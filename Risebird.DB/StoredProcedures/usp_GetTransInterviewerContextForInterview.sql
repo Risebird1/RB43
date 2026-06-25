@@ -9,11 +9,17 @@ BEGIN
         ti.UserId          AS UserId,
         ti.IRFId           AS IrfId,
         ti.IsActive        AS IsActive,
-        ul.EmailId         AS InterviewerEmail
+        ul.EmailId         AS InterviewerEmail,
+        ip.NickName        AS InterviewerCodedId,
+        CASE
+            WHEN ti.IsSMEVerified = 0 THEN CAST(1 AS BIT)
+            ELSE CAST(0 AS BIT)
+        END                AS RbVetAlreadyNo
     FROM dbo.InterviewMeetings im
     INNER JOIN dbo.IRF irf ON irf.IRFId = im.IRFId
-    INNER JOIN dbo.TransInterviewer ti ON ti.IRFId = irf.id
-    INNER JOIN dbo.UserList ul ON ul.id = ti.UserId AND ul.EmailId = im.interviewer
+    INNER JOIN dbo.UserList ul ON ul.EmailId = im.interviewer
+    INNER JOIN dbo.TransInterviewer ti ON ti.IRFId = irf.id AND ti.UserId = ul.id
+    INNER JOIN dbo.InterviewerProfile ip ON ip.UserId = ti.UserId
     WHERE im.id = @InterviewId
     ORDER BY ti.id;
 END

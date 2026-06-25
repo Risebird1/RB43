@@ -26,7 +26,8 @@ namespace Risebird.Repository
         }
 
         public async Task InsertAsync(int transInterviewerId, string eventType, string fromValue, string toValue,
-            string reasonCategory, int? triggeringInterviewId, string changedBy)
+            string reasonCategory, int? triggeringInterviewId, string changedBy,
+            string auditTag = null, string auditSource = null, Guid? backfillBatchId = null, string extraMetadata = null)
         {
             try
             {
@@ -40,7 +41,11 @@ namespace Risebird.Repository
                         ToValue = toValue,
                         ReasonCategory = reasonCategory,
                         TriggeringInterviewId = triggeringInterviewId,
-                        ChangedBy = changedBy ?? "System"
+                        ChangedBy = changedBy ?? "System",
+                        AuditTag = auditTag,
+                        AuditSource = auditSource,
+                        BackfillBatchId = backfillBatchId,
+                        ExtraMetadata = extraMetadata
                     },
                     commandType: CommandType.StoredProcedure,
                     commandTimeout: 30);
@@ -124,6 +129,30 @@ namespace Risebird.Repository
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return Array.Empty<TransInterviewerInactiveAuditSummary>();
+            }
+        }
+
+        public async Task<bool> HasAutoQcRemovalAuditForInterviewAsync(int transInterviewerId, int triggeringInterviewId, string auditSource = null)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var row = await con.QueryFirstOrDefaultAsync<dynamic>(
+                    "usp_HasAutoQcRemovalAuditForInterview",
+                    new
+                    {
+                        TransInterviewerId = transInterviewerId,
+                        TriggeringInterviewId = triggeringInterviewId,
+                        AuditSource = auditSource
+                    },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 30);
+                return row != null && (bool)row.AlreadyRecorded;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
     }

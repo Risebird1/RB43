@@ -1,3 +1,5 @@
+using Risebird.Entities.Data;
+using Risebird.Entities.ViewModel;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,5 +13,8 @@ namespace Risebird.Business.Interface
         /// </summary>
         Task TryApplyAutoQcRemovalAsync(int interviewId, int irfId, string interviewerSuspicious, bool? redoInterview,
             CancellationToken cancellationToken = default);
+
+        Task<bool> ApplyAutoQcRemovalForContextAsync(TransInterviewerInterviewContext ctx, int triggeringInterviewId,
+            string verdict, AutoQcRemovalOptions options, CancellationToken cancellationToken = default);
     }
 }

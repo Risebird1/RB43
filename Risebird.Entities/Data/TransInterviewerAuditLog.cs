@@ -13,6 +13,10 @@ namespace Risebird.Entities.Data
         public int? TriggeringInterviewId { get; set; }
         public string ChangedBy { get; set; }
         public DateTime ChangedAt { get; set; }
+        public string AuditTag { get; set; }
+        public string AuditSource { get; set; }
+        public Guid? BackfillBatchId { get; set; }
+        public string ExtraMetadata { get; set; }
     }
 
     public class TransInterviewerInterviewContext
@@ -22,6 +26,8 @@ namespace Risebird.Entities.Data
         public int IrfId { get; set; }
         public bool IsActive { get; set; }
         public string InterviewerEmail { get; set; }
+        public string InterviewerCodedId { get; set; }
+        public bool RbVetAlreadyNo { get; set; }
     }
 
     public class TransInterviewerInactiveAuditSummary
