@@ -1,0 +1,600 @@
+@model Risebird.Entities.ViewModel.EmailLookupResultVM
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Email Lookup";
+    Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+
+    bool hasResult = Model != null && Model.IsFound;
+    bool searched = Model != null && !string.IsNullOrEmpty(Model.SearchEmail);
+    string searchEmail = Model?.SearchEmail ?? string.Empty;
+
+    Func<string, string> GetStatusClass = (s) => {
+        string sl = (s ?? "").ToLower();
+        if (sl == "completed")          return "status-completed";
+        if (sl == "scheduled")          return "status-scheduled";
+        if (sl == "cancelled")          return "status-cancelled";
+        if (sl.StartsWith("no show") || sl.StartsWith("dropped")) return "status-cancelled";
+        return "status-default";
+    };
+
+    Func<string, string> GetStatusLabel = (s) => {
+        return string.IsNullOrEmpty(s) ? "—" : s;
+    };
+
+    Func<string, string> GetProfileBadgeClass = (profile) => {
+        string p = (profile ?? "").ToLower();
+        if (p == "admin") return "badge-admin";
+        if (p == "interviewer") return "badge-interviewer";
+        if (p == "candidate") return "badge-candidate";
+        if (p == "hr" || p == "seniorhr" || p == "supportadmin") return "badge-hr";
+        if (p == "client") return "badge-client";
+        return "badge-default";
+    };
+}
+
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+
+<style>
+    body { background: #f4f6f9 !important; }
+
+    .lookup-hero {
+        background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+        padding: 40px 0 60px;
+        margin-bottom: -40px;
+    }
+    .lookup-hero h2 { color: #fff; font-weight: 700; letter-spacing: .5px; }
+    .lookup-hero p  { color: rgba(255,255,255,.8); }
+
+    .search-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 28px 32px;
+        box-shadow: 0 4px 24px rgba(0,0,0,.12);
+        margin-bottom: 32px;
+    }
+    .search-input {
+        border-radius: 8px 0 0 8px !important;
+        border: 2px solid #e0e0e0 !important;
+        font-size: 15px;
+        height: 48px;
+        padding-left: 16px;
+    }
+    .search-input:focus { border-color: #1a73e8 !important; box-shadow: none !important; }
+    .search-btn {
+        border-radius: 0 8px 8px 0 !important;
+        height: 48px;
+        padding: 0 28px;
+        font-size: 15px;
+        font-weight: 600;
+        background: #1a73e8;
+        border-color: #1a73e8;
+    }
+    .search-btn:hover { background: #1557b0; border-color: #1557b0; }
+
+    .profile-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 2px 12px rgba(0,0,0,.08);
+        margin-bottom: 24px;
+        border-left: 5px solid #1a73e8;
+    }
+    .profile-avatar {
+        width: 64px; height: 64px; border-radius: 50%;
+        background: linear-gradient(135deg, #1a73e8, #0d47a1);
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 26px; font-weight: 700; flex-shrink: 0;
+    }
+    .profile-name  { font-size: 20px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+    .profile-email { color: #666; font-size: 14px; }
+    .profile-badge {
+        display: inline-block; padding: 4px 12px; border-radius: 20px;
+        font-size: 12px; font-weight: 600; letter-spacing: .3px;
+    }
+    .badge-admin       { background: #e8f0fe; color: #1a73e8; }
+    .badge-interviewer { background: #e6f4ea; color: #137333; }
+    .badge-candidate   { background: #fce8b2; color: #e37400; }
+    .badge-hr          { background: #fce8e6; color: #c5221f; }
+    .badge-client      { background: #e8eaf6; color: #3949ab; }
+    .badge-default     { background: #f1f3f4; color: #5f6368; }
+    .badge-active      { background: #e6f4ea; color: #137333; }
+    .badge-inactive    { background: #fce8e6; color: #c5221f; }
+    .badge-blocked     { background: #fce8e6; color: #c5221f; border: 1.5px solid #c5221f; }
+    .badge-hold        { background: #fff3e0; color: #e65100; border: 1.5px solid #e65100; }
+    .badge-no-access   { background: #f3e5f5; color: #6a1b9a; border: 1.5px solid #6a1b9a; }
+
+    .alert-banner {
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-size: 13px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 12px;
+    }
+    .alert-blocked  { background: #fce8e6; color: #c5221f; border: 1px solid #f5c6c4; }
+    .alert-hold     { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
+    .alert-access   { background: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7; }
+
+    .stat-card {
+        background: #fff; border-radius: 12px; padding: 20px 24px;
+        box-shadow: 0 2px 12px rgba(0,0,0,.07); text-align: center;
+        transition: transform .15s, box-shadow .15s;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,.12); }
+    .stat-number { font-size: 36px; font-weight: 800; line-height: 1; margin-bottom: 6px; }
+    .stat-label  { font-size: 13px; color: #666; font-weight: 500; text-transform: uppercase; letter-spacing: .5px; }
+    .stat-blue   { color: #1a73e8; }
+    .stat-green  { color: #137333; }
+    .stat-red    { color: #c5221f; }
+    .stat-orange { color: #e37400; }
+
+    .section-title {
+        font-size: 16px; font-weight: 700; color: #1a1a2e;
+        margin-bottom: 16px; padding-bottom: 8px;
+        border-bottom: 2px solid #e0e0e0;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .section-title i { color: #1a73e8; }
+
+    .data-table           { font-size: 13px; }
+    .data-table th        { background: #f8f9fa; font-weight: 600; color: #444; border-bottom: 2px solid #dee2e6; white-space: nowrap; }
+    .data-table td        { vertical-align: middle; }
+
+    .status-pill      { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+    .status-completed { background: #e6f4ea; color: #137333; }
+    .status-scheduled { background: #e8f0fe; color: #1a73e8; }
+    .status-cancelled { background: #fce8e6; color: #c5221f; }
+    .status-paid      { background: #e6f4ea; color: #137333; }
+    .status-pending   { background: #fce8b2; color: #e37400; }
+    .status-default   { background: #f1f3f4; color: #5f6368; }
+
+    .not-found-card { background: #fff; border-radius: 12px; padding: 48px 32px; text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,.07); }
+    .not-found-card .icon { font-size: 56px; color: #dadce0; margin-bottom: 16px; }
+    .not-found-card h4 { color: #3c4043; font-weight: 600; }
+    .not-found-card p  { color: #80868b; }
+
+    .section-card    { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,.07); margin-bottom: 24px; }
+    .section-divider { border: none; border-top: 1px solid #f1f3f4; margin: 24px 0; }
+</style>
+
+<div class="lookup-hero">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2><i class="fas fa-search me-2"></i> Email Lookup</h2>
+                <p>Search by email to view complete profile — interviews, payments &amp; more</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5" style="padding-top: 60px;">
+
+    <div class="search-card">
+        <form method="post" action="@Url.Action("Index", "EmailLookup")">
+            @Html.AntiForgeryToken()
+            <div class="input-group">
+                <input type="text"
+                       name="emailId"
+                       class="form-control search-input"
+                       placeholder="Enter email address to search..."
+                       value="@searchEmail"
+                       autofocus />
+                <button type="submit" class="btn btn-primary search-btn">
+                    <i class="fas fa-search me-1"></i> Search
+                </button>
+            </div>
+        </form>
+    </div>
+
+    @if (searched && !hasResult)
+    {
+        <div class="not-found-card">
+            <div class="icon"><i class="fas fa-user-slash"></i></div>
+            <h4>No record found</h4>
+            <p>No user with email <strong>@searchEmail</strong> exists in the system.</p>
+        </div>
+    }
+
+    @if (hasResult)
+    {
+        string fName      = Model.FirstName ?? "";
+        string lName      = Model.LastName ?? "";
+        string initials   = (fName.Length > 0 ? fName[0].ToString() : "") + (lName.Length > 0 ? lName[0].ToString() : "");
+        string bdgClass   = GetProfileBadgeClass(Model.ProfileType);
+        bool   isIvr      = (Model.ProfileType ?? "").ToLower() == "interviewer" || Model.InterviewerTotalCount > 0 || !string.IsNullOrEmpty(Model.PrimarySkill) || !string.IsNullOrEmpty(Model.CurrentRole);
+        bool   isCand     = (Model.ProfileType ?? "").ToLower() == "candidate"   || Model.CandidateTotalCount > 0;
+
+        <div class="profile-card">
+            <div class="d-flex align-items-center gap-3">
+                <div class="profile-avatar">@initials.ToUpper()</div>
+                <div class="flex-grow-1">
+                    <div class="profile-name">@Model.FirstName @Model.LastName</div>
+                    <div class="profile-email mb-2"><i class="fas fa-envelope me-1"></i>@Model.EmailId</div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="profile-badge @bdgClass"><i class="fas fa-id-badge me-1"></i>@Model.ProfileType</span>
+
+                        @if (!string.IsNullOrEmpty(Model.MobileNumber) && Model.MobileNumber != "0")
+                        {
+                            <span class="profile-badge badge-default"><i class="fas fa-phone me-1"></i>@Model.MobileNumber</span>
+                        }
+
+                        @if (Model.IsActive)
+                        {
+                            <span class="profile-badge badge-active"><i class="fas fa-circle me-1" style="font-size:8px;"></i>Active</span>
+                        }
+                        else
+                        {
+                            <span class="profile-badge badge-inactive"><i class="fas fa-circle me-1" style="font-size:8px;"></i>Inactive</span>
+                        }
+
+                        @if (isIvr && Model.IsApproved)
+                        {
+                            <span class="profile-badge badge-interviewer"><i class="fas fa-check-circle me-1"></i>Approved Interviewer</span>
+                        }
+                        @if (isIvr && Model.IsLeadInterviewer)
+                        {
+                            <span class="profile-badge badge-admin"><i class="fas fa-star me-1"></i>Lead Interviewer</span>
+                        }
+                        @if (isIvr && !string.IsNullOrEmpty(Model.PrimarySkill))
+                        {
+                            <span class="profile-badge badge-default"><i class="fas fa-code me-1"></i>@Model.PrimarySkill</span>
+                        }
+                        @if (isIvr && !string.IsNullOrEmpty(Model.CurrentRole))
+                        {
+                            <span class="profile-badge badge-default"><i class="fas fa-briefcase me-1"></i>@Model.CurrentRole</span>
+                        }
+                        @if (isIvr && Model.Experience > 0)
+                        {
+                            <span class="profile-badge badge-default"><i class="fas fa-clock me-1"></i>@Model.Experience yrs exp</span>
+                        }
+                        @if (isIvr && !string.IsNullOrEmpty(Model.City))
+                        {
+                            <span class="profile-badge badge-default"><i class="fas fa-map-marker-alt me-1"></i>@Model.City@((!string.IsNullOrEmpty(Model.Country)) ? ", " + Model.Country : "")</span>
+                        }
+                        @if (isIvr && !string.IsNullOrEmpty(Model.CompanyName))
+                        {
+                            <span class="profile-badge badge-default"><i class="fas fa-building me-1"></i>@Model.CompanyName</span>
+                        }
+
+                        @* ── Blocked / Access / Hold status badges ── *@
+                        @if (isIvr && Model.IsBlockedProfile)
+                        {
+                            <span class="profile-badge badge-blocked"><i class="fas fa-ban me-1"></i>Profile Blocked</span>
+                        }
+                        @if (isIvr && !Model.IsInterviewerAccess)
+                        {
+                            <span class="profile-badge badge-no-access"><i class="fas fa-lock me-1"></i>No Interviewer Access</span>
+                        }
+                        @if (isIvr && Model.IsHoldPayment)
+                        {
+                            <span class="profile-badge badge-hold"><i class="fas fa-pause-circle me-1"></i>Payment On Hold</span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            @* ── Alert banners for critical flags ── *@
+            @if (isIvr && (Model.IsBlockedProfile || !Model.IsInterviewerAccess || Model.IsHoldPayment))
+            {
+                <div class="mt-3">
+                    @if (isIvr && Model.IsBlockedProfile)
+                    {
+                        <div class="alert-banner alert-blocked">
+                            <i class="fas fa-ban"></i>
+                            <strong>Profile Blocked</strong> — This interviewer's profile has been deleted/blocked.
+                        </div>
+                    }
+                    @if (isIvr && !Model.IsInterviewerAccess)
+                    {
+                        <div class="alert-banner alert-access">
+                            <i class="fas fa-lock"></i>
+                            <strong>Interviewer Access Revoked</strong> — This user does not have active interviewer access.
+                        </div>
+                    }
+                    @if (isIvr && Model.IsHoldPayment)
+                    {
+                        <div class="alert-banner alert-hold">
+                            <i class="fas fa-pause-circle"></i>
+                            <strong>Payment On Hold</strong>
+                            @if (!string.IsNullOrEmpty(Model.HoldPaymentReason))
+                            {
+                                <span>— @Model.HoldPaymentReason</span>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+
+            @* ── PAN / Bank details (interviewers only) ── *@
+            @if (isIvr && (!string.IsNullOrEmpty(Model.PAN) || !string.IsNullOrEmpty(Model.AccountNumber)))
+            {
+                <div class="mt-3 pt-3" style="border-top:1px solid var(--border-color);">
+                    <div class="fw-semibold mb-2" style="font-size:0.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);">
+                        <i class="fas fa-university me-1"></i> Bank &amp; PAN Details
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        @if (!string.IsNullOrEmpty(Model.PAN))
+                        {
+                            <span class="profile-badge badge-default">
+                                <i class="fas fa-id-card me-1"></i>PAN: <strong>@Model.PAN</strong>
+                                @if (Model.IsBankVerified)
+                                {
+                                    <i class="fas fa-check-circle text-success ms-1" title="Bank Verified"></i>
+                                }
+                            </span>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.AccountName))
+                        {
+                            <span class="profile-badge badge-default"><i class="fas fa-user me-1"></i>@Model.AccountName</span>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.AccountNumber))
+                        {
+                            <span class="profile-badge badge-default"><i class="fas fa-hashtag me-1"></i>@Model.AccountNumber</span>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.IFSCCode))
+                        {
+                            <span class="profile-badge badge-default"><i class="fas fa-code-branch me-1"></i>IFSC: @Model.IFSCCode</span>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        @* ── AS CANDIDATE ── *@
+        @if (isCand)
+        {
+            <div class="section-card">
+                <div class="section-title"><i class="fas fa-user-graduate"></i> As Candidate — Interview Summary</div>
+                <div class="row g-3">
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number stat-blue">@Model.CandidateTotalCount</div>
+                            <div class="stat-label">Total</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number stat-orange">@Model.CandidateTotalScheduled</div>
+                            <div class="stat-label">Scheduled</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number stat-green">@Model.CandidateTotalCompleted</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number stat-red">@Model.CandidateTotalCancelled</div>
+                            <div class="stat-label">Cancelled</div>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.MeetingsAsCandidate != null && Model.MeetingsAsCandidate.Count > 0)
+                {
+                    <hr class="section-divider" />
+                    <div class="section-title" style="font-size:14px;"><i class="fas fa-list-alt"></i> Recent Interviews (as Candidate)</div>
+                    <div class="table-responsive">
+                        <table class="table table-hover data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>IRF ID</th>
+                                    <th>Interview Date</th>
+                                    <th>Slot</th>
+                                    <th>Interviewer</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var cm in Model.MeetingsAsCandidate)
+                                {
+                                    <tr>
+                                        <td>@cm.Id</td>
+                                        <td>@(cm.IRFId ?? "—")</td>
+                                        <td>@(cm.InterviewDate.HasValue ? cm.InterviewDate.Value.ToString("dd MMM yyyy") : "—")</td>
+                                        <td>@(cm.InterviewSlot ?? "—")</td>
+                                        <td>@(cm.Interviewer ?? "—")</td>
+                                        <td><span class="status-pill @GetStatusClass(cm.Status)">@GetStatusLabel(cm.Status)</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        }
+
+        @* ── AS INTERVIEWER ── *@
+        @if (isIvr)
+        {
+            <div class="section-card">
+                <div class="section-title"><i class="fas fa-user-tie"></i> As Interviewer — Interview Summary</div>
+                <div class="row g-3">
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number stat-blue">@Model.InterviewerTotalCount</div>
+                            <div class="stat-label">Total</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number stat-orange">@Model.InterviewerTotalScheduled</div>
+                            <div class="stat-label">Scheduled</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number stat-green">@Model.InterviewerTotalCompleted</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number stat-red">@Model.InterviewerTotalCancelled</div>
+                            <div class="stat-label">Cancelled</div>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.MeetingsAsInterviewer != null && Model.MeetingsAsInterviewer.Count > 0)
+                {
+                    <hr class="section-divider" />
+                    <div class="section-title" style="font-size:14px;"><i class="fas fa-list-alt"></i> Recent Interviews (as Interviewer)</div>
+                    <div class="table-responsive">
+                        <table class="table table-hover data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>IRF ID</th>
+                                    <th>Interview Date</th>
+                                    <th>Slot</th>
+                                    <th>Candidate Email</th>
+                                    <th>Candidate Name</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var im in Model.MeetingsAsInterviewer)
+                                {
+                                    <tr>
+                                        <td>@im.Id</td>
+                                        <td>@(im.IRFId ?? "—")</td>
+                                        <td>@(im.InterviewDate.HasValue ? im.InterviewDate.Value.ToString("dd MMM yyyy") : "—")</td>
+                                        <td>@(im.InterviewSlot ?? "—")</td>
+                                        <td>@(im.CandidateEmail ?? "—")</td>
+                                        <td>@(im.CandidateName ?? "—")</td>
+                                        <td><span class="status-pill @GetStatusClass(im.Status)">@GetStatusLabel(im.Status)</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+
+            @* ── PAYMENT SUMMARY ── *@
+            <div class="section-card">
+                <div class="section-title"><i class="fas fa-rupee-sign"></i> Payment Summary</div>
+                <div class="row g-3">
+                    <div class="col-6 col-md-4">
+                        <div class="stat-card">
+                            <div class="stat-number stat-blue">&#8377;@Model.TotalPaymentAmount.ToString("N0")</div>
+                            <div class="stat-label">Total Earned</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <div class="stat-card">
+                            <div class="stat-number stat-green">&#8377;@Model.TotalPaidAmount.ToString("N0")</div>
+                            <div class="stat-label">Total Paid</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <div class="stat-card">
+                            <div class="stat-number stat-orange">&#8377;@Model.TotalPendingPayment.ToString("N0")</div>
+                            <div class="stat-label">Pending / On Hold</div>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.RecentPayments != null && Model.RecentPayments.Count > 0)
+                {
+                    <hr class="section-divider" />
+                    <div class="section-title" style="font-size:14px;"><i class="fas fa-history"></i> Recent Payments</div>
+                    <div class="table-responsive">
+                        <table class="table table-hover data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Payment Date</th>
+                                    <th>Amount (&#8377;)</th>
+                                    <th>Total Billed (&#8377;)</th>
+                                    <th>Status</th>
+                                    <th>Payout Status</th>
+                                    <th>Comment</th>
+                                    <th>Transaction Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var pmt in Model.RecentPayments)
+                                {
+                                    string pmtClass = (pmt.PayoutStatus ?? "").ToUpper() == "SUCCESS" || (pmt.Status ?? "").ToLower() == "paid"
+                                        ? "status-paid" : "status-pending";
+                                    string poClass = (pmt.PayoutStatus ?? "").ToUpper() == "SUCCESS" ? "status-paid" : "status-pending";
+                                    <tr>
+                                        <td>@pmt.Id</td>
+                                        <td>@(pmt.PaymentDate.HasValue ? pmt.PaymentDate.Value.ToString("dd MMM yyyy") : "—")</td>
+                                        <td>@pmt.Amount.ToString("N0")</td>
+                                        <td>@pmt.TotalAmount.ToString("N0")</td>
+                                        <td><span class="status-pill @pmtClass">@(pmt.Status ?? "—")</span></td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(pmt.PayoutStatus))
+                                            {
+                                                <span class="status-pill @poClass">@pmt.PayoutStatus</span>
+                                            }
+                                            else
+                                            {
+                                                <text>—</text>
+                                            }
+                                        </td>
+                                        <td>@(pmt.Comment ?? "—")</td>
+                                        <td>@(pmt.TransactionDate.HasValue ? pmt.TransactionDate.Value.ToString("dd MMM yyyy") : "—")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <hr class="section-divider" />
+                    <div class="text-center py-3 text-muted">
+                        <i class="fas fa-info-circle me-1"></i> No payment records found for this user.
+                    </div>
+                }
+            </div>
+        }
+
+        @if (!isCand && !isIvr)
+        {
+            <div class="section-card text-center py-4">
+                <i class="fas fa-info-circle fa-2x text-muted mb-2 d-block"></i>
+                <p class="text-muted mb-0">No interview or payment records associated with this account.</p>
+            </div>
+        }
+    }
+
+    @if (!searched)
+    {
+        <div class="row g-4 mt-1">
+            <div class="col-md-4">
+                <div class="section-card text-center py-4">
+                    <i class="fas fa-user-graduate fa-2x mb-2 stat-blue d-block"></i>
+                    <h6 class="fw-bold">Candidate Lookup</h6>
+                    <p class="text-muted small mb-0">View all interviews scheduled, completed, and cancelled for any candidate by email.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="section-card text-center py-4">
+                    <i class="fas fa-user-tie fa-2x mb-2 stat-green d-block"></i>
+                    <h6 class="fw-bold">Interviewer Lookup</h6>
+                    <p class="text-muted small mb-0">Check total interviews conducted and full payment history for any interviewer.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="section-card text-center py-4">
+                    <i class="fas fa-rupee-sign fa-2x mb-2 stat-orange d-block"></i>
+                    <h6 class="fw-bold">Payment Lookup</h6>
+                    <p class="text-muted small mb-0">View total billed, paid, and pending payment amounts instantly.</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>

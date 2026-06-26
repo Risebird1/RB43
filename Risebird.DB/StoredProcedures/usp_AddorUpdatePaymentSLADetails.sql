@@ -41,10 +41,10 @@ Create Procedure usp_AddorUpdatePaymentSLADetails
 AS      
 BEGIN      
 Declare @Userid int           
-Declare @isQcDonecheck bit      
+Declare @isQcDonecheck bit   
+Declare @isApprovedCheck bit   
 Declare @isTechQcDonecheck bit      
-Select  @isQcDonecheck=ISNULL(isQcDone,0) from PaymentSLADetails where Interviewid=@Interviewid    
-Select  @isTechQcDonecheck=ISNULL(IsTechQCDone,0) from PaymentSLADetails where Interviewid=@Interviewid    
+Select  @isQcDonecheck=ISNULL(isQcDone,0),@isApprovedCheck=ISNULL(IsApproved,0),@isTechQcDonecheck=ISNULL(IsTechQCDone,0)  from PaymentSLADetails where Interviewid=@Interviewid    
 if(@techqc=1)    
 begin    
 Update TechQualityDetails set IsCompleted=1 where interviewid=@Interviewid    
@@ -56,6 +56,10 @@ end
 if(@isTechQcDonecheck=1)    
 begin    
 set @techqc=1    
+end    
+if(@isApprovedCheck=1)    
+begin    
+set @isapproved=1    
 end    
 Select @Userid=id From UserList where Emailid=@Emailid        
 if(@Rating<5)    
@@ -117,6 +121,4 @@ begin
  END  
 end  
 END      
-  
-  
 GO
