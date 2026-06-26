@@ -164,7 +164,12 @@ begin try
 				END
 				ELSE
 				BEGIN
-					SET @existingList = @existingList + ',' + @agId;
+					-- BUGFIX: previously appended to @existingList (a different, NULL-in-this-branch
+					-- variable belonging to the non-MAG branch), so the new MAG's AG id was never
+					-- added to the profile's AssessmentGroupId list. The MAG interviewer popup reads
+					-- InterviewerProfile.AssessmentGroupId, so the interviewer would acknowledge /
+					-- self-register yet never appear in that MAG's interviewer list.
+					SET @existingList2 = @existingList2 + ',' + @agId;
 				END
 
 				-- Update the table
