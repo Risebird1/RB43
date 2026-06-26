@@ -151,9 +151,13 @@ namespace Risebird.Business
                 if (result)
                 {
                     // Send acknowledgement email ONLY for INSERT operations (new interviewers)
-                    // The stored procedure determines if this was an INSERT or UPDATE operation
+                    // The stored procedure determines if this was an INSERT or UPDATE operation.
+                    // Callers that send their own acknowledgement email (e.g. NaukriOnboarding manual
+                    // onboard) set SuppressAcknowledgementEmail = true to avoid a duplicate mail.
                     if (isInsertOperation)
                     {
+                        if (!interviewerProfile.SuppressAcknowledgementEmail)
+                        {
                         try
                         {
                             string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" + userId.ToString();
@@ -181,6 +185,7 @@ namespace Risebird.Business
                             // Log email sending failure but don't fail the entire operation
                             _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, 
                                 new Exception($"Failed to send acknowledgement email to {interviewerProfile.EmailId}", emailEx));
+                        }
                         }
 
                         // Link the pre-onboarding AI verdict record that caused this hire back to the
