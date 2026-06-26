@@ -404,6 +404,25 @@
     .mgm-action-btn:disabled { opacity:.88; cursor:not-allowed; }
     .mgm-result-block { font-size:12px; margin-top:8px; padding:8px 12px; border-radius:6px; background:#f8f9fa; border:1px solid #e9ecef; max-height:200px; overflow-y:auto; }
     .mgm-footer { border-top:1px solid #e9ecef; background:#fafbfc; }
+
+    /* SendGrid email delivery events (per pipeline step) */
+    .mgm-email-events:empty { display:none; }
+    .evt-card { border:1px solid #e9ecef; border-radius:8px; background:#fcfcff; padding:8px 10px; }
+    .evt-head { display:flex; align-items:baseline; justify-content:space-between; gap:8px; flex-wrap:wrap; margin-bottom:6px; }
+    .evt-title { font-size:11.5px; font-weight:700; color:#334155; }
+    .evt-sent { font-size:10.5px; color:#9aa0a6; }
+    .evt-chips { display:flex; gap:6px; flex-wrap:wrap; }
+    .evt-chip { font-size:10.5px; font-weight:600; border-radius:6px; padding:2px 8px; white-space:nowrap; }
+    .evt-warn { margin-top:6px; font-size:11px; color:#842029; background:#fff5f5; border:1px solid #f5c2c7; border-radius:6px; padding:5px 8px; }
+    .evt-pending { margin-top:6px; font-size:10.5px; color:#94a3b8; }
+    .evt-toggle { margin-top:7px; font-size:10.5px; font-weight:600; color:#0d6efd; cursor:pointer; user-select:none; }
+    .evt-toggle:hover { text-decoration:underline; }
+    .evt-timeline { margin-top:6px; border-left:2px solid #e9ecef; padding-left:10px; }
+    .evt-row { display:flex; align-items:baseline; gap:7px; font-size:11px; padding:2px 0; }
+    .evt-dot { width:8px; height:8px; border-radius:50%; flex:0 0 8px; position:relative; left:-15px; }
+    .evt-name { font-weight:600; text-transform:capitalize; margin-left:-8px; }
+    .evt-extra { color:#64748b; flex:1 1 auto; min-width:0; word-break:break-word; }
+    .evt-time { color:#9aa0a6; white-space:nowrap; font-size:10px; }
     .mgm-info-row { display:flex; align-items:flex-start; gap:10px; padding:8px 12px; border-radius:8px; background:#fff; border:1px solid #e9ecef; margin-bottom:8px; font-size:12.5px; box-shadow:0 1px 2px rgba(0,0,0,.04); }
     .mgm-info-row .label { font-weight:600; color:#495057; flex:0 0 108px; min-width:0; }
     .mgm-info-row .value { color:#212529; flex:1 1 auto; min-width:0; word-break:break-word; overflow-wrap:anywhere; line-height:1.45; }
@@ -1130,6 +1149,7 @@
                                     </div>
                                 </div>
                                 <div class="mgm-result-block" id="step3Result" style="display:none;"></div>
+                                <div id="mgmInviteEvents" class="mgm-email-events" style="margin-top:8px;"></div>
                             </div>
                         </div>
                     </div>
@@ -1262,6 +1282,7 @@
                                             </div>
                                         </div>
                                         <div class="mgm-result-block" id="mStep3Result" style="display:none;"></div>
+                                        <div id="mgmAckEvents" class="mgm-email-events" style="margin-top:8px;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -1404,46 +1425,101 @@
         syncAutomationBadge(r);
         syncPlivoCallUI(r);
         syncPipeline(r);
-        loadInvitationEmailStatus();
+        loadEmailEvents();
     }
 
-    // Fetches & renders the SendGrid delivery status of the invitation email for the EmailParsed step.
-    // Until the invitation has been sent there is nothing to show against the parsed email.
-    function loadInvitationEmailStatus() {
-        var $el = $('#mgmInviteEmailStatus');
-        $el.empty();
+    // Fetches SendGrid delivery + engagement events for BOTH the invitation and the acknowledgement
+    // emails, and renders them in the relevant pipeline steps (plus a compact badge in the header).
+    function loadEmailEvents() {
+        $('#mgmInviteEmailStatus').empty();
+        $('#mgmInviteEvents').empty();
+        $('#mgmAckEvents').empty();
         if (!currentRecordId) return;
         $.ajax({
-            url: '@Url.Action("GetInvitationEmailStatus", "NaukriOnboarding")', type: 'GET',
+            url: '@Url.Action("GetProspectEmailEvents", "NaukriOnboarding")', type: 'GET',
             data: { id: currentRecordId },
             success: function (res) {
                 if (!res || !res.success || !res.hasEmail) return;
-                if (!res.sent) {
-                    $el.html('<span style="color:#6c757d;"><i class="fas fa-clock me-1"></i>Invitation not sent yet</span>');
-                    return;
-                }
-                var ev = (res.deliveryEvent || '').toLowerCase();
-                var style, icon, label;
-                if (res.hasBounced || ev === 'bounce' || ev === 'dropped') {
-                    style = 'color:#842029;font-weight:600;'; icon = 'fa-exclamation-triangle';
-                    label = (ev === 'dropped' ? 'Dropped' : 'Bounced') + (res.deliveryReason ? ' \u2014 ' + res.deliveryReason : '');
-                    label += ' \u00b7 try a different email';
-                } else if (ev === 'delivered') {
-                    style = 'color:#0f5132;font-weight:600;'; icon = 'fa-check-circle'; label = 'Delivered';
-                } else if (ev === 'deferred') {
-                    style = 'color:#92660e;font-weight:600;'; icon = 'fa-hourglass-half'; label = 'Deferred';
-                } else if (ev === 'processed') {
-                    style = 'color:#1e40af;font-weight:600;'; icon = 'fa-paper-plane'; label = 'Sent (processing)';
-                } else {
-                    style = 'color:#495057;'; icon = 'fa-envelope'; label = 'Sent';
-                }
-                var html = '<span style="' + style + '"><i class="fas ' + icon + ' me-1"></i>Invitation: ' + $('<span>').text(label).html() + '</span>';
-                if (res.opened) html += ' <span style="color:#0a3278;" title="Opened the invitation email"><i class="fas fa-envelope-open me-1"></i>Opened</span>';
-                if (res.clicked) html += ' <span style="color:#0a3278;" title="Clicked a link in the invitation"><i class="fas fa-mouse-pointer me-1"></i>Clicked</span>';
-                if (res.sentAt) html += ' <span style="color:#9aa0a6;">(' + res.sentAt + ')</span>';
-                $el.html(html);
+                $('#mgmInviteEmailStatus').html(buildEmailBadge('Invitation', res.invitation));
+                renderEmailEventBlock('#mgmInviteEvents', 'Invitation email', res.invitation);
+                renderEmailEventBlock('#mgmAckEvents', 'Acknowledgement email', res.acknowledgement);
             }
         });
+    }
+
+    // Compact one-line delivery summary (used in the modal header next to the parsed email).
+    function buildEmailBadge(label, d) {
+        if (!d || !d.sent) return '<span style="color:#6c757d;"><i class="fas fa-clock me-1"></i>' + label + ' not sent yet</span>';
+        var ev = (d.deliveryEvent || '').toLowerCase();
+        var style, icon, text;
+        if (d.hasBounced || ev === 'bounce' || ev === 'dropped') {
+            style = 'color:#842029;font-weight:600;'; icon = 'fa-exclamation-triangle';
+            text = (ev === 'dropped' ? 'Dropped' : 'Bounced') + (d.deliveryReason ? ' \u2014 ' + d.deliveryReason : '') + ' \u00b7 try a different email';
+        } else if (ev === 'delivered') { style = 'color:#0f5132;font-weight:600;'; icon = 'fa-check-circle'; text = 'Delivered'; }
+        else if (ev === 'deferred') { style = 'color:#92660e;font-weight:600;'; icon = 'fa-hourglass-half'; text = 'Deferred'; }
+        else if (ev === 'processed') { style = 'color:#1e40af;font-weight:600;'; icon = 'fa-paper-plane'; text = 'Sent (processing)'; }
+        else { style = 'color:#495057;'; icon = 'fa-envelope'; text = 'Sent'; }
+        var html = '<span style="' + style + '"><i class="fas ' + icon + ' me-1"></i>' + label + ': ' + $('<span>').text(text).html() + '</span>';
+        if (d.opened) html += ' <span style="color:#0a3278;" title="Opened"><i class="fas fa-envelope-open me-1"></i>Opened</span>';
+        if (d.clicked) html += ' <span style="color:#0a3278;" title="Clicked a link"><i class="fas fa-mouse-pointer me-1"></i>Clicked</span>';
+        if (d.sentAt) html += ' <span style="color:#9aa0a6;">(' + d.sentAt + ')</span>';
+        return html;
+    }
+
+    // Full SendGrid status card + collapsible event timeline for one email.
+    function renderEmailEventBlock(sel, label, d) {
+        var $el = $(sel); if (!$el.length) return; $el.empty();
+        if (!d || !d.sent) return; // nothing sent yet — keep the step clean
+        var ev = (d.deliveryEvent || '').toLowerCase();
+        var dStyle, dIcon, dText;
+        if (d.hasBounced || ev === 'bounce' || ev === 'dropped') {
+            dStyle = 'background:#f8d7da;color:#842029;border:1px solid #dc3545;'; dIcon = 'fa-exclamation-triangle';
+            dText = (ev === 'dropped' ? 'Dropped' : 'Bounced');
+        } else if (ev === 'delivered') { dStyle = 'background:#d1e7dd;color:#0f5132;border:1px solid #198754;'; dIcon = 'fa-check-circle'; dText = 'Delivered'; }
+        else if (ev === 'deferred') { dStyle = 'background:#fff3cd;color:#92660e;border:1px solid #ffc107;'; dIcon = 'fa-hourglass-half'; dText = 'Deferred'; }
+        else if (ev === 'processed') { dStyle = 'background:#cfe2ff;color:#1e40af;border:1px solid #0d6efd;'; dIcon = 'fa-paper-plane'; dText = 'Sent (processing)'; }
+        else { dStyle = 'background:#e9ecef;color:#495057;border:1px solid #ced4da;'; dIcon = 'fa-envelope'; dText = 'Sent'; }
+
+        var chips = ['<span class="evt-chip" style="' + dStyle + '"><i class="fas ' + dIcon + ' me-1"></i>' + dText + '</span>'];
+        if (d.opened) chips.push('<span class="evt-chip" style="background:#e7f1ff;color:#0a3278;border:1px solid #0d6efd;"><i class="fas fa-envelope-open me-1"></i>Opened</span>');
+        if (d.clicked) chips.push('<span class="evt-chip" style="background:#e7f1ff;color:#0a3278;border:1px solid #0d6efd;"><i class="fas fa-mouse-pointer me-1"></i>Clicked</span>');
+
+        var html = '<div class="evt-card">'
+            + '<div class="evt-head"><span class="evt-title"><i class="fas fa-envelope me-1"></i>' + label + '</span>'
+            + (d.sentAt ? '<span class="evt-sent">sent ' + d.sentAt + '</span>' : '') + '</div>'
+            + '<div class="evt-chips">' + chips.join(' ') + '</div>';
+
+        if ((d.hasBounced || ev === 'bounce' || ev === 'dropped')) {
+            html += '<div class="evt-warn"><i class="fas fa-info-circle me-1"></i>'
+                + (d.deliveryReason ? $('<span>').text(d.deliveryReason).html() + ' — ' : '')
+                + 'this email did not reach the prospect; try a different address.</div>';
+        }
+
+        if (d.events && d.events.length) {
+            var rows = d.events.map(function (e) {
+                var em = (e.ev || '').toLowerCase(), c = '#6c757d';
+                if (em === 'delivered') c = '#198754';
+                else if (em.indexOf('bounce') >= 0 || em.indexOf('drop') >= 0) c = '#dc3545';
+                else if (em === 'deferred') c = '#e6a817';
+                else if (em === 'open') c = '#0d6efd';
+                else if (em === 'click') c = '#0a58ca';
+                else if (em === 'processed') c = '#3b82f6';
+                var extra = e.reason ? ' — ' + $('<span>').text(e.reason).html()
+                    : (e.response ? ' — ' + $('<span>').text(e.response).html() : '');
+                return '<div class="evt-row"><span class="evt-dot" style="background:' + c + ';"></span>'
+                    + '<span class="evt-name" style="color:' + c + ';">' + $('<span>').text(e.ev || '').html() + '</span>'
+                    + '<span class="evt-extra">' + extra + '</span>'
+                    + '<span class="evt-time">' + (e.at || '') + '</span></div>';
+            }).join('');
+            var tid = sel.replace('#', '') + 'Timeline';
+            html += '<div class="evt-toggle" onclick="$(\'#' + tid + '\').slideToggle(120)">'
+                + '<i class="fas fa-stream me-1"></i>' + d.events.length + ' event' + (d.events.length > 1 ? 's' : '') + ' — show / hide timeline</div>'
+                + '<div id="' + tid + '" class="evt-timeline" style="display:none;">' + rows + '</div>';
+        } else {
+            html += '<div class="evt-pending"><i class="fas fa-clock me-1"></i>No delivery events received from SendGrid yet.</div>';
+        }
+        html += '</div>';
+        $el.html(html);
     }
 
     function syncAutomationBadge(r) {
@@ -1921,6 +1997,7 @@
                     $('#step4Card').removeClass('disabled');
                     $('#plivoCallCard').removeClass('disabled'); $('#btnInitiateCall').prop('disabled', false);
                     $('#step4Subtitle').html('Waiting for prospect to respond or self-register...');
+                    loadEmailEvents();
                 } else {
                     markStep(3, 'failed', res.error || 'Failed to send email.');
                     btn.prop('disabled',false).html('<i class="fas fa-paper-plane me-1"></i>Retry');
@@ -1937,7 +2014,7 @@
         $.ajax({ url: '@Url.Action("SendInvitationEmail", "NaukriOnboarding")', type: 'POST', timeout: 60000,
             data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
             success: function(res) {
-                if (res.success) { btn.html('<i class="fas fa-check me-1"></i>Resent').prop('disabled',true); }
+                if (res.success) { btn.html('<i class="fas fa-check me-1"></i>Resent').prop('disabled',true); loadEmailEvents(); }
                 else { alert(res.error || 'Failed.'); btn.prop('disabled',false).html('<i class="fas fa-redo me-1"></i>Resend'); }
             },
             error: function(){ alert('Request failed.'); btn.prop('disabled',false).html('<i class="fas fa-redo me-1"></i>Resend'); }
@@ -2403,6 +2480,7 @@
                     // M4 (Onboarding) is now pending the interviewer's acceptance.
                     $('#mStep4Card').removeClass('disabled');
                     mMarkStep(4, 'pending', '<span class="text-warning"><i class="fas fa-hourglass-half me-1"></i>Awaiting the interviewer\'s acceptance of the acknowledgement email. Use <strong>Refresh Status</strong> to check.</span>');
+                    loadEmailEvents();
                 } else {
                     mMarkStep(3, 'failed', '<span class="text-danger"><i class="fas fa-times-circle me-1"></i>' + (res.error || 'Could not send acknowledgement.') + '</span>');
                     btn.prop('disabled',false).html('<i class="fas fa-paper-plane me-1"></i>Retry');
@@ -2431,6 +2509,7 @@
                 if (res.success) {
                     if (currentRecord) currentRecord.acknowledgementEmailSent = true;
                     $('#mStep3Result').append('<br/><span class="text-success"><i class="fas fa-paper-plane me-1"></i>Acknowledgement email resent.</span>');
+                    loadEmailEvents();
                 } else {
                     alert(res.error || 'Could not resend the acknowledgement email.');
                 }

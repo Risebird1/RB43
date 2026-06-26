@@ -709,11 +709,21 @@ namespace Risebird.Web.Controllers
                     AssessmentGroupDifference = agId.ToString(),
                     RemovedAssessmentGroups = "",
                     PrimarySpecializationForAcknowledgement = record.AssessmentGroupName ?? record.MagName ?? "",
-                    IsActive = true,
+                    // Create the interviewer account INACTIVE. Onboarding is gated on the prospect
+                    // accepting the acknowledgement email: the "Yes/Accept" button hits
+                    // InterviewerAcknowledgementResponse (status=1), which activates the UserList
+                    // account (usp_UpdateInterviewerActiveStatus) and advances the funnel to 'Onboarded'.
+                    // Setting IsActive = true here would make them a live, active interviewer the moment
+                    // the profile is created — i.e. "onboarded without acknowledging" — which is the bug.
+                    IsActive = false,
                     Isavailable = 1,
                     CompanyName = record.EmploymentCompanyName ?? "",
                     IsEmployed = record.EmploymentIsEmployed == true,
-                    ResourceUrl = $"https://{Request.Host}/NaukriOnboarding/Index"
+                    ResourceUrl = $"https://{Request.Host}/NaukriOnboarding/Index",
+                    // This action sends its own richer acknowledgement email (both Accept/Drop
+                    // buttons, correct host & AG names) below, so suppress the service's default
+                    // one to avoid the prospect receiving two acknowledgement mails.
+                    SuppressAcknowledgementEmail = true
                 };
 
                 bool addResult;
@@ -1039,6 +1049,73 @@ namespace Risebird.Web.Controllers
                     hasBounced = st.HasBounced,
                     opened = st.Opened,
                     clicked = st.Clicked
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── SendGrid events for BOTH the invitation and acknowledgement emails ──────
+        [HttpGet]
+        public async Task<IActionResult> GetProspectEmailEvents(int id)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var record = await _repository.GetByIdAsync(id);
+                if (record == null) return Json(new { success = false, error = "Record not found." });
+
+                if (string.IsNullOrWhiteSpace(record.ParsedEmail))
+                    return Json(new { success = true, hasEmail = false });
+
+                var data = await _repository.GetProspectEmailEventsAsync(record.ParsedEmail);
+
+                Func<string, object> shape = type =>
+                {
+                    var s = data.Summaries?.FirstOrDefault(x =>
+                        string.Equals(x.EmailType, type, StringComparison.OrdinalIgnoreCase));
+                    if (s == null || s.SentAt == null) return new { sent = false };
+
+                    var evs = (data.Events ?? new System.Collections.Generic.List<NaukriEmailEvent>())
+                        .Where(e => string.Equals(e.EmailType, type, StringComparison.OrdinalIgnoreCase))
+                        .OrderBy(e => e.EventAt)
+                        .Select(e => new
+                        {
+                            ev = e.Event,
+                            reason = e.Reason,
+                            status = e.Status,
+                            response = e.Response,
+                            url = e.Url,
+                            at = e.EventAt?.ToString("dd MMM yyyy, HH:mm")
+                        }).ToList();
+
+                    return new
+                    {
+                        sent = true,
+                        subject = s.MailSubject,
+                        sentAt = s.SentAt?.ToString("dd MMM yyyy, HH:mm"),
+                        deliveryEvent = s.DeliveryEvent,
+                        deliveryReason = s.DeliveryReason,
+                        deliveryStatus = s.DeliveryStatus,
+                        hasBounced = s.HasBounced,
+                        opened = s.Opened,
+                        clicked = s.Clicked,
+                        events = evs
+                    };
+                };
+
+                return Json(new
+                {
+                    success = true,
+                    hasEmail = true,
+                    email = record.ParsedEmail,
+                    invitation = shape("Invitation"),
+                    acknowledgement = shape("Acknowledgement")
                 });
             }
             catch (Exception ex)

@@ -44,11 +44,15 @@ begin try
 
 			if not exists(select 1 from TransInterviewer where UserId = @userId and IRFId = @IRFId)
 			Begin
+				-- Self-application via the direct IRF link adds the channel as AVAILABLE ONLY
+				-- (IsAvailable = 1) but NOT active (IsActive = 0); an operator must manually review
+				-- and activate it, so ActivatedAt stays NULL. Keeps self-applicants out of the
+				-- 'active' panel until that manual review step.
 				insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, IsSMEVerified, ClientAction, PerSuccessRate, OpenAIScreeningResponse, AIVerdict, Source, AIScreeningScore, IsAIScreeningAtempted, ActivatedAt)
-				values (@IRFId, @InterviewerProfileId, @userId, 1, CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END,
+				values (@IRFId, @InterviewerProfileId, @userId, 1, 0,
 			 CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END,
 			 CASE WHEN @isLocked = 1 THEN NULL ELSE 'Shortlisted' END,
-			 @rate, @OpenAIScreeningResponse, @verdict, 'Internal IRF Link', @score, 1, CASE WHEN @isLocked = 1 THEN NULL ELSE GETDATE() END)
+			 @rate, @OpenAIScreeningResponse, @verdict, 'Internal IRF Link', @score, 1, NULL)
 			End
 
 			UPDATE InterviewerProfile
@@ -117,11 +121,16 @@ begin try
 
 				if not exists(select 1 from TransInterviewer where UserId = @userId2 and IRFId = @targetIRFId)
 				Begin
+					-- Self-registration via the MAG application link adds the interviewer to each
+					-- channel as AVAILABLE ONLY (IsAvailable = 1) but NOT active (IsActive = 0).
+					-- An operator must manually review and activate each channel, so ActivatedAt
+					-- stays NULL. This prevents MAG applicants from appearing 'active' in the panel
+					-- before that manual review / acknowledgement step.
 					insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, IsSMEVerified, ClientAction, PerSuccessRate, OpenAIScreeningResponse, AIVerdict, Source, AIScreeningScore, IsAIScreeningAtempted, ActivatedAt)
-					values (@targetIRFId, @InterviewerProfileId2, @userId2, 1, CASE WHEN @isLocked2 = 1 THEN 0 ELSE 1 END,
+					values (@targetIRFId, @InterviewerProfileId2, @userId2, 1, 0,
 				 CASE WHEN @isLocked2 = 1 THEN 0 ELSE 1 END,
 				 CASE WHEN @isLocked2 = 1 THEN NULL ELSE 'Shortlisted' END,
-				 @rate2, @OpenAIScreeningResponse, @verdict, 'Internal MAG Link', @score, 1, CASE WHEN @isLocked2 = 1 THEN NULL ELSE GETDATE() END)
+				 @rate2, @OpenAIScreeningResponse, @verdict, 'Internal MAG Link', @score, 1, NULL)
 				End
 
 				delete from @tbl_targetIRFs where irfId = @targetIRFId
