@@ -12,7 +12,7 @@ namespace Risebird.Repository.Interface
             string reasonCategory, int? triggeringInterviewId, string changedBy,
             string auditTag = null, string auditSource = null, Guid? backfillBatchId = null, string extraMetadata = null);
 
-        Task UpdateAutoQcFieldsAsync(int transInterviewerId, string autoQcVerdict, int triggeringInterviewId);
+        Task UpdateAutoQcFieldsAsync(int transInterviewerId, string autoQcVerdict, int triggeringInterviewId, string flagSource = null);
 
         Task ClearAutoQcFieldsAsync(int transInterviewerId);
 
@@ -23,5 +23,7 @@ namespace Risebird.Repository.Interface
         Task<IReadOnlyList<TransInterviewerInactiveAuditSummary>> GetInactiveAuditSummariesByIrfIdAsync(int irfId);
 
         Task<bool> HasAutoQcRemovalAuditForInterviewAsync(int transInterviewerId, int triggeringInterviewId, string auditSource = null);
+
+        Task<bool> HasAutoQcFlagAuditForInterviewAsync(int transInterviewerId, int triggeringInterviewId, string auditSource = null);
     }
 }

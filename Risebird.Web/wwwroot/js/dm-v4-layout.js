@@ -1215,14 +1215,15 @@
             $(this).toggleClass('is-on', on).attr('aria-selected', on ? 'true' : 'false');
         });
         if (tab === 'inactive') {
-            // Clear any sub-tab filter hidden state left over from active tab and refresh counts.
+            setActiveSubTab('all');
             $('#dmV4IvPanel .dm-v4-iv-row').removeClass('dm-v4-iv-row--subtab-hidden');
             refreshInactiveSubTabCounts();
             applyInactiveSubTabFilter();
         } else {
-            // Leaving Inactive tab — reset sub-tab selection to "all" so next visit starts fresh.
             setInactiveSubTab('all');
             $('#dmV4IvPanel .dm-v4-iv-row').removeClass('dm-v4-iv-row--subtab-hidden');
+            refreshActiveSubTabCounts();
+            applyActiveSubTabFilter();
         }
         applyIvTabFilter();
     }
@@ -1237,6 +1238,7 @@
         $('#dmV4IvTabActiveCount').text(active);
         $('#dmV4IvTabInactiveCount').text(inactive);
         refreshInactiveSubTabCounts();
+        refreshActiveSubTabCounts();
     }
 
     function applyIvTabFilter() {
@@ -1250,6 +1252,7 @@
             $row.toggleClass('dm-v4-iv-row--tab-hidden', !show);
         });
         if (tab === 'inactive') applyInactiveSubTabFilter();
+        else if (tab === 'active') applyActiveSubTabFilter();
         else updateIvTabEmptyMessage();
     }
 
@@ -1272,6 +1275,69 @@
         return { label: 'Inactive', tone: 'inactive' };
     }
 
+    // ── Active sub-tabs ─────────────────────────────────────────────────────
+
+    function rowHasBadQualityFlag($row) {
+        if (!readRowDbActive($row)) return false;
+        var verdict = ($row.attr('data-auto-qc-verdict') || '').trim();
+        return verdict.length > 0;
+    }
+
+    function getActiveSubTab() {
+        var val = ($('#dmV4IvActiveSubTabs').attr('data-active-subtab') || 'all').toString();
+        return val || 'all';
+    }
+
+    function setActiveSubTab(subtab) {
+        subtab = subtab || 'all';
+        $('#dmV4IvActiveSubTabs').attr('data-active-subtab', subtab);
+        $('#dmV4IvActiveSubTabs .dm-v4-iv-subtab').each(function () {
+            var on = ($(this).attr('data-active-subtab') || '') === subtab;
+            $(this).toggleClass('is-on', on).attr('aria-selected', on ? 'true' : 'false');
+        });
+        applyActiveSubTabFilter();
+    }
+
+    function refreshActiveSubTabCounts() {
+        var counts = { all: 0, 'bad-quality': 0 };
+        $('#dmV4IvPanel .dm-v4-iv-row').each(function () {
+            var $row = $(this);
+            if (!readRowDbActive($row)) return;
+            counts.all += 1;
+            if (rowHasBadQualityFlag($row)) counts['bad-quality'] += 1;
+        });
+        $('#dmV4ActiveSubTabAllCount').text(counts.all);
+        $('#dmV4ActiveSubTabBadQualityCount').text(counts['bad-quality']);
+    }
+
+    function applyActiveSubTabFilter() {
+        if (getIvTab() !== 'active') {
+            $('#dmV4IvPanel .dm-v4-iv-row').removeClass('dm-v4-iv-row--subtab-hidden');
+            return;
+        }
+        var subtab = getActiveSubTab();
+        $('#dmV4IvPanel .dm-v4-iv-row').each(function () {
+            var $row = $(this);
+            if (!readRowDbActive($row)) return;
+            var show = subtab === 'all' || (subtab === 'bad-quality' && rowHasBadQualityFlag($row));
+            $row.toggleClass('dm-v4-iv-row--subtab-hidden', !show);
+        });
+        updateIvTabEmptyMessage();
+    }
+
+    function initActiveSubTabs() {
+        if (!$('#dmV4IvActiveSubTabs').length) return;
+        $(document).off('click.dmV4ActiveSubTab', '#dmV4IvActiveSubTabs .dm-v4-iv-subtab')
+            .on('click.dmV4ActiveSubTab', '#dmV4IvActiveSubTabs .dm-v4-iv-subtab', function (e) {
+                e.preventDefault();
+                if (getIvTab() !== 'active') setIvTab('active');
+                var subtab = ($(this).attr('data-active-subtab') || 'all').toString();
+                if (subtab === getActiveSubTab()) return;
+                setActiveSubTab(subtab);
+            });
+        refreshActiveSubTabCounts();
+    }
+
     // ── Inactive sub-tabs ────────────────────────────────────────────────────
 
     /** Maps a data-subtab value to the set of data-inactive-reason-category values it shows. */
@@ -1281,7 +1347,6 @@
             case 'pending': return category === 'PendingRbReview';
             case 'removed-rb': return category === 'RemovedByRb';
             case 'removed-client': return category === 'RemovedByClient';
-            case 'bad-quality': return isAutoQcCategory(category);
             default: return true;
         }
     }
@@ -1312,7 +1377,7 @@
     }
 
     function refreshInactiveSubTabCounts() {
-        var counts = { all: 0, pending: 0, 'removed-rb': 0, 'removed-client': 0, 'bad-quality': 0 };
+        var counts = { all: 0, pending: 0, 'removed-rb': 0, 'removed-client': 0 };
         $('#dmV4IvPanel .dm-v4-iv-row').each(function () {
             var $row = $(this);
             if (readRowDbActive($row)) return;
@@ -1321,13 +1386,11 @@
             if (cat === 'PendingRbReview') counts.pending += 1;
             if (cat === 'RemovedByRb') counts['removed-rb'] += 1;
             if (cat === 'RemovedByClient') counts['removed-client'] += 1;
-            if (isAutoQcCategory(cat)) counts['bad-quality'] += 1;
         });
         $('#dmV4SubTabAllCount').text(counts.all);
         $('#dmV4SubTabPendingCount').text(counts.pending);
         $('#dmV4SubTabRemovedRbCount').text(counts['removed-rb']);
         $('#dmV4SubTabRemovedClientCount').text(counts['removed-client']);
-        $('#dmV4SubTabBadQualityCount').text(counts['bad-quality']);
     }
 
     function applyInactiveSubTabFilter() {
@@ -1348,7 +1411,7 @@
 
     function isInactiveRowVisibleInTab($row, mainTab) {
         if ($row.hasClass('dm-v4-iv-row--tab-hidden')) return false;
-        if (readRowDbActive($row)) return mainTab === 'active';
+        if (readRowDbActive($row)) return mainTab === 'active' && !$row.hasClass('dm-v4-iv-row--subtab-hidden');
         if (mainTab !== 'inactive') return false;
         if ($row.hasClass('dm-v4-iv-row--subtab-hidden')) return false;
         return true;
@@ -1364,6 +1427,8 @@
         });
         if (visible === 0) {
             if (tab === 'inactive' && getInactiveSubTab() !== 'all') {
+                $empty.text('No interviewers in this category.').prop('hidden', false);
+            } else if (tab === 'active' && getActiveSubTab() !== 'all') {
                 $empty.text('No interviewers in this category.').prop('hidden', false);
             } else {
                 $empty.text(tab === 'active' ? 'No active interviewers.' : 'No inactive interviewers.').prop('hidden', false);
@@ -1427,6 +1492,9 @@
             if (opts.active) {
                 $row.attr('data-ever-activated', '1');
                 $row.attr('data-on-panel', '1');
+            } else {
+                $row.removeAttr('data-auto-qc-verdict data-auto-qc-interview-id data-auto-qc-removed-at');
+                $row.find('.dm-v4-iv-active-bad-quality').remove();
             }
         }
         if (typeof opts.available !== 'undefined') {
@@ -3561,6 +3629,7 @@
         setPolicyLockOn(getPolicyBar(), isPolicyLockOn(getPolicyBar()));
         initIvTabs();
         initInactiveSubTabs();
+        initActiveSubTabs();
         initAutoQcBadgeTooltips();
         refreshIvBadges();
         updatePolicySubtext();

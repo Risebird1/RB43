@@ -10,6 +10,7 @@ BEGIN
         ti.IRFId           AS IrfId,
         ti.IsActive        AS IsActive,
         ti.ClientAction    AS ClientAction,
+        ti.AutoQcVerdict   AS AutoQcVerdict,
         ul.EmailId         AS InterviewerEmail,
         ip.NickName        AS InterviewerCodedId,
         CASE

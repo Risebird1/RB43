@@ -121,6 +121,7 @@ builder.Services.AddHttpClient<ICashfreePayoutService, CashfreePayoutService>();
 builder.Services.AddScoped<IQcInterviewAIMergeJobService, QcInterviewAIMergeJobService>();
 builder.Services.AddScoped<ITransInterviewerAuditRepository, TransInterviewerAuditRepository>();
 builder.Services.AddScoped<IDmIvAutoQcRemovalService, DmIvAutoQcRemovalService>();
+builder.Services.AddScoped<IDmIvAutoQcFlagService, DmIvAutoQcFlagService>();
 builder.Services.AddScoped<IDmIvChannelDeactivationService, DmIvChannelDeactivationService>();
 builder.Services.AddScoped<IAutoQcRemovalMonitorRepository, AutoQcRemovalMonitorRepository>();
 builder.Services.AddScoped<IDmIvAutoQcBackfillService, DmIvAutoQcBackfillService>();

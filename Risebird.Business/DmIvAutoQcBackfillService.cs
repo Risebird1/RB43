@@ -15,72 +15,49 @@ namespace Risebird.Business
     public class DmIvAutoQcBackfillService : IDmIvAutoQcBackfillService
     {
         private readonly IAutoQcRemovalMonitorRepository _monitorRepository;
-        private readonly IDmIvAutoQcRemovalService _autoQcRemovalService;
+        private readonly IDmIvAutoQcFlagService _autoQcFlagService;
         private readonly ILogger<DmIvAutoQcBackfillService> _log;
 
         public DmIvAutoQcBackfillService(
             IAutoQcRemovalMonitorRepository monitorRepository,
-            IDmIvAutoQcRemovalService autoQcRemovalService,
+            IDmIvAutoQcFlagService autoQcFlagService,
             ILogger<DmIvAutoQcBackfillService> log)
         {
             _monitorRepository = monitorRepository;
-            _autoQcRemovalService = autoQcRemovalService;
+            _autoQcFlagService = autoQcFlagService;
             _log = log;
         }
 
-        public Task<int> GetPreDeploymentCandidateCountAsync(DateTime? asOfUtc = null, int windowDays = 60) =>
-            _monitorRepository.GetBackfillCandidateCountAsync(asOfUtc, windowDays);
+        public Task<AutoQcPerIrfBackfillPreviewVm> GetPerIrfBackfillPreviewAsync(int irfId, DateTime fromUtc, DateTime toUtc) =>
+            _monitorRepository.GetPerIrfBackfillPreviewAsync(irfId, fromUtc, toUtc);
 
-        public Task<(bool HasRun, Guid? LatestBatchId, DateTime? LatestExecutedAtUtc)> GetRunStatusAsync() =>
-            _monitorRepository.GetBackfillRunStatusAsync();
+        public Task<IReadOnlyList<IrfAuditDirectoryRowVm>> GetIrfAuditDirectoryAsync() =>
+            _monitorRepository.GetIrfAuditDirectoryAsync();
 
-        public async Task<AutoQcBackfillResultVm> RunBackfillAsync(string executedBy, bool forceRerun = false, CancellationToken cancellationToken = default)
+        public async Task<AutoQcPerIrfBackfillResultVm> RunPerIrfBackfillAsync(int irfId, DateTime fromUtc, DateTime toUtc, string executedBy,
+            CancellationToken cancellationToken = default)
         {
-            var result = new AutoQcBackfillResultVm();
-            var status = await _monitorRepository.GetBackfillRunStatusAsync();
-            result.PreDeploymentCandidateCount = await _monitorRepository.GetBackfillCandidateCountAsync();
-
-            if (status.HasRun && !forceRerun)
+            var result = new AutoQcPerIrfBackfillResultVm();
+            if (irfId <= 0)
             {
                 result.Ok = false;
-                result.Message = $"Backfill already executed on {status.LatestExecutedAtUtc:u} (batch {status.LatestBatchId}). Use forceRerun only for ops recovery.";
-                result.BatchId = status.LatestBatchId;
+                result.Message = "Invalid IRF.";
                 return result;
             }
 
-            var candidates = (await _monitorRepository.GetBackfillCandidatesAsync()).ToList();
-            if (candidates.Count == 0)
-            {
-                var batchId = Guid.NewGuid();
-                await _monitorRepository.RecordBackfillRunAsync(batchId, 0, 0, 0, executedBy ?? "System");
-                result.Ok = true;
-                result.BatchId = batchId;
-                result.Message = "Backfill completed: no qualifying interviews in the 60-day window.";
-                return result;
-            }
+            var preview = await _monitorRepository.GetPerIrfBackfillPreviewAsync(irfId, fromUtc, toUtc);
+            var candidates = (await _monitorRepository.GetPerIrfBackfillCandidatesAsync(irfId, fromUtc, toUtc)).ToList();
+            var runId = Guid.NewGuid();
+            var newFlags = 0;
+            var skipped = preview.AlreadyFlaggedCount;
 
-            var batch = Guid.NewGuid();
-            var grouped = candidates
-                .GroupBy(x => x.TransInterviewerId)
-                .ToList();
-
-            var removed = 0;
-            var skipped = 0;
-            var triggeringInterviewCount = candidates.Select(x => x.InterviewId).Distinct().Count();
-
+            var grouped = candidates.GroupBy(x => x.TransInterviewerId).ToList();
             foreach (var group in grouped)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
                 var rows = group.OrderByDescending(x => x.VerdictFinalizedAt).ThenByDescending(x => x.InterviewId).ToList();
                 var first = rows[0];
-
-                if (first.RbVetAlreadyNo)
-                {
-                    skipped += 1;
-                    continue;
-                }
-
                 var badge = ResolveBadgeVerdict(rows);
                 var badgeInterview = ResolveBadgeInterviewId(rows, badge);
                 var metadata = JsonConvert.SerializeObject(new
@@ -97,42 +74,43 @@ namespace Risebird.Business
                     IsActive = true,
                     InterviewerEmail = first.InterviewerEmail,
                     InterviewerCodedId = first.InterviewerCodedId,
-                    RbVetAlreadyNo = first.RbVetAlreadyNo
+                    AutoQcVerdict = null
                 };
 
-                var options = new AutoQcRemovalOptions
+                var options = new AutoQcFlagOptions
                 {
-                    Source = DmIvAutoQcAuditConstants.SourceRetroactiveBackfill60Day,
-                    Tag = DmIvAutoQcAuditConstants.Tag,
-                    BackfillBatchId = batch,
+                    Source = DmIvAutoQcAuditConstants.SourcePerIrfBackfill,
+                    Tag = DmIvAutoQcAuditConstants.FlagTag,
+                    BackfillBatchId = runId,
                     ExtraMetadata = metadata,
-                    SkipIfAlreadyInactive = true,
                     BadgeVerdict = badge,
                     BadgeTriggeringInterviewId = badgeInterview
                 };
 
-                var applied = await _autoQcRemovalService.ApplyAutoQcRemovalForContextAsync(
-                    ctx,
-                    badgeInterview,
-                    badge,
-                    options,
-                    cancellationToken);
+                var anyNewAudit = false;
+                foreach (var row in rows)
+                {
+                    var flagged = await _autoQcFlagService.ApplyAutoQcFlagForContextAsync(
+                        ctx, row.InterviewId, row.Verdict, options, cancellationToken);
+                    if (flagged)
+                        anyNewAudit = true;
+                }
 
-                if (applied)
-                    removed += 1;
-                else
-                    skipped += 1;
+                if (anyNewAudit)
+                    newFlags += 1;
             }
 
-            await _monitorRepository.RecordBackfillRunAsync(batch, removed, skipped, triggeringInterviewCount, executedBy ?? "System");
+            await _monitorRepository.RecordPerIrfBackfillRunAsync(
+                runId, irfId, fromUtc, toUtc, preview.VerdictCount, newFlags, skipped, executedBy ?? "System");
 
             result.Ok = true;
-            result.BatchId = batch;
-            result.RecordsRemoved = removed;
-            result.RecordsSkipped = skipped;
-            result.TriggeringInterviewCount = triggeringInterviewCount;
-            result.Message = $"Backfill completed: {removed} interviewer-channel record(s) removed, {skipped} skipped, {triggeringInterviewCount} triggering interview(s).";
-            _log.LogInformation("AutoQc backfill batch {BatchId}: removed={Removed} skipped={Skipped}", batch, removed, skipped);
+            result.RunId = runId;
+            result.VerdictsScanned = preview.VerdictCount;
+            result.NewFlagsSet = newFlags;
+            result.AlreadyFlaggedSkipped = skipped;
+            result.Message =
+                $"Backfill complete. {preview.VerdictCount} verdicts scanned. {newFlags} new flags set. {skipped} already flagged and skipped.";
+            _log.LogInformation("Per-IRF AutoQc backfill run {RunId} irf={IrfId}: new={New} skipped={Skipped}", runId, irfId, newFlags, skipped);
             return result;
         }
 

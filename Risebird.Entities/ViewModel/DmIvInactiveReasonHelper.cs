@@ -118,14 +118,10 @@ namespace Risebird.Entities.ViewModel
             if (TryResolveFromAuditLog(iv, reasonDetail, out var fromAudit))
                 return fromAudit;
 
-            // Auto-QC columns when audit summary is not yet available (pre-migration environments).
-            if (!string.IsNullOrWhiteSpace(iv.AutoQcVerdict))
+            // Legacy auto-QC columns on inactive rows map to Removed by RB (human removal path).
+            if (!string.IsNullOrWhiteSpace(iv.AutoQcVerdict) && !iv.IsActive)
             {
-                var verdict = iv.AutoQcVerdict.Trim().ToLowerInvariant();
-                if (verdict == "suspicious")
-                    return DmIvInactiveReasonResult.ForCategory(DmIvInactiveReasonCategory.RemovedByRbAutoQcSuspicious);
-                if (verdict == "redo")
-                    return DmIvInactiveReasonResult.ForCategory(DmIvInactiveReasonCategory.RemovedByRbAutoQcRedo);
+                return DmIvInactiveReasonResult.ForCategory(DmIvInactiveReasonCategory.RemovedByRb, reasonDetail);
             }
 
             return ResolveFromCurrentState(iv, channelLocked, reasonDetail);
@@ -145,20 +141,10 @@ namespace Risebird.Entities.ViewModel
 
             if (!string.IsNullOrEmpty(latestEvent))
             {
-                if (string.Equals(latestEvent, DmIvInactiveAuditEventTypes.AutoQcRemoval, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(latestEvent, DmIvInactiveAuditEventTypes.AutoQcRemoval, StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(latestEvent, DmIvInactiveAuditEventTypes.AutoQcFlag, StringComparison.OrdinalIgnoreCase))
                 {
-                    var verdict = (iv.LatestInactiveAuditReasonDetail ?? iv.AutoQcVerdict ?? string.Empty).Trim().ToLowerInvariant();
-                    if (verdict == "suspicious")
-                    {
-                        result = DmIvInactiveReasonResult.ForCategory(DmIvInactiveReasonCategory.RemovedByRbAutoQcSuspicious);
-                        return true;
-                    }
-                    if (verdict == "redo")
-                    {
-                        result = DmIvInactiveReasonResult.ForCategory(DmIvInactiveReasonCategory.RemovedByRbAutoQcRedo);
-                        return true;
-                    }
-                    result = DmIvInactiveReasonResult.ForCategory(DmIvInactiveReasonCategory.Unknown);
+                    result = DmIvInactiveReasonResult.ForCategory(DmIvInactiveReasonCategory.RemovedByRb, detail);
                     return true;
                 }
 

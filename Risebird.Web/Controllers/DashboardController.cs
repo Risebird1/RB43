@@ -7782,9 +7782,7 @@ NEVER:
         /// Ops monitor for automated QC verdict removals — forward trigger + 60-day backfill.
         /// Trigger: QcInterviewAIMergeJobService.ProcessRowAsync after usp_SaveQcInterviewAIMergedDetails.
         /// </summary>
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> AutoRemovalMonitor(DateTime? from = null, DateTime? to = null, int? irfId = null, string source = null, string verdict = null)
+        public async Task<IActionResult> AutoRemovalMonitor()
         {
             try
             {
@@ -7795,11 +7793,9 @@ NEVER:
                 if (!IsAutoQcOpsProfile(profileName))
                     return RedirectToAction("SignOut", "Session");
 
-                var fromUtc = from ?? DateTime.UtcNow.AddDays(-30);
-                var toUtc = to ?? DateTime.UtcNow;
-                var model = await _autoQcRemovalMonitorService.GetMonitorAsync(fromUtc, toUtc, irfId, source, verdict);
+                var directory = await _autoQcBackfillService.GetIrfAuditDirectoryAsync();
                 ViewBag.Profile = profileName;
-                return View(model);
+                return View(directory);
             }
             catch (Exception ex)
             {
@@ -7810,7 +7806,7 @@ NEVER:
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetAutoQcBackfillPreviewCount()
+        public async Task<IActionResult> GetPerIrfAutoQcBackfillPreview(int irfId, DateTime? from = null, DateTime? to = null)
         {
             try
             {
@@ -7821,15 +7817,18 @@ NEVER:
                 if (!IsAutoQcOpsProfile(profileName))
                     return Json(new { ok = false, message = "Not authorized." });
 
-                var count = await _autoQcBackfillService.GetPreDeploymentCandidateCountAsync();
-                var status = await _autoQcBackfillService.GetRunStatusAsync();
+                var fromUtc = from ?? DateTime.UtcNow.AddDays(-60);
+                var toUtc = to ?? DateTime.UtcNow;
+                var preview = await _autoQcBackfillService.GetPerIrfBackfillPreviewAsync(irfId, fromUtc, toUtc);
                 return Json(new
                 {
                     ok = true,
-                    candidateTransInterviewerCount = count,
-                    backfillAlreadyRun = status.HasRun,
-                    latestBatchId = status.LatestBatchId,
-                    latestExecutedAtUtc = status.LatestExecutedAtUtc
+                    irfId,
+                    verdictCount = preview.VerdictCount,
+                    wouldFlagCount = preview.WouldFlagCount,
+                    alreadyFlaggedCount = preview.AlreadyFlaggedCount,
+                    fromUtc,
+                    toUtc
                 });
             }
             catch (Exception ex)
@@ -7841,7 +7840,7 @@ NEVER:
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> RunAutoQcBackfill(bool forceRerun = false)
+        public async Task<IActionResult> RunPerIrfAutoQcBackfill(int irfId, DateTime? from = null, DateTime? to = null)
         {
             try
             {
@@ -7853,16 +7852,17 @@ NEVER:
                     return Json(new { ok = false, message = "Not authorized." });
 
                 var email = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? profileName;
-                var result = await _autoQcBackfillService.RunBackfillAsync(email, forceRerun);
+                var fromUtc = from ?? DateTime.UtcNow.AddDays(-60);
+                var toUtc = to ?? DateTime.UtcNow;
+                var result = await _autoQcBackfillService.RunPerIrfBackfillAsync(irfId, fromUtc, toUtc, email);
                 return Json(new
                 {
                     ok = result.Ok,
                     message = result.Message,
-                    batchId = result.BatchId,
-                    recordsRemoved = result.RecordsRemoved,
-                    recordsSkipped = result.RecordsSkipped,
-                    triggeringInterviewCount = result.TriggeringInterviewCount,
-                    preDeploymentCandidateCount = result.PreDeploymentCandidateCount
+                    runId = result.RunId,
+                    verdictsScanned = result.VerdictsScanned,
+                    newFlagsSet = result.NewFlagsSet,
+                    alreadyFlaggedSkipped = result.AlreadyFlaggedSkipped
                 });
             }
             catch (Exception ex)
@@ -7871,6 +7871,18 @@ NEVER:
                 return Json(new { ok = false, message = "Backfill failed; see logs." });
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        [Obsolete("Use GetPerIrfAutoQcBackfillPreview per IRF.")]
+        public Task<IActionResult> GetAutoQcBackfillPreviewCount() =>
+            Task.FromResult<IActionResult>(Json(new { ok = false, message = "Global backfill removed. Use per-IRF backfill from IRF Audit Directory." }));
+
+        [Authorize]
+        [HttpPost]
+        [Obsolete("Use RunPerIrfAutoQcBackfill per IRF.")]
+        public Task<IActionResult> RunAutoQcBackfill(bool forceRerun = false) =>
+            Task.FromResult<IActionResult>(Json(new { ok = false, message = "Global backfill removed. Use per-IRF backfill from IRF Audit Directory." }));
 
         /// <summary>
         /// Runs the QC Interview AI merge assistant (same logic as the Azure Functions timer <c>QcInterviewAIMergeJob</c>).

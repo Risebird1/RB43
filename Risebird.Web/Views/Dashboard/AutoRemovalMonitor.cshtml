@@ -1,234 +1,139 @@
-@model Risebird.Entities.ViewModel.AutoQcRemovalMonitorVm
+@model IReadOnlyList<Risebird.Entities.ViewModel.IrfAuditDirectoryRowVm>
 @{
-    ViewData["Title"] = "Auto QC Removal Monitor";
-    var backfill = Model?.LatestBackfill;
+    ViewData["Title"] = "IRF Audit Directory";
+    var rows = Model ?? Array.Empty<Risebird.Entities.ViewModel.IrfAuditDirectoryRowVm>();
 }
 <script>
-    var Header = "<div>Auto QC Removal Monitor</div>";
+    var Header = "<div>IRF Audit Directory</div>";
     $('#txtpageHeader').empty().html(Header);
 </script>
 
 <style>
-    .autoqc-monitor { padding: 16px; }
-    .autoqc-metrics { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
-    .autoqc-metric {
-        flex: 1 1 160px;
-        background: #fff;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        padding: 14px 16px;
-        min-width: 140px;
-    }
-    .autoqc-metric__label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: .04em; }
-    .autoqc-metric__value { font-size: 24px; font-weight: 700; color: #0f172a; margin-top: 4px; }
-    .autoqc-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-bottom: 16px; }
-    .autoqc-filters label { font-size: 12px; color: #475569; display: block; margin-bottom: 4px; }
-    .autoqc-filters input, .autoqc-filters select { padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
-    .autoqc-backfill-banner {
-        background: #fff7ed;
-        border: 1px solid #fdba74;
-        border-radius: 8px;
-        padding: 12px 14px;
-        margin-bottom: 16px;
-        font-size: 13px;
-        color: #9a3412;
-    }
-    .autoqc-actions { margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
-    .autoqc-btn {
-        appearance: none;
-        border: 1px solid #cbd5e1;
-        background: #fff;
-        border-radius: 6px;
-        padding: 8px 12px;
-        font-size: 13px;
-        cursor: pointer;
-    }
-
-    .autoqc-btn--primary {
-        background: #42a5f5;
-        border-color: #42a5f5;
-        color: #fff;
-    }
-    .autoqc-table-wrap { overflow-x: auto; }
-    .autoqc-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .autoqc-table th, .autoqc-table td { border-bottom: 1px solid #e2e8f0; padding: 8px 10px; text-align: left; white-space: nowrap; }
-    .autoqc-table th { background: #f8fafc; font-size: 11px; text-transform: uppercase; color: #64748b; }
-    .autoqc-pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
-    .autoqc-pill--suspicious { background: #fef3c7; color: #92400e; }
-    .autoqc-pill--redo { background: #fee2e2; color: #991b1b; }
-    .autoqc-pill--forward { background: #dbeafe; color: #1e40af; }
-    .autoqc-pill--backfill { background: #ede9fe; color: #5b21b6; }
+    .irf-audit-dir { padding: 16px; }
+    .irf-audit-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .irf-audit-table th, .irf-audit-table td { border-bottom: 1px solid #e2e8f0; padding: 8px 10px; text-align: left; }
+    .irf-audit-table th { background: #f8fafc; font-size: 11px; text-transform: uppercase; color: #64748b; }
+    .irf-audit-btn { appearance: none; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; padding: 4px 8px; font-size: 12px; cursor: pointer; margin-right: 4px; }
+    .irf-audit-btn--primary { background: #42a5f5; border-color: #42a5f5; color: #fff; }
+    #irfBackfillModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 9999; align-items: center; justify-content: center; }
+    #irfBackfillModal.is-open { display: flex; }
+    .irf-backfill-card { background: #fff; border-radius: 8px; padding: 20px; width: 420px; max-width: 95vw; }
 </style>
 
-<div class="main-panel autoqc-monitor" id="main-panel">
-    <div class="autoqc-actions">
-        <button type="button" class="autoqc-btn" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'">Back</button>
-        <button type="button" class="autoqc-btn" id="btnPreviewBackfill">Preview backfill count (60d)</button>
-        <button type="button" class="autoqc-btn autoqc-btn--primary" id="btnRunBackfill">Run 60-day backfill (once)</button>
+<div class="main-panel irf-audit-dir" id="main-panel">
+    <div style="margin-bottom: 12px;">
+        <button type="button" class="irf-audit-btn" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'">Back</button>
     </div>
-
-    @if (backfill != null)
-    {
-        <div class="autoqc-backfill-banner">
-            <strong>Backfill executed on @backfill.ExecutedAtUtc.ToString("u")</strong>:
-            @backfill.RecordsRemoved interviewer-channel record(s) removed from @backfill.TriggeringInterviewCount triggering interview(s).
-            Batch ID: <code>@backfill.BatchId</code> (@backfill.ExecutedBy)
-        </div>
-    }
-
-    <div class="autoqc-metrics">
-        <div class="autoqc-metric"><div class="autoqc-metric__label">Today</div><div class="autoqc-metric__value">@Model.TodayRemovals</div></div>
-        <div class="autoqc-metric"><div class="autoqc-metric__label">7-day removals</div><div class="autoqc-metric__value">@Model.Rolling7DayRemovals</div></div>
-        <div class="autoqc-metric"><div class="autoqc-metric__label">30-day removals</div><div class="autoqc-metric__value">@Model.Rolling30DayRemovals</div></div>
-        <div class="autoqc-metric"><div class="autoqc-metric__label">30-day reactivations</div><div class="autoqc-metric__value">@Model.Rolling30DayReactivations</div></div>
-        <div class="autoqc-metric"><div class="autoqc-metric__label">Reactivation rate</div><div class="autoqc-metric__value">@Model.ReactivationRatePercent%</div></div>
-        <div class="autoqc-metric"><div class="autoqc-metric__label">Suspicious</div><div class="autoqc-metric__value">@Model.SuspiciousCount</div></div>
-        <div class="autoqc-metric"><div class="autoqc-metric__label">Redo</div><div class="autoqc-metric__value">@Model.RedoCount</div></div>
-        <div class="autoqc-metric"><div class="autoqc-metric__label">Forward trigger</div><div class="autoqc-metric__value">@Model.ForwardTriggerCount</div></div>
-        <div class="autoqc-metric"><div class="autoqc-metric__label">Backfill</div><div class="autoqc-metric__value">@Model.BackfillCount</div></div>
-    </div>
-
-    @{
-        var filterSource = Model.FilterSource ?? "";
-        var filterVerdict = Model.FilterVerdict ?? "";
-    }
-    <form class="autoqc-filters" method="get" action="@Url.Action("AutoRemovalMonitor", "Dashboard")">
-        <div>
-            <label for="from">From (UTC)</label>
-            <input type="date" id="from" name="from" value="@(Model.FilterFrom?.ToString("yyyy-MM-dd"))" />
-        </div>
-        <div>
-            <label for="to">To (UTC)</label>
-            <input type="date" id="to" name="to" value="@(Model.FilterTo?.ToString("yyyy-MM-dd"))" />
-        </div>
-        <div>
-            <label for="irfId">IRF id</label>
-            <input type="number" id="irfId" name="irfId" value="@Model.FilterIrfId" placeholder="All" />
-        </div>
-        <div>
-            <label for="source">Source</label>
-            <select id="source" name="source">
-                <option value="" selected="@(filterSource == "")">All</option>
-                <option value="forward_trigger" selected="@(filterSource == "forward_trigger")">Forward trigger</option>
-                <option value="retroactive_backfill_60day" selected="@(filterSource == "retroactive_backfill_60day")">Backfill (60d)</option>
-            </select>
-        </div>
-        <div>
-            <label for="verdict">Verdict</label>
-            <select id="verdict" name="verdict">
-                <option value="" selected="@(filterVerdict == "")">All</option>
-                <option value="suspicious" selected="@(filterVerdict == "suspicious")">Suspicious</option>
-                <option value="redo" selected="@(filterVerdict == "redo")">Redo</option>
-            </select>
-        </div>
-        <div><button type="submit" class="autoqc-btn autoqc-btn--primary">Apply filters</button></div>
-    </form>
-
-    <h4 style="margin: 0 0 8px;">Removals</h4>
-    <div class="autoqc-table-wrap">
-        <table class="autoqc-table">
+    <p style="font-size: 13px; color: #475569; margin-bottom: 16px;">
+        Per-IRF bad-quality flag backfill. Forward triggers set flags only (no auto-removal). Run backfill to populate historical suspicious/redo verdicts.
+    </p>
+    <div style="overflow-x: auto;">
+        <table class="irf-audit-table">
             <thead>
                 <tr>
-                    <th>Removed at (UTC)</th>
-                    <th>Interviewer</th>
                     <th>IRF</th>
-                    <th>Verdict</th>
-                    <th>Source</th>
-                    <th>Interview</th>
-                    <th>Reactivated?</th>
-                    <th>Batch</th>
+                    <th>Completed (lifetime)</th>
+                    <th>Completed (90d)</th>
+                    <th>Pending flags</th>
+                    <th>Last backfill</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-            @if (Model.Removals == null || Model.Removals.Count == 0)
-            {
-                <tr><td colspan="8">No automated removals in this range.</td></tr>
-            }
-            else
-            {
-                foreach (var row in Model.Removals)
+                @foreach (var row in rows)
                 {
-                    <tr>
-                        <td>@row.RemovedAt.ToString("u")</td>
-                        <td>@(row.InterviewerCodedId ?? "—")</td>
-                        <td>@(row.IrfName ?? row.IrfId.ToString())</td>
+                    <tr data-irf-id="@row.IrfId">
+                        <td><strong>@row.IrfName</strong> <span style="color:#94a3b8;">(#@row.IrfId)</span></td>
+                        <td>@row.TotalCompletedLifetime</td>
+                        <td>@row.CompletedLast90Days</td>
+                        <td class="pending-flags">@row.PendingFlagsCount</td>
+                        <td>@(row.LastBackfillAtUtc?.ToString("u") ?? "—")</td>
                         <td>
-                            <span class="autoqc-pill @(row.Verdict == "suspicious" ? "autoqc-pill--suspicious" : "autoqc-pill--redo")">@row.Verdict</span>
+                            <button type="button" class="irf-audit-btn irf-audit-btn--primary btn-backfill" data-irf-id="@row.IrfId" data-irf-name="@row.IrfName">Backfill</button>
+                            <a class="irf-audit-btn" href="/IRF/DeliveryHeadInstruction/@row.IrfId" target="_blank" rel="noopener">Open DM Approval</a>
                         </td>
-                        <td>
-                            <span class="autoqc-pill @(row.Source == "retroactive_backfill_60day" ? "autoqc-pill--backfill" : "autoqc-pill--forward")">@row.Source</span>
-                        </td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(row.QcDetailsUrl))
-                            {
-                                <a href="@row.QcDetailsUrl" target="_blank" rel="noopener">@row.TriggeringInterviewId</a>
-                            }
-                            else
-                            {
-                                @(row.TriggeringInterviewId?.ToString() ?? "—")
-                            }
-                        </td>
-                        <td>@(row.WasReactivated ? "Yes" : "No")</td>
-                        <td>@(row.BackfillBatchId?.ToString() ?? "—")</td>
                     </tr>
                 }
-            }
             </tbody>
         </table>
     </div>
+</div>
 
-    @if (Model.IrfBreakdown != null && Model.IrfBreakdown.Count > 0)
-    {
-        <h4 style="margin: 24px 0 8px;">Per-IRF breakdown</h4>
-        <div class="autoqc-table-wrap">
-            <table class="autoqc-table">
-                <thead>
-                    <tr>
-                        <th>IRF</th>
-                        <th>Removals</th>
-                        <th>Reactivations</th>
-                        <th>Suspicious</th>
-                        <th>Redo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach (var irf in Model.IrfBreakdown)
-                {
-                    <tr>
-                        <td>@(irf.IrfName ?? irf.IrfId.ToString())</td>
-                        <td>@irf.Removals</td>
-                        <td>@irf.Reactivations</td>
-                        <td>@irf.SuspiciousRemovals</td>
-                        <td>@irf.RedoRemovals</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
+<div id="irfBackfillModal" aria-hidden="true">
+    <div class="irf-backfill-card">
+        <h3 style="margin-top:0;">Backfill flags — <span id="bfIrfName"></span></h3>
+        <input type="hidden" id="bfIrfId" />
+        <div style="margin-bottom: 10px;">
+            <label>From (UTC)</label><br />
+            <input type="date" id="bfFrom" />
         </div>
-    }
+        <div style="margin-bottom: 10px;">
+            <label>To (UTC)</label><br />
+            <input type="date" id="bfTo" />
+        </div>
+        <p id="bfPreview" style="font-size: 13px; color: #334155; min-height: 40px;">Click Preview to see counts.</p>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" class="irf-audit-btn" id="bfPreviewBtn">Preview</button>
+            <button type="button" class="irf-audit-btn irf-audit-btn--primary" id="bfRunBtn">Run backfill</button>
+            <button type="button" class="irf-audit-btn" id="bfCloseBtn">Close</button>
+        </div>
+    </div>
 </div>
 
 <script>
     (function () {
-        $('#btnPreviewBackfill').on('click', function () {
-            $.get('@Url.Action("GetAutoQcBackfillPreviewCount", "Dashboard")', function (res) {
-                if (!res || !res.ok) {
-                    alert((res && res.message) || 'Failed to load preview count.');
+        function defaultDates() {
+            var to = new Date();
+            var from = new Date();
+            from.setDate(from.getDate() - 60);
+            $('#bfTo').val(to.toISOString().slice(0, 10));
+            $('#bfFrom').val(from.toISOString().slice(0, 10));
+        }
+
+        $('.btn-backfill').on('click', function () {
+            $('#bfIrfId').val($(this).data('irf-id'));
+            $('#bfIrfName').text($(this).data('irf-name'));
+            $('#bfPreview').text('Click Preview to see counts.');
+            defaultDates();
+            $('#irfBackfillModal').addClass('is-open');
+        });
+
+        $('#bfCloseBtn').on('click', function () {
+            $('#irfBackfillModal').removeClass('is-open');
+        });
+
+        $('#bfPreviewBtn').on('click', function () {
+            var irfId = $('#bfIrfId').val();
+            $.get('@Url.Action("GetPerIrfAutoQcBackfillPreview", "Dashboard")', {
+                irfId: irfId,
+                from: $('#bfFrom').val(),
+                to: $('#bfTo').val()
+            }).done(function (res) {
+                if (!res.ok) {
+                    $('#bfPreview').text(res.message || 'Preview failed.');
                     return;
                 }
-                var msg = 'Would backfill up to ' + res.candidateTransInterviewerCount + ' interviewer-channel record(s) (60-day window).';
-                if (res.backfillAlreadyRun) {
-                    msg += '\n\nBackfill already ran on ' + res.latestExecutedAtUtc + ' (batch ' + res.latestBatchId + ').';
-                }
-                alert(msg);
+                $('#bfPreview').html(
+                    res.verdictCount + ' suspicious/redo verdicts in this range.<br>' +
+                    res.wouldFlagCount + ' interviewer-channel records would be flagged (excluding ' + res.alreadyFlaggedCount + ' already-flagged).');
             });
         });
-        $('#btnRunBackfill').on('click', function () {
-            if (!confirm('Run the one-time 60-day retroactive backfill? Already-inactive interviewers are skipped.')) return;
-            $.post('@Url.Action("RunAutoQcBackfill", "Dashboard")', function (res) {
-                alert((res && res.message) || 'Backfill finished.');
-                if (res && res.ok) location.reload();
-            });
+
+        $('#bfRunBtn').on('click', function () {
+            var irfId = $('#bfIrfId').val();
+            var $btn = $(this).prop('disabled', true);
+            $.post('@Url.Action("RunPerIrfAutoQcBackfill", "Dashboard")', {
+                irfId: irfId,
+                from: $('#bfFrom').val(),
+                to: $('#bfTo').val()
+            }).done(function (res) {
+                alert(res.message || (res.ok ? 'Done' : 'Failed'));
+                if (res.ok) {
+                    var $row = $('tr[data-irf-id="' + irfId + '"]');
+                    var cur = parseInt($row.find('.pending-flags').text(), 10) || 0;
+                    $row.find('.pending-flags').text(cur + (res.newFlagsSet || 0));
+                }
+            }).always(function () { $btn.prop('disabled', false); });
         });
     })();
 </script>

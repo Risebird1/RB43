@@ -77,9 +77,37 @@ namespace Risebird.Entities.ViewModel
         public int IrfId { get; set; }
         public string Verdict { get; set; }
         public DateTime? VerdictFinalizedAt { get; set; }
-        public bool RbVetAlreadyNo { get; set; }
+        public bool AlreadyFlagged { get; set; }
         public string InterviewerEmail { get; set; }
         public int UserId { get; set; }
         public string InterviewerCodedId { get; set; }
+    }
+
+    public class AutoQcPerIrfBackfillPreviewVm
+    {
+        public int IrfId { get; set; }
+        public int VerdictCount { get; set; }
+        public int WouldFlagCount { get; set; }
+        public int AlreadyFlaggedCount { get; set; }
+    }
+
+    public class AutoQcPerIrfBackfillResultVm
+    {
+        public bool Ok { get; set; }
+        public string Message { get; set; }
+        public Guid? RunId { get; set; }
+        public int VerdictsScanned { get; set; }
+        public int NewFlagsSet { get; set; }
+        public int AlreadyFlaggedSkipped { get; set; }
+    }
+
+    public class IrfAuditDirectoryRowVm
+    {
+        public int IrfId { get; set; }
+        public string IrfName { get; set; }
+        public int TotalCompletedLifetime { get; set; }
+        public int CompletedLast90Days { get; set; }
+        public int PendingFlagsCount { get; set; }
+        public DateTime? LastBackfillAtUtc { get; set; }
     }
 }

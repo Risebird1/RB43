@@ -30,6 +30,7 @@ namespace Risebird.Entities.Data
         public bool RbVetAlreadyNo { get; set; }
         public string ClientAction { get; set; }
         public bool IsRbVetYes { get; set; }
+        public string AutoQcVerdict { get; set; }
     }
 
     public class TransInterviewerInactiveAuditSummary
