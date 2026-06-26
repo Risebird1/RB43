@@ -34,6 +34,10 @@ namespace Risebird.Repository.Interface
         // SendGrid delivery status of the invitation email for a recipient (null if none sent yet).
         Task<NaukriInvitationEmailStatus> GetInvitationEmailStatusAsync(string email);
 
+        // SendGrid delivery + engagement events for BOTH the invitation and acknowledgement emails
+        // sent to a recipient (summaries + full event timeline).
+        Task<NaukriProspectEmailEvents> GetProspectEmailEventsAsync(string email);
+
         Task<NaukriProspectiveInterviewerVM> GetByIdAsync(int id);
 
         Task<bool> UpdateStatusAsync(int id, string status, string changedBy);
@@ -154,6 +158,40 @@ namespace Risebird.Repository.Interface
         public bool HasBounced { get; set; }
         public bool Opened { get; set; }
         public bool Clicked { get; set; }
+    }
+
+    // Per-email SendGrid delivery summary (one per email type that was actually sent).
+    public class NaukriEmailSummary
+    {
+        public string EmailType { get; set; }       // Invitation | Acknowledgement
+        public string MailSubject { get; set; }
+        public DateTime? SentAt { get; set; }
+        public string DeliveryEvent { get; set; }   // processed | delivered | deferred | bounce | dropped
+        public string DeliveryReason { get; set; }
+        public string DeliveryStatus { get; set; }
+        public string DeliveryResponse { get; set; }
+        public bool HasBounced { get; set; }
+        public bool Opened { get; set; }
+        public bool Clicked { get; set; }
+    }
+
+    // A single SendGrid event row (timeline).
+    public class NaukriEmailEvent
+    {
+        public string EmailType { get; set; }
+        public string Event { get; set; }
+        public string Reason { get; set; }
+        public string Status { get; set; }
+        public string Response { get; set; }
+        public string Url { get; set; }
+        public DateTime? EventAt { get; set; }
+    }
+
+    // Combined SendGrid events for a prospect's invitation + acknowledgement emails.
+    public class NaukriProspectEmailEvents
+    {
+        public List<NaukriEmailSummary> Summaries { get; set; } = new List<NaukriEmailSummary>();
+        public List<NaukriEmailEvent> Events { get; set; } = new List<NaukriEmailEvent>();
     }
 
     public class MagDropdownItem
