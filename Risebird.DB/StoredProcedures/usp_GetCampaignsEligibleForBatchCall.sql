@@ -15,6 +15,10 @@ BEGIN
         ON mag.AssessmentGroupId = c.AssessmentGroupId
         AND ISNULL(mag.IsDeleted, 0) = 0
     WHERE c.BatchCallTriggeredAt IS NULL
-      AND c.CreatedAt <= DATEADD(HOUR, -1, GETDATE())
+      -- CreatedAt is stored from the app's DateTime.Now (IST). GETDATE() on this server returns UTC
+      -- (the rest of the codebase converts via DATEADD(MINUTE, 330, GETDATE())), so comparing against
+      -- bare GETDATE() made IST timestamps look ~5.5h "in the future" and a campaign would not become
+      -- eligible until ~6.5h after creation. Compare against IST instead.
+      AND c.CreatedAt <= DATEADD(HOUR, -1, DATEADD(MINUTE, 330, GETUTCDATE()))
 END
 GO
