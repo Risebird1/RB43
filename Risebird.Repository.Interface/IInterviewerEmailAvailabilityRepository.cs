@@ -72,6 +72,9 @@ namespace Risebird.Repository.Interface
 
         // Campaign batch call (delayed Plivo calls for AG campaigns)
         Task<List<CampaignBatchCallEligible>> GetCampaignsEligibleForBatchCallAsync();
+        // Operator-initiated (manual) trigger: resolves a campaign WITHOUT the 1-hour delay gate;
+        // only an already-triggered batch call blocks it. Returns null if not found / already triggered.
+        Task<CampaignBatchCallEligible> GetCampaignForManualBatchCallAsync(int campaignId);
         Task<List<CampaignUnrespondedInterviewer>> GetCampaignUnrespondedInterviewersAsync(int campaignId);
         Task MarkCampaignBatchCallTriggeredAsync(int campaignId);
     }
