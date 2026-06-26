@@ -10089,10 +10089,11 @@ namespace Risebird.Web.Controllers
 
             try
             {
-                var campaigns = await _eaRepository.GetCampaignsEligibleForBatchCallAsync();
-                var campaign = campaigns?.FirstOrDefault(c => c.CampaignId == campaignId);
+                // Manual/operator-initiated trigger: no 1-hour delay gate (that delay applies only to
+                // the automated timer job). Only an already-triggered batch call blocks a manual run.
+                var campaign = await _eaRepository.GetCampaignForManualBatchCallAsync(campaignId);
                 if (campaign == null)
-                    return Json(new { success = false, error = "Campaign not found or already triggered." });
+                    return Json(new { success = false, error = "Campaign not found, or its batch call has already been triggered." });
 
                 await _eaRepository.MarkCampaignBatchCallTriggeredAsync(campaignId);
 
