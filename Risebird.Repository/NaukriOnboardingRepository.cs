@@ -249,6 +249,29 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<NaukriProspectEmailEvents> GetProspectEmailEventsAsync(string email)
+        {
+            var result = new NaukriProspectEmailEvents();
+            if (string.IsNullOrWhiteSpace(email)) return result;
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@Email", email.Trim());
+                using var multi = await con.QueryMultipleAsync(
+                    "usp_GetNaukriProspectEmailEvents", p,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                result.Summaries = (await multi.ReadAsync<NaukriEmailSummary>()).ToList();
+                result.Events = (await multi.ReadAsync<NaukriEmailEvent>()).ToList();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return result;
+            }
+        }
+
         public async Task<NaukriProspectiveInterviewerVM> GetByIdAsync(int id)
         {
             try

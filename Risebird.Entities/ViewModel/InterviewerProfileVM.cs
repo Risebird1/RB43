@@ -263,5 +263,10 @@ namespace Risebird.Entities.ViewModel
         public int TotalPendingAmount { get; set; }
         public int TotalPaidAmount { get; set; }
         public DateTime? LastPaymentDate { get; set; }
+
+        // When true, AddInterviewerProfile will NOT send its own acknowledgement email.
+        // Used by callers (e.g. NaukriOnboarding manual onboard) that send a richer
+        // acknowledgement email themselves, to avoid the prospect receiving duplicates.
+        public bool SuppressAcknowledgementEmail { get; set; }
     }
 }

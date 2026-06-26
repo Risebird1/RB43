@@ -1,0 +1,142 @@
+<script>
+    function formatClientReportFutureUnassignText(count) {
+        var n = parseInt(count, 10);
+        if (isNaN(n) || n < 0) n = 0;
+        if (n === 1) return '1 currently-scheduled future interview will be unassigned.';
+        return n + ' currently-scheduled future interviews will be unassigned.';
+    }
+
+    function buildClientReportRemoveModalCopy(isClientRole, futureAssignedCount) {
+        var futureText = formatClientReportFutureUnassignText(futureAssignedCount);
+        if (isClientRole) {
+            return {
+                title: 'Remove this interviewer from your panel?',
+                html: '<p>This will mark <strong>Client Vet</strong> as <strong>No</strong> for this interviewer. Their future interviews on this IRF will be unassigned.</p><p>' + futureText + '</p>',
+                confirmButtonText: 'Confirm — Remove from my panel',
+                cancelButtonText: 'Cancel',
+                successHtml: '<p>The interviewer has been removed from your panel.</p>'
+            };
+        }
+        return {
+            title: 'Remove this interviewer (as Risebird)?',
+            html: '<p>This will mark <strong>RB Vet</strong> as <strong>No</strong> for this interviewer. Their future interviews on this IRF will be unassigned. They will no longer be eligible for this channel until reactivated.</p><p>' + futureText + '</p>',
+            confirmButtonText: 'Confirm — Remove as Risebird',
+            cancelButtonText: 'Cancel',
+            successHtml: '<p>The interviewer has been removed as Risebird.</p>'
+        };
+    }
+
+    function removeInterviewerFromClientReport(interviewid) {
+        $.ajax({
+            type: 'GET',
+            url: '/Interview/GetRemoveInterviewerFromClientReportPreview',
+            data: { interviewId: interviewid },
+            success: function (preview) {
+                if (!preview || preview.success !== true) {
+                    swal.fire('Error', (preview && preview.message) ? preview.message : 'Could not load removal details.', 'error');
+                    return;
+                }
+                var copy = buildClientReportRemoveModalCopy(preview.isClientRole, preview.futureAssignedCount);
+                swal.fire({
+                    title: copy.title,
+                    html: copy.html,
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: copy.confirmButtonText,
+                    cancelButtonText: copy.cancelButtonText,
+                    preConfirm: function () {
+                        return new Promise(function (resolve) {
+                            captureclick('Interviewer Status', 'Rejected', interviewid);
+                            $.ajax({
+                                type: 'POST',
+                                url: '/Interview/RemoveInterviewerFromClientReport',
+                                data: { interviewid: interviewid },
+                                success: function (result) {
+                                    resolve(result);
+                                },
+                                error: function () {
+                                    resolve({ success: false, message: 'Request failed.' });
+                                }
+                            });
+                        });
+                    },
+                    allowOutsideClick: false
+                }).then(function (result) {
+                    if (result.dismiss === 'cancel') {
+                        return;
+                    }
+                    var payload = result.value;
+                    if (!payload || payload.success !== true) {
+                        swal.fire('Error', (payload && payload.message) ? payload.message : 'Could not remove interviewer.', 'error');
+                        return;
+                    }
+                    swal.fire({
+                        title: 'Successful!',
+                        type: 'success',
+                        html: copy.successHtml,
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+                        location.reload(true);
+                    });
+                });
+            },
+            error: function () {
+                swal.fire('Error', 'Could not load removal details.', 'error');
+            }
+        });
+    }
+
+    function removeOrShortlistInterviewer(interviewid, action) {
+        if (action === 'Rejected') {
+            removeInterviewerFromClientReport(interviewid);
+            return;
+        }
+
+        var bodyText = 'Do you want to shortlist this interviewer?';
+        var confirmationButtonText = 'Yes Shorlist it';
+        var successHtmlText = '<p>The Interviewer has been shortlisted.</p>';
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: bodyText,
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: confirmationButtonText,
+            preConfirm: function () {
+                return new Promise(function (resolve) {
+                    captureclick('Interviewer Status', action, interviewid);
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Interview/RemoveOrShortlistInterviewer',
+                        data: { 'interviewid': interviewid, 'action': action },
+                        success: function (result) {
+                            resolve(result);
+                        }
+                    });
+                });
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Successful!',
+                    type: 'success',
+                    html: successHtmlText,
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    location.reload(true);
+                });
+            }
+        });
+    }
+</script>
