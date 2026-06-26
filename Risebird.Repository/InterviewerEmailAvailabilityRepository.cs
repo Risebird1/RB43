@@ -573,6 +573,16 @@ namespace Risebird.Repository
             return result.ToList();
         }
 
+        public async Task<CampaignBatchCallEligible> GetCampaignForManualBatchCallAsync(int campaignId)
+        {
+            using var con = new SqlConnection(_connectionString);
+            var result = await con.QueryAsync<CampaignBatchCallEligible>(
+                "usp_GetCampaignForManualBatchCall",
+                new { CampaignId = campaignId },
+                commandType: CommandType.StoredProcedure, commandTimeout: 30);
+            return result.FirstOrDefault();
+        }
+
         public async Task<List<CampaignUnrespondedInterviewer>> GetCampaignUnrespondedInterviewersAsync(int campaignId)
         {
             using var con = new SqlConnection(_connectionString);

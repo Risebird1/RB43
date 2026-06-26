@@ -335,9 +335,11 @@
                                                             @{
                                                                 bool alreadyTriggered = item.BatchCallTriggeredAt.HasValue;
                                                                 bool hourElapsed = item.CreatedAt.HasValue && DateTime.Now.Subtract(item.CreatedAt.Value).TotalHours >= 1;
-                                                                bool canTrigger = !alreadyTriggered && hourElapsed;
+                                                                // A manual trigger is an explicit operator override, so it is allowed any time the batch
+                                                                // call has not already run — the 1-hour delay only governs the automated timer job.
+                                                                bool canTrigger = !alreadyTriggered;
                                                                 string btnTitle = alreadyTriggered ? "Batch call already triggered"
-                                                                    : !hourElapsed ? "Available 1 hour after campaign creation"
+                                                                    : !hourElapsed ? "Call unresponded interviewers now (overrides the 1-hour auto-call delay)"
                                                                     : "Call unresponded interviewers for availability";
                                                             }
                                                             <button class="mdc-fab app-fab--absolute btn-trigger-batch-call"
