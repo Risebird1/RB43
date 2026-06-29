@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using RestSharp;
@@ -89,6 +90,7 @@ namespace Risebird.Web.Controllers
         private readonly IPlivoCXService _plivoCXService;
         private readonly IInterviewerEmailAvailabilityRepository _eaRepository;
         private readonly ITransInterviewerAuditRepository _transInterviewerAuditRepository;
+        private readonly IServiceScopeFactory _scopeFactory;
 
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
@@ -99,8 +101,10 @@ namespace Risebird.Web.Controllers
             IOpenAISpeechToTextService speechToTextService,
             IPlivoCXService plivoCXService,
             IInterviewerEmailAvailabilityRepository eaRepository,
-            ITransInterviewerAuditRepository transInterviewerAuditRepository)
+            ITransInterviewerAuditRepository transInterviewerAuditRepository,
+            IServiceScopeFactory scopeFactory)
         {
+            _scopeFactory = scopeFactory;
             _userService = userService;
             _irfRepository = iRFRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -10089,17 +10093,22 @@ namespace Risebird.Web.Controllers
 
             try
             {
-                // Manual/operator-initiated trigger: no 1-hour delay gate (that delay applies only to
-                // the automated timer job). Only an already-triggered batch call blocks a manual run.
+                // Multiple batch-call attempts per campaign are allowed (each logged + named separately),
+                // so there is no "already triggered" or 1-hour delay gate for a manual run. The only
+                // guard is against an attempt that is still in progress, to avoid double-dialing.
                 var campaign = await _eaRepository.GetCampaignForManualBatchCallAsync(campaignId);
                 if (campaign == null)
-                    return Json(new { success = false, error = "Campaign not found, or its batch call has already been triggered." });
+                    return Json(new { success = false, error = "Campaign not found." });
 
-                await _eaRepository.MarkCampaignBatchCallTriggeredAsync(campaignId);
+                if (campaign.HasRunningAttempt)
+                    return Json(new { success = false, error = "A batch-call attempt for this campaign is already in progress. Please wait for it to finish before starting another." });
 
                 var interviewers = await _eaRepository.GetCampaignUnrespondedInterviewersAsync(campaignId);
                 if (interviewers == null || !interviewers.Any())
-                    return Json(new { success = true, succeeded = 0, failed = 0, skipped = 0, message = "No unresponded interviewers to call." });
+                    return Json(new { success = true, started = false, message = "No unresponded interviewers to call." });
+
+                // Mark the campaign so the automated timer job leaves it alone going forward.
+                try { await _eaRepository.MarkCampaignBatchCallTriggeredAsync(campaignId); } catch { }
 
                 string callerId = _configuration["PlivoCX:AvailabilityCallerId"]
                                ?? _configuration["PlivoCX:OnboardingCallerId"]
@@ -10109,53 +10118,129 @@ namespace Risebird.Web.Controllers
                 string source = "Campaign";
                 string initiatedBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "Manual";
 
-                int batchLogId = 0;
-                try { batchLogId = await _eaRepository.InsertBatchCallLogAsync(campaign.MagName, initiatedBy, interviewers.Count, campaignId); }
-                catch { }
+                // Open a named attempt (sequential per campaign). This row shows up immediately on the
+                // Campaigns page as "Running" so the operator sees the attempt has begun.
+                var attempt = await _eaRepository.StartCampaignBatchCallAttemptAsync(
+                    campaignId, campaign.CampaignName, campaign.MagName, initiatedBy, interviewers.Count);
 
-                int succeeded = 0, failed = 0, skipped = 0;
-
-                foreach (var interviewer in interviewers)
+                // Hand the actual calling off to the CampaignBatchCall Azure Function (fire-and-forget).
+                // The portal does NOT wait for the calls to complete — the function paces them on its
+                // own and writes each call's outcome + finalizes the attempt log.
+                var dto = new CampaignBatchCallRequestDTO
                 {
-                    try
+                    BatchCallLogId = attempt.LogId,
+                    CampaignId     = campaignId,
+                    CampaignName   = campaign.CampaignName,
+                    MagName        = campaign.MagName,
+                    AttemptNumber  = attempt.AttemptNumber,
+                    AttemptName    = attempt.AttemptName,
+                    CallerId       = callerId,
+                    Source         = source,
+                    Interviewers   = interviewers.Select(i => new CampaignBatchCallInterviewerDTO
                     {
-                        string phone = interviewer.Phone?.Trim() ?? "";
-                        if (string.IsNullOrWhiteSpace(phone) || phone.Length < 10) { skipped++; continue; }
-                        if (phone.Length == 10 && !phone.StartsWith("+")) phone = "+91" + phone;
-                        else if (phone.Length > 10 && !phone.StartsWith("+")) phone = "+" + phone;
+                        InterviewerProfileId = i.InterviewerProfileId,
+                        InterviewerName      = i.InterviewerName,
+                        SenderEmail          = i.SenderEmail,
+                        Phone                = i.Phone
+                    }).ToList()
+                };
 
-                        // Defer record creation: the row is created by the hangup webhook only
-                        // if the call confirms availability.
-                        var triggerRequest = new PlivoCXAvailabilityTriggerRequest
-                        {
-                            CallerId         = callerId,
-                            PhoneNumber      = phone,
-                            InterviewerName  = interviewer.InterviewerName ?? "there",
-                            InterviewerEmail = interviewer.SenderEmail,
-                            MagName          = campaign.MagName,
-                            LogId            = AvailabilityCallToken.Build(interviewer.InterviewerProfileId, campaign.MagName, source),
-                            TodayDate        = DateTime.Now.ToString("dddd, dd MMMM yyyy")
-                        };
+                FireCampaignBatchCallFunction(dto);
 
-                        var response = await _plivoCXService.TriggerAvailabilityCallAsync(triggerRequest);
-
-                        if (!string.IsNullOrEmpty(response?.Error))
-                            failed++;
-                        else
-                            succeeded++;
-
-                        await System.Threading.Tasks.Task.Delay(1200);
-                    }
-                    catch { failed++; }
-                }
-
-                if (batchLogId > 0)
+                return Json(new
                 {
-                    try { await _eaRepository.CompleteBatchCallLogAsync(batchLogId, succeeded, failed, skipped, "Completed"); }
-                    catch { }
-                }
+                    success = true,
+                    started = true,
+                    queued = interviewers.Count,
+                    attemptName = attempt.AttemptName,
+                    attemptNumber = attempt.AttemptNumber,
+                    message = $"Batch call attempt #{attempt.AttemptNumber} started for {interviewers.Count} unresponded interviewer(s). Calls are being placed by a background service — refresh this page in a few minutes to see the outcome."
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
 
-                return Json(new { success = true, succeeded, failed, skipped });
+        // Fire-and-forget POST to the CampaignBatchCall Azure Function. Detached so the portal request
+        // returns instantly and never holds the connection open for the multi-minute calling run.
+        private void FireCampaignBatchCallFunction(CampaignBatchCallRequestDTO dto)
+        {
+            _ = System.Threading.Tasks.Task.Run(async () =>
+            {
+                try
+                {
+                    var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/CampaignBatchCall";
+                    var functionKey = "ok-GN-EaOPcWFO2ft8_m_eIaLSxMgT_0a19YdeFmBSPCAzFuuzQdQg==";
+                    await _httpClient.SendRequestAsync(HttpMethod.Post, path, dto, functionKey, "", _cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    try { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex); } catch { }
+                }
+            });
+        }
+
+        // Returns the batch-call attempt history (and optionally per-call details) for a campaign.
+        [HttpGet]
+        public async Task<IActionResult> GetCampaignBatchCallAttempts(int campaignId)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var attempts = await _eaRepository.GetCampaignBatchCallAttemptsAsync(campaignId);
+                return Json(new
+                {
+                    success = true,
+                    attempts = attempts.Select(a => new
+                    {
+                        id = a.Id,
+                        attemptNumber = a.AttemptNumber,
+                        attemptName = a.AttemptName,
+                        initiatedBy = a.InitiatedBy,
+                        initiatedAt = a.InitiatedAt.ToString("dd MMM yyyy, HH:mm"),
+                        attempted = a.InterviewersAttempted,
+                        succeeded = a.InterviewersSucceeded,
+                        failed = a.InterviewersFailed,
+                        skipped = a.InterviewersSkipped,
+                        completedAt = a.CompletedAt?.ToString("dd MMM yyyy, HH:mm"),
+                        status = a.Status
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCampaignBatchCallAttemptDetails(int batchCallLogId)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var details = await _eaRepository.GetCampaignBatchCallAttemptDetailsAsync(batchCallLogId);
+                return Json(new
+                {
+                    success = true,
+                    details = details.Select(d => new
+                    {
+                        name = d.InterviewerName,
+                        email = d.InterviewerEmail,
+                        phone = d.Phone,
+                        outcome = d.Outcome,
+                        error = d.Error,
+                        calledAt = d.CalledAt.ToString("dd MMM yyyy, HH:mm")
+                    })
+                });
             }
             catch (Exception ex)
             {
@@ -10178,6 +10263,13 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client" || profileName == "SeniorInterviewerManagement")
                     {
                         var model = await _irfService.GetCampaignDetailsById(campaignId);
+                        // The details could not be resolved (campaign missing, or its detail query failed).
+                        // Don't render the view with a null model — that NREs on @Model.CampaignName.
+                        if (model == null || (model.id == 0 && string.IsNullOrEmpty(model.CampaignName)))
+                        {
+                            TempData["SuccessErrorMessage"] = "Campaign details could not be loaded for this campaign.";
+                            return RedirectToAction("Campaigns", new { returnBack = 1 });
+                        }
                         return View(model);
                     }
                     else

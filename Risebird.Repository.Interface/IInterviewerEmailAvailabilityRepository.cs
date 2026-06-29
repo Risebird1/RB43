@@ -77,6 +77,15 @@ namespace Risebird.Repository.Interface
         Task<CampaignBatchCallEligible> GetCampaignForManualBatchCallAsync(int campaignId);
         Task<List<CampaignUnrespondedInterviewer>> GetCampaignUnrespondedInterviewersAsync(int campaignId);
         Task MarkCampaignBatchCallTriggeredAsync(int campaignId);
+
+        // Per-attempt batch-call tracking. An attempt is a single (manual or auto) batch-call run for a
+        // campaign; multiple attempts per campaign are allowed and each is logged + named separately.
+        Task<(int LogId, int AttemptNumber, string AttemptName)> StartCampaignBatchCallAttemptAsync(
+            int campaignId, string campaignName, string magName, string initiatedBy, int totalInterviewers);
+        Task InsertCampaignBatchCallDetailAsync(int batchCallLogId, int? interviewerProfileId,
+            string interviewerName, string interviewerEmail, string phone, string outcome, string error, string conversationId);
+        Task<List<CampaignBatchCallAttempt>> GetCampaignBatchCallAttemptsAsync(int campaignId);
+        Task<List<CampaignBatchCallAttemptDetail>> GetCampaignBatchCallAttemptDetailsAsync(int batchCallLogId);
     }
 
     public class IABatchCallMagSummary
@@ -181,6 +190,41 @@ namespace Risebird.Repository.Interface
         public int AssessmentGroupId { get; set; }
         public DateTime CreatedAt { get; set; }
         public string MagName { get; set; }
+        // True when a batch-call attempt for this campaign is still in progress (manual lookup only).
+        public bool HasRunningAttempt { get; set; }
+    }
+
+    // One batch-call attempt against a campaign (a row of IABatchCallLog).
+    public class CampaignBatchCallAttempt
+    {
+        public int Id { get; set; }
+        public int? CampaignId { get; set; }
+        public int? AttemptNumber { get; set; }
+        public string AttemptName { get; set; }
+        public string MagName { get; set; }
+        public string InitiatedBy { get; set; }
+        public DateTime InitiatedAt { get; set; }
+        public int InterviewersAttempted { get; set; }
+        public int InterviewersSucceeded { get; set; }
+        public int InterviewersFailed { get; set; }
+        public int InterviewersSkipped { get; set; }
+        public DateTime? CompletedAt { get; set; }
+        public string Status { get; set; }
+    }
+
+    // One call placed during an attempt (a row of IABatchCallAttemptDetail).
+    public class CampaignBatchCallAttemptDetail
+    {
+        public int Id { get; set; }
+        public int BatchCallLogId { get; set; }
+        public int? InterviewerProfileId { get; set; }
+        public string InterviewerName { get; set; }
+        public string InterviewerEmail { get; set; }
+        public string Phone { get; set; }
+        public string Outcome { get; set; }
+        public string Error { get; set; }
+        public string ConversationId { get; set; }
+        public DateTime CalledAt { get; set; }
     }
 
     public class CampaignUnrespondedInterviewer

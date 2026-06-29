@@ -48,5 +48,8 @@ namespace Risebird.Entities.ViewModel
         public int?      BatchCallSkipped       { get; set; }
         public DateTime? BatchCallCompletedAt   { get; set; }
         public string    BatchCallStatus        { get; set; }
+        public int?      BatchCallAttemptNumber { get; set; }
+        public string    BatchCallAttemptName   { get; set; }
+        public int       BatchCallAttemptCount  { get; set; }
     }
 }
