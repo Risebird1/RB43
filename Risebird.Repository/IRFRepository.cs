@@ -9043,7 +9043,7 @@ namespace Risebird.Repository
                     if (dataset.Tables.Count > 0)
                     {
                         dt = dataset.Tables[0];
-                        if (dt.Rows != null)
+                        if (dt.Rows != null && dt.Rows.Count > 0)
                         {
 
                             _resultVM.id = !string.IsNullOrEmpty(dt.Rows[0]["id"].ToString()) ? Convert.ToInt32(dt.Rows[0]["id"]) : 0;
