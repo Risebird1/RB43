@@ -1215,14 +1215,15 @@
             $(this).toggleClass('is-on', on).attr('aria-selected', on ? 'true' : 'false');
         });
         if (tab === 'inactive') {
-            // Clear any sub-tab filter hidden state left over from active tab and refresh counts.
+            setActiveSubTab('all');
             $('#dmV4IvPanel .dm-v4-iv-row').removeClass('dm-v4-iv-row--subtab-hidden');
             refreshInactiveSubTabCounts();
             applyInactiveSubTabFilter();
         } else {
-            // Leaving Inactive tab — reset sub-tab selection to "all" so next visit starts fresh.
             setInactiveSubTab('all');
             $('#dmV4IvPanel .dm-v4-iv-row').removeClass('dm-v4-iv-row--subtab-hidden');
+            refreshActiveSubTabCounts();
+            applyActiveSubTabFilter();
         }
         applyIvTabFilter();
     }
@@ -1237,6 +1238,7 @@
         $('#dmV4IvTabActiveCount').text(active);
         $('#dmV4IvTabInactiveCount').text(inactive);
         refreshInactiveSubTabCounts();
+        refreshActiveSubTabCounts();
     }
 
     function applyIvTabFilter() {
@@ -1250,6 +1252,7 @@
             $row.toggleClass('dm-v4-iv-row--tab-hidden', !show);
         });
         if (tab === 'inactive') applyInactiveSubTabFilter();
+        else if (tab === 'active') applyActiveSubTabFilter();
         else updateIvTabEmptyMessage();
     }
 
@@ -1272,6 +1275,71 @@
         return { label: 'Inactive', tone: 'inactive' };
     }
 
+    // ── Active sub-tabs ─────────────────────────────────────────────────────
+
+    function rowHasBadQualityFlag($row) {
+        if (!readRowDbActive($row)) return false;
+        var verdict = ($row.attr('data-auto-qc-verdict') || '').trim();
+        if (verdict.length > 0) return true;
+        return $row.find('[data-active-bad-quality="1"]').length > 0
+            || $row.find('.dm-v4-iv-active-bad-quality').length > 0;
+    }
+
+    function getActiveSubTab() {
+        var val = ($('#dmV4IvActiveSubTabs').attr('data-active-subtab') || 'all').toString();
+        return val || 'all';
+    }
+
+    function setActiveSubTab(subtab) {
+        subtab = subtab || 'all';
+        $('#dmV4IvActiveSubTabs').attr('data-active-subtab', subtab);
+        $('#dmV4IvActiveSubTabs .dm-v4-iv-subtab').each(function () {
+            var on = ($(this).attr('data-active-subtab') || '') === subtab;
+            $(this).toggleClass('is-on', on).attr('aria-selected', on ? 'true' : 'false');
+        });
+        applyActiveSubTabFilter();
+    }
+
+    function refreshActiveSubTabCounts() {
+        var counts = { all: 0, 'bad-quality': 0 };
+        $('#dmV4IvPanel .dm-v4-iv-row').each(function () {
+            var $row = $(this);
+            if (!readRowDbActive($row)) return;
+            counts.all += 1;
+            if (rowHasBadQualityFlag($row)) counts['bad-quality'] += 1;
+        });
+        $('#dmV4ActiveSubTabAllCount').text(counts.all);
+        $('#dmV4ActiveSubTabBadQualityCount').text(counts['bad-quality']);
+    }
+
+    function applyActiveSubTabFilter() {
+        if (getIvTab() !== 'active') {
+            $('#dmV4IvPanel .dm-v4-iv-row').removeClass('dm-v4-iv-row--subtab-hidden');
+            return;
+        }
+        var subtab = getActiveSubTab();
+        $('#dmV4IvPanel .dm-v4-iv-row').each(function () {
+            var $row = $(this);
+            if (!readRowDbActive($row)) return;
+            var show = subtab === 'all' || (subtab === 'bad-quality' && rowHasBadQualityFlag($row));
+            $row.toggleClass('dm-v4-iv-row--subtab-hidden', !show);
+        });
+        updateIvTabEmptyMessage();
+    }
+
+    function initActiveSubTabs() {
+        if (!$('#dmV4IvActiveSubTabs').length) return;
+        $(document).off('click.dmV4ActiveSubTab', '#dmV4IvActiveSubTabs .dm-v4-iv-subtab')
+            .on('click.dmV4ActiveSubTab', '#dmV4IvActiveSubTabs .dm-v4-iv-subtab', function (e) {
+                e.preventDefault();
+                if (getIvTab() !== 'active') setIvTab('active');
+                var subtab = ($(this).attr('data-active-subtab') || 'all').toString();
+                if (subtab === getActiveSubTab()) return;
+                setActiveSubTab(subtab);
+            });
+        refreshActiveSubTabCounts();
+    }
+
     // ── Inactive sub-tabs ────────────────────────────────────────────────────
 
     /** Maps a data-subtab value to the set of data-inactive-reason-category values it shows. */
@@ -1281,7 +1349,6 @@
             case 'pending': return category === 'PendingRbReview';
             case 'removed-rb': return category === 'RemovedByRb';
             case 'removed-client': return category === 'RemovedByClient';
-            case 'bad-quality': return isAutoQcCategory(category);
             default: return true;
         }
     }
@@ -1312,7 +1379,7 @@
     }
 
     function refreshInactiveSubTabCounts() {
-        var counts = { all: 0, pending: 0, 'removed-rb': 0, 'removed-client': 0, 'bad-quality': 0 };
+        var counts = { all: 0, pending: 0, 'removed-rb': 0, 'removed-client': 0 };
         $('#dmV4IvPanel .dm-v4-iv-row').each(function () {
             var $row = $(this);
             if (readRowDbActive($row)) return;
@@ -1321,13 +1388,11 @@
             if (cat === 'PendingRbReview') counts.pending += 1;
             if (cat === 'RemovedByRb') counts['removed-rb'] += 1;
             if (cat === 'RemovedByClient') counts['removed-client'] += 1;
-            if (isAutoQcCategory(cat)) counts['bad-quality'] += 1;
         });
         $('#dmV4SubTabAllCount').text(counts.all);
         $('#dmV4SubTabPendingCount').text(counts.pending);
         $('#dmV4SubTabRemovedRbCount').text(counts['removed-rb']);
         $('#dmV4SubTabRemovedClientCount').text(counts['removed-client']);
-        $('#dmV4SubTabBadQualityCount').text(counts['bad-quality']);
     }
 
     function applyInactiveSubTabFilter() {
@@ -1348,7 +1413,7 @@
 
     function isInactiveRowVisibleInTab($row, mainTab) {
         if ($row.hasClass('dm-v4-iv-row--tab-hidden')) return false;
-        if (readRowDbActive($row)) return mainTab === 'active';
+        if (readRowDbActive($row)) return mainTab === 'active' && !$row.hasClass('dm-v4-iv-row--subtab-hidden');
         if (mainTab !== 'inactive') return false;
         if ($row.hasClass('dm-v4-iv-row--subtab-hidden')) return false;
         return true;
@@ -1364,6 +1429,8 @@
         });
         if (visible === 0) {
             if (tab === 'inactive' && getInactiveSubTab() !== 'all') {
+                $empty.text('No interviewers in this category.').prop('hidden', false);
+            } else if (tab === 'active' && getActiveSubTab() !== 'all') {
                 $empty.text('No interviewers in this category.').prop('hidden', false);
             } else {
                 $empty.text(tab === 'active' ? 'No active interviewers.' : 'No inactive interviewers.').prop('hidden', false);
@@ -1427,6 +1494,9 @@
             if (opts.active) {
                 $row.attr('data-ever-activated', '1');
                 $row.attr('data-on-panel', '1');
+            } else {
+                $row.removeAttr('data-auto-qc-verdict data-auto-qc-interview-id data-auto-qc-removed-at');
+                $row.find('.dm-v4-iv-active-bad-quality').remove();
             }
         }
         if (typeof opts.available !== 'undefined') {
@@ -1511,10 +1581,6 @@
 
         var fromAudit = inferInactiveReasonFromAuditRow($row);
         if (fromAudit) return fromAudit;
-
-        var autoQcVerdict = ($row.attr('data-auto-qc-verdict') || '').toLowerCase();
-        if (autoQcVerdict === 'suspicious') return inactiveReasonFromCategory('RemovedByRbAutoQcSuspicious');
-        if (autoQcVerdict === 'redo') return inactiveReasonFromCategory('RemovedByRbAutoQcRedo');
 
         var channelLocked = isPolicyLockOn(getPolicyBar());
         var available = ($row.attr('data-is-available') || '0') === '1';
@@ -1621,6 +1687,41 @@
             $tip.append('<br><em>No interview ID recorded</em>');
         }
         return $tip;
+    }
+
+    function buildAutoQcFlagTooltipHtml(interviewId, verdict, flaggedAtIso) {
+        var $tip = $('<span class="dm-v4-autoqc-tooltip"></span>');
+        $tip.append('<span class="dm-v4-autoqc-tooltip__label">Auto QC Flag</span>');
+        if (interviewId) {
+            $tip.append('<br>Verdict: <strong>' + $('<span>').text(verdict).html() + '</strong>');
+            $tip.append('<br>Triggering interview: <strong>' + $('<span>').text(interviewId).html() + '</strong>');
+            if (flaggedAtIso) {
+                $tip.append('<br>Flagged: <strong>' + $('<span>').text(formatAutoQcTimestamp(flaggedAtIso)).html() + '</strong>');
+            }
+            var url = '/Interview/QCMergedAIDetails?interviewId=' + encodeURIComponent(interviewId);
+            $tip.append('<br><a class="dm-v4-autoqc-tooltip__link" href="' + url + '" target="_blank" rel="noopener">View QCMergedAIDetails →</a>');
+        } else {
+            $tip.append('<br>Verdict: <strong>' + $('<span>').text(verdict).html() + '</strong>');
+            if (flaggedAtIso) {
+                $tip.append('<br>Flagged: <strong>' + $('<span>').text(formatAutoQcTimestamp(flaggedAtIso)).html() + '</strong>');
+            }
+        }
+        return $tip;
+    }
+
+    function syncActiveBadQualityBadges() {
+        $('#dmV4IvPanel .dm-v4-iv-active-bad-quality').each(function () {
+            var $badge = $(this);
+            if ($badge.find('.dm-v4-autoqc-tooltip').length) return;
+            var interviewId = ($badge.attr('data-auto-qc-interview-id') || '').toString();
+            var verdict = ($badge.attr('data-auto-qc-verdict') || 'flagged').toLowerCase();
+            var flaggedAt = ($badge.attr('data-auto-qc-removed-at') || '').toString();
+            var label = $badge.text().trim() || 'Flagged (Auto QC)';
+            $badge.empty()
+                .append(document.createTextNode(label))
+                .append(buildAutoQcFlagTooltipHtml(interviewId, verdict, flaggedAt));
+            $badge.attr('title', '');
+        });
     }
 
     function syncVetButtons($row) {
@@ -3561,7 +3662,9 @@
         setPolicyLockOn(getPolicyBar(), isPolicyLockOn(getPolicyBar()));
         initIvTabs();
         initInactiveSubTabs();
+        initActiveSubTabs();
         initAutoQcBadgeTooltips();
+        syncActiveBadQualityBadges();
         refreshIvBadges();
         updatePolicySubtext();
         initIvEditableFields();
