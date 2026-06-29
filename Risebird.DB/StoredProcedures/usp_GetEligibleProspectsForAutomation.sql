@@ -50,11 +50,22 @@ BEGIN
             ) AS RowNum
         FROM NaukriProspectiveInterviewer np
         OUTER APPLY (
-            SELECT TOP 1 mag.AssessmentGroupId, ag.AssessmentGroup AS AssessmentGroupName
-            FROM MasterAssessmentGroup mag
-            LEFT JOIN AssessmentGroup ag ON ag.id = mag.AssessmentGroupId
-            WHERE LTRIM(RTRIM(LOWER(mag.MAGName))) = LTRIM(RTRIM(LOWER(np.MagName)))
-              AND (mag.IsDeleted IS NULL OR mag.IsDeleted = 0)
+            -- Tolerant MAG-name resolution (case + invisible/odd whitespace folded by
+            -- dbo.fn_NormalizeMagName), with a fallback to a direct AssessmentGroup name match.
+            SELECT TOP 1 x.AssessmentGroupId, x.AssessmentGroupName
+            FROM (
+                SELECT 1 AS Pref, mag.AssessmentGroupId, ag.AssessmentGroup AS AssessmentGroupName
+                FROM MasterAssessmentGroup mag
+                LEFT JOIN AssessmentGroup ag ON ag.id = mag.AssessmentGroupId
+                WHERE dbo.fn_NormalizeMagName(mag.MAGName) = dbo.fn_NormalizeMagName(np.MagName)
+                  AND (mag.IsDeleted IS NULL OR mag.IsDeleted = 0)
+                UNION ALL
+                SELECT 2 AS Pref, ag2.id AS AssessmentGroupId, ag2.AssessmentGroup AS AssessmentGroupName
+                FROM AssessmentGroup ag2
+                WHERE dbo.fn_NormalizeMagName(ag2.AssessmentGroup) = dbo.fn_NormalizeMagName(np.MagName)
+            ) x
+            WHERE x.AssessmentGroupId IS NOT NULL
+            ORDER BY x.Pref
         ) magInfo
         WHERE np.Status IN ('Open', 'InProgress')
           AND ISNULL(np.AutomationStatus, '') NOT IN (
