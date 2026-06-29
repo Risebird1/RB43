@@ -29,25 +29,23 @@ BEGIN
         SELECT w.WeekNumber,
                DATEADD(DAY, WeekStartOffset, DATEADD(MONTH, MonthOffset, @StartDate)) AS WeekStart,
                CASE
-                   WHEN WeekDayEnd = 21 THEN DATEADD(DAY, 21, DATEADD(MONTH, MonthOffset, @StartDate))
-                   WHEN WeekDayEnd = 14 THEN DATEADD(DAY, 14, DATEADD(MONTH, MonthOffset, @StartDate))
-                   WHEN WeekDayEnd = 7  THEN DATEADD(DAY,  7, DATEADD(MONTH, MonthOffset, @StartDate))
+                   WHEN WeekInMonth < 4 THEN DATEADD(DAY, WeekStartOffset + 6, DATEADD(MONTH, MonthOffset, @StartDate))
                    ELSE DATEADD(DAY, -1, DATEADD(MONTH, MonthOffset + 1, @StartDate))
                END AS WeekEnd
         FROM (VALUES
-            (1,  0, 0,  7),   -- Month 1 wk 1: day 1..7
-            (2,  0, 7,  14),  -- Month 1 wk 2: day 8..14
-            (3,  0, 14, 21),  -- Month 1 wk 3: day 15..21
-            (4,  0, 21, 28),  -- Month 1 wk 4: day 22..EOM
-            (5,  1, 0,  7),
-            (6,  1, 7,  14),
-            (7,  1, 14, 21),
-            (8,  1, 21, 28),
-            (9,  2, 0,  7),
-            (10, 2, 7,  14),
-            (11, 2, 14, 21),
-            (12, 2, 21, 28)
-        ) w(WeekNumber, MonthOffset, WeekStartOffset, WeekDayEnd)
+            (1,  0, 0,  1),   -- Month 1 wk 1: day 1..7
+            (2,  0, 7,  2),   -- Month 1 wk 2: day 8..14
+            (3,  0, 14, 3),   -- Month 1 wk 3: day 15..21
+            (4,  0, 21, 4),   -- Month 1 wk 4: day 22..EOM
+            (5,  1, 0,  1),
+            (6,  1, 7,  2),
+            (7,  1, 14, 3),
+            (8,  1, 21, 4),
+            (9,  2, 0,  1),
+            (10, 2, 7,  2),
+            (11, 2, 14, 3),
+            (12, 2, 21, 4)
+        ) w(WeekNumber, MonthOffset, WeekStartOffset, WeekInMonth)
     ),
     PayoutsByWeek AS (
         SELECT

@@ -277,187 +277,229 @@
                                     <input type="hidden" name="FinancialYear"               value="@Model.SelectedYear" />
                                     <input type="hidden" name="Quarter"                     value="@Model.SelectedQuarter" />
 
-                                    <div class="row">
-                                        <div class="col-md-1">
+                                    <!-- Row 1: Identity fields -->
+                                    <div class="row" style="margin-bottom:4px;">
+                                        <div class="col-md-2">
                                             <div class="form-group">
-                                                <label style="font-size:12px;">Week #</label>
+                                                <label style="font-size:11px;color:#666;">Week #</label>
                                                 <input type="number" name="WeekNumber" id="cf-week" class="form-control form-control-sm" min="1" max="12" required />
                                             </div>
                                         </div>
-                                        <div class="col-md-1">
+                                        <div class="col-md-2">
                                             <div class="form-group">
-                                                <label style="font-size:12px;">Sr No</label>
+                                                <label style="font-size:11px;color:#666;">Sr No</label>
                                                 <input type="number" name="SrNo" id="cf-srno" class="form-control form-control-sm" required />
                                             </div>
                                         </div>
-                                        <div class="col-md-1">
+                                        <div class="col-md-2">
                                             <div class="form-group">
-                                                <label style="font-size:12px;">Section</label>
-                                                <input type="text" name="SectionCode" value="194JB" class="form-control form-control-sm" readonly />
+                                                <label style="font-size:11px;color:#666;">Section</label>
+                                                <input type="text" name="SectionCode" value="194JB" class="form-control form-control-sm" readonly style="background:#f5f5f5;" />
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <label style="font-size:12px;">TAN</label>
+                                                <label style="font-size:11px;color:#666;">Minor Head</label>
+                                                <input type="text" name="MinorHead" value="200" class="form-control form-control-sm" readonly style="background:#f5f5f5;" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label style="font-size:11px;color:#666;">TAN</label>
                                                 <input type="text" name="TANNumber" id="cf-tan" value="@TdsConstants.CompanyTAN" class="form-control form-control-sm" />
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label style="font-size:12px;">Deductor</label>
-                                                <input type="text" name="Deductor" id="cf-deductor" value="@TdsConstants.DeductorName" class="form-control form-control-sm" />
-                                            </div>
-                                        </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <label style="font-size:12px;">TDS Amount (₹)</label>
+                                                <label style="font-size:11px;color:#666;">TDS Amount (₹) <span style="color:red;">*</span></label>
                                                 <input type="number" name="TdsAmount" id="cf-tds" class="form-control form-control-sm" step="0.01" required />
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
+                                    </div>
+
+                                    <!-- Row 1b: Deductor (full width) -->
+                                    <div class="row" style="margin-bottom:4px;">
+                                        <div class="col-md-12">
                                             <div class="form-group">
-                                                <label style="font-size:12px;">BSR Code</label>
-                                                <input type="text" name="BSRCode" id="cf-bsr" class="form-control form-control-sm" />
+                                                <label style="font-size:11px;color:#666;">Deductor</label>
+                                                <input type="text" name="Deductor" id="cf-deductor" value="@TdsConstants.DeductorName" class="form-control form-control-sm" />
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
+
+                                    <!-- Row 2: Challan & payment detail -->
+                                    <div class="row" style="margin-bottom:4px;">
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <label style="font-size:12px;">Deposit Date</label>
-                                                <input type="date" name="DepositDate" id="cf-depdate" class="form-control form-control-sm" />
+                                                <label style="font-size:11px;color:#666;">BSR Code</label>
+                                                <input type="text" name="BSRCode" id="cf-bsr" class="form-control form-control-sm" />
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <label style="font-size:12px;">Challan Serial No</label>
+                                                <label style="font-size:11px;color:#666;">Challan Serial No</label>
                                                 <input type="text" name="ChallanSerialNumber" id="cf-serial" class="form-control form-control-sm" />
                                             </div>
                                         </div>
-                                        <div class="col-md-1">
-                                            <div class="form-group">
-                                                <label style="font-size:12px;">Minor Head</label>
-                                                <input type="text" name="MinorHead" value="200" class="form-control form-control-sm" readonly />
-                                            </div>
-                                        </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <label style="font-size:12px;">Reference No</label>
+                                                <label style="font-size:11px;color:#666;">Reference No</label>
                                                 <input type="text" name="ChallanReferenceNumber" id="cf-ref" class="form-control form-control-sm" />
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <label style="font-size:12px;">Payout Reference</label>
-                                                <input type="text" name="PayoutReference" id="cf-payref" class="form-control form-control-sm" />
+                                                <label style="font-size:11px;color:#666;">Deposit Date</label>
+                                                <input type="date" name="DepositDate" id="cf-depdate" class="form-control form-control-sm" />
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <label style="font-size:12px;">Payment Date</label>
+                                                <label style="font-size:11px;color:#666;">Payment Date</label>
                                                 <input type="date" name="PaymentDate" id="cf-paydate" class="form-control form-control-sm" />
                                             </div>
                                         </div>
-                                        <div class="col-md-1 d-flex align-items-end">
+                                        <div class="col-md-2">
                                             <div class="form-group">
-                                                <label style="font-size:12px;display:block;">&nbsp;</label>
-                                                <div class="form-check">
-                                                    <input type="checkbox" name="IsPaid" id="cf-paid" class="form-check-input" value="true" />
-                                                    <input type="hidden" name="IsPaid" value="false" />
-                                                    <label class="form-check-label" for="cf-paid" style="font-size:12px;">Is Paid</label>
-                                                </div>
+                                                <label style="font-size:11px;color:#666;">Payout Reference</label>
+                                                <input type="text" name="PayoutReference" id="cf-payref" class="form-control form-control-sm" />
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
+
+                                    <!-- Row 3: PDF + Is Paid + Actions -->
+                                    <div class="row align-items-end">
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <label style="font-size:12px;">Challan PDF</label>
+                                                <label style="font-size:11px;color:#666;">Challan PDF</label>
                                                 <input type="file" name="ChallanPdf" accept="application/pdf" class="form-control form-control-sm" />
                                             </div>
                                         </div>
-                                        <div class="col-md-2 d-flex align-items-end">
-                                            <a id="cf-pdf-link" href="#" target="_blank" style="display:none;font-size:12px;" class="mdc-button mdc-button--outlined mdc-ripple-upgraded">
-                                                <span class="fas fa-file-pdf" style="color:#d32f2f;"></span>&nbsp;Current PDF
-                                            </a>
+                                        <div class="col-md-2">
+                                            <div class="form-group" style="padding-bottom:6px;">
+                                                <a id="cf-pdf-link" href="#" target="_blank" style="display:none;font-size:12px;" class="mdc-button mdc-button--outlined mdc-ripple-upgraded">
+                                                    <span class="fas fa-file-pdf" style="color:#d32f2f;"></span>&nbsp;Current PDF
+                                                </a>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div style="margin-top:6px;">
-                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
-                                            <span class="fas fa-save"></span>&nbsp; Save Challan
-                                        </button>
-                                        <button type="button" class="mdc-button mdc-button--outlined mdc-ripple-upgraded" onclick="clearChallanForm()" style="margin-left:8px;">
-                                            Clear
-                                        </button>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label style="font-size:11px;color:#666;display:block;margin-bottom:6px;">Mark as Paid</label>
+                                                <div class="form-check form-switch" style="padding-left:2.5em;">
+                                                    <input type="checkbox" name="IsPaid" id="cf-paid" class="form-check-input" value="true" role="switch" style="width:2.2em;height:1.2em;cursor:pointer;" />
+                                                    <input type="hidden" name="IsPaid" value="false" />
+                                                    <label class="form-check-label" for="cf-paid" id="cf-paid-label" style="font-size:12px;font-weight:600;color:#999;cursor:pointer;line-height:1.8;margin-left:4px;">No</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" style="padding-bottom:6px;">
+                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                                <span class="fas fa-save"></span>&nbsp; Save Challan
+                                            </button>
+                                            <button type="button" class="mdc-button mdc-button--outlined mdc-ripple-upgraded" onclick="clearChallanForm()" style="margin-left:8px;">
+                                                Clear
+                                            </button>
+                                        </div>
                                     </div>
                                 </form>
                             </div>
 
                             <!-- Challan ledger -->
-                            <div class="table-responsive">
-                                <table class="table tds-table" style="width:100%;">
-                                    <thead>
-                                        <tr>
-                                            <th>Week</th><th>Sr</th><th>Section</th><th>TAN</th><th>Deductor</th>
-                                            <th>TDS (₹)</th><th>BSR</th><th>Deposit Date</th><th>Serial No</th>
-                                            <th>Minor Head</th><th>Ref No</th><th>PDF</th><th>Payout Ref</th><th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @{decimal totalChallanTds = 0;}
-                                        @if (Model.Challans != null)
-                                        {
-                                            @foreach (var c in Model.Challans)
+                            <div style="border-top:1px solid #e0e0e0;margin-top:16px;padding-top:12px;">
+                                <div style="font-size:13px;font-weight:600;color:#444;margin-bottom:8px;">Challan Ledger</div>
+                                <div class="table-responsive">
+                                    <table class="table tds-table" style="width:100%;font-size:12px;">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:50px;">Wk</th>
+                                                <th style="width:40px;">Sr</th>
+                                                <th style="width:70px;">Section</th>
+                                                <th style="width:110px;">TAN</th>
+                                                <th>Deductor</th>
+                                                <th style="width:100px;text-align:right;">TDS (₹)</th>
+                                                <th style="width:90px;">BSR</th>
+                                                <th style="width:100px;">Deposit Date</th>
+                                                <th style="width:90px;">Serial No</th>
+                                                <th style="width:80px;">Minor Head</th>
+                                                <th style="width:100px;">Ref No</th>
+                                                <th style="width:100px;">Payout Ref</th>
+                                                <th style="width:50px;text-align:center;">PDF</th>
+                                                <th style="width:50px;text-align:center;">Paid</th>
+                                                <th style="width:70px;text-align:center;">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{decimal totalChallanTds = 0;}
+                                            @if (Model.Challans != null && Model.Challans.Any())
                                             {
-                                                totalChallanTds += c.TdsAmount;
-                                                <tr>
-                                                    <td>@c.WeekNumber</td>
-                                                    <td>@c.SrNo</td>
-                                                    <td>@c.SectionCode</td>
-                                                    <td>@c.TANNumber</td>
-                                                    <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="@c.Deductor">@c.Deductor</td>
-                                                    <td>@c.TdsAmount.ToString("N0")</td>
-                                                    <td>@c.BSRCode</td>
-                                                    <td>@c.DepositDate?.ToString("dd-MM-yyyy")</td>
-                                                    <td>@c.ChallanSerialNumber</td>
-                                                    <td>@c.MinorHead</td>
-                                                    <td>@c.ChallanReferenceNumber</td>
-                                                    <td>
-                                                        @if (!string.IsNullOrWhiteSpace(c.ChallanPdfPath))
-                                                        {
-                                                            <a href="@c.ChallanPdfPath" target="_blank" style="color:#d32f2f;font-size:16px;">
-                                                                <span class="fas fa-file-pdf"></span>
-                                                            </a>
-                                                        }
-                                                    </td>
-                                                    <td>@c.PayoutReference</td>
-                                                    <td style="white-space:nowrap;">
-                                                        <button class="mdc-button mdc-button--outlined mdc-ripple-upgraded" style="font-size:11px;height:26px;padding:0 8px;min-width:0;"
-                                                                onclick="editChallan(@c.id,@c.WeekNumber,@c.SrNo,@c.TdsAmount,'@c.BSRCode','@(c.DepositDate?.ToString("yyyy-MM-dd"))','@c.ChallanSerialNumber','@c.ChallanReferenceNumber','@c.PayoutReference','@(c.PaymentDate?.ToString("yyyy-MM-dd"))','@(c.IsPaid ? "true" : "false")','@c.ChallanPdfPath','@c.TANNumber','@c.Deductor')">
-                                                            <span class="fas fa-edit"></span>
-                                                        </button>
-                                                        <form method="post" action="@Url.Action("DeleteTdsChallan","Tds")" style="display:inline;" onsubmit="return confirm('Delete this challan?');">
-                                                            @Html.AntiForgeryToken()
-                                                            <input type="hidden" name="id"      value="@c.id" />
-                                                            <input type="hidden" name="year"    value="@Model.SelectedYear" />
-                                                            <input type="hidden" name="quarter" value="@Model.SelectedQuarter" />
-                                                            <button type="submit" class="mdc-button mdc-button--outlined mdc-ripple-upgraded" style="font-size:11px;height:26px;padding:0 8px;min-width:0;color:#d32f2f;">
-                                                                <span class="fas fa-trash"></span>
+                                                @foreach (var c in Model.Challans)
+                                                {
+                                                    totalChallanTds += c.TdsAmount;
+                                                    <tr>
+                                                        <td>@c.WeekNumber</td>
+                                                        <td>@c.SrNo</td>
+                                                        <td>@c.SectionCode</td>
+                                                        <td style="font-size:11px;">@c.TANNumber</td>
+                                                        <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="@c.Deductor">@c.Deductor</td>
+                                                        <td style="text-align:right;font-weight:500;">@c.TdsAmount.ToString("N0")</td>
+                                                        <td>@c.BSRCode</td>
+                                                        <td>@c.DepositDate?.ToString("dd-MM-yyyy")</td>
+                                                        <td>@c.ChallanSerialNumber</td>
+                                                        <td>@c.MinorHead</td>
+                                                        <td>@c.ChallanReferenceNumber</td>
+                                                        <td style="font-size:11px;">@c.PayoutReference</td>
+                                                        <td style="text-align:center;">
+                                                            @if (!string.IsNullOrWhiteSpace(c.ChallanPdfPath))
+                                                            {
+                                                                <a href="@c.ChallanPdfPath" target="_blank" style="color:#d32f2f;font-size:15px;">
+                                                                    <span class="fas fa-file-pdf"></span>
+                                                                </a>
+                                                            }
+                                                        </td>
+                                                        <td style="text-align:center;">
+                                                            @if (c.IsPaid)
+                                                            {
+                                                                <span class="fas fa-check-circle" style="color:#4caf50;font-size:14px;" title="Paid"></span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="fas fa-clock" style="color:#ff9800;font-size:14px;" title="Pending"></span>
+                                                            }
+                                                        </td>
+                                                        <td style="text-align:center;white-space:nowrap;">
+                                                            <button class="mdc-button mdc-button--outlined mdc-ripple-upgraded" style="font-size:11px;height:26px;padding:0 6px;min-width:0;"
+                                                                    onclick="editChallan(@c.id,@c.WeekNumber,@c.SrNo,@c.TdsAmount,'@c.BSRCode','@(c.DepositDate?.ToString("yyyy-MM-dd"))','@c.ChallanSerialNumber','@c.ChallanReferenceNumber','@c.PayoutReference','@(c.PaymentDate?.ToString("yyyy-MM-dd"))','@(c.IsPaid ? "true" : "false")','@c.ChallanPdfPath','@c.TANNumber','@c.Deductor')" title="Edit">
+                                                                <span class="fas fa-edit"></span>
                                                             </button>
-                                                        </form>
-                                                    </td>
+                                                            <form method="post" action="@Url.Action("DeleteTdsChallan","Tds")" style="display:inline;" onsubmit="return confirm('Delete this challan?');">
+                                                                @Html.AntiForgeryToken()
+                                                                <input type="hidden" name="id"      value="@c.id" />
+                                                                <input type="hidden" name="year"    value="@Model.SelectedYear" />
+                                                                <input type="hidden" name="quarter" value="@Model.SelectedQuarter" />
+                                                                <button type="submit" class="mdc-button mdc-button--outlined mdc-ripple-upgraded" style="font-size:11px;height:26px;padding:0 6px;min-width:0;color:#d32f2f;" title="Delete">
+                                                                    <span class="fas fa-trash"></span>
+                                                                </button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td colspan="15" style="text-align:center;color:#999;padding:20px 0;">No challans added yet for this quarter.</td>
                                                 </tr>
                                             }
-                                        }
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="5" style="text-align:right;">Total</td>
-                                            <td>@totalChallanTds.ToString("N0")</td>
-                                            <td colspan="8"></td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="5" style="text-align:right;font-weight:600;">Total</td>
+                                                <td style="text-align:right;font-weight:600;">@totalChallanTds.ToString("N0")</td>
+                                                <td colspan="9"></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
                             </div>
                         </div>
 
@@ -638,6 +680,17 @@
 
 @section Scripts {
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var cb = document.getElementById('cf-paid');
+        var lbl = document.getElementById('cf-paid-label');
+        if (cb && lbl) {
+            cb.addEventListener('change', function () {
+                lbl.textContent = cb.checked ? 'Yes' : 'No';
+                lbl.style.color = cb.checked ? '#4caf50' : '#999';
+            });
+        }
+    });
+
     function showTab(event, tabId) {
         event.preventDefault();
         document.querySelectorAll('.tds-tab-pane').forEach(function(p) { p.classList.remove('active'); });
@@ -663,6 +716,8 @@
         document.getElementById('cf-payref').value   = '';
         document.getElementById('cf-paydate').value  = '';
         document.getElementById('cf-paid').checked   = false;
+        document.getElementById('cf-paid-label').textContent = 'No';
+        document.getElementById('cf-paid-label').style.color = '#999';
         document.getElementById('cf-pdf-link').style.display = 'none';
         document.getElementById('challan-form-title').textContent = 'Add Challan';
     }
@@ -678,7 +733,11 @@
         document.getElementById('cf-ref').value      = ref_;
         document.getElementById('cf-payref').value   = payref;
         document.getElementById('cf-paydate').value  = paydate;
-        document.getElementById('cf-paid').checked   = (paid === 'true');
+        var isPaid = (paid === 'true');
+        document.getElementById('cf-paid').checked   = isPaid;
+        var paidLbl = document.getElementById('cf-paid-label');
+        paidLbl.textContent = isPaid ? 'Yes' : 'No';
+        paidLbl.style.color = isPaid ? '#4caf50' : '#999';
         document.getElementById('cf-tan').value      = tan;
         document.getElementById('cf-deductor').value = deductor;
         document.getElementById('challan-form-title').textContent = 'Edit Challan #' + id;

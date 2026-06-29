@@ -9,7 +9,6 @@
                 <th>Deductee Code</th>
                 <th>PAN</th>
                 <th>First Name</th>
-                <th>Middle Name</th>
                 <th>Last Name</th>
                 <th style="text-align:right;">Amount Paid (₹)</th>
                 <th>Section</th>
@@ -44,7 +43,6 @@
                         }
                     </td>
                     <td>@d.FirstName</td>
-                    <td>@d.MiddleName</td>
                     <td>@d.LastName</td>
                     <td style="text-align:right;">@d.TotalPaid.ToString("N0")</td>
                     <td>@d.SectionCode</td>
@@ -78,7 +76,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="6" style="text-align:right;font-weight:600;">Totals</td>
+                <td colspan="5" style="text-align:right;font-weight:600;">Totals</td>
                 <td style="text-align:right;font-weight:600;">@totalPaid.ToString("N0")</td>
                 <td></td>
                 <td></td>
