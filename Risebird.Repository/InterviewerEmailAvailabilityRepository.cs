@@ -69,7 +69,7 @@ namespace Risebird.Repository
             string status, string senderEmail, string resumeFitment,
             DateTime? dateFrom, DateTime? dateTo, int page, int pageSize,
             string source = null, bool? isAutoClosed = null, bool? isInterviewerActive = null,
-            bool? recentlyAvailable = null)
+            bool? recentlyAvailable = null, string magName = null)
         {
             try
             {
@@ -82,6 +82,7 @@ namespace Risebird.Repository
                 parameters.Add("@IsAutoClosed", isAutoClosed);
                 parameters.Add("@IsInterviewerActive", isInterviewerActive);
                 parameters.Add("@RecentlyAvailable", recentlyAvailable);
+                parameters.Add("@MagName", string.IsNullOrWhiteSpace(magName) ? null : magName.Trim());
                 parameters.Add("@DateFrom", dateFrom);
                 parameters.Add("@DateTo", dateTo);
                 parameters.Add("@Page", page);
