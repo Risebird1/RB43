@@ -174,6 +174,11 @@
             line-height: 1;
         }
 
+        .pp-dot.pp-await {
+            background: #fff3cd;
+            color: #856404;
+        }
+
     .pp-badge {
         display: inline-block;
         padding: 2px 8px;
@@ -375,8 +380,10 @@
                     int cParsed = Model.Count(r => r.ResumeParseCompleted == true);
                     int cChannel = Model.Count(r => !string.IsNullOrEmpty(r.ApplicationLink));
                     int cInvited = Model.Count(r => r.InvitationEmailSent == true);
-                    int cSelfReg = Model.Count(r => r.SelfRegistrationCompleted == true || r.OnboardingCompleted == true);
-                    int cAwaiting = Model.Count(r => r.InvitationEmailSent == true && r.SelfRegistrationCompleted != true && r.OnboardingCompleted != true && string.IsNullOrEmpty(r.ProspectResponse));
+                    // Truly onboarded: accepted the acknowledgement (FunnelStage = 'Onboarded') or self-registered.
+                    // OnboardingCompleted alone = acknowledgement SENT, not accepted, so it must not count here.
+                    int cSelfReg = Model.Count(r => string.Equals(r.FunnelStage, "Onboarded", StringComparison.OrdinalIgnoreCase) || r.SelfRegistrationCompleted == true);
+                    int cAwaiting = Model.Count(r => r.InvitationEmailSent == true && r.SelfRegistrationCompleted != true && !string.Equals(r.FunnelStage, "Onboarded", StringComparison.OrdinalIgnoreCase) && string.IsNullOrEmpty(r.ProspectResponse));
                 }
                 <div class="row g-3 mb-4 pp-summary-cards">
                     <div class="col-6 col-sm-4 col-lg-2">
@@ -395,7 +402,7 @@
                         <div class="card border-0 shadow-sm text-center py-3"><div class="sv text-warning">@cAwaiting</div><div class="sl">Awaiting Response</div></div>
                     </div>
                     <div class="col-6 col-sm-4 col-lg-2">
-                        <div class="card border-0 shadow-sm text-center py-3"><div class="sv text-success">@cSelfReg</div><div class="sl">Self-Registered</div></div>
+                        <div class="card border-0 shadow-sm text-center py-3"><div class="sv text-success">@cSelfReg</div><div class="sl">Onboarded</div></div>
                     </div>
                 </div>
 
@@ -498,7 +505,17 @@
                                             bool isDuplicate = parsed && r.IsExistingInterviewer == true;
                                             bool channelSelected = !string.IsNullOrEmpty(r.ApplicationLink);
                                             bool invited = r.InvitationEmailSent == true;
-                                            bool selfReg = r.SelfRegistrationCompleted == true || r.OnboardingCompleted == true;
+                                            // A prospect is truly ONBOARDED only when they accepted the acknowledgement
+                                            // (FunnelStage = 'Onboarded') or self-registered via the MAG link — i.e. they
+                                            // actually exist in the system. OnboardingCompleted alone is set when the
+                                            // interviewer profile is created and the acknowledgement email is SENT, which is
+                                            // NOT acceptance — those are "awaiting acceptance", not onboarded.
+                                            bool trulyOnboarded = string.Equals(r.FunnelStage, "Onboarded", StringComparison.OrdinalIgnoreCase)
+                                                                  || r.SelfRegistrationCompleted == true;
+                                            bool ackSentNotAccepted = !trulyOnboarded
+                                                                  && (r.OnboardingCompleted == true
+                                                                      || string.Equals(r.FunnelStage, "AcknowledgementSent", StringComparison.OrdinalIgnoreCase));
+                                            bool selfReg = trulyOnboarded;
 
                                             bool evDone = r.EmploymentVerified == true;
                                             bool evPassed = evDone && (!string.IsNullOrEmpty(r.EmploymentCompanyName) || r.EmploymentIsEmployed == true);
@@ -506,13 +523,24 @@
                                             string aiVerdict = r.AIVerdict ?? "";
                                             bool aiPositive = aiDone && aiVerdict.IndexOf("yes", StringComparison.OrdinalIgnoreCase) >= 0;
 
-                                            string statusLower = (r.Status ?? "open").ToLower();
+                                            // Status column reflects the TRUE onboarding state, not just the raw ticket status
+                                            // (which can lag/regress). A truly-onboarded prospect (accepted the ack or
+                                            // self-registered) reads "Onboarded"; a record whose status merely SAYS onboarded
+                                            // without an actual acceptance reads "Awaiting acceptance".
+                                            string statusDisplay = r.Status ?? "Open";
+                                            if (trulyOnboarded)
+                                                statusDisplay = "Onboarded";
+                                            else if (string.Equals(statusDisplay, "Onboarded", StringComparison.OrdinalIgnoreCase))
+                                                statusDisplay = "Awaiting acceptance";
+
+                                            string statusLower = statusDisplay.ToLower();
                                             string statusBadgeCss = statusLower switch
                                             {
                                                 "open" => "pp-badge-open",
                                                 "inprogress" => "pp-badge-inprogress",
                                                 "verified" => "pp-badge-verified",
                                                 "onboarded" => "pp-badge-onboarded",
+                                                "awaiting acceptance" => "pp-badge-inprogress",
                                                 "rejected" => "pp-badge-rejected",
                                                 "closed" => "pp-badge-closed",
                                                 _ => "pp-badge-open"
@@ -574,7 +602,20 @@
                                                 </td>
                                                 <td style="text-align:center;">@Html.Raw(stepDot(channelSelected))</td>
                                                 <td style="text-align:center;">@Html.Raw(stepDot(invited))</td>
-                                                <td style="text-align:center;">@Html.Raw(stepDot(selfReg))</td>
+                                                <td style="text-align:center;">
+                                                    @if (trulyOnboarded)
+                                                    {
+                                                        @Html.Raw(stepDot(true))
+                                                    }
+                                                    else if (ackSentNotAccepted)
+                                                    {
+                                                        <span class="pp-dot pp-await" title="Acknowledgement sent — awaiting prospect's acceptance (not yet onboarded)"><i class="fas fa-user-clock"></i></span>
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.Raw(stepDot(false))
+                                                    }
+                                                </td>
 
                                                 @* MAG Link *@
                                                 <td style="font-size:11px;">
@@ -642,15 +683,19 @@
 
                                                 @* Prospect Response *@
                                                 <td style="font-size:11px;">
-                                                    @if (selfReg)
+                                                    @if (trulyOnboarded)
                                                     {
-                                                        <span class="pp-response text-success"><i class="fas fa-check-circle me-1"></i>Self-Registered</span>
+                                                        <span class="pp-response text-success"><i class="fas fa-check-circle me-1"></i>@(r.SelfRegistrationCompleted == true ? "Self-Registered" : "Onboarded")</span>
                                                         @if (r.OnboardedUserId.HasValue)
                                                         {
                                                             <br />
 
                                                             <span style="font-size:10px;color:#6c757d;">UserId: @r.OnboardedUserId</span>
                                                         }
+                                                    }
+                                                    else if (ackSentNotAccepted)
+                                                    {
+                                                        <span class="pp-response text-warning"><i class="fas fa-user-clock me-1"></i>Awaiting acceptance</span>
                                                     }
                                                     else if (!string.IsNullOrEmpty(r.ProspectResponse))
                                                     {
@@ -681,7 +726,7 @@
                                                 </td>
 
                                                 @* Status *@
-                                                <td><span class="pp-badge @statusBadgeCss">@(r.Status ?? "Open")</span></td>
+                                                <td><span class="pp-badge @statusBadgeCss">@statusDisplay</span></td>
                                             </tr>
                                         }
                                     </tbody>
