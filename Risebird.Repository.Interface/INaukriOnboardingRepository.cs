@@ -83,6 +83,16 @@ namespace Risebird.Repository.Interface
 
         Task<(int? UserId, int? ProfileId)> FindUserByEmailAsync(string email);
 
+        // Resolves an interviewer account by email REGARDLESS of active status (also returns IsActive).
+        // Used by the onboarding "adopt existing interviewer" path to find accounts that exist but are
+        // inactive (which usp_FindActiveUserByEmail / FindUserByEmailAsync would exclude).
+        Task<(int? UserId, int? ProfileId, bool? IsActive)> FindInterviewerByEmailAnyStatusAsync(string email);
+
+        // Maps an EXISTING interviewer to an Assessment Group (appends the AG id to the profile and adds
+        // the AG's skill channels as available-only / inactive) WITHOUT rewriting the profile's fields.
+        // Used to adopt an existing-but-inactive interviewer into a Naukri MAG during onboarding.
+        Task<bool> MapInterviewerToAssessmentGroupChannelsAsync(int profileId, int userId, int assessmentGroupId, string assignedBy);
+
         Task<bool> UpdatePlivoCallStatusAsync(int id, string callStatus, string conversationId,
             DateTime? callAt, int? duration, string transcript, string summary,
             string disposition, string onboardingPreference, bool? kycAccepted, string calledBy);

@@ -44,3 +44,11 @@ BEGIN
     ALTER TABLE [dbo].[TransInterviewer] ADD [AutoQcRemovedAt] DATETIME NULL
 END
 GO
+
+IF NOT EXISTS (
+    SELECT * FROM sys.columns
+    WHERE Name = N'AutoQcFlagSource' AND Object_ID = Object_ID(N'TransInterviewer'))
+BEGIN
+    ALTER TABLE [dbo].[TransInterviewer] ADD [AutoQcFlagSource] VARCHAR(50) NULL
+END
+GO
