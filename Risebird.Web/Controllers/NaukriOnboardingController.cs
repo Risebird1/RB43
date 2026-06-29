@@ -660,8 +660,10 @@ namespace Risebird.Web.Controllers
                 if (record.OnboardingCompleted == true)
                     return Json(new { success = true, alreadyOnboarded = true, message = "Already onboarded." });
 
-                if (record.IsExistingInterviewer == true)
-                    return Json(new { success = false, error = "This interviewer already exists in the system. Cannot re-onboard." });
+                // NOTE: an "existing interviewer" is NOT blocked outright here anymore. If the existing
+                // account is already ACTIVE we block in the branch below (a genuine live interviewer);
+                // if it exists but is INACTIVE (e.g. a prior MAG-direct add that was never activated)
+                // we ADOPT it so onboarding can complete instead of silently dead-ending the funnel.
 
                 if (string.IsNullOrWhiteSpace(record.ParsedEmail))
                     return Json(new { success = false, error = "Email not parsed yet. Complete Step 1 first." });
@@ -691,74 +693,109 @@ namespace Risebird.Web.Controllers
                 if (phone.Length > 0 && phone.Length < 10)
                     phone = phone.PadRight(10, '0');
 
-                var profileVM = new InterviewerProfileVM
-                {
-                    EmailId = record.ParsedEmail.Trim().ToLower(),
-                    FirstName = firstName,
-                    LastName = lastName,
-                    MobileNumber = phone,
-                    Country = "26",
-                    City = record.Location ?? "",
-                    Experience = experience,
-                    CurrentRole = record.CurrentRole ?? "",
-                    ResumeLink = record.ResumeLink ?? "",
-                    Gender = "Male",
-                    AssessmentGroupId = agId.ToString(),
-                    AssessmentGroupArray = new[] { agId.ToString() },
-                    PreviousAssessmentGroupArray = new string[0],
-                    AssessmentGroupDifference = agId.ToString(),
-                    RemovedAssessmentGroups = "",
-                    PrimarySpecializationForAcknowledgement = record.AssessmentGroupName ?? record.MagName ?? "",
-                    // Create the interviewer account INACTIVE. Onboarding is gated on the prospect
-                    // accepting the acknowledgement email: the "Yes/Accept" button hits
-                    // InterviewerAcknowledgementResponse (status=1), which activates the UserList
-                    // account (usp_UpdateInterviewerActiveStatus) and advances the funnel to 'Onboarded'.
-                    // Setting IsActive = true here would make them a live, active interviewer the moment
-                    // the profile is created — i.e. "onboarded without acknowledging" — which is the bug.
-                    IsActive = false,
-                    Isavailable = 1,
-                    CompanyName = record.EmploymentCompanyName ?? "",
-                    IsEmployed = record.EmploymentIsEmployed == true,
-                    ResourceUrl = $"https://{Request.Host}/NaukriOnboarding/Index",
-                    // This action sends its own richer acknowledgement email (both Accept/Drop
-                    // buttons, correct host & AG names) below, so suppress the service's default
-                    // one to avoid the prospect receiving two acknowledgement mails.
-                    SuppressAcknowledgementEmail = true
-                };
-
-                bool addResult;
-                string assessmentGroupList = null;
-                int userId = 0;
+                int userId;
+                int? profileId;
                 string uniqueid = null;
-                try
-                {
-                    addResult = _interviewerService.AddInterviewerProfile(
-                        profileVM, loggedInUser,
-                        out assessmentGroupList, out userId, out uniqueid);
-                }
-                catch (Exception svcEx)
-                {
-                    await _logger.LogMessage(LogLevelInfo.Exception, svcEx);
-                    return Json(new { success = false, error = $"Failed to create interviewer profile: {svcEx.Message}" });
-                }
 
-                if (!addResult || userId <= 0)
+                if (record.IsExistingInterviewer == true)
                 {
-                    string errMsg;
-                    if (!string.IsNullOrEmpty(assessmentGroupList))
-                    {
-                        errMsg = $"AG capacity issue: {assessmentGroupList}";
-                    }
-                    else
-                    {
-                        var innerEx = _interviewerService.LastAddProfileException;
-                        string detail = innerEx != null ? innerEx.Message : "Unknown reason";
-                        errMsg = $"Failed to create interviewer profile. Reason: {detail} [Email: {profileVM.EmailId}, Phone: {profileVM.MobileNumber}, AG: {agId}]";
-                    }
-                    return Json(new { success = false, error = errMsg });
-                }
+                    // ── ADOPT an existing interviewer ──────────────────────────────────────────
+                    // The prospect's email already maps to an interviewer account, so we must NOT
+                    // re-create or overwrite that profile (doing so would clobber their real data via
+                    // usp_AddOrEditInterviewerProfile's UPDATE path). Two sub-cases:
+                    //   • already ACTIVE   → a genuine live interviewer; block the re-onboard.
+                    //   • currently INACTIVE → an account that was never activated (e.g. a MAG-direct
+                    //     add). Adopt it: map them to this MAG (channels available-only / inactive),
+                    //     link the prospect, send the acknowledgement, and let acceptance activate them.
+                    var existing = await _repository.FindInterviewerByEmailAnyStatusAsync(record.ParsedEmail);
+                    if (!existing.UserId.HasValue || existing.UserId.Value <= 0)
+                        return Json(new { success = false, error = $"Flagged as an existing interviewer, but no account was found for {record.ParsedEmail}." });
 
-                int? profileId = await _repository.GetInterviewerProfileIdByUserIdAsync(userId);
+                    if (existing.IsActive == true)
+                        return Json(new { success = false, error = "This interviewer is already ACTIVE in the system. Cannot re-onboard." });
+
+                    userId = existing.UserId.Value;
+                    profileId = existing.ProfileId ?? await _repository.GetInterviewerProfileIdByUserIdAsync(userId);
+                    if (!profileId.HasValue || profileId.Value <= 0)
+                        return Json(new { success = false, error = "Could not resolve the existing interviewer profile to onboard." });
+
+                    // Map to this MAG WITHOUT touching profile fields: appends the AG id (so they
+                    // surface in the MAG members list once active) and adds the AG's skill channels
+                    // as available-only / inactive, pending manual operator activation.
+                    await _repository.MapInterviewerToAssessmentGroupChannelsAsync(profileId.Value, userId, agId, loggedInUser);
+                }
+                else
+                {
+                    // ── CREATE a new interviewer account (INACTIVE) ────────────────────────────
+                    var profileVM = new InterviewerProfileVM
+                    {
+                        EmailId = record.ParsedEmail.Trim().ToLower(),
+                        FirstName = firstName,
+                        LastName = lastName,
+                        MobileNumber = phone,
+                        Country = "26",
+                        City = record.Location ?? "",
+                        Experience = experience,
+                        CurrentRole = record.CurrentRole ?? "",
+                        ResumeLink = record.ResumeLink ?? "",
+                        Gender = "Male",
+                        AssessmentGroupId = agId.ToString(),
+                        AssessmentGroupArray = new[] { agId.ToString() },
+                        PreviousAssessmentGroupArray = new string[0],
+                        AssessmentGroupDifference = agId.ToString(),
+                        RemovedAssessmentGroups = "",
+                        PrimarySpecializationForAcknowledgement = record.AssessmentGroupName ?? record.MagName ?? "",
+                        // Create the interviewer account INACTIVE. Onboarding is gated on the prospect
+                        // accepting the acknowledgement email: the "Yes/Accept" button hits
+                        // InterviewerAcknowledgementResponse (status=1), which activates the UserList
+                        // account (usp_UpdateInterviewerActiveStatus) and advances the funnel to 'Onboarded'.
+                        // Setting IsActive = true here would make them a live, active interviewer the moment
+                        // the profile is created — i.e. "onboarded without acknowledging" — which is the bug.
+                        IsActive = false,
+                        Isavailable = 1,
+                        CompanyName = record.EmploymentCompanyName ?? "",
+                        IsEmployed = record.EmploymentIsEmployed == true,
+                        ResourceUrl = $"https://{Request.Host}/NaukriOnboarding/Index",
+                        // This action sends its own richer acknowledgement email (both Accept/Drop
+                        // buttons, correct host & AG names) below, so suppress the service's default
+                        // one to avoid the prospect receiving two acknowledgement mails.
+                        SuppressAcknowledgementEmail = true
+                    };
+
+                    bool addResult;
+                    string assessmentGroupList = null;
+                    int createdUserId = 0;
+                    try
+                    {
+                        addResult = _interviewerService.AddInterviewerProfile(
+                            profileVM, loggedInUser,
+                            out assessmentGroupList, out createdUserId, out uniqueid);
+                    }
+                    catch (Exception svcEx)
+                    {
+                        await _logger.LogMessage(LogLevelInfo.Exception, svcEx);
+                        return Json(new { success = false, error = $"Failed to create interviewer profile: {svcEx.Message}" });
+                    }
+
+                    if (!addResult || createdUserId <= 0)
+                    {
+                        string errMsg;
+                        if (!string.IsNullOrEmpty(assessmentGroupList))
+                        {
+                            errMsg = $"AG capacity issue: {assessmentGroupList}";
+                        }
+                        else
+                        {
+                            var innerEx = _interviewerService.LastAddProfileException;
+                            string detail = innerEx != null ? innerEx.Message : "Unknown reason";
+                            errMsg = $"Failed to create interviewer profile. Reason: {detail} [Email: {profileVM.EmailId}, Phone: {profileVM.MobileNumber}, AG: {agId}]";
+                        }
+                        return Json(new { success = false, error = errMsg });
+                    }
+
+                    userId = createdUserId;
+                    profileId = await _repository.GetInterviewerProfileIdByUserIdAsync(userId);
+                }
 
                 bool ackSent = false;
                 try
@@ -817,8 +854,8 @@ namespace Risebird.Web.Controllers
                     onboardingComplete = false,
                     awaitingAcknowledgement = ackSent,
                     message = ackSent
-                        ? $"Profile created (UserId: {userId}) and mapped to AG + channels. Acknowledgement email sent — onboarding completes once the interviewer accepts it."
-                        : $"Profile created (UserId: {userId}) and mapped to AG + channels, but the acknowledgement email FAILED. Use the Resend button to send it."
+                        ? $"{(record.IsExistingInterviewer == true ? "Existing interviewer" : "Profile created")} (UserId: {userId}) and mapped to AG + channels. Acknowledgement email sent — onboarding completes once the interviewer accepts it."
+                        : $"{(record.IsExistingInterviewer == true ? "Existing interviewer" : "Profile created")} (UserId: {userId}) and mapped to AG + channels, but the acknowledgement email FAILED. Use the Resend button to send it."
                 });
             }
             catch (Exception ex)

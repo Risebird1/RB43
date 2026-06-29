@@ -434,7 +434,7 @@
                                                             }
                                                         </td>
                                                         <td><span class="status-badge status-@(item.AvailabilityStatusValue?.ToLower().Replace(" ", "-") ?? "na")">@(item.AvailabilityStatusValue ?? "—")</span></td>
-                                                        <td><span class="status-badge @(item.IsInterviewerAccess ? "status-active" : "status-inactive")">@(item.IsInterviewerAccess ? "Active" : "Inactive")</span></td>
+                                                        <td><span class="status-badge @(item.IsActive ? "status-active" : "status-inactive")">@(item.IsInterviewerAccess ? "Active" : "Inactive")</span></td>
                                                         <td>
                                                             @if (item.VideoConfirmation == 1) { <span class="status-badge status-yes">Yes</span> }
                                                             else if (item.VideoConfirmation == 2) { <span class="status-badge status-no">No</span> }
@@ -1248,7 +1248,7 @@
             } else { html += '<td><span class="text-muted">—</span></td>'; }
             var availVal = (data[i].availabilityStatusValue || '—').toString().toLowerCase().replace(/\s/g, '-');
             html += '<td><span class="status-badge status-' + availVal + '">' + (data[i].availabilityStatusValue || '—') + '</span></td>';
-            html += '<td><span class="status-badge ' + (data[i].isInterviewerAccess ? 'status-active' : 'status-inactive') + '">' + (data[i].isInterviewerAccess ? 'Active' : 'Inactive') + '</span></td>';
+            html += '<td><span class="status-badge ' + (data[i].isActive ? 'status-active' : 'status-inactive') + '">' + (data[i].isActive ? 'Active' : 'Inactive') + '</span></td>';
             if (data[i].videoConfirmation == 1) html += '<td><span class="status-badge status-yes">Yes</span></td>';
             else if (data[i].videoConfirmation == 2) html += '<td><span class="status-badge status-no">No</span></td>';
             else html += '<td><span>—</span></td>';

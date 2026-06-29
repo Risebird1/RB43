@@ -82,6 +82,7 @@ namespace Risebird.Web.Controllers
             string autoClosed    = null,
             string activeStatus  = null,
             string recentlyAvailable = null,
+            string magName       = null,
             int    page          = 1,
             int    pageSize      = 25)
         {
@@ -108,7 +109,7 @@ namespace Risebird.Web.Controllers
                 else if (recentlyAvailable == "no") isRecentlyAvailable = false;
 
                 var records = await _repository.GetEmailAvailabilityAsync(
-                    status, senderEmail, resumeFitment, dtFrom, dtTo, page, pageSize, source, isAutoClosed, isInterviewerActive, isRecentlyAvailable);
+                    status, senderEmail, resumeFitment, dtFrom, dtTo, page, pageSize, source, isAutoClosed, isInterviewerActive, isRecentlyAvailable, magName);
 
                 var first      = records.FirstOrDefault();
                 int totalCount = first?.TotalCount ?? 0;
@@ -131,6 +132,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.Source        = source        ?? string.Empty;
                 ViewBag.AutoClosed    = autoClosed    ?? string.Empty;
                 ViewBag.ActiveStatus  = activeStatus  ?? string.Empty;
+                ViewBag.MagName       = magName       ?? string.Empty;
                 ViewBag.ProfileName   = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
 
                 return View(records);
@@ -144,6 +146,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.Status = status; ViewBag.SenderEmail = senderEmail; ViewBag.ResumeFitment = resumeFitment;
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
                 ViewBag.Source = source; ViewBag.AutoClosed = autoClosed; ViewBag.ActiveStatus = activeStatus;
+                ViewBag.MagName = magName ?? string.Empty;
                 ViewBag.ProfileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") ?? "";
                 return View(new List<InterviewerEmailAvailabilityVM>());
             }

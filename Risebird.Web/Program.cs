@@ -238,7 +238,9 @@ builder.Services.AddScoped<IResumeOptimizationHelper, ResumeOptimizationHelper>(
 builder.Services.AddScoped<ITranscriptOptimizationHelper, TranscriptOptimizationHelper>();
 builder.Services.AddScoped<IReportQCOptimizationHelper, ReportQCOptimizationHelper>();
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
-
+// Email Lookup
+builder.Services.AddScoped<IEmailLookupRepository, EmailLookupRepository>();
+builder.Services.AddScoped<IEmailLookupService, EmailLookupService>();
 // ============================================
 // Vapi.ai Voice AI Integration Services
 // ============================================
@@ -277,6 +279,8 @@ builder.Services.AddScoped<IInterviewerEmailAvailabilityRepository, InterviewerE
 // ============================================
 builder.Services.AddScoped<INaukriOnboardingRepository, NaukriOnboardingRepository>();
 // ============================================
+
+
 
 var app = builder.Build();
 

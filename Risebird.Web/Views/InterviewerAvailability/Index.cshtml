@@ -16,6 +16,7 @@
     string selAutoClosed = ViewBag.AutoClosed as string ?? string.Empty;
     string selActiveStatus = ViewBag.ActiveStatus as string ?? string.Empty;
     string selRecentlyAvailable = ViewBag.RecentlyAvailable as string ?? string.Empty;
+    string selMag = ViewBag.MagName as string ?? string.Empty;
     string profileName = ViewBag.ProfileName as string ?? string.Empty;
     bool canDelete = profileName == "Admin" || profileName == "SupportAdmin";
     bool canDrop = canDelete || profileName == "HR" || profileName == "SeniorHR"
@@ -27,7 +28,7 @@
                    || !string.IsNullOrEmpty(selFitment) || !string.IsNullOrEmpty(selDateFrom)
                    || !string.IsNullOrEmpty(selDateTo) || !string.IsNullOrEmpty(selSource)
                    || !string.IsNullOrEmpty(selAutoClosed) || !string.IsNullOrEmpty(selActiveStatus)
-                   || !string.IsNullOrEmpty(selRecentlyAvailable);
+                   || !string.IsNullOrEmpty(selRecentlyAvailable) || !string.IsNullOrEmpty(selMag);
 
     int first = totalCount == 0 ? 0 : (page - 1) * pageSize + 1;
     int last = Math.Min(page * pageSize, totalCount);
@@ -44,6 +45,7 @@
         if (!string.IsNullOrEmpty(selAutoClosed)) q += $"&autoClosed={Uri.EscapeDataString(selAutoClosed)}";
         if (!string.IsNullOrEmpty(selActiveStatus)) q += $"&activeStatus={Uri.EscapeDataString(selActiveStatus)}";
         if (!string.IsNullOrEmpty(selRecentlyAvailable)) q += $"&recentlyAvailable={Uri.EscapeDataString(selRecentlyAvailable)}";
+        if (!string.IsNullOrEmpty(selMag)) q += $"&magName={Uri.EscapeDataString(selMag)}";
         return Url.Action("Index", "InterviewerAvailability") + q;
     }
 
@@ -59,6 +61,7 @@
         if (!string.IsNullOrEmpty(selSource)) q += $"&source={Uri.EscapeDataString(selSource)}";
         if (!string.IsNullOrEmpty(selAutoClosed)) q += $"&autoClosed={Uri.EscapeDataString(selAutoClosed)}";
         if (!string.IsNullOrEmpty(selActiveStatus)) q += $"&activeStatus={Uri.EscapeDataString(selActiveStatus)}";
+        if (!string.IsNullOrEmpty(selMag)) q += $"&magName={Uri.EscapeDataString(selMag)}";
         if (!string.IsNullOrEmpty(ra)) q += $"&recentlyAvailable={Uri.EscapeDataString(ra)}";
         return Url.Action("Index", "InterviewerAvailability") + q;
     }
@@ -353,6 +356,7 @@
                                     @if (selRecentlyAvailable == "yes") { <option value="yes" selected>Recently available</option> } else { <option value="yes">Recently available</option> }
                                     @if (selRecentlyAvailable == "no") { <option value="no" selected>Not recently available</option> } else { <option value="no">Not recently available</option> }
                                 </select>
+                                <input type="text" name="magName" class="form-control ia-filter-control ia-filter-field--wide" placeholder="MAG / Assessment Group..." value="@selMag" />
                                 <input type="text" name="senderEmail" class="form-control ia-filter-control ia-filter-field--wide" placeholder="Sender email..." value="@selEmail" />
                                 <input type="date" name="dateFrom" class="form-control ia-filter-control" value="@selDateFrom" onchange="document.getElementById('filterForm').submit()" />
                                 <input type="date" name="dateTo" class="form-control ia-filter-control" value="@selDateTo" onchange="document.getElementById('filterForm').submit()" />
