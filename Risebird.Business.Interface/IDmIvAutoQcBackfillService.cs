@@ -1,5 +1,6 @@
 using Risebird.Entities.ViewModel;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,10 +8,11 @@ namespace Risebird.Business.Interface
 {
     public interface IDmIvAutoQcBackfillService
     {
-        Task<int> GetPreDeploymentCandidateCountAsync(DateTime? asOfUtc = null, int windowDays = 60);
+        Task<AutoQcPerIrfBackfillPreviewVm> GetPerIrfBackfillPreviewAsync(int irfId, DateTime fromUtc, DateTime toUtc);
 
-        Task<AutoQcBackfillResultVm> RunBackfillAsync(string executedBy, bool forceRerun = false, CancellationToken cancellationToken = default);
+        Task<AutoQcPerIrfBackfillResultVm> RunPerIrfBackfillAsync(int irfId, DateTime fromUtc, DateTime toUtc, string executedBy,
+            CancellationToken cancellationToken = default);
 
-        Task<(bool HasRun, Guid? LatestBatchId, DateTime? LatestExecutedAtUtc)> GetRunStatusAsync();
+        Task<IReadOnlyList<IrfAuditDirectoryRowVm>> GetIrfAuditDirectoryAsync();
     }
 }

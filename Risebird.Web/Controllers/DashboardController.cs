@@ -165,6 +165,20 @@ namespace Risebird.Web.Controllers
                 || profileName == "TechSupport";
         }
 
+        /// <summary>Date picker values are IST calendar dates; aligns with QCDoneOn storage (IST wall clock).</summary>
+        private static readonly TimeSpan IstOffset = TimeSpan.FromHours(5.5);
+
+        private static DateTime IstToday() => (DateTime.UtcNow + IstOffset).Date;
+
+        private static (DateTime FromIst, DateTime ToIst) NormalizeBackfillIstDateRange(DateTime? from, DateTime? to)
+        {
+            var toDay = (to ?? IstToday()).Date;
+            var fromDay = (from ?? toDay.AddDays(-90)).Date;
+            if (fromDay > toDay)
+                fromDay = toDay.AddDays(-90);
+            return (fromDay, toDay);
+        }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Index(bool testVapiCalls = false, bool testPlivoCalls = false, bool testPlivoRescheduleCalls = false,
@@ -7784,7 +7798,7 @@ NEVER:
         /// </summary>
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> AutoRemovalMonitor(DateTime? from = null, DateTime? to = null, int? irfId = null, string source = null, string verdict = null)
+        public async Task<IActionResult> AutoRemovalMonitor()
         {
             try
             {
@@ -7795,11 +7809,21 @@ NEVER:
                 if (!IsAutoQcOpsProfile(profileName))
                     return RedirectToAction("SignOut", "Session");
 
-                var fromUtc = from ?? DateTime.UtcNow.AddDays(-30);
-                var toUtc = to ?? DateTime.UtcNow;
-                var model = await _autoQcRemovalMonitorService.GetMonitorAsync(fromUtc, toUtc, irfId, source, verdict);
+                IReadOnlyList<IrfAuditDirectoryRowVm> directory;
+                try
+                {
+                    directory = await _autoQcBackfillService.GetIrfAuditDirectoryAsync();
+                    ViewBag.DirectoryError = null;
+                }
+                catch (Exception loadEx)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, loadEx);
+                    directory = Array.Empty<IrfAuditDirectoryRowVm>();
+                    ViewBag.DirectoryError = loadEx.GetBaseException()?.Message ?? loadEx.Message;
+                }
+
                 ViewBag.Profile = profileName;
-                return View(model);
+                return View(directory);
             }
             catch (Exception ex)
             {
@@ -7810,7 +7834,7 @@ NEVER:
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetAutoQcBackfillPreviewCount()
+        public async Task<IActionResult> GetPerIrfAutoQcBackfillPreview(int irfId, DateTime? from = null, DateTime? to = null)
         {
             try
             {
@@ -7821,15 +7845,27 @@ NEVER:
                 if (!IsAutoQcOpsProfile(profileName))
                     return Json(new { ok = false, message = "Not authorized." });
 
-                var count = await _autoQcBackfillService.GetPreDeploymentCandidateCountAsync();
-                var status = await _autoQcBackfillService.GetRunStatusAsync();
+                if (irfId <= 0)
+                    return Json(new { ok = false, message = "Invalid IRF." });
+
+                var (fromIst, toIst) = NormalizeBackfillIstDateRange(from, to);
+                var preview = await _autoQcBackfillService.GetPerIrfBackfillPreviewAsync(irfId, fromIst, toIst);
+                if (!string.IsNullOrWhiteSpace(preview.ErrorMessage))
+                    return Json(new { ok = false, message = preview.ErrorMessage });
+
                 return Json(new
                 {
                     ok = true,
-                    candidateTransInterviewerCount = count,
-                    backfillAlreadyRun = status.HasRun,
-                    latestBatchId = status.LatestBatchId,
-                    latestExecutedAtUtc = status.LatestExecutedAtUtc
+                    irfId,
+                    verdictCount = preview.VerdictCount,
+                    wouldFlagCount = preview.WouldFlagCount,
+                    alreadyFlaggedCount = preview.AlreadyFlaggedCount,
+                    unmappedVerdictCount = preview.UnmappedVerdictCount,
+                    qcMergedInRangeCount = preview.QcMergedInRangeCount,
+                    oldestVerdictDate = preview.OldestVerdictDate?.ToString("yyyy-MM-dd"),
+                    newestVerdictDate = preview.NewestVerdictDate?.ToString("yyyy-MM-dd"),
+                    fromIst = fromIst.ToString("yyyy-MM-dd"),
+                    toIst = toIst.ToString("yyyy-MM-dd")
                 });
             }
             catch (Exception ex)
@@ -7841,7 +7877,7 @@ NEVER:
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> RunAutoQcBackfill(bool forceRerun = false)
+        public async Task<IActionResult> RunPerIrfAutoQcBackfill(int irfId, DateTime? from = null, DateTime? to = null)
         {
             try
             {
@@ -7853,16 +7889,16 @@ NEVER:
                     return Json(new { ok = false, message = "Not authorized." });
 
                 var email = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? profileName;
-                var result = await _autoQcBackfillService.RunBackfillAsync(email, forceRerun);
+                var (fromIst, toIst) = NormalizeBackfillIstDateRange(from, to);
+                var result = await _autoQcBackfillService.RunPerIrfBackfillAsync(irfId, fromIst, toIst, email);
                 return Json(new
                 {
                     ok = result.Ok,
                     message = result.Message,
-                    batchId = result.BatchId,
-                    recordsRemoved = result.RecordsRemoved,
-                    recordsSkipped = result.RecordsSkipped,
-                    triggeringInterviewCount = result.TriggeringInterviewCount,
-                    preDeploymentCandidateCount = result.PreDeploymentCandidateCount
+                    runId = result.RunId,
+                    verdictsScanned = result.VerdictsScanned,
+                    newFlagsSet = result.NewFlagsSet,
+                    alreadyFlaggedSkipped = result.AlreadyFlaggedSkipped
                 });
             }
             catch (Exception ex)
@@ -7871,6 +7907,18 @@ NEVER:
                 return Json(new { ok = false, message = "Backfill failed; see logs." });
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        [Obsolete("Use GetPerIrfAutoQcBackfillPreview per IRF.")]
+        public Task<IActionResult> GetAutoQcBackfillPreviewCount() =>
+            Task.FromResult<IActionResult>(Json(new { ok = false, message = "Global backfill removed. Use per-IRF backfill from IRF Audit Directory." }));
+
+        [Authorize]
+        [HttpPost]
+        [Obsolete("Use RunPerIrfAutoQcBackfill per IRF.")]
+        public Task<IActionResult> RunAutoQcBackfill(bool forceRerun = false) =>
+            Task.FromResult<IActionResult>(Json(new { ok = false, message = "Global backfill removed. Use per-IRF backfill from IRF Audit Directory." }));
 
         /// <summary>
         /// Runs the QC Interview AI merge assistant (same logic as the Azure Functions timer <c>QcInterviewAIMergeJob</c>).
