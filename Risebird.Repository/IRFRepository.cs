@@ -624,6 +624,102 @@ namespace Risebird.Repository
             }
         }
 
+        private sealed class TransInterviewerAutoQcFlagRow
+        {
+            public int TransInterviewerId { get; set; }
+            public string AutoQcVerdict { get; set; }
+            public int? AutoQcTriggeringInterviewId { get; set; }
+            public DateTime? AutoQcRemovedAt { get; set; }
+        }
+
+        /// <summary>
+        /// Ensures AutoQcVerdict is on each active row for DM Bad Quality sub-tab counts.
+        /// Primary source: TransInterviewer columns; fallback: latest AutoQcFlag audit per row.
+        /// </summary>
+        private async Task EnrichAutoQcFieldsAsync(List<TransInterviewer> interviewers, int irfId)
+        {
+            if (interviewers == null || interviewers.Count == 0 || irfId <= 0)
+                return;
+
+            var byTransId = interviewers.ToDictionary(x => x.id);
+
+            try
+            {
+                using var con = new SqlConnection(connectionString);
+                var fromColumns = (await con.QueryAsync<TransInterviewerAutoQcFlagRow>(@"
+                    SELECT
+                        t.id AS TransInterviewerId,
+                        t.AutoQcVerdict,
+                        t.AutoQcTriggeringInterviewId,
+                        t.AutoQcRemovedAt
+                    FROM dbo.TransInterviewer t
+                    WHERE t.IRFId = @IrfId
+                      AND t.IsActive = 1
+                      AND NULLIF(LTRIM(RTRIM(ISNULL(t.AutoQcVerdict, ''))), '') IS NOT NULL",
+                    new { IrfId = irfId },
+                    commandTimeout: 30))?.ToList();
+
+                ApplyAutoQcFlagRows(fromColumns, byTransId, overwrite: true);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            try
+            {
+                using var con = new SqlConnection(connectionString);
+                var fromAudit = (await con.QueryAsync<TransInterviewerAutoQcFlagRow>(@"
+                    ;WITH Latest AS (
+                        SELECT
+                            al.TransInterviewerId,
+                            al.ToValue AS AutoQcVerdict,
+                            al.TriggeringInterviewId AS AutoQcTriggeringInterviewId,
+                            al.ChangedAt AS AutoQcRemovedAt,
+                            ROW_NUMBER() OVER (
+                                PARTITION BY al.TransInterviewerId
+                                ORDER BY al.ChangedAt DESC, al.Id DESC) AS rn
+                        FROM dbo.TransInterviewerAuditLog al
+                        INNER JOIN dbo.TransInterviewer t
+                            ON t.id = al.TransInterviewerId AND t.IRFId = @IrfId AND t.IsActive = 1
+                        WHERE al.EventType = 'AutoQcFlag'
+                    )
+                    SELECT TransInterviewerId, AutoQcVerdict, AutoQcTriggeringInterviewId, AutoQcRemovedAt
+                    FROM Latest
+                    WHERE rn = 1",
+                    new { IrfId = irfId },
+                    commandTimeout: 30))?.ToList();
+
+                ApplyAutoQcFlagRows(fromAudit, byTransId, overwrite: false);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        private static void ApplyAutoQcFlagRows(
+            IEnumerable<TransInterviewerAutoQcFlagRow> rows,
+            IReadOnlyDictionary<int, TransInterviewer> byTransId,
+            bool overwrite)
+        {
+            if (rows == null) return;
+
+            foreach (var row in rows)
+            {
+                if (row == null || row.TransInterviewerId <= 0) continue;
+                if (!byTransId.TryGetValue(row.TransInterviewerId, out var iv) || iv == null) continue;
+                if (!overwrite && !string.IsNullOrWhiteSpace(iv.AutoQcVerdict)) continue;
+                if (string.IsNullOrWhiteSpace(row.AutoQcVerdict)) continue;
+
+                iv.AutoQcVerdict = row.AutoQcVerdict.Trim();
+                if (row.AutoQcTriggeringInterviewId.HasValue)
+                    iv.AutoQcTriggeringInterviewId = row.AutoQcTriggeringInterviewId;
+                if (row.AutoQcRemovedAt.HasValue)
+                    iv.AutoQcRemovedAt = row.AutoQcRemovedAt;
+            }
+        }
+
         public async Task<IRFVm> GetSkillChannelDetailsForUpdate(int irfId)
         {
             try
@@ -866,6 +962,7 @@ namespace Risebird.Repository
                                 });
                             }
                             await EnrichInactiveAuditSummariesAsync(transInterviewer, irfId);
+                            await EnrichAutoQcFieldsAsync(transInterviewer, irfId);
                             _resultVM.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer);
                         }
                     }

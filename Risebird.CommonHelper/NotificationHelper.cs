@@ -3532,5 +3532,64 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail.";
             }
         }
+
+        public async Task<string> SendTdsLapseReminderAsync(
+            string toEmail,
+            string interviewerName,
+            decimal unpaidAmount,
+            DateTime lapseDate,
+            string verifyLink,
+            int reminderIndex)
+        {
+            try
+            {
+                var daysLeft = (lapseDate - DateTime.Today).Days;
+                var urgency  = reminderIndex >= 8 ? "URGENT: " : "";
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Payments");
+                msg.Subject = $"{urgency}Action Required: Verify your wallet to receive ₹{unpaidAmount:N0}";
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(toEmail, interviewerName));
+
+                string risebirdLogoLink = _configuration["RisebirdDetails:RisebirdLogo"];
+                string baseUrl          = _configuration["HostDetails:baseUrl"];
+
+                var body = new StringBuilder();
+                body.AppendLine($@"
+<!DOCTYPE html>
+<html>
+<body style='font-family:Arial,sans-serif;color:#333;'>
+  <div style='max-width:560px;margin:0 auto;padding:24px;border:1px solid #e0e0e0;border-radius:6px;'>
+    <img src='{risebirdLogoLink}' alt='Risebird' style='height:40px;margin-bottom:16px;' />
+    <h2 style='color:#d9534f;'>Payment Pending — Wallet Verification Required</h2>
+    <p>Dear {interviewerName},</p>
+    <p>You have a pending payment of <strong>₹{unpaidAmount:N0}</strong> on Risebird.</p>
+    <p>
+      To receive this amount, please verify your bank account (Cashfree wallet).<br/>
+      <strong>Your window to claim this payment expires on {lapseDate:dd MMM yyyy} ({daysLeft} day(s) remaining).</strong>
+    </p>
+    <p style='text-align:center;margin:24px 0;'>
+      <a href='{verifyLink}' style='background:#0046bf;color:#fff;padding:12px 24px;border-radius:4px;text-decoration:none;font-weight:bold;'>
+        Verify My Wallet Now
+      </a>
+    </p>
+    <p style='font-size:12px;color:#999;'>
+      If you have already verified, please ignore this email.<br/>
+      This is reminder #{reminderIndex + 1} of 10.
+    </p>
+    <hr style='border:none;border-top:1px solid #eee;margin:16px 0;'/>
+    <p style='font-size:11px;color:#aaa;'>Risebird &bull; Arhat Talent Solutions Pvt Ltd</p>
+  </div>
+</body>
+</html>");
+
+                msg.HtmlContent = body.ToString();
+                return await SendMail(msg);
+            }
+            catch (Exception ex)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to send TDS lapse reminder.";
+            }
+        }
     }
 }

@@ -1,0 +1,88 @@
+@using Risebird.Entities.ViewModel
+@model IList<InterviewerQuarterlyTdsRow>
+
+<div class="table-responsive">
+    <table class="table tds-table" style="width:100%;">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Deductee Code</th>
+                <th>PAN</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th style="text-align:right;">Amount Paid (₹)</th>
+                <th>Section</th>
+                <th style="text-align:right;">Rate %</th>
+                <th style="text-align:right;">TDS (₹)</th>
+                <th>Date Paid</th>
+                <th>Challan No(s)</th>
+                <th>Form 16A</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int idx = 1;
+                long totalPaid = 0;
+                long totalTds  = 0;
+            }
+            @foreach (var d in Model)
+            {
+                totalPaid += d.TotalPaid;
+                totalTds  += d.Tds;
+                <tr>
+                    <td>@(idx++)</td>
+                    <td>@d.DeducteeCode</td>
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(d.PAN))
+                        {
+                            <span class="badge-pan">@d.PAN</span>
+                        }
+                        else
+                        {
+                            <span style="color:#bbb;">—</span>
+                        }
+                    </td>
+                    <td>@d.FirstName</td>
+                    <td>@d.LastName</td>
+                    <td style="text-align:right;">@d.TotalPaid.ToString("N0")</td>
+                    <td>@d.SectionCode</td>
+                    <td style="text-align:right;">@d.Rate%</td>
+                    <td style="text-align:right;">@d.Tds.ToString("N0")</td>
+                    <td style="white-space:nowrap;">@d.DatePaid?.ToString("dd-MMM-yyyy")</td>
+                    <td style="font-size:11px;">
+                        @if (d.ChallanNumbers != null && d.ChallanNumbers.Any())
+                        {
+                            @string.Join(", ", d.ChallanNumbers)
+                        }
+                        else
+                        {
+                            <span style="color:#bbb;">—</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(d.Form16Link))
+                        {
+                            <a href="@d.Form16Link" target="_blank" class="mdc-button mdc-button--outlined mdc-ripple-upgraded" style="font-size:11px;height:26px;padding:0 8px;min-width:0;color:#d32f2f;">
+                                <span class="fas fa-file-pdf"></span>
+                            </a>
+                        }
+                        else
+                        {
+                            <span style="color:#bbb;">—</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5" style="text-align:right;font-weight:600;">Totals</td>
+                <td style="text-align:right;font-weight:600;">@totalPaid.ToString("N0")</td>
+                <td></td>
+                <td></td>
+                <td style="text-align:right;font-weight:600;">@totalTds.ToString("N0")</td>
+                <td colspan="3"></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>

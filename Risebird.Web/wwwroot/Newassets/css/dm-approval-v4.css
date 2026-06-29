@@ -2037,9 +2037,9 @@
     border-top: 1px solid var(--dm-border);
 }
 
-/* ── Inactive sub-tabs (subordinate to main Active/Inactive tabs) ── */
+/* ── Active / Inactive sub-tabs ── */
 .dm-v4-iv-subtabs {
-    display: none; /* shown by JS / CSS when Inactive tab is selected */
+    display: none;
     align-items: center;
     gap: 0;
     padding: 0 16px;
@@ -2049,7 +2049,11 @@
     -webkit-overflow-scrolling: touch;
 }
 
-#dmV4IvPanel[data-iv-tab="inactive"] .dm-v4-iv-subtabs {
+#dmV4IvPanel[data-iv-tab="active"] .dm-v4-iv-subtabs--active {
+    display: flex;
+}
+
+#dmV4IvPanel[data-iv-tab="inactive"] .dm-v4-iv-subtabs--inactive {
     display: flex;
 }
 

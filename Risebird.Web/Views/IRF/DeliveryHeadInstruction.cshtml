@@ -104,6 +104,8 @@
     }
     DmIvInactiveReasonResult DmV4InactiveReasonBadge(TransInterviewer iv, bool channelLocked) =>
         !iv.IsActive ? DmIvInactiveReasonHelper.Resolve(iv, channelLocked) : null;
+    DmIvActiveBadQualityBadge DmV4ActiveBadQualityBadge(TransInterviewer iv) =>
+        DmIvBadQualityFlagHelper.ResolveActiveBadge(iv);
     /// <summary>True when TransInterviewer.InterviewCapacity is set (explicit per-row override).</summary>
     bool DmV4CapExplicit(TransInterviewer iv) =>
         iv?.InterviewCapacity != null;
@@ -1125,6 +1127,7 @@
                                                 int ivCount = ivList.Count;
                                                 int ivActiveCount = ivList.Count(x => x.IsActive);
                                                 int ivInactiveCount = ivCount - ivActiveCount;
+                                                int ivBadQualityCount = ivList.Count(x => DmIvBadQualityFlagHelper.HasBadQualityFlag(x));
                                                 bool dmIvLockNew = Model.DmIvLockNew;
                                                 int rbVetCount = ivList.Count(x => DmV4RbVetDisplayYes(x, dmIvLockNew));
                                                 int clientVetCount = ivList.Count(x => DmV4ClientVetDisplayYes(x, dmIvLockNew, DmV4RbVetDisplayYes(x, dmIvLockNew)));
@@ -1281,7 +1284,21 @@
                                                                 <span class="dm-v4-iv-tab-count" id="dmV4IvTabInactiveCount">@ivInactiveCount</span>
                                                             </button>
                                                         </div>
-                                                        <div class="dm-v4-iv-subtabs" id="dmV4IvSubTabs" role="tablist" aria-label="Inactive filter" data-inactive-subtab="all">
+                                                        <div class="dm-v4-iv-subtabs dm-v4-iv-subtabs--active" id="dmV4IvActiveSubTabs" role="tablist" aria-label="Active filter" data-active-subtab="all">
+                                                            <button type="button" class="dm-v4-iv-subtab is-on" data-active-subtab="all" role="tab" aria-selected="true">
+                                                                All <span class="dm-v4-iv-subtab-count" id="dmV4ActiveSubTabAllCount">@ivActiveCount</span>
+                                                            </button>
+                                                            <button type="button" class="dm-v4-iv-subtab" data-active-subtab="bad-quality" role="tab" aria-selected="false">
+                                                                Bad Quality (Auto QC) <span class="dm-v4-iv-subtab-count" id="dmV4ActiveSubTabBadQualityCount">@ivBadQualityCount</span>
+                                                            </button>
+                                                        </div>
+                                                        @if (!isClientShareView && !isSmeView && ivBadQualityCount == 0)
+                                                        {
+                                                            <div class="dm-v4-autoqc-zero-hint" id="dmV4BadQualityZeroHint" style="margin:8px 0 0;font-size:12px;color:#64748b;line-height:1.45;">
+                                                                Bad Quality counts <strong>active</strong> interviewer-channels with <code>AutoQcVerdict</code> set (suspicious/redo). It is not the same as suspicious/redo interview verdicts on the IRF Audit Directory — run <strong>Backfill</strong> on <a href="/Dashboard/AutoRemovalMonitor" target="_blank" rel="noopener">IRF Audit Directory</a> first to populate flags.
+                                                            </div>
+                                                        }
+                                                        <div class="dm-v4-iv-subtabs dm-v4-iv-subtabs--inactive" id="dmV4IvSubTabs" role="tablist" aria-label="Inactive filter" data-inactive-subtab="all">
                                                             <button type="button" class="dm-v4-iv-subtab is-on" data-subtab="all" role="tab" aria-selected="true">
                                                                 All <span class="dm-v4-iv-subtab-count" id="dmV4SubTabAllCount">@ivInactiveCount</span>
                                                             </button>
@@ -1293,9 +1310,6 @@
                                                             </button>
                                                             <button type="button" class="dm-v4-iv-subtab" data-subtab="removed-client" role="tab" aria-selected="false">
                                                                 Removed by Client <span class="dm-v4-iv-subtab-count" id="dmV4SubTabRemovedClientCount">0</span>
-                                                            </button>
-                                                            <button type="button" class="dm-v4-iv-subtab" data-subtab="bad-quality" role="tab" aria-selected="false">
-                                                                Bad Quality (Auto QC) <span class="dm-v4-iv-subtab-count" id="dmV4SubTabBadQualityCount">0</span>
                                                             </button>
                                                         </div>
                                                     }
@@ -1386,6 +1400,7 @@
                                                             var ivRejectedCount = iv.TotalRejected;
                                                             var ivStatsInterviewerId = isPanelCompactView ? (iv.NickName ?? "") : (iv.EmailId ?? "");
                                                             var ivInactiveReason = DmV4InactiveReasonBadge(iv, dmIvLockNew);
+                                                            var ivActiveBadQuality = DmV4ActiveBadQualityBadge(iv);
                                                             var autoQcInterviewId = iv.AutoQcTriggeringInterviewId ?? iv.LatestInactiveAuditTriggeringInterviewId;
                                                             var autoQcRemovedAtIso = DmV4IsoTimestamp(iv.AutoQcRemovedAt ?? iv.LatestInactiveAuditChangedAt);
                                                             if (isClientShareView)
@@ -1523,6 +1538,15 @@
                                                                     @if (dmIvLockNew && !isPanelCompactView)
                                                                     {
                                                                         <span class="dm-v4-iv-status dm-v4-iv-status--@ivStatusTone" data-role="iv-status" title="Derived from RB Vet and Client Vet">@ivStatusLabel</span>
+                                                                    }
+                                                                    @if (ivActiveBadQuality != null)
+                                                                    {
+                                                                        <span class="dm-v4-iv-inactive-reason dm-v4-iv-inactive-reason--@ivActiveBadQuality.Tone dm-v4-iv-inactive-reason--auto-qc dm-v4-iv-active-bad-quality"
+                                                                              data-active-bad-quality="1"
+                                                                              @if (autoQcInterviewId.HasValue) { <text>data-auto-qc-interview-id="@autoQcInterviewId.Value"</text> }
+                                                                              data-auto-qc-verdict="@ivActiveBadQuality.Verdict"
+                                                                              @if (!string.IsNullOrEmpty(autoQcRemovedAtIso)) { <text>data-auto-qc-removed-at="@autoQcRemovedAtIso"</text> }
+                                                                              title="">@ivActiveBadQuality.Label</span>
                                                                     }
                                                                     @if (ivInactiveReason != null)
                                                                     {
@@ -3636,7 +3660,7 @@ else
         white-space:normal;
     }
 </style>
-<script src="~/js/dm-v4-layout.js?v=20250625inactive3"></script>
+<script src="~/js/dm-v4-layout.js?v=20250629autoqcflag3"></script>
 <script src="~/js/dm-v4-voice.js?v=20250609istmeta1"></script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
 <script src="~/js/dm-v4-questions.js?v=20250609synthesia2"></script>
