@@ -1,33 +1,43 @@
-
-IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_AddCertificates'))
+CREATE OR ALTER PROCEDURE [dbo].[usp_AddCertificates]
+    @Emailid  VARCHAR(150),
+    @year     VARCHAR(15),
+    @comment  VARCHAR(250),
+    @clink    VARCHAR(1000),
+    @month    VARCHAR(15),
+    @id       INT              -- kept for backward compatibility; ignored in upsert logic
+AS
 BEGIN
-    DROP PROCEDURE dbo.usp_AddCertificates
+    SET NOCOUNT ON;
+
+    -- Resolve interviewer id from email
+    DECLARE @interviewerid INT;
+    SELECT @interviewerid = id FROM UserList WHERE EmailId = @Emailid;
+
+    IF @interviewerid IS NULL
+    BEGIN
+        RAISERROR('usp_AddCertificates: no UserList row found for EmailId = %s', 16, 1, @Emailid);
+        RETURN;
+    END
+
+    -- Upsert based on (interviewerid, year, month) — never create duplicates
+    IF EXISTS (
+        SELECT 1 FROM InterviewerCertificates
+        WHERE interviewerid = @interviewerid
+          AND year          = @year
+          AND month         = @month
+    )
+    BEGIN
+        UPDATE InterviewerCertificates
+        SET certificatelink = @clink,
+            comment         = @comment
+        WHERE interviewerid = @interviewerid
+          AND year          = @year
+          AND month         = @month;
+    END
+    ELSE
+    BEGIN
+        INSERT INTO InterviewerCertificates (interviewerid, year, month, certificatelink, comment)
+        VALUES (@interviewerid, @year, @month, @clink, @comment);
+    END
 END
-
-SET ANSI_NULLS ON
 GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-  
-CREATE Procedure usp_AddCertificates  
-@Emailid varchar(150),  
-@year varchar(15),  
-@comment varchar(250),  
-@clink varchar(1000),  
-@month varchar(15),  
-@id int  
-As  
-BEGIN  
-Declare @interviewerid int  
-Select @interviewerid=id from Userlist where Emailid=@Emailid  
-if Exists (Select 1 from InterviewerCertificates where id=@id )  
-BEGIN  
-Update InterviewerCertificates set certificatelink=@clink,month=@month,comment=@comment where id=@id  
-END  
-ELSE  
-BEGIN  
-Insert into InterviewerCertificates(interviewerid,year,month,certificatelink,comment) values(@interviewerid,@year,@month,@clink,@comment)  
-END  
-END  
-Go
