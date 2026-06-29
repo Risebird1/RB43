@@ -16,7 +16,7 @@ namespace Risebird.Repository.Interface
 
         Task ClearAutoQcFieldsAsync(int transInterviewerId);
 
-        Task<TransInterviewerInterviewContext> GetContextForInterviewAsync(int interviewId);
+        Task<TransInterviewerInterviewContext> GetContextForInterviewAsync(int interviewId, int irfId = 0);
 
         Task<int> GetFutureAssignedCountForInterviewAsync(int interviewId);
 

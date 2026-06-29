@@ -31,7 +31,7 @@ namespace Risebird.Business
             if (verdict == null)
                 return;
 
-            var ctx = await _auditRepository.GetContextForInterviewAsync(interviewId);
+            var ctx = await _auditRepository.GetContextForInterviewAsync(interviewId, irfId);
             if (ctx == null)
             {
                 _log.LogWarning("DmIvAutoQcFlag: no TransInterviewer for interviewId={InterviewId}", interviewId);
@@ -70,7 +70,7 @@ namespace Risebird.Business
                 : options.Source;
 
             var alreadyRecorded = await _auditRepository.HasAutoQcFlagAuditForInterviewAsync(
-                ctx.TransInterviewerId, triggeringInterviewId, source);
+                ctx.TransInterviewerId, triggeringInterviewId, auditSource: null);
             if (alreadyRecorded)
             {
                 _log.LogInformation(

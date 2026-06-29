@@ -81,6 +81,7 @@ namespace Risebird.Entities.ViewModel
         public string InterviewerEmail { get; set; }
         public int UserId { get; set; }
         public string InterviewerCodedId { get; set; }
+        public string CurrentAutoQcVerdict { get; set; }
     }
 
     public class AutoQcPerIrfBackfillPreviewVm
@@ -89,6 +90,11 @@ namespace Risebird.Entities.ViewModel
         public int VerdictCount { get; set; }
         public int WouldFlagCount { get; set; }
         public int AlreadyFlaggedCount { get; set; }
+        public int UnmappedVerdictCount { get; set; }
+        public int QcMergedInRangeCount { get; set; }
+        public DateTime? OldestVerdictDate { get; set; }
+        public DateTime? NewestVerdictDate { get; set; }
+        public string ErrorMessage { get; set; }
     }
 
     public class AutoQcPerIrfBackfillResultVm
@@ -107,6 +113,7 @@ namespace Risebird.Entities.ViewModel
         public string IrfName { get; set; }
         public int TotalCompletedLifetime { get; set; }
         public int CompletedLast90Days { get; set; }
+        public int SuspiciousRedoLast90Days { get; set; }
         public int PendingFlagsCount { get; set; }
         public DateTime? LastBackfillAtUtc { get; set; }
     }

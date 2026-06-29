@@ -20,7 +20,7 @@ namespace Risebird.Repository
 
         public AutoQcRemovalMonitorRepository(IConfiguration configuration, IApplicationErrorLogger logger)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection");
+            _connectionString = configuration["ConnectionString:DBConnectionString"];
             _logger = logger;
         }
 
@@ -192,19 +192,48 @@ namespace Risebird.Repository
 
         public async Task<AutoQcPerIrfBackfillPreviewVm> GetPerIrfBackfillPreviewAsync(int irfId, DateTime fromUtc, DateTime toUtc)
         {
+            if (string.IsNullOrWhiteSpace(_connectionString))
+            {
+                return new AutoQcPerIrfBackfillPreviewVm
+                {
+                    IrfId = irfId,
+                    ErrorMessage = "Database connection string (ConnectionString:DBConnectionString) is not configured."
+                };
+            }
+
             try
             {
                 using var con = new SqlConnection(_connectionString);
-                return await con.QueryFirstOrDefaultAsync<AutoQcPerIrfBackfillPreviewVm>(
+                var row = await con.QueryFirstOrDefaultAsync<AutoQcPerIrfBackfillPreviewVm>(
                     "usp_GetPerIrfAutoQcBackfillPreview",
                     new { IrfId = irfId, FromUtc = fromUtc, ToUtc = toUtc },
                     commandType: CommandType.StoredProcedure,
-                    commandTimeout: 120);
+                    commandTimeout: 300);
+                if (row == null)
+                {
+                    return new AutoQcPerIrfBackfillPreviewVm
+                    {
+                        IrfId = irfId,
+                        ErrorMessage = "Preview query returned no row. Deploy the latest usp_GetPerIrfAutoQcBackfillPreview script."
+                    };
+                }
+
+                row.IrfId = irfId;
+                return row;
             }
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                return new AutoQcPerIrfBackfillPreviewVm { IrfId = irfId };
+                var detail = ex.GetBaseException()?.Message ?? ex.Message;
+                var isTimeout = detail.IndexOf("timeout", StringComparison.OrdinalIgnoreCase) >= 0
+                    || detail.IndexOf("timed out", StringComparison.OrdinalIgnoreCase) >= 0;
+                return new AutoQcPerIrfBackfillPreviewVm
+                {
+                    IrfId = irfId,
+                    ErrorMessage = isTimeout
+                        ? "Preview query timed out. Deploy the latest usp_GetPerIrfAutoQcBackfillPreview and AutoQcBackfillPerformanceIndexes.sql, then retry."
+                        : "Preview query failed. Deploy usp_GetPerIrfAutoQcBackfillPreview and ensure TransInterviewerAuditLog exists. " + detail
+                };
             }
         }
 
@@ -217,7 +246,7 @@ namespace Risebird.Repository
                     "usp_GetPerIrfAutoQcBackfillCandidates",
                     new { IrfId = irfId, FromUtc = fromUtc, ToUtc = toUtc },
                     commandType: CommandType.StoredProcedure,
-                    commandTimeout: 180);
+                    commandTimeout: 300);
                 return rows?.ToList() ?? new List<AutoQcBackfillCandidateRow>();
             }
             catch (Exception ex)
@@ -251,6 +280,9 @@ namespace Risebird.Repository
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(_connectionString))
+                    throw new InvalidOperationException("Database connection string is not configured.");
+
                 using var con = new SqlConnection(_connectionString);
                 var rows = await con.QueryAsync<IrfAuditDirectoryRowVm>(
                     "usp_GetIrfAuditDirectory",
@@ -261,7 +293,9 @@ namespace Risebird.Repository
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                return Array.Empty<IrfAuditDirectoryRowVm>();
+                throw new InvalidOperationException(
+                    "Failed to load IRF Audit Directory. Deploy usp_GetIrfAuditDirectory, AutoQcIrfBackfillRun, and TransInterviewer.AutoQcVerdict scripts.",
+                    ex);
             }
         }
     }

@@ -165,6 +165,20 @@ namespace Risebird.Web.Controllers
                 || profileName == "TechSupport";
         }
 
+        /// <summary>Date picker values are IST calendar dates; aligns with QCDoneOn storage (IST wall clock).</summary>
+        private static readonly TimeSpan IstOffset = TimeSpan.FromHours(5.5);
+
+        private static DateTime IstToday() => (DateTime.UtcNow + IstOffset).Date;
+
+        private static (DateTime FromIst, DateTime ToIst) NormalizeBackfillIstDateRange(DateTime? from, DateTime? to)
+        {
+            var toDay = (to ?? IstToday()).Date;
+            var fromDay = (from ?? toDay.AddDays(-90)).Date;
+            if (fromDay > toDay)
+                fromDay = toDay.AddDays(-90);
+            return (fromDay, toDay);
+        }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Index(bool testVapiCalls = false, bool testPlivoCalls = false, bool testPlivoRescheduleCalls = false,
@@ -7793,7 +7807,19 @@ NEVER:
                 if (!IsAutoQcOpsProfile(profileName))
                     return RedirectToAction("SignOut", "Session");
 
-                var directory = await _autoQcBackfillService.GetIrfAuditDirectoryAsync();
+                IReadOnlyList<IrfAuditDirectoryRowVm> directory;
+                try
+                {
+                    directory = await _autoQcBackfillService.GetIrfAuditDirectoryAsync();
+                    ViewBag.DirectoryError = null;
+                }
+                catch (Exception loadEx)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, loadEx);
+                    directory = Array.Empty<IrfAuditDirectoryRowVm>();
+                    ViewBag.DirectoryError = loadEx.GetBaseException()?.Message ?? loadEx.Message;
+                }
+
                 ViewBag.Profile = profileName;
                 return View(directory);
             }
@@ -7817,9 +7843,14 @@ NEVER:
                 if (!IsAutoQcOpsProfile(profileName))
                     return Json(new { ok = false, message = "Not authorized." });
 
-                var fromUtc = from ?? DateTime.UtcNow.AddDays(-60);
-                var toUtc = to ?? DateTime.UtcNow;
-                var preview = await _autoQcBackfillService.GetPerIrfBackfillPreviewAsync(irfId, fromUtc, toUtc);
+                if (irfId <= 0)
+                    return Json(new { ok = false, message = "Invalid IRF." });
+
+                var (fromIst, toIst) = NormalizeBackfillIstDateRange(from, to);
+                var preview = await _autoQcBackfillService.GetPerIrfBackfillPreviewAsync(irfId, fromIst, toIst);
+                if (!string.IsNullOrWhiteSpace(preview.ErrorMessage))
+                    return Json(new { ok = false, message = preview.ErrorMessage });
+
                 return Json(new
                 {
                     ok = true,
@@ -7827,8 +7858,12 @@ NEVER:
                     verdictCount = preview.VerdictCount,
                     wouldFlagCount = preview.WouldFlagCount,
                     alreadyFlaggedCount = preview.AlreadyFlaggedCount,
-                    fromUtc,
-                    toUtc
+                    unmappedVerdictCount = preview.UnmappedVerdictCount,
+                    qcMergedInRangeCount = preview.QcMergedInRangeCount,
+                    oldestVerdictDate = preview.OldestVerdictDate?.ToString("yyyy-MM-dd"),
+                    newestVerdictDate = preview.NewestVerdictDate?.ToString("yyyy-MM-dd"),
+                    fromIst = fromIst.ToString("yyyy-MM-dd"),
+                    toIst = toIst.ToString("yyyy-MM-dd")
                 });
             }
             catch (Exception ex)
@@ -7852,9 +7887,8 @@ NEVER:
                     return Json(new { ok = false, message = "Not authorized." });
 
                 var email = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? profileName;
-                var fromUtc = from ?? DateTime.UtcNow.AddDays(-60);
-                var toUtc = to ?? DateTime.UtcNow;
-                var result = await _autoQcBackfillService.RunPerIrfBackfillAsync(irfId, fromUtc, toUtc, email);
+                var (fromIst, toIst) = NormalizeBackfillIstDateRange(from, to);
+                var result = await _autoQcBackfillService.RunPerIrfBackfillAsync(irfId, fromIst, toIst, email);
                 return Json(new
                 {
                     ok = result.Ok,

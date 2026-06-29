@@ -1127,6 +1127,7 @@
                                                 int ivCount = ivList.Count;
                                                 int ivActiveCount = ivList.Count(x => x.IsActive);
                                                 int ivInactiveCount = ivCount - ivActiveCount;
+                                                int ivBadQualityCount = ivList.Count(x => DmIvBadQualityFlagHelper.HasBadQualityFlag(x));
                                                 bool dmIvLockNew = Model.DmIvLockNew;
                                                 int rbVetCount = ivList.Count(x => DmV4RbVetDisplayYes(x, dmIvLockNew));
                                                 int clientVetCount = ivList.Count(x => DmV4ClientVetDisplayYes(x, dmIvLockNew, DmV4RbVetDisplayYes(x, dmIvLockNew)));
@@ -1288,9 +1289,15 @@
                                                                 All <span class="dm-v4-iv-subtab-count" id="dmV4ActiveSubTabAllCount">@ivActiveCount</span>
                                                             </button>
                                                             <button type="button" class="dm-v4-iv-subtab" data-active-subtab="bad-quality" role="tab" aria-selected="false">
-                                                                Bad Quality (Auto QC) <span class="dm-v4-iv-subtab-count" id="dmV4ActiveSubTabBadQualityCount">0</span>
+                                                                Bad Quality (Auto QC) <span class="dm-v4-iv-subtab-count" id="dmV4ActiveSubTabBadQualityCount">@ivBadQualityCount</span>
                                                             </button>
                                                         </div>
+                                                        @if (!isClientShareView && !isSmeView && ivBadQualityCount == 0)
+                                                        {
+                                                            <div class="dm-v4-autoqc-zero-hint" id="dmV4BadQualityZeroHint" style="margin:8px 0 0;font-size:12px;color:#64748b;line-height:1.45;">
+                                                                Bad Quality counts <strong>active</strong> interviewer-channels with <code>AutoQcVerdict</code> set (suspicious/redo). It is not the same as suspicious/redo interview verdicts on the IRF Audit Directory — run <strong>Backfill</strong> on <a href="/Dashboard/AutoRemovalMonitor" target="_blank" rel="noopener">IRF Audit Directory</a> first to populate flags.
+                                                            </div>
+                                                        }
                                                         <div class="dm-v4-iv-subtabs dm-v4-iv-subtabs--inactive" id="dmV4IvSubTabs" role="tablist" aria-label="Inactive filter" data-inactive-subtab="all">
                                                             <button type="button" class="dm-v4-iv-subtab is-on" data-subtab="all" role="tab" aria-selected="true">
                                                                 All <span class="dm-v4-iv-subtab-count" id="dmV4SubTabAllCount">@ivInactiveCount</span>
@@ -3652,7 +3659,7 @@ else
         white-space:normal;
     }
 </style>
-<script src="~/js/dm-v4-layout.js?v=20250625autoqcflag1"></script>
+<script src="~/js/dm-v4-layout.js?v=20250629autoqcflag3"></script>
 <script src="~/js/dm-v4-voice.js?v=20250609istmeta1"></script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
 <script src="~/js/dm-v4-questions.js?v=20250609synthesia2"></script>

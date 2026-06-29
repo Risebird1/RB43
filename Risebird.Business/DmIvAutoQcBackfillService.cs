@@ -74,7 +74,7 @@ namespace Risebird.Business
                     IsActive = true,
                     InterviewerEmail = first.InterviewerEmail,
                     InterviewerCodedId = first.InterviewerCodedId,
-                    AutoQcVerdict = null
+                    AutoQcVerdict = first.CurrentAutoQcVerdict
                 };
 
                 var options = new AutoQcFlagOptions

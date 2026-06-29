@@ -1280,7 +1280,9 @@
     function rowHasBadQualityFlag($row) {
         if (!readRowDbActive($row)) return false;
         var verdict = ($row.attr('data-auto-qc-verdict') || '').trim();
-        return verdict.length > 0;
+        if (verdict.length > 0) return true;
+        return $row.find('[data-active-bad-quality="1"]').length > 0
+            || $row.find('.dm-v4-iv-active-bad-quality').length > 0;
     }
 
     function getActiveSubTab() {
@@ -1580,10 +1582,6 @@
         var fromAudit = inferInactiveReasonFromAuditRow($row);
         if (fromAudit) return fromAudit;
 
-        var autoQcVerdict = ($row.attr('data-auto-qc-verdict') || '').toLowerCase();
-        if (autoQcVerdict === 'suspicious') return inactiveReasonFromCategory('RemovedByRbAutoQcSuspicious');
-        if (autoQcVerdict === 'redo') return inactiveReasonFromCategory('RemovedByRbAutoQcRedo');
-
         var channelLocked = isPolicyLockOn(getPolicyBar());
         var available = ($row.attr('data-is-available') || '0') === '1';
         var action = ($row.attr('data-client-action') || '').toLowerCase();
@@ -1689,6 +1687,41 @@
             $tip.append('<br><em>No interview ID recorded</em>');
         }
         return $tip;
+    }
+
+    function buildAutoQcFlagTooltipHtml(interviewId, verdict, flaggedAtIso) {
+        var $tip = $('<span class="dm-v4-autoqc-tooltip"></span>');
+        $tip.append('<span class="dm-v4-autoqc-tooltip__label">Auto QC Flag</span>');
+        if (interviewId) {
+            $tip.append('<br>Verdict: <strong>' + $('<span>').text(verdict).html() + '</strong>');
+            $tip.append('<br>Triggering interview: <strong>' + $('<span>').text(interviewId).html() + '</strong>');
+            if (flaggedAtIso) {
+                $tip.append('<br>Flagged: <strong>' + $('<span>').text(formatAutoQcTimestamp(flaggedAtIso)).html() + '</strong>');
+            }
+            var url = '/Interview/QCMergedAIDetails?interviewId=' + encodeURIComponent(interviewId);
+            $tip.append('<br><a class="dm-v4-autoqc-tooltip__link" href="' + url + '" target="_blank" rel="noopener">View QCMergedAIDetails →</a>');
+        } else {
+            $tip.append('<br>Verdict: <strong>' + $('<span>').text(verdict).html() + '</strong>');
+            if (flaggedAtIso) {
+                $tip.append('<br>Flagged: <strong>' + $('<span>').text(formatAutoQcTimestamp(flaggedAtIso)).html() + '</strong>');
+            }
+        }
+        return $tip;
+    }
+
+    function syncActiveBadQualityBadges() {
+        $('#dmV4IvPanel .dm-v4-iv-active-bad-quality').each(function () {
+            var $badge = $(this);
+            if ($badge.find('.dm-v4-autoqc-tooltip').length) return;
+            var interviewId = ($badge.attr('data-auto-qc-interview-id') || '').toString();
+            var verdict = ($badge.attr('data-auto-qc-verdict') || 'flagged').toLowerCase();
+            var flaggedAt = ($badge.attr('data-auto-qc-removed-at') || '').toString();
+            var label = $badge.text().trim() || 'Flagged (Auto QC)';
+            $badge.empty()
+                .append(document.createTextNode(label))
+                .append(buildAutoQcFlagTooltipHtml(interviewId, verdict, flaggedAt));
+            $badge.attr('title', '');
+        });
     }
 
     function syncVetButtons($row) {
@@ -3631,6 +3664,7 @@
         initInactiveSubTabs();
         initActiveSubTabs();
         initAutoQcBadgeTooltips();
+        syncActiveBadQualityBadges();
         refreshIvBadges();
         updatePolicySubtext();
         initIvEditableFields();
