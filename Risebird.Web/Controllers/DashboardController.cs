@@ -7796,6 +7796,8 @@ NEVER:
         /// Ops monitor for automated QC verdict removals — forward trigger + 60-day backfill.
         /// Trigger: QcInterviewAIMergeJobService.ProcessRowAsync after usp_SaveQcInterviewAIMergedDetails.
         /// </summary>
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> AutoRemovalMonitor()
         {
             try
