@@ -14,15 +14,19 @@ AS
 BEGIN 
 
 --campaign table
+-- LEFT JOIN to AssessmentGroup so a valid campaign always returns a header row even if its
+-- assessment group is missing/removed (an INNER JOIN previously dropped the row entirely, which
+-- left the caller with a null model and crashed the details page).
 select agc.id, agc.CampaignName, agc.CreatedAt, agc.CreatedBy, agc.ModifiedAt, agc.ModifiedBy, 
 ag.AssessmentGroup as AssessmentGroupName, 
+agc.AssessmentGroupId,
 CASE
         WHEN mag.id is null THEN 0
         WHEN mag.id > 0 THEN 1
         ELSE 0
 END AS IsAlreadyMasterAG
 from AGCampaigns agc
-join AssessmentGroup ag on ag.id = agc.AssessmentGroupId
+left join AssessmentGroup ag on ag.id = agc.AssessmentGroupId
 left join MasterAssessmentGroup mag on mag.AssessmentGroupId = agc.AssessmentGroupId
 where agc.id =@campaignId
      

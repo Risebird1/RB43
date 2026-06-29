@@ -107,6 +107,21 @@
     .camp-bc-pill--scheduled { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
     .camp-bc-pill--pending { background: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
 
+    .camp-bc-attempts-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        align-self: flex-start;
+        margin-top: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #17a2b8;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .camp-bc-attempts-link:hover { text-decoration: underline; }
+
     .camp-bc-stats {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -281,6 +296,10 @@
                                                                             <div class="camp-bc-progress__bar" style="width:@successPct%;"></div>
                                                                         </div>
                                                                     }
+                                                                    @if (!string.IsNullOrWhiteSpace(item.BatchCallAttemptName))
+                                                                    {
+                                                                        <div class="camp-bc-meta" title="Latest attempt">@item.BatchCallAttemptName</div>
+                                                                    }
                                                                     <div class="camp-bc-meta">
                                                                         @if (item.BatchCallCompletedAt.HasValue)
                                                                         {
@@ -291,6 +310,14 @@
                                                                             <span>Started @item.BatchCallInitiatedAt.Value.ToString("dd MMM yyyy, HH:mm")</span>
                                                                         }
                                                                     </div>
+                                                                    @if (item.BatchCallAttemptCount > 0)
+                                                                    {
+                                                                        <a href="javascript:void(0)" class="camp-bc-attempts-link"
+                                                                           onclick="viewCampaignAttempts(@item.id, '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(item.CampaignName ?? string.Empty))')">
+                                                                            <i class="fa fa-history"></i>
+                                                                            View @item.BatchCallAttemptCount attempt@(item.BatchCallAttemptCount > 1 ? "s" : "")
+                                                                        </a>
+                                                                    }
                                                                 </div>
                                                             }
                                                             else if (item.BatchCallTriggeredAt.HasValue)
@@ -333,14 +360,14 @@
                                                                 </button>
                                                             </a>
                                                             @{
-                                                                bool alreadyTriggered = item.BatchCallTriggeredAt.HasValue;
-                                                                bool hourElapsed = item.CreatedAt.HasValue && DateTime.Now.Subtract(item.CreatedAt.Value).TotalHours >= 1;
-                                                                // A manual trigger is an explicit operator override, so it is allowed any time the batch
-                                                                // call has not already run — the 1-hour delay only governs the automated timer job.
-                                                                bool canTrigger = !alreadyTriggered;
-                                                                string btnTitle = alreadyTriggered ? "Batch call already triggered"
-                                                                    : !hourElapsed ? "Call unresponded interviewers now (overrides the 1-hour auto-call delay)"
-                                                                    : "Call unresponded interviewers for availability";
+                                                                // Multiple attempts per campaign are allowed; only an in-progress attempt blocks a new one.
+                                                                bool isRunning = string.Equals(item.BatchCallStatus, "Running", StringComparison.OrdinalIgnoreCase) && !item.BatchCallCompletedAt.HasValue;
+                                                                bool canTrigger = !isRunning;
+                                                                string btnTitle = isRunning
+                                                                    ? "A batch-call attempt is currently in progress"
+                                                                    : (item.BatchCallAttemptCount > 0
+                                                                        ? "Start another batch-call attempt for unresponded interviewers"
+                                                                        : "Call unresponded interviewers for availability");
                                                             }
                                                             <button class="mdc-fab app-fab--absolute btn-trigger-batch-call"
                                                                     aria-label="Trigger Availability Calls"
@@ -548,7 +575,8 @@
 
         Swal.fire({
             title: 'Trigger Availability Calls?',
-            html: 'This will place Plivo calls to all unresponded interviewers in campaign <strong>' + campaignName + '</strong>.<br><br>Do you want to proceed?',
+            html: 'This starts a new batch-call attempt that places Plivo calls to all unresponded interviewers in campaign <strong>' + campaignName + '</strong>.<br><br>'
+                + 'The calls are handled by a background service, so this returns immediately.<br><br>Do you want to proceed?',
             type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#17a2b8',
@@ -561,14 +589,11 @@
             btn.prop('disabled', true).css('opacity', '0.45');
             btn.find('i').removeClass('fa-phone').addClass('fa-spinner fa-spin');
 
-            // The batch call runs synchronously on the server — one Plivo call is placed per
-            // unresponded interviewer with a short gap between each — so the request can take a
-            // while. Show a persistent, non-dismissible progress modal so the operator knows it
-            // is in progress (instead of the dialog just disappearing).
+            // The portal only opens the attempt and hands the calling off to the CampaignBatchCall
+            // Azure Function (fire-and-forget), so this request returns in a moment.
             Swal.fire({
-                title: 'Placing availability calls…',
-                html: 'Calling unresponded interviewers in campaign <strong>' + campaignName + '</strong>.<br><br>'
-                    + 'This can take a few minutes for large campaigns. Please keep this tab open until it finishes.',
+                title: 'Starting batch call…',
+                html: 'Handing the calls for <strong>' + campaignName + '</strong> off to the background calling service.',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
                 showConfirmButton: false,
@@ -588,14 +613,24 @@
                 success: function (res) {
                     btn.find('i').removeClass('fa-spinner fa-spin').addClass('fa-phone');
                     if (res.success) {
-                        Swal.fire({
-                            title: 'Calls Triggered!',
-                            html: (res.message ? res.message + '<br><br>' : '')
-                                + '<b>Succeeded:</b> ' + (res.succeeded || 0) + '<br><b>Failed:</b> ' + (res.failed || 0) + '<br><b>Skipped:</b> ' + (res.skipped || 0),
-                            type: 'success',
-                            allowOutsideClick: false,
-                            confirmButtonColor: '#17a2b8'
-                        }).then(function () { location.reload(); });
+                        if (res.started === false) {
+                            // Nothing to do (e.g. no unresponded interviewers).
+                            Swal.fire({
+                                title: 'Nothing to call',
+                                html: res.message || 'No unresponded interviewers to call.',
+                                type: 'info',
+                                confirmButtonColor: '#17a2b8'
+                            }).then(function () { location.reload(); });
+                        } else {
+                            // Calls are placed in the background; the request returns immediately.
+                            Swal.fire({
+                                title: 'Batch Call Started',
+                                html: res.message || 'Availability calls are being placed in the background. Refresh in a few minutes to see the final status.',
+                                type: 'success',
+                                allowOutsideClick: false,
+                                confirmButtonColor: '#17a2b8'
+                            }).then(function () { location.reload(); });
+                        }
                     } else {
                         btn.prop('disabled', false).css('opacity', '1');
                         Swal.fire('Error', res.error || 'Failed to trigger batch calls.', 'error');
@@ -619,6 +654,141 @@
             });
         });
     });
+
+    function camp_bc_escapeHtml(s) {
+        if (s === null || s === undefined) return '';
+        return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function camp_bc_outcomeBadge(outcome) {
+        var o = (outcome || '').toLowerCase();
+        var color = o === 'succeeded' ? '#166534' : (o === 'failed' ? '#991b1b' : '#92400e');
+        var bg = o === 'succeeded' ? '#dcfce7' : (o === 'failed' ? '#fee2e2' : '#fef3c7');
+        return '<span style="display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;color:' + color + ';background:' + bg + ';">' + camp_bc_escapeHtml(outcome || '-') + '</span>';
+    }
+
+    var _campBcCurrentCampaignId = 0;
+    var _campBcCurrentCampaignName = '';
+
+    // Shows all batch-call attempts for a campaign. Each attempt can be expanded to per-call details.
+    function viewCampaignAttempts(campaignId, campaignName) {
+        _campBcCurrentCampaignId = campaignId;
+        _campBcCurrentCampaignName = campaignName;
+        Swal.fire({
+            title: 'Batch call attempts',
+            html: 'Loading…',
+            width: 820,
+            onOpen: function () { Swal.showLoading(); }
+        });
+
+        $.ajax({
+            url: '@Url.Action("GetCampaignBatchCallAttempts", "IRF")',
+            type: 'GET',
+            data: { campaignId: campaignId },
+            success: function (res) {
+                if (!res || !res.success) {
+                    Swal.fire('Error', (res && res.error) || 'Failed to load attempts.', 'error');
+                    return;
+                }
+                var attempts = res.attempts || [];
+                var html = '<div style="text-align:left;">'
+                    + '<div style="font-size:12px;color:#64748b;margin-bottom:10px;">Campaign: <strong>' + camp_bc_escapeHtml(campaignName) + '</strong> &middot; ' + attempts.length + ' attempt(s)</div>';
+                if (attempts.length === 0) {
+                    html += '<div style="padding:14px;color:#64748b;">No batch-call attempts yet.</div>';
+                } else {
+                    html += '<table style="width:100%;border-collapse:collapse;font-size:12px;">'
+                        + '<thead><tr style="background:#f1f5f9;color:#334155;">'
+                        + '<th style="padding:6px;text-align:left;">Attempt</th>'
+                        + '<th style="padding:6px;">Status</th>'
+                        + '<th style="padding:6px;">OK</th>'
+                        + '<th style="padding:6px;">Fail</th>'
+                        + '<th style="padding:6px;">Skip</th>'
+                        + '<th style="padding:6px;">Total</th>'
+                        + '<th style="padding:6px;"></th>'
+                        + '</tr></thead><tbody>';
+                    attempts.forEach(function (a) {
+                        html += '<tr style="border-bottom:1px solid #e2e8f0;">'
+                            + '<td style="padding:6px;text-align:left;">'
+                                + '<div style="font-weight:600;color:#1e293b;">#' + (a.attemptNumber || '-') + '</div>'
+                                + '<div style="font-size:10px;color:#64748b;word-break:break-all;">' + camp_bc_escapeHtml(a.attemptName) + '</div>'
+                                + '<div style="font-size:10px;color:#94a3b8;">by ' + camp_bc_escapeHtml(a.initiatedBy) + ' &middot; ' + camp_bc_escapeHtml(a.initiatedAt) + '</div>'
+                            + '</td>'
+                            + '<td style="padding:6px;text-align:center;">' + camp_bc_escapeHtml(a.status) + '</td>'
+                            + '<td style="padding:6px;text-align:center;color:#166534;font-weight:600;">' + a.succeeded + '</td>'
+                            + '<td style="padding:6px;text-align:center;color:#991b1b;font-weight:600;">' + a.failed + '</td>'
+                            + '<td style="padding:6px;text-align:center;color:#92400e;font-weight:600;">' + a.skipped + '</td>'
+                            + '<td style="padding:6px;text-align:center;">' + a.attempted + '</td>'
+                            + '<td style="padding:6px;text-align:center;"><a href="javascript:void(0)" style="color:#17a2b8;" onclick="viewAttemptDetails(' + a.id + ')">details</a></td>'
+                            + '</tr>';
+                    });
+                    html += '</tbody></table>';
+                }
+                html += '</div>';
+                Swal.fire({ title: 'Batch call attempts', html: html, width: 820, confirmButtonColor: '#17a2b8' });
+            },
+            error: function () {
+                Swal.fire('Error', 'Failed to load attempts.', 'error');
+            }
+        });
+    }
+
+    // Per-call detail for a single attempt.
+    function viewAttemptDetails(batchCallLogId) {
+        Swal.fire({ title: 'Call details', html: 'Loading…', width: 820, onOpen: function () { Swal.showLoading(); } });
+        $.ajax({
+            url: '@Url.Action("GetCampaignBatchCallAttemptDetails", "IRF")',
+            type: 'GET',
+            data: { batchCallLogId: batchCallLogId },
+            success: function (res) {
+                if (!res || !res.success) {
+                    Swal.fire('Error', (res && res.error) || 'Failed to load call details.', 'error');
+                    return;
+                }
+                var details = res.details || [];
+                var html = '<div style="text-align:left;">';
+                if (details.length === 0) {
+                    html += '<div style="padding:14px;color:#64748b;">No call details recorded for this attempt.</div>';
+                } else {
+                    html += '<table style="width:100%;border-collapse:collapse;font-size:12px;">'
+                        + '<thead><tr style="background:#f1f5f9;color:#334155;">'
+                        + '<th style="padding:6px;text-align:left;">Interviewer</th>'
+                        + '<th style="padding:6px;text-align:left;">Phone</th>'
+                        + '<th style="padding:6px;">Outcome</th>'
+                        + '<th style="padding:6px;text-align:left;">When</th>'
+                        + '</tr></thead><tbody>';
+                    details.forEach(function (d) {
+                        html += '<tr style="border-bottom:1px solid #e2e8f0;">'
+                            + '<td style="padding:6px;text-align:left;">'
+                                + '<div style="font-weight:600;color:#1e293b;">' + camp_bc_escapeHtml(d.name || '-') + '</div>'
+                                + '<div style="font-size:10px;color:#64748b;">' + camp_bc_escapeHtml(d.email || '') + '</div>'
+                                + (d.error ? '<div style="font-size:10px;color:#991b1b;">' + camp_bc_escapeHtml(d.error) + '</div>' : '')
+                            + '</td>'
+                            + '<td style="padding:6px;text-align:left;">' + camp_bc_escapeHtml(d.phone || '-') + '</td>'
+                            + '<td style="padding:6px;text-align:center;">' + camp_bc_outcomeBadge(d.outcome) + '</td>'
+                            + '<td style="padding:6px;text-align:left;">' + camp_bc_escapeHtml(d.calledAt) + '</td>'
+                            + '</tr>';
+                    });
+                    html += '</tbody></table>';
+                }
+                html += '</div>';
+                Swal.fire({
+                    title: 'Call details',
+                    html: html,
+                    width: 820,
+                    showCancelButton: true,
+                    confirmButtonText: 'Back to attempts',
+                    confirmButtonColor: '#17a2b8',
+                    cancelButtonText: 'Close'
+                }).then(function (r) {
+                    if (r.value) { viewCampaignAttempts(_campBcCurrentCampaignId, _campBcCurrentCampaignName); }
+                });
+            },
+            error: function () {
+                Swal.fire('Error', 'Failed to load call details.', 'error');
+            }
+        });
+    }
 </script>
 @Html.AntiForgeryToken()
 @* <script src="~/js/filtervalidation.js"></script> *@

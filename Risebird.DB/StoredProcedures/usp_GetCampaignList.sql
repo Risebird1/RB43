@@ -26,7 +26,10 @@ BEGIN
         bcl.InterviewersFailed     AS BatchCallFailed,
         bcl.InterviewersSkipped    AS BatchCallSkipped,
         bcl.CompletedAt     AS BatchCallCompletedAt,
-        bcl.Status          AS BatchCallStatus
+        bcl.Status          AS BatchCallStatus,
+        bcl.AttemptNumber   AS BatchCallAttemptNumber,
+        bcl.AttemptName     AS BatchCallAttemptName,
+        ISNULL(att.AttemptCount, 0) AS BatchCallAttemptCount
     FROM AGCampaigns agc
     INNER JOIN AssessmentGroup ag ON ag.id = agc.AssessmentGroupId
     OUTER APPLY (
@@ -35,6 +38,11 @@ BEGIN
         WHERE l.CampaignId = agc.id
         ORDER BY l.Id DESC
     ) bcl
+    OUTER APPLY (
+        SELECT COUNT(*) AS AttemptCount
+        FROM IABatchCallLog l2
+        WHERE l2.CampaignId = agc.id
+    ) att
     ORDER BY agc.CreatedAt DESC
 END
 
