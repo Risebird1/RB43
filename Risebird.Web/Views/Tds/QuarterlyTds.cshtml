@@ -1,0 +1,700 @@
+@using Risebird.Entities.ViewModel
+@model TdsComplianceVM
+@{
+    ViewData["Title"] = "Quarterly TDS – " + Model.SelectedYear + " " + Model.SelectedQuarter;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var form16Result = TempData["Form16Result"] != null
+        ? System.Text.Json.JsonSerializer.Deserialize<Form16UploadResultVM>((string)TempData["Form16Result"])
+        : null;
+}
+
+<link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css?v=2024" />
+
+<style>
+    .tds-recon-bar { border-radius: 6px; padding: 14px 20px; margin-bottom: 16px; }
+    .tds-recon-bar .recon-item { text-align: center; }
+    .tds-recon-bar .recon-label { font-size: 11px; color: #888; margin-bottom: 2px; }
+    .tds-recon-bar .recon-value { font-size: 20px; font-weight: 600; color: #333; }
+    .tds-badge-ok   { background: #28a745; color: #fff; border-radius: 20px; padding: 6px 18px; font-size: 14px; font-weight: 600; }
+    .tds-badge-warn { background: #ffc107; color: #333; border-radius: 20px; padding: 6px 18px; font-size: 14px; font-weight: 600; }
+    .tds-tab-nav .nav-link { font-size: 13px; padding: 8px 14px; color: #555; cursor: pointer; }
+    .tds-tab-nav .nav-link.active { color: #0046bf; border-bottom: 2px solid #0046bf; background: transparent; font-weight: 600; }
+    .tds-tab-pane { display: none; padding-top: 16px; }
+    .tds-tab-pane.active { display: block; }
+    .tds-table th { background: #0046bf; color: #fff; font-size: 12px; white-space: nowrap; }
+    .tds-table td { font-size: 12px; vertical-align: middle; }
+    .tds-table tfoot td { background: #f5f5f5; font-weight: 600; }
+    .tds-form-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 6px; padding: 16px; margin-bottom: 16px; }
+    .tds-form-card .card-title-bar { font-size: 13px; font-weight: 600; color: #333; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 14px; }
+    .badge-pan { background: #e8eaf6; color: #3949ab; border-radius: 4px; padding: 2px 7px; font-size: 11px; font-family: monospace; }
+    .week-row-expand td { background: #f9f9f9; }
+</style>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!--  MAIN PANEL WRAPPER (matches all Finance views)                   -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<div class="main-panel" id="main-panel">
+
+    <!-- ── Page header bar ─────────────────────────────────────────── -->
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title">Quarterly TDS Compliance &nbsp;
+                        <small class="text-muted" style="font-size:13px;">@Model.QuarterRange</small>
+                    </h4>
+                </div>
+                <div class="pull-right" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <!-- FY selector -->
+                    <form method="get" action="@Url.Action("QuarterlyTds","Tds")" id="fy-form" style="display:flex;align-items:center;gap:6px;">
+                        <select name="year" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="min-width:130px;" onchange="document.getElementById('fy-form').submit()">
+                            @foreach (var y in Model.FinancialYears)
+                            {
+                                if (y.Selected)
+                                {
+                                    <option value="@y.Value" selected>@y.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@y.Value">@y.Text</option>
+                                }
+                            }
+                        </select>
+                        <select name="quarter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="min-width:110px;" onchange="document.getElementById('fy-form').submit()">
+                            @foreach (var q in Model.Quarters)
+                            {
+                                if (q.Selected)
+                                {
+                                    <option value="@q.Value" selected>@q.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@q.Value">@q.Text</option>
+                                }
+                            }
+                        </select>
+                    </form>
+                    <!-- Export button -->
+                    <a href="@Url.Action("ExportTdsReturn26Q","Tds",new{year=Model.SelectedYear,quarter=Model.SelectedQuarter})"
+                       class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                        <span class="far fa-file-excel"></span>&nbsp; Export 26Q
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Main content area ───────────────────────────────────────── -->
+    <div class="content client candidate">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section" style="padding:16px;">
+
+                        <!-- Status alert -->
+                        @if (ViewBag.StatusMessage != null)
+                        {
+                            <div class="alert alert-@(ViewBag.StatusType ?? "info") alert-dismissible fade show" role="alert" style="margin-bottom:12px;">
+                                @ViewBag.StatusMessage
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        }
+
+                        <!-- ── RECONCILIATION BAR ──────────────────────────────── -->
+                        <div class="tds-recon-bar" style="background:@(Model.IsReconciled ? "#f0fff4" : "#fffbf0");border:1px solid @(Model.IsReconciled ? "#a3d9a5" : "#ffd166");">
+                            <div class="row align-items-center">
+                                <div class="col recon-item">
+                                    <div class="recon-label">Total Paid (Verified)</div>
+                                    <div class="recon-value">₹@Model.InterviewerPaidTotal.ToString("N0")</div>
+                                </div>
+                                <div class="col recon-item">
+                                    <div class="recon-label">Interviewer TDS (10%)</div>
+                                    <div class="recon-value">₹@Model.InterviewerTdsTotal.ToString("N0")</div>
+                                </div>
+                                <div class="col recon-item">
+                                    <div class="recon-label">Challans Deposited (@Model.ChallanCount)</div>
+                                    <div class="recon-value">₹@Model.ChallanTdsTotal.ToString("N0")</div>
+                                </div>
+                                <div class="col recon-item">
+                                    <div class="recon-label">Difference</div>
+                                    <div class="recon-value" style="color:@(Model.IsReconciled ? "#28a745" : "#e67e22");">
+                                        ₹@Model.Difference.ToString("N0")
+                                    </div>
+                                </div>
+                                <div class="col recon-item">
+                                    @if (Model.IsReconciled)
+                                    {
+                                        <span class="tds-badge-ok">✓ Reconciled</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="tds-badge-warn">⚠ Mismatch</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── TABS ────────────────────────────────────────────── -->
+                        <ul class="nav tds-tab-nav" style="border-bottom:1px solid #ddd;margin-bottom:0;">
+                            <li class="nav-item"><a class="nav-link active"  onclick="showTab(event,'tab1')">Interviewer TDS</a></li>
+                            <li class="nav-item"><a class="nav-link"         onclick="showTab(event,'tab2')">Lapsed / Unverified</a></li>
+                            <li class="nav-item"><a class="nav-link"         onclick="showTab(event,'tab3')">Weekly Payout Status</a></li>
+                            <li class="nav-item"><a class="nav-link"         onclick="showTab(event,'tab4')">Challans</a></li>
+                            <li class="nav-item"><a class="nav-link"         onclick="showTab(event,'tab5')">Pending TDS</a></li>
+                            <li class="nav-item"><a class="nav-link"         onclick="showTab(event,'tab6')">Return Filing</a></li>
+                            <li class="nav-item"><a class="nav-link"         onclick="showTab(event,'tab7')">Form 16A Upload</a></li>
+                        </ul>
+
+                        <!-- ─── TAB 1 — Interviewer TDS ──────────────────────── -->
+                        <div id="tab1" class="tds-tab-pane active">
+                            <p style="font-size:12px;color:#888;margin-bottom:8px;">
+                                Wallet-verified interviewers with PAN — included in 26Q filing. <strong>@Model.Deductees.Count</strong> interviewer(s).
+                            </p>
+                            @if (Model.Deductees != null && Model.Deductees.Any())
+                            {
+                                @Html.Partial("_TdsDeducteeTable", Model.Deductees)
+                            }
+                            else
+                            {
+                                <p class="text-muted" style="font-size:13px;">No verified-wallet interviewers with PAN paid in this quarter.</p>
+                            }
+                        </div>
+
+                        <!-- ─── TAB 2 — Lapsed / Unverified ──────────────────── -->
+                        <div id="tab2" class="tds-tab-pane">
+                            <div style="background:#fff8e1;border:1px solid #ffe082;border-radius:4px;padding:10px 14px;font-size:12px;margin-bottom:10px;">
+                                These interviewers are <strong>excluded</strong> from TDS computation, reconciliation, and the 26Q export
+                                (unverified wallet or missing PAN).
+                            </div>
+                            @if (Model.LapsedDeductees != null && Model.LapsedDeductees.Any())
+                            {
+                                @Html.Partial("_TdsDeducteeTable", Model.LapsedDeductees)
+                            }
+                            else
+                            {
+                                <p class="text-muted" style="font-size:13px;">No excluded interviewers this quarter.</p>
+                            }
+                        </div>
+
+                        <!-- ─── TAB 3 — Weekly Payout Status ─────────────────── -->
+                        <div id="tab3" class="tds-tab-pane">
+                            <div class="table-responsive">
+                                <table class="table tds-table" style="width:100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Week</th><th>Date Range</th><th>Interviewers</th>
+                                            <th>Total Paid (₹)</th><th>TDS Due (₹)</th><th>Paid?</th><th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.WeeklyPayouts != null)
+                                        {
+                                            @foreach (var w in Model.WeeklyPayouts)
+                                            {
+                                                var challan = Model.Challans?.FirstOrDefault(c => c.WeekNumber == w.WeekNumber);
+                                                <tr>
+                                                    <td>@w.WeekNumber</td>
+                                                    <td>@w.WeekRange</td>
+                                                    <td>@w.InterviewerCount</td>
+                                                    <td>@w.TotalPaid.ToString("N0")</td>
+                                                    <td>@w.TdsDue.ToString("N0")</td>
+                                                    <td>
+                                                        @if (challan != null)
+                                                        {
+                                                            <form method="post" action="@Url.Action("ToggleChallanPaid","Tds")" style="display:inline;">
+                                                                @Html.AntiForgeryToken()
+                                                                <input type="hidden" name="id"      value="@challan.id" />
+                                                                <input type="hidden" name="isPaid"  value="@(!challan.IsPaid)" />
+                                                                <input type="hidden" name="year"    value="@Model.SelectedYear" />
+                                                                <input type="hidden" name="quarter" value="@Model.SelectedQuarter" />
+                                                                <button type="submit" class="mdc-button @(challan.IsPaid ? "mdc-button--raised" : "mdc-button--outlined") mdc-ripple-upgraded" style="font-size:11px;height:28px;padding:0 10px;">
+                                                                    @(challan.IsPaid ? "✓ Paid" : "Unpaid")
+                                                                </button>
+                                                            </form>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="font-size:11px;color:#aaa;">No Challan</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (challan != null)
+                                                        {
+                                                            <button class="mdc-button mdc-button--outlined mdc-ripple-upgraded" style="font-size:11px;height:28px;padding:0 8px;"
+                                                                    onclick="toggleWeekDetail(@w.WeekNumber)">
+                                                                <span class="fas fa-users"></span>
+                                                            </button>
+                                                            if (!string.IsNullOrWhiteSpace(challan.ChallanPdfPath))
+                                                            {
+                                                                <a href="@challan.ChallanPdfPath" target="_blank" class="mdc-button mdc-button--outlined mdc-ripple-upgraded" style="font-size:11px;height:28px;padding:0 8px;color:#d32f2f;">
+                                                                    <span class="fas fa-file-pdf"></span>
+                                                                </a>
+                                                            }
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                @if (challan != null && challan.Interviewers != null && challan.Interviewers.Any())
+                                                {
+                                                    <tr id="week-detail-@w.WeekNumber" style="display:none;" class="week-row-expand">
+                                                        <td colspan="7" style="padding:0;">
+                                                            <table class="table" style="margin:0;font-size:11px;">
+                                                                <thead style="background:#e8eaf6;">
+                                                                    <tr><th>PAN</th><th>Name</th><th>Amount Paid (₹)</th><th>TDS (₹)</th></tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @foreach (var iv in challan.Interviewers)
+                                                                    {
+                                                                        <tr>
+                                                                            <td><span class="badge-pan">@iv.PAN</span></td>
+                                                                            <td>@iv.FullName</td>
+                                                                            <td>@iv.AmountPaid.ToString("N0")</td>
+                                                                            <td>@iv.TdsAmount.ToString("N0")</td>
+                                                                        </tr>
+                                                                    }
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- ─── TAB 4 — Challans ──────────────────────────────── -->
+                        <div id="tab4" class="tds-tab-pane">
+
+                            <!-- Add / Edit form -->
+                            <div class="tds-form-card">
+                                <div class="card-title-bar" id="challan-form-title">Add Challan</div>
+                                <form method="post" action="@Url.Action("SaveTdsChallan","Tds")" enctype="multipart/form-data">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id"            id="cf-id"    value="0" />
+                                    <input type="hidden" name="FinancialYear"               value="@Model.SelectedYear" />
+                                    <input type="hidden" name="Quarter"                     value="@Model.SelectedQuarter" />
+
+                                    <div class="row">
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <label style="font-size:12px;">Week #</label>
+                                                <input type="number" name="WeekNumber" id="cf-week" class="form-control form-control-sm" min="1" max="12" required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <label style="font-size:12px;">Sr No</label>
+                                                <input type="number" name="SrNo" id="cf-srno" class="form-control form-control-sm" required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <label style="font-size:12px;">Section</label>
+                                                <input type="text" name="SectionCode" value="194JB" class="form-control form-control-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label style="font-size:12px;">TAN</label>
+                                                <input type="text" name="TANNumber" id="cf-tan" value="@TdsConstants.CompanyTAN" class="form-control form-control-sm" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label style="font-size:12px;">Deductor</label>
+                                                <input type="text" name="Deductor" id="cf-deductor" value="@TdsConstants.DeductorName" class="form-control form-control-sm" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label style="font-size:12px;">TDS Amount (₹)</label>
+                                                <input type="number" name="TdsAmount" id="cf-tds" class="form-control form-control-sm" step="0.01" required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label style="font-size:12px;">BSR Code</label>
+                                                <input type="text" name="BSRCode" id="cf-bsr" class="form-control form-control-sm" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label style="font-size:12px;">Deposit Date</label>
+                                                <input type="date" name="DepositDate" id="cf-depdate" class="form-control form-control-sm" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label style="font-size:12px;">Challan Serial No</label>
+                                                <input type="text" name="ChallanSerialNumber" id="cf-serial" class="form-control form-control-sm" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <label style="font-size:12px;">Minor Head</label>
+                                                <input type="text" name="MinorHead" value="200" class="form-control form-control-sm" readonly />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label style="font-size:12px;">Reference No</label>
+                                                <input type="text" name="ChallanReferenceNumber" id="cf-ref" class="form-control form-control-sm" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label style="font-size:12px;">Payout Reference</label>
+                                                <input type="text" name="PayoutReference" id="cf-payref" class="form-control form-control-sm" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label style="font-size:12px;">Payment Date</label>
+                                                <input type="date" name="PaymentDate" id="cf-paydate" class="form-control form-control-sm" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1 d-flex align-items-end">
+                                            <div class="form-group">
+                                                <label style="font-size:12px;display:block;">&nbsp;</label>
+                                                <div class="form-check">
+                                                    <input type="checkbox" name="IsPaid" id="cf-paid" class="form-check-input" value="true" />
+                                                    <input type="hidden" name="IsPaid" value="false" />
+                                                    <label class="form-check-label" for="cf-paid" style="font-size:12px;">Is Paid</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label style="font-size:12px;">Challan PDF</label>
+                                                <input type="file" name="ChallanPdf" accept="application/pdf" class="form-control form-control-sm" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 d-flex align-items-end">
+                                            <a id="cf-pdf-link" href="#" target="_blank" style="display:none;font-size:12px;" class="mdc-button mdc-button--outlined mdc-ripple-upgraded">
+                                                <span class="fas fa-file-pdf" style="color:#d32f2f;"></span>&nbsp;Current PDF
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div style="margin-top:6px;">
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                            <span class="fas fa-save"></span>&nbsp; Save Challan
+                                        </button>
+                                        <button type="button" class="mdc-button mdc-button--outlined mdc-ripple-upgraded" onclick="clearChallanForm()" style="margin-left:8px;">
+                                            Clear
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Challan ledger -->
+                            <div class="table-responsive">
+                                <table class="table tds-table" style="width:100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Week</th><th>Sr</th><th>Section</th><th>TAN</th><th>Deductor</th>
+                                            <th>TDS (₹)</th><th>BSR</th><th>Deposit Date</th><th>Serial No</th>
+                                            <th>Minor Head</th><th>Ref No</th><th>PDF</th><th>Payout Ref</th><th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{decimal totalChallanTds = 0;}
+                                        @if (Model.Challans != null)
+                                        {
+                                            @foreach (var c in Model.Challans)
+                                            {
+                                                totalChallanTds += c.TdsAmount;
+                                                <tr>
+                                                    <td>@c.WeekNumber</td>
+                                                    <td>@c.SrNo</td>
+                                                    <td>@c.SectionCode</td>
+                                                    <td>@c.TANNumber</td>
+                                                    <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="@c.Deductor">@c.Deductor</td>
+                                                    <td>@c.TdsAmount.ToString("N0")</td>
+                                                    <td>@c.BSRCode</td>
+                                                    <td>@c.DepositDate?.ToString("dd-MM-yyyy")</td>
+                                                    <td>@c.ChallanSerialNumber</td>
+                                                    <td>@c.MinorHead</td>
+                                                    <td>@c.ChallanReferenceNumber</td>
+                                                    <td>
+                                                        @if (!string.IsNullOrWhiteSpace(c.ChallanPdfPath))
+                                                        {
+                                                            <a href="@c.ChallanPdfPath" target="_blank" style="color:#d32f2f;font-size:16px;">
+                                                                <span class="fas fa-file-pdf"></span>
+                                                            </a>
+                                                        }
+                                                    </td>
+                                                    <td>@c.PayoutReference</td>
+                                                    <td style="white-space:nowrap;">
+                                                        <button class="mdc-button mdc-button--outlined mdc-ripple-upgraded" style="font-size:11px;height:26px;padding:0 8px;min-width:0;"
+                                                                onclick="editChallan(@c.id,@c.WeekNumber,@c.SrNo,@c.TdsAmount,'@c.BSRCode','@(c.DepositDate?.ToString("yyyy-MM-dd"))','@c.ChallanSerialNumber','@c.ChallanReferenceNumber','@c.PayoutReference','@(c.PaymentDate?.ToString("yyyy-MM-dd"))','@(c.IsPaid ? "true" : "false")','@c.ChallanPdfPath','@c.TANNumber','@c.Deductor')">
+                                                            <span class="fas fa-edit"></span>
+                                                        </button>
+                                                        <form method="post" action="@Url.Action("DeleteTdsChallan","Tds")" style="display:inline;" onsubmit="return confirm('Delete this challan?');">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="id"      value="@c.id" />
+                                                            <input type="hidden" name="year"    value="@Model.SelectedYear" />
+                                                            <input type="hidden" name="quarter" value="@Model.SelectedQuarter" />
+                                                            <button type="submit" class="mdc-button mdc-button--outlined mdc-ripple-upgraded" style="font-size:11px;height:26px;padding:0 8px;min-width:0;color:#d32f2f;">
+                                                                <span class="fas fa-trash"></span>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="5" style="text-align:right;">Total</td>
+                                            <td>@totalChallanTds.ToString("N0")</td>
+                                            <td colspan="8"></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- ─── TAB 5 — Pending TDS ───────────────────────────── -->
+                        <div id="tab5" class="tds-tab-pane">
+                            <div class="table-responsive">
+                                <table class="table tds-table" style="width:100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Week</th><th>Range</th><th>TDS Due (₹)</th>
+                                            <th>TDS Deposited (₹)</th><th>Outstanding (₹)</th><th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.PendingByWeek != null)
+                                        {
+                                            @foreach (var p in Model.PendingByWeek)
+                                            {
+                                                <tr style="@(p.Outstanding > 0 && !p.IsPaid ? "background:#fff8e1;" : "")">
+                                                    <td>@p.WeekNumber</td>
+                                                    <td>@p.WeekRange</td>
+                                                    <td>@p.TdsDue.ToString("N0")</td>
+                                                    <td>@p.TdsDeposited.ToString("N0")</td>
+                                                    <td style="@(p.Outstanding > 0 ? "color:#d32f2f;font-weight:600;" : "")">
+                                                        @p.Outstanding.ToString("N0")
+                                                    </td>
+                                                    <td>
+                                                        @if (p.IsPaid)
+                                                        {
+                                                            <span style="background:#28a745;color:#fff;border-radius:3px;padding:2px 8px;font-size:11px;">Paid</span>
+                                                        }
+                                                        else if (p.TdsDue == 0)
+                                                        {
+                                                            <span style="background:#9e9e9e;color:#fff;border-radius:3px;padding:2px 8px;font-size:11px;">No Payouts</span>
+                                                        }
+                                                        else if (p.Outstanding <= 0)
+                                                        {
+                                                            <span style="background:#28a745;color:#fff;border-radius:3px;padding:2px 8px;font-size:11px;">Deposited</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="background:#ffc107;color:#333;border-radius:3px;padding:2px 8px;font-size:11px;">Pending</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- ─── TAB 6 — Return Filing ─────────────────────────── -->
+                        <div id="tab6" class="tds-tab-pane">
+                            <div class="tds-form-card" style="max-width:540px;">
+                                <div class="card-title-bar">26Q Return Filing</div>
+                                <form method="post" action="@Url.Action("SaveTdsReturnFiling","Tds")">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id"            value="@Model.Filing.id" />
+                                    <input type="hidden" name="FinancialYear" value="@Model.SelectedYear" />
+                                    <input type="hidden" name="Quarter"       value="@Model.SelectedQuarter" />
+
+                                    <div class="form-group">
+                                        <label style="font-size:12px;">Return Type</label>
+                                        <input type="text" name="ReturnType" value="26Q" class="form-control form-control-sm" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label style="font-size:12px;">Filing Date</label>
+                                        <input type="date" name="FilingDate" value="@Model.Filing.FilingDate?.ToString("yyyy-MM-dd")" class="form-control form-control-sm" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label style="font-size:12px;">Acknowledgement / RRR No.</label>
+                                        <input type="text" name="AcknowledgementNumber" value="@Model.Filing.AcknowledgementNumber" class="form-control form-control-sm" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label style="font-size:12px;">Token No.</label>
+                                        <input type="text" name="TokenNumber" value="@Model.Filing.TokenNumber" class="form-control form-control-sm" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label style="font-size:12px;">Status</label>
+                                        <select name="Status" class="form-control form-control-sm">
+                                            @foreach (var s in new[] { "Pending", "Filed", "Revised" })
+                                            {
+                                                if (Model.Filing.Status == s)
+                                                {
+                                                    <option value="@s" selected>@s</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@s">@s</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label style="font-size:12px;">Remarks</label>
+                                        <textarea name="Remarks" class="form-control form-control-sm" rows="3">@Model.Filing.Remarks</textarea>
+                                    </div>
+                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                        <span class="fas fa-save"></span>&nbsp; Save Filing
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- ─── TAB 7 — Form 16A Upload ───────────────────────── -->
+                        <div id="tab7" class="tds-tab-pane">
+                            <div class="tds-form-card" style="max-width:540px;">
+                                <div class="card-title-bar">Form 16A Auto-Upload</div>
+                                <p style="font-size:12px;color:#777;margin-bottom:12px;">
+                                    Upload one or more Form 16A PDFs. PAN is extracted from the filename
+                                    (<code>[A-Z]{5}[0-9]{4}[A-Z]</code>) and the certificate is saved to the
+                                    interviewer's <em>My Profile</em> dashboard automatically.
+                                </p>
+                                <form method="post" action="@Url.Action("UploadForm16Dump","Tds")" enctype="multipart/form-data">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="year"    value="@Model.SelectedYear" />
+                                    <input type="hidden" name="quarter" value="@Model.SelectedQuarter" />
+                                    <div class="form-group">
+                                        <label style="font-size:12px;">Select PDF files</label>
+                                        <input type="file" name="files" accept="application/pdf" multiple class="form-control form-control-sm" />
+                                    </div>
+                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                        <span class="fas fa-upload"></span>&nbsp; Upload &amp; Auto-Map
+                                    </button>
+                                </form>
+                            </div>
+
+                            @if (form16Result != null)
+                            {
+                                <div class="row" style="margin-top:12px;">
+                                    @if (form16Result.Matched.Any())
+                                    {
+                                        <div class="col-md-4">
+                                            <div class="tds-form-card" style="border-color:#a3d9a5;">
+                                                <div class="card-title-bar" style="color:#28a745;">✓ Matched (@form16Result.Matched.Count)</div>
+                                                @foreach (var m in form16Result.Matched)
+                                                {
+                                                    <div style="font-size:11px;padding:2px 0;border-bottom:1px solid #f0f0f0;">@m</div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                    @if (form16Result.Unmatched.Any())
+                                    {
+                                        <div class="col-md-4">
+                                            <div class="tds-form-card" style="border-color:#ffe082;">
+                                                <div class="card-title-bar" style="color:#e67e22;">⚠ Unmatched (@form16Result.Unmatched.Count)</div>
+                                                @foreach (var u in form16Result.Unmatched)
+                                                {
+                                                    <div style="font-size:11px;padding:2px 0;border-bottom:1px solid #f0f0f0;">@u</div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                    @if (form16Result.Skipped.Any())
+                                    {
+                                        <div class="col-md-4">
+                                            <div class="tds-form-card">
+                                                <div class="card-title-bar">Skipped (@form16Result.Skipped.Count)</div>
+                                                @foreach (var sk in form16Result.Skipped)
+                                                {
+                                                    <div style="font-size:11px;padding:2px 0;border-bottom:1px solid #f0f0f0;">@sk</div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+
+                    </div><!-- /mdc-card-wrapper__text-section -->
+                </div><!-- /mdc-card -->
+            </div><!-- /col-md-12 -->
+        </div><!-- /row -->
+    </div><!-- /content -->
+</div><!-- /main-panel -->
+
+@section Scripts {
+<script>
+    function showTab(event, tabId) {
+        event.preventDefault();
+        document.querySelectorAll('.tds-tab-pane').forEach(function(p) { p.classList.remove('active'); });
+        document.querySelectorAll('.tds-tab-nav .nav-link').forEach(function(l) { l.classList.remove('active'); });
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    function toggleWeekDetail(weekNum) {
+        var row = document.getElementById('week-detail-' + weekNum);
+        if (row) row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+    }
+
+    function clearChallanForm() {
+        document.getElementById('cf-id').value       = '0';
+        document.getElementById('cf-week').value     = '';
+        document.getElementById('cf-srno').value     = '';
+        document.getElementById('cf-tds').value      = '';
+        document.getElementById('cf-bsr').value      = '';
+        document.getElementById('cf-depdate').value  = '';
+        document.getElementById('cf-serial').value   = '';
+        document.getElementById('cf-ref').value      = '';
+        document.getElementById('cf-payref').value   = '';
+        document.getElementById('cf-paydate').value  = '';
+        document.getElementById('cf-paid').checked   = false;
+        document.getElementById('cf-pdf-link').style.display = 'none';
+        document.getElementById('challan-form-title').textContent = 'Add Challan';
+    }
+
+    function editChallan(id, week, srno, tds, bsr, depdate, serial, ref_, payref, paydate, paid, pdfpath, tan, deductor) {
+        document.getElementById('cf-id').value       = id;
+        document.getElementById('cf-week').value     = week;
+        document.getElementById('cf-srno').value     = srno;
+        document.getElementById('cf-tds').value      = tds;
+        document.getElementById('cf-bsr').value      = bsr;
+        document.getElementById('cf-depdate').value  = depdate;
+        document.getElementById('cf-serial').value   = serial;
+        document.getElementById('cf-ref').value      = ref_;
+        document.getElementById('cf-payref').value   = payref;
+        document.getElementById('cf-paydate').value  = paydate;
+        document.getElementById('cf-paid').checked   = (paid === 'true');
+        document.getElementById('cf-tan').value      = tan;
+        document.getElementById('cf-deductor').value = deductor;
+        document.getElementById('challan-form-title').textContent = 'Edit Challan #' + id;
+
+        var pdfLink = document.getElementById('cf-pdf-link');
+        if (pdfpath && pdfpath.trim() !== '') {
+            pdfLink.href = pdfpath;
+            pdfLink.style.display = 'inline-flex';
+        } else {
+            pdfLink.style.display = 'none';
+        }
+
+        // Switch to Challans tab and scroll to form
+        var challanTab = document.querySelector('.tds-tab-nav .nav-link:nth-child(4)');
+        showTab({ preventDefault: function(){}, currentTarget: document.querySelectorAll('.tds-tab-nav .nav-link')[3] }, 'tab4');
+        document.getElementById('challan-form-title').scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+}

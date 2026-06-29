@@ -186,6 +186,18 @@ namespace Risebird.AzureFunctions
             services.AddScoped<ICashfreePayoutService, CashfreePayoutService>();
             services.AddScoped<IWalletService, WalletService>();
             services.AddScoped<IWalletRepository, WalletRepository>();
+
+            // TDS Compliance Module
+            services.AddScoped<Risebird.Repository.Interface.ITdsRepository, Risebird.Repository.TdsRepository>();
+            services.AddScoped<Risebird.Business.Interface.ITdsComplianceService>(sp =>
+            {
+                var repo    = sp.GetRequiredService<Risebird.Repository.Interface.ITdsRepository>();
+                var logger  = sp.GetRequiredService<IApplicationErrorLogger>();
+                var cfg     = sp.GetRequiredService<IConfiguration>();
+                var offsets = cfg.GetSection("Tds:Reminder:Offsets").Get<int[]>();
+                return new Risebird.Business.TdsComplianceService(repo, logger, offsets);
+            });
+
             return services;
         }
     }
