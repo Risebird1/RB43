@@ -23,7 +23,7 @@ namespace Risebird.Web.Controllers
         private readonly ILogger<TdsController> _logger;
 
         // Container name to store challan PDFs and Form16A files
-        private const string BlobContainer = "resumes";
+        private const string BlobContainer = "certificates";
 
         public TdsController(
             ITdsComplianceService  tdsService,
@@ -130,8 +130,9 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("QuarterlyTds", new { year = vm.FinancialYear, quarter = vm.Quarter });
                     }
 
-                    var blobName = $"challan_{vm.FinancialYear}_{vm.Quarter}_W{vm.WeekNumber}_{DateTime.UtcNow:yyyyMMddHHmmss}.pdf"
-                        .Replace(" ", "_");
+                    // Path: certificates/{financialYear}/{Quarter1}/challans/challan_W{week}_{timestamp}.pdf
+                    var qFolder  = vm.Quarter.Replace(" ", "");
+                    var blobName = $"{vm.FinancialYear}/{qFolder}/challans/challan_W{vm.WeekNumber}_{DateTime.UtcNow:yyyyMMddHHmmss}.pdf";
                     await _azureStorageHelper.InsertBlob(blobName, BlobContainer, ChallanPdf);
                     var container = _azureStorageHelper.GetCloudBlobContainer(BlobContainer);
                     vm.ChallanPdfPath = container.GetBlockBlobReference(blobName).Uri.ToString();
@@ -263,7 +264,10 @@ namespace Risebird.Web.Controllers
                 var result = await _tdsService.ProcessForm16DumpAsync(year, quarter, files,
                     async file =>
                     {
-                        var blobName = $"form16_{year}_{quarter}_{file.FileName}".Replace(" ", "_");
+                        // Path: certificates/{financialYear}/{Quarter1}/{filename}
+                        // e.g. certificates/2025-2026/Quarter1/AAGPT8198N_Q1_2026-27.pdf
+                        var quarterFolder = quarter.Replace(" ", "");   // "Quarter 1" → "Quarter1"
+                        var blobName      = $"{year}/{quarterFolder}/{file.FileName}";
                         await _azureStorageHelper.InsertBlob(blobName, BlobContainer, file);
                         var container = _azureStorageHelper.GetCloudBlobContainer(BlobContainer);
                         return container.GetBlockBlobReference(blobName).Uri.ToString();
