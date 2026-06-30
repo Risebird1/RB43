@@ -43,11 +43,20 @@ BEGIN
         ISNULL(ipr.HoldPaymentReason, '')    AS HoldPaymentReason,
         ISNULL(ul.IsInterviewerAccess, 0)    AS IsInterviewerAccess,
         ISNULL(ipr.IsDeleted, 0)             AS IsDeleted,
-        ISNULL(tic.PAN, '')                  AS PAN,
-        ISNULL(tic.AccountName, '')          AS AccountName,
-        ISNULL(tic.AccountNumber, '')        AS AccountNumber,
-        ISNULL(tic.IFSCCode, '')             AS IFSCCode,
-        ISNULL(tic.IsBankVerified, 0)        AS IsBankVerified,
+        ISNULL(tic.PAN, '')                      AS PAN,
+        ISNULL(tic.AccountName, '')              AS AccountName,
+        ISNULL(tic.AccountNumber, '')            AS AccountNumber,
+        ISNULL(tic.IFSCCode, '')                 AS IFSCCode,
+        ISNULL(tic.UPIId, '')                    AS UPIId,
+        ISNULL(tic.IsBankVerified, 0)            AS IsBankVerified,
+        tic.VerifiedOn                           AS BankVerifiedOn,
+        ISNULL(tic.VerifiedAccountNumber, '')    AS VerifiedAccountNumber,
+        ISNULL(tic.VerifiedAccountName, '')      AS VerifiedAccountName,
+        ISNULL(tic.NameAtBank, '')               AS NameAtBank,
+        ISNULL(tic.IsPanVerified, 0)             AS IsPanVerified,
+        tic.PanVerifiedOn                        AS PanVerifiedOn,
+        ISNULL(tic.VerifiedPAN, '')              AS VerifiedPAN,
+        ISNULL(tic.NameAtPan, '')                AS NameAtPan,
         ISNULL(
             STUFF((
                 SELECT DISTINCT ', ' + ski.Name
@@ -168,6 +177,90 @@ BEGIN
     FROM PaymentHistory ph
     WHERE ph.Userid = @UserId
     ORDER BY ph.PaymentDate DESC;
+
+    -- Result Set 9: Payment-driven quarter breakdown.
+    -- Starts from PaymentHistory (all quarters with real payments appear),
+    -- then LEFT JOINs TDS challan data so TDS figures are shown where available.
+    -- Indian FY: Apr-Jun = Q1, Jul-Sep = Q2, Oct-Dec = Q3, Jan-Mar = Q4.
+    ;WITH PhByQuarter AS (
+        SELECT
+            CASE WHEN MONTH(ph.PaymentDate) >= 4
+                 THEN CAST(YEAR(ph.PaymentDate)   AS NVARCHAR(4)) + '-'
+                      + RIGHT(CAST(YEAR(ph.PaymentDate) + 1 AS NVARCHAR(4)), 2)
+                 ELSE CAST(YEAR(ph.PaymentDate)-1 AS NVARCHAR(4)) + '-'
+                      + RIGHT(CAST(YEAR(ph.PaymentDate)   AS NVARCHAR(4)), 2)
+            END AS FinancialYear,
+            CASE WHEN MONTH(ph.PaymentDate) IN (4,5,6)    THEN 'Q1'
+                 WHEN MONTH(ph.PaymentDate) IN (7,8,9)    THEN 'Q2'
+                 WHEN MONTH(ph.PaymentDate) IN (10,11,12) THEN 'Q3'
+                 ELSE                                          'Q4'
+            END AS Quarter,
+            ph.TotalAmount
+        FROM PaymentHistory ph
+        WHERE ph.Userid = @UserId
+          AND ph.TotalAmount > 0
+          AND (ph.Status = 'Done' OR ph.PayoutStatus = 'TRANSFER_SUCCESS')
+          AND ph.PaymentDate >= '2026-04-01'   -- FY 2026-27 onwards
+    ),
+    PhAgg AS (
+        SELECT FinancialYear, Quarter, SUM(TotalAmount) AS TotalAmountPaid
+        FROM   PhByQuarter
+        GROUP  BY FinancialYear, Quarter
+    ),
+    -- Aggregate all weekly challans per FY+Quarter.
+    -- TdsChallan.Quarter is stored as 'Quarter 1' / 'Quarter 2' etc.
+    -- Map to 'Q1'–'Q4' so it joins correctly with PhAgg.
+    TdsAgg AS (
+        SELECT
+            -- Normalise '2026-2027' → '2026-27' to match PhAgg format
+            LEFT(tc.FinancialYear, 4) + '-' + RIGHT(tc.FinancialYear, 2) AS FinancialYear,
+            -- Normalise 'Quarter 1' → 'Q1' to match PhAgg format
+            CASE tc.Quarter
+                WHEN 'Quarter 1' THEN 'Q1'
+                WHEN 'Quarter 2' THEN 'Q2'
+                WHEN 'Quarter 3' THEN 'Q3'
+                WHEN 'Quarter 4' THEN 'Q4'
+                ELSE LEFT(tc.Quarter, 2)
+            END                                           AS Quarter,
+            ISNULL(SUM(tci.TdsAmount), 0)                 AS TdsAmount,
+            CAST(MAX(CAST(tc.IsPaid AS INT)) AS BIT)      AS IsPaid,
+            MIN(tc.DepositDate)                           AS DepositDate,
+            ISNULL(MIN(tc.BSRCode), '')                   AS BSRCode,
+            ISNULL(MIN(tc.ChallanSerialNumber), '')       AS ChallanSerialNumber
+        FROM TdsChallanInterviewer tci
+        INNER JOIN TdsChallan tc ON tc.id = tci.ChallanId
+        WHERE tci.Userid = @UserId
+        GROUP BY
+            LEFT(tc.FinancialYear, 4) + '-' + RIGHT(tc.FinancialYear, 2),
+            CASE tc.Quarter
+                WHEN 'Quarter 1' THEN 'Q1'
+                WHEN 'Quarter 2' THEN 'Q2'
+                WHEN 'Quarter 3' THEN 'Q3'
+                WHEN 'Quarter 4' THEN 'Q4'
+                ELSE LEFT(tc.Quarter, 2)
+            END
+    )
+    SELECT
+        0                                   AS ChallanId,
+        pa.FinancialYear,
+        pa.Quarter,
+        pa.TotalAmountPaid                  AS AmountPaid,
+        ISNULL(td.TdsAmount, 0)             AS TdsAmount,
+        ISNULL(td.IsPaid, 0)               AS IsPaid,
+        td.DepositDate,
+        ISNULL(td.BSRCode, '')              AS BSRCode,
+        ISNULL(td.ChallanSerialNumber, '')  AS ChallanSerialNumber
+    FROM      PhAgg   pa
+    LEFT JOIN TdsAgg  td ON td.FinancialYear = pa.FinancialYear
+                        AND td.Quarter       = pa.Quarter
+    ORDER BY pa.FinancialYear DESC, pa.Quarter ASC;
+
+    -- Result Set 10: Grand total from PaymentHistory (used in summary header card)
+    SELECT ISNULL(SUM(ph.TotalAmount), 0) AS TotalHistoryPaid
+    FROM   PaymentHistory ph
+    WHERE  ph.Userid = @UserId
+      AND  ph.TotalAmount > 0
+      AND  (ph.Status = 'Done' OR ph.PayoutStatus = 'TRANSFER_SUCCESS');
 
 END
 GO
