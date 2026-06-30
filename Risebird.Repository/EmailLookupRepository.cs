@@ -51,6 +51,8 @@ namespace Risebird.Repository
                 var meetingsAsCandidate = (await multi.ReadAsync<EmailLookupMeetingVM>()).ToList();
                 var meetingsAsInterviewer = (await multi.ReadAsync<EmailLookupMeetingVM>()).ToList();
                 var recentPayments = (await multi.ReadAsync<EmailLookupPaymentVM>()).ToList();
+                var tdsQuarters   = (await multi.ReadAsync<EmailLookupTdsQuarterVM>()).ToList();
+                var historyTotal  = (await multi.ReadAsync<EmailLookupHistoryTotalVM>()).FirstOrDefault();
 
                 var result = new EmailLookupResultVM
                 {
@@ -81,7 +83,16 @@ namespace Risebird.Repository
                     AccountName = interviewerProfile?.AccountName,
                     AccountNumber = interviewerProfile?.AccountNumber,
                     IFSCCode = interviewerProfile?.IFSCCode,
+                    UPIId = interviewerProfile?.UPIId,
                     IsBankVerified = interviewerProfile?.IsBankVerified ?? false,
+                    BankVerifiedOn = interviewerProfile?.BankVerifiedOn,
+                    VerifiedAccountNumber = interviewerProfile?.VerifiedAccountNumber,
+                    VerifiedAccountName = interviewerProfile?.VerifiedAccountName,
+                    NameAtBank = interviewerProfile?.NameAtBank,
+                    IsPanVerified = interviewerProfile?.IsPanVerified ?? false,
+                    PanVerifiedOn = interviewerProfile?.PanVerifiedOn,
+                    VerifiedPAN = interviewerProfile?.VerifiedPAN,
+                    NameAtPan = interviewerProfile?.NameAtPan,
 
                     CandidateTotalCount = candidateStats.TotalCount,
                     CandidateTotalCompleted = candidateStats.TotalCompleted,
@@ -99,7 +110,9 @@ namespace Risebird.Repository
 
                     MeetingsAsCandidate = meetingsAsCandidate,
                     MeetingsAsInterviewer = meetingsAsInterviewer,
-                    RecentPayments = recentPayments
+                    RecentPayments = recentPayments,
+                    TdsQuarters = tdsQuarters,
+                    TotalHistoryPaid = historyTotal?.TotalHistoryPaid ?? 0
                 };
 
                 return result;

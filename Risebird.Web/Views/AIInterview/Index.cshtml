@@ -2624,6 +2624,7 @@
                 navigator.mediaDevices.getUserMedia({ video: true, audio: true })
                     .then(function(stream) {
                         window._audioPhoneCandidateStream = stream;
+                        window.stream = stream;
                         candidateVideoEl.srcObject = stream;
                         candidateVideoEl.style.display = 'block';
                         candidateVideoEl.play().catch(function() {});
@@ -2684,16 +2685,145 @@
 <script>
     let mediaRecorderAudio;
     let audioChunks = [];
+    let answerSubmitInFlight = false;
+    let answerSubmitFallbackTimers = [];
     const recordBtn = document.getElementById("recordBtn");
     const audioInput = document.getElementById("audioInput");
     const videoInput = document.getElementById("videoInput");
-    const form = document.querySelector("form"); // 🔥 grabs the first form on the page
+    const form = document.getElementById("chatForm") || document.querySelector("form");
     const overlay = document.getElementById("waitOverlay");
     const recordingOverlay = document.getElementById("recordingOverlay");
     const showChatBox = @Json.Serialize(Model.showChatBox);
 
+    function syncMessageFromEditor() {
+        if (typeof codeEditor !== 'undefined' && codeEditor) {
+            const messageTextarea = document.getElementById('messageTextarea');
+            if (messageTextarea) {
+                messageTextarea.value = codeEditor.getValue();
+            }
+        }
+    }
+
+    function showSubmitLoadingState() {
+        const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
+        if (sendBtn) {
+            sendBtn.classList.add('loading');
+            sendBtn.disabled = true;
+        }
+        if (overlay) overlay.style.display = "flex";
+    }
+
+    function answerSubmitNeedsVideo() {
+        const typingField = document.querySelector('input[name="IsTypingSpeedQuestion"]');
+        const listeningField = document.querySelector('input[name="IsListeningComprehensionQuestion"]');
+        if (typingField && String(typingField.value).toLowerCase() === 'true') return false;
+        if (listeningField && String(listeningField.value).toLowerCase() === 'true') return false;
+        return true;
+    }
+
+    function answerRecordingHasUsableAudio() {
+        return Boolean(audioInput && audioInput.files && audioInput.files.length > 0 && audioInput.files[0].size > 1000);
+    }
+
+    function answerRecordingHasUsableVideo() {
+        return Boolean(videoInput && videoInput.files && videoInput.files.length > 0 && videoInput.files[0].size > 1000);
+    }
+
     // Detect whether the audio phone UI is active (IsAdaptive mode)
     const isAudioPhoneMode = !!document.querySelector('.rb-audio-phone-section');
+
+    function pickAudioRecorderMimeType() {
+        const types = [
+            'audio/webm;codecs=opus',
+            'video/webm;codecs=opus',
+            'audio/webm',
+            'video/webm',
+            'audio/ogg;codecs=opus',
+            'audio/mp4'
+        ];
+        for (let i = 0; i < types.length; i++) {
+            if (MediaRecorder.isTypeSupported(types[i])) return types[i];
+        }
+        return '';
+    }
+
+    function pickVideoRecorderMimeType() {
+        const types = [
+            'video/webm;codecs=vp9',
+            'video/webm;codecs=vp8',
+            'video/webm',
+            'video/mp4;codecs=avc1.42E01E',
+            'video/mp4'
+        ];
+        for (let i = 0; i < types.length; i++) {
+            if (MediaRecorder.isTypeSupported(types[i])) return types[i];
+        }
+        return '';
+    }
+
+    function getCandidateVideoStream() {
+        const source = (window.stream && window.stream.active)
+            ? window.stream
+            : (window._audioPhoneCandidateStream && window._audioPhoneCandidateStream.active)
+                ? window._audioPhoneCandidateStream
+                : null;
+        if (!source) return null;
+        const videoTracks = source.getVideoTracks().filter(function (t) { return t.readyState === 'live'; });
+        if (!videoTracks.length) return null;
+        return new MediaStream(videoTracks);
+    }
+
+    function getCandidateAudioStream() {
+        if (isAudioPhoneMode && window._audioPhoneCandidateStream && window._audioPhoneCandidateStream.active) {
+            const audioTracks = window._audioPhoneCandidateStream.getAudioTracks().filter(function (t) { return t.readyState === 'live'; });
+            if (audioTracks.length) {
+                return new MediaStream(audioTracks);
+            }
+        }
+        if (window.stream && window.stream.active) {
+            const audioTracks = window.stream.getAudioTracks().filter(function (t) { return t.readyState === 'live'; });
+            if (audioTracks.length) {
+                return new MediaStream(audioTracks);
+            }
+        }
+        return null;
+    }
+
+    function clearAnswerSubmitFallbacks() {
+        answerSubmitFallbackTimers.forEach(function (id) { window.clearTimeout(id); });
+        answerSubmitFallbackTimers = [];
+    }
+
+    function stopAudioRecordingForSubmit() {
+        if (!mediaRecorderAudio || mediaRecorderAudio.state !== 'recording') return;
+        try { mediaRecorderAudio.requestData(); } catch (e) { /* ignore */ }
+        mediaRecorderAudio.stop();
+    }
+
+    function tryFinalizeAnswerSubmit() {
+        if (answerSubmitInFlight || !form) return false;
+        if (!answerRecordingHasUsableAudio()) return false;
+        const needsVideo = answerSubmitNeedsVideo();
+        if (needsVideo && !answerRecordingHasUsableVideo()) return false;
+        answerSubmitInFlight = true;
+        syncMessageFromEditor();
+        showSubmitLoadingState();
+        form.submit();
+        setTimeout(function () {
+            if (typeof clearEditorContent === 'function') clearEditorContent();
+        }, 0);
+        return true;
+    }
+
+    function scheduleAnswerSubmitFallback() {
+        clearAnswerSubmitFallbacks();
+        [800, 2000, 5000].forEach(function (delayMs) {
+            const timerId = window.setTimeout(function () {
+                tryFinalizeAnswerSubmit();
+            }, delayMs);
+            answerSubmitFallbackTimers.push(timerId);
+        });
+    }
 
     // ---- helpers for phone UI visual state ----
     function setPhoneUiRecording(isRecording) {
@@ -2741,28 +2871,53 @@
     if (recordBtn) {
         recordBtn.addEventListener("click", async () => {
             if (!mediaRecorderAudio || mediaRecorderAudio.state === "inactive") {
-                let stream;
-                if (isAudioPhoneMode && window._audioPhoneCandidateStream && window._audioPhoneCandidateStream.active) {
-                    var audioTracks = window._audioPhoneCandidateStream.getAudioTracks();
-                    if (audioTracks.length) {
-                        stream = new MediaStream(audioTracks);
-                    }
-                }
+                clearAnswerSubmitFallbacks();
+                answerSubmitInFlight = false;
+                audioChunks = [];
+                let stream = getCandidateAudioStream();
                 if (!stream) {
                     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 }
-                mediaRecorderAudio = new MediaRecorder(stream);
+                const audioMimeType = pickAudioRecorderMimeType();
+                try {
+                    mediaRecorderAudio = audioMimeType
+                        ? new MediaRecorder(stream, { mimeType: audioMimeType })
+                        : new MediaRecorder(stream);
+                } catch (recErr) {
+                    mediaRecorderAudio = new MediaRecorder(stream);
+                }
 
                 mediaRecorderAudio.ondataavailable = e => {
-                    audioChunks.push(e.data);
+                    if (e.data && e.data.size > 0) {
+                        audioChunks.push(e.data);
+                    }
                 };
 
                 mediaRecorderAudio.onstop = async () => {
                     timerStopped = true;
                     clearInterval(countdownInterval);
 
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                    const file = new File([audioBlob], "voice-input.wav", { type: 'audio/wav' });
+                    const audioMime = (mediaRecorderAudio && mediaRecorderAudio.mimeType) || pickAudioRecorderMimeType() || 'audio/webm';
+                    const resolvedMime = (audioMime.indexOf('webm') >= 0 && audioMime.indexOf('video/') < 0)
+                        ? 'video/webm'
+                        : audioMime;
+                    const audioExt = resolvedMime.indexOf('webm') >= 0 ? 'webm'
+                        : resolvedMime.indexOf('ogg') >= 0 ? 'ogg'
+                        : resolvedMime.indexOf('mp4') >= 0 ? 'm4a'
+                        : 'webm';
+                    const audioBlob = new Blob(audioChunks, { type: resolvedMime });
+                    if (audioBlob.size < 1000) {
+                        audioChunks = [];
+                        if (overlay) overlay.style.display = "none";
+                        Swal.fire({
+                            title: 'Recording too short',
+                            text: 'Please speak for at least a few seconds, then submit again.',
+                            icon: 'warning',
+                            confirmButtonColor: '#4eda92'
+                        });
+                        return;
+                    }
+                    const file = new File([audioBlob], 'voice-input.' + audioExt, { type: resolvedMime });
 
                     // populate the file input with blob data (check if audioInput exists)
                     if (audioInput) {
@@ -2799,32 +2954,12 @@
                     if (typeof syncEditorStateToPopup === 'function') {
                         syncEditorStateToPopup();
                     }
-                    // Show loading state to indicate response is being submitted
-                    const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
-                    if (sendBtn) {
-                        sendBtn.classList.add('loading');
-                        sendBtn.disabled = true;
-                    }
-                    // Sync editor content to textarea before submitting (if editor exists)
-                    if (typeof codeEditor !== 'undefined' && codeEditor) {
-                        const messageTextarea = document.getElementById('messageTextarea');
-                        if (messageTextarea) {
-                            messageTextarea.value = codeEditor.getValue();
-                        }
-                    }
-                    // 🔥 Submit the form automatically
-                    if (form) {
-                        form.submit();
-                        // Clear editor content after form submission starts
-                        setTimeout(function() {
-                            clearEditorContent();
-                        }, 0);
-                    } else {
-                        console.error("Form element not found. Cannot submit answer.");
+                    if (!tryFinalizeAnswerSubmit()) {
+                        scheduleAnswerSubmitFallback();
                     }
                 };
 
-                mediaRecorderAudio.start();
+                mediaRecorderAudio.start(250);
                 if (typeof window.risebirdNotifyProctoringRecordingStart === 'function') window.risebirdNotifyProctoringRecordingStart();
                 startRecording();
                 // Enable CodeMirror editor when recording starts
@@ -2867,7 +3002,7 @@
                     if (result.isConfirmed || result.value === true) {
                         if (mediaRecorderAudio && mediaRecorderAudio.state === "recording") {
                             console.log("Calling mediaRecorderAudio.stop()");
-                            mediaRecorderAudio.stop();
+                            stopAudioRecordingForSubmit();
                         } else {
                             console.log("ERROR: MediaRecorder not active or null");
                         }
@@ -3061,15 +3196,26 @@
         };
     }
     function startRecording() {
+        const videoStream = getCandidateVideoStream();
+        if (!videoStream) {
+            console.warn('Answer video stream unavailable — camera may still be starting.');
+            return;
+        }
         chunks = [];
-        //let options = { mimeType: 'video/mp4;codecs=vp9,opus' };
-        let options = { mimeType: 'video/mp4;codecs=avc1.42E01E,mp4a.40.2' };
+        const videoMimeType = pickVideoRecorderMimeType();
+        const options = videoMimeType ? { mimeType: videoMimeType } : undefined;
 
         try {
-            mediaRecorder = new MediaRecorder(window.stream, options);
+            mediaRecorder = options
+                ? new MediaRecorder(videoStream, options)
+                : new MediaRecorder(videoStream);
         } catch (e) {
-            alert('MediaRecorder not supported: ' + e);
-            return;
+            try {
+                mediaRecorder = new MediaRecorder(videoStream);
+            } catch (e2) {
+                alert('MediaRecorder not supported: ' + e2);
+                return;
+            }
         }
         mediaRecorder.ondataavailable = function(event) {
             if (event.data && event.data.size > 0) {
@@ -3077,9 +3223,11 @@
             }
         };
         mediaRecorder.onstop = (ev) => {
-            let blob = new Blob(chunks, { 'type': 'video/mp4;' });
+            const videoMime = (mediaRecorder && mediaRecorder.mimeType) || videoMimeType || 'video/webm';
+            const videoExt = videoMime.indexOf('mp4') >= 0 ? 'mp4' : 'webm';
+            let blob = new Blob(chunks, { type: videoMime });
             let videoURL = window.URL.createObjectURL(blob);
-            const filevideo = new File([blob], "videoinput.mp4", { type: 'video/mp4' });
+            const filevideo = new File([blob], 'videoinput.' + videoExt, { type: videoMime });
 
             // Check if videoInput exists before setting files
             if (videoInput) {
@@ -3092,31 +3240,11 @@
             }
 
             chunks = [];
-          // hideRecordingOverlay();
-            // Show loading state to indicate response is being submitted
-            const sendBtn = document.querySelector('.rb-chatbox-sendbtn');
-            if (sendBtn) {
-                sendBtn.classList.add('loading');
-                sendBtn.disabled = true;
+            if (!tryFinalizeAnswerSubmit()) {
+                scheduleAnswerSubmitFallback();
             }
-            // Sync editor content to textarea before submitting (if editor exists)
-            if (typeof codeEditor !== 'undefined' && codeEditor) {
-                const messageTextarea = document.getElementById('messageTextarea');
-                if (messageTextarea) {
-                    messageTextarea.value = codeEditor.getValue();
-                }
-            }
-            if (form) {
-                form.submit();
-                // Clear editor content after form submission starts
-                setTimeout(function() {
-                    clearEditorContent();
-                }, 0);
-            } else {
-                console.error("Form element not found. Cannot submit answer.");
-            }
-        }
-        mediaRecorder.start();
+        };
+        mediaRecorder.start(250);
         isRecording = true;
         if (typeof window.risebirdNotifyProctoringRecordingStart === 'function') window.risebirdNotifyProctoringRecordingStart();
         showRecordingOverlay();
@@ -3142,6 +3270,9 @@
     }
     function stopRecording() {
         if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            if (mediaRecorder.state === 'recording') {
+                try { mediaRecorder.requestData(); } catch (e) { /* ignore */ }
+            }
             mediaRecorder.stop();
         }
         isRecording = false;
@@ -3452,6 +3583,10 @@
         // Confirm button
         modalConfirm.addEventListener('click', function() {
             hideCustomModal();
+
+            if (totalSecondsLeft > 0 && typeof window.risebirdMarkProctoringSoftInterrupt === 'function') {
+                window.risebirdMarkProctoringSoftInterrupt();
+            }
 
             // Hide the entire AI interview section
             const interviewContainer = document.querySelector('.rb-aiinterview-container');
