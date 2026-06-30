@@ -33,7 +33,19 @@ namespace Risebird.Entities.ViewModel
         public string AccountName { get; set; }
         public string AccountNumber { get; set; }
         public string IFSCCode { get; set; }
+        public string UPIId { get; set; }
         public bool IsBankVerified { get; set; }
+        public DateTime? BankVerifiedOn { get; set; }
+        public string VerifiedAccountNumber { get; set; }
+        public string VerifiedAccountName { get; set; }
+        public string NameAtBank { get; set; }
+        public bool IsPanVerified { get; set; }
+        public DateTime? PanVerifiedOn { get; set; }
+        public string VerifiedPAN { get; set; }
+        public string NameAtPan { get; set; }
+
+        public decimal TotalHistoryPaid { get; set; }
+        public List<EmailLookupTdsQuarterVM> TdsQuarters { get; set; } = new List<EmailLookupTdsQuarterVM>();
 
         public int CandidateTotalCount { get; set; }
         public int CandidateTotalCompleted { get; set; }
@@ -85,7 +97,16 @@ namespace Risebird.Entities.ViewModel
         public string AccountName { get; set; }
         public string AccountNumber { get; set; }
         public string IFSCCode { get; set; }
+        public string UPIId { get; set; }
         public bool IsBankVerified { get; set; }
+        public DateTime? BankVerifiedOn { get; set; }
+        public string VerifiedAccountNumber { get; set; }
+        public string VerifiedAccountName { get; set; }
+        public string NameAtBank { get; set; }
+        public bool IsPanVerified { get; set; }
+        public DateTime? PanVerifiedOn { get; set; }
+        public string VerifiedPAN { get; set; }
+        public string NameAtPan { get; set; }
     }
 
     public class EmailLookupInterviewStatsVM
@@ -125,5 +146,23 @@ namespace Risebird.Entities.ViewModel
         public string Comment { get; set; }
         public string PayoutStatus { get; set; }
         public DateTime? TransactionDate { get; set; }
+    }
+
+    public class EmailLookupHistoryTotalVM
+    {
+        public decimal TotalHistoryPaid { get; set; }
+    }
+
+    public class EmailLookupTdsQuarterVM
+    {
+        public int ChallanId { get; set; }
+        public string FinancialYear { get; set; }
+        public string Quarter { get; set; }
+        public decimal AmountPaid { get; set; }
+        public decimal TdsAmount { get; set; }
+        public DateTime? DepositDate { get; set; }
+        public bool IsPaid { get; set; }
+        public string ChallanSerialNumber { get; set; }
+        public string BSRCode { get; set; }
     }
 }
