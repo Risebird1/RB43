@@ -8628,6 +8628,174 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
             return null;
         }
 
+        public async Task<IReadOnlyDictionary<int, QcInterviewAIevaluation>> GetQcInterviewAIevaluationByInterviewIdsAsync(IEnumerable<int> interviewIds)
+        {
+            var ids = interviewIds?.Where(id => id > 0).Distinct().ToList();
+            if (ids == null || ids.Count == 0)
+                return new Dictionary<int, QcInterviewAIevaluation>();
+
+            try
+            {
+                const string query = @"
+SELECT q.id, q.InterviewId, q.ReportAI, q.TranscritAi, q.PenalityApplied, q.QCDone, q.QCDoneOn,
+       q.ReportAIDetails, q.TranscritAiDetails, q.MergedAIQCDetails, q.ContradictionJson,
+       q.AIMergeTotalPenalty, q.AIMergeInterviewerSuspicious, q.AIMergeRedoInterview
+FROM dbo.QcInterviewAIevaluation q
+INNER JOIN (
+    SELECT InterviewId, MAX(id) AS MaxId
+    FROM dbo.QcInterviewAIevaluation
+    WHERE InterviewId IN @InterviewIds
+    GROUP BY InterviewId
+) latest ON latest.MaxId = q.id";
+
+                using var con = new SqlConnection(connectionString);
+                var rows = await SqlMapper.QueryAsync<QcInterviewAIevaluation>(
+                    con, query, new { InterviewIds = ids }, commandTimeout: 120);
+                return rows?
+                    .Where(r => r.InterviewId.HasValue)
+                    .GroupBy(r => r.InterviewId.Value)
+                    .ToDictionary(g => g.Key, g => g.First())
+                    ?? new Dictionary<int, QcInterviewAIevaluation>();
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            return new Dictionary<int, QcInterviewAIevaluation>();
+        }
+
+        public async Task<IReadOnlyDictionary<int, StatsDetailsPaymentDeductionSummary>> GetPaymentSlaSummaryByInterviewIdsAsync(IEnumerable<int> interviewIds)
+        {
+            var ids = interviewIds?.Where(id => id > 0).Distinct().ToList();
+            if (ids == null || ids.Count == 0)
+                return new Dictionary<int, StatsDetailsPaymentDeductionSummary>();
+
+            var rows = await QueryPaymentSlaSummariesAsync(ids, includeExtendedColumns: true);
+            if (rows.Count == 0)
+                rows = await QueryPaymentSlaSummariesAsync(ids, includeExtendedColumns: false);
+
+            return rows
+                .GroupBy(r => r.InterviewId)
+                .ToDictionary(g => g.Key, g => g.First());
+        }
+
+        private async Task<List<StatsDetailsPaymentDeductionSummary>> QueryPaymentSlaSummariesAsync(
+            List<int> ids,
+            bool includeExtendedColumns)
+        {
+            var extendedSelect = includeExtendedColumns
+                ? @"
+    ps.AttendanceJoinCompliance,
+    ps.AIContradictionScore,
+    ps.InterviewerVideo,"
+                : @"
+    NULL AS AttendanceJoinCompliance,
+    NULL AS AIContradictionScore,
+    NULL AS InterviewerVideo,";
+
+            var query = $@"
+SELECT
+    im.id AS InterviewId,
+    ps.PaymentDeduction,
+    ps.PaymentComplianceCount,
+    ps.Inaccuratedecisionmaking,
+    ps.TimeManagement,
+    ps.QuestionsRelevance,
+    ps.ScoreRubricIgnorance,
+    ps.PoorFeedbackComments,
+    ps.CandidateInteractionQuality,
+    ps.LimitedHandoncoding,
+    ps.WrongStatusUpdates,
+    ps.WeakInfrastructure,
+    ps.ProctoringIgnorance,
+    ps.UnethicalPractices,
+    ps.PoorCommunicationSkills,
+    {extendedSelect}
+    d.NonAIreasoning,
+    d.Riskcategory
+FROM dbo.InterviewMeetings im
+LEFT JOIN dbo.PaymentSLADetails ps ON ps.Interviewid = im.id
+LEFT JOIN (
+    SELECT InterviewId,
+           STRING_AGG(Type, ',') WITHIN GROUP (ORDER BY Type) AS NonAIreasoning,
+           STRING_AGG(Riskcategory, ',') WITHIN GROUP (ORDER BY Type) AS Riskcategory
+    FROM (
+        SELECT im2.id AS InterviewId, 'deficitmorethan10' AS Type, 'High Severity' AS Riskcategory
+        FROM dbo.InterviewMeetings im2
+        INNER JOIN dbo.InterviewComments ic ON ic.InterviewId = im2.id
+        INNER JOIN dbo.IRF irf ON irf.IRFId = im2.IRFId
+        INNER JOIN dbo.PlanTypeChargesMaster pt ON pt.CountryType = irf.JobCountry
+            AND pt.PlanTypeEnumValue = irf.Heuristicsscore AND irf.CompanyType = pt.CompanyType
+        WHERE im2.id IN @InterviewIds AND ic.MeetingStatus = 4
+          AND (ic.VideoDuration - pt.DurationSelectedMin) > (-pt.DurationSelectedMin)
+          AND (ic.VideoDuration - pt.DurationSelectedMin) < -10
+        UNION ALL
+        SELECT im2.id, 'AIVerdictLessthan4', 'High Severity'
+        FROM dbo.InterviewMeetings im2
+        INNER JOIN dbo.InterviewComments ic ON ic.InterviewId = im2.id
+        WHERE im2.id IN @InterviewIds AND ic.MeetingStatus IN (4, 6, 7, 8) AND ic.AITranscriptAnalysisScore < 4
+        UNION ALL
+        SELECT ic.InterviewId, 'Transcript AI Score', 'High Severity'
+        FROM dbo.InterviewComments ic
+        WHERE ic.InterviewId IN @InterviewIds AND ic.AITranscriptAnalysisScore < 6
+        UNION ALL
+        SELECT ic.InterviewId, 'Report AI Score', 'High Severity'
+        FROM dbo.InterviewComments ic
+        WHERE ic.InterviewId IN @InterviewIds AND ic.AIReportQCAnalysisScore < 60
+        UNION ALL
+        SELECT qca.InterviewId, 'AIRedo', 'Redo Requested'
+        FROM dbo.QcInterviewAIevaluation qca
+        WHERE qca.InterviewId IN @InterviewIds AND ISNULL(qca.AIMergeRedoInterview, 0) = 1
+        UNION ALL
+        SELECT qca.InterviewId, 'Contradiction AI Score', 'High Severity'
+        FROM dbo.QcInterviewAIevaluation qca
+        WHERE qca.InterviewId IN @InterviewIds
+          AND ISNULL(TRY_CAST(qca.ContradictionScore AS DECIMAL(10, 2)), 0) >= 4
+        UNION ALL
+        SELECT im2.id, 'CandidateRating', 'High Severity'
+        FROM dbo.InterviewMeetings im2
+        INNER JOIN dbo.InterviewComments ic ON ic.InterviewId = im2.id
+        INNER JOIN dbo.CandidateFeedbackDetails cfd ON cfd.InterviewId = im2.id
+        WHERE im2.id IN @InterviewIds AND ic.MeetingStatus IN (4, 6, 7, 8) AND cfd.Rating < 4
+        UNION ALL
+        SELECT im2.id, 'Selectdeficit', 'Under Review'
+        FROM dbo.InterviewMeetings im2
+        INNER JOIN dbo.InterviewComments ic ON ic.InterviewId = im2.id
+        INNER JOIN dbo.IRF irf ON irf.IRFId = im2.IRFId
+        INNER JOIN dbo.PlanTypeChargesMaster pt ON pt.CountryType = irf.JobCountry
+            AND pt.PlanTypeEnumValue = irf.Heuristicsscore AND irf.CompanyType = pt.CompanyType
+        WHERE im2.id IN @InterviewIds AND ic.MeetingStatus IN (4, 6, 7, 8)
+          AND (pt.DurationSelectedMin * 2 / 3 > ic.VideoDuration)
+          AND ic.InterviewStatus IN (2, 4)
+    ) flags
+    GROUP BY InterviewId
+) d ON d.InterviewId = im.id
+WHERE im.id IN @InterviewIds";
+
+            try
+            {
+                using var con = new SqlConnection(connectionString);
+                var rows = await SqlMapper.QueryAsync<StatsDetailsPaymentDeductionSummary>(
+                    con, query, new { InterviewIds = ids }, commandTimeout: 120);
+                return rows?.ToList() ?? new List<StatsDetailsPaymentDeductionSummary>();
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            return new List<StatsDetailsPaymentDeductionSummary>();
+        }
+
         public async Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId)
         {
             try

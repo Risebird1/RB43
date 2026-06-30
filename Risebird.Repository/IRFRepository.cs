@@ -720,6 +720,118 @@ namespace Risebird.Repository
             }
         }
 
+        private sealed class InterviewerQcAggregateRow
+        {
+            public string InterviewerEmail { get; set; }
+            public int SuspiciousCount { get; set; }
+            public int RedoCount { get; set; }
+        }
+
+        /// <summary>
+        /// Per-interviewer QCMerged verdict counts on completed interviews for this IRF,
+        /// plus manual suspicious flag from SuspiciousInterviewer.
+        /// </summary>
+        private async Task EnrichQcVerdictAggregateMetricsAsync(List<TransInterviewer> interviewers, int irfId)
+        {
+            if (interviewers == null || interviewers.Count == 0 || irfId <= 0)
+                return;
+
+            var byEmail = interviewers
+                .Where(iv => !string.IsNullOrWhiteSpace(iv.EmailId))
+                .GroupBy(iv => iv.EmailId.Trim(), StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
+
+            if (byEmail.Count == 0)
+                return;
+
+            try
+            {
+                using var con = new SqlConnection(connectionString);
+                var aggregates = (await con.QueryAsync<InterviewerQcAggregateRow>(@"
+;WITH IrfScope AS (
+    SELECT IRFId AS IrfCode FROM dbo.IRF WHERE id = @IrfId
+),
+Completed AS (
+    SELECT im.id AS InterviewId, LTRIM(RTRIM(im.interviewer)) AS InterviewerEmail
+    FROM dbo.InterviewMeetings im
+    INNER JOIN dbo.InterviewComments ic ON ic.InterviewId = im.id
+    CROSS JOIN IrfScope s
+    WHERE im.IRFId = s.IrfCode
+      AND im.confirmationStatus = 1
+      AND ic.MeetingStatus IN (4, 6, 7, 8)
+),
+LatestQc AS (
+    SELECT q.InterviewId, q.QCDone, q.AIMergeInterviewerSuspicious, q.AIMergeRedoInterview, q.MergedAIQCDetails
+    FROM dbo.QcInterviewAIevaluation q
+    INNER JOIN (
+        SELECT InterviewId, MAX(id) AS MaxId
+        FROM dbo.QcInterviewAIevaluation
+        GROUP BY InterviewId
+    ) x ON x.MaxId = q.id
+),
+Verdicts AS (
+    SELECT
+        c.InterviewerEmail,
+        CASE
+            WHEN q.QCDone = 1
+                 AND UPPER(LTRIM(RTRIM(ISNULL(q.AIMergeInterviewerSuspicious, '')))) IN ('YES', 'Y', 'TRUE') THEN 'suspicious'
+            WHEN q.QCDone = 1 AND ISNULL(q.AIMergeRedoInterview, 0) = 1 THEN 'redo'
+            WHEN q.QCDone = 1
+                 AND UPPER(LTRIM(RTRIM(ISNULL(JSON_VALUE(q.MergedAIQCDetails, '$.interviewer_suspicious'), '')))) IN ('YES', 'Y', 'TRUE') THEN 'suspicious'
+            WHEN q.QCDone = 1
+                 AND ISNULL(TRY_CAST(JSON_VALUE(q.MergedAIQCDetails, '$.RedoInterview') AS BIT), 0) = 1 THEN 'redo'
+            ELSE NULL
+        END AS Verdict
+    FROM Completed c
+    LEFT JOIN LatestQc q ON q.InterviewId = c.InterviewId
+)
+SELECT
+    InterviewerEmail,
+    SUM(CASE WHEN Verdict = 'suspicious' THEN 1 ELSE 0 END) AS SuspiciousCount,
+    SUM(CASE WHEN Verdict = 'redo' THEN 1 ELSE 0 END) AS RedoCount
+FROM Verdicts
+WHERE InterviewerEmail IS NOT NULL AND InterviewerEmail <> ''
+GROUP BY InterviewerEmail",
+                    new { IrfId = irfId },
+                    commandTimeout: 120))?.ToList();
+
+                if (aggregates != null)
+                {
+                    foreach (var row in aggregates)
+                    {
+                        if (string.IsNullOrWhiteSpace(row.InterviewerEmail)) continue;
+                        if (!byEmail.TryGetValue(row.InterviewerEmail.Trim(), out var rows)) continue;
+                        foreach (var iv in rows)
+                        {
+                            iv.QcVerdictSuspiciousCount = row.SuspiciousCount;
+                            iv.QcVerdictRedoCount = row.RedoCount;
+                        }
+                    }
+                }
+
+                var markedEmails = (await con.QueryAsync<string>(@"
+SELECT LTRIM(RTRIM(ul.EmailId))
+FROM dbo.SuspiciousInterviewer si
+INNER JOIN dbo.UserList ul ON ul.id = si.UserId
+WHERE si.SuspiciousStatus = 1",
+                    commandTimeout: 60))?.ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+                if (markedEmails != null && markedEmails.Count > 0)
+                {
+                    foreach (var email in markedEmails)
+                    {
+                        if (!byEmail.TryGetValue(email, out var rows)) continue;
+                        foreach (var iv in rows)
+                            iv.IsManuallyMarkedSuspicious = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
         public async Task<IRFVm> GetSkillChannelDetailsForUpdate(int irfId)
         {
             try
@@ -963,6 +1075,7 @@ namespace Risebird.Repository
                             }
                             await EnrichInactiveAuditSummariesAsync(transInterviewer, irfId);
                             await EnrichAutoQcFieldsAsync(transInterviewer, irfId);
+                            await EnrichQcVerdictAggregateMetricsAsync(transInterviewer, irfId);
                             _resultVM.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer);
                         }
                     }

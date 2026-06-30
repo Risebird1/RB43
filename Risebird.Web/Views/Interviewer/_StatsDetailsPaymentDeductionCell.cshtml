@@ -1,0 +1,46 @@
+@model Risebird.Entities.ViewModel.StatsDetailsVM
+@using Risebird.Entities.ViewModel
+@{
+    var display = Model?.PaymentDeductionDisplay;
+    var interviewId = Model?.interviewId ?? 0;
+    var hasContent = display != null && !string.IsNullOrEmpty(display.StatusLabel);
+    var statusText = hasContent && display.DeductionPercent.HasValue
+        ? $"{display.StatusLabel} ({display.DeductionPercent}%)"
+        : display?.StatusLabel;
+    var tagList = display?.RedFlagTags ?? Array.Empty<string>();
+    var tooltip = tagList.Count > 0
+        ? string.Join(", ", tagList)
+        : "View payment compliance details";
+}
+@if (!hasContent)
+{
+    <span class="iv-payment-deduction iv-payment-deduction--empty">—</span>
+}
+else if (display.IsClickable && interviewId > 0)
+{
+    <div class="iv-payment-deduction iv-payment-deduction--active"
+         onclick="PaymentComplianceDetails('@interviewId')"
+         title="@tooltip"
+         role="button"
+         tabindex="0"
+         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();PaymentComplianceDetails('@interviewId');}">
+        <span class="iv-payment-deduction__status">@statusText</span>
+        @if (tagList.Count > 0)
+        {
+            <span class="iv-payment-deduction__tags">
+                @foreach (var tag in tagList.Take(3))
+                {
+                    <span class="iv-payment-deduction__tag">@tag</span>
+                }
+                @if (tagList.Count > 3)
+                {
+                    <span class="iv-payment-deduction__tag iv-payment-deduction__tag--more">+@(tagList.Count - 3)</span>
+                }
+            </span>
+        }
+    </div>
+}
+else
+{
+    <span class="iv-payment-deduction" title="@tooltip">@statusText</span>
+}
