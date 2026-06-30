@@ -35,6 +35,7 @@ namespace Risebird.Repository.Interface
         //Task<IEnumerable<TransInterviewerAccDetails>> GetAccDetailsList(int ProfileId);
         Task<TransInterviewerAccDetails> GetAccDetailsList(int ProfileId);
         Task<bool> SaveBankVerificationAsync(int interviewerProfileId, TransInterviewerAccDetails accountDetails, CashfreeBankVerificationResult verificationResult);
+        Task<bool> SavePanVerificationAsync(int interviewerProfileId, string pan, CashfreePanVerificationResult verificationResult);
         Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile);
         IEnumerable<InterviewerInvites> GetInterviewerInvites(string emailId);
         Task<IEnumerable<Meeting>> GetUnapprovedInterviewerScheduledInterviews(string emailID);
