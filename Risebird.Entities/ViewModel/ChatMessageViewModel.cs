@@ -6,7 +6,7 @@ namespace Risebird.Entities.ViewModel
 {
     public class ChatMessageViewModel
     {
-        public Guid SessionId { get; set; } = Guid.NewGuid();
+        public Guid SessionId { get; set; }
         public string Message { get; set; }
         //public string BotReply { get; set; }
         public List<ChatLine> ChatLog { get; set; } = new();
