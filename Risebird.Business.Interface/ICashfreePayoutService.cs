@@ -40,5 +40,10 @@ namespace Risebird.Business.Interface
             string accountNumber,
             string ifscCode,
             string phone);
+
+        /// <summary>
+        /// Verifies a PAN number via Cashfree PAN Verification API.
+        /// </summary>
+        Task<CashfreePanVerificationResult> VerifyPanAsync(string pan, string name);
     }
 }

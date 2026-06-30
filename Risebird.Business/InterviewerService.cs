@@ -601,6 +601,23 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<bool> SavePanVerificationAsync(
+            int interviewerProfileId,
+            string pan,
+            CashfreePanVerificationResult verificationResult)
+        {
+            try
+            {
+                return await _interviewerRepository.SavePanVerificationAsync(
+                    interviewerProfileId, pan, verificationResult);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         #endregion
         #region  unapproved interviewers
         public IEnumerable<InterviewerInvites> GetInterviewerInvites(string emailId)

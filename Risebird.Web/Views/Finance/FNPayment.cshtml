@@ -30,6 +30,58 @@
         position: static !important;
         flex-shrink: 0;
     }
+
+    /* PAN info tooltip */
+    .pan-info-wrap {
+        position: relative;
+        display: inline-block;
+    }
+    .pan-info-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #1976d2;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        font-style: normal;
+        cursor: pointer;
+        margin-left: 4px;
+        vertical-align: middle;
+        line-height: 1;
+    }
+    .pan-tooltip-box {
+        display: none;
+        position: absolute;
+        z-index: 9999;
+        bottom: calc(100% + 6px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: #263238;
+        color: #fff;
+        font-size: 12px;
+        border-radius: 5px;
+        padding: 7px 10px;
+        white-space: nowrap;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.28);
+        pointer-events: none;
+        min-width: 160px;
+    }
+    .pan-tooltip-box::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 5px solid transparent;
+        border-top-color: #263238;
+    }
+    .pan-info-wrap:hover .pan-tooltip-box {
+        display: block;
+    }
 </style>
 <link href="~/Autocomplete/jquery-ui.min.css?v=2024" rel="stylesheet" />
 <link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
@@ -158,27 +210,28 @@
                                                             <th>Status</th>
                                                             <th>Blocked</th>
                                                             <th>Mobile</th>
-                                                            <th>Amount</th>
                                                             <th>Account Verified</th>
+                                                            <th>PAN Verified</th>
+                                                            <th style="text-align:right;">Amount</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tfoot>
                                                         <tr>
-
                                                             <th>Name</th>
                                                             <th>Status</th>
                                                             <th>Blocked</th>
                                                             <th>Mobile</th>
-                                                            <th>Amount</th>
                                                             <th>Account Verified</th>
+                                                            <th>PAN Verified</th>
+                                                            <th style="text-align:right;">Amount</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </tfoot>
                                                     <tbody id="tblbodyPayment">
                                                         @if (Model.Count == 0)
                                                         {
-                                                            <tr><td colspan="7" style="text-align:center">No Result found</td></tr>
+                                                            <tr><td colspan="8" style="text-align:center">No Result found</td></tr>
                                                         }
                                                         @foreach (var item in Model)
                                                         {
@@ -206,7 +259,6 @@
                                                                     }
                                                                 </td>
                                                                 <td>@(string.IsNullOrWhiteSpace(item.MobileNumber) ? "?" : item.MobileNumber)</td>
-                                                                <td>@item.Points<input type="hidden" id="hidpoint_@item.id" value="@item.Points" /></td>
                                                                 <td>
                                                                     @if (item.IsBankVerified)
                                                                     {
@@ -217,6 +269,25 @@
                                                                         <span class="text-danger" title="Bank account not verified">No</span>
                                                                     }
                                                                 </td>
+                                                                <td>
+                                                                    @if (item.IsPanVerified)
+                                                                    {
+                                                                        <span class="text-success">Yes</span>
+                                                                        <span class="pan-info-wrap">
+                                                                            <i class="pan-info-icon">i</i>
+                                                                            <span class="pan-tooltip-box">
+                                                                                PAN: @(item.VerifiedPAN ?? "—")<br />
+                                                                                Name: @(item.NameAtPan ?? "—")<br />
+                                                                                On: @(item.PanVerifiedOn?.ToString("dd MMM yyyy") ?? "—")
+                                                                            </span>
+                                                                        </span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span class="text-danger" title="PAN not verified">No</span>
+                                                                    }
+                                                                </td>
+                                                                <td style="text-align:right;">@item.Points<input type="hidden" id="hidpoint_@item.id" value="@item.Points" /></td>
                                                                 <td>
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Detailed View">
                                                                         <span onclick="DetailedView(@item.id)" title="Detailed View" class="mdc-fab__icon material-icons">
@@ -579,7 +650,7 @@
         var html = '';
         if (data.length == 0) {
             html += '  <tr>';
-            html += ' <td colspan="7" class="text-center">No data available in table</td>';
+            html += ' <td colspan="8" class="text-center">No data available in table</td>';
             html += ' </tr>';
         }
 
@@ -589,13 +660,39 @@
             var verifiedLabel = isVerified
                 ? '<span class="text-success" title="Bank account verified via Cashfree">Yes</span>'
                 : '<span class="text-danger" title="Bank account not verified">No</span>';
+
+            // PAN verified column with hover-info icon
+            var isPanVerified = data[i].isPanVerified === true || data[i].isPanVerified === 'true' || data[i].IsPanVerified === true;
+            var panLabel;
+            if (isPanVerified) {
+                var panNum  = data[i].verifiedPAN  || data[i].VerifiedPAN  || '—';
+                var panName = data[i].nameAtPan    || data[i].NameAtPan    || '—';
+                var panDate = data[i].panVerifiedOn || data[i].PanVerifiedOn || '';
+                if (panDate && panDate.toString().length >= 10) {
+                    var d = new Date(panDate);
+                    panDate = isNaN(d.getTime()) ? panDate : d.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()] + ' ' + d.getFullYear();
+                }
+                panLabel = '<span class="text-success">Yes</span>'
+                    + '<span class="pan-info-wrap">'
+                    +   '<i class="pan-info-icon">i</i>'
+                    +   '<span class="pan-tooltip-box">'
+                    +     'PAN: '  + panNum  + '<br/>'
+                    +     'Name: ' + panName + '<br/>'
+                    +     'On: '   + (panDate || '—')
+                    +   '</span>'
+                    + '</span>';
+            } else {
+                panLabel = '<span class="text-danger" title="PAN not verified">No</span>';
+            }
+
             html += '  <tr>';
             html += '  <td>' + data[i].comment + '</td>';
             html += '  <td>' + fnPaymentActiveLabel(data[i]) + '</td>';
             html += '  <td>' + fnPaymentBlockedLabel(data[i]) + '</td>';
             html += '  <td>' + fnPaymentMobileValue(data[i]) + '</td>';
-            html += ' <td>' + pointdetails + '</td> ';
             html += '  <td>' + verifiedLabel + '</td>';
+            html += '  <td>' + panLabel + '</td>';
+            html += ' <td style="text-align:right;">' + pointdetails + '</td> ';
             html += '  <td>';
             html += ' <button class="mdc-fab app-fab--absolute" aria-label="Detail View">';
             html += '   <span onclick = "DetailedView(' + data[i].id + ')" title = "Detail View" class="mdc-fab__icon material-icons">';
@@ -1206,13 +1303,17 @@
     // works even before any AJAX filter is applied.
     currentTableData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
         Model.Select(x => new {
-            id            = x.id,
-            comment       = x.Comment,
-            points        = x.Points,
-            isActive      = x.IsActive,
-            isBlocked     = x.IsBlocked,
-            isBankVerified= x.IsBankVerified,
-            mobileNumber  = x.MobileNumber
+            id             = x.id,
+            comment        = x.Comment,
+            points         = x.Points,
+            isActive       = x.IsActive,
+            isBlocked      = x.IsBlocked,
+            isBankVerified = x.IsBankVerified,
+            isPanVerified  = x.IsPanVerified,
+            verifiedPAN    = x.VerifiedPAN,
+            nameAtPan      = x.NameAtPan,
+            panVerifiedOn  = x.PanVerifiedOn,
+            mobileNumber   = x.MobileNumber
         })
     ));
 
@@ -1409,7 +1510,7 @@
     function bindtableDataChangeMonth() {
         var html = '';
         html += '  <tr>';
-        html += ' <td colspan="7" class="text-center">No data available in table</td>';
+        html += ' <td colspan="8" class="text-center">No data available in table</td>';
         html += ' </tr>';
         $("#tblbodyPayment").empty().html(html);
     }

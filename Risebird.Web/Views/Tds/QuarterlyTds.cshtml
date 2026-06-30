@@ -206,7 +206,14 @@
                                                             <form method="post" action="@Url.Action("ToggleChallanPaid","Tds")" style="display:inline;">
                                                                 @Html.AntiForgeryToken()
                                                                 <input type="hidden" name="id"      value="@challan.id" />
-                                                                <input type="hidden" name="isPaid"  value="@(!challan.IsPaid)" />
+                                                                @if(challan.IsPaid)
+                                                                {
+                                                                    <input type="hidden" name="isPaid"  value="false" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="hidden" name="isPaid"  value="true" />
+                                                                }
                                                                 <input type="hidden" name="year"    value="@Model.SelectedYear" />
                                                                 <input type="hidden" name="quarter" value="@Model.SelectedQuarter" />
                                                                 <button type="submit" class="mdc-button @(challan.IsPaid ? "mdc-button--raised" : "mdc-button--outlined") mdc-ripple-upgraded" style="font-size:11px;height:28px;padding:0 10px;">
