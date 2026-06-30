@@ -1128,6 +1128,41 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> SavePanVerificationAsync(
+            int interviewerProfileId,
+            string pan,
+            CashfreePanVerificationResult verificationResult)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@InterviewerProfileId", interviewerProfileId);
+                parameters.Add("@PAN", (pan ?? string.Empty).Trim().ToUpperInvariant());
+                parameters.Add("@IsPanVerified", verificationResult?.IsValid == true);
+                parameters.Add("@PanVerifiedOn", verificationResult?.IsValid == true ? DateTime.UtcNow : (DateTime?)null);
+                parameters.Add("@VerifiedPAN", verificationResult?.IsValid == true ? (pan ?? string.Empty).Trim().ToUpperInvariant() : null);
+                parameters.Add("@NameAtPan", verificationResult?.NameAtPan);
+                parameters.Add("@PanVerificationReferenceId", verificationResult?.ReferenceId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_SaveInterviewerPanVerification", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+                return true;
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         private static void AddBankVerificationParameters(
             DynamicParameters paramsAccount,
             TransInterviewerAccDetails previous,

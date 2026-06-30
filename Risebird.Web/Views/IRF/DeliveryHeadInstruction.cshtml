@@ -1138,6 +1138,13 @@
                                                 bool canEditIvOps = canEditDmIvOps || isSmeView;
                                                 bool canUploadIvResume = (canEditDmIvOps && DmV4CanUploadIvResume(dmProfileName)) || isSmeView;
                                                 bool canEditSurcharge = !isPanelCompactView && (ViewBag.profileName == "Admin" || ViewBag.profileName == "SupportAdmin");
+                                                bool canMarkSuspicious = !isClientShareView && !isSmeView
+                                                    && (string.Equals(dmProfileName, "Admin", StringComparison.OrdinalIgnoreCase)
+                                                        || string.Equals(dmProfileName, "HR", StringComparison.OrdinalIgnoreCase)
+                                                        || string.Equals(dmProfileName, "Finance", StringComparison.OrdinalIgnoreCase)
+                                                        || string.Equals(dmProfileName, "SeniorInterviewerManagement", StringComparison.OrdinalIgnoreCase)
+                                                        || string.Equals(dmProfileName, "SupportAdmin", StringComparison.OrdinalIgnoreCase)
+                                                        || string.Equals(dmProfileName, "MappingAdmin", StringComparison.OrdinalIgnoreCase));
                                                 if (isClientShareView)
                                                 {
                                                     ivList = ivList.Where(x => x.IsActive).ToList();
@@ -1468,6 +1475,8 @@
                                                                  @if (ivInactiveReason != null) { <text>data-inactive-reason-category="@ivInactiveReason.Category"</text> }
                                                                  @if (iv.InactiveAuditSummaryLoaded) { <text>data-inactive-audit-loaded="1" data-inactive-audit-event="@(iv.LatestInactiveAuditEventType ?? "")" data-inactive-audit-detail="@(iv.LatestInactiveAuditReasonDetail ?? "")" data-inactive-audit-changed-at="@DmV4IsoTimestamp(iv.LatestInactiveAuditChangedAt)"</text> if (iv.LatestInactiveAuditTriggeringInterviewId.HasValue) { <text> data-inactive-audit-interview-id="@iv.LatestInactiveAuditTriggeringInterviewId.Value"</text> } <text></text> }
                                                                  @if (!string.IsNullOrWhiteSpace(iv.AutoQcVerdict)) { <text>data-auto-qc-verdict="@iv.AutoQcVerdict.Trim().ToLowerInvariant()"</text> }
+                                                                 @if (iv.IsManuallyMarkedSuspicious) { <text>data-manual-suspicious="1"</text> }
+                                                                 data-qc-completed="@ivCompletedCount" data-qc-suspicious="@iv.QcVerdictSuspiciousCount" data-qc-redo="@iv.QcVerdictRedoCount"
                                                                  @if (autoQcInterviewId.HasValue) { <text>data-auto-qc-interview-id="@autoQcInterviewId.Value"</text> }
                                                                  @if (!string.IsNullOrEmpty(autoQcRemovedAtIso)) { <text>data-auto-qc-removed-at="@autoQcRemovedAtIso"</text> }
                                                                  data-capacity="@(ivCapExplicit ? iv.InterviewCapacity.ToString() : "")" data-cap-configured="@(ivCapExplicit ? "1" : "0")" data-cap-effective="@(ivCapShowUnlimited ? "" : ivCapVal.ToString())" data-cap-from-default="@(ivCapUsesDefault ? "1" : "0")" data-assigned="@ivAssigned" data-future-assigned="@ivFutureAssignedCount"
@@ -1547,6 +1556,27 @@
                                                                               data-auto-qc-verdict="@ivActiveBadQuality.Verdict"
                                                                               @if (!string.IsNullOrEmpty(autoQcRemovedAtIso)) { <text>data-auto-qc-removed-at="@autoQcRemovedAtIso"</text> }
                                                                               title="">@ivActiveBadQuality.Label</span>
+                                                                    }
+                                                                    @if (!isPanelCompactView && !isSmeView && canEditDmIvOps)
+                                                                    {
+                                                                        <div class="dm-v4-iv-bad-quality-extra dm-v4-iv-bad-quality-extra--actions" hidden aria-hidden="true">
+                                                                            @if (iv.IsManuallyMarkedSuspicious)
+                                                                            {
+                                                                                <span class="dm-v4-iv-manual-suspicious-badge" data-manual-suspicious-badge="1">
+                                                                                    <i class="fa fa-user-secret" aria-hidden="true"></i>
+                                                                                    Manually marked suspicious
+                                                                                </span>
+                                                                            }
+                                                                            else if (canMarkSuspicious && !string.IsNullOrWhiteSpace(iv.EmailId))
+                                                                            {
+                                                                                <button type="button" class="dm-v4-iv-mark-suspicious-btn" data-email="@iv.EmailId" title="Mark interviewer as suspicious">
+                                                                                    <span class="dm-v4-iv-mark-suspicious-btn__icon" aria-hidden="true">
+                                                                                        <img src="/img/suspicious.png" width="16" height="16" alt="" />
+                                                                                    </span>
+                                                                                    <span class="dm-v4-iv-mark-suspicious-btn__title">Mark Suspicious</span>
+                                                                                </button>
+                                                                            }
+                                                                        </div>
                                                                     }
                                                                     @if (ivInactiveReason != null)
                                                                     {
@@ -1704,6 +1734,30 @@
                                                                             <span class="dm-v4-iv-outcomes__empty" title="No rejected outcomes">Rejected 0</span>
                                                                         }
                                                                     </div>
+                                                                    @if (!isPanelCompactView && !isSmeView && canEditDmIvOps)
+                                                                    {
+                                                                        <div class="dm-v4-iv-bad-quality-extra dm-v4-iv-bad-quality-extra--counts" hidden aria-hidden="true">
+                                                                            <div class="dm-v4-iv-qc-counts" aria-label="QC verdict counts on this channel">
+                                                                                <div class="dm-v4-iv-qc-count dm-v4-iv-qc-count--suspicious" title="QCMergedAIDetails suspicious verdicts">
+                                                                                    <span class="dm-v4-iv-qc-count__label">Suspicious</span>
+                                                                                    <span class="dm-v4-iv-qc-count__value dm-v4-mono">
+                                                                                        @if (ivCompletedCount > 0)
+                                                                                        {
+                                                                                            @($"{iv.QcVerdictSuspiciousCount}/{ivCompletedCount}")
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            @iv.QcVerdictSuspiciousCount
+                                                                                        }
+                                                                                    </span>
+                                                                                </div>
+                                                                                <div class="dm-v4-iv-qc-count dm-v4-iv-qc-count--redo" title="QCMergedAIDetails redo verdicts">
+                                                                                    <span class="dm-v4-iv-qc-count__label">Redo</span>
+                                                                                    <span class="dm-v4-iv-qc-count__value dm-v4-mono">@iv.QcVerdictRedoCount</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    }
                                                                 </div>
                                                                 <div class="dm-v4-iv-cell dm-v4-iv-cell--capacity">
                                                                     <div class="dm-v4-iv-capacity" data-capacity="@(ivCapExplicit ? iv.InterviewCapacity.ToString() : "")" data-cap-configured="@(ivCapExplicit ? "1" : "0")" data-cap-effective="@(ivCapShowUnlimited ? "" : ivCapVal.ToString())" data-cap-from-default="@(ivCapUsesDefault ? "1" : "0")" data-assigned="@ivAssigned">
@@ -2178,7 +2232,7 @@
             </button>
         </div>
         <div class="dm-v4-vd-foot">
-            <button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" id="dmV4VerdictDrawerClose">Close</button>
+            <button style="width:auto;height:max-content;" type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" id="dmV4VerdictDrawerClose">Close</button>
         </div>
     </div>
 </aside>
@@ -3660,7 +3714,21 @@ else
         white-space:normal;
     }
 </style>
-<script src="~/js/dm-v4-layout.js?v=20250629autoqcflag3"></script>
+@if (!ViewBag.IsClientShareView && !ViewBag.IsSmeView)
+{
+    var dmProfileForSuspicious = (ViewBag.profileName as string ?? "").Trim().Trim('"');
+    var showMarkSuspiciousModal = string.Equals(dmProfileForSuspicious, "Admin", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(dmProfileForSuspicious, "HR", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(dmProfileForSuspicious, "Finance", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(dmProfileForSuspicious, "SeniorInterviewerManagement", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(dmProfileForSuspicious, "SupportAdmin", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(dmProfileForSuspicious, "MappingAdmin", StringComparison.OrdinalIgnoreCase);
+    if (showMarkSuspiciousModal)
+    {
+        @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
+    }
+}
+<script src="~/js/dm-v4-layout.js?v=20250630badqc4"></script>
 <script src="~/js/dm-v4-voice.js?v=20250609istmeta1"></script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
 <script src="~/js/dm-v4-questions.js?v=20250609synthesia2"></script>
