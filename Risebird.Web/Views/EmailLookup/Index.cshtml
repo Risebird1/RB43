@@ -1,5 +1,6 @@
 @model Risebird.Entities.ViewModel.EmailLookupResultVM
 @using Microsoft.AspNetCore.Http
+@using System.Linq
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Email Lookup";
@@ -118,6 +119,76 @@
     .alert-blocked  { background: #fce8e6; color: #c5221f; border: 1px solid #f5c6c4; }
     .alert-hold     { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
     .alert-access   { background: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7; }
+
+    /* ── Verification cards ── */
+    .verif-card {
+        border-radius: 10px;
+        border: 1.5px solid var(--border-color);
+        overflow: hidden;
+        font-size: 0.85rem;
+    }
+    .verif-card--ok      { border-color: #34a853; }
+    .verif-card--pending { border-color: #e0a500; }
+    .verif-card__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 14px;
+        background: #f8f9fa;
+        font-weight: 600;
+        font-size: 0.8rem;
+        gap: 8px;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .verif-card--ok      .verif-card__header { background: #e6f4ea; border-color: #c8e6c9; }
+    .verif-card--pending .verif-card__header { background: #fff8e1; border-color: #ffe082; }
+    .verif-card__body { padding: 10px 14px; }
+    .verif-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 4px 0;
+        border-bottom: 1px solid #f0f0f0;
+        gap: 8px;
+    }
+    .verif-row:last-child { border-bottom: none; }
+    .verif-label { color: var(--text-muted); font-size: 0.78rem; white-space: nowrap; }
+    .verif-value { font-size: 0.85rem; text-align: right; word-break: break-all; }
+    .verif-badge {
+        border-radius: 20px;
+        padding: 2px 10px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    .verif-badge--ok      { background: #34a853; color: #fff; }
+    .verif-badge--pending { background: #e0a500; color: #fff; }
+
+    /* ── TDS quarterly section ── */
+    .tds-year-block { margin-bottom: 18px; }
+    .tds-year-block:last-child { margin-bottom: 0; }
+    .tds-year-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #f1f3f4;
+        border-radius: 8px 8px 0 0;
+        padding: 8px 14px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        border: 1px solid var(--border-color);
+        border-bottom: none;
+    }
+    .tds-year-totals { font-size: 0.82rem; color: var(--text-muted); }
+    .tds-quarter-pill {
+        background: #e8f0fe;
+        color: #1a73e8;
+        border-radius: 20px;
+        padding: 2px 10px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
 
     .stat-card {
         background: #fff; border-radius: 12px; padding: 20px 24px;
@@ -310,36 +381,124 @@
                 </div>
             }
 
-            @* ── PAN / Bank details (interviewers only) ── *@
+            @* ── PAN / Bank Verification details (interviewers only) ── *@
             @if (isIvr && (!string.IsNullOrEmpty(Model.PAN) || !string.IsNullOrEmpty(Model.AccountNumber)))
             {
                 <div class="mt-3 pt-3" style="border-top:1px solid var(--border-color);">
-                    <div class="fw-semibold mb-2" style="font-size:0.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);">
-                        <i class="fas fa-university me-1"></i> Bank &amp; PAN Details
+                    <div class="fw-semibold mb-3" style="font-size:0.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);">
+                        <i class="fas fa-university me-1"></i> Bank &amp; PAN Verification
                     </div>
-                    <div class="d-flex flex-wrap gap-2">
-                        @if (!string.IsNullOrEmpty(Model.PAN))
-                        {
-                            <span class="profile-badge badge-default">
-                                <i class="fas fa-id-card me-1"></i>PAN: <strong>@Model.PAN</strong>
-                                @if (Model.IsBankVerified)
-                                {
-                                    <i class="fas fa-check-circle text-success ms-1" title="Bank Verified"></i>
-                                }
-                            </span>
-                        }
-                        @if (!string.IsNullOrEmpty(Model.AccountName))
-                        {
-                            <span class="profile-badge badge-default"><i class="fas fa-user me-1"></i>@Model.AccountName</span>
-                        }
-                        @if (!string.IsNullOrEmpty(Model.AccountNumber))
-                        {
-                            <span class="profile-badge badge-default"><i class="fas fa-hashtag me-1"></i>@Model.AccountNumber</span>
-                        }
-                        @if (!string.IsNullOrEmpty(Model.IFSCCode))
-                        {
-                            <span class="profile-badge badge-default"><i class="fas fa-code-branch me-1"></i>IFSC: @Model.IFSCCode</span>
-                        }
+                    <div class="row g-3">
+                        @* PAN Card *@
+                        <div class="col-md-6">
+                            <div class="verif-card @(Model.IsPanVerified ? "verif-card--ok" : "verif-card--pending")">
+                                <div class="verif-card__header">
+                                    <i class="fas fa-id-card"></i> PAN Card
+                                    @if (Model.IsPanVerified)
+                                    {
+                                        <span class="verif-badge verif-badge--ok"><i class="fas fa-check-circle me-1"></i>Verified</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="verif-badge verif-badge--pending"><i class="fas fa-clock me-1"></i>Not Verified</span>
+                                    }
+                                </div>
+                                <div class="verif-card__body">
+                                    <div class="verif-row">
+                                        <span class="verif-label">PAN Number</span>
+                                        <span class="verif-value fw-bold">@(string.IsNullOrEmpty(Model.PAN) ? "—" : Model.PAN)</span>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(Model.NameAtPan))
+                                    {
+                                        <div class="verif-row">
+                                            <span class="verif-label">Name at PAN</span>
+                                            <span class="verif-value">@Model.NameAtPan</span>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.VerifiedPAN) && Model.VerifiedPAN != Model.PAN)
+                                    {
+                                        <div class="verif-row">
+                                            <span class="verif-label">Verified PAN</span>
+                                            <span class="verif-value text-success">@Model.VerifiedPAN</span>
+                                        </div>
+                                    }
+                                    @if (Model.PanVerifiedOn.HasValue)
+                                    {
+                                        <div class="verif-row">
+                                            <span class="verif-label">Verified On</span>
+                                            <span class="verif-value">@Model.PanVerifiedOn.Value.ToString("dd MMM yyyy, hh:mm tt")</span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        @* Bank Account Card *@
+                        <div class="col-md-6">
+                            <div class="verif-card @(Model.IsBankVerified ? "verif-card--ok" : "verif-card--pending")">
+                                <div class="verif-card__header">
+                                    <i class="fas fa-piggy-bank"></i> Bank Account
+                                    @if (Model.IsBankVerified)
+                                    {
+                                        <span class="verif-badge verif-badge--ok"><i class="fas fa-check-circle me-1"></i>Verified</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="verif-badge verif-badge--pending"><i class="fas fa-clock me-1"></i>Not Verified</span>
+                                    }
+                                </div>
+                                <div class="verif-card__body">
+                                    @if (!string.IsNullOrEmpty(Model.AccountName))
+                                    {
+                                        <div class="verif-row">
+                                            <span class="verif-label">Account Name</span>
+                                            <span class="verif-value fw-bold">@Model.AccountName</span>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.AccountNumber))
+                                    {
+                                        <div class="verif-row">
+                                            <span class="verif-label">Account No.</span>
+                                            <span class="verif-value">@Model.AccountNumber</span>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.IFSCCode))
+                                    {
+                                        <div class="verif-row">
+                                            <span class="verif-label">IFSC Code</span>
+                                            <span class="verif-value">@Model.IFSCCode</span>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.NameAtBank))
+                                    {
+                                        <div class="verif-row">
+                                            <span class="verif-label">Name at Bank</span>
+                                            <span class="verif-value text-success">@Model.NameAtBank</span>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.VerifiedAccountNumber) && Model.VerifiedAccountNumber != Model.AccountNumber)
+                                    {
+                                        <div class="verif-row">
+                                            <span class="verif-label">Verified Acc No.</span>
+                                            <span class="verif-value text-success">@Model.VerifiedAccountNumber</span>
+                                        </div>
+                                    }
+                                    @if (Model.BankVerifiedOn.HasValue)
+                                    {
+                                        <div class="verif-row">
+                                            <span class="verif-label">Verified On</span>
+                                            <span class="verif-value">@Model.BankVerifiedOn.Value.ToString("dd MMM yyyy, hh:mm tt")</span>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(Model.UPIId))
+                                    {
+                                        <div class="verif-row">
+                                            <span class="verif-label">UPI ID</span>
+                                            <span class="verif-value">@Model.UPIId</span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             }
@@ -557,6 +716,141 @@
                     <hr class="section-divider" />
                     <div class="text-center py-3 text-muted">
                         <i class="fas fa-info-circle me-1"></i> No payment records found for this user.
+                    </div>
+                }
+            </div>
+
+            @* ── TDS Quarter-wise Section ── *@
+            <div class="section-card">
+                <div class="section-title"><i class="fas fa-receipt"></i> TDS — Quarter-wise Summary</div>
+                @if (Model.TdsQuarters != null && Model.TdsQuarters.Count > 0)
+                {
+                    @* Overall totals across all years *@
+                    decimal allPaidamount = Model.TdsQuarters.Sum(t => t.AmountPaid);
+                    decimal allTdsCalculated = Model.TdsQuarters.Sum(t => Math.Round(t.AmountPaid * 0.10m, 0));
+                    decimal allTdsPaid       = Model.TdsQuarters.Where(t => t.IsPaid).Sum(t => t.TdsAmount);
+                    decimal allTdsPending    = allTdsCalculated - allTdsPaid;
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-6 col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-number stat-blue">&#8377;@allPaidamount.ToString("N0")</div>
+                                <div class="stat-label">Total Amount Paid</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-number" style="color:#1a73e8;">&#8377;@allTdsCalculated.ToString("N0")</div>
+                                <div class="stat-label">TDS Calculated (10%)</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-number stat-green">&#8377;@allTdsPaid.ToString("N0")</div>
+                                <div class="stat-label">TDS Paid</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-number" style="color:#e65100;">&#8377;@allTdsPending.ToString("N0")</div>
+                                <div class="stat-label">TDS Pending</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @* Group by Financial Year *@
+                    var tdsYears = Model.TdsQuarters
+                        .GroupBy(t => t.FinancialYear)
+                        .OrderByDescending(g => g.Key)
+                        .ToList();
+                    foreach (var yrGroup in tdsYears)
+                    {
+                        decimal yrAmountPaid     = yrGroup.Sum(t => t.AmountPaid);
+                        decimal yrTdsCalculated  = yrGroup.Sum(t => Math.Round(t.AmountPaid * 0.10m, 0));
+                        decimal yrTdsPaid        = yrGroup.Where(t => t.IsPaid).Sum(t => t.TdsAmount);
+                        decimal yrTdsPending     = yrTdsCalculated - yrTdsPaid;
+                        <div class="tds-year-block">
+                            <div class="tds-year-header">
+                                <span><i class="fas fa-calendar-alt me-1"></i> FY @yrGroup.Key</span>
+                                <span class="tds-year-totals">
+                                    Total Paid: <strong>&#8377;@yrAmountPaid.ToString("N0")</strong>
+                                    &nbsp;|&nbsp; TDS Calculated: <strong style="color:#1a73e8;">&#8377;@yrTdsCalculated.ToString("N0")</strong>
+                                    &nbsp;|&nbsp; TDS Paid: <strong class="text-success">&#8377;@yrTdsPaid.ToString("N0")</strong>
+                                    &nbsp;|&nbsp; TDS Pending: <strong @(yrTdsPending > 0 ? "class=\"text-danger\"" : "class=\"text-muted\"")>&#8377;@yrTdsPending.ToString("N0")</strong>
+                                </span>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Quarter</th>
+                                            <th class="text-end">Total Amount (&#8377;)</th>
+                                            <th class="text-end">TDS Calculated (&#8377;)</th>
+                                            <th class="text-end">TDS Paid (&#8377;)</th>
+                                            <th class="text-end">TDS Pending (&#8377;)</th>
+                                            <th>Deposit Date</th>
+                                            <th>Challan / BSR</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var tds in yrGroup.OrderBy(t => t.Quarter))
+                                        {
+                                            decimal tdsCalculated = Math.Round(tds.AmountPaid * 0.10m, 0);
+                                            decimal tdsPaid       = tds.IsPaid ? tds.TdsAmount : 0;
+                                            decimal tdsPending    = tdsCalculated - tdsPaid;
+                                            <tr>
+                                                <td><span class="tds-quarter-pill">@tds.Quarter</span></td>
+                                                <td class="text-end">@tds.AmountPaid.ToString("N0")</td>
+                                                <td class="text-end fw-bold" style="color:#1a73e8;">@tdsCalculated.ToString("N0")</td>
+                                                <td class="text-end fw-bold text-success">
+                                                    @if (tds.IsPaid)
+                                                    {
+                                                        <text>@tdsPaid.ToString("N0")</text>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">0</span>
+                                                    }
+                                                </td>
+                                                <td class="text-end fw-bold @(tdsPending > 0 ? "text-danger" : "text-muted")">
+                                                    @tdsPending.ToString("N0")
+                                                </td>
+                                                <td>
+                                                    @if (tds.IsPaid && tds.DepositDate.HasValue)
+                                                    {
+                                                        <text>@tds.DepositDate.Value.ToString("dd MMM yyyy")</text>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="status-pill status-pending">Pending</span>
+                                                    }
+                                                </td>
+                                                <td style="font-size:0.78rem;color:var(--text-muted);">
+                                                    @if (!string.IsNullOrEmpty(tds.ChallanSerialNumber))
+                                                    {
+                                                        <div>Challan: @tds.ChallanSerialNumber</div>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(tds.BSRCode))
+                                                    {
+                                                        <div>BSR: @tds.BSRCode</div>
+                                                    }
+                                                    @if (string.IsNullOrEmpty(tds.ChallanSerialNumber) && string.IsNullOrEmpty(tds.BSRCode))
+                                                    {
+                                                        <text>—</text>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-3 text-muted">
+                        <i class="fas fa-info-circle me-1"></i> No TDS records found for this interviewer.
                     </div>
                 }
             </div>

@@ -1,8 +1,10 @@
 @using Risebird.CommonHelper
 @using Risebird.Entities.Data
+@using Risebird.Entities.ViewModel
 @using Risebird.Web.Helpers
 @using System.Text.Json
 @using System.Linq
+@using System.Collections.Generic
 @model Risebird.Entities.ViewModel.ProctoringSessionEventsResultViewModel
 @{
     ViewData["Title"] = "Proctoring session events";
@@ -2444,6 +2446,57 @@
         </div>
     </div>
 
+    @{
+        var mediaDiag = Model.MediaDiagnostics;
+        var showMediaDiag = mediaDiag != null &&
+            (mediaDiag.ScreenshotWithBlob + mediaDiag.ChunkWithBlob + mediaDiag.AzureScreenshotFallback + mediaDiag.AzureChunkFallback) == 0;
+    }
+    @if (showMediaDiag)
+    {
+        var diagTitle = mediaDiag.TotalEvents == 0
+            ? "Proctoring never connected (no server telemetry)"
+            : "Why no screenshots or video?";
+        var diagSubtitle = mediaDiag.TotalEvents == 0
+            ? "Blob upload was never attempted — fix extension join and screen share first."
+            : "Capture or upload failed after the session started.";
+        <section class="card rb-pe-media-diag" style="margin-top:20px;border-color:#f59e0b;background:#fffbeb">
+            <div class="card-head">
+                <div>
+                    <h2 style="color:#92400e">@diagTitle</h2>
+                    <div class="desc">@diagSubtitle · Session <code>@Model.SessionId</code> · Interview #@Model.InterviewId</div>
+                </div>
+            </div>
+            <div style="padding:0 20px 20px;font-size:14px;color:#334155;line-height:1.55">
+                <p style="margin:0 0 12px">
+                    Scheduled window (server local):
+                    <strong>@(mediaDiag.ScheduledStartLocal > DateTime.MinValue ? mediaDiag.ScheduledStartLocal.ToString("dd MMM yyyy HH:mm") : "—")</strong>
+                    –
+                    <strong>@(mediaDiag.ScheduledEndLocal > DateTime.MinValue ? mediaDiag.ScheduledEndLocal.ToString("dd MMM yyyy HH:mm") : "—")</strong>
+                    @if (mediaDiag.MeetingStatusId.HasValue)
+                    {
+                        <span> · Meeting status: @mediaDiag.MeetingStatusId</span>
+                    }
+                </p>
+                <table style="width:100%;max-width:640px;border-collapse:collapse;margin-bottom:14px;font-size:13px">
+                    <tr><td style="padding:4px 8px 4px 0;color:#64748b">DB events</td><td><strong>@mediaDiag.TotalEvents</strong></td></tr>
+                    <tr><td style="padding:4px 8px 4px 0;color:#64748b">join / start / stop</td><td><strong>@mediaDiag.JoinEvents / @mediaDiag.StartEvents / @mediaDiag.StopEvents</strong></td></tr>
+                    <tr><td style="padding:4px 8px 4px 0;color:#64748b">screenshot rows (blob / failed)</td><td><strong>@mediaDiag.ScreenshotEvents (@mediaDiag.ScreenshotWithBlob ok, @mediaDiag.ScreenshotUploadFailed failed)</strong></td></tr>
+                    <tr><td style="padding:4px 8px 4px 0;color:#64748b">screen_chunk rows (blob / failed)</td><td><strong>@mediaDiag.ChunkEvents (@mediaDiag.ChunkWithBlob ok, @mediaDiag.ChunkUploadFailed failed)</strong></td></tr>
+                    <tr><td style="padding:4px 8px 4px 0;color:#64748b">Azure fallback blobs</td><td><strong>@mediaDiag.AzureScreenshotFallback screenshots, @mediaDiag.AzureChunkFallback chunks</strong></td></tr>
+                </table>
+                @if (mediaDiag.LikelyCauses != null && mediaDiag.LikelyCauses.Any())
+                {
+                    <ul style="margin:0;padding-left:20px">
+                        @foreach (var cause in mediaDiag.LikelyCauses)
+                        {
+                            <li style="margin-bottom:6px">@cause</li>
+                        }
+                    </ul>
+                }
+            </div>
+        </section>
+    }
+
     @if (Model.Events == null || !Model.Events.Any())
     {
         <div class="rb-pe-empty">
@@ -2459,6 +2512,10 @@
         .Select(x => new { Event = x, BlobUrl = ExtractBlobUrl(x.MetadataJson) })
         .Where(x => !string.IsNullOrWhiteSpace(x.BlobUrl))
         .ToList();
+        var screenshotFallback = Model.FallbackScreenshots?
+            .Where(x => !string.IsNullOrWhiteSpace(x.BlobUrl))
+            .ToList() ?? new List<ProctoringCapturedBlobViewModel>();
+        var screenshotDisplayCount = screenshotRows.Count + (screenshotRows.Any() ? 0 : screenshotFallback.Count);
         var screenshotBlobFailures = allEvents
         .Where(x => string.Equals(x.EventKind, "screenshot", System.StringComparison.OrdinalIgnoreCase))
         .Select(x => ExtractMetaString(x.MetadataJson, "uploadError"))
@@ -2468,6 +2525,10 @@
         .Select(x => new { Event = x, BlobUrl = ExtractBlobUrl(x.MetadataJson) })
         .Where(x => !string.IsNullOrWhiteSpace(x.BlobUrl))
         .ToList();
+        var videoFallback = Model.FallbackVideoChunks?
+            .Where(x => !string.IsNullOrWhiteSpace(x.BlobUrl))
+            .ToList() ?? new List<ProctoringCapturedBlobViewModel>();
+        var videoDisplayCount = videoRows.Count + (videoRows.Any() ? 0 : videoFallback.Count);
         var screenChunkBlobFailures = allEvents
         .Where(x => string.Equals(x.EventKind, "screen_chunk", System.StringComparison.OrdinalIgnoreCase))
         .Select(x => ExtractMetaString(x.MetadataJson, "uploadError"))
@@ -2546,7 +2607,7 @@
             <div class="media-row">
                 <div class="media-title">
                     <h3>Screenshots</h3>
-                    <span class="media-count">@screenshotRows.Count item(s)</span>
+                    <span class="media-count">@screenshotDisplayCount item(s)</span>
                 </div>
                 @if (screenshotBlobFailures > 0)
                 {
@@ -2567,16 +2628,32 @@
                         }
                     </div>
                 }
+                else if (screenshotFallback.Any())
+                {
+                    <div class="desc" style="margin-bottom:8px;">Loaded from Azure storage (telemetry metadata had no blob links).</div>
+                    <div class="media-strip media-strip-wrap">
+                        @foreach (var shot in screenshotFallback)
+                        {
+                            <a class="media-card" href="@shot.BlobUrl" target="_blank" rel="noopener">
+                                <img class="media-thumb" src="@shot.BlobUrl" alt="Screenshot" loading="lazy" />
+                                <div class="media-meta">
+                                    <div class="tt">Screenshot</div>
+                                    <div class="st">@(shot.CapturedAtUtc.HasValue ? IndiaTimeHelper.FormatIstForDisplay(shot.CapturedAtUtc.Value) : "—")</div>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                }
                 else
                 {
-                    <div class="desc">No screenshot blobs found in telemetry metadata.</div>
+                    <div class="desc">No screenshot blobs found in telemetry metadata or Azure containers (proctoring-screenshots).</div>
                 }
             </div>
 
             <div class="media-row">
                 <div class="media-title">
                     <h3>Captured video chunks</h3>
-                    <span class="media-count">@videoRows.Count item(s)</span>
+                    <span class="media-count">@videoDisplayCount item(s)</span>
                 </div>
                 @if (screenChunkBlobFailures > 0)
                 {
@@ -2597,9 +2674,25 @@
                         }
                     </div>
                 }
+                else if (videoFallback.Any())
+                {
+                    <div class="desc" style="margin-bottom:8px;">Loaded from Azure storage (telemetry metadata had no blob links).</div>
+                    <div class="media-strip media-strip-wrap">
+                        @foreach (var chunk in videoFallback)
+                        {
+                            <a class="media-card" href="@chunk.BlobUrl" target="_blank" rel="noopener">
+                                <video class="media-thumb" src="@chunk.BlobUrl" preload="metadata" muted playsinline></video>
+                                <div class="media-meta">
+                                    <div class="tt">Screen chunk</div>
+                                    <div class="st">@(chunk.CapturedAtUtc.HasValue ? IndiaTimeHelper.FormatIstForDisplay(chunk.CapturedAtUtc.Value) : "—")</div>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                }
                 else
                 {
-                    <div class="desc">No video chunk blobs found in telemetry metadata.</div>
+                    <div class="desc">No video chunk blobs found in telemetry metadata or Azure containers (proctoring-screen-chunks).</div>
                 }
             </div>
         </section>
