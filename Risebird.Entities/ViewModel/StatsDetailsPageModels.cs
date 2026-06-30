@@ -8,6 +8,8 @@ namespace Risebird.Entities.ViewModel
     public class StatsDetailsApiResponse
     {
         public bool ShowEvidenceColumn { get; set; }
+        public bool ShowQcVerdictColumn { get; set; }
+        public bool ShowPaymentDeductionColumn { get; set; }
         public IEnumerable<StatsDetailsClientRowDto> Rows { get; set; } = Array.Empty<StatsDetailsClientRowDto>();
 
         public static StatsDetailsApiResponse ForClient(IEnumerable<StatsDetailsVM> source)
@@ -15,16 +17,26 @@ namespace Risebird.Entities.ViewModel
             return new StatsDetailsApiResponse
             {
                 ShowEvidenceColumn = false,
+                ShowQcVerdictColumn = false,
+                ShowPaymentDeductionColumn = false,
                 Rows = (source ?? Enumerable.Empty<StatsDetailsVM>()).Select(MapClientRow).ToList()
             };
         }
 
-        public static StatsDetailsApiResponse ForInternal(IEnumerable<StatsDetailsVM> source)
+        public static StatsDetailsApiResponse ForInternal(
+            IEnumerable<StatsDetailsVM> source,
+            bool showEvidenceColumn,
+            bool showQcVerdictColumn,
+            bool showPaymentDeductionColumn)
         {
             return new StatsDetailsApiResponse
             {
-                ShowEvidenceColumn = true,
-                Rows = (source ?? Enumerable.Empty<StatsDetailsVM>()).Select(MapInternalRow).ToList()
+                ShowEvidenceColumn = showEvidenceColumn,
+                ShowQcVerdictColumn = showQcVerdictColumn,
+                ShowPaymentDeductionColumn = showPaymentDeductionColumn,
+                Rows = (source ?? Enumerable.Empty<StatsDetailsVM>())
+                    .Select(x => MapInternalRow(x, showEvidenceColumn, showQcVerdictColumn, showPaymentDeductionColumn))
+                    .ToList()
             };
         }
 
@@ -40,7 +52,11 @@ namespace Risebird.Entities.ViewModel
             IrfId = x.irfId
         };
 
-        private static StatsDetailsInternalRowDto MapInternalRow(StatsDetailsVM x)
+        private static StatsDetailsInternalRowDto MapInternalRow(
+            StatsDetailsVM x,
+            bool showEvidenceColumn,
+            bool showQcVerdictColumn,
+            bool showPaymentDeductionColumn)
         {
             var row = new StatsDetailsInternalRowDto
             {
@@ -51,15 +67,24 @@ namespace Risebird.Entities.ViewModel
                 MeetingStatus = x.MeetingStatus,
                 InterviewStatus = x.InterviewStatus,
                 InterviewId = x.interviewId,
-                IrfId = x.irfId,
-                Evidence = x.interviewId.HasValue
-                    ? new StatsDetailsEvidenceMeta
-                    {
-                        InterviewId = x.interviewId.Value,
-                        IrfId = x.irfId
-                    }
-                    : null
+                IrfId = x.irfId
             };
+
+            if (showEvidenceColumn && x.interviewId.HasValue)
+            {
+                row.Evidence = new StatsDetailsEvidenceMeta
+                {
+                    InterviewId = x.interviewId.Value,
+                    IrfId = x.irfId
+                };
+            }
+
+            if (showQcVerdictColumn)
+                row.QcVerdictDisplay = x.QcVerdictDisplay;
+
+            if (showPaymentDeductionColumn)
+                row.PaymentDeductionDisplay = x.PaymentDeductionDisplay;
+
             return row;
         }
     }
@@ -80,6 +105,12 @@ namespace Risebird.Entities.ViewModel
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public StatsDetailsEvidenceMeta Evidence { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string QcVerdictDisplay { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public StatsDetailsPaymentDeductionDisplay PaymentDeductionDisplay { get; set; }
     }
 
     public class StatsDetailsEvidenceMeta
