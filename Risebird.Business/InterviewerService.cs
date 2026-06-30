@@ -1593,12 +1593,67 @@ namespace Risebird.Business
                     row.candidateEmail = null;
                 }
 
+                await EnrichQcMergedVerdictsAsync(rows);
+                await EnrichPaymentDeductionSummariesAsync(rows);
+
                 return rows;
             }
             catch (SqlTypeException ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        private async Task EnrichQcMergedVerdictsAsync(IList<StatsDetailsVM> rows)
+        {
+            if (rows == null || rows.Count == 0)
+                return;
+
+            var interviewIds = rows
+                .Where(r => r.interviewId.HasValue && r.interviewId.Value > 0)
+                .Select(r => r.interviewId.Value)
+                .Distinct()
+                .ToList();
+
+            if (interviewIds.Count == 0)
+                return;
+
+            var evaluations = await _meetingRespository.GetQcInterviewAIevaluationByInterviewIdsAsync(interviewIds);
+
+            foreach (var row in rows)
+            {
+                if (!row.interviewId.HasValue || row.interviewId.Value <= 0)
+                    continue;
+
+                evaluations.TryGetValue(row.interviewId.Value, out var evaluation);
+                row.QcVerdictDisplay = StatsDetailsQcVerdictHelper.ResolveDisplay(evaluation);
+            }
+        }
+
+        private async Task EnrichPaymentDeductionSummariesAsync(IList<StatsDetailsVM> rows)
+        {
+            if (rows == null || rows.Count == 0)
+                return;
+
+            var interviewIds = rows
+                .Where(r => r.interviewId.HasValue && r.interviewId.Value > 0)
+                .Select(r => r.interviewId.Value)
+                .Distinct()
+                .ToList();
+
+            if (interviewIds.Count == 0)
+                return;
+
+            var summaries = await _meetingRespository.GetPaymentSlaSummaryByInterviewIdsAsync(interviewIds);
+
+            foreach (var row in rows)
+            {
+                if (!row.interviewId.HasValue || row.interviewId.Value <= 0)
+                    continue;
+
+                summaries.TryGetValue(row.interviewId.Value, out var summary);
+                row.PaymentDeductionDisplay = StatsDetailsPaymentDeductionHelper.ResolveDisplay(summary);
             }
         }
 

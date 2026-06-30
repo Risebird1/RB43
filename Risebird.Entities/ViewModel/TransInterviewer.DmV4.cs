@@ -26,6 +26,16 @@ namespace Risebird.Entities.ViewModel
 
         /// <summary>Rejected outcomes on this skill channel.</summary>
         public int TotalRejected { get; set; }
+
+        /// <summary>Completed interviews on this channel with QCMerged verdict = suspicious (QCDone).</summary>
+        public int QcVerdictSuspiciousCount { get; set; }
+
+        /// <summary>Completed interviews on this channel with QCMerged verdict = redo (QCDone).</summary>
+        public int QcVerdictRedoCount { get; set; }
+
+        /// <summary>True when SuspiciousInterviewer.SuspiciousStatus = 1 for this user.</summary>
+        public bool IsManuallyMarkedSuspicious { get; set; }
+
         /// <summary>Most recent activation on this skill channel (null = never activated).</summary>
         public DateTime? ActivatedAt { get; set; }
 

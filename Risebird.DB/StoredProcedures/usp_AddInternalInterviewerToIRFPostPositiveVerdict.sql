@@ -44,15 +44,16 @@ begin try
 
 			if not exists(select 1 from TransInterviewer where UserId = @userId and IRFId = @IRFId)
 			Begin
-				-- Self-application via the direct IRF link adds the channel as AVAILABLE ONLY
-				-- (IsAvailable = 1) but NOT active (IsActive = 0); an operator must manually review
-				-- and activate it, so ActivatedAt stays NULL. Keeps self-applicants out of the
-				-- 'active' panel until that manual review step.
+				-- Self-application via the direct IRF link. Channel activation follows the channel's
+				-- Interviewer Lock (IRF.DmIvLockNew): locked → Available-only (IsActive = 0, ActivatedAt
+				-- NULL) pending manual RB vetting; unlocked → auto-activated (IsActive = 1) right away.
 				insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, IsSMEVerified, ClientAction, PerSuccessRate, OpenAIScreeningResponse, AIVerdict, Source, AIScreeningScore, IsAIScreeningAtempted, ActivatedAt)
-				values (@IRFId, @InterviewerProfileId, @userId, 1, 0,
+				values (@IRFId, @InterviewerProfileId, @userId, 1,
+			 CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END,
 			 CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END,
 			 CASE WHEN @isLocked = 1 THEN NULL ELSE 'Shortlisted' END,
-			 @rate, @OpenAIScreeningResponse, @verdict, 'Internal IRF Link', @score, 1, NULL)
+			 @rate, @OpenAIScreeningResponse, @verdict, 'Internal IRF Link', @score, 1,
+			 CASE WHEN @isLocked = 1 THEN NULL ELSE @timeNow END)
 			End
 
 			UPDATE InterviewerProfile
@@ -121,16 +122,17 @@ begin try
 
 				if not exists(select 1 from TransInterviewer where UserId = @userId2 and IRFId = @targetIRFId)
 				Begin
-					-- Self-registration via the MAG application link adds the interviewer to each
-					-- channel as AVAILABLE ONLY (IsAvailable = 1) but NOT active (IsActive = 0).
-					-- An operator must manually review and activate each channel, so ActivatedAt
-					-- stays NULL. This prevents MAG applicants from appearing 'active' in the panel
-					-- before that manual review / acknowledgement step.
+					-- Self-registration via the MAG application link. Each channel's activation follows
+					-- its Interviewer Lock (IRF.DmIvLockNew): locked channels are Available-only
+					-- (IsActive = 0, ActivatedAt NULL) pending manual RB vetting; unlocked channels are
+					-- auto-activated (IsActive = 1) immediately.
 					insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, IsSMEVerified, ClientAction, PerSuccessRate, OpenAIScreeningResponse, AIVerdict, Source, AIScreeningScore, IsAIScreeningAtempted, ActivatedAt)
-					values (@targetIRFId, @InterviewerProfileId2, @userId2, 1, 0,
+					values (@targetIRFId, @InterviewerProfileId2, @userId2, 1,
+				 CASE WHEN @isLocked2 = 1 THEN 0 ELSE 1 END,
 				 CASE WHEN @isLocked2 = 1 THEN 0 ELSE 1 END,
 				 CASE WHEN @isLocked2 = 1 THEN NULL ELSE 'Shortlisted' END,
-				 @rate2, @OpenAIScreeningResponse, @verdict, 'Internal MAG Link', @score, 1, NULL)
+				 @rate2, @OpenAIScreeningResponse, @verdict, 'Internal MAG Link', @score, 1,
+				 CASE WHEN @isLocked2 = 1 THEN NULL ELSE @timeNow END)
 				End
 
 				delete from @tbl_targetIRFs where irfId = @targetIRFId

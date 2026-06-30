@@ -483,13 +483,13 @@ namespace Risebird.Web.Controllers
                             {
                                 if (profileName == "InterviewerManagement")
                                 {
-                                    //TempData["MessageAddInterviewer"] = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
-                                    ViewBag.Message = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
+                                    //TempData["MessageAddInterviewer"] = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 2000 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
+                                    ViewBag.Message = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 2000 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
                                     return View(interviewerProfile);
                                 }
                                 else
                                 {
-                                    TempData["MessageInterviewer"] = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
+                                    TempData["MessageInterviewer"] = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 2000 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
 
                                 }
                             }
@@ -607,7 +607,7 @@ namespace Risebird.Web.Controllers
 
                                 //if (!string.IsNullOrEmpty(assessmentGroupList))
                                 //{
-                                //    TempData["MessageInterviewer"] = $"Failed to update Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
+                                //    TempData["MessageInterviewer"] = $"Failed to update Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 2000 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
                                 //}
                                 //else
                                 //{
@@ -673,7 +673,7 @@ namespace Risebird.Web.Controllers
                             {
                                 if (!string.IsNullOrEmpty(assessmentGroupList))
                                 {
-                                    TempData["MessageInterviewer"] = $"Failed to update Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
+                                    TempData["MessageInterviewer"] = $"Failed to update Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 2000 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
                                 }
                                 else
                                 {
@@ -4838,6 +4838,19 @@ namespace Risebird.Web.Controllers
                         ViewBag.UsePl = usePl;
                     }
                     ViewBag.ShowEvidenceColumn = CompletedInterviewsViewMode.ShouldShowEvidenceColumn(HttpContext, null, ViewBag.UsePl as string);
+                    ViewBag.ShowQcVerdictColumn = CompletedInterviewsViewMode.ShouldShowQcVerdictColumn(HttpContext, null, ViewBag.UsePl as string, irfId);
+                    ViewBag.ShowPaymentDeductionColumn = CompletedInterviewsViewMode.ShouldShowPaymentDeductionColumn(HttpContext, null, ViewBag.UsePl as string);
+                    ViewBag.ShowRedoInterviewAction = CompletedInterviewsViewMode.ShouldShowRedoInterviewAction(ViewBag.UsePl as string);
+                    if (ViewBag.ShowQcVerdictColumn != true)
+                    {
+                        foreach (var row in statsDetailsList)
+                            row.QcVerdictDisplay = null;
+                    }
+                    if (ViewBag.ShowPaymentDeductionColumn != true)
+                    {
+                        foreach (var row in statsDetailsList)
+                            row.PaymentDeductionDisplay = null;
+                    }
                     return View("StatsDetails", statsDetailsList);
 
                     //else
@@ -4897,6 +4910,19 @@ namespace Risebird.Web.Controllers
                     }
                 }
                 ViewBag.ShowEvidenceColumn = CompletedInterviewsViewMode.ShouldShowEvidenceColumn(HttpContext, clientEmailId, ViewBag.UsePl as string);
+                ViewBag.ShowQcVerdictColumn = CompletedInterviewsViewMode.ShouldShowQcVerdictColumn(HttpContext, clientEmailId, ViewBag.UsePl as string, irfId);
+                ViewBag.ShowPaymentDeductionColumn = CompletedInterviewsViewMode.ShouldShowPaymentDeductionColumn(HttpContext, clientEmailId, ViewBag.UsePl as string);
+                ViewBag.ShowRedoInterviewAction = CompletedInterviewsViewMode.ShouldShowRedoInterviewAction(ViewBag.UsePl as string);
+                if (ViewBag.ShowQcVerdictColumn != true)
+                {
+                    foreach (var row in statsDetailsList)
+                        row.QcVerdictDisplay = null;
+                }
+                if (ViewBag.ShowPaymentDeductionColumn != true)
+                {
+                    foreach (var row in statsDetailsList)
+                        row.PaymentDeductionDisplay = null;
+                }
                 return View("StatsDetails", statsDetailsList);
             }
             catch (Exception ex)
@@ -4931,12 +4957,24 @@ namespace Risebird.Web.Controllers
                 }
 
                 var showEvidence = CompletedInterviewsViewMode.ShouldShowEvidenceColumn(HttpContext, clientEmailId, usePl);
-                return Json(CompletedInterviewsViewMode.BuildApiResponse(statsDetailsList, showEvidence));
+                var showQcVerdict = CompletedInterviewsViewMode.ShouldShowQcVerdictColumn(HttpContext, clientEmailId, usePl, irfId);
+                var showPaymentDeduction = CompletedInterviewsViewMode.ShouldShowPaymentDeductionColumn(HttpContext, clientEmailId, usePl);
+                if (!showQcVerdict)
+                {
+                    foreach (var row in statsDetailsList)
+                        row.QcVerdictDisplay = null;
+                }
+                if (!showPaymentDeduction)
+                {
+                    foreach (var row in statsDetailsList)
+                        row.PaymentDeductionDisplay = null;
+                }
+                return Json(CompletedInterviewsViewMode.BuildApiResponse(statsDetailsList, showEvidence, showQcVerdict, showPaymentDeduction));
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(new { showEvidenceColumn = false, rows = Array.Empty<object>(), error = "Unable to load stats details." });
+                return Json(new { showEvidenceColumn = false, showQcVerdictColumn = false, showPaymentDeductionColumn = false, rows = Array.Empty<object>(), error = "Unable to load stats details." });
             }
         }
 
