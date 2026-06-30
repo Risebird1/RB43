@@ -28,6 +28,13 @@ namespace Risebird.Entities.ViewModel
         public string JDTiltle { get; set; }
         public string intervieweStatusStatDesc { get; set; }
 
+        /// <summary>Suspicious | Redo | Pending — populated for ops views only; stripped from client API.</summary>
+        public string QcVerdictDisplay { get; set; }
+
+        /// <summary>Payment deduction summary for ops Completed Interviews column.</summary>
+        [JsonIgnore]
+        public StatsDetailsPaymentDeductionDisplay PaymentDeductionDisplay { get; set; }
+
     }
     public class ProjectStatsVM
     {

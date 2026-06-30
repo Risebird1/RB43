@@ -109,7 +109,7 @@ BEGIN
         AND ph.PaymentDate <= @WeekEnd
         AND ph.TotalAmount > 0
         AND (ph.Status = 'Done' OR ph.PayoutStatus = 'TRANSFER_SUCCESS')
-        AND ISNULL(tic.IsBankVerified, 0) = 1
+        --AND ISNULL(tic.IsBankVerified, 0) = 1
     GROUP BY ul.id, tic.PAN;
 
     SELECT @ChallanId AS NewId;

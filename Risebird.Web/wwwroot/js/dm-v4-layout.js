@@ -1297,7 +1297,9 @@
             var on = ($(this).attr('data-active-subtab') || '') === subtab;
             $(this).toggleClass('is-on', on).attr('aria-selected', on ? 'true' : 'false');
         });
+        $('#dmV4IvPanel').toggleClass('dm-v4-active-subtab--bad-quality', subtab === 'bad-quality');
         applyActiveSubTabFilter();
+        syncBadQualityExtraVisibility();
     }
 
     function refreshActiveSubTabCounts() {
@@ -1325,6 +1327,55 @@
             $row.toggleClass('dm-v4-iv-row--subtab-hidden', !show);
         });
         updateIvTabEmptyMessage();
+        syncBadQualityExtraVisibility();
+    }
+
+    function syncBadQualityExtraVisibility() {
+        if (!$('#dmV4IvPanel').length) return;
+        var show = getIvTab() === 'active' && getActiveSubTab() === 'bad-quality';
+        $('#dmV4IvPanel .dm-v4-iv-bad-quality-extra').each(function () {
+            var $extra = $(this);
+            var $row = $extra.closest('.dm-v4-iv-row');
+            var rowVisible = show && readRowDbActive($row) && rowHasBadQualityFlag($row) && !$row.hasClass('dm-v4-iv-row--subtab-hidden');
+            $extra.prop('hidden', !rowVisible).attr('aria-hidden', rowVisible ? 'false' : 'true');
+        });
+    }
+
+    function dmV4ConfirmMarkSuspicious(email) {
+        if (!email) return;
+        var prompt = (typeof swal !== 'undefined' && swal.fire)
+            ? swal.fire({
+                title: 'Mark this interviewer as suspicious?',
+                text: 'This adds them to the suspicious interviewer list and records a reliability score. You will be asked for a comment next.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Continue',
+                cancelButtonText: 'Cancel'
+            })
+            : (window.confirm('Mark this interviewer as suspicious? This adds them to the suspicious interviewer list and records a reliability score.')
+                ? Promise.resolve({ isConfirmed: true }) : Promise.resolve({ isConfirmed: false }));
+        Promise.resolve(prompt).then(function (result) {
+            if (result && result.isConfirmed && typeof window.SuspiciousTypeDetails === 'function') {
+                window.SuspiciousTypeDetails(email);
+            }
+        });
+    }
+
+    function dmV4OnManualSuspiciousMarked(email) {
+        if (!email || !$('#dmV4IvPanel').length) return;
+        var esc = email.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+        $('#dmV4IvPanel .dm-v4-iv-row[data-email="' + esc + '"]').each(function () {
+            var $row = $(this);
+            $row.attr('data-manual-suspicious', '1');
+            var $extra = $row.find('.dm-v4-iv-bad-quality-extra--actions');
+            $extra.find('.dm-v4-iv-mark-suspicious-btn').remove();
+            if (!$extra.find('[data-manual-suspicious-badge="1"]').length) {
+                $extra.append(
+                    '<span class="dm-v4-iv-manual-suspicious-badge" data-manual-suspicious-badge="1">' +
+                    '<i class="fa fa-user-secret" aria-hidden="true"></i> Manually marked suspicious</span>'
+                );
+            }
+        });
     }
 
     function initActiveSubTabs() {
@@ -1337,7 +1388,25 @@
                 if (subtab === getActiveSubTab()) return;
                 setActiveSubTab(subtab);
             });
+        $(document).off('click.dmV4MarkSuspicious', '.dm-v4-iv-mark-suspicious-btn')
+            .on('click.dmV4MarkSuspicious', '.dm-v4-iv-mark-suspicious-btn', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dmV4ConfirmMarkSuspicious(($(this).attr('data-email') || '').trim());
+            });
+        if (!$('#dmV4IvPanel').data('dmV4SuspiciousAjaxHooked')) {
+            $('#dmV4IvPanel').data('dmV4SuspiciousAjaxHooked', true);
+            $(document).ajaxSuccess(function (_e, xhr, settings) {
+                var url = (settings && settings.url) ? settings.url.toString() : '';
+                if (url.indexOf('/Interviewer/AddSuspiciousTypeComment') < 0) return;
+                var response = xhr && xhr.responseText ? xhr.responseText.toString().replace(/^"|"$/g, '') : '';
+                if (response.indexOf('Successfully') < 0) return;
+                var email = ($('#hdnInterviewerEmail').val() || '').trim();
+                if (email) dmV4OnManualSuspiciousMarked(email);
+            });
+        }
         refreshActiveSubTabCounts();
+        syncBadQualityExtraVisibility();
     }
 
     // ── Inactive sub-tabs ────────────────────────────────────────────────────

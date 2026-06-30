@@ -12,6 +12,8 @@ namespace Risebird.Entities.ViewModel
         public string UPIId { get; set; }
         public string PAN { get; set; }
         public string AccountLocation { get; set; }
+
+        // Bank verification
         public bool IsBankVerified { get; set; }
         public DateTime? VerifiedOn { get; set; }
         public string VerifiedAccountNumber { get; set; }
@@ -20,5 +22,11 @@ namespace Risebird.Entities.ViewModel
         public string NameAtBank { get; set; }
         public long? CashfreeReferenceId { get; set; }
 
+        // PAN verification
+        public bool IsPanVerified { get; set; }
+        public DateTime? PanVerifiedOn { get; set; }
+        public string VerifiedPAN { get; set; }
+        public string NameAtPan { get; set; }
+        public long? PanVerificationReferenceId { get; set; }
     }
 }
