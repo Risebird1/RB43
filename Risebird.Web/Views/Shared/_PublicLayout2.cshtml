@@ -5,6 +5,7 @@
 @inject IHostingEnvironment env
 @{
     string emailId = string.Empty;
+    var isAiInterviewPage = Context.Request.Path.StartsWithSegments("/AIInterview", StringComparison.OrdinalIgnoreCase);
 }
 <!DOCTYPE html>
 <html>
@@ -269,7 +270,18 @@
     <!--  Plugin for the Wizard, full documentation here: https://github.com/VinceG/twitter-bootstrap-wizard -->
     <script src="~/Newassets/js/plugins/jquery.bootstrap-wizard.js"></script>
     <!--	Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select -->
-    <script src="~/Newassets/js/plugins/bootstrap-selectpicker.js"></script>
+    @if (!isAiInterviewPage)
+    {
+        <script>
+            (function ($) {
+                if ($ && (!$?.fn?.dropdown?.Constructor)) {
+                    $.fn.dropdown = $.fn.dropdown || function () { return this; };
+                    $.fn.dropdown.Constructor = { VERSION: '4.6.0' };
+                }
+            })(window.jQuery);
+        </script>
+        <script src="~/Newassets/js/plugins/bootstrap-selectpicker.js"></script>
+    }
     <!--  Plugin for the DateTimePicker, full documentation here: https://eonasdan.github.io/bootstrap-datetimepicker/ -->
     <script src="~/Newassets/js/plugins/bootstrap-datetimepicker.js"></script>
     <!--  DataTables.net Plugin, full documentation here: https://datatables.net/ -->
