@@ -80,7 +80,7 @@ namespace Risebird.Business
 
 
 
-            var verdict = ResolveVerdict(interviewerSuspicious, redoInterview);
+            var verdict = DmIvAutoQcAuditConstants.ResolveVerdict(interviewerSuspicious, redoInterview);
 
             if (verdict == null)
 
@@ -283,27 +283,7 @@ namespace Risebird.Business
             return true;
 
         }
-
-
-
-        internal static string ResolveVerdict(string interviewerSuspicious, bool? redoInterview)
-
-        {
-
-            if (string.Equals(interviewerSuspicious, "Yes", StringComparison.OrdinalIgnoreCase))
-
-                return DmIvAutoQcAuditConstants.VerdictSuspicious;
-
-            if (redoInterview == true)
-
-                return DmIvAutoQcAuditConstants.VerdictRedo;
-
-            return null;
-
-        }
-
     }
-
 }
 
 
