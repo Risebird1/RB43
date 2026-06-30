@@ -6,8 +6,9 @@
 --      This is what surfaces the interviewer in the MAG members popup
 --      (usp_GetAssessmentGroupInterviewerMembers) once their account is active.
 --   2. Record AssessmentGroupInterviewers membership if missing.
---   3. Add the AG's active skill channels as AVAILABLE ONLY (IsAvailable = 1, IsActive = 0),
---      pending manual operator activation (ActivatedAt stays NULL).
+--   3. Add the AG's active skill channels. Channel activation follows each channel's Interviewer
+--      Lock (IRF.DmIvLockNew): locked channels are Available-only (IsActive = 0) pending manual RB
+--      vetting; unlocked channels are auto-activated (IsActive = 1) immediately.
 --
 -- Fully idempotent: re-running adds nothing that is already present, and never flips an existing
 -- channel's IsActive flag.
@@ -55,20 +56,22 @@ BEGIN
         INSERT INTO AssessmentGroupInterviewers (AssessmentGroupId, InterviewerProfileId, IsSME, CreatedBy, CreatedOn)
         VALUES (@AssessmentGroupId, @InterviewerProfileId, 0, ISNULL(@AssignedBy, 'System'), GETDATE());
 
-    -- 3. Add the AG's active skill channels as AVAILABLE ONLY (inactive, pending manual activation).
+    -- 3. Add the AG's active skill channels. Activation follows each channel's Interviewer Lock
+    --    (IRF.DmIvLockNew): locked → Available-only (IsActive = 0) pending manual RB vetting;
+    --    unlocked → auto-activated (IsActive = 1) immediately.
     INSERT INTO TransInterviewer (IRFId, InterviewerId, UserId, IsActive, IsAvailable, IsSMEVerified, ClientAction, PerSuccessRate, [Source], AddedAt, ActivatedAt)
     SELECT
         irf.id,
         @InterviewerProfileId,
         @UserId,
-        0,   -- IsActive: pending manual operator activation
+        CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN 0 ELSE 1 END,   -- IsActive
         1,   -- IsAvailable
         CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN 0 ELSE 1 END,
         CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN NULL ELSE 'Shortlisted' END,
         ISNULL(irf.FlatRate, 0),
         'Naukri-Adopt',
         GETDATE(),
-        NULL -- ActivatedAt: set only when an operator activates the channel
+        CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN NULL ELSE GETDATE() END -- ActivatedAt: set when auto-activated
     FROM IRF irf
     WHERE LTRIM(RTRIM(irf.AssessmentGroupId)) = CAST(@AssessmentGroupId AS VARCHAR)
       AND ISNULL(irf.IsPaused, 0) = 0

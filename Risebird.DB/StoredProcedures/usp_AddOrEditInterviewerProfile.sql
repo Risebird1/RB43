@@ -315,8 +315,17 @@ Declare @v_User_Id int;
 
         if not exists(select 1 from TransInterviewer where UserId = @v_User_Id and IRFId = @TargetIrfId)
         Begin
-            insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, PerSuccessRate)
-            values (@TargetIrfId, @InterviewerProfileId, @v_User_Id, 1, 0, @rate)
+            -- Skill-channel activation follows the channel's Interviewer Lock (IRF.DmIvLockNew):
+            --   Locked  → IsActive = 0 (pending manual RB vetting), IsSMEVerified = 0, ClientAction NULL, ActivatedAt NULL
+            --   Unlocked→ IsActive = 1 (auto-activated), IsSMEVerified = 1, ClientAction 'Shortlisted', ActivatedAt now (IST)
+            DECLARE @targetIsLocked bit = ISNULL((SELECT DmIvLockNew FROM IRF WHERE id = @TargetIrfId), 0)
+            insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, IsSMEVerified, ClientAction, PerSuccessRate, ActivatedAt)
+            values (@TargetIrfId, @InterviewerProfileId, @v_User_Id, 1,
+                CASE WHEN @targetIsLocked = 1 THEN 0 ELSE 1 END,
+                CASE WHEN @targetIsLocked = 1 THEN 0 ELSE 1 END,
+                CASE WHEN @targetIsLocked = 1 THEN NULL ELSE 'Shortlisted' END,
+                @rate,
+                CASE WHEN @targetIsLocked = 1 THEN NULL ELSE DATEADD(MINUTE, 330, GETDATE()) END)
         End
 	 
  End
@@ -326,18 +335,24 @@ Declare @v_User_Id int;
     DECLARE @agIdInt INT = TRY_CAST(@AssessmentGroupId AS INT)
     IF @agIdInt > 0
     BEGIN
-        INSERT INTO TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, PerSuccessRate, AddedAt, Source)
+        -- MAG-direct onboarding: each skill channel's activation follows its Interviewer Lock
+        -- (IRF.DmIvLockNew). Locked channels stay Available-only (IsActive = 0) pending manual RB
+        -- vetting; unlocked channels are auto-activated (IsActive = 1) right away.
+        INSERT INTO TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, IsSMEVerified, ClientAction, PerSuccessRate, AddedAt, ActivatedAt, Source)
         SELECT 
             irf.id,
             @InterviewerProfileId,
             @v_User_Id,
             1,  -- IsAvailable
-            0,  -- IsActive (pending activation)
+            CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN 0 ELSE 1 END,  -- IsActive
+            CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN 0 ELSE 1 END,  -- IsSMEVerified
+            CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN NULL ELSE 'Shortlisted' END,  -- ClientAction
             (SELECT TOP 1 Rate FROM PlanTypeChargesMaster 
              WHERE CountryType = irf.JobCountry 
                AND PlanTypeEnumValue = irf.Heuristicsscore 
                AND CompanyType = irf.CompanyType),
-            DATEADD(MINUTE, 330, GETDATE()),
+            DATEADD(MINUTE, 330, GETDATE()),  -- AddedAt (IST)
+            CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN NULL ELSE DATEADD(MINUTE, 330, GETDATE()) END,  -- ActivatedAt (IST when auto-activated)
             'MAG-Direct'
         FROM IRF irf
         WHERE irf.AssessmentGroupId = @agIdInt
