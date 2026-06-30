@@ -1,0 +1,641 @@
+@model IReadOnlyList<Risebird.Entities.ViewModel.IrfAuditDirectoryRowVm>
+
+@{
+
+    ViewData["Title"] = "IRF Audit Directory";
+
+    var rows = Model ?? Array.Empty<Risebird.Entities.ViewModel.IrfAuditDirectoryRowVm>();
+
+    var directoryError = ViewBag.DirectoryError as string;
+
+    string FormatIst(DateTime? utc)
+    {
+        if (!utc.HasValue) return "—";
+        var utcDt = DateTime.SpecifyKind(utc.Value, DateTimeKind.Utc);
+        return utcDt.AddHours(5.5).ToString("yyyy-MM-dd HH:mm") + " IST";
+    }
+
+}
+
+<script>
+
+    var Header = "<div>IRF Audit Directory</div>";
+
+    $('#txtpageHeader').empty().html(Header);
+
+</script>
+
+
+
+<style>
+
+    .irf-audit-dir { padding: 16px; max-width: 1400px; }
+
+    .irf-audit-header { margin-bottom: 16px; }
+
+    .irf-audit-header h2 { margin: 0 0 6px; font-size: 20px; color: #0f172a; }
+
+    .irf-audit-header p { margin: 0; font-size: 13px; color: #475569; line-height: 1.5; }
+
+    .irf-audit-alert { padding: 12px 14px; border-radius: 8px; margin-bottom: 14px; font-size: 13px; line-height: 1.45; }
+
+    .irf-audit-alert--error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+
+    .irf-audit-alert--info { background: #f8fafc; border: 1px solid #e2e8f0; color: #64748b; }
+
+    .irf-audit-table-wrap { overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; }
+
+    .irf-audit-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+    .irf-audit-table th, .irf-audit-table td { border-bottom: 1px solid #e2e8f0; padding: 10px 12px; text-align: left; vertical-align: middle; }
+
+    .irf-audit-table th { background: #f8fafc; font-size: 11px; text-transform: uppercase; letter-spacing: .03em; color: #64748b; white-space: nowrap; }
+
+    .irf-audit-table tbody tr:hover { background: #f8fafc; }
+
+    .irf-audit-table .pending-flags { font-weight: 600; color: #b45309; }
+
+    .irf-audit-table .pending-flags.is-zero { color: #94a3b8; font-weight: 400; }
+
+    .irf-audit-btn { appearance: none; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; padding: 5px 10px; font-size: 12px; cursor: pointer; margin: 2px 4px 2px 0; text-decoration: none; color: #334155; display: inline-block; }
+
+    .irf-audit-btn:hover { background: #f1f5f9; }
+
+    .irf-audit-btn--primary { background: #2563eb; border-color: #2563eb; color: #fff; }
+
+    .irf-audit-btn--primary:hover { background: #1d4ed8; }
+
+    .irf-audit-btn:disabled { opacity: .55; cursor: not-allowed; }
+
+    #irfBackfillModal { display: none; position: fixed; inset: 0; background: rgba(15,23,42,.45); z-index: 9999; align-items: center; justify-content: center; padding: 16px; }
+
+    #irfBackfillModal.is-open { display: flex; }
+
+    .irf-backfill-card { background: #fff; border-radius: 12px; padding: 0; width: 520px; max-width: 100%; box-shadow: 0 20px 40px rgba(15,23,42,.18); overflow: hidden; }
+
+    .irf-backfill-card__head { padding: 18px 20px 12px; border-bottom: 1px solid #e2e8f0; }
+
+    .irf-backfill-card__head h3 { margin: 0; font-size: 18px; color: #0f172a; }
+
+    .irf-backfill-card__head .sub { margin-top: 4px; font-size: 12px; color: #64748b; }
+
+    .irf-backfill-card__body { padding: 16px 20px; }
+
+    .irf-backfill-dates { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+
+    .irf-backfill-dates label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: #64748b; margin-bottom: 4px; }
+
+    .irf-backfill-dates input[type=date] { width: 100%; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 10px; font-size: 13px; }
+
+    .irf-backfill-preview { min-height: 88px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; background: #f8fafc; margin-bottom: 14px; }
+
+    .irf-backfill-preview.is-loading { color: #64748b; font-style: italic; }
+
+    .irf-backfill-preview.is-error { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+
+    .irf-backfill-stat { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
+
+    .irf-backfill-stat:last-child { margin-bottom: 0; }
+
+    .irf-backfill-stat__num { min-width: 28px; height: 28px; border-radius: 999px; background: #dbeafe; color: #1d4ed8; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+    .irf-backfill-stat__num--warn { background: #fef3c7; color: #b45309; }
+
+    .irf-backfill-stat__num--muted { background: #e2e8f0; color: #64748b; }
+
+    .irf-backfill-stat__text { font-size: 13px; color: #334155; line-height: 1.45; padding-top: 4px; }
+
+    .irf-backfill-card__foot { padding: 12px 20px 18px; display: flex; gap: 8px; flex-wrap: wrap; border-top: 1px solid #e2e8f0; background: #fafafa; }
+
+    .irf-toast { position: fixed; bottom: 24px; right: 24px; z-index: 10000; max-width: 420px; padding: 12px 16px; border-radius: 8px; font-size: 13px; box-shadow: 0 8px 24px rgba(15,23,42,.15); display: none; }
+
+    .irf-toast.is-show { display: block; }
+
+    .irf-toast--ok { background: #ecfdf5; border: 1px solid #6ee7b7; color: #065f46; }
+
+    .irf-toast--err { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+
+</style>
+
+
+
+<div class="main-panel irf-audit-dir" id="main-panel">
+
+    <div class="irf-audit-header">
+
+        <button type="button" class="irf-audit-btn" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'">Back</button>
+
+        <h2 style="margin-top:12px;">IRF Audit Directory</h2>
+
+        <p>Per-IRF bad-quality flag backfill. Forward triggers set flags only (no auto-removal). Run backfill to populate historical suspicious/redo verdicts.</p>
+
+    </div>
+
+
+
+    @if (!string.IsNullOrWhiteSpace(directoryError))
+
+    {
+
+        <div class="irf-audit-alert irf-audit-alert--error">
+
+            <strong>Could not load IRF directory.</strong> @directoryError
+
+        </div>
+
+    }
+
+    else if (!rows.Any())
+
+    {
+
+        <div class="irf-audit-alert irf-audit-alert--info">
+
+            No IRFs with completed interviews were found in the database for this environment.
+
+        </div>
+
+    }
+
+
+
+    <div class="irf-audit-table-wrap">
+
+        <table class="irf-audit-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>IRF</th>
+
+                    <th>Completed (lifetime)</th>
+
+                    <th>Completed (90d)</th>
+
+                    <th>Suspicious/redo (90d)</th>
+
+                    <th>Pending flags</th>
+
+                    <th>Last backfill</th>
+
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                @foreach (var row in rows)
+
+                {
+
+                    var pendingClass = row.PendingFlagsCount > 0 ? "pending-flags" : "pending-flags is-zero";
+
+                    <tr data-irf-id="@row.IrfId">
+
+                        <td><strong>@row.IrfName</strong> <span style="color:#94a3b8;">(#@row.IrfId)</span></td>
+
+                        <td>@row.TotalCompletedLifetime</td>
+
+                        <td>@row.CompletedLast90Days</td>
+
+                        <td class="@(row.SuspiciousRedoLast90Days > 0 ? "pending-flags" : "pending-flags is-zero")">@row.SuspiciousRedoLast90Days</td>
+
+                        <td class="@pendingClass">@row.PendingFlagsCount</td>
+
+                        <td>@FormatIst(row.LastBackfillAtUtc)</td>
+
+                        <td>
+
+                            <button type="button" class="irf-audit-btn irf-audit-btn--primary btn-backfill" data-irf-id="@row.IrfId" data-irf-name="@row.IrfName" data-suspicious-90d="@row.SuspiciousRedoLast90Days">Backfill</button>
+
+                            <a class="irf-audit-btn" href="/IRF/DeliveryHeadInstruction?irfid=@row.IrfId" target="_blank" rel="noopener">Open DM Approval</a>
+
+                        </td>
+
+                    </tr>
+
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+
+<div id="irfBackfillModal" aria-hidden="true" role="dialog" aria-labelledby="bfModalTitle">
+
+    <div class="irf-backfill-card">
+
+        <div class="irf-backfill-card__head">
+
+            <h3 id="bfModalTitle">Backfill bad-quality flags</h3>
+
+            <div class="sub">IRF: <strong id="bfIrfName"></strong> <span id="bfIrfIdLabel"></span></div>
+
+            <div class="sub" id="bfDirectoryHint" style="margin-top:6px;display:none;"></div>
+
+        </div>
+
+        <div class="irf-backfill-card__body">
+
+            <input type="hidden" id="bfIrfId" />
+
+            <div class="irf-backfill-dates">
+
+                <div>
+
+                    <label for="bfFrom">From (IST date)</label>
+
+                    <input type="date" id="bfFrom" />
+
+                </div>
+
+                <div>
+
+                    <label for="bfTo">To (IST date)</label>
+
+                    <input type="date" id="bfTo" />
+
+                </div>
+
+            </div>
+
+            <div id="bfPreview" class="irf-backfill-preview">
+
+                Select a date range — preview loads automatically.
+
+            </div>
+
+        </div>
+
+        <div class="irf-backfill-card__foot">
+
+            <button type="button" class="irf-audit-btn" id="bfReset90Btn">Last 90 days (IST)</button>
+
+            <button type="button" class="irf-audit-btn" id="bfPreviewBtn">Refresh preview</button>
+
+            <button type="button" class="irf-audit-btn irf-audit-btn--primary" id="bfRunBtn" disabled>Run backfill</button>
+
+            <button type="button" class="irf-audit-btn" id="bfCloseBtn">Close</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<div id="irfToast" class="irf-toast" role="status"></div>
+
+
+
+<script>
+
+    (function () {
+
+        var previewUrl = '@Url.Action("GetPerIrfAutoQcBackfillPreview", "Dashboard")';
+
+        var runUrl = '@Url.Action("RunPerIrfAutoQcBackfill", "Dashboard")';
+
+        var previewTimer = null;
+
+        var lastPreviewOk = false;
+
+        var previewRequest = null;
+
+        var directorySuspicious90d = 0;
+
+
+
+        function istDateString(d) {
+
+            return d.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+
+        }
+
+
+
+        function defaultDates() {
+
+            var today = new Date();
+
+            $('#bfTo').val(istDateString(today));
+
+            var from = new Date(today);
+
+            from.setDate(from.getDate() - 90);
+
+            $('#bfFrom').val(istDateString(from));
+
+        }
+
+
+
+        function setPreviewLoading() {
+
+            lastPreviewOk = false;
+
+            $('#bfRunBtn').prop('disabled', true);
+
+            $('#bfPreview').removeClass('is-error').addClass('is-loading')
+
+                .html('Loading preview counts…');
+
+        }
+
+
+
+        function renderPreview(res) {
+
+            var $preview = $('#bfPreview');
+
+            $preview.removeClass('is-loading');
+
+
+
+            if (!res || !res.ok) {
+
+                $preview.addClass('is-error');
+
+                $preview.html((res && res.message) ? res.message : 'Preview request failed. Check network or sign in again.');
+
+                lastPreviewOk = false;
+
+                $('#bfRunBtn').prop('disabled', true);
+
+                return;
+
+            }
+
+
+
+            lastPreviewOk = true;
+
+            $preview.removeClass('is-error');
+
+            var html =
+
+                '<div class="irf-backfill-stat"><span class="irf-backfill-stat__num">' + res.verdictCount + '</span>' +
+
+                '<span class="irf-backfill-stat__text"><strong>suspicious / redo</strong> verdicts in this date range.</span></div>' +
+
+                '<div class="irf-backfill-stat"><span class="irf-backfill-stat__num">' + res.wouldFlagCount + '</span>' +
+
+                '<span class="irf-backfill-stat__text"><strong>interviewer-channel records</strong> would be flagged (excluding ' + res.alreadyFlaggedCount + ' already flagged).</span></div>';
+
+
+
+            if (res.unmappedVerdictCount > 0) {
+
+                html += '<div class="irf-backfill-stat"><span class="irf-backfill-stat__num irf-backfill-stat__num--warn">' + res.unmappedVerdictCount + '</span>' +
+
+                    '<span class="irf-backfill-stat__text">verdict(s) could not be mapped to a TransInterviewer on this IRF (no flag will be set for those).</span></div>';
+
+            }
+
+
+
+            if (res.verdictCount === 0) {
+
+                if (res.qcMergedInRangeCount > 0) {
+
+                    html += '<div style="margin-top:8px;font-size:12px;color:#b45309;">' + res.qcMergedInRangeCount +
+
+                        ' merge(s) in range; none marked <strong>Suspicious</strong> or <strong>Redo</strong>. Only those verdicts qualify for backfill.</div>';
+
+                } else if (directorySuspicious90d > 0) {
+
+                    html += '<div style="margin-top:8px;font-size:12px;color:#b45309;">The directory shows <strong>' + directorySuspicious90d +
+
+                        '</strong> suspicious/redo verdict(s) in the last 90 days, but your selected date range only includes <strong>0</strong> QC merges. Widen the <strong>From</strong> date (try “Last 90 days”) to match the directory window.</div>';
+
+                } else {
+
+                    html += '<div style="margin-top:8px;font-size:12px;color:#64748b;">No QC merges (QCDone=1) for this IRF in the selected date range. Widen the range or confirm the QC AI merge job has run for this IRF.</div>';
+
+                }
+
+            } else if (res.wouldFlagCount === 0 && res.verdictCount > 0 && res.unmappedVerdictCount === 0 && res.alreadyFlaggedCount > 0) {
+
+                html += '<div style="margin-top:8px;font-size:12px;color:#64748b;">All mapped verdicts in range are already flagged.</div>';
+
+            }
+
+
+
+            if (res.oldestVerdictDate && res.newestVerdictDate) {
+
+                html += '<div style="margin-top:4px;font-size:11px;color:#64748b;">Verdict dates in range: ' + res.oldestVerdictDate + ' → ' + res.newestVerdictDate + '</div>';
+
+            }
+
+
+
+            if (res.fromIst && res.toIst) {
+
+                html += '<div style="margin-top:8px;font-size:11px;color:#64748b;">Range applied: ' + res.fromIst + ' → ' + res.toIst + ' (IST, inclusive)</div>';
+
+            }
+
+
+
+            $preview.html(html);
+
+            $('#bfRunBtn').prop('disabled', res.verdictCount === 0);
+
+        }
+
+
+
+        function loadPreview() {
+
+            var irfId = $('#bfIrfId').val();
+
+            if (!irfId) return;
+
+
+
+            if (previewRequest && previewRequest.readyState !== 4) {
+
+                previewRequest.abort();
+
+            }
+
+
+
+            setPreviewLoading();
+
+            previewRequest = $.ajax({
+
+                url: previewUrl,
+
+                method: 'GET',
+
+                timeout: 300000,
+
+                data: {
+
+                    irfId: irfId,
+
+                    from: $('#bfFrom').val(),
+
+                    to: $('#bfTo').val()
+
+                }
+
+            }).done(renderPreview).fail(function (xhr, status) {
+
+                if (status === 'abort') return;
+
+                var message = 'Preview failed (' + (xhr.status || status || 'network error') + ').';
+
+                if (status === 'timeout') {
+
+                    message = 'Preview timed out after 5 minutes. Deploy the latest usp_GetPerIrfAutoQcBackfillPreview and AutoQcBackfillPerformanceIndexes.sql on the database, then retry.';
+
+                }
+
+                renderPreview({ ok: false, message: message });
+
+            });
+
+        }
+
+
+
+        function schedulePreview() {
+
+            clearTimeout(previewTimer);
+
+            previewTimer = setTimeout(loadPreview, 350);
+
+        }
+
+
+
+        function showToast(message, isOk) {
+
+            var $t = $('#irfToast');
+
+            $t.removeClass('irf-toast--ok irf-toast--err').addClass(isOk ? 'irf-toast--ok' : 'irf-toast--err')
+
+                .text(message).addClass('is-show');
+
+            setTimeout(function () { $t.removeClass('is-show'); }, 6000);
+
+        }
+
+
+
+        $('.btn-backfill').on('click', function () {
+
+            var irfId = $(this).data('irf-id');
+
+            var irfName = $(this).data('irf-name');
+
+            directorySuspicious90d = Number($(this).data('suspicious-90d')) || 0;
+
+            $('#bfIrfId').val(irfId);
+
+            $('#bfIrfName').text(irfName);
+
+            $('#bfIrfIdLabel').text('(#' + irfId + ')');
+
+            if (directorySuspicious90d > 0) {
+
+                $('#bfDirectoryHint').show().text('Directory: ' + directorySuspicious90d + ' suspicious/redo verdict(s) in the last 90 days (IST).');
+
+            } else {
+
+                $('#bfDirectoryHint').hide().text('');
+
+            }
+
+            defaultDates();
+
+            $('#irfBackfillModal').addClass('is-open');
+
+            loadPreview();
+
+        });
+
+
+
+        $('#bfReset90Btn').on('click', function () {
+
+            defaultDates();
+
+            loadPreview();
+
+        });
+
+
+
+        $('#bfCloseBtn, #irfBackfillModal').on('click', function (e) {
+
+            if (e.target === this) $('#irfBackfillModal').removeClass('is-open');
+
+        });
+
+        $('.irf-backfill-card').on('click', function (e) { e.stopPropagation(); });
+
+
+
+        $('#bfPreviewBtn').on('click', loadPreview);
+
+        $('#bfFrom, #bfTo').on('change', schedulePreview);
+
+
+
+        $('#bfRunBtn').on('click', function () {
+
+            if (!lastPreviewOk) return;
+
+            var irfId = $('#bfIrfId').val();
+
+            var $btn = $(this).prop('disabled', true);
+
+            $.post(runUrl, {
+
+                irfId: irfId,
+
+                from: $('#bfFrom').val(),
+
+                to: $('#bfTo').val()
+
+            }).done(function (res) {
+
+                showToast(res.message || (res.ok ? 'Backfill complete.' : 'Backfill failed.'), !!res.ok);
+
+                if (res.ok) {
+
+                    setTimeout(function () { location.reload(); }, 1200);
+
+                } else {
+
+                    $btn.prop('disabled', false);
+
+                }
+
+            }).fail(function (xhr) {
+
+                showToast('Backfill request failed (' + (xhr.status || 'network error') + ').', false);
+
+                $btn.prop('disabled', false);
+
+            });
+
+        });
+
+    })();
+
+</script>
+

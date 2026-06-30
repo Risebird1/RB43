@@ -249,6 +249,29 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<NaukriProspectEmailEvents> GetProspectEmailEventsAsync(string email)
+        {
+            var result = new NaukriProspectEmailEvents();
+            if (string.IsNullOrWhiteSpace(email)) return result;
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@Email", email.Trim());
+                using var multi = await con.QueryMultipleAsync(
+                    "usp_GetNaukriProspectEmailEvents", p,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                result.Summaries = (await multi.ReadAsync<NaukriEmailSummary>()).ToList();
+                result.Events = (await multi.ReadAsync<NaukriEmailEvent>()).ToList();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return result;
+            }
+        }
+
         public async Task<NaukriProspectiveInterviewerVM> GetByIdAsync(int id)
         {
             try
@@ -666,6 +689,40 @@ namespace Risebird.Repository
                 return ((int?)row.UserId, (int?)row.ProfileId);
             }
             catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return (null, null); }
+        }
+
+        public async Task<(int? UserId, int? ProfileId, bool? IsActive)> FindInterviewerByEmailAnyStatusAsync(string email)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var row = await con.QueryFirstOrDefaultAsync<dynamic>(
+                    "usp_FindInterviewerByEmail",
+                    new { Email = email?.Trim() },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                if (row == null) return (null, null, null);
+                bool? isActive = row.IsActive == null ? (bool?)null : Convert.ToBoolean(row.IsActive);
+                return ((int?)row.UserId, (int?)row.ProfileId, isActive);
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return (null, null, null); }
+        }
+
+        public async Task<bool> MapInterviewerToAssessmentGroupChannelsAsync(int profileId, int userId, int assessmentGroupId, string assignedBy)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@InterviewerProfileId", profileId);
+                p.Add("@UserId", userId);
+                p.Add("@AssessmentGroupId", assessmentGroupId);
+                p.Add("@AssignedBy", assignedBy);
+                await con.ExecuteAsync(
+                    "usp_MapInterviewerToAssessmentGroupChannels", p,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return true;
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return false; }
         }
 
         public async Task<bool> UpdatePlivoCallStatusAsync(int id, string callStatus, string conversationId,

@@ -12,7 +12,7 @@ Create PROCEDURE [dbo].[usp_GetOpenAIReportQCV2]
 @interviewId int
 As
 Begin
- select top 1 OpenAIQCResponse as completeAnalysis, AIVerdict as verdict, AIReportQCAnalysisScore as score from InterviewComments where InterviewId = @interviewId
+ select top 1 OpenAIQCResponse as completeAnalysis, AIVerdict as final_verdict, AIReportQCAnalysisScore as final_score from InterviewComments where InterviewId = @interviewId
 End
 GO
 

@@ -119,6 +119,13 @@ builder.Services.AddScoped<IWalletService, WalletService>();
 builder.Services.AddScoped<IMeetingService, MeetingService>();
 builder.Services.AddHttpClient<ICashfreePayoutService, CashfreePayoutService>();
 builder.Services.AddScoped<IQcInterviewAIMergeJobService, QcInterviewAIMergeJobService>();
+builder.Services.AddScoped<ITransInterviewerAuditRepository, TransInterviewerAuditRepository>();
+builder.Services.AddScoped<IDmIvAutoQcRemovalService, DmIvAutoQcRemovalService>();
+builder.Services.AddScoped<IDmIvAutoQcFlagService, DmIvAutoQcFlagService>();
+builder.Services.AddScoped<IDmIvChannelDeactivationService, DmIvChannelDeactivationService>();
+builder.Services.AddScoped<IAutoQcRemovalMonitorRepository, AutoQcRemovalMonitorRepository>();
+builder.Services.AddScoped<IDmIvAutoQcBackfillService, DmIvAutoQcBackfillService>();
+builder.Services.AddScoped<IAutoQcRemovalMonitorService, AutoQcRemovalMonitorService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IGeneralSkillMatrixService, GeneralSkillMatrixService>();
 builder.Services.AddScoped<IJoinabilityMatrixService, JoinabilityMatrixService>();
@@ -231,7 +238,9 @@ builder.Services.AddScoped<IResumeOptimizationHelper, ResumeOptimizationHelper>(
 builder.Services.AddScoped<ITranscriptOptimizationHelper, TranscriptOptimizationHelper>();
 builder.Services.AddScoped<IReportQCOptimizationHelper, ReportQCOptimizationHelper>();
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
-
+// Email Lookup
+builder.Services.AddScoped<IEmailLookupRepository, EmailLookupRepository>();
+builder.Services.AddScoped<IEmailLookupService, EmailLookupService>();
 // ============================================
 // Vapi.ai Voice AI Integration Services
 // ============================================
@@ -270,6 +279,21 @@ builder.Services.AddScoped<IInterviewerEmailAvailabilityRepository, InterviewerE
 // ============================================
 builder.Services.AddScoped<INaukriOnboardingRepository, NaukriOnboardingRepository>();
 // ============================================
+
+// ============================================
+// TDS Compliance Module
+// ============================================
+builder.Services.AddScoped<Risebird.Repository.Interface.ITdsRepository, Risebird.Repository.TdsRepository>();
+builder.Services.AddScoped<Risebird.Business.Interface.ITdsComplianceService>(sp =>
+{
+    var repo    = sp.GetRequiredService<Risebird.Repository.Interface.ITdsRepository>();
+    var logger  = sp.GetRequiredService<IApplicationErrorLogger>();
+    var offsets = builder.Configuration.GetSection("Tds:Reminder:Offsets").Get<int[]>();
+    return new Risebird.Business.TdsComplianceService(repo, logger, offsets);
+});
+// ============================================
+
+
 
 var app = builder.Build();
 

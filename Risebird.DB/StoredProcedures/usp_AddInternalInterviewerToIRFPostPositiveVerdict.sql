@@ -44,11 +44,16 @@ begin try
 
 			if not exists(select 1 from TransInterviewer where UserId = @userId and IRFId = @IRFId)
 			Begin
+				-- Self-application via the direct IRF link. Channel activation follows the channel's
+				-- Interviewer Lock (IRF.DmIvLockNew): locked → Available-only (IsActive = 0, ActivatedAt
+				-- NULL) pending manual RB vetting; unlocked → auto-activated (IsActive = 1) right away.
 				insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, IsSMEVerified, ClientAction, PerSuccessRate, OpenAIScreeningResponse, AIVerdict, Source, AIScreeningScore, IsAIScreeningAtempted, ActivatedAt)
-				values (@IRFId, @InterviewerProfileId, @userId, 1, CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END,
+				values (@IRFId, @InterviewerProfileId, @userId, 1,
+			 CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END,
 			 CASE WHEN @isLocked = 1 THEN 0 ELSE 1 END,
 			 CASE WHEN @isLocked = 1 THEN NULL ELSE 'Shortlisted' END,
-			 @rate, @OpenAIScreeningResponse, @verdict, 'Internal IRF Link', @score, 1, CASE WHEN @isLocked = 1 THEN NULL ELSE GETDATE() END)
+			 @rate, @OpenAIScreeningResponse, @verdict, 'Internal IRF Link', @score, 1,
+			 CASE WHEN @isLocked = 1 THEN NULL ELSE @timeNow END)
 			End
 
 			UPDATE InterviewerProfile
@@ -117,11 +122,17 @@ begin try
 
 				if not exists(select 1 from TransInterviewer where UserId = @userId2 and IRFId = @targetIRFId)
 				Begin
+					-- Self-registration via the MAG application link. Each channel's activation follows
+					-- its Interviewer Lock (IRF.DmIvLockNew): locked channels are Available-only
+					-- (IsActive = 0, ActivatedAt NULL) pending manual RB vetting; unlocked channels are
+					-- auto-activated (IsActive = 1) immediately.
 					insert into TransInterviewer(IRFId, InterviewerId, UserId, IsAvailable, IsActive, IsSMEVerified, ClientAction, PerSuccessRate, OpenAIScreeningResponse, AIVerdict, Source, AIScreeningScore, IsAIScreeningAtempted, ActivatedAt)
-					values (@targetIRFId, @InterviewerProfileId2, @userId2, 1, CASE WHEN @isLocked2 = 1 THEN 0 ELSE 1 END,
+					values (@targetIRFId, @InterviewerProfileId2, @userId2, 1,
+				 CASE WHEN @isLocked2 = 1 THEN 0 ELSE 1 END,
 				 CASE WHEN @isLocked2 = 1 THEN 0 ELSE 1 END,
 				 CASE WHEN @isLocked2 = 1 THEN NULL ELSE 'Shortlisted' END,
-				 @rate2, @OpenAIScreeningResponse, @verdict, 'Internal MAG Link', @score, 1, CASE WHEN @isLocked2 = 1 THEN NULL ELSE GETDATE() END)
+				 @rate2, @OpenAIScreeningResponse, @verdict, 'Internal MAG Link', @score, 1,
+				 CASE WHEN @isLocked2 = 1 THEN NULL ELSE @timeNow END)
 				End
 
 				delete from @tbl_targetIRFs where irfId = @targetIRFId
@@ -155,7 +166,12 @@ begin try
 				END
 				ELSE
 				BEGIN
-					SET @existingList = @existingList + ',' + @agId;
+					-- BUGFIX: previously appended to @existingList (a different, NULL-in-this-branch
+					-- variable belonging to the non-MAG branch), so the new MAG's AG id was never
+					-- added to the profile's AssessmentGroupId list. The MAG interviewer popup reads
+					-- InterviewerProfile.AssessmentGroupId, so the interviewer would acknowledge /
+					-- self-register yet never appear in that MAG's interviewer list.
+					SET @existingList2 = @existingList2 + ',' + @agId;
 				END
 
 				-- Update the table

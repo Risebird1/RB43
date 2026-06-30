@@ -418,6 +418,10 @@ namespace Risebird.Entities.ViewModel
         public int IRFinid { get; set; }
         public string Comment { get; set; }
         public bool IsBankVerified { get; set; }
+        public bool IsPanVerified { get; set; }
+        public string NameAtPan { get; set; }
+        public DateTime? PanVerifiedOn { get; set; }
+        public string VerifiedPAN { get; set; }
         public bool IsActive { get; set; }
         public bool IsBlocked { get; set; }
         public string MobileNumber { get; set; }

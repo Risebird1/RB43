@@ -69,7 +69,7 @@ namespace Risebird.Repository
             string status, string senderEmail, string resumeFitment,
             DateTime? dateFrom, DateTime? dateTo, int page, int pageSize,
             string source = null, bool? isAutoClosed = null, bool? isInterviewerActive = null,
-            bool? recentlyAvailable = null)
+            bool? recentlyAvailable = null, string magName = null)
         {
             try
             {
@@ -82,6 +82,7 @@ namespace Risebird.Repository
                 parameters.Add("@IsAutoClosed", isAutoClosed);
                 parameters.Add("@IsInterviewerActive", isInterviewerActive);
                 parameters.Add("@RecentlyAvailable", recentlyAvailable);
+                parameters.Add("@MagName", string.IsNullOrWhiteSpace(magName) ? null : magName.Trim());
                 parameters.Add("@DateFrom", dateFrom);
                 parameters.Add("@DateTo", dateTo);
                 parameters.Add("@Page", page);
@@ -573,6 +574,16 @@ namespace Risebird.Repository
             return result.ToList();
         }
 
+        public async Task<CampaignBatchCallEligible> GetCampaignForManualBatchCallAsync(int campaignId)
+        {
+            using var con = new SqlConnection(_connectionString);
+            var result = await con.QueryAsync<CampaignBatchCallEligible>(
+                "usp_GetCampaignForManualBatchCall",
+                new { CampaignId = campaignId },
+                commandType: CommandType.StoredProcedure, commandTimeout: 30);
+            return result.FirstOrDefault();
+        }
+
         public async Task<List<CampaignUnrespondedInterviewer>> GetCampaignUnrespondedInterviewersAsync(int campaignId)
         {
             using var con = new SqlConnection(_connectionString);
@@ -590,6 +601,61 @@ namespace Risebird.Repository
                 "usp_MarkCampaignBatchCallTriggered",
                 new { CampaignId = campaignId },
                 commandType: CommandType.StoredProcedure, commandTimeout: 15);
+        }
+
+        public async Task<(int LogId, int AttemptNumber, string AttemptName)> StartCampaignBatchCallAttemptAsync(
+            int campaignId, string campaignName, string magName, string initiatedBy, int totalInterviewers)
+        {
+            using var con = new SqlConnection(_connectionString);
+            var p = new DynamicParameters();
+            p.Add("@CampaignId", campaignId);
+            p.Add("@CampaignName", campaignName);
+            p.Add("@MagName", magName);
+            p.Add("@InitiatedBy", initiatedBy);
+            p.Add("@TotalInterviewers", totalInterviewers);
+            p.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            p.Add("@AttemptNumber", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            p.Add("@AttemptName", dbType: DbType.String, size: 300, direction: ParameterDirection.Output);
+            await con.ExecuteAsync("usp_StartCampaignBatchCallAttempt", p,
+                commandType: CommandType.StoredProcedure, commandTimeout: 30);
+            return (p.Get<int>("@NewId"), p.Get<int>("@AttemptNumber"), p.Get<string>("@AttemptName"));
+        }
+
+        public async Task InsertCampaignBatchCallDetailAsync(int batchCallLogId, int? interviewerProfileId,
+            string interviewerName, string interviewerEmail, string phone, string outcome, string error, string conversationId)
+        {
+            using var con = new SqlConnection(_connectionString);
+            var p = new DynamicParameters();
+            p.Add("@BatchCallLogId", batchCallLogId);
+            p.Add("@InterviewerProfileId", interviewerProfileId);
+            p.Add("@InterviewerName", interviewerName);
+            p.Add("@InterviewerEmail", interviewerEmail);
+            p.Add("@Phone", phone);
+            p.Add("@Outcome", outcome);
+            p.Add("@Error", error);
+            p.Add("@ConversationId", conversationId);
+            await con.ExecuteAsync("usp_InsertCampaignBatchCallDetail", p,
+                commandType: CommandType.StoredProcedure, commandTimeout: 30);
+        }
+
+        public async Task<List<CampaignBatchCallAttempt>> GetCampaignBatchCallAttemptsAsync(int campaignId)
+        {
+            using var con = new SqlConnection(_connectionString);
+            var result = await con.QueryAsync<CampaignBatchCallAttempt>(
+                "usp_GetCampaignBatchCallAttempts",
+                new { CampaignId = campaignId },
+                commandType: CommandType.StoredProcedure, commandTimeout: 30);
+            return result.ToList();
+        }
+
+        public async Task<List<CampaignBatchCallAttemptDetail>> GetCampaignBatchCallAttemptDetailsAsync(int batchCallLogId)
+        {
+            using var con = new SqlConnection(_connectionString);
+            var result = await con.QueryAsync<CampaignBatchCallAttemptDetail>(
+                "usp_GetCampaignBatchCallAttemptDetails",
+                new { BatchCallLogId = batchCallLogId },
+                commandType: CommandType.StoredProcedure, commandTimeout: 30);
+            return result.ToList();
         }
     }
 

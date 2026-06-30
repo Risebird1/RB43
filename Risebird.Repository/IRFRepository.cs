@@ -588,6 +588,250 @@ namespace Risebird.Repository
             return dt;
         }
 
+        private async Task EnrichInactiveAuditSummariesAsync(List<TransInterviewer> interviewers, int irfId)
+        {
+            if (interviewers == null || interviewers.Count == 0)
+                return;
+
+            try
+            {
+                using var con = new SqlConnection(connectionString);
+                var summaries = (await con.QueryAsync<TransInterviewerInactiveAuditSummary>(
+                    "usp_GetTransInterviewerInactiveAuditSummariesByIrfId",
+                    new { IrfId = irfId },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 30))?.ToList();
+
+                if (summaries == null || summaries.Count == 0)
+                    return;
+
+                var byTransId = summaries.ToDictionary(x => x.TransInterviewerId);
+                foreach (var iv in interviewers)
+                {
+                    if (!byTransId.TryGetValue(iv.id, out var summary))
+                        continue;
+
+                    iv.InactiveAuditSummaryLoaded = summary.InactiveAuditSummaryLoaded;
+                    iv.LatestInactiveAuditEventType = summary.InactiveAuditEventType;
+                    iv.LatestInactiveAuditReasonDetail = summary.InactiveAuditReasonDetail;
+                    iv.LatestInactiveAuditTriggeringInterviewId = summary.InactiveAuditTriggeringInterviewId;
+                    iv.LatestInactiveAuditChangedAt = summary.InactiveAuditChangedAt;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        private sealed class TransInterviewerAutoQcFlagRow
+        {
+            public int TransInterviewerId { get; set; }
+            public string AutoQcVerdict { get; set; }
+            public int? AutoQcTriggeringInterviewId { get; set; }
+            public DateTime? AutoQcRemovedAt { get; set; }
+        }
+
+        /// <summary>
+        /// Ensures AutoQcVerdict is on each active row for DM Bad Quality sub-tab counts.
+        /// Primary source: TransInterviewer columns; fallback: latest AutoQcFlag audit per row.
+        /// </summary>
+        private async Task EnrichAutoQcFieldsAsync(List<TransInterviewer> interviewers, int irfId)
+        {
+            if (interviewers == null || interviewers.Count == 0 || irfId <= 0)
+                return;
+
+            var byTransId = interviewers.ToDictionary(x => x.id);
+
+            try
+            {
+                using var con = new SqlConnection(connectionString);
+                var fromColumns = (await con.QueryAsync<TransInterviewerAutoQcFlagRow>(@"
+                    SELECT
+                        t.id AS TransInterviewerId,
+                        t.AutoQcVerdict,
+                        t.AutoQcTriggeringInterviewId,
+                        t.AutoQcRemovedAt
+                    FROM dbo.TransInterviewer t
+                    WHERE t.IRFId = @IrfId
+                      AND t.IsActive = 1
+                      AND NULLIF(LTRIM(RTRIM(ISNULL(t.AutoQcVerdict, ''))), '') IS NOT NULL",
+                    new { IrfId = irfId },
+                    commandTimeout: 30))?.ToList();
+
+                ApplyAutoQcFlagRows(fromColumns, byTransId, overwrite: true);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            try
+            {
+                using var con = new SqlConnection(connectionString);
+                var fromAudit = (await con.QueryAsync<TransInterviewerAutoQcFlagRow>(@"
+                    ;WITH Latest AS (
+                        SELECT
+                            al.TransInterviewerId,
+                            al.ToValue AS AutoQcVerdict,
+                            al.TriggeringInterviewId AS AutoQcTriggeringInterviewId,
+                            al.ChangedAt AS AutoQcRemovedAt,
+                            ROW_NUMBER() OVER (
+                                PARTITION BY al.TransInterviewerId
+                                ORDER BY al.ChangedAt DESC, al.Id DESC) AS rn
+                        FROM dbo.TransInterviewerAuditLog al
+                        INNER JOIN dbo.TransInterviewer t
+                            ON t.id = al.TransInterviewerId AND t.IRFId = @IrfId AND t.IsActive = 1
+                        WHERE al.EventType = 'AutoQcFlag'
+                    )
+                    SELECT TransInterviewerId, AutoQcVerdict, AutoQcTriggeringInterviewId, AutoQcRemovedAt
+                    FROM Latest
+                    WHERE rn = 1",
+                    new { IrfId = irfId },
+                    commandTimeout: 30))?.ToList();
+
+                ApplyAutoQcFlagRows(fromAudit, byTransId, overwrite: false);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        private static void ApplyAutoQcFlagRows(
+            IEnumerable<TransInterviewerAutoQcFlagRow> rows,
+            IReadOnlyDictionary<int, TransInterviewer> byTransId,
+            bool overwrite)
+        {
+            if (rows == null) return;
+
+            foreach (var row in rows)
+            {
+                if (row == null || row.TransInterviewerId <= 0) continue;
+                if (!byTransId.TryGetValue(row.TransInterviewerId, out var iv) || iv == null) continue;
+                if (!overwrite && !string.IsNullOrWhiteSpace(iv.AutoQcVerdict)) continue;
+                if (string.IsNullOrWhiteSpace(row.AutoQcVerdict)) continue;
+
+                iv.AutoQcVerdict = row.AutoQcVerdict.Trim();
+                if (row.AutoQcTriggeringInterviewId.HasValue)
+                    iv.AutoQcTriggeringInterviewId = row.AutoQcTriggeringInterviewId;
+                if (row.AutoQcRemovedAt.HasValue)
+                    iv.AutoQcRemovedAt = row.AutoQcRemovedAt;
+            }
+        }
+
+        private sealed class InterviewerQcAggregateRow
+        {
+            public string InterviewerEmail { get; set; }
+            public int SuspiciousCount { get; set; }
+            public int RedoCount { get; set; }
+        }
+
+        /// <summary>
+        /// Per-interviewer QCMerged verdict counts on completed interviews for this IRF,
+        /// plus manual suspicious flag from SuspiciousInterviewer.
+        /// </summary>
+        private async Task EnrichQcVerdictAggregateMetricsAsync(List<TransInterviewer> interviewers, int irfId)
+        {
+            if (interviewers == null || interviewers.Count == 0 || irfId <= 0)
+                return;
+
+            var byEmail = interviewers
+                .Where(iv => !string.IsNullOrWhiteSpace(iv.EmailId))
+                .GroupBy(iv => iv.EmailId.Trim(), StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
+
+            if (byEmail.Count == 0)
+                return;
+
+            try
+            {
+                using var con = new SqlConnection(connectionString);
+                var aggregates = (await con.QueryAsync<InterviewerQcAggregateRow>(@"
+;WITH IrfScope AS (
+    SELECT IRFId AS IrfCode FROM dbo.IRF WHERE id = @IrfId
+),
+Completed AS (
+    SELECT im.id AS InterviewId, LTRIM(RTRIM(im.interviewer)) AS InterviewerEmail
+    FROM dbo.InterviewMeetings im
+    INNER JOIN dbo.InterviewComments ic ON ic.InterviewId = im.id
+    CROSS JOIN IrfScope s
+    WHERE im.IRFId = s.IrfCode
+      AND im.confirmationStatus = 1
+      AND ic.MeetingStatus IN (4, 6, 7, 8)
+),
+LatestQc AS (
+    SELECT q.InterviewId, q.QCDone, q.AIMergeInterviewerSuspicious, q.AIMergeRedoInterview, q.MergedAIQCDetails
+    FROM dbo.QcInterviewAIevaluation q
+    INNER JOIN (
+        SELECT InterviewId, MAX(id) AS MaxId
+        FROM dbo.QcInterviewAIevaluation
+        GROUP BY InterviewId
+    ) x ON x.MaxId = q.id
+),
+Verdicts AS (
+    SELECT
+        c.InterviewerEmail,
+        CASE
+            WHEN q.QCDone = 1
+                 AND UPPER(LTRIM(RTRIM(ISNULL(q.AIMergeInterviewerSuspicious, '')))) IN ('YES', 'Y', 'TRUE') THEN 'suspicious'
+            WHEN q.QCDone = 1 AND ISNULL(q.AIMergeRedoInterview, 0) = 1 THEN 'redo'
+            WHEN q.QCDone = 1
+                 AND UPPER(LTRIM(RTRIM(ISNULL(JSON_VALUE(q.MergedAIQCDetails, '$.interviewer_suspicious'), '')))) IN ('YES', 'Y', 'TRUE') THEN 'suspicious'
+            WHEN q.QCDone = 1
+                 AND ISNULL(TRY_CAST(JSON_VALUE(q.MergedAIQCDetails, '$.RedoInterview') AS BIT), 0) = 1 THEN 'redo'
+            ELSE NULL
+        END AS Verdict
+    FROM Completed c
+    LEFT JOIN LatestQc q ON q.InterviewId = c.InterviewId
+)
+SELECT
+    InterviewerEmail,
+    SUM(CASE WHEN Verdict = 'suspicious' THEN 1 ELSE 0 END) AS SuspiciousCount,
+    SUM(CASE WHEN Verdict = 'redo' THEN 1 ELSE 0 END) AS RedoCount
+FROM Verdicts
+WHERE InterviewerEmail IS NOT NULL AND InterviewerEmail <> ''
+GROUP BY InterviewerEmail",
+                    new { IrfId = irfId },
+                    commandTimeout: 120))?.ToList();
+
+                if (aggregates != null)
+                {
+                    foreach (var row in aggregates)
+                    {
+                        if (string.IsNullOrWhiteSpace(row.InterviewerEmail)) continue;
+                        if (!byEmail.TryGetValue(row.InterviewerEmail.Trim(), out var rows)) continue;
+                        foreach (var iv in rows)
+                        {
+                            iv.QcVerdictSuspiciousCount = row.SuspiciousCount;
+                            iv.QcVerdictRedoCount = row.RedoCount;
+                        }
+                    }
+                }
+
+                var markedEmails = (await con.QueryAsync<string>(@"
+SELECT LTRIM(RTRIM(ul.EmailId))
+FROM dbo.SuspiciousInterviewer si
+INNER JOIN dbo.UserList ul ON ul.id = si.UserId
+WHERE si.SuspiciousStatus = 1",
+                    commandTimeout: 60))?.ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+                if (markedEmails != null && markedEmails.Count > 0)
+                {
+                    foreach (var email in markedEmails)
+                    {
+                        if (!byEmail.TryGetValue(email, out var rows)) continue;
+                        foreach (var iv in rows)
+                            iv.IsManuallyMarkedSuspicious = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
         public async Task<IRFVm> GetSkillChannelDetailsForUpdate(int irfId)
         {
             try
@@ -821,9 +1065,17 @@ namespace Risebird.Repository
                                     AddedAt = ReadNullableDateTimeCell(dt.Rows[i], dt.Columns, "AddedAt"),
                                     LastLoginAt = ReadNullableDateTimeCell(dt.Rows[i], dt.Columns, "LastLogin"),
                                     LastInterviewConductedAt = ReadNullableDateTimeCell(dt.Rows[i], dt.Columns, "LastInterviewConductedAt"),
+                                    AutoQcVerdict = dt.Columns.Contains("AutoQcVerdict") && !string.IsNullOrEmpty(dt.Rows[i]["AutoQcVerdict"]?.ToString())
+                                        ? dt.Rows[i]["AutoQcVerdict"].ToString() : null,
+                                    AutoQcTriggeringInterviewId = dt.Columns.Contains("AutoQcTriggeringInterviewId") && dt.Rows[i]["AutoQcTriggeringInterviewId"] != DBNull.Value && !string.IsNullOrEmpty(dt.Rows[i]["AutoQcTriggeringInterviewId"]?.ToString())
+                                        ? Convert.ToInt32(dt.Rows[i]["AutoQcTriggeringInterviewId"]) : (int?)null,
+                                    AutoQcRemovedAt = ReadNullableDateTimeCell(dt.Rows[i], dt.Columns, "AutoQcRemovedAt"),
 
                                 });
                             }
+                            await EnrichInactiveAuditSummariesAsync(transInterviewer, irfId);
+                            await EnrichAutoQcFieldsAsync(transInterviewer, irfId);
+                            await EnrichQcVerdictAggregateMetricsAsync(transInterviewer, irfId);
                             _resultVM.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer);
                         }
                     }
@@ -9001,7 +9253,7 @@ namespace Risebird.Repository
                     if (dataset.Tables.Count > 0)
                     {
                         dt = dataset.Tables[0];
-                        if (dt.Rows != null)
+                        if (dt.Rows != null && dt.Rows.Count > 0)
                         {
 
                             _resultVM.id = !string.IsNullOrEmpty(dt.Rows[0]["id"].ToString()) ? Convert.ToInt32(dt.Rows[0]["id"]) : 0;

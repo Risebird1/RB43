@@ -21,6 +21,7 @@ namespace Risebird.Business
         private readonly IConfiguration _configuration;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IMeetingService _meetingService;
+        private readonly IDmIvAutoQcFlagService _autoQcFlagService;
         private readonly ILogger<QcInterviewAIMergeJobService> _log;
 
         public QcInterviewAIMergeJobService(
@@ -28,12 +29,14 @@ namespace Risebird.Business
             IConfiguration configuration,
             IAssistantServiceHelper assistantServiceHelper,
             IMeetingService meetingService,
+            IDmIvAutoQcFlagService autoQcFlagService,
             ILogger<QcInterviewAIMergeJobService> log)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _configuration = configuration;
             _assistantServiceHelper = assistantServiceHelper;
             _meetingService = meetingService;
+            _autoQcFlagService = autoQcFlagService;
             _log = log;
         }
 
@@ -144,6 +147,16 @@ namespace Risebird.Business
 
             if (row.InterviewId > 0)
                 await PersistPaymentSlaFromQcMergeAsync(row.InterviewId, combined, paymentComplianceCount);
+
+            if (row.InterviewId > 0)
+            {
+                await _autoQcFlagService.TryApplyAutoQcFlagAsync(
+                    row.InterviewId,
+                    row.irfId,
+                    combined.interviewer_suspicious,
+                    combined.RedoInterview,
+                    cancellationToken);
+            }
 
             return true;
         }

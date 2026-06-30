@@ -78,6 +78,77 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<CashfreePanVerificationResult> VerifyPanAsync(string pan, string name)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(pan))
+                    return PanVerifyFail("PAN number is required.");
+
+                var panUpper = pan.Trim().ToUpperInvariant();
+                var baseUrl = VerificationBaseUrl();
+                var payload = new
+                {
+                    pan = panUpper,
+                    name = string.IsNullOrWhiteSpace(name) ? null : name.Trim()
+                };
+
+                var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl}/pan");
+                AddVerificationHeaders(request);
+                request.Content = new StringContent(
+                    JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.SendAsync(request);
+                var body = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var err = TryParseCashfreeError(body);
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Exception,
+                        new Exception($"Cashfree PAN verification failed [{(int)response.StatusCode}]: {body}"));
+                    return PanVerifyFail(err ?? $"Cashfree returned HTTP {(int)response.StatusCode}.");
+                }
+
+                var json = JObject.Parse(body);
+                var panStatus = json["pan_status"]?.ToString();
+                var isValid = string.Equals(panStatus, "VALID", StringComparison.OrdinalIgnoreCase);
+                var nameMatchResult = json["name_match_result"]?.ToString();
+
+                var result = new CashfreePanVerificationResult
+                {
+                    Success = isValid,
+                    IsValid = isValid,
+                    PanStatus = panStatus,
+                    NameAtPan = json["name_at_pan"]?.ToString(),
+                    NameMatchResult = nameMatchResult,
+                    NameMatchScore = json["name_match_score"]?.ToString(),
+                    ReferenceId = json["reference_id"]?.Value<long?>()
+                };
+
+                if (!isValid)
+                {
+                    result.ErrorMessage = "The PAN number could not be verified. Please check and try again.";
+                    return result;
+                }
+
+                if (!string.IsNullOrWhiteSpace(name) &&
+                    !string.IsNullOrWhiteSpace(nameMatchResult) &&
+                    (nameMatchResult == "NO_MATCH" || nameMatchResult == "POOR_PARTIAL_MATCH"))
+                {
+                    result.ErrorMessage =
+                        $"PAN is valid but the name on record ({result.NameAtPan}) does not closely match the name you entered ({nameMatchResult}).";
+                }
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return PanVerifyFail($"Unexpected error verifying PAN: {e.Message}");
+            }
+        }
+
         public async Task<CashfreeBankVerificationResult> VerifyBankAccountAsync(string accountName, string accountNumber, string ifscCode, string phone)
         {
             try
@@ -388,6 +459,9 @@ namespace Risebird.Business
 
         private static CashfreeBankVerificationResult VerifyFail(string message) =>
             new CashfreeBankVerificationResult { Success = false, IsValid = false, ErrorMessage = message };
+
+        private static CashfreePanVerificationResult PanVerifyFail(string message) =>
+            new CashfreePanVerificationResult { Success = false, IsValid = false, ErrorMessage = message };
 
         private static string TryParseCashfreeError(string body)
         {

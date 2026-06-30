@@ -129,5 +129,19 @@ namespace Risebird.CommonHelper.Interface
 
         Task<string> SendMAGApplicationLinkToInterviewers(string interviewerEmailId, string uniqueId, string magLink, int? assessmentGroupId = null);
         Task<string> SendRequestVideoKYCEmail(string interviewerEmailId, string interviewerName, string dashboardLink);
+
+        /// <summary>
+        /// Sends the wallet-lapse reminder email to an interviewer.
+        /// reminderIndex is 0-based (0 = first reminder, 9 = final).
+        /// lapseDate is the 90-day deadline.
+        /// verifyLink is the deep-link to the bank-verification page.
+        /// </summary>
+        Task<string> SendTdsLapseReminderAsync(
+            string toEmail,
+            string interviewerName,
+            decimal unpaidAmount,
+            DateTime lapseDate,
+            string verifyLink,
+            int reminderIndex);
     }
 }

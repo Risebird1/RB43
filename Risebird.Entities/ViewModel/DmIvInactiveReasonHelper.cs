@@ -9,7 +9,11 @@ namespace Risebird.Entities.ViewModel
         RemovedByRb,
         RemovedByClient,
         Unavailable,
-        Unknown
+        Unknown,
+        /// <summary>Auto-removed by QCMergedAIDetails verdict = "suspicious" (item 59).</summary>
+        RemovedByRbAutoQcSuspicious,
+        /// <summary>Auto-removed by QCMergedAIDetails verdict = "redo" (item 59).</summary>
+        RemovedByRbAutoQcRedo,
     }
 
     public sealed class DmIvInactiveReasonResult
@@ -40,6 +44,10 @@ namespace Risebird.Entities.ViewModel
                     return new DmIvInactiveReasonResult(category, "Removed by Client" + suffix, "warning");
                 case DmIvInactiveReasonCategory.Unavailable:
                     return new DmIvInactiveReasonResult(category, "Not available on channel", "muted");
+                case DmIvInactiveReasonCategory.RemovedByRbAutoQcSuspicious:
+                    return new DmIvInactiveReasonResult(category, "Removed by RB — Suspicious (Auto QC)", "warning");
+                case DmIvInactiveReasonCategory.RemovedByRbAutoQcRedo:
+                    return new DmIvInactiveReasonResult(category, "Removed by RB — Redo (Auto QC)", "warning");
                 default:
                     return new DmIvInactiveReasonResult(DmIvInactiveReasonCategory.Unknown, "Inactive — reason unknown", "unknown");
             }
@@ -97,6 +105,11 @@ namespace Risebird.Entities.ViewModel
         public static bool ResolveHistoricalRbVetExplicitNo(TransInterviewer iv) =>
             iv?.IsSMEVerifiedStored == false;
 
+        /// <summary>True for both auto-QC-derived categories (suspicious and redo). Used by sub-tab "Bad Quality".</summary>
+        public static bool IsAutoQcCategory(DmIvInactiveReasonCategory category) =>
+            category == DmIvInactiveReasonCategory.RemovedByRbAutoQcSuspicious ||
+            category == DmIvInactiveReasonCategory.RemovedByRbAutoQcRedo;
+
         public static DmIvInactiveReasonResult Resolve(TransInterviewer iv, bool channelLocked, string reasonDetail = null)
         {
             if (iv == null || iv.IsActive)
@@ -105,13 +118,57 @@ namespace Risebird.Entities.ViewModel
             if (TryResolveFromAuditLog(iv, reasonDetail, out var fromAudit))
                 return fromAudit;
 
+            // Legacy auto-QC columns on inactive rows map to Removed by RB (human removal path).
+            if (!string.IsNullOrWhiteSpace(iv.AutoQcVerdict) && !iv.IsActive)
+            {
+                return DmIvInactiveReasonResult.ForCategory(DmIvInactiveReasonCategory.RemovedByRb, reasonDetail);
+            }
+
             return ResolveFromCurrentState(iv, channelLocked, reasonDetail);
         }
 
-        /// <summary>Placeholder for future row-level vet/active audit API. Returns false until implemented.</summary>
+        /// <summary>Resolves inactive reason from pre-loaded audit summary on the row (DM Approval load SP).</summary>
         public static bool TryResolveFromAuditLog(TransInterviewer iv, string reasonDetail, out DmIvInactiveReasonResult result)
         {
             result = null;
+            if (iv == null || !iv.InactiveAuditSummaryLoaded)
+                return false;
+
+            var latestEvent = (iv.LatestInactiveAuditEventType ?? string.Empty).Trim();
+            var detail = !string.IsNullOrWhiteSpace(iv.LatestInactiveAuditReasonDetail)
+                ? iv.LatestInactiveAuditReasonDetail.Trim()
+                : reasonDetail;
+
+            if (!string.IsNullOrEmpty(latestEvent))
+            {
+                if (string.Equals(latestEvent, DmIvInactiveAuditEventTypes.AutoQcRemoval, StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(latestEvent, DmIvInactiveAuditEventTypes.AutoQcFlag, StringComparison.OrdinalIgnoreCase))
+                {
+                    result = DmIvInactiveReasonResult.ForCategory(DmIvInactiveReasonCategory.RemovedByRb, detail);
+                    return true;
+                }
+
+                if (string.Equals(latestEvent, DmIvInactiveAuditEventTypes.ClientVetFlippedToNo, StringComparison.OrdinalIgnoreCase))
+                {
+                    result = DmIvInactiveReasonResult.ForCategory(DmIvInactiveReasonCategory.RemovedByClient, detail);
+                    return true;
+                }
+
+                if (string.Equals(latestEvent, DmIvInactiveAuditEventTypes.RbVetFlippedToNo, StringComparison.OrdinalIgnoreCase))
+                {
+                    result = DmIvInactiveReasonResult.ForCategory(DmIvInactiveReasonCategory.RemovedByRb, detail);
+                    return true;
+                }
+            }
+
+            // (a) No removal transitions recorded and never reached active panel → Pending RB Review.
+            if (!WasEverOnActivePanel(iv))
+            {
+                result = DmIvInactiveReasonResult.ForCategory(DmIvInactiveReasonCategory.PendingRbReview, detail);
+                return true;
+            }
+
+            // Audit loaded but ambiguous for legacy rows — fall back to state inference.
             return false;
         }
 

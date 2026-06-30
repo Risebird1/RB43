@@ -483,13 +483,13 @@ namespace Risebird.Web.Controllers
                             {
                                 if (profileName == "InterviewerManagement")
                                 {
-                                    //TempData["MessageAddInterviewer"] = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
-                                    ViewBag.Message = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
+                                    //TempData["MessageAddInterviewer"] = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 2000 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
+                                    ViewBag.Message = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 2000 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
                                     return View(interviewerProfile);
                                 }
                                 else
                                 {
-                                    TempData["MessageInterviewer"] = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
+                                    TempData["MessageInterviewer"] = $"Failed to add Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 2000 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
 
                                 }
                             }
@@ -607,7 +607,7 @@ namespace Risebird.Web.Controllers
 
                                 //if (!string.IsNullOrEmpty(assessmentGroupList))
                                 //{
-                                //    TempData["MessageInterviewer"] = $"Failed to update Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
+                                //    TempData["MessageInterviewer"] = $"Failed to update Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 2000 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
                                 //}
                                 //else
                                 //{
@@ -673,7 +673,7 @@ namespace Risebird.Web.Controllers
                             {
                                 if (!string.IsNullOrEmpty(assessmentGroupList))
                                 {
-                                    TempData["MessageInterviewer"] = $"Failed to update Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 100 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
+                                    TempData["MessageInterviewer"] = $"Failed to update Interviewer Profile. Cannot map interviewer to the following Assessment Groups as 2000 interviewers have already been mapped to the Assessment Group(s) : \n '{assessmentGroupList}' ";
                                 }
                                 else
                                 {
@@ -1882,12 +1882,7 @@ namespace Risebird.Web.Controllers
         /// Self-service bank account verification via Cashfree BAV (My Profile → Account Details tab).
         /// </summary>
         [HttpPost]
-        public async Task<JsonResult> VerifyBankAccount(
-            int interviewerProfileId,
-            string accountName,
-            string accountNumber,
-            string ifscCode,
-            string phone)
+        public async Task<JsonResult> VerifyBankAccount(int interviewerProfileId,string accountName,string accountNumber,string ifscCode,string phone)
         {
             try
             {
@@ -1978,6 +1973,92 @@ namespace Risebird.Web.Controllers
                     isValid = false,
                     message = result.ErrorMessage ?? "Bank account could not be verified.",
                     accountStatusCode = result.AccountStatusCode
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Verification failed. Please try again later." });
+            }
+        }
+
+        /// <summary>
+        /// Self-service PAN verification via Cashfree PAN API (My Profile → Account Details tab).
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> VerifyPanNumber(int interviewerProfileId, string pan, string name)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { success = false, message = "Session expired. Please sign in again." });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName != "Interviewer")
+                    return Json(new { success = false, message = "Only interviewers can verify PAN here." });
+
+                if (interviewerProfileId <= 0)
+                    return Json(new { success = false, message = "Invalid profile. Please refresh the page and try again." });
+
+                if (string.IsNullOrWhiteSpace(pan))
+                    return Json(new { success = false, message = "PAN number is required." });
+
+                var panUpper = pan.Trim().ToUpperInvariant();
+                var panRegex = new System.Text.RegularExpressions.Regex(@"^[A-Z]{5}[0-9]{4}[A-Z]$");
+                if (!panRegex.IsMatch(panUpper))
+                    return Json(new { success = false, message = "Please enter a valid 10-character PAN (e.g. ABCDE1234F)." });
+
+                var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var profile = await _interviewerService.GetInterviewerProfileByEmailId(email, profileName);
+                if (profile == null || profile.id != interviewerProfileId)
+                    return Json(new { success = false, message = "You can only verify your own PAN." });
+
+                var existingAcc = profile.InterviewerAccDetails;
+                if (existingAcc?.IsPanVerified == true
+                    && string.Equals(existingAcc.VerifiedPAN, panUpper, StringComparison.OrdinalIgnoreCase))
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        alreadyVerified = true,
+                        isPanVerified = true,
+                        message = "Your PAN is already verified.",
+                        panVerifiedOn = existingAcc.PanVerifiedOn?.ToString("dd MMM yyyy, hh:mm tt") + " UTC",
+                        nameAtPan = existingAcc.NameAtPan
+                    });
+                }
+
+                var result = await _cashfreePayoutService.VerifyPanAsync(panUpper, name);
+
+                if (result.IsValid)
+                {
+                    var saved = await _interviewerService.SavePanVerificationAsync(interviewerProfileId, panUpper, result);
+                    if (!saved)
+                        return Json(new { success = false, message = "PAN verified with Cashfree but could not save status. Please try again." });
+
+                    var message = string.IsNullOrWhiteSpace(result.ErrorMessage)
+                        ? $"PAN verified successfully. Name at PAN: {result.NameAtPan ?? "—"}."
+                        : result.ErrorMessage;
+
+                    return Json(new
+                    {
+                        success = true,
+                        isValid = true,
+                        isPanVerified = true,
+                        panVerifiedOn = DateTime.UtcNow.ToString("dd MMM yyyy, hh:mm tt") + " UTC",
+                        message,
+                        nameAtPan = result.NameAtPan,
+                        nameMatchResult = result.NameMatchResult,
+                        nameMatchScore = result.NameMatchScore,
+                        referenceId = result.ReferenceId
+                    });
+                }
+
+                return Json(new
+                {
+                    success = false,
+                    isValid = false,
+                    message = result.ErrorMessage ?? "PAN could not be verified."
                 });
             }
             catch (Exception ex)
@@ -4757,6 +4838,19 @@ namespace Risebird.Web.Controllers
                         ViewBag.UsePl = usePl;
                     }
                     ViewBag.ShowEvidenceColumn = CompletedInterviewsViewMode.ShouldShowEvidenceColumn(HttpContext, null, ViewBag.UsePl as string);
+                    ViewBag.ShowQcVerdictColumn = CompletedInterviewsViewMode.ShouldShowQcVerdictColumn(HttpContext, null, ViewBag.UsePl as string, irfId);
+                    ViewBag.ShowPaymentDeductionColumn = CompletedInterviewsViewMode.ShouldShowPaymentDeductionColumn(HttpContext, null, ViewBag.UsePl as string);
+                    ViewBag.ShowRedoInterviewAction = CompletedInterviewsViewMode.ShouldShowRedoInterviewAction(ViewBag.UsePl as string);
+                    if (ViewBag.ShowQcVerdictColumn != true)
+                    {
+                        foreach (var row in statsDetailsList)
+                            row.QcVerdictDisplay = null;
+                    }
+                    if (ViewBag.ShowPaymentDeductionColumn != true)
+                    {
+                        foreach (var row in statsDetailsList)
+                            row.PaymentDeductionDisplay = null;
+                    }
                     return View("StatsDetails", statsDetailsList);
 
                     //else
@@ -4816,6 +4910,19 @@ namespace Risebird.Web.Controllers
                     }
                 }
                 ViewBag.ShowEvidenceColumn = CompletedInterviewsViewMode.ShouldShowEvidenceColumn(HttpContext, clientEmailId, ViewBag.UsePl as string);
+                ViewBag.ShowQcVerdictColumn = CompletedInterviewsViewMode.ShouldShowQcVerdictColumn(HttpContext, clientEmailId, ViewBag.UsePl as string, irfId);
+                ViewBag.ShowPaymentDeductionColumn = CompletedInterviewsViewMode.ShouldShowPaymentDeductionColumn(HttpContext, clientEmailId, ViewBag.UsePl as string);
+                ViewBag.ShowRedoInterviewAction = CompletedInterviewsViewMode.ShouldShowRedoInterviewAction(ViewBag.UsePl as string);
+                if (ViewBag.ShowQcVerdictColumn != true)
+                {
+                    foreach (var row in statsDetailsList)
+                        row.QcVerdictDisplay = null;
+                }
+                if (ViewBag.ShowPaymentDeductionColumn != true)
+                {
+                    foreach (var row in statsDetailsList)
+                        row.PaymentDeductionDisplay = null;
+                }
                 return View("StatsDetails", statsDetailsList);
             }
             catch (Exception ex)
@@ -4850,12 +4957,24 @@ namespace Risebird.Web.Controllers
                 }
 
                 var showEvidence = CompletedInterviewsViewMode.ShouldShowEvidenceColumn(HttpContext, clientEmailId, usePl);
-                return Json(CompletedInterviewsViewMode.BuildApiResponse(statsDetailsList, showEvidence));
+                var showQcVerdict = CompletedInterviewsViewMode.ShouldShowQcVerdictColumn(HttpContext, clientEmailId, usePl, irfId);
+                var showPaymentDeduction = CompletedInterviewsViewMode.ShouldShowPaymentDeductionColumn(HttpContext, clientEmailId, usePl);
+                if (!showQcVerdict)
+                {
+                    foreach (var row in statsDetailsList)
+                        row.QcVerdictDisplay = null;
+                }
+                if (!showPaymentDeduction)
+                {
+                    foreach (var row in statsDetailsList)
+                        row.PaymentDeductionDisplay = null;
+                }
+                return Json(CompletedInterviewsViewMode.BuildApiResponse(statsDetailsList, showEvidence, showQcVerdict, showPaymentDeduction));
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(new { showEvidenceColumn = false, rows = Array.Empty<object>(), error = "Unable to load stats details." });
+                return Json(new { showEvidenceColumn = false, showQcVerdictColumn = false, showPaymentDeductionColumn = false, rows = Array.Empty<object>(), error = "Unable to load stats details." });
             }
         }
 
