@@ -179,6 +179,41 @@ namespace Risebird.Web.Controllers
             return (fromDay, toDay);
         }
 
+        /// <summary>IRF Audit Directory list: active skill channels with completed interviews in range (IST calendar dates, max 90-day span).</summary>
+        private static (DateTime FromIst, DateTime ToIst, string Preset) NormalizeDirectoryIstDateRange(DateTime? from, DateTime? to, string preset)
+        {
+            var toDay = IstToday();
+            var normalizedPreset = string.IsNullOrWhiteSpace(preset) ? null : preset.Trim().ToLowerInvariant();
+
+            if (normalizedPreset == "1w")
+            {
+                return (toDay.AddDays(-7), toDay, "1w");
+            }
+
+            if (normalizedPreset == "2m")
+            {
+                return (toDay.AddDays(-60), toDay, "2m");
+            }
+
+            if (normalizedPreset == "1m")
+            {
+                return (toDay.AddDays(-30), toDay, "1m");
+            }
+
+            if (from.HasValue || to.HasValue)
+            {
+                toDay = (to ?? IstToday()).Date;
+                var fromDay = (from ?? toDay.AddDays(-30)).Date;
+                if (fromDay > toDay)
+                    fromDay = toDay;
+                if ((toDay - fromDay).TotalDays > 90)
+                    fromDay = toDay.AddDays(-90);
+                return (fromDay, toDay, "custom");
+            }
+
+            return (toDay.AddDays(-30), toDay, "1m");
+        }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Index(bool testVapiCalls = false, bool testPlivoCalls = false, bool testPlivoRescheduleCalls = false,
@@ -7798,7 +7833,7 @@ NEVER:
         /// </summary>
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> AutoRemovalMonitor()
+        public async Task<IActionResult> AutoRemovalMonitor(DateTime? from = null, DateTime? to = null, string preset = null)
         {
             try
             {
@@ -7809,10 +7844,12 @@ NEVER:
                 if (!IsAutoQcOpsProfile(profileName))
                     return RedirectToAction("SignOut", "Session");
 
+                var (fromIst, toIst, activePreset) = NormalizeDirectoryIstDateRange(from, to, preset);
+
                 IReadOnlyList<IrfAuditDirectoryRowVm> directory;
                 try
                 {
-                    directory = await _autoQcBackfillService.GetIrfAuditDirectoryAsync();
+                    directory = await _autoQcBackfillService.GetIrfAuditDirectoryAsync(fromIst, toIst);
                     ViewBag.DirectoryError = null;
                 }
                 catch (Exception loadEx)
@@ -7823,6 +7860,9 @@ NEVER:
                 }
 
                 ViewBag.Profile = profileName;
+                ViewBag.DirectoryFromIst = fromIst.ToString("yyyy-MM-dd");
+                ViewBag.DirectoryToIst = toIst.ToString("yyyy-MM-dd");
+                ViewBag.DirectoryPreset = activePreset;
                 return View(directory);
             }
             catch (Exception ex)

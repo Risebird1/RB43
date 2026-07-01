@@ -94,6 +94,25 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
     where (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and DateDiff(Day,im.interviewDate,Getdate())<30
     and (pt.DurationSelectedMin*2/3>ic.VideoDuration) and (InterviewStatus=2 or InterviewStatus=4)
     union
+    Select im.id as InterviewId,'Rejectdeficit' as Type,'Under Review' as Riskcategory              
+    from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id      
+    join IRF on IRF.IRFId=im.IRFId      
+    join PlanTypeChargesMaster pt on pt.CountryType=IRF.JobCountry and pt.PlanTypeEnumValue=IRF.Heuristicsscore and IRF.CompanyType=pt.CompanyType      
+    where (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and DateDiff(Day,im.interviewDate,Getdate())<30      
+    and (pt.DurationSelectedMin*4/9>ic.VideoDuration) and (InterviewStatus=1 or InterviewStatus=3 or InterviewStatus=5)
+    union
+    Select qca.InterviewId,'AIRedo' as Type,'Redo Requested' as Riskcategory        
+    from QcInterviewAIevaluation qca where ISNULL(AIMergeRedoInterview,0)=1
+    union
+    Select InterviewId,'Report AI Score' as Type,'High Severity' as Riskcategory
+    From InterviewComments where AIReportQCAnalysisScore<60
+    Union
+    Select InterviewId,'Transcript AI Score' as Type,'High Severity' as Riskcategory
+    From InterviewComments where AITranscriptAnalysisScore<6
+    Union
+    Select qca.InterviewId,'Contradiction AI Score' as Type,'High Severity' as Riskcategory
+    from QcInterviewAIevaluation qca where ISNULL(TRY_CAST(ContradictionScore AS DECIMAL(10,2)), 0) >=4
+    union
     Select im.id as InterviewId, Case when imj.Joinedon is null and imc.PerformedOn is null then 'No Show'
     when imj.Joinedon is null then 'Interviewer No Show' when imc.PerformedOn is null then 'Candidate No Show' end as Type,'Fake Report' as Riskcategory
     from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id
@@ -175,6 +194,25 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
     join PlanTypeChargesMaster pt on pt.CountryType=IRF.JobCountry and pt.PlanTypeEnumValue=IRF.Heuristicsscore and IRF.CompanyType=pt.CompanyType
     where (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and DateDiff(Day,im.interviewDate,Getdate())<30
     and (pt.DurationSelectedMin*2/3>ic.VideoDuration) and (InterviewStatus=2 or InterviewStatus=4)
+    union
+    Select im.id as InterviewId,'Rejectdeficit' as Type,'Under Review' as Riskcategory              
+    from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id      
+    join IRF on IRF.IRFId=im.IRFId      
+    join PlanTypeChargesMaster pt on pt.CountryType=IRF.JobCountry and pt.PlanTypeEnumValue=IRF.Heuristicsscore and IRF.CompanyType=pt.CompanyType      
+    where (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and DateDiff(Day,im.interviewDate,Getdate())<30      
+    and (pt.DurationSelectedMin*4/9>ic.VideoDuration) and (InterviewStatus=1 or InterviewStatus=3 or InterviewStatus=5)
+    union
+    Select qca.InterviewId,'AIRedo' as Type,'Redo Requested' as Riskcategory        
+    from QcInterviewAIevaluation qca where ISNULL(AIMergeRedoInterview,0)=1
+    union
+    Select InterviewId,'Report AI Score' as Type,'High Severity' as Riskcategory
+    From InterviewComments where AIReportQCAnalysisScore<60
+    Union
+    Select InterviewId,'Transcript AI Score' as Type,'High Severity' as Riskcategory
+    From InterviewComments where AITranscriptAnalysisScore<6
+    Union
+    Select qca.InterviewId,'Contradiction AI Score' as Type,'High Severity' as Riskcategory
+    from QcInterviewAIevaluation qca where ISNULL(TRY_CAST(ContradictionScore AS DECIMAL(10,2)), 0) >=4
     union
     Select im.id as InterviewId, Case when imj.Joinedon is null and imc.PerformedOn is null then 'No Show'
     when imj.Joinedon is null then 'Interviewer No Show' when imc.PerformedOn is null then 'Candidate No Show' end as Type,'Fake Report' as Riskcategory
@@ -263,6 +301,25 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
     where (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and DateDiff(Day,im.interviewDate,Getdate())<30
     and (pt.DurationSelectedMin*2/3>ic.VideoDuration) and (InterviewStatus=2 or InterviewStatus=4)
     union
+    Select im.id as InterviewId,'Rejectdeficit' as Type,'Under Review' as Riskcategory              
+    from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id      
+    join IRF on IRF.IRFId=im.IRFId      
+    join PlanTypeChargesMaster pt on pt.CountryType=IRF.JobCountry and pt.PlanTypeEnumValue=IRF.Heuristicsscore and IRF.CompanyType=pt.CompanyType      
+    where (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and DateDiff(Day,im.interviewDate,Getdate())<30      
+    and (pt.DurationSelectedMin*4/9>ic.VideoDuration) and (InterviewStatus=1 or InterviewStatus=3 or InterviewStatus=5)
+    union
+    Select qca.InterviewId,'AIRedo' as Type,'Redo Requested' as Riskcategory        
+    from QcInterviewAIevaluation qca where ISNULL(AIMergeRedoInterview,0)=1
+    union
+    Select InterviewId,'Report AI Score' as Type,'High Severity' as Riskcategory
+    From InterviewComments where AIReportQCAnalysisScore<60
+    Union
+    Select InterviewId,'Transcript AI Score' as Type,'High Severity' as Riskcategory
+    From InterviewComments where AITranscriptAnalysisScore<6
+    Union
+    Select qca.InterviewId,'Contradiction AI Score' as Type,'High Severity' as Riskcategory
+    from QcInterviewAIevaluation qca where ISNULL(TRY_CAST(ContradictionScore AS DECIMAL(10,2)), 0) >=4
+    union
     Select im.id as InterviewId, Case when imj.Joinedon is null and imc.PerformedOn is null then 'No Show'
     when imj.Joinedon is null then 'Interviewer No Show' when imc.PerformedOn is null then 'Candidate No Show' end as Type,'Fake Report' as Riskcategory
     from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id
@@ -344,6 +401,25 @@ else
     join PlanTypeChargesMaster pt on pt.CountryType=IRF.JobCountry and pt.PlanTypeEnumValue=IRF.Heuristicsscore and IRF.CompanyType=pt.CompanyType
     where (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and DateDiff(Day,im.interviewDate,Getdate())<30
     and (pt.DurationSelectedMin*2/3>ic.VideoDuration) and (InterviewStatus=2 or InterviewStatus=4)
+    union
+    Select im.id as InterviewId,'Rejectdeficit' as Type,'Under Review' as Riskcategory              
+    from InterviewMeetings im join InterviewComments ic on ic.InterviewId=im.id      
+    join IRF on IRF.IRFId=im.IRFId      
+    join PlanTypeChargesMaster pt on pt.CountryType=IRF.JobCountry and pt.PlanTypeEnumValue=IRF.Heuristicsscore and IRF.CompanyType=pt.CompanyType      
+    where (MeetingStatus=4 or MeetingStatus=6 or MeetingStatus=7 or MeetingStatus=8) and DateDiff(Day,im.interviewDate,Getdate())<30      
+    and (pt.DurationSelectedMin*4/9>ic.VideoDuration) and (InterviewStatus=1 or InterviewStatus=3 or InterviewStatus=5)
+    union
+    Select qca.InterviewId,'AIRedo' as Type,'Redo Requested' as Riskcategory        
+    from QcInterviewAIevaluation qca where ISNULL(AIMergeRedoInterview,0)=1
+    union
+    Select InterviewId,'Report AI Score' as Type,'High Severity' as Riskcategory
+    From InterviewComments where AIReportQCAnalysisScore<60
+    Union
+    Select InterviewId,'Transcript AI Score' as Type,'High Severity' as Riskcategory
+    From InterviewComments where AITranscriptAnalysisScore<6
+    Union
+    Select qca.InterviewId,'Contradiction AI Score' as Type,'High Severity' as Riskcategory
+    from QcInterviewAIevaluation qca where ISNULL(TRY_CAST(ContradictionScore AS DECIMAL(10,2)), 0) >=4
     union
     Select im.id as InterviewId, Case when imj.Joinedon is null and imc.PerformedOn is null then 'No Show'
     when imj.Joinedon is null then 'Interviewer No Show' when imc.PerformedOn is null then 'Candidate No Show' end as Type,'Fake Report' as Riskcategory

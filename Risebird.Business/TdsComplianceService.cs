@@ -93,15 +93,17 @@ namespace Risebird.Business
                 var pendingTask      = _tdsRepo.FetchPendingTdsByWeekAsync(financialYear, quarter);
                 var filingTask       = _tdsRepo.FetchTdsReturnFilingAsync(financialYear, quarter);
                 var challanLinksTask = _tdsRepo.FetchInterviewerChallanNumbersAsync(financialYear, quarter);
+                var paymentItemsTask = _tdsRepo.FetchInterviewerPaymentItemsAsync(start, end);
 
-                await Task.WhenAll(allRowsTask, challansTask, weeklyTask, pendingTask, filingTask, challanLinksTask);
+                await Task.WhenAll(allRowsTask, challansTask, weeklyTask, pendingTask, filingTask, challanLinksTask, paymentItemsTask);
 
-                var allRows      = allRowsTask.Result   ?? new List<InterviewerQuarterlyTdsRow>();
-                var challans     = challansTask.Result  ?? new List<TdsChallanVM>();
-                var weekly       = weeklyTask.Result    ?? new List<WeeklyPayoutVM>();
-                var pending      = pendingTask.Result   ?? new List<PendingTdsWeekVM>();
-                var filing       = filingTask.Result    ?? new TdsReturnFilingVM { FinancialYear = financialYear, Quarter = quarter };
+                var allRows      = allRowsTask.Result      ?? new List<InterviewerQuarterlyTdsRow>();
+                var challans     = challansTask.Result     ?? new List<TdsChallanVM>();
+                var weekly       = weeklyTask.Result       ?? new List<WeeklyPayoutVM>();
+                var pending      = pendingTask.Result      ?? new List<PendingTdsWeekVM>();
+                var filing       = filingTask.Result       ?? new TdsReturnFilingVM { FinancialYear = financialYear, Quarter = quarter };
                 var challanLinks = challanLinksTask.Result ?? new List<InterviewerChallanLink>();
+                var paymentItems = paymentItemsTask.Result ?? new List<PaymentHistoryItem>();
 
                 var challanByUser = challanLinks
                     .GroupBy(l => l.Userid)
@@ -112,8 +114,15 @@ namespace Risebird.Business
                               .Distinct()
                               .ToList());
 
+                var paymentsByUser = paymentItems
+                    .GroupBy(p => p.Userid)
+                    .ToDictionary(g => g.Key, g => g.OrderBy(p => p.PaymentDate).ToList());
+
                 foreach (var row in allRows)
+                {
                     row.ChallanNumbers = challanByUser.TryGetValue(row.Userid, out var nums) ? nums : new List<string>();
+                    row.PaymentItems   = paymentsByUser.TryGetValue(row.Userid, out var items) ? items : new List<PaymentHistoryItem>();
+                }
 
                 foreach (var challan in challans)
                 {

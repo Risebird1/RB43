@@ -28,8 +28,8 @@ BEGIN
     LEFT JOIN InterviewerProfile irp ON irp.UserId = ul.id
     LEFT JOIN TransInterviewerAccDetails tic ON tic.InterviewerProfileId = irp.id
     WHERE
-        ph.PaymentDate >= '2026-04-01'
-        AND ph.PaymentDate <= '2026-07-01'
+        ph.PaymentDate >= @StartDate
+        AND ph.PaymentDate <= @EndDate
         AND ph.TotalAmount > 0
         AND (ph.Status = 'Done' OR ph.PayoutStatus = 'TRANSFER_SUCCESS')
         --AND ISNULL(tic.IsBankVerified, 0) = 1        -- wallet-verified only

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -82,6 +84,9 @@ namespace Risebird.Entities.ViewModel
 
         // Linked challan serial numbers (all challans this quarter for this interviewer)
         public List<string> ChallanNumbers { get; set; } = new();
+
+        // Individual payment rows for the quarter (used by Date Paid popover)
+        public List<PaymentHistoryItem> PaymentItems { get; set; } = new();
 
         // Form 16A certificate blob URL (from InterviewerCertificates table)
         public string Form16Link { get; set; }
@@ -205,6 +210,39 @@ namespace Risebird.Entities.ViewModel
         public decimal  TotalUnpaid             { get; set; }
         public int      DaysSinceFirstUnclaimed { get; set; }
         public string   PaymentReference        { get; set; }
+    }
+
+    // -----------------------------------------------------------------------
+    // Individual payment row (for the Date Paid popover breakdown)
+    // -----------------------------------------------------------------------
+    public class PaymentHistoryItem
+    {
+        public int       Userid      { get; set; }
+        public DateTime? PaymentDate { get; set; }
+        public int       TotalAmount { get; set; }
+        public string    Comment     { get; set; }
+
+        // Replaces "M/d/yyyy h:mm:ss tt" datetime substrings in Comment with "dd-MMM-yyyy".
+        // Uses InvariantCulture + TryParseExact so month/day order is always treated as M/d/yyyy
+        // regardless of the server's regional settings (e.g. "5/22/2021" = 22-May-2021).
+        public string FormattedComment
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(Comment)) return "";
+                return Regex.Replace(
+                    Comment,
+                    @"\d{1,2}/\d{1,2}/\d{4} \d{1,2}:\d{2}:\d{2} [AP]M",
+                    m => DateTime.TryParseExact(
+                             m.Value,
+                             "M/d/yyyy h:mm:ss tt",
+                             CultureInfo.InvariantCulture,
+                             DateTimeStyles.None,
+                             out var dt)
+                         ? dt.ToString("dd-MMM-yyyy")
+                         : m.Value);
+            }
+        }
     }
 
     // -----------------------------------------------------------------------
