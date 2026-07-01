@@ -31,8 +31,8 @@ namespace Risebird.Business
         public Task<AutoQcPerIrfBackfillPreviewVm> GetPerIrfBackfillPreviewAsync(int irfId, DateTime fromUtc, DateTime toUtc) =>
             _monitorRepository.GetPerIrfBackfillPreviewAsync(irfId, fromUtc, toUtc);
 
-        public Task<IReadOnlyList<IrfAuditDirectoryRowVm>> GetIrfAuditDirectoryAsync() =>
-            _monitorRepository.GetIrfAuditDirectoryAsync();
+        public Task<IReadOnlyList<IrfAuditDirectoryRowVm>> GetIrfAuditDirectoryAsync(DateTime fromIst, DateTime toIst) =>
+            _monitorRepository.GetIrfAuditDirectoryAsync(fromIst, toIst);
 
         public async Task<AutoQcPerIrfBackfillResultVm> RunPerIrfBackfillAsync(int irfId, DateTime fromUtc, DateTime toUtc, string executedBy,
             CancellationToken cancellationToken = default)
