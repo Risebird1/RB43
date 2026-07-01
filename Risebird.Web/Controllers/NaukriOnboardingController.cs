@@ -940,6 +940,80 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        // ── Priority intent-collection MAGs ───────────────────────────────────────
+        // Operators flag up to MaxPriorityMags MAGs per day. The parallel PriorityIntentCallJob
+        // (Azure Function) then calls prospects mapped to these MAGs that are stuck at the
+        // InterestCollection stage, bypassing the usual anti-spam caps. Flags reset daily (IST).
+
+        private const int MaxPriorityMags = 2;
+
+        [HttpGet]
+        public async Task<IActionResult> GetPriorityMags()
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var mags = await _repository.GetPriorityMagsAsync();
+                return Json(new { success = true, max = MaxPriorityMags, data = mags });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SetPriorityMag(int assessmentGroupId, string magName)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            if (assessmentGroupId <= 0 || string.IsNullOrWhiteSpace(magName))
+                return Json(new { success = false, error = "A valid MAG is required." });
+
+            try
+            {
+                var user = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+                var result = await _repository.SetPriorityMagAsync(assessmentGroupId, magName.Trim(), user, MaxPriorityMags);
+
+                if (string.Equals(result.Status, "LimitReached", StringComparison.OrdinalIgnoreCase))
+                    return Json(new { success = false, status = result.Status, count = result.PriorityCount,
+                        error = $"You can prioritise at most {MaxPriorityMags} MAGs at a time. Clear one first." });
+
+                var mags = await _repository.GetPriorityMagsAsync();
+                return Json(new { success = true, status = result.Status, count = result.PriorityCount, data = mags });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ClearPriorityMag(int assessmentGroupId)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                await _repository.ClearPriorityMagAsync(assessmentGroupId);
+                var mags = await _repository.GetPriorityMagsAsync();
+                return Json(new { success = true, data = mags });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
         // ── Get active skill channels (IRFs) for a given assessment group ─────────
 
         [HttpGet]
