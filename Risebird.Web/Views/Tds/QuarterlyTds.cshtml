@@ -30,6 +30,16 @@
     .tds-form-card .card-title-bar { font-size: 13px; font-weight: 600; color: #333; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 14px; }
     .badge-pan { background: #e8eaf6; color: #3949ab; border-radius: 4px; padding: 2px 7px; font-size: 11px; font-family: monospace; }
     .week-row-expand td { background: #f9f9f9; }
+
+    /* Payment-history popover */
+    .popover { max-width: 420px !important; }
+    .ph-popup-table { font-size: 12px; border-collapse: collapse; width: 100%; }
+    .ph-popup-table thead tr { background: #e8f0fe; }
+    .ph-popup-table th { padding: 5px 10px; font-weight: 600; color: #1a237e; border-bottom: 2px solid #c5cae9; white-space: nowrap; }
+    .ph-popup-table td { padding: 4px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+    .ph-popup-table tbody tr:last-child td { border-bottom: none; }
+    .ph-popup-table tbody tr:hover td { background: #f5f7ff; }
+    .ph-comment { color: #555; }
 </style>
 
 <!-- ══════════════════════════════════════════════════════════════════ -->
@@ -696,6 +706,32 @@
                 lbl.style.color = cb.checked ? '#4caf50' : '#999';
             });
         }
+
+        // Initialize payment-history popovers on all i-icon buttons
+        document.querySelectorAll('.payment-info-btn').forEach(function (btn) {
+            var targetId = btn.getAttribute('data-ph-target');
+            var el = document.getElementById(targetId);
+            if (!el) return;
+            new bootstrap.Popover(btn, {
+                html: true,
+                content: el.innerHTML,
+                title: '<span style="font-size:13px;font-weight:600;color:#1a237e;">Payment History</span>',
+                placement: 'top',
+                trigger: 'click',
+                sanitize: false,
+                customClass: 'ph-popover'
+            });
+        });
+
+        // Close any open popover when clicking elsewhere
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.payment-info-btn') && !e.target.closest('.popover')) {
+                document.querySelectorAll('.payment-info-btn').forEach(function (btn) {
+                    var pop = bootstrap.Popover.getInstance(btn);
+                    if (pop) pop.hide();
+                });
+            }
+        });
     });
 
     function showTab(event, tabId) {

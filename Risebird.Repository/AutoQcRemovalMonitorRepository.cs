@@ -276,7 +276,7 @@ namespace Risebird.Repository
                 commandTimeout: 30);
         }
 
-        public async Task<IReadOnlyList<IrfAuditDirectoryRowVm>> GetIrfAuditDirectoryAsync()
+        public async Task<IReadOnlyList<IrfAuditDirectoryRowVm>> GetIrfAuditDirectoryAsync(DateTime fromIst, DateTime toIst)
         {
             try
             {
@@ -286,6 +286,7 @@ namespace Risebird.Repository
                 using var con = new SqlConnection(_connectionString);
                 var rows = await con.QueryAsync<IrfAuditDirectoryRowVm>(
                     "usp_GetIrfAuditDirectory",
+                    new { FromIst = fromIst.Date, ToIst = toIst.Date },
                     commandType: CommandType.StoredProcedure,
                     commandTimeout: 120);
                 return rows?.ToList() ?? new List<IrfAuditDirectoryRowVm>();

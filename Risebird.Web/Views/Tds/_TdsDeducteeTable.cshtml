@@ -48,7 +48,41 @@
                     <td>@d.SectionCode</td>
                     <td style="text-align:right;">@d.Rate%</td>
                     <td style="text-align:right;">@d.Tds.ToString("N0")</td>
-                    <td style="white-space:nowrap;">@d.DatePaid?.ToString("dd-MMM-yyyy")</td>
+                    <td style="white-space:nowrap;">
+                        @d.DatePaid?.ToString("dd-MMM-yyyy")
+                        @if (d.PaymentItems != null && d.PaymentItems.Any())
+                        {
+                            var phId = "ph-" + Guid.NewGuid().ToString("N").Substring(0, 10);
+                            <button type="button"
+                                    class="btn p-0 border-0 ms-1 payment-info-btn"
+                                    data-ph-target="@phId"
+                                    style="color:#1976d2;font-size:12px;vertical-align:middle;line-height:1;cursor:pointer;"
+                                    title="Payment History">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                            <div id="@phId" class="d-none">
+                                <table class="ph-popup-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th class="text-end">Amount (₹)</th>
+                                            <th>Week Range</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var p in d.PaymentItems)
+                                        {
+                                            <tr>
+                                                <td class="text-nowrap">@p.PaymentDate?.ToString("dd-MMM-yyyy")</td>
+                                                <td class="text-end">@p.TotalAmount.ToString("N0")</td>
+                                                <td class="ph-comment">@(string.IsNullOrWhiteSpace(p.FormattedComment) ? "—" : p.FormattedComment)</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </td>
                     <td style="font-size:11px;">
                         @if (d.ChallanNumbers != null && d.ChallanNumbers.Any())
                         {
