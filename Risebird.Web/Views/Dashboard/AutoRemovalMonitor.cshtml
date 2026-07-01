@@ -37,6 +37,12 @@
 
     .irf-audit-header p { margin: 0; font-size: 13px; color: #475569; line-height: 1.5; }
 
+    .irf-audit-header__row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+    .irf-audit-header__row p { flex: 1; min-width: 240px; }
+
+    .irf-audit-search { display: flex; align-items: center; gap: 8px; width: 275px; max-width: 100%; flex-shrink: 0; }
+
     .irf-audit-alert { padding: 12px 14px; border-radius: 8px; margin-bottom: 14px; font-size: 13px; line-height: 1.45; }
 
     .irf-audit-alert--error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
@@ -115,6 +121,29 @@
 
     .irf-toast--err { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
 
+    .irf-audit-pagination { display: none; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 10px 12px; background: #f8fafc; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b; }
+
+    .irf-audit-pagination.is-visible { display: flex; }
+
+    .irf-audit-pagination__btns { display: flex; gap: 4px; align-items: center; }
+
+    .irf-audit-pagination__btns .irf-audit-btn { margin: 0; min-width: 32px; text-align: center; }
+
+    .irf-audit-pagination__btns .irf-audit-btn.is-active { background: #2563eb; border-color: #2563eb; color: #fff; }
+
+    .irf-audit-search__box { position: relative; flex: 1;  max-width: 225px;
+    float: right; }
+
+    .irf-audit-search__box svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none; }
+
+    .irf-audit-search__input { width: 100%; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 10px 8px 34px; font-size: 13px; color: #334155; background: #fff; }
+
+    .irf-audit-search__input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,.12); }
+
+    .irf-audit-search-empty { display: none; padding: 24px 12px; text-align: center; font-size: 13px; color: #64748b; border-top: 1px solid #e2e8f0; }
+
+    .irf-audit-search-empty.is-visible { display: block; }
+
 </style>
 
 
@@ -127,7 +156,31 @@
 
         <h2 style="margin-top:12px;">IRF Audit Directory</h2>
 
-        <p>Per-IRF bad-quality flag backfill. Forward triggers set flags only (no auto-removal). Run backfill to populate historical suspicious/redo verdicts.</p>
+        <div class="irf-audit-header__row">
+
+            <p>Per-IRF bad-quality flag backfill. Forward triggers set flags only (no auto-removal). Run backfill to populate historical suspicious/redo verdicts.</p>
+
+            @if (rows.Any())
+
+            {
+
+                <div class="irf-audit-search">
+
+                    <div class="irf-audit-search__box">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+
+                        <input type="search" id="irfAuditSearch" class="irf-audit-search__input" placeholder="Search by IRF name..." autocomplete="off" />
+
+                    </div>
+
+                    <button type="button" class="irf-audit-btn" id="irfAuditSearchClear" style="display:none;">Clear</button>
+
+                </div>
+
+            }
+
+        </div>
 
     </div>
 
@@ -193,7 +246,7 @@
 
                     var pendingClass = row.PendingFlagsCount > 0 ? "pending-flags" : "pending-flags is-zero";
 
-                    <tr data-irf-id="@row.IrfId">
+                    <tr data-irf-id="@row.IrfId" data-irf-name="@row.IrfName">
 
                         <td><strong>@row.IrfName</strong> <span style="color:#94a3b8;">(#@row.IrfId)</span></td>
 
@@ -222,6 +275,16 @@
             </tbody>
 
         </table>
+
+        <div id="irfAuditSearchEmpty" class="irf-audit-search-empty">No IRFs match your search.</div>
+
+        <div id="irfAuditPagination" class="irf-audit-pagination" aria-label="IRF directory pagination">
+
+            <span id="irfAuditPageInfo"></span>
+
+            <div class="irf-audit-pagination__btns" id="irfAuditPageBtns"></div>
+
+        </div>
 
     </div>
 
@@ -634,6 +697,206 @@
             });
 
         });
+
+
+
+        var IRF_AUDIT_PAGE_SIZE = 30;
+
+        var irfAuditCurrentPage = 1;
+
+        var irfAuditSearchTerm = '';
+
+        var $irfAuditRows = $('.irf-audit-table tbody tr');
+
+
+
+        function getIrfAuditMatchedRows() {
+
+            if (!irfAuditSearchTerm) return $irfAuditRows;
+
+            return $irfAuditRows.filter(function () {
+
+                var name = ($(this).attr('data-irf-name') || '').toString().toLowerCase();
+
+                return name.indexOf(irfAuditSearchTerm) >= 0;
+
+            });
+
+        }
+
+
+
+        function applyIrfAuditSearch() {
+
+            irfAuditSearchTerm = ($('#irfAuditSearch').val() || '').trim().toLowerCase();
+
+            irfAuditCurrentPage = 1;
+
+            $('#irfAuditSearchClear').toggle(irfAuditSearchTerm.length > 0);
+
+            renderIrfAuditPagination();
+
+        }
+
+
+
+        function renderIrfAuditPagination() {
+
+            var $matched = getIrfAuditMatchedRows();
+
+            var total = $matched.length;
+
+            var $bar = $('#irfAuditPagination');
+
+            var $info = $('#irfAuditPageInfo');
+
+            var $btns = $('#irfAuditPageBtns');
+
+            var $empty = $('#irfAuditSearchEmpty');
+
+
+
+            $irfAuditRows.hide();
+
+            $empty.toggleClass('is-visible', total === 0 && irfAuditSearchTerm.length > 0 && $irfAuditRows.length > 0);
+
+
+
+            if (total === 0) {
+
+                $bar.removeClass('is-visible');
+
+                return;
+
+            }
+
+
+
+            var totalPages = Math.max(1, Math.ceil(total / IRF_AUDIT_PAGE_SIZE));
+
+            if (irfAuditCurrentPage > totalPages) irfAuditCurrentPage = totalPages;
+
+            if (irfAuditCurrentPage < 1) irfAuditCurrentPage = 1;
+
+
+
+            var start = (irfAuditCurrentPage - 1) * IRF_AUDIT_PAGE_SIZE;
+
+            $matched.slice(start, start + IRF_AUDIT_PAGE_SIZE).show();
+
+
+
+            if (total <= IRF_AUDIT_PAGE_SIZE) {
+
+                $bar.removeClass('is-visible');
+
+                return;
+
+            }
+
+
+
+            var first = start + 1;
+
+            var last = Math.min(start + IRF_AUDIT_PAGE_SIZE, total);
+
+            $info.text('Showing ' + first + '–' + last + ' of ' + total);
+
+
+
+            var html = '';
+
+            html += '<button type="button" class="irf-audit-btn irf-audit-pg-prev"' + (irfAuditCurrentPage <= 1 ? ' disabled' : '') + ' aria-label="Previous page">&lsaquo;</button>';
+
+
+
+            var windowSize = 5;
+
+            var startPage = Math.max(1, irfAuditCurrentPage - Math.floor(windowSize / 2));
+
+            var endPage = Math.min(totalPages, startPage + windowSize - 1);
+
+            startPage = Math.max(1, endPage - windowSize + 1);
+
+
+
+            for (var p = startPage; p <= endPage; p++) {
+
+                html += '<button type="button" class="irf-audit-btn irf-audit-pg' + (p === irfAuditCurrentPage ? ' is-active' : '') + '" data-page="' + p + '">' + p + '</button>';
+
+            }
+
+
+
+            html += '<button type="button" class="irf-audit-btn irf-audit-pg-next"' + (irfAuditCurrentPage >= totalPages ? ' disabled' : '') + ' aria-label="Next page">&rsaquo;</button>';
+
+            $btns.html(html);
+
+            $bar.addClass('is-visible');
+
+        }
+
+
+
+        $(document).on('click', '.irf-audit-pg', function () {
+
+            var page = parseInt($(this).data('page'), 10);
+
+            if (!page || page === irfAuditCurrentPage) return;
+
+            irfAuditCurrentPage = page;
+
+            renderIrfAuditPagination();
+
+        });
+
+
+
+        $(document).on('click', '.irf-audit-pg-prev', function () {
+
+            if (irfAuditCurrentPage > 1) {
+
+                irfAuditCurrentPage--;
+
+                renderIrfAuditPagination();
+
+            }
+
+        });
+
+
+
+        $(document).on('click', '.irf-audit-pg-next', function () {
+
+            var totalPages = Math.ceil(getIrfAuditMatchedRows().length / IRF_AUDIT_PAGE_SIZE);
+
+            if (irfAuditCurrentPage < totalPages) {
+
+                irfAuditCurrentPage++;
+
+                renderIrfAuditPagination();
+
+            }
+
+        });
+
+
+
+        $('#irfAuditSearch').on('input', applyIrfAuditSearch);
+
+
+
+        $('#irfAuditSearchClear').on('click', function () {
+
+            $('#irfAuditSearch').val('');
+
+            applyIrfAuditSearch();
+
+        });
+
+
+
+        renderIrfAuditPagination();
 
     })();
 

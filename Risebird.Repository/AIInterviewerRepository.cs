@@ -165,14 +165,23 @@ namespace Risebird.Repository
                     //    }
                     //}
                     if (normalizedSessionId is null ||
-                        normalizedVideoLink is null ||
-                        normalizedCandidateResponse is null ||
                         normalizedQuestion is null ||
+                        normalizedCandidateResponse is null ||
                         interviewId <= 0)
                     {
                         return false;
                     }
 
+                    var requiresVideo = !isTypingSpeedQuestion && !isListeningComprehension;
+                    if (requiresVideo && normalizedVideoLink is null)
+                    {
+                        return false;
+                    }
+
+                    if (!requiresVideo && normalizedVideoLink is null)
+                    {
+                        normalizedVideoLink = "no-video";
+                    }
 
                     var parameters = new DynamicParameters();
                     parameters.Add("@VideoLink", normalizedVideoLink);

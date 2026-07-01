@@ -431,8 +431,42 @@
                                                         <div class="col-md-4 col-sm-4 px-1">
                                                             <div class="form-group">
                                                                 <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="bankLocation">PAN</label>
-                                                                @Html.TextBoxFor(m => m.InterviewerAccDetails.PAN, null, new { @class = "form-control text-box single-line" })
+                                                                @Html.TextBoxFor(m => m.InterviewerAccDetails.PAN, null, new { @class = "form-control text-box single-line", @id = "InterviewerAccDetails_PAN", @maxlength = "10", @style = "text-transform:uppercase;" })
                                                             </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <button type="button" id="btnVerifyPan" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-right:8px;">
+                                                                    @(Model.InterviewerAccDetails?.IsPanVerified == true ? "Re-verify PAN" : "Verify PAN")
+                                                                </button>
+                                                                @if (Model.InterviewerAccDetails?.IsPanVerified == true)
+                                                                {
+                                                                    <span id="panVerifyStatus" class="ml-2 text-success"><strong>PAN verified</strong></span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span id="panVerifyStatus" class="ml-2"></span>
+                                                                }
+                                                            </div>
+                                                            @if (Model.InterviewerAccDetails?.IsPanVerified == true)
+                                                            {
+                                                                <p id="panVerifiedInfo" class="text-success" style="margin-top:0;">
+                                                                    Your PAN is already verified.
+                                                                    Verified on @(Model.InterviewerAccDetails.PanVerifiedOn?.ToString("dd MMM yyyy, hh:mm tt")) UTC
+                                                                    @if (!string.IsNullOrEmpty(Model.InterviewerAccDetails.NameAtPan))
+                                                                    {
+                                                                        <span> — Name at PAN: @Model.InterviewerAccDetails.NameAtPan</span>
+                                                                    }
+                                                                </p>
+                                                            }
+                                                            else if (!string.IsNullOrEmpty(Model.InterviewerAccDetails?.PAN))
+                                                            {
+                                                                <p id="panVerifiedInfo" class="text-warning" style="margin-top:0;">PAN not verified. Please verify your PAN.</p>
+                                                            }
+                                                            else
+                                                            {
+                                                                <p id="panVerifiedInfo" class="text-muted" style="margin-top:0;display:none;"></p>
+                                                            }
                                                         </div>
                                                         <div class="col-md-12">
                                                             <div class="form-group">
@@ -504,6 +538,103 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
+    // ── PAN verification ────────────────────────────────────────────────
+    (function () {
+        var panSnapshot = {
+            pan: '@(Model.InterviewerAccDetails?.VerifiedPAN ?? "")',
+            isVerified: @(Model.InterviewerAccDetails?.IsPanVerified == true ? "true" : "false")
+        };
+
+        function normalizePan(v) { return (v || '').trim().toUpperCase(); }
+
+        function panChanged() {
+            return normalizePan($('#InterviewerAccDetails_PAN').val()) !== normalizePan(panSnapshot.pan);
+        }
+
+        function updatePanHint() {
+            var $info = $('#panVerifiedInfo');
+            if (panSnapshot.isVerified && panChanged()) {
+                $info.removeClass('text-success text-warning text-muted').addClass('text-warning')
+                    .show().text('PAN changed — please verify again.');
+                $('#panVerifyStatus').removeClass('text-success').text('Re-verification required').css('color', '#e67e22');
+                $('#btnVerifyPan').text('Verify PAN');
+            } else if (panSnapshot.isVerified) {
+                $('#panVerifyStatus').html('<strong>PAN verified</strong>').removeClass('text-warning').addClass('text-success').css('color', '');
+                $('#panVerifiedInfo').removeClass('text-warning text-muted').addClass('text-success')
+                    .show().html('Your PAN is already verified.');
+                $('#btnVerifyPan').text('Re-verify PAN');
+            }
+        }
+
+        $('#InterviewerAccDetails_PAN').on('input change', function () {
+            this.value = this.value.toUpperCase();
+            updatePanHint();
+        });
+
+        $('#btnVerifyPan').on('click', function () {
+            var pan = normalizePan($('#InterviewerAccDetails_PAN').val());
+            var name = ($('#InterviewerAccDetails_AccountName').val() || '').trim();
+            var interviewerProfileId = $('#id').val();
+
+            if (!pan) {
+                swal.fire('Required', 'Please enter a PAN number before verifying.', 'warning');
+                return;
+            }
+
+            var panPattern = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
+            if (!panPattern.test(pan)) {
+                swal.fire('Invalid PAN', 'Please enter a valid 10-character PAN (e.g. ABCDE1234F).', 'warning');
+                return;
+            }
+
+            if (panSnapshot.isVerified && !panChanged()) {
+                swal.fire('PAN verified', 'Your PAN is already verified. Change the PAN number only if you need to verify a different one.', 'info');
+                return;
+            }
+
+            var $btn = $(this);
+            var $status = $('#panVerifyStatus');
+            $btn.prop('disabled', true);
+            $status.show().text('Verifying…').css('color', '#666');
+
+            $.ajax({
+                url: '@Url.Action("VerifyPanNumber", "Interviewer")',
+                type: 'POST',
+                data: { interviewerProfileId: interviewerProfileId, pan: pan, name: name },
+                success: function (res) {
+                    if (res.success) {
+                        if (res.alreadyVerified) {
+                            swal.fire('PAN verified', res.message || 'Your PAN is already verified.', 'info');
+                            updatePanHint();
+                            return;
+                        }
+                        panSnapshot.pan = pan;
+                        panSnapshot.isVerified = true;
+                        $status.html('<strong>PAN verified</strong>').removeClass('text-warning').addClass('text-success').css('color', '');
+                        $('#btnVerifyPan').text('Re-verify PAN');
+                        $('#panVerifiedInfo').removeClass('text-warning text-muted').addClass('text-success')
+                            .show().html('Your PAN is already verified. Verified on ' + (res.panVerifiedOn || 'now') + (res.nameAtPan ? ' — Name at PAN: ' + res.nameAtPan : ''));
+                        swal.fire('Verified', res.message || 'PAN verified successfully.', 'success');
+                    } else {
+                        panSnapshot.isVerified = false;
+                        $status.text(res.message || 'PAN verification failed').css('color', 'red');
+                        $('#panVerifiedInfo').removeClass('text-success').addClass('text-warning')
+                            .show().text(res.message || 'PAN verification failed.');
+                        swal.fire('Not verified', res.message || 'PAN could not be verified.', 'error');
+                    }
+                },
+                error: function () {
+                    $status.text('Verification request failed').css('color', 'red');
+                    swal.fire('Error', 'Could not reach the server. Please try again.', 'error');
+                },
+                complete: function () { $btn.prop('disabled', false); }
+            });
+        });
+
+        updatePanHint();
+    })();
+
+    // ── Bank account verification ────────────────────────────────────────
     (function () {
         var verifiedSnapshot = {
             account: '@(Model.InterviewerAccDetails?.VerifiedAccountNumber ?? "")',

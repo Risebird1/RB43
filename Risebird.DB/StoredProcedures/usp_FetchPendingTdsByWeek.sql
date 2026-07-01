@@ -51,7 +51,8 @@ BEGIN
                 ELSE 4
             END AS WeekNumber,
             ph.TotalAmount,
-            ISNULL(tic.IsBankVerified, 0) AS IsVerified
+            --ISNULL(tic.IsBankVerified, 0) AS IsVerified
+            1 AS IsVerified
         FROM PaymentHistory ph
         JOIN UserList ul ON ul.id = ph.Userid
         LEFT JOIN InterviewerProfile irp ON irp.UserId = ul.id

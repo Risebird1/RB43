@@ -1,0 +1,25 @@
+@model Risebird.Entities.ViewModel.StatsDetailsVM
+@using Risebird.Entities.ViewModel
+@{
+    var display = Model?.QcVerdictDisplay;
+    var interviewId = Model?.interviewId ?? 0;
+    var isWarning = display == StatsDetailsQcVerdictHelper.DisplaySuspicious
+        || display == StatsDetailsQcVerdictHelper.DisplayRedo;
+    var isLinkable = StatsDetailsQcVerdictHelper.IsLinkable(display)
+        || display == StatsDetailsQcVerdictHelper.DisplayPending;
+}
+@if (string.IsNullOrEmpty(display))
+{
+    <span class="iv-qc-verdict iv-qc-verdict--empty">—</span>
+}
+else if (isLinkable && interviewId > 0)
+{
+    <a class="iv-qc-verdict @(isWarning ? "iv-qc-verdict--warning" : "iv-qc-verdict--pending")"
+       target="_blank" rel="noopener"
+       href="@Url.Action("QCMergedAIDetails", "Interview", new { interviewId = interviewId })"
+       title="View QCMerged AI Details">@display</a>
+}
+else
+{
+    <span class="iv-qc-verdict @(isWarning ? "iv-qc-verdict--warning" : "")">@display</span>
+}

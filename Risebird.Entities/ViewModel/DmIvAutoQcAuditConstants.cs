@@ -18,11 +18,23 @@ namespace Risebird.Entities.ViewModel
 
         public static string ResolveVerdict(string interviewerSuspicious, bool? redoInterview)
         {
-            if (string.Equals(interviewerSuspicious, "Yes", StringComparison.OrdinalIgnoreCase))
+            if (IsAffirmativeSuspicious(interviewerSuspicious))
                 return VerdictSuspicious;
             if (redoInterview == true)
                 return VerdictRedo;
             return null;
+        }
+
+        /// <summary>Matches backfill / IRF audit SQL: Yes, Y, True (case-insensitive).</summary>
+        public static bool IsAffirmativeSuspicious(string interviewerSuspicious)
+        {
+            if (string.IsNullOrWhiteSpace(interviewerSuspicious))
+                return false;
+
+            var normalized = interviewerSuspicious.Trim();
+            return normalized.Equals("Yes", StringComparison.OrdinalIgnoreCase)
+                || normalized.Equals("Y", StringComparison.OrdinalIgnoreCase)
+                || normalized.Equals("True", StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>

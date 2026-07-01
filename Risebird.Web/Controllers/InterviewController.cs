@@ -38,6 +38,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using X.PagedList.Extensions;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace Risebird.Web.Controllers
 {
@@ -74,7 +76,7 @@ namespace Risebird.Web.Controllers
         private readonly IActivityTrackerService _activityTrackerService;
         private readonly IReportQCOptimizationHelper _reportQCOptimizationHelper;
         private readonly IDmIvChannelDeactivationService _dmIvChannelDeactivationService;
-
+        private readonly IWebHostEnvironment _env;
         //private static List<MeetingVM> _modelDetails;
         //private static List<Meeting> _modelDetail;
         //private static string Searchvalue;
@@ -92,7 +94,7 @@ namespace Risebird.Web.Controllers
             IIRFService irfService, ICompositeViewEngine viewEngine, ITempDataProvider tempDataProvider,
             IServiceProvider serviceProvider, IHttpContextAccessor contextAccessor,
             IConverter converter, IAssistantServiceHelper assistantServiceHelper, IEncryptionHelper encryptionHelper, IActivityTrackerService activityTrackerService,
-            IReportQCOptimizationHelper reportQCOptimizationHelper, IDmIvChannelDeactivationService dmIvChannelDeactivationService)//IConverter converter,
+            IReportQCOptimizationHelper reportQCOptimizationHelper, IDmIvChannelDeactivationService dmIvChannelDeactivationService, IWebHostEnvironment env)//IConverter converter,
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -125,6 +127,7 @@ namespace Risebird.Web.Controllers
             _activityTrackerService = activityTrackerService;
             _reportQCOptimizationHelper = reportQCOptimizationHelper;
             _dmIvChannelDeactivationService = dmIvChannelDeactivationService;
+            _env = env;
         }
 
 
@@ -319,6 +322,10 @@ namespace Risebird.Web.Controllers
         public async Task<FileContentResult> InterviewsExporttoExcel(string type)
         {
             string userEmailId = string.Empty;
+            if (_env.IsDevelopment())
+            {
+                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+            }
             ExcelPackage Ep = new ExcelPackage();
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Interviews");
             string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Interviews" + ".xlsx";
@@ -434,9 +441,9 @@ namespace Risebird.Web.Controllers
                 {
                     modelList = modelList.Where(x => !string.IsNullOrWhiteSpace(x.TemplateName) && x.RedoInterview == false && x.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription()).ToList();
                 }
-                Sheet.Cells["A1:AI1"].Style.Font.Bold = true;
-                Sheet.Cells["A1:AI1"].Style.Font.Size = 12;
-                Sheet.Cells["A1:AI1"].Style.WrapText = true;
+                Sheet.Cells["A1:AN1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:AN1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:AN1"].Style.WrapText = true;
                 int startColumn = 1; int endColumn = 40;
                 for (int a = startColumn; a <= endColumn; a++)
                 {
@@ -480,9 +487,11 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 35].Value = "Job Country";
                 Sheet.Cells[1, 36].Value = "Billing Owner";
                 Sheet.Cells[1, 37].Value = "Channel Owner";
+                Sheet.Cells[1, 38].Value = "Non AI Reasoning";
+                Sheet.Cells[1, 39].Value = "Risk Category";
                 if (profileName == "Client")
                 {
-                    Sheet.Cells[1, 38].Value = "Executive URL";
+                    Sheet.Cells[1, 40].Value = "Executive URL";
                 }
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
@@ -632,19 +641,21 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 35].Value = item.JobCountry;
                         Sheet.Cells[i, 36].Value = item.BillingOwner;
                         Sheet.Cells[i, 37].Value = item.ChannelOwner;
+                        Sheet.Cells[i, 38].Value = item.NonAIreasoning;
+                        Sheet.Cells[i, 39].Value = item.Riskcategory;
                         if (profileName == "Client")
                         {
                             var executiveurl = "https://portal.risebird.io/Interview/ClientReport?interviewId=" + item.InterviewId + "&irfId=" + item.irfIntId + "&isClient=True";
                             try
                             {
-                                Sheet.Cells[i, 38].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
-                                Sheet.Cells[i, 38].Value = "Executive Report";
-                                Sheet.Cells[i, 38].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 38].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                Sheet.Cells[i, 40].Hyperlink = new Uri(executiveurl, UriKind.Absolute);
+                                Sheet.Cells[i, 40].Value = "Executive Report";
+                                Sheet.Cells[i, 40].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 40].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
                             catch (Exception)
                             {
-                                Sheet.Cells[i, 38].Value = "No Report";
+                                Sheet.Cells[i, 40].Value = "No Report";
                             }
                         }
                         i++;
