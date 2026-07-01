@@ -495,6 +495,49 @@
     #magList .mag-item .mag-ag { font-size:10px; opacity:.7; }
     #magList .mag-no-results { padding:12px; text-align:center; color:#6c757d; font-size:12px; }
 
+    /* Priority intent-collection panel */
+    .nk-priority-divider { margin:12px 0 10px; border:0; border-top:1px dashed #fde0c2; }
+    .nk-priority-head { display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin-bottom:8px; }
+    .nk-priority-title { font-size:12px; font-weight:700; color:#b54708; text-transform:uppercase; letter-spacing:.04em; white-space:nowrap; }
+    .nk-priority-sub { font-size:11px; color:#94734a; line-height:1.3; }
+    .nk-priority-sub strong { color:#b54708; }
+    .nk-priority-body { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+    .nk-priority-chips { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+    .nk-priority-empty { font-size:11px; color:#94a3b8; font-style:italic; }
+    .nk-priority-chip {
+        display:inline-flex; align-items:center; gap:7px;
+        background:#fff7ed; border:1px solid #fed7aa; color:#9a3412;
+        border-radius:999px; padding:4px 6px 4px 11px; font-size:11.5px; font-weight:600;
+        box-shadow:0 1px 2px rgba(180,71,8,.08);
+    }
+    .nk-priority-chip .nk-priority-chip-ag { font-weight:500; color:#c2754a; }
+    .nk-priority-chip .nk-priority-chip-x {
+        display:inline-flex; align-items:center; justify-content:center;
+        width:16px; height:16px; border-radius:50%; background:#fed7aa; color:#9a3412;
+        cursor:pointer; font-size:9px; border:0; line-height:1; transition:background .12s;
+    }
+    .nk-priority-chip .nk-priority-chip-x:hover { background:#fb923c; color:#fff; }
+    .nk-priority-addbtn {
+        display:inline-flex; align-items:center; font-size:11.5px; font-weight:600;
+        color:#b54708; background:#fff; border:1px dashed #fdba74; border-radius:999px;
+        padding:5px 12px; cursor:pointer; transition:all .12s;
+    }
+    .nk-priority-addbtn:hover { background:#fff7ed; border-color:#fb923c; }
+    .nk-priority-addbtn:disabled { opacity:.5; cursor:not-allowed; }
+    #nkPriorityDropdown {
+        display:none; position:absolute; z-index:1090; background:#fff;
+        border:1px solid #fde0c2; border-radius:10px; box-shadow:0 10px 28px rgba(15,23,42,.16);
+        width:min(420px, calc(100vw - 2rem)); left:0; top:100%; margin-top:6px;
+    }
+    #nkPriorityDropdown.mag-dropdown--up { top:auto; bottom:100%; margin-top:0; margin-bottom:6px; }
+    #nkPrioritySearch { font-size:12px; margin:8px; width:calc(100% - 16px); }
+    #nkPriorityList { max-height:260px; overflow-y:auto; padding:4px; }
+    #nkPriorityList .mag-item { padding:6px 10px; font-size:12px; cursor:pointer; border-radius:4px; transition:background .12s; display:flex; justify-content:space-between; align-items:center; }
+    #nkPriorityList .mag-item:hover { background:#fff7ed; }
+    #nkPriorityList .mag-item.disabled { opacity:.45; cursor:not-allowed; }
+    #nkPriorityList .mag-item .mag-ag { font-size:10px; opacity:.7; }
+    #nkPriorityList .mag-no-results { padding:12px; text-align:center; color:#6c757d; font-size:12px; }
+
 </style>
 
 <div id="loadingOverlay">
@@ -606,6 +649,29 @@
                                     <span class="nk-funnel-pill-count">@nkOther</span>
                                 </span>
                             }
+                        </div>
+
+                        <hr class="nk-priority-divider" />
+                        <div class="nk-priority" id="nkPriorityPanel">
+                            <div class="nk-priority-head">
+                                <span class="nk-priority-title"><i class="fas fa-bolt me-1"></i>Priority Intent Collection</span>
+                                <span class="nk-priority-sub">
+                                    Aggressively call prospects in these MAGs who are stuck at <strong>Interest Collection</strong>
+                                    to capture intent fast. Bypasses the usual call caps, runs 8&nbsp;AM&ndash;10&nbsp;PM IST, and resets daily. Max 2 MAGs.
+                                </span>
+                            </div>
+                            <div class="nk-priority-body">
+                                <div class="nk-priority-chips" id="nkPriorityChips">
+                                    <span class="nk-priority-empty">No priority MAGs set.</span>
+                                </div>
+                                <div class="mag-dropdown-wrap" id="nkPriorityAddWrap">
+                                    <button type="button" class="nk-priority-addbtn" id="nkPriorityAddBtn"><i class="fas fa-plus me-1"></i>Add priority MAG</button>
+                                    <div id="nkPriorityDropdown">
+                                        <input type="text" id="nkPrioritySearch" class="form-control form-control-sm" placeholder="Search MAG..." />
+                                        <div id="nkPriorityList"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1619,6 +1685,118 @@
             }
         });
     }
+
+    /* ── Priority intent-collection MAGs ─────────────────────────── */
+    var priorityMags = [], priorityMax = 2;
+
+    function loadPriorityMags() {
+        $.ajax({
+            url: '@Url.Action("GetPriorityMags", "NaukriOnboarding")', type: 'GET',
+            success: function (res) {
+                if (res && res.success) {
+                    priorityMags = res.data || [];
+                    if (res.max) priorityMax = res.max;
+                    renderPriorityChips();
+                }
+            }
+        });
+    }
+
+    function renderPriorityChips() {
+        var $c = $('#nkPriorityChips').empty();
+        if (!priorityMags.length) {
+            $c.append('<span class="nk-priority-empty">No priority MAGs set.</span>');
+        } else {
+            $.each(priorityMags, function (i, m) {
+                var $chip = $('<span class="nk-priority-chip">');
+                $chip.append($('<span>').text(m.magName));
+                $chip.append('<button type="button" class="nk-priority-chip-x" title="Remove priority" data-ag="' + m.assessmentGroupId + '"><i class="fas fa-times"></i></button>');
+                $c.append($chip);
+            });
+        }
+        var atMax = priorityMags.length >= priorityMax;
+        $('#nkPriorityAddBtn').prop('disabled', atMax)
+            .attr('title', atMax ? ('Max ' + priorityMax + ' priority MAGs. Remove one first.') : 'Add a priority MAG');
+    }
+
+    function renderPriorityList(filter) {
+        var $list = $('#nkPriorityList').empty();
+        var lf = (filter || '').toLowerCase();
+        var activeAgIds = priorityMags.map(function (m) { return m.assessmentGroupId; });
+        var count = 0;
+        $.each(allMags, function (idx, m) {
+            var display = m.magName + (m.assessmentGroupName ? ' \u2192 ' + m.assessmentGroupName : '');
+            if (lf && display.toLowerCase().indexOf(lf) === -1) return;
+            var already = activeAgIds.indexOf(m.assessmentGroupId) !== -1;
+            var $item = $('<div class="mag-item' + (already ? ' disabled' : '') + '" data-mag-idx="' + idx + '">')
+                .html('<span>' + $('<span>').text(m.magName).html() + '</span><span class="mag-ag">' + $('<span>').text(m.assessmentGroupName || (already ? 'already priority' : '')).html() + '</span>');
+            $list.append($item);
+            count++;
+        });
+        if (count === 0) $list.append('<div class="mag-no-results">No matching MAGs found</div>');
+    }
+
+    $('#nkPriorityAddBtn').on('click', function (e) {
+        e.stopPropagation();
+        var $dd = $('#nkPriorityDropdown');
+        if ($dd.is(':visible')) { $dd.hide(); return; }
+        loadMags(function () {
+            renderPriorityList('');
+            $dd.show();
+            $('#nkPrioritySearch').val('').focus();
+        });
+    });
+
+    $('#nkPrioritySearch').on('input', function () { renderPriorityList($(this).val()); })
+        .on('click', function (e) { e.stopPropagation(); });
+
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('#nkPriorityAddWrap').length) $('#nkPriorityDropdown').hide();
+    });
+
+    $(document).on('click', '#nkPriorityList .mag-item', function (e) {
+        e.stopPropagation();
+        if ($(this).hasClass('disabled')) return;
+        var idx = $(this).attr('data-mag-idx');
+        if (idx === undefined || idx === null) return;
+        var m = allMags[parseInt(idx)];
+        if (!m || !m.assessmentGroupId) {
+            alert('This MAG has no resolved assessment group and cannot be prioritised.');
+            return;
+        }
+        $('#nkPriorityDropdown').hide();
+        $.ajax({
+            url: '@Url.Action("SetPriorityMag", "NaukriOnboarding")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, assessmentGroupId: m.assessmentGroupId, magName: m.magName },
+            success: function (res) {
+                if (res && res.success) {
+                    priorityMags = res.data || [];
+                    renderPriorityChips();
+                } else {
+                    alert((res && res.error) || 'Failed to set priority MAG.');
+                }
+            },
+            error: function () { alert('Request failed. Please try again.'); }
+        });
+    });
+
+    $(document).on('click', '.nk-priority-chip-x', function (e) {
+        e.stopPropagation();
+        var agId = $(this).attr('data-ag');
+        if (!agId) return;
+        $.ajax({
+            url: '@Url.Action("ClearPriorityMag", "NaukriOnboarding")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, assessmentGroupId: agId },
+            success: function (res) {
+                if (res && res.success) {
+                    priorityMags = res.data || [];
+                    renderPriorityChips();
+                }
+            }
+        });
+    });
+
+    $(function () { loadPriorityMags(); });
 
     function initStep2Mag(r) {
         var magFull = (r.magName || '\u2014') + (r.assessmentGroupName ? ' \u2192 ' + r.assessmentGroupName : '');

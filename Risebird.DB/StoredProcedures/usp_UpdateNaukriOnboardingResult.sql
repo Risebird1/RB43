@@ -28,16 +28,23 @@ BEGIN
         DECLARE @UserId INT
         SELECT @UserId = UserId FROM InterviewerProfile WHERE Id = @OnboardedProfileId
 
-        INSERT INTO TransInterviewer (IRFId, InterviewerId, UserId, IsActive, IsAvailable, PerSuccessRate, [Source], AddedAt)
+        -- Channel activation follows each channel's Interviewer Lock (IRF.DmIvLockNew):
+        --   Locked  (DmIvLockNew = 1) → Available-only (IsActive = 0) pending manual RB vetting.
+        --   Unlocked(DmIvLockNew = 0) → auto-activated (IsActive = 1, RB-vetted, Client-shortlisted) now.
+        -- Mirrors usp_MapInterviewerToAssessmentGroupChannels / usp_AddOrEditInterviewerProfile (MAG-Direct).
+        INSERT INTO TransInterviewer (IRFId, InterviewerId, UserId, IsActive, IsAvailable, IsSMEVerified, ClientAction, PerSuccessRate, [Source], AddedAt, ActivatedAt)
         SELECT
             irf.id,
             @OnboardedProfileId,
             @UserId,
-            0,
-            1,
+            CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN 0 ELSE 1 END,   -- IsActive
+            1,                                                            -- IsAvailable
+            CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN 0 ELSE 1 END,   -- IsSMEVerified
+            CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN NULL ELSE 'Shortlisted' END,  -- ClientAction
             ISNULL(irf.FlatRate, 0),
             'NaukriOnboarding',
-            GETDATE()
+            GETDATE(),
+            CASE WHEN ISNULL(irf.DmIvLockNew, 0) = 1 THEN NULL ELSE GETDATE() END        -- ActivatedAt (set when auto-activated)
         FROM IRF irf
         WHERE LTRIM(RTRIM(irf.AssessmentGroupId)) = CAST(@AssessmentGroupId AS VARCHAR)
           AND ISNULL(irf.IsPaused, 0) = 0
