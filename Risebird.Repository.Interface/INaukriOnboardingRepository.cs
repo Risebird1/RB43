@@ -102,6 +102,13 @@ namespace Risebird.Repository.Interface
         // Automation
         Task<List<NaukriProspectiveInterviewerVM>> GetEligibleProspectsForAutomationAsync(int batchSize = 2);
         Task<bool> UpdateAutomationStatusAsync(int id, string automationStatus, bool incrementCallAttempt = false);
+
+        // Priority intent-collection push (parallel automation service)
+        Task<List<NaukriPriorityMag>> GetPriorityMagsAsync();
+        Task<PrioritySetResult> SetPriorityMagAsync(int assessmentGroupId, string magName, string setBy, int maxPriority = 2);
+        Task<bool> ClearPriorityMagAsync(int assessmentGroupId);
+        Task<List<NaukriProspectiveInterviewerVM>> GetPriorityIntentCallProspectsAsync(int batchSize = 5, int cooldownMinutes = 15);
+        Task<bool> RecordPriorityCallAttemptAsync(int id);
         Task<int?> GetLatestActiveIRFForAssessmentGroupAsync(int assessmentGroupId);
         Task<bool> UpdateMagNameAsync(int id, string magName);
         Task<bool> UpdateParsedEmailAsync(int id, string email);
@@ -210,5 +217,24 @@ namespace Risebird.Repository.Interface
         public string MagName { get; set; }
         public int AssessmentGroupId { get; set; }
         public string AssessmentGroupName { get; set; }
+    }
+
+    // A MAG currently flagged as priority for today's priority-intent-collection push.
+    public class NaukriPriorityMag
+    {
+        public int Id { get; set; }
+        public int AssessmentGroupId { get; set; }
+        public string MagName { get; set; }
+        public string SetBy { get; set; }
+        public DateTime SetAt { get; set; }
+    }
+
+    // Outcome of attempting to flag a MAG as priority.
+    public class PrioritySetResult
+    {
+        // 'Set', 'AlreadySet', or 'LimitReached'.
+        public string Status { get; set; }
+        // Number of MAGs currently active as priority for today.
+        public int PriorityCount { get; set; }
     }
 }
