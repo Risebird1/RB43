@@ -231,7 +231,7 @@ namespace Risebird.Repository
                 {
                     IrfId = irfId,
                     ErrorMessage = isTimeout
-                        ? "Preview query timed out. Deploy the latest usp_GetPerIrfAutoQcBackfillPreview and AutoQcBackfillPerformanceIndexes.sql, then retry."
+                        ? "Preview query timed out. Deploy the latest usp_GetPerIrfAutoQcBackfillPreview and Indexes/AutoQcBackfillPerformanceIndexes.sql, then retry."
                         : "Preview query failed. Deploy usp_GetPerIrfAutoQcBackfillPreview and ensure TransInterviewerAuditLog exists. " + detail
                 };
             }

@@ -8,7 +8,7 @@ FROM (VALUES
 ) AS o(name)
 WHERE OBJECT_ID(N'dbo.' + o.name, N'P') IS NULL;
 
-PRINT '=== 2. Performance indexes (run Tables/AutoQcBackfillPerformanceIndexes.sql if any missing) ===';
+PRINT '=== 2. Performance indexes (run Indexes/AutoQcBackfillPerformanceIndexes.sql if any missing) ===';
 SELECT i.name AS IndexName, OBJECT_NAME(i.object_id) AS TableName
 FROM sys.indexes i
 WHERE i.name IN (
