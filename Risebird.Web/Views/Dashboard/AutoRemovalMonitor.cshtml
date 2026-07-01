@@ -8,6 +8,11 @@
 
     var directoryError = ViewBag.DirectoryError as string;
 
+    var directoryFromIst = ViewBag.DirectoryFromIst as string ?? "";
+
+    var directoryToIst = ViewBag.DirectoryToIst as string ?? "";
+
+    var directoryPreset = ViewBag.DirectoryPreset as string ?? "1m";
     string FormatIst(DateTime? utc)
     {
         if (!utc.HasValue) return "—";
@@ -144,6 +149,24 @@
 
     .irf-audit-search-empty.is-visible { display: block; }
 
+    .irf-audit-filter { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 14px; margin-bottom: 14px; padding: 12px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; }
+
+    .irf-audit-filter__presets { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+
+    .irf-audit-filter__label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: #64748b; margin-right: 4px; }
+
+    .irf-audit-filter__presets .irf-audit-btn.is-active { background: #2563eb; border-color: #2563eb; color: #fff; }
+
+    .irf-audit-filter__custom { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+
+    .irf-audit-filter__field label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: #64748b; margin-bottom: 4px; }
+
+    .irf-audit-filter__field input[type=date] { border: 1px solid #cbd5e1; border-radius: 6px; padding: 7px 10px; font-size: 13px; min-width: 140px; }
+
+    .irf-audit-filter__hint { flex: 1 1 100%; font-size: 12px; color: #64748b; margin: 0; }
+
+    .irf-audit-filter__range { font-size: 12px; color: #475569; margin: 0 0 10px; }
+
 </style>
 
 
@@ -158,7 +181,7 @@
 
         <div class="irf-audit-header__row">
 
-            <p>Per-IRF bad-quality flag backfill. Forward triggers set flags only (no auto-removal). Run backfill to populate historical suspicious/redo verdicts.</p>
+            <p>Active skill channels with completed interviews in the selected period. Forward triggers set flags only (no auto-removal). Run backfill to populate historical suspicious/redo verdicts.</p>
 
             @if (rows.Any())
 
@@ -182,6 +205,48 @@
 
         </div>
 
+        <p class="irf-audit-filter__range">Showing active skill channels with completed interviews from <strong>@directoryFromIst</strong> to <strong>@directoryToIst</strong> (IST).</p>
+
+        <form id="irfDirectoryFilter" class="irf-audit-filter" method="get" action="@Url.Action("AutoRemovalMonitor", "Dashboard")">
+
+            <div class="irf-audit-filter__presets">
+
+                <span class="irf-audit-filter__label">Period</span>
+
+                <button type="submit" name="preset" value="1w" class="irf-audit-btn@(directoryPreset == "1w" ? " is-active" : "")">1 week</button>
+
+                <button type="submit" name="preset" value="1m" class="irf-audit-btn@(directoryPreset == "1m" ? " is-active" : "")">1 month</button>
+
+                <button type="submit" name="preset" value="2m" class="irf-audit-btn@(directoryPreset == "2m" ? " is-active" : "")">2 months</button>
+
+            </div>
+
+            <div class="irf-audit-filter__custom">
+
+                <div class="irf-audit-filter__field">
+
+                    <label for="dirFrom">From (IST)</label>
+
+                    <input type="date" id="dirFrom" name="from" value="@directoryFromIst" />
+
+                </div>
+
+                <div class="irf-audit-filter__field">
+
+                    <label for="dirTo">To (IST)</label>
+
+                    <input type="date" id="dirTo" name="to" value="@directoryToIst" />
+
+                </div>
+
+                <button type="submit" class="irf-audit-btn irf-audit-btn--primary" id="dirApplyCustom">Apply range</button>
+
+            </div>
+
+            <p class="irf-audit-filter__hint">Custom range cannot exceed 90 days. Only active skill channels (current contract) with at least one completed interview in the period are listed.</p>
+
+        </form>
+
     </div>
 
 
@@ -204,7 +269,7 @@
 
         <div class="irf-audit-alert irf-audit-alert--info">
 
-            No IRFs with completed interviews were found in the database for this environment.
+            No active skill channels with completed interviews were found for the selected date range.
 
         </div>
 
@@ -897,6 +962,102 @@
 
 
         renderIrfAuditPagination();
+
+
+
+        var dirMonitorUrl = '@Url.Action("AutoRemovalMonitor", "Dashboard")';
+
+
+
+        function parseIsoDate(s) {
+
+            if (!s) return null;
+
+            var parts = s.split('-');
+
+            if (parts.length !== 3) return null;
+
+            return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+
+        }
+
+
+
+        function daysBetween(from, to) {
+
+            return Math.round((to - from) / (24 * 60 * 60 * 1000));
+
+        }
+
+
+
+        $('#irfDirectoryFilter').on('submit', function (e) {
+
+            var $form = $(this);
+
+            var submitter = e.originalEvent && e.originalEvent.submitter;
+
+            var isPreset = submitter && submitter.name === 'preset';
+
+
+
+            if (isPreset) {
+
+                $form.find('input[name=from], input[name=to]').prop('disabled', true);
+
+                return;
+
+            }
+
+
+
+            e.preventDefault();
+
+            var fromVal = $('#dirFrom').val();
+
+            var toVal = $('#dirTo').val();
+
+            if (!fromVal || !toVal) {
+
+                alert('Please select both From and To dates.');
+
+                return;
+
+            }
+
+            var fromDate = parseIsoDate(fromVal);
+
+            var toDate = parseIsoDate(toVal);
+
+            if (!fromDate || !toDate) {
+
+                alert('Invalid date format.');
+
+                return;
+
+            }
+
+            if (fromDate > toDate) {
+
+                alert('From date cannot be after To date.');
+
+                return;
+
+            }
+
+            if (daysBetween(fromDate, toDate) > 90) {
+
+                alert('Date range cannot exceed 90 days.');
+
+                return;
+
+            }
+
+            var qs = '?from=' + encodeURIComponent(fromVal) + '&to=' + encodeURIComponent(toVal);
+
+            window.location.href = dirMonitorUrl + qs;
+
+        });
 
     })();
 
