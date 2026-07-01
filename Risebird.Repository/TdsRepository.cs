@@ -24,6 +24,31 @@ namespace Risebird.Repository
             _applicationErrorLogger = applicationErrorLogger;
         }
 
+        public async Task<IList<PaymentHistoryItem>> FetchInterviewerPaymentItemsAsync(
+            DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_connectionString))
+                {
+                    var rows = await SqlMapper.QueryAsync<PaymentHistoryItem>(con,
+                        "usp_FetchInterviewerPaymentItems",
+                        new { StartDate = startDate.Date, EndDate = endDate.Date },
+                        commandType: CommandType.StoredProcedure);
+                    return rows.ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<IList<InterviewerQuarterlyTdsRow>> FetchInterviewerQuarterlyTdsAsync(
             DateTime startDate, DateTime endDate)
         {
