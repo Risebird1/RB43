@@ -810,6 +810,100 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<List<NaukriPriorityMag>> GetPriorityMagsAsync()
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var result = await con.QueryAsync<NaukriPriorityMag>(
+                    "usp_GetNaukriPriorityMags",
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return result?.ToList() ?? new List<NaukriPriorityMag>();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<NaukriPriorityMag>();
+            }
+        }
+
+        public async Task<PrioritySetResult> SetPriorityMagAsync(int assessmentGroupId, string magName, string setBy, int maxPriority = 2)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@AssessmentGroupId", assessmentGroupId);
+                p.Add("@MagName", magName);
+                p.Add("@SetBy", setBy);
+                p.Add("@MaxPriority", maxPriority);
+
+                var result = await con.QueryFirstOrDefaultAsync<PrioritySetResult>(
+                    "usp_SetNaukriPriorityMag", p,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return result ?? new PrioritySetResult { Status = "Error", PriorityCount = 0 };
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new PrioritySetResult { Status = "Error", PriorityCount = 0 };
+            }
+        }
+
+        public async Task<bool> ClearPriorityMagAsync(int assessmentGroupId)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var rows = await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_ClearNaukriPriorityMag",
+                    new { AssessmentGroupId = assessmentGroupId },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<List<NaukriProspectiveInterviewerVM>> GetPriorityIntentCallProspectsAsync(int batchSize = 5, int cooldownMinutes = 15)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var result = await con.QueryAsync<NaukriProspectiveInterviewerVM>(
+                    "usp_GetPriorityIntentCallProspects",
+                    new { BatchSize = batchSize, CooldownMinutes = cooldownMinutes },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 60);
+                return result?.ToList() ?? new List<NaukriProspectiveInterviewerVM>();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<NaukriProspectiveInterviewerVM>();
+            }
+        }
+
+        public async Task<bool> RecordPriorityCallAttemptAsync(int id)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var rows = await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_RecordNaukriPriorityCallAttempt",
+                    new { Id = id },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public async Task<int?> GetLatestActiveIRFForAssessmentGroupAsync(int assessmentGroupId)
         {
             try
