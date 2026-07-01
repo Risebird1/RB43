@@ -30,6 +30,7 @@ namespace Risebird.AzureTimerFunctions
         private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IMeetingService _meetingService;
         private readonly IDmIvAutoQcFlagService _autoQcFlagService;
+        private readonly ITrialJudgmentService _trialJudgmentService;
         private readonly IOpenAIInterviewerAssistantHelper _ai;
         private readonly ILogger _log;
         private readonly IHttpContextAccessor _contextAccessor;
@@ -41,6 +42,7 @@ namespace Risebird.AzureTimerFunctions
             IAssistantServiceHelper assistantServiceHelper,
             IMeetingService meetingService,
             IDmIvAutoQcFlagService autoQcFlagService,
+            ITrialJudgmentService trialJudgmentService,
             IOpenAIInterviewerAssistantHelper ai,
             IHttpContextAccessor contextAccessor)
         {
@@ -49,6 +51,7 @@ namespace Risebird.AzureTimerFunctions
             _assistantServiceHelper = assistantServiceHelper;
             _meetingService = meetingService;
             _autoQcFlagService = autoQcFlagService;
+            _trialJudgmentService = trialJudgmentService;
             _ai = ai;
             _log = loggerFactory.CreateLogger<QcInterviewAIMergeJob>();
             _contextAccessor = contextAccessor;
@@ -111,6 +114,24 @@ namespace Risebird.AzureTimerFunctions
                                 row.irfId,
                                 combined.interviewer_suspicious,
                                 combined.RedoInterview);
+
+                            var trialResult = await _trialJudgmentService.TryEvaluateAndFlagTrialAsync(
+                                row.InterviewId,
+                                row.irfId,
+                                combined);
+
+                            if (trialResult.Inserted)
+                            {
+                                _log.LogInformation(
+                                    "QcInterviewAIMergeJob: trial flag inserted id={TrialFlagId} interviewId={InterviewId} verdict={Verdict}",
+                                    trialResult.TrialFlagId, row.InterviewId, trialResult.OverallVerdict);
+                            }
+                            else if (!string.IsNullOrWhiteSpace(trialResult.SkipReason))
+                            {
+                                _log.LogDebug(
+                                    "QcInterviewAIMergeJob: trial judgment skipped interviewId={InterviewId} reason={Reason}",
+                                    row.InterviewId, trialResult.SkipReason);
+                            }
                         }
                     }
                     catch (Exception ex)
