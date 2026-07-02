@@ -69,6 +69,8 @@ namespace Risebird.AzureFunctions
             services.AddScoped<ITransInterviewerAuditRepository, TransInterviewerAuditRepository>();
             services.AddScoped<IDmIvAutoQcRemovalService, DmIvAutoQcRemovalService>();
             services.AddScoped<IDmIvAutoQcFlagService, DmIvAutoQcFlagService>();
+            services.AddScoped<ITrialJudgmentRepository, TrialJudgmentRepository>();
+            services.AddScoped<ITrialJudgmentService, TrialJudgmentService>();
             services.AddScoped<IAutoQcRemovalMonitorRepository, AutoQcRemovalMonitorRepository>();
             services.AddScoped<IDmIvAutoQcBackfillService, DmIvAutoQcBackfillService>();
             services.AddScoped<IAutoQcRemovalMonitorService, AutoQcRemovalMonitorService>();

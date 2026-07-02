@@ -4687,7 +4687,7 @@ namespace Risebird.Web.Controllers
                 //var emailid = HttpContext.Session.GetString("email")?.Trim();
                 //emailid = emailid.Replace("\"", "");
 
-                if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                if (CanViewInterviewerIrfStats(profileName))
                 {
                     IEnumerable<InterviewerStatsVM> statsList;
                     statsList = await _interviewerService.GetInterviewerStatsAndRatings(irfId);
@@ -4711,6 +4711,32 @@ namespace Risebird.Web.Controllers
             {
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+
+        /// <summary>
+        /// IRF stats drill-down from Trial Flag Review. Reuses InterviewerStatsAndRatings view.
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public Task<IActionResult> TrialStats(int irfId, int? interviewerId = null, string irfName = null)
+        {
+            if (interviewerId.HasValue && interviewerId.Value > 0)
+                ViewBag.HighlightInterviewerId = interviewerId.Value;
+            return InterviewerStatsAndRatings(irfId, irfName);
+        }
+
+        private static bool CanViewInterviewerIrfStats(string profileName)
+        {
+            if (string.IsNullOrWhiteSpace(profileName)) return false;
+            return profileName == "Admin"
+                || profileName == "Finance"
+                || profileName == "SeniorHR"
+                || profileName == "SupportAdmin"
+                || profileName == "SeniorInterviewerManagement"
+                || profileName == "HR"
+                || profileName == "Quality Controller"
+                || profileName == "InterviewerManagement"
+                || profileName == "TechSupport";
         }
 
 
