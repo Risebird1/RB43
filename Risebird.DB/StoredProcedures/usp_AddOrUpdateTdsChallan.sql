@@ -105,8 +105,8 @@ BEGIN
     LEFT JOIN InterviewerProfile irp ON irp.UserId = ul.id
     LEFT JOIN TransInterviewerAccDetails tic ON tic.InterviewerProfileId = irp.id
     WHERE
-        ph.PaymentDate >= @WeekStart
-        AND ph.PaymentDate <= @WeekEnd
+        CAST(ph.PaymentDate AS DATE) >= @WeekStart
+        AND CAST(ph.PaymentDate AS DATE) <= @WeekEnd
         AND ph.TotalAmount > 0
         AND (ph.Status = 'Done' OR ph.PayoutStatus = 'TRANSFER_SUCCESS')
         --AND ISNULL(tic.IsBankVerified, 0) = 1
