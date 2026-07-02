@@ -40,6 +40,8 @@ builder.Services.AddScoped<ITransInterviewerAuditRepository, TransInterviewerAud
 builder.Services.AddScoped<IAutoQcRemovalMonitorRepository, AutoQcRemovalMonitorRepository>();
 builder.Services.AddScoped<IDmIvAutoQcBackfillService, DmIvAutoQcBackfillService>();
 builder.Services.AddScoped<IAutoQcRemovalMonitorService, AutoQcRemovalMonitorService>();
+builder.Services.AddScoped<ITrialJudgmentRepository, TrialJudgmentRepository>();
+builder.Services.AddScoped<ITrialJudgmentService, TrialJudgmentService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();

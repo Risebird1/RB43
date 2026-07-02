@@ -126,6 +126,10 @@ builder.Services.AddScoped<IDmIvChannelDeactivationService, DmIvChannelDeactivat
 builder.Services.AddScoped<IAutoQcRemovalMonitorRepository, AutoQcRemovalMonitorRepository>();
 builder.Services.AddScoped<IDmIvAutoQcBackfillService, DmIvAutoQcBackfillService>();
 builder.Services.AddScoped<IAutoQcRemovalMonitorService, AutoQcRemovalMonitorService>();
+builder.Services.AddScoped<ITrialFlagReviewRepository, TrialFlagReviewRepository>();
+builder.Services.AddScoped<ITrialFlagReviewService, TrialFlagReviewService>();
+builder.Services.AddScoped<ITrialJudgmentRepository, TrialJudgmentRepository>();
+builder.Services.AddScoped<ITrialJudgmentService, TrialJudgmentService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IGeneralSkillMatrixService, GeneralSkillMatrixService>();
 builder.Services.AddScoped<IJoinabilityMatrixService, JoinabilityMatrixService>();
@@ -519,7 +523,6 @@ app.UseWebSockets(new WebSocketOptions
 //    //       .Allow("'unsafe-eval'");
 
 //});
-
 app.Use(async (context, next) =>
 {
     context.Response.Headers.Add("X-Xss-Protection", "1; mode=block");
