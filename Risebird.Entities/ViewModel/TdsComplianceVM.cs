@@ -217,10 +217,11 @@ namespace Risebird.Entities.ViewModel
     // -----------------------------------------------------------------------
     public class PaymentHistoryItem
     {
-        public int       Userid      { get; set; }
-        public DateTime? PaymentDate { get; set; }
-        public int       TotalAmount { get; set; }
-        public string    Comment     { get; set; }
+        public int       Userid               { get; set; }
+        public DateTime? PaymentDate          { get; set; }
+        public int       TotalAmount          { get; set; }
+        public string    Comment              { get; set; }
+        public string    ChallanSerialNumber  { get; set; }
 
         // Replaces "M/d/yyyy h:mm:ss tt" datetime substrings in Comment with "dd-MMM-yyyy".
         // Uses InvariantCulture + TryParseExact so month/day order is always treated as M/d/yyyy
