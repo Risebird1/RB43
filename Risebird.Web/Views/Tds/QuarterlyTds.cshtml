@@ -32,14 +32,21 @@
     .week-row-expand td { background: #f9f9f9; }
 
     /* Payment-history popover */
-    .popover { max-width: 420px !important; }
-    .ph-popup-table { font-size: 12px; border-collapse: collapse; width: 100%; }
+    .ph-popover.popover { max-width: 620px !important; width: 620px !important; }
+    .ph-popover .popover-body { padding: 10px 14px; }
+    .ph-popover .popover-header { padding: 8px 14px; }
+    .ph-popup-table { font-size: 12px; border-collapse: collapse; width: 100%; table-layout: fixed; }
+    .ph-popup-table colgroup col:nth-child(1) { width: 110px; }
+    .ph-popup-table colgroup col:nth-child(2) { width: 100px; }
+    .ph-popup-table colgroup col:nth-child(3) { width: 230px; }
+    .ph-popup-table colgroup col:nth-child(4) { width: 120px; }
     .ph-popup-table thead tr { background: #e8f0fe; }
-    .ph-popup-table th { padding: 5px 10px; font-weight: 600; color: #1a237e; border-bottom: 2px solid #c5cae9; white-space: nowrap; }
-    .ph-popup-table td { padding: 4px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+    .ph-popup-table th { padding: 6px 10px; font-weight: 600; color: #1a237e; border-bottom: 2px solid #c5cae9; white-space: nowrap; }
+    .ph-popup-table td { padding: 5px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
     .ph-popup-table tbody tr:last-child td { border-bottom: none; }
     .ph-popup-table tbody tr:hover td { background: #f5f7ff; }
     .ph-comment { color: #555; }
+    .ph-challan { font-family: monospace; font-size: 11px; color: #1a237e; font-weight: 600; }
 </style>
 
 <!-- ══════════════════════════════════════════════════════════════════ -->

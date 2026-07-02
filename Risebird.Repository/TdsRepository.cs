@@ -25,7 +25,7 @@ namespace Risebird.Repository
         }
 
         public async Task<IList<PaymentHistoryItem>> FetchInterviewerPaymentItemsAsync(
-            DateTime startDate, DateTime endDate)
+            DateTime startDate, DateTime endDate, string financialYear, string quarter)
         {
             try
             {
@@ -33,7 +33,13 @@ namespace Risebird.Repository
                 {
                     var rows = await SqlMapper.QueryAsync<PaymentHistoryItem>(con,
                         "usp_FetchInterviewerPaymentItems",
-                        new { StartDate = startDate.Date, EndDate = endDate.Date },
+                        new
+                        {
+                            StartDate     = startDate.Date,
+                            EndDate       = endDate.Date,
+                            FinancialYear = financialYear,
+                            Quarter       = quarter
+                        },
                         commandType: CommandType.StoredProcedure);
                     return rows.ToList();
                 }

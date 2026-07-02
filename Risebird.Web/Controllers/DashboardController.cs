@@ -86,6 +86,8 @@ namespace Risebird.Web.Controllers
         private readonly IQcInterviewAIMergeJobService _qcInterviewAIMergeJobService;
         private readonly IAutoQcRemovalMonitorService _autoQcRemovalMonitorService;
         private readonly IDmIvAutoQcBackfillService _autoQcBackfillService;
+        private readonly ITrialFlagReviewService _trialFlagReviewService;
+        private readonly ITrialJudgmentService _trialJudgmentService;
 
         //private readonly IIRFService _irfService;
 
@@ -107,7 +109,9 @@ namespace Risebird.Web.Controllers
             IPlivoWhatsAppService plivoWhatsAppService, IPlivoWhatsAppRepository plivoWhatsAppRepository, ISupportTicketRepository repository, ITranscriptOptimizationHelper transcriptOptimizationHelper,
             IQcInterviewAIMergeJobService qcInterviewAIMergeJobService,
             IAutoQcRemovalMonitorService autoQcRemovalMonitorService,
-            IDmIvAutoQcBackfillService autoQcBackfillService)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
+            IDmIvAutoQcBackfillService autoQcBackfillService,
+            ITrialFlagReviewService trialFlagReviewService,
+            ITrialJudgmentService trialJudgmentService)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -151,6 +155,22 @@ namespace Risebird.Web.Controllers
             _qcInterviewAIMergeJobService = qcInterviewAIMergeJobService;
             _autoQcRemovalMonitorService = autoQcRemovalMonitorService;
             _autoQcBackfillService = autoQcBackfillService;
+            _trialFlagReviewService = trialFlagReviewService;
+            _trialJudgmentService = trialJudgmentService;
+        }
+
+        private static bool IsTrialFlagReviewerProfile(string profileName)
+        {
+            if (string.IsNullOrWhiteSpace(profileName)) return false;
+            return profileName == "Admin"
+                || profileName == "HR"
+                || profileName == "SeniorHR"
+                || profileName == "Quality Controller"
+                || profileName == "SupportAdmin"
+                || profileName == "InterviewerManagement"
+                || profileName == "SeniorInterviewerManagement"
+                || profileName == "TechSupport"
+                || profileName == "Finance";
         }
 
         private static bool IsAutoQcOpsProfile(string profileName)
@@ -7869,6 +7889,149 @@ NEVER:
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        /// <summary>
+        /// Central trial-flag review queue — SMEs/ops triage first-interview trial outcomes per (interviewer, IRF).
+        /// Consumer for rows written to dbo.TrialFlags by the trial judgment producer.
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> TrialFlagReview(string tab = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return RedirectToAction("SignOut", "Session");
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsTrialFlagReviewerProfile(profileName))
+                    return RedirectToAction("SignOut", "Session");
+
+                TrialFlagReviewPageVm page;
+                try
+                {
+                    page = await _trialFlagReviewService.GetPageAsync(tab);
+                    ViewBag.LoadError = null;
+                }
+                catch (Exception loadEx)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, loadEx);
+                    page = new TrialFlagReviewPageVm { ActiveTab = TrialFlagConstants.ReviewPending };
+                    ViewBag.LoadError = loadEx.GetBaseException()?.Message ?? loadEx.Message;
+                }
+
+                ViewBag.Profile = profileName;
+                return View(page);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> KeepTrialFlagReviewer(int trialFlagId, string comment = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { ok = false, message = "Session expired." });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsTrialFlagReviewerProfile(profileName))
+                    return Json(new { ok = false, message = "Not authorized." });
+
+                var email = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? "";
+                var result = await _trialFlagReviewService.KeepOnIrfAsync(trialFlagId, email, comment);
+                return Json(new { ok = result.Ok, message = result.Message });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, message = "Keep action failed." });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> RemoveTrialFlagReviewer(int trialFlagId, string comment = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { ok = false, message = "Session expired." });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsTrialFlagReviewerProfile(profileName))
+                    return Json(new { ok = false, message = "Not authorized." });
+
+                var email = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? "";
+                var result = await _trialFlagReviewService.RemoveFromIrfAsync(trialFlagId, email, comment);
+                return Json(new { ok = result.Ok, message = result.Message });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, message = "Remove action failed." });
+            }
+        }
+
+        /// <summary>
+        /// Backfill TrialFlags for first interviews that already have QC merge done (QCDone=1) but no flag row.
+        /// Omit interviewId to process the next batch of eligible candidates.
+        /// </summary>
+        [Authorize]
+        [HttpPost]
+        [HttpGet]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> BackfillTrialFlags(int? interviewId = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { ok = false, message = "Session expired." });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsTrialFlagReviewerProfile(profileName))
+                    return Json(new { ok = false, message = "Not authorized." });
+
+                var result = await _trialJudgmentService.BackfillMissingTrialFlagsAsync(interviewId);
+                var details = result.Messages?.Take(30).ToList() ?? new List<string>();
+                var summary = result.Failed > 0 && result.Inserted == 0 && result.Skipped == 0
+                    ? (details.FirstOrDefault() ?? $"Backfill failed ({result.Failed} error(s)).")
+                    : $"Inserted {result.Inserted}, skipped {result.Skipped}, failed {result.Failed}.";
+                if (result.Inserted == 0 && result.Skipped > 0)
+                {
+                    var skipSummary = details.FirstOrDefault(d =>
+                        d.StartsWith("Skip summary:", StringComparison.OrdinalIgnoreCase));
+                    var firstSkip = details.FirstOrDefault(d =>
+                        d.StartsWith("Skipped interview ", StringComparison.OrdinalIgnoreCase));
+                    if (!string.IsNullOrEmpty(skipSummary))
+                        summary += " " + skipSummary;
+                    else if (!string.IsNullOrEmpty(firstSkip))
+                        summary += " Example: " + firstSkip;
+                }
+                return Json(new
+                {
+                    ok = result.Failed == 0,
+                    inserted = result.Inserted,
+                    skipped = result.Skipped,
+                    failed = result.Failed,
+                    message = summary,
+                    details
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                var msg = ex.GetBaseException()?.Message ?? ex.Message;
+                return Json(new { ok = false, message = "Backfill failed: " + msg });
             }
         }
 
