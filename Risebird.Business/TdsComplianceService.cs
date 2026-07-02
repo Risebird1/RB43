@@ -93,7 +93,7 @@ namespace Risebird.Business
                 var pendingTask      = _tdsRepo.FetchPendingTdsByWeekAsync(financialYear, quarter);
                 var filingTask       = _tdsRepo.FetchTdsReturnFilingAsync(financialYear, quarter);
                 var challanLinksTask = _tdsRepo.FetchInterviewerChallanNumbersAsync(financialYear, quarter);
-                var paymentItemsTask = _tdsRepo.FetchInterviewerPaymentItemsAsync(start, end);
+                var paymentItemsTask = _tdsRepo.FetchInterviewerPaymentItemsAsync(start, end, financialYear, quarter);
 
                 await Task.WhenAll(allRowsTask, challansTask, weeklyTask, pendingTask, filingTask, challanLinksTask, paymentItemsTask);
 

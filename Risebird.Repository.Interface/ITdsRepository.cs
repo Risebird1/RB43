@@ -9,7 +9,7 @@ namespace Risebird.Repository.Interface
     {
         Task<IList<InterviewerQuarterlyTdsRow>> FetchInterviewerQuarterlyTdsAsync(DateTime startDate, DateTime endDate);
 
-        Task<IList<PaymentHistoryItem>> FetchInterviewerPaymentItemsAsync(DateTime startDate, DateTime endDate);
+        Task<IList<PaymentHistoryItem>> FetchInterviewerPaymentItemsAsync(DateTime startDate, DateTime endDate, string financialYear, string quarter);
 
         Task<IList<WeeklyPayoutVM>> FetchWeeklyPayoutsAsync(string financialYear, string quarter);
 
