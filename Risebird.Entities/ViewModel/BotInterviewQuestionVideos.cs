@@ -39,6 +39,14 @@ namespace Risebird.Entities.ViewModel
         public string AIResumeScreeningVerdict { get; set; } 
         public int AIResumeScreeningScore { get; set; }
         public List<TypingSpeedAssessment> TypingSpeedAssessments { get; set; }
+
+        /// <summary>
+        /// Raw report content returned by the AI assistant. For Adaptive interviews the
+        /// assistant produces a ready-to-render HTML report (not the structured JSON that
+        /// <see cref="AIInterviewEvaluation"/> is parsed from), so the view falls back to
+        /// rendering this HTML when <see cref="AIInterviewEvaluation"/> could not be parsed.
+        /// </summary>
+        public string RawAIReportHtml { get; set; }
     }
 
 }
