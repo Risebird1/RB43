@@ -431,6 +431,52 @@
             color: #ccc;
         }
 
+    /* AI-generated HTML report (Adaptive interviews) rendered as-is */
+    .rb-ai-raw-report {
+        padding: 8px 20px 20px 20px;
+        color: #333;
+        line-height: 1.6;
+        overflow-x: auto;
+    }
+
+        .rb-ai-raw-report h2,
+        .rb-ai-raw-report h3,
+        .rb-ai-raw-report h4 {
+            color: #1a1a2e;
+            margin: 18px 0 10px 0;
+        }
+
+        .rb-ai-raw-report table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 20px 0;
+            font-size: 0.92rem;
+        }
+
+        .rb-ai-raw-report th,
+        .rb-ai-raw-report td {
+            border: 1px solid #e0e0e0;
+            padding: 8px 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .rb-ai-raw-report th {
+            background: #f4fbf7;
+            color: #1a1a2e;
+            font-weight: 600;
+        }
+
+        .rb-ai-raw-report tr:nth-child(even) td {
+            background: #fafafa;
+        }
+
+        .rb-ai-raw-report hr {
+            border: 0;
+            border-top: 1px solid #eee;
+            margin: 18px 0;
+        }
+
     .rb-report-actions {
         display: flex;
         gap: 16px;
@@ -2394,6 +2440,12 @@
                         </div>
 
 
+                    }
+                    else if (!string.IsNullOrWhiteSpace(Model.RawAIReportHtml))
+                    {
+                        <div class="rb-ai-raw-report">
+                            @Html.Raw(Model.RawAIReportHtml)
+                        </div>
                     }
                     else
                     {
