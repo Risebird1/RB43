@@ -36,8 +36,14 @@ namespace Risebird.AzureTimerFunctions
         private readonly IApplicationErrorLogger     _errorLogger;
         private readonly ILogger                     _log;
 
-        private const int DefaultBatchSize       = 5;
-        private const int DefaultCooldownMinutes = 15;
+        // Aggressive defaults: cover as much of the pool as fast as possible. Both priority MAGs are
+        // treated equally — the eligibility SP interleaves all prospects strictly by who was called
+        // least recently, so the whole pool is worked through once before anyone is re-attempted.
+        private const int DefaultBatchSize       = 15;
+        private const int DefaultCooldownMinutes = 5;
+
+        // Delay between successive Plivo triggers within a round (throttles the trigger endpoint only).
+        private const int InterCallDelayMs = 800;
 
         public PriorityIntentCallJob(
             ILoggerFactory              loggerFactory,
@@ -102,7 +108,7 @@ namespace Risebird.AzureTimerFunctions
                             new Exception($"PriorityIntent failed for prospect #{p.Id}", ex));
                     }
 
-                    await Task.Delay(2000);
+                    await Task.Delay(InterCallDelayMs);
                 }
 
                 _log.LogInformation("[PriorityIntent] Batch done.");
