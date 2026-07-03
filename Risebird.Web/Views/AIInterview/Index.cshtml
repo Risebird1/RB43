@@ -3176,7 +3176,15 @@
     const btnRecord = document.getElementById('btnRecord');
     const btnRecordToggle = document.getElementById('btnRecordToggle');
     let blobtransfer;
-    if (navigator.mediaDevices && video) {
+    // In Adaptive (audio-phone) mode the camera is already opened once for the
+    // candidate preview (candidateVideoEl) and that single stream is reused for
+    // recording. The hidden #video element must NOT open a second camera stream:
+    // mobile devices expose the camera as a single-consumer resource, so a second
+    // getUserMedia() contends with the first and the answer recorder ends up with a
+    // blank/frame-less video track (the candidate's answer video is effectively
+    // empty and never persists). Desktops tolerate the duplicate open, which is why
+    // this only broke on phones. Only open here when NOT in audio-phone mode.
+    if (navigator.mediaDevices && video && !document.querySelector('.rb-audio-phone-section')) {
         navigator.mediaDevices.getUserMedia({ video: true, audio: true })
             .then(function(stream) {
                 video.srcObject = stream;
@@ -3197,10 +3205,42 @@
     }
     function startRecording() {
         const videoStream = getCandidateVideoStream();
-        if (!videoStream) {
-            console.warn('Answer video stream unavailable — camera may still be starting.');
+        if (videoStream) {
+            beginVideoRecording(videoStream);
             return;
         }
+        // Shared camera stream is not ready yet. This is common on phones, where the
+        // camera initializes more slowly than on laptops. Instead of silently recording
+        // audio-only and losing the candidate's answer video, acquire the (single) shared
+        // camera stream once and reuse it, then start recording.
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                .then(function (stream) {
+                    if (!window.stream || !window.stream.active) window.stream = stream;
+                    if (isAudioPhoneMode && (!window._audioPhoneCandidateStream || !window._audioPhoneCandidateStream.active)) {
+                        window._audioPhoneCandidateStream = stream;
+                        const candidateVideoEl = document.getElementById('candidateVideoEl');
+                        const candidateAvatarCircle = document.getElementById('candidateAvatarCircle');
+                        if (candidateVideoEl) {
+                            candidateVideoEl.srcObject = stream;
+                            candidateVideoEl.style.display = 'block';
+                            candidateVideoEl.play().catch(function () {});
+                            if (candidateAvatarCircle) candidateAvatarCircle.classList.add('has-video');
+                        }
+                    }
+                    const readyStream = getCandidateVideoStream();
+                    if (readyStream) {
+                        beginVideoRecording(readyStream);
+                    } else {
+                        console.warn('Answer video stream unavailable — camera did not provide a live video track.');
+                    }
+                })
+                .catch(function (err) {
+                    console.warn('Could not start answer video recording:', err);
+                });
+        }
+    }
+    function beginVideoRecording(videoStream) {
         chunks = [];
         const videoMimeType = pickVideoRecorderMimeType();
         const options = videoMimeType ? { mimeType: videoMimeType } : undefined;
