@@ -4217,7 +4217,7 @@ WHERE si.SuspiciousStatus = 1",
                 dynamicParameters.Add("@emailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await SqlMapper.QueryAsync<Candidate>(con, "usp_GetIRFCandidates", dynamicParameters,
+                    var results = await SqlMapper.QueryAsync<Candidate>(con, "usp_GetIRFCandidates", dynamicParameters, commandTimeout: 600,
                        commandType: CommandType.StoredProcedure);
                     return results;
                 }
