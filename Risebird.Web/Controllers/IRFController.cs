@@ -10124,8 +10124,10 @@ namespace Risebird.Web.Controllers
                     campaignId, campaign.CampaignName, campaign.MagName, initiatedBy, interviewers.Count);
 
                 // Hand the actual calling off to the CampaignBatchCall Azure Function (fire-and-forget).
-                // The portal does NOT wait for the calls to complete — the function paces them on its
-                // own and writes each call's outcome + finalizes the attempt log.
+                // The portal does NOT wait for the calls to complete — the function re-reads the
+                // unresponded interviewers from the DB (so we send only lightweight attempt context,
+                // never a large interviewer list), paces the calls on its own, and writes each call's
+                // outcome + finalizes the attempt log.
                 var dto = new CampaignBatchCallRequestDTO
                 {
                     BatchCallLogId = attempt.LogId,
@@ -10135,14 +10137,7 @@ namespace Risebird.Web.Controllers
                     AttemptNumber  = attempt.AttemptNumber,
                     AttemptName    = attempt.AttemptName,
                     CallerId       = callerId,
-                    Source         = source,
-                    Interviewers   = interviewers.Select(i => new CampaignBatchCallInterviewerDTO
-                    {
-                        InterviewerProfileId = i.InterviewerProfileId,
-                        InterviewerName      = i.InterviewerName,
-                        SenderEmail          = i.SenderEmail,
-                        Phone                = i.Phone
-                    }).ToList()
+                    Source         = source
                 };
 
                 FireCampaignBatchCallFunction(dto);
@@ -10164,6 +10159,16 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        // Dedicated client for the detached batch-call trigger. The shared portal HttpClient has the
+        // default 100s timeout, which the multi-minute in-function calling run blows past ("The request
+        // was canceled due to the configured HttpClient.Timeout of 100 seconds elapsing."). This one
+        // uses an unbounded timeout because the call is already detached from the user request and the
+        // function finalizes its own attempt log even if this wait is abandoned (e.g. an app recycle).
+        private static readonly HttpClient _batchCallHttpClient = new HttpClient
+        {
+            Timeout = System.Threading.Timeout.InfiniteTimeSpan
+        };
+
         // Fire-and-forget POST to the CampaignBatchCall Azure Function. Detached so the portal request
         // returns instantly and never holds the connection open for the multi-minute calling run.
         private void FireCampaignBatchCallFunction(CampaignBatchCallRequestDTO dto)
@@ -10172,9 +10177,10 @@ namespace Risebird.Web.Controllers
             {
                 try
                 {
-                    var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/CampaignBatchCall";
-                    var functionKey = "ok-GN-EaOPcWFO2ft8_m_eIaLSxMgT_0a19YdeFmBSPCAzFuuzQdQg==";
-                    await _httpClient.SendRequestAsync(HttpMethod.Post, path, dto, functionKey, "", _cancellationToken);
+                    var path = $"risebirdazuretimerfunctions.azurewebsites.net/api/CampaignBatchCall";
+                    var functionKey = "eeTzskrWbTrXlEl4i0kk7_87unuuVRbZtvfZ6idYXnbaAzFu6vjJPQ==";
+                    // CancellationToken.None so a completed portal request never aborts this detached run.
+                    await _batchCallHttpClient.SendRequestAsync(HttpMethod.Post, path, dto, functionKey, "", System.Threading.CancellationToken.None);
                 }
                 catch (Exception ex)
                 {
