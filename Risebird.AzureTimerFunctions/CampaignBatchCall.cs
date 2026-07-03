@@ -68,15 +68,33 @@ namespace Risebird.AzureTimerFunctions
                 return bad;
             }
 
+            // Read the unresponded interviewers directly from the DB (the portal now sends only the
+            // lightweight attempt context, not the full list). This keeps the fire-and-forget request
+            // body tiny and lets the function work at its own pace.
+            System.Collections.Generic.List<CampaignUnrespondedInterviewer> interviewers;
+            try
+            {
+                interviewers = await _eaRepository.GetCampaignUnrespondedInterviewersAsync(dto.CampaignId);
+            }
+            catch (Exception exLoad)
+            {
+                _log.LogError($"[CampaignBatchCall] Failed to load interviewers for campaign #{dto.CampaignId}: {exLoad.Message}");
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, exLoad);
+                try { await _eaRepository.CompleteBatchCallLogAsync(dto.BatchCallLogId, 0, 0, 0, "Failed"); } catch { }
+                var err = req.CreateResponse(HttpStatusCode.InternalServerError);
+                await err.WriteAsJsonAsync(new { success = false, error = "Failed to load interviewers." });
+                return err;
+            }
+
             _log.LogInformation($"[CampaignBatchCall] Attempt '{dto.AttemptName}' (log #{dto.BatchCallLogId}) for campaign #{dto.CampaignId} " +
-                                $"'{dto.CampaignName}' — {dto.Interviewers?.Count ?? 0} interviewer(s).");
+                                $"'{dto.CampaignName}' — {interviewers?.Count ?? 0} interviewer(s).");
 
             int succeeded = 0, failed = 0, skipped = 0;
             try
             {
-                if (dto.Interviewers != null)
+                if (interviewers != null)
                 {
-                    foreach (var interviewer in dto.Interviewers)
+                    foreach (var interviewer in interviewers)
                     {
                         string outcome = "Skipped";
                         string error = null;
