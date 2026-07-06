@@ -347,13 +347,13 @@ namespace Risebird.Repository
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@TicketId",        ticketId);
+                parameters.Add("@TicketId", ticketId);
                 parameters.Add("@AIReviewResponse", aiResponseJson);
-                parameters.Add("@StatusComment",    statusComment);
-                parameters.Add("@ClosedBy",         closedBy);
-                parameters.Add("@ClosedOn",         closedOn);
-                parameters.Add("@CloseTicket",      closeTicket ? 1 : 0);
-                parameters.Add("@ActionByRole",     "System");
+                parameters.Add("@StatusComment", statusComment);
+                parameters.Add("@ClosedBy", closedBy);
+                parameters.Add("@ClosedOn", closedOn);
+                parameters.Add("@CloseTicket", closeTicket ? 1 : 0);
+                parameters.Add("@ActionByRole", "System");
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -375,10 +375,10 @@ namespace Risebird.Repository
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@InterviewId",          interviewId);
-                parameters.Add("@RevisedPenaltyPct",    revisedPenaltyPct);
+                parameters.Add("@InterviewId", interviewId);
+                parameters.Add("@RevisedPenaltyPct", revisedPenaltyPct);
                 parameters.Add("@UpdatedMergedDetails", updatedMergedDetails);
-                parameters.Add("@ReasoningComment",     reasoningComment);
+                parameters.Add("@ReasoningComment", reasoningComment);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

@@ -17,13 +17,13 @@ namespace Risebird.Repository
 {
     public class PlivoWhatsAppRepository : IPlivoWhatsAppRepository
     {
-        private readonly string                  _connectionString;
+        private readonly string _connectionString;
         private readonly IApplicationErrorLogger _logger;
 
         public PlivoWhatsAppRepository(IConfiguration configuration, IApplicationErrorLogger logger)
         {
             _connectionString = configuration["ConnectionString:DBConnectionString"];
-            _logger           = logger;
+            _logger = logger;
         }
 
         // ── Log CRUD ──────────────────────────────────────────────────────────
@@ -157,11 +157,11 @@ namespace Risebird.Repository
                     "usp_GetPlivoWhatsAppLogDetails",
                     new
                     {
-                        Page        = page,
-                        PageSize    = pageSize,
-                        Status      = string.IsNullOrWhiteSpace(status)      ? null : status,
-                        Purpose     = string.IsNullOrWhiteSpace(purpose)     ? null : purpose,
-                        Meeting     = string.IsNullOrWhiteSpace(meeting)     ? null : meeting,
+                        Page = page,
+                        PageSize = pageSize,
+                        Status = string.IsNullOrWhiteSpace(status) ? null : status,
+                        Purpose = string.IsNullOrWhiteSpace(purpose) ? null : purpose,
+                        Meeting = string.IsNullOrWhiteSpace(meeting) ? null : meeting,
                         Disposition = string.IsNullOrWhiteSpace(disposition) ? null : disposition
                     },
                     commandType: CommandType.StoredProcedure);
@@ -315,11 +315,11 @@ namespace Risebird.Repository
         {
             try
             {
-                using var conn   = new SqlConnection(_connectionString);
-                var parameters   = new DynamicParameters();
+                using var conn = new SqlConnection(_connectionString);
+                var parameters = new DynamicParameters();
                 parameters.Add("@CandidateEmail", candidateEmail, DbType.String);
-                parameters.Add("@IRFId",          irfId,          DbType.Int32);
-                parameters.Add("@HasConfirmed",   dbType: DbType.Boolean, direction: ParameterDirection.Output);
+                parameters.Add("@IRFId", irfId, DbType.Int32);
+                parameters.Add("@HasConfirmed", dbType: DbType.Boolean, direction: ParameterDirection.Output);
                 await conn.ExecuteAsync("usp_HasConfirmedInterview", parameters, commandType: CommandType.StoredProcedure);
                 return parameters.Get<bool>("@HasConfirmed");
             }

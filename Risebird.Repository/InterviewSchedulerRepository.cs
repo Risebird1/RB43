@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Microsoft.CognitiveServices.Speech.Transcription;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;

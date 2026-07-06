@@ -12,7 +12,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using static Risebird.Entities.Data.RchilliResumeMapFields;
 using static System.Data.CommandType;
 
 namespace Risebird.Repository
@@ -429,45 +428,13 @@ namespace Risebird.Repository
         {
             try
             {
-                if (emailid != string.Empty && profileName == "Client")
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@emailid", emailid);
+                dynamicParameters.Add("@profileName", profileName);
+                using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    //"Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tc.ClientUserId where IsDeleted = @IsDeleted and ul.EmailId = @emailid Order by StartDate desc"
-                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tc.ClientUserId where ul.EmailId = @emailid Order by EndDate desc";
-                    var dynamicParameters = new DynamicParameters();
-                    //dynamicParameters.Add("@IsDeleted", 0);
-                    dynamicParameters.Add("@emailid", emailid);
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        var results = con.Query<IRF>(query, dynamicParameters);
-                        return results;
-                    }
+                    return DapperStoredProcedureHelper.Query<IRF>(con, "usp_GetAllIRFLegacyList", dynamicParameters);
                 }
-                else if (emailid != string.Empty && profileName == "Recruiter")
-                {
-                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransRecruiter] tr on tr.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tr.UserId where ul.EmailId = @emailid Order by EndDate desc";
-                    var dynamicParameters = new DynamicParameters();
-                    //dynamicParameters.Add("@IsDeleted", 0);
-                    dynamicParameters.Add("@emailid", emailid);
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        var results = con.Query<IRF>(query, dynamicParameters);
-                        return results;
-                    }
-                }
-                else
-                {
-                    //"Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id where IsDeleted = @IsDeleted Order by StartDate desc"
-                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id Order by EndDate desc";
-                    var dynamicParameters = new DynamicParameters();
-                    //dynamicParameters.Add("@IsDeleted", 0);
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        var results = con.Query<IRF>(query, dynamicParameters);
-                        return results;
-                    }
-                }
-
-
             }
             catch (SqlException ex)
             {
@@ -548,13 +515,11 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id where IRF.id =@id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<IRF>(query, dynamicParameters);
-                    return results.FirstOrDefault();
+                    return DapperStoredProcedureHelper.QueryFirstOrDefault<IRF>(con, "usp_GetIRFWithClientDetailsById", dynamicParameters);
                 }
             }
             catch (SqlException ex)
@@ -1461,13 +1426,11 @@ WHERE si.SuspiciousStatus = 1",
                 {
                     connectionString = connectionStringForTesting;
                 }
-                var query = "select IRF.*, Client.[Name] as ClientCompName, Client.GST as ClientGST, Client.OfficeAddress as ClientAddress from IRF join Client on IRF.ClientId=client.id where IRF.id = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<IRF>(query, dynamicParameters);
-                    return results.FirstOrDefault();
+                    return DapperStoredProcedureHelper.QueryFirstOrDefault<IRF>(con, "usp_GetIRFWithClientDetailsById", dynamicParameters);
                 }
 
             }
@@ -1483,13 +1446,11 @@ WHERE si.SuspiciousStatus = 1",
         {
             try
             {
-                var query = "select IRF.*, Client.[Name] as ClientCompName, Client.GST as ClientGST, Client.OfficeAddress as ClientAddress from IRF join Client on IRF.ClientId=client.id where IRF.IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", irfName);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<IRF>(query, dynamicParameters);
-                    return results.FirstOrDefault();
+                    return DapperStoredProcedureHelper.QueryFirstOrDefault<IRF>(con, "usp_GetIRFWithClientDetailsByStringId", dynamicParameters);
                 }
 
             }
@@ -3405,13 +3366,11 @@ WHERE si.SuspiciousStatus = 1",
         {
             try
             {
-                var query = "Select tts.*, IRF.TechRubricType from TransTechSkill tts join IRF on irf.id = tts.IRFId where tts.IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<TransSkill>(query, dynamicParameters);
-                    return results;
+                    return await DapperStoredProcedureHelper.QueryAsync<TransSkill>(con, "usp_GetTransTechSkillByIRFId", dynamicParameters);
                 }
 
             }
@@ -3425,13 +3384,11 @@ WHERE si.SuspiciousStatus = 1",
         {
             try
             {
-                var query = "Select * from TransSkillGeneral where IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<TransSkillGeneral>(query, dynamicParameters);
-                    return results;
+                    return DapperStoredProcedureHelper.Query<TransSkillGeneral>(con, "usp_GetTransSkillGeneralByIRFId", dynamicParameters);
                 }
 
             }
@@ -3446,13 +3403,11 @@ WHERE si.SuspiciousStatus = 1",
         {
             try
             {
-                var query = "Select * from TransJoinability where IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<TransJoinability>(query, dynamicParameters);
-                    return results;
+                    return DapperStoredProcedureHelper.Query<TransJoinability>(con, "usp_GetTransJoinabilityByIRFId", dynamicParameters);
                 }
 
             }
@@ -3466,13 +3421,11 @@ WHERE si.SuspiciousStatus = 1",
         {
             try
             {
-                var query = "Select * from TransSelectability where IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<TransSelectability>(query, dynamicParameters);
-                    return results;
+                    return DapperStoredProcedureHelper.Query<TransSelectability>(con, "usp_GetTransSelectabilityByIRFId", dynamicParameters);
                 }
 
             }
@@ -4192,13 +4145,11 @@ WHERE si.SuspiciousStatus = 1",
         {
             try
             {
-                var query = "Select JDTiltle from IRF where id = @irfID";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@irfID", irfID);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<string>(query, dynamicParameters);
-                    return results.FirstOrDefault();
+                    return DapperStoredProcedureHelper.QueryFirstOrDefault<string>(con, "usp_GetJDTiltleByIRFIntId", dynamicParameters);
                 }
             }
             catch (SqlException ex)
@@ -10881,11 +10832,10 @@ WHERE id = @irfId";
             {
                 using (var con = new SqlConnection(connectionString))
                 {
-                    return await con.QueryFirstOrDefaultAsync<int?>(
-                        @"SELECT TOP 1 id FROM TransInterviewer 
-                          WHERE AssessmentGroupId = @AgId AND ISNULL(IsActive, 0) = 1 AND ISNULL(IsDeleted, 0) = 0 
-                          ORDER BY id DESC",
-                        new { AgId = assessmentGroupId });
+                    return await DapperStoredProcedureHelper.QueryFirstOrDefaultAsync<int?>(
+                        con,
+                        "usp_GetLatestActiveIRFForAssessmentGroup",
+                        new { AssessmentGroupId = assessmentGroupId });
                 }
             }
             catch (SqlException ex)

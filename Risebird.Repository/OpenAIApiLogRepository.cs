@@ -104,34 +104,34 @@ namespace Risebird.Repository
             try
             {
                 using var conn = new SqlConnection(connectionString);
-                
+
                 // Get total count
                 var countSql = "SELECT COUNT(*) FROM OpenAIApiLogs WHERE LogDate >= @StartDate AND LogDate <= @EndDate";
                 var totalCount = await conn.ExecuteScalarAsync<int>(countSql, new { StartDate = startDate, EndDate = endDate });
-                
+
                 // Validate sort column to prevent SQL injection
                 var validSortColumns = new[] { "LogDate", "OperationType", "Model", "IsSuccess", "ResponseTimeMs", "TotalTokens", "PromptTokens", "CompletionTokens", "EstimatedCostUSD" };
                 if (!validSortColumns.Contains(sortBy))
                 {
                     sortBy = "LogDate";
                 }
-                
+
                 // Validate sort order
                 sortOrder = sortOrder.ToLower() == "asc" ? "ASC" : "DESC";
-                
+
                 // Build ORDER BY clause
                 var orderByClause = $"ORDER BY {sortBy} {sortOrder}";
-                
+
                 // Get paged data
                 var sql = $@"
                     SELECT * FROM OpenAIApiLogs 
                     WHERE LogDate >= @StartDate AND LogDate <= @EndDate 
                     {orderByClause}
                     OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
-                
+
                 var offset = (pageNumber - 1) * pageSize;
                 var result = await conn.QueryAsync<OpenAIApiLog>(sql, new { StartDate = startDate, EndDate = endDate, Offset = offset, PageSize = pageSize });
-                
+
                 return (result?.ToList() ?? new List<OpenAIApiLog>(), totalCount);
             }
             catch (Exception ex)
@@ -401,18 +401,18 @@ namespace Risebird.Repository
             try
             {
                 using var conn = new SqlConnection(connectionString);
-                
+
                 using var multi = await conn.QueryMultipleAsync(
                     "usp_GetAssistantCostDetails",
                     new { AssistantId = assistantId, StartDate = startDate, EndDate = endDate },
                     commandType: System.Data.CommandType.StoredProcedure
                 );
-                
+
                 var summary = await multi.ReadFirstOrDefaultAsync<OpenAIAssistantCostSummary>();
                 var costByOperation = (await multi.ReadAsync<AssistantCostByOperation>()).ToList();
                 var costByModel = (await multi.ReadAsync<AssistantCostByModel>()).ToList();
                 var dailyCosts = (await multi.ReadAsync<AssistantDailyCost>()).ToList();
-                
+
                 return new AssistantCostDetails
                 {
                     Summary = summary,

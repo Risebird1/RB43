@@ -79,18 +79,18 @@ namespace Risebird.Repository
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@ClientId",            clientId);
-                parameters.Add("@BillingType",         billingType);
-                parameters.Add("@BillingOwnerId",      billingOwnerId);
-                parameters.Add("@CreatedBy",           loginedUser);
-                parameters.Add("@TransactionType",     transactionType);
-                parameters.Add("@Credit",              CreditAmount);
-                parameters.Add("@CreatedOn",           DateTime.Now);
-                parameters.Add("@TransactionDate",     transactionDate);
-                parameters.Add("@TransactionRefNumber",transactionRefNumber);
-                parameters.Add("@InvoicePDF",          invoicePDF);
-                parameters.Add("@ClientPOId",          clientPOId);
-                parameters.Add("@InvoiceId",           invoiceId);
+                parameters.Add("@ClientId", clientId);
+                parameters.Add("@BillingType", billingType);
+                parameters.Add("@BillingOwnerId", billingOwnerId);
+                parameters.Add("@CreatedBy", loginedUser);
+                parameters.Add("@TransactionType", transactionType);
+                parameters.Add("@Credit", CreditAmount);
+                parameters.Add("@CreatedOn", DateTime.Now);
+                parameters.Add("@TransactionDate", transactionDate);
+                parameters.Add("@TransactionRefNumber", transactionRefNumber);
+                parameters.Add("@InvoicePDF", invoicePDF);
+                parameters.Add("@ClientPOId", clientPOId);
+                parameters.Add("@InvoiceId", invoiceId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_AddCreditWalletDetails", parameters,
@@ -238,25 +238,25 @@ namespace Risebird.Repository
             var vm = new AllClientsWalletVM
             {
                 FromMonth = fromMonth,
-                FromYear  = fromYear,
-                ToMonth   = toMonth,
-                ToYear    = toYear
+                FromYear = fromYear,
+                ToMonth = toMonth,
+                ToYear = toYear
             };
             try
             {
                 using var con = new SqlConnection(connectionString);
                 var parameters = new DynamicParameters();
                 parameters.Add("@FromMonth", fromMonth);
-                parameters.Add("@FromYear",  fromYear);
-                parameters.Add("@ToMonth",   toMonth);
-                parameters.Add("@ToYear",    toYear);
+                parameters.Add("@FromYear", fromYear);
+                parameters.Add("@ToMonth", toMonth);
+                parameters.Add("@ToYear", toYear);
 
                 using var multi = await con.QueryMultipleAsync(
                     "usp_GetAllClientsWalletSummary",
                     parameters,
                     commandType: CommandType.StoredProcedure);
 
-                vm.Clients            = (await multi.ReadAsync<ClientWalletSummaryRowVM>()).ToList();
+                vm.Clients = (await multi.ReadAsync<ClientWalletSummaryRowVM>()).ToList();
                 vm.BillingOwnerCounts = (await multi.ReadAsync<BillingOwnerInterviewCountVM>()).ToList();
             }
             catch (Exception ex)

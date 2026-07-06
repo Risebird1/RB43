@@ -1,7 +1,6 @@
 using Dapper;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -583,7 +582,7 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    
+
                     DataTable techSkillDt = new DataTable();
 
                     if (techRubrics != null && techRubrics.Count() > 0)
@@ -609,7 +608,7 @@ namespace Risebird.Repository
                             {
                                 item.Natureofquestion = "";
                             }
-                            
+
                             techSkillDt.Rows.Add(0, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill, item.SkillSet, item.SkillName);
                         }
                     }
@@ -626,8 +625,8 @@ namespace Risebird.Repository
                         cmdCreateIRF.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured));
                         cmdCreateIRF.Parameters["@TechSkillBulkData"].Value = techSkillDt;
                     }
-                    
-                    
+
+
                     con.Open();
 
                     if (await cmdCreateIRF.ExecuteNonQueryAsync() != 0)
@@ -692,7 +691,7 @@ namespace Risebird.Repository
                         }
                     }
 
-                    SqlCommand cmdCreateTemplate= new SqlCommand("usp_CreateTemplateFromMAG", con);
+                    SqlCommand cmdCreateTemplate = new SqlCommand("usp_CreateTemplateFromMAG", con);
                     cmdCreateTemplate.CommandType = CommandType.StoredProcedure;
 
                     cmdCreateTemplate.Parameters.Add(new SqlParameter("@assessmentGroupId", SqlDbType.Int));
@@ -766,8 +765,8 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<MAGWithoutTemplateVM>(
-                        con, 
-                        "usp_GetMAGsWithoutTemplates", 
+                        con,
+                        "usp_GetMAGsWithoutTemplates",
                         commandType: CommandType.StoredProcedure);
                 }
             }

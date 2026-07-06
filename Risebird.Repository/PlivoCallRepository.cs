@@ -211,11 +211,11 @@ namespace Risebird.Repository
 
                 await conn.ExecuteAsync(sql, new
                 {
-                    CallUUID            = callUUID,
-                    IsBooked            = isBooked,
-                    BookedDateTime      = bookedDateTime,
+                    CallUUID = callUUID,
+                    IsBooked = isBooked,
+                    BookedDateTime = bookedDateTime,
                     ConfirmationDetails = confirmationDetails,
-                    UpdatedAt           = DateTime.UtcNow
+                    UpdatedAt = DateTime.UtcNow
                 });
                 return true;
             }
