@@ -12,8 +12,8 @@
 -- prospect while a just-triggered call is still ringing. The cooldown is tracked via the
 -- dedicated PriorityCallLastAt column, independent of the normal PlivoCall* counters.
 CREATE OR ALTER PROCEDURE [dbo].[usp_GetPriorityIntentCallProspects]
-    @BatchSize       INT = 5,
-    @CooldownMinutes INT = 15
+    @BatchSize       INT = 15,
+    @CooldownMinutes INT = 5
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -64,9 +64,18 @@ BEGIN
             AND ISNULL(np.SelfRegistrationCompleted, 0) = 0
             AND ISNULL(np.OnboardingCompleted, 0) = 0
             AND np.ParsedPhone IS NOT NULL AND np.ParsedPhone <> ''
-            -- No call currently in flight.
-            AND ISNULL(np.PlivoCallStatus, '') NOT IN ('initiated', 'triggered')
-            -- Short between-call cooldown (NOT the 5/2 anti-spam cap).
+            -- Don't double-dial a call that is genuinely still in flight, BUT a stale
+            -- 'initiated'/'triggered' status older than the cooldown must NOT block a re-attempt.
+            -- (Otherwise a prospect whose call never received a terminal status webhook would be
+            --  called exactly once and then skipped forever — defeating the repeat-until-intent push.)
+            AND NOT (
+                ISNULL(np.PlivoCallStatus, '') IN ('initiated', 'triggered')
+                AND (np.PlivoCallAt IS NULL
+                     OR DATEDIFF(MINUTE, np.PlivoCallAt, GETUTCDATE()) < @CooldownMinutes)
+            )
+            -- Short between-call cooldown (NOT the 5/2 anti-spam cap). Combined with the ordering
+            -- above (least-recently-called first), this guarantees the whole eligible pool is worked
+            -- through once before anyone is re-attempted.
             AND (np.PriorityCallLastAt IS NULL
                  OR DATEDIFF(MINUTE, np.PriorityCallLastAt, GETUTCDATE()) >= @CooldownMinutes)
             -- Mapped to one of today's priority MAGs.
