@@ -10093,63 +10093,38 @@ namespace Risebird.Web.Controllers
 
             try
             {
-                // Multiple batch-call attempts per campaign are allowed (each logged + named separately),
-                // so there is no "already triggered" or 1-hour delay gate for a manual run. The only
-                // guard is against an attempt that is still in progress, to avoid double-dialing.
-                var campaign = await _eaRepository.GetCampaignForManualBatchCallAsync(campaignId);
-                if (campaign == null)
-                    return Json(new { success = false, error = "Campaign not found." });
-
-                if (campaign.HasRunningAttempt)
-                    return Json(new { success = false, error = "A batch-call attempt for this campaign is already in progress. Please wait for it to finish before starting another." });
-
-                var interviewers = await _eaRepository.GetCampaignUnrespondedInterviewersAsync(campaignId);
-                if (interviewers == null || !interviewers.Any())
-                    return Json(new { success = true, started = false, message = "No unresponded interviewers to call." });
-
-                // Mark the campaign so the automated timer job leaves it alone going forward.
-                try { await _eaRepository.MarkCampaignBatchCallTriggeredAsync(campaignId); } catch { }
-
-                string callerId = _configuration["PlivoCX:AvailabilityCallerId"]
-                               ?? _configuration["PlivoCX:OnboardingCallerId"]
-                               ?? _configuration["Plivo:FromNumber"]
-                               ?? "+918031136547";
-
-                string source = "Campaign";
+                // The portal stays thin: it only fires the trigger. The CampaignBatchCall Azure Function
+                // owns everything — resolving the campaign, guarding against an attempt already running,
+                // reading the unresponded interviewers, opening + finalizing the attempt log, and placing
+                // the paced Plivo calls. The function opens the attempt and returns immediately (it dials
+                // in the background), so this await resolves in seconds — no long-held connection.
                 string initiatedBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "Manual";
-
-                // Open a named attempt (sequential per campaign). This row shows up immediately on the
-                // Campaigns page as "Running" so the operator sees the attempt has begun.
-                var attempt = await _eaRepository.StartCampaignBatchCallAttemptAsync(
-                    campaignId, campaign.CampaignName, campaign.MagName, initiatedBy, interviewers.Count);
-
-                // Hand the actual calling off to the CampaignBatchCall Azure Function (fire-and-forget).
-                // The portal does NOT wait for the calls to complete — the function re-reads the
-                // unresponded interviewers from the DB (so we send only lightweight attempt context,
-                // never a large interviewer list), paces the calls on its own, and writes each call's
-                // outcome + finalizes the attempt log.
                 var dto = new CampaignBatchCallRequestDTO
                 {
-                    BatchCallLogId = attempt.LogId,
-                    CampaignId     = campaignId,
-                    CampaignName   = campaign.CampaignName,
-                    MagName        = campaign.MagName,
-                    AttemptNumber  = attempt.AttemptNumber,
-                    AttemptName    = attempt.AttemptName,
-                    CallerId       = callerId,
-                    Source         = source
+                    CampaignId  = campaignId,
+                    InitiatedBy = initiatedBy,
+                    Source      = "Campaign"
                 };
 
-                FireCampaignBatchCallFunction(dto);
+                var path = $"https://risebirdazuretimerfunctions.azurewebsites.net/api/CampaignBatchCall";
+                var functionKey = "8zKgFQa2S5HddU1aSqRIPVeEhuRHHGDwHoajMMSLS0H0AzFuQV1OPw==";
+
+                var response = await _batchCallHttpClient.SendRequestAsync(
+                    HttpMethod.Post, path, dto, functionKey, "", System.Threading.CancellationToken.None);
+                var body = await response.Content.ReadAsStringAsync();
+
+                // The function returns the exact JSON the Campaigns page expects
+                // (success/started/queued/attemptName/message/error), so relay it straight through.
+                if (!string.IsNullOrWhiteSpace(body))
+                    return Content(body, "application/json");
 
                 return Json(new
                 {
-                    success = true,
-                    started = true,
-                    queued = interviewers.Count,
-                    attemptName = attempt.AttemptName,
-                    attemptNumber = attempt.AttemptNumber,
-                    message = $"Batch call attempt #{attempt.AttemptNumber} started for {interviewers.Count} unresponded interviewer(s). Calls are being placed by a background service — refresh this page in a few minutes to see the outcome."
+                    success = response.IsSuccessStatusCode,
+                    started = response.IsSuccessStatusCode,
+                    message = response.IsSuccessStatusCode
+                        ? "Batch call started. Refresh this page in a few minutes to see the outcome."
+                        : "The batch call service returned an error. Please try again."
                 });
             }
             catch (Exception ex)
@@ -10159,35 +10134,13 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        // Dedicated client for the detached batch-call trigger. The shared portal HttpClient has the
-        // default 100s timeout, which the multi-minute in-function calling run blows past ("The request
-        // was canceled due to the configured HttpClient.Timeout of 100 seconds elapsing."). This one
-        // uses an unbounded timeout because the call is already detached from the user request and the
-        // function finalizes its own attempt log even if this wait is abandoned (e.g. an app recycle).
+        // Dedicated client for the batch-call trigger. The function now opens the attempt and returns
+        // promptly (calls run in a background task inside the function), so a bounded timeout is plenty
+        // and we avoid mutating the shared 100s-timeout portal client.
         private static readonly HttpClient _batchCallHttpClient = new HttpClient
         {
-            Timeout = System.Threading.Timeout.InfiniteTimeSpan
+            Timeout = TimeSpan.FromSeconds(230)
         };
-
-        // Fire-and-forget POST to the CampaignBatchCall Azure Function. Detached so the portal request
-        // returns instantly and never holds the connection open for the multi-minute calling run.
-        private void FireCampaignBatchCallFunction(CampaignBatchCallRequestDTO dto)
-        {
-            _ = System.Threading.Tasks.Task.Run(async () =>
-            {
-                try
-                {
-                    var path = $"risebirdazuretimerfunctions.azurewebsites.net/api/CampaignBatchCall";
-                    var functionKey = "eeTzskrWbTrXlEl4i0kk7_87unuuVRbZtvfZ6idYXnbaAzFu6vjJPQ==";
-                    // CancellationToken.None so a completed portal request never aborts this detached run.
-                    await _batchCallHttpClient.SendRequestAsync(HttpMethod.Post, path, dto, functionKey, "", System.Threading.CancellationToken.None);
-                }
-                catch (Exception ex)
-                {
-                    try { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex); } catch { }
-                }
-            });
-        }
 
         // Returns the batch-call attempt history (and optionally per-call details) for a campaign.
         [HttpGet]
