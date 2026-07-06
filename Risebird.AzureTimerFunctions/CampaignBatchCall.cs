@@ -1,5 +1,7 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
@@ -9,6 +11,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.Helpers;
 using Risebird.Repository.Interface;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -17,29 +20,34 @@ namespace Risebird.AzureTimerFunctions
 {
     /// <summary>
     /// HTTP-triggered worker that performs a campaign batch call OUTSIDE the main portal. The portal
-    /// opens the attempt log row and then fires this function (fire-and-forget) with the interviewer
-    /// list. This function paces one Plivo availability call per interviewer, records each call's
-    /// outcome in IABatchCallAttemptDetail, and finalizes the attempt (IABatchCallLog) when done.
+    /// only fires a lightweight trigger (campaign id + who started it); THIS function owns everything:
+    /// it resolves the campaign, guards against an attempt that is already running, reads the
+    /// unresponded interviewers from the DB, opens the attempt log, and then places one paced Plivo
+    /// availability call per interviewer, recording each outcome in IABatchCallAttemptDetail and
+    /// finalizing the attempt (IABatchCallLog) when done.
     ///
-    /// Offloading the calling here keeps the portal request instant and frees it from holding the
-    /// connection open for the many minutes a large batch takes.
+    /// The HTTP call returns as soon as the attempt is opened; the actual multi-minute calling loop runs
+    /// in a detached background task (with its own DI scope). This keeps the request well under Azure's
+    /// ~230s HTTP limit — the old design ran the whole loop in-request, which was torn down mid-run
+    /// (HTTP 499) so no calls completed.
     /// </summary>
     public class CampaignBatchCall
     {
-        private readonly IInterviewerEmailAvailabilityRepository _eaRepository;
-        private readonly IPlivoCXService _plivoCXService;
-        private readonly IApplicationErrorLogger _errorLogger;
+        private readonly IServiceScopeFactory _scopeFactory;
+        private readonly IConfiguration _configuration;
+        private readonly ILoggerFactory _loggerFactory;
         private readonly ILogger _log;
+
+        private const int InterCallDelayMs = 1200;
 
         public CampaignBatchCall(
             ILoggerFactory loggerFactory,
-            IInterviewerEmailAvailabilityRepository eaRepository,
-            IPlivoCXService plivoCXService,
-            IApplicationErrorLogger errorLogger)
+            IServiceScopeFactory scopeFactory,
+            IConfiguration configuration)
         {
-            _eaRepository = eaRepository;
-            _plivoCXService = plivoCXService;
-            _errorLogger = errorLogger;
+            _scopeFactory = scopeFactory;
+            _configuration = configuration;
+            _loggerFactory = loggerFactory;
             _log = loggerFactory.CreateLogger<CampaignBatchCall>();
         }
 
@@ -56,133 +64,189 @@ namespace Risebird.AzureTimerFunctions
             catch (Exception ex)
             {
                 _log.LogError($"[CampaignBatchCall] Bad request body: {ex.Message}");
-                var bad = req.CreateResponse(HttpStatusCode.BadRequest);
-                await bad.WriteAsJsonAsync(new { success = false, error = "Invalid request body." });
-                return bad;
+                return await Json(req, HttpStatusCode.BadRequest, new { success = false, error = "Invalid request body." });
             }
 
-            if (dto == null || dto.BatchCallLogId <= 0)
-            {
-                var bad = req.CreateResponse(HttpStatusCode.BadRequest);
-                await bad.WriteAsJsonAsync(new { success = false, error = "Missing batch-call attempt context." });
-                return bad;
-            }
+            if (dto == null || dto.CampaignId <= 0)
+                return await Json(req, HttpStatusCode.BadRequest, new { success = false, error = "Missing campaign id." });
 
-            // Read the unresponded interviewers directly from the DB (the portal now sends only the
-            // lightweight attempt context, not the full list). This keeps the fire-and-forget request
-            // body tiny and lets the function work at its own pace.
-            System.Collections.Generic.List<CampaignUnrespondedInterviewer> interviewers;
+            string source = string.IsNullOrWhiteSpace(dto.Source) ? "Campaign" : dto.Source;
+            string initiatedBy = string.IsNullOrWhiteSpace(dto.InitiatedBy) ? "Manual" : dto.InitiatedBy;
+
+            // ---- Synchronous prep (fast): resolve campaign, guard, fetch interviewers, open attempt ----
+            CampaignBatchCallEligible campaign;
+            List<CampaignUnrespondedInterviewer> interviewers;
+            (int LogId, int AttemptNumber, string AttemptName) attempt;
+
             try
             {
-                interviewers = await _eaRepository.GetCampaignUnrespondedInterviewersAsync(dto.CampaignId);
+                using var scope = _scopeFactory.CreateScope();
+                var repo = scope.ServiceProvider.GetRequiredService<IInterviewerEmailAvailabilityRepository>();
+
+                campaign = await repo.GetCampaignForManualBatchCallAsync(dto.CampaignId);
+                if (campaign == null)
+                    return await Json(req, HttpStatusCode.OK, new { success = false, started = false, message = "Campaign not found." });
+
+                if (campaign.HasRunningAttempt)
+                    return await Json(req, HttpStatusCode.OK, new { success = false, started = false, message = "A batch-call attempt for this campaign is already in progress. Please wait for it to finish before starting another." });
+
+                interviewers = await repo.GetCampaignUnrespondedInterviewersAsync(dto.CampaignId);
+                if (interviewers == null || interviewers.Count == 0)
+                    return await Json(req, HttpStatusCode.OK, new { success = true, started = false, message = "No unresponded interviewers to call." });
+
+                // Mark the campaign so the automated timer job leaves it alone going forward.
+                try { await repo.MarkCampaignBatchCallTriggeredAsync(dto.CampaignId); } catch { }
+
+                // Open a named attempt (sequential per campaign). Shows up immediately on the Campaigns
+                // page as "Running" so the operator sees the attempt has begun.
+                attempt = await repo.StartCampaignBatchCallAttemptAsync(
+                    dto.CampaignId, campaign.CampaignName, campaign.MagName, initiatedBy, interviewers.Count);
             }
-            catch (Exception exLoad)
+            catch (Exception ex)
             {
-                _log.LogError($"[CampaignBatchCall] Failed to load interviewers for campaign #{dto.CampaignId}: {exLoad.Message}");
-                await _errorLogger.LogMessage(LogLevelInfo.Exception, exLoad);
-                try { await _eaRepository.CompleteBatchCallLogAsync(dto.BatchCallLogId, 0, 0, 0, "Failed"); } catch { }
-                var err = req.CreateResponse(HttpStatusCode.InternalServerError);
-                await err.WriteAsJsonAsync(new { success = false, error = "Failed to load interviewers." });
-                return err;
+                _log.LogError($"[CampaignBatchCall] Prep failed for campaign #{dto.CampaignId}: {ex.Message}");
+                try
+                {
+                    using var errScope = _scopeFactory.CreateScope();
+                    await errScope.ServiceProvider.GetRequiredService<IApplicationErrorLogger>().LogMessage(LogLevelInfo.Exception, ex);
+                }
+                catch { }
+                return await Json(req, HttpStatusCode.InternalServerError, new { success = false, error = "Failed to start the batch call. Please try again." });
             }
 
-            _log.LogInformation($"[CampaignBatchCall] Attempt '{dto.AttemptName}' (log #{dto.BatchCallLogId}) for campaign #{dto.CampaignId} " +
-                                $"'{dto.CampaignName}' — {interviewers?.Count ?? 0} interviewer(s).");
+            string callerId = _configuration["PlivoCX:AvailabilityCallerId"]
+                           ?? _configuration["PlivoCX:OnboardingCallerId"]
+                           ?? _configuration["Plivo:FromNumber"]
+                           ?? "+918031136547";
+
+            // Hand the actual paced calling to a detached background task with its OWN DI scope (services
+            // are scoped, so we cannot reuse the request scope after this method returns). Safe on the
+            // Always-On dedicated plan the function runs on.
+            _ = Task.Run(() => ProcessCallsAsync(attempt.LogId, attempt.AttemptName, campaign.MagName, source, callerId, interviewers));
+
+            _log.LogInformation($"[CampaignBatchCall] Attempt '{attempt.AttemptName}' (log #{attempt.LogId}) started for campaign " +
+                                $"#{dto.CampaignId} '{campaign.CampaignName}' — {interviewers.Count} interviewer(s) queued.");
+
+            return await Json(req, HttpStatusCode.Accepted, new
+            {
+                success = true,
+                started = true,
+                queued = interviewers.Count,
+                attemptName = attempt.AttemptName,
+                attemptNumber = attempt.AttemptNumber,
+                message = $"Batch call attempt #{attempt.AttemptNumber} started for {interviewers.Count} unresponded interviewer(s). " +
+                          "Calls are being placed by a background service — refresh this page in a few minutes to see the outcome."
+            });
+        }
+
+        // Places the paced Plivo calls for an already-opened attempt, logs each outcome, and finalizes
+        // the attempt log. Runs detached from the HTTP request; creates its own scope for DB/Plivo work.
+        private async Task ProcessCallsAsync(
+            int batchCallLogId, string attemptName, string magName, string source, string callerId,
+            List<CampaignUnrespondedInterviewer> interviewers)
+        {
+            var log = _loggerFactory.CreateLogger<CampaignBatchCall>();
+            using var scope = _scopeFactory.CreateScope();
+            var repo = scope.ServiceProvider.GetRequiredService<IInterviewerEmailAvailabilityRepository>();
+            var plivoCXService = scope.ServiceProvider.GetRequiredService<IPlivoCXService>();
+            var errorLogger = scope.ServiceProvider.GetRequiredService<IApplicationErrorLogger>();
 
             int succeeded = 0, failed = 0, skipped = 0;
             try
             {
-                if (interviewers != null)
+                foreach (var interviewer in interviewers)
                 {
-                    foreach (var interviewer in interviewers)
+                    string outcome = "Skipped";
+                    string error = null;
+                    string conversationId = null;
+                    string phone = interviewer.Phone?.Trim() ?? "";
+                    try
                     {
-                        string outcome = "Skipped";
-                        string error = null;
-                        string conversationId = null;
-                        string phone = interviewer.Phone?.Trim() ?? "";
-                        try
+                        if (string.IsNullOrWhiteSpace(phone) || phone.Length < 10)
                         {
-                            if (string.IsNullOrWhiteSpace(phone) || phone.Length < 10)
+                            skipped++;
+                            error = "Missing or invalid phone number.";
+                        }
+                        else
+                        {
+                            if (phone.Length == 10 && !phone.StartsWith("+")) phone = "+91" + phone;
+                            else if (phone.Length > 10 && !phone.StartsWith("+")) phone = "+" + phone;
+
+                            // Defer EA record creation: the row is created by the hangup webhook
+                            // only if the call confirms availability.
+                            var triggerRequest = new PlivoCXAvailabilityTriggerRequest
                             {
-                                skipped++;
-                                error = "Missing or invalid phone number.";
+                                CallerId         = callerId,
+                                PhoneNumber      = phone,
+                                InterviewerName  = interviewer.InterviewerName ?? "there",
+                                InterviewerEmail = interviewer.SenderEmail,
+                                MagName          = magName,
+                                LogId            = AvailabilityCallToken.Build(interviewer.InterviewerProfileId, magName, source),
+                                TodayDate        = DateTime.Now.ToString("dddd, dd MMMM yyyy")
+                            };
+
+                            var response = await plivoCXService.TriggerAvailabilityCallAsync(triggerRequest);
+
+                            if (!string.IsNullOrEmpty(response?.Error))
+                            {
+                                failed++;
+                                outcome = "Failed";
+                                error = response.Error;
                             }
                             else
                             {
-                                if (phone.Length == 10 && !phone.StartsWith("+")) phone = "+91" + phone;
-                                else if (phone.Length > 10 && !phone.StartsWith("+")) phone = "+" + phone;
-
-                                // Defer EA record creation: the row is created by the hangup webhook
-                                // only if the call confirms availability.
-                                var triggerRequest = new PlivoCXAvailabilityTriggerRequest
-                                {
-                                    CallerId         = dto.CallerId,
-                                    PhoneNumber      = phone,
-                                    InterviewerName  = interviewer.InterviewerName ?? "there",
-                                    InterviewerEmail = interviewer.SenderEmail,
-                                    MagName          = dto.MagName,
-                                    LogId            = AvailabilityCallToken.Build(interviewer.InterviewerProfileId, dto.MagName, dto.Source),
-                                    TodayDate        = DateTime.Now.ToString("dddd, dd MMMM yyyy")
-                                };
-
-                                var response = await _plivoCXService.TriggerAvailabilityCallAsync(triggerRequest);
-
-                                if (!string.IsNullOrEmpty(response?.Error))
-                                {
-                                    failed++;
-                                    outcome = "Failed";
-                                    error = response.Error;
-                                }
-                                else
-                                {
-                                    succeeded++;
-                                    outcome = "Succeeded";
-                                    conversationId = response?.ConversationId;
-                                }
-
-                                await Task.Delay(1200);
+                                succeeded++;
+                                outcome = "Succeeded";
+                                conversationId = response?.ConversationId;
                             }
-                        }
-                        catch (Exception exCall)
-                        {
-                            failed++;
-                            outcome = "Failed";
-                            error = exCall.Message;
-                            _log.LogError($"[CampaignBatchCall] Error calling interviewer #{interviewer.InterviewerProfileId}: {exCall.Message}");
-                        }
 
-                        try
-                        {
-                            await _eaRepository.InsertCampaignBatchCallDetailAsync(
-                                dto.BatchCallLogId, interviewer.InterviewerProfileId, interviewer.InterviewerName,
-                                interviewer.SenderEmail, phone, outcome, error, conversationId);
+                            await Task.Delay(InterCallDelayMs);
                         }
-                        catch (Exception exLog)
-                        {
-                            _log.LogError($"[CampaignBatchCall] Failed to log detail for interviewer #{interviewer.InterviewerProfileId}: {exLog.Message}");
-                        }
+                    }
+                    catch (Exception exCall)
+                    {
+                        failed++;
+                        outcome = "Failed";
+                        error = exCall.Message;
+                        log.LogError($"[CampaignBatchCall] Error calling interviewer #{interviewer.InterviewerProfileId}: {exCall.Message}");
+                    }
+
+                    try
+                    {
+                        await repo.InsertCampaignBatchCallDetailAsync(
+                            batchCallLogId, interviewer.InterviewerProfileId, interviewer.InterviewerName,
+                            interviewer.SenderEmail, phone, outcome, error, conversationId);
+                    }
+                    catch (Exception exLog)
+                    {
+                        log.LogError($"[CampaignBatchCall] Failed to log detail for interviewer #{interviewer.InterviewerProfileId}: {exLog.Message}");
                     }
                 }
             }
             catch (Exception ex)
             {
-                _log.LogError($"[CampaignBatchCall] Attempt #{dto.BatchCallLogId} failed: {ex.Message}");
-                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                log.LogError($"[CampaignBatchCall] Attempt #{batchCallLogId} failed: {ex.Message}");
+                try { await errorLogger.LogMessage(LogLevelInfo.Exception, ex); } catch { }
             }
             finally
             {
-                try { await _eaRepository.CompleteBatchCallLogAsync(dto.BatchCallLogId, succeeded, failed, skipped, "Completed"); }
+                try { await repo.CompleteBatchCallLogAsync(batchCallLogId, succeeded, failed, skipped, "Completed"); }
                 catch (Exception exComplete)
                 {
-                    _log.LogError($"[CampaignBatchCall] Failed to finalize attempt #{dto.BatchCallLogId}: {exComplete.Message}");
+                    log.LogError($"[CampaignBatchCall] Failed to finalize attempt #{batchCallLogId}: {exComplete.Message}");
                 }
             }
 
-            _log.LogInformation($"[CampaignBatchCall] Attempt '{dto.AttemptName}' done. Succeeded={succeeded}, Failed={failed}, Skipped={skipped}");
+            log.LogInformation($"[CampaignBatchCall] Attempt '{attemptName}' done. Succeeded={succeeded}, Failed={failed}, Skipped={skipped}");
+        }
 
-            var response2 = req.CreateResponse(HttpStatusCode.OK);
-            await response2.WriteAsJsonAsync(new { success = true, succeeded, failed, skipped });
-            return response2;
+        private static async Task<HttpResponseData> Json(HttpRequestData req, HttpStatusCode status, object body)
+        {
+            var response = req.CreateResponse(status);
+            await response.WriteAsJsonAsync(body);
+            // WriteAsJsonAsync can reset the status to 200 OK, so re-assert the intended status after.
+            response.StatusCode = status;
+            return response;
         }
     }
 }
