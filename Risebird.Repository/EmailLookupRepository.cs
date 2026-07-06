@@ -45,14 +45,16 @@ namespace Risebird.Repository
                 }
 
                 var interviewerProfile = (await multi.ReadAsync<EmailLookupInterviewerProfileVM>()).FirstOrDefault();
-                var candidateStats = (await multi.ReadAsync<EmailLookupInterviewStatsVM>()).FirstOrDefault() ?? new EmailLookupInterviewStatsVM();
-                var interviewerStats = (await multi.ReadAsync<EmailLookupInterviewStatsVM>()).FirstOrDefault() ?? new EmailLookupInterviewStatsVM();
-                var paymentStats = (await multi.ReadAsync<EmailLookupPaymentStatsVM>()).FirstOrDefault() ?? new EmailLookupPaymentStatsVM();
-                var meetingsAsCandidate = (await multi.ReadAsync<EmailLookupMeetingVM>()).ToList();
+                var clientProfile      = (await multi.ReadAsync<EmailLookupClientProfileVM>()).FirstOrDefault();
+                var clientPOs          = (await multi.ReadAsync<EmailLookupClientPOVM>()).ToList();
+                var candidateStats     = (await multi.ReadAsync<EmailLookupInterviewStatsVM>()).FirstOrDefault() ?? new EmailLookupInterviewStatsVM();
+                var interviewerStats   = (await multi.ReadAsync<EmailLookupInterviewStatsVM>()).FirstOrDefault() ?? new EmailLookupInterviewStatsVM();
+                var paymentStats       = (await multi.ReadAsync<EmailLookupPaymentStatsVM>()).FirstOrDefault() ?? new EmailLookupPaymentStatsVM();
+                var meetingsAsCandidate   = (await multi.ReadAsync<EmailLookupMeetingVM>()).ToList();
                 var meetingsAsInterviewer = (await multi.ReadAsync<EmailLookupMeetingVM>()).ToList();
-                var recentPayments = (await multi.ReadAsync<EmailLookupPaymentVM>()).ToList();
-                var tdsQuarters   = (await multi.ReadAsync<EmailLookupTdsQuarterVM>()).ToList();
-                var historyTotal  = (await multi.ReadAsync<EmailLookupHistoryTotalVM>()).FirstOrDefault();
+                var recentPayments     = (await multi.ReadAsync<EmailLookupPaymentVM>()).ToList();
+                var tdsQuarters        = (await multi.ReadAsync<EmailLookupTdsQuarterVM>()).ToList();
+                var historyTotal       = (await multi.ReadAsync<EmailLookupHistoryTotalVM>()).FirstOrDefault();
 
                 var result = new EmailLookupResultVM
                 {
@@ -108,11 +110,32 @@ namespace Risebird.Repository
                     TotalPaidAmount = paymentStats.TotalPaidAmount,
                     TotalPendingPayment = paymentStats.TotalPendingPayment,
 
-                    MeetingsAsCandidate = meetingsAsCandidate,
+                    ClientId          = clientProfile?.ClientId ?? 0,
+                    ClientName        = clientProfile?.ClientName,
+                    BillingType       = clientProfile?.BillingType ?? 0,
+                    BillingModel      = clientProfile?.BillingModel ?? 0,
+                    GSTApplicable     = clientProfile?.GSTApplicable ?? false,
+                    GST               = clientProfile?.GST,
+                    PerInterviewRate  = clientProfile?.PerInterviewRate ?? 0,
+                    AIPerInterviewRate = clientProfile?.AIPerInterviewRate ?? 0,
+                    PaymentTerm       = clientProfile?.PaymentTerm ?? 0,
+                    ClientType        = clientProfile?.ClientType ?? 0,
+                    CountryType       = clientProfile?.CountryType ?? 0,
+                    BillingCurrency   = clientProfile?.BillingCurrency ?? "INR",
+                    ActiveUserCount   = clientProfile?.ActiveUserCount ?? 0,
+                    TotalUserCount    = clientProfile?.TotalUserCount ?? 0,
+                    TotalCredits      = clientProfile?.TotalCredits ?? 0,
+                    TotalDebits       = clientProfile?.TotalDebits ?? 0,
+                    CashCreditAdded   = clientProfile?.CashCreditAdded ?? 0,
+                    TotalPOAmount     = clientProfile?.TotalPOAmount ?? 0,
+                    TotalPOReceived   = clientProfile?.TotalPOReceived ?? 0,
+                    ClientPOs         = clientPOs,
+
+                    MeetingsAsCandidate   = meetingsAsCandidate,
                     MeetingsAsInterviewer = meetingsAsInterviewer,
-                    RecentPayments = recentPayments,
-                    TdsQuarters = tdsQuarters,
-                    TotalHistoryPaid = historyTotal?.TotalHistoryPaid ?? 0
+                    RecentPayments        = recentPayments,
+                    TdsQuarters           = tdsQuarters,
+                    TotalHistoryPaid      = historyTotal?.TotalHistoryPaid ?? 0
                 };
 
                 return result;
