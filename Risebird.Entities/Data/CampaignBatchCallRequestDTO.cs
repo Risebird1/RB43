@@ -1,30 +1,15 @@
-using System.Collections.Generic;
-
 namespace Risebird.Entities.Data
 {
     /// <summary>
-    /// Payload the portal fires (fire-and-forget) to the CampaignBatchCall Azure Function. The portal
-    /// has already opened the attempt log row (BatchCallLogId / AttemptName); the function does the
-    /// actual paced Plivo calling, logs each call's outcome, and finalizes the attempt log.
+    /// Lightweight trigger payload the portal fires at the CampaignBatchCall Azure Function. The portal
+    /// only identifies WHICH campaign to call and WHO started it — the function owns everything else:
+    /// resolving the campaign, guarding against a running attempt, reading the unresponded interviewers
+    /// from the DB, opening + finalizing the attempt log, and placing the paced Plivo calls.
     /// </summary>
     public class CampaignBatchCallRequestDTO
     {
-        public int BatchCallLogId { get; set; }
         public int CampaignId { get; set; }
-        public string CampaignName { get; set; }
-        public string MagName { get; set; }
-        public int AttemptNumber { get; set; }
-        public string AttemptName { get; set; }
-        public string CallerId { get; set; }
+        public string InitiatedBy { get; set; }
         public string Source { get; set; }
-        public List<CampaignBatchCallInterviewerDTO> Interviewers { get; set; } = new List<CampaignBatchCallInterviewerDTO>();
-    }
-
-    public class CampaignBatchCallInterviewerDTO
-    {
-        public int InterviewerProfileId { get; set; }
-        public string InterviewerName { get; set; }
-        public string SenderEmail { get; set; }
-        public string Phone { get; set; }
     }
 }

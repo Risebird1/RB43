@@ -2043,6 +2043,14 @@ namespace Risebird.Web.Controllers
 
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault()); //JsonConvert.DeserializeObject<AIInterviewEvaluation>(cleaned);
                 EnrichQuestionRatingsWithActualQuestions(reportModel.AIInterviewEvaluation, reportModel.videoQuestionDetails);
+                // Adaptive interviews return the report as ready-to-render HTML (not the structured
+                // JSON that AIInterviewEvaluation is parsed from). When the reply can't be parsed into
+                // the structured model, keep the HTML so the view can render it directly instead of
+                // showing an empty "AI Analysis & Recommendations" section.
+                if (reportModel.AIInterviewEvaluation == null)
+                {
+                    reportModel.RawAIReportHtml = aiReport?.Replies?.FirstOrDefault();
+                }
                 //reportModel.TotalQuestions = result.Replies.Count() - 1;
                 ViewBag.IsAdaptive = true;
                 List<TypingSpeedAssessment> typingAssessmentsAdaptive;
