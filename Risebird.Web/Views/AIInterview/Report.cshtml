@@ -435,30 +435,37 @@
     .rb-ai-raw-report {
         padding: 8px 20px 20px 20px;
         color: #333;
-        line-height: 1.6;
-        overflow-x: auto;
+        line-height: 1.5;
+        overflow: visible;
     }
 
         .rb-ai-raw-report h2,
         .rb-ai-raw-report h3,
         .rb-ai-raw-report h4 {
             color: #1a1a2e;
-            margin: 18px 0 10px 0;
+            margin: 14px 0 8px 0;
+            font-size: 1rem;
         }
 
         .rb-ai-raw-report table {
             width: 100%;
             border-collapse: collapse;
-            margin: 12px 0 20px 0;
-            font-size: 0.92rem;
+            margin: 8px 0 14px 0;
+            font-size: 12px;
+            table-layout: fixed;
         }
 
         .rb-ai-raw-report th,
         .rb-ai-raw-report td {
             border: 1px solid #e0e0e0;
-            padding: 8px 10px;
+            padding: 5px 7px;
             text-align: left;
             vertical-align: top;
+            word-wrap: break-word;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+            line-height: 1.4;
         }
 
         .rb-ai-raw-report th {
@@ -603,8 +610,415 @@
     }
 
     .question-scroll {
-        height: 900px;
-        overflow-y: scroll;
+        height: auto;
+        max-height: none;
+        overflow: visible;
+    }
+
+    /* ── AI Analysis compact layout ─────────────────────────────────────── */
+    .rb-ai-analysis-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        padding: 12px 14px 16px;
+    }
+
+    .rb-ai-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 10px;
+    }
+
+    .rb-ai-metric {
+        background: rgba(151, 202, 244, 0.1);
+        border: 1px solid rgba(151, 202, 244, 0.25);
+        border-radius: 10px;
+        padding: 10px 12px;
+    }
+
+    .rb-ai-metric__label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #64748b;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .rb-ai-metric__label img {
+        width: 16px;
+        height: 16px;
+        object-fit: contain;
+    }
+
+    .rb-ai-metric__value {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1.2;
+    }
+
+    .rb-ai-metric__sub {
+        font-size: 12px;
+        color: #64748b;
+        margin-top: 4px;
+        line-height: 1.45;
+        white-space: pre-line;
+    }
+
+    .rb-ai-two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        align-items: start;
+    }
+
+    .rb-ai-panel {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        padding: 12px 14px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06);
+    }
+
+    .rb-ai-panel--full {
+        width: 100%;
+    }
+
+    .rb-ai-panel__head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #eef2f6;
+    }
+
+    .rb-ai-panel__head img {
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+        flex-shrink: 0;
+    }
+
+    .rb-ai-panel__title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #334155;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .rb-ai-table-wrap {
+        overflow: visible;
+        width: 100%;
+    }
+
+    .rb-ai-rubric-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+        table-layout: fixed;
+        margin: 0;
+    }
+
+    .rb-ai-questions-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12.5px;
+        table-layout: fixed;
+        margin: 0;
+    }
+
+    .rb-ai-rubric-table th,
+    .rb-ai-rubric-table td,
+    .rb-ai-questions-table th,
+    .rb-ai-questions-table td {
+        border: 1px solid #e8edf2;
+        padding: 6px 8px;
+        vertical-align: top;
+        text-align: left;
+        word-wrap: break-word;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        white-space: normal;
+        line-height: 1.45;
+        hyphens: auto;
+    }
+
+    .rb-ai-rubric-table th,
+    .rb-ai-questions-table th {
+        background: #f1f5f9;
+        font-size: 10.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #64748b;
+    }
+
+    .rb-ai-rubric-table tbody tr:nth-child(even),
+    .rb-ai-questions-table tbody tr:nth-child(even) {
+        background: #fafbfc;
+    }
+
+    .rb-ai-questions-table .rb-ai-q-num {
+        width: 3%;
+        text-align: center;
+        font-weight: 700;
+        color: #475569;
+        background: #f8fafc;
+    }
+
+    .rb-ai-questions-table .rb-ai-q-text {
+        width: 28%;
+        min-width: 0;
+        color: #1e293b;
+        font-weight: 500;
+    }
+
+    .rb-ai-questions-table .rb-ai-q-rating {
+        width: 10%;
+    }
+
+    .rb-ai-questions-table .rb-ai-q-score {
+        width: 5%;
+        text-align: center;
+        font-weight: 600;
+        color: #127430;
+    }
+
+    .rb-ai-questions-table .rb-ai-q-comment {
+        width: 22%;
+        color: #475569;
+        font-size: 12px;
+    }
+
+    .rb-ai-questions-table .rb-ai-q-comm-score {
+        width: 5%;
+        text-align: center;
+    }
+
+    .rb-ai-rubric-table .rb-ai-r-score {
+        width: 56px;
+        text-align: center;
+        font-weight: 600;
+        color: #127430;
+    }
+
+    .rb-ai-rubric-table .rb-ai-r-level {
+        width: 90px;
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    .rb-ai-verdict-pill {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 7px;
+        border-radius: 4px;
+        line-height: 1.35;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    .rb-ai-verdict-pill--select {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .rb-ai-verdict-pill--reject {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .rb-ai-verdict-pill--avg {
+        background: #fef9c3;
+        color: #ca8a04;
+    }
+
+    .rb-ai-verdict-pill--neutral {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .rb-ai-comment-block {
+        font-size: 12.5px;
+        color: #334155;
+        line-height: 1.5;
+        white-space: pre-line;
+        margin: 0;
+    }
+
+    .rb-ai-comment-block + .rb-ai-comment-block {
+        margin-top: 10px;
+    }
+
+    .rb-ai-comment-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: #64748b;
+        margin-bottom: 4px;
+    }
+
+    .rb-ai-verify-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 12px;
+        margin-bottom: 8px;
+    }
+
+    .rb-ai-verify-item .info-label {
+        font-size: 11px;
+        color: #64748b;
+        margin-bottom: 2px;
+    }
+
+    .rb-ai-no-data-inline {
+        font-size: 12.5px;
+        color: #94a3b8;
+        margin: 0;
+        padding: 6px 0;
+    }
+
+    /* Competency / questions — stacked cards, no scroll */
+    .rb-ai-q-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .rb-ai-q-card {
+        border: 1px solid #e8edf2;
+        border-radius: 8px;
+        background: #fff;
+        padding: 8px 10px;
+    }
+
+    .rb-ai-q-card:nth-child(even) {
+        background: #fafbfc;
+    }
+
+    .rb-ai-q-card__head {
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+        margin-bottom: 6px;
+    }
+
+    .rb-ai-q-card__num {
+        flex-shrink: 0;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #4eda92 0%, #56e0cb 100%);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .rb-ai-q-card__text {
+        flex: 1;
+        min-width: 0;
+        font-size: 12.5px;
+        font-weight: 500;
+        color: #1e293b;
+        line-height: 1.45;
+        word-wrap: break-word;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        white-space: normal;
+    }
+
+    .rb-ai-q-card__meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 10px;
+        padding-left: 30px;
+        font-size: 11.5px;
+        color: #475569;
+    }
+
+    .rb-ai-meta-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        background: #f1f5f9;
+        border-radius: 4px;
+        border: 1px solid #e2e8f0;
+        line-height: 1.35;
+    }
+
+    .rb-ai-meta-chip strong {
+        font-weight: 600;
+        color: #64748b;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .rb-ai-q-card__note {
+        margin: 6px 0 0 30px;
+        font-size: 12px;
+        color: #475569;
+        line-height: 1.45;
+        word-wrap: break-word;
+        word-break: break-word;
+        white-space: normal;
+    }
+
+    .rb-ai-q-card__note-label {
+        font-weight: 600;
+        color: #64748b;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        margin-right: 4px;
+    }
+
+    @@media (max-width: 991px) {
+        .rb-ai-two-col {
+            grid-template-columns: 1fr;
+        }
+
+        .rb-ai-questions-table .rb-ai-q-rating,
+        .rb-ai-questions-table .rb-ai-q-score,
+        .rb-ai-questions-table .rb-ai-q-comm-score {
+            width: auto;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .rb-ai-summary-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .rb-ai-rubric-table,
+        .rb-ai-questions-table {
+            font-size: 12px;
+        }
+
+        .rb-ai-rubric-table th,
+        .rb-ai-rubric-table td,
+        .rb-ai-questions-table th,
+        .rb-ai-questions-table td {
+            padding: 5px 6px;
+        }
+
+        .rb-ai-q-card__meta,
+        .rb-ai-q-card__note {
+            padding-left: 0;
+            margin-left: 0;
+        }
     }
 
     .rb-analysis-item {
@@ -2088,7 +2502,7 @@
                 </div>
             </div>
         }
-        <div style="display:flex; align-items:center; margin: 32px 0 28px 0; gap: 0;">
+        <div style="display:flex; align-items:center; margin: 32px 0 0px 0; gap: 0;">
             <div style="flex:1; height:2px; background: linear-gradient(90deg, transparent 0%, #4eda92 40%, #56e0cb 100%); border-radius:2px; opacity:0.5;"></div>
             <div style="display:flex; align-items:center; gap:8px; padding: 0 18px; background:#fff; position:relative; z-index:1;">
                 <span style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; background: linear-gradient(135deg, #4eda92 0%, #56e0cb 100%); box-shadow: 0 2px 8px rgba(78,218,146,0.35);">
@@ -2106,337 +2520,261 @@
                 <div class="rb-analysis-content">
                     @if (Model.AIInterviewEvaluation != null)
                     {
-                        <div class="row" style="margin:0;">
-                            <!-- Left: Tech Skill Score (Rubric Score Summary) -->
-                            <div class="col-lg-3 col-md-5 col-sm-12 ai-tech-score-wrapper" style="padding:0px;margin:0px;">
-                                @if (Model.AIInterviewEvaluation.AadharVerificationId > 0)
+                        <div class="rb-ai-analysis-layout">
+                            @{
+                                string GetQVerdictPillClass(string verdict)
                                 {
-                                    <div class="modern-card" style="border-bottom: 1px #e4e1e1 solid;margin:0px 0px 0px 20px;padding-top: 10px;">
-                                        <div class="rb-analysis-header" style="margin:0px">
-                                            <img style="width: 20px;left:0px;top:-1px;position:relative;" src="/img/acknowledge-tick.png">                                            <span class="rb-analysis-title">Verification status :</span>
-                                        </div>
-                                        <div class="modern-card-body">
-                                            @if (Model.AIInterviewEvaluation.AadharVerificationId > 0)
+                                    if (string.IsNullOrWhiteSpace(verdict)) return "rb-ai-verdict-pill--neutral";
+                                    var v = verdict.Trim().ToLowerInvariant();
+                                    if (v.Contains("reject")) return "rb-ai-verdict-pill--reject";
+                                    if (v.Contains("select")) return "rb-ai-verdict-pill--select";
+                                    if (v == "average") return "rb-ai-verdict-pill--avg";
+                                    return "rb-ai-verdict-pill--neutral";
+                                }
+                                string GetFvBadgeClass(string verdict)
+                                {
+                                    if (string.IsNullOrWhiteSpace(verdict)) return null;
+                                    var v = verdict.Trim().ToLowerInvariant();
+                                    if (v.Contains("reject")) return "ai-final-verdict-reject";
+                                    if (v == "selected" || v.Contains("strongly selected") || v.Contains("marginally selected") || v.Contains("marginal selected")) return "ai-final-verdict-select";
+                                    if (v == "average") return "ai-final-verdict-average";
+                                    return null;
+                                }
+                            }
+
+                            <div class="rb-ai-summary-grid">
+                                @if (Model.AIInterviewEvaluation.OverallTechnicalScore != 0)
+                                {
+                                    <div class="rb-ai-metric">
+                                        <div class="rb-ai-metric__label"><img src="/img/techskill-score.png" alt="" /> Overall Skill Score</div>
+                                        <div class="rb-ai-metric__value">@Model.AIInterviewEvaluation.OverallTechnicalScore</div>
+                                    </div>
+                                }
+                                @if (Model.AIInterviewEvaluation.OverallCommunicationScore != 0)
+                                {
+                                    <div class="rb-ai-metric">
+                                        <div class="rb-ai-metric__label"><img src="/img/communication-score.png" alt="" /> Communication Score</div>
+                                        <div class="rb-ai-metric__value">@Model.AIInterviewEvaluation.OverallCommunicationScore</div>
+                                    </div>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict))
+                                {
+                                    var fv = Model.AIInterviewEvaluation.FinalVerdict.Trim();
+                                    var fvClass = GetFvBadgeClass(fv);
+                                    <div class="rb-ai-metric">
+                                        <div class="rb-ai-metric__label"><img src="/img/interviewer-comment.png" alt="" /> Final Verdict</div>
+                                        <div class="rb-ai-metric__value">
+                                            @if (fvClass != null)
                                             {
-                                                <div class="verification-grid">
-                                                    <div class="verification-item" style="border-right: 1px #d8cdcd solid;margin: 5px 10px;">
-                                                        <div class="info-label">Aadhaar Verified</div>
-                                                        <div class="info-value-simple">
-                                                            @if (Model.AIInterviewEvaluation.AadharVerificationId > 0)
-                                                            {
-                                                                <span class="status-badge success">Yes</span>
-                                                            }
-                                                            else
-                                                            {
-                                                                <span class="status-badge error">No</span>
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                    <div class="verification-item" style="margin: 5px 10px;">
-                                                        <div class="info-label">Match Score %</div>
-                                                        <div class="info-value-simple">@Model.MatchScorePercentage</div>
-                                                    </div>
-                                                </div>
+                                                <span class="ai-final-verdict-badge @fvClass">@fv</span>
                                             }
-                                            @if (Model.AIInterviewEvaluation.AadharVerificationId > 0)
+                                            else
                                             {
-                                                <a href="#" class="aadhaar-link" onclick="javascript:FetchAadhaarDetails('@Model.InterviewId','@Model.CandidateEmail');">
-                                                    <i class="fa fa-id-card"></i> Click Here For Candidate Verified Data
-                                                </a>
+                                                @fv
                                             }
                                         </div>
                                     </div>
                                 }
-
-
-
-                                <div class="rb-analysis-item ai-tech-score" style="padding-bottom:20px;padding-top:0px;">
-
-
-                                    <div class="rb-analysis-header">
-                                        @if (Model.AIResumeScreeningScore != 0)
+                                @if (Model.AIResumeScreeningScore != 0)
+                                {
+                                    <div class="rb-ai-metric">
+                                        <div class="rb-ai-metric__label"><img src="/img/resume-screening.png" alt="" /> Resume Screening</div>
+                                        <div class="rb-ai-metric__value">@Model.AIResumeScreeningScore</div>
+                                        @if (!string.IsNullOrWhiteSpace(Model.AIResumeScreeningVerdict))
                                         {
-
-                                            <img style="width:21px;left:-3px; top:0px; position:relative;" src="/img/resume-screening.png">
-                                            <span class="rb-analysis-title">
-                                                AI Resume Screening Score:
-                                                <span style="color:#000;margin-left:6px;font-weight:bold">@Model.AIResumeScreeningScore</span>
-
-                                            </span>
+                                            <div class="rb-ai-metric__sub">@Model.AIResumeScreeningVerdict</div>
                                         }
                                     </div>
+                                }
+                            </div>
 
-
-                                    <div class="rb-analysis-text">
-                                        <div class="question" style="margin-bottom:15px;">
-                                            @if (!string.IsNullOrWhiteSpace(Model.AIResumeScreeningVerdict))
-                                            {
-
-                                                <label style="color:#000;font-weight:bold;padding-left:5px;font-size: 15px;margin:0px">AI Resume Screening Verdict:</label>
-
-                                                <span style="color:#000;margin-left:6px;">@Model.AIResumeScreeningVerdict</span>
-
-                                            }
-
-                                        </div>
-
-
-
-
+                            @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.OverallCommunicationScoreReasoning))
+                            {
+                                <div class="rb-ai-panel rb-ai-panel--full">
+                                    <div class="rb-ai-panel__head">
+                                        <img src="/img/communication-score.png" alt="" />
+                                        <span class="rb-ai-panel__title">Communication Analysis</span>
                                     </div>
+                                    <p class="rb-ai-comment-block">@Model.AIInterviewEvaluation.OverallCommunicationScoreReasoning</p>
+                                </div>
+                            }
 
-
-
-                                    <div class="rb-analysis-text">
-                                        <h4 style="color: brown;background: #df9b9b4d;height: 18px;position: relative;top:0px;padding: 14px 5px;font-size:16px;">
-                                            <span style="position: relative;top: -10px;padding: 0px 12px">Score Rubic / Score Parameters:</span>
-                                        </h4>
-
-                                        @if (Model.AIInterviewEvaluation?.RubricScoreSummary != null && Model.AIInterviewEvaluation.RubricScoreSummary.Any())
-                                        {
-                                            @foreach (var r in Model.AIInterviewEvaluation.RubricScoreSummary)
-                                            {
-                                                var barWidth = r.Score;
-                                                if (barWidth < 0) { barWidth = 0; }
-                                                if (barWidth > 100) { barWidth = 100; }
-                                                @*                                          <div class="tech-skill-wrapper" style="margin:10px 0 16px 0;border-bottom: 1px #e4e1e1 solid;">*@
-                                                <div class="tech-skill-wrapper" style="margin:10px 0 0px 0;border-bottom: 1px #e4e1e1 solid;">
-                                                    <div style="font-weight:500;">@r.RubricItem</div>
-                                                    @if (!string.IsNullOrEmpty(r.ExpectedLevel) || !string.IsNullOrEmpty(r.ObservedLevel))
-                                                    {
-                                                        <span class="rqlevel" style="display:block;margin:4px 0 8px 0;">
-                                                            Evaluated at <b>@(r.ExpectedLevel ?? "N/A")</b> &nbsp; | &nbsp; Observed: <b>@(r.ObservedLevel ?? "N/A")</b>
-                                                        </span>
-                                                    }
-                                                    @*   <div class="skillBackground skill-round-xlarge skill-small" style="background:#e9ecef;border-radius:4px;height:13px;position:relative;">
-                                        <div class="skill-round-xlarge skill-teal" style="background:#4eda92;border-radius:4px;height:13px;width:@(barWidth)%;">
-                                        <span class="ratecount" style="position: relative;top: 16px;color: #000;right:-235px;font-weight: bold;width: 100px; display: block;">
-                                        @r.Score
-                                        </span>
+                            <div class="rb-ai-two-col">
+                                <div class="rb-ai-panel">
+                                    @if (Model.AIInterviewEvaluation.AadharVerificationId > 0)
+                                    {
+                                        <div class="rb-ai-panel__head">
+                                            <img src="/img/acknowledge-tick.png" alt="" />
+                                            <span class="rb-ai-panel__title">Verification</span>
                                         </div>
-                                        </div>
-                                        <span class="ratecount" style="position: relative;top: 16px;color: #000;right:-235px;font-weight: bold;width: 100px; display: block;">
-                                        @r.Score
-                                        </span> *@
-
-                                                    <span class="ratecount-score">
-                                                        Score : @r.Score
-                                                    </span>
-                                                </div>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <div class="rb-no-data" style="padding:10px 0 0 0;">
-                                                <p>No rubric summary found.</p>
+                                        <div class="rb-ai-verify-grid">
+                                            <div class="rb-ai-verify-item">
+                                                <div class="info-label">Aadhaar Verified</div>
+                                                <span class="status-badge success">Yes</span>
                                             </div>
-                                        }
-
-                                        <div class="rb-analysis-header" style="margin-top:14px;">
-                                            <img style="width:25px;left:-5px; top:5px; position:relative;" src="/img/techskill-score.png">
-                                            <span class="rb-analysis-title" style="font-size:16px!important;font-weight:600">
-                                                Overall Skill Score:
-                                                @if (Model.AIInterviewEvaluation.OverallTechnicalScore != 0)
-                                                {
-                                                    <span style="color:#000;margin-left:6px;font-weight:bold">@Model.AIInterviewEvaluation.OverallTechnicalScore</span>
-                                                }
-                                            </span>
-                                        </div>
-
-                                        @if (Model.AIInterviewEvaluation != null && (Model.AIInterviewEvaluation.OverallCommunicationScore != 0 || !string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.OverallCommunicationScoreReasoning)))
-                                        {
-                                            <div class="question" style="margin-top:10px;">
-                                                <div class="rb-analysis-header" style="margin:0px">
-                                                    <img style="width:20px;left:-4px;top: 2px;position:relative;" src="/img/communication-score.png">
-                                                    <span class="rb-analysis-title" style="font-size: 16px!important;font-weight: 600;">Overall Communication :</span>
-                                                    @if (Model.AIInterviewEvaluation.OverallCommunicationScore != 0)
-                                                    {
-                                                        <div style="margin:0;">
-                                                            @*  <label style="color:#000;font-weight:bold;">Overall Communication Score :</label> *@
-                                                            <span style="color:#333;font-weight:bold;font-size: 16px;">@Model.AIInterviewEvaluation.OverallCommunicationScore</span>
-                                                        </div>
-                                                    }
-
-                                                </div>
-
-                                                @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.OverallCommunicationScoreReasoning))
-                                                {
-                                                    <div style="margin:0;">
-                                                        <label style="color:#000;font-weight:bold;">Overall CommunicationScore Reasoning :</label>
-                                                        <div style="color:#333;margin:6px 0 0 0;white-space:pre-line;">@Model.AIInterviewEvaluation.OverallCommunicationScoreReasoning</div>
-                                                    </div>
-                                                }
+                                            <div class="rb-ai-verify-item">
+                                                <div class="info-label">Match Score %</div>
+                                                <div class="info-value-simple">@Model.MatchScorePercentage</div>
                                             </div>
-                                        }
+                                        </div>
+                                        <a href="#" class="aadhaar-link" onclick="javascript:FetchAadhaarDetails('@Model.InterviewId','@Model.CandidateEmail');">
+                                            <i class="fa fa-id-card"></i> Candidate verified data
+                                        </a>
+                                    }
 
-
-
-
-
+                                    <div class="rb-ai-panel__head" style="@(Model.AIInterviewEvaluation.AadharVerificationId > 0 ? "margin-top:12px;" : "")">
+                                        <img src="/img/techskill-score.png" alt="" />
+                                        <span class="rb-ai-panel__title">Score Rubric</span>
                                     </div>
+                                    @if (Model.AIInterviewEvaluation?.RubricScoreSummary != null && Model.AIInterviewEvaluation.RubricScoreSummary.Any())
+                                    {
+                                        <div class="rb-ai-table-wrap">
+                                            <table class="rb-ai-rubric-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Rubric Item</th>
+                                                        <th class="rb-ai-r-level">Expected</th>
+                                                        <th class="rb-ai-r-level">Observed</th>
+                                                        <th class="rb-ai-r-score">Score</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var r in Model.AIInterviewEvaluation.RubricScoreSummary)
+                                                    {
+                                                        <tr>
+                                                            <td>@r.RubricItem</td>
+                                                            <td class="rb-ai-r-level">@(r.ExpectedLevel ?? "—")</td>
+                                                            <td class="rb-ai-r-level">@(r.ObservedLevel ?? "—")</td>
+                                                            <td class="rb-ai-r-score">@r.Score</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p class="rb-ai-no-data-inline">No rubric summary found.</p>
+                                    }
                                 </div>
 
-
-                            </div>
-                            <div class="col-lg-9 col-md-7 col-sm-12 ai-coment-question-wrapper" style="padding:0px;margin:0px;">
-
-                                <div class="col-lg-8 col-md-7 col-sm-12" style="padding:0px!important;margin:0px!important;float:left">
-
-                                    <div id="question-list" class="rb-analysis-item" style="box-shadow:none;padding-top:0px;">
-                                        <div class="rb-analysis-header">
-                                            <img style="width:27px;position: relative;left: -4px;top:11px;" src="/img/question-asked.png">
-                                            <span class="rb-analysis-title" style="font-size:17px!important">Questions Discussed</span>
-                                        </div>
-                                        <div class="rb-analysis-text">
-                                            <div class="question question-scroll">
-                                                @if (Model.AIInterviewEvaluation?.QuestionRatings != null && Model.AIInterviewEvaluation.QuestionRatings.Any())
+                                <div class="rb-ai-panel">
+                                    <div class="rb-ai-panel__head">
+                                        <img src="/img/interviewer-comment.png" alt="" />
+                                        <span class="rb-ai-panel__title">AI Interviewer Comment</span>
+                                    </div>
+                                    @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict) || !string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalComment))
+                                    {
+                                        @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict))
+                                        {
+                                            var fvPanel = Model.AIInterviewEvaluation.FinalVerdict.Trim();
+                                            var fvPanelClass = GetFvBadgeClass(fvPanel);
+                                            <div class="rb-ai-comment-label">Final Verdict</div>
+                                            <div style="margin-bottom:8px;">
+                                                @if (fvPanelClass != null)
                                                 {
-                                                    <ol>
-                                                        @foreach (var q in Model.AIInterviewEvaluation.QuestionRatings)
-                                                        {
-                                                            <li>
-                                                                @q.Question
-                                                                @if (!string.IsNullOrWhiteSpace(q.Verdict) || q.Score != 0 || !string.IsNullOrWhiteSpace(q.Comment))
-                                                                {
-                                                                    <div>
-                                                                        @if (!string.IsNullOrWhiteSpace(q.Verdict))
-                                                                        {
-                                                                            <label>Rating : @q.Verdict</label>
-                                                                        }
-                                                                        <label>Score : @q.Score</label>
-                                                                        @if (!string.IsNullOrWhiteSpace(q.Comment))
-                                                                        {
-                                                                            <label>Comment : @q.Comment</label>
-                                                                        }
-                                                                    </div>
-                                                                }
-                                                                @if (q.CommunicationScore != 0 || !string.IsNullOrWhiteSpace(q.CommunicationComment))
-                                                                {
-                                                                    <div>
-                                                                        <label>Communication Score : @q.CommunicationScore</label>
-                                                                        @if (!string.IsNullOrWhiteSpace(q.CommunicationComment))
-                                                                        {
-                                                                            <label>Communication Comment : @q.CommunicationComment</label>
-                                                                        }
-                                                                    </div>
-                                                                }
-                                                            </li>
-                                                        }
-                                                    </ol>
+                                                    <span class="ai-final-verdict-badge @fvPanelClass">@fvPanel</span>
                                                 }
                                                 else
                                                 {
-                                                    <p class="nodata" style="margin:0;"><img width="25" src="/img/no-question.png" /><span style="font-size:16px;position:relative;top:3px;padding-left:5px;">No Question Found</span></p>
+                                                    <span style="font-weight:600;color:#0f172a;">@fvPanel</span>
                                                 }
                                             </div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                                <!-- Right: Questions Discussed (Question Ratings) -->
-                                <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12" style="float:left;padding:0px;margin:0px;">
-                                    <!-- Right: Final Verdict & Comment (like Interviewer Comment) -->
-                                    <div class="rb-analysis-item ai-interviewer-cmt" style="padding-top:0px;">
-                                        <div class="rb-analysis-header">
-                                            <img style="width:27px;position: relative;left: -2px;top:11px;" src="/img/interviewer-comment.png">
-                                            <span class="rb-analysis-title" style="font-size:17px!important">AI Interviewer Comment</span>
-                                        </div>
-                                        <div class="rb-analysis-text">
-                                            @if (Model.AIInterviewEvaluation != null && (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict) || !string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalComment)))
-                                            {
-                                                <div class="question" style="margin-top:4px;">
-                                                    @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict))
-                                                    {
-                                                        string _fvClass = null;
-                                                        var _fv = Model.AIInterviewEvaluation.FinalVerdict.Trim();
-                                                        var _fvL = _fv.ToLowerInvariant();
-                                                        if (_fvL.Contains("reject"))
-                                                        {
-                                                            _fvClass = "ai-final-verdict-reject";
-                                                        }
-                                                        else if (_fvL == "selected" || _fvL.Contains("strongly selected") || _fvL.Contains("marginally selected") || _fvL.Contains("marginal selected"))
-                                                        {
-                                                            _fvClass = "ai-final-verdict-select";
-                                                        }
-                                                        else if (_fvL == "average")
-                                                        {
-                                                            _fvClass = "ai-final-verdict-average";
-                                                        }
-                                                        <div style="margin:6px 0;">
-                                                            <label style="color:#000;font-weight:bold">Final Verdict:</label>
-                                                            @if (_fvClass != null)
-                                                            {
-                                                                <span class="ai-final-verdict-badge @_fvClass">@_fv</span>
-                                                            }
-                                                            else
-                                                            {
-                                                                <span style="color:#000;margin-left:6px;">@_fv</span>
-                                                            }
-                                                        </div>
-                                                    }
-                                                    @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalComment))
-                                                    {
-                                                        <div style="margin:6px 0;">
-                                                            <label style="color:#000;font-weight:bold;">Final Comment:</label>
-                                                            <div style="color:#000;margin:0px 0 0 0;white-space:pre-line;">@Model.AIInterviewEvaluation.FinalComment</div>
-                                                        </div>
-                                                    }
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <p class="nodata" style="margin:0;"><img src="/img/no-question.png" /><span>No Comment Found</span></p>
-                                            }
-
-
-                                        </div>
-                                    </div>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalComment))
+                                        {
+                                            <div class="rb-ai-comment-label">Final Comment</div>
+                                            <p class="rb-ai-comment-block">@Model.AIInterviewEvaluation.FinalComment</p>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p class="rb-ai-no-data-inline">No comment found.</p>
+                                    }
 
                                     @if (Model.AIInterviewEvaluation.LlmDetection != null)
                                     {
-                                        <div class="row rb-analysis-row" style="margin:0 0 0px 0;">
-
-                                            <div>
-                                                <div class="rb-analysis-item ai-interviewer-cmt" style="padding:0px;">
-                                                    <div class="rb-analysis-header">
-                                                        <img style="width:27px;position: relative;left: -2px;top:3px;" src="/img/lm-detection.png">
-
-                                                        <span class="rb-analysis-title">LLM Detection</span>
-                                                    </div>
-                                                    <div class="rb-analysis-text">
-                                                        <div style="margin-bottom:8px;">
-                                                            <strong>LLM Response Suspected:</strong>
-                                                            @(Model.AIInterviewEvaluation.LlmDetection.LlmResponseSuspected ? "Yes" : "No")
-                                                        </div>
-                                                        @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.LlmDetection.EvidenceComment))
-                                                        {
-                                                            <div style="margin-bottom:8px;">
-                                                                <strong>Evidence Comment:</strong>
-                                                                <div style="color:#333;margin-top:4px;">@Model.AIInterviewEvaluation.LlmDetection.EvidenceComment</div>
-                                                            </div>
-                                                        }
-                                                        @if (Model.AIInterviewEvaluation.LlmDetection.SuspiciousInstances != null && Model.AIInterviewEvaluation.LlmDetection.SuspiciousInstances.Any())
-                                                        {
-                                                            <div>
-                                                                <strong>Suspicious Instances:</strong>
-                                                                <ul style="margin-top:6px;">
-                                                                    @foreach (var item in Model.AIInterviewEvaluation.LlmDetection.SuspiciousInstances)
-                                                                    {
-                                                                        <li>@item</li>
-                                                                    }
-                                                                </ul>
-                                                            </div>
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div class="rb-ai-panel__head" style="margin-top:12px;">
+                                            <img src="/img/lm-detection.png" alt="" />
+                                            <span class="rb-ai-panel__title">LLM Detection</span>
                                         </div>
+                                        <div class="rb-ai-comment-block">
+                                            <strong>Suspected:</strong> @(Model.AIInterviewEvaluation.LlmDetection.LlmResponseSuspected ? "Yes" : "No")
+                                        </div>
+                                        @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.LlmDetection.EvidenceComment))
+                                        {
+                                            <div class="rb-ai-comment-label" style="margin-top:8px;">Evidence</div>
+                                            <p class="rb-ai-comment-block">@Model.AIInterviewEvaluation.LlmDetection.EvidenceComment</p>
+                                        }
+                                        @if (Model.AIInterviewEvaluation.LlmDetection.SuspiciousInstances != null && Model.AIInterviewEvaluation.LlmDetection.SuspiciousInstances.Any())
+                                        {
+                                            <div class="rb-ai-comment-label" style="margin-top:8px;">Suspicious Instances</div>
+                                            <ul style="margin:0;padding-left:18px;font-size:12.5px;line-height:1.5;color:#475569;">
+                                                @foreach (var item in Model.AIInterviewEvaluation.LlmDetection.SuspiciousInstances)
+                                                {
+                                                    <li>@item</li>
+                                                }
+                                            </ul>
+                                        }
                                     }
-
                                 </div>
                             </div>
 
+                            <div id="question-list" class="rb-ai-panel rb-ai-panel--full">
+                                <div class="rb-ai-panel__head">
+                                    <img src="/img/question-asked.png" alt="" />
+                                    <span class="rb-ai-panel__title">Questions Discussed &amp; Competency Rating</span>
+                                </div>
+                                @if (Model.AIInterviewEvaluation?.QuestionRatings != null && Model.AIInterviewEvaluation.QuestionRatings.Any())
+                                {
+                                    <div class="rb-ai-q-list">
+                                        @{ var qIdx = 1; }
+                                        @foreach (var q in Model.AIInterviewEvaluation.QuestionRatings)
+                                        {
+                                            <div class="rb-ai-q-card">
+                                                <div class="rb-ai-q-card__head">
+                                                    <span class="rb-ai-q-card__num">@qIdx</span>
+                                                    <div class="rb-ai-q-card__text">@q.Question</div>
+                                                </div>
+                                                <div class="rb-ai-q-card__meta">
+                                                    @if (!string.IsNullOrWhiteSpace(q.Verdict))
+                                                    {
+                                                        <span class="rb-ai-meta-chip">
+                                                            <strong>Rating</strong>
+                                                            <span class="rb-ai-verdict-pill @GetQVerdictPillClass(q.Verdict)">@q.Verdict</span>
+                                                        </span>
+                                                    }
+                                                    @if (q.Score != 0)
+                                                    {
+                                                        <span class="rb-ai-meta-chip"><strong>Score</strong> @q.Score</span>
+                                                    }
+                                                    @if (q.CommunicationScore != 0)
+                                                    {
+                                                        <span class="rb-ai-meta-chip"><strong>Comm.</strong> @q.CommunicationScore</span>
+                                                    }
+                                                </div>
+                                                @if (!string.IsNullOrWhiteSpace(q.Comment))
+                                                {
+                                                    <div class="rb-ai-q-card__note">
+                                                        <span class="rb-ai-q-card__note-label">Comment</span>@q.Comment
+                                                    </div>
+                                                }
+                                                @if (!string.IsNullOrWhiteSpace(q.CommunicationComment))
+                                                {
+                                                    <div class="rb-ai-q-card__note">
+                                                        <span class="rb-ai-q-card__note-label">Comm. Comment</span>@q.CommunicationComment
+                                                    </div>
+                                                }
+                                            </div>
+                                            qIdx++;
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <p class="rb-ai-no-data-inline"><img width="20" src="/img/no-question.png" alt="" style="margin-right:6px;vertical-align:middle;" />No questions found.</p>
+                                }
+                            </div>
                         </div>
 
 
