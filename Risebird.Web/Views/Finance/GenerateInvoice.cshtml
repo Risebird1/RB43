@@ -527,22 +527,17 @@
                     </div>
                     <div class="col-md-12">
                         <div class="gen-inv-field">
-                            <label class="gen-inv-label">e-Invoice File <span class="tag-auto">PDF / Word</span></label>
+                            <label class="gen-inv-label">e-Invoice Files <span class="tag-auto">PDF / Word · multiple allowed</span></label>
                             <div class="gen-inv-upload-row">
-                                <label class="gen-inv-upload-btn">
+                                <label class="gen-inv-upload-btn" title="Selecting files replaces any previously uploaded files">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>
                                     Upload e-Invoice
-                                    <input type="file" id="fileEInvoice" accept=".pdf,.doc,.docx" style="display:none;" onchange="uploadEInvoiceFile(this)" />
+                                    <input type="file" id="fileEInvoice" accept=".pdf,.doc,.docx" multiple style="display:none;" onchange="uploadEInvoiceFile(this)" />
                                 </label>
                                 <span id="spnEInvoiceUploadStatus" style="font-size:12px;color:#555;"></span>
                             </div>
                             <input type="hidden" id="hidEInvoiceFileLink" name="EInvoiceFileLink" value="" />
-                            <div id="divEInvoiceLink" style="display:none;margin-top:8px;">
-                                <a id="lnkEInvoiceFile" href="#" target="_blank" style="font-size:12px;color:#42a5f5;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16" style="margin-right:3px;"><path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/><path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/></svg>
-                                    View Uploaded File
-                                </a>
-                            </div>
+                            <div id="divEInvoiceLink" style="display:none;margin-top:8px;"></div>
                         </div>
                     </div>
                 </div>
@@ -1043,15 +1038,38 @@
         return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
 
+    var _genInvLinkIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16" style="margin-right:3px;"><path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/><path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/></svg>';
+
+    function fileNameFromUrl(url) {
+        var blobName = url.split('/').pop().split('?')[0];
+        var m = blobName.match(/^einvoice_\d{14}_(.+)$/);
+        return m ? decodeURIComponent(m[1]) : blobName;
+    }
+
+    function renderEInvoiceLinks(fileUrls, fileNames) {
+        var container = document.getElementById('divEInvoiceLink');
+        container.innerHTML = '';
+        if (!fileUrls || fileUrls.length === 0) { container.style.display = 'none'; return; }
+        container.style.display = 'block';
+        fileUrls.forEach(function (url, i) {
+            var label = (fileNames && fileNames[i]) ? fileNames[i] : fileNameFromUrl(url);
+            var row   = document.createElement('div');
+            row.style.marginBottom = '3px';
+            row.innerHTML = '<a href="' + url + '" target="_blank" style="font-size:12px;color:#42a5f5;">' +
+                            _genInvLinkIcon + label + '</a>';
+            container.appendChild(row);
+        });
+    }
+
     function uploadEInvoiceFile(input) {
-        if (!input.files || !input.files[0]) return;
-        var file = input.files[0];
+        if (!input.files || input.files.length === 0) return;
+        var count  = input.files.length;
         var status = document.getElementById('spnEInvoiceUploadStatus');
         status.style.color = '#555';
-        status.textContent = 'Uploading…';
+        status.textContent = 'Uploading ' + count + ' file' + (count > 1 ? 's' : '') + '…';
 
         var fd = new FormData();
-        fd.append('file', file);
+        for (var i = 0; i < count; i++) { fd.append('files', input.files[i]); }
 
         $.ajax({
             url: '/Finance/UploadEInvoiceFile',
@@ -1062,11 +1080,11 @@
             headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
             success: function (res) {
                 if (res.success) {
-                    document.getElementById('hidEInvoiceFileLink').value = res.fileUrl;
-                    document.getElementById('lnkEInvoiceFile').href = res.fileUrl;
-                    document.getElementById('divEInvoiceLink').style.display = 'block';
+                    // Replace old files — store pipe-separated URLs in the hidden field
+                    document.getElementById('hidEInvoiceFileLink').value = res.combinedUrl;
+                    renderEInvoiceLinks(res.fileUrls, res.fileNames);
                     status.style.color = '#2e7d32';
-                    status.textContent = file.name + ' — uploaded';
+                    status.textContent = res.fileNames.length + ' file' + (res.fileNames.length > 1 ? 's' : '') + ' uploaded (old files replaced)';
                 } else {
                     status.style.color = '#c62828';
                     status.textContent = res.message || 'Upload failed.';

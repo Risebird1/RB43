@@ -258,8 +258,7 @@
                                         <th class="text-right">PO Credit</th>
                                         <th class="text-right">Cash Received</th>
                                         <th class="text-right">Pending Cash</th>
-                                        <th>Status</th>
-                                        <th>Document</th>
+                                                    <th>Document</th>
                                         <th class="text-center">Actions</th>
                                     </tr>
                                 </thead>
@@ -279,8 +278,7 @@
                                             <td class="text-right">@(po.POCreditAmount > 0 ? "₹ " + po.POCreditAmount.ToString("N0") : "—")</td>
                                             <td class="text-right">@(po.CashCreditReceived > 0 ? "₹ " + po.CashCreditReceived.ToString("N0") : "—")</td>
                                             <td class="text-right">@(po.POCreditAmount > 0 ? "₹ " + po.PendingCashCredit.ToString("N0") : "—")</td>
-                                            <td><span class="badge @po.StatusCss">@po.StatusDesc</span></td>
-                                            <td>
+                                                        <td>
                                                 @if (!string.IsNullOrEmpty(po.PODocumentUrl))
                                                 {
                                                     <a href="@po.PODocumentUrl" target="_blank" class="btn btn-sm btn-link">View PDF</a>
@@ -437,10 +435,32 @@
                 {
                     <div class="form-group">
                         <label>Link to PO (optional)</label>
-                        <select id="ddlCashPO" class="form-control">
+                        <select id="ddlCashPO" class="form-control" onchange="ShowSelectedPOStatus()">
                             <option value="">— Standalone cash credit —</option>
                         </select>
                         <small class="text-muted">Select a registered PO to post cash credit against it in wallet.</small>
+                        <div id="divSelectedPOStatus" style="margin-top:8px;display:none;">
+                            <table style="font-size:12px;width:100%;background:#f8f9fa;border-radius:4px;padding:8px;border:1px solid #dee2e6;">
+                                <tr>
+                                    <td style="color:#666;padding:2px 6px;">Status</td>
+                                    <td style="padding:2px 6px;"><span id="spnPOStatusBadge" class="badge"></span></td>
+                                    <td style="color:#666;padding:2px 6px;">Period</td>
+                                    <td id="spnPOPeriod" style="padding:2px 6px;font-weight:600;"></td>
+                                </tr>
+                                <tr>
+                                    <td style="color:#666;padding:2px 6px;">PO Credit</td>
+                                    <td id="spnPOCredit" style="padding:2px 6px;font-weight:600;"></td>
+                                    <td style="color:#666;padding:2px 6px;">Cash Received</td>
+                                    <td id="spnPOCash" style="padding:2px 6px;font-weight:600;"></td>
+                                </tr>
+                                <tr>
+                                    <td style="color:#666;padding:2px 6px;">Pending</td>
+                                    <td id="spnPOPending" style="padding:2px 6px;font-weight:600;color:#c62828;"></td>
+                                    <td style="color:#666;padding:2px 6px;">Remarks</td>
+                                    <td id="spnPORemarks" style="padding:2px 6px;"></td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                 }
                 <input type="hidden" id="hidCashPOId" value="" />
@@ -581,19 +601,39 @@
         $('#cashCreditModal').modal('show');
     }
 
+    var _openPOItems = [];
+
     function LoadOpenPOs(selectedId) {
         var ownerId = _requiresOwner ? $('#ddlCashOwner').val() : null;
+        $('#divSelectedPOStatus').hide();
         $.get('/Wallet/GetOpenClientPOs', { clientId: _clientId, billingOwnerId: ownerId }, function (r) {
             var $ddl = $('#ddlCashPO');
             $ddl.empty().append('<option value="">— Standalone cash credit —</option>');
+            _openPOItems = [];
             if (r.success && r.items) {
+                _openPOItems = r.items;
                 r.items.forEach(function (item) {
                     $ddl.append('<option value="' + item.id + '">' + item.label + '</option>');
                 });
             }
             var pre = selectedId || $('#hidCashPOId').val();
-            if (pre) $ddl.val(pre);
+            if (pre) { $ddl.val(pre); ShowSelectedPOStatus(); }
         });
+    }
+
+    function ShowSelectedPOStatus() {
+        var selectedId = parseInt($('#ddlCashPO').val());
+        var $panel = $('#divSelectedPOStatus');
+        if (!selectedId) { $panel.hide(); return; }
+        var po = _openPOItems.find(function (x) { return x.id === selectedId; });
+        if (!po) { $panel.hide(); return; }
+        $('#spnPOStatusBadge').attr('class', 'badge ' + po.statusCss).text(po.statusDesc);
+        $('#spnPOPeriod').text(po.periodLabel || '—');
+        $('#spnPOCredit').text(po.poCreditAmount > 0 ? '₹ ' + Number(po.poCreditAmount).toLocaleString('en-IN') : '—');
+        $('#spnPOCash').text(po.cashCreditReceived > 0 ? '₹ ' + Number(po.cashCreditReceived).toLocaleString('en-IN') : '—');
+        $('#spnPOPending').text(po.pending > 0 ? '₹ ' + Number(po.pending).toLocaleString('en-IN') : '—');
+        $('#spnPORemarks').text(po.remarks || '—');
+        $panel.show();
     }
 
     function OpenPOCreditModal(ownerId) {

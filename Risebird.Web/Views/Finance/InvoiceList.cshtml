@@ -1,5 +1,6 @@
 @model IEnumerable<Risebird.Entities.ViewModel.InvoiceListVM>
 @using System
+@using System.Linq
 @using Newtonsoft.Json
 @using Microsoft.AspNetCore.Http
 @using Risebird.Entities.ViewModel
@@ -28,12 +29,10 @@
     bool unpaidHasAnyRemark = unpaidList.Any(m => !string.IsNullOrEmpty(m.LatestRemark));
 
     // Per-status counts & gross for unpaid sub-tabs
-    int upCountDraft              = unpaidList.Count(x => x.Status == 0);
     int upCountGenerated          = unpaidList.Count(x => x.Status == 1);
     int upCountPOPending          = unpaidList.Count(x => x.Status == 2);
     int upCountApprovalPending    = unpaidList.Count(x => x.Status == 3);
     int upCountIRP                = unpaidList.Count(x => x.Status == 4);
-    decimal upGrossDraft              = unpaidList.Where(x => x.Status == 0).Sum(x => x.GrossAmount);
     decimal upGrossGenerated          = unpaidList.Where(x => x.Status == 1).Sum(x => x.GrossAmount);
     decimal upGrossPOPending          = unpaidList.Where(x => x.Status == 2).Sum(x => x.GrossAmount);
     decimal upGrossApprovalPending    = unpaidList.Where(x => x.Status == 3).Sum(x => x.GrossAmount);
@@ -207,6 +206,25 @@
     }
     /* Hidden integer-status column used only for DataTable column search */
     .inv-status-int-col { display: none !important; }
+    /* Due Date / Expected Date / Aging columns */
+    .col-duedate, .col-expecteddate, .col-aging {
+        white-space: nowrap;
+        min-width: 105px;
+    }
+    .col-aging-overdue { color: #c62828; font-weight: 600; }
+    .col-aging-ok      { color: #2e7d32; }
+    .inv-expdate-display {
+        font-size: 12px;
+        color: #333;
+        white-space: nowrap;
+    }
+    .inv-expdate-display.not-set { color: #aaa; font-style: italic; }
+    .btn-set-expdate {
+        padding: 2px 7px;
+        font-size: 11px;
+        margin-left: 4px;
+        vertical-align: middle;
+    }
 </style>
 
 <div class="main-panel invoice-list-page" id="main-panel">
@@ -329,7 +347,6 @@
                                                                 <div class="col-md-12">
                                                                     <select id="FilterStatus" name="Status" data-placeholder="All Statuses"
                                                                             class="form-control multiselect" multiple="multiple">
-                                                                        <option value="0">Draft</option>
                                                                         <option value="1">Generated</option>
                                                                         <option value="2">PO Pending</option>
                                                                         <option value="3">Approval Pending</option>
@@ -360,6 +377,36 @@
                                     </div>
                                 </div>
                             }
+
+                            <!-- ══ Expected Date Modal ══ -->
+                            <div class="modal fade" id="expectedDateModal" tabindex="-1" role="dialog" aria-labelledby="expectedDateModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-sm" role="document">
+                                    <div class="modal-content">
+                                        <div class="filheader">
+                                            <div class="filavatar"><span class="fa fa-calendar"></span></div>
+                                            <h5 class="modal-title pull-left" id="expectedDateModalLabel">Set Expected Date</h5>
+                                        </div>
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <div class="modal-body" style="padding:20px 24px;">
+                                            <div class="form-group">
+                                                <label class="control-label desp-label" style="font-size:12px;font-weight:600;">Expected Payment Date</label>
+                                                <input type="date" id="expectedDateInput" class="form-control" style="margin-top:6px;" />
+                                            </div>
+                                            <p id="expectedDateError" class="text-danger" style="font-size:12px;display:none;margin-top:6px;"></p>
+                                        </div>
+                                        <div class="modal-footer" style="padding:10px 24px 16px;">
+                                            <button type="button" class="mdc-button mdc-button--outlined mdc-ripple-upgraded" data-bs-dismiss="modal" style="font-size:12px;">
+                                                Cancel
+                                            </button>
+                                            <button type="button" id="saveExpectedDateBtn" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="font-size:12px;">
+                                                <span id="saveExpDateBtnLabel">Save</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                             <!-- ══ Tab Navigation (page-navigation, not client-side toggle) ══ -->
                             <ul class="nav inv-nav-tabs" role="tablist">
@@ -406,13 +453,6 @@
                                               data-count="@unpaidList.Count">
                                             All
                                             <span class="inv-sub-tab-badge">@unpaidList.Count</span>
-                                        </span>
-                                        <span class="sub-tab" data-ustatus="0"
-                                              data-label="Draft"
-                                              data-gross="@upGrossDraft.ToString("N2")"
-                                              data-count="@upCountDraft">
-                                            Draft
-                                            <span class="inv-sub-tab-badge">@upCountDraft</span>
                                         </span>
                                         <span class="sub-tab" data-ustatus="1"
                                               data-label="Generated"
@@ -468,6 +508,9 @@
                                                     <th>Owner</th>
                                                     @if (unpaidHasAnyRemark) { <th>Latest Remark</th> }
                                                     <th>UTR / Trxn</th>
+                                                    <th class="col-duedate">Due Date</th>
+                                                    <th class="col-expecteddate">Expected Date</th>
+                                                    <th class="col-aging">Aging</th>
                                                     <th>Actions</th>
                                                     <th class="inv-status-int-col"></th>
                                                 </tr>
@@ -487,6 +530,9 @@
                                                     <th>Owner</th>
                                                     @if (unpaidHasAnyRemark) { <th>Latest Remark</th> }
                                                     <th>UTR / Trxn</th>
+                                                    <th class="col-duedate">Due Date</th>
+                                                    <th class="col-expecteddate">Expected Date</th>
+                                                    <th class="col-aging">Aging</th>
                                                     <th>Actions</th>
                                                     <th class="inv-status-int-col"></th>
                                                 </tr>
@@ -495,12 +541,14 @@
                                                 @if (!unpaidList.Any())
                                                 {
                                                     <tr>
-                                                        <td colspan="@(unpaidHasAnyRemark ? 15 : 14)" class="text-center">No unpaid invoices found.</td>
+                                                        <td colspan="@(unpaidHasAnyRemark ? 18 : 17)" class="text-center">No unpaid invoices found.</td>
                                                     </tr>
                                                 }
                                                 @{ int unpaidRow = 1; }
                                                 @foreach (var item in unpaidList)
                                                 {
+                                                    var uDueDate = ComputeDueDate(item.InvoiceMonth, item.InvoiceYear, item.CreditPeriod);
+                                                    var uAging   = ComputeAging(uDueDate);
                                                     <tr data-ustatus="@item.Status">
                                                         <td>@unpaidRow</td>
                                                         <td>@item.ClientName</td>
@@ -535,11 +583,36 @@
                                                             </td>
                                                         }
                                                         <td>@(item.BillingModel != 1 && item.BillingModel != 0 ? item.UTRTrxn : "")</td>
-                                                        <td class="text-center">
+                                                        <td class="col-duedate">
+                                                            @(uDueDate.HasValue ? uDueDate.Value.ToString("dd MMM yyyy") : "—")
+                                                        </td>
+                                                        <td class="col-expecteddate">
+                                                            @if (item.ExpectedDate.HasValue)
+                                                            {
+                                                                <span class="inv-expdate-display">@item.ExpectedDate.Value.ToString("dd MMM yyyy")</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="inv-expdate-display not-set">Not set</span>
+                                                            }
+                                                        </td>
+                                                        <td class="col-aging @(string.IsNullOrEmpty(uAging) ? "col-aging-ok" : "col-aging-overdue")">
+                                                            @(string.IsNullOrEmpty(uAging) ? "—" : uAging)
+                                                        </td>
+                                                        <td class="text-center" style="white-space:nowrap;">
                                                             <a href="@Url.Action("ViewInvoice","Finance", new { invoiceId = item.id })"
                                                                target="_blank" class="btn btn-sm btn-outline-primary" title="View / Edit Invoice">
                                                                 <i class="fa fa-eye"></i> View
                                                             </a>
+                                                            <button type="button"
+                                                                    class="btn btn-sm btn-outline-secondary btn-set-expdate"
+                                                                    data-invoice-id="@item.id"
+                                                                    data-current-date="@(item.ExpectedDate.HasValue ? item.ExpectedDate.Value.ToString("yyyy-MM-dd") : "")"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#expectedDateModal"
+                                                                    title="Set Expected Date">
+                                                                <i class="fa fa-calendar"></i>
+                                                            </button>
                                                         </td>
                                                         <td class="inv-status-int-col">@item.Status</td>
                                                     </tr>
@@ -737,6 +810,9 @@
                                                     <th>Owner</th>
                                                     @if (hasAnyRemark) { <th>Latest Remark</th> }
                                                     <th>UTR / Trxn</th>
+                                                    <th class="col-duedate">Due Date</th>
+                                                    <th class="col-expecteddate">Expected Date</th>
+                                                    <th class="col-aging">Aging</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
@@ -754,6 +830,9 @@
                                                     <th>Owner</th>
                                                     @if (hasAnyRemark) { <th>Latest Remark</th> }
                                                     <th>UTR / Trxn</th>
+                                                    <th class="col-duedate">Due Date</th>
+                                                    <th class="col-expecteddate">Expected Date</th>
+                                                    <th class="col-aging">Aging</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </tfoot>
@@ -761,12 +840,14 @@
                                                 @if (!Model.Any())
                                                 {
                                                     <tr>
-                                                        <td colspan="@(hasAnyRemark ? 13 : 12)" class="text-center">No records found for the selected month.</td>
+                                                        <td colspan="@(hasAnyRemark ? 16 : 15)" class="text-center">No records found for the selected month.</td>
                                                     </tr>
                                                 }
                                                 @{ int rowNo = 1; }
                                                 @foreach (var item in Model)
                                                 {
+                                                    var mDueDate = ComputeDueDate(item.InvoiceMonth, item.InvoiceYear, item.CreditPeriod);
+                                                    var mAging   = ComputeAging(mDueDate);
                                                     <tr>
                                                         <td>@rowNo</td>
                                                         <td>@item.ClientName</td>
@@ -799,11 +880,39 @@
                                                             </td>
                                                         }
                                                         <td>@(item.BillingModel != 1 && item.BillingModel != 0 ? item.UTRTrxn : "")</td>
-                                                        <td class="text-center">
+                                                        <td class="col-duedate">
+                                                            @(item.Status == 5 ? "—" : mDueDate.HasValue ? mDueDate.Value.ToString("dd MMM yyyy") : "—")
+                                                        </td>
+                                                        <td class="col-expecteddate">
+                                                            @if (item.ExpectedDate.HasValue)
+                                                            {
+                                                                <span class="inv-expdate-display">@item.ExpectedDate.Value.ToString("dd MMM yyyy")</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="inv-expdate-display not-set">Not set</span>
+                                                            }
+                                                        </td>
+                                                        <td class="col-aging @(item.Status != 5 && !string.IsNullOrEmpty(mAging) ? "col-aging-overdue" : "col-aging-ok")">
+                                                            @(item.Status == 5 ? "—" : string.IsNullOrEmpty(mAging) ? "—" : mAging)
+                                                        </td>
+                                                        <td class="text-center" style="white-space:nowrap;">
                                                             <a href="@Url.Action("ViewInvoice","Finance", new { invoiceId = item.id })"
                                                                target="_blank" class="btn btn-sm btn-outline-primary" title="View / Edit Invoice">
                                                                 <i class="fa fa-eye"></i> View
                                                             </a>
+                                                            @if (item.Status != 5)
+                                                            {
+                                                                <button type="button"
+                                                                        class="btn btn-sm btn-outline-secondary btn-set-expdate"
+                                                                        data-invoice-id="@item.id"
+                                                                        data-current-date="@(item.ExpectedDate.HasValue ? item.ExpectedDate.Value.ToString("yyyy-MM-dd") : "")"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#expectedDateModal"
+                                                                        title="Set Expected Date">
+                                                                    <i class="fa fa-calendar"></i>
+                                                                </button>
+                                                            }
                                                         </td>
                                                     </tr>
                                                     rowNo++;
@@ -950,6 +1059,61 @@
         });
     }
 
+    // ── Expected Date modal ────────────────────────────────────────────────
+    var _expDateInvoiceId  = null;
+    var _expDateTriggerBtn = null;
+
+    // Populate modal when a calendar button is clicked
+    $(document).on('click', '.btn-set-expdate', function () {
+        _expDateInvoiceId  = $(this).data('invoice-id');
+        _expDateTriggerBtn = $(this);
+        var currentDate    = $(this).data('current-date') || '';
+        $('#expectedDateInput').val(currentDate);
+        $('#expectedDateError').hide().text('');
+        $('#saveExpDateBtnLabel').text('Save');
+        $('#saveExpectedDateBtn').prop('disabled', false);
+    });
+
+    // Save button handler
+    $('#saveExpectedDateBtn').on('click', function () {
+        var dateValue = $('#expectedDateInput').val();
+        $('#expectedDateError').hide().text('');
+        $('#saveExpDateBtnLabel').text('Saving…');
+        $('#saveExpectedDateBtn').prop('disabled', true);
+
+        $.ajax({
+            url:  '/Finance/SaveInvoiceExpectedDate',
+            type: 'POST',
+            data: { invoiceId: _expDateInvoiceId, expectedDate: dateValue },
+            success: function (res) {
+                $('#saveExpDateBtnLabel').text('Save');
+                $('#saveExpectedDateBtn').prop('disabled', false);
+                if (res.success) {
+                    // Update the display cell and the button's data attribute
+                    var displayText = dateValue
+                        ? new Date(dateValue).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+                        : 'Not set';
+                    var $cell = _expDateTriggerBtn.closest('tr').find('.inv-expdate-display');
+                    $cell.text(displayText);
+                    if (dateValue) {
+                        $cell.removeClass('not-set');
+                    } else {
+                        $cell.addClass('not-set');
+                    }
+                    _expDateTriggerBtn.data('current-date', dateValue);
+                    $('#expectedDateModal').modal('hide');
+                } else {
+                    $('#expectedDateError').text(res.message || 'Failed to save.').show();
+                }
+            },
+            error: function () {
+                $('#saveExpDateBtnLabel').text('Save');
+                $('#saveExpectedDateBtn').prop('disabled', false);
+                $('#expectedDateError').text('An error occurred. Please try again.').show();
+            }
+        });
+    });
+
     function refreshBtn(tableId) {
         return "<span class='ref-btn' onclick='RefreshTable(\"" + tableId + "\")'>" +
             "<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'>" +
@@ -989,3 +1153,26 @@
         }, 1500);
     };
 </script>
+
+@functions {
+    DateTime? ComputeDueDate(int invoiceMonth, int invoiceYear, string creditPeriod)
+    {
+        if (invoiceMonth < 1 || invoiceMonth > 12 || invoiceYear < 1) return null;
+        var lastDay = new DateTime(invoiceYear, invoiceMonth, 1).AddMonths(1).AddDays(-1);
+        int days = 0;
+        if (!string.IsNullOrEmpty(creditPeriod))
+        {
+            var digits = new string(creditPeriod.Where(c => char.IsDigit(c)).ToArray());
+            int.TryParse(digits, out days);
+        }
+        return lastDay.AddDays(days);
+    }
+
+    string ComputeAging(DateTime? dueDate)
+    {
+        if (!dueDate.HasValue) return "";
+        if (dueDate.Value.Date < DateTime.Today)
+            return (DateTime.Today - dueDate.Value.Date).Days + " days";
+        return "";
+    }
+}
