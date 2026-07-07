@@ -1,5 +1,6 @@
 @model Risebird.Entities.ViewModel.InvoiceDetailVM
 @using System.Globalization
+@using System.Linq
 @{
     ViewData["Title"] = "View Invoice";
     ViewBag.PageHeader = "View Invoice";
@@ -111,21 +112,39 @@
                     <input type="text" id="editIRN" class="form-control editable-field"
                            value="@Model.IRN" placeholder="IRN" />
                     <div style="margin-top:8px;">
-                        <label class="vi-label">e-Invoice File <span style="font-weight:400;color:#888;">(PDF / Word)</span></label>
+                        <label class="vi-label">e-Invoice Files <span style="font-weight:400;color:#888;">(PDF / Word · multiple allowed)</span></label>
                         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px;">
-                            <label class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="font-size:11px;cursor:pointer;margin:0;">
+                            <label class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="font-size:11px;cursor:pointer;margin:0;" title="Selecting files replaces any previously uploaded files">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16" style="margin-right:4px;"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>
                                 Upload e-Invoice
-                                <input type="file" id="fileEInvoiceView" accept=".pdf,.doc,.docx" style="display:none;" onchange="uploadEInvoiceFileView(this)" />
+                                <input type="file" id="fileEInvoiceView" accept=".pdf,.doc,.docx" multiple style="display:none;" onchange="uploadEInvoiceFileView(this)" />
                             </label>
                             <span id="spnEInvoiceViewStatus" style="font-size:12px;color:#555;"></span>
                         </div>
                         <input type="hidden" id="hidEInvoiceFileLinkView" value="@Model.EInvoiceFileLink" />
-                        <div id="divEInvoiceLinkView" style="margin-top:5px;@(string.IsNullOrEmpty(Model.EInvoiceFileLink) ? "display:none;" : "")">
-                            <a id="lnkEInvoiceFileView" href="@Model.EInvoiceFileLink" target="_blank" style="font-size:12px;color:#1976d2;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16" style="margin-right:3px;"><path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/><path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/></svg>
-                                View Uploaded File
-                            </a>
+                        @{
+                            var existingLinks = (Model.EInvoiceFileLink ?? "")
+                                .Split('|')
+                                .Where(l => !string.IsNullOrWhiteSpace(l))
+                                .ToArray();
+                            // Extract original filename from blob URL: einvoice_YYYYMMDDHHMMSS_originalname.ext
+                            string ExtractBlobFileName(string url)
+                            {
+                                var blobName = url.Split('/').Last().Split('?').First();
+                                var match = System.Text.RegularExpressions.Regex.Match(blobName, @"^einvoice_\d{14}_(.+)$");
+                                return match.Success ? Uri.UnescapeDataString(match.Groups[1].Value) : blobName;
+                            }
+                        }
+                        <div id="divEInvoiceLinkView" style="margin-top:6px;@(existingLinks.Length == 0 ? "display:none;" : "")">
+                            @foreach (var elink in existingLinks)
+                            {
+                                <div class="einv-file-row" style="margin-bottom:3px;">
+                                    <a href="@elink" target="_blank" style="font-size:12px;color:#1976d2;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16" style="margin-right:3px;"><path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/><path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/></svg>
+                                        @ExtractBlobFileName(elink)
+                                    </a>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -414,15 +433,39 @@
         });
     }
 
+    var _einvLinkIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16" style="margin-right:3px;"><path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/><path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/></svg>';
+
+    function fileNameFromUrl(url) {
+        var blobName = url.split('/').pop().split('?')[0];
+        var m = blobName.match(/^einvoice_\d{14}_(.+)$/);
+        return m ? decodeURIComponent(m[1]) : blobName;
+    }
+
+    function renderEInvoiceLinksView(fileUrls, fileNames) {
+        var container = document.getElementById('divEInvoiceLinkView');
+        container.innerHTML = '';
+        if (!fileUrls || fileUrls.length === 0) { container.style.display = 'none'; return; }
+        container.style.display = 'block';
+        fileUrls.forEach(function (url, i) {
+            var label = (fileNames && fileNames[i]) ? fileNames[i] : fileNameFromUrl(url);
+            var row   = document.createElement('div');
+            row.className = 'einv-file-row';
+            row.style.marginBottom = '3px';
+            row.innerHTML = '<a href="' + url + '" target="_blank" style="font-size:12px;color:#1976d2;">' +
+                            _einvLinkIcon + label + '</a>';
+            container.appendChild(row);
+        });
+    }
+
     function uploadEInvoiceFileView(input) {
-        if (!input.files || !input.files[0]) return;
-        var file = input.files[0];
+        if (!input.files || input.files.length === 0) return;
+        var count  = input.files.length;
         var status = document.getElementById('spnEInvoiceViewStatus');
-        status.style.color = '#555';
-        status.textContent = 'Uploading…';
+        status.style.color   = '#555';
+        status.textContent   = 'Uploading ' + count + ' file' + (count > 1 ? 's' : '') + '…';
 
         var fd = new FormData();
-        fd.append('file', file);
+        for (var i = 0; i < count; i++) { fd.append('files', input.files[i]); }
 
         $.ajax({
             url: '/Finance/UploadEInvoiceFile',
@@ -433,11 +476,11 @@
             headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
             success: function (res) {
                 if (res.success) {
-                    document.getElementById('hidEInvoiceFileLinkView').value = res.fileUrl;
-                    document.getElementById('lnkEInvoiceFileView').href = res.fileUrl;
-                    document.getElementById('divEInvoiceLinkView').style.display = 'block';
+                    // Replace old files — store pipe-separated URLs
+                    document.getElementById('hidEInvoiceFileLinkView').value = res.combinedUrl;
+                    renderEInvoiceLinksView(res.fileUrls, res.fileNames);
                     status.style.color = '#2e7d32';
-                    status.textContent = file.name + ' — uploaded';
+                    status.textContent = res.fileNames.length + ' file' + (res.fileNames.length > 1 ? 's' : '') + ' uploaded (old files replaced)';
                 } else {
                     status.style.color = '#c62828';
                     status.textContent = res.message || 'Upload failed.';
