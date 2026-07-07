@@ -17,19 +17,24 @@ namespace Risebird.Repository.Interface
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo, int page, int pageSize,
             string automationStatus = null, string callStatus = null, string disposition = null,
-            string funnelStage = null, string onboardingType = null);
+            string funnelStage = null, string onboardingType = null, string assignedTo = null);
 
         Task<Dictionary<string, int>> GetFunnelStageCountsAsync(
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo,
             string automationStatus = null, string callStatus = null, string disposition = null,
-            string funnelStage = null, string onboardingType = null);
+            string funnelStage = null, string onboardingType = null, string assignedTo = null);
 
         Task<Dictionary<string, int>> GetFunnelReachCountsAsync(
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo,
             string automationStatus = null, string callStatus = null, string disposition = null,
-            string funnelStage = null, string onboardingType = null);
+            string funnelStage = null, string onboardingType = null, string assignedTo = null);
+
+        // Ticket assignment: eligible operators (InterviewerManagement / SeniorInterviewerManagement)
+        // and manual (re)assignment of a prospect to one of them.
+        Task<List<NaukriAssigneeVM>> GetEligibleAssigneesAsync();
+        Task<(bool Success, string FromAssignedTo, string ToEmail, string ToName)> UpdateAssignmentAsync(int id, int assignedToUserId);
 
         // SendGrid delivery status of the invitation email for a recipient (null if none sent yet).
         Task<NaukriInvitationEmailStatus> GetInvitationEmailStatusAsync(string email);

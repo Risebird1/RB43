@@ -110,7 +110,7 @@ namespace Risebird.Repository
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo, int page, int pageSize,
             string automationStatus = null, string callStatus = null, string disposition = null,
-            string funnelStage = null, string onboardingType = null)
+            string funnelStage = null, string onboardingType = null, string assignedTo = null)
         {
             try
             {
@@ -125,6 +125,7 @@ namespace Risebird.Repository
                 p.Add("@Disposition", string.IsNullOrWhiteSpace(disposition) ? null : disposition);
                 p.Add("@FunnelStage", string.IsNullOrWhiteSpace(funnelStage) ? null : funnelStage);
                 p.Add("@OnboardingType", string.IsNullOrWhiteSpace(onboardingType) ? null : onboardingType);
+                p.Add("@AssignedTo", string.IsNullOrWhiteSpace(assignedTo) ? null : assignedTo);
                 p.Add("@DateFrom", dateFrom);
                 p.Add("@DateTo", dateTo);
                 p.Add("@Page", page);
@@ -147,7 +148,7 @@ namespace Risebird.Repository
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo,
             string automationStatus = null, string callStatus = null, string disposition = null,
-            string funnelStage = null, string onboardingType = null)
+            string funnelStage = null, string onboardingType = null, string assignedTo = null)
         {
             try
             {
@@ -162,6 +163,7 @@ namespace Risebird.Repository
                 p.Add("@Disposition", string.IsNullOrWhiteSpace(disposition) ? null : disposition);
                 p.Add("@FunnelStage", string.IsNullOrWhiteSpace(funnelStage) ? null : funnelStage);
                 p.Add("@OnboardingType", string.IsNullOrWhiteSpace(onboardingType) ? null : onboardingType);
+                p.Add("@AssignedTo", string.IsNullOrWhiteSpace(assignedTo) ? null : assignedTo);
                 p.Add("@DateFrom", dateFrom);
                 p.Add("@DateTo", dateTo);
 
@@ -193,7 +195,7 @@ namespace Risebird.Repository
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo,
             string automationStatus = null, string callStatus = null, string disposition = null,
-            string funnelStage = null, string onboardingType = null)
+            string funnelStage = null, string onboardingType = null, string assignedTo = null)
         {
             try
             {
@@ -208,6 +210,7 @@ namespace Risebird.Repository
                 p.Add("@Disposition", string.IsNullOrWhiteSpace(disposition) ? null : disposition);
                 p.Add("@FunnelStage", string.IsNullOrWhiteSpace(funnelStage) ? null : funnelStage);
                 p.Add("@OnboardingType", string.IsNullOrWhiteSpace(onboardingType) ? null : onboardingType);
+                p.Add("@AssignedTo", string.IsNullOrWhiteSpace(assignedTo) ? null : assignedTo);
                 p.Add("@DateFrom", dateFrom);
                 p.Add("@DateTo", dateTo);
 
@@ -288,6 +291,56 @@ namespace Risebird.Repository
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        // Eligible operators for the assignee dropdowns / filter: active InterviewerManagement or
+        // SeniorInterviewerManagement users.
+        public async Task<List<NaukriAssigneeVM>> GetEligibleAssigneesAsync()
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var result = await con.QueryAsync<NaukriAssigneeVM>(
+                    "usp_GetNaukriEligibleAssignees", commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return result.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<NaukriAssigneeVM>();
+            }
+        }
+
+        // Manually (re)assigns a prospect to an eligible operator. Returns success + the previous and
+        // new assignee (for history logging). Rejects non-eligible / inactive target users.
+        public async Task<(bool Success, string FromAssignedTo, string ToEmail, string ToName)> UpdateAssignmentAsync(int id, int assignedToUserId)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@Id", id);
+                p.Add("@AssignedToUserId", assignedToUserId);
+                p.Add("@FromAssignedTo", dbType: DbType.String, direction: ParameterDirection.Output, size: 150);
+                p.Add("@RowsAffected", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await con.ExecuteAsync("usp_UpdateNaukriProspectAssignment", p,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+
+                int rows = p.Get<int>("@RowsAffected");
+                string from = p.Get<string>("@FromAssignedTo");
+                if (rows <= 0)
+                    return (false, from, null, null);
+
+                // Re-read the freshly-set assignee for accurate name/email in the response + history.
+                var rec = await GetByIdAsync(id);
+                return (true, from, rec?.AssignedToEmail, rec?.AssignedToName);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return (false, null, null, null);
             }
         }
 

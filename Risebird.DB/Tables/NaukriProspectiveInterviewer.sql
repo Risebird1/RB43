@@ -161,3 +161,36 @@ BEGIN
     ALTER TABLE NaukriProspectiveInterviewer ADD [OnboardingType] VARCHAR(50) NULL
 END
 GO
+
+-- Ticket assignment: the operator (InterviewerManagement / SeniorInterviewerManagement) who owns
+-- this prospect and is accountable for its closure (mirrors SupportTicket assignment).
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'AssignedToUserId' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [AssignedToUserId] INT NULL
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'AssignedToEmail' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [AssignedToEmail] VARCHAR(150) NULL
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'AssignedToName' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [AssignedToName] NVARCHAR(200) NULL
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'AssignedAt' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [AssignedAt] DATETIME NULL
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.indexes WHERE name = N'IX_NaukriProspectiveInterviewer_AssignedToUserId' AND object_id = OBJECT_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    CREATE NONCLUSTERED INDEX [IX_NaukriProspectiveInterviewer_AssignedToUserId]
+        ON [dbo].[NaukriProspectiveInterviewer] ([AssignedToUserId])
+END
+GO
