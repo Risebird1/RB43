@@ -16,6 +16,8 @@
     string selDisposition = ViewBag.Disposition as string ?? string.Empty;
     string selFunnelStage = ViewBag.FunnelStage as string ?? string.Empty;
     string selOnboardingType = ViewBag.OnboardingType as string ?? string.Empty;
+    string selAssignedTo = ViewBag.AssignedTo as string ?? string.Empty;
+    var assignees = ViewBag.Assignees as List<Risebird.Entities.ViewModel.NaukriAssigneeVM> ?? new List<Risebird.Entities.ViewModel.NaukriAssigneeVM>();
     string selDateFrom = ViewBag.DateFrom as string ?? string.Empty;
     string selDateTo = ViewBag.DateTo as string ?? string.Empty;
     string profileName = ViewBag.ProfileName as string ?? string.Empty;
@@ -66,6 +68,7 @@
                    || !string.IsNullOrEmpty(selCallStatus) || !string.IsNullOrEmpty(selDisposition)
                    || !string.IsNullOrEmpty(selFunnelStage)
                    || !string.IsNullOrEmpty(selOnboardingType)
+                   || !string.IsNullOrEmpty(selAssignedTo)
                    || !string.IsNullOrEmpty(selDateFrom) || !string.IsNullOrEmpty(selDateTo);
 
     int first = totalCount == 0 ? 0 : (page - 1) * pageSize + 1;
@@ -83,6 +86,7 @@
         if (!string.IsNullOrEmpty(selDisposition)) q += $"&disposition={Uri.EscapeDataString(selDisposition)}";
         if (!string.IsNullOrEmpty(selFunnelStage)) q += $"&funnelStage={Uri.EscapeDataString(selFunnelStage)}";
         if (!string.IsNullOrEmpty(selOnboardingType)) q += $"&onboardingType={Uri.EscapeDataString(selOnboardingType)}";
+        if (!string.IsNullOrEmpty(selAssignedTo)) q += $"&assignedTo={Uri.EscapeDataString(selAssignedTo)}";
         if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
         if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
         return Url.Action("Index", "NaukriOnboarding") + q;
@@ -100,6 +104,7 @@
         if (!string.IsNullOrEmpty(selCallStatus)) q += $"&callStatus={Uri.EscapeDataString(selCallStatus)}";
         if (!string.IsNullOrEmpty(selDisposition)) q += $"&disposition={Uri.EscapeDataString(selDisposition)}";
         if (!string.IsNullOrEmpty(selOnboardingType)) q += $"&onboardingType={Uri.EscapeDataString(selOnboardingType)}";
+        if (!string.IsNullOrEmpty(selAssignedTo)) q += $"&assignedTo={Uri.EscapeDataString(selAssignedTo)}";
         if (!string.IsNullOrEmpty(selDateFrom)) q += $"&dateFrom={Uri.EscapeDataString(selDateFrom)}";
         if (!string.IsNullOrEmpty(selDateTo)) q += $"&dateTo={Uri.EscapeDataString(selDateTo)}";
         return q;
@@ -345,7 +350,10 @@
     .col-mag { width: 130px; }
     .col-location { width: 100px; }
     .col-exp { width: 58px; } .col-status { width: 100px; }
+    .col-assignee { width: 130px; }
     .col-actions { width: 96px; white-space:nowrap; }
+    .nk-assignee-edit { color:#6c757d; text-decoration:none; }
+    .nk-assignee-edit:hover { color:#0d6efd; }
     .col-source { width: 68px; }
     .col-call { width: 92px; }
     .col-auto { width: 108px; }
@@ -749,6 +757,14 @@
                                         if (selOnboardingType == val) { <option value="@val" selected>@label</option> } else { <option value="@val">@label</option> }
                                     }
                                 </select>
+                                <select name="assignedTo" class="form-select nk-filter-control nk-filter-grid__wide" onchange="document.getElementById('filterForm').submit()" title="Filter by assigned operator">
+                                    <option value="">All assignees</option>
+                                    @if (selAssignedTo == "_unassigned_") { <option value="_unassigned_" selected>Unassigned</option> } else { <option value="_unassigned_">Unassigned</option> }
+                                    @foreach (var a in assignees)
+                                    {
+                                        if (selAssignedTo == a.Email) { <option value="@a.Email" selected>@a.DisplayName</option> } else { <option value="@a.Email">@a.DisplayName</option> }
+                                    }
+                                </select>
                                 <input type="date" name="dateFrom" class="form-control nk-filter-control" value="@selDateFrom" onchange="document.getElementById('filterForm').submit()" title="From date" />
                                 <input type="date" name="dateTo" class="form-control nk-filter-control" value="@selDateTo" onchange="document.getElementById('filterForm').submit()" title="To date" />
                                 <div class="nk-filter-actions">
@@ -777,7 +793,7 @@
                                         <col class="col-num" /><col class="col-date" /><col class="col-source" />
                                         <col class="col-name" /><col class="col-role" /><col class="col-exp" /><col class="col-location" />
                                         <col class="col-mag" /><col class="col-skills" /><col class="col-call" /><col class="col-auto" />
-                                        <col class="col-funnel" /><col class="col-status" /><col class="col-actions" />
+                                        <col class="col-funnel" /><col class="col-status" /><col class="col-assignee" /><col class="col-actions" />
                                     </colgroup>
                                     <thead>
                                         <tr>
@@ -789,7 +805,9 @@
                                             <th class="col-call">Call</th>
                                             <th class="col-auto">Auto</th>
                                             <th class="col-funnel">Funnel Stage</th>
-                                            <th class="col-status">Status</th><th class="col-actions">Actions</th>
+                                            <th class="col-status">Status</th>
+                                            <th class="col-assignee">Assigned To</th>
+                                            <th class="col-actions">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -992,6 +1010,33 @@
                                                         <br /><span style="font-size:9px;" class="text-warning" title="Interviewer profile created and acknowledgement email sent — awaiting the prospect's acceptance to complete onboarding. NOT yet onboarded."><i class="fas fa-user-clock"></i> Awaiting acceptance</span>
                                                     }
                                                 </td>
+                                                <td class="col-assignee nk-assignee-cell" data-record-id="@r.Id">
+                                                    <div class="nk-assignee-view d-flex align-items-center gap-1">
+                                                        @if (!string.IsNullOrWhiteSpace(r.AssignedToEmail))
+                                                        {
+                                                            <span class="nk-assignee-name" style="font-size:11px;white-space:break-spaces;" title="@r.AssignedToEmail">
+                                                                <i class="fas fa-user-circle me-1 text-secondary"></i>@(string.IsNullOrWhiteSpace(r.AssignedToName) ? r.AssignedToEmail : r.AssignedToName)
+                                                            </span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="nk-assignee-name text-muted fst-italic" style="font-size:11px;"><i class="fas fa-user-slash me-1"></i>Unassigned</span>
+                                                        }
+                                                        <button type="button" class="btn btn-link p-0 nk-assignee-edit" title="Reassign this prospect"
+                                                                data-record-id="@r.Id" data-current="@r.AssignedToUserId" style="font-size:11px;line-height:1;">
+                                                            <i class="fas fa-pen"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="nk-assignee-edit-box d-none">
+                                                        <select class="form-select form-select-sm nk-assignee-select" style="font-size:11px;min-width:150px;">
+                                                            <option value="">Loading…</option>
+                                                        </select>
+                                                        <div class="d-flex gap-1 mt-1">
+                                                            <button type="button" class="btn btn-success btn-sm nk-assignee-save" style="font-size:10px;padding:1px 6px;">Save</button>
+                                                            <button type="button" class="btn btn-outline-secondary btn-sm nk-assignee-cancel" style="font-size:10px;padding:1px 6px;">Cancel</button>
+                                                        </div>
+                                                    </div>
+                                                </td>
                                                 <td class="col-actions">
                                                     <div class="action-btns d-flex align-items-center flex-wrap gap-1">
                                                         <button type="button" title="Manage \u2014 review, verify &amp; onboard"
@@ -1069,6 +1114,17 @@
                     <button type="button" class="btn btn-outline-primary btn-sm btn-mgm-status" data-status="InProgress"><i class="fas fa-hourglass-half me-1"></i>In Progress</button>
                     <button type="button" class="btn btn-outline-secondary btn-sm btn-mgm-status" data-status="Closed"><i class="fas fa-times-circle me-1"></i>Close</button>
                     <button type="button" class="btn btn-outline-warning btn-sm btn-mgm-status" data-status="Open"><i class="fas fa-redo me-1"></i>Reopen</button>
+                </div>
+            </div>
+
+            <div class="mgm-status-strip px-3 px-md-4 py-2 d-flex align-items-center flex-wrap gap-2" style="border-top:1px dashed #e2e8f0;">
+                <strong class="text-muted" style="font-size:12.5px;"><i class="fas fa-user-tag me-1"></i>Assigned to</strong>
+                <span id="mgmAssigneeName" class="badge bg-light text-dark border" style="font-size:11.5px;">Unassigned</span>
+                <div id="mgmAssigneeEditWrap" class="d-flex align-items-center gap-1">
+                    <select id="mgmAssigneeSelect" class="form-select form-select-sm" style="font-size:12px;min-width:220px;width:auto;">
+                        <option value="">Loading…</option>
+                    </select>
+                    <button type="button" id="mgmAssigneeSave" class="btn btn-success btn-sm" style="font-size:11px;"><i class="fas fa-check me-1"></i>Assign</button>
                 </div>
             </div>
 
@@ -1491,7 +1547,116 @@
         syncAutomationBadge(r);
         syncPlivoCallUI(r);
         syncPipeline(r);
+        syncAssignee(r);
         loadEmailEvents();
+    }
+
+    // ── Ticket assignment ─────────────────────────────────────────────────────────
+    // Cache of eligible operators, loaded once and reused by the modal + inline editors.
+    var naukriAssignees = null;
+    function loadAssignees(cb) {
+        if (naukriAssignees) { if (cb) cb(naukriAssignees); return; }
+        $.ajax({
+            url: '@Url.Action("GetEligibleAssignees", "NaukriOnboarding")', type: 'GET', timeout: 20000,
+            success: function (res) {
+                naukriAssignees = (res && res.success && res.assignees) ? res.assignees : [];
+                if (cb) cb(naukriAssignees);
+            },
+            error: function () { naukriAssignees = []; if (cb) cb(naukriAssignees); }
+        });
+    }
+
+    function assigneeOptionsHtml(selectedId) {
+        var html = '<option value="">— Unassigned —</option>';
+        (naukriAssignees || []).forEach(function (a) {
+            var sel = (String(a.userId) === String(selectedId)) ? ' selected' : '';
+            html += '<option value="' + a.userId + '"' + sel + '>' + $('<div>').text(a.displayName).html() + '</option>';
+        });
+        return html;
+    }
+
+    // Modal assignee widget.
+    function syncAssignee(r) {
+        var name = r.assignedToName || r.assignedToEmail;
+        $('#mgmAssigneeName')
+            .text(name || 'Unassigned')
+            .attr('title', r.assignedToEmail || '')
+            .toggleClass('fst-italic text-muted', !name);
+        loadAssignees(function () {
+            $('#mgmAssigneeSelect').html(assigneeOptionsHtml(r.assignedToUserId));
+        });
+    }
+
+    $(document).on('click', '#mgmAssigneeSave', function () {
+        var newId = $('#mgmAssigneeSelect').val();
+        if (!newId) { alert('Please select an operator to assign.'); return; }
+        var $btn = $(this).prop('disabled', true);
+        $.ajax({
+            url: '@Url.Action("UpdateAssignment", "NaukriOnboarding")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId, assignedToUserId: newId },
+            success: function (res) {
+                $btn.prop('disabled', false);
+                if (!res.success) { alert(res.error || 'Could not reassign.'); return; }
+                if (currentRecord) {
+                    currentRecord.assignedToUserId = parseInt(newId, 10);
+                    currentRecord.assignedToEmail = res.assignedToEmail;
+                    currentRecord.assignedToName = res.assignedToName;
+                    syncAssignee(currentRecord);
+                }
+                updateRowAssignee(currentRecordId, newId, res.assignedToEmail, res.assignedToName);
+            },
+            error: function () { $btn.prop('disabled', false); alert('Failed to reassign. Please try again.'); }
+        });
+    });
+
+    // Inline (list row) assignee editor.
+    $(document).on('click', '.nk-assignee-edit', function () {
+        var $cell = $(this).closest('.nk-assignee-cell');
+        var current = $(this).data('current') || '';
+        $cell.find('.nk-assignee-view').addClass('d-none');
+        var $box = $cell.find('.nk-assignee-edit-box').removeClass('d-none');
+        var $sel = $box.find('.nk-assignee-select');
+        $sel.html('<option value="">Loading…</option>');
+        loadAssignees(function () { $sel.html(assigneeOptionsHtml(current)); });
+    });
+
+    $(document).on('click', '.nk-assignee-cancel', function () {
+        var $cell = $(this).closest('.nk-assignee-cell');
+        $cell.find('.nk-assignee-edit-box').addClass('d-none');
+        $cell.find('.nk-assignee-view').removeClass('d-none');
+    });
+
+    $(document).on('click', '.nk-assignee-save', function () {
+        var $cell = $(this).closest('.nk-assignee-cell');
+        var recId = $cell.data('record-id');
+        var newId = $cell.find('.nk-assignee-select').val();
+        if (!newId) { alert('Please select an operator to assign.'); return; }
+        var $btn = $(this).prop('disabled', true);
+        $.ajax({
+            url: '@Url.Action("UpdateAssignment", "NaukriOnboarding")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: recId, assignedToUserId: newId },
+            success: function (res) {
+                $btn.prop('disabled', false);
+                if (!res.success) { alert(res.error || 'Could not reassign.'); return; }
+                updateRowAssignee(recId, newId, res.assignedToEmail, res.assignedToName);
+            },
+            error: function () { $btn.prop('disabled', false); alert('Failed to reassign. Please try again.'); }
+        });
+    });
+
+    // Refresh a row's assignee display (used after both inline + modal reassign).
+    function updateRowAssignee(recId, userId, email, name) {
+        var $cell = $('.nk-assignee-cell[data-record-id="' + recId + '"]');
+        if (!$cell.length) return;
+        var display = name || email || 'Unassigned';
+        var $view = $cell.find('.nk-assignee-view');
+        $view.find('.nk-assignee-name')
+            .removeClass('text-muted fst-italic')
+            .attr('title', email || '')
+            .html('<i class="fas fa-user-circle me-1 text-secondary"></i>' + $('<div>').text(display).html());
+        $cell.find('.nk-assignee-edit').data('current', userId).attr('data-current', userId);
+        $cell.find('.nk-assignee-edit-box').addClass('d-none');
+        $view.removeClass('d-none');
     }
 
     // Fetches SendGrid delivery + engagement events for BOTH the invitation and the acknowledgement

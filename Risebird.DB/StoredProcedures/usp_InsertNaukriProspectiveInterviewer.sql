@@ -87,5 +87,9 @@ BEGIN
          @ResumeLink, @HasAttachment, ISNULL(@Source, 'Naukri'), 'Open', GETUTCDATE())
 
     SET @NewId = SCOPE_IDENTITY()
+
+    -- Ticket-style ownership: assign the new prospect to a random eligible operator so someone is
+    -- accountable for its closure from the moment it enters the pipeline.
+    EXEC dbo.usp_AssignNaukriProspectRandomly @Id = @NewId;
 END
 GO
