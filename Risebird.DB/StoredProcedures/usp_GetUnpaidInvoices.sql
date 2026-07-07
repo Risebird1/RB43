@@ -32,7 +32,9 @@ BEGIN
         gi.InvoiceMonth,
         gi.InvoiceYear,
         gi.CreatedOn,
-        gi.ModifiedOn
+        gi.ModifiedOn,
+        gi.CreditPeriod,
+        gi.ExpectedDate
     FROM GeneratedInvoices gi
     LEFT JOIN Client   c  ON c.id  = gi.ClientId
     LEFT JOIN UserList ul ON ul.id = gi.BillingOwnerId

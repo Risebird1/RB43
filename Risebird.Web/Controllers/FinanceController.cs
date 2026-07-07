@@ -2119,6 +2119,28 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> SaveInvoiceExpectedDate(int invoiceId, string expectedDate)
+        {
+            try
+            {
+                DateTime? date = null;
+                if (!string.IsNullOrWhiteSpace(expectedDate) &&
+                    DateTime.TryParse(expectedDate, out DateTime parsed))
+                {
+                    date = parsed.Date;
+                }
+                var success = await _meetingService.SaveInvoiceExpectedDate(invoiceId, date);
+                return Json(new { success, message = success ? "Expected date saved." : "Failed to save expected date." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "An error occurred." });
+            }
+        }
+
+        [Authorize]
         [Authorize]
         [HttpPost]
         [DisableRequestSizeLimit]
