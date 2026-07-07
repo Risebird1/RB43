@@ -5366,6 +5366,27 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> SaveInvoiceExpectedDate(int invoiceId, DateTime? expectedDate)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@InvoiceId",    invoiceId);
+                    parameters.Add("@ExpectedDate", expectedDate, System.Data.DbType.Date);
+                    var result = await SqlMapper.QueryAsync<dynamic>(con, "usp_SaveInvoiceExpectedDate", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return (result.FirstOrDefault()?.UpdatedRows ?? 0) > 0;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public async Task UpdateInvoiceLineItem(int lineItemId, decimal unitRate, decimal lineTotal)
         {
             try

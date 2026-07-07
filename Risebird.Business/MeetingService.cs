@@ -3224,6 +3224,12 @@ namespace Risebird.Business
             catch (Exception e) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e); return false; }
         }
 
+        public async Task<bool> SaveInvoiceExpectedDate(int invoiceId, DateTime? expectedDate)
+        {
+            try { return await _meetingRespository.SaveInvoiceExpectedDate(invoiceId, expectedDate); }
+            catch (Exception e) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e); return false; }
+        }
+
         public async Task<DuplicateInvoiceCheckVM> CheckDuplicateInvoice(int clientId, int billingOwnerId, int month, int year)
         {
             try
