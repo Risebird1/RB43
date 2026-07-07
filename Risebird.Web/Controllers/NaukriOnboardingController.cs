@@ -80,6 +80,7 @@ namespace Risebird.Web.Controllers
             string disposition       = null,
             string funnelStage       = null,
             string onboardingType    = null,
+            string assignedTo        = null,
             string dateFrom          = null,
             string dateTo            = null,
             int    page              = 1,
@@ -95,11 +96,13 @@ namespace Risebird.Web.Controllers
                 if (!string.IsNullOrWhiteSpace(dateFrom) && DateTime.TryParse(dateFrom, out var pFrom)) dtFrom = pFrom;
                 if (!string.IsNullOrWhiteSpace(dateTo) && DateTime.TryParse(dateTo, out var pTo)) dtTo = pTo;
 
-                var records = await _repository.GetListAsync(status, candidateName, magName, source, dtFrom, dtTo, page, pageSize, automationStatus, callStatus, disposition, funnelStage, onboardingType);
+                var records = await _repository.GetListAsync(status, candidateName, magName, source, dtFrom, dtTo, page, pageSize, automationStatus, callStatus, disposition, funnelStage, onboardingType, assignedTo);
 
-                var funnelCounts = await _repository.GetFunnelStageCountsAsync(status, candidateName, magName, source, dtFrom, dtTo, automationStatus, callStatus, disposition, funnelStage, onboardingType);
+                var funnelCounts = await _repository.GetFunnelStageCountsAsync(status, candidateName, magName, source, dtFrom, dtTo, automationStatus, callStatus, disposition, funnelStage, onboardingType, assignedTo);
 
-                var funnelReach = await _repository.GetFunnelReachCountsAsync(status, candidateName, magName, source, dtFrom, dtTo, automationStatus, callStatus, disposition, funnelStage, onboardingType);
+                var funnelReach = await _repository.GetFunnelReachCountsAsync(status, candidateName, magName, source, dtFrom, dtTo, automationStatus, callStatus, disposition, funnelStage, onboardingType, assignedTo);
+
+                var assignees = await _repository.GetEligibleAssigneesAsync();
 
                 var first = records.FirstOrDefault();
                 int totalCount = first?.TotalCount ?? 0;
@@ -118,6 +121,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.Disposition = disposition ?? string.Empty;
                 ViewBag.FunnelStage = funnelStage ?? string.Empty;
                 ViewBag.OnboardingType = onboardingType ?? string.Empty;
+                ViewBag.AssignedTo = assignedTo ?? string.Empty;
+                ViewBag.Assignees = assignees;
                 ViewBag.FunnelCounts = funnelCounts;
                 ViewBag.FunnelReach = funnelReach;
                 // Global status breakdown (Open + InProgress + Closed + Onboarded = Total).
@@ -142,6 +147,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.Disposition = disposition ?? string.Empty;
                 ViewBag.FunnelStage = funnelStage ?? string.Empty;
                 ViewBag.OnboardingType = onboardingType ?? string.Empty;
+                ViewBag.AssignedTo = assignedTo ?? string.Empty;
+                ViewBag.Assignees = new List<Risebird.Entities.ViewModel.NaukriAssigneeVM>();
                 ViewBag.FunnelCounts = new Dictionary<string, int>();
                 ViewBag.FunnelReach = new Dictionary<string, int>();
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
@@ -247,6 +254,8 @@ namespace Risebird.Web.Controllers
                         record.AutomationStatus, record.PlivoCallAttemptsTotal, record.PlivoCallAttemptsToday,
                         record.Status, record.Source, record.ProcessedBy,
                         record.Intent, record.IntentSource, record.FunnelStage, record.TicketStatus, record.OnboardingType,
+                        record.AssignedToUserId, record.AssignedToEmail, record.AssignedToName,
+                        assignedAt = record.AssignedAt?.ToString("dd MMM yyyy, HH:mm"),
                         record.ResolvedAssessmentGroupId, record.AssessmentGroupName,
                         hasResumeLink = !string.IsNullOrEmpty(record.ResumeLink)
                                         && !string.Equals(record.ResumeLink, "None", StringComparison.OrdinalIgnoreCase)
@@ -280,6 +289,64 @@ namespace Risebird.Web.Controllers
             if (ok)
                 await _repository.InsertHistoryAsync(id, "StatusChange", existing?.TicketStatus ?? existing?.Status ?? "—", status, changedBy);
             return Json(new { success = ok, status });
+        }
+
+        // ── Ticket assignment ────────────────────────────────────────────────────────
+
+        // Eligible operators (InterviewerManagement / SeniorInterviewerManagement) for the assignee
+        // dropdowns. Returned as { userId, email, name, displayName }.
+        [HttpGet]
+        public async Task<IActionResult> GetEligibleAssignees()
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in.", assignees = new object[0] });
+
+            try
+            {
+                var list = await _repository.GetEligibleAssigneesAsync();
+                var assignees = list.Select(a => new
+                {
+                    userId = a.UserId,
+                    email = a.Email,
+                    name = a.Name,
+                    displayName = a.DisplayName
+                });
+                return Json(new { success = true, assignees });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message, assignees = new object[0] });
+            }
+        }
+
+        // (Re)assign a prospect (ticket) to an operator. Logs the change to NaukriOnboardingHistory as
+        // an AssignmentChange so the assignee history is auditable like SupportTicket.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateAssignment(int id, int assignedToUserId)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            if (id <= 0 || assignedToUserId <= 0)
+                return Json(new { success = false, error = "Invalid request." });
+
+            var changedBy = HttpContext.Session.GetString("email").Trim('"');
+            var result = await _repository.UpdateAssignmentAsync(id, assignedToUserId);
+            if (!result.Success)
+                return Json(new { success = false, error = "Could not assign — the selected operator is not an active InterviewerManagement / SeniorInterviewerManagement user." });
+
+            await _repository.InsertHistoryAsync(id, "AssignmentChange",
+                string.IsNullOrWhiteSpace(result.FromAssignedTo) ? "Unassigned" : result.FromAssignedTo,
+                result.ToEmail, changedBy);
+
+            return Json(new
+            {
+                success = true,
+                assignedToEmail = result.ToEmail,
+                assignedToName = result.ToName
+            });
         }
 
         // ── Inline field update (MAG, Email, Phone) ──────────────────────────────────

@@ -47,6 +47,28 @@ namespace Risebird.Entities.ViewModel
         public decimal TotalHistoryPaid { get; set; }
         public List<EmailLookupTdsQuarterVM> TdsQuarters { get; set; } = new List<EmailLookupTdsQuarterVM>();
 
+        // Client
+        public int ClientId { get; set; }
+        public string ClientName { get; set; }
+        public int BillingType { get; set; }
+        public int BillingModel { get; set; }
+        public bool GSTApplicable { get; set; }
+        public string GST { get; set; }
+        public int PerInterviewRate { get; set; }
+        public int AIPerInterviewRate { get; set; }
+        public int PaymentTerm { get; set; }
+        public int ClientType { get; set; }
+        public int CountryType { get; set; }
+        public string BillingCurrency { get; set; }
+        public int ActiveUserCount { get; set; }
+        public int TotalUserCount { get; set; }
+        public decimal TotalCredits { get; set; }
+        public decimal TotalDebits { get; set; }
+        public decimal CashCreditAdded { get; set; }
+        public decimal TotalPOAmount { get; set; }
+        public decimal TotalPOReceived { get; set; }
+        public List<EmailLookupClientPOVM> ClientPOs { get; set; } = new List<EmailLookupClientPOVM>();
+
         public int CandidateTotalCount { get; set; }
         public int CandidateTotalCompleted { get; set; }
         public int CandidateTotalCancelled { get; set; }
@@ -146,6 +168,42 @@ namespace Risebird.Entities.ViewModel
         public string Comment { get; set; }
         public string PayoutStatus { get; set; }
         public DateTime? TransactionDate { get; set; }
+    }
+
+    public class EmailLookupClientProfileVM
+    {
+        public int ClientId { get; set; }
+        public string ClientName { get; set; }
+        public int BillingType { get; set; }
+        public int BillingModel { get; set; }
+        public bool GSTApplicable { get; set; }
+        public string GST { get; set; }
+        public int PerInterviewRate { get; set; }
+        public int AIPerInterviewRate { get; set; }
+        public int PaymentTerm { get; set; }
+        public int ClientType { get; set; }
+        public int CountryType { get; set; }
+        public string BillingCurrency { get; set; }
+        public int ActiveUserCount { get; set; }
+        public int TotalUserCount { get; set; }
+        public decimal TotalCredits { get; set; }
+        public decimal TotalDebits { get; set; }
+        public decimal CashCreditAdded { get; set; }
+        public decimal TotalPOAmount { get; set; }
+        public decimal TotalPOReceived { get; set; }
+    }
+
+    public class EmailLookupClientPOVM
+    {
+        public int Id { get; set; }
+        public string PONumber { get; set; }
+        public decimal POCreditAmount { get; set; }
+        public decimal CashCreditReceived { get; set; }
+        public int POMonth { get; set; }
+        public int POYear { get; set; }
+        public int Status { get; set; }
+        public string Remarks { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
 
     public class EmailLookupHistoryTotalVM
