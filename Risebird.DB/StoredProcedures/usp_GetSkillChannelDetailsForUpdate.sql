@@ -96,7 +96,7 @@ outer apply (
       and (ic.InterviewStatus = 3 or ic.InterviewStatus = 5 or ic.InterviewStatus = 1)  
       and ic.MeetingStatus in (4, 6, 8)  
 ) trej  
-where ti.IRFId=@irfId and ul.IsActive=1 and ul.IsInterviewerAccess=1  and ISNULL(ip.IsDeleted,0)=0 
+where ti.IRFId=@irfId and ul.IsActive=1 --and ul.IsInterviewerAccess=1  and ISNULL(ip.IsDeleted,0)=0 
     
 --selectability details    
 Select * from TransSelectability where IRFId = @irfId and @isJoinabilitySelectabilityRequired = 1    
