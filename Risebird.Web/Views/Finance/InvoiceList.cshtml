@@ -29,12 +29,10 @@
     bool unpaidHasAnyRemark = unpaidList.Any(m => !string.IsNullOrEmpty(m.LatestRemark));
 
     // Per-status counts & gross for unpaid sub-tabs
-    int upCountDraft              = unpaidList.Count(x => x.Status == 0);
     int upCountGenerated          = unpaidList.Count(x => x.Status == 1);
     int upCountPOPending          = unpaidList.Count(x => x.Status == 2);
     int upCountApprovalPending    = unpaidList.Count(x => x.Status == 3);
     int upCountIRP                = unpaidList.Count(x => x.Status == 4);
-    decimal upGrossDraft              = unpaidList.Where(x => x.Status == 0).Sum(x => x.GrossAmount);
     decimal upGrossGenerated          = unpaidList.Where(x => x.Status == 1).Sum(x => x.GrossAmount);
     decimal upGrossPOPending          = unpaidList.Where(x => x.Status == 2).Sum(x => x.GrossAmount);
     decimal upGrossApprovalPending    = unpaidList.Where(x => x.Status == 3).Sum(x => x.GrossAmount);
@@ -349,7 +347,6 @@
                                                                 <div class="col-md-12">
                                                                     <select id="FilterStatus" name="Status" data-placeholder="All Statuses"
                                                                             class="form-control multiselect" multiple="multiple">
-                                                                        <option value="0">Draft</option>
                                                                         <option value="1">Generated</option>
                                                                         <option value="2">PO Pending</option>
                                                                         <option value="3">Approval Pending</option>
@@ -456,13 +453,6 @@
                                               data-count="@unpaidList.Count">
                                             All
                                             <span class="inv-sub-tab-badge">@unpaidList.Count</span>
-                                        </span>
-                                        <span class="sub-tab" data-ustatus="0"
-                                              data-label="Draft"
-                                              data-gross="@upGrossDraft.ToString("N2")"
-                                              data-count="@upCountDraft">
-                                            Draft
-                                            <span class="inv-sub-tab-badge">@upCountDraft</span>
                                         </span>
                                         <span class="sub-tab" data-ustatus="1"
                                               data-label="Generated"
