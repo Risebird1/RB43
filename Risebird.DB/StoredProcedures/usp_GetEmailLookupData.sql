@@ -71,7 +71,61 @@ BEGIN
     LEFT JOIN TransInterviewerAccDetails tic ON tic.InterviewerProfileId = ipr.Id
     WHERE ul.EmailId = @EmailId;
 
-    -- Result Set 3: Interview stats as Candidate
+    -- Result Set 3: Client profile + wallet summary + user counts (empty if not a client)
+    SELECT
+        c.id                                                                   AS ClientId,
+        ISNULL(c.Name, '')                                                     AS ClientName,
+        ISNULL(c.BillingType, 3)                                               AS BillingType,
+        ISNULL(c.BillingModel, 0)                                              AS BillingModel,
+        ISNULL(c.GSTApplicable, 0)                                             AS GSTApplicable,
+        ISNULL(c.GST, '')                                                      AS GST,
+        ISNULL(c.PerInterviewRate, 0)                                          AS PerInterviewRate,
+        ISNULL(c.AIPerInterviewRate, 0)                                        AS AIPerInterviewRate,
+        ISNULL(c.PaymentTerm, 0)                                               AS PaymentTerm,
+        ISNULL(c.ClientType, 0)                                                AS ClientType,
+        ISNULL(c.CountryType, 0)                                               AS CountryType,
+        ISNULL(c.BillingCurrency, 'INR')                                       AS BillingCurrency,
+        -- Active users under this client
+        (SELECT COUNT(*)
+         FROM ClientUser cu2
+         INNER JOIN UserList ul2 ON ul2.id = cu2.UserId
+         WHERE cu2.ClientId = c.id AND ISNULL(ul2.IsActive, 0) = 1)           AS ActiveUserCount,
+        -- Total users under this client
+        (SELECT COUNT(*) FROM ClientUser cu2 WHERE cu2.ClientId = c.id)        AS TotalUserCount,
+        -- Wallet: overall credits and debits (all time)
+        ISNULL((SELECT SUM(ISNULL(w.Credit, 0)) FROM Wallet w WHERE w.ClientId = c.id), 0)  AS TotalCredits,
+        ISNULL((SELECT SUM(ISNULL(w.Debit, 0))  FROM Wallet w WHERE w.ClientId = c.id), 0)  AS TotalDebits,
+        -- Cash credits (Manual / CashCredit transactions only)
+        ISNULL((SELECT SUM(CASE WHEN ISNULL(w.TransactionType,'') IN ('Manual','CashCredit')
+                                THEN ISNULL(w.Credit, 0) ELSE 0 END)
+                FROM Wallet w WHERE w.ClientId = c.id), 0)                     AS CashCreditAdded,
+        -- PO summary
+        ISNULL((SELECT SUM(ISNULL(cp.POCreditAmount, 0))     FROM ClientPO cp WHERE cp.ClientId = c.id), 0) AS TotalPOAmount,
+        ISNULL((SELECT SUM(ISNULL(cp.CashCreditReceived, 0)) FROM ClientPO cp WHERE cp.ClientId = c.id), 0) AS TotalPOReceived
+    FROM Client c
+    INNER JOIN ClientUser cu ON cu.ClientId = c.id
+    INNER JOIN UserList ul   ON ul.id = cu.UserId
+    WHERE ul.EmailId = @EmailId;
+
+    -- Result Set 4: Recent POs for this client (last 10)
+    SELECT TOP 10
+        cp.id,
+        ISNULL(cp.PONumber, '')                AS PONumber,
+        ISNULL(cp.POCreditAmount, 0)           AS POCreditAmount,
+        ISNULL(cp.CashCreditReceived, 0)       AS CashCreditReceived,
+        ISNULL(cp.POMonth, 0)                  AS POMonth,
+        ISNULL(cp.POYear, 0)                   AS POYear,
+        ISNULL(cp.Status, 0)                   AS Status,
+        ISNULL(cp.Remarks, '')                 AS Remarks,
+        cp.CreatedOn
+    FROM ClientPO cp
+    INNER JOIN ClientUser cu ON cu.ClientId = cp.ClientId
+    INNER JOIN UserList ul   ON ul.id = cu.UserId
+    WHERE ul.EmailId = @EmailId
+    ORDER BY cp.POYear DESC, cp.POMonth DESC, cp.CreatedOn DESC;
+
+    -- Result Set 5: Interview stats as Candidate
+    -- confirmationStatus = 1 → active/scheduled, = 2 → cancelled
     -- confirmationStatus = 1 → active/scheduled, = 2 → cancelled
     SELECT
         COUNT(DISTINCT im.id)                                                                                            AS TotalCount,
@@ -84,7 +138,7 @@ BEGIN
     WHERE im.candidateEmail = @EmailId
       AND ISNULL(im.IsDeleted, 0) = 0;
 
-    -- Result Set 4: Interview stats as Interviewer
+    -- Result Set 6: Interview stats as Interviewer
     SELECT
         COUNT(DISTINCT im.id)                                                                                            AS TotalCount,
         COUNT(DISTINCT CASE WHEN ic.MeetingStatus IN (4,6,7,8) AND im.confirmationStatus != 2 THEN im.id END)           AS TotalCompleted,
@@ -96,7 +150,7 @@ BEGIN
     WHERE im.interviewer = @EmailId
       AND ISNULL(im.IsDeleted, 0) = 0;
 
-    -- Result Set 5: Payment stats from InterviewPoints (actual earned amounts)
+    -- Result Set 7: Payment stats from InterviewPoints (actual earned amounts)
     DECLARE @UserId INT;
     SELECT @UserId = id FROM UserList WHERE EmailId = @EmailId;
 
@@ -120,7 +174,7 @@ BEGIN
     WHERE ip.userid = @UserId
       AND ip.Points > 0;
 
-    -- Result Set 6: Recent meetings as Candidate (last 20)
+    -- Result Set 8: Recent meetings as Candidate (last 20)
     SELECT TOP 20
         im.id                AS Id,
         im.IRFId,
@@ -142,7 +196,7 @@ BEGIN
       AND ISNULL(im.IsDeleted, 0) = 0
     ORDER BY im.interviewDate DESC;
 
-    -- Result Set 7: Recent meetings as Interviewer (last 20)
+    -- Result Set 9: Recent meetings as Interviewer (last 20)
     SELECT TOP 20
         im.id                AS Id,
         im.IRFId,
@@ -164,7 +218,7 @@ BEGIN
       AND ISNULL(im.IsDeleted, 0) = 0
     ORDER BY im.interviewDate DESC;
 
-    -- Result Set 8: Recent payouts from PaymentHistory (last 20)
+    -- Result Set 10: Recent payouts from PaymentHistory (last 20)
     SELECT TOP 20
         ph.id               AS Id,
         ph.PaymentDate,
@@ -178,7 +232,7 @@ BEGIN
     WHERE ph.Userid = @UserId
     ORDER BY ph.PaymentDate DESC;
 
-    -- Result Set 9: Payment-driven quarter breakdown.
+    -- Result Set 11: Payment-driven quarter breakdown.
     -- Starts from PaymentHistory (all quarters with real payments appear),
     -- then LEFT JOINs TDS challan data so TDS figures are shown where available.
     -- Indian FY: Apr-Jun = Q1, Jul-Sep = Q2, Oct-Dec = Q3, Jan-Mar = Q4.
@@ -255,7 +309,7 @@ BEGIN
                         AND td.Quarter       = pa.Quarter
     ORDER BY pa.FinancialYear DESC, pa.Quarter ASC;
 
-    -- Result Set 10: Grand total from PaymentHistory (used in summary header card)
+    -- Result Set 12: Grand total from PaymentHistory (used in summary header card)
     SELECT ISNULL(SUM(ph.TotalAmount), 0) AS TotalHistoryPaid
     FROM   PaymentHistory ph
     WHERE  ph.Userid = @UserId
