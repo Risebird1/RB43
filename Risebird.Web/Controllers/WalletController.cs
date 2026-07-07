@@ -550,7 +550,42 @@ namespace Risebird.Web.Controllers
                     x.POCreditAmount,
                     x.CashCreditReceived,
                     pending = x.PendingCashCredit,
-                    x.BillingOwnerId
+                    x.BillingOwnerId,
+                    x.Status,
+                    x.StatusDesc,
+                    x.StatusCss,
+                    x.PONumber,
+                    x.PeriodLabel,
+                    x.Remarks
+                })
+            });
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> GetClientPOStatusInfo(int clientId, int? billingOwnerId = null)
+        {
+            if (!IsFinanceOrAdmin()) return Json(new { success = false, message = "Unauthorized." });
+            var list = await _walletService.GetClientPOList(clientId, billingOwnerId: billingOwnerId);
+            return Json(new
+            {
+                success = true,
+                items = list.Select(x => new
+                {
+                    x.id,
+                    x.PONumber,
+                    x.PeriodLabel,
+                    x.POCreditAmount,
+                    x.CashCreditReceived,
+                    pending     = x.PendingCashCredit,
+                    x.Status,
+                    x.StatusDesc,
+                    x.StatusCss,
+                    x.BillingOwnerId,
+                    x.BillingOwnerEmail,
+                    x.Remarks,
+                    x.CreatedBy,
+                    createdOn = x.CreatedOn?.ToString("dd MMM yyyy")
                 })
             });
         }

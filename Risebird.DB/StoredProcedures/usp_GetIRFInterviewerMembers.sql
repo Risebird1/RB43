@@ -29,7 +29,7 @@ Begin
   join Client cl on cl.id = IRF.ClientId
   left join AGCampaigns agc on agc.id = ti.CampaignId  
   left join InterviewerBillingRate ibr on ibr.IRFId=ti.IRFId and ibr.Userid=ti.UserId  
-  where irf.id=@IRFId and ISNULL(ipr.IsDeleted,0)=0 --and ti.IsActive=1 and ul.IsActive=1 and ti.IsAvailable=1   
+  where irf.id=@IRFId and ul.IsActive=1 and ul.IsInterviewerAccess=1  and ISNULL(ipr.IsDeleted,0)=0    
   group by ti.IRFId, ul.EmailId, ipr.ResumeLink, ipr.UserId, irf.IRFId, ti.AIVerdict, ipr.ResumeLink, ul.MobileNumber, IRF.IRFId,ul.uniqueid,ul.FirstName+' '+ul.LastName,Case when ti.IsActive=1 and ul.isactive=1 then 1 else 0 end,ti.IsAvailable,  
   IRF.SendIntervieweravailbilityOn,ipr.isVerified,ipr.IsEmployed,ipr.CompanyName,ipr.EmploymentComment,ipr.AvailabilityResponseDate,  
   ti.PerSuccessRate,IRF.JDLink,IRF.JDTiltle,IRF.InterviewDuration,ipr.VideoConfirmation,ipr.RedMarker, ti.[Source], ti.ClientAction, agc.CampaignName,ibr.BillingRate,cl.BillingCurrency     

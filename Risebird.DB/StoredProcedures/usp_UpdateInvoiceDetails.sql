@@ -39,7 +39,7 @@ BEGIN
         InvoiceValue     = @InvoiceValue,
         TDSAmount        = @TDSAmount,
         NetReceivable    = @NetReceivable,
-        LatestRemark        = CASE WHEN @LatestRemark IS NOT NULL THEN @LatestRemark ELSE LatestRemark END,
+        LatestRemark        =  @LatestRemark,
         UTRTrxn             = CASE WHEN @UTRTrxn IS NOT NULL AND @UTRTrxn != '' THEN @UTRTrxn ELSE UTRTrxn END,
         CashCreditAmount    = @CashCreditAmount,
         TaxScenario         = CASE WHEN @TaxScenario != 0 THEN @TaxScenario ELSE TaxScenario END,
