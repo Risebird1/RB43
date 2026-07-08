@@ -81,6 +81,12 @@ namespace Risebird.Entities.ViewModel
         // Onboarding type for reporting: SelfOnboarded | IntentAutoProcessed | ManuallyOnboarded
         public string   OnboardingType              { get; set; }
 
+        // Ticket assignment — the operator accountable for this prospect (like SupportTicket).
+        public int?      AssignedToUserId            { get; set; }
+        public string    AssignedToEmail             { get; set; }
+        public string    AssignedToName              { get; set; }
+        public DateTime? AssignedAt                  { get; set; }
+
         public string   Status                      { get; set; }
         public string   Source                      { get; set; }
         public string   ProcessedBy                 { get; set; }

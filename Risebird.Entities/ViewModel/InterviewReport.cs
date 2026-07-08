@@ -565,6 +565,8 @@ namespace Risebird.Entities.ViewModel
         public int InvoiceYear { get; set; }
         public DateTime? CreatedOn { get; set; }
         public DateTime? ModifiedOn { get; set; }
+        public string CreditPeriod { get; set; }
+        public DateTime? ExpectedDate { get; set; }
     }
 
     public class InvoiceListFilter

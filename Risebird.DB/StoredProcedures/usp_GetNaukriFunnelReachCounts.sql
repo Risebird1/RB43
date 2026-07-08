@@ -36,6 +36,7 @@ CREATE PROCEDURE [dbo].[usp_GetNaukriFunnelReachCounts]
     @Disposition        VARCHAR(50)  = NULL,
     @FunnelStage        VARCHAR(50)  = NULL,   -- accepted for signature symmetry; intentionally NOT applied
     @OnboardingType     VARCHAR(50)  = NULL,
+    @AssignedTo         VARCHAR(150) = NULL,   -- assignee email, or '_unassigned_' for records with no assignee
     @DateFrom           DATETIME     = NULL,
     @DateTo             DATETIME     = NULL
 AS
@@ -72,6 +73,11 @@ BEGIN
                 @OnboardingType IS NULL
                 OR (@OnboardingType = '_none_' AND ISNULL(np.OnboardingType, '') = '')
                 OR np.OnboardingType = @OnboardingType
+            )
+            AND (
+                @AssignedTo IS NULL
+                OR (@AssignedTo = '_unassigned_' AND np.AssignedToUserId IS NULL)
+                OR (@AssignedTo NOT IN ('_unassigned_') AND np.AssignedToEmail = @AssignedTo)
             )
             AND (@DateFrom IS NULL OR np.ReceivedAt >= @DateFrom)
             AND (@DateTo IS NULL OR np.ReceivedAt < DATEADD(DAY, 1, @DateTo))
