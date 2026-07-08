@@ -19,6 +19,12 @@ namespace Risebird.Entities.Data
         [JsonProperty("RedoInterview")]
         public bool? RedoInterview { get; set; }
 
+        [JsonProperty("total_qcmerge_score")]
+        public int? total_qcmerge_score { get; set; }
+
+        [JsonProperty("qcmerge_verdict")]
+        public string qcmerge_verdict { get; set; }
+
         /// <summary>Strips markdown fences and parses assistant JSON (object with flags, or legacy array of flags).</summary>
         public static bool TryParseFromAssistantText(string rawText, out QcInterviewAIMergeAssistantResponse result)
         {
@@ -33,7 +39,7 @@ namespace Risebird.Entities.Data
                 if (token.Type == JTokenType.Object)
                 {
                     result = token.ToObject<QcInterviewAIMergeAssistantResponse>();
-                    return result != null && (result.flags != null || result.total_penalty.HasValue || result.RedoInterview.HasValue || !string.IsNullOrEmpty(result.interviewer_suspicious));
+                    return result != null && (result.flags != null || result.total_penalty.HasValue || result.RedoInterview.HasValue || !string.IsNullOrEmpty(result.interviewer_suspicious) || result.total_qcmerge_score.HasValue || !string.IsNullOrEmpty(result.qcmerge_verdict));
                 }
 
                 if (token.Type == JTokenType.Array)

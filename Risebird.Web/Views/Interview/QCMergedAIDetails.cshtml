@@ -174,6 +174,9 @@
                             var suspiciousStr = string.IsNullOrWhiteSpace(Model.AIMergeInterviewerSuspicious) ? "NA" : Model.AIMergeInterviewerSuspicious;
                             var redoStr = Model.AIMergeRedoInterview.HasValue ? (Model.AIMergeRedoInterview.Value ? "Yes" : "No") : "NA";
 
+                            var qcScoreStr   = Model.Merged?.total_qcmerge_score?.ToString() ?? "NA";
+                            var qcVerdictStr = !string.IsNullOrWhiteSpace(Model.Merged?.qcmerge_verdict) ? Model.Merged.qcmerge_verdict : "NA";
+
                             var penaltyMetricClass = "qc-metric qc-metric--info";
                             if (Model.AIMergeTotalPenalty.HasValue)
                             {
@@ -184,6 +187,20 @@
 
                             var redoMetricClass = redoStr == "Yes" ? "qc-metric qc-metric--danger"
                                 : redoStr == "No" ? "qc-metric qc-metric--ok"
+                                : "qc-metric qc-metric--info";
+
+                            var scoreMetricClass = "qc-metric qc-metric--info";
+                            if (Model.Merged?.total_qcmerge_score.HasValue == true)
+                            {
+                                scoreMetricClass = Model.Merged.total_qcmerge_score.Value >= 8 ? "qc-metric qc-metric--ok"
+                                    : Model.Merged.total_qcmerge_score.Value >= 5 ? "qc-metric qc-metric--warn"
+                                    : "qc-metric qc-metric--danger";
+                            }
+
+                            var verdictLower = qcVerdictStr.ToLower();
+                            var verdictMetricClass = verdictLower.Contains("high") ? "qc-metric qc-metric--ok"
+                                : verdictLower.Contains("medium") ? "qc-metric qc-metric--warn"
+                                : verdictLower.Contains("low") ? "qc-metric qc-metric--danger"
                                 : "qc-metric qc-metric--info";
                         }
 
@@ -215,6 +232,22 @@
                                         <div class="qc-metric__value" style="font-size: 1.05rem;">@redoStr</div>
                                     </div>
                                     <div class="qc-metric__badge">Action</div>
+                                </div>
+
+                                <div class="@scoreMetricClass">
+                                    <div class="qc-metric__left">
+                                        <div class="qc-metric__label">Score</div>
+                                        <div class="qc-metric__value">@qcScoreStr</div>
+                                    </div>
+                                    <div class="qc-metric__badge">QC Score</div>
+                                </div>
+
+                                <div class="@verdictMetricClass">
+                                    <div class="qc-metric__left">
+                                        <div class="qc-metric__label">Verdict</div>
+                                        <div class="qc-metric__value" style="font-size: 1.05rem;">@qcVerdictStr</div>
+                                    </div>
+                                    <div class="qc-metric__badge">QC Verdict</div>
                                 </div>
                             </div>
                         </div>
@@ -269,9 +302,23 @@
                             }
                             else
                             {
-                                <div class="alert alert-warning">No merged flags available.</div>
+                                <div class="alert alert-warning">No flags available or Applied.</div>
                             }
                         </div>
+
+                        @if (!string.IsNullOrWhiteSpace(Model.RawMergedJson))
+                        {
+                            <div class="mt-3">
+                                <button type="button" id="btnToggleRawJson"
+                                        class="btn btn-sm btn-outline-secondary"
+                                        onclick="toggleRawJson()">
+                                    <i class="fas fa-code mr-1"></i> Show Raw JSON
+                                </button>
+                                <div id="rawJsonPanel" style="display:none; margin-top:10px;">
+                                    <pre id="rawJsonContent" style="background:#f8f9fa; border:1px solid #dee2e6; border-radius:6px; padding:14px; font-size:12px; max-height:500px; overflow:auto; white-space:pre-wrap; word-break:break-all;">@Html.Raw(Html.Encode(Model.RawMergedJson))</pre>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -313,4 +360,15 @@
             initReasoningToggles();
         }
     })();
+
+    function toggleRawJson() {
+        var panel = document.getElementById('rawJsonPanel');
+        var btn   = document.getElementById('btnToggleRawJson');
+        if (!panel) return;
+        var isVisible = panel.style.display !== 'none';
+        panel.style.display = isVisible ? 'none' : 'block';
+        btn.innerHTML = isVisible
+            ? '<i class="fas fa-code mr-1"></i> Show Raw JSON'
+            : '<i class="fas fa-code mr-1"></i> Hide Raw JSON';
+    }
 </script>
