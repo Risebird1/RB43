@@ -45,21 +45,70 @@
         var a = assignees.FirstOrDefault(x => string.Equals(x.Email, email, StringComparison.OrdinalIgnoreCase));
         return (a != null && !string.IsNullOrWhiteSpace(a.Name)) ? $"{a.Name}" : email;
     }
+
+    // Group the ~25 raw event types into a handful of readable buckets so the matrix stays legible.
+    var perfCategories = new (string Key, string Label, string Tip, string[] Events)[]
+    {
+        ("Intake",     "Intake",     "Record created, resume parse, duplicate checks",              new[] { "RecordCreated", "RelayPreParsed", "ResumeParse", "ResumeUpload", "DuplicateDetected", "DuplicateCleared" }),
+        ("Mag",        "MAG / Channel", "MAG selection/confirmation and skill-channel mapping",     new[] { "MagChange", "MagConfirmed", "SkillChannelSelected" }),
+        ("Outreach",   "Outreach",   "Invitation email, AI calls, prospect response & intent",      new[] { "InvitationEmailSent", "PlivoCallInitiated", "PlivoCallCompleted", "BatchCallInitiated", "ProspectResponse", "IntentConfirmed", "MarkedCold" }),
+        ("Screening",  "Screening",  "Employment verification & AI resume fitment",                 new[] { "EmploymentVerification", "NotQualified", "ResumeAnalysis" }),
+        ("Onboarding", "Onboarding", "Acknowledgement emails & self-registration",                  new[] { "AcknowledgementSent", "AcknowledgementPending", "AckEmailResent", "SelfRegistered" }),
+        ("Assignment", "Assignment", "Ticket (re)assignment",                                       new[] { "AssignmentChange" }),
+        ("Status",     "Status",     "Ticket status changes (open / in-progress / closed)",         new[] { "StatusChange" }),
+        ("Other",      "Other",      "Automation notes & miscellaneous events",                     new string[0] ),
+    };
+
+    string CatOf(string ev)
+    {
+        foreach (var c in perfCategories)
+            if (c.Events.Contains(ev)) return c.Key;
+        return "Other";
+    }
+
+    // Per-operator category totals + which categories actually have data (so empty columns are hidden).
+    var perfCatTotals = new Dictionary<string, Dictionary<string, int>>(StringComparer.OrdinalIgnoreCase);
+    var perfCatUsed = new HashSet<string>();
+    foreach (var op in Model.Operators)
+    {
+        var byCat = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        foreach (var kv in op.EventCounts)
+        {
+            var cat = CatOf(kv.Key);
+            byCat.TryGetValue(cat, out var cur);
+            byCat[cat] = cur + kv.Value;
+            if (kv.Value > 0) perfCatUsed.Add(cat);
+        }
+        perfCatTotals[op.Operator] = byCat;
+    }
+    var perfCols = perfCategories.Where(c => perfCatUsed.Contains(c.Key)).ToList();
 }
 
 <style>
     .perf-card .sv { font-size: 26px; font-weight: 700; line-height: 1; }
     .perf-card .sl { font-size: 11.5px; color: #6c757d; margin-top: 4px; text-transform: uppercase; letter-spacing: .3px; }
-    .perf-matrix { font-size: 12px; }
-    .perf-matrix th, .perf-matrix td { white-space: nowrap; }
-    .perf-matrix thead th { position: sticky; top: 0; background: #f8f9fa; z-index: 2; font-size: 11px; }
-    .perf-matrix td.num, .perf-matrix th.num { text-align: right; }
+
+    .perf-matrix { font-size: 12.5px; border-collapse: separate; border-spacing: 0; min-width: 880px; }
+    .perf-matrix th, .perf-matrix td { white-space: nowrap; padding: 9px 14px; border-bottom: 1px solid #eef2f7; vertical-align: middle; }
+    .perf-matrix thead th {
+        position: sticky; top: 0; z-index: 2; background: #f1f5f9; color:#334155;
+        font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px;
+        border-bottom: 2px solid #dbe3ec;
+    }
+    .perf-matrix td.num, .perf-matrix th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .perf-matrix th.num { min-width: 78px; }
+    .perf-matrix tbody tr:hover td { background: #f8fbff; }
     .perf-matrix .zero { color: #cbd5e1; }
-    .perf-op { font-weight: 600; }
-    .perf-op small { display:block; font-weight: 400; color:#6c757d; font-size:10px; }
-    .perf-scroll { max-height: 460px; overflow: auto; border: 1px solid #e2e8f0; border-radius: 10px; }
+    .perf-when { color:#64748b; font-size: 11.5px; }
+    /* Sticky, readable operator column */
+    .perf-matrix .perf-sticky { position: sticky; left: 0; z-index: 3; background: #fff; min-width: 220px; max-width: 260px; box-shadow: 1px 0 0 #e2e8f0; }
+    .perf-matrix thead .perf-sticky { z-index: 4; background: #f1f5f9; }
+    .perf-op { font-weight: 600; white-space: normal; line-height: 1.2; }
+    .perf-op small { display:block; font-weight: 400; color:#6c757d; font-size:10px; word-break: break-all; }
+
+    .perf-scroll { max-height: 480px; overflow: auto; border: 1px solid #e2e8f0; border-radius: 10px; }
     .perf-log td { font-size: 11.5px; vertical-align: top; }
-    .perf-evt-badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; background:#eef2f7; color:#334155; border:1px solid #dbe3ec; }
+    .perf-evt-badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; background:#eef2f7; color:#334155; border:1px solid #dbe3ec; white-space: nowrap; }
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -141,16 +190,19 @@
                         }
                         else
                         {
+                            <div class="perf-note px-3 pt-2 pb-1 text-muted" style="font-size:11.5px;">
+                                Actions are grouped into stages. Hover a column header to see what it includes.
+                            </div>
                             <div class="perf-scroll">
-                                <table class="table table-hover table-bordered mb-0 perf-matrix">
+                                <table class="table table-hover mb-0 perf-matrix">
                                     <thead>
                                         <tr>
-                                            <th style="position:sticky;left:0;z-index:3;background:#f8f9fa;">Operator</th>
+                                            <th class="perf-sticky">Operator</th>
                                             <th class="num">Total</th>
                                             <th class="num">Tickets</th>
-                                            @foreach (var et in Model.EventTypes)
+                                            @foreach (var c in perfCols)
                                             {
-                                                <th class="num" title="@et">@EventLabel(et)</th>
+                                                <th class="num" title="@c.Tip">@c.Label</th>
                                             }
                                             <th>First</th>
                                             <th>Last</th>
@@ -159,20 +211,21 @@
                                     <tbody>
                                         @foreach (var op in Model.Operators)
                                         {
+                                            var cats = perfCatTotals[op.Operator];
                                             <tr>
-                                                <td class="perf-op" style="position:sticky;left:0;background:#fff;">
+                                                <td class="perf-op perf-sticky">
                                                     @OpDisplay(op.Operator)
                                                     <small>@op.Operator</small>
                                                 </td>
-                                                <td class="num fw-bold">@op.TotalActions</td>
-                                                <td class="num">@op.TicketsTouched</td>
-                                                @foreach (var et in Model.EventTypes)
+                                                <td class="num fw-bold">@op.TotalActions.ToString("N0")</td>
+                                                <td class="num">@op.TicketsTouched.ToString("N0")</td>
+                                                @foreach (var c in perfCols)
                                                 {
-                                                    int c = op.CountFor(et);
-                                                    <td class="num @(c == 0 ? "zero" : "")">@(c == 0 ? "·" : c.ToString())</td>
+                                                    cats.TryGetValue(c.Key, out var cv);
+                                                    <td class="num @(cv == 0 ? "zero" : "")">@(cv == 0 ? "·" : cv.ToString("N0"))</td>
                                                 }
-                                                <td>@(op.FirstActionAt?.ToString("dd MMM, HH:mm") ?? "—")</td>
-                                                <td>@(op.LastActionAt?.ToString("dd MMM, HH:mm") ?? "—")</td>
+                                                <td class="perf-when">@(op.FirstActionAt?.ToString("dd MMM, HH:mm") ?? "—")</td>
+                                                <td class="perf-when">@(op.LastActionAt?.ToString("dd MMM, HH:mm") ?? "—")</td>
                                             </tr>
                                         }
                                     </tbody>
