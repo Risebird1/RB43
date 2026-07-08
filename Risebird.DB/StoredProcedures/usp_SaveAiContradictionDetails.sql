@@ -11,20 +11,28 @@ CREATE PROCEDURE [dbo].[usp_SaveAiContradictionDetails]
     @contradictionJson varchar(max)    
 AS    
 BEGIN    
-Declare @Count int=0,@ContradictionScore varchar(10)  
+Declare @Count int=0,@ContradictionScore varchar(10),@ContradictionVerdict varchar(100),@ContradictionDirectionVerdict varchar(100)
 Set @Count=(Select Count(*) from QcInterviewAIevaluation where interviewid=@qcEvaluationId)  
-Set @ContradictionScore=(CASE WHEN ISJSON(@contradictionJson) = 1 THEN JSON_VALUE(@contradictionJson, '$.OverallContradictionScore') ELSE NULL END)  
-  
+    
+	IF ISJSON(@contradictionJson) = 1
+    BEGIN
+        SET @ContradictionScore = JSON_VALUE(@contradictionJson, '$.OverallContradictionScore');
+        SET @ContradictionVerdict = JSON_VALUE(@contradictionJson, '$.OverallContradictionVerdict');
+        SET @ContradictionDirectionVerdict = JSON_VALUE(@contradictionJson, '$.OverallContradictionDirectionVerdict');
+    END
+ 
 if(@Count>0)  
 begin  
         UPDATE [dbo].[QcInterviewAIevaluation]    
         SET [ContradictionJson]=@contradictionJson,  
-        [ContradictionScore]=@ContradictionScore  
+        [ContradictionScore]=@ContradictionScore,
+        [ContradictionVerdict]=@ContradictionVerdict,
+        [ContradictionDirectionVerdict]=@ContradictionDirectionVerdict
         WHERE [interviewid] = @qcEvaluationId;    
 end  
 else  
 begin  
-Insert into QcInterviewAIevaluation (InterviewId,ContradictionJson,ContradictionScore) values(@qcEvaluationId,@contradictionJson,@ContradictionScore)  
+Insert into QcInterviewAIevaluation (InterviewId,ContradictionJson,ContradictionScore,ContradictionVerdict,ContradictionDirectionVerdict) values(@qcEvaluationId,@contradictionJson,@ContradictionScore,@ContradictionVerdict,@ContradictionDirectionVerdict)
 end  
 END  
 GO

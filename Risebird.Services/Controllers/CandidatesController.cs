@@ -349,15 +349,10 @@ namespace Risebird.Services.Controllers
                                                     Mail _mail = new Mail
                                                     {
                                                         TO = item.EmailId,
+                                                        CC = reqData.requestedBy,
                                                         Subject = item.ClientName + " Interview - " + item.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
                                                     };
                                                     _ = await _notificationHelper.SendInterviewInvite(_mail, item.EmailId, portallink, reqData.requestedBy, reqData.requestedBy, accountEmail, interviewdatetime, item.Name, timezonevalue, item.ClientName, TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), item._IRFDetails?.LogoLink, item._IRFDetails?.CompanyLink);
-                                                    Mail _mail1 = new Mail
-                                                    {
-                                                        TO = reqData.requestedBy,
-                                                        Subject = item.ClientName + " Interview - " + item.Name + " | " + jdDetails.JDTiltle + " | " + interviewdatetime + "(" + timezonevalue + ")"
-                                                    };
-                                                    var resultmail = await _notificationHelper.SendInterviewInvite(_mail1, item.EmailId, zoomLink.join_url, reqData.requestedBy, reqData.requestedBy, accountEmail, interviewdatetime, item.Name, timezonevalue, item.ClientName, TimeZoneoffset, interviewId != 0 ? interviewId : new int?(), jdDetails.InterviewDuration, jdDetails.JDLink?.Replace(" ", "%20"), item._IRFDetails?.LogoLink, item._IRFDetails?.CompanyLink);
                                                 }
                                                 else
                                                 {
