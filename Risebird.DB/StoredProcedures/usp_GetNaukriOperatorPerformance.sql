@@ -8,7 +8,8 @@ GO
 -- @DateFrom / @DateTo are IST calendar dates (inclusive). ChangedAt is stored in UTC, so the window
 -- is converted to UTC (IST = UTC + 5:30) before filtering.
 -- @Operator optionally restricts to a single ChangedBy (email).
--- @IncludeSystem = 0 hides automation ('System' / 'AutomationJob') so the focus is on human operators.
+-- @IncludeSystem = 0 hides automation / webhook actors ('System', 'AutomationJob', 'PlivoCX Webhook',
+-- 'Relay Webhook') so the focus is on human operators.
 --
 -- Returns THREE result sets:
 --   1) Per-operator summary   (Operator, TotalActions, TicketsTouched, FirstActionAt, LastActionAt)
@@ -40,7 +41,7 @@ BEGIN
     WHERE h.ChangedAt >= @FromUtc
       AND h.ChangedAt <  @ToUtc
       AND (@Operator IS NULL OR h.ChangedBy = @Operator)
-      AND (@IncludeSystem = 1 OR ISNULL(h.ChangedBy, 'System') NOT IN ('System', 'AutomationJob'));
+      AND (@IncludeSystem = 1 OR ISNULL(h.ChangedBy, 'System') NOT IN ('System', 'AutomationJob', 'PlivoCX Webhook', 'Relay Webhook'));
 
     -- 1) Summary
     SELECT
