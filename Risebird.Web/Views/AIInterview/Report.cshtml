@@ -624,28 +624,43 @@
     }
 
     .rb-ai-summary-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        display: flex;
+        flex-wrap: wrap;
         gap: 10px;
+        align-items: stretch;
     }
 
     .rb-ai-metric {
+        flex: 1 1 0;
+        min-width: 220px;
         background: rgba(151, 202, 244, 0.1);
         border: 1px solid rgba(151, 202, 244, 0.25);
         border-radius: 10px;
-        padding: 10px 12px;
+        padding: 10px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .rb-ai-metric__main {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        width: 100%;
     }
 
     .rb-ai-metric__label {
-        font-size: 11px;
+        font-size: 12px;
         font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        color: #64748b;
-        margin-bottom: 4px;
+        color: #475569;
+        margin-bottom: 0;
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 6px;
+        flex: 1 1 auto;
+        min-width: 0;
+        line-height: 1.3;
     }
 
     .rb-ai-metric__label img {
@@ -655,10 +670,13 @@
     }
 
     .rb-ai-metric__value {
-        font-size: 1.15rem;
+        font-size: 1.1rem;
         font-weight: 700;
         color: #0f172a;
         line-height: 1.2;
+        flex: 0 0 auto;
+        text-align: right;
+        white-space: nowrap;
     }
 
     .rb-ai-metric__sub {
@@ -999,7 +1017,12 @@
 
     @@media (max-width: 768px) {
         .rb-ai-summary-grid {
-            grid-template-columns: 1fr 1fr;
+            flex-direction: column;
+        }
+
+        .rb-ai-metric {
+            min-width: 0;
+            flex: 1 1 auto;
         }
 
         .rb-ai-rubric-table,
@@ -2546,15 +2569,19 @@
                                 @if (Model.AIInterviewEvaluation.OverallTechnicalScore != 0)
                                 {
                                     <div class="rb-ai-metric">
-                                        <div class="rb-ai-metric__label"><img src="/img/techskill-score.png" alt="" /> Overall Skill Score</div>
-                                        <div class="rb-ai-metric__value">@Model.AIInterviewEvaluation.OverallTechnicalScore</div>
+                                        <div class="rb-ai-metric__main">
+                                            <div class="rb-ai-metric__label"><img src="/img/techskill-score.png" alt="" /> Overall Skill Score</div>
+                                            <div class="rb-ai-metric__value">@Model.AIInterviewEvaluation.OverallTechnicalScore</div>
+                                        </div>
                                     </div>
                                 }
                                 @if (Model.AIInterviewEvaluation.OverallCommunicationScore != 0)
                                 {
                                     <div class="rb-ai-metric">
-                                        <div class="rb-ai-metric__label"><img src="/img/communication-score.png" alt="" /> Communication Score</div>
-                                        <div class="rb-ai-metric__value">@Model.AIInterviewEvaluation.OverallCommunicationScore</div>
+                                        <div class="rb-ai-metric__main">
+                                            <div class="rb-ai-metric__label"><img src="/img/communication-score.png" alt="" /> Communication Score</div>
+                                            <div class="rb-ai-metric__value">@Model.AIInterviewEvaluation.OverallCommunicationScore</div>
+                                        </div>
                                     </div>
                                 }
                                 @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict))
@@ -2562,24 +2589,28 @@
                                     var fv = Model.AIInterviewEvaluation.FinalVerdict.Trim();
                                     var fvClass = GetFvBadgeClass(fv);
                                     <div class="rb-ai-metric">
-                                        <div class="rb-ai-metric__label"><img src="/img/interviewer-comment.png" alt="" /> Final Verdict</div>
-                                        <div class="rb-ai-metric__value">
-                                            @if (fvClass != null)
-                                            {
-                                                <span class="ai-final-verdict-badge @fvClass">@fv</span>
-                                            }
-                                            else
-                                            {
-                                                @fv
-                                            }
+                                        <div class="rb-ai-metric__main">
+                                            <div class="rb-ai-metric__label"><img src="/img/interviewer-comment.png" alt="" /> Final Verdict</div>
+                                            <div class="rb-ai-metric__value">
+                                                @if (fvClass != null)
+                                                {
+                                                    <span class="ai-final-verdict-badge @fvClass">@fv</span>
+                                                }
+                                                else
+                                                {
+                                                    @fv
+                                                }
+                                            </div>
                                         </div>
                                     </div>
                                 }
                                 @if (Model.AIResumeScreeningScore != 0)
                                 {
                                     <div class="rb-ai-metric">
-                                        <div class="rb-ai-metric__label"><img src="/img/resume-screening.png" alt="" /> Resume Screening</div>
-                                        <div class="rb-ai-metric__value">@Model.AIResumeScreeningScore</div>
+                                        <div class="rb-ai-metric__main">
+                                            <div class="rb-ai-metric__label"><img src="/img/resume-screening.png" alt="" /> Resume Screening</div>
+                                            <div class="rb-ai-metric__value">@Model.AIResumeScreeningScore</div>
+                                        </div>
                                         @if (!string.IsNullOrWhiteSpace(Model.AIResumeScreeningVerdict))
                                         {
                                             <div class="rb-ai-metric__sub">@Model.AIResumeScreeningVerdict</div>
@@ -3327,16 +3358,34 @@
                                 <div class="rb-video-header" style="flex: 1;">
                                     <div class="rb-video-info">
                                         <h4><span class="rb-question-number">@questionNumber</span>Answer</h4>
-                                        @if (!string.IsNullOrEmpty(videoDetail.VideoLink))
+                                        @if (!string.IsNullOrEmpty(videoDetail.VideoLink) || !string.IsNullOrEmpty(videoDetail.CandidateAnswerAudioLink))
                                         {
                                             <p style="margin-top:15px;">
                                                 @if (ViewBag.IsAdaptive == true)
                                                 {
-                                                    <video controls style="width:435px;" class="rb-video-element">
-                                                        <source src="@videoDetail.VideoLink" type="video/mp4">
-                                                        <source src="@videoDetail.VideoLink" type="video/webm">
-                                                        Your browser does not support the video element.
-                                                    </video>
+                                                    @* if (!string.IsNullOrEmpty(videoDetail.CandidateAnswerAudioLink))
+                                                    {
+                                                        <audio controls style="width:435px;height:70px;" class="rb-video-element">
+                                                            <source src="@videoDetail.CandidateAnswerAudioLink" type="audio/webm">
+                                                            <source src="@videoDetail.CandidateAnswerAudioLink" type="audio/mpeg">
+                                                            <source src="@videoDetail.CandidateAnswerAudioLink" type="audio/wav">
+                                                            <source src="@videoDetail.CandidateAnswerAudioLink" type="audio/ogg">
+                                                        </audio>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(videoDetail.VideoLink))
+                                                    {
+                                                        <video controls style="width:435px;@(string.IsNullOrEmpty(videoDetail.CandidateAnswerAudioLink) ? "" : "margin-top:10px;")" class="rb-video-element">
+                                                            <source src="@videoDetail.VideoLink" type="video/webm">
+                                                            <source src="@videoDetail.VideoLink" type="video/mp4">
+                                                            Your browser does not support the video element.
+                                                        </video>
+                                                    } *@
+
+                                                    <video controls style="width:435px;@(string.IsNullOrEmpty(videoDetail.CandidateAnswerAudioLink) ? "" : "margin-top:10px;")" class="rb-video-element">
+                                                            <source src="@videoDetail.VideoLink" type="video/webm">
+                                                            <source src="@videoDetail.VideoLink" type="video/mp4">
+                                                            Your browser does not support the video element.
+                                                        </video>
                                                 }
                                                 else
                                                 {
