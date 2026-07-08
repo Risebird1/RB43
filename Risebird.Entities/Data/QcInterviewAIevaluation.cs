@@ -20,6 +20,11 @@ namespace Risebird.Entities.Data
         public string MergedAIQCDetails { get; set; }
         /// <summary>JSON from the contradiction AI assistant (reconciling transcript vs report).</summary>
         public string ContradictionJson { get; set; }
+        public string ContradictionScore { get; set; }
+        public string ContradictionVerdict { get; set; }
+        public string ContradictionDirectionVerdict { get; set; }
+        public string qcmergeverdict { get; set; }
+        public int? qcmergescore { get; set; }
         public int? AIMergeTotalPenalty { get; set; }
         public string AIMergeInterviewerSuspicious { get; set; }
         public bool? AIMergeRedoInterview { get; set; }
