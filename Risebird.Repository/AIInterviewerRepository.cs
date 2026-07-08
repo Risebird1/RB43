@@ -125,7 +125,7 @@ namespace Risebird.Repository
                 // Silently fail to not block the interview flow
             }
         }
-        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false)
+        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false, string candidateAnswerAudioLink = null)
         {
             try
             {
@@ -139,6 +139,7 @@ namespace Risebird.Repository
                     var normalizedQuestion = NormalizeForDb(CleanMessage(question));
                     var normalizedBotSynthVideoLink = NormalizeForDb(botSynthesizedVideoLink);
                     var normalizedBotAudioLink = NormalizeForDb(BotAudioLink);
+                    var normalizedCandidateAnswerAudioLink = NormalizeForDb(candidateAnswerAudioLink);
 
                     // Required fields for a meaningful row in BotInterviewQuestionVideos.
                     //if(isTypingSpeedQuestion || isListeningComprehension)
@@ -194,6 +195,7 @@ namespace Risebird.Repository
                     parameters.Add("@CreatedAt", DateTime.Now);
                     parameters.Add("@BotAudioLink", normalizedBotAudioLink);
                     parameters.Add("@DeliveryHeadQuestionId", deliveryHeadQuestionId);
+                    parameters.Add("@CandidateAnswerAudioLink", normalizedCandidateAnswerAudioLink);
                     await SqlMapper.QueryAsync(con, "usp_SaveBotInterviewQuestionVideos", parameters,
                          commandType: CommandType.StoredProcedure);
                     //await SqlMapper.QueryAsync(con, "usp_SaveBotInterviewQuestionVideosTestVersion", parameters,

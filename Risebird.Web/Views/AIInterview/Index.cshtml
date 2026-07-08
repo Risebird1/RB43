@@ -2749,9 +2749,12 @@
 
     function pickVideoRecorderMimeType() {
         const types = [
+            'video/webm;codecs=vp9,opus',
+            'video/webm;codecs=vp8,opus',
             'video/webm;codecs=vp9',
             'video/webm;codecs=vp8',
             'video/webm',
+            'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
             'video/mp4;codecs=avc1.42E01E',
             'video/mp4'
         ];
@@ -2770,7 +2773,11 @@
         if (!source) return null;
         const videoTracks = source.getVideoTracks().filter(function (t) { return t.readyState === 'live'; });
         if (!videoTracks.length) return null;
-        return new MediaStream(videoTracks);
+        // Clone audio tracks so the answer video recorder does not contend with mediaRecorderAudio.
+        const audioTracks = source.getAudioTracks()
+            .filter(function (t) { return t.readyState === 'live'; })
+            .map(function (t) { return t.clone(); });
+        return new MediaStream(videoTracks.concat(audioTracks));
     }
 
     function getCandidateAudioStream() {
@@ -2898,9 +2905,9 @@
                     clearInterval(countdownInterval);
 
                     const audioMime = (mediaRecorderAudio && mediaRecorderAudio.mimeType) || pickAudioRecorderMimeType() || 'audio/webm';
-                    const resolvedMime = (audioMime.indexOf('webm') >= 0 && audioMime.indexOf('video/') < 0)
-                        ? 'video/webm'
-                        : audioMime;
+                    const resolvedMime = audioMime.indexOf('audio/') === 0
+                        ? audioMime.split(';')[0]
+                        : (audioMime.indexOf('webm') >= 0 ? 'audio/webm' : audioMime);
                     const audioExt = resolvedMime.indexOf('webm') >= 0 ? 'webm'
                         : resolvedMime.indexOf('ogg') >= 0 ? 'ogg'
                         : resolvedMime.indexOf('mp4') >= 0 ? 'm4a'
