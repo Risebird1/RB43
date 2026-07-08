@@ -8,6 +8,8 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+-- Prerequisite: run Migrations/AddCandidateAnswerAudioLinkToBotInterviewQuestionVideos.sql first.
 Create Procedure usp_SaveBotInterviewQuestionVideos
 @VideoLink varchar(1000),
 @question nvarchar(max),
@@ -18,7 +20,8 @@ Create Procedure usp_SaveBotInterviewQuestionVideos
 @BotSynthesizedVideoLink varchar(2000) = null,
 @CandidateResponse nvarchar(max),
 @BotAudioLink varchar(2000) = null,
-@DeliveryHeadQuestionId int = null
+@DeliveryHeadQuestionId int = null,
+@CandidateAnswerAudioLink varchar(2000) = null
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -42,6 +45,7 @@ BEGIN
                 BotSynthesizedVideoLink = @BotSynthesizedVideoLink,
                 CandidateAnswer = @CandidateResponse,
                 BotAudioLink = @BotAudioLink,
+                CandidateAnswerAudioLink = @CandidateAnswerAudioLink,
                 AnswerModifiedAt = GETDATE(),
                 AnswerModifiedBy = 'System'
             WHERE SessionId = @SessionId 
@@ -50,8 +54,8 @@ BEGIN
         ELSE
         BEGIN
             -- Insert new record
-            Insert into BotInterviewQuestionVideos (SessionId, VideoLink, question, CreatedAt, BotSynthesizedVideoLink, CandidateAnswer, BotAudioLink, DeliveryHeadQuestionId) 
-            values(@SessionId, @VideoLink, @question, @CreatedAt, @BotSynthesizedVideoLink, @CandidateResponse, @BotAudioLink, @DeliveryHeadQuestionId)
+            Insert into BotInterviewQuestionVideos (SessionId, VideoLink, question, CreatedAt, BotSynthesizedVideoLink, CandidateAnswer, BotAudioLink, DeliveryHeadQuestionId, CandidateAnswerAudioLink) 
+            values(@SessionId, @VideoLink, @question, @CreatedAt, @BotSynthesizedVideoLink, @CandidateResponse, @BotAudioLink, @DeliveryHeadQuestionId, @CandidateAnswerAudioLink)
         END
 
         update InterviewMeetings set TimeLeftInSeconds = @secondsLeft where id = @interviewId
