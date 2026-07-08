@@ -82,6 +82,16 @@ BEGIN
     Add AnswerModifiedBy varchar(100) null
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CandidateAnswerAudioLink')
+      AND Object_ID = Object_ID(N'BotInterviewQuestionVideos'))
+BEGIN
+    ALTER TABLE BotInterviewQuestionVideos
+    Add CandidateAnswerAudioLink varchar(2000) null
+END
+
 IF EXISTS(
     SELECT *
     FROM sys.columns
