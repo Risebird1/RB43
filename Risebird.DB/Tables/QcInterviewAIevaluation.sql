@@ -20,6 +20,8 @@ CREATE TABLE [dbo].[QcInterviewAIevaluation](
 	[ContradictionScore] [varchar](10) NULL,
 	[ContradictionVerdict] [varchar](100) NULL,
 	[ContradictionDirectionVerdict] [varchar](100) NULL,
+	[qcmergeverdict] [varchar](100) NULL,
+	[qcmergescore] [int] NULL,
  CONSTRAINT [PK_QcInterviewAIevaluation] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -37,6 +39,18 @@ GO
 IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'QcInterviewAIevaluation' AND COLUMN_NAME = 'ContradictionDirectionVerdict')
 BEGIN
     ALTER TABLE [dbo].[QcInterviewAIevaluation] ADD [ContradictionDirectionVerdict] [varchar](100) NULL;
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'QcInterviewAIevaluation' AND COLUMN_NAME = 'qcmergeverdict')
+BEGIN
+    ALTER TABLE [dbo].[QcInterviewAIevaluation] ADD [qcmergeverdict] [varchar](100) NULL;
+END
+GO
+
+IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'QcInterviewAIevaluation' AND COLUMN_NAME = 'qcmergescore')
+BEGIN
+    ALTER TABLE [dbo].[QcInterviewAIevaluation] ADD [qcmergescore] [int] NULL;
 END
 GO
 
