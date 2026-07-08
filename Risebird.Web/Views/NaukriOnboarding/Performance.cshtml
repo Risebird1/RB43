@@ -1,0 +1,235 @@
+@model Risebird.Entities.ViewModel.NaukriPerformanceVM
+@{
+    ViewData["Title"] = "Operator Performance";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var assignees = ViewBag.Assignees as List<Risebird.Entities.ViewModel.NaukriAssigneeVM> ?? new List<Risebird.Entities.ViewModel.NaukriAssigneeVM>();
+    string df = Model.DateFrom.ToString("yyyy-MM-dd");
+    string dt = Model.DateTo.ToString("yyyy-MM-dd");
+
+    // Friendly labels for the raw event-type keys stored in NaukriOnboardingHistory.
+    string EventLabel(string e)
+    {
+        switch (e)
+        {
+            case "StatusChange": return "Status";
+            case "AssignmentChange": return "Assign";
+            case "EmploymentVerification": return "Emp. Verify";
+            case "NotQualified": return "Not Qualified";
+            case "ResumeParse": return "Resume Parse";
+            case "ResumeAnalysis": return "AI Fitment";
+            case "AcknowledgementSent": return "Ack Sent";
+            case "AcknowledgementPending": return "Ack Pending";
+            case "AckEmailResent": return "Ack Resent";
+            case "SkillChannelSelected": return "Channel";
+            case "MagChange": return "MAG Change";
+            case "MagConfirmed": return "MAG Confirm";
+            case "InvitationEmailSent": return "Invite Sent";
+            case "ProspectResponse": return "Response";
+            case "SelfRegistered": return "Self-Reg";
+            case "DuplicateCleared": return "Dup Cleared";
+            case "ResumeUpload": return "Resume Upload";
+            case "RecordCreated": return "Created";
+            case "RelayPreParsed": return "Relay Parse";
+            case "PlivoCallInitiated": return "Call Init";
+            case "PlivoCallCompleted": return "Call Done";
+            case "IntentConfirmed": return "Intent";
+            case "BatchCallInitiated": return "Batch Call";
+            case "Deleted": return "Deleted";
+            default: return e;
+        }
+    }
+
+    string OpDisplay(string email)
+    {
+        var a = assignees.FirstOrDefault(x => string.Equals(x.Email, email, StringComparison.OrdinalIgnoreCase));
+        return (a != null && !string.IsNullOrWhiteSpace(a.Name)) ? $"{a.Name}" : email;
+    }
+}
+
+<style>
+    .perf-card .sv { font-size: 26px; font-weight: 700; line-height: 1; }
+    .perf-card .sl { font-size: 11.5px; color: #6c757d; margin-top: 4px; text-transform: uppercase; letter-spacing: .3px; }
+    .perf-matrix { font-size: 12px; }
+    .perf-matrix th, .perf-matrix td { white-space: nowrap; }
+    .perf-matrix thead th { position: sticky; top: 0; background: #f8f9fa; z-index: 2; font-size: 11px; }
+    .perf-matrix td.num, .perf-matrix th.num { text-align: right; }
+    .perf-matrix .zero { color: #cbd5e1; }
+    .perf-op { font-weight: 600; }
+    .perf-op small { display:block; font-weight: 400; color:#6c757d; font-size:10px; }
+    .perf-scroll { max-height: 460px; overflow: auto; border: 1px solid #e2e8f0; border-radius: 10px; }
+    .perf-log td { font-size: 11.5px; vertical-align: top; }
+    .perf-evt-badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; background:#eef2f7; color:#334155; border:1px solid #dbe3ec; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="content client">
+            <div class="container-fluid py-4">
+
+                <div class="row mb-3 align-items-center">
+                    <div class="col">
+                        <h4 class="fw-bold mb-0"><i class="fas fa-user-clock text-info me-2"></i>Operator Performance</h4>
+                        <p class="text-muted mb-0 mt-1" style="font-size:13px;">Who did what on Naukri onboarding tickets between the selected dates.</p>
+                    </div>
+                    <div class="col-auto d-flex gap-2">
+                        <a href="@Url.Action("Index", "NaukriOnboarding")" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back to Onboarding</a>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="location.reload()"><i class="fas fa-sync-alt me-1"></i>Refresh</button>
+                    </div>
+                </div>
+
+                @if (TempData["Error"] != null) { <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div> }
+
+                <form method="get" asp-action="Performance" asp-controller="NaukriOnboarding" class="card border-0 shadow-sm mb-4">
+                    <div class="card-body py-3">
+                        <div class="row g-2 align-items-end">
+                            <div class="col-auto">
+                                <label class="form-label mb-1" style="font-size:12px;">From</label>
+                                <input type="date" name="dateFrom" value="@df" class="form-control form-control-sm" />
+                            </div>
+                            <div class="col-auto">
+                                <label class="form-label mb-1" style="font-size:12px;">To</label>
+                                <input type="date" name="dateTo" value="@dt" class="form-control form-control-sm" />
+                            </div>
+                            <div class="col-auto">
+                                <label class="form-label mb-1" style="font-size:12px;">Operator</label>
+                                <select name="operatorEmail" class="form-select form-select-sm" style="min-width:220px;">
+                                    <option value="">All operators</option>
+                                    @foreach (var a in assignees)
+                                    {
+                                        if (string.Equals(Model.Operator, a.Email, StringComparison.OrdinalIgnoreCase))
+                                        { <option value="@a.Email" selected>@a.DisplayName</option> }
+                                        else { <option value="@a.Email">@a.DisplayName</option> }
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-auto">
+                                <div class="form-check mb-1" style="margin-top:22px;">
+                                    <input class="form-check-input" type="checkbox" name="includeSystem" value="true" id="incSys" @(Model.IncludeSystem ? "checked" : "") />
+                                    <label class="form-check-label" for="incSys" style="font-size:12px;">Include automation (System)</label>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-filter me-1"></i>Apply</button>
+                                <a href="@Url.Action("Performance", "NaukriOnboarding")" class="btn btn-sm btn-outline-secondary"><i class="fas fa-times me-1"></i>Clear</a>
+                            </div>
+                            <div class="col-auto ms-auto d-flex gap-2">
+                                @foreach (var (lbl, days) in new[] { ("Today", 0), ("7d", 6), ("30d", 29) })
+                                {
+                                    var qf = DateTime.UtcNow.AddMinutes(330).Date.AddDays(-days).ToString("yyyy-MM-dd");
+                                    var qt = DateTime.UtcNow.AddMinutes(330).Date.ToString("yyyy-MM-dd");
+                                    <a class="btn btn-sm btn-outline-info" href="@Url.Action("Performance", "NaukriOnboarding")?dateFrom=@qf&dateTo=@qt@(string.IsNullOrEmpty(Model.Operator) ? "" : "&operatorEmail=" + Uri.EscapeDataString(Model.Operator))@(Model.IncludeSystem ? "&includeSystem=true" : "")">@lbl</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-3"><div class="card border-0 shadow-sm text-center py-3 perf-card"><div class="sv text-primary">@Model.TotalActions.ToString("N0")</div><div class="sl">Total Actions</div></div></div>
+                    <div class="col-6 col-md-3"><div class="card border-0 shadow-sm text-center py-3 perf-card"><div class="sv text-info">@Model.TotalOperators</div><div class="sl">Operators Active</div></div></div>
+                    <div class="col-6 col-md-3"><div class="card border-0 shadow-sm text-center py-3 perf-card"><div class="sv" style="color:#6f42c1;">@Model.TotalTicketsTouched.ToString("N0")</div><div class="sl">Tickets Touched</div></div></div>
+                    <div class="col-6 col-md-3"><div class="card border-0 shadow-sm text-center py-3 perf-card"><div class="sv" style="color:#0f5132;font-size:16px;padding-top:6px;">@Model.DateFrom.ToString("dd MMM")&ndash;@Model.DateTo.ToString("dd MMM yy")</div><div class="sl">Date Range (IST)</div></div></div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0 py-3"><strong><i class="fas fa-table me-2 text-secondary"></i>Activity by operator</strong></div>
+                    <div class="card-body p-0">
+                        @if (!Model.Operators.Any())
+                        {
+                            <div class="text-center text-muted py-5"><i class="fas fa-inbox fa-2x mb-2 d-block"></i>No activity in this window.</div>
+                        }
+                        else
+                        {
+                            <div class="perf-scroll">
+                                <table class="table table-hover table-bordered mb-0 perf-matrix">
+                                    <thead>
+                                        <tr>
+                                            <th style="position:sticky;left:0;z-index:3;background:#f8f9fa;">Operator</th>
+                                            <th class="num">Total</th>
+                                            <th class="num">Tickets</th>
+                                            @foreach (var et in Model.EventTypes)
+                                            {
+                                                <th class="num" title="@et">@EventLabel(et)</th>
+                                            }
+                                            <th>First</th>
+                                            <th>Last</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var op in Model.Operators)
+                                        {
+                                            <tr>
+                                                <td class="perf-op" style="position:sticky;left:0;background:#fff;">
+                                                    @OpDisplay(op.Operator)
+                                                    <small>@op.Operator</small>
+                                                </td>
+                                                <td class="num fw-bold">@op.TotalActions</td>
+                                                <td class="num">@op.TicketsTouched</td>
+                                                @foreach (var et in Model.EventTypes)
+                                                {
+                                                    int c = op.CountFor(et);
+                                                    <td class="num @(c == 0 ? "zero" : "")">@(c == 0 ? "·" : c.ToString())</td>
+                                                }
+                                                <td>@(op.FirstActionAt?.ToString("dd MMM, HH:mm") ?? "—")</td>
+                                                <td>@(op.LastActionAt?.ToString("dd MMM, HH:mm") ?? "—")</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                        <strong><i class="fas fa-stream me-2 text-secondary"></i>Detailed activity log</strong>
+                        <span class="text-muted" style="font-size:12px;">@Model.Log.Count shown@(Model.Log.Count >= 1000 ? " (capped at 1000)" : "")</span>
+                    </div>
+                    <div class="card-body p-0">
+                        @if (!Model.Log.Any())
+                        {
+                            <div class="text-center text-muted py-5"><i class="fas fa-inbox fa-2x mb-2 d-block"></i>No log entries.</div>
+                        }
+                        else
+                        {
+                            <div class="perf-scroll">
+                                <table class="table table-hover table-sm mb-0 perf-log">
+                                    <thead class="table-light" style="position:sticky;top:0;z-index:1;">
+                                        <tr>
+                                            <th>When (IST)</th><th>Operator</th><th>Ticket</th><th>Candidate</th><th>MAG</th><th>Event</th><th>Change</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var l in Model.Log)
+                                        {
+                                            <tr>
+                                                <td style="white-space:nowrap;">@l.ChangedAt.ToString("dd MMM yy, HH:mm")</td>
+                                                <td>@OpDisplay(l.Operator)</td>
+                                                <td>#@l.RecordId</td>
+                                                <td>@(string.IsNullOrWhiteSpace(l.CandidateName) ? "—" : l.CandidateName)</td>
+                                                <td style="max-width:180px;white-space:normal;">@(string.IsNullOrWhiteSpace(l.MagName) ? "—" : l.MagName)</td>
+                                                <td><span class="perf-evt-badge" title="@l.EventType">@EventLabel(l.EventType)</span></td>
+                                                <td style="max-width:260px;white-space:normal;">
+                                                    @{
+                                                        string fromV = string.IsNullOrWhiteSpace(l.FromValue) || l.FromValue == "—" ? null : l.FromValue;
+                                                        string toV = string.IsNullOrWhiteSpace(l.ToValue) || l.ToValue == "—" ? null : l.ToValue;
+                                                    }
+                                                    @if (fromV != null && toV != null) { <span class="text-muted">@fromV</span> <i class="fas fa-arrow-right mx-1 text-muted" style="font-size:9px;"></i> <span>@toV</span> }
+                                                    else if (toV != null) { <span>@toV</span> }
+                                                    else { <span class="text-muted">—</span> }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

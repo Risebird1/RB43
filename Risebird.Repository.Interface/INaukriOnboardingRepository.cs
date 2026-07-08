@@ -36,6 +36,13 @@ namespace Risebird.Repository.Interface
         Task<List<NaukriAssigneeVM>> GetEligibleAssigneesAsync();
         Task<(bool Success, string FromAssignedTo, string ToEmail, string ToName)> UpdateAssignmentAsync(int id, int assignedToUserId);
 
+        // Bulk assignment: distribute a whole MAG's tickets to a single operator (MAG-wise ownership).
+        Task<List<NaukriMagAssignmentSummary>> GetMagAssignmentSummaryAsync();
+        Task<(bool Success, int Affected, string ToEmail, string ToName)> BulkAssignByMagAsync(string magName, int assignedToUserId, string scope, string changedBy);
+
+        // Operator performance / supervision (derived from NaukriOnboardingHistory) between dates.
+        Task<NaukriPerformanceData> GetOperatorPerformanceAsync(DateTime dateFrom, DateTime dateTo, string operatorEmail, bool includeSystem, int logLimit);
+
         // SendGrid delivery status of the invitation email for a recipient (null if none sent yet).
         Task<NaukriInvitationEmailStatus> GetInvitationEmailStatusAsync(string email);
 
@@ -144,6 +151,53 @@ namespace Risebird.Repository.Interface
         public int? LastBatchSucceeded { get; set; }
         public string LastBatchStatus { get; set; }
         public int TotalBatches { get; set; }
+    }
+
+    // Per-MAG ticket distribution snapshot for the bulk-assign picker.
+    public class NaukriMagAssignmentSummary
+    {
+        public string MagName { get; set; }
+        public string AssessmentGroupName { get; set; }
+        public int Total { get; set; }
+        public int Assigned { get; set; }
+        public int Unassigned { get; set; }
+        public int Active { get; set; }
+    }
+
+    // Raw rows returned by usp_GetNaukriOperatorPerformance (assembled into view models by the app).
+    public class NaukriPerfSummaryRow
+    {
+        public string Operator { get; set; }
+        public int TotalActions { get; set; }
+        public int TicketsTouched { get; set; }
+        public DateTime? FirstActionAt { get; set; }
+        public DateTime? LastActionAt { get; set; }
+    }
+
+    public class NaukriPerfEventRow
+    {
+        public string Operator { get; set; }
+        public string EventType { get; set; }
+        public int Cnt { get; set; }
+    }
+
+    public class NaukriPerfLogRow
+    {
+        public DateTime ChangedAt { get; set; }
+        public string Operator { get; set; }
+        public int RecordId { get; set; }
+        public string CandidateName { get; set; }
+        public string MagName { get; set; }
+        public string EventType { get; set; }
+        public string FromValue { get; set; }
+        public string ToValue { get; set; }
+    }
+
+    public class NaukriPerformanceData
+    {
+        public List<NaukriPerfSummaryRow> Summary { get; set; } = new List<NaukriPerfSummaryRow>();
+        public List<NaukriPerfEventRow> Events { get; set; } = new List<NaukriPerfEventRow>();
+        public List<NaukriPerfLogRow> Log { get; set; } = new List<NaukriPerfLogRow>();
     }
 
     public class BatchCallLogEntry
