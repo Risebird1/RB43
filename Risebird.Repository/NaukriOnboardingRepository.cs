@@ -344,6 +344,87 @@ namespace Risebird.Repository
             }
         }
 
+        // Per-MAG ticket distribution snapshot for the bulk-assign picker.
+        public async Task<List<NaukriMagAssignmentSummary>> GetMagAssignmentSummaryAsync()
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var result = await con.QueryAsync<NaukriMagAssignmentSummary>(
+                    "usp_GetNaukriMagAssignmentSummary", commandType: CommandType.StoredProcedure, commandTimeout: 60);
+                return result.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<NaukriMagAssignmentSummary>();
+            }
+        }
+
+        // Bulk-assigns every ticket in a MAG (per @scope) to a single operator. History is logged
+        // set-based inside the SP. Returns the resolved assignee + number of tickets re-owned.
+        public async Task<(bool Success, int Affected, string ToEmail, string ToName)> BulkAssignByMagAsync(
+            string magName, int assignedToUserId, string scope, string changedBy)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@MagName", magName);
+                p.Add("@AssignedToUserId", assignedToUserId);
+                p.Add("@Scope", string.IsNullOrWhiteSpace(scope) ? "unassigned" : scope);
+                p.Add("@ChangedBy", changedBy ?? "System");
+                p.Add("@Email", dbType: DbType.String, direction: ParameterDirection.Output, size: 150);
+                p.Add("@Name", dbType: DbType.String, direction: ParameterDirection.Output, size: 200);
+                p.Add("@Affected", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                await con.ExecuteAsync("usp_BulkAssignNaukriProspectsByMag", p,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 120);
+
+                string email = p.Get<string>("@Email");
+                if (string.IsNullOrEmpty(email))
+                    return (false, 0, null, null);  // operator failed validation
+
+                return (true, p.Get<int>("@Affected"), email, p.Get<string>("@Name"));
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return (false, 0, null, null);
+            }
+        }
+
+        // Operator performance / supervision, derived from NaukriOnboardingHistory between two dates.
+        public async Task<NaukriPerformanceData> GetOperatorPerformanceAsync(
+            DateTime dateFrom, DateTime dateTo, string operatorEmail, bool includeSystem, int logLimit)
+        {
+            var data = new NaukriPerformanceData();
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@DateFrom", dateFrom.Date, DbType.Date);
+                p.Add("@DateTo", dateTo.Date, DbType.Date);
+                p.Add("@Operator", string.IsNullOrWhiteSpace(operatorEmail) ? null : operatorEmail);
+                p.Add("@IncludeSystem", includeSystem);
+                p.Add("@LogLimit", logLimit <= 0 ? 1000 : logLimit);
+
+                using var multi = await con.QueryMultipleAsync(
+                    "usp_GetNaukriOperatorPerformance", p,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 120);
+
+                data.Summary = (await multi.ReadAsync<NaukriPerfSummaryRow>()).ToList();
+                data.Events = (await multi.ReadAsync<NaukriPerfEventRow>()).ToList();
+                data.Log = (await multi.ReadAsync<NaukriPerfLogRow>()).ToList();
+                return data;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return data;
+            }
+        }
+
         public async Task<bool> UpdateStatusAsync(int id, string status, string changedBy)
         {
             try

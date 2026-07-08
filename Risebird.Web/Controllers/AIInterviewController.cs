@@ -1636,6 +1636,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 string VideoLink = string.Empty;
+                string candidateAnswerAudioLink = string.Empty;
 
                 // If there's a video file, upload it
                 if (model.VideoFile != null && model.VideoFile.Length > 0)
@@ -1646,7 +1647,8 @@ namespace Risebird.Web.Controllers
                         //var key = await _aWSRekognitionService.UploadVideoAsync(model.VideoFile);
                         //var faceDetection = await _aWSRekognitionService.AnalyzeVideoAsync(key);
                         var file = model.VideoFile;
-                        var filename = model.SessionId.ToString().Replace(".", "_").Replace("@", "a").ToString() + DateTime.Now.ToString("yyyyMMddHHmmssffff") + ".mp4";
+                        var videoExtension = fileMimeType.Contains("webm", StringComparison.OrdinalIgnoreCase) ? "webm" : "mp4";
+                        var filename = model.SessionId.ToString().Replace(".", "_").Replace("@", "a").ToString() + DateTime.Now.ToString("yyyyMMddHHmmssffff") + "." + videoExtension;
                         //await _azureStorageHelper.InsertBlob(filename, "botinterviewvideo", file);
                         await _azureStorageHelper.InsertImageBlob(filename, "botinterviewvideo", file, fileMimeType);
                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("botinterviewvideo");
@@ -1711,6 +1713,46 @@ namespace Risebird.Web.Controllers
                     //    }
                     //}
                 }
+
+                if (model.AudioFile != null && model.AudioFile.Length > 0)
+                {
+                    var audioMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
+                    if (string.IsNullOrWhiteSpace(audioMimeType) && !string.IsNullOrWhiteSpace(model.AudioFile.ContentType))
+                    {
+                        audioMimeType = model.AudioFile.ContentType.ToLowerInvariant();
+                    }
+                    if (string.IsNullOrWhiteSpace(audioMimeType)
+                        && !string.IsNullOrWhiteSpace(model.AudioFile.FileName)
+                        && model.AudioFile.FileName.EndsWith(".webm", StringComparison.OrdinalIgnoreCase))
+                    {
+                        audioMimeType = "audio/webm";
+                    }
+
+                    if (audioMimeType == "audio/mpeg" || audioMimeType == "audio/wav" || audioMimeType == "audio/ogg"
+                        || audioMimeType == "audio/webm" || audioMimeType == "video/webm" || audioMimeType == "audio/mp4"
+                        || audioMimeType == "audio/x-m4a" || audioMimeType == "application/octet-stream")
+                    {
+                        var uploadContentType = audioMimeType == "application/octet-stream" ? "audio/webm" : audioMimeType;
+                        var audioExtension = uploadContentType.Contains("webm", StringComparison.OrdinalIgnoreCase) ? "webm"
+                            : uploadContentType.Contains("ogg", StringComparison.OrdinalIgnoreCase) ? "ogg"
+                            : uploadContentType.Contains("wav", StringComparison.OrdinalIgnoreCase) ? "wav"
+                            : uploadContentType.Contains("mpeg", StringComparison.OrdinalIgnoreCase) || uploadContentType.Contains("mp3", StringComparison.OrdinalIgnoreCase) ? "mp3"
+                            : "webm";
+                        var audioFilename = model.SessionId.ToString().Replace(".", "_").Replace("@", "a")
+                            + "_answer_" + DateTime.Now.ToString("yyyyMMddHHmmssffff") + "." + audioExtension;
+                        await _azureStorageHelper.InsertImageBlob(audioFilename, "botinterviewvideo", model.AudioFile, uploadContentType);
+                        var audioContainerRef = _azureStorageHelper.GetCloudBlobContainer("botinterviewvideo");
+                        var audioBlob = audioContainerRef.GetBlockBlobReference(audioFilename);
+                        var uploadedAudioFileUrl = audioBlob?.Uri?.ToString();
+                        var audioSas = _sasUrlHelper.CreateSasUrl("botinterviewvideo");
+                        var audioBlobExists = audioBlob != null && await audioBlob.ExistsAsync();
+                        if (audioBlobExists && !string.IsNullOrWhiteSpace(uploadedAudioFileUrl) && !string.IsNullOrWhiteSpace(audioSas))
+                        {
+                            candidateAnswerAudioLink = uploadedAudioFileUrl + "?" + audioSas;
+                        }
+                    }
+                }
+
                 // If no video file but there's a text/code response, save it with empty VideoLink
                 // This allows text/code submissions to be saved successfully
 
@@ -1720,7 +1762,7 @@ namespace Risebird.Web.Controllers
                 // (DeliveryHeadQuestionId=0) on every subsequent answer instead of INSERTing a new row.
                 // Passing null tells the stored proc to always INSERT a new row, creating one entry per answered question.
                 int? deliveryHeadQuestionId = model.CurrentQuestionId > 0 ? model.CurrentQuestionId : (int?)null;
-                var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, deliveryHeadQuestionId, model.IsTypingSpeedQuestion, model.IsListeningComprehensionQuestion);
+                var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, deliveryHeadQuestionId, model.IsTypingSpeedQuestion, model.IsListeningComprehensionQuestion, candidateAnswerAudioLink);
                 return result;
             }
             catch (Exception ex)

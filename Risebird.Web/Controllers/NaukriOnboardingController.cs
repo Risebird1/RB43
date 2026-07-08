@@ -349,6 +349,148 @@ namespace Risebird.Web.Controllers
             });
         }
 
+        // ── Bulk assignment by MAG ────────────────────────────────────────────────────
+        // Distribute a whole MAG's tickets to one operator (the pre-system MAG-wise practice).
+
+        [HttpGet]
+        public async Task<IActionResult> GetMagAssignmentSummary()
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in.", mags = new object[0] });
+
+            try
+            {
+                var mags = await _repository.GetMagAssignmentSummaryAsync();
+                return Json(new { success = true, mags });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message, mags = new object[0] });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BulkAssignByMag(List<string> magNames, int assignedToUserId, string scope)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            if (magNames == null || magNames.Count == 0 || assignedToUserId <= 0)
+                return Json(new { success = false, error = "Select at least one MAG and an operator." });
+
+            var changedBy = HttpContext.Session.GetString("email").Trim('"');
+            int totalAffected = 0;
+            string toEmail = null, toName = null;
+            var failed = new List<string>();
+
+            foreach (var mag in magNames.Where(m => !string.IsNullOrWhiteSpace(m)).Select(m => m.Trim()).Distinct())
+            {
+                var result = await _repository.BulkAssignByMagAsync(mag, assignedToUserId, scope, changedBy);
+                if (!result.Success)
+                {
+                    // A validation failure means the operator itself is invalid — abort the whole run.
+                    return Json(new { success = false, error = "Could not assign — the selected operator is not an active InterviewerManagement / SeniorInterviewerManagement user." });
+                }
+                totalAffected += result.Affected;
+                toEmail = result.ToEmail;
+                toName = result.ToName;
+            }
+
+            return Json(new
+            {
+                success = true,
+                affected = totalAffected,
+                assignedToEmail = toEmail,
+                assignedToName = toName,
+                message = $"{totalAffected} ticket(s) assigned to {(string.IsNullOrWhiteSpace(toName) ? toEmail : toName)}."
+            });
+        }
+
+        // ── Operator performance / supervision ────────────────────────────────────────
+
+        [HttpGet]
+        public async Task<IActionResult> Performance(string dateFrom = null, string dateTo = null,
+            string operatorEmail = null, bool includeSystem = false)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return RedirectToAction("Index", "Home");
+
+            // Default window: last 30 days (IST calendar).
+            var todayIst = DateTime.UtcNow.AddMinutes(330).Date;
+            DateTime from = todayIst.AddDays(-29), to = todayIst;
+            if (!string.IsNullOrWhiteSpace(dateFrom) && DateTime.TryParse(dateFrom, out var pf)) from = pf.Date;
+            if (!string.IsNullOrWhiteSpace(dateTo) && DateTime.TryParse(dateTo, out var pt)) to = pt.Date;
+            if (to < from) { var tmp = from; from = to; to = tmp; }
+
+            var vm = new NaukriPerformanceVM
+            {
+                DateFrom = from,
+                DateTo = to,
+                Operator = operatorEmail,
+                IncludeSystem = includeSystem
+            };
+
+            try
+            {
+                var data = await _repository.GetOperatorPerformanceAsync(from, to, operatorEmail, includeSystem, 1000);
+
+                // Column order for the event matrix: most frequent event types first.
+                vm.EventTypes = data.Events
+                    .GroupBy(e => e.EventType)
+                    .OrderByDescending(g => g.Sum(x => x.Cnt))
+                    .Select(g => g.Key)
+                    .ToList();
+
+                var eventsByOp = data.Events
+                    .GroupBy(e => e.Operator, StringComparer.OrdinalIgnoreCase)
+                    .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
+
+                foreach (var s in data.Summary)
+                {
+                    var row = new NaukriPerformanceRow
+                    {
+                        Operator = s.Operator,
+                        TotalActions = s.TotalActions,
+                        TicketsTouched = s.TicketsTouched,
+                        FirstActionAt = s.FirstActionAt,
+                        LastActionAt = s.LastActionAt
+                    };
+                    if (eventsByOp.TryGetValue(s.Operator, out var evs))
+                        foreach (var ev in evs) row.EventCounts[ev.EventType] = ev.Cnt;
+                    vm.Operators.Add(row);
+                }
+
+                vm.Log = data.Log.Select(l => new NaukriPerformanceLogItem
+                {
+                    ChangedAt = l.ChangedAt,
+                    Operator = l.Operator,
+                    RecordId = l.RecordId,
+                    CandidateName = l.CandidateName,
+                    MagName = l.MagName,
+                    EventType = l.EventType,
+                    FromValue = l.FromValue,
+                    ToValue = l.ToValue
+                }).ToList();
+
+                vm.TotalActions = vm.Operators.Sum(o => o.TotalActions);
+                vm.TotalOperators = vm.Operators.Count;
+                vm.TotalTicketsTouched = data.Log.Select(l => l.RecordId).Distinct().Count();
+
+                // For the operator filter dropdown.
+                ViewBag.Assignees = await _repository.GetEligibleAssigneesAsync();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                ViewBag.Assignees = new List<NaukriAssigneeVM>();
+                TempData["Error"] = "Failed to load performance data.";
+            }
+
+            return View(vm);
+        }
+
         // ── Inline field update (MAG, Email, Phone) ──────────────────────────────────
 
         [HttpPost]
