@@ -15,14 +15,19 @@ CREATE PROCEDURE [dbo].[usp_SaveQcInterviewAIMergedDetails]
     @redoInterview BIT = NULL
 AS
 BEGIN
-        UPDATE [dbo].[QcInterviewAIevaluation]
-        SET [MergedAIQCDetails] = @mergedJson,
-            [AIMergeTotalPenalty] = @totalPenalty,
-            [AIMergeInterviewerSuspicious] = @interviewerSuspicious,
-            [AIMergeRedoInterview] = @redoInterview,
-            [QCDone] = 1,
-            [QCDoneOn] = DATEADD(MINUTE, 330, GETDATE())
-        WHERE [id] = @qcEvaluationId;
+    DECLARE @qcmergeVerdict VARCHAR(100)   = CASE WHEN ISJSON(@mergedJson) = 1 THEN JSON_VALUE(@mergedJson, '$.qcmerge_verdict') ELSE NULL END
+    DECLARE @qcmergeScore   INT            = CASE WHEN ISJSON(@mergedJson) = 1 THEN TRY_CAST(JSON_VALUE(@mergedJson, '$.total_qcmerge_score') AS INT) ELSE NULL END
+
+    UPDATE [dbo].[QcInterviewAIevaluation]
+    SET [MergedAIQCDetails]          = @mergedJson,
+        [AIMergeTotalPenalty]        = @totalPenalty,
+        [AIMergeInterviewerSuspicious] = @interviewerSuspicious,
+        [AIMergeRedoInterview]       = @redoInterview,
+        [qcmergeverdict]             = @qcmergeVerdict,
+        [qcmergescore]               = @qcmergeScore,
+        [QCDone]                     = 1,
+        [QCDoneOn]                   = DATEADD(MINUTE, 330, GETDATE())
+    WHERE [id] = @qcEvaluationId;
 END
 
 
