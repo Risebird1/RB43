@@ -111,7 +111,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
     From InterviewComments where AITranscriptAnalysisScore<6
     Union
     Select qca.InterviewId,'Contradiction AI Score' as Type,'High Severity' as Riskcategory
-    from QcInterviewAIevaluation qca where ISNULL(TRY_CAST(ContradictionScore AS DECIMAL(10,2)), 0) >=4
+    from QcInterviewAIevaluation qca where ISNULL(TRY_CAST(ContradictionScore AS DECIMAL(10,2)), 0) <=5
     union
     Select im.id as InterviewId, Case when imj.Joinedon is null and imc.PerformedOn is null then 'No Show'
     when imj.Joinedon is null then 'Interviewer No Show' when imc.PerformedOn is null then 'Candidate No Show' end as Type,'Fake Report' as Riskcategory
@@ -212,7 +212,7 @@ if(@EmailId is not null and ((select idProfile from UserList where EmailId=@Emai
     From InterviewComments where AITranscriptAnalysisScore<6
     Union
     Select qca.InterviewId,'Contradiction AI Score' as Type,'High Severity' as Riskcategory
-    from QcInterviewAIevaluation qca where ISNULL(TRY_CAST(ContradictionScore AS DECIMAL(10,2)), 0) >=4
+    from QcInterviewAIevaluation qca where ISNULL(TRY_CAST(ContradictionScore AS DECIMAL(10,2)), 0) <=5
     union
     Select im.id as InterviewId, Case when imj.Joinedon is null and imc.PerformedOn is null then 'No Show'
     when imj.Joinedon is null then 'Interviewer No Show' when imc.PerformedOn is null then 'Candidate No Show' end as Type,'Fake Report' as Riskcategory
@@ -318,7 +318,7 @@ else if(@EmailId is not null and ((select idProfile from UserList where EmailId=
     From InterviewComments where AITranscriptAnalysisScore<6
     Union
     Select qca.InterviewId,'Contradiction AI Score' as Type,'High Severity' as Riskcategory
-    from QcInterviewAIevaluation qca where ISNULL(TRY_CAST(ContradictionScore AS DECIMAL(10,2)), 0) >=4
+    from QcInterviewAIevaluation qca where ISNULL(TRY_CAST(ContradictionScore AS DECIMAL(10,2)), 0) <=5
     union
     Select im.id as InterviewId, Case when imj.Joinedon is null and imc.PerformedOn is null then 'No Show'
     when imj.Joinedon is null then 'Interviewer No Show' when imc.PerformedOn is null then 'Candidate No Show' end as Type,'Fake Report' as Riskcategory
@@ -419,7 +419,7 @@ else
     From InterviewComments where AITranscriptAnalysisScore<6
     Union
     Select qca.InterviewId,'Contradiction AI Score' as Type,'High Severity' as Riskcategory
-    from QcInterviewAIevaluation qca where ISNULL(TRY_CAST(ContradictionScore AS DECIMAL(10,2)), 0) >=4
+    from QcInterviewAIevaluation qca where ISNULL(TRY_CAST(ContradictionScore AS DECIMAL(10,2)), 0) <=5
     union
     Select im.id as InterviewId, Case when imj.Joinedon is null and imc.PerformedOn is null then 'No Show'
     when imj.Joinedon is null then 'Interviewer No Show' when imc.PerformedOn is null then 'Candidate No Show' end as Type,'Fake Report' as Riskcategory
