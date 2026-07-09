@@ -877,10 +877,20 @@ namespace Risebird.Web.Controllers
                 if (string.IsNullOrWhiteSpace(record.ParsedEmail))
                     return Json(new { success = false, error = "Email not parsed yet. Complete Step 1 first." });
 
-                if (!record.ResolvedAssessmentGroupId.HasValue || record.ResolvedAssessmentGroupId.Value <= 0)
-                    return Json(new { success = false, error = $"No assessment group found for MAG: '{record.MagName}'." });
+                // Use the assessment group the operator explicitly CONFIRMED / locked (stored in
+                // AssessmentGroupId by ConfirmMag / SelectSkillChannel — it is also the AG the MAG
+                // application link was built from). Only fall back to the AG re-derived from the MAG
+                // NAME text when no confirmed AG is present. Re-deriving from the name text here was a
+                // bug: if the parsed MAG text resolved to a different AG than the one the operator
+                // confirmed, the interviewer got mapped to the wrong role (e.g. onboarded for
+                // "Salesforce Developer" but mapped under "Salesforce CRM Admin").
+                int agId = (record.AssessmentGroupId.HasValue && record.AssessmentGroupId.Value > 0)
+                    ? record.AssessmentGroupId.Value
+                    : (record.ResolvedAssessmentGroupId ?? 0);
 
-                int agId = record.ResolvedAssessmentGroupId.Value;
+                if (agId <= 0)
+                    return Json(new { success = false, error = $"No assessment group found for MAG: '{record.MagName}'. Confirm the MAG first." });
+
                 string loggedInUser = HttpContext.Session.GetString("email").Trim('"');
 
                 string candidateName = (record.CandidateName ?? "").Trim();

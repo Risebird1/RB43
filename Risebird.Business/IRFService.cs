@@ -814,61 +814,78 @@ namespace Risebird.Business
                 var result = await _irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null, removedInterviewers ?? null, addedNewInterviewers ?? null, removedTechSkills ?? null);
                 if (result.Item1)
                 {
-
-                    if (model.SkillChannelSMEs != null && model.SkillChannelSMEs.Any(x => x.IsSelectedForIRF))//&& result.Item2
+                    // The IRF has already been persisted (committed) at this point. The blocks below are
+                    // best-effort side-effects (SME notification, activity tracking). A failure here MUST NOT
+                    // turn a successful save into a "Skills Channel edits were not saved." error for the user,
+                    // so each is isolated and logged instead of bubbling up.
+                    try
                     {
-                        //send notification to the sme here
-                        var smeEmails = model.SkillChannelSMEs.Where(x => x.IsSelectedForIRF)?.Select(x => x.EmailId);
-                        string channelOwner = string.Empty;
-                        var client = (await _clientService.GetClient(model.ClientId))?.Name;
-
-                        if (model.RisebirdHr != 0)
+                        if (model.SkillChannelSMEs != null && model.SkillChannelSMEs.Any(x => x.IsSelectedForIRF))//&& result.Item2
                         {
-                            channelOwner = (await _userRepository.GetUser(model.RisebirdHr)).EmailId;
-                        }
-                        await _notificationHelper.SendAssignedNotificationToSME(smeEmails, model.IRFId, client, model.JDTiltle, model.PrimarySkillInvite, channelOwner);
-                    }
+                            //send notification to the sme here
+                            var smeEmails = model.SkillChannelSMEs.Where(x => x.IsSelectedForIRF)?.Select(x => x.EmailId);
+                            string channelOwner = string.Empty;
+                            var client = (await _clientService.GetClient(model.ClientId))?.Name;
 
-                    var activityTrackerModel = new ActivityTrackerVM();
-                    activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateSkillsChannel;
-                    activityTrackerModel.Particulars = model.IRFId;
-                    activityTrackerModel.PerformedBy = loggedInUser;
-
-                    StringBuilder summary = new StringBuilder();
-                    if (model.OldAssessmentGroupId != model.AssessmentGroupId)
-                    {
-                        summary.Append("Assessment Group changed");
-                    }
-                    if (model.OldCalendlyLink != model.CalendlyLink)
-                    {
-                        if (summary.Length > 0)
-                        {
-                            summary.Append("; Calendly Link changed");
-                        }
-                        else
-                        {
-                            summary.Append("Calendly Link changed");
+                            if (model.RisebirdHr != 0)
+                            {
+                                channelOwner = (await _userRepository.GetUser(model.RisebirdHr))?.EmailId;
+                            }
+                            await _notificationHelper.SendAssignedNotificationToSME(smeEmails, model.IRFId, client, model.JDTiltle, model.PrimarySkillInvite, channelOwner);
                         }
                     }
-                    if (model.OldJDLink != model.JDLink)
+                    catch (Exception smeEx)
                     {
-                        if (summary.Length > 0)
-                        {
-                            summary.Append("; JD Link changed");
-                        }
-                        else
-                        {
-                            summary.Append("JD Link changed");
-                        }
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, smeEx);
                     }
-                    if (summary.Length == 0)
-                    {
-                        summary.Append("Skill Channel updated");
-                    }
-                    activityTrackerModel.Summary = summary.ToString();
-                    activityTrackerModel.ResourceUrl = model.ResourceUrl;
 
-                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                    try
+                    {
+                        var activityTrackerModel = new ActivityTrackerVM();
+                        activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateSkillsChannel;
+                        activityTrackerModel.Particulars = model.IRFId;
+                        activityTrackerModel.PerformedBy = loggedInUser;
+
+                        StringBuilder summary = new StringBuilder();
+                        if (model.OldAssessmentGroupId != model.AssessmentGroupId)
+                        {
+                            summary.Append("Assessment Group changed");
+                        }
+                        if (model.OldCalendlyLink != model.CalendlyLink)
+                        {
+                            if (summary.Length > 0)
+                            {
+                                summary.Append("; Calendly Link changed");
+                            }
+                            else
+                            {
+                                summary.Append("Calendly Link changed");
+                            }
+                        }
+                        if (model.OldJDLink != model.JDLink)
+                        {
+                            if (summary.Length > 0)
+                            {
+                                summary.Append("; JD Link changed");
+                            }
+                            else
+                            {
+                                summary.Append("JD Link changed");
+                            }
+                        }
+                        if (summary.Length == 0)
+                        {
+                            summary.Append("Skill Channel updated");
+                        }
+                        activityTrackerModel.Summary = summary.ToString();
+                        activityTrackerModel.ResourceUrl = model.ResourceUrl;
+
+                        await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                    }
+                    catch (Exception activityEx)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, activityEx);
+                    }
                 }
                 return result.Item1;
             }
