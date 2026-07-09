@@ -8748,7 +8748,7 @@ LEFT JOIN (
         SELECT qca.InterviewId, 'Contradiction AI Score', 'High Severity'
         FROM dbo.QcInterviewAIevaluation qca
         WHERE qca.InterviewId IN @InterviewIds
-          AND ISNULL(TRY_CAST(qca.ContradictionScore AS DECIMAL(10, 2)), 0) >= 4
+          AND ISNULL(TRY_CAST(qca.ContradictionScore AS DECIMAL(10, 2)), 0) <=5
         UNION ALL
         SELECT im2.id, 'CandidateRating', 'High Severity'
         FROM dbo.InterviewMeetings im2
