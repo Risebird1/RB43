@@ -574,15 +574,27 @@ namespace Risebird.AzureTimerFunctions
             // (forward-only; a no-op if already past it).
             await _repository.AdvanceFunnelStageAsync(rec.Id, "IntentConfirmed", "InProgress");
 
-            // A resolved assessment group is required to onboard. Try one more MAG resolution if missing.
-            int? agId = rec.ResolvedAssessmentGroupId;
+            // An assessment group is required to onboard. Prefer the CONFIRMED/locked AG stored on the
+            // record (AssessmentGroupId — also the AG the MAG application link was built from) over the
+            // one re-derived from the MAG NAME text, so the interviewer is mapped to the same role that
+            // was confirmed (avoids the "onboarded for X but mapped under Y" mismatch). Fall back to the
+            // name-resolved AG, then to a fresh MAG resolution.
+            int? agId = (rec.AssessmentGroupId.HasValue && rec.AssessmentGroupId.Value > 0)
+                ? rec.AssessmentGroupId
+                : rec.ResolvedAssessmentGroupId;
             if (agId == null || agId <= 0)
             {
                 var resolved = await ResolveMAGAndGenerateLinkAsync(rec);
                 if (resolved)
                 {
                     var refreshed = await _repository.GetByIdAsync(rec.Id);
-                    if (refreshed != null) { rec = refreshed; agId = rec.ResolvedAssessmentGroupId; }
+                    if (refreshed != null)
+                    {
+                        rec = refreshed;
+                        agId = (rec.AssessmentGroupId.HasValue && rec.AssessmentGroupId.Value > 0)
+                            ? rec.AssessmentGroupId
+                            : rec.ResolvedAssessmentGroupId;
+                    }
                 }
                 if (agId == null || agId <= 0)
                 {
