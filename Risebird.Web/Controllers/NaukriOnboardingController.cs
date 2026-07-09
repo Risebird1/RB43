@@ -1626,7 +1626,17 @@ namespace Risebird.Web.Controllers
                 if (string.IsNullOrWhiteSpace(record.ParsedEmail))
                     return Json(new { success = true, completed = false, reason = "No email to check." });
 
-                var (foundUserId, foundProfileId) = await _repository.FindUserByEmailAsync(record.ParsedEmail);
+                // Only a genuine self-registration counts: an active interviewer mapped to the CONFIRMED
+                // assessment group. Matching the email against any active UserList row falsely flagged
+                // pre-existing interviewers in other MAGs (and non-interviewer accounts) as self-registered,
+                // linking the prospect to the wrong account and marking it Onboarded under the wrong role.
+                int agId = (record.AssessmentGroupId.HasValue && record.AssessmentGroupId.Value > 0)
+                    ? record.AssessmentGroupId.Value
+                    : (record.ResolvedAssessmentGroupId ?? 0);
+                if (agId <= 0)
+                    return Json(new { success = true, completed = false, reason = "Confirm the MAG first, then check self-registration." });
+
+                var (foundUserId, foundProfileId) = await _repository.FindSelfRegisteredInterviewerForMagAsync(record.ParsedEmail, agId);
 
                 if (foundUserId.HasValue && foundUserId.Value > 0)
                 {
@@ -1635,7 +1645,7 @@ namespace Risebird.Web.Controllers
                     await _repository.AdvanceFunnelStageAsync(id, "Onboarded", "Closed");
                     var sysUser = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
                     await _repository.InsertHistoryAsync(id, "SelfRegistered", "\u2014",
-                        $"Prospect self-registered. UserId: {foundUserId.Value}", sysUser);
+                        $"Prospect self-registered via MAG link. UserId: {foundUserId.Value}, AG: {agId}", sysUser);
                     return Json(new { success = true, completed = true, userId = foundUserId.Value, profileId = foundProfileId });
                 }
 
