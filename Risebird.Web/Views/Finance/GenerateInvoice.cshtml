@@ -566,6 +566,11 @@
                         <tbody id="tblLineItemsBody"></tbody>
                         <tfoot>
                             <tr>
+                                <td colspan="3" class="text-end col-num fw-semibold">Total Qty</td>
+                                <td class="col-num fw-semibold" id="tdTotalQty">0</td>
+                                <td colspan="3"></td>
+                            </tr>
+                            <tr>
                                 <td colspan="5" class="text-end col-num">Subtotal</td>
                                 <td class="col-num" id="tdSubtotal">0.00</td>
                                 <td></td>
@@ -942,9 +947,11 @@
         $('#tblLineItems tfoot').show();
 
         var subtotal = 0;
+        var totalQty = 0;
         $.each(items, function (i, item) {
             var lt = parseFloat(item.lineTotal) || 0;
             subtotal += lt;
+            totalQty += parseInt(item.qty) || 0;
             var row = '<tr>' +
                 '<td class="col-idx">' + (i + 1) + '</td>' +
                 '<td>' + escHtml(item.productName) + '</td>' +
@@ -957,6 +964,7 @@
             tbody.append(row);
         });
 
+        $('#tdTotalQty').text(totalQty);
         $('#tdSubtotal').text(formatNum(subtotal));
         $('#hidSubtotal').val(subtotal.toFixed(2));
         $('#hidLineItemsJson').val(JSON.stringify(items));

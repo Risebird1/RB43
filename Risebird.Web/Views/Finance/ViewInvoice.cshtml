@@ -260,6 +260,13 @@
                             <tr><td colspan="5" class="text-center text-muted">No line items found.</td></tr>
                         }
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2" class="text-right font-weight-bold">Total Qty</td>
+                            <td class="text-right font-weight-bold" id="tdTotalQty">@(Model.LineItems != null ? Model.LineItems.Sum(li => li.Qty) : 0)</td>
+                            <td colspan="2"></td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
@@ -346,6 +353,11 @@
     function refreshTotals() {
         var taxScenario = parseInt($('#editTaxScenario').val() || 0);
         var subtotal = 0;
+        var totalQty = 0;
+        $('#tblLineItemsBody tr[data-qty]').each(function () {
+            totalQty += parseInt($(this).data('qty') || 0);
+        });
+        $('#tdTotalQty').text(totalQty);
         $('#tblLineItemsBody .line-total-cell').each(function () {
             subtotal += parseFloat($(this).text().replace(/,/g, '') || 0);
         });
