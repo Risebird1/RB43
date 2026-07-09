@@ -2816,20 +2816,30 @@
 
         // M3 (Send Acknowledgement): profile created + acknowledgement email sent.
         if (r.onboardingCompleted === true) {
+            // If the prospect has ALREADY accepted (FunnelStage = 'Onboarded'), the acknowledgement
+            // step is moot — whether or not the email-sent flag was recorded, the outcome is achieved.
+            // Showing "email failed — use Resend" in that case is misleading (the reported bug), and
+            // resending an acknowledgement to a live, onboarded interviewer makes no sense.
+            var fs = (r.funnelStage || '').toLowerCase();
+            var alreadyOnboarded = (fs === 'onboarded');
+
             var ackHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Profile created &amp; mapped.</span>';
             if (r.onboardedUserId) ackHtml += '<br/><strong>UserId:</strong> ' + r.onboardedUserId;
             if (r.onboardedProfileId) ackHtml += ' &mdash; <strong>ProfileId:</strong> ' + r.onboardedProfileId;
             if (r.acknowledgementEmailSent === true) {
                 ackHtml += '<br/><span class="text-success"><i class="fas fa-paper-plane me-1"></i>Acknowledgement email sent.</span>';
+            } else if (alreadyOnboarded) {
+                ackHtml += '<br/><span class="text-success"><i class="fas fa-check-circle me-1"></i>Acknowledgement accepted &mdash; onboarding complete.</span>';
             } else {
                 ackHtml += '<br/><span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>Acknowledgement email failed &mdash; use Resend.</span>';
             }
             mMarkStep(3, 'completed', ackHtml);
-            $('#btnResendAck').show().prop('disabled', false);
+            // Only offer Resend while the prospect has not yet accepted.
+            if (alreadyOnboarded) { $('#btnResendAck').hide(); }
+            else { $('#btnResendAck').show().prop('disabled', false); }
 
             // M4 (Onboarding): completes only when the interviewer ACCEPTS the acknowledgement email.
-            var fs = (r.funnelStage || '').toLowerCase();
-            if (fs === 'onboarded') {
+            if (alreadyOnboarded) {
                 var obHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Interviewer accepted the acknowledgement &mdash; onboarding complete!</span>';
                 if (r.onboardedUserId) obHtml += '<br/><strong>UserId:</strong> ' + r.onboardedUserId;
                 mMarkStep(4, 'completed', obHtml);
