@@ -2610,7 +2610,7 @@ WHERE si.SuspiciousStatus = 1",
                     techSkillDt.Columns.Add("SkillSet", typeof(int));
                     techSkillDt.Columns.Add("SkillName", typeof(string));
 
-                    foreach (var item in irfDetails.SkillCollection?.Where(x => x.LevelId > 0))
+                    foreach (var item in (irfDetails.SkillCollection ?? Enumerable.Empty<TransSkill>()).Where(x => x.LevelId > 0))
                     {
                         //if (item.SkillId != 0)
                         //{
@@ -2719,7 +2719,7 @@ WHERE si.SuspiciousStatus = 1",
                     hRDt.Columns.Add("IRFId", typeof(int));
                     hRDt.Columns.Add("UserId", typeof(int));
 
-                    foreach (var item in irfDetails.HRCollection)
+                    foreach (var item in irfDetails.HRCollection ?? Enumerable.Empty<TransHR>())
                     {
                         hRDt.Rows.Add(irfDetails.id, item.UserId);
                     }

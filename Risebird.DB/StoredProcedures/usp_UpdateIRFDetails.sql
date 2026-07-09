@@ -216,13 +216,37 @@ BEGIN
   
  --interviewers  
   
- --Start :Delete interviewers  
+ --Start :Upsert interviewers
+ -- NOTE: This section used to DELETE + re-INSERT all MAG interviewers on every save. That approach
+ -- (a) failed once TransInterviewerAuditLog started referencing TransInterviewer.id via
+ --     FK_TransInterviewerAuditLog_TransInterviewer (the delete was blocked and the whole save
+ --     rolled back), and
+ -- (b) discarded audit history + any in-place edits to existing interviewers.
+ -- It is now an upsert: existing rows are updated in place (id preserved, audit log intact),
+ -- genuinely-new interviewers are inserted, and only genuinely-removed interviewers are deleted
+ -- (after clearing their audit-log children, which is the sole FK referencing TransInterviewer).
  Declare @Assessmentid int    
   Select @Assessmentid=AssessmentGroupid From IRF where id=@id   
   Declare @temptable Table(Userid int)    
   Insert into @temptable Select Userid from InterviewerProfile cross apply string_split(AssessmentGroupid,',') where value=@Assessmentid    
-   --delete from TransInterviewer where IRFId=@id   
- Delete b FROM TransInterviewer b LEFT JOIN @temptable f ON f.Userid = b.Userid WHERE f.Userid IS NOT NULL and b.IRFId=@id   
+
+ -- Interviewers submitted with this save (from whichever bulk TVP is populated for this channel type)
+ Declare @incomingInterviewers Table(UserId int)
+ if(@IsNewSkillChannel is not null and @IsNewSkillChannel = 1)
+  Insert into @incomingInterviewers(UserId) Select UserId from @InterviewerSurchargeBulkData
+ else
+  Insert into @incomingInterviewers(UserId) Select UserId from @InterviewerBulkData
+
+ -- MAG interviewers currently attached to this IRF but NOT resubmitted => genuinely removed.
+ Declare @removedInterviewerIds Table(id int)
+ Insert into @removedInterviewerIds(id)
+  Select b.id FROM TransInterviewer b
+  JOIN @temptable f ON f.Userid = b.Userid
+  WHERE b.IRFId=@id
+    AND NOT EXISTS (SELECT 1 FROM @incomingInterviewers i WHERE i.UserId = b.UserId)
+
+ DELETE FROM TransInterviewerAuditLog WHERE TransInterviewerId IN (SELECT id FROM @removedInterviewerIds)
+ DELETE FROM TransInterviewer WHERE id IN (SELECT id FROM @removedInterviewerIds)
  --END: Delete interviewers  
   
  if(@IsNewSkillChannel is not null and @IsNewSkillChannel = 1)  
@@ -252,6 +276,21 @@ BEGIN
   FROM [dbo].[TransInterviewer] ti  
   WHERE ti.UserId = ibd.UserId AND ti.IRFId = ibd.IRFId  
  );  
+
+ -- Update interviewers that already exist for this IRF (preserves id -> keeps audit log FK valid)
+ UPDATE ti SET
+    ti.PerSuccessRate = ibd.PerSuccessRate,
+    ti.Surcharge = ibd.Surcharge,
+    ti.IsActive = ibd.IsActive,
+    ti.IsAvailable = ibd.IsAvailable,
+    ti.[Source] = ibd.[Source],
+    ti.ModifiedBy = @ModifiedBy,
+    ti.IsCampaignActivity = ibd.IsCampaignActivity,
+    ti.CampaignId = ibd.CampaignId,
+    ti.OpenAIScreeningResponse = ibd.OpenAIScreeningResponse,
+    ti.AIVerdict = ibd.AIVerdict
+ FROM [dbo].[TransInterviewer] ti
+ JOIN @InterviewerSurchargeBulkData ibd ON ibd.UserId = ti.UserId AND ibd.IRFId = ti.IRFId;
   
  Insert into SurchargeActivityTracker(InterviewId,Surcharge,SurchargeComment,RequestBy,RequestAt,RequestType,IRFId,UserId)  
  SELECT   
@@ -294,6 +333,21 @@ FROM
   FROM [dbo].[TransInterviewer] ti  
   WHERE ti.UserId = ibd.UserId AND ti.IRFId = ibd.IRFId  
  );  
+
+ -- Update interviewers that already exist for this IRF (preserves id -> keeps audit log FK valid)
+ UPDATE ti SET
+    ti.PerSuccessRate = ibd.PerSuccessRate,
+    ti.IsActive = ibd.IsActive,
+    ti.IsAvailable = ibd.IsAvailable,
+    ti.[Source] = ibd.[Source],
+    ti.ModifiedBy = @ModifiedBy,
+    ti.IsCampaignActivity = ibd.IsCampaignActivity,
+    ti.CampaignId = ibd.CampaignId,
+    ti.OpenAIScreeningResponse = ibd.OpenAIScreeningResponse,
+    ti.AIVerdict = ibd.AIVerdict,
+    ti.IsSurchargeApprove = ibd.IsSurchargeApprove
+ FROM [dbo].[TransInterviewer] ti
+ JOIN @InterviewerBulkData ibd ON ibd.UserId = ti.UserId AND ibd.IRFId = ti.IRFId;
  End  
    
     --emergency interviewers  
