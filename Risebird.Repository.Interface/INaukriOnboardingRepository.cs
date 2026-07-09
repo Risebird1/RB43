@@ -95,6 +95,12 @@ namespace Risebird.Repository.Interface
 
         Task<(int? UserId, int? ProfileId)> FindUserByEmailAsync(string email);
 
+        // Resolves the interviewer account for an email ONLY when that interviewer is genuinely mapped
+        // to the given assessment group — the accurate "self-registered via the MAG link" signal.
+        // Returns (null, null) when no such interviewer exists (e.g. the email matches a non-interviewer
+        // account, or an interviewer mapped only to a DIFFERENT MAG). Prevents false self-registrations.
+        Task<(int? UserId, int? ProfileId)> FindSelfRegisteredInterviewerForMagAsync(string email, int assessmentGroupId);
+
         // Resolves an interviewer account by email REGARDLESS of active status (also returns IsActive).
         // Used by the onboarding "adopt existing interviewer" path to find accounts that exist but are
         // inactive (which usp_FindActiveUserByEmail / FindUserByEmailAsync would exclude).

@@ -825,6 +825,22 @@ namespace Risebird.Repository
             catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return (null, null); }
         }
 
+        public async Task<(int? UserId, int? ProfileId)> FindSelfRegisteredInterviewerForMagAsync(string email, int assessmentGroupId)
+        {
+            try
+            {
+                if (assessmentGroupId <= 0 || string.IsNullOrWhiteSpace(email)) return (null, null);
+                using var con = new SqlConnection(_connectionString);
+                var row = await con.QueryFirstOrDefaultAsync<dynamic>(
+                    "usp_FindSelfRegisteredInterviewerForMag",
+                    new { Email = email.Trim(), AssessmentGroupId = assessmentGroupId },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                if (row == null) return (null, null);
+                return ((int?)row.UserId, (int?)row.ProfileId);
+            }
+            catch (Exception ex) { await _logger.LogMessage(LogLevelInfo.Exception, ex); return (null, null); }
+        }
+
         public async Task<(int? UserId, int? ProfileId, bool? IsActive)> FindInterviewerByEmailAnyStatusAsync(string email)
         {
             try
