@@ -162,7 +162,7 @@ BEGIN
                'High Severity'          AS Riskcategory
         FROM QcInterviewAIevaluation qca
         WHERE qca.InterviewId = @InterviewId
-          AND ISNULL(TRY_CAST(qca.ContradictionScore AS DECIMAL(10,2)), 0) >= 4
+          AND ISNULL(TRY_CAST(qca.ContradictionScore AS DECIMAL(10,2)), 0) <= 5
 
         UNION
 
