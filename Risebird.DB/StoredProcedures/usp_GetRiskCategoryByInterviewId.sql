@@ -33,9 +33,11 @@ BEGIN
         im.candidateEmail,
         im.Interviewer,
         im.interviewDate,
-        im.PrimarySkill
+        im.IRFId,
+        IRF.PrimarySkillInvite AS PrimarySkill
     FROM RiskCategory rc
-    LEFT JOIN InterviewMeetings im ON im.id = rc.InterviewId
+    LEFT JOIN InterviewMeetings im ON im.id  = rc.InterviewId
+    LEFT JOIN IRF               ON IRF.IRFId = im.IRFId
     WHERE rc.InterviewId = @InterviewId
 
 END
