@@ -1,0 +1,320 @@
+@model IEnumerable<Risebird.Entities.Data.RiskCategory>
+@using Newtonsoft.Json
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Risk Category";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    dynamic filter = null;
+    string strtDte = string.Empty;
+    string endDte  = string.Empty;
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("RiskCategoryFilters") != null)
+{
+    filter  = JsonConvert.DeserializeObject<RiskCategoryFilter>(HttpContextAccessor.HttpContext.Session.GetString("RiskCategoryFilters"));
+    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
+    endDte  = filter.EndDate   != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate)   : string.Empty;
+}
+
+<link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/scrollBar.css?v=2024" />
+
+<style>
+    .risk-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        margin: 1px 2px;
+        white-space: nowrap;
+    }
+    .risk-high    { background: #fde8e8; color: #c0392b; }
+    .risk-review  { background: #fef9e7; color: #d4ac0d; }
+    .risk-redo    { background: #eaf4fb; color: #1a6fa0; }
+    .risk-fake    { background: #f9ebf0; color: #922b5e; }
+    .risk-default { background: #f0f0f0; color: #555; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <div class="mobile-view">
+                        <h4 class="card-title">Risk Category</h4>
+                    </div>
+                </div>
+                <div class="pull-right">
+                    <button id="btnFilter"
+                            class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded"
+                            data-bs-toggle="modal" data-bs-target="#filterModal"
+                            style="vertical-align:top">
+                        <span class="mdc-button__label">
+                            <span class="fa fa-filter"></span>
+                            <font style="font-family:Roboto,sans-serif;font-size:12px;"> Filter</font>
+                        </span>
+                    </button>
+                    @if (!string.IsNullOrEmpty(strtDte) || !string.IsNullOrEmpty(endDte))
+                    {
+                        <button type="button"
+                                class="mdc-button mdc-button--outlined mdc-ripple-upgraded"
+                                onclick="ResetFilter()"
+                                style="vertical-align:top">
+                            <span class="mdc-button__label">
+                                <span class="fa fa-times"></span>
+                                <font style="font-family:Roboto,sans-serif;font-size:12px;"> Reset Filter</font>
+                            </span>
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content client candidate">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+
+                        <!-- Loader -->
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+
+                        <div class="dataloading" style="display:none;">
+
+                            <!-- Filter Modal -->
+                            <div class="modal fade" id="filterModal" tabindex="-1" role="dialog"
+                                 aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-md" role="document">
+                                    <div class="modal-content">
+                                        <div class="filheader">
+                                            <div class="filavatar">
+                                                <span class="fa fa-filter"></span>
+                                            </div>
+                                            <h5 class="modal-title pull-left" id="filterModalLabel">Filter</h5>
+                                        </div>
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <form action="@Url.Action("Index","RiskCategory")" method="post" id="filterForm">
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 desp-label" for="StartDate">
+                                                                Interview Date From
+                                                            </label>
+                                                            <div class="col-md-12">
+                                                                <input id="StartDate" name="StartDate" type="date"
+                                                                       class="form-control" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 desp-label" for="EndDate">
+                                                                Interview Date To
+                                                            </label>
+                                                            <div class="col-md-12">
+                                                                <input id="EndDate" name="EndDate" type="date"
+                                                                       class="form-control" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="mdc-button mdc-button--outlined mdc-ripple-upgraded"
+                                                        id="ResetFilter">
+                                                    <span class="mdc-button__label">Reset Filter</span>
+                                                </button>
+                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                                    <span class="mdc-button__label">Apply Filter</span>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Filter Modal -->
+
+                            <!-- Summary badge -->
+                            @if (!string.IsNullOrEmpty(strtDte) || !string.IsNullOrEmpty(endDte))
+                            {
+                                <div style="padding:8px 0 4px 4px;">
+                                    <span class="risk-badge risk-default">
+                                        <span class="fa fa-calendar"></span>
+                                        @(string.IsNullOrEmpty(strtDte) ? "–" : strtDte)
+                                        &nbsp;→&nbsp;
+                                        @(string.IsNullOrEmpty(endDte) ? "–" : endDte)
+                                    </span>
+                                </div>
+                            }
+
+                            <div style="overflow-x:auto;" class="scrollbar">
+                                <table id="riskTable"
+                                       class="table table-striped table-bordered dt-responsive"
+                                       cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Interview ID</th>
+                                            <th>Interview Date</th>
+                                            <th>Interviewer</th>
+                                            <th>Candidate Name</th>
+                                            <th>Candidate Email</th>
+                                            <th>Primary Skill</th>
+                                            <th>Risk Category (Severity)</th>
+                                            <th>Risk Types (Description)</th>
+                                            <th>Created On</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Interview ID</th>
+                                            <th>Interview Date</th>
+                                            <th>Interviewer</th>
+                                            <th>Candidate Name</th>
+                                            <th>Candidate Email</th>
+                                            <th>Primary Skill</th>
+                                            <th>Risk Category (Severity)</th>
+                                            <th>Risk Types (Description)</th>
+                                            <th>Created On</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        @if (Model != null && Model.Any())
+                                        {
+                                            int sno = 1;
+                                            foreach (var item in Model)
+                                            {
+                                                <tr>
+                                                    <td>@sno</td>
+                                                    <td>@item.InterviewId</td>
+                                                    <td>
+                                                        @(item.InterviewDate.HasValue
+                                                            ? item.InterviewDate.Value.ToString("dd MMM yyyy")
+                                                            : "–")
+                                                    </td>
+                                                    <td>@item.Interviewer</td>
+                                                    <td>@item.CandidateName</td>
+                                                    <td>@item.CandidateEmail</td>
+                                                    <td>@item.PrimarySkill</td>
+                                                    <td>
+                                                        @if (!string.IsNullOrWhiteSpace(item.Name))
+                                                        {
+                                                            foreach (var label in item.Name.Split(','))
+                                                            {
+                                                                string trimmed = label.Trim();
+                                                                string badgeClass = trimmed switch
+                                                                {
+                                                                    "High Severity"  => "risk-high",
+                                                                    "Under Review"   => "risk-review",
+                                                                    "Redo Requested" => "risk-redo",
+                                                                    "Fake Report"    => "risk-fake",
+                                                                    _                => "risk-default"
+                                                                };
+                                                                <span class="risk-badge @badgeClass">@trimmed</span>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="risk-badge risk-default">–</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (!string.IsNullOrWhiteSpace(item.Description))
+                                                        {
+                                                            foreach (var desc in item.Description.Split(','))
+                                                            {
+                                                                <span class="risk-badge risk-default">@desc.Trim()</span>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <text>–</text>
+                                                        }
+                                                    </td>
+                                                    <td>@item.CreatedOn.ToString("dd MMM yyyy")</td>
+                                                </tr>
+                                                sno++;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="10" class="text-center">No risk category data found for the selected period.</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                        <!-- end dataloading -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Loader
+    $(document).ready(function () {
+        ShowProgress();
+    });
+
+    window.onload = function () {
+        setTimeout(function () {
+            var loader = document.querySelector('.loader');
+            if (loader) loader.style.display = 'none';
+            $('.dataloading').show();
+            applyDataTable();
+        }, 1500);
+    };
+
+    function applyDataTable() {
+        $('#riskTable').DataTable({
+            pagingType: 'full_numbers',
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
+            order: [],
+            responsive: true,
+            language: {
+                search: '_INPUT_',
+                searchPlaceholder: 'Search records'
+            }
+        });
+    }
+
+    function ResetFilter() {
+        window.location.href = '@Url.Action("ResetFilter", "RiskCategory")';
+    }
+
+    function ApplySessionFilter() {
+        $('input[name=StartDate]').val('@strtDte');
+        $('input[name=EndDate]').val('@endDte');
+    }
+
+    $(document).ready(function () {
+        $('#ResetFilter').on('click', function () { ResetFilter(); });
+
+        // Rehydrate filter modal with current session values
+        if ('@filter' !== '') {
+            ApplySessionFilter();
+        }
+
+        // Open modal populated if filter is active
+        $('#filterModal').on('show.bs.modal', function () {
+            ApplySessionFilter();
+        });
+    });
+</script>
