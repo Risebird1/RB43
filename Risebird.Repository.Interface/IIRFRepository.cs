@@ -14,6 +14,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<Users> GetCientUsers();
         Task<IEnumerable<Client>> GetClients();
         IEnumerable<Users> GetUsers();
+        IEnumerable<Users> GetRisebirdUsersForDropdown();
         IEnumerable<InterviewerVM> GetInterviewers();
         IEnumerable<ClientRole> GetClientRoles();
         IEnumerable<Users> GetQualityController();

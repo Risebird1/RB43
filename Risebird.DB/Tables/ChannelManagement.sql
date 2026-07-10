@@ -38,11 +38,48 @@ CREATE TABLE [dbo].[ChannelManagement](
 	[Expectedrevenue] [int] NULL,
 	[PaymentStatus] [varchar](5) NULL,
 	[ConfirmationStatus] [varchar](5) NULL,
+	[ClientId] [int] NULL,
+	[PlanType] [int] NULL,
+	[ClientType] [int] NULL,
  CONSTRAINT [PK_ChannelManagement] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+END
+ELSE
+BEGIN
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ClientId')
+      AND Object_ID = Object_ID(N'ChannelManagement'))
+BEGIN
+    ALTER TABLE ChannelManagement
+    ADD ClientId int NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'PlanType')
+      AND Object_ID = Object_ID(N'ChannelManagement'))
+BEGIN
+    ALTER TABLE ChannelManagement
+    ADD PlanType int NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ClientType')
+      AND Object_ID = Object_ID(N'ChannelManagement'))
+BEGIN
+    ALTER TABLE ChannelManagement
+    ADD ClientType int NULL
+END
 
 END
 GO

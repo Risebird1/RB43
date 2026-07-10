@@ -88,6 +88,7 @@ namespace Risebird.Web.Controllers
         private readonly IDmIvAutoQcBackfillService _autoQcBackfillService;
         private readonly ITrialFlagReviewService _trialFlagReviewService;
         private readonly ITrialJudgmentService _trialJudgmentService;
+        private readonly IClientRepository _clientRepository;
 
         //private readonly IIRFService _irfService;
 
@@ -111,7 +112,8 @@ namespace Risebird.Web.Controllers
             IAutoQcRemovalMonitorService autoQcRemovalMonitorService,
             IDmIvAutoQcBackfillService autoQcBackfillService,
             ITrialFlagReviewService trialFlagReviewService,
-            ITrialJudgmentService trialJudgmentService)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
+            ITrialJudgmentService trialJudgmentService,
+            IClientRepository clientRepository)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -157,6 +159,7 @@ namespace Risebird.Web.Controllers
             _autoQcBackfillService = autoQcBackfillService;
             _trialFlagReviewService = trialFlagReviewService;
             _trialJudgmentService = trialJudgmentService;
+            _clientRepository = clientRepository;
         }
 
         private static bool IsTrialFlagReviewerProfile(string profileName)
@@ -3172,6 +3175,14 @@ NEVER:
             ViewBag.Client = "false";
             var model = new ChannelVM();
             model.isEditable = false;
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid?.Replace("\"", "");
+                if (!string.IsNullOrWhiteSpace(emailid))
+                    model.CreatedBy = emailid;
+            }
+            await PopulateChannelRequirementDropDowns(model);
             return View(model);
         }
 
@@ -3179,21 +3190,34 @@ NEVER:
         [HttpPost]
         public async Task<ActionResult> AddRequirement(ChannelVM model)
         {
-            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            if (string.IsNullOrWhiteSpace(model.CreatedBy)
+                && HttpContext.Session.GetString("email") != null
+                && HttpContext.Session.GetString("profileName") != null)
             {
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
-                emailid = emailid.Replace("\"", "");
-                model.CreatedBy = emailid;
+                emailid = emailid?.Replace("\"", "");
+                if (!string.IsNullOrWhiteSpace(emailid))
+                    model.CreatedBy = emailid;
             }
+            await ResolveChannelClientFromSelection(model);
+            if (!string.IsNullOrWhiteSpace(model.Client))
+                ModelState.Remove("Client");
+
             if (!ModelState.IsValid)
             {
+                SetAddRequirementViewBag();
+                await PopulateChannelRequirementDropDowns(model);
+                if (model.isEditable)
+                    PopulateChannelEditDropDowns(model);
                 return View(model);
             }
-            if (model.Jdfile == null && (model.JdLink == null))
+            if (model.Jdfile == null && string.IsNullOrWhiteSpace(model.JdLink))
             {
                 ModelState.AddModelError(string.Empty, "Please upload a Jd.");
+                SetAddRequirementViewBag();
+                await PopulateChannelRequirementDropDowns(model);
+                if (model.isEditable)
+                    PopulateChannelEditDropDowns(model);
                 return View(model);
             }
             if (model.Jdfile != null)
@@ -3236,9 +3260,9 @@ NEVER:
                         TO = Emailaddress,
                         Subject = $"Risebird: a new Channel request is created for " + model.Client
                     };
-                    var resultset = await _notificationHelper.ChannelRequestNotification(_mail, model.Client, model.PrimarySkill, model.Requester);
+                    var resultset = await _notificationHelper.ChannelRequestNotification(_mail, model.Client, model.PrimarySkill, model.RequesterEmailid);
                     TempData["SuccessErrorMessageInterview"] = "Channel Request has been added Successfully!";
-                    ViewBag.Message = "Channel Request has been updated Successfully!";
+                    ViewBag.Message = "Channel Request has been added Successfully!";
                 }
                 else
                 {
@@ -3254,7 +3278,9 @@ NEVER:
                         menus = menus.Where(x => x.functionName == "Support").ToList();
                         HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                     }
-                    return View();
+                    SetAddRequirementViewBag();
+                    await PopulateChannelRequirementDropDowns(model);
+                    return View(model);
                 }
                 return RedirectToAction("RequirementManagement");
             }
@@ -3278,24 +3304,16 @@ NEVER:
                     }
                     var model = await _dashboardService.FetchChannelRequestsByid(id);
                     model.isEditable = true;
-                    var Priority = from Prioritylevels s in Enum.GetValues(typeof(Prioritylevels))
-                                   select new { ID = (int)s, Name = s.GetDescription() };
-                    model.Prioritylist = new SelectList(Priority, "ID", "Name");
-                    var Origin = from Originlevel s in Enum.GetValues(typeof(Originlevel))
-                                 select new { ID = (int)s, Name = s.GetDescription() };
-                    model.Originlist = new SelectList(Origin, "ID", "Name");
-                    var Engagementtype = from Engagementtypelevel s in Enum.GetValues(typeof(Engagementtypelevel))
-                                         select new { ID = (int)s, Name = s.GetDescription() };
-                    model.EngagementTypelist = new SelectList(Engagementtype, "ID", "Name");
-                    var stage = from stagelevel s in Enum.GetValues(typeof(stagelevel))
-                                select new { ID = (int)s, Name = s.GetDescription() };
-                    model.stagelist = new SelectList(stage, "ID", "Name");
-                    var paymentstatus = from paymentstatuslevel s in Enum.GetValues(typeof(paymentstatuslevel))
-                                        select new { ID = (int)s, Name = s.GetDescription() };
-                    model.PaymentStatuslist = new SelectList(paymentstatus, "ID", "Name");
-                    var confirmationstatus = from ConfirmationStatuslevel s in Enum.GetValues(typeof(ConfirmationStatuslevel))
-                                             select new { ID = (int)s, Name = s.GetDescription() };
-                    model.ConfirmationStatuslist = new SelectList(confirmationstatus, "ID", "Name");
+                    if (model.ClientId <= 0 && !string.IsNullOrWhiteSpace(model.Client))
+                    {
+                        var clients = await _clientRepository.GetClientsForDropdown();
+                        var matchedClient = clients?.FirstOrDefault(c =>
+                            string.Equals(c.Name, model.Client, StringComparison.OrdinalIgnoreCase));
+                        if (matchedClient != null)
+                            model.ClientId = matchedClient.id;
+                    }
+                    await PopulateChannelRequirementDropDowns(model);
+                    PopulateChannelEditDropDowns(model);
                     return View("AddRequirement", model);
                 }
                 else
@@ -3307,6 +3325,82 @@ NEVER:
             {
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> GetRequesterEmails(int clientId)
+        {
+            var emails = await _clientRepository.GetClientUsersByClientId(clientId);
+            return Json(new { success = true, data = emails });
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> GetClientDetails(int clientId)
+        {
+            var client = await _clientRepository.GetClient(clientId);
+            return Json(new { success = client != null, planType = client?.PlanType, clientType = client?.ClientType });
+        }
+
+        private async Task PopulateChannelRequirementDropDowns(ChannelVM model)
+        {
+            var clients = await _clientRepository.GetClientsForDropdown();
+            model.ClientList = new SelectList(clients ?? Enumerable.Empty<Client>(), "id", "Name", model.ClientId > 0 ? model.ClientId : null);
+
+            model.CreatedByList = new SelectList(_irfRepository.GetRisebirdUsersForDropdown() ?? Enumerable.Empty<Users>(), "EmailId", "EmailId", model.CreatedBy);
+
+            var planTypes = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
+                            select new { ID = (int)s, Name = s.GetDescription() };
+            model.PlanTypeList = new SelectList(planTypes, "ID", "Name", model.PlanType > 0 ? model.PlanType : null);
+
+            var clientTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                              select new { ID = (int)s, Name = s.GetDescription() };
+            model.ClientTypeList = new SelectList(clientTypes, "ID", "Name", model.ClientType > 0 ? model.ClientType : null);
+        }
+
+        private static void PopulateChannelEditDropDowns(ChannelVM model)
+        {
+            var priority = from Prioritylevels s in Enum.GetValues(typeof(Prioritylevels))
+                           select new { ID = (int)s, Name = s.GetDescription() };
+            model.Prioritylist = new SelectList(priority, "ID", "Name", model.Priority);
+
+            var origin = from Originlevel s in Enum.GetValues(typeof(Originlevel))
+                         select new { ID = (int)s, Name = s.GetDescription() };
+            model.Originlist = new SelectList(origin, "ID", "Name", model.Origin);
+
+            var engagementType = from Engagementtypelevel s in Enum.GetValues(typeof(Engagementtypelevel))
+                                 select new { ID = (int)s, Name = s.GetDescription() };
+            model.EngagementTypelist = new SelectList(engagementType, "ID", "Name", model.EngagementType);
+
+            var stage = from stagelevel s in Enum.GetValues(typeof(stagelevel))
+                        select new { ID = (int)s, Name = s.GetDescription() };
+            model.stagelist = new SelectList(stage, "ID", "Name", model.Stage);
+
+            var paymentStatus = from paymentstatuslevel s in Enum.GetValues(typeof(paymentstatuslevel))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+            model.PaymentStatuslist = new SelectList(paymentStatus, "ID", "Name", model.PaymentStatus);
+
+            var confirmationStatus = from ConfirmationStatuslevel s in Enum.GetValues(typeof(ConfirmationStatuslevel))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+            model.ConfirmationStatuslist = new SelectList(confirmationStatus, "ID", "Name", model.ConfirmationStatus);
+        }
+
+        private async Task ResolveChannelClientFromSelection(ChannelVM model)
+        {
+            if (model.ClientId <= 0)
+                return;
+
+            model.Client = await _clientRepository.GetClientName(model.ClientId);
+        }
+
+        private void SetAddRequirementViewBag()
+        {
+            ViewBag.Client = "false";
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                ViewBag.type = "back";
+            else
+                ViewBag.type = "no";
         }
 
         [Authorize]

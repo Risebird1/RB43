@@ -1566,6 +1566,30 @@ WHERE si.SuspiciousStatus = 1",
             return null;
         }
 
+        public IEnumerable<Users> GetRisebirdUsersForDropdown()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<Users>(
+                        con,
+                        @"SELECT id, idProfile, FirstName, EmailId
+                          FROM UserList
+                          WHERE EmailId IS NOT NULL
+                            AND idProfile NOT IN (3, 4, 23, 27)
+                          ORDER BY EmailId",
+                        null,
+                        commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return Enumerable.Empty<Users>();
+        }
+
         public bool AddIRFDetails(IRFVm irfDetails, out int irfID)
         {
             try
