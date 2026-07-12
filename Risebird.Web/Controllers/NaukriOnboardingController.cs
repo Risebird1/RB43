@@ -80,6 +80,7 @@ namespace Risebird.Web.Controllers
             string disposition       = null,
             string funnelStage       = null,
             string onboardingType    = null,
+            string assignedTo        = null,
             string dateFrom          = null,
             string dateTo            = null,
             int    page              = 1,
@@ -95,11 +96,13 @@ namespace Risebird.Web.Controllers
                 if (!string.IsNullOrWhiteSpace(dateFrom) && DateTime.TryParse(dateFrom, out var pFrom)) dtFrom = pFrom;
                 if (!string.IsNullOrWhiteSpace(dateTo) && DateTime.TryParse(dateTo, out var pTo)) dtTo = pTo;
 
-                var records = await _repository.GetListAsync(status, candidateName, magName, source, dtFrom, dtTo, page, pageSize, automationStatus, callStatus, disposition, funnelStage, onboardingType);
+                var records = await _repository.GetListAsync(status, candidateName, magName, source, dtFrom, dtTo, page, pageSize, automationStatus, callStatus, disposition, funnelStage, onboardingType, assignedTo);
 
-                var funnelCounts = await _repository.GetFunnelStageCountsAsync(status, candidateName, magName, source, dtFrom, dtTo, automationStatus, callStatus, disposition, funnelStage, onboardingType);
+                var funnelCounts = await _repository.GetFunnelStageCountsAsync(status, candidateName, magName, source, dtFrom, dtTo, automationStatus, callStatus, disposition, funnelStage, onboardingType, assignedTo);
 
-                var funnelReach = await _repository.GetFunnelReachCountsAsync(status, candidateName, magName, source, dtFrom, dtTo, automationStatus, callStatus, disposition, funnelStage, onboardingType);
+                var funnelReach = await _repository.GetFunnelReachCountsAsync(status, candidateName, magName, source, dtFrom, dtTo, automationStatus, callStatus, disposition, funnelStage, onboardingType, assignedTo);
+
+                var assignees = await _repository.GetEligibleAssigneesAsync();
 
                 var first = records.FirstOrDefault();
                 int totalCount = first?.TotalCount ?? 0;
@@ -118,6 +121,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.Disposition = disposition ?? string.Empty;
                 ViewBag.FunnelStage = funnelStage ?? string.Empty;
                 ViewBag.OnboardingType = onboardingType ?? string.Empty;
+                ViewBag.AssignedTo = assignedTo ?? string.Empty;
+                ViewBag.Assignees = assignees;
                 ViewBag.FunnelCounts = funnelCounts;
                 ViewBag.FunnelReach = funnelReach;
                 // Global status breakdown (Open + InProgress + Closed + Onboarded = Total).
@@ -142,6 +147,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.Disposition = disposition ?? string.Empty;
                 ViewBag.FunnelStage = funnelStage ?? string.Empty;
                 ViewBag.OnboardingType = onboardingType ?? string.Empty;
+                ViewBag.AssignedTo = assignedTo ?? string.Empty;
+                ViewBag.Assignees = new List<Risebird.Entities.ViewModel.NaukriAssigneeVM>();
                 ViewBag.FunnelCounts = new Dictionary<string, int>();
                 ViewBag.FunnelReach = new Dictionary<string, int>();
                 ViewBag.DateFrom = dateFrom; ViewBag.DateTo = dateTo;
@@ -247,6 +254,8 @@ namespace Risebird.Web.Controllers
                         record.AutomationStatus, record.PlivoCallAttemptsTotal, record.PlivoCallAttemptsToday,
                         record.Status, record.Source, record.ProcessedBy,
                         record.Intent, record.IntentSource, record.FunnelStage, record.TicketStatus, record.OnboardingType,
+                        record.AssignedToUserId, record.AssignedToEmail, record.AssignedToName,
+                        assignedAt = record.AssignedAt?.ToString("dd MMM yyyy, HH:mm"),
                         record.ResolvedAssessmentGroupId, record.AssessmentGroupName,
                         hasResumeLink = !string.IsNullOrEmpty(record.ResumeLink)
                                         && !string.Equals(record.ResumeLink, "None", StringComparison.OrdinalIgnoreCase)
@@ -280,6 +289,206 @@ namespace Risebird.Web.Controllers
             if (ok)
                 await _repository.InsertHistoryAsync(id, "StatusChange", existing?.TicketStatus ?? existing?.Status ?? "—", status, changedBy);
             return Json(new { success = ok, status });
+        }
+
+        // ── Ticket assignment ────────────────────────────────────────────────────────
+
+        // Eligible operators (InterviewerManagement / SeniorInterviewerManagement) for the assignee
+        // dropdowns. Returned as { userId, email, name, displayName }.
+        [HttpGet]
+        public async Task<IActionResult> GetEligibleAssignees()
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in.", assignees = new object[0] });
+
+            try
+            {
+                var list = await _repository.GetEligibleAssigneesAsync();
+                var assignees = list.Select(a => new
+                {
+                    userId = a.UserId,
+                    email = a.Email,
+                    name = a.Name,
+                    displayName = a.DisplayName
+                });
+                return Json(new { success = true, assignees });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message, assignees = new object[0] });
+            }
+        }
+
+        // (Re)assign a prospect (ticket) to an operator. Logs the change to NaukriOnboardingHistory as
+        // an AssignmentChange so the assignee history is auditable like SupportTicket.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateAssignment(int id, int assignedToUserId)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            if (id <= 0 || assignedToUserId <= 0)
+                return Json(new { success = false, error = "Invalid request." });
+
+            var changedBy = HttpContext.Session.GetString("email").Trim('"');
+            var result = await _repository.UpdateAssignmentAsync(id, assignedToUserId);
+            if (!result.Success)
+                return Json(new { success = false, error = "Could not assign — the selected operator is not an active InterviewerManagement / SeniorInterviewerManagement user." });
+
+            await _repository.InsertHistoryAsync(id, "AssignmentChange",
+                string.IsNullOrWhiteSpace(result.FromAssignedTo) ? "Unassigned" : result.FromAssignedTo,
+                result.ToEmail, changedBy);
+
+            return Json(new
+            {
+                success = true,
+                assignedToEmail = result.ToEmail,
+                assignedToName = result.ToName
+            });
+        }
+
+        // ── Bulk assignment by MAG ────────────────────────────────────────────────────
+        // Distribute a whole MAG's tickets to one operator (the pre-system MAG-wise practice).
+
+        [HttpGet]
+        public async Task<IActionResult> GetMagAssignmentSummary()
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in.", mags = new object[0] });
+
+            try
+            {
+                var mags = await _repository.GetMagAssignmentSummaryAsync();
+                return Json(new { success = true, mags });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message, mags = new object[0] });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BulkAssignByMag(List<string> magNames, int assignedToUserId, string scope)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            if (magNames == null || magNames.Count == 0 || assignedToUserId <= 0)
+                return Json(new { success = false, error = "Select at least one MAG and an operator." });
+
+            var changedBy = HttpContext.Session.GetString("email").Trim('"');
+            int totalAffected = 0;
+            string toEmail = null, toName = null;
+            var failed = new List<string>();
+
+            foreach (var mag in magNames.Where(m => !string.IsNullOrWhiteSpace(m)).Select(m => m.Trim()).Distinct())
+            {
+                var result = await _repository.BulkAssignByMagAsync(mag, assignedToUserId, scope, changedBy);
+                if (!result.Success)
+                {
+                    // A validation failure means the operator itself is invalid — abort the whole run.
+                    return Json(new { success = false, error = "Could not assign — the selected operator is not an active InterviewerManagement / SeniorInterviewerManagement user." });
+                }
+                totalAffected += result.Affected;
+                toEmail = result.ToEmail;
+                toName = result.ToName;
+            }
+
+            return Json(new
+            {
+                success = true,
+                affected = totalAffected,
+                assignedToEmail = toEmail,
+                assignedToName = toName,
+                message = $"{totalAffected} ticket(s) assigned to {(string.IsNullOrWhiteSpace(toName) ? toEmail : toName)}."
+            });
+        }
+
+        // ── Operator performance / supervision ────────────────────────────────────────
+
+        [HttpGet]
+        public async Task<IActionResult> Performance(string dateFrom = null, string dateTo = null,
+            string operatorEmail = null, bool includeSystem = false)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return RedirectToAction("Index", "Home");
+
+            // Default window: last 30 days (IST calendar).
+            var todayIst = DateTime.UtcNow.AddMinutes(330).Date;
+            DateTime from = todayIst.AddDays(-29), to = todayIst;
+            if (!string.IsNullOrWhiteSpace(dateFrom) && DateTime.TryParse(dateFrom, out var pf)) from = pf.Date;
+            if (!string.IsNullOrWhiteSpace(dateTo) && DateTime.TryParse(dateTo, out var pt)) to = pt.Date;
+            if (to < from) { var tmp = from; from = to; to = tmp; }
+
+            var vm = new NaukriPerformanceVM
+            {
+                DateFrom = from,
+                DateTo = to,
+                Operator = operatorEmail,
+                IncludeSystem = includeSystem
+            };
+
+            try
+            {
+                var data = await _repository.GetOperatorPerformanceAsync(from, to, operatorEmail, includeSystem, 1000);
+
+                // Column order for the event matrix: most frequent event types first.
+                vm.EventTypes = data.Events
+                    .GroupBy(e => e.EventType)
+                    .OrderByDescending(g => g.Sum(x => x.Cnt))
+                    .Select(g => g.Key)
+                    .ToList();
+
+                var eventsByOp = data.Events
+                    .GroupBy(e => e.Operator, StringComparer.OrdinalIgnoreCase)
+                    .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
+
+                foreach (var s in data.Summary)
+                {
+                    var row = new NaukriPerformanceRow
+                    {
+                        Operator = s.Operator,
+                        TotalActions = s.TotalActions,
+                        TicketsTouched = s.TicketsTouched,
+                        FirstActionAt = s.FirstActionAt,
+                        LastActionAt = s.LastActionAt
+                    };
+                    if (eventsByOp.TryGetValue(s.Operator, out var evs))
+                        foreach (var ev in evs) row.EventCounts[ev.EventType] = ev.Cnt;
+                    vm.Operators.Add(row);
+                }
+
+                vm.Log = data.Log.Select(l => new NaukriPerformanceLogItem
+                {
+                    ChangedAt = l.ChangedAt,
+                    Operator = l.Operator,
+                    RecordId = l.RecordId,
+                    CandidateName = l.CandidateName,
+                    MagName = l.MagName,
+                    EventType = l.EventType,
+                    FromValue = l.FromValue,
+                    ToValue = l.ToValue
+                }).ToList();
+
+                vm.TotalActions = vm.Operators.Sum(o => o.TotalActions);
+                vm.TotalOperators = vm.Operators.Count;
+                vm.TotalTicketsTouched = data.Log.Select(l => l.RecordId).Distinct().Count();
+
+                // For the operator filter dropdown.
+                ViewBag.Assignees = await _repository.GetEligibleAssigneesAsync();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                ViewBag.Assignees = new List<NaukriAssigneeVM>();
+                TempData["Error"] = "Failed to load performance data.";
+            }
+
+            return View(vm);
         }
 
         // ── Inline field update (MAG, Email, Phone) ──────────────────────────────────
@@ -668,10 +877,20 @@ namespace Risebird.Web.Controllers
                 if (string.IsNullOrWhiteSpace(record.ParsedEmail))
                     return Json(new { success = false, error = "Email not parsed yet. Complete Step 1 first." });
 
-                if (!record.ResolvedAssessmentGroupId.HasValue || record.ResolvedAssessmentGroupId.Value <= 0)
-                    return Json(new { success = false, error = $"No assessment group found for MAG: '{record.MagName}'." });
+                // Use the assessment group the operator explicitly CONFIRMED / locked (stored in
+                // AssessmentGroupId by ConfirmMag / SelectSkillChannel — it is also the AG the MAG
+                // application link was built from). Only fall back to the AG re-derived from the MAG
+                // NAME text when no confirmed AG is present. Re-deriving from the name text here was a
+                // bug: if the parsed MAG text resolved to a different AG than the one the operator
+                // confirmed, the interviewer got mapped to the wrong role (e.g. onboarded for
+                // "Salesforce Developer" but mapped under "Salesforce CRM Admin").
+                int agId = (record.AssessmentGroupId.HasValue && record.AssessmentGroupId.Value > 0)
+                    ? record.AssessmentGroupId.Value
+                    : (record.ResolvedAssessmentGroupId ?? 0);
 
-                int agId = record.ResolvedAssessmentGroupId.Value;
+                if (agId <= 0)
+                    return Json(new { success = false, error = $"No assessment group found for MAG: '{record.MagName}'. Confirm the MAG first." });
+
                 string loggedInUser = HttpContext.Session.GetString("email").Trim('"');
 
                 string candidateName = (record.CandidateName ?? "").Trim();
@@ -1407,7 +1626,17 @@ namespace Risebird.Web.Controllers
                 if (string.IsNullOrWhiteSpace(record.ParsedEmail))
                     return Json(new { success = true, completed = false, reason = "No email to check." });
 
-                var (foundUserId, foundProfileId) = await _repository.FindUserByEmailAsync(record.ParsedEmail);
+                // Only a genuine self-registration counts: an active interviewer mapped to the CONFIRMED
+                // assessment group. Matching the email against any active UserList row falsely flagged
+                // pre-existing interviewers in other MAGs (and non-interviewer accounts) as self-registered,
+                // linking the prospect to the wrong account and marking it Onboarded under the wrong role.
+                int agId = (record.AssessmentGroupId.HasValue && record.AssessmentGroupId.Value > 0)
+                    ? record.AssessmentGroupId.Value
+                    : (record.ResolvedAssessmentGroupId ?? 0);
+                if (agId <= 0)
+                    return Json(new { success = true, completed = false, reason = "Confirm the MAG first, then check self-registration." });
+
+                var (foundUserId, foundProfileId) = await _repository.FindSelfRegisteredInterviewerForMagAsync(record.ParsedEmail, agId);
 
                 if (foundUserId.HasValue && foundUserId.Value > 0)
                 {
@@ -1416,7 +1645,7 @@ namespace Risebird.Web.Controllers
                     await _repository.AdvanceFunnelStageAsync(id, "Onboarded", "Closed");
                     var sysUser = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
                     await _repository.InsertHistoryAsync(id, "SelfRegistered", "\u2014",
-                        $"Prospect self-registered. UserId: {foundUserId.Value}", sysUser);
+                        $"Prospect self-registered via MAG link. UserId: {foundUserId.Value}, AG: {agId}", sysUser);
                     return Json(new { success = true, completed = true, userId = foundUserId.Value, profileId = foundProfileId });
                 }
 

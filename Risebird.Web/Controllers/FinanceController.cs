@@ -2119,29 +2119,66 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
-        [Authorize]
         [HttpPost]
-        [DisableRequestSizeLimit]
-        public async Task<JsonResult> UploadEInvoiceFile(IFormFile file)
+        public async Task<JsonResult> SaveInvoiceExpectedDate(int invoiceId, string expectedDate)
         {
             try
             {
-                if (file == null || file.Length == 0)
-                    return Json(new { success = false, message = "No file received." });
+                DateTime? date = null;
+                if (!string.IsNullOrWhiteSpace(expectedDate) &&
+                    DateTime.TryParse(expectedDate, out DateTime parsed))
+                {
+                    date = parsed.Date;
+                }
+                var success = await _meetingService.SaveInvoiceExpectedDate(invoiceId, date);
+                return Json(new { success, message = success ? "Expected date saved." : "Failed to save expected date." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "An error occurred." });
+            }
+        }
 
-                var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+        [Authorize]
+        [Authorize]
+        [HttpPost]
+        [DisableRequestSizeLimit]
+        public async Task<JsonResult> UploadEInvoiceFile(IFormFile[] files)
+        {
+            try
+            {
+                if (files == null || files.Length == 0)
+                    return Json(new { success = false, message = "No file(s) received." });
+
                 var allowed = new[] { "application/pdf", "application/msword",
                     "application/vnd.openxmlformats-officedocument.wordprocessingml.document" };
-                if (!allowed.Contains(fileMimeType))
-                    return Json(new { success = false, message = "Only PDF or Word documents are allowed." });
 
-                var uniqueFileName = $"einvoice_{DateTime.UtcNow:yyyyMMddHHmmss}_{file.FileName.Replace(" ", "_")}";
-                await _azureStorageHelper.InsertBlob(uniqueFileName, "invoicefiles", file);
-                var containerRef = _azureStorageHelper.GetCloudBlobContainer("invoicefiles");
-                var blob = containerRef.GetBlockBlobReference(uniqueFileName);
-                var fileUrl = blob.Uri.ToString();
+                var fileUrls   = new List<string>();
+                var fileNames  = new List<string>();
+                var timestamp  = DateTime.UtcNow.ToString("yyyyMMddHHmmss");
 
-                return Json(new { success = true, fileUrl });
+                foreach (var file in files)
+                {
+                    if (file == null || file.Length == 0) continue;
+
+                    var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
+                    if (!allowed.Contains(fileMimeType))
+                        return Json(new { success = false, message = $"'{file.FileName}' is not allowed. Only PDF or Word documents are supported." });
+
+                    var uniqueFileName = $"einvoice_{timestamp}_{file.FileName.Replace(" ", "_")}";
+                    await _azureStorageHelper.InsertBlob(uniqueFileName, "invoicefiles", file);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("invoicefiles");
+                    var blob         = containerRef.GetBlockBlobReference(uniqueFileName);
+
+                    fileUrls.Add(blob.Uri.ToString());
+                    fileNames.Add(file.FileName);
+                }
+
+                if (fileUrls.Count == 0)
+                    return Json(new { success = false, message = "No valid files were uploaded." });
+
+                return Json(new { success = true, fileUrls, fileNames, combinedUrl = string.Join("|", fileUrls) });
             }
             catch (Exception ex)
             {

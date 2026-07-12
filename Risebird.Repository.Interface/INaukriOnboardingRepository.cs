@@ -17,19 +17,31 @@ namespace Risebird.Repository.Interface
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo, int page, int pageSize,
             string automationStatus = null, string callStatus = null, string disposition = null,
-            string funnelStage = null, string onboardingType = null);
+            string funnelStage = null, string onboardingType = null, string assignedTo = null);
 
         Task<Dictionary<string, int>> GetFunnelStageCountsAsync(
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo,
             string automationStatus = null, string callStatus = null, string disposition = null,
-            string funnelStage = null, string onboardingType = null);
+            string funnelStage = null, string onboardingType = null, string assignedTo = null);
 
         Task<Dictionary<string, int>> GetFunnelReachCountsAsync(
             string status, string candidateName, string magName, string source,
             DateTime? dateFrom, DateTime? dateTo,
             string automationStatus = null, string callStatus = null, string disposition = null,
-            string funnelStage = null, string onboardingType = null);
+            string funnelStage = null, string onboardingType = null, string assignedTo = null);
+
+        // Ticket assignment: eligible operators (InterviewerManagement / SeniorInterviewerManagement)
+        // and manual (re)assignment of a prospect to one of them.
+        Task<List<NaukriAssigneeVM>> GetEligibleAssigneesAsync();
+        Task<(bool Success, string FromAssignedTo, string ToEmail, string ToName)> UpdateAssignmentAsync(int id, int assignedToUserId);
+
+        // Bulk assignment: distribute a whole MAG's tickets to a single operator (MAG-wise ownership).
+        Task<List<NaukriMagAssignmentSummary>> GetMagAssignmentSummaryAsync();
+        Task<(bool Success, int Affected, string ToEmail, string ToName)> BulkAssignByMagAsync(string magName, int assignedToUserId, string scope, string changedBy);
+
+        // Operator performance / supervision (derived from NaukriOnboardingHistory) between dates.
+        Task<NaukriPerformanceData> GetOperatorPerformanceAsync(DateTime dateFrom, DateTime dateTo, string operatorEmail, bool includeSystem, int logLimit);
 
         // SendGrid delivery status of the invitation email for a recipient (null if none sent yet).
         Task<NaukriInvitationEmailStatus> GetInvitationEmailStatusAsync(string email);
@@ -82,6 +94,12 @@ namespace Risebird.Repository.Interface
         Task<int?> FindProspectIdByOnboardedUserIdAsync(int userId);
 
         Task<(int? UserId, int? ProfileId)> FindUserByEmailAsync(string email);
+
+        // Resolves the interviewer account for an email ONLY when that interviewer is genuinely mapped
+        // to the given assessment group — the accurate "self-registered via the MAG link" signal.
+        // Returns (null, null) when no such interviewer exists (e.g. the email matches a non-interviewer
+        // account, or an interviewer mapped only to a DIFFERENT MAG). Prevents false self-registrations.
+        Task<(int? UserId, int? ProfileId)> FindSelfRegisteredInterviewerForMagAsync(string email, int assessmentGroupId);
 
         // Resolves an interviewer account by email REGARDLESS of active status (also returns IsActive).
         // Used by the onboarding "adopt existing interviewer" path to find accounts that exist but are
@@ -139,6 +157,53 @@ namespace Risebird.Repository.Interface
         public int? LastBatchSucceeded { get; set; }
         public string LastBatchStatus { get; set; }
         public int TotalBatches { get; set; }
+    }
+
+    // Per-MAG ticket distribution snapshot for the bulk-assign picker.
+    public class NaukriMagAssignmentSummary
+    {
+        public string MagName { get; set; }
+        public string AssessmentGroupName { get; set; }
+        public int Total { get; set; }
+        public int Assigned { get; set; }
+        public int Unassigned { get; set; }
+        public int Active { get; set; }
+    }
+
+    // Raw rows returned by usp_GetNaukriOperatorPerformance (assembled into view models by the app).
+    public class NaukriPerfSummaryRow
+    {
+        public string Operator { get; set; }
+        public int TotalActions { get; set; }
+        public int TicketsTouched { get; set; }
+        public DateTime? FirstActionAt { get; set; }
+        public DateTime? LastActionAt { get; set; }
+    }
+
+    public class NaukriPerfEventRow
+    {
+        public string Operator { get; set; }
+        public string EventType { get; set; }
+        public int Cnt { get; set; }
+    }
+
+    public class NaukriPerfLogRow
+    {
+        public DateTime ChangedAt { get; set; }
+        public string Operator { get; set; }
+        public int RecordId { get; set; }
+        public string CandidateName { get; set; }
+        public string MagName { get; set; }
+        public string EventType { get; set; }
+        public string FromValue { get; set; }
+        public string ToValue { get; set; }
+    }
+
+    public class NaukriPerformanceData
+    {
+        public List<NaukriPerfSummaryRow> Summary { get; set; } = new List<NaukriPerfSummaryRow>();
+        public List<NaukriPerfEventRow> Events { get; set; } = new List<NaukriPerfEventRow>();
+        public List<NaukriPerfLogRow> Log { get; set; } = new List<NaukriPerfLogRow>();
     }
 
     public class BatchCallLogEntry

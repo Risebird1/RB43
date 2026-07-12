@@ -2412,20 +2412,56 @@ namespace Risebird.Web.Controllers
             DateTime absoluteTime = new DateTime(2024, 12, 2, 16, 30, 0);
             var AssessmentsGroups = new List<AssignmentVM>();
             //var interviewers = new List<Interviewer>();
+            var interviewerOptions = new List<SelectListItem>();
             if (model.CreatedOn < absoluteTime)
             {
                 AssessmentsGroups = _interviewerService.FetchAssessmentGroups().ToList();
                 var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
-                ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
-
+                if (interviewers != null)
+                {
+                    interviewerOptions = interviewers
+                        .Select(x => new SelectListItem { Value = x.UserId.ToString(), Text = x.EmailId })
+                        .ToList();
+                }
             }
             else
             {
                 AssessmentsGroups = (await _irfService.GetAllMAGs()).ToList();
                 var interviewers = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
-                ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
-
+                if (interviewers != null)
+                {
+                    interviewerOptions = interviewers
+                        .Select(x => new SelectListItem { Value = x.UserId.ToString(), Text = x.EmailId })
+                        .ToList();
+                }
             }
+
+            // Interviewers already attached to this skill channel must always remain selectable,
+            // even if they've since been removed from the MAG (or deactivated). Otherwise their
+            // dropdown renders only "Select" with an empty value, which trips the client-side
+            // "There should be atleast one Interviewer." validation and makes the IRF uneditable.
+            if (model.InterviewerCollection != null)
+            {
+                var existingOptionValues = new HashSet<string>(interviewerOptions.Select(o => o.Value));
+                foreach (var member in model.InterviewerCollection)
+                {
+                    if (member.UserId == 0)
+                    {
+                        continue;
+                    }
+                    var userIdValue = member.UserId.ToString();
+                    if (existingOptionValues.Add(userIdValue))
+                    {
+                        interviewerOptions.Add(new SelectListItem
+                        {
+                            Value = userIdValue,
+                            Text = !string.IsNullOrEmpty(member.EmailId) ? member.EmailId : userIdValue
+                        });
+                    }
+                }
+            }
+
+            ViewBag.Interviewers = new SelectList(interviewerOptions, "Value", "Text");
             //var interviewers = await _irfService.GetInterviewersForIRF(model.AssessmentGroupId, model.id);
             //var interviewers = await _irfService.GetAssessmentGroupInterviewerMembers(Convert.ToInt16(model.AssessmentGroupId), true);
             //var interviewers = await _irfService.GetAvailableAssessmentGroupInterviewerMembers(model.AssessmentGroupId);

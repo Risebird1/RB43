@@ -461,9 +461,12 @@ namespace Risebird.AzureTimerFunctions
         /// if so, reflects it in the funnel (stage → 'Onboarded', ticket → 'Closed') and stops
         /// further automation. Returns true when self-registration was detected and finalized.
         ///
-        /// "Self-registered" mirrors the operator-facing CheckSelfRegistration definition:
-        /// an active UserList entry exists for the prospect's email that the system did NOT
-        /// auto-create (OnboardedUserId is still null).
+        /// A prospect counts as "self-registered via the MAG link" ONLY when their email maps to an
+        /// active interviewer who is genuinely mapped to the CONFIRMED assessment group (the durable
+        /// trace a real MAG application leaves: an AG-scoped skill channel and/or the AG id on the
+        /// profile). Matching the email against any active UserList row (the old behaviour) produced
+        /// false positives — pre-existing interviewers in other MAGs, or non-interviewer accounts —
+        /// which linked the prospect to the wrong account and marked it Onboarded under the wrong role.
         /// </summary>
         private async Task<bool> TryReflectSelfRegistrationAsync(NaukriProspectiveInterviewerVM p)
         {
@@ -473,7 +476,15 @@ namespace Risebird.AzureTimerFunctions
                 || string.IsNullOrWhiteSpace(p.ParsedEmail))
                 return false;
 
-            var (userId, profileId) = await _repository.FindUserByEmailAsync(p.ParsedEmail);
+            // The confirmed/locked AG (also the AG the MAG link was built from). Without it we cannot
+            // verify the self-registration actually landed on THIS MAG, so we do not finalize.
+            int agId = (p.AssessmentGroupId.HasValue && p.AssessmentGroupId.Value > 0)
+                ? p.AssessmentGroupId.Value
+                : (p.ResolvedAssessmentGroupId ?? 0);
+            if (agId <= 0)
+                return false;
+
+            var (userId, profileId) = await _repository.FindSelfRegisteredInterviewerForMagAsync(p.ParsedEmail, agId);
             if (!userId.HasValue || userId.Value <= 0)
                 return false;
 
@@ -482,9 +493,9 @@ namespace Risebird.AzureTimerFunctions
             await _repository.AdvanceFunnelStageAsync(p.Id, "Onboarded", "Closed");
             await _repository.UpdateAutomationStatusAsync(p.Id, "Completed");
             await _repository.InsertHistoryAsync(p.Id, "SelfRegistered", "—",
-                $"Prospect self-registered via MAG link (UserId: {userId.Value}). Funnel advanced to Onboarded.", "AutomationJob");
+                $"Prospect self-registered via MAG link (UserId: {userId.Value}, AG: {agId}). Funnel advanced to Onboarded.", "AutomationJob");
 
-            _log.LogInformation($"[OnboardAuto] #{p.Id} — detected self-registration (UserId {userId.Value}). Marked Onboarded.");
+            _log.LogInformation($"[OnboardAuto] #{p.Id} — detected self-registration (UserId {userId.Value}, AG {agId}). Marked Onboarded.");
             return true;
         }
 
@@ -574,15 +585,27 @@ namespace Risebird.AzureTimerFunctions
             // (forward-only; a no-op if already past it).
             await _repository.AdvanceFunnelStageAsync(rec.Id, "IntentConfirmed", "InProgress");
 
-            // A resolved assessment group is required to onboard. Try one more MAG resolution if missing.
-            int? agId = rec.ResolvedAssessmentGroupId;
+            // An assessment group is required to onboard. Prefer the CONFIRMED/locked AG stored on the
+            // record (AssessmentGroupId — also the AG the MAG application link was built from) over the
+            // one re-derived from the MAG NAME text, so the interviewer is mapped to the same role that
+            // was confirmed (avoids the "onboarded for X but mapped under Y" mismatch). Fall back to the
+            // name-resolved AG, then to a fresh MAG resolution.
+            int? agId = (rec.AssessmentGroupId.HasValue && rec.AssessmentGroupId.Value > 0)
+                ? rec.AssessmentGroupId
+                : rec.ResolvedAssessmentGroupId;
             if (agId == null || agId <= 0)
             {
                 var resolved = await ResolveMAGAndGenerateLinkAsync(rec);
                 if (resolved)
                 {
                     var refreshed = await _repository.GetByIdAsync(rec.Id);
-                    if (refreshed != null) { rec = refreshed; agId = rec.ResolvedAssessmentGroupId; }
+                    if (refreshed != null)
+                    {
+                        rec = refreshed;
+                        agId = (rec.AssessmentGroupId.HasValue && rec.AssessmentGroupId.Value > 0)
+                            ? rec.AssessmentGroupId
+                            : rec.ResolvedAssessmentGroupId;
+                    }
                 }
                 if (agId == null || agId <= 0)
                 {
@@ -694,6 +717,20 @@ namespace Risebird.AzureTimerFunctions
             if (phone.Length > 0 && phone.Length < 10) phone = phone.PadRight(10, '0');
 
             var portalBase = _configuration["ApplicationUrl"] ?? "https://portal.risebird.io";
+
+            // Guard: if the prospect's email already maps to an existing interviewer, do NOT auto-create
+            // a profile here. usp_AddOrEditInterviewerProfile's UPDATE path REPLACES the profile's
+            // AssessmentGroupId list, which would wipe their other specialisations and can surface them
+            // under a pre-existing role instead of the confirmed MAG. These cases need a human decision,
+            // so route to manual — the operator's "adopt existing" onboarding path appends the confirmed
+            // MAG (never overwrites) and gates activation on the acknowledgement.
+            var existingIv = await _repository.FindInterviewerByEmailAnyStatusAsync(rec.ParsedEmail);
+            if (existingIv.UserId.HasValue && existingIv.UserId.Value > 0)
+            {
+                await MarkManualAsync(rec.Id,
+                    $"Auto-onboard halted: email {rec.ParsedEmail} already maps to an existing interviewer account (UserId {existingIv.UserId.Value}). Onboard manually so the confirmed MAG (AG {agId}) is added without overwriting their existing role.");
+                return;
+            }
 
             var profileVM = new InterviewerProfileVM
             {

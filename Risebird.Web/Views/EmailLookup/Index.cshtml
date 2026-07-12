@@ -279,6 +279,7 @@
         string bdgClass   = GetProfileBadgeClass(Model.ProfileType);
         bool   isIvr      = (Model.ProfileType ?? "").ToLower() == "interviewer" || Model.InterviewerTotalCount > 0 || !string.IsNullOrEmpty(Model.PrimarySkill) || !string.IsNullOrEmpty(Model.CurrentRole);
         bool   isCand     = (Model.ProfileType ?? "").ToLower() == "candidate"   || Model.CandidateTotalCount > 0;
+        bool   isClient   = Model.ClientId > 0;
 
         <div class="profile-card">
             <div class="d-flex align-items-center gap-3">
@@ -303,6 +304,10 @@
                             <span class="profile-badge badge-inactive"><i class="fas fa-circle me-1" style="font-size:8px;"></i>Inactive</span>
                         }
 
+                        @if (isClient)
+                        {
+                            <span class="profile-badge badge-admin"><i class="fas fa-building me-1"></i>@Model.ClientName</span>
+                        }
                         @if (isIvr && Model.IsApproved)
                         {
                             <span class="profile-badge badge-interviewer"><i class="fas fa-check-circle me-1"></i>Approved Interviewer</span>
@@ -856,7 +861,143 @@
             </div>
         }
 
-        @if (!isCand && !isIvr)
+        @* ── AS CLIENT ── *@
+        @if (isClient)
+        {
+            string billingTypeLabel  = Model.BillingType == 1 ? "Billing Owner" : "Client";
+            string billingModelLabel = Model.BillingModel switch {
+                1 => "M1 — Prepaid",
+                2 => "M2 — Postpaid + Pre-Delivery PO",
+                3 => "M3 — Postpaid + Post-Delivery PO",
+                4 => "M4 — Postpaid Direct",
+                _ => "—"
+            };
+            string clientTypeLabel   = Model.ClientType == 0 ? "Standard" : Model.ClientType == 1 ? "Premium" : Model.ClientType == 2 ? "Elite" : "—";
+            string countryTypeLabel  = Model.CountryType == 0 ? "Domestic" : "Offshore";
+            decimal walletBalance    = Model.TotalCredits - Model.TotalDebits;
+
+            <div class="section-card">
+                <div class="section-title"><i class="fas fa-building"></i> Client Profile — @Model.ClientName</div>
+
+                @* Stat cards *@
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number stat-blue">@Model.ActiveUserCount</div>
+                            <div class="stat-label">Active Users</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number stat-orange">@Model.TotalUserCount</div>
+                            <div class="stat-label">Total Users</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number stat-green">@Model.BillingCurrency &#8377;@Model.TotalCredits.ToString("N0")</div>
+                            <div class="stat-label">Total Credits</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-number @(walletBalance >= 0 ? "stat-green" : "text-danger")">&#8377;@walletBalance.ToString("N0")</div>
+                            <div class="stat-label">Wallet Balance</div>
+                        </div>
+                    </div>
+                </div>
+
+                @* Client details grid *@
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="verif-card verif-card--ok">
+                            <div class="verif-card__header"><i class="fas fa-building me-1"></i> Company &amp; Billing</div>
+                            <div class="verif-card__body">
+                                <div class="verif-row"><span class="verif-label">Client Name</span><span class="verif-value fw-bold">@Model.ClientName</span></div>
+                                <div class="verif-row"><span class="verif-label">Billing Type</span><span class="verif-value">@billingTypeLabel</span></div>
+                                <div class="verif-row"><span class="verif-label">Billing Model</span><span class="verif-value">@billingModelLabel</span></div>
+                                <div class="verif-row"><span class="verif-label">Client Type</span><span class="verif-value">@clientTypeLabel</span></div>
+                                <div class="verif-row"><span class="verif-label">Country Type</span><span class="verif-value">@countryTypeLabel</span></div>
+                                <div class="verif-row"><span class="verif-label">Currency</span><span class="verif-value">@Model.BillingCurrency</span></div>
+                                @if (Model.GSTApplicable && !string.IsNullOrEmpty(Model.GST))
+                                {
+                                    <div class="verif-row"><span class="verif-label">GST</span><span class="verif-value">@Model.GST</span></div>
+                                }
+                                <div class="verif-row"><span class="verif-label">Payment Term</span><span class="verif-value">@(Model.PaymentTerm > 0 ? Model.PaymentTerm + " days" : "—")</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="verif-card verif-card--ok">
+                            <div class="verif-card__header"><i class="fas fa-wallet me-1"></i> Wallet &amp; Rates</div>
+                            <div class="verif-card__body">
+                                <div class="verif-row"><span class="verif-label">Per Interview Rate</span><span class="verif-value fw-bold">&#8377;@Model.PerInterviewRate.ToString("N0")</span></div>
+                                @if (Model.AIPerInterviewRate > 0)
+                                {
+                                    <div class="verif-row"><span class="verif-label">AI Interview Rate</span><span class="verif-value">&#8377;@Model.AIPerInterviewRate.ToString("N0")</span></div>
+                                }
+                                <div class="verif-row"><span class="verif-label">Total Credits Added</span><span class="verif-value text-success">&#8377;@Model.TotalCredits.ToString("N0")</span></div>
+                                <div class="verif-row"><span class="verif-label">Total Debits</span><span class="verif-value text-danger">&#8377;@Model.TotalDebits.ToString("N0")</span></div>
+                                <div class="verif-row"><span class="verif-label">Cash Credits Added</span><span class="verif-value">&#8377;@Model.CashCreditAdded.ToString("N0")</span></div>
+                                <div class="verif-row"><span class="verif-label">Total PO Amount</span><span class="verif-value">&#8377;@Model.TotalPOAmount.ToString("N0")</span></div>
+                                <div class="verif-row"><span class="verif-label">PO Cash Received</span><span class="verif-value">&#8377;@Model.TotalPOReceived.ToString("N0")</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @* Recent POs *@
+                @if (Model.ClientPOs != null && Model.ClientPOs.Count > 0)
+                {
+                    <hr class="section-divider" />
+                    <div class="section-title" style="font-size:14px;"><i class="fas fa-file-invoice-dollar"></i> Purchase Orders</div>
+                    <div class="table-responsive">
+                        <table class="data-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>PO Number</th>
+                                    <th class="text-end">PO Amount (&#8377;)</th>
+                                    <th class="text-end">Cash Received (&#8377;)</th>
+                                    <th class="text-end">Pending (&#8377;)</th>
+                                    <th>Period</th>
+                                    <th>Status</th>
+                                    <th>Remarks</th>
+                                    <th>Created On</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var po in Model.ClientPOs)
+                                {
+                                    decimal pending = po.POCreditAmount - po.CashCreditReceived;
+                                    string poStatus = po.Status switch {
+                                        0 => "Awaiting Cash",
+                                        1 => "Partial Cash",
+                                        2 => "Cash Credited",
+                                        3 => "Document Only",
+                                        _ => "—"
+                                    };
+                                    string poStatusClass = po.Status == 2 ? "status-paid" : po.Status == 1 ? "status-pending" : "status-cancelled";
+                                    string monthName = po.POMonth > 0 && po.POMonth <= 12
+                                        ? new DateTime(2000, po.POMonth, 1).ToString("MMM") : "—";
+                                    <tr>
+                                        <td class="fw-bold">@(string.IsNullOrEmpty(po.PONumber) ? "—" : po.PONumber)</td>
+                                        <td class="text-end">@po.POCreditAmount.ToString("N0")</td>
+                                        <td class="text-end text-success">@po.CashCreditReceived.ToString("N0")</td>
+                                        <td class="text-end @(pending > 0 ? "text-danger fw-bold" : "text-muted")">@pending.ToString("N0")</td>
+                                        <td>@monthName @(po.POYear > 0 ? po.POYear.ToString() : "")</td>
+                                        <td><span class="status-pill @poStatusClass">@poStatus</span></td>
+                                        <td style="max-width:180px;font-size:0.8rem;">@(string.IsNullOrEmpty(po.Remarks) ? "—" : po.Remarks)</td>
+                                        <td>@(po.CreatedOn.HasValue ? po.CreatedOn.Value.ToString("dd MMM yyyy") : "—")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (!isCand && !isIvr && !isClient)
         {
             <div class="section-card text-center py-4">
                 <i class="fas fa-info-circle fa-2x text-muted mb-2 d-block"></i>

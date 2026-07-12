@@ -1,0 +1,517 @@
+@model Risebird.Entities.ViewModel.NaukriPerformanceVM
+@{
+    ViewData["Title"] = "Operator Performance";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var assignees = ViewBag.Assignees as List<Risebird.Entities.ViewModel.NaukriAssigneeVM> ?? new List<Risebird.Entities.ViewModel.NaukriAssigneeVM>();
+    string df = Model.DateFrom.ToString("yyyy-MM-dd");
+    string dt = Model.DateTo.ToString("yyyy-MM-dd");
+
+    // Friendly labels for the raw event-type keys stored in NaukriOnboardingHistory.
+    string EventLabel(string e)
+    {
+        switch (e)
+        {
+            case "StatusChange": return "Status";
+            case "AssignmentChange": return "Assign";
+            case "EmploymentVerification": return "Emp. Verify";
+            case "NotQualified": return "Not Qualified";
+            case "ResumeParse": return "Resume Parse";
+            case "ResumeAnalysis": return "AI Fitment";
+            case "AcknowledgementSent": return "Ack Sent";
+            case "AcknowledgementPending": return "Ack Pending";
+            case "AckEmailResent": return "Ack Resent";
+            case "SkillChannelSelected": return "Channel";
+            case "MagChange": return "MAG Change";
+            case "MagConfirmed": return "MAG Confirm";
+            case "InvitationEmailSent": return "Invite Sent";
+            case "ProspectResponse": return "Response";
+            case "SelfRegistered": return "Self-Reg";
+            case "DuplicateCleared": return "Dup Cleared";
+            case "ResumeUpload": return "Resume Upload";
+            case "RecordCreated": return "Created";
+            case "RelayPreParsed": return "Relay Parse";
+            case "PlivoCallInitiated": return "Call Init";
+            case "PlivoCallCompleted": return "Call Done";
+            case "IntentConfirmed": return "Intent";
+            case "BatchCallInitiated": return "Batch Call";
+            case "Deleted": return "Deleted";
+            default: return e;
+        }
+    }
+
+    string OpDisplay(string email)
+    {
+        var a = assignees.FirstOrDefault(x => string.Equals(x.Email, email, StringComparison.OrdinalIgnoreCase));
+        return (a != null && !string.IsNullOrWhiteSpace(a.Name)) ? $"{a.Name}" : email;
+    }
+
+    // Group the ~25 raw event types into a handful of readable buckets so the matrix stays legible.
+    var perfCategories = new (string Key, string Label, string ShortLabel, string Tip, string[] Events)[]
+    {
+        ("Intake",     "Intake",        "Intake",   "Record created, resume parse, duplicate checks",              new[] { "RecordCreated", "RelayPreParsed", "ResumeParse", "ResumeUpload", "DuplicateDetected", "DuplicateCleared" }),
+        ("Mag",        "MAG / Channel", "MAG",      "MAG selection/confirmation and skill-channel mapping",     new[] { "MagChange", "MagConfirmed", "SkillChannelSelected" }),
+        ("Outreach",   "Outreach",      "Outreach", "Invitation email, AI calls, prospect response & intent",      new[] { "InvitationEmailSent", "PlivoCallInitiated", "PlivoCallCompleted", "BatchCallInitiated", "ProspectResponse", "IntentConfirmed", "MarkedCold" }),
+        ("Screening",  "Screening",     "Screen",   "Employment verification & AI resume fitment",                 new[] { "EmploymentVerification", "NotQualified", "ResumeAnalysis" }),
+        ("Onboarding", "Onboarding",    "Onboard",  "Acknowledgement emails & self-registration",                  new[] { "AcknowledgementSent", "AcknowledgementPending", "AckEmailResent", "SelfRegistered" }),
+        ("Assignment", "Assignment",    "Assign",   "Ticket (re)assignment",                                       new[] { "AssignmentChange" }),
+        ("Status",     "Status",        "Status",   "Ticket status changes (open / in-progress / closed)",         new[] { "StatusChange" }),
+        ("Other",      "Other",         "Other",    "Automation notes & miscellaneous events",                     new string[0] ),
+    };
+
+    string CatOf(string ev)
+    {
+        foreach (var c in perfCategories)
+            if (c.Events.Contains(ev)) return c.Key;
+        return "Other";
+    }
+
+    // Per-operator category totals + which categories actually have data (so empty columns are hidden).
+    var perfCatTotals = new Dictionary<string, Dictionary<string, int>>(StringComparer.OrdinalIgnoreCase);
+    var perfCatUsed = new HashSet<string>();
+    foreach (var op in Model.Operators)
+    {
+        var byCat = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        foreach (var kv in op.EventCounts)
+        {
+            var cat = CatOf(kv.Key);
+            byCat.TryGetValue(cat, out var cur);
+            byCat[cat] = cur + kv.Value;
+            if (kv.Value > 0) perfCatUsed.Add(cat);
+        }
+        perfCatTotals[op.Operator] = byCat;
+    }
+    var perfCols = perfCategories.Where(c => perfCatUsed.Contains(c.Key)).ToList();
+}
+
+<style>
+    .perf-page .perf-card .sv { font-size: 24px; font-weight: 700; line-height: 1; }
+    .perf-page .perf-card .sl { font-size: 11px; color: #64748b; margin-top: 4px; text-transform: uppercase; letter-spacing: .35px; font-weight: 600; }
+
+    .perf-page .perf-filter-card .form-label { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: .03em; }
+    .perf-page .perf-filter-card .form-control-sm,
+    .perf-page .perf-filter-card .form-select-sm { font-size: 12.5px; min-height: 32px; }
+
+    /* Activity-by-operator matrix */
+    .perf-matrix-card .card-body { padding: 0; }
+
+    .perf-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 0 1px 1px;
+    }
+
+    .perf-matrix {
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+        font-size: 12.5px;
+        background: #fff;
+        margin: 0;
+    }
+
+    .perf-matrix thead th {
+        background: #f1f5f9;
+        color: #334155;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .02em;
+        padding: 10px 12px;
+        border: 1px solid #dbe3ec;
+        border-bottom-width: 2px;
+        vertical-align: middle;
+        text-align: left;
+        white-space: nowrap;
+        line-height: 1.2;
+    }
+
+    .perf-matrix tbody td {
+        padding: 9px 12px;
+        border: 1px solid #e8edf2;
+        vertical-align: middle;
+        color: #1e293b;
+        background: #fff;
+        line-height: 1.35;
+    }
+
+    .perf-matrix tbody tr:nth-child(even) td { background: #fafbfd; }
+    .perf-matrix tbody tr:hover td { background: #f0f7ff; }
+
+    .perf-matrix .perf-col-op {
+        min-width: 170px;
+        max-width: 220px;
+        text-align: left;
+        white-space: normal;
+    }
+
+    .perf-matrix .perf-col-sum {
+        width: 72px;
+        min-width: 72px;
+        text-align: center;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .perf-matrix .perf-col-cat {
+        width: 64px;
+        min-width: 64px;
+        max-width: 72px;
+        text-align: center;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .perf-matrix .perf-col-time {
+        width: 118px;
+        min-width: 118px;
+        text-align: left;
+        white-space: nowrap;
+        color: #64748b;
+        font-size: 11.5px;
+    }
+
+    .perf-matrix thead .perf-col-sum,
+    .perf-matrix thead .perf-col-cat { text-align: center; }
+
+    .perf-matrix tbody .perf-col-sum { font-weight: 600; }
+    .perf-matrix tbody .perf-col-sum.perf-total { color: #0d6efd; }
+
+    .perf-matrix td.perf-zero { color: #cbd5e1; }
+
+    .perf-op-name {
+        display: block;
+        font-weight: 600;
+        color: #0f172a;
+        font-size: 12.5px;
+        line-height: 1.3;
+    }
+
+    .perf-op-email {
+        display: block;
+        font-size: 10.5px;
+        color: #94a3b8;
+        margin-top: 2px;
+        word-break: break-all;
+        line-height: 1.2;
+    }
+
+    .perf-section-hint {
+        font-size: 11.5px;
+        color: #94a3b8;
+        padding: 12px 16px 10px;
+        border-bottom: 1px solid #eef2f6;
+        background: #fcfdfe;
+    }
+
+    /* Detailed activity log */
+    .perf-log-card .perf-table-wrap {
+        overflow-x: visible;
+        padding: 0 1px 1px;
+    }
+
+    .perf-log {
+        width: 100%;
+        margin: 0;
+        font-size: 12.5px;
+        table-layout: fixed;
+        border-collapse: collapse;
+        background: #fff;
+    }
+
+    .perf-log thead th {
+        background: #f1f5f9;
+        color: #334155;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .02em;
+        padding: 10px 12px;
+        border: 1px solid #dbe3ec;
+        border-bottom-width: 2px;
+        vertical-align: middle;
+        text-align: left;
+        white-space: normal;
+        word-break: break-word;
+        line-height: 1.25;
+    }
+
+    .perf-log tbody td {
+        padding: 9px 12px;
+        border: 1px solid #e8edf2;
+        vertical-align: top;
+        text-align: left;
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        word-break: break-word;
+        line-height: 1.4;
+        max-width: 0;
+    }
+
+    .perf-log tbody tr:nth-child(even) td { background: #fafbfd; }
+    .perf-log tbody tr:hover td { background: #f0f7ff; }
+
+    .perf-log .perf-log-when,
+    .perf-log .perf-log-ticket {
+        white-space: nowrap;
+        max-width: none;
+        width: 1%;
+    }
+
+    .perf-log .perf-log-ticket {
+        text-align: center;
+        color: #64748b;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .perf-log .perf-log-event {
+        max-width: none;
+        width: 9%;
+        white-space: normal;
+    }
+
+    .perf-log .perf-log-change {
+        max-width: none;
+        width: 28%;
+    }
+
+    .perf-evt-badge {
+        display: inline-block;
+        font-size: 10px;
+        padding: 2px 7px;
+        border-radius: 999px;
+        background: #eef2f7;
+        color: #334155;
+        border: 1px solid #dbe3ec;
+        white-space: normal;
+        word-break: break-word;
+        line-height: 1.3;
+        max-width: 100%;
+    }
+
+    .perf-change-cell {
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .perf-change-part {
+        display: inline;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+
+    .perf-change-arrow {
+        display: inline-block;
+        margin: 0 4px;
+        color: #94a3b8;
+        font-size: 10px;
+        vertical-align: middle;
+    }
+
+    .perf-when {
+        color: #64748b;
+        font-size: 11.5px;
+    }
+</style>
+
+<div class="main-panel perf-page" id="main-panel">
+    <div class="pt30">
+        <div class="content client">
+            <div class="container-fluid py-4">
+
+                <div class="row mb-3 align-items-center">
+                    <div class="col">
+                        <h4 class="fw-bold mb-0"><i class="fas fa-user-clock text-info me-2"></i>Operator Performance</h4>
+                        <p class="text-muted mb-0 mt-1" style="font-size:13px;">Who did what on Naukri onboarding tickets between the selected dates.</p>
+                    </div>
+                    <div class="col-auto d-flex gap-2">
+                        <a href="@Url.Action("Index", "NaukriOnboarding")" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back to Onboarding</a>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="location.reload()"><i class="fas fa-sync-alt me-1"></i>Refresh</button>
+                    </div>
+                </div>
+
+                @if (TempData["Error"] != null) { <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div> }
+
+                <form method="get" asp-action="Performance" asp-controller="NaukriOnboarding" class="card border-0 shadow-sm mb-4 perf-filter-card">
+                    <div class="card-body py-3">
+                        <div class="row g-2 align-items-end">
+                            <div class="col-auto">
+                                <label class="form-label mb-1" style="font-size:12px;">From</label>
+                                <input type="date" name="dateFrom" value="@df" class="form-control form-control-sm" />
+                            </div>
+                            <div class="col-auto">
+                                <label class="form-label mb-1" style="font-size:12px;">To</label>
+                                <input type="date" name="dateTo" value="@dt" class="form-control form-control-sm" />
+                            </div>
+                            <div class="col-auto">
+                                <label class="form-label mb-1" style="font-size:12px;">Operator</label>
+                                <select name="operatorEmail" class="form-select form-select-sm" style="min-width:220px;">
+                                    <option value="">All operators</option>
+                                    @foreach (var a in assignees)
+                                    {
+                                        if (string.Equals(Model.Operator, a.Email, StringComparison.OrdinalIgnoreCase))
+                                        { <option value="@a.Email" selected>@a.DisplayName</option> }
+                                        else { <option value="@a.Email">@a.DisplayName</option> }
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-auto">
+                                <div class="form-check mb-1" style="margin-top:22px;">
+                                    <input class="form-check-input" type="checkbox" name="includeSystem" value="true" id="incSys" @(Model.IncludeSystem ? "checked" : "") />
+                                    <label class="form-check-label" for="incSys" style="font-size:12px;">Include automation (System)</label>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-filter me-1"></i>Apply</button>
+                                <a href="@Url.Action("Performance", "NaukriOnboarding")" class="btn btn-sm btn-outline-secondary"><i class="fas fa-times me-1"></i>Clear</a>
+                            </div>
+                            <div class="col-auto ms-auto d-flex gap-2">
+                                @foreach (var (lbl, days) in new[] { ("Today", 0), ("7d", 6), ("30d", 29) })
+                                {
+                                    var qf = DateTime.UtcNow.AddMinutes(330).Date.AddDays(-days).ToString("yyyy-MM-dd");
+                                    var qt = DateTime.UtcNow.AddMinutes(330).Date.ToString("yyyy-MM-dd");
+                                    <a class="btn btn-sm btn-outline-info" href="@Url.Action("Performance", "NaukriOnboarding")?dateFrom=@qf&dateTo=@qt@(string.IsNullOrEmpty(Model.Operator) ? "" : "&operatorEmail=" + Uri.EscapeDataString(Model.Operator))@(Model.IncludeSystem ? "&includeSystem=true" : "")">@lbl</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-3"><div class="card border-0 shadow-sm text-center py-3 perf-card"><div class="sv text-primary">@Model.TotalActions.ToString("N0")</div><div class="sl">Total Actions</div></div></div>
+                    <div class="col-6 col-md-3"><div class="card border-0 shadow-sm text-center py-3 perf-card"><div class="sv text-info">@Model.TotalOperators</div><div class="sl">Operators Active</div></div></div>
+                    <div class="col-6 col-md-3"><div class="card border-0 shadow-sm text-center py-3 perf-card"><div class="sv" style="color:#6f42c1;">@Model.TotalTicketsTouched.ToString("N0")</div><div class="sl">Tickets Touched</div></div></div>
+                    <div class="col-6 col-md-3"><div class="card border-0 shadow-sm text-center py-3 perf-card"><div class="sv" style="color:#0f5132;font-size:16px;padding-top:6px;">@Model.DateFrom.ToString("dd MMM")&ndash;@Model.DateTo.ToString("dd MMM yy")</div><div class="sl">Date Range (IST)</div></div></div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4 perf-matrix-card">
+                    <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                        <strong><i class="fas fa-table me-2 text-secondary"></i>Activity by operator</strong>
+                        <span class="text-muted" style="font-size:12px;">@Model.Operators.Count operator@(Model.Operators.Count == 1 ? "" : "s")</span>
+                    </div>
+                    <div class="card-body p-0">
+                        @if (!Model.Operators.Any())
+                        {
+                            <div class="text-center text-muted py-5"><i class="fas fa-inbox fa-2x mb-2 d-block"></i>No activity in this window.</div>
+                        }
+                        else
+                        {
+                            <div class="perf-section-hint">Counts by onboarding stage. Hover a stage column header for what it includes.</div>
+                            <div class="perf-table-wrap">
+                                <table class="perf-matrix">
+                                    <thead>
+                                        <tr>
+                                            <th class="perf-col-op">Operator</th>
+                                            <th class="perf-col-sum">Total</th>
+                                            <th class="perf-col-sum">Tickets</th>
+                                            @foreach (var c in perfCols)
+                                            {
+                                                <th class="perf-col-cat" title="@c.Label — @c.Tip">@c.ShortLabel</th>
+                                            }
+                                            <th class="perf-col-time">First action</th>
+                                            <th class="perf-col-time">Last action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var op in Model.Operators)
+                                        {
+                                            var cats = perfCatTotals[op.Operator];
+                                            <tr>
+                                                <td class="perf-col-op">
+                                                    <span class="perf-op-name">@OpDisplay(op.Operator)</span>
+                                                    <span class="perf-op-email">@op.Operator</span>
+                                                </td>
+                                                <td class="perf-col-sum perf-total">@op.TotalActions.ToString("N0")</td>
+                                                <td class="perf-col-sum">@op.TicketsTouched.ToString("N0")</td>
+                                                @foreach (var c in perfCols)
+                                                {
+                                                    cats.TryGetValue(c.Key, out var cv);
+                                                    <td class="perf-col-cat @(cv == 0 ? "perf-zero" : "")">@(cv == 0 ? "—" : cv.ToString("N0"))</td>
+                                                }
+                                                <td class="perf-col-time">@(op.FirstActionAt?.ToString("dd MMM, HH:mm") ?? "—")</td>
+                                                <td class="perf-col-time">@(op.LastActionAt?.ToString("dd MMM, HH:mm") ?? "—")</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4 perf-log-card">
+                    <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                        <strong><i class="fas fa-stream me-2 text-secondary"></i>Detailed activity log</strong>
+                        <span class="text-muted" style="font-size:12px;">@Model.Log.Count shown@(Model.Log.Count >= 1000 ? " (capped at 1000)" : "")</span>
+                    </div>
+                    <div class="card-body p-0">
+                        @if (!Model.Log.Any())
+                        {
+                            <div class="text-center text-muted py-5"><i class="fas fa-inbox fa-2x mb-2 d-block"></i>No log entries.</div>
+                        }
+                        else
+                        {
+                            <div class="perf-table-wrap">
+                                <table class="perf-log">
+                                    <colgroup>
+                                        <col style="width:10%;" />
+                                        <col style="width:12%;" />
+                                        <col style="width:5%;" />
+                                        <col style="width:14%;" />
+                                        <col style="width:16%;" />
+                                        <col style="width:9%;" />
+                                        <col style="width:34%;" />
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th>When (IST)</th>
+                                            <th>Operator</th>
+                                            <th>Ticket</th>
+                                            <th>Candidate</th>
+                                            <th>MAG</th>
+                                            <th>Event</th>
+                                            <th>Change</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var l in Model.Log)
+                                        {
+                                            <tr>
+                                                <td class="perf-when perf-log-when">@l.ChangedAt.ToString("dd MMM yy, HH:mm")</td>
+                                                <td>@OpDisplay(l.Operator)</td>
+                                                <td class="perf-log-ticket">#@l.RecordId</td>
+                                                <td>@(string.IsNullOrWhiteSpace(l.CandidateName) ? "—" : l.CandidateName)</td>
+                                                <td>@(string.IsNullOrWhiteSpace(l.MagName) ? "—" : l.MagName)</td>
+                                                <td class="perf-log-event"><span class="perf-evt-badge" title="@l.EventType">@EventLabel(l.EventType)</span></td>
+                                                <td class="perf-change-cell perf-log-change">
+                                                    @{
+                                                        string fromV = string.IsNullOrWhiteSpace(l.FromValue) || l.FromValue == "—" ? null : l.FromValue;
+                                                        string toV = string.IsNullOrWhiteSpace(l.ToValue) || l.ToValue == "—" ? null : l.ToValue;
+                                                    }
+                                                    @if (fromV != null && toV != null)
+                                                    {
+                                                        <span class="perf-change-part text-muted">@fromV</span>
+                                                        <span class="perf-change-arrow"><i class="fas fa-arrow-right"></i></span>
+                                                        <span class="perf-change-part">@toV</span>
+                                                    }
+                                                    else if (toV != null)
+                                                    {
+                                                        <span class="perf-change-part">@toV</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">—</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
