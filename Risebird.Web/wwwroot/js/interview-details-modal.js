@@ -31,6 +31,9 @@
         $('#psaDetailInterviewerLateJoin').empty();
         $('#psaDetailMeetingStatus').text('Loading…');
         $('#psaDetailInterviewStatus').text('Loading…');
+        $('#psaDetailInterviewerVideoOff').empty();
+        $('#psaDetailCandidateRedo').empty();
+        $('#psaDetailCandidateComment').empty();
         modal.style.display = 'block';
 
         $.ajax({
@@ -47,6 +50,9 @@
                     $('#psaDetailInterviewerLateJoin').empty();
                     $('#psaDetailMeetingStatus').text('');
                     $('#psaDetailInterviewStatus').text('');
+                    $('#psaDetailInterviewerVideoOff').empty();
+                    $('#psaDetailCandidateRedo').empty();
+                    $('#psaDetailCandidateComment').empty();
                     return;
                 }
                 var row = rows[0];
@@ -60,6 +66,10 @@
                 var video = pickVmProp(row, 'isVideoRequired', 'IsVideoRequired') === true
                     || pickVmProp(row, 'isVideoRequired', 'IsVideoRequired') === 'true'
                     || pickVmProp(row, 'isVideoRequired', 'IsVideoRequired') === 1;
+
+                var interviewerVideoRaw = pickVmProp(row, 'interviewerVideo', 'InterviewerVideo');
+                var redoRaw = pickVmProp(row, 'redoInterview', 'RedoInterview');
+                var candidateCommentRaw = pickVmProp(row, 'candidateComment', 'CandidateComment');
 
                 var interviewDateStr = pickVmProp(row, 'interviewDate', 'InterviewDate');
                 var confirmation = String(pickVmProp(row, 'confirmationStatus', 'ConfirmationStatus') || '').trim();
@@ -144,6 +154,68 @@
 
                 $('#psaDetailMeetingStatus').text(meetingStatus);
                 $('#psaDetailInterviewStatus').text(interviewStatus);
+
+                // Interviewer Video Off
+                var elVideoOff = document.getElementById('psaDetailInterviewerVideoOff');
+                if (elVideoOff) {
+                    elVideoOff.innerHTML = '';
+                    var videoOffVal = (interviewerVideoRaw !== undefined && interviewerVideoRaw !== null)
+                        ? String(interviewerVideoRaw).trim() : '';
+                    if (videoOffVal) {
+                        var videoSpan = document.createElement('span');
+                        var lc = videoOffVal.toLowerCase();
+                        if (lc === 'yes' || lc === '1' || lc === 'true') {
+                            videoSpan.style.cssText = 'color:#b91c1c;font-weight:600;';
+                            videoSpan.textContent = 'Yes';
+                        } else if (lc === 'no' || lc === '0' || lc === 'false') {
+                            videoSpan.style.cssText = 'color:#15803d;font-weight:400;';
+                            videoSpan.textContent = 'No';
+                        } else {
+                            videoSpan.textContent = videoOffVal;
+                        }
+                        elVideoOff.appendChild(videoSpan);
+                    } else {
+                        var naVideoSpan = document.createElement('span');
+                        naVideoSpan.style.cssText = 'font-size:15px;color:grey';
+                        naVideoSpan.textContent = 'NA';
+                        elVideoOff.appendChild(naVideoSpan);
+                    }
+                }
+
+                // Candidate Redo Request
+                var elRedo = document.getElementById('psaDetailCandidateRedo');
+                if (elRedo) {
+                    elRedo.innerHTML = '';
+                    var redoRequested = redoRaw === true || redoRaw === 'true' || redoRaw === 1 || redoRaw === '1';
+                    var redoSpan = document.createElement('span');
+                    if (redoRequested) {
+                        redoSpan.style.color = 'green';
+                        redoSpan.textContent = 'Yes';
+                    } else {
+                        redoSpan.style.cssText = 'color:#000;font-weight:400';
+                        redoSpan.textContent = 'No';
+                    }
+                    elRedo.appendChild(redoSpan);
+                }
+
+                // Candidate Comment (combined from feedback columns)
+                var elComment = document.getElementById('psaDetailCandidateComment');
+                if (elComment) {
+                    elComment.innerHTML = '';
+                    var commentText = (candidateCommentRaw !== undefined && candidateCommentRaw !== null)
+                        ? String(candidateCommentRaw).trim() : '';
+                    if (commentText) {
+                        var commentDiv = document.createElement('div');
+                        commentDiv.style.cssText = 'font-size:13px;color:#0f172a;line-height:1.5;';
+                        commentDiv.textContent = commentText;
+                        elComment.appendChild(commentDiv);
+                    } else {
+                        var naComment = document.createElement('span');
+                        naComment.style.cssText = 'font-size:15px;color:grey';
+                        naComment.textContent = 'NA';
+                        elComment.appendChild(naComment);
+                    }
+                }
             },
             error: function () {
                 $('#psaDetailInterviewDuration').text('');
@@ -153,6 +225,9 @@
                 $('#psaDetailInterviewerLateJoin').empty();
                 $('#psaDetailMeetingStatus').text('');
                 $('#psaDetailInterviewStatus').text('');
+                $('#psaDetailInterviewerVideoOff').empty();
+                $('#psaDetailCandidateRedo').empty();
+                $('#psaDetailCandidateComment').empty();
             }
         });
     };
