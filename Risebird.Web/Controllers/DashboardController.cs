@@ -7992,7 +7992,7 @@ NEVER:
         /// </summary>
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> TrialFlagReview(string tab = null)
+        public async Task<IActionResult> TrialFlagReview(string tab = null, bool refresh = false)
         {
             try
             {
@@ -8006,7 +8006,7 @@ NEVER:
                 TrialFlagReviewPageVm page;
                 try
                 {
-                    page = await _trialFlagReviewService.GetPageAsync(tab);
+                    page = await _trialFlagReviewService.GetPageAsync(tab, refresh);
                     ViewBag.LoadError = null;
                 }
                 catch (Exception loadEx)

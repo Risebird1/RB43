@@ -37,7 +37,7 @@
     .tfr-header h2 { margin: 0 0 6px; font-size: 20px; color: #0f172a; }
     .tfr-header__row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
     .tfr-header__row p { margin: 0; flex: 1; min-width: 280px; font-size: 13px; color: #475569; line-height: 1.5; }
-    .tfr-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .tfr-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
     .tfr-tab { appearance: none; border: 1px solid #cbd5e1; background: #fff; border-radius: 999px; padding: 6px 14px; font-size: 12px; cursor: pointer; color: #334155; text-decoration: none; }
     .tfr-tab.is-active { background: #2563eb; border-color: #2563eb; color: #fff; }
     .tfr-tab__count { opacity: .85; margin-left: 4px; }
@@ -321,7 +321,16 @@
         <a class="tfr-tab @(activeTab == TrialFlagConstants.ReviewPending ? "is-active" : "")" href="@Url.Action("TrialFlagReview", new { tab = TrialFlagConstants.ReviewPending })">Pending<span class="tfr-tab__count">(@Model.PendingCount)</span></a>
         <a class="tfr-tab @(activeTab == TrialFlagConstants.ReviewKept ? "is-active" : "")" href="@Url.Action("TrialFlagReview", new { tab = TrialFlagConstants.ReviewKept })">Kept<span class="tfr-tab__count">(@Model.KeptCount)</span></a>
         <a class="tfr-tab @(activeTab == TrialFlagConstants.ReviewRemoved ? "is-active" : "")" href="@Url.Action("TrialFlagReview", new { tab = TrialFlagConstants.ReviewRemoved })">Removed<span class="tfr-tab__count">(@Model.RemovedCount)</span></a>
+        @if (rows.Any())
+        {
+            <a class="tfr-btn" style="margin-left:auto;" href="@Url.Action("TrialFlagReview", new { tab = activeTab, refresh = true })" title="Recompute risk categories and trial factors for rows on this tab">Refresh live metrics</a>
+        }
     </div>
+
+    @if (Model.LiveMetrics && rows.Any())
+    {
+        <div class="tfr-alert tfr-alert--info">Showing live risk and factor metrics for this tab. Normal page loads use stored snapshots for speed.</div>
+    }
 
     @if (isPendingTab && Model.TrialFlagsTableExists && string.IsNullOrWhiteSpace(loadError))
     {
@@ -382,7 +391,8 @@
                         ? "tfr-verdict tfr-verdict--good" : "tfr-verdict tfr-verdict--bad";
                     var searchKey = (row.IrfName + " " + row.InterviewerName + " " + row.InterviewerEmail + " " + row.InterviewerCodedId).ToLowerInvariant();
                     var interviewId = row.TriggeringInterviewId;
-                    var transcriptDetail = row.TranscriptQualityScore.HasValue ? row.TranscriptQualityScore.Value.ToString("0.##") + "/5" : null;
+                    var transcriptDetail = row.TranscriptQualityScore.HasValue ? row.TranscriptQualityScore.Value.ToString("0.##") + "/10" : null;
+                    var reportDetail = row.ReportQualityScore.HasValue ? row.ReportQualityScore.Value.ToString("0.##") + "/100" : null;
                     var ratingDetail = row.CandidateRating.HasValue ? row.CandidateRating.Value.ToString("0.##") + "/5" : null;
                     var joinDetail = row.JoinTimeMinutes.HasValue ? row.JoinTimeMinutes.Value.ToString("0.##") + " min" : null;
                     var durationDetail = row.InterviewDurationMinutes.HasValue ? row.InterviewDurationMinutes.Value.ToString("0.##") + " min" : null;
@@ -427,7 +437,7 @@
                         <td><span class="@verdictClass">@VerdictLabel(row.OverallVerdict)</span></td>
                         <td class="tfr-risk-col">@RiskCategoryBadges(row)</td>
                         <td>@FactorCell(row.TranscriptQualityPass, transcriptDetail, TrialFlagDrillDownUrls.TranscriptQuality(interviewId, row.IrfId), "Transcript")</td>
-                        <td>@FactorCell(row.ReportQualityPass, null, TrialFlagDrillDownUrls.ReportQuality(interviewId), "QC report")</td>
+                        <td>@FactorCell(row.ReportQualityPass, reportDetail, TrialFlagDrillDownUrls.ReportQuality(interviewId), "QC report")</td>
                         <td>@FactorCell(row.CandidateRatingPass, ratingDetail, TrialFlagDrillDownUrls.CandidateRating(interviewId), "Rating")</td>
                         <td>@FactorCell(row.JoinTimePass, joinDetail, timingUrl, "Timing")</td>
                         <td>@FactorCell(row.InterviewDurationPass, durationDetail, timingUrl, "Timing")</td>

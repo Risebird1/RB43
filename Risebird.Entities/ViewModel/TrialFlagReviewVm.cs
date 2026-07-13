@@ -85,6 +85,7 @@ namespace Risebird.Entities.ViewModel
         public bool TrialFlagsTableExists { get; set; }
         public int TotalRowsInTable { get; set; }
         public string EmptyStateHint { get; set; }
+        public bool LiveMetrics { get; set; }
     }
 
     public class TrialFlagReviewRowVm
@@ -102,6 +103,7 @@ namespace Risebird.Entities.ViewModel
         public bool JoinTimePass { get; set; }
         public bool InterviewDurationPass { get; set; }
         public decimal? TranscriptQualityScore { get; set; }
+        public decimal? ReportQualityScore { get; set; }
         public decimal? CandidateRating { get; set; }
         public decimal? JoinTimeMinutes { get; set; }
         public decimal? InterviewDurationMinutes { get; set; }
