@@ -69,7 +69,7 @@ namespace Risebird.AzureTimerFunctions
                     }
 
 
-                    string dashboardLink = "https://portal.risebird.io/Candidate/InterviewDetails/" + item.uniqueid + "?IRFId=" + item.Irfid;
+                    string dashboardLink = "https://portal.risebird.io/Candidate/InterviewDetails?id=" + item.uniqueid + "?IRFId=" + item.Irfid;
                     nobutton = dashboardLink;
                     rescheulebutton = dashboardLink;
                     needcleritybutton = dashboardLink;
