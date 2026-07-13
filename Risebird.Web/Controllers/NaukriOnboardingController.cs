@@ -474,9 +474,17 @@ namespace Risebird.Web.Controllers
                     ToValue = l.ToValue
                 }).ToList();
 
-                vm.TotalActions = vm.Operators.Sum(o => o.TotalActions);
                 vm.TotalOperators = vm.Operators.Count;
-                vm.TotalTicketsTouched = data.Log.Select(l => l.RecordId).Distinct().Count();
+                // Use the SP's grand totals (whole window) — NOT the capped log, which undercounts
+                // tickets touched, and NOT a SUM of per-operator tickets, which would double-count
+                // tickets handled by more than one operator. Fall back to the log-derived count only
+                // if the totals row was unavailable.
+                vm.TotalActions = data.GrandTotalActions > 0
+                    ? data.GrandTotalActions
+                    : vm.Operators.Sum(o => o.TotalActions);
+                vm.TotalTicketsTouched = data.GrandTicketsTouched > 0
+                    ? data.GrandTicketsTouched
+                    : data.Log.Select(l => l.RecordId).Distinct().Count();
 
                 // For the operator filter dropdown.
                 ViewBag.Assignees = await _repository.GetEligibleAssigneesAsync();
@@ -709,6 +717,105 @@ namespace Risebird.Web.Controllers
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false, error = "Parse failed. The resume file could not be processed — it may be corrupted or in an unsupported format. Try uploading a valid PDF/DOC/DOCX.", needsUpload = true });
             }
+        }
+
+        // ── Step 2: Decide EV path (LinkedIn-verified prospects skip Signzy/Surepass) ────
+        // The client calls this BEFORE running the client-side Signzy call. When the prospect came
+        // through the "LinkedIn Verified" Relay flow (all three LinkedIn fields populated), the LinkedIn
+        // background check already established a genuine, currently-employed person, so we satisfy EV
+        // from that verdict here and tell the client to skip Signzy. Otherwise we tell the client to run
+        // Signzy/Surepass as usual (its result is then saved via SaveEmploymentResult).
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PrepareEmploymentVerification(int id)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var record = await _repository.GetByIdAsync(id);
+                if (record == null)
+                    return Json(new { success = false, error = "Record not found." });
+
+                // Same business rule as the Signzy path: intent must be confirmed as 'Interested'.
+                if (!string.Equals(record.Intent, "Interested", StringComparison.OrdinalIgnoreCase))
+                {
+                    string intentMsg = string.IsNullOrEmpty(record.Intent)
+                        ? "Intent has not been confirmed yet. Collect the prospect's intent (email reply or AI Plivo call) before running Employment Verification."
+                        : $"Intent is '{record.Intent}'. Employment Verification can only proceed once the prospect's intent is confirmed as 'Interested'.";
+                    return Json(new { success = false, error = intentMsg, intentBlocked = true });
+                }
+
+                // No LinkedIn verdict → fall back to Signzy/Surepass on the client.
+                if (!HasLinkedInVerdict(record))
+                    return Json(new { success = true, runSignzy = true });
+
+                // LinkedIn verdict present → satisfy EV from it and skip Signzy.
+                bool verified   = string.Equals(record.LinkedInMatch?.Trim(), "YES", StringComparison.OrdinalIgnoreCase);
+                string company  = ExtractCompanyFromRole(record.CurrentRole) ?? record.EmploymentCompanyName;
+                bool isEmployed = verified;
+                string details  = $"Satisfied by LinkedIn background verification (match={record.LinkedInMatch}, confidence={record.LinkedInConfidence}). Profile: {record.LinkedInUrl}";
+
+                var ok = await _repository.UpdateEmploymentVerificationAsync(id, verified, company, isEmployed, details);
+                if (ok)
+                {
+                    var user = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+                    if (verified)
+                    {
+                        await _repository.InsertHistoryAsync(id, "EmploymentVerification", "—",
+                            $"EV skipped — satisfied by LinkedIn verification (match={record.LinkedInMatch}, confidence={record.LinkedInConfidence}). Company: {company ?? "N/A"}. Profile: {record.LinkedInUrl}", user);
+                        await _repository.AdvanceFunnelStageAsync(id, "EmploymentVerified", "InProgress");
+                    }
+                    else
+                    {
+                        await _repository.InsertHistoryAsync(id, "NotQualified", "—",
+                            $"LinkedIn verification did not confirm the prospect (match={record.LinkedInMatch}). Funnel → Not Qualified.", user);
+                        await _repository.SetFunnelOutcomeAsync(id, "NotQualified", "Closed");
+                    }
+                }
+
+                return Json(new
+                {
+                    success = ok,
+                    autoVerifiedViaLinkedIn = true,
+                    verified,
+                    isEmployed,
+                    companyName = company,
+                    details
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// True when the prospect carries a complete LinkedIn background-verification verdict (all three
+        /// LinkedIn fields populated by the "LinkedIn Verified" Relay flow). When true, EV is satisfied
+        /// from LinkedIn and Signzy/Surepass is skipped; when false, EV runs normally.
+        /// </summary>
+        private static bool HasLinkedInVerdict(NaukriProspectiveInterviewerVM rec)
+            => rec != null
+               && !string.IsNullOrWhiteSpace(rec.LinkedInUrl)
+               && !string.IsNullOrWhiteSpace(rec.LinkedInMatch)
+               && rec.LinkedInConfidence.HasValue;
+
+        /// <summary>
+        /// Best-effort extraction of the employer name from a "designation at company" style current-role
+        /// string (e.g. "Development Team Lead at RSS Softech / gistec" → "RSS Softech / gistec"). Falls
+        /// back to the whole role string when no " at " delimiter is present.
+        /// </summary>
+        private static string ExtractCompanyFromRole(string currentRole)
+        {
+            if (string.IsNullOrWhiteSpace(currentRole)) return null;
+            int idx = currentRole.LastIndexOf(" at ", StringComparison.OrdinalIgnoreCase);
+            string company = idx >= 0 ? currentRole.Substring(idx + 4) : currentRole;
+            company = company?.Trim();
+            return string.IsNullOrWhiteSpace(company) ? null : company;
         }
 
         // ── Step 2: Verify Employment (save result from client-side Signzy call) ────
@@ -1916,7 +2023,10 @@ namespace Risebird.Web.Controllers
                     ResumeParseCompleted = preParsed ? true : null,
                     ResumeLink      = blobResumeUrl ?? sourceResumeUrl,
                     HasAttachment   = !string.IsNullOrWhiteSpace(blobResumeUrl) || payload.HasAttachment,
-                    Source          = "Naukri"
+                    Source          = "Naukri",
+                    LinkedInUrl        = payload.LinkedInUrl?.Trim(),
+                    LinkedInMatch      = payload.LinkedInMatch?.Trim(),
+                    LinkedInConfidence = payload.LinkedInConfidence
                 };
 
                 var newId = await _repository.InsertAsync(record);
@@ -1928,6 +2038,9 @@ namespace Risebird.Web.Controllers
                     if (preParsed)
                         await _repository.InsertHistoryAsync(newId, "RelayPreParsed", "\u2014",
                             $"Email: {relayEmail ?? "—"}, Phone: {relayPhone ?? "—"} (extracted by Relay agent)", "Relay Webhook");
+                    if (!string.IsNullOrWhiteSpace(record.LinkedInMatch))
+                        await _repository.InsertHistoryAsync(newId, "LinkedInVerified", "\u2014",
+                            $"LinkedIn: {record.LinkedInMatch} (confidence {record.LinkedInConfidence?.ToString() ?? "—"}) — {record.LinkedInUrl ?? "no url"} (verified by Relay agent)", "Relay Webhook");
                 }
 
                 return Ok(new

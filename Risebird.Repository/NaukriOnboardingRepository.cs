@@ -92,6 +92,9 @@ namespace Risebird.Repository
                 p.Add("@ResumeLink", record.ResumeLink);
                 p.Add("@HasAttachment", record.HasAttachment);
                 p.Add("@Source", record.Source ?? "Naukri");
+                p.Add("@LinkedInUrl", record.LinkedInUrl);
+                p.Add("@LinkedInMatch", record.LinkedInMatch);
+                p.Add("@LinkedInConfidence", record.LinkedInConfidence);
                 p.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 await con.ExecuteAsync("usp_InsertNaukriProspectiveInterviewer", p,
@@ -416,6 +419,13 @@ namespace Risebird.Repository
                 data.Summary = (await multi.ReadAsync<NaukriPerfSummaryRow>()).ToList();
                 data.Events = (await multi.ReadAsync<NaukriPerfEventRow>()).ToList();
                 data.Log = (await multi.ReadAsync<NaukriPerfLogRow>()).ToList();
+
+                var totals = (await multi.ReadAsync<dynamic>()).FirstOrDefault();
+                if (totals != null)
+                {
+                    data.GrandTotalActions = (int)totals.TotalActions;
+                    data.GrandTicketsTouched = (int)totals.TicketsTouched;
+                }
                 return data;
             }
             catch (Exception ex)

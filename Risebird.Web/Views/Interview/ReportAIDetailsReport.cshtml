@@ -1,0 +1,164 @@
+@model Risebird.Entities.ViewModel.AIJsonReportVM
+@{
+    ViewData["Title"] = "Report AI Details";
+    ViewBag.PageHeader = "Report AI Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Newassets/css/interview.css?v=2026" rel="stylesheet" />
+<link href="~/Newassets/css/dashboard-new.css?v=2026" rel="stylesheet" />
+
+<style>
+    .ai-report-page .card-header.bg-w {
+        border-bottom: 1px solid rgba(0,0,0,0.06);
+        padding-top: 18px;
+        padding-bottom: 18px;
+    }
+    .ai-report-page .card-header .card-title {
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        margin-bottom: 4px;
+        font-size: 17px;
+    }
+    .ai-report-page .header-id {
+        padding-top: 2px;
+        text-align: right;
+    }
+    @@media (max-width: 767px) {
+        .ai-report-page .header-id { float: none !important; text-align: left; margin-top: 12px; }
+    }
+    .ai-report-page .header-id .meta-pill {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 6px;
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        color: #495057;
+        font-weight: 500;
+    }
+    .ai-report-page .multiple_row {
+        border-bottom: 1px solid #e9ecef;
+        padding-bottom: 12px;
+        margin-bottom: 0;
+        margin-top: 4px;
+    }
+    .ai-report-page .multiple_row > h3 {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+    .ai-report-page .multiple_row > h3 span {
+        font-size: 15px;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    .ai-report-body { margin-top: 16px; border-radius: 10px; }
+    .ai-report-page .contradiction-json-root .table-responsive {
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(15,23,42,0.06);
+        margin-bottom: 1rem;
+        padding-bottom: 0;
+    }
+    .ai-report-page .contradiction-json-root .table-responsive:last-child { margin-bottom: 0; }
+    .ai-report-page .contradiction-json-root td .table-responsive {
+        margin-top: 0.5rem;
+        border-color: #e9edf2;
+        box-shadow: none;
+        border-radius: 6px;
+        padding-bottom: 0;
+    }
+    .ai-report-page .contradiction-json-root .contradiction-json-table { border-collapse: separate; border-spacing: 0; }
+    .ai-report-page .contradiction-json-root .contradiction-json-table th.contradiction-json-th-row {
+        font-size: 12px;
+        vertical-align: top;
+        font-weight: 600;
+        color: #334155;
+        border-right: 1px solid #dce3ed !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        line-height: 1.45;
+        hyphens: auto;
+        width: 32%;
+        max-width: 320px;
+    }
+    .ai-report-page .contradiction-json-root .contradiction-json-table td {
+        vertical-align: top;
+        background: #fff;
+        border-bottom: 1px solid #eef1f5 !important;
+        padding: 0.65rem 0.85rem;
+        font-size: 13px;
+        color: #1e293b;
+    }
+    .ai-report-page .contradiction-json-root .contradiction-json-table tbody tr:nth-child(even) td { background: #fafbfd; }
+    .ai-report-page .contradiction-json-root .contradiction-json-table tbody tr:hover td { background: #f0f6ff; }
+    .ai-report-page .contradiction-json-first-table .contradiction-json-table th.contradiction-json-th-row,
+    .ai-report-page .contradiction-json-first-table .contradiction-json-array-table thead th { font-size: 14px; color: #1e293b; }
+    .ai-report-page .contradiction-json-root .json-leaf { white-space: pre-wrap; word-break: break-word; color: #212529; }
+    .ai-report-page .contradiction-json-array-table thead th {
+        font-size: 12px;
+        font-weight: 600;
+        color: #1e293b;
+        background: linear-gradient(180deg,#eef2f7 0%,#e2e8f0 100%);
+        border-bottom: 2px solid #cbd5e1 !important;
+        padding: 0.65rem 0.75rem;
+        vertical-align: top;
+    }
+    .ai-report-page .contradiction-json-array-table td {
+        font-size: 13px;
+        vertical-align: top;
+        padding: 0.6rem 0.75rem;
+        border-color: #eef1f5 !important;
+    }
+    .ai-report-page .contradiction-json-array-table tbody tr:hover { background-color: #f8fafc; }
+    .ai-report-page .contradiction-json-root .table { margin-bottom: 0; }
+</style>
+
+<div class="main-panel ai-report-page" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title">
+                        <i class="fas fa-file-alt" style="color:#3498db;margin-right:6px;"></i>
+                        Report AI Details
+                    </h4>
+                    <p class="text-muted small mb-0" style="margin-top:4px;">Quality control · AI analysis of the interview report</p>
+                </div>
+                <div class="pull-right header-id">
+                    <span class="meta-pill">Interview ID: @Model.InterviewId</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="report-full-wrap">
+
+                            @if (ViewBag.Message != null)
+                            {
+                                <div class="alert alert-info mb-4" role="alert">@ViewBag.Message</div>
+                            }
+
+                            <div class="multiple_row">
+                                <h3 class="mb-0"><span>Report AI evaluation output</span></h3>
+                            </div>
+
+                            <div class="ai-report-body">
+                                @Html.Raw(Risebird.Web.Hepler.ContradictionJsonHtmlFormatter.FormatContradictionJson(Model.JsonData))
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

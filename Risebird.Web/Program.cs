@@ -246,6 +246,8 @@ builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 // Email Lookup
 builder.Services.AddScoped<IEmailLookupRepository, EmailLookupRepository>();
 builder.Services.AddScoped<IEmailLookupService, EmailLookupService>();
+builder.Services.AddScoped<IRiskCategoryService, RiskCategoryService>();
+builder.Services.AddScoped<IRiskCategoryRepository, RiskCategoryRepository>();
 // ============================================
 // Vapi.ai Voice AI Integration Services
 // ============================================

@@ -204,6 +204,11 @@ namespace Risebird.Repository.Interface
         public List<NaukriPerfSummaryRow> Summary { get; set; } = new List<NaukriPerfSummaryRow>();
         public List<NaukriPerfEventRow> Events { get; set; } = new List<NaukriPerfEventRow>();
         public List<NaukriPerfLogRow> Log { get; set; } = new List<NaukriPerfLogRow>();
+
+        // Grand totals across the whole filtered window (NOT limited by the log cap). Use these for
+        // the summary cards so "Tickets Touched" reflects every ticket, not just the capped log.
+        public int GrandTotalActions { get; set; }
+        public int GrandTicketsTouched { get; set; }
     }
 
     public class BatchCallLogEntry
