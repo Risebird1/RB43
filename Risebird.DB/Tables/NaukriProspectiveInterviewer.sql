@@ -194,3 +194,24 @@ BEGIN
         ON [dbo].[NaukriProspectiveInterviewer] ([AssignedToUserId])
 END
 GO
+
+-- LinkedIn background-verification verdict (Relay "LinkedIn Verified" variant).
+-- Captured at webhook ingestion; only verified prospects reach the webhook, so these
+-- record WHICH profile matched and HOW confident the check was, for audit purposes.
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'LinkedInUrl' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [LinkedInUrl] NVARCHAR(2000) NULL
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'LinkedInMatch' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [LinkedInMatch] VARCHAR(10) NULL
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'LinkedInConfidence' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [LinkedInConfidence] INT NULL
+END
+GO

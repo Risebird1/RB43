@@ -42,6 +42,11 @@ namespace Risebird.Entities.ViewModel
         public string   AIVerdict                   { get; set; }
         public int?     AIFitmentScore              { get; set; }
 
+        // LinkedIn background verification (Relay "LinkedIn Verified" variant, captured at ingestion)
+        public string   LinkedInUrl                 { get; set; }
+        public string   LinkedInMatch               { get; set; }
+        public int?     LinkedInConfidence          { get; set; }
+
         public bool?    OnboardingCompleted         { get; set; }
         public int?     OnboardedUserId             { get; set; }
         public int?     OnboardedProfileId          { get; set; }
@@ -172,6 +177,16 @@ namespace Risebird.Entities.ViewModel
 
         [JsonProperty("has_attachment")]
         public bool HasAttachment               { get; set; }
+
+        // LinkedIn background-verification verdict (from the "LinkedIn Verified" Relay variant).
+        [JsonProperty("linkedin_url")]
+        public string LinkedInUrl               { get; set; }
+
+        [JsonProperty("linkedin_match")]
+        public string LinkedInMatch             { get; set; }
+
+        [JsonProperty("linkedin_confidence")]
+        public int? LinkedInConfidence          { get; set; }
     }
 
     public class RelayLinkedInPayload

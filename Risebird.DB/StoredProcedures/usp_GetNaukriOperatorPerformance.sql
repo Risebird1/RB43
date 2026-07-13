@@ -76,6 +76,15 @@ BEGIN
     LEFT JOIN dbo.NaukriProspectiveInterviewer np ON np.Id = h.RecordId
     ORDER BY h.ChangedAt DESC;
 
+    -- 4) Grand totals across the WHOLE filtered window (independent of @LogLimit). The header
+    --    "Tickets Touched" card must use this — deriving it from the capped log (set 3) undercounts,
+    --    and a plain SUM of per-operator TicketsTouched would double-count tickets handled by more
+    --    than one operator. TotalActions here equals SUM(per-operator TotalActions).
+    SELECT
+        COUNT(*)                   AS TotalActions,
+        COUNT(DISTINCT h.RecordId) AS TicketsTouched
+    FROM #H h;
+
     IF OBJECT_ID('tempdb..#H') IS NOT NULL DROP TABLE #H;
 END
 GO
