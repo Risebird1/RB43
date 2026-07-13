@@ -188,7 +188,6 @@
                                                     <thead>
                                                         <tr>
                                                             <th>#</th>
-                                                            <th>Interview ID</th>
                                                             <th>Interview Date</th>
                                                             <th>Interviewer</th>
                                                             <th>Candidate Name</th>
@@ -203,7 +202,6 @@
                                                     <tfoot>
                                                         <tr>
                                                             <th>#</th>
-                                                            <th>Interview ID</th>
                                                             <th>Interview Date</th>
                                                             <th>Interviewer</th>
                                                             <th>Candidate Name</th>
@@ -223,12 +221,7 @@
                                             {
                                                 <tr>
                                                     <td>@sno</td>
-                                                    <td>@item.InterviewId</td>
-                                                    <td>
-                                                        @(item.InterviewDate.HasValue
-                                                            ? item.InterviewDate.Value.ToString("dd MMM yyyy")
-                                                            : "–")
-                                                    </td>
+                                                    <td>@item.InterviewDate</td>
                                                     <td>@item.Interviewer</td>
                                                     <td>@item.CandidateName</td>
                                                     <td>@item.CandidateEmail</td>
