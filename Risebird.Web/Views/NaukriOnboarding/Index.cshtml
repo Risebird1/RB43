@@ -836,6 +836,17 @@
                                                 <td class="col-name">
                                                     <span class="fw-semibold" style="font-size:12px;white-space:break-spaces;">@(r.CandidateName ?? "\u2014")</span>
                                                     @if (!string.IsNullOrEmpty(r.ParsedEmail)) { <br /><span class="text-muted" style="font-size:10px;white-space:break-spaces;">@r.ParsedEmail</span> }
+                                                    @if (!string.IsNullOrWhiteSpace(r.LinkedInMatch))
+                                                    {
+                                                        bool liMatched = string.Equals(r.LinkedInMatch.Trim(), "YES", StringComparison.OrdinalIgnoreCase);
+                                                        string liCss = liMatched
+                                                            ? "background:#d1f0e0;color:#1c6b47;border:1px solid #28a745;"
+                                                            : "background:#fde2e1;color:#a12622;border:1px solid #dc3545;";
+                                                        string liConf = r.LinkedInConfidence.HasValue ? (" " + r.LinkedInConfidence.Value + "%") : "";
+                                                        string liTitle = "LinkedIn verification: " + (liMatched ? "Match" : "No match") + liConf
+                                                            + (string.IsNullOrWhiteSpace(r.LinkedInUrl) ? "" : (" \u2014 " + r.LinkedInUrl));
+                                                        <br /><span class="badge" style="@liCss font-size:9.5px;" title="@liTitle"><i class="fab fa-linkedin me-1"></i>@(liMatched ? "Verified" : "No match")@liConf</span>
+                                                    }
                                                 </td>
                                                 <td class="col-role" style="font-size:12px;white-space:break-spaces;">@(r.CurrentRole ?? "\u2014")</td>
                                                 <td class="col-exp" style="font-size:12px;">@(r.ExperienceYears ?? "\u2014")</td>
@@ -1184,6 +1195,15 @@
                             <div class="mgm-info-row">
                                 <span><i class="fas fa-briefcase me-1"></i>Employed:</span>
                                 <span class="value" id="mgmEmployed">\u2014</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="mgm-info-row">
+                                <span><i class="fab fa-linkedin me-1" style="color:#0a66c2;"></i>LinkedIn Verification:</span>
+                                <span class="value" id="mgmLinkedIn">\u2014</span>
                             </div>
                         </div>
                     </div>
@@ -1606,12 +1626,30 @@
         if (r.employmentIsEmployed === true) { $('#mgmEmployed').html('<span class="employed-yes"><i class="fas fa-check-circle me-1"></i>Yes</span>'); }
         else if (r.employmentIsEmployed === false) { $('#mgmEmployed').html('<span class="employed-no"><i class="fas fa-times-circle me-1"></i>No</span>'); }
 
+        renderLinkedInVerdict(r);
+
         if (r.hasResumeLink) { $('#btnViewResume').attr('href', r.resumeLink).show(); } else { $('#btnViewResume').hide(); }
         syncAutomationBadge(r);
         syncPlivoCallUI(r);
         syncPipeline(r);
         syncAssignee(r);
         loadEmailEvents();
+    }
+
+    // Renders the LinkedIn background-verification verdict captured at ingestion by the
+    // "LinkedIn Verified" Relay flow. Absent for prospects from the original (non-verified) agent.
+    function renderLinkedInVerdict(r) {
+        var el = $('#mgmLinkedIn');
+        if (!r.linkedInMatch) { el.html('<span class="text-muted">Not verified via LinkedIn</span>'); return; }
+        var matched = String(r.linkedInMatch).toUpperCase() === 'YES';
+        var conf = (r.linkedInConfidence !== null && r.linkedInConfidence !== undefined) ? (' (' + r.linkedInConfidence + '% confidence)') : '';
+        var html = matched
+            ? '<span class="employed-yes"><i class="fas fa-check-circle me-1"></i>Match</span>' + conf
+            : '<span class="employed-no"><i class="fas fa-times-circle me-1"></i>No match</span>' + conf;
+        if (r.linkedInUrl) {
+            html += ' &mdash; <a href="' + $('<span>').text(r.linkedInUrl).html() + '" target="_blank" rel="noopener" style="font-size:11.5px;">View profile <i class="fas fa-external-link-alt" style="font-size:9px;"></i></a>';
+        }
+        el.html(html);
     }
 
     // ── Ticket assignment ─────────────────────────────────────────────────────────
@@ -1980,6 +2018,7 @@
         $('#resumeUploadArea').hide(); $('#resumeFileInput').val(''); $('#uploadProgress, #uploadResult').hide();
         $('#mgmParsedEmail').text('\u2014'); $('#mgmParsedPhone').text('\u2014');
         $('#mgmCompany').text('\u2014'); $('#mgmEmployed').text('\u2014');
+        $('#mgmLinkedIn').text('\u2014');
         $('#magDropdown').hide();
         $('#step2MagDisplay').text('\u2014');
 
@@ -2884,13 +2923,62 @@
 
     $('#btnTriggerEV, #btnRetryEV').on('click', function () {
         if (!currentRecordId || !currentRecord) return;
-        var email = currentRecord.parsedEmail, phone = currentRecord.parsedPhone;
-        if (!email) { alert('No email parsed. Complete Step 1 first.'); return; }
-        if (!phone) { alert('No phone number parsed. EV requires a phone number.'); return; }
 
         var btn = $('#btnTriggerEV'); var retryBtn = $('#btnRetryEV');
         btn.show().prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Verifying...');
         retryBtn.hide();
+        $('#mStep1Subtitle').text('Checking verification path...');
+
+        // Ask the server which EV path to take. LinkedIn-verified prospects skip Signzy entirely.
+        $.ajax({
+            url: '@Url.Action("PrepareEmploymentVerification", "NaukriOnboarding")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
+            success: function (prep) {
+                if (prep && prep.intentBlocked) {
+                    alert(prep.error);
+                    btn.prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment');
+                    $('#mStep1Subtitle').html('Verify the prospect\'s current employment via Signzy');
+                    return;
+                }
+
+                if (prep && prep.autoVerifiedViaLinkedIn) {
+                    var company = prep.companyName || '';
+                    if (prep.verified && prep.isEmployed) {
+                        var liHtml = '<span class="text-success"><i class="fab fa-linkedin me-1"></i>Verified via LinkedIn</span>';
+                        if (company) liHtml += ' &mdash; <strong>' + $('<span>').text(company).html() + '</strong>';
+                        liHtml += ' <span class="employed-yes">(Employed)</span>';
+                        liHtml += '<br/><span style="font-size:11px;" class="text-muted">Signzy skipped — background confirmed by LinkedIn verification.</span>';
+                        mMarkStep(1, 'completed', liHtml);
+                        $('#mgmCompany').text(company);
+                        $('#mgmEmployed').html('<span class="employed-yes">Yes</span>');
+                        if (currentRecord) {
+                            currentRecord.employmentVerified = true;
+                            currentRecord.employmentCompanyName = company;
+                            currentRecord.employmentIsEmployed = true;
+                        }
+                    } else {
+                        mMarkStep(1, 'failed', '<span class="text-danger"><i class="fab fa-linkedin me-1"></i>LinkedIn verification did not confirm the prospect &mdash; Not Qualified.</span>');
+                        $('#mgmEmployed').html('<span class="employed-no">No</span>');
+                    }
+                    return;
+                }
+
+                // No LinkedIn verdict → run Signzy/Surepass as usual.
+                runSignzyEV(btn, retryBtn);
+            },
+            error: function () {
+                mMarkStep(1, 'failed', '<span class="text-danger">Could not determine verification path. Try again.</span>');
+                btn.prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment');
+                $('#mStep1Subtitle').html('Verify the prospect\'s current employment via Signzy');
+            }
+        });
+    });
+
+    function runSignzyEV(btn, retryBtn) {
+        var email = currentRecord.parsedEmail, phone = currentRecord.parsedPhone;
+        if (!email) { alert('No email parsed. Complete Step 1 first.'); btn.prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment'); return; }
+        if (!phone) { alert('No phone number parsed. EV requires a phone number.'); btn.prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment'); return; }
+
         $('#mStep1Subtitle').text('Running employment verification...');
 
         $.ajax({
@@ -2936,7 +3024,7 @@
                 $('#mStep1Subtitle').html('Verify the prospect\'s current employment via Signzy');
             }
         });
-    });
+    }
 
     /* ── M2: AI Resume Fitment Analysis ── */
 
