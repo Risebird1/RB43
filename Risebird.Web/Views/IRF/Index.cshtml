@@ -159,7 +159,7 @@
                                         @if (Model.Profile == "Admin" || Model.Profile == "HR")
                                         {
                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
-                                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("Index", "InterviewDemand")'" title="Plan weekend interview staffing"><font style="font-family:arial;">Weekend Drive</font></span>
+                                                <span data-toggle="tooltip" data-placement="top" onclick="window.open('@Url.Action("Index", "InterviewDemand")', '_blank', 'noopener,noreferrer')" title="Plan weekend interview staffing"><font style="font-family:arial;">Weekend Drive</font></span>
                                             </button>
                                         }
                                         @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin" || Model.Profile == "SeniorHR" || Model.Profile == "InterviewerManagement")
