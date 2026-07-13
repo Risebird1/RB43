@@ -226,7 +226,7 @@ namespace Risebird.Repository
             if (InternalWideAccessProfiles.Contains(profileName))
                 return $"{IrfIndexFields.AllowAllInternal} eq true";
 
-            return $"{IrfIndexFields.AllowedViewerEmails}/any(v: v eq '{AzureSearchOData.Escape(emailId)}')";
+            return $"{IrfIndexFields.AllowedViewerEmails}/any(v: v eq '{AzureSearchOData.Escape((emailId ?? string.Empty).Trim().ToLowerInvariant())}')";
         }
     }
 }

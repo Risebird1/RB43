@@ -1,4 +1,5 @@
 using Azure;
+using Azure.Search.Documents;
 using Azure.Search.Documents.Indexes;
 using Azure.Search.Documents.Indexes.Models;
 using Azure.Search.Documents.Models;
@@ -133,7 +134,19 @@ namespace Risebird.Repository.Search
 
                 var documents = await LoadDocumentsFromDatabaseAsync(documentId);
                 var document = documents.FirstOrDefault();
-                if (document == null || ShouldRemoveFromIndex(document))
+
+                // Only remove when we successfully loaded a soft-deleted row.
+                // An empty load usually means the SP missed the row (deploy lag, wrong id) —
+                // deleting would "succeed" without uploading and leave new IRFs out of the index.
+                if (document == null)
+                {
+                    await LogExceptionAsync(
+                        new InvalidOperationException($"No SQL row returned for documentId={documentId}."),
+                        "UpsertAsync skipped (empty load).");
+                    return false;
+                }
+
+                if (ShouldRemoveFromIndex(document))
                     return await RemoveAsync(documentId);
 
                 var searchClient = _clientFactory.CreateSearchClient(IndexName);

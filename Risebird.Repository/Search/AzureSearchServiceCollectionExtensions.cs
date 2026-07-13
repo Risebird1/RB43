@@ -36,9 +36,9 @@ namespace Risebird.Repository
             services.AddScoped<IIrfListingSearchRepository, IrfListingSearchRepository>();
             services.AddScoped<IListingIndexRepository>(sp => sp.GetRequiredService<IIrfListingSearchRepository>());
 
-            // Register additional listings the same way, e.g.:
-            // services.AddScoped<ICandidateListingSearchRepository, CandidateListingSearchRepository>();
-            // services.AddScoped<IListingIndexRepository>(sp => sp.GetRequiredService<ICandidateListingSearchRepository>());
+            // Interviewer roster plugin.
+            services.AddScoped<IInterviewerListingSearchRepository, InterviewerListingSearchRepository>();
+            services.AddScoped<IListingIndexRepository>(sp => sp.GetRequiredService<IInterviewerListingSearchRepository>());
 
             services.AddScoped<IListingIndexRepositoryResolver, ListingIndexRepositoryResolver>();
 

@@ -110,11 +110,15 @@ namespace Risebird.Repository.Indexing
                 [IrfIndexFields.CreatedOn] = ToIndexDate(document.CreatedOn),
                 [IrfIndexFields.AllowAllInternal] = document.AllowAllInternal,
                 [IrfIndexFields.AllowedViewerEmails] = document.AllowedViewerEmails?.ToList() ?? new List<string>(),
-                [IrfIndexFields.CuratedLink] = document.CuratedLink,
-                [IrfIndexFields.AffindaEmbedUrl] = document.AffindaEmbedUrl ?? string.Empty
+                [IrfIndexFields.CuratedLink] = document.CuratedLink
             };
 
-            if (document.AffindaEmbedUrlCreatedAt.HasValue)
+            // Omit Affinda fields when empty so MergeOrUpload still succeeds if the live
+            // index was created before those fields existed (unknown fields fail the whole upsert).
+            if (!string.IsNullOrWhiteSpace(document.AffindaEmbedUrl))
+                azureDoc[IrfIndexFields.AffindaEmbedUrl] = document.AffindaEmbedUrl;
+
+            if (document.AffindaEmbedUrlCreatedAt.HasValue && document.AffindaEmbedUrlCreatedAt.Value != default)
                 azureDoc[IrfIndexFields.AffindaEmbedUrlCreatedAt] = ToIndexDate(document.AffindaEmbedUrlCreatedAt.Value);
 
             return azureDoc;
@@ -178,14 +182,16 @@ namespace Risebird.Repository.Indexing
 
             return pipeDelimitedEmails
                 .Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Select(e => e.ToLowerInvariant())
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
         }
 
         private static DateTimeOffset ToIndexDate(DateTime value)
         {
-            if (value == default)
-                return DateTimeOffset.MinValue;
+            // Azure Search rejects DateTimeOffset.MinValue on some service versions.
+            if (value == default || value < new DateTime(1900, 1, 1))
+                return new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
             if (value.Kind == DateTimeKind.Unspecified)
                 return new DateTimeOffset(value, TimeSpan.Zero);
