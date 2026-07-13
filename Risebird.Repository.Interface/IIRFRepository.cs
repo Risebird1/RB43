@@ -87,6 +87,8 @@ namespace Risebird.Repository.Interface
         string GetRecruiterDomain(int userId);
         IEnumerable<TransRecruiter> GetTransRecruiter(int id);
         IEnumerable<InterviewVM> GetUpComingInterviewList();
+        IEnumerable<InterviewVM> GetWeekendInterviewList(DateTime start, DateTime end);
+        Dictionary<string, DriveIRFMetadataRecord> GetDriveIRFMetadata(IEnumerable<string> irfIds);
         IEnumerable<IRFVm> GetUpComingIRFList();
         Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string IRFId, string emailid);
         IEnumerable<TransClientUser> GetTransClientUserRole(int id);

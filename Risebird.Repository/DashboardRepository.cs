@@ -2542,5 +2542,84 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public bool SaveRowActions(string refType, string refId, string actionsTaken, string updatedBy)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@refType", refType);
+                dynamicParameters.Add("@refId", refId);
+                dynamicParameters.Add("@actionsTaken", actionsTaken);
+                dynamicParameters.Add("@updatedBy", updatedBy);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Execute(con, "usp_UpsertRowActions", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public Dictionary<string, string> GetRowActions(string refType, IEnumerable<string> refIds = null)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@refType", refType);
+
+                var ids = refIds?
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Select(x => x.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                if (ids != null && ids.Count == 1)
+                {
+                    dynamicParameters.Add("@refId", ids[0]);
+                    dynamicParameters.Add("@refIds", null);
+                }
+                else if (ids != null && ids.Count > 1)
+                {
+                    dynamicParameters.Add("@refId", null);
+                    dynamicParameters.Add("@refIds", string.Join(",", ids));
+                }
+                else
+                {
+                    dynamicParameters.Add("@refId", null);
+                    dynamicParameters.Add("@refIds", null);
+                }
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var rows = SqlMapper.Query<RowActionLogRecord>(con, "usp_GetRowActions", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return rows?
+                        .Where(x => !string.IsNullOrWhiteSpace(x.RefId))
+                        .ToDictionary(x => x.RefId, x => x.ActionsTaken, StringComparer.OrdinalIgnoreCase)
+                        ?? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            }
+        }
     }
 }

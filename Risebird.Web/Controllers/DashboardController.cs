@@ -8412,5 +8412,32 @@ NEVER:
                 return Json(new { ok = false, message = "Upload failed. Please try again." });
             }
         }
+
+        [HttpPost]
+        public JsonResult SaveRowActions(string refType, string refId, string actions)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                {
+                    return Json(new { success = false });
+                }
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName != "Admin" && profileName != "HR")
+                {
+                    return Json(new { success = false });
+                }
+
+                var emailId = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "") ?? string.Empty;
+                _dashboardService.SaveRowActions(refType, refId, actions ?? string.Empty, emailId);
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false });
+            }
+        }
     }
 }
