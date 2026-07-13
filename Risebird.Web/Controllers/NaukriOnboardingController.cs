@@ -239,6 +239,7 @@ namespace Risebird.Web.Controllers
                         record.IsExistingInterviewer, record.ExistingUserId, record.ExistingProfileId,
                         record.EmploymentVerified, record.EmploymentCompanyName,
                         record.EmploymentIsEmployed, record.EmploymentDetails,
+                        record.LinkedInUrl, record.LinkedInMatch, record.LinkedInConfidence,
                         record.ResumeAIAnalysisCompleted, record.ResumeAIAnalysisResult,
                         record.AIVerdict, record.AIFitmentScore,
                         record.OnboardingCompleted, record.OnboardedUserId, record.OnboardedProfileId,
