@@ -10369,6 +10369,84 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ReportAIDetailsReport(int interviewId)
+        {
+            string emailId = string.Empty;
+            try
+            {
+                if (!CompletedInterviewsViewMode.TryAuthorizeEvidenceEndpoints(HttpContext, out _))
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+                emailId = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "");
+                var evaluation = await _meetingService.GetQcInterviewAIevaluationByInterviewId(interviewId);
+                if (evaluation == null)
+                {
+                    ViewBag.Message = "QC AI evaluation was not found for this interview.";
+                    return View(new AIJsonReportVM { InterviewId = interviewId, ReportTitle = "Report AI Details" });
+                }
+
+                var vm = new AIJsonReportVM
+                {
+                    InterviewId  = interviewId,
+                    JsonData     = evaluation.ReportAIDetails,
+                    ReportTitle  = "Report AI Details"
+                };
+                if (string.IsNullOrWhiteSpace(vm.JsonData))
+                {
+                    ViewBag.Message = "Report AI details have not been generated yet for this interview.";
+                }
+
+                return View(vm);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; userEmailId : {emailId}");
+                return null;
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TranscritAiDetailsReport(int interviewId)
+        {
+            string emailId = string.Empty;
+            try
+            {
+                if (!CompletedInterviewsViewMode.TryAuthorizeEvidenceEndpoints(HttpContext, out _))
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+                emailId = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "");
+                var evaluation = await _meetingService.GetQcInterviewAIevaluationByInterviewId(interviewId);
+                if (evaluation == null)
+                {
+                    ViewBag.Message = "QC AI evaluation was not found for this interview.";
+                    return View(new AIJsonReportVM { InterviewId = interviewId, ReportTitle = "Transcript AI Details" });
+                }
+
+                var vm = new AIJsonReportVM
+                {
+                    InterviewId  = interviewId,
+                    JsonData     = evaluation.TranscritAiDetails,
+                    ReportTitle  = "Transcript AI Details"
+                };
+                if (string.IsNullOrWhiteSpace(vm.JsonData))
+                {
+                    ViewBag.Message = "Transcript AI details have not been generated yet for this interview.";
+                }
+
+                return View(vm);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; userEmailId : {emailId}");
+                return null;
+            }
+        }
+
         public async Task<JsonResult> GetQuestionSkillById(string questionText, int irfId)//,int techSkillCommentId
         {
             if (HttpContext.Session.GetString("email") != null)
