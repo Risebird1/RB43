@@ -1,0 +1,238 @@
+================================================================================
+RELAY.APP  NAUKRI PROSPECTIVE INTERVIEWER ONBOARDING — LINKEDIN-VERIFIED VARIANT
+================================================================================
+
+OVERVIEW
+--------
+This is a variant of the "Naukri Prospective Interviewer Onboarding" workflow
+(see Relay_NaukriOnboarding_WorkflowGuide.txt) that inserts a LinkedIn
+background-verification gate BETWEEN the "Extract with AI" step and the
+downstream steps (Google Drive upload + webhook POST).
+
+Goal: after the AI has extracted the candidate's details (name, location,
+current role/company, experience, education, key skills, and — in the current
+deployed agent — candidate_email / candidate_phone), the workflow searches the
+web for that person's LinkedIn profile, then an AI reasoning step decides — with
+high certainty — whether the extracted details and the LinkedIn findings point
+to the SAME genuine person.
+
+Decision rule (as specified):
+  • No LinkedIn profile found                       -> NO  (stop the run)
+  • A profile found but details don't match         -> NO  (stop the run)
+  • A profile found and the crucial details match,
+    barring minor discrepancies                      -> YES (continue pipeline)
+
+Only a YES lets the run proceed to the Google Drive upload + webhook POST, so
+prospects that fail verification never reach the Risebird server at all.
+
+
+================================================================================
+HOW TO CREATE IT — DUPLICATE, DON'T REBUILD
+================================================================================
+1. Open the existing "Naukri Prospective Interviewer Onboarding" workflow.
+2. Top-right, open the "⋮" (more) menu (next to Sharing) — or use the "⋮" on
+   the workflow tile in the workflow list — and click "Duplicate".
+   (Relay offers Duplicate on every workflow.)
+3. Rename the copy, e.g.
+      "Naukri Prospective Interviewer Onboarding — LinkedIn Verified"
+4. IMPORTANT: turn the ORIGINAL "On/Off" toggle OFF (or turn the trigger of
+   ONE of the two off). If both the original and the duplicate listen to the
+   same Gmail inbox with the same filter, every Naukri email will be processed
+   twice. Decide which one is live. (Recommended: keep only the verified
+   variant live once tested.)
+5. In the duplicate, the flow already contains:
+      1  Email received (trigger)
+      2  Extract with AI
+      3  End run if experience_years is less than 8
+      4  For each item in Email > Attachments
+      5  Upload ... Attachments to Drive
+      6  Custom HTTP request to portal.risebird.io
+   You will INSERT the new steps AFTER step 2 (Extract with AI). Placing them
+   right after Extract with AI — and before/around the existing "End run if" —
+   means unverified prospects are dropped as early and as cheaply as possible.
+
+
+================================================================================
+NEW STEPS TO ADD (three steps: Search -> AI verdict -> Gate)
+================================================================================
+
+────────────────────────────────────────────────
+NEW STEP A — Search Google  (built-in action)
+────────────────────────────────────────────────
+  Add step -> search for "Search Google" (it appears under both the AI menu and
+  the Web scraping menu). Cost: flat 5 AI credits per search.
+
+  Query (build it from Step 2 "Extract with AI" outputs):
+      {candidate_name} {current_role} {location} LinkedIn
+
+  Tip: keep it focused on the strongest identity signals. A good template:
+      {{Extract with AI.candidate_name}} {{Extract with AI.current_role}} {{Extract with AI.location}} site:linkedin.com/in
+
+  Number of results: 10 (max). This returns a list of {title, url, snippet}.
+
+  Note (from Relay docs): the Search Google step returns public, signed-out
+  results and ignores your browser location, so results can differ slightly
+  from what you'd see typing the same query into Google yourself. That's fine —
+  we only need enough signal for the AI step to reason over.
+
+
+────────────────────────────────────────────────
+NEW STEP B — AI verdict (reasoning step over the search results)
+────────────────────────────────────────────────
+  Add step -> "Use AI" / AI step. Two model choices:
+
+    Option 1 (recommended, deterministic): a normal reasoning model
+      (e.g. GPT-5.4 / a capable non-search model). Feed it BOTH the extracted
+      fields (Step 2) AND the Search Google results (Step A) and let it reason.
+      Cheaper and fully controllable because YOU supply the evidence.
+
+    Option 2 (delegate the searching too): pick a model WITH built-in search
+      (Perplexity Sonar Reasoning Pro, or an OpenAI/Gemini search-enabled
+      model). Then you can even skip Step A and let this single step search +
+      reason. Slightly less predictable but can open pages the snippet didn't
+      cover. If you use Option 2, you may drop Step A entirely.
+
+  Turn Auto-generate OFF for the output and define these EXACT output fields so
+  the gate in Step C can read them:
+      linkedin_match      (text)   -> "YES" or "NO"
+      confidence          (number) -> 0-100
+      linkedin_url        (text)   -> the matched profile URL, or "None"
+      reason              (text)   -> one-line justification
+
+  PROMPT / INSTRUCTIONS:
+  ──────────────────────
+  You are a background-verification assistant for a company that recruits
+  freelance technical interviewers. You are given (1) details extracted from a
+  Naukri.com candidate notification and (2) Google search results that should
+  contain the candidate's LinkedIn profile. Your job is to decide, with HIGH
+  CERTAINTY, whether the extracted candidate and a LinkedIn profile in the
+  search results are the SAME real person.
+
+  EXTRACTED CANDIDATE (from the Naukri email):
+    Name:            {{Extract with AI.candidate_name}}
+    Location:        {{Extract with AI.location}}
+    Current role:    {{Extract with AI.current_role}}
+    Past experience: {{Extract with AI.past_experience}}
+    Experience:      {{Extract with AI.experience_years}}
+    Education:       {{Extract with AI.education}}
+    Key skills:      {{Extract with AI.key_skills}}
+
+  GOOGLE SEARCH RESULTS (title / url / snippet):
+    {{Search Google.results}}
+    (Insert the full results list from the Search Google step here.)
+
+  MATCHING RULES:
+  1. First, identify the single LinkedIn profile in the results that most
+     likely belongs to this candidate. Prefer linkedin.com/in/ URLs.
+  2. If NO LinkedIn profile appears in the results at all, this is an automatic
+     NO. Set linkedin_match="NO", confidence=0, linkedin_url="None".
+  3. If a profile is found, compare the crucial identity signals:
+        - Full name (allow reordering, initials, common spelling variants)
+        - Current or recent employer / role
+        - Location / city (allow metro-area equivalence)
+        - Seniority consistent with the stated years of experience
+        - Overlap between stated key skills and the profile's field
+     The CRUCIAL things (name + employer/role + broad field/seniority) must
+     line up. Minor discrepancies are acceptable and expected, e.g.:
+        - slightly different job title wording
+        - location = nearby city / metro area
+        - experience off by a year or two
+        - a skill or two missing on one side
+  4. Return YES only if you are confident the crucial signals match and it is
+     clearly the same person. If signals conflict (different employer AND
+     different field, wrong seniority, a namesake in a different profession,
+     ambiguity between multiple people), return NO.
+  5. Be conservative: when genuinely unsure, return NO. A false YES onboards an
+     unverified interviewer; a false NO just skips one profile.
+
+  OUTPUT: return ONLY a JSON object, no markdown fences, no extra text:
+  {
+    "linkedin_match": "YES" | "NO",
+    "confidence": <integer 0-100>,
+    "linkedin_url": "<matched profile url or 'None'>",
+    "reason": "<one concise sentence explaining the decision>"
+  }
+
+
+────────────────────────────────────────────────
+NEW STEP C — Gate: "End run if" (stop unverified prospects)
+────────────────────────────────────────────────
+  Add step -> "End run if" (same step type you already use for the
+  experience_years >= 8 check).
+
+  Condition (end / stop the run when NOT verified):
+      Step B (AI verdict) -> linkedin_match   is not equal to   "YES"
+
+  Optionally tighten with confidence:
+      OR  Step B -> confidence   is less than   80
+
+  When this condition is true, Relay ends the run here — so the Drive upload
+  and the webhook POST never fire for that candidate. When it's false (i.e.
+  linkedin_match == "YES" and confidence high enough), the run continues into
+  the existing steps unchanged.
+
+  ORDER RECOMMENDATION:
+    Trigger
+      -> Extract with AI
+      -> End run if experience_years < 8        (existing cheap gate first)
+      -> Search Google                          (NEW A)
+      -> AI verdict                             (NEW B)
+      -> End run if linkedin_match != "YES"     (NEW C)
+      -> For each attachment / Upload to Drive  (existing)
+      -> HTTP POST to webhook                   (existing)
+  Keeping the experience gate BEFORE the Google search avoids spending the
+  5 search credits on candidates you'd reject on experience anyway.
+
+
+================================================================================
+RECORD THE LINKEDIN VERDICT ON THE SERVER  (IMPLEMENTED)
+================================================================================
+The server now persists the LinkedIn verdict. Add these three keys to the
+Step 8 (Custom HTTP request) JSON body, mapping the values from the verdict AI
+step (step 5) via the @ field picker — NOT literal text:
+
+    "linkedin_url":        {{step 5 -> linkedin_url}}
+    "linkedin_match":      {{step 5 -> linkedin_match}}
+    "linkedin_confidence": {{step 5 -> confidence}}
+
+Server-side wiring (already in place):
+  - RelayNaukriPayload gains linkedin_url / linkedin_match / linkedin_confidence
+    (Risebird.Entities/ViewModel/NaukriProspectiveInterviewerVM.cs)
+  - NaukriOnboardingController.Webhook() maps them onto the record and writes a
+    "LinkedInVerified" history entry
+  - NaukriProspectiveInterviewer table + entity + VM gain LinkedInUrl /
+    LinkedInMatch / LinkedInConfidence columns/props
+  - usp_InsertNaukriProspectiveInterviewer persists them (and backfills on the
+    duplicate path); repository InsertAsync passes the params
+  - Migration: Risebird.DB/Migrations/AddLinkedInVerificationToNaukriProspectiveInterviewer.sql
+
+Notes:
+  - The webhook deserializes with MissingMemberHandling.Ignore, so sending the
+    keys was always safe; they are now actually stored.
+  - The verification GATE (step 6) still works entirely inside Relay — rejected
+    prospects never call the webhook — so these fields are for audit/traceability
+    of the prospects that DID pass (they'll typically all be linkedin_match=YES).
+  - Deploy order: run the migration (or the updated table script) and the updated
+    usp_InsertNaukriProspectiveInterviewer BEFORE deploying the app, so the
+    INSERT's new columns/params exist when the new code runs.
+
+
+================================================================================
+NOTES / GOTCHAS
+================================================================================
+• Duplicate = same trigger. Only ONE of {original, verified variant} should be
+  live on the same inbox+filter, or every email is processed twice.
+• LinkedIn actively blocks scraping. We are NOT scraping LinkedIn — we use
+  Google's public snippets + AI reasoning, which is compliant and sufficient
+  for an identity match. Do not add a step that fetches/scrapes the LinkedIn
+  page directly.
+• Common-name risk: for very common names the AI may see multiple candidates.
+  The prompt already instructs "when unsure -> NO", which is the safe default
+  for a background check. Raising the confidence threshold in Step C (e.g. 85)
+  makes it stricter.
+• Cost: each run that reaches Step A spends ~5 AI credits for the search plus
+  the AI verdict step's model cost. Placing the experience gate first limits
+  how many runs incur that cost.
+• Test with Relay's "Test" / single-run mode on a few real Naukri emails —
+  including at least one obvious match and one obvious non-match — and inspect
+  the AI verdict JSON before turning the workflow On.

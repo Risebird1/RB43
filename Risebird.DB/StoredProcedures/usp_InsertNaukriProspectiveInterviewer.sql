@@ -23,6 +23,9 @@ CREATE PROCEDURE [dbo].[usp_InsertNaukriProspectiveInterviewer]
     @ResumeLink             NVARCHAR(2000)  = NULL,
     @HasAttachment          BIT             = 0,
     @Source                 VARCHAR(50)     = 'Naukri',
+    @LinkedInUrl            NVARCHAR(2000)  = NULL,
+    @LinkedInMatch          VARCHAR(10)     = NULL,
+    @LinkedInConfidence     INT             = NULL,
     @NewId                  INT             OUTPUT
 AS
 BEGIN
@@ -70,6 +73,18 @@ BEGIN
             WHERE Id = @NewId AND ISNULL(ResumeParseCompleted, 0) = 0
         END
 
+        -- On duplicate, backfill the LinkedIn verification verdict if Relay now provides it
+        -- and it was not recorded before.
+        IF @LinkedInMatch IS NOT NULL AND LEN(LTRIM(RTRIM(@LinkedInMatch))) > 0
+        BEGIN
+            UPDATE NaukriProspectiveInterviewer
+            SET LinkedInUrl        = @LinkedInUrl,
+                LinkedInMatch      = @LinkedInMatch,
+                LinkedInConfidence = @LinkedInConfidence,
+                UpdatedAt          = GETUTCDATE()
+            WHERE Id = @NewId AND (LinkedInMatch IS NULL OR LEN(LTRIM(RTRIM(LinkedInMatch))) = 0)
+        END
+
         RETURN
     END
 
@@ -78,13 +93,15 @@ BEGIN
          CandidateName, Location, PastExperience, NoticePeriod, Education,
          KeySkills, CurrentRole, ExperienceYears, Salary, MagName,
          ParsedEmail, ParsedPhone, ResumeParseCompleted,
-         ResumeLink, HasAttachment, [Source], Status, CreatedAt)
+         ResumeLink, HasAttachment, [Source],
+         LinkedInUrl, LinkedInMatch, LinkedInConfidence, Status, CreatedAt)
     VALUES
         (@SenderEmail, @Subject, @MailContent, ISNULL(@ReceivedAt, GETUTCDATE()),
          @CandidateName, @Location, @PastExperience, @NoticePeriod, @Education,
          @KeySkills, @CurrentRole, @ExperienceYears, @Salary, @MagName,
          @ParsedEmail, @ParsedPhone, @ResumeParseCompleted,
-         @ResumeLink, @HasAttachment, ISNULL(@Source, 'Naukri'), 'Open', GETUTCDATE())
+         @ResumeLink, @HasAttachment, ISNULL(@Source, 'Naukri'),
+         @LinkedInUrl, @LinkedInMatch, @LinkedInConfidence, 'Open', GETUTCDATE())
 
     SET @NewId = SCOPE_IDENTITY()
 
