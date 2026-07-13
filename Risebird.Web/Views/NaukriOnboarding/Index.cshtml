@@ -2884,13 +2884,62 @@
 
     $('#btnTriggerEV, #btnRetryEV').on('click', function () {
         if (!currentRecordId || !currentRecord) return;
-        var email = currentRecord.parsedEmail, phone = currentRecord.parsedPhone;
-        if (!email) { alert('No email parsed. Complete Step 1 first.'); return; }
-        if (!phone) { alert('No phone number parsed. EV requires a phone number.'); return; }
 
         var btn = $('#btnTriggerEV'); var retryBtn = $('#btnRetryEV');
         btn.show().prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Verifying...');
         retryBtn.hide();
+        $('#mStep1Subtitle').text('Checking verification path...');
+
+        // Ask the server which EV path to take. LinkedIn-verified prospects skip Signzy entirely.
+        $.ajax({
+            url: '@Url.Action("PrepareEmploymentVerification", "NaukriOnboarding")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
+            success: function (prep) {
+                if (prep && prep.intentBlocked) {
+                    alert(prep.error);
+                    btn.prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment');
+                    $('#mStep1Subtitle').html('Verify the prospect\'s current employment via Signzy');
+                    return;
+                }
+
+                if (prep && prep.autoVerifiedViaLinkedIn) {
+                    var company = prep.companyName || '';
+                    if (prep.verified && prep.isEmployed) {
+                        var liHtml = '<span class="text-success"><i class="fab fa-linkedin me-1"></i>Verified via LinkedIn</span>';
+                        if (company) liHtml += ' &mdash; <strong>' + $('<span>').text(company).html() + '</strong>';
+                        liHtml += ' <span class="employed-yes">(Employed)</span>';
+                        liHtml += '<br/><span style="font-size:11px;" class="text-muted">Signzy skipped — background confirmed by LinkedIn verification.</span>';
+                        mMarkStep(1, 'completed', liHtml);
+                        $('#mgmCompany').text(company);
+                        $('#mgmEmployed').html('<span class="employed-yes">Yes</span>');
+                        if (currentRecord) {
+                            currentRecord.employmentVerified = true;
+                            currentRecord.employmentCompanyName = company;
+                            currentRecord.employmentIsEmployed = true;
+                        }
+                    } else {
+                        mMarkStep(1, 'failed', '<span class="text-danger"><i class="fab fa-linkedin me-1"></i>LinkedIn verification did not confirm the prospect &mdash; Not Qualified.</span>');
+                        $('#mgmEmployed').html('<span class="employed-no">No</span>');
+                    }
+                    return;
+                }
+
+                // No LinkedIn verdict → run Signzy/Surepass as usual.
+                runSignzyEV(btn, retryBtn);
+            },
+            error: function () {
+                mMarkStep(1, 'failed', '<span class="text-danger">Could not determine verification path. Try again.</span>');
+                btn.prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment');
+                $('#mStep1Subtitle').html('Verify the prospect\'s current employment via Signzy');
+            }
+        });
+    });
+
+    function runSignzyEV(btn, retryBtn) {
+        var email = currentRecord.parsedEmail, phone = currentRecord.parsedPhone;
+        if (!email) { alert('No email parsed. Complete Step 1 first.'); btn.prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment'); return; }
+        if (!phone) { alert('No phone number parsed. EV requires a phone number.'); btn.prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment'); return; }
+
         $('#mStep1Subtitle').text('Running employment verification...');
 
         $.ajax({
@@ -2936,7 +2985,7 @@
                 $('#mStep1Subtitle').html('Verify the prospect\'s current employment via Signzy');
             }
         });
-    });
+    }
 
     /* ── M2: AI Resume Fitment Analysis ── */
 

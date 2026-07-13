@@ -618,28 +618,52 @@ namespace Risebird.AzureTimerFunctions
             await _repository.UpdateAutomationStatusAsync(rec.Id, "AutoOnboarding");
 
             // ── Gate 1: Employment Verification (must PASS) ──────────────────────────
+            // When the prospect came through the "LinkedIn Verified" Relay flow, the LinkedIn
+            // background check already established the person is genuine and currently employed in
+            // the stated role. In that case we SKIP Signzy/Surepass and satisfy EV from the LinkedIn
+            // verdict. Signzy/Surepass only runs when the LinkedIn verdict is absent (any of the three
+            // LinkedIn fields is null).
             if (rec.EmploymentVerified != true)
             {
-                var ev = await RunEmploymentVerificationAsync(rec.ParsedEmail, rec.ParsedPhone);
-                await _repository.UpdateEmploymentVerificationAsync(rec.Id, ev.passed, ev.companyName, ev.isEmployed, ev.message);
-                await _repository.InsertHistoryAsync(rec.Id, "EmploymentVerification", "—",
-                    $"Auto-EV — Company: {ev.companyName ?? "N/A"}, Employed: {(ev.isEmployed ? "Yes" : "No")} — {(ev.passed ? "PASSED" : "FAILED")}. {ev.message}", "AutomationJob");
+                bool passed; string companyName; bool isEmployed; string message; string historyPrefix;
 
-                if (!ev.passed)
+                if (HasLinkedInVerdict(rec))
+                {
+                    passed        = string.Equals(rec.LinkedInMatch?.Trim(), "YES", StringComparison.OrdinalIgnoreCase);
+                    companyName   = ExtractCompanyFromRole(rec.CurrentRole) ?? rec.EmploymentCompanyName;
+                    isEmployed    = passed;
+                    message       = $"Satisfied by LinkedIn background verification (match={rec.LinkedInMatch}, confidence={rec.LinkedInConfidence}). Profile: {rec.LinkedInUrl}";
+                    historyPrefix = "Auto-EV skipped (LinkedIn-verified)";
+                }
+                else
+                {
+                    var ev = await RunEmploymentVerificationAsync(rec.ParsedEmail, rec.ParsedPhone);
+                    passed        = ev.passed;
+                    companyName   = ev.companyName;
+                    isEmployed    = ev.isEmployed;
+                    message       = ev.message;
+                    historyPrefix = "Auto-EV";
+                }
+
+                await _repository.UpdateEmploymentVerificationAsync(rec.Id, passed, companyName, isEmployed, message);
+                await _repository.InsertHistoryAsync(rec.Id, "EmploymentVerification", "—",
+                    $"{historyPrefix} — Company: {companyName ?? "N/A"}, Employed: {(isEmployed ? "Yes" : "No")} — {(passed ? "PASSED" : "FAILED")}. {message}", "AutomationJob");
+
+                if (!passed)
                 {
                     // Employment Verification failed → terminal 'Not Qualified' funnel outcome (ticket Closed).
                     await _repository.SetFunnelOutcomeAsync(rec.Id, "NotQualified", "Closed");
                     await _repository.UpdateAutomationStatusAsync(rec.Id, "Completed");
                     await _repository.InsertHistoryAsync(rec.Id, "NotQualified", "—",
-                        $"Automation: Employment Verification did not pass ({ev.message}). Funnel → Not Qualified.", "AutomationJob");
-                    _log.LogInformation($"[OnboardAuto] #{rec.Id} — EV failed ({ev.message}). Funnel → Not Qualified.");
+                        $"Automation: Employment Verification did not pass ({message}). Funnel → Not Qualified.", "AutomationJob");
+                    _log.LogInformation($"[OnboardAuto] #{rec.Id} — EV failed ({message}). Funnel → Not Qualified.");
                     return;
                 }
 
                 await _repository.AdvanceFunnelStageAsync(rec.Id, "EmploymentVerified", "InProgress");
                 rec.EmploymentVerified = true;
-                rec.EmploymentCompanyName = ev.companyName;
-                rec.EmploymentIsEmployed = ev.isEmployed;
+                rec.EmploymentCompanyName = companyName;
+                rec.EmploymentIsEmployed = isEmployed;
             }
 
             // ── Gates 2 & 3: AI Resume Fitment (verdict must be POSITIVE; resume must be readable) ──
@@ -826,6 +850,31 @@ namespace Risebird.AzureTimerFunctions
                     $"Automation: profile created (UserId {userId}, AG {agId}) but acknowledgement email FAILED. Operator must use Resend.", "AutomationJob");
                 _log.LogWarning($"[OnboardAuto] #{rec.Id} — auto-onboarded UserId {userId} but acknowledgement email FAILED. Marked ManualRequired.");
             }
+        }
+
+        /// <summary>
+        /// True when the prospect carries a complete LinkedIn background-verification verdict (all three
+        /// LinkedIn fields populated by the "LinkedIn Verified" Relay flow). When true, EV is satisfied
+        /// from LinkedIn and Signzy/Surepass is skipped; when false, EV runs normally.
+        /// </summary>
+        private static bool HasLinkedInVerdict(Entities.ViewModel.NaukriProspectiveInterviewerVM rec)
+            => rec != null
+               && !string.IsNullOrWhiteSpace(rec.LinkedInUrl)
+               && !string.IsNullOrWhiteSpace(rec.LinkedInMatch)
+               && rec.LinkedInConfidence.HasValue;
+
+        /// <summary>
+        /// Best-effort extraction of the employer name from a "designation at company" style current-role
+        /// string (e.g. "Development Team Lead at RSS Softech / gistec" → "RSS Softech / gistec"). Falls
+        /// back to the whole role string when no " at " delimiter is present.
+        /// </summary>
+        private static string ExtractCompanyFromRole(string currentRole)
+        {
+            if (string.IsNullOrWhiteSpace(currentRole)) return null;
+            int idx = currentRole.LastIndexOf(" at ", StringComparison.OrdinalIgnoreCase);
+            string company = idx >= 0 ? currentRole.Substring(idx + 4) : currentRole;
+            company = company?.Trim();
+            return string.IsNullOrWhiteSpace(company) ? null : company;
         }
 
         /// <summary>

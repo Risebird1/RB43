@@ -41,6 +41,11 @@ namespace Risebird.Entities.Data
         public string   AIVerdict                   { get; set; }
         public int?     AIFitmentScore              { get; set; }
 
+        // LinkedIn background verification (Relay "LinkedIn Verified" variant, captured at ingestion)
+        public string   LinkedInUrl                 { get; set; }
+        public string   LinkedInMatch               { get; set; }
+        public int?     LinkedInConfidence          { get; set; }
+
         public bool?    OnboardingCompleted         { get; set; }
         public int?     OnboardedUserId             { get; set; }
         public int?     OnboardedProfileId          { get; set; }
