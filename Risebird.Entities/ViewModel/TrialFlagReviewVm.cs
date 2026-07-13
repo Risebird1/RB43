@@ -21,6 +21,11 @@ namespace Risebird.Entities.ViewModel
         public const int BackfillBatchSize = 25;            // max inserts per backfill HTTP request
         public const int BackfillCandidateFetchSize = 100;  // candidates to return from SP per click
         public const int BackfillCandidateScanSize = 800;   // recent QCDone rows SP scans before filtering
+
+        // Trial severity (P0 = worst … P5 = clean)
+        public const string SeverityP0 = "P0";
+        public const string SeverityP4 = "P4";
+        public const string SeverityClean = "P5";
     }
 
     public class TrialJudgmentContextVm
@@ -51,6 +56,7 @@ namespace Risebird.Entities.ViewModel
         public bool CandidateRatingPass { get; set; }
         public bool JoinTimePass { get; set; }
         public bool InterviewDurationPass { get; set; }
+        public string Severity { get; set; }
         public string SkipReason { get; set; }
     }
 
@@ -109,6 +115,14 @@ namespace Risebird.Entities.ViewModel
         public string InterviewerEmail { get; set; }
         public string InterviewerCodedId { get; set; }
         public string IrfName { get; set; }
+        public string Severity { get; set; }
+        public string RiskCategoryLabels { get; set; }
+        public string RiskCategoryReasons { get; set; }
+        public string SeverityBreakdown { get; set; }
+        public bool IsSuboptimalQuality =>
+            !string.IsNullOrWhiteSpace(RiskCategoryLabels)
+            || (!string.IsNullOrWhiteSpace(Severity)
+                && !string.Equals(Severity, TrialFlagConstants.SeverityClean, StringComparison.OrdinalIgnoreCase));
     }
 
     public class TrialFlagReviewActionResultVm

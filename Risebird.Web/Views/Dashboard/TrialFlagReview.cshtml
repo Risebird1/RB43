@@ -173,6 +173,42 @@
         color: #64748b;
     }
     .tfr-backfill-bar__hint { flex: 1; min-width: 200px; line-height: 1.45; }
+    .tfr-severity {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 2px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .02em;
+        white-space: nowrap;
+    }
+    .tfr-severity--p0 { background: #450a0a; color: #fff; }
+    .tfr-severity--p1 { background: #991b1b; color: #fff; }
+    .tfr-severity--p2 { background: #c2410c; color: #fff; }
+    .tfr-severity--p3 { background: #ca8a04; color: #fff; }
+    .tfr-severity--p4 { background: #fef3c7; color: #92400e; }
+    .tfr-severity--p5 { background: #dcfce7; color: #166534; }
+    .tfr-severity--na { background: #f1f5f9; color: #64748b; }
+    .tfr-risk-col { min-width: 160px; max-width: 280px; }
+    .tfr-risk-badges { display: flex; flex-wrap: wrap; gap: 3px; }
+    .tfr-risk-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    .tfr-risk-badge--high { background: #fde8e8; color: #c0392b; }
+    .tfr-risk-badge--review { background: #fef9e7; color: #d4ac0d; }
+    .tfr-risk-badge--redo { background: #eaf4fb; color: #1a6fa0; }
+    .tfr-risk-badge--fake { background: #f9ebf0; color: #922b5e; }
+    .tfr-risk-badge--default { background: #f0f0f0; color: #555; }
+    .tfr-filter { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .tfr-filter select { border: 1px solid #cbd5e1; border-radius: 6px; padding: 7px 10px; font-size: 12px; background: #fff; }
+    .tfr-th-sort { cursor: pointer; user-select: none; }
+    .tfr-th-sort:hover { color: #2563eb; }
+    .tfr-th-sort.is-active { color: #2563eb; }
 </style>
 
 @functions {
@@ -189,6 +225,65 @@
         html += "</div>";
         return new Microsoft.AspNetCore.Html.HtmlString(html);
     }
+
+    string ResolveSeverity(TrialFlagReviewRowVm row)
+    {
+        if (!string.IsNullOrWhiteSpace(row.Severity))
+            return row.Severity.Trim().ToUpperInvariant();
+        if (string.Equals(row.OverallVerdict, TrialFlagConstants.VerdictGoodTrial, StringComparison.OrdinalIgnoreCase))
+            return TrialFlagConstants.SeverityClean;
+        return TrialFlagConstants.SeverityP4;
+    }
+
+    string SeverityCssClass(string severity)
+    {
+        var p = (severity ?? "").Trim().ToUpperInvariant();
+        return p switch
+        {
+            "P0" => "tfr-severity--p0",
+            "P1" => "tfr-severity--p1",
+            "P2" => "tfr-severity--p2",
+            "P3" => "tfr-severity--p3",
+            "P4" => "tfr-severity--p4",
+            "P5" => "tfr-severity--p5",
+            _ => "tfr-severity--na"
+        };
+    }
+
+    IHtmlContent SeverityBadge(TrialFlagReviewRowVm row)
+    {
+        var sev = ResolveSeverity(row);
+        var title = string.IsNullOrWhiteSpace(row.SeverityBreakdown) ? sev : row.SeverityBreakdown;
+        var html = $@"<span class=""tfr-severity {SeverityCssClass(sev)}"" title=""{System.Net.WebUtility.HtmlEncode(title)}"">{sev}</span>";
+        return new Microsoft.AspNetCore.Html.HtmlString(html);
+    }
+
+    IHtmlContent RiskCategoryBadges(TrialFlagReviewRowVm row)
+    {
+        if (string.IsNullOrWhiteSpace(row.RiskCategoryLabels))
+            return new Microsoft.AspNetCore.Html.HtmlString(@"<span style=""color:#94a3b8;font-size:12px;"">—</span>");
+
+        var labels = row.RiskCategoryLabels.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var reasons = (row.RiskCategoryReasons ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var html = @"<div class=""tfr-risk-badges"">";
+        for (var i = 0; i < labels.Length; i++)
+        {
+            var label = labels[i].Trim();
+            var reason = i < reasons.Length ? reasons[i].Trim() : label;
+            var badgeClass = label switch
+            {
+                "High Severity" => "tfr-risk-badge--high",
+                "Under Review" => "tfr-risk-badge--review",
+                "Redo Requested" => "tfr-risk-badge--redo",
+                "Fake Report" => "tfr-risk-badge--fake",
+                _ => "tfr-risk-badge--default"
+            };
+            var tip = System.Net.WebUtility.HtmlEncode(reason);
+            html += $@"<span class=""tfr-risk-badge {badgeClass}"" title=""{tip}"">{System.Net.WebUtility.HtmlEncode(label)}</span>";
+        }
+        html += "</div>";
+        return new Microsoft.AspNetCore.Html.HtmlString(html);
+    }
 }
 
 <div class="main-panel tfr-page" id="main-panel">
@@ -199,6 +294,18 @@
             <p>First-interview trial outcomes per interviewer–IRF pair. Review each factor, open drill-downs for context, then keep or remove inline.</p>
             @if (rows.Any())
             {
+                <div class="tfr-filter">
+                    <label for="tfrSeverityFilter" style="font-size:11px;color:#64748b;white-space:nowrap;">Severity</label>
+                    <select id="tfrSeverityFilter" aria-label="Filter by severity">
+                        <option value="">All</option>
+                        <option value="P0">P0</option>
+                        <option value="P1">P1</option>
+                        <option value="P2">P2</option>
+                        <option value="P3">P3</option>
+                        <option value="P4">P4</option>
+                        <option value="P5">P5</option>
+                    </select>
+                </div>
                 <div class="tfr-search">
                     <div class="tfr-search__box">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
@@ -257,7 +364,9 @@
                     <th>Interviewer</th>
                     <th>IRF</th>
                     <th>Trial interview</th>
+                    <th class="tfr-th-sort" id="tfrSortSeverity" title="Sort by severity">Severity</th>
                     <th>Verdict</th>
+                    <th>Risk categories</th>
                     <th>Transcript</th>
                     <th>Report</th>
                     <th>Candidate rating</th>
@@ -279,8 +388,9 @@
                     var durationDetail = row.InterviewDurationMinutes.HasValue ? row.InterviewDurationMinutes.Value.ToString("0.##") + " min" : null;
                     var timingUrl = TrialFlagDrillDownUrls.InterviewTiming(interviewId, row.IrfName);
                     var interviewerDisplayName = !string.IsNullOrWhiteSpace(row.InterviewerName) ? row.InterviewerName : row.InterviewerEmail;
+                    var displaySeverity = ResolveSeverity(row);
 
-                    <tr data-search="@searchKey" data-flag-id="@row.TrialFlagId">
+                    <tr data-search="@searchKey" data-flag-id="@row.TrialFlagId" data-severity="@displaySeverity">
                         @if (isPendingTab)
                         {
                             <td class="tfr-actions">
@@ -313,7 +423,9 @@
                             <div style="color:#64748b;font-size:12px;">@FormatIst(row.TriggeringInterviewDate)</div>
                             <div style="color:#94a3b8;font-size:11px;">Flagged @FormatIst(row.FlaggedAtUtc)</div>
                         </td>
+                        <td>@SeverityBadge(row)</td>
                         <td><span class="@verdictClass">@VerdictLabel(row.OverallVerdict)</span></td>
+                        <td class="tfr-risk-col">@RiskCategoryBadges(row)</td>
                         <td>@FactorCell(row.TranscriptQualityPass, transcriptDetail, TrialFlagDrillDownUrls.TranscriptQuality(interviewId, row.IrfId), "Transcript")</td>
                         <td>@FactorCell(row.ReportQualityPass, null, TrialFlagDrillDownUrls.ReportQuality(interviewId), "QC report")</td>
                         <td>@FactorCell(row.CandidateRatingPass, ratingDetail, TrialFlagDrillDownUrls.CandidateRating(interviewId), "Rating")</td>
@@ -371,13 +483,40 @@
         var PAGE_SIZE = 30;
         var currentPage = 1;
         var searchTerm = '';
-        var $rows = $('.tfr-table tbody tr');
+        var severityFilter = '';
+        var severitySortAsc = true;
+        var $tbody = $('.tfr-table tbody');
+        var $rows = $tbody.find('tr');
+
+        function severityRank(sev) {
+            var m = (sev || '').match(/^P(\d)$/i);
+            return m ? parseInt(m[1], 10) : 99;
+        }
 
         function getMatchedRows() {
-            if (!searchTerm) return $rows;
-            return $rows.filter(function () {
-                return ($(this).attr('data-search') || '').indexOf(searchTerm) >= 0;
+            var $matched = $rows;
+            if (searchTerm) {
+                $matched = $matched.filter(function () {
+                    return ($(this).attr('data-search') || '').indexOf(searchTerm) >= 0;
+                });
+            }
+            if (severityFilter) {
+                $matched = $matched.filter(function () {
+                    return ($(this).attr('data-severity') || '').toUpperCase() === severityFilter;
+                });
+            }
+            return $matched;
+        }
+
+        function applySeveritySort() {
+            var rows = $rows.get();
+            rows.sort(function (a, b) {
+                var ra = severityRank($(a).attr('data-severity'));
+                var rb = severityRank($(b).attr('data-severity'));
+                return severitySortAsc ? (ra - rb) : (rb - ra);
             });
+            $.each(rows, function (_, row) { $tbody.append(row); });
+            $rows = $tbody.find('tr');
         }
 
         function renderPagination() {
@@ -407,6 +546,7 @@
 
         function applySearch() {
             searchTerm = ($('#tfrSearch').val() || '').trim().toLowerCase();
+            severityFilter = ($('#tfrSeverityFilter').val() || '').trim().toUpperCase();
             currentPage = 1;
             $('#tfrSearchClear').toggle(searchTerm.length > 0);
             renderPagination();
@@ -464,6 +604,13 @@
 
         $('#tfrSearch').on('input', applySearch);
         $('#tfrSearchClear').on('click', function () { $('#tfrSearch').val(''); applySearch(); });
+        $('#tfrSeverityFilter').on('change', applySearch);
+        $('#tfrSortSeverity').on('click', function () {
+            severitySortAsc = !severitySortAsc;
+            $(this).toggleClass('is-active', true).text(severitySortAsc ? 'Severity ↑' : 'Severity ↓');
+            applySeveritySort();
+            applySearch();
+        });
 
         $('#btnTfrBackfill').on('click', function () {
             var $btn = $(this).prop('disabled', true);

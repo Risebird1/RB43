@@ -14,7 +14,8 @@ CREATE OR ALTER PROCEDURE [dbo].[usp_InsertTrialFlag]
     @CandidateRating            DECIMAL(5,2) = NULL,
     @JoinTimeMinutes            DECIMAL(8,2) = NULL,
     @InterviewDurationMinutes   DECIMAL(8,2) = NULL,
-    @OverallVerdict             VARCHAR(30)
+    @OverallVerdict             VARCHAR(30),
+    @Severity                   VARCHAR(4) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -37,12 +38,12 @@ BEGIN
         InterviewerId, IrfId, ChannelId, TriggeringInterviewId, TriggeringInterviewDate,
         TranscriptQualityPass, ReportQualityPass, DecisionQualityPass, CandidateRatingPass, JoinTimePass, InterviewDurationPass,
         TranscriptQualityScore, CandidateRating, JoinTimeMinutes, InterviewDurationMinutes,
-        OverallVerdict, ReviewStatus, FlaggedAtUtc)
+        OverallVerdict, Severity, ReviewStatus, FlaggedAtUtc)
     VALUES (
         @InterviewerId, @IrfId, @ChannelId, @TriggeringInterviewId, @TriggeringInterviewDate,
         @TranscriptQualityPass, @ReportQualityPass, @DecisionQualityPass, @CandidateRatingPass, @JoinTimePass, @InterviewDurationPass,
         @TranscriptQualityScore, @CandidateRating, @JoinTimeMinutes, @InterviewDurationMinutes,
-        @OverallVerdict, 'pending', GETUTCDATE());
+        @OverallVerdict, @Severity, 'pending', GETUTCDATE());
 
     SELECT CAST(1 AS BIT) AS Inserted, CAST(SCOPE_IDENTITY() AS INT) AS TrialFlagId;
 END
