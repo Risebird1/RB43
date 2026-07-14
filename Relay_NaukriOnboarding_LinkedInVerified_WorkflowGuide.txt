@@ -5,25 +5,29 @@ RELAY.APP  NAUKRI PROSPECTIVE INTERVIEWER ONBOARDING — LINKEDIN-VERIFIED VARIA
 OVERVIEW
 --------
 This is a variant of the "Naukri Prospective Interviewer Onboarding" workflow
-(see Relay_NaukriOnboarding_WorkflowGuide.txt) that inserts a LinkedIn
-background-verification gate BETWEEN the "Extract with AI" step and the
-downstream steps (Google Drive upload + webhook POST).
+(see Relay_NaukriOnboarding_WorkflowGuide.txt) that adds a LinkedIn background
+lookup AFTER the "Extract with AI" step and sends the resulting verdict to the
+webhook alongside the extracted candidate details.
 
 Goal: after the AI has extracted the candidate's details (name, location,
-current role/company, experience, education, key skills, and — in the current
-deployed agent — candidate_email / candidate_phone), the workflow searches the
-web for that person's LinkedIn profile, then an AI reasoning step decides — with
-high certainty — whether the extracted details and the LinkedIn findings point
-to the SAME genuine person.
+current role/company, experience, education, key skills, and candidate_email /
+candidate_phone), the workflow searches the web for that person's LinkedIn
+profile, then an AI reasoning step produces a verdict (linkedin_url,
+linkedin_match, confidence). These three fields are POSTed to the webhook.
 
-Decision rule (as specified):
-  • No LinkedIn profile found                       -> NO  (stop the run)
-  • A profile found but details don't match         -> NO  (stop the run)
-  • A profile found and the crucial details match,
-    barring minor discrepancies                      -> YES (continue pipeline)
+*** UPDATED REQUIREMENT (LinkedIn is now a FALLBACK, not a gate) ***
+We NO LONGER filter prospects inside the Relay agent. Every prospect is sent to
+the webhook indiscriminately — there is NO "End run if" verification gate.
 
-Only a YES lets the run proceed to the Google Drive upload + webhook POST, so
-prospects that fail verification never reach the Risebird server at all.
+On the server side, Signzy is the PRIMARY employment-verification check. Only if
+Signzy fails (for any reason) does the code fall back to the LinkedIn verdict:
+if a LinkedIn profile link is present with confidence >= 80, the prospect is
+accepted as employed and the same EV fields Signzy would set are written to the
+database. (Surepass is not used for EV at this time.)
+
+=> ACTION REQUIRED IN RELAY: DELETE the "End run if linkedin_match != YES ..."
+   step (the verification gate). Keep steps 4 (Search Google) and 5 (the AI
+   verdict) so the linkedin_* fields are still produced and sent to the webhook.
 
 
 ================================================================================
@@ -155,33 +159,26 @@ NEW STEP B — AI verdict (reasoning step over the search results)
 
 
 ────────────────────────────────────────────────
-NEW STEP C — Gate: "End run if" (stop unverified prospects)
+STEP C — (REMOVED) verification gate
 ────────────────────────────────────────────────
-  Add step -> "End run if" (same step type you already use for the
-  experience_years >= 8 check).
+  *** DO NOT add a LinkedIn "End run if" gate, and DELETE it if present. ***
 
-  Condition (end / stop the run when NOT verified):
-      Step B (AI verdict) -> linkedin_match   is not equal to   "YES"
+  Per the updated requirement, prospects are sent to the webhook regardless of
+  the LinkedIn verdict. The LinkedIn fields (linkedin_url / linkedin_match /
+  confidence) are still produced by steps 4-5 and POSTed to the webhook, where
+  the server uses them only as a FALLBACK when Signzy fails (link present +
+  confidence >= 80 => accepted as employed).
 
-  Optionally tighten with confidence:
-      OR  Step B -> confidence   is less than   80
-
-  When this condition is true, Relay ends the run here — so the Drive upload
-  and the webhook POST never fire for that candidate. When it's false (i.e.
-  linkedin_match == "YES" and confidence high enough), the run continues into
-  the existing steps unchanged.
-
-  ORDER RECOMMENDATION:
+  ORDER (current):
     Trigger
       -> Extract with AI
-      -> End run if experience_years < 8        (existing cheap gate first)
-      -> Search Google                          (NEW A)
-      -> AI verdict                             (NEW B)
-      -> End run if linkedin_match != "YES"     (NEW C)
+      -> End run if experience_years < 8        (existing cheap gate — keep)
+      -> Search Google                          (A)
+      -> AI verdict                             (B — produces linkedin_* fields)
       -> For each attachment / Upload to Drive  (existing)
-      -> HTTP POST to webhook                   (existing)
-  Keeping the experience gate BEFORE the Google search avoids spending the
-  5 search credits on candidates you'd reject on experience anyway.
+      -> HTTP POST to webhook                   (existing — sends linkedin_* too)
+  The experience gate is unrelated to LinkedIn and stays. Only the LinkedIn
+  "End run if" step is removed.
 
 
 ================================================================================
@@ -209,9 +206,15 @@ Server-side wiring (already in place):
 Notes:
   - The webhook deserializes with MissingMemberHandling.Ignore, so sending the
     keys was always safe; they are now actually stored.
-  - The verification GATE (step 6) still works entirely inside Relay — rejected
-    prospects never call the webhook — so these fields are for audit/traceability
-    of the prospects that DID pass (they'll typically all be linkedin_match=YES).
+  - There is NO longer a LinkedIn verification gate in Relay — ALL prospects
+    reach the webhook. The linkedin_* fields are used server-side as a FALLBACK
+    to Signzy: Signzy is primary; if it fails, a LinkedIn link with confidence
+    >= 80 accepts the prospect as employed (Surepass is disabled for EV).
+  - Fallback logic lives in:
+      * NaukriOnboardingController.SaveEmploymentResult (manual modal path) and
+        PrepareEmploymentVerification (now an intent-only gate)
+      * ProspectOnboardingAutomationJob Gate 1 (automated path)
+    both via LinkedInFallbackPasses() (link present + confidence >= 80).
   - Deploy order: run the migration (or the updated table script) and the updated
     usp_InsertNaukriProspectiveInterviewer BEFORE deploying the app, so the
     INSERT's new columns/params exist when the new code runs.
@@ -228,8 +231,8 @@ NOTES / GOTCHAS
   page directly.
 • Common-name risk: for very common names the AI may see multiple candidates.
   The prompt already instructs "when unsure -> NO", which is the safe default
-  for a background check. Raising the confidence threshold in Step C (e.g. 85)
-  makes it stricter.
+  for a background check. Because LinkedIn is now only a fallback, a false YES no
+  longer auto-onboards anyone unless Signzy also failed AND confidence >= 80.
 • Cost: each run that reaches Step A spends ~5 AI credits for the search plus
   the AI verdict step's model cost. Placing the experience gate first limits
   how many runs incur that cost.
