@@ -36,6 +36,18 @@
                         @if (!string.IsNullOrWhiteSpace(d.PAN))
                         {
                             <span class="badge-pan">@d.PAN</span>
+                            if (d.IsPanVerified)
+                            {
+                                <span class="badge-pan-verified" title="PAN Verified">&#10003; Verified</span>
+                            }
+                            else
+                            {
+                                <span class="badge-pan-unverified" title="PAN Not Verified">&#33; Unverified</span>
+                            }
+                            if (!string.IsNullOrWhiteSpace(d.NameAtPan))
+                            {
+                                <br /><small class="text-pan-name" title="Name as per PAN">@d.NameAtPan</small>
+                            }
                         }
                         else
                         {

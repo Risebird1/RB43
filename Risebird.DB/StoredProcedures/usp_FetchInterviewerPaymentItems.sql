@@ -73,8 +73,8 @@ BEGIN
          AND  CAST(ph.PaymentDate AS DATE) >= ch.WeekStart
          AND  CAST(ph.PaymentDate AS DATE) <= ch.WeekEnd
     WHERE
-        ph.PaymentDate >= @StartDate
-        AND ph.PaymentDate <= @EndDate
+        CAST(ph.PaymentDate AS DATE) >= @StartDate
+        AND CAST(ph.PaymentDate AS DATE) <= @EndDate
         AND ph.TotalAmount > 0
         AND (ph.Status = 'Done' OR ph.PayoutStatus = 'TRANSFER_SUCCESS')
     ORDER BY ph.Userid, ph.PaymentDate;

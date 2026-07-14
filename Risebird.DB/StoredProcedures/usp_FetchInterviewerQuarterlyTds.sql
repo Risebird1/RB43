@@ -15,6 +15,8 @@ BEGIN
         ul.LastName,
         ul.EmailId                                  AS Email,
         ISNULL(tic.PAN, '')                         AS PAN,
+        ISNULL(tic.IsPanVerified, 0)                AS IsPanVerified,
+        ISNULL(tic.NameAtPan, '')                   AS NameAtPan,
         ISNULL(tic.AccountNumber, '')               AS AccountNumber,
         ISNULL(tic.IFSCCode, '')                    AS IFSCCode,
         ISNULL(tic.AccountName, '')                 AS AccountName,
@@ -28,14 +30,15 @@ BEGIN
     LEFT JOIN InterviewerProfile irp ON irp.UserId = ul.id
     LEFT JOIN TransInterviewerAccDetails tic ON tic.InterviewerProfileId = irp.id
     WHERE
-        ph.PaymentDate >= @StartDate
-        AND ph.PaymentDate <= @EndDate
+        CAST(ph.PaymentDate AS DATE) >= @StartDate
+        AND CAST(ph.PaymentDate AS DATE) <= @EndDate
         AND ph.TotalAmount > 0
         AND (ph.Status = 'Done' OR ph.PayoutStatus = 'TRANSFER_SUCCESS')
         --AND ISNULL(tic.IsBankVerified, 0) = 1        -- wallet-verified only
     GROUP BY
         ul.id, ul.FirstName, ul.LastName, ul.EmailId,
-        tic.PAN, tic.AccountNumber, tic.IFSCCode, tic.AccountName, tic.IsBankVerified
+        tic.PAN, tic.IsPanVerified, tic.NameAtPan,
+        tic.AccountNumber, tic.IFSCCode, tic.AccountName, tic.IsBankVerified
 
     --UNION ALL
 
@@ -59,8 +62,8 @@ BEGIN
     --LEFT JOIN InterviewerProfile irp ON irp.UserId = ul.id
     --LEFT JOIN TransInterviewerAccDetails tic ON tic.InterviewerProfileId = irp.id
     --WHERE
-    --    ph.PaymentDate >= @StartDate
-    --    AND ph.PaymentDate <= @EndDate
+    --    CAST(ph.PaymentDate AS DATE) >= @StartDate
+    --    AND CAST(ph.PaymentDate AS DATE) <= @EndDate
     --    AND ph.TotalAmount > 0
     --    AND (ph.Status = 'Done' OR ph.PayoutStatus = 'TRANSFER_SUCCESS')
     --    AND ISNULL(tic.IsBankVerified, 0) = 0        -- unverified wallet
