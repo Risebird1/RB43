@@ -222,9 +222,12 @@ BEGIN
  --     FK_TransInterviewerAuditLog_TransInterviewer (the delete was blocked and the whole save
  --     rolled back), and
  -- (b) discarded audit history + any in-place edits to existing interviewers.
- -- It is now an upsert: existing rows are updated in place (id preserved, audit log intact),
- -- genuinely-new interviewers are inserted, and only genuinely-removed interviewers are deleted
- -- (after clearing their audit-log children, which is the sole FK referencing TransInterviewer).
+ -- It is now an upsert that NEVER hard-deletes a TransInterviewer row: existing rows are updated in
+ -- place (id preserved, audit log intact), genuinely-new interviewers are inserted, and interviewers
+ -- removed from the panel are SOFT-removed (IsActive = 0). We must never physically delete a row,
+ -- because interview history and several open-interview / Auto-QC / payout / reporting queries
+ -- INNER JOIN TransInterviewer; deleting a row would make that interviewer's past interviews for this
+ -- channel disappear from those fetches.
  Declare @Assessmentid int    
   Select @Assessmentid=AssessmentGroupid From IRF where id=@id   
   Declare @temptable Table(Userid int)    
@@ -237,17 +240,18 @@ BEGIN
  else
   Insert into @incomingInterviewers(UserId) Select UserId from @InterviewerBulkData
 
- -- MAG interviewers currently attached to this IRF but NOT resubmitted => genuinely removed.
- Declare @removedInterviewerIds Table(id int)
- Insert into @removedInterviewerIds(id)
-  Select b.id FROM TransInterviewer b
-  JOIN @temptable f ON f.Userid = b.Userid
+ -- Interviewers currently attached to this IRF but NOT resubmitted => removed from the panel in the
+ -- UI. Soft-remove them (deactivate) instead of deleting. Guarded so an empty/absent bulk TVP (e.g.
+ -- when the app skips building it) can never mass-deactivate an existing panel.
+ IF EXISTS (SELECT 1 FROM @incomingInterviewers)
+ BEGIN
+  UPDATE b SET b.IsActive = 0, b.IsAvailable = 0, b.ModifiedBy = @ModifiedBy, b.ModifiedAt = @timeNow
+  FROM TransInterviewer b
   WHERE b.IRFId=@id
+    AND ISNULL(b.IsActive, 0) = 1
     AND NOT EXISTS (SELECT 1 FROM @incomingInterviewers i WHERE i.UserId = b.UserId)
-
- DELETE FROM TransInterviewerAuditLog WHERE TransInterviewerId IN (SELECT id FROM @removedInterviewerIds)
- DELETE FROM TransInterviewer WHERE id IN (SELECT id FROM @removedInterviewerIds)
- --END: Delete interviewers  
+ END
+ --END: Soft-remove interviewers  
   
  if(@IsNewSkillChannel is not null and @IsNewSkillChannel = 1)  
  Begin  
@@ -267,7 +271,11 @@ BEGIN
  [OpenAIScreeningResponse],  
  [AIVerdict])    
       
- SELECT distinct ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id, ibd.[Source],  
+ SELECT distinct ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge,
+ -- An interviewer may only be ACTIVE on a channel while they belong to the channel's MAG. If the
+ -- interviewer is not (or no longer) in the MAG, force IsActive = 0 regardless of what was submitted.
+ CASE WHEN EXISTS (SELECT 1 FROM @temptable t WHERE t.Userid = ibd.UserId) THEN ibd.IsActive ELSE 0 END,
+ ibd.IsAvailable, InterviewerProfile.id, ibd.[Source],  
  @ModifiedBy, NULL as IsSurchargeApprove, ibd.IsCampaignActivity, ibd.CampaignId, ibd.OpenAIScreeningResponse, ibd.AIVerdict  
  FROM @InterviewerSurchargeBulkData ibd join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId    
  WHERE   
@@ -277,11 +285,13 @@ BEGIN
   WHERE ti.UserId = ibd.UserId AND ti.IRFId = ibd.IRFId  
  );  
 
- -- Update interviewers that already exist for this IRF (preserves id -> keeps audit log FK valid)
+ -- Update interviewers that already exist for this IRF (preserves id -> keeps audit log FK valid).
+ -- IsActive is forced to 0 when the interviewer no longer belongs to the channel's MAG, so an
+ -- interviewer removed from the MAG cannot be (re)activated on this channel.
  UPDATE ti SET
     ti.PerSuccessRate = ibd.PerSuccessRate,
     ti.Surcharge = ibd.Surcharge,
-    ti.IsActive = ibd.IsActive,
+    ti.IsActive = CASE WHEN EXISTS (SELECT 1 FROM @temptable t WHERE t.Userid = ti.UserId) THEN ibd.IsActive ELSE 0 END,
     ti.IsAvailable = ibd.IsAvailable,
     ti.[Source] = ibd.[Source],
     ti.ModifiedBy = @ModifiedBy,
@@ -324,7 +334,11 @@ FROM
  [AIVerdict],  
  [IsSurchargeApprove])    
       
- SELECT distinct ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id as InterviewerId,  
+ SELECT distinct ibd.IRFId, ibd.UserId, ibd.PerSuccessRate,
+ -- An interviewer may only be ACTIVE on a channel while they belong to the channel's MAG. If the
+ -- interviewer is not (or no longer) in the MAG, force IsActive = 0 regardless of what was submitted.
+ CASE WHEN EXISTS (SELECT 1 FROM @temptable t WHERE t.Userid = ibd.UserId) THEN ibd.IsActive ELSE 0 END,
+ ibd.IsAvailable, InterviewerProfile.id as InterviewerId,  
  ibd.[Source], @ModifiedBy, ibd.IsCampaignActivity, ibd.CampaignId, ibd.OpenAIScreeningResponse, ibd.AIVerdict, ibd.IsSurchargeApprove  
  FROM @InterviewerBulkData ibd join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId    
  WHERE   
@@ -334,10 +348,12 @@ FROM
   WHERE ti.UserId = ibd.UserId AND ti.IRFId = ibd.IRFId  
  );  
 
- -- Update interviewers that already exist for this IRF (preserves id -> keeps audit log FK valid)
+ -- Update interviewers that already exist for this IRF (preserves id -> keeps audit log FK valid).
+ -- IsActive is forced to 0 when the interviewer no longer belongs to the channel's MAG, so an
+ -- interviewer removed from the MAG cannot be (re)activated on this channel.
  UPDATE ti SET
     ti.PerSuccessRate = ibd.PerSuccessRate,
-    ti.IsActive = ibd.IsActive,
+    ti.IsActive = CASE WHEN EXISTS (SELECT 1 FROM @temptable t WHERE t.Userid = ti.UserId) THEN ibd.IsActive ELSE 0 END,
     ti.IsAvailable = ibd.IsAvailable,
     ti.[Source] = ibd.[Source],
     ti.ModifiedBy = @ModifiedBy,

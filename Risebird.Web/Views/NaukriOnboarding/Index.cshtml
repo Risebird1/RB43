@@ -2922,6 +2922,13 @@
     /* ── M1: Employment Verification ── */
 
     $('#btnTriggerEV, #btnRetryEV').on('click', function () {
+        triggerEmploymentVerification(false);
+    });
+
+    // overrideIntent: when true the operator has explicitly chosen to bypass the intent-confirmation
+    // gate for this manually-handled prospect. Automation never uses this path, so intent stays
+    // mandatory for the automated pipeline.
+    function triggerEmploymentVerification(overrideIntent) {
         if (!currentRecordId || !currentRecord) return;
 
         var btn = $('#btnTriggerEV'); var retryBtn = $('#btnRetryEV');
@@ -2932,12 +2939,15 @@
         // Ask the server which EV path to take. LinkedIn-verified prospects skip Signzy entirely.
         $.ajax({
             url: '@Url.Action("PrepareEmploymentVerification", "NaukriOnboarding")', type: 'POST',
-            data: { __RequestVerificationToken: verificationToken, id: currentRecordId },
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId, overrideIntent: overrideIntent === true },
             success: function (prep) {
                 if (prep && prep.intentBlocked) {
-                    alert(prep.error);
                     btn.prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment');
                     $('#mStep1Subtitle').html('Verify the prospect\'s current employment via Signzy');
+                    // Manual flexibility: let the operator override the intent gate for this prospect.
+                    if (confirm(prep.error + '\n\nThis prospect is being handled manually. Override the intent check and run Employment Verification anyway?')) {
+                        triggerEmploymentVerification(true);
+                    }
                     return;
                 }
 
@@ -2964,7 +2974,7 @@
                 }
 
                 // No LinkedIn verdict → run Signzy/Surepass as usual.
-                runSignzyEV(btn, retryBtn);
+                runSignzyEV(btn, retryBtn, overrideIntent === true);
             },
             error: function () {
                 mMarkStep(1, 'failed', '<span class="text-danger">Could not determine verification path. Try again.</span>');
@@ -2972,9 +2982,9 @@
                 $('#mStep1Subtitle').html('Verify the prospect\'s current employment via Signzy');
             }
         });
-    });
+    }
 
-    function runSignzyEV(btn, retryBtn) {
+    function runSignzyEV(btn, retryBtn, overrideIntent) {
         var email = currentRecord.parsedEmail, phone = currentRecord.parsedPhone;
         if (!email) { alert('No email parsed. Complete Step 1 first.'); btn.prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment'); return; }
         if (!phone) { alert('No phone number parsed. EV requires a phone number.'); btn.prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment'); return; }
@@ -3009,7 +3019,7 @@
                 // Save EV result to DB
                 $.ajax({
                     url: '@Url.Action("SaveEmploymentResult", "NaukriOnboarding")', type: 'POST',
-                    data: { __RequestVerificationToken: verificationToken, id: currentRecordId, verified: verified, companyName: companyName, isEmployed: isEmployed, details: details }
+                    data: { __RequestVerificationToken: verificationToken, id: currentRecordId, verified: verified, companyName: companyName, isEmployed: isEmployed, details: details, overrideIntent: overrideIntent === true }
                 });
 
                 if (currentRecord) {
