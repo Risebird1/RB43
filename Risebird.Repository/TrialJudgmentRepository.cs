@@ -69,7 +69,8 @@ namespace Risebird.Repository
                         CandidateRating = context.CandidateRating,
                         JoinTimeMinutes = context.JoinTimeMinutes,
                         InterviewDurationMinutes = context.InterviewDurationMinutes,
-                        judgment.OverallVerdict
+                        judgment.OverallVerdict,
+                        judgment.Severity
                     },
                     commandType: CommandType.StoredProcedure,
                     commandTimeout: 30);

@@ -1,0 +1,31 @@
+@model Risebird.Entities.ViewModel.DriveIRFVM
+@using System.Linq
+@using Risebird.Entities.Constants
+@{
+    var selected = (Model.ActionsTaken ?? string.Empty)
+        .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+        .Select(x => x.Trim())
+        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+    var actionRefId = DriveWeekendActionRefs.BuildRefId(Model.IRFId, Model.WeekendStart);
+    var weekendStart = Model.WeekendStart.ToString("yyyy-MM-dd");
+}
+
+<div class="drive-actions-taken-wrap">
+    <select multiple
+            class="form-control multiselect row-actions"
+            data-reftype="@DriveWeekendActionRefs.RefType"
+            data-refid="@actionRefId"
+            data-weekend-start="@weekendStart">
+        @foreach (var option in DriveRowActions.Options)
+        {
+            if (selected.Contains(option.Key))
+            {
+                <option value="@option.Key" selected="selected">@option.Value</option>
+            }
+            else
+            {
+                <option value="@option.Key">@option.Value</option>
+            }
+        }
+    </select>
+</div>

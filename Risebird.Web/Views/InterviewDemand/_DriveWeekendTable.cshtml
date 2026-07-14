@@ -1,0 +1,97 @@
+@model IEnumerable<Risebird.Entities.ViewModel.DriveIRFVM>
+@using System.Linq
+@using System.Text.Json
+@{
+    var rows = Model?.ToList() ?? new List<Risebird.Entities.ViewModel.DriveIRFVM>();
+}
+
+<div class="drive-table-wrap">
+    <table class="table drive-table">
+        <thead>
+            <tr>
+                <th>IRF / Skill</th>
+                <th>Client</th>
+                <th>Demand</th>
+                <th>Unassigned</th>
+                <th title="Interviewers in IRF">IRF</th>
+                <th title="Interviewers in mapped MAG">MAG</th>
+                <th title="Interviewers in related MAGs">Rel.</th>
+                <th>Concurrency</th>
+                <th>Outreach</th>
+                <th>Actions taken</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var i in rows)
+            {
+                var irfNameJson = JsonSerializer.Serialize(i.IRFId ?? string.Empty);
+                var agNameJson = JsonSerializer.Serialize(i.AssessmentGroupName ?? string.Empty);
+                var unassignedTotal = i.UnassignedMorning + i.UnassignedEvening;
+                var unassignedClass = unassignedTotal > 0 ? "drive-unassigned-warn" : "drive-unassigned-ok";
+                <tr>
+                    <td>
+                        <div class="drive-irf-id">@i.IRFId</div>
+                        <div class="drive-irf-skill" title="@i.PrimarySkill">@i.PrimarySkill</div>
+                        @if (!string.IsNullOrEmpty(i.AssessmentGroupName))
+                        {
+                            <div class="drive-mag-name" title="@i.AssessmentGroupName">@i.AssessmentGroupName</div>
+                        }
+                    </td>
+                    <td>
+                        <div>@i.ClientName</div>
+                        @if (!string.IsNullOrEmpty(i.EndClientName))
+                        {
+                            <div class="drive-meta-sub">@i.EndClientName</div>
+                        }
+                    </td>
+                    <td>
+                        <span class="drive-badge drive-badge-m" title="Morning">M @i.ExpectedMorning</span>
+                        <span class="drive-badge drive-badge-e" title="Evening">E @i.ExpectedEvening</span>
+                        <span class="drive-badge drive-badge-total">@i.ExpectedTotal</span>
+                    </td>
+                    <td class="@unassignedClass">
+                        M @i.UnassignedMorning / E @i.UnassignedEvening
+                    </td>
+                    <td>
+                        @if (i.IrfIntId > 0)
+                        {
+                            <a class="drive-supply-link" href="javascript:void(0);" onclick="openDriveMembers('IRF', @i.IrfIntId, @i.IrfIntId, @irfNameJson)" title="View IRF interviewers">@i.InterviewersInIRF</a>
+                        }
+                        else
+                        {
+                            <span class="drive-supply-muted">@i.InterviewersInIRF</span>
+                        }
+                    </td>
+                    <td>
+                        @if (i.MAGId > 0)
+                        {
+                            <a class="drive-supply-link" href="javascript:void(0);" onclick="openDriveMembers('MAG', @i.MAGId, @i.IrfIntId, @irfNameJson, @agNameJson)" title="View MAG interviewers">@i.InterviewersInMAG</a>
+                        }
+                        else
+                        {
+                            <span class="drive-supply-muted">@i.InterviewersInMAG</span>
+                        }
+                    </td>
+                    <td>
+                        @if (i.MAGId > 0 && i.InterviewersInRelatedMAGs > 0)
+                        {
+                            <a class="drive-supply-link" href="javascript:void(0);" onclick="openDriveRelatedMagMembers(@i.MAGId, @i.IrfIntId, @irfNameJson)" title="View related MAG interviewers">@i.InterviewersInRelatedMAGs</a>
+                        }
+                        else
+                        {
+                            <span class="drive-supply-muted">@i.InterviewersInRelatedMAGs</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(i.ConcurrentInterview))
+                        {
+                            <span class="drive-concurrency" title="@i.ConcurrentInterview"><i class="fas fa-exclamation-triangle"></i> @i.ConcurrentInterview</span>
+                        }
+                    </td>
+                    <td>@await Html.PartialAsync("_DriveActions", i)</td>
+                    <td>@await Html.PartialAsync("_ActionsTaken", i)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

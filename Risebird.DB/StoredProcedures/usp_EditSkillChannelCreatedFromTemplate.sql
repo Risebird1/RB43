@@ -125,26 +125,29 @@ begin try
  --     FK_TransInterviewerAuditLog_TransInterviewer (the delete was blocked and the whole save
  --     rolled back), and
  -- (b) discarded audit history + any in-place edits to existing interviewers.
- -- It is now an upsert: existing rows are updated in place (id preserved, audit log intact),
- -- genuinely-new interviewers are inserted, and only genuinely-removed interviewers are deleted
- -- (after clearing their audit-log children, which is the sole FK referencing TransInterviewer).
+ -- It is now an upsert that NEVER hard-deletes a TransInterviewer row: existing rows are updated in
+ -- place (id preserved, audit log intact), genuinely-new interviewers are inserted, and interviewers
+ -- removed from the panel are SOFT-removed (IsActive = 0). We must never physically delete a row,
+ -- because interview history and several open-interview / Auto-QC / payout / reporting queries
+ -- INNER JOIN TransInterviewer; deleting a row would make that interviewer's past interviews for this
+ -- channel disappear from those fetches.
  Declare @Assessmentid int  
 Select @Assessmentid=AssessmentGroupid From IRF where id=@id  
 Declare @temptable Table(Userid int)  
 Insert into @temptable Select Userid from InterviewerProfile cross apply string_split(AssessmentGroupid,',') where value=@Assessmentid  
 
- -- Interviewers attached to this IRF that were active or belong to the MAG but were NOT resubmitted
- -- => genuinely removed (mirrors the old "delete IsActive=1 + delete MAG members" scope).
- Declare @removedInterviewerIds Table(id int)
- Insert into @removedInterviewerIds(id)
-  Select b.id FROM TransInterviewer b
+ -- Interviewers currently active on this IRF but NOT resubmitted => removed from the panel in the UI.
+ -- Soft-remove them (deactivate) instead of deleting. Guarded so an empty/absent bulk TVP can never
+ -- mass-deactivate an existing panel.
+ IF EXISTS (SELECT 1 FROM @InterviewerBulkData)
+ BEGIN
+  UPDATE b SET b.IsActive = 0, b.IsAvailable = 0, b.ModifiedAt = @ModifiedOn
+  FROM TransInterviewer b
   WHERE b.IRFId=@id
-    AND (b.IsActive = 1 OR EXISTS (SELECT 1 FROM @temptable f WHERE f.Userid = b.Userid))
+    AND ISNULL(b.IsActive, 0) = 1
     AND NOT EXISTS (SELECT 1 FROM @InterviewerBulkData i WHERE i.UserId = b.UserId AND i.IRFId = b.IRFId)
-
- DELETE FROM TransInterviewerAuditLog WHERE TransInterviewerId IN (SELECT id FROM @removedInterviewerIds)
- DELETE FROM TransInterviewer WHERE id IN (SELECT id FROM @removedInterviewerIds)
- --END: Delete interviewers
+ END
+ --END: Soft-remove interviewers
   
  INSERT INTO [dbo].[TransInterviewer](    
  [IRFId] ,    
@@ -154,7 +157,11 @@ Insert into @temptable Select Userid from InterviewerProfile cross apply string_
  [IsAvailable],  
  [InterviewerId])    
       
- SELECT distinct @id, ibd.UserId, ibd.PerSuccessRate, ibd.IsActive, ibd.IsAvailable, InterviewerProfile.id   
+ SELECT distinct @id, ibd.UserId, ibd.PerSuccessRate,
+ -- An interviewer may only be ACTIVE on a channel while they belong to the channel's MAG. If the
+ -- interviewer is not (or no longer) in the MAG, force IsActive = 0 regardless of what was submitted.
+ CASE WHEN EXISTS (SELECT 1 FROM @temptable t WHERE t.Userid = ibd.UserId) THEN ibd.IsActive ELSE 0 END,
+ ibd.IsAvailable, InterviewerProfile.id   
  as InterviewerId FROM @InterviewerBulkData ibd join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId    
  WHERE 
 NOT EXISTS (
@@ -163,10 +170,12 @@ NOT EXISTS (
 	WHERE ti.UserId = ibd.UserId AND ti.IRFId = ibd.IRFId
 );
 
- -- Update interviewers that already exist for this IRF (preserves id -> keeps audit log FK valid)
+ -- Update interviewers that already exist for this IRF (preserves id -> keeps audit log FK valid).
+ -- IsActive is forced to 0 when the interviewer no longer belongs to the channel's MAG, so an
+ -- interviewer removed from the MAG cannot be (re)activated on this channel.
  UPDATE ti SET
     ti.PerSuccessRate = ibd.PerSuccessRate,
-    ti.IsActive = ibd.IsActive,
+    ti.IsActive = CASE WHEN EXISTS (SELECT 1 FROM @temptable t WHERE t.Userid = ti.UserId) THEN ibd.IsActive ELSE 0 END,
     ti.IsAvailable = ibd.IsAvailable
  FROM [dbo].[TransInterviewer] ti
  JOIN @InterviewerBulkData ibd ON ibd.UserId = ti.UserId AND ibd.IRFId = ti.IRFId;

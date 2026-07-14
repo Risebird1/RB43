@@ -1560,7 +1560,7 @@
                                                                                         @Html.TextBoxFor(m => m.InterviewerCollection[i].ClientAction, new { @class = "form-control", @style = "width:100px;", @readonly = "readonly" })
                                                                                     </td>
                                                                                     <td class="text-center">
-                                                                                        @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive)
+                                                                                        @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsActive, new { @onclick = "return onInterviewerActiveToggle(this);" })
                                                                                     </td>
                                                                                     <td class="text-center">
                                                                                         @Html.CheckBoxFor(m => m.InterviewerCollection[i].IsAvailable)
@@ -2346,6 +2346,27 @@
 
         }
 
+    }
+
+    // UserIds eligible to be ACTIVE on this channel (i.e. still part of its MAG). Interviewers listed
+    // on the channel but not in this set have been removed from the MAG and cannot be (re)activated.
+    var magMemberUserIds = [@Html.Raw(string.Join(",", (ViewBag.MagMemberUserIds as System.Collections.Generic.IEnumerable<int>) ?? new System.Collections.Generic.List<int>()))];
+
+    function onInterviewerActiveToggle(chk) {
+        // Deactivating is always allowed; only guard activation.
+        if (!chk.checked) { return true; }
+        var $row = $(chk).closest('tr');
+        var $sel = $row.find('select[id$="__UserId"]');
+        var rawUserId = $sel.length ? $sel.val() : $row.find('input[type="hidden"][id$="__UserId"]').val();
+        var userId = parseInt(rawUserId, 10);
+        if (userId && magMemberUserIds.indexOf(userId) === -1) {
+            chk.checked = false;
+            var email = ($sel.find('option:selected').text() || '').trim();
+            var who = email !== '' ? email : 'This interviewer';
+            alert(who + ' could not be activated because it is no longer a part of the MAG (Master Assessment Group) of this skill channel.');
+            return false;
+        }
+        return true;
     }
 
 </script>
