@@ -120,7 +120,7 @@ namespace Risebird.Business
                     Success = isValid,
                     IsValid = isValid,
                     PanStatus = panStatus,
-                    NameAtPan = json["name_at_pan"]?.ToString(),
+                    NameAtPan = json["name_pan_card"]?.ToString(),
                     NameMatchResult = nameMatchResult,
                     NameMatchScore = json["name_match_score"]?.ToString(),
                     ReferenceId = json["reference_id"]?.Value<long?>()
