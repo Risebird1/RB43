@@ -117,4 +117,55 @@ namespace Risebird.Entities.ViewModel
         public int PendingFlagsCount { get; set; }
         public DateTime? LastBackfillAtUtc { get; set; }
     }
+
+    public class IrfAuditInterviewerRiskRowVm
+    {
+        public int TransInterviewerId { get; set; }
+        public int InterviewerId { get; set; }
+        public string InterviewerCodedId { get; set; }
+        public string InterviewerEmail { get; set; }
+        public int IrfId { get; set; }
+        public string IrfName { get; set; }
+        public int TotalCompleted { get; set; }
+        public int RiskInterviews { get; set; }
+        public int P0Count { get; set; }
+        public int P1Count { get; set; }
+        public int P2Count { get; set; }
+        public int P3Count { get; set; }
+        public int P4Count { get; set; }
+        public int P5Count { get; set; }
+        public decimal? RiskRatio { get; set; }
+        public decimal? HighSevRatio { get; set; }
+        public int? WorstSeverityInterviewId { get; set; }
+        public string Recommendation { get; set; }
+    }
+
+    /// <summary>
+    /// Per-interview RiskCategory detail for IRF audit drill-down (Severity + Description + SeverityBreakdown).
+    /// </summary>
+    public class IrfAuditInterviewerRiskDetailVm
+    {
+        public int TransInterviewerId { get; set; }
+        public int InterviewId { get; set; }
+        public DateTime? InterviewDate { get; set; }
+        public string InterviewerRaw { get; set; }
+        public string Severity { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string SeverityBreakdown { get; set; }
+    }
+
+    public class IrfAuditRiskBackfillResultVm
+    {
+        public bool Ok { get; set; }
+        public string Message { get; set; }
+        public int Processed { get; set; }
+        public int Remaining { get; set; }
+    }
+
+    public class IrfAuditRiskRemoveResultVm
+    {
+        public bool Ok { get; set; }
+        public string Message { get; set; }
+    }
 }

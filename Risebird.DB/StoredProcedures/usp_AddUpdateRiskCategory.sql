@@ -10,6 +10,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+-- Grades a single interview (@InterviewId) into RiskCategory with P0–P5 severity.
+-- Date-windowing is the caller's job (audit candidates / list views), not this producer.
 CREATE PROCEDURE [dbo].[usp_AddUpdateRiskCategory]
     @InterviewId INT
 AS
@@ -60,7 +62,6 @@ BEGIN
         JOIN PlanTypeChargesMaster pt ON pt.CountryType = IRF.JobCountry
              AND pt.PlanTypeEnumValue = IRF.Heuristicsscore AND IRF.CompanyType = pt.CompanyType
         WHERE im.id = @InterviewId AND ic.MeetingStatus = 4
-          AND DATEDIFF(DAY, im.interviewDate, GETDATE()) < 30
           AND (ic.VideoDuration - pt.DurationSelectedMin) > (-pt.DurationSelectedMin)
           AND (ic.VideoDuration - pt.DurationSelectedMin) < -@DeficitMoreThan10_Min
         UNION ALL
@@ -71,7 +72,6 @@ BEGIN
         FROM InterviewMeetings im JOIN InterviewComments ic ON ic.InterviewId = im.id
         JOIN IRF ON IRF.IRFId = im.IRFId JOIN Client cl ON cl.id = IRF.ClientId
         WHERE im.id = @InterviewId AND ic.MeetingStatus IN (4,6,7,8)
-          AND DATEDIFF(DAY, im.interviewDate, GETDATE()) < 30
           AND NULLIF(ic.AITranscriptAnalysisScore,0) < 4
         UNION ALL
         -- #3 CandidateRating
@@ -82,7 +82,7 @@ BEGIN
         JOIN IRF ON IRF.IRFId = im.IRFId JOIN Client cl ON cl.id = IRF.ClientId
         JOIN CandidateFeedbackDetails cfd ON cfd.InterviewId = im.id
         WHERE im.id = @InterviewId AND ic.MeetingStatus IN (4,6,7,8)
-          AND DATEDIFF(DAY, im.interviewDate, GETDATE()) < 30 AND cfd.Rating < 4
+          AND cfd.Rating < 4
         UNION ALL
         -- #4 Selectdeficit
         SELECT im.id, 'Selectdeficit', 'Under Review',
@@ -93,7 +93,7 @@ BEGIN
         JOIN PlanTypeChargesMaster pt ON pt.CountryType = IRF.JobCountry
              AND pt.PlanTypeEnumValue = IRF.Heuristicsscore AND IRF.CompanyType = pt.CompanyType
         WHERE im.id = @InterviewId AND ic.MeetingStatus IN (4,6,7,8)
-          AND DATEDIFF(DAY, im.interviewDate, GETDATE()) < 30 AND pt.DurationSelectedMin > 0
+          AND pt.DurationSelectedMin > 0
           AND (pt.DurationSelectedMin * 2 / 3 > ic.VideoDuration) AND ic.InterviewStatus IN (2,4)
         UNION ALL
         -- #5 Rejectdeficit
@@ -105,7 +105,7 @@ BEGIN
         JOIN PlanTypeChargesMaster pt ON pt.CountryType = IRF.JobCountry
              AND pt.PlanTypeEnumValue = IRF.Heuristicsscore AND IRF.CompanyType = pt.CompanyType
         WHERE im.id = @InterviewId AND ic.MeetingStatus IN (4,6,7,8)
-          AND DATEDIFF(DAY, im.interviewDate, GETDATE()) < 30 AND pt.DurationSelectedMin > 0
+          AND pt.DurationSelectedMin > 0
           AND (pt.DurationSelectedMin * 4 / 9 > ic.VideoDuration) AND ic.InterviewStatus IN (1,3,5)
         UNION ALL
         -- #6 AIRedo
@@ -147,7 +147,7 @@ BEGIN
         OUTER APPLY (SELECT MAX(Joinedon) AS Joinedon FROM InterviewMeetingsJoinTime WHERE Interviewid = im.id) imj
         OUTER APPLY (SELECT MAX(PerformedOn) AS PerformedOn FROM PageClickDetails
                      WHERE ButtonAction='JoinMeeting' AND Interviewid=im.id AND ProfileType='Candidate') imc
-        WHERE im.id = @InterviewId AND DATEDIFF(DAY, im.interviewDate, GETDATE()) < 30
+        WHERE im.id = @InterviewId
           AND im.confirmationStatus = 1
           AND im.ZoomMeetingId IN (SELECT DISTINCT Meetingid FROM ZoomMeetingTransmission)
           AND (imj.Joinedon IS NULL OR imc.PerformedOn IS NULL)
