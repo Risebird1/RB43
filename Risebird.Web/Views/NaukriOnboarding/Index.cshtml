@@ -2934,9 +2934,9 @@
         var btn = $('#btnTriggerEV'); var retryBtn = $('#btnRetryEV');
         btn.show().prop('disabled',true).html('<i class="fas fa-spinner fa-spin me-1"></i>Verifying...');
         retryBtn.hide();
-        $('#mStep1Subtitle').text('Checking verification path...');
+        $('#mStep1Subtitle').text('Checking eligibility...');
 
-        // Ask the server which EV path to take. LinkedIn-verified prospects skip Signzy entirely.
+        // Intent/eligibility gate. Signzy is the primary EV method; LinkedIn is a server-side fallback.
         $.ajax({
             url: '@Url.Action("PrepareEmploymentVerification", "NaukriOnboarding")', type: 'POST',
             data: { __RequestVerificationToken: verificationToken, id: currentRecordId, overrideIntent: overrideIntent === true },
@@ -2951,33 +2951,11 @@
                     return;
                 }
 
-                if (prep && prep.autoVerifiedViaLinkedIn) {
-                    var company = prep.companyName || '';
-                    if (prep.verified && prep.isEmployed) {
-                        var liHtml = '<span class="text-success"><i class="fab fa-linkedin me-1"></i>Verified via LinkedIn</span>';
-                        if (company) liHtml += ' &mdash; <strong>' + $('<span>').text(company).html() + '</strong>';
-                        liHtml += ' <span class="employed-yes">(Employed)</span>';
-                        liHtml += '<br/><span style="font-size:11px;" class="text-muted">Signzy skipped — background confirmed by LinkedIn verification.</span>';
-                        mMarkStep(1, 'completed', liHtml);
-                        $('#mgmCompany').text(company);
-                        $('#mgmEmployed').html('<span class="employed-yes">Yes</span>');
-                        if (currentRecord) {
-                            currentRecord.employmentVerified = true;
-                            currentRecord.employmentCompanyName = company;
-                            currentRecord.employmentIsEmployed = true;
-                        }
-                    } else {
-                        mMarkStep(1, 'failed', '<span class="text-danger"><i class="fab fa-linkedin me-1"></i>LinkedIn verification did not confirm the prospect &mdash; Not Qualified.</span>');
-                        $('#mgmEmployed').html('<span class="employed-no">No</span>');
-                    }
-                    return;
-                }
-
-                // No LinkedIn verdict → run Signzy/Surepass as usual.
+                // Primary: run Signzy. LinkedIn fallback is applied server-side if Signzy fails.
                 runSignzyEV(btn, retryBtn, overrideIntent === true);
             },
             error: function () {
-                mMarkStep(1, 'failed', '<span class="text-danger">Could not determine verification path. Try again.</span>');
+                mMarkStep(1, 'failed', '<span class="text-danger">Could not start verification. Try again.</span>');
                 btn.prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment');
                 $('#mStep1Subtitle').html('Verify the prospect\'s current employment via Signzy');
             }
@@ -2986,50 +2964,81 @@
 
     function runSignzyEV(btn, retryBtn, overrideIntent) {
         var email = currentRecord.parsedEmail, phone = currentRecord.parsedPhone;
-        if (!email) { alert('No email parsed. Complete Step 1 first.'); btn.prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment'); return; }
-        if (!phone) { alert('No phone number parsed. EV requires a phone number.'); btn.prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment'); return; }
 
-        $('#mStep1Subtitle').text('Running employment verification...');
+        // Signzy needs a phone number. If it's missing, Signzy can't run — treat as a Signzy failure and
+        // let the server apply the LinkedIn fallback.
+        if (!phone) {
+            saveEvResult(false, '', false, 'No phone number available for Signzy.', btn, retryBtn, overrideIntent);
+            return;
+        }
+
+        $('#mStep1Subtitle').text('Running employment verification (Signzy)...');
 
         $.ajax({
             url: '/Aadhaar/EvVerification', type: 'POST', timeout: 60000,
             data: { mobilenumber: phone, candidateemail: email },
             success: function (result) {
-                var verified = true;
                 var companyName = result.companyName || '';
                 var isEmployed = (result.message == null && companyName !== '');
                 var details = result.message || '';
+                // verified reflects Signzy running & finding a qualifying employer; the server decides the
+                // final outcome (including LinkedIn fallback).
+                saveEvResult(isEmployed, companyName, isEmployed, details, btn, retryBtn, overrideIntent);
+            },
+            error: function () {
+                saveEvResult(false, '', false, 'Signzy request failed.', btn, retryBtn, overrideIntent);
+            }
+        });
+    }
 
-                if (isEmployed) {
-                    var evHtml = '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Verified</span>';
-                    evHtml += ' &mdash; <strong>' + $('<span>').text(companyName).html() + '</strong>';
+    // Posts the Signzy outcome to the server, which applies the LinkedIn fallback when Signzy did not
+    // pass, then renders the FINAL decision returned by the server.
+    function saveEvResult(verified, companyName, isEmployed, details, btn, retryBtn, overrideIntent) {
+        $('#mStep1Subtitle').text('Saving verification result...');
+        $.ajax({
+            url: '@Url.Action("SaveEmploymentResult", "NaukriOnboarding")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId, verified: verified, companyName: companyName, isEmployed: isEmployed, details: details, overrideIntent: overrideIntent === true },
+            success: function (res) {
+                if (res && res.intentBlocked) {
+                    btn.prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment');
+                    $('#mStep1Subtitle').html('Verify the prospect\'s current employment via Signzy');
+                    if (confirm((res.error || 'Intent not confirmed.') + '\n\nOverride the intent check and run Employment Verification anyway?')) {
+                        triggerEmploymentVerification(true);
+                    }
+                    return;
+                }
+
+                var passed = res && res.verified && res.isEmployed;
+                var comp = (res && res.companyName) || companyName || '';
+                if (passed) {
+                    var src = res.viaLinkedInFallback
+                        ? '<span class="text-success"><i class="fab fa-linkedin me-1"></i>Verified via LinkedIn (fallback)</span>'
+                        : '<span class="text-success"><i class="fas fa-check-circle me-1"></i>Verified</span>';
+                    var evHtml = src;
+                    if (comp) evHtml += ' &mdash; <strong>' + $('<span>').text(comp).html() + '</strong>';
                     evHtml += ' <span class="employed-yes">(Employed)</span>';
+                    if (res.viaLinkedInFallback) evHtml += '<br/><span style="font-size:11px;" class="text-muted">Signzy did not confirm employment — accepted via LinkedIn verification (confidence &ge; 80).</span>';
                     mMarkStep(1, 'completed', evHtml);
-                    $('#mgmCompany').text(companyName);
+                    $('#mgmCompany').text(comp);
                     $('#mgmEmployed').html('<span class="employed-yes">Yes</span>');
+                    if (currentRecord) {
+                        currentRecord.employmentVerified = true;
+                        currentRecord.employmentCompanyName = comp;
+                        currentRecord.employmentIsEmployed = true;
+                    }
                 } else {
                     var evHtml2 = '<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>Verification completed</span>';
                     evHtml2 += ' &mdash; <span class="employed-no">Not Employed / Not Found</span>';
+                    evHtml2 += '<br/><span style="font-size:11px;">Signzy did not confirm employment and no qualifying LinkedIn verification (link + confidence &ge; 80) was available.</span>';
                     if (details) evHtml2 += '<br/><span style="font-size:11px;">' + $('<span>').text(details).html() + '</span>';
                     mMarkStep(1, 'failed', evHtml2);
                     btn.hide(); retryBtn.show().prop('disabled', false);
                     $('#mgmEmployed').html('<span class="employed-no">No</span>');
-                }
-
-                // Save EV result to DB
-                $.ajax({
-                    url: '@Url.Action("SaveEmploymentResult", "NaukriOnboarding")', type: 'POST',
-                    data: { __RequestVerificationToken: verificationToken, id: currentRecordId, verified: verified, companyName: companyName, isEmployed: isEmployed, details: details, overrideIntent: overrideIntent === true }
-                });
-
-                if (currentRecord) {
-                    currentRecord.employmentVerified = true;
-                    currentRecord.employmentCompanyName = companyName;
-                    currentRecord.employmentIsEmployed = isEmployed;
+                    if (currentRecord) { currentRecord.employmentIsEmployed = false; }
                 }
             },
             error: function () {
-                mMarkStep(1, 'failed', '<span class="text-danger">EV request failed. Try again.</span>');
+                mMarkStep(1, 'failed', '<span class="text-danger">Failed to save verification result. Try again.</span>');
                 btn.prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment');
                 $('#mStep1Subtitle').html('Verify the prospect\'s current employment via Signzy');
             }

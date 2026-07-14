@@ -618,31 +618,28 @@ namespace Risebird.AzureTimerFunctions
             await _repository.UpdateAutomationStatusAsync(rec.Id, "AutoOnboarding");
 
             // ── Gate 1: Employment Verification (must PASS) ──────────────────────────
-            // When the prospect came through the "LinkedIn Verified" Relay flow, the LinkedIn
-            // background check already established the person is genuine and currently employed in
-            // the stated role. In that case we SKIP Signzy/Surepass and satisfy EV from the LinkedIn
-            // verdict. Signzy/Surepass only runs when the LinkedIn verdict is absent (any of the three
-            // LinkedIn fields is null).
+            // Signzy is the PRIMARY employment-verification check. If Signzy does not pass (for any
+            // reason — no phone, not configured, API error, blacklisted company, exit marked, or no
+            // records), we FALL BACK to the LinkedIn background verdict sent by the Relay agent: when a
+            // LinkedIn profile link is present with confidence >= 80, we accept the prospect as employed.
+            // (Surepass is not used for EV at this time.)
             if (rec.EmploymentVerified != true)
             {
-                bool passed; string companyName; bool isEmployed; string message; string historyPrefix;
+                var ev = await RunEmploymentVerificationAsync(rec.ParsedEmail, rec.ParsedPhone);
+                bool passed        = ev.passed;
+                string companyName = ev.companyName;
+                bool isEmployed    = ev.isEmployed;
+                string message     = ev.message;
+                string historyPrefix = "Auto-EV (Signzy)";
 
-                if (HasLinkedInVerdict(rec))
+                // Fallback: LinkedIn, only when Signzy did not pass.
+                if (!passed && LinkedInFallbackPasses(rec))
                 {
-                    passed        = string.Equals(rec.LinkedInMatch?.Trim(), "YES", StringComparison.OrdinalIgnoreCase);
-                    companyName   = ExtractCompanyFromRole(rec.CurrentRole) ?? rec.EmploymentCompanyName;
-                    isEmployed    = passed;
-                    message       = $"Satisfied by LinkedIn background verification (match={rec.LinkedInMatch}, confidence={rec.LinkedInConfidence}). Profile: {rec.LinkedInUrl}";
-                    historyPrefix = "Auto-EV skipped (LinkedIn-verified)";
-                }
-                else
-                {
-                    var ev = await RunEmploymentVerificationAsync(rec.ParsedEmail, rec.ParsedPhone);
-                    passed        = ev.passed;
-                    companyName   = ev.companyName;
-                    isEmployed    = ev.isEmployed;
-                    message       = ev.message;
-                    historyPrefix = "Auto-EV";
+                    passed        = true;
+                    isEmployed    = true;
+                    companyName   = companyName ?? ExtractCompanyFromRole(rec.CurrentRole);
+                    message       = $"Signzy did not pass ({ev.message}); accepted via LinkedIn fallback (confidence {rec.LinkedInConfidence}). Profile: {rec.LinkedInUrl}";
+                    historyPrefix = "Auto-EV (LinkedIn fallback)";
                 }
 
                 await _repository.UpdateEmploymentVerificationAsync(rec.Id, passed, companyName, isEmployed, message);
@@ -852,16 +849,20 @@ namespace Risebird.AzureTimerFunctions
             }
         }
 
+        // Minimum LinkedIn confidence to accept a prospect as employed via the fallback path.
+        private const int LinkedInFallbackMinConfidence = 80;
+
         /// <summary>
-        /// True when the prospect carries a complete LinkedIn background-verification verdict (all three
-        /// LinkedIn fields populated by the "LinkedIn Verified" Relay flow). When true, EV is satisfied
-        /// from LinkedIn and Signzy/Surepass is skipped; when false, EV runs normally.
+        /// True when the LinkedIn background verdict is strong enough to accept the prospect as employed
+        /// as a FALLBACK to Signzy: a LinkedIn profile link must be present (not empty / "None") and the
+        /// confidence must be >= 80. Used only after Signzy fails to pass.
         /// </summary>
-        private static bool HasLinkedInVerdict(Entities.ViewModel.NaukriProspectiveInterviewerVM rec)
+        private static bool LinkedInFallbackPasses(Entities.ViewModel.NaukriProspectiveInterviewerVM rec)
             => rec != null
                && !string.IsNullOrWhiteSpace(rec.LinkedInUrl)
-               && !string.IsNullOrWhiteSpace(rec.LinkedInMatch)
-               && rec.LinkedInConfidence.HasValue;
+               && !string.Equals(rec.LinkedInUrl.Trim(), "None", StringComparison.OrdinalIgnoreCase)
+               && rec.LinkedInConfidence.HasValue
+               && rec.LinkedInConfidence.Value >= LinkedInFallbackMinConfidence;
 
         /// <summary>
         /// Best-effort extraction of the employer name from a "designation at company" style current-role

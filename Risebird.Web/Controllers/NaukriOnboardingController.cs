@@ -720,12 +720,11 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        // ── Step 2: Decide EV path (LinkedIn-verified prospects skip Signzy/Surepass) ────
-        // The client calls this BEFORE running the client-side Signzy call. When the prospect came
-        // through the "LinkedIn Verified" Relay flow (all three LinkedIn fields populated), the LinkedIn
-        // background check already established a genuine, currently-employed person, so we satisfy EV
-        // from that verdict here and tell the client to skip Signzy. Otherwise we tell the client to run
-        // Signzy/Surepass as usual (its result is then saved via SaveEmploymentResult).
+        // ── Step 2: Intent/eligibility gate before Employment Verification ────
+        // The client calls this BEFORE running the client-side Signzy call. Signzy is the PRIMARY EV
+        // method; this endpoint only enforces the intent gate (with an operator override) and then tells
+        // the client to run Signzy. If Signzy later fails, SaveEmploymentResult applies the LinkedIn
+        // fallback. (Surepass is not used for EV at this time.)
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -759,43 +758,9 @@ namespace Risebird.Web.Controllers
                         $"Operator manually bypassed the intent gate to run Employment Verification (intent was '{(string.IsNullOrEmpty(record.Intent) ? "not confirmed" : record.Intent)}').", ovUser);
                 }
 
-                // No LinkedIn verdict → fall back to Signzy/Surepass on the client.
-                if (!HasLinkedInVerdict(record))
-                    return Json(new { success = true, runSignzy = true });
-
-                // LinkedIn verdict present → satisfy EV from it and skip Signzy.
-                bool verified   = string.Equals(record.LinkedInMatch?.Trim(), "YES", StringComparison.OrdinalIgnoreCase);
-                string company  = ExtractCompanyFromRole(record.CurrentRole) ?? record.EmploymentCompanyName;
-                bool isEmployed = verified;
-                string details  = $"Satisfied by LinkedIn background verification (match={record.LinkedInMatch}, confidence={record.LinkedInConfidence}). Profile: {record.LinkedInUrl}";
-
-                var ok = await _repository.UpdateEmploymentVerificationAsync(id, verified, company, isEmployed, details);
-                if (ok)
-                {
-                    var user = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
-                    if (verified)
-                    {
-                        await _repository.InsertHistoryAsync(id, "EmploymentVerification", "—",
-                            $"EV skipped — satisfied by LinkedIn verification (match={record.LinkedInMatch}, confidence={record.LinkedInConfidence}). Company: {company ?? "N/A"}. Profile: {record.LinkedInUrl}", user);
-                        await _repository.AdvanceFunnelStageAsync(id, "EmploymentVerified", "InProgress");
-                    }
-                    else
-                    {
-                        await _repository.InsertHistoryAsync(id, "NotQualified", "—",
-                            $"LinkedIn verification did not confirm the prospect (match={record.LinkedInMatch}). Funnel → Not Qualified.", user);
-                        await _repository.SetFunnelOutcomeAsync(id, "NotQualified", "Closed");
-                    }
-                }
-
-                return Json(new
-                {
-                    success = ok,
-                    autoVerifiedViaLinkedIn = true,
-                    verified,
-                    isEmployed,
-                    companyName = company,
-                    details
-                });
+                // Signzy is primary — always run it on the client. LinkedIn fallback is applied server-side
+                // in SaveEmploymentResult only if Signzy does not pass.
+                return Json(new { success = true, runSignzy = true });
             }
             catch (Exception ex)
             {
@@ -804,16 +769,20 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        // Minimum LinkedIn confidence to accept a prospect as employed via the fallback path.
+        private const int LinkedInFallbackMinConfidence = 80;
+
         /// <summary>
-        /// True when the prospect carries a complete LinkedIn background-verification verdict (all three
-        /// LinkedIn fields populated by the "LinkedIn Verified" Relay flow). When true, EV is satisfied
-        /// from LinkedIn and Signzy/Surepass is skipped; when false, EV runs normally.
+        /// True when the LinkedIn background verdict is strong enough to accept the prospect as employed
+        /// as a FALLBACK to Signzy: a LinkedIn profile link must be present (not empty / "None") and the
+        /// confidence must be >= 80. Used only after Signzy fails to pass.
         /// </summary>
-        private static bool HasLinkedInVerdict(NaukriProspectiveInterviewerVM rec)
+        private static bool LinkedInFallbackPasses(NaukriProspectiveInterviewerVM rec)
             => rec != null
                && !string.IsNullOrWhiteSpace(rec.LinkedInUrl)
-               && !string.IsNullOrWhiteSpace(rec.LinkedInMatch)
-               && rec.LinkedInConfidence.HasValue;
+               && !string.Equals(rec.LinkedInUrl.Trim(), "None", StringComparison.OrdinalIgnoreCase)
+               && rec.LinkedInConfidence.HasValue
+               && rec.LinkedInConfidence.Value >= LinkedInFallbackMinConfidence;
 
         /// <summary>
         /// Best-effort extraction of the employer name from a "designation at company" style current-role
@@ -855,18 +824,35 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, error = intentMsg, intentBlocked = true });
                 }
 
+                // Signzy is the primary check. It qualifies ONLY when it ran successfully AND the prospect
+                // is currently employed.
+                bool signzyPassed = verified && isEmployed;
+
+                // Fallback: if Signzy did not pass, accept the prospect via the LinkedIn verdict when a
+                // profile link is present with confidence >= 80.
+                bool viaLinkedInFallback = false;
+                if (!signzyPassed && LinkedInFallbackPasses(record))
+                {
+                    verified   = true;
+                    isEmployed = true;
+                    if (string.IsNullOrWhiteSpace(companyName))
+                        companyName = ExtractCompanyFromRole(record.CurrentRole);
+                    details = $"Signzy did not pass ({(string.IsNullOrWhiteSpace(details) ? "no qualifying result" : details)}); accepted via LinkedIn fallback (confidence {record.LinkedInConfidence}). Profile: {record.LinkedInUrl}";
+                    viaLinkedInFallback = true;
+                }
+
                 var ok = await _repository.UpdateEmploymentVerificationAsync(id, verified, companyName, isEmployed, details);
                 if (ok)
                 {
                     var user = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
                     string evSummary = $"Company: {companyName ?? "N/A"}, Employed: {(isEmployed ? "Yes" : "No")}";
 
-                    // EV qualifies ONLY when verification ran successfully AND the prospect is currently
-                    // employed. A failed verification OR isEmployed = false → terminal 'Not Qualified'.
+                    // Qualifies when Signzy passed OR the LinkedIn fallback accepted the prospect.
                     bool qualified = verified && isEmployed;
                     if (qualified)
                     {
-                        await _repository.InsertHistoryAsync(id, "EmploymentVerification", "—", $"{evSummary} — PASSED", user);
+                        string src = viaLinkedInFallback ? " (via LinkedIn fallback)" : " (via Signzy)";
+                        await _repository.InsertHistoryAsync(id, "EmploymentVerification", "—", $"{evSummary} — PASSED{src}. {details}", user);
                         await _repository.AdvanceFunnelStageAsync(id, "EmploymentVerified", "InProgress");
                     }
                     else
@@ -874,11 +860,11 @@ namespace Risebird.Web.Controllers
                         string reason = !verified ? "verification could not confirm a qualifying employer"
                                                   : "prospect is not currently employed";
                         await _repository.InsertHistoryAsync(id, "NotQualified", "—",
-                            $"{evSummary} — Employment Verification FAILED ({reason}). Funnel → Not Qualified.", user);
+                            $"{evSummary} — Employment Verification FAILED ({reason}); LinkedIn fallback not applicable. Funnel → Not Qualified.", user);
                         await _repository.SetFunnelOutcomeAsync(id, "NotQualified", "Closed");
                     }
                 }
-                return Json(new { success = ok, verified, isEmployed });
+                return Json(new { success = ok, verified, isEmployed, viaLinkedInFallback, companyName });
             }
             catch (Exception ex)
             {
