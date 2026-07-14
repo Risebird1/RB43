@@ -18,5 +18,8 @@ namespace Risebird.Entities.ViewModel
         public int RequiredDuration { get; set; }
         public string AudioTranscriptFileLink { get; set; }
         public int MeetingStatus { get; set; }
+        public int? CandidateRating { get; set; }
+        public bool CandidateRedoRequest { get; set; }
+        public string InterviewerVideoOff { get; set; }
     }
 }
