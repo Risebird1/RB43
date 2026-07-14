@@ -53,7 +53,10 @@ namespace Risebird.Business.Interface
         int GetUserId(string emailId, string profile = null);
         string GetRecruiterDomain(int userId);
         List<InterviewVM> GetUpComingInterviewList();
+        List<InterviewVM> GetWeekendInterviewList(DateTime start, DateTime end);
+        Dictionary<string, DriveIRFMetadataRecord> GetDriveIRFMetadata(IEnumerable<string> irfIds);
         List<IRFVm> GetUpComingIRFList();
+        int GetIRFIdByIRFName(string irfId);
         Task<bool> PauseIRF(int irfId, string irfName, string emailid);
         bool PlayIRF(int irfId, string irfName);
         Task<IEnumerable<IRF>> GetAllIRFs(string emailId, string profileName, int? pageNumber, string searchValue = null, IRFFilter filterModel = null);

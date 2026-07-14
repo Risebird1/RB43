@@ -1,0 +1,45 @@
+@model Risebird.Entities.ViewModel.DriveIRFVM
+@using System.Text.Json
+@using Risebird.Entities.Constants
+@{
+    var agName = Model.AssessmentGroupName ?? string.Empty;
+    var encAgName = Uri.EscapeDataString(agName);
+    var irfIdJs = Model.IRFId ?? string.Empty;
+    var irfIdJson = JsonSerializer.Serialize(irfIdJs);
+    var agNameJs = JsonSerializer.Serialize(agName);
+    var actionRefId = DriveWeekendActionRefs.BuildRefId(Model.IRFId, Model.WeekendStart);
+    var actionRefJson = JsonSerializer.Serialize(actionRefId);
+    var magDisabled = Model.MAGId <= 0;
+    var irfDisabled = Model.IrfIntId <= 0;
+}
+
+<div class="drive-actions-toolbar" role="group" aria-label="Drive actions for @Model.IRFId">
+    <button type="button" class="drive-action-btn" title="@(magDisabled ? "No MAG mapped on this IRF" : "MAG batch call")" @(magDisabled ? "disabled" : "")
+            onclick="plivoBatchCall(@Model.MAGId, 'MAG', @irfIdJson, @actionRefJson)">
+        <i class="fas fa-phone-volume"></i>
+    </button>
+    <button type="button" class="drive-action-btn" title="@(magDisabled ? "No MAG mapped on this IRF" : "MAG email")" @(magDisabled ? "disabled" : "")
+            onclick="sendMagEmail(@Model.MAGId, @agNameJs, @actionRefJson)">
+        <i class="fas fa-envelope"></i>
+    </button>
+    <button type="button" class="drive-action-btn" title="@(magDisabled ? "No MAG mapped on this IRF" : "Campaign email")" @(magDisabled ? "disabled" : "")
+            onclick="openCampaignEmail(@Model.MAGId, '@encAgName', @actionRefJson)">
+        <i class="fas fa-bullhorn"></i>
+    </button>
+    <button type="button" class="drive-action-btn" title="@(magDisabled ? "No MAG mapped on this IRF" : "Campaign batch call")" @(magDisabled ? "disabled" : "")
+            onclick="plivoBatchCall(@Model.MAGId, 'Campaign', @irfIdJson, @actionRefJson)">
+        <i class="fas fa-phone-alt"></i>
+    </button>
+    <button type="button" class="drive-action-btn" title="Process stuck applicants (Naukri)"
+            onclick="openStuckApplicants(@agNameJs, @actionRefJson)">
+        <i class="fas fa-user-clock"></i>
+    </button>
+    <button type="button" class="drive-action-btn" title="Invite fresh interviewers"
+            onclick="inviteFreshInterviewers(@Model.IrfIntId, @irfIdJson, @actionRefJson)">
+        <i class="fas fa-user-plus"></i>
+    </button>
+    <button type="button" class="drive-action-btn" title="@(irfDisabled ? "IRF id not resolved" : "Send open-interview notification")" @(irfDisabled ? "disabled" : "")
+            onclick="sendOpenInterviewNotification(@Model.IrfIntId, @actionRefJson)">
+        <i class="fas fa-bell"></i>
+    </button>
+</div>

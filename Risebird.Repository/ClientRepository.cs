@@ -936,6 +936,28 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<IEnumerable<Client>> GetClientsForDropdown()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<Client>(
+                        con, "SELECT id, Name FROM Client ORDER BY Name", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return Enumerable.Empty<Client>();
+        }
+
         public async Task<string> GetClientLogoByIRFId(int irfId)
         {
             try

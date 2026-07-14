@@ -27,6 +27,8 @@ BEGIN
         rc.InterviewId,
         rc.Name,
         rc.Description,
+        rc.Severity,
+        rc.SeverityBreakdown,
         rc.CreatedOn,
         rc.ModifiedOn,
         im.candidateName,

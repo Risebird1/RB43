@@ -53,5 +53,6 @@ namespace Risebird.Repository.Interface
         Task<bool> VerifyClientAuthenticity(int irfId, string emailId);
         Task<IEnumerable<string>> GetClientUsersByClientId(int clientId);
         Task<Client> GetClientByTalentId(string tenantId);
+        Task<IEnumerable<Client>> GetClientsForDropdown();
     }
 }

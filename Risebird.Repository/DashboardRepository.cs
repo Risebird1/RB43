@@ -444,37 +444,36 @@ namespace Risebird.Repository
                     if (!request.isEditable)
                     {
                         var CreatedDate = DateTime.Now;
-                        var Status = "Open";
-                        string sqlInsertReport = "INSERT INTO ChannelManagement (Client,Requester,PrimarySkill,EndClient,Location,JdLink,CreatedBy,CreatedDate,Status,RequesterEmailid,RequesterMobile,Title,SeniorityLevel,TurnAroundTimeindays,Comments,NumberofInterviews) Values (@Client,@Requester,@PrimarySkill,@EndClient,@Location,@JdLink,@CreatedBy,@CreatedDate,@Status,@RequesterEmailid,@RequesterMobile,@Title,@SeniorityLevel,@TurnAroundTimeindays,@Comments,@NumberofInterviews);";
+                        var Status = "Pending";
+                        string sqlInsertReport = "INSERT INTO ChannelManagement (Client,ClientId,PrimarySkill,Location,JdLink,CreatedBy,CreatedDate,Status,RequesterEmailid,Title,SeniorityLevel,TurnAroundTimeindays,Comments,NumberofInterviews,PlanType,ClientType) Values (@Client,@ClientId,@PrimarySkill,@Location,@JdLink,@CreatedBy,@CreatedDate,@Status,@RequesterEmailid,@Title,@SeniorityLevel,@TurnAroundTimeindays,@Comments,@NumberofInterviews,@PlanType,@ClientType);";
                         var affectedRows = con.ExecuteAsync(sqlInsertReport, new
                         {
                             request.Client,
-                            request.Requester,
+                            ClientId = request.ClientId > 0 ? request.ClientId : (int?)null,
                             request.PrimarySkill,
-                            request.EndClient,
                             request.Location,
                             request.JdLink,
                             request.CreatedBy,
                             CreatedDate,
                             Status,
                             request.RequesterEmailid,
-                            request.RequesterMobile,
                             request.Title,
                             request.SeniorityLevel,
                             request.TurnAroundTimeindays,
                             request.Comments,
-                            request.NumberofInterviews
+                            request.NumberofInterviews,
+                            PlanType = request.PlanType > 0 ? request.PlanType : (int?)null,
+                            ClientType = request.ClientType > 0 ? request.ClientType : (int?)null
                         }).Result;
                     }
                     else
                     {
-                        var updatequery = "Update ChannelManagement set Client=@Client,Requester=@Requester,PrimarySkill=@PrimarySkill,EndClient=@EndClient,Location=@Location,ExpectedVolume=@ExpectedVolume,JdLink=@JdLink,WeekendDrive=@WeekendDrive,POGenerated=@POGenerated,IPSCreated=@IPSCreated,CalendlyLinkCreated=@CalendlyLinkCreated,CandidateSourcing=@CandidateSourcing,AdditionalComment=@AdditionalComment,HRCoordinator=@HRCoordinator,ProgramManager=@ProgramManager,IRFID=@IRFID,IRFIDs=@IRFIDs,Priority=@Priority,RequesterEmailid=@RequesterEmailid,RequesterMobile=@RequesterMobile,Title=@Title,SeniorityLevel=@SeniorityLevel,TurnAroundTimeindays=@TurnAroundTimeindays,Comments=@Comments,NumberofInterviews=@NumberofInterviews,Origin=@Origin,EngagementType=@EngagementType,Stage=@Stage,ExpectedPrice=@ExpectedPrice,Expectedrevenue=@Expectedrevenue,PaymentStatus=@PaymentStatus,ConfirmationStatus=@ConfirmationStatus where id=@id;";
+                        var updatequery = "Update ChannelManagement set Client=@Client,ClientId=@ClientId,PrimarySkill=@PrimarySkill,Location=@Location,ExpectedVolume=@ExpectedVolume,JdLink=@JdLink,WeekendDrive=@WeekendDrive,POGenerated=@POGenerated,IPSCreated=@IPSCreated,CalendlyLinkCreated=@CalendlyLinkCreated,CandidateSourcing=@CandidateSourcing,AdditionalComment=@AdditionalComment,HRCoordinator=@HRCoordinator,ProgramManager=@ProgramManager,IRFID=@IRFID,IRFIDs=@IRFIDs,Priority=@Priority,RequesterEmailid=@RequesterEmailid,Title=@Title,SeniorityLevel=@SeniorityLevel,TurnAroundTimeindays=@TurnAroundTimeindays,Comments=@Comments,NumberofInterviews=@NumberofInterviews,Origin=@Origin,EngagementType=@EngagementType,Stage=@Stage,ExpectedPrice=@ExpectedPrice,Expectedrevenue=@Expectedrevenue,PaymentStatus=@PaymentStatus,ConfirmationStatus=@ConfirmationStatus,PlanType=@PlanType,ClientType=@ClientType,Status=@Status where id=@id;";
                         var updatedynamicParameters = new DynamicParameters();
                         updatedynamicParameters.Add("@id", request.id);
                         updatedynamicParameters.Add("@Client", request.Client);
-                        updatedynamicParameters.Add("@Requester", request.Requester);
+                        updatedynamicParameters.Add("@ClientId", request.ClientId > 0 ? request.ClientId : (int?)null);
                         updatedynamicParameters.Add("@PrimarySkill", request.PrimarySkill);
-                        updatedynamicParameters.Add("@EndClient", request.EndClient);
                         updatedynamicParameters.Add("@Location", request.Location);
                         updatedynamicParameters.Add("@ExpectedVolume", request.ExpectedVolume);
                         updatedynamicParameters.Add("@JdLink", request.JdLink);
@@ -490,7 +489,6 @@ namespace Risebird.Repository
                         updatedynamicParameters.Add("@IRFIDs", request.IRFIDs);
                         updatedynamicParameters.Add("@Priority", request.Priority);
                         updatedynamicParameters.Add("@RequesterEmailid", request.RequesterEmailid);
-                        updatedynamicParameters.Add("@RequesterMobile", request.RequesterMobile);
                         updatedynamicParameters.Add("@Title", request.Title);
                         updatedynamicParameters.Add("@SeniorityLevel", request.SeniorityLevel);
                         updatedynamicParameters.Add("@TurnAroundTimeindays", request.TurnAroundTimeindays);
@@ -503,6 +501,9 @@ namespace Risebird.Repository
                         updatedynamicParameters.Add("@Expectedrevenue", request.Expectedrevenue);
                         updatedynamicParameters.Add("@PaymentStatus", request.PaymentStatus);
                         updatedynamicParameters.Add("@ConfirmationStatus", request.ConfirmationStatus);
+                        updatedynamicParameters.Add("@PlanType", request.PlanType > 0 ? request.PlanType : (int?)null);
+                        updatedynamicParameters.Add("@ClientType", request.ClientType > 0 ? request.ClientType : (int?)null);
+                        updatedynamicParameters.Add("@Status", "Processed");
                         var results = await con.QueryAsync(updatequery, updatedynamicParameters);
                     }
                     return "Success";
@@ -2538,6 +2539,85 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+
+        public bool SaveRowActions(string refType, string refId, string actionsTaken, string updatedBy)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@refType", refType);
+                dynamicParameters.Add("@refId", refId);
+                dynamicParameters.Add("@actionsTaken", actionsTaken);
+                dynamicParameters.Add("@updatedBy", updatedBy);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Execute(con, "usp_UpsertRowActions", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public Dictionary<string, string> GetRowActions(string refType, IEnumerable<string> refIds = null)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@refType", refType);
+
+                var ids = refIds?
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Select(x => x.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                if (ids != null && ids.Count == 1)
+                {
+                    dynamicParameters.Add("@refId", ids[0]);
+                    dynamicParameters.Add("@refIds", null);
+                }
+                else if (ids != null && ids.Count > 1)
+                {
+                    dynamicParameters.Add("@refId", null);
+                    dynamicParameters.Add("@refIds", string.Join(",", ids));
+                }
+                else
+                {
+                    dynamicParameters.Add("@refId", null);
+                    dynamicParameters.Add("@refIds", null);
+                }
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var rows = SqlMapper.Query<RowActionLogRecord>(con, "usp_GetRowActions", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return rows?
+                        .Where(x => !string.IsNullOrWhiteSpace(x.RefId))
+                        .ToDictionary(x => x.RefId, x => x.ActionsTaken, StringComparer.OrdinalIgnoreCase)
+                        ?? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             }
         }
     }
