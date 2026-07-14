@@ -1332,5 +1332,31 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public bool SaveRowActions(string refType, string refId, string actionsTaken, string updatedBy)
+        {
+            try
+            {
+                return _dashboardRespository.SaveRowActions(refType, refId, actionsTaken, updatedBy);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public Dictionary<string, string> GetRowActions(string refType, IEnumerable<string> refIds = null)
+        {
+            try
+            {
+                return _dashboardRespository.GetRowActions(refType, refIds);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            }
+        }
     }
 }

@@ -234,7 +234,15 @@
     var magPagination = { page: 1, pageSize: 20, totalCount: 0, search: '' };
     var searchDebounceTimer = null;
 
-    $(function () { loadMAGs(1); });
+    $(function () {
+        var urlParams = new URLSearchParams(window.location.search);
+        var initialSearch = urlParams.get('search');
+        if (initialSearch) {
+            magPagination.search = initialSearch;
+            $('#bcSearchMAG').val(initialSearch);
+        }
+        loadMAGs(1);
+    });
 
     function loadMAGs(page) {
         page = page || magPagination.page || 1;

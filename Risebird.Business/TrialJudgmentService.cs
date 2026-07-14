@@ -14,11 +14,16 @@ namespace Risebird.Business
     public class TrialJudgmentService : ITrialJudgmentService
     {
         private readonly ITrialJudgmentRepository _repository;
+        private readonly IRiskCategoryService _riskCategoryService;
         private readonly ILogger<TrialJudgmentService> _log;
 
-        public TrialJudgmentService(ITrialJudgmentRepository repository, ILogger<TrialJudgmentService> log)
+        public TrialJudgmentService(
+            ITrialJudgmentRepository repository,
+            IRiskCategoryService riskCategoryService,
+            ILogger<TrialJudgmentService> log)
         {
             _repository = repository;
+            _riskCategoryService = riskCategoryService;
             _log = log;
         }
 
@@ -56,7 +61,11 @@ namespace Risebird.Business
                     interviewId, irfId, ctx.IrfId);
             }
 
+            await _riskCategoryService.AddUpdateRiskCategory(interviewId);
+            var risk = await _riskCategoryService.GetRiskCategoryByInterviewId(interviewId);
+
             var judgment = EvaluateFactors(ctx, mergeResult);
+            ApplyRiskVerdictAndSeverity(judgment, risk);
             var (inserted, trialFlagId) = await _repository.InsertTrialFlagAsync(judgment, ctx, interviewId);
             judgment.Inserted = inserted;
             judgment.TrialFlagId = trialFlagId > 0 ? trialFlagId : (int?)null;
@@ -241,6 +250,34 @@ namespace Risebird.Business
                 JoinTimePass = joinPass,
                 InterviewDurationPass = durationPass
             };
+        }
+
+        internal static void ApplyRiskVerdictAndSeverity(TrialJudgmentResultVm judgment, RiskCategory risk)
+        {
+            var riskPresent = risk != null && !string.IsNullOrWhiteSpace(risk.Description);
+            var factorPass = string.Equals(
+                judgment.OverallVerdict,
+                TrialFlagConstants.VerdictGoodTrial,
+                StringComparison.OrdinalIgnoreCase);
+
+            if (riskPresent)
+            {
+                judgment.OverallVerdict = TrialFlagConstants.VerdictBadTrial;
+                judgment.Severity = !string.IsNullOrWhiteSpace(risk.Severity)
+                    ? risk.Severity
+                    : TrialFlagConstants.SeverityP0;
+                return;
+            }
+
+            if (!factorPass)
+            {
+                judgment.OverallVerdict = TrialFlagConstants.VerdictBadTrial;
+                judgment.Severity = TrialFlagConstants.SeverityP4;
+                return;
+            }
+
+            judgment.OverallVerdict = TrialFlagConstants.VerdictGoodTrial;
+            judgment.Severity = TrialFlagConstants.SeverityClean;
         }
 
         private static TrialJudgmentResultVm Skipped(string reason) =>

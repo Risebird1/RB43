@@ -165,3 +165,46 @@ PRINT 'B) Historical merges — QCDone=1 rows never re-enter pending queue; run 
 PRINT 'C) Not first interview — only the earliest completed interview per (interviewer email, IRF) qualifies.';
 PRINT 'D) TransInterviewer mapping missing — interviewer email must match UserList on a TransInterviewer row for that IRF.';
 PRINT 'E) SPs not deployed — usp_GetTrialJudgmentContext / usp_InsertTrialFlag must exist on this database.';
+
+PRINT '=== 8. Risk category linkage (Trial Flag Review risk column) ===';
+SELECT
+    CASE WHEN OBJECT_ID(N'dbo.RiskCategory', N'U') IS NOT NULL THEN 'YES' ELSE 'NO — run Tables/RiskCategory.sql' END AS RiskCategoryTable,
+    CASE WHEN COL_LENGTH(N'dbo.RiskCategory', N'Severity') IS NOT NULL THEN 'YES' ELSE 'NO — run Tables/RiskCategory.sql (Severity column)' END AS SeverityColumn,
+    (SELECT COUNT(*) FROM dbo.RiskCategory) AS RiskCategoryRowCount;
+
+SELECT name AS MissingRiskProcedure
+FROM (VALUES
+    ('usp_AddUpdateRiskCategory'),
+    ('usp_GetRiskCategoryByInterviewId')
+) AS p(name)
+WHERE OBJECT_ID(N'dbo.' + p.name, N'P') IS NULL;
+
+;WITH Flagged AS (
+    SELECT tf.TriggeringInterviewId, tf.OverallVerdict, tf.Severity AS TrialFlagSeverity
+    FROM dbo.TrialFlags tf
+)
+SELECT
+    COUNT(*) AS TrialFlagCount,
+    SUM(CASE WHEN rc.InterviewId IS NOT NULL THEN 1 ELSE 0 END) AS WithRiskCategoryRow,
+    SUM(CASE WHEN ISNULL(LTRIM(RTRIM(rc.Description)), '') <> '' THEN 1 ELSE 0 END) AS WithRiskDescription
+FROM Flagged f
+LEFT JOIN dbo.RiskCategory rc ON rc.InterviewId = f.TriggeringInterviewId;
+
+PRINT '=== 9. Sample trial flags missing RiskCategory (top 20) ===';
+SELECT TOP 20
+    tf.Id AS TrialFlagId,
+    tf.TriggeringInterviewId,
+    tf.OverallVerdict,
+    tf.Severity AS StoredTrialSeverity,
+    rc.Name AS RiskLabels,
+    rc.Severity AS RiskSeverity
+FROM dbo.TrialFlags tf
+LEFT JOIN dbo.RiskCategory rc ON rc.InterviewId = tf.TriggeringInterviewId
+WHERE rc.InterviewId IS NULL OR ISNULL(LTRIM(RTRIM(rc.Description)), '') = ''
+ORDER BY tf.FlaggedAtUtc DESC;
+
+PRINT '=== 10. Fix empty risk column ===';
+PRINT '1) Deploy RiskCategory.sql, usp_AddUpdateRiskCategory.sql, usp_GetTrialFlagsForReview.sql on this DB.';
+PRINT '2) For each TriggeringInterviewId: EXEC usp_AddUpdateRiskCategory @InterviewId = <id>';
+PRINT '3) Reload /Dashboard/TrialFlagReview (page refresh now re-runs risk producer per row).';
+PRINT '4) New trial flags get risk at QC merge only if web app + Azure Functions run trial-riskcategory-link code.';
