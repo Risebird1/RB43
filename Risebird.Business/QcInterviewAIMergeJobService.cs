@@ -123,7 +123,7 @@ namespace Risebird.Business
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var userMessage = BuildMergeUserMessage(row.ReportAIDetails, row.TranscritAiDetails, row.ContradictionJson, row.interviewDate, row.Joinedon, row.ActualDuration, row.RequiredDuration);
+            var userMessage = BuildMergeUserMessage(row.ReportAIDetails, row.TranscritAiDetails, row.ContradictionJson, row.interviewDate, row.Joinedon, row.ActualDuration, row.RequiredDuration, row.CandidateRating, row.CandidateRedoRequest, row.InterviewerVideoOff);
             var runResult = await _assistantServiceHelper.GenerateQcAnalysisInterviewAIMerge(userMessage, assistantId, useJsonResponseFormat: true);
             var rawText = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value?.Replace("```json", "").Replace("```", "");
             if (string.IsNullOrWhiteSpace(rawText))
@@ -183,7 +183,7 @@ namespace Risebird.Business
             return true;
         }
 
-        private static string BuildMergeUserMessage(string reportJson, string transcriptJson, string contradictionJson, DateTime interviewdate, DateTime? Joinedon, int ActualDuration, int RequiredDuration)
+        private static string BuildMergeUserMessage(string reportJson, string transcriptJson, string contradictionJson, DateTime interviewdate, DateTime? Joinedon, int ActualDuration, int RequiredDuration, int? candidateRating, bool candidateRedoRequest, string interviewerVideoOff)
         {
             var message =
                 "You are given JSON evaluations for the same interview: Report AI, Transcript AI, and optionally Contradiction AI. " +
@@ -199,6 +199,11 @@ namespace Risebird.Business
                 message += "\n\nInterview Datetime: " + interviewdate + " and interviewer join the meeting at " + Joinedon.Value;
             if (ActualDuration > 0)
                 message += "\n\nInterview Duration Required: " + RequiredDuration + " and Interview Duration Actual " + ActualDuration;
+            if (candidateRating.HasValue && candidateRating.Value > 0)
+                message += "\n\nCandidate Rating (given by candidate): " + candidateRating.Value + " out of 5";
+            message += "\n\nCandidate Redo Request: " + (candidateRedoRequest ? "Yes" : "No");
+            if (!string.IsNullOrWhiteSpace(interviewerVideoOff))
+                message += "\n\nInterviewer Video Status: " + interviewerVideoOff;
             return message;
         }
 
