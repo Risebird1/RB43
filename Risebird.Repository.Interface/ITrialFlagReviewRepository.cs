@@ -8,6 +8,8 @@ namespace Risebird.Repository.Interface
     {
         Task<(bool TableExists, int TotalRows)> GetDiagnosticsAsync();
 
+        Task<(int Pending, int Kept, int Removed)> GetStatusCountsAsync();
+
         Task<IReadOnlyList<TrialFlagReviewRowVm>> GetTrialFlagsAsync(string reviewStatus);
 
         Task<TrialFlagReviewRowVm> GetTrialFlagByIdAsync(int trialFlagId);

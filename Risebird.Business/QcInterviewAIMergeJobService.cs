@@ -22,6 +22,7 @@ namespace Risebird.Business
         private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IMeetingService _meetingService;
         private readonly IDmIvAutoQcFlagService _autoQcFlagService;
+        private readonly IRiskCategoryService _riskCategoryService;
         private readonly ITrialJudgmentService _trialJudgmentService;
         private readonly ILogger<QcInterviewAIMergeJobService> _log;
 
@@ -31,6 +32,7 @@ namespace Risebird.Business
             IAssistantServiceHelper assistantServiceHelper,
             IMeetingService meetingService,
             IDmIvAutoQcFlagService autoQcFlagService,
+            IRiskCategoryService riskCategoryService,
             ITrialJudgmentService trialJudgmentService,
             ILogger<QcInterviewAIMergeJobService> log)
         {
@@ -39,6 +41,7 @@ namespace Risebird.Business
             _assistantServiceHelper = assistantServiceHelper;
             _meetingService = meetingService;
             _autoQcFlagService = autoQcFlagService;
+            _riskCategoryService = riskCategoryService;
             _trialJudgmentService = trialJudgmentService;
             _log = log;
         }
@@ -159,6 +162,8 @@ namespace Risebird.Business
                     combined.interviewer_suspicious,
                     combined.RedoInterview,
                     cancellationToken);
+
+                await _riskCategoryService.AddUpdateRiskCategory(row.InterviewId);
 
                 var trialResult = await _trialJudgmentService.TryEvaluateAndFlagTrialAsync(
                     row.InterviewId,

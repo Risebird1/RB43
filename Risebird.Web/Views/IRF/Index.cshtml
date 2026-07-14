@@ -152,6 +152,15 @@
                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
                                                 <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("LeadInterviewer", "Interviewer",new { uniqueid="74206543283756"})'" data-original-title="Tooltip on top"><font style="font-family:arial;">Lead Interviewers</font></span>
                                             </button>
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
+                                                <span data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("SkillChannelDetails", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;">Skill Channel Stats</font></span>
+                                            </button>
+                                        }
+                                        @if (Model.Profile == "Admin" || Model.Profile == "HR")
+                                        {
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
+                                                <span data-toggle="tooltip" data-placement="top" onclick="window.open('@Url.Action("Index", "InterviewDemand")', '_blank', 'noopener,noreferrer')" title="Plan weekend interview staffing"><font style="font-family:arial;">Weekend Drive</font></span>
+                                            </button>
                                         }
                                         @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin" || Model.Profile == "SeniorHR" || Model.Profile == "InterviewerManagement")
                                         {

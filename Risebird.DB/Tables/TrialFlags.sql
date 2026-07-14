@@ -29,6 +29,16 @@ BEGIN
 END
 GO
 
+IF OBJECT_ID(N'dbo.TrialFlags', N'U') IS NOT NULL
+AND NOT EXISTS (
+    SELECT * FROM sys.columns
+    WHERE Name = N'Severity'
+      AND Object_ID = OBJECT_ID(N'dbo.TrialFlags'))
+BEGIN
+    ALTER TABLE dbo.TrialFlags ADD Severity VARCHAR(4) NULL
+END
+GO
+
 IF NOT EXISTS (
     SELECT * FROM sys.indexes
     WHERE name = N'IX_TrialFlags_ReviewStatus_FlaggedAt'

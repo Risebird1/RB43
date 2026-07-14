@@ -8,6 +8,8 @@ namespace Risebird.Entities.Data
         public int InterviewId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string Severity { get; set; }
+        public string SeverityBreakdown { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime? ModifiedOn { get; set; }
 

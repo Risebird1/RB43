@@ -1566,6 +1566,30 @@ WHERE si.SuspiciousStatus = 1",
             return null;
         }
 
+        public IEnumerable<Users> GetRisebirdUsersForDropdown()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<Users>(
+                        con,
+                        @"SELECT id, idProfile, FirstName, EmailId
+                          FROM UserList
+                          WHERE EmailId IS NOT NULL
+                            AND idProfile NOT IN (3, 4, 23, 27)
+                          ORDER BY EmailId",
+                        null,
+                        commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return Enumerable.Empty<Users>();
+        }
+
         public bool AddIRFDetails(IRFVm irfDetails, out int irfID)
         {
             try
@@ -4785,6 +4809,150 @@ WHERE si.SuspiciousStatus = 1",
         }
 
 
+        public IEnumerable<InterviewVM> GetWeekendInterviewList(DateTime start, DateTime end)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@startDate", start.Date);
+                dynamicParameters.Add("@endDate", end.Date);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    IEnumerable<InterviewVM> rows = null;
+                    try
+                    {
+                        rows = SqlMapper.Query<InterviewVM>(con, "usp_DriveWeekendInterviews", dynamicParameters,
+                            commandType: CommandType.StoredProcedure);
+                    }
+                    catch (SqlException)
+                    {
+                        rows = QueryWeekendInterviewsInline(con, start.Date, end.Date);
+                    }
+
+                    if (rows == null || !rows.Any())
+                    {
+                        rows = QueryWeekendInterviewsInline(con, start.Date, end.Date);
+                    }
+
+                    return rows;
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        private static IEnumerable<InterviewVM> QueryWeekendInterviewsInline(SqlConnection con, DateTime start, DateTime end)
+        {
+            const string sql = @"
+SELECT
+    im.IRFId AS IRFID,
+    im.interviewDate,
+    CASE
+        WHEN LTRIM(RTRIM(CAST(im.interviewSlot AS varchar(100)))) IN ('1', 'Morning') THEN 1
+        WHEN LTRIM(RTRIM(CAST(im.interviewSlot AS varchar(100)))) IN ('2', 'Evening') THEN 2
+        ELSE TRY_CAST(LTRIM(RTRIM(CAST(im.interviewSlot AS varchar(100)))) AS INT)
+    END AS interviewSlot,
+    im.interviewer,
+    ic.interviewStatus,
+    ic.InterviewerComment,
+    ic.VideoLink,
+    QCF.InterviewId AS QCInterview
+FROM InterviewMeetings im
+LEFT JOIN InterviewComments ic ON im.id = ic.InterviewId
+LEFT JOIN QCFeedbackReport QCF ON im.id = QCF.InterviewId
+WHERE CAST(im.interviewDate AS date) >= @startDate
+  AND CAST(im.interviewDate AS date) <= @endDate
+  AND im.confirmationStatus = 1";
+
+            return SqlMapper.Query<InterviewVM>(con, sql, new { startDate = start, endDate = end });
+        }
+
+        public Dictionary<string, DriveIRFMetadataRecord> GetDriveIRFMetadata(IEnumerable<string> irfIds)
+        {
+            try
+            {
+                var ids = irfIds?
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Select(x => x.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                if (ids == null || ids.Count == 0)
+                {
+                    return new Dictionary<string, DriveIRFMetadataRecord>(StringComparer.OrdinalIgnoreCase);
+                }
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    IEnumerable<DriveIRFMetadataRecord> rows = null;
+                    try
+                    {
+                        var dynamicParameters = new DynamicParameters();
+                        dynamicParameters.Add("@irfIds", string.Join(",", ids));
+                        rows = SqlMapper.Query<DriveIRFMetadataRecord>(con, "usp_GetDriveIRFMetadata", dynamicParameters,
+                            commandType: CommandType.StoredProcedure);
+                    }
+                    catch (SqlException)
+                    {
+                        rows = QueryDriveIRFMetadataInline(con, ids);
+                    }
+
+                    if (rows == null || !rows.Any())
+                    {
+                        rows = QueryDriveIRFMetadataInline(con, ids);
+                    }
+
+                    return rows?
+                        .Where(x => !string.IsNullOrWhiteSpace(x.IRFId))
+                        .ToDictionary(x => x.IRFId.Trim(), x => x, StringComparer.OrdinalIgnoreCase)
+                        ?? new Dictionary<string, DriveIRFMetadataRecord>(StringComparer.OrdinalIgnoreCase);
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new Dictionary<string, DriveIRFMetadataRecord>(StringComparer.OrdinalIgnoreCase);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new Dictionary<string, DriveIRFMetadataRecord>(StringComparer.OrdinalIgnoreCase);
+            }
+        }
+
+        private static IEnumerable<DriveIRFMetadataRecord> QueryDriveIRFMetadataInline(SqlConnection con, List<string> ids)
+        {
+            const string sql = @"
+SELECT
+    irf.id,
+    irf.IRFId,
+    irf.ClientName,
+    irf.JDTiltle,
+    cl.[Name] AS ClientCompName,
+    LTRIM(RTRIM(irf.AssessmentGroupId)) AS AssessmentGroupId,
+    ag.AssessmentGroup AS AssessmentGroupName
+FROM dbo.IRF irf
+LEFT JOIN dbo.Client cl ON irf.ClientId = cl.id
+LEFT JOIN dbo.AssessmentGroup ag
+    ON ag.id = TRY_CAST(NULLIF(LTRIM(RTRIM(irf.AssessmentGroupId)), '') AS INT)
+WHERE irf.IsDeleted = 0
+  AND (
+      LTRIM(RTRIM(irf.IRFId)) IN @ids
+      OR CAST(irf.id AS varchar(20)) IN @ids
+  )";
+
+            return SqlMapper.Query<DriveIRFMetadataRecord>(con, sql, new { ids });
+        }
+
+
         public async Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string IRFId, string emailid)
         {
             try
@@ -7827,9 +7995,9 @@ WHERE si.SuspiciousStatus = 1",
         {
             try
             {
-                var query = "Select id from IRF where IRFId=@IRFId";
+                var query = "Select id from IRF where LTRIM(RTRIM(IRFId)) = LTRIM(RTRIM(@IRFId))";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@IRFId", IRFId);
+                dynamicParameters.Add("@IRFId", IRFId?.Trim());
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

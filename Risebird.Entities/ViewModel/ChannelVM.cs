@@ -8,15 +8,19 @@ namespace Risebird.Entities.ViewModel
 {
     public class ChannelVM
     {
-        [Required]
         public string Client { get; set; }
-        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Please select a client")]
+        [Display(Name = "Client")]
+        public int ClientId { get; set; }
+        [Display(Name = "Plan Type")]
+        public int PlanType { get; set; }
+        [Display(Name = "Client Segment")]
+        public int ClientType { get; set; }
         [Display(Name = "Requester Name")]
         public string Requester { get; set; }
         [Display(Name = "Primary Skill")]
         [Required]
         public string PrimarySkill { get; set; }
-        [Required]
         public string EndClient { get; set; }
         [Display(Name = "Job Country and Location")]
         [Required]
@@ -48,13 +52,17 @@ namespace Risebird.Entities.ViewModel
         public string IRFIDs { get; set; }
         public string Priority { get; set; }
         public SelectList Prioritylist { get; set; }
+        public SelectList ClientList { get; set; }
+        public SelectList CreatedByList { get; set; }
+        public SelectList PlanTypeList { get; set; }
+        public SelectList ClientTypeList { get; set; }
         [Display(Name = "Your Email Adress")]
+        [Required(ErrorMessage = "Please select a Risebird user")]
         public string CreatedBy { get; set; }
         public int id { get; set; }
         [Required]
         [Display(Name = "Requester EmailAddress")]
         public string RequesterEmailid { get; set; }
-        [Required]
         [Display(Name = "Requester Mobile Number")]
         public string RequesterMobile { get; set; }
         [Required]
@@ -65,7 +73,6 @@ namespace Risebird.Entities.ViewModel
         [Required]
         [Display(Name = "Turn Around Time in days")]
         public string TurnAroundTimeindays { get; set; }
-        [Required]
         public string Comments { get; set; }
         [Required]
         [Display(Name = "Number of Interviews")]

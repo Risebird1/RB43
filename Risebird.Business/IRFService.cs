@@ -1545,6 +1545,32 @@ namespace Risebird.Business
             }
         }
 
+        public List<InterviewVM> GetWeekendInterviewList(DateTime start, DateTime end)
+        {
+            try
+            {
+                return _irfRepository.GetWeekendInterviewList(start, end)?.ToList() ?? new List<InterviewVM>();
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new List<InterviewVM>();
+            }
+        }
+
+        public Dictionary<string, DriveIRFMetadataRecord> GetDriveIRFMetadata(IEnumerable<string> irfIds)
+        {
+            try
+            {
+                return _irfRepository.GetDriveIRFMetadata(irfIds);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new Dictionary<string, DriveIRFMetadataRecord>(StringComparer.OrdinalIgnoreCase);
+            }
+        }
+
         public List<IRFVm> GetUpComingIRFList()
         {
             try
@@ -1556,6 +1582,19 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return new List<IRFVm>();
+            }
+        }
+
+        public int GetIRFIdByIRFName(string irfId)
+        {
+            try
+            {
+                return _irfRepository.GetIRFIdByIRFName(irfId);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
             }
         }
         public async Task<bool> PauseIRF(int irfId, string irfName, string emailid)
