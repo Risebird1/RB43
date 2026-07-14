@@ -729,7 +729,7 @@ namespace Risebird.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> PrepareEmploymentVerification(int id)
+        public async Task<IActionResult> PrepareEmploymentVerification(int id, bool overrideIntent = false)
         {
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
@@ -740,13 +740,23 @@ namespace Risebird.Web.Controllers
                 if (record == null)
                     return Json(new { success = false, error = "Record not found." });
 
-                // Same business rule as the Signzy path: intent must be confirmed as 'Interested'.
+                // Business rule: intent must be confirmed as 'Interested' before EV. For MANUAL handling
+                // an operator may explicitly bypass this (overrideIntent = true) — automation never sets
+                // this flag, so intent confirmation stays mandatory for the automated pipeline. Every
+                // manual override is recorded on the ticket history for accountability.
                 if (!string.Equals(record.Intent, "Interested", StringComparison.OrdinalIgnoreCase))
                 {
-                    string intentMsg = string.IsNullOrEmpty(record.Intent)
-                        ? "Intent has not been confirmed yet. Collect the prospect's intent (email reply or AI Plivo call) before running Employment Verification."
-                        : $"Intent is '{record.Intent}'. Employment Verification can only proceed once the prospect's intent is confirmed as 'Interested'.";
-                    return Json(new { success = false, error = intentMsg, intentBlocked = true });
+                    if (!overrideIntent)
+                    {
+                        string intentMsg = string.IsNullOrEmpty(record.Intent)
+                            ? "Intent has not been confirmed yet. Collect the prospect's intent (email reply or AI Plivo call) before running Employment Verification."
+                            : $"Intent is '{record.Intent}'. Employment Verification can only proceed once the prospect's intent is confirmed as 'Interested'.";
+                        return Json(new { success = false, error = intentMsg, intentBlocked = true });
+                    }
+
+                    var ovUser = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+                    await _repository.InsertHistoryAsync(id, "IntentOverride", record.Intent ?? "—",
+                        $"Operator manually bypassed the intent gate to run Employment Verification (intent was '{(string.IsNullOrEmpty(record.Intent) ? "not confirmed" : record.Intent)}').", ovUser);
                 }
 
                 // No LinkedIn verdict → fall back to Signzy/Surepass on the client.
@@ -823,7 +833,7 @@ namespace Risebird.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SaveEmploymentResult(int id, bool verified, string companyName, bool isEmployed, string details)
+        public async Task<IActionResult> SaveEmploymentResult(int id, bool verified, string companyName, bool isEmployed, string details, bool overrideIntent = false)
         {
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
@@ -831,11 +841,13 @@ namespace Risebird.Web.Controllers
             try
             {
                 // Business rule: Intent must be CONFIRMED (and positive) before Employment Verification starts.
+                // Manual handling may bypass it (overrideIntent = true, set only from the operator UI, never
+                // by automation). The override is already logged in PrepareEmploymentVerification.
                 var record = await _repository.GetByIdAsync(id);
                 if (record == null)
                     return Json(new { success = false, error = "Record not found." });
 
-                if (!string.Equals(record.Intent, "Interested", StringComparison.OrdinalIgnoreCase))
+                if (!string.Equals(record.Intent, "Interested", StringComparison.OrdinalIgnoreCase) && !overrideIntent)
                 {
                     string intentMsg = string.IsNullOrEmpty(record.Intent)
                         ? "Intent has not been confirmed yet. Collect the prospect's intent (email reply or AI Plivo call) before running Employment Verification."

@@ -2413,6 +2413,10 @@ namespace Risebird.Web.Controllers
             var AssessmentsGroups = new List<AssignmentVM>();
             //var interviewers = new List<Interviewer>();
             var interviewerOptions = new List<SelectListItem>();
+            // UserIds of interviewers that currently belong to this channel's MAG (i.e. are eligible to
+            // be ACTIVE on the channel). Interviewers attached to the channel but not in this set have
+            // been removed from the MAG and must not be (re)activated.
+            var magMemberUserIds = new List<int>();
             if (model.CreatedOn < absoluteTime)
             {
                 AssessmentsGroups = _interviewerService.FetchAssessmentGroups().ToList();
@@ -2422,6 +2426,7 @@ namespace Risebird.Web.Controllers
                     interviewerOptions = interviewers
                         .Select(x => new SelectListItem { Value = x.UserId.ToString(), Text = x.EmailId })
                         .ToList();
+                    magMemberUserIds = interviewers.Select(x => x.UserId).Distinct().ToList();
                 }
             }
             else
@@ -2433,8 +2438,10 @@ namespace Risebird.Web.Controllers
                     interviewerOptions = interviewers
                         .Select(x => new SelectListItem { Value = x.UserId.ToString(), Text = x.EmailId })
                         .ToList();
+                    magMemberUserIds = interviewers.Select(x => x.UserId).Distinct().ToList();
                 }
             }
+            ViewBag.MagMemberUserIds = magMemberUserIds;
 
             // Interviewers already attached to this skill channel must always remain selectable,
             // even if they've since been removed from the MAG (or deactivated). Otherwise their

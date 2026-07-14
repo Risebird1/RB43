@@ -39,7 +39,8 @@ Select * from TransJoinability where IRFId = @irfId and @isJoinabilitySelectabil
 --Do not filter by assessment-group membership; manually added panel members must appear on DM Approval.  
 DECLARE @irfName varchar(50) = (SELECT IRFID FROM IRF WHERE id = @irfId)  
   
-select distinct ti.*, agc.CampaignName, c.PrimarySkill, ul.EmailId, ul.MobileNumber, c.NickName, c.ResumeLink, c.CodedResumeLink,c.CompanyName, c.IsResumeRedactAttempted,  
+;WITH InterviewerDetails AS (
+select ti.*, agc.CampaignName, c.PrimarySkill, ul.EmailId, ul.MobileNumber, c.NickName, c.ResumeLink, c.CodedResumeLink,c.CompanyName, c.IsResumeRedactAttempted,  
 ip.VideoLink, isnull(ip.IsVideoApproved, 0) as IsVideoApproved, ip.EmploymentComment,  
 isnull(sti.TotalInterview, 0) as TotalInterview,  
 isnull(fti.TotalFuture, 0) as TotalFuture,  
@@ -47,7 +48,13 @@ isnull(tcm.TotalCompletedMeetings, 0) as TotalCompletedMeetings,
 isnull(tsel.TotalSelected, 0) as TotalSelected,  
 isnull(trej.TotalRejected, 0) as TotalRejected,  
 ul.LastLogin as LastLogin,  
-lic.LastInterviewConductedAt as LastInterviewConductedAt  
+lic.LastInterviewConductedAt as LastInterviewConductedAt,  
+-- Collapse to exactly ONE row per interviewer (UserId). A user with more than one
+-- InterviewerProfile row would otherwise fan out into duplicate rows here (the c/ip joins are on
+-- UserId), and duplicate UserId values break the edit form's interviewer dropdowns: the client-side
+-- de-dupe script (ManageInterviewerDropDowns) strips the shared value from the second row, leaving
+-- it stuck on "Select" and tripping the "atleast one Interviewer" validation.
+ROW_NUMBER() OVER (PARTITION BY ti.UserId ORDER BY ISNULL(ti.IsActive, 0) DESC, ti.id DESC) as RowNum  
 from  (SELECT  UserId, NickName, ResumeLink, CodedResumeLink,CompanyName, IsResumeRedactAttempted, PrimarySkill =     
 STUFF((SELECT ', ' + SkillName    
 FROM (select ipr.*,sk.[Name] as SkillName from InterviewerProfile ipr left join TransInterviewerSkill tis on tis.InterviewerProfileId = ipr.id left join Skill sk on sk.id = tis.SkillId) b     
@@ -97,6 +104,8 @@ outer apply (
       and ic.MeetingStatus in (4, 6, 8)  
 ) trej  
 where ti.IRFId=@irfId and ul.IsActive=1 --and ul.IsInterviewerAccess=1  and ISNULL(ip.IsDeleted,0)=0 
+)  
+select * from InterviewerDetails where RowNum = 1
     
 --selectability details    
 Select * from TransSelectability where IRFId = @irfId and @isJoinabilitySelectabilityRequired = 1    
