@@ -195,6 +195,48 @@ BEGIN
           AND (imj.Joinedon IS NULL OR imc.PerformedOn IS NULL)
           AND ic.MeetingStatus NOT IN (1, 2, 3, 5, 9)
 
+        UNION
+
+        -- Interviewer joined > 5 minutes after scheduled interview start
+        SELECT DISTINCT im.id,
+               'Late Join'              AS Type,
+               'High Severity'          AS Riskcategory
+        FROM InterviewMeetings im
+        JOIN InterviewComments ic         ON ic.InterviewId = im.id
+        JOIN InterviewMeetingsJoinTime imj ON imj.Interviewid = im.id
+        WHERE im.id = @InterviewId
+          AND ic.MeetingStatus IN (4, 6, 7, 8)
+          AND DATEDIFF(DAY, im.interviewDate, GETDATE()) < 30
+          AND DATEDIFF(MINUTE, im.interviewDate, imj.Joinedon) > 5
+
+        UNION
+
+        -- Interviewer video off as reported by candidate in CandidateFeedbackDetails
+        SELECT im.id,
+               'Interviewer Video Off'  AS Type,
+               'High Severity'          AS Riskcategory
+        FROM InterviewMeetings im
+        JOIN InterviewComments ic         ON ic.InterviewId = im.id
+        JOIN CandidateFeedbackDetails cfd ON cfd.InterviewId = im.id
+        WHERE im.id = @InterviewId
+          AND ic.MeetingStatus IN (4, 6, 7, 8)
+          AND DATEDIFF(DAY, im.interviewDate, GETDATE()) < 30
+          AND cfd.InterviewerVideo LIKE '%Interviewer Video off%'
+
+        UNION
+
+        -- Candidate-raised redo request pending approval/rejection in RedoInterviews
+        SELECT im.id,
+               'Candidate Redo'         AS Type,
+               'High Severity'          AS Riskcategory
+        FROM InterviewMeetings im
+        JOIN RedoInterviews ri ON ri.interviewid = im.id
+        WHERE im.id = @InterviewId
+          AND DATEDIFF(DAY, im.interviewDate, GETDATE()) < 30
+          AND ri.Type = 'Candidate'
+          AND ISNULL(ri.Approved, 0) = 0
+          AND ISNULL(ri.Rejected, 0) = 0
+
     ) x
     WHERE x.InterviewId = @InterviewId
 
