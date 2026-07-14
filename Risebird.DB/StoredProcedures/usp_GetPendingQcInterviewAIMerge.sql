@@ -28,13 +28,17 @@ BEGIN
 		imj.[Joinedon],
 		im.interviewDate,
 		ic.VideoDuration as ActualDuration,
-		pt.DurationSelectedMin as RequiredDuration
+		pt.DurationSelectedMin as RequiredDuration,
+		cfd.Rating as CandidateRating,
+		CAST(CASE WHEN EXISTS(SELECT 1 FROM RedoInterviews ri WHERE ri.interviewid = q.InterviewId) THEN 1 ELSE 0 END AS BIT) as CandidateRedoRequest,
+		cfd.InterviewerVideo as InterviewerVideoOff
     FROM [dbo].[QcInterviewAIevaluation] q  
 	join InterviewMeetings im on im.id=q.InterviewId
 	join InterviewComments ic on ic.InterviewId=q.InterviewId
 	join IRF on IRF.IRFId=im.IRFId
 	Left JOIN PlanTypeChargesMaster pt ON pt.CountryType = IRF.JobCountry AND pt.PlanTypeEnumValue = IRF.Heuristicsscore AND IRF.CompanyType = pt.CompanyType
 	outer Apply(Select Min(Joinedon) as JoinedOn From InterviewMeetingsJoinTime where Interviewid=q.InterviewId and interviewer=im.Interviewer) imj
+	LEFT JOIN CandidateFeedbackDetails cfd ON cfd.InterviewId = q.InterviewId
     WHERE (q.[QCDone] IS NULL OR q.[QCDone] = 0)  
       AND q.[ReportAIDetails] IS NOT NULL AND LEN(LTRIM(RTRIM(q.[ReportAIDetails]))) > 0  
       AND q.[TranscritAiDetails] IS NOT NULL AND LEN(LTRIM(RTRIM(q.[TranscritAiDetails]))) > 0  
