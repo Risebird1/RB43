@@ -106,5 +106,7 @@ namespace Risebird.Repository.Interface
         Task<List<MeetingVM>> FetchMissingParticipantFakeReporting(string emailid, string profileName, string actionstatus, UnassignedInterviewsFilter filters = null);
         Task<QCOwnerDashboardResponseVM> GetQCOwnerDashboardMetrics(DateTime? dateFrom, DateTime? dateTo);
         Task<QCOwnerFlagDetailResponseVM> GetQCOwnerFlagDetails(string qcOwner, DateTime? dateFrom, DateTime? dateTo);
+        bool SaveRowActions(string refType, string refId, string actionsTaken, string updatedBy);
+        Dictionary<string, string> GetRowActions(string refType, IEnumerable<string> refIds = null);
     }
 }

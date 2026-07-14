@@ -36,5 +36,21 @@ BEGIN
     ALTER TABLE RiskCategory ADD ModifiedOn datetime NULL
 END
 
+IF NOT EXISTS(
+    SELECT * FROM sys.columns
+    WHERE Name = N'Severity'
+      AND Object_ID = OBJECT_ID(N'RiskCategory'))
+BEGIN
+    ALTER TABLE RiskCategory ADD Severity VARCHAR(4) NULL
+END
+
+IF NOT EXISTS(
+    SELECT * FROM sys.columns
+    WHERE Name = N'SeverityBreakdown'
+      AND Object_ID = OBJECT_ID(N'RiskCategory'))
+BEGIN
+    ALTER TABLE RiskCategory ADD SeverityBreakdown VARCHAR(500) NULL
+END
+
 END
 GO

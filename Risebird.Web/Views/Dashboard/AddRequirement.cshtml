@@ -9,6 +9,40 @@
 <link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
 <link href="~/Autocomplete/jquery-ui.min.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<style>
+    #commentsOverlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 10050;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #commentsOverlay.is-open {
+        display: flex;
+    }
+
+    .comments-popup {
+        background: #fff;
+        border-radius: 6px;
+        padding: 20px;
+        width: 90%;
+        max-width: 520px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .comments-popup textarea {
+        min-height: 140px;
+        resize: vertical;
+    }
+
+    .comments-popup-actions {
+        margin-top: 12px;
+        text-align: right;
+    }
+</style>
 <div class="main-panel " id="main-panel">
 
     @*<nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -66,12 +100,46 @@
                                 <div style="width: 100%;">&nbsp;</div>
                                 @Html.HiddenFor(model => model.isEditable)
                                 @Html.HiddenFor(model => model.id)
+                                @Html.HiddenFor(model => model.Client)
                                 <div class="col-lg-4 col-md-6 col-sm-6 pr-1">
                                     <div class="form-group" style="margin-bottom:0px;">
-                                        @Html.LabelFor(model => model.Client, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.Client, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                        @Html.ValidationMessageFor(model => model.Client, "", new { @class = "text-danger" })
+                                        @Html.LabelFor(model => model.ClientId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownListFor(m => m.ClientId, Model.ClientList, "Select client", new { @class = "form-control", @id = "ddlClient", @onchange = "onClientChanged(this.value)" })
+                                        @Html.ValidationMessageFor(model => model.ClientId, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-6 px-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.RequesterEmailid, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        <select id="ddlRequesterEmail" name="RequesterEmailid" class="form-control">
+                                            <option value="">Select requester</option>
+                                            @if (!string.IsNullOrEmpty(Model.RequesterEmailid))
+                                            {
+                                                <option value="@Model.RequesterEmailid" selected="selected">@Model.RequesterEmailid</option>
+                                            }
+                                        </select>
+                                        @Html.ValidationMessageFor(model => model.RequesterEmailid, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-6 pl-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.CreatedBy, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownListFor(m => m.CreatedBy, Model.CreatedByList, "Select Risebird user", new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.CreatedBy, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-6 pr-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.PlanType, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownListFor(m => m.PlanType, Model.PlanTypeList, "Plan type", new { @id = "ddlPlanType", @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.PlanType, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-6 px-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.ClientType, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownListFor(m => m.ClientType, Model.ClientTypeList, "Client segment", new { @id = "ddlClientType", @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.ClientType, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-6 col-sm-6 px-1">
@@ -100,39 +168,7 @@
 
                                     </div>
                                 </div>
-                                <div class="col-lg-4 col-md-6 col-sm-6 px-1">
-                                    <div class="form-group" style="margin-bottom:0px;">
-                                        @Html.LabelFor(model => model.EndClient, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.EndClient, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.EndClient, "", new { @class = "text-danger" })
 
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 col-md-6 col-sm-6 pl-1">
-                                    <div class="form-group" style="margin-bottom:0px;">
-                                        @Html.LabelFor(model => model.Requester, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.Requester, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                        @Html.ValidationMessageFor(model => model.Requester, "", new { @class = "text-danger" })
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-6 col-sm-6 pr-1">
-                                    <div class="form-group" style="margin-bottom:0px;">
-                                        @Html.LabelFor(model => model.RequesterEmailid, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.RequesterEmailid, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.RequesterEmailid, "", new { @class = "text-danger" })
-
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-6 col-sm-6 px-1">
-                                    <div class="form-group" style="margin-bottom:0px;">
-                                        @Html.LabelFor(model => model.RequesterMobile, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.RequesterMobile, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.RequesterMobile, "", new { @class = "text-danger" })
-
-                                    </div>
-                                </div>
                                 <div class="col-lg-4 col-md-6 col-sm-6 pl-1">
                                     <div class="form-group" style="margin-bottom:0px;">
                                         @Html.LabelFor(model => model.SeniorityLevel, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -159,16 +195,6 @@
 
                                     </div>
                                 </div>
-                                <div class="col-lg-4 col-md-6 col-sm-6 pl-1">
-                                    <div class="form-group" style="        margin-bottom: 0px;
-        margin-top: 15px;
-">
-                                        @Html.LabelFor(model => model.Comments, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.Comments, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.Comments, "", new { @class = "text-danger" })
-
-                                    </div>
-                                </div>
                                 <div class="col-lg-6 col-md-6 col-sm-6 pr-1">
                                     <div class="form-group col-md-12 filebox">
                                         <input type="radio" name="Jd" id="Jdlink" value="Upload" onclick="RadioChanged('Upload')" /> Upload File
@@ -188,18 +214,23 @@
 
                                     </div>
                                 </div>
-                                @if (ViewBag.type == "no")
-                                {
-                                    <div class="col-lg-4 col-md-6 col-sm-6 pr-1" style="margin-top:28px">
-                                        <div class="form-group" style="margin-bottom:0px;">
-                                            @Html.LabelFor(model => model.CreatedBy, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.EditorFor(model => model.CreatedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                            <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                            @Html.ValidationMessageFor(model => model.CreatedBy, "", new { @class = "text-danger" })
-                                        </div>
+                                <div class="col-lg-4 col-md-6 col-sm-6 px-1">
+                                    <div class="form-group" style="margin-bottom:0px;margin-top:15px;">
+                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Comments</label>
+                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="toggleCommentsPopup(true)">Add comments (optional)</button>
                                     </div>
-                                }
+                                </div>
 
+                            </div>
+
+                            <div id="commentsOverlay" onclick="if (event.target === this) toggleCommentsPopup(false)">
+                                <div class="comments-popup" onclick="event.stopPropagation()">
+                                    <label for="txtComments" class="control-label desp-label">Comments (optional)</label>
+                                    <textarea id="txtComments" name="Comments" class="form-control">@Model.Comments</textarea>
+                                    <div class="comments-popup-actions">
+                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="toggleCommentsPopup(false)">Done</button>
+                                    </div>
+                                </div>
                             </div>
 
                             @if (Model.isEditable && ViewBag.Client != "true")
@@ -426,6 +457,16 @@
         // check valididate for values which are required
         return true;
     }
+
+    function toggleCommentsPopup(show) {
+        var overlay = document.getElementById('commentsOverlay');
+        if (!overlay) return;
+        if (show) {
+            overlay.classList.add('is-open');
+        } else {
+            overlay.classList.remove('is-open');
+        }
+    }
 </script>
 
 @if (ViewBag.Message != null)
@@ -467,8 +508,50 @@
 
 <script src="~/Autocomplete/jquery-ui.min.js?v=2024"></script>
 <script>
+    var savedRequesterEmail = @Html.Raw(Json.Serialize(Model.RequesterEmailid ?? ""));
+
+    function onClientChanged(clientId) {
+        $('#ddlRequesterEmail').html('<option value="">Select requester</option>');
+        var clientName = $('#ddlClient option:selected').text();
+        if (clientId && clientName && clientName !== 'Select client') {
+            $('input[name="Client"]').val(clientName);
+        } else {
+            $('input[name="Client"]').val('');
+        }
+        if (!clientId) return;
+        $.getJSON('/DashBoard/GetRequesterEmails', { clientId: clientId }, function (res) {
+            if (res && res.success && res.data) {
+                res.data.forEach(function (e) {
+                    $('#ddlRequesterEmail').append('<option value="' + e + '">' + e + '</option>');
+                });
+            }
+        });
+        $.getJSON('/DashBoard/GetClientDetails', { clientId: clientId }, function (res) {
+            if (res && res.success) {
+                if (res.planType != null) $('#ddlPlanType').val(res.planType);
+                if (res.clientType != null) $('#ddlClientType').val(res.clientType);
+            }
+        });
+    }
+
     var Generateinvoiceflag = 1;
     $(document).ready(function () {
+        var clientId = $('#ddlClient').val();
+        if (clientId) {
+            onClientChanged(clientId);
+            if (savedRequesterEmail) {
+                $(document).one('ajaxSuccess', function (e, xhr, settings) {
+                    if (settings.url && settings.url.indexOf('GetRequesterEmails') !== -1) {
+                        var $sel = $('#ddlRequesterEmail');
+                        if (!$sel.find('option').filter(function () { return $(this).val() === savedRequesterEmail; }).length) {
+                            $sel.append('<option value="' + savedRequesterEmail + '">' + savedRequesterEmail + '</option>');
+                        }
+                        $sel.val(savedRequesterEmail);
+                    }
+                });
+            }
+        }
+
         $(".autofillHr").autocomplete({
             source: function (request, response) {
                 $.ajax({
@@ -491,6 +574,9 @@
             },
             minLength: 1
         });
-        document.getElementById("ui-id-1").style.zIndex = "10000";
+        var uiAutocomplete = document.getElementById("ui-id-1");
+        if (uiAutocomplete) {
+            uiAutocomplete.style.zIndex = "10000";
+        }
     });
 </script>
