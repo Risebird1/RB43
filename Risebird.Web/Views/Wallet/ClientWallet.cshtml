@@ -334,6 +334,7 @@
                                 <tbody>
                                     @foreach (var owner in Model.OwnerWallets)
                                     {
+                                        @if (owner.POCredit == 0 && owner.Consumed == 0 && owner.Remaining == 0 && owner.CashBalance == 0) { continue; }
                                         <tr>
                                             <td>@owner.BillingOwnerName</td>
                                             <td>@owner.BillingOwnerEmail</td>
@@ -341,12 +342,19 @@
                                             <td class="text-right">@(owner.Consumed > 0 ? "₹ " + owner.Consumed.ToString("N0") : "—")</td>
                                             <td class="text-right">@(owner.POCredit > 0 || owner.Consumed > 0 ? "₹ " + owner.Remaining.ToString("N0") : "—")</td>
                                             <td class="text-right">@(owner.CashBalance != 0 ? "₹ " + owner.CashBalance.ToString("N0") : "—")</td>
-                                            <td><span class="badge @owner.StateCss">@owner.State</span></td>
-                                            <td class="text-center">
-                                                <a href="javascript:void(0)" onclick="OpenWalletLogModal(@owner.BillingOwnerId)" class="btn btn-sm btn-outline-secondary">View log</a>
+                                            <td>
+                                                <span class="badge @owner.StateCss" style="white-space:nowrap;display:inline-block;min-width:100px;text-align:center;font-size:11px;padding:4px 8px;">
+                                                    @owner.State
+                                                </span>
+                                            </td>
+                                            <td class="text-center" style="white-space:nowrap;">
+                                                <a href="javascript:void(0)" onclick="OpenWalletLogModal(@owner.BillingOwnerId)" class="btn btn-sm btn-outline-secondary" style="margin:2px;">View log</a>
                                                 @if (Model.SupportsPO)
                                                 {
-                                                    <a href="javascript:void(0)" onclick="OpenPOCreditModal(@owner.BillingOwnerId)" class="btn btn-sm btn-outline-primary">Add PO</a>
+                                                    var _oName = (owner.BillingOwnerName ?? "").Replace("'", "\\'");
+                                                    var _oEmail = owner.BillingOwnerEmail ?? "";
+                                                    <a href="javascript:void(0)" onclick="OpenOwnerPOHistory(@owner.BillingOwnerId, '@_oName', '@_oEmail')" class="btn btn-sm btn-outline-info" style="margin:2px;">PO History</a>
+                                                    <a href="javascript:void(0)" onclick="OpenPOCreditModal(@owner.BillingOwnerId)" class="btn btn-sm btn-outline-primary" style="margin:2px;">Add PO</a>
                                                 }
                                             </td>
                                         </tr>
@@ -571,9 +579,39 @@
     }
 
     function OpenPOHistory() {
+        var scope = $('input[name="detailsScope"]:checked').val() || 'month';
+        var month = null, year = null, periodLabel = 'Overall';
+        if (scope === 'month') {
+            month = $('#selMonth').val();
+            year  = $('#selYear').val();
+            periodLabel = $('#selMonth option:selected').text() + ' ' + year;
+        }
+        $('#poHistoryModal .modal-title').text('PO History — ' + periodLabel);
         $('#poHistoryBody').html('<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></div>');
         $('#poHistoryModal').modal('show');
-        $.get('/Wallet/GetPOHistory', { clientId: _clientId }, function (html) {
+        $.get('/Wallet/GetPOHistory', { clientId: _clientId, month: month, year: year }, function (html) {
+            $('#poHistoryBody').html(html);
+        });
+    }
+
+    function OpenOwnerPOHistory(ownerId, ownerName, ownerEmail) {
+        var scope = $('input[name="detailsScope"]:checked').val() || 'month';
+        var month = null, year = null, periodLabel = 'Overall';
+        if (scope === 'month') {
+            month = $('#selMonth').val();
+            year  = $('#selYear').val();
+            periodLabel = $('#selMonth option:selected').text() + ' ' + year;
+        }
+        $('#poHistoryModal .modal-title').text('PO History — ' + ownerName + ' · ' + periodLabel);
+        $('#poHistoryBody').html('<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></div>');
+        $('#poHistoryModal').modal('show');
+        $.get('/Wallet/GetPOHistory', {
+            clientId: _clientId,
+            billingOwnerId: ownerId,
+            ownerEmail: ownerEmail || '',
+            month: month,
+            year: year
+        }, function (html) {
             $('#poHistoryBody').html(html);
         });
     }

@@ -1,4 +1,5 @@
 @model List<Risebird.Entities.ViewModel.ClientPOVM>
+@using System.Globalization
 
 <style>
     .po-hist-summary {
@@ -31,9 +32,9 @@
         font-family: Roboto, sans-serif;
         color: #333;
     }
-    .po-hist-stat.stat-pending .stat-value { color: #c62828; }
+    .po-hist-stat.stat-pending .stat-value  { color: #c62828; }
     .po-hist-stat.stat-received .stat-value { color: #2e7d32; }
-    .po-hist-stat.stat-credit .stat-value  { color: #1565c0; }
+    .po-hist-stat.stat-credit .stat-value   { color: #1565c0; }
 
     .po-hist-table thead th {
         background: #e8eaf6 !important;
@@ -54,6 +55,9 @@
         padding: 7px 10px !important;
     }
     .po-hist-table tbody tr:hover { background: #f3f4ff; }
+    .po-hist-table tbody tr.po-carry-fwd  { background: #fffde7; }
+    .po-hist-table tbody tr.po-carry-fwd:hover { background: #fff9c4; }
+    .po-hist-table tbody tr.po-completed  { opacity: .7; }
     .po-hist-note {
         font-size: 12px;
         color: #777;
@@ -67,15 +71,81 @@
         white-space: nowrap;
     }
     .po-pdf-link:hover { text-decoration: underline; }
+    .po-tag {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 10px;
+        letter-spacing: .3px;
+        white-space: nowrap;
+    }
+    .po-tag-current   { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; }
+    .po-tag-carry     { background: #fff8e1; color: #e65100; border: 1px solid #ffcc80; }
+    .po-tag-completed { background: #f1f8e9; color: #33691e; border: 1px solid #aed581; }
 </style>
 
-<p class="po-hist-note">Overall PO history for this client (all periods).</p>
+@{
+    var filterMonth   = ViewBag.FilterMonth   as int?;
+    var filterYear    = ViewBag.FilterYear    as int?;
+    var ownerFiltered = ViewBag.OwnerFiltered is bool b  && b;
+    var fifoApplied   = ViewBag.FifoApplied   is bool fa && fa;
+    var billingType   = (int)(ViewBag.BillingType ?? 3);
+
+    string periodNote;
+    if (filterMonth.HasValue && filterYear.HasValue)
+    {
+        var mn = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(filterMonth.Value);
+        periodNote = ownerFiltered
+            ? $"PO history for this billing owner — showing <strong>{mn} {filterYear}</strong> POs and any carry-forward balance from previous months."
+            : $"PO history for <strong>{mn} {filterYear}</strong> — showing consumption per billing owner with carry-forward.";
+    }
+    else
+    {
+        periodNote = billingType == 1
+            ? "Overall PO history — consumption shown per billing owner (oldest PO consumed first, carry-forward applied)."
+            : "Overall PO history for this client (all periods, carry-forward applied).";
+    }
+
+    // Classify a PO relative to the filter period
+    string ClassifyPO(Risebird.Entities.ViewModel.ClientPOVM po)
+    {
+        if (!filterMonth.HasValue || !filterYear.HasValue) return "overall";
+        var poDate     = new DateTime(po.POYear,  po.POMonth,  1);
+        var filterDate = new DateTime(filterYear.Value, filterMonth.Value, 1);
+        if (poDate == filterDate) return "current";
+        if (poDate < filterDate)
+        {
+            var hasBalance = fifoApplied ? po.WalletRemaining > 0 : po.PendingCashCredit > 0;
+            return hasBalance ? "carryforward" : "completed";
+        }
+        return "future";
+    }
+}
+
+<p class="po-hist-note">@Html.Raw(periodNote)</p>
+
+@if (filterMonth.HasValue && filterYear.HasValue)
+{
+    <div style="margin-bottom:10px;font-size:12px;color:#555;">
+        <span class="po-tag po-tag-current" style="margin-right:6px;">Current Month</span> PO raised in the selected month &nbsp;·&nbsp;
+        <span class="po-tag po-tag-carry" style="margin-right:6px;">Carry Forward</span> Previous PO with remaining balance &nbsp;·&nbsp;
+        <span class="po-tag po-tag-completed">Fully Consumed</span> Previous PO fully utilised
+    </div>
+}
 
 @if (Model != null && Model.Any())
 {
-    var totalPOCredit     = Model.Sum(x => x.POCreditAmount);
-    var totalCashReceived = Model.Sum(x => x.CashCreditReceived);
-    var totalPending      = totalPOCredit - totalCashReceived;
+    // Summary uses ALL POs so Credit / Consumed / Remaining represent the full picture.
+    // In month-filter mode the "Consumed" figure shows cumulative consumption up to that
+    // month (thanks to the FIFO ledger replaying all months chronologically).
+    var totalPOCredit  = Model.Sum(x => x.POCreditAmount);
+    var totalConsumed  = fifoApplied
+        ? Model.Sum(x => x.WalletConsumed)
+        : Model.Sum(x => Math.Min(x.CashCreditReceived, x.POCreditAmount));
+    var totalRemaining = fifoApplied
+        ? Model.Sum(x => x.WalletRemaining)
+        : Model.Sum(x => x.POCreditAmount - Math.Min(x.CashCreditReceived, x.POCreditAmount));
 
     <div class="po-hist-summary">
         <div class="po-hist-stat stat-credit">
@@ -83,12 +153,12 @@
             <div class="stat-value">&#8377; @totalPOCredit.ToString("N0")</div>
         </div>
         <div class="po-hist-stat stat-received">
-            <div class="stat-label">Cash Received</div>
-            <div class="stat-value">&#8377; @totalCashReceived.ToString("N0")</div>
+            <div class="stat-label">Total Consumed</div>
+            <div class="stat-value">&#8377; @totalConsumed.ToString("N0")</div>
         </div>
         <div class="po-hist-stat stat-pending">
-            <div class="stat-label">Pending</div>
-            <div class="stat-value">&#8377; @totalPending.ToString("N0")</div>
+            <div class="stat-label">Total Remaining</div>
+            <div class="stat-value">&#8377; @totalRemaining.ToString("N0")</div>
         </div>
     </div>
 
@@ -97,34 +167,81 @@
             <thead>
                 <tr>
                     <th>Period</th>
+                    @if (filterMonth.HasValue) { <th>Type</th> }
                     <th>PO Number</th>
-                    @if ((int)ViewBag.BillingType == 1) { <th>Billing Owner</th> }
+                    @if (billingType == 1 && !ownerFiltered) { <th>Billing Owner</th> }
                     <th class="text-right">PO Credit</th>
-                    <th class="text-right">Cash Received</th>
-                    <th class="text-right">Pending</th>
+                    <th class="text-right">Consumed</th>
+                    <th class="text-right">Remaining</th>
+                    <th>Usage</th>
                     <th>Added By</th>
                     <th>Added On</th>
                     <th>Document</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var po in Model)
+                @foreach (var po in Model.OrderBy(x => x.POYear).ThenBy(x => x.POMonth).ThenBy(x => x.CreatedOn ?? DateTime.MaxValue))
                 {
-                    <tr>
+                    var classification = ClassifyPO(po);
+
+                    // In month-filter mode, hide future POs entirely
+                    if (filterMonth.HasValue && classification == "future") { continue; }
+
+                    // Use FIFO-computed values when available; fall back to cash-credit-received.
+                    var consumed  = fifoApplied
+                        ? po.WalletConsumed
+                        : Math.Min(po.CashCreditReceived, po.POCreditAmount);
+                    var remaining = fifoApplied
+                        ? po.WalletRemaining
+                        : po.POCreditAmount - consumed;
+                    var usedPct   = po.POCreditAmount > 0 ? (int)Math.Round(consumed / po.POCreditAmount * 100) : 0;
+
+                    string rowCss = classification switch {
+                        "carryforward" => "po-carry-fwd",
+                        "completed"    => "po-completed",
+                        _              => ""
+                    };
+
+                    <tr class="@rowCss">
                         <td style="white-space:nowrap;">@po.PeriodLabel</td>
+                        @if (filterMonth.HasValue)
+                        {
+                            <td>
+                                @if (classification == "current")
+                                { <span class="po-tag po-tag-current">Current Month</span> }
+                                else if (classification == "carryforward")
+                                { <span class="po-tag po-tag-carry">Carry Forward</span> }
+                                else if (classification == "completed")
+                                { <span class="po-tag po-tag-completed">Fully Consumed</span> }
+                                else
+                                { <span style="color:#aaa;">—</span> }
+                            </td>
+                        }
                         <td>@(string.IsNullOrEmpty(po.PONumber) ? "—" : po.PONumber)</td>
-                        @if ((int)ViewBag.BillingType == 1)
+                        @if (billingType == 1 && !ownerFiltered)
                         {
                             <td>@(string.IsNullOrEmpty(po.BillingOwnerEmail) ? "—" : po.BillingOwnerEmail)</td>
                         }
-                        <td class="text-right" style="white-space:nowrap;">
+                        <td class="text-right" style="white-space:nowrap;font-weight:600;color:#1565c0;">
                             @(po.POCreditAmount > 0 ? "₹ " + po.POCreditAmount.ToString("N0") : "—")
                         </td>
-                        <td class="text-right" style="white-space:nowrap;color:@(po.CashCreditReceived > 0 ? "#2e7d32" : "inherit");">
-                            @(po.CashCreditReceived > 0 ? "₹ " + po.CashCreditReceived.ToString("N0") : "—")
+                        <td class="text-right" style="white-space:nowrap;color:@(consumed > 0 ? "#2e7d32" : "inherit");">
+                            @(consumed > 0 ? "₹ " + consumed.ToString("N0") : "—")
                         </td>
-                        <td class="text-right" style="white-space:nowrap;color:@(po.PendingCashCredit > 0 ? "#c62828" : "#2e7d32");font-weight:600;">
-                            @(po.POCreditAmount > 0 ? "₹ " + po.PendingCashCredit.ToString("N0") : "—")
+                        <td class="text-right" style="white-space:nowrap;font-weight:600;color:@(remaining > 0 ? "#c62828" : "#2e7d32");">
+                            @(po.POCreditAmount > 0 ? "₹ " + remaining.ToString("N0") : "—")
+                        </td>
+                        <td style="min-width:100px;">
+                            @if (po.POCreditAmount > 0)
+                            {
+                                <div style="display:flex;align-items:center;gap:6px;">
+                                    <div style="flex:1;height:6px;background:#eee;border-radius:3px;overflow:hidden;">
+                                        <div style="width:@usedPct%;height:100%;background:@(usedPct >= 100 ? "#2e7d32" : usedPct >= 80 ? "#c62828" : "#1976d2");border-radius:3px;"></div>
+                                    </div>
+                                    <span style="font-size:11px;color:#555;white-space:nowrap;">@usedPct%</span>
+                                </div>
+                            }
+                            else { <span style="color:#aaa;">—</span> }
                         </td>
                         <td style="white-space:nowrap;">@(po.CreatedBy ?? "—")</td>
                         <td style="white-space:nowrap;">@(po.CreatedOn?.ToString("dd MMM yyyy HH:mm") ?? "—")</td>
@@ -147,6 +264,6 @@ else
 {
     <div style="text-align:center;padding:30px 20px;color:#999;font-size:13px;font-family:Roboto,sans-serif;">
         <i class="fa fa-inbox fa-2x" style="display:block;margin-bottom:8px;"></i>
-        No PO history found for this client.
+        No PO history found.
     </div>
 }

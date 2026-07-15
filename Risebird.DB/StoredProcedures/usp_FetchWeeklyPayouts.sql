@@ -58,6 +58,7 @@ BEGIN
                 ELSE 4
             END                                         AS WeekNumber,
             ph.TotalAmount,
+			ROUND(ph.TotalAmount * 0.10,0) as Tds,
             ph.Userid,
             --ISNULL(tic.IsBankVerified, 0)              AS IsVerified
             1 AS IsVerified
@@ -75,7 +76,7 @@ BEGIN
         w.WeekNumber,
         CONVERT(NVARCHAR(10), w.WeekStart, 103) + ' – ' + CONVERT(NVARCHAR(10), w.WeekEnd, 103) AS WeekRange,
         ISNULL(SUM(CASE WHEN p.IsVerified = 1 THEN p.TotalAmount ELSE 0 END), 0)  AS TotalPaid,
-        ISNULL(ROUND(SUM(CASE WHEN p.IsVerified = 1 THEN p.TotalAmount ELSE 0 END) * 0.10, 0), 0) AS TdsDue,
+        ISNULL(SUM(CASE WHEN p.IsVerified = 1 THEN p.Tds ELSE 0 END), 0) AS TdsDue,
         ISNULL(COUNT(DISTINCT CASE WHEN p.IsVerified = 1 THEN p.Userid END), 0)   AS InterviewerCount,
         ISNULL(tc.IsPaid, 0)                                                       AS IsPaid,
         tc.id                                                                       AS ChallanId

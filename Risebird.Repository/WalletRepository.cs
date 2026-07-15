@@ -233,6 +233,41 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<List<WalletMonthDebitVM>> GetOwnerMonthlyDebits(int clientId, int billingType, int? billingOwnerId = null)
+        {
+            // Returns wallet debits grouped by (BillingOwnerId, Month, Year).
+            // When billingOwnerId is supplied, only that owner's rows are returned.
+            // When null, all owners (or the client ledger for BillingType 3) are returned.
+            const string sql = @"
+                SELECT
+                    w.BillingOwnerId,
+                    CASE WHEN w.InterviewId > 0 THEN MONTH(im.interviewDate) ELSE MONTH(w.CreatedOn) END AS [Month],
+                    CASE WHEN w.InterviewId > 0 THEN YEAR(im.interviewDate)  ELSE YEAR(w.CreatedOn)  END AS [Year],
+                    SUM(ISNULL(w.Debit, 0)) AS TotalDebit
+                FROM Wallet w
+                LEFT JOIN InterviewMeetings im ON im.id = w.InterviewId
+                WHERE w.ClientId      = @ClientId
+                  AND w.BillingType   = @BillingType
+                  AND w.Debit         > 0
+                  AND (@BillingOwnerId IS NULL OR w.BillingOwnerId = @BillingOwnerId)
+                GROUP BY
+                    w.BillingOwnerId,
+                    CASE WHEN w.InterviewId > 0 THEN MONTH(im.interviewDate) ELSE MONTH(w.CreatedOn) END,
+                    CASE WHEN w.InterviewId > 0 THEN YEAR(im.interviewDate)  ELSE YEAR(w.CreatedOn)  END";
+            try
+            {
+                using var con = new SqlConnection(connectionString);
+                var result = await con.QueryAsync<WalletMonthDebitVM>(
+                    sql, new { ClientId = clientId, BillingType = billingType, BillingOwnerId = billingOwnerId });
+                return result.ToList();
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<WalletMonthDebitVM>();
+            }
+        }
+
         public async Task<AllClientsWalletVM> GetAllClientsWalletSummary(int fromMonth, int fromYear, int toMonth, int toYear)
         {
             var vm = new AllClientsWalletVM
