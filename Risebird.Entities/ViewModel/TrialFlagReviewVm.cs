@@ -108,6 +108,8 @@ namespace Risebird.Entities.ViewModel
         public decimal? JoinTimeMinutes { get; set; }
         public decimal? InterviewDurationMinutes { get; set; }
         public string OverallVerdict { get; set; }
+        /// <summary>Read-time verdict: bad_trial when RiskCategory exists for triggering interview.</summary>
+        public string DisplayVerdict { get; set; }
         public string ReviewStatus { get; set; }
         public DateTime FlaggedAtUtc { get; set; }
         public DateTime? ReviewedAtUtc { get; set; }
@@ -123,10 +125,20 @@ namespace Risebird.Entities.ViewModel
         public string SeverityBreakdown { get; set; }
         /// <summary>Candidate feedback traits / comment text when CandidateRating risk is present.</summary>
         public string CandidateFeedbackComment { get; set; }
+        public string QcMergeVerdict { get; set; }
+        public int? QcMergeScore { get; set; }
+        public int PaymentDeduction { get; set; }
+        public string PaymentDeductionReasons { get; set; }
+        public string PaymentRecommendation { get; set; }
+        public string PaymentRecommendationComments { get; set; }
         public bool IsSuboptimalQuality =>
             !string.IsNullOrWhiteSpace(RiskCategoryLabels)
             || (!string.IsNullOrWhiteSpace(Severity)
                 && !string.Equals(Severity, TrialFlagConstants.SeverityClean, StringComparison.OrdinalIgnoreCase));
+
+        /// <summary>Badge text for verdict column — prefers DisplayVerdict.</summary>
+        public string EffectiveVerdict =>
+            !string.IsNullOrWhiteSpace(DisplayVerdict) ? DisplayVerdict : OverallVerdict;
     }
 
     public class TrialFlagReviewActionResultVm
@@ -144,7 +156,6 @@ namespace Risebird.Entities.ViewModel
         public static string ReportQuality(int interviewId) =>
             $"/Interview/QCMergedAIDetails?interviewId={interviewId}";
 
-        /// <summary>Same target as RiskCategory / PaymentSlaDetails / Stats evidence: Contradiction Report page.</summary>
         public static string ContradictionReport(int interviewId) =>
             $"/Interview/ContradictionReport?interviewId={interviewId}";
 
