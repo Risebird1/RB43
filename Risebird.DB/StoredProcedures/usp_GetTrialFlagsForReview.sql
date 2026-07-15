@@ -20,6 +20,7 @@ BEGIN
             CAST(0 AS INT) AS JoinTimePass,
             CAST(0 AS INT) AS InterviewDurationPass,
             CAST(NULL AS DECIMAL(5,2)) AS TranscriptQualityScore,
+            CAST(NULL AS DECIMAL(5,2)) AS ReportQualityScore,
             CAST(NULL AS DECIMAL(5,2)) AS CandidateRating,
             CAST(NULL AS DECIMAL(8,2)) AS JoinTimeMinutes,
             CAST(NULL AS DECIMAL(8,2)) AS InterviewDurationMinutes,
@@ -36,7 +37,8 @@ BEGIN
             CAST('' AS NVARCHAR(200)) AS IrfName,
             CAST(NULL AS VARCHAR(MAX)) AS RiskCategoryLabels,
             CAST(NULL AS VARCHAR(500)) AS RiskCategoryReasons,
-            CAST(NULL AS VARCHAR(500)) AS SeverityBreakdown
+            CAST(NULL AS VARCHAR(500)) AS SeverityBreakdown,
+            CAST(NULL AS NVARCHAR(1000)) AS CandidateFeedbackComment
         WHERE 1 = 0;
         RETURN;
     END
@@ -54,8 +56,9 @@ BEGIN
         CAST(tf.CandidateRatingPass AS INT) AS CandidateRatingPass,
         CAST(tf.JoinTimePass AS INT) AS JoinTimePass,
         CAST(tf.InterviewDurationPass AS INT) AS InterviewDurationPass,
-        tf.TranscriptQualityScore,
-        tf.CandidateRating,
+        COALESCE(tf.TranscriptQualityScore, CAST(NULLIF(ic.AITranscriptAnalysisScore, 0) AS DECIMAL(5,2))) AS TranscriptQualityScore,
+        CAST(NULLIF(ic.AIReportQCAnalysisScore, 0) AS DECIMAL(5,2)) AS ReportQualityScore,
+        COALESCE(tf.CandidateRating, CAST(NULLIF(cfd.Rating, 0) AS DECIMAL(5,2))) AS CandidateRating,
         tf.JoinTimeMinutes,
         tf.InterviewDurationMinutes,
         tf.OverallVerdict,
@@ -91,9 +94,27 @@ BEGIN
         ) AS IrfName,
         rc.Name AS RiskCategoryLabels,
         rc.Description AS RiskCategoryReasons,
-        rc.SeverityBreakdown
+        rc.SeverityBreakdown,
+        ISNULL(STUFF(CONCAT(
+            CASE WHEN NULLIF(LTRIM(RTRIM(cfd.CandidateInteractionQuality)), '') IS NOT NULL THEN ' · ' + LTRIM(RTRIM(cfd.CandidateInteractionQuality)) ELSE '' END,
+            CASE WHEN NULLIF(LTRIM(RTRIM(cfd.LimitedHandoncoding)), '') IS NOT NULL THEN ' · ' + LTRIM(RTRIM(cfd.LimitedHandoncoding)) ELSE '' END,
+            CASE WHEN NULLIF(LTRIM(RTRIM(cfd.WeakInfrastructure)), '') IS NOT NULL THEN ' · ' + LTRIM(RTRIM(cfd.WeakInfrastructure)) ELSE '' END,
+            CASE WHEN NULLIF(LTRIM(RTRIM(cfd.UnethicalPractices)), '') IS NOT NULL THEN ' · ' + LTRIM(RTRIM(cfd.UnethicalPractices)) ELSE '' END,
+            CASE WHEN NULLIF(LTRIM(RTRIM(cfd.TimeManagement)), '') IS NOT NULL THEN ' · ' + LTRIM(RTRIM(cfd.TimeManagement)) ELSE '' END,
+            CASE WHEN NULLIF(LTRIM(RTRIM(cfd.PoorCommunicationSkills)), '') IS NOT NULL THEN ' · ' + LTRIM(RTRIM(cfd.PoorCommunicationSkills)) ELSE '' END,
+            CASE WHEN NULLIF(LTRIM(RTRIM(cfd.InterviewerVideo)), '') IS NOT NULL THEN ' · ' + LTRIM(RTRIM(cfd.InterviewerVideo)) ELSE '' END,
+            CASE WHEN NULLIF(LTRIM(RTRIM(psd.FeedBackComment)), '') IS NOT NULL THEN ' · ' + LTRIM(RTRIM(psd.FeedBackComment)) ELSE '' END
+        ), 1, 3, ''), '') AS CandidateFeedbackComment
     FROM dbo.TrialFlags tf
     LEFT JOIN dbo.RiskCategory rc ON rc.InterviewId = tf.TriggeringInterviewId
+    LEFT JOIN dbo.InterviewComments ic ON ic.InterviewId = tf.TriggeringInterviewId
+    OUTER APPLY (
+        SELECT TOP 1 *
+        FROM dbo.CandidateFeedbackDetails x
+        WHERE x.InterviewId = tf.TriggeringInterviewId
+        ORDER BY x.Id DESC
+    ) cfd
+    LEFT JOIN dbo.PaymentSLADetails psd ON psd.Interviewid = tf.TriggeringInterviewId
     LEFT JOIN dbo.TransInterviewer ti ON ti.id = tf.ChannelId
     LEFT JOIN dbo.IRF irf ON irf.id = tf.IrfId
     LEFT JOIN dbo.InterviewMeetings im ON im.id = tf.TriggeringInterviewId

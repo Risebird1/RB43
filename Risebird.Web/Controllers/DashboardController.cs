@@ -8035,6 +8035,41 @@ NEVER:
             }
         }
 
+        /// <summary>
+        /// AI evaluation summary for a trial triggering interview (Report / Transcript / Contradiction / Merge).
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InterviewAiRiskSummary(int interviewId, int? irfId = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { ok = false, message = "Unauthorized" });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsTrialFlagReviewerProfile(profileName))
+                    return Json(new { ok = false, message = "Not authorized." });
+
+                if (interviewId <= 0)
+                    return Json(new { ok = false, message = "Invalid interview." });
+
+                var rows = await _trialFlagReviewService.GetInterviewAiRiskSummaryAsync(interviewId);
+                return Json(new
+                {
+                    ok = true,
+                    interviewId,
+                    irfId,
+                    rows
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, message = "Failed to load AI risk summary. Deploy usp_GetInterviewAiRiskSummary." });
+            }
+        }
+
         [Authorize]
         [HttpPost]
         [IgnoreAntiforgeryToken]

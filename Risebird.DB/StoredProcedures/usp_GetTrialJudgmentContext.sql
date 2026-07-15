@@ -257,14 +257,37 @@ BEGIN
 
 
     DECLARE @JoinedOn DATETIME;
+    DECLARE @InterviewInterviewer VARCHAR(200);
 
-    SELECT @JoinedOn = MIN(j.Joinedon)
+    SELECT @InterviewInterviewer = LTRIM(RTRIM(im.interviewer))
+    FROM dbo.InterviewMeetings im
+    WHERE im.id = @InterviewId;
 
+    -- Prefer join rows matching interviewer email/nickname (cross-resolve both sides); else earliest join.
+    SELECT TOP 1 @JoinedOn = j.Joinedon
     FROM dbo.InterviewMeetingsJoinTime j
-
-    WHERE j.Interviewid = @InterviewId;
-
-
+    WHERE j.Interviewid = @InterviewId
+      AND j.Joinedon IS NOT NULL
+    ORDER BY
+        CASE
+            WHEN NULLIF(LTRIM(RTRIM(j.interviewer)), '') IS NOT NULL
+             AND LTRIM(RTRIM(j.interviewer)) = @InterviewInterviewer THEN 0
+            WHEN EXISTS (
+                SELECT 1
+                FROM dbo.UserList ul
+                LEFT JOIN dbo.InterviewerProfile ip ON ip.UserId = ul.UserId
+                WHERE (
+                        LTRIM(RTRIM(ul.EmailId)) = @InterviewInterviewer
+                     OR LTRIM(RTRIM(ISNULL(ip.NickName, ''))) = @InterviewInterviewer
+                      )
+                  AND (
+                        LTRIM(RTRIM(ul.EmailId)) = LTRIM(RTRIM(j.interviewer))
+                     OR LTRIM(RTRIM(ISNULL(ip.NickName, ''))) = LTRIM(RTRIM(j.interviewer))
+                      )
+            ) THEN 1
+            ELSE 2
+        END ASC,
+        j.Joinedon ASC;
 
     DECLARE @ActualDuration INT;
 
