@@ -16,5 +16,18 @@ namespace Risebird.Business.Interface
 
         Task<bool> ApplyAutoQcRemovalForContextAsync(TransInterviewerInterviewContext ctx, int triggeringInterviewId,
             string verdict, AutoQcRemovalOptions options, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Ops-initiated removal from IRF Audit risk drill-down. Deactivates TransInterviewer via the same rail
+        /// as auto-QC removal and writes EventType = RiskAuditRemoval (no automatic removal).
+        /// </summary>
+        Task<IrfAuditRiskRemoveResultVm> RemoveForRiskAuditAsync(
+            int transInterviewerId,
+            int irfId,
+            string changedBy,
+            string riskSummary,
+            int? worstSeverityInterviewId,
+            string comment = null,
+            CancellationToken cancellationToken = default);
     }
 }

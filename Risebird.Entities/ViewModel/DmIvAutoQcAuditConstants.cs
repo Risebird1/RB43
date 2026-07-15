@@ -10,6 +10,13 @@ namespace Risebird.Entities.ViewModel
         public const string SourceForwardTrigger = "forward_trigger";
         public const string SourceRetroactiveBackfill60Day = "retroactive_backfill_60day";
         public const string SourcePerIrfBackfill = "per_irf_backfill";
+        public const string SourceRiskAuditManual = "risk_audit_manual";
+        public const string RiskAuditTag = "irf_audit_risk_removal";
+
+        /// <summary>Max interviews processed per Refresh-risk click.</summary>
+        public const int RiskCategoryBackfillBatchSize = 100;
+        /// <summary>Max batches per Refresh-risk HTTP call (avoids timeout while filling empty IRFs).</summary>
+        public const int RiskCategoryBackfillMaxBatches = 5;
 
         /// <summary>Triggers auto-removal (item 59).</summary>
         public const string VerdictSuspicious = "suspicious";
