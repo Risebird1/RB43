@@ -56,6 +56,12 @@ BEGIN
         RETURN;
     END
 
+    IF COL_LENGTH('dbo.RiskCategory', 'InterviewId') IS NULL
+    BEGIN
+        RAISERROR('dbo.RiskCategory.InterviewId is missing. Deploy Risebird.DB/Tables/RiskCategory.sql first.', 16, 1);
+        RETURN;
+    END
+
     -- IST window (same normalization as usp_GetIrfAuditDirectory)
     IF @ToIst IS NULL
         SET @ToIst = CAST(DATEADD(MINUTE, 330, GETUTCDATE()) AS DATE);
@@ -278,7 +284,8 @@ BEGIN
         GROUP BY ml.TransInterviewerId
     ),
     WorstInterview AS (
-        SELECT TransInterviewerId, InterviewId AS WorstSeverityInterviewId
+        -- Keep column name InterviewId here; alias only in the final SELECT.
+        SELECT TransInterviewerId, InterviewId
         FROM (
             SELECT
                 m.TransInterviewerId,
@@ -295,10 +302,9 @@ BEGIN
         ) x
         WHERE rn = 1
     ),
-    -- QC merge verdict/score for worst-severity interview (or latest window interview with QC if no risk)
+    -- QC merge: worst-severity interview, else latest in-window completed interview
     QcPick AS (
-        SELECT TransInterviewerId, WorstSeverityInterviewId AS InterviewId
-        FROM WorstInterview
+        SELECT TransInterviewerId, InterviewId FROM WorstInterview
         UNION ALL
         SELECT TransInterviewerId, InterviewId
         FROM (
@@ -375,7 +381,7 @@ BEGIN
         CAST(CASE WHEN ISNULL(ia.TotalCompleted, 0) = 0 THEN NULL
                   ELSE CAST(ISNULL(ia.P0Count, 0) + ISNULL(ia.P1Count, 0) AS DECIMAL(18,4)) / NULLIF(ia.TotalCompleted, 0)
              END AS DECIMAL(10,4)) AS HighSevRatio,
-        wi.WorstSeverityInterviewId,
+        wi.InterviewId AS WorstSeverityInterviewId,
         CASE
             WHEN ISNULL(ia.TotalCompleted, 0) < @MinVolume THEN 'InsufficientData'
             WHEN (
