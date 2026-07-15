@@ -143,6 +143,19 @@ namespace Risebird.Entities.ViewModel
         public string BillingOwnerEmail { get; set; }
         public string BillingOwnerName { get; set; }
         public string PeriodLabel { get; set; }
+
+        /// <summary>Actual wallet debit (interview charges) consumed against this PO — populated by FIFO distribution in WalletService.</summary>
+        public decimal WalletConsumed { get; set; }
+        public decimal WalletRemaining => Math.Max(0, POCreditAmount - WalletConsumed);
+    }
+
+    /// <summary>Total wallet debits per billing owner (or client) per calendar month, used for FIFO distribution.</summary>
+    public class WalletMonthDebitVM
+    {
+        public int? BillingOwnerId { get; set; }   // null = client-scope (BillingType 3)
+        public int  Month          { get; set; }
+        public int  Year           { get; set; }
+        public decimal TotalDebit  { get; set; }
     }
 
     public class OwnerWalletRowVM
