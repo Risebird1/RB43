@@ -144,8 +144,12 @@ namespace Risebird.Entities.ViewModel
         public static string ReportQuality(int interviewId) =>
             $"/Interview/QCMergedAIDetails?interviewId={interviewId}";
 
+        /// <summary>Same target as RiskCategory / PaymentSlaDetails / Stats evidence: Contradiction Report page.</summary>
+        public static string ContradictionReport(int interviewId) =>
+            $"/Interview/ContradictionReport?interviewId={interviewId}";
+
         public static string DecisionQuality(int interviewId) =>
-            $"/Interview/QCMergedAIDetails?interviewId={interviewId}";
+            ContradictionReport(interviewId);
 
         public static string CandidateRating(int interviewId) =>
             $"/Interview/PaymentSlaDetails?interviewId={interviewId}&returnBack=0&actionstatus=SLACompleted";

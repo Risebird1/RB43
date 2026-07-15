@@ -20,7 +20,7 @@
         .Replace("222222222", "__IRF_ID__");
     var tplReport = TrialFlagDrillDownUrls.ReportQuality(111111111)
         .Replace("111111111", "__INTERVIEW_ID__");
-    var tplContradiction = TrialFlagDrillDownUrls.DecisionQuality(111111111)
+    var tplContradiction = TrialFlagDrillDownUrls.ContradictionReport(111111111)
         .Replace("111111111", "__INTERVIEW_ID__");
     var tplTrialStats = TrialFlagDrillDownUrls.TrialStats(111111111, 222222222, "__IRF_NAME__", "__FROM__", "__TO__")
         .Replace("111111111", "__USER_ID__")
@@ -310,38 +310,7 @@
         opacity: .5;
     }
 
-    /* Soft dark tooltip */
-    #irfRiskTip {
-        display: none; position: fixed; z-index: 10050; width: min(320px, calc(100vw - 24px));
-        pointer-events: none; opacity: 0; transition: opacity .1s ease;
-    }
-    #irfRiskTip.is-visible { display: block; opacity: 1; }
-    .irf-tip {
-        background: #334155; color: #e2e8f0; border-radius: 8px;
-        border: 1px solid #475569; box-shadow: 0 8px 20px rgba(15,23,42,.18); overflow: hidden;
-    }
-    .irf-tip__head {
-        display: flex; align-items: center; justify-content: space-between; gap: 8px;
-        padding: 7px 10px; background: #1e293b; border-bottom: 1px solid #475569;
-    }
-    .irf-tip__head-title { font-size: 11px; font-weight: 600; color: #f1f5f9; }
-    .irf-tip__head-count { font-size: 10px; color: #94a3b8; }
-    .irf-tip__body { padding: 2px 0; max-height: 220px; overflow-y: auto; }
-    .irf-tip__empty { padding: 10px; font-size: 11px; color: #94a3b8; text-align: center; }
-    .irf-tip__row { padding: 6px 10px; border-top: 1px solid #475569; }
-    .irf-tip__row:first-child { border-top: none; }
-    .irf-tip__row-top { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 2px; }
-    .irf-tip__id { font-size: 11px; font-weight: 600; color: #93c5fd; }
-    .irf-tip__date { font-size: 10px; color: #94a3b8; }
-    .irf-tip__desc { font-size: 11px; color: #cbd5e1; line-height: 1.35; }
-    .irf-tip__br { font-size: 11px; color: #e2e8f0; margin-top: 2px; word-break: break-word; }
-    .irf-tip__more { padding: 6px 10px; font-size: 10px; color: #94a3b8; border-top: 1px solid #475569; }
-    .irf-tip__foot { display: none; }
-
 </style>
-<div id="irfRiskTip" role="tooltip" aria-hidden="true"></div>
-
-
 
 <div class="main-panel irf-audit-dir" id="main-panel">
 
@@ -1258,13 +1227,12 @@
             return 'irf-rec--insufficient';
         }
 
-        function pBadge(level, count, tipKey) {
+        function pBadge(level, count) {
             var n = Number(count) || 0;
             var zero = n === 0 ? ' is-zero' : '';
             var clickable = n > 0 ? ' is-clickable' : '';
-            var tipAttr = tipKey ? ' data-tip-key="' + esc(tipKey) + '"' : '';
             return '<button type="button" class="irf-p-badge irf-p-badge--p' + level + zero + clickable + '"'
-                + ' data-p-level="' + level + '"' + tipAttr
+                + ' data-p-level="' + level + '"'
                 + ' aria-label="P' + level + ': ' + n + '">' + n + '</button>';
         }
 
@@ -1299,79 +1267,6 @@
             return details.filter(function (d) {
                 return Number(prop(d, 'transInterviewerId', 'TransInterviewerId')) === Number(transId);
             });
-        }
-
-        function itemsForP(detailsForIv, level) {
-            var key = 'P' + level;
-            return (detailsForIv || []).filter(function (d) {
-                return (prop(d, 'severity', 'Severity') || '').toUpperCase() === key;
-            });
-        }
-
-        var _tipStore = {};
-        function tipKeyFor(transId, level) {
-            return String(transId) + ':P' + level;
-        }
-
-        function buildTipHtml(level, items) {
-            var key = 'P' + level;
-            var head = '<div class="irf-tip"><div class="irf-tip__head">'
-                + '<span class="irf-tip__head-title">' + key + '</span>'
-                + '<span class="irf-tip__head-count">' + (items ? items.length : 0) + '</span>'
-                + '</div>';
-            if (!items || !items.length) {
-                return head + '<div class="irf-tip__empty">No reason at ' + key + '.</div></div>';
-            }
-            // Unique descriptions / reasons only
-            var seen = {};
-            var reasons = [];
-            items.forEach(function (d) {
-                var desc = (prop(d, 'description', 'Description') || '').trim();
-                if (!desc) desc = (prop(d, 'name', 'Name') || '').trim();
-                if (!desc) return;
-                var parts = desc.split(',').map(function (p) { return p.trim(); }).filter(Boolean);
-                parts.forEach(function (p) {
-                    var k = p.toLowerCase();
-                    if (!seen[k]) {
-                        seen[k] = true;
-                        reasons.push(p);
-                    }
-                });
-            });
-            if (!reasons.length) {
-                return head + '<div class="irf-tip__empty">No description available.</div></div>';
-            }
-            var body = '<div class="irf-tip__body">';
-            reasons.forEach(function (r) {
-                body += '<div class="irf-tip__row"><div class="irf-tip__desc">' + esc(r) + '</div></div>';
-            });
-            body += '</div></div>';
-            return head + body;
-        }
-
-        function showRiskTip($el) {
-            var tipKey = $el.attr('data-tip-key');
-            var html = tipKey && _tipStore[tipKey] ? _tipStore[tipKey] : '';
-            if (!html) return;
-            var $tip = $('#irfRiskTip');
-            $tip.html(html).attr('aria-hidden', 'false');
-            var rect = $el[0].getBoundingClientRect();
-            var tipW = Math.min(360, window.innerWidth - 24);
-            var left = Math.max(12, Math.min(rect.left + rect.width / 2 - tipW / 2, window.innerWidth - tipW - 12));
-            var top = rect.bottom + 8;
-            $tip.css({ width: tipW + 'px', left: left + 'px', top: top + 'px' });
-            requestAnimationFrame(function () {
-                var h = $tip.outerHeight() || 0;
-                if (rect.bottom + 8 + h > window.innerHeight - 8) {
-                    top = Math.max(8, rect.top - h - 8);
-                    $tip.css('top', top + 'px');
-                }
-                $tip.addClass('is-visible');
-            });
-        }
-
-        function hideRiskTip() {
-            $('#irfRiskTip').removeClass('is-visible').attr('aria-hidden', 'true');
         }
 
         function renderSeverityGroups(detailsForIv, focusLevel) {
@@ -1518,7 +1413,6 @@
             if (!rows || !rows.length) {
                 return '<div class="irf-risk-empty">No active interviewers on this IRF.</div>';
             }
-            _tipStore = {};
             var riskSum = 0;
             rows.forEach(function (r) {
                 riskSum += Number(prop(r,'riskInterviews','RiskInterviews') || 0);
@@ -1552,10 +1446,6 @@
                 var payTotal = prop(r,'paymentDeductionTotal','PaymentDeductionTotal') || 0;
                 var payReasons = prop(r,'paymentDeductionReasons','PaymentDeductionReasons') || '';
 
-                for (var lvl = 0; lvl <= 5; lvl++) {
-                    _tipStore[tipKeyFor(transId, lvl)] = buildTipHtml(lvl, itemsForP(ivDetails, lvl));
-                }
-
                 html += '<tr class="irf-risk-iv-row" data-trans-id="' + transId + '">'
                     + '<td><div class="irf-risk-iv-name">' + esc(name) + '</div>'
                     + (email ? '<div class="irf-risk-iv-email">' + esc(email) + '</div>' : '')
@@ -1566,12 +1456,12 @@
                         : '0')
                     + '</td>'
                     + '<td class="col-num">' + lifetime + '</td>'
-                    + '<td class="col-num">' + pBadge(0, prop(r,'p0Count','P0Count'), tipKeyFor(transId, 0)) + '</td>'
-                    + '<td class="col-num">' + pBadge(1, prop(r,'p1Count','P1Count'), tipKeyFor(transId, 1)) + '</td>'
-                    + '<td class="col-num">' + pBadge(2, prop(r,'p2Count','P2Count'), tipKeyFor(transId, 2)) + '</td>'
-                    + '<td class="col-num">' + pBadge(3, prop(r,'p3Count','P3Count'), tipKeyFor(transId, 3)) + '</td>'
-                    + '<td class="col-num">' + pBadge(4, prop(r,'p4Count','P4Count'), tipKeyFor(transId, 4)) + '</td>'
-                    + '<td class="col-num">' + pBadge(5, prop(r,'p5Count','P5Count'), tipKeyFor(transId, 5)) + '</td>'
+                    + '<td class="col-num">' + pBadge(0, prop(r,'p0Count','P0Count')) + '</td>'
+                    + '<td class="col-num">' + pBadge(1, prop(r,'p1Count','P1Count')) + '</td>'
+                    + '<td class="col-num">' + pBadge(2, prop(r,'p2Count','P2Count')) + '</td>'
+                    + '<td class="col-num">' + pBadge(3, prop(r,'p3Count','P3Count')) + '</td>'
+                    + '<td class="col-num">' + pBadge(4, prop(r,'p4Count','P4Count')) + '</td>'
+                    + '<td class="col-num">' + pBadge(5, prop(r,'p5Count','P5Count')) + '</td>'
                     + '<td>' + formatRatio(prop(r,'riskRatio','RiskRatio')) + '</td>'
                     + '<td><span class="irf-rec ' + recClass(rec) + '">' + esc(rec) + '</span></td>'
                     + '<td><div class="irf-qc-verdict irf-qc-' + esc(String(qcVerdict).toLowerCase()) + '">' + esc(qcVerdict) + '</div>'
@@ -1636,17 +1526,8 @@
             fetchBreakdown();
         }
 
-        $(document).on('mouseenter', '.irf-p-badge[data-tip-key]', function () {
-            showRiskTip($(this));
-        });
-        $(document).on('mouseleave', '.irf-p-badge[data-tip-key]', function () {
-            hideRiskTip();
-        });
-        $(document).on('scroll', function () { hideRiskTip(); });
-
         $(document).on('click', '.irf-p-badge.is-clickable', function (e) {
             e.preventDefault();
-            hideRiskTip();
             var level = $(this).data('p-level');
             var $ivRow = $(this).closest('tr.irf-risk-iv-row');
             var transId = $ivRow.data('trans-id');
