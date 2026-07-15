@@ -1,4 +1,4 @@
-@model IEnumerable<Risebird.Entities.ViewModel.InvoiceListVM>
+﻿@model IEnumerable<Risebird.Entities.ViewModel.InvoiceListVM>
 @using System
 @using System.Linq
 @using Newtonsoft.Json
@@ -596,8 +596,8 @@
                                                                 <span class="inv-expdate-display not-set">Not set</span>
                                                             }
                                                         </td>
-                                                        <td class="col-aging @(string.IsNullOrEmpty(uAging) ? "col-aging-ok" : "col-aging-overdue")">
-                                                            @(string.IsNullOrEmpty(uAging) ? "—" : uAging)
+                                                        <td class="col-aging @(uAging == null ? "col-aging-ok" : "col-aging-overdue")" data-order="@(uAging ?? 0)">
+                                                            @(uAging == null ? "—" : uAging.ToString())
                                                         </td>
                                                         <td class="text-center" style="white-space:nowrap;">
                                                             <a href="@Url.Action("ViewInvoice","Finance", new { invoiceId = item.id })"
@@ -893,8 +893,8 @@
                                                                 <span class="inv-expdate-display not-set">Not set</span>
                                                             }
                                                         </td>
-                                                        <td class="col-aging @(item.Status != 5 && !string.IsNullOrEmpty(mAging) ? "col-aging-overdue" : "col-aging-ok")">
-                                                            @(item.Status == 5 ? "—" : string.IsNullOrEmpty(mAging) ? "—" : mAging)
+                                                        <td class="col-aging @(item.Status != 5 && mAging != null ? "col-aging-overdue" : "col-aging-ok")" data-order="@(item.Status == 5 ? 0 : mAging ?? 0)">
+                                                            @(item.Status == 5 ? "—" : mAging == null ? "—" : mAging.ToString())
                                                         </td>
                                                         <td class="text-center" style="white-space:nowrap;">
                                                             <a href="@Url.Action("ViewInvoice","Finance", new { invoiceId = item.id })"
@@ -1168,11 +1168,11 @@
         return lastDay.AddDays(days);
     }
 
-    string ComputeAging(DateTime? dueDate)
+    int? ComputeAging(DateTime? dueDate)
     {
-        if (!dueDate.HasValue) return "";
+        if (!dueDate.HasValue) return null;
         if (dueDate.Value.Date < DateTime.Today)
-            return (DateTime.Today - dueDate.Value.Date).Days + " days";
-        return "";
+            return (DateTime.Today - dueDate.Value.Date).Days;
+        return null;
     }
 }
