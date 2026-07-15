@@ -197,7 +197,7 @@ BEGIN
                  OR EXISTS (
                         SELECT 1
                         FROM UserList ul
-                        LEFT JOIN InterviewerProfile ip ON ip.UserId = ul.UserId
+                        LEFT JOIN InterviewerProfile ip ON ip.UserId = ul.id
                         WHERE (
                                 LTRIM(RTRIM(ul.EmailId)) = LTRIM(RTRIM(im.interviewer))
                              OR LTRIM(RTRIM(ISNULL(ip.NickName, ''))) = LTRIM(RTRIM(im.interviewer))
@@ -226,11 +226,16 @@ BEGIN
     IF @MinPLevel IS NOT NULL
         SET @Severity = 'P' + CAST(@MinPLevel AS VARCHAR(1));
 
-    IF EXISTS (SELECT 1 FROM RiskCategory WHERE InterviewId = @InterviewId)
+    IF ISNULL(LTRIM(RTRIM(@Description)), '') = ''
+    BEGIN
+        -- No checks triggered: remove stale RiskCategory row (do not leave NULL severity)
+        DELETE FROM RiskCategory WHERE InterviewId = @InterviewId;
+    END
+    ELSE IF EXISTS (SELECT 1 FROM RiskCategory WHERE InterviewId = @InterviewId)
         UPDATE RiskCategory SET Name=@Name, Description=@Description,
                Severity=@Severity, SeverityBreakdown=@SeverityBreakdown, ModifiedOn=GETDATE()
         WHERE InterviewId = @InterviewId;
-    ELSE IF ISNULL(LTRIM(RTRIM(@Description)), '') <> ''
+    ELSE
         INSERT INTO RiskCategory (InterviewId, Name, Description, Severity, SeverityBreakdown, CreatedOn)
         VALUES (@InterviewId, @Name, @Description, @Severity, @SeverityBreakdown, GETDATE());
 END

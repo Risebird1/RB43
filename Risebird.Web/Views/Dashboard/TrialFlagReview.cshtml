@@ -824,6 +824,11 @@
             if (currentPage < totalPages) { currentPage++; renderPagination(); }
         });
 
+        applySeveritySort();
+        $('#tfrSortSeverity')
+            .addClass('is-active')
+            .attr('title', 'P0 highest first')
+            .text('Severity ↑ (P0 first)');
         renderPagination();
     })();
 </script>
