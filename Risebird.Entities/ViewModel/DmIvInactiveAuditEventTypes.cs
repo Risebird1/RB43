@@ -10,5 +10,7 @@ namespace Risebird.Entities.ViewModel
         public const string AutoQcRemoval = "AutoQcRemoval";
         /// <summary>Bad-quality flag set (no deactivation) — forward trigger or per-IRF backfill.</summary>
         public const string AutoQcFlag = "AutoQcFlag";
+        /// <summary>Manual removal from IRF Audit risk breakdown (ops-initiated).</summary>
+        public const string RiskAuditRemoval = "RiskAuditRemoval";
     }
 }
