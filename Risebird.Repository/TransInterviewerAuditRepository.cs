@@ -255,5 +255,37 @@ ORDER BY ti.id;";
                 return false;
             }
         }
+
+        public async Task<TransInterviewerInterviewContext> GetContextByTransInterviewerIdAsync(int transInterviewerId)
+        {
+            try
+            {
+                const string sql = @"
+SELECT TOP 1
+    ti.id AS TransInterviewerId,
+    ti.UserId,
+    ti.IRFId AS IrfId,
+    ti.IsActive AS IsActive,
+    ti.ClientAction AS ClientAction,
+    ti.AutoQcVerdict AS AutoQcVerdict,
+    ul.EmailId AS InterviewerEmail,
+    ip.NickName AS InterviewerCodedId,
+    CASE WHEN ti.IsSMEVerified = 1 THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END AS IsRbVetYes,
+    CASE WHEN ti.IsSMEVerified = 0 THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END AS RbVetAlreadyNo
+FROM dbo.TransInterviewer ti
+LEFT JOIN dbo.UserList ul ON ul.id = ti.UserId
+LEFT JOIN dbo.InterviewerProfile ip ON ip.UserId = ti.UserId
+WHERE ti.id = @TransInterviewerId;";
+
+                using var con = new SqlConnection(_connectionString);
+                return await con.QueryFirstOrDefaultAsync<TransInterviewerInterviewContext>(
+                    sql, new { TransInterviewerId = transInterviewerId }, commandTimeout: 30);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

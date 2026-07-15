@@ -34,6 +34,7 @@
 
 <style>
 
+.irf-risk-detail-cell{padding:10px!important;}
     .irf-audit-dir { padding: 16px; max-width: 1400px; }
 
     .irf-audit-header { margin-bottom: 16px; }
@@ -167,7 +168,152 @@
 
     .irf-audit-filter__range { font-size: 12px; color: #475569; margin: 0 0 10px; }
 
+    .irf-audit-expand { appearance: none; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; padding: 4px 10px; font-size: 12px; cursor: pointer; color: #334155; }
+    .irf-audit-expand:hover { background: #f1f5f9; }
+    .irf-audit-expand.is-open { background: #eff6ff; border-color: #93c5fd; color: #1d4ed8; }
+
+    /* Expanded IRF risk table — compact */
+    .irf-risk-detail-row td { background: #f8fafc; padding: 0 !important; border-bottom: 1px solid #e2e8f0; }
+    .irf-risk-panel { padding: 10px 12px 12px; }
+    .irf-risk-panel__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+    .irf-risk-panel__title { font-size: 12px; font-weight: 600; color: #475569; }
+    .irf-risk-table { width: 100%; border-collapse: collapse; font-size: 12px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
+    .irf-risk-table th, .irf-risk-table td { border-bottom: 1px solid #e2e8f0; padding: 10px!important; text-align: left; vertical-align: middle; }
+    .irf-risk-table th { background: #f1f5f9; font-size: 10px; text-transform: uppercase; letter-spacing: .03em; color: #64748b; white-space: nowrap; font-weight: 600; }
+    .irf-risk-table th.col-num, .irf-risk-table td.col-num { text-align: center; }
+    .irf-risk-table tr.irf-risk-iv-row:hover td { background: #f8fafc; }cha
+    .irf-risk-table tr:last-child td { border-bottom: none; }
+    .irf-risk-iv-name { font-weight: 600; color: #0f172a; }
+    .irf-risk-iv-email { font-size: 11px; color: #64748b; margin-top: 1px; }
+    .irf-p-badge {
+        display: inline-flex; align-items: center; justify-content: center;
+        min-width: 26px; height: 22px; padding: 0 7px; border-radius: 6px;
+        font-size: 11px; font-weight: 600; line-height: 1; border: 1px solid transparent;
+    }
+    .irf-p-badge.is-zero { opacity: .45; }
+    .irf-p-badge.is-clickable { cursor: pointer; }
+    .irf-p-badge.is-clickable:hover { filter: brightness(0.97); outline: 1px solid rgba(15,23,42,.08); }
+    .irf-p-badge--p0 { background: #fce8e8; color: #9b2c2c; border-color: #f5c2c2; }
+    .irf-p-badge--p1 { background: #fdecec; color: #b91c1c; border-color: #f6cfcf; }
+    .irf-p-badge--p2 { background: #fff1e8; color: #c2410c; border-color: #fad7c2; }
+    .irf-p-badge--p3 { background: #fff8e8; color: #a16207; border-color: #f3e0a8; }
+    .irf-p-badge--p4 { background: #fbf7eb; color: #92680a; border-color: #efe4c3; }
+    .irf-p-badge--p5 { background: #f3f5f8; color: #64748b; border-color: #e2e8f0; }
+    .irf-risk-detail-cell { background: #f1f5f9 !important; padding: 12px 14px 14px !important; }
+    .irf-sev-groups { display: flex; flex-direction: column; gap: 12px; }
+    .irf-sev-panel-title {
+        display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+        margin: 0 0 4px; padding: 0 2px;
+    }
+    .irf-sev-panel-title__main {
+        margin: 0; font-size: 13px; font-weight: 700; color: #0f172a; letter-spacing: .01em;
+    }
+    .irf-sev-panel-title__sub {
+        margin: 2px 0 10px; padding: 0 2px; font-size: 11px; color: #64748b; line-height: 1.35;
+    }
+    .irf-sev-group {
+        border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;
+        overflow: hidden; box-shadow: 0 1px 2px rgba(15,23,42,.04);
+    }
+    .irf-sev-group.is-focus { border-color: #94a3b8; }
+    .irf-sev-group__head {
+        display: flex; align-items: center; justify-content: space-between; gap: 12px;
+        padding: 12px 14px; background: #f8fafc;
+        border-bottom: 1px solid #eef2f7;
+    }
+    .irf-sev-group__head-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .irf-sev-group__title {
+        display: flex; flex-direction: column; gap: 2px; min-width: 0;
+    }
+    .irf-sev-group__title-main {
+        font-size: 13px; font-weight: 700; color: #0f172a; line-height: 1.2;
+    }
+    .irf-sev-group__title-sub {
+        font-size: 11px; font-weight: 500; color: #64748b; line-height: 1.3;
+    }
+    .irf-sev-group__count {
+        flex-shrink: 0; font-size: 11px; font-weight: 600; color: #475569;
+        background: #eef2f7; border: 1px solid #e2e8f0; border-radius: 999px;
+        padding: 3px 9px; white-space: nowrap;
+    }
+    .irf-sev-group__body { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .irf-sev-group__body th {
+        padding: 10px 14px; text-align: left; vertical-align: middle;
+        color: #64748b; font-size: 10px; font-weight: 600;
+        text-transform: uppercase; letter-spacing: .04em;
+        background: #fff; border-bottom: 1px solid #eef2f7;
+    }
+    .irf-sev-group__body td {
+        padding: 4px 9px; text-align: left; vertical-align: top;
+        border-bottom: 1px solid #f1f5f9; color: #334155; line-height: 1.45;
+    }
+    .irf-sev-group__body tr:last-child td { border-bottom: none; }
+    .irf-sev-group__body tr:hover td { background: #fafbfc; }
+    .irf-sev-id { font-weight: 600; color: #475569; white-space: nowrap; }
+    .irf-sev-date { color: #94a3b8; white-space: nowrap; font-size: 11px; }
+    .irf-sev-meta { color: #475569; word-break: break-word; }
+    .irf-sev-br { color: #0f172a; font-weight: 500; word-break: break-word; }
+    .irf-rec { display: inline-block; border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 600; }
+    .irf-rec--remove { background: #fdecec; color: #b91c1c; }
+    .irf-rec--watch { background: #fff8e8; color: #a16207; }
+    .irf-rec--ok { background: #eaf7ef; color: #166534; }
+    .irf-rec--insufficient { background: #f3f5f8; color: #64748b; }
+    .irf-risk-empty, .irf-risk-loading, .irf-risk-error { font-size: 12px; color: #64748b; padding: 6px 2px; }
+    .irf-risk-empty--warn { color: #92680a; margin-bottom: 8px; }
+    .irf-risk-error { color: #991b1b; }
+    .irf-audit-btn--danger { background: #dc2626; border-color: #dc2626; color: #fff; }
+    .irf-audit-btn--danger:hover { background: #b91c1c; }
+    .irf-risk-table .btn-risk-remove {
+        padding: 2px 8px;
+        font-size: 10px;
+        font-weight: 600;
+        line-height: 1.3;
+        border-radius: 4px;
+        margin: 0;
+        letter-spacing: .02em;
+        background: #e11d48;
+        border: 1px solid #be123c;
+        color: #fff;
+        box-shadow: none;
+    }
+    .irf-risk-table .btn-risk-remove:hover {
+        background: #be123c;
+        border-color: #9f1239;
+    }
+    .irf-risk-table .btn-risk-remove:disabled {
+        opacity: .5;
+    }
+
+    /* Soft dark tooltip */
+    #irfRiskTip {
+        display: none; position: fixed; z-index: 10050; width: min(320px, calc(100vw - 24px));
+        pointer-events: none; opacity: 0; transition: opacity .1s ease;
+    }
+    #irfRiskTip.is-visible { display: block; opacity: 1; }
+    .irf-tip {
+        background: #334155; color: #e2e8f0; border-radius: 8px;
+        border: 1px solid #475569; box-shadow: 0 8px 20px rgba(15,23,42,.18); overflow: hidden;
+    }
+    .irf-tip__head {
+        display: flex; align-items: center; justify-content: space-between; gap: 8px;
+        padding: 7px 10px; background: #1e293b; border-bottom: 1px solid #475569;
+    }
+    .irf-tip__head-title { font-size: 11px; font-weight: 600; color: #f1f5f9; }
+    .irf-tip__head-count { font-size: 10px; color: #94a3b8; }
+    .irf-tip__body { padding: 2px 0; max-height: 220px; overflow-y: auto; }
+    .irf-tip__empty { padding: 10px; font-size: 11px; color: #94a3b8; text-align: center; }
+    .irf-tip__row { padding: 6px 10px; border-top: 1px solid #475569; }
+    .irf-tip__row:first-child { border-top: none; }
+    .irf-tip__row-top { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 2px; }
+    .irf-tip__id { font-size: 11px; font-weight: 600; color: #93c5fd; }
+    .irf-tip__date { font-size: 10px; color: #94a3b8; }
+    .irf-tip__desc { font-size: 11px; color: #cbd5e1; line-height: 1.35; }
+    .irf-tip__br { font-size: 11px; color: #e2e8f0; margin-top: 2px; word-break: break-word; }
+    .irf-tip__more { padding: 6px 10px; font-size: 10px; color: #94a3b8; border-top: 1px solid #475569; }
+    .irf-tip__foot { display: none; }
+
 </style>
+<div id="irfRiskTip" role="tooltip" aria-hidden="true"></div>
 
 
 
@@ -285,6 +431,8 @@
 
                 <tr>
 
+                    <th style="width:40px;"></th>
+
                     <th>IRF</th>
 
                     <th>Completed (lifetime)</th>
@@ -311,7 +459,13 @@
 
                     var pendingClass = row.PendingFlagsCount > 0 ? "pending-flags" : "pending-flags is-zero";
 
-                    <tr data-irf-id="@row.IrfId" data-irf-name="@row.IrfName">
+                    <tr data-irf-id="@row.IrfId" data-irf-name="@row.IrfName" class="irf-audit-main-row">
+
+                        <td>
+
+                            <button type="button" class="irf-audit-expand btn-view-interviewers" data-irf-id="@row.IrfId" data-irf-name="@row.IrfName" aria-expanded="false" title="View interviewers">View</button>
+
+                        </td>
 
                         <td><strong>@row.IrfName</strong> <span style="color:#94a3b8;">(#@row.IrfId)</span></td>
 
@@ -771,7 +925,7 @@
 
         var irfAuditSearchTerm = '';
 
-        var $irfAuditRows = $('.irf-audit-table tbody tr');
+        var $irfAuditRows = $('.irf-audit-table tbody tr.irf-audit-main-row');
 
 
 
@@ -821,7 +975,7 @@
 
 
 
-            $irfAuditRows.hide();
+            $irfAuditRows.hide();$('.irf-risk-detail-row').hide();
 
             $empty.toggleClass('is-visible', total === 0 && irfAuditSearchTerm.length > 0 && $irfAuditRows.length > 0);
 
@@ -1055,8 +1209,396 @@
 
             var qs = '?from=' + encodeURIComponent(fromVal) + '&to=' + encodeURIComponent(toVal);
 
+
             window.location.href = dirMonitorUrl + qs;
 
+        });
+
+        var riskBreakdownUrl = '@Url.Action("IrfAuditInterviewerRisk", "Dashboard")';
+        var riskRefreshUrl = '@Url.Action("RefreshIrfRiskCategory", "Dashboard")';
+        var riskRemoveUrl = '@Url.Action("RemoveInterviewerFromIrfRiskAudit", "Dashboard")';
+        var dirFromVal = '@directoryFromIst';
+        var dirToVal = '@directoryToIst';
+
+        function recClass(rec) {
+            var r = (rec || '').toString().toLowerCase();
+            if (r === 'remove') return 'irf-rec--remove';
+            if (r === 'watch') return 'irf-rec--watch';
+            if (r === 'ok') return 'irf-rec--ok';
+            return 'irf-rec--insufficient';
+        }
+
+        function pBadge(level, count, tipKey) {
+            var n = Number(count) || 0;
+            var zero = n === 0 ? ' is-zero' : '';
+            var clickable = n > 0 ? ' is-clickable' : '';
+            var tipAttr = tipKey ? ' data-tip-key="' + esc(tipKey) + '"' : '';
+            return '<button type="button" class="irf-p-badge irf-p-badge--p' + level + zero + clickable + '"'
+                + ' data-p-level="' + level + '"' + tipAttr
+                + ' aria-label="P' + level + ': ' + n + '">' + n + '</button>';
+        }
+
+        function prop(obj, camel, pascal) {
+            if (!obj) return undefined;
+            if (obj[camel] !== undefined) return obj[camel];
+            return obj[pascal];
+        }
+
+        function formatRatio(v) {
+            if (v === null || v === undefined || v === '') return '—';
+            var n = Number(v);
+            if (isNaN(n)) return '—';
+            return (n * 100).toFixed(0) + '%';
+        }
+
+        function fmtDate(v) {
+            if (!v) return '—';
+            try {
+                var d = new Date(v);
+                if (isNaN(d.getTime())) return String(v);
+                return d.toISOString().slice(0, 10);
+            } catch (e) { return String(v); }
+        }
+
+        function esc(s) {
+            return $('<div>').text(s == null ? '' : String(s)).html();
+        }
+
+        function detailsForTrans(details, transId) {
+            if (!details || !details.length) return [];
+            return details.filter(function (d) {
+                return Number(prop(d, 'transInterviewerId', 'TransInterviewerId')) === Number(transId);
+            });
+        }
+
+        function itemsForP(detailsForIv, level) {
+            var key = 'P' + level;
+            return (detailsForIv || []).filter(function (d) {
+                return (prop(d, 'severity', 'Severity') || '').toUpperCase() === key;
+            });
+        }
+
+        var _tipStore = {};
+        function tipKeyFor(transId, level) {
+            return String(transId) + ':P' + level;
+        }
+
+        function buildTipHtml(level, items) {
+            var key = 'P' + level;
+            var head = '<div class="irf-tip"><div class="irf-tip__head">'
+                + '<span class="irf-tip__head-title">' + key + '</span>'
+                + '<span class="irf-tip__head-count">' + (items ? items.length : 0) + '</span>'
+                + '</div>';
+            if (!items || !items.length) {
+                return head + '<div class="irf-tip__empty">No reason at ' + key + '.</div></div>';
+            }
+            // Unique descriptions / reasons only
+            var seen = {};
+            var reasons = [];
+            items.forEach(function (d) {
+                var desc = (prop(d, 'description', 'Description') || '').trim();
+                if (!desc) desc = (prop(d, 'name', 'Name') || '').trim();
+                if (!desc) return;
+                var parts = desc.split(',').map(function (p) { return p.trim(); }).filter(Boolean);
+                parts.forEach(function (p) {
+                    var k = p.toLowerCase();
+                    if (!seen[k]) {
+                        seen[k] = true;
+                        reasons.push(p);
+                    }
+                });
+            });
+            if (!reasons.length) {
+                return head + '<div class="irf-tip__empty">No description available.</div></div>';
+            }
+            var body = '<div class="irf-tip__body">';
+            reasons.forEach(function (r) {
+                body += '<div class="irf-tip__row"><div class="irf-tip__desc">' + esc(r) + '</div></div>';
+            });
+            body += '</div></div>';
+            return head + body;
+        }
+
+        function showRiskTip($el) {
+            var tipKey = $el.attr('data-tip-key');
+            var html = tipKey && _tipStore[tipKey] ? _tipStore[tipKey] : '';
+            if (!html) return;
+            var $tip = $('#irfRiskTip');
+            $tip.html(html).attr('aria-hidden', 'false');
+            var rect = $el[0].getBoundingClientRect();
+            var tipW = Math.min(360, window.innerWidth - 24);
+            var left = Math.max(12, Math.min(rect.left + rect.width / 2 - tipW / 2, window.innerWidth - tipW - 12));
+            var top = rect.bottom + 8;
+            $tip.css({ width: tipW + 'px', left: left + 'px', top: top + 'px' });
+            requestAnimationFrame(function () {
+                var h = $tip.outerHeight() || 0;
+                if (rect.bottom + 8 + h > window.innerHeight - 8) {
+                    top = Math.max(8, rect.top - h - 8);
+                    $tip.css('top', top + 'px');
+                }
+                $tip.addClass('is-visible');
+            });
+        }
+
+        function hideRiskTip() {
+            $('#irfRiskTip').removeClass('is-visible').attr('aria-hidden', 'true');
+        }
+
+        function renderSeverityGroups(detailsForIv, focusLevel) {
+            if (!detailsForIv || !detailsForIv.length) {
+                return '<div class="irf-risk-empty">No description / breakdown for this interviewer in range.</div>';
+            }
+            var bySev = {};
+            detailsForIv.forEach(function (d) {
+                var sev = (prop(d, 'severity', 'Severity') || '').toUpperCase();
+                if (!sev) return;
+                if (!bySev[sev]) bySev[sev] = [];
+                bySev[sev].push(d);
+            });
+            var order = ['P0', 'P1', 'P2', 'P3', 'P4', 'P5'];
+            var totalShown = 0;
+            order.forEach(function (sev) {
+                var list = bySev[sev];
+                if (!list || !list.length) return;
+                if (focusLevel != null && ('P' + focusLevel) !== sev) return;
+                totalShown += list.length;
+            });
+            var html = '<div class="irf-sev-panel-title">'
+                + '<h4 class="irf-sev-panel-title__main">Description &amp; Severity Breakdown</h4>'
+                + '</div>'
+                + '<p class="irf-sev-panel-title__sub">Interview-level risk reasons and check-level P grades'
+                + (totalShown ? ' · ' + totalShown + ' interview' + (totalShown === 1 ? '' : 's') : '')
+                + '</p>'
+                + '<div class="irf-sev-groups">';
+            order.forEach(function (sev) {
+                var list = bySev[sev];
+                if (!list || !list.length) return;
+                if (focusLevel != null && ('P' + focusLevel) !== sev) return;
+                var level = sev.charAt(1);
+                var n = list.length;
+                html += '<div class="irf-sev-group" data-sev="' + sev + '">'
+                    + '<div class="irf-sev-group__head">'
+                    + '<div class="irf-sev-group__head-left">'
+                    + pBadge(level, n)
+                    + '<div class="irf-sev-group__title">'
+                    + '<span class="irf-sev-group__title-main">Severity ' + sev + '</span>'
+                    + '<span class="irf-sev-group__title-sub">Description and severity breakdown</span>'
+                    + '</div></div>'
+                    + '<span class="irf-sev-group__count">' + n + ' interview' + (n === 1 ? '' : 's') + '</span>'
+                    + '</div>'
+                    + '<table class="irf-sev-group__body"><thead><tr>'
+                    + '<th style="width:90px;">Interview</th>'
+                    + '<th style="width:100px;">Date</th>'
+                    + '<th>Description</th>'
+                    + '<th>Severity Breakdown</th>'
+                    + '</tr></thead><tbody>';
+                list.forEach(function (d) {
+                    html += '<tr>'
+                        + '<td class="irf-sev-id">#' + esc(prop(d, 'interviewId', 'InterviewId')) + '</td>'
+                        + '<td class="irf-sev-date">' + esc(fmtDate(prop(d, 'interviewDate', 'InterviewDate'))) + '</td>'
+                        + '<td class="irf-sev-meta">' + esc(prop(d, 'description', 'Description') || '—') + '</td>'
+                        + '<td class="irf-sev-br">' + esc(prop(d, 'severityBreakdown', 'SeverityBreakdown') || '—') + '</td>'
+                        + '</tr>';
+                });
+                html += '</tbody></table></div>';
+            });
+            html += '</div>';
+            return html;
+        }
+
+        function buildRiskSummary(row) {
+            return 'RiskRatio=' + (prop(row,'riskRatio','RiskRatio') != null ? Number(prop(row,'riskRatio','RiskRatio')).toFixed(2) : 'n/a')
+                + '; P0=' + (prop(row,'p0Count','P0Count') || 0)
+                + ',P1=' + (prop(row,'p1Count','P1Count') || 0)
+                + ',P2=' + (prop(row,'p2Count','P2Count') || 0)
+                + ',P3=' + (prop(row,'p3Count','P3Count') || 0)
+                + ',P4=' + (prop(row,'p4Count','P4Count') || 0)
+                + ',P5=' + (prop(row,'p5Count','P5Count') || 0);
+        }
+
+        function renderRiskRows(irfId, rows, details) {
+            if (!rows || !rows.length) {
+                return '<div class="irf-risk-empty">No active interviewers on this IRF.</div>';
+            }
+            _tipStore = {};
+            var riskSum = 0;
+            rows.forEach(function (r) {
+                riskSum += Number(prop(r,'riskInterviews','RiskInterviews') || 0);
+            });
+            var html = '';
+            if (riskSum === 0) {
+                html += '<div class="irf-risk-empty irf-risk-empty--warn">P0–P5 are 0 — no RiskCategory rows yet, or interviews are clean. Click <strong>Refresh risk</strong> to backfill.</div>';
+            }
+            html += '<table class="irf-risk-table"><thead><tr>'
+                + '<th>Interviewer</th><th class="col-num">Total</th>'
+                + '<th class="col-num">P0</th><th class="col-num">P1</th><th class="col-num">P2</th>'
+                + '<th class="col-num">P3</th><th class="col-num">P4</th><th class="col-num">P5</th>'
+                + '<th>Risk ratio</th><th>Recommendation</th><th>Action</th></tr></thead><tbody>';
+            rows.forEach(function (r) {
+                var rec = prop(r,'recommendation','Recommendation') || 'InsufficientData';
+                var canRemove = rec === 'Remove' || rec === 'Watch';
+                var transId = prop(r,'transInterviewerId','TransInterviewerId');
+                var name = (prop(r,'interviewerCodedId','InterviewerCodedId') || prop(r,'interviewerEmail','InterviewerEmail') || ('#' + transId));
+                var email = prop(r,'interviewerEmail','InterviewerEmail') || '';
+                var ivDetails = detailsForTrans(details, transId);
+
+                for (var lvl = 0; lvl <= 5; lvl++) {
+                    _tipStore[tipKeyFor(transId, lvl)] = buildTipHtml(lvl, itemsForP(ivDetails, lvl));
+                }
+
+                html += '<tr class="irf-risk-iv-row" data-trans-id="' + transId + '">'
+                    + '<td><div class="irf-risk-iv-name">' + esc(name) + '</div>'
+                    + (email ? '<div class="irf-risk-iv-email">' + esc(email) + '</div>' : '')
+                    + '</td>'
+                    + '<td class="col-num">' + (prop(r,'totalCompleted','TotalCompleted') || 0) + '</td>'
+                    + '<td class="col-num">' + pBadge(0, prop(r,'p0Count','P0Count'), tipKeyFor(transId, 0)) + '</td>'
+                    + '<td class="col-num">' + pBadge(1, prop(r,'p1Count','P1Count'), tipKeyFor(transId, 1)) + '</td>'
+                    + '<td class="col-num">' + pBadge(2, prop(r,'p2Count','P2Count'), tipKeyFor(transId, 2)) + '</td>'
+                    + '<td class="col-num">' + pBadge(3, prop(r,'p3Count','P3Count'), tipKeyFor(transId, 3)) + '</td>'
+                    + '<td class="col-num">' + pBadge(4, prop(r,'p4Count','P4Count'), tipKeyFor(transId, 4)) + '</td>'
+                    + '<td class="col-num">' + pBadge(5, prop(r,'p5Count','P5Count'), tipKeyFor(transId, 5)) + '</td>'
+                    + '<td>' + formatRatio(prop(r,'riskRatio','RiskRatio')) + '</td>'
+                    + '<td><span class="irf-rec ' + recClass(rec) + '">' + esc(rec) + '</span></td>'
+                    + '<td>';
+                if (canRemove) {
+                    html += '<button type="button" class="irf-audit-btn irf-audit-btn--danger btn-risk-remove"'
+                        + ' data-trans-id="' + transId + '"'
+                        + ' data-irf-id="' + irfId + '"'
+                        + ' data-worst-id="' + (prop(r,'worstSeverityInterviewId','WorstSeverityInterviewId') || '') + '"'
+                        + ' data-risk-summary="' + esc(buildRiskSummary(r)).replace(/"/g, '&quot;') + '"'
+                        + '>Remove</button>';
+                } else {
+                    html += '<span style="color:#94a3b8;font-size:11px;">—</span>';
+                }
+                html += '</td></tr>';
+                html += '<tr class="irf-risk-sev-row" data-trans-id="' + transId + '" style="display:none;">'
+                    + '<td colspan="11" class="irf-risk-detail-cell">'
+                    + renderSeverityGroups(ivDetails, null)
+                    + '</td></tr>';
+            });
+            html += '</tbody></table>';
+            return html;
+        }
+
+        function loadRiskBreakdown($mainRow, force) {
+            var irfId = $mainRow.data('irf-id');
+            var $detail = $mainRow.next('.irf-risk-detail-row');
+            if (!$detail.length) {
+                $detail = $('<tr class="irf-risk-detail-row" data-parent-irf="' + irfId + '"><td colspan="8"><div class="irf-risk-panel">'
+                    + '<div class="irf-risk-panel__head">'
+                    + '<div class="irf-risk-panel__title">Active interviewers — risk by severity</div>'
+                    + '<div>'
+                    + '<button type="button" class="irf-audit-btn btn-refresh-risk" data-irf-id="' + irfId + '">Refresh risk</button>'
+                    + '</div></div>'
+                    + '<div class="irf-risk-body"><div class="irf-risk-loading">Loading…</div></div>'
+                    + '</div></td></tr>');
+                $mainRow.after($detail);
+            } else {
+                $detail.show();
+                if (!force) return;
+                $detail.find('.irf-risk-body').html('<div class="irf-risk-loading">Loading…</div>');
+            }
+
+            function fetchBreakdown() {
+                $.getJSON(riskBreakdownUrl, { irfId: irfId, from: dirFromVal, to: dirToVal })
+                    .done(function (res) {
+                        if (!res || !res.ok) {
+                            $detail.find('.irf-risk-body').html('<div class="irf-risk-error">' + ((res && res.message) || 'Failed to load risk breakdown.') + '</div>');
+                            return;
+                        }
+                        $detail.find('.irf-risk-body').html(renderRiskRows(irfId, res.rows || [], res.details || []));
+                    })
+                    .fail(function () {
+                        $detail.find('.irf-risk-body').html('<div class="irf-risk-error">Failed to load risk breakdown.</div>');
+                    });
+            }
+            fetchBreakdown();
+        }
+
+        $(document).on('mouseenter', '.irf-p-badge[data-tip-key]', function () {
+            showRiskTip($(this));
+        });
+        $(document).on('mouseleave', '.irf-p-badge[data-tip-key]', function () {
+            hideRiskTip();
+        });
+        $(document).on('scroll', function () { hideRiskTip(); });
+
+        $(document).on('click', '.irf-p-badge.is-clickable', function (e) {
+            e.preventDefault();
+            hideRiskTip();
+            var level = $(this).data('p-level');
+            var $ivRow = $(this).closest('tr.irf-risk-iv-row');
+            var transId = $ivRow.data('trans-id');
+            var $sev = $ivRow.nextAll('tr.irf-risk-sev-row[data-trans-id="' + transId + '"]').first();
+            var opening = !$sev.is(':visible');
+            $sev.toggle(opening);
+            var $group = $sev.find('.irf-sev-group[data-sev="P' + level + '"]');
+            $sev.find('.irf-sev-group').removeClass('is-focus');
+            if (opening && $group.length) {
+                $group.addClass('is-focus');
+                try { $group[0].scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (err) { }
+            }
+        });
+
+        $(document).on('click', '.btn-view-interviewers', function () {
+            var $btn = $(this);
+            var $main = $btn.closest('tr.irf-audit-main-row');
+            var open = $btn.hasClass('is-open');
+            if (open) {
+                $btn.removeClass('is-open').attr('aria-expanded', 'false').text('View');
+                $main.next('.irf-risk-detail-row').hide();
+                return;
+            }
+            $btn.addClass('is-open').attr('aria-expanded', 'true').text('Hide');
+            loadRiskBreakdown($main, !$main.next('.irf-risk-detail-row').length);
+        });
+
+        $(document).on('click', '.btn-refresh-risk', function () {
+            var irfId = $(this).data('irf-id');
+            var $btn = $(this);
+            $btn.prop('disabled', true).text('Refreshing…');
+            $.post(riskRefreshUrl, { irfId: irfId, from: dirFromVal, to: dirToVal })
+                .done(function (res) {
+                    showToast((res && res.message) || (res && res.ok ? 'Risk refreshed.' : 'Refresh failed.'), !!(res && res.ok));
+                    var $main = $('tr.irf-audit-main-row[data-irf-id="' + irfId + '"]');
+                    loadRiskBreakdown($main, true);
+                    if (res && res.ok && res.remaining > 0) {
+                        // leave button enabled so ops can click again for next batch
+                    }
+                })
+                .fail(function () { showToast('Risk refresh failed.', false); })
+                .always(function () { $btn.prop('disabled', false).text('Refresh risk'); });
+        });
+
+        $(document).on('click', '.btn-risk-remove', function () {
+            var $btn = $(this);
+            var irfId = $btn.data('irf-id');
+            var transId = $btn.data('trans-id');
+            var worstId = $btn.data('worst-id') || null;
+            var riskSummary = $btn.attr('data-risk-summary') || '';
+            if (!confirm('Remove this interviewer from the IRF? This deactivates their channel and writes a RiskAuditRemoval audit entry. No automatic bulk removal.')) return;
+            var comment = prompt('Optional comment for the audit log:', '') || '';
+            $btn.prop('disabled', true);
+            $.post(riskRemoveUrl, {
+                transInterviewerId: transId,
+                irfId: irfId,
+                comment: comment,
+                riskSummary: riskSummary,
+                worstSeverityInterviewId: worstId
+            })
+                .done(function (res) {
+                    showToast((res && res.message) || (res && res.ok ? 'Removed.' : 'Remove failed.'), !!(res && res.ok));
+                    if (res && res.ok) {
+                        var $main = $('tr.irf-audit-main-row[data-irf-id="' + irfId + '"]');
+                        loadRiskBreakdown($main, true);
+                    } else {
+                        $btn.prop('disabled', false);
+                    }
+                })
+                .fail(function () {
+                    showToast('Remove failed.', false);
+                    $btn.prop('disabled', false);
+                });
         });
 
     })();

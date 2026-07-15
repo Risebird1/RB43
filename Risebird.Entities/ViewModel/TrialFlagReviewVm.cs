@@ -121,6 +121,8 @@ namespace Risebird.Entities.ViewModel
         public string RiskCategoryLabels { get; set; }
         public string RiskCategoryReasons { get; set; }
         public string SeverityBreakdown { get; set; }
+        /// <summary>Candidate feedback traits / comment text when CandidateRating risk is present.</summary>
+        public string CandidateFeedbackComment { get; set; }
         public bool IsSuboptimalQuality =>
             !string.IsNullOrWhiteSpace(RiskCategoryLabels)
             || (!string.IsNullOrWhiteSpace(Severity)
@@ -163,5 +165,13 @@ namespace Risebird.Entities.ViewModel
                 url += $"&irfName={Uri.EscapeDataString(irfName)}";
             return url;
         }
+    }
+
+    public class InterviewAiRiskSummaryRowVm
+    {
+        public string SourceName { get; set; }
+        public string RawScore { get; set; }
+        public bool Triggered { get; set; }
+        public string PLevel { get; set; }
     }
 }
