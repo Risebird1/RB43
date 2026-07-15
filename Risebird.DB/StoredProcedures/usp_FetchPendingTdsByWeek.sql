@@ -51,6 +51,7 @@ BEGIN
                 ELSE 4
             END AS WeekNumber,
             ph.TotalAmount,
+			ROUND(ph.TotalAmount * 0.10,0) as Tds,
             --ISNULL(tic.IsBankVerified, 0) AS IsVerified
             1 AS IsVerified
         FROM PaymentHistory ph
@@ -65,10 +66,9 @@ BEGIN
     SELECT
         w.WeekNumber,
         w.WeekRange,
-        ISNULL(ROUND(SUM(CASE WHEN p.IsVerified = 1 THEN p.TotalAmount ELSE 0 END) * 0.10, 0), 0) AS TdsDue,
+		ISNULL(SUM(CASE WHEN p.IsVerified = 1 THEN p.Tds ELSE 0 END), 0) AS TdsDue,
         ISNULL(tc.TdsAmount, 0)                                                                     AS TdsDeposited,
-        ISNULL(ROUND(SUM(CASE WHEN p.IsVerified = 1 THEN p.TotalAmount ELSE 0 END) * 0.10, 0), 0)
-            - ISNULL(tc.TdsAmount, 0)                                                               AS Outstanding,
+        ISNULL(SUM(CASE WHEN p.IsVerified = 1 THEN p.Tds ELSE 0 END), 0)- ISNULL(tc.TdsAmount, 0)   AS Outstanding,
         ISNULL(tc.IsPaid, 0)                                                                        AS IsPaid
     FROM Weeks w
     LEFT JOIN PayoutsByWeek p ON p.WeekNumber = w.WeekNumber
