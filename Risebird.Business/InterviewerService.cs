@@ -1551,11 +1551,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<IEnumerable<StatsDetailsVM>> GetInterviewerStatsAndRatingsDetails(int interviewerUserId, string type, int? irfId = null, string clientEmailId = null)
+        public async Task<IEnumerable<StatsDetailsVM>> GetInterviewerStatsAndRatingsDetails(int interviewerUserId, string type, int? irfId = null, string clientEmailId = null, DateTime? fromIst = null, DateTime? toIst = null)
         {
             try
             {
-                var rows = (await _interviewerRepository.GetInterviewerStatsAndRatingsDetails(interviewerUserId, type, irfId, clientEmailId))?.ToList();
+                var rows = (await _interviewerRepository.GetInterviewerStatsAndRatingsDetails(interviewerUserId, type, irfId, clientEmailId, fromIst, toIst))?.ToList();
                 if (rows == null || rows.Count == 0)
                 {
                     return rows;
