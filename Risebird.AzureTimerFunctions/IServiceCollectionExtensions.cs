@@ -194,13 +194,15 @@ namespace Risebird.AzureFunctions
             services.AddScoped<Risebird.Repository.Interface.ITdsRepository, Risebird.Repository.TdsRepository>();
             services.AddScoped<Risebird.Business.Interface.ITdsComplianceService>(sp =>
             {
-                var repo    = sp.GetRequiredService<Risebird.Repository.Interface.ITdsRepository>();
-                var logger  = sp.GetRequiredService<IApplicationErrorLogger>();
-                var cfg     = sp.GetRequiredService<IConfiguration>();
+                var repo = sp.GetRequiredService<Risebird.Repository.Interface.ITdsRepository>();
+                var logger = sp.GetRequiredService<IApplicationErrorLogger>();
+                var cfg = sp.GetRequiredService<IConfiguration>();
                 var offsets = cfg.GetSection("Tds:Reminder:Offsets").Get<int[]>();
                 return new Risebird.Business.TdsComplianceService(repo, logger, offsets);
             });
 
+            services.AddScoped<IInterviewerEmailAvailabilityRepository, InterviewerEmailAvailabilityRepository>();
+            services.AddScoped<IPlivoCXService, PlivoCXService>();
             return services;
         }
     }

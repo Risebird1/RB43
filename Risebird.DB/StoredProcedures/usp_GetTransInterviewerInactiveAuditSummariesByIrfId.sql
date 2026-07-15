@@ -19,14 +19,14 @@ BEGIN
         SELECT TOP 1
             al.EventType AS InactiveAuditEventType,
             CASE
-                WHEN al.EventType = 'AutoQcRemoval' THEN al.ToValue
+                WHEN al.EventType IN ('AutoQcRemoval', 'RiskAuditRemoval') THEN COALESCE(NULLIF(LTRIM(RTRIM(al.ReasonCategory)), ''), al.ToValue)
                 ELSE al.ReasonCategory
             END AS InactiveAuditReasonDetail,
             al.TriggeringInterviewId AS InactiveAuditTriggeringInterviewId,
             al.ChangedAt AS InactiveAuditChangedAt
         FROM dbo.TransInterviewerAuditLog al
         WHERE al.TransInterviewerId = ti.id
-          AND al.EventType IN ('RbVetFlippedToNo', 'ClientVetFlippedToNo', 'AutoQcRemoval')
+          AND al.EventType IN ('RbVetFlippedToNo', 'ClientVetFlippedToNo', 'AutoQcRemoval', 'RiskAuditRemoval')
         ORDER BY al.ChangedAt DESC, al.Id DESC
     ) latest
     WHERE ti.IRFId = @IrfId;

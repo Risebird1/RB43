@@ -142,7 +142,8 @@ namespace Risebird.Entities.ViewModel
             if (!string.IsNullOrEmpty(latestEvent))
             {
                 if (string.Equals(latestEvent, DmIvInactiveAuditEventTypes.AutoQcRemoval, StringComparison.OrdinalIgnoreCase)
-                    || string.Equals(latestEvent, DmIvInactiveAuditEventTypes.AutoQcFlag, StringComparison.OrdinalIgnoreCase))
+                    || string.Equals(latestEvent, DmIvInactiveAuditEventTypes.AutoQcFlag, StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(latestEvent, DmIvInactiveAuditEventTypes.RiskAuditRemoval, StringComparison.OrdinalIgnoreCase))
                 {
                     result = DmIvInactiveReasonResult.ForCategory(DmIvInactiveReasonCategory.RemovedByRb, detail);
                     return true;

@@ -25,5 +25,7 @@ namespace Risebird.Repository.Interface
         Task<bool> HasAutoQcRemovalAuditForInterviewAsync(int transInterviewerId, int triggeringInterviewId, string auditSource = null);
 
         Task<bool> HasAutoQcFlagAuditForInterviewAsync(int transInterviewerId, int triggeringInterviewId, string auditSource = null);
+
+        Task<TransInterviewerInterviewContext> GetContextByTransInterviewerIdAsync(int transInterviewerId);
     }
 }

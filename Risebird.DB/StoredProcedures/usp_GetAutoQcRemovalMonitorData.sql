@@ -33,7 +33,7 @@ BEGIN
         INNER JOIN dbo.TransInterviewer ti ON ti.id = al.TransInterviewerId
         LEFT JOIN dbo.InterviewerProfile ip ON ip.UserId = ti.UserId
         LEFT JOIN dbo.IRF irf ON irf.id = ti.IRFId
-        WHERE al.EventType = 'AutoQcRemoval'
+        WHERE al.EventType IN ('AutoQcRemoval', 'RiskAuditRemoval')
           AND al.ChangedAt >= @FromUtc
           AND al.ChangedAt <= @ToUtc
           AND (@IrfId IS NULL OR ti.IRFId = @IrfId)
@@ -78,7 +78,7 @@ BEGIN
         WHERE x.TransInterviewerId = al.TransInterviewerId
           AND x.EventType = 'RbVetFlippedToYes'
     ) react
-    WHERE al.EventType = 'AutoQcRemoval'
+    WHERE al.EventType IN ('AutoQcRemoval', 'RiskAuditRemoval')
       AND al.ChangedAt >= @FromUtc
       AND al.ChangedAt <= @ToUtc
       AND (@IrfId IS NULL OR ti.IRFId = @IrfId)

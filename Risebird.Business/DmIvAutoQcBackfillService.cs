@@ -16,15 +16,18 @@ namespace Risebird.Business
     {
         private readonly IAutoQcRemovalMonitorRepository _monitorRepository;
         private readonly IDmIvAutoQcFlagService _autoQcFlagService;
+        private readonly IRiskCategoryService _riskCategoryService;
         private readonly ILogger<DmIvAutoQcBackfillService> _log;
 
         public DmIvAutoQcBackfillService(
             IAutoQcRemovalMonitorRepository monitorRepository,
             IDmIvAutoQcFlagService autoQcFlagService,
+            IRiskCategoryService riskCategoryService,
             ILogger<DmIvAutoQcBackfillService> log)
         {
             _monitorRepository = monitorRepository;
             _autoQcFlagService = autoQcFlagService;
+            _riskCategoryService = riskCategoryService;
             _log = log;
         }
 
@@ -33,6 +36,72 @@ namespace Risebird.Business
 
         public Task<IReadOnlyList<IrfAuditDirectoryRowVm>> GetIrfAuditDirectoryAsync(DateTime fromIst, DateTime toIst) =>
             _monitorRepository.GetIrfAuditDirectoryAsync(fromIst, toIst);
+
+        public Task<IReadOnlyList<IrfAuditInterviewerRiskRowVm>> GetIrfAuditInterviewerRiskBreakdownAsync(int irfId, DateTime fromIst, DateTime toIst) =>
+            _monitorRepository.GetIrfAuditInterviewerRiskBreakdownAsync(irfId, fromIst, toIst);
+
+        public Task<IReadOnlyList<IrfAuditInterviewerRiskDetailVm>> GetIrfAuditInterviewerRiskInterviewDetailsAsync(int irfId, DateTime fromIst, DateTime toIst, int? transInterviewerId = null) =>
+            _monitorRepository.GetIrfAuditInterviewerRiskInterviewDetailsAsync(irfId, fromIst, toIst, transInterviewerId);
+
+        public async Task<IrfAuditRiskBackfillResultVm> BackfillRiskCategoryForIrfAsync(int irfId, DateTime fromIst, DateTime toIst,
+            CancellationToken cancellationToken = default)
+        {
+            var result = new IrfAuditRiskBackfillResultVm();
+            if (irfId <= 0)
+            {
+                result.Ok = false;
+                result.Message = "Invalid IRF.";
+                return result;
+            }
+
+            var batchSize = DmIvAutoQcAuditConstants.RiskCategoryBackfillBatchSize;
+            var maxBatches = DmIvAutoQcAuditConstants.RiskCategoryBackfillMaxBatches;
+            var processed = 0;
+            var remaining = 0;
+
+            for (var batchIndex = 0; batchIndex < maxBatches; batchIndex++)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var candidates = (await _monitorRepository.GetRiskCategoryBackfillCandidatesByIrfAsync(
+                    irfId, fromIst, toIst, batchSize + 1)).ToList();
+
+                if (candidates.Count == 0)
+                {
+                    remaining = 0;
+                    break;
+                }
+
+                var batch = candidates.Take(batchSize).ToList();
+                remaining = Math.Max(0, candidates.Count - batch.Count);
+
+                foreach (var interviewId in batch)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    var ok = await _riskCategoryService.AddUpdateRiskCategory(interviewId);
+                    if (ok)
+                        processed++;
+                }
+
+                // Prefer-missing ordering: once only existing (severity-filled) rows remain,
+                // one pass is enough; further loops would re-process forever.
+                if (remaining == 0)
+                    break;
+
+                // If everything remaining already has Severity (ORDER BY puts them last),
+                // candidate list still returns them — stop after first full regrade pass of missing ones.
+                // Heuristic: if this batch did not shrink the "prefer missing" set, continue until maxBatches.
+            }
+
+            result.Ok = true;
+            result.Processed = processed;
+            result.Remaining = remaining;
+            result.Message = remaining > 0
+                ? $"Refreshed risk for {processed} interview(s). Click Refresh risk again for ~{remaining}+ more."
+                : $"Refreshed risk for {processed} interview(s). Expand the IRF again to see updated P0–P5 counts.";
+            _log.LogInformation("RiskCategory backfill irf={IrfId}: processed={Processed} remainingHint={Remaining}", irfId, processed, remaining);
+            return result;
+        }
 
         public async Task<AutoQcPerIrfBackfillResultVm> RunPerIrfBackfillAsync(int irfId, DateTime fromUtc, DateTime toUtc, string executedBy,
             CancellationToken cancellationToken = default)
