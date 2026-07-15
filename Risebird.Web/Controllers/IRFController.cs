@@ -10136,11 +10136,6 @@ namespace Risebird.Web.Controllers
 
             try
             {
-                // The portal stays thin: it only fires the trigger. The CampaignBatchCall Azure Function
-                // owns everything — resolving the campaign, guarding against an attempt already running,
-                // reading the unresponded interviewers, opening + finalizing the attempt log, and placing
-                // the paced Plivo calls. The function opens the attempt and returns immediately (it dials
-                // in the background), so this await resolves in seconds — no long-held connection.
                 string initiatedBy = HttpContext.Session.GetString("email")?.Trim('"') ?? "Manual";
                 var dto = new CampaignBatchCallRequestDTO
                 {
@@ -10150,30 +10145,62 @@ namespace Risebird.Web.Controllers
                 };
 
                 var path = $"https://risebirdazuretimerfunctions.azurewebsites.net/api/CampaignBatchCall";
+                //var path = $"http://localhost:7071/api/CampaignBatchCall";
                 var functionKey = "8zKgFQa2S5HddU1aSqRIPVeEhuRHHGDwHoajMMSLS0H0AzFuQV1OPw==";
 
-                var response = await _batchCallHttpClient.SendRequestAsync(
-                    HttpMethod.Post, path, dto, functionKey, "", System.Threading.CancellationToken.None);
-                var body = await response.Content.ReadAsStringAsync();
+                HttpResponseMessage response;
+                try
+                {
+                    response = await _batchCallHttpClient.SendRequestAsync(
+                        HttpMethod.Post, path, dto, functionKey, "", System.Threading.CancellationToken.None);
+                }
+                catch (TaskCanceledException)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                        new Exception($"TriggerCampaignBatchCall: HTTP request to Azure Function timed out after 230s for campaign #{campaignId}"));
+                    return Json(new { success = false, error = "The batch call service did not respond in time. The service may still be processing — check back shortly." });
+                }
+                catch (HttpRequestException httpEx)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                        new Exception($"TriggerCampaignBatchCall: HTTP request to Azure Function failed for campaign #{campaignId}. Status={httpEx.StatusCode}", httpEx));
+                    return Json(new { success = false, error = $"Could not reach the batch call service: {httpEx.Message}" });
+                }
 
-                // The function returns the exact JSON the Campaigns page expects
-                // (success/started/queued/attemptName/message/error), so relay it straight through.
-                if (!string.IsNullOrWhiteSpace(body))
+                var body = await response.Content.ReadAsStringAsync();
+                var contentType = response.Content.Headers.ContentType?.MediaType ?? "";
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var truncated = body?.Length > 500 ? body.Substring(0, 500) : body;
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                        new Exception($"TriggerCampaignBatchCall: Azure Function returned HTTP {(int)response.StatusCode} for campaign #{campaignId}. Body: {truncated}"));
+
+                    return Json(new
+                    {
+                        success = false,
+                        error = $"The batch call service returned HTTP {(int)response.StatusCode}. " +
+                                (contentType.Contains("json") && !string.IsNullOrWhiteSpace(body)
+                                    ? body
+                                    : "Please check Application Insights for details.")
+                    });
+                }
+
+                if (!string.IsNullOrWhiteSpace(body) && contentType.Contains("json"))
                     return Content(body, "application/json");
 
                 return Json(new
                 {
-                    success = response.IsSuccessStatusCode,
-                    started = response.IsSuccessStatusCode,
-                    message = response.IsSuccessStatusCode
-                        ? "Batch call started. Refresh this page in a few minutes to see the outcome."
-                        : "The batch call service returned an error. Please try again."
+                    success = true,
+                    started = true,
+                    message = "Batch call started. Refresh this page in a few minutes to see the outcome."
                 });
             }
             catch (Exception ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(new { success = false, error = ex.Message });
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                    new Exception($"TriggerCampaignBatchCall: Unexpected exception for campaign #{campaignId}", ex));
+                return Json(new { success = false, error = $"Unexpected error: {ex.Message}" });
             }
         }
 

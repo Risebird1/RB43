@@ -1284,34 +1284,43 @@ namespace Risebird.Web.Controllers
                 testResults.Add(jsonBody);
                 testResults.Add("");
 
-                using (var httpClient = new HttpClient())
-                {
-                    httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+                // Surepass is disabled for the time being — we are not using Surepass for employment
+                // verification. Signzy is the primary EV method, with LinkedIn as the fallback. The
+                // Surepass API call below is intentionally commented out; re-enable if Surepass is
+                // brought back into the EV flow.
+                testResults.Add("Surepass API call is DISABLED (not used for employment verification at this time).");
+                testResults.Add("═══════════════════════════════════");
+                testResults.Add("RESULT: SKIPPED (Surepass disabled)");
+                testResults.Add("═══════════════════════════════════");
 
-                    var content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
-                    var response = await httpClient.PostAsync(apiUrl, content);
-                    var responseBody = await response.Content.ReadAsStringAsync();
+                //using (var httpClient = new HttpClient())
+                //{
+                //    httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
 
-                    testResults.Add($"HTTP Status: {(int)response.StatusCode} {response.StatusCode}");
-                    testResults.Add("");
+                //    var content = new StringContent(jsonBody, System.Text.Encoding.UTF8, "application/json");
+                //    var response = await httpClient.PostAsync(apiUrl, content);
+                //    var responseBody = await response.Content.ReadAsStringAsync();
 
-                    try
-                    {
-                        var formatted = JToken.Parse(responseBody).ToString(Formatting.Indented);
-                        testResults.Add("Response Body:");
-                        testResults.Add(formatted);
-                    }
-                    catch
-                    {
-                        testResults.Add("Response Body (raw):");
-                        testResults.Add(responseBody);
-                    }
+                //    testResults.Add($"HTTP Status: {(int)response.StatusCode} {response.StatusCode}");
+                //    testResults.Add("");
 
-                    testResults.Add("");
-                    testResults.Add("═══════════════════════════════════");
-                    testResults.Add(response.IsSuccessStatusCode ? "RESULT: SUCCESS" : "RESULT: FAILED");
-                    testResults.Add("═══════════════════════════════════");
-                }
+                //    try
+                //    {
+                //        var formatted = JToken.Parse(responseBody).ToString(Formatting.Indented);
+                //        testResults.Add("Response Body:");
+                //        testResults.Add(formatted);
+                //    }
+                //    catch
+                //    {
+                //        testResults.Add("Response Body (raw):");
+                //        testResults.Add(responseBody);
+                //    }
+
+                //    testResults.Add("");
+                //    testResults.Add("═══════════════════════════════════");
+                //    testResults.Add(response.IsSuccessStatusCode ? "RESULT: SUCCESS" : "RESULT: FAILED");
+                //    testResults.Add("═══════════════════════════════════");
+                //}
             }
             catch (Exception ex)
             {
@@ -8026,6 +8035,41 @@ NEVER:
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        /// <summary>
+        /// AI evaluation summary for a trial triggering interview (Report / Transcript / Contradiction / Merge).
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InterviewAiRiskSummary(int interviewId, int? irfId = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { ok = false, message = "Unauthorized" });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsTrialFlagReviewerProfile(profileName))
+                    return Json(new { ok = false, message = "Not authorized." });
+
+                if (interviewId <= 0)
+                    return Json(new { ok = false, message = "Invalid interview." });
+
+                var rows = await _trialFlagReviewService.GetInterviewAiRiskSummaryAsync(interviewId);
+                return Json(new
+                {
+                    ok = true,
+                    interviewId,
+                    irfId,
+                    rows
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, message = "Failed to load AI risk summary. Deploy usp_GetInterviewAiRiskSummary." });
             }
         }
 
