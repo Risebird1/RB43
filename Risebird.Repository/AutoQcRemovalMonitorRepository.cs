@@ -310,7 +310,7 @@ namespace Risebird.Repository
                 if (exists == 0)
                 {
                     throw new InvalidOperationException(
-                        "Stored procedure dbo.usp_GetIrfAuditInterviewerRiskBreakdown was not found. Run Risebird.DB/HowTo_DeployIrfAuditRiskBreakdown.sql.");
+                        "Stored procedure dbo.usp_GetIrfAuditInterviewerRiskBreakdown was not found. Deploy Risebird.DB/StoredProcedures/usp_GetIrfAuditInterviewerRiskBreakdown.sql.");
                 }
 
                 var rows = await con.QueryAsync<IrfAuditInterviewerRiskRowVm>(

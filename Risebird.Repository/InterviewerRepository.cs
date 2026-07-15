@@ -3211,7 +3211,7 @@ SELECT CAST(CASE WHEN EXISTS (
             }
         }
 
-        public async Task<IEnumerable<StatsDetailsVM>> GetInterviewerStatsAndRatingsDetails(int interviewerUserId, string type, int? irfId = null, string clientEmailId = null)
+        public async Task<IEnumerable<StatsDetailsVM>> GetInterviewerStatsAndRatingsDetails(int interviewerUserId, string type, int? irfId = null, string clientEmailId = null, DateTime? fromIst = null, DateTime? toIst = null)
         {
             try
             {
@@ -3223,6 +3223,8 @@ SELECT CAST(CASE WHEN EXISTS (
                     parameters.Add("@interviewerUserId", interviewerUserId);
                     parameters.Add("@type", type);
                     parameters.Add("@clientEmailId", clientEmailId);
+                    parameters.Add("@FromIst", fromIst?.Date);
+                    parameters.Add("@ToIst", toIst?.Date);
                     return await SqlMapper.QueryAsync<StatsDetailsVM>(con, "dbo.usp_GetInterviewerStatsAndRatingsDetails", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                 }

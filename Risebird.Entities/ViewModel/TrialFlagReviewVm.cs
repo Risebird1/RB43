@@ -144,8 +144,12 @@ namespace Risebird.Entities.ViewModel
         public static string ReportQuality(int interviewId) =>
             $"/Interview/QCMergedAIDetails?interviewId={interviewId}";
 
+        /// <summary>Same target as RiskCategory / PaymentSlaDetails / Stats evidence: Contradiction Report page.</summary>
+        public static string ContradictionReport(int interviewId) =>
+            $"/Interview/ContradictionReport?interviewId={interviewId}";
+
         public static string DecisionQuality(int interviewId) =>
-            $"/Interview/QCMergedAIDetails?interviewId={interviewId}";
+            ContradictionReport(interviewId);
 
         public static string CandidateRating(int interviewId) =>
             $"/Interview/PaymentSlaDetails?interviewId={interviewId}&returnBack=0&actionstatus=SLACompleted";
@@ -156,13 +160,17 @@ namespace Risebird.Entities.ViewModel
             return $"/RiseTube/VideoPage?id={interviewId}&irfid={irf}";
         }
 
-        public static string TrialStats(int interviewerId, int irfId, string irfName = null)
+        public static string TrialStats(int interviewerId, int irfId, string irfName = null, string fromIst = null, string toIst = null)
         {
             var url = $"/Interviewer/TrialStats?irfId={irfId}";
             if (interviewerId > 0)
                 url += $"&interviewerId={interviewerId}";
             if (!string.IsNullOrWhiteSpace(irfName))
                 url += $"&irfName={Uri.EscapeDataString(irfName)}";
+            if (!string.IsNullOrWhiteSpace(fromIst))
+                url += $"&from={Uri.EscapeDataString(fromIst)}";
+            if (!string.IsNullOrWhiteSpace(toIst))
+                url += $"&to={Uri.EscapeDataString(toIst)}";
             return url;
         }
     }
