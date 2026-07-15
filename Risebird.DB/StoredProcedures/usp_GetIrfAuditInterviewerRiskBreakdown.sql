@@ -297,7 +297,7 @@ BEGIN
     ),
     -- QC merge verdict/score for worst-severity interview (or latest window interview with QC if no risk)
     QcPick AS (
-        SELECT TransInterviewerId, InterviewId
+        SELECT TransInterviewerId, WorstSeverityInterviewId AS InterviewId
         FROM WorstInterview
         UNION ALL
         SELECT TransInterviewerId, InterviewId
