@@ -385,5 +385,27 @@ namespace Risebird.Repository
                 throw;
             }
         }
+
+        public async Task<int> SyncTrialFlagsVerdictFromRiskCategoryAsync()
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var exists = await con.ExecuteScalarAsync<int>(
+                    "SELECT CASE WHEN OBJECT_ID(N'dbo.usp_SyncTrialFlagsVerdictFromRiskCategory', N'P') IS NOT NULL THEN 1 ELSE 0 END");
+                if (exists == 0)
+                    return 0;
+
+                return await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_SyncTrialFlagsVerdictFromRiskCategory",
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 120);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
     }
 }
