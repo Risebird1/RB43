@@ -182,13 +182,37 @@
         letter-spacing: .02em;
         white-space: nowrap;
     }
-    .tfr-severity--p0 { background: #450a0a; color: #fff; }
-    .tfr-severity--p1 { background: #991b1b; color: #fff; }
-    .tfr-severity--p2 { background: #c2410c; color: #fff; }
-    .tfr-severity--p3 { background: #ca8a04; color: #fff; }
-    .tfr-severity--p4 { background: #fef3c7; color: #92400e; }
-    .tfr-severity--p5 { background: #dcfce7; color: #166534; }
+    .tfr-severity--p0 { background: #fce8e8; color: #9b2c2c; }
+    .tfr-severity--p1 { background: #fdecec; color: #b91c1c; }
+    .tfr-severity--p2 { background: #fff1e8; color: #c2410c; }
+    .tfr-severity--p3 { background: #fff8e8; color: #a16207; }
+    .tfr-severity--p4 { background: #fbf7eb; color: #92680a; }
+    .tfr-severity--p5 { background: #eef2f7; color: #64748b; }
     .tfr-severity--na { background: #f1f5f9; color: #64748b; }
+    .tfr-ai-ok { color: #166534; font-weight: 600; font-size: 11px; }
+    .tfr-ai-na { color: #94a3b8; font-size: 11px; }
+    .tfr-sev-hint { display: block; margin-top: 2px; font-size: 10px; color: #94a3b8; font-weight: 500; }
+    .tfr-flag-break { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+    .tfr-flag-pill {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 600;
+        border: 1px solid transparent;
+    }
+    .tfr-detail-toggle {
+        appearance: none; margin-top: 6px; border: 1px solid #cbd5e1; background: #fff;
+        border-radius: 5px; padding: 2px 8px; font-size: 10px; cursor: pointer; color: #475569;
+    }
+    .tfr-detail-toggle:hover { background: #f8fafc; }
+    .tfr-detail-row td { background: #f8fafc !important; padding: 10px 12px 14px !important; }
+    .tfr-ai-table { width: 100%; border-collapse: collapse; font-size: 12px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
+    .tfr-ai-table th, .tfr-ai-table td { padding: 8px 10px; border-bottom: 1px solid #eef2f7; text-align: left; vertical-align: middle; }
+    .tfr-ai-table th { background: #f1f5f9; font-size: 10px; text-transform: uppercase; color: #64748b; }
+    .tfr-ai-table tr:last-child td { border-bottom: none; }
+    .tfr-candidate-comment {
+        margin-top: 8px; padding: 8px 10px; background: #fff; border: 1px solid #e2e8f0;
+        border-radius: 6px; font-size: 12px; color: #475569; line-height: 1.4;
+    }
+    .tfr-candidate-comment strong { color: #0f172a; }
     .tfr-risk-col { min-width: 160px; max-width: 280px; }
     .tfr-risk-badges { display: flex; flex-wrap: wrap; gap: 3px; }
     .tfr-risk-badge {
@@ -253,8 +277,39 @@
     IHtmlContent SeverityBadge(TrialFlagReviewRowVm row)
     {
         var sev = ResolveSeverity(row);
-        var title = string.IsNullOrWhiteSpace(row.SeverityBreakdown) ? sev : row.SeverityBreakdown;
-        var html = $@"<span class=""tfr-severity {SeverityCssClass(sev)}"" title=""{System.Net.WebUtility.HtmlEncode(title)}"">{sev}</span>";
+        var rankHint = sev switch
+        {
+            "P0" => "P0 = highest / most severe",
+            "P5" => "P5 = clean",
+            _ => sev + " (P0 highest … P5 clean)"
+        };
+        var title = string.IsNullOrWhiteSpace(row.SeverityBreakdown) ? rankHint : rankHint + " · " + row.SeverityBreakdown;
+        var html = $@"<span class=""tfr-severity {SeverityCssClass(sev)}"" title=""{System.Net.WebUtility.HtmlEncode(title)}"">{sev}</span>
+            <span class=""tfr-sev-hint"">{System.Net.WebUtility.HtmlEncode(rankHint)}</span>";
+        return new Microsoft.AspNetCore.Html.HtmlString(html);
+    }
+
+    IHtmlContent SeverityBreakdownPills(TrialFlagReviewRowVm row)
+    {
+        if (string.IsNullOrWhiteSpace(row.SeverityBreakdown))
+            return Microsoft.AspNetCore.Html.HtmlString.Empty;
+
+        var parts = row.SeverityBreakdown.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (parts.Length == 0)
+            return Microsoft.AspNetCore.Html.HtmlString.Empty;
+
+        var html = @"<div class=""tfr-flag-break"">";
+        foreach (var part in parts)
+        {
+            var bits = part.Split(':');
+            var flag = bits.Length > 0 ? bits[0].Trim() : part;
+            var p = bits.Length > 1 ? bits[1].Trim().ToUpperInvariant() : "";
+            if (string.IsNullOrWhiteSpace(p) || !p.StartsWith("P")) p = "";
+            html += $@"<span class=""tfr-flag-pill {SeverityCssClass(p)}"" title=""{System.Net.WebUtility.HtmlEncode(part)} · P0 highest"">{System.Net.WebUtility.HtmlEncode(flag)}"
+                + (string.IsNullOrEmpty(p) ? "" : " " + System.Net.WebUtility.HtmlEncode(p))
+                + "</span>";
+        }
+        html += "</div>";
         return new Microsoft.AspNetCore.Html.HtmlString(html);
     }
 
@@ -295,15 +350,15 @@
             @if (rows.Any())
             {
                 <div class="tfr-filter">
-                    <label for="tfrSeverityFilter" style="font-size:11px;color:#64748b;white-space:nowrap;">Severity</label>
-                    <select id="tfrSeverityFilter" aria-label="Filter by severity">
+                    <label for="tfrSeverityFilter" style="font-size:11px;color:#64748b;white-space:nowrap;" title="P0 = highest severity … P5 = clean">Severity</label>
+                    <select id="tfrSeverityFilter" aria-label="Filter by severity (P0 highest … P5 clean)">
                         <option value="">All</option>
-                        <option value="P0">P0</option>
+                        <option value="P0">P0 (highest)</option>
                         <option value="P1">P1</option>
                         <option value="P2">P2</option>
                         <option value="P3">P3</option>
                         <option value="P4">P4</option>
-                        <option value="P5">P5</option>
+                        <option value="P5">P5 (clean)</option>
                     </select>
                 </div>
                 <div class="tfr-search">
@@ -373,11 +428,11 @@
                     <th>Interviewer</th>
                     <th>IRF</th>
                     <th>Trial interview</th>
-                    <th class="tfr-th-sort" id="tfrSortSeverity" title="Sort by severity">Severity</th>
+                    <th class="tfr-th-sort" id="tfrSortSeverity" title="P0 = highest severity … P5 = clean">Severity</th>
                     <th>Verdict</th>
                     <th>Risk categories</th>
-                    <th>Transcript</th>
-                    <th>Report</th>
+                    <th>Transcript score</th>
+                    <th>Report score</th>
                     <th>Candidate rating</th>
                     <th>Join time</th>
                     <th>Duration</th>
@@ -399,8 +454,11 @@
                     var timingUrl = TrialFlagDrillDownUrls.InterviewTiming(interviewId, row.IrfName);
                     var interviewerDisplayName = !string.IsNullOrWhiteSpace(row.InterviewerName) ? row.InterviewerName : row.InterviewerEmail;
                     var displaySeverity = ResolveSeverity(row);
+                    var hasRatingRisk = !string.IsNullOrWhiteSpace(row.SeverityBreakdown)
+                        && row.SeverityBreakdown.IndexOf("CandidateRating", StringComparison.OrdinalIgnoreCase) >= 0;
+                    var ratingHasComment = hasRatingRisk && !string.IsNullOrWhiteSpace(row.CandidateFeedbackComment);
 
-                    <tr data-search="@searchKey" data-flag-id="@row.TrialFlagId" data-severity="@displaySeverity">
+                    <tr class="tfr-main-row" data-search="@searchKey" data-flag-id="@row.TrialFlagId" data-severity="@displaySeverity" data-interview-id="@interviewId" data-irf-id="@row.IrfId">
                         @if (isPendingTab)
                         {
                             <td class="tfr-actions">
@@ -432,13 +490,23 @@
                             <a href="@TrialFlagDrillDownUrls.TranscriptQuality(interviewId, row.IrfId)" target="_blank" rel="noopener">#@interviewId</a>
                             <div style="color:#64748b;font-size:12px;">@FormatIst(row.TriggeringInterviewDate)</div>
                             <div style="color:#94a3b8;font-size:11px;">Flagged @FormatIst(row.FlaggedAtUtc)</div>
+                            <button type="button" class="tfr-detail-toggle btn-tfr-details" data-flag-id="@row.TrialFlagId">Details</button>
                         </td>
-                        <td>@SeverityBadge(row)</td>
+                        <td>
+                            @SeverityBadge(row)
+                            @SeverityBreakdownPills(row)
+                        </td>
                         <td><span class="@verdictClass">@VerdictLabel(row.OverallVerdict)</span></td>
                         <td class="tfr-risk-col">@RiskCategoryBadges(row)</td>
                         <td>@FactorCell(row.TranscriptQualityPass, transcriptDetail, TrialFlagDrillDownUrls.TranscriptQuality(interviewId, row.IrfId), "Transcript")</td>
                         <td>@FactorCell(row.ReportQualityPass, reportDetail, TrialFlagDrillDownUrls.ReportQuality(interviewId), "QC report")</td>
-                        <td>@FactorCell(row.CandidateRatingPass, ratingDetail, TrialFlagDrillDownUrls.CandidateRating(interviewId), "Rating")</td>
+                        <td>
+                            @FactorCell(row.CandidateRatingPass, ratingDetail, TrialFlagDrillDownUrls.CandidateRating(interviewId), "Rating")
+                            @if (ratingHasComment)
+                            {
+                                <div class="tfr-candidate-comment"><strong>Candidate feedback:</strong> @row.CandidateFeedbackComment</div>
+                            }
+                        </td>
                         <td>@FactorCell(row.JoinTimePass, joinDetail, timingUrl, "Timing")</td>
                         <td>@FactorCell(row.InterviewDurationPass, durationDetail, timingUrl, "Timing")</td>
                         @if (!isPendingTab)
@@ -452,6 +520,17 @@
                                 }
                             </td>
                         }
+                    </tr>
+                    <tr class="tfr-detail-row" data-flag-id="@row.TrialFlagId" style="display:none;">
+                        <td colspan="@(isPendingTab ? 12 : 12)">
+                            <div style="font-size:12px;font-weight:700;color:#0f172a;margin-bottom:6px;">AI Evaluations</div>
+                            <div class="tfr-ai-body" data-interview-id="@interviewId" data-irf-id="@row.IrfId">Loading…</div>
+                            @if (!string.IsNullOrWhiteSpace(row.SeverityBreakdown))
+                            {
+                                <div style="margin-top:10px;font-size:12px;font-weight:700;color:#0f172a;">Flag breakdown</div>
+                                @SeverityBreakdownPills(row)
+                            }
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -490,21 +569,29 @@
         var keepUrl = '@Url.Action("KeepTrialFlagReviewer", "Dashboard")';
         var removeUrl = '@Url.Action("RemoveTrialFlagReviewer", "Dashboard")';
         var backfillUrl = '@Url.Action("BackfillTrialFlags", "Dashboard")';
+        var aiSummaryUrl = '@Url.Action("InterviewAiRiskSummary", "Dashboard")';
         var PAGE_SIZE = 30;
         var currentPage = 1;
         var searchTerm = '';
         var severityFilter = '';
+        // Ascending numeric rank = P0 first (most severe). Sort label: ↑ = worst first.
         var severitySortAsc = true;
         var $tbody = $('.tfr-table tbody');
-        var $rows = $tbody.find('tr');
+        var $mainRows = $tbody.find('tr.tfr-main-row');
 
         function severityRank(sev) {
             var m = (sev || '').match(/^P(\d)$/i);
             return m ? parseInt(m[1], 10) : 99;
         }
 
+        function severityCss(p) {
+            var s = (p || '').toString().toUpperCase();
+            if (/^P[0-5]$/.test(s)) return 'tfr-severity tfr-severity--' + s.toLowerCase();
+            return 'tfr-severity tfr-severity--na';
+        }
+
         function getMatchedRows() {
-            var $matched = $rows;
+            var $matched = $mainRows;
             if (searchTerm) {
                 $matched = $matched.filter(function () {
                     return ($(this).attr('data-search') || '').indexOf(searchTerm) >= 0;
@@ -519,27 +606,38 @@
         }
 
         function applySeveritySort() {
-            var rows = $rows.get();
+            var rows = $mainRows.get();
             rows.sort(function (a, b) {
                 var ra = severityRank($(a).attr('data-severity'));
                 var rb = severityRank($(b).attr('data-severity'));
                 return severitySortAsc ? (ra - rb) : (rb - ra);
             });
-            $.each(rows, function (_, row) { $tbody.append(row); });
-            $rows = $tbody.find('tr');
+            $.each(rows, function (_, row) {
+                var $main = $(row);
+                var flagId = $main.attr('data-flag-id');
+                var $detail = $tbody.find('tr.tfr-detail-row[data-flag-id="' + flagId + '"]');
+                $tbody.append($main);
+                if ($detail.length) $tbody.append($detail);
+            });
+            $mainRows = $tbody.find('tr.tfr-main-row');
         }
 
         function renderPagination() {
             var $matched = getMatchedRows();
             var total = $matched.length;
             var $bar = $('#tfrPagination');
-            $rows.hide();
-            $('#tfrSearchEmpty').toggleClass('is-visible', total === 0 && searchTerm.length > 0 && $rows.length > 0);
+            $tbody.find('tr').hide();
+            $('#tfrSearchEmpty').toggleClass('is-visible', total === 0 && searchTerm.length > 0 && $mainRows.length > 0);
             if (total === 0) { $bar.removeClass('is-visible'); return; }
             var totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
             if (currentPage > totalPages) currentPage = totalPages;
             var start = (currentPage - 1) * PAGE_SIZE;
-            $matched.slice(start, start + PAGE_SIZE).show();
+            $matched.slice(start, start + PAGE_SIZE).each(function () {
+                var $main = $(this).show();
+                var flagId = $main.attr('data-flag-id');
+                var $detail = $tbody.find('tr.tfr-detail-row[data-flag-id="' + flagId + '"]');
+                if ($detail.data('open')) $detail.show();
+            });
             if (total <= PAGE_SIZE) { $bar.removeClass('is-visible'); return; }
             $('#tfrPageInfo').text('Showing ' + (start + 1) + '–' + Math.min(start + PAGE_SIZE, total) + ' of ' + total);
             var html = '<button type="button" class="tfr-btn tfr-pg-prev"' + (currentPage <= 1 ? ' disabled' : '') + '>&lsaquo;</button>';
@@ -552,6 +650,60 @@
             html += '<button type="button" class="tfr-btn tfr-pg-next"' + (currentPage >= totalPages ? ' disabled' : '') + '>&rsaquo;</button>';
             $('#tfrPageBtns').html(html);
             $bar.addClass('is-visible');
+        }
+
+        function aiLink(sourceName, interviewId, irfId) {
+            if (sourceName === 'Transcript AI')
+                return '/AIScreener/TransciptAnalysis?interviewId=' + encodeURIComponent(interviewId) + '&irfId=' + encodeURIComponent(irfId || '');
+            return '/Interview/QCMergedAIDetails?interviewId=' + encodeURIComponent(interviewId);
+        }
+
+        function renderAiTable(rows, interviewId, irfId) {
+            var html = '<table class="tfr-ai-table"><thead><tr><th>Source</th><th>Score / value</th><th>Status</th><th>Report</th></tr></thead><tbody>';
+            (rows || []).forEach(function (r) {
+                var score = (r.rawScore != null && r.rawScore !== '') ? r.rawScore : ((r.RawScore != null && r.RawScore !== '') ? r.RawScore : null);
+                var triggered = !!(r.triggered != null ? r.triggered : r.Triggered);
+                var pLevel = (r.pLevel || r.PLevel || '').toString().toUpperCase();
+                var name = r.sourceName || r.SourceName || '—';
+                var numericish = score != null && score !== '' && !isNaN(Number(score));
+                var notScored = score == null || score === '' || (numericish && Number(score) === 0);
+                var scoreHtml = notScored
+                    ? '<span class="tfr-ai-na">Not scored</span>'
+                    : $('<div/>').text(score).html();
+                // Treat 0/NULL numeric scores as not scored — never Triggered
+                if (notScored && numericish) {
+                    triggered = false;
+                    pLevel = '';
+                }
+                var statusHtml = triggered && pLevel
+                    ? '<span class="' + severityCss(pLevel) + '" title="P0 = highest severity">' + $('<div/>').text(pLevel).html() + '</span>'
+                    : '<span class="tfr-ai-ok">OK</span>';
+                var href = aiLink(name, interviewId, irfId);
+                html += '<tr><td>' + $('<div/>').text(name).html() + '</td><td>' + scoreHtml + '</td><td>' + statusHtml
+                    + '</td><td><a href="' + href + '" target="_blank" rel="noopener">Open</a></td></tr>';
+            });
+            html += '</tbody></table>';
+            return html;
+        }
+
+        function loadAiSummary($body) {
+            if ($body.data('loaded')) return;
+            var interviewId = $body.data('interview-id');
+            var irfId = $body.data('irf-id');
+            $.ajax({
+                url: aiSummaryUrl,
+                type: 'GET',
+                data: { interviewId: interviewId, irfId: irfId },
+                dataType: 'json'
+            }).done(function (res) {
+                if (!res || !res.ok) {
+                    $body.html('<span class="tfr-ai-na">' + $('<div/>').text((res && res.message) || 'Failed to load.').html() + '</span>');
+                    return;
+                }
+                $body.html(renderAiTable(res.rows || [], interviewId, irfId)).data('loaded', true);
+            }).fail(function () {
+                $body.html('<span class="tfr-ai-na">Failed to load AI evaluations.</span>');
+            });
         }
 
         function applySearch() {
@@ -617,9 +769,22 @@
         $('#tfrSeverityFilter').on('change', applySearch);
         $('#tfrSortSeverity').on('click', function () {
             severitySortAsc = !severitySortAsc;
-            $(this).toggleClass('is-active', true).text(severitySortAsc ? 'Severity ↑' : 'Severity ↓');
+            // ↑ = P0 (highest) first; ↓ = P5 (clean) first
+            $(this).toggleClass('is-active', true)
+                .attr('title', severitySortAsc ? 'P0 highest first' : 'P5 clean first')
+                .text(severitySortAsc ? 'Severity ↑ (P0 first)' : 'Severity ↓ (P5 first)');
             applySeveritySort();
             applySearch();
+        });
+
+        $(document).on('click', '.btn-tfr-details', function () {
+            var flagId = $(this).data('flag-id');
+            var $detail = $tbody.find('tr.tfr-detail-row[data-flag-id="' + flagId + '"]');
+            var open = !$detail.data('open');
+            $detail.data('open', open);
+            $detail.toggle(open);
+            $(this).text(open ? 'Hide details' : 'Details');
+            if (open) loadAiSummary($detail.find('.tfr-ai-body'));
         });
 
         $('#btnTfrBackfill').on('click', function () {
@@ -659,6 +824,11 @@
             if (currentPage < totalPages) { currentPage++; renderPagination(); }
         });
 
+        applySeveritySort();
+        $('#tfrSortSeverity')
+            .addClass('is-active')
+            .attr('title', 'P0 highest first')
+            .text('Severity ↑ (P0 first)');
         renderPagination();
     })();
 </script>

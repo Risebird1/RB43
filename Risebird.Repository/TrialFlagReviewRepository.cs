@@ -110,6 +110,7 @@ namespace Risebird.Repository
                 JoinTimePass = ToBool(row.JoinTimePass),
                 InterviewDurationPass = ToBool(row.InterviewDurationPass),
                 TranscriptQualityScore = row.TranscriptQualityScore,
+                ReportQualityScore = row.ReportQualityScore,
                 CandidateRating = row.CandidateRating,
                 JoinTimeMinutes = row.JoinTimeMinutes,
                 InterviewDurationMinutes = row.InterviewDurationMinutes,
@@ -126,7 +127,8 @@ namespace Risebird.Repository
                 Severity = row.Severity,
                 RiskCategoryLabels = row.RiskCategoryLabels,
                 RiskCategoryReasons = row.RiskCategoryReasons,
-                SeverityBreakdown = row.SeverityBreakdown
+                SeverityBreakdown = row.SeverityBreakdown,
+                CandidateFeedbackComment = row.CandidateFeedbackComment
             };
 
         private static bool ToBool(int? value) => value.HasValue && value.Value != 0;
@@ -146,6 +148,7 @@ namespace Risebird.Repository
             public int? JoinTimePass { get; set; }
             public int? InterviewDurationPass { get; set; }
             public decimal? TranscriptQualityScore { get; set; }
+            public decimal? ReportQualityScore { get; set; }
             public decimal? CandidateRating { get; set; }
             public decimal? JoinTimeMinutes { get; set; }
             public decimal? InterviewDurationMinutes { get; set; }
@@ -163,6 +166,31 @@ namespace Risebird.Repository
             public string RiskCategoryLabels { get; set; }
             public string RiskCategoryReasons { get; set; }
             public string SeverityBreakdown { get; set; }
+            public string CandidateFeedbackComment { get; set; }
+        }
+
+        public async Task<IReadOnlyList<InterviewAiRiskSummaryRowVm>> GetInterviewAiRiskSummaryAsync(int interviewId)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var exists = await con.ExecuteScalarAsync<int>(
+                    "SELECT CASE WHEN OBJECT_ID(N'dbo.usp_GetInterviewAiRiskSummary', N'P') IS NOT NULL THEN 1 ELSE 0 END");
+                if (exists == 0)
+                    return Array.Empty<InterviewAiRiskSummaryRowVm>();
+
+                var rows = await con.QueryAsync<InterviewAiRiskSummaryRowVm>(
+                    "usp_GetInterviewAiRiskSummary",
+                    new { InterviewId = interviewId },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 60);
+                return rows?.ToList() ?? new List<InterviewAiRiskSummaryRowVm>();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                throw;
+            }
         }
 
         public async Task<TrialFlagReviewRowVm> GetTrialFlagByIdAsync(int trialFlagId)
