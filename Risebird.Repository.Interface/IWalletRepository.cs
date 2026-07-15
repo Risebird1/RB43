@@ -16,6 +16,7 @@ namespace Risebird.Repository.Interface
         Task<List<WalletVM>> GetCashCreditHistory(int clientId);
         Task<bool> UpdatePOStatus(int poId, int clientId, int status);
         Task<AllClientsWalletVM> GetAllClientsWalletSummary(int fromMonth, int fromYear, int toMonth, int toYear);
+        Task<List<WalletMonthDebitVM>> GetOwnerMonthlyDebits(int clientId, int billingType, int? billingOwnerId = null);
     }
 }
 

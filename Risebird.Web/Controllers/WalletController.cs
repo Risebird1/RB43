@@ -472,12 +472,16 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetPOHistory(int clientId)
+        public async Task<IActionResult> GetPOHistory(int clientId, int? month = null, int? year = null, int? billingOwnerId = null, string ownerEmail = null)
         {
             if (!IsFinanceOrAdmin()) return PartialView("_POHistory", new List<ClientPOVM>());
             var billingType = await _clientService.GetClientBillingType(clientId);
-            var list = await _walletService.GetPOHistory(clientId);
-            ViewBag.BillingType = billingType;
+            var list = await _walletService.GetPOHistory(clientId, billingType, month, year, billingOwnerId, ownerEmail);
+            ViewBag.BillingType   = billingType;
+            ViewBag.FilterMonth   = month;
+            ViewBag.FilterYear    = year;
+            ViewBag.OwnerFiltered = billingOwnerId.HasValue || !string.IsNullOrEmpty(ownerEmail);
+            ViewBag.FifoApplied   = true;   // FIFO always calculated — view should use WalletConsumed
             return PartialView("_POHistory", list);
         }
 
