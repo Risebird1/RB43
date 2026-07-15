@@ -1,4 +1,5 @@
 @model IReadOnlyList<Risebird.Entities.ViewModel.IrfAuditDirectoryRowVm>
+@using Risebird.Entities.ViewModel
 
 @{
 
@@ -13,6 +14,17 @@
     var directoryToIst = ViewBag.DirectoryToIst as string ?? "";
 
     var directoryPreset = ViewBag.DirectoryPreset as string ?? "1m";
+    // URL templates from shared helpers — JS fills __INTERVIEW_ID__ / __IRF_ID__
+    var tplTranscript = TrialFlagDrillDownUrls.TranscriptQuality(111111111, 222222222)
+        .Replace("111111111", "__INTERVIEW_ID__")
+        .Replace("222222222", "__IRF_ID__");
+    var tplReport = TrialFlagDrillDownUrls.ReportQuality(111111111)
+        .Replace("111111111", "__INTERVIEW_ID__");
+    var tplContradiction = TrialFlagDrillDownUrls.DecisionQuality(111111111)
+        .Replace("111111111", "__INTERVIEW_ID__");
+    var tplTrialStats = TrialFlagDrillDownUrls.TrialStats(111111111, 222222222, "__IRF_NAME__", "__FROM__", "__TO__")
+        .Replace("111111111", "__USER_ID__")
+        .Replace("222222222", "__IRF_ID__");
     string FormatIst(DateTime? utc)
     {
         if (!utc.HasValue) return "—";
@@ -181,8 +193,22 @@
     .irf-risk-table th, .irf-risk-table td { border-bottom: 1px solid #e2e8f0; padding: 10px!important; text-align: left; vertical-align: middle; }
     .irf-risk-table th { background: #f1f5f9; font-size: 10px; text-transform: uppercase; letter-spacing: .03em; color: #64748b; white-space: nowrap; font-weight: 600; }
     .irf-risk-table th.col-num, .irf-risk-table td.col-num { text-align: center; }
-    .irf-risk-table tr.irf-risk-iv-row:hover td { background: #f8fafc; }cha
+    .irf-risk-table tr.irf-risk-iv-row:hover td { background: #f8fafc; }
     .irf-risk-table tr:last-child td { border-bottom: none; }
+    .irf-completed-link { color: #1d4ed8; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+    .irf-completed-link:hover { color: #1e40af; }
+    .irf-ai-links { display: flex; flex-wrap: wrap; gap: 4px; }
+    .irf-ai-links a { font-size: 10px; font-weight: 600; color: #1d4ed8; text-decoration: none; white-space: nowrap; }
+    .irf-ai-links a:hover { text-decoration: underline; }
+    .irf-pay-badge { display: inline-block; margin: 1px 2px; padding: 1px 6px; border-radius: 4px; background: #fef3c7; color: #92400e; font-size: 10px; font-weight: 600; }
+    .irf-pay-total { display: block; font-size: 11px; font-weight: 700; color: #b45309; margin-bottom: 2px; }
+    .irf-qc-verdict { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+    .irf-qc-ok { background: #eaf7ef; color: #166534; }
+    .irf-qc-suspicious { background: #fff8e8; color: #a16207; }
+    .irf-qc-redo { background: #fdecec; color: #b91c1c; }
+    .irf-qc-na { background: #f3f5f8; color: #64748b; }
+    .irf-qc-score { display: block; font-size: 10px; color: #64748b; margin-top: 2px; }
+    .irf-noshow-tag { display: inline-block; margin-left: 4px; padding: 1px 5px; border-radius: 3px; background: #fee2e2; color: #991b1b; font-size: 10px; font-weight: 600; }
     .irf-risk-iv-name { font-weight: 600; color: #0f172a; }
     .irf-risk-iv-email { font-size: 11px; color: #64748b; margin-top: 1px; }
     .irf-p-badge {
@@ -1219,6 +1245,10 @@
         var riskRemoveUrl = '@Url.Action("RemoveInterviewerFromIrfRiskAudit", "Dashboard")';
         var dirFromVal = '@directoryFromIst';
         var dirToVal = '@directoryToIst';
+        var tplTranscript = @Html.Raw(Json.Serialize(tplTranscript));
+        var tplReport = @Html.Raw(Json.Serialize(tplReport));
+        var tplContradiction = @Html.Raw(Json.Serialize(tplContradiction));
+        var tplTrialStats = @Html.Raw(Json.Serialize(tplTrialStats));
 
         function recClass(rec) {
             var r = (rec || '').toString().toLowerCase();
@@ -1396,7 +1426,7 @@
                     html += '<tr>'
                         + '<td class="irf-sev-id">#' + esc(prop(d, 'interviewId', 'InterviewId')) + '</td>'
                         + '<td class="irf-sev-date">' + esc(fmtDate(prop(d, 'interviewDate', 'InterviewDate'))) + '</td>'
-                        + '<td class="irf-sev-meta">' + esc(prop(d, 'description', 'Description') || '—') + '</td>'
+                        + '<td class="irf-sev-meta">' + formatDescCell(prop(d, 'description', 'Description'), prop(d, 'severityBreakdown', 'SeverityBreakdown')) + '</td>'
                         + '<td class="irf-sev-br">' + esc(prop(d, 'severityBreakdown', 'SeverityBreakdown') || '—') + '</td>'
                         + '</tr>';
                 });
@@ -1406,6 +1436,72 @@
             return html;
         }
 
+        function formatShortRange(fromStr, toStr) {
+            function pretty(s) {
+                if (!s) return '';
+                var p = String(s).split('-');
+                if (p.length !== 3) return s;
+                var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                var m = months[parseInt(p[1], 10) - 1] || p[1];
+                return String(parseInt(p[2], 10)) + ' ' + m;
+            }
+            return pretty(fromStr) + ' – ' + pretty(toStr);
+        }
+
+        function noShowLabel(description, breakdown) {
+            var text = ((description || '') + ',' + (breakdown || '')).toLowerCase();
+            var isFakeOrNoShow = text.indexOf('fake report') >= 0
+                || text.indexOf('fakereport') >= 0
+                || text.indexOf('no show') >= 0
+                || text.indexOf('noshow') >= 0;
+            if (!isFakeOrNoShow) return null;
+            if (text.indexOf('interviewer no show') >= 0 || text.indexOf('interviewernoshow') >= 0) return 'Interviewer No Show';
+            if (text.indexOf('candidate no show') >= 0 || text.indexOf('candidatenoshow') >= 0) return 'Candidate No Show';
+            if (text.indexOf('no show') >= 0 || text.indexOf('noshow') >= 0) return 'No Show';
+            return null;
+        }
+
+        function formatDescCell(description, breakdown) {
+            var ns = noShowLabel(description, breakdown);
+            var base = esc(description || '—');
+            if (!ns) return base;
+            return base + ' <span class="irf-noshow-tag" title="Fake Report detail">' + esc(ns) + '</span>';
+        }
+
+        function payReasonBadges(reasonsCsv) {
+            if (!reasonsCsv) return '<span style="color:#94a3b8;font-size:11px;">—</span>';
+            return String(reasonsCsv).split(',').filter(Boolean).map(function (r) {
+                return '<span class="irf-pay-badge">' + esc(r.trim()) + '</span>';
+            }).join(' ');
+        }
+
+        function aiLinks(worstId, irfId) {
+            if (!worstId) return '<span style="color:#94a3b8;font-size:11px;">—</span>';
+            var id = String(worstId);
+            var irf = String(irfId || '');
+            var transcript = String(tplTranscript).replace(/__INTERVIEW_ID__/g, encodeURIComponent(id)).replace(/__IRF_ID__/g, encodeURIComponent(irf));
+            var report = String(tplReport).replace(/__INTERVIEW_ID__/g, encodeURIComponent(id));
+            var contradiction = String(tplContradiction).replace(/__INTERVIEW_ID__/g, encodeURIComponent(id));
+            return '<div class="irf-ai-links">'
+                + '<a href="' + transcript + '" target="_blank" rel="noopener">Transcript</a>'
+                + '<a href="' + report + '" target="_blank" rel="noopener">Report</a>'
+                + '<a href="' + contradiction + '" target="_blank" rel="noopener">Contradiction</a>'
+                + '</div>';
+        }
+
+        function trialStatsUrl(r, fromStr, toStr) {
+            var irfId = prop(r, 'irfId', 'IrfId') || 0;
+            var ivId = prop(r, 'userId', 'UserId') || prop(r, 'interviewerId', 'InterviewerId') || 0;
+            var irfName = prop(r, 'irfName', 'IrfName') || '';
+            var url = String(tplTrialStats)
+                .replace(/__USER_ID__/g, encodeURIComponent(ivId))
+                .replace(/__IRF_ID__/g, encodeURIComponent(irfId))
+                .replace(/__IRF_NAME__/g, encodeURIComponent(irfName))
+                .replace(/__FROM__/g, encodeURIComponent(fromStr || ''))
+                .replace(/__TO__/g, encodeURIComponent(toStr || ''));
+            return url;
+        }
+
         function buildRiskSummary(row) {
             return 'RiskRatio=' + (prop(row,'riskRatio','RiskRatio') != null ? Number(prop(row,'riskRatio','RiskRatio')).toFixed(2) : 'n/a')
                 + '; P0=' + (prop(row,'p0Count','P0Count') || 0)
@@ -1413,10 +1509,12 @@
                 + ',P2=' + (prop(row,'p2Count','P2Count') || 0)
                 + ',P3=' + (prop(row,'p3Count','P3Count') || 0)
                 + ',P4=' + (prop(row,'p4Count','P4Count') || 0)
-                + ',P5=' + (prop(row,'p5Count','P5Count') || 0);
+                + ',P5=' + (prop(row,'p5Count','P5Count') || 0)
+                + '; WindowCompleted=' + (prop(row,'totalCompleted','TotalCompleted') || 0)
+                + '; Lifetime=' + (prop(row,'lifetimeCompleted','LifetimeCompleted') || 0);
         }
 
-        function renderRiskRows(irfId, rows, details) {
+        function renderRiskRows(irfId, rows, details, fromStr, toStr) {
             if (!rows || !rows.length) {
                 return '<div class="irf-risk-empty">No active interviewers on this IRF.</div>';
             }
@@ -1425,15 +1523,20 @@
             rows.forEach(function (r) {
                 riskSum += Number(prop(r,'riskInterviews','RiskInterviews') || 0);
             });
+            var rangeLabel = formatShortRange(fromStr || dirFromVal, toStr || dirToVal);
             var html = '';
             if (riskSum === 0) {
                 html += '<div class="irf-risk-empty irf-risk-empty--warn">P0–P5 are 0 — no RiskCategory rows yet, or interviews are clean. Click <strong>Refresh risk</strong> to backfill.</div>';
             }
             html += '<table class="irf-risk-table"><thead><tr>'
-                + '<th>Interviewer</th><th class="col-num">Total</th>'
+                + '<th>Interviewer</th>'
+                + '<th class="col-num" title="Completed in selected window">Completed (' + esc(rangeLabel) + ')</th>'
+                + '<th class="col-num" title="Lifetime completed on this IRF (display only)">Lifetime</th>'
                 + '<th class="col-num">P0</th><th class="col-num">P1</th><th class="col-num">P2</th>'
                 + '<th class="col-num">P3</th><th class="col-num">P4</th><th class="col-num">P5</th>'
-                + '<th>Risk ratio</th><th>Recommendation</th><th>Action</th></tr></thead><tbody>';
+                + '<th>Risk ratio</th><th>Recommendation</th>'
+                + '<th>QC Merge</th><th>AI links</th><th>Payment deduction</th>'
+                + '<th>Action</th></tr></thead><tbody>';
             rows.forEach(function (r) {
                 var rec = prop(r,'recommendation','Recommendation') || 'InsufficientData';
                 var canRemove = rec === 'Remove' || rec === 'Watch';
@@ -1441,6 +1544,13 @@
                 var name = (prop(r,'interviewerCodedId','InterviewerCodedId') || prop(r,'interviewerEmail','InterviewerEmail') || ('#' + transId));
                 var email = prop(r,'interviewerEmail','InterviewerEmail') || '';
                 var ivDetails = detailsForTrans(details, transId);
+                var completed = prop(r,'totalCompleted','TotalCompleted') || 0;
+                var lifetime = prop(r,'lifetimeCompleted','LifetimeCompleted') || 0;
+                var worstId = prop(r,'worstSeverityInterviewId','WorstSeverityInterviewId');
+                var qcVerdict = prop(r,'qcMergeVerdict','QcMergeVerdict') || '—';
+                var qcScore = prop(r,'qcMergeScore','QcMergeScore');
+                var payTotal = prop(r,'paymentDeductionTotal','PaymentDeductionTotal') || 0;
+                var payReasons = prop(r,'paymentDeductionReasons','PaymentDeductionReasons') || '';
 
                 for (var lvl = 0; lvl <= 5; lvl++) {
                     _tipStore[tipKeyFor(transId, lvl)] = buildTipHtml(lvl, itemsForP(ivDetails, lvl));
@@ -1450,7 +1560,12 @@
                     + '<td><div class="irf-risk-iv-name">' + esc(name) + '</div>'
                     + (email ? '<div class="irf-risk-iv-email">' + esc(email) + '</div>' : '')
                     + '</td>'
-                    + '<td class="col-num">' + (prop(r,'totalCompleted','TotalCompleted') || 0) + '</td>'
+                    + '<td class="col-num">'
+                    + (completed > 0
+                        ? '<a class="irf-completed-link" href="' + esc(trialStatsUrl(r, fromStr || dirFromVal, toStr || dirToVal)) + '" target="_blank" rel="noopener" title="Open in-window interviews">' + completed + '</a>'
+                        : '0')
+                    + '</td>'
+                    + '<td class="col-num">' + lifetime + '</td>'
                     + '<td class="col-num">' + pBadge(0, prop(r,'p0Count','P0Count'), tipKeyFor(transId, 0)) + '</td>'
                     + '<td class="col-num">' + pBadge(1, prop(r,'p1Count','P1Count'), tipKeyFor(transId, 1)) + '</td>'
                     + '<td class="col-num">' + pBadge(2, prop(r,'p2Count','P2Count'), tipKeyFor(transId, 2)) + '</td>'
@@ -1459,12 +1574,18 @@
                     + '<td class="col-num">' + pBadge(5, prop(r,'p5Count','P5Count'), tipKeyFor(transId, 5)) + '</td>'
                     + '<td>' + formatRatio(prop(r,'riskRatio','RiskRatio')) + '</td>'
                     + '<td><span class="irf-rec ' + recClass(rec) + '">' + esc(rec) + '</span></td>'
+                    + '<td><div class="irf-qc-verdict irf-qc-' + esc(String(qcVerdict).toLowerCase()) + '">' + esc(qcVerdict) + '</div>'
+                    + (qcScore != null && qcScore !== '' ? '<div class="irf-qc-score">Score ' + esc(qcScore) + '</div>' : '')
+                    + '</td>'
+                    + '<td>' + aiLinks(worstId, irfId) + '</td>'
+                    + '<td><div class="irf-pay-total">' + (payTotal ? (payTotal + '%') : '—') + '</div>'
+                    + payReasonBadges(payReasons) + '</td>'
                     + '<td>';
                 if (canRemove) {
                     html += '<button type="button" class="irf-audit-btn irf-audit-btn--danger btn-risk-remove"'
                         + ' data-trans-id="' + transId + '"'
                         + ' data-irf-id="' + irfId + '"'
-                        + ' data-worst-id="' + (prop(r,'worstSeverityInterviewId','WorstSeverityInterviewId') || '') + '"'
+                        + ' data-worst-id="' + (worstId || '') + '"'
                         + ' data-risk-summary="' + esc(buildRiskSummary(r)).replace(/"/g, '&quot;') + '"'
                         + '>Remove</button>';
                 } else {
@@ -1472,7 +1593,7 @@
                 }
                 html += '</td></tr>';
                 html += '<tr class="irf-risk-sev-row" data-trans-id="' + transId + '" style="display:none;">'
-                    + '<td colspan="11" class="irf-risk-detail-cell">'
+                    + '<td colspan="15" class="irf-risk-detail-cell">'
                     + renderSeverityGroups(ivDetails, null)
                     + '</td></tr>';
             });
@@ -1506,7 +1627,7 @@
                             $detail.find('.irf-risk-body').html('<div class="irf-risk-error">' + ((res && res.message) || 'Failed to load risk breakdown.') + '</div>');
                             return;
                         }
-                        $detail.find('.irf-risk-body').html(renderRiskRows(irfId, res.rows || [], res.details || []));
+                        $detail.find('.irf-risk-body').html(renderRiskRows(irfId, res.rows || [], res.details || [], res.from || dirFromVal, res.to || dirToVal));
                     })
                     .fail(function () {
                         $detail.find('.irf-risk-body').html('<div class="irf-risk-error">Failed to load risk breakdown.</div>');

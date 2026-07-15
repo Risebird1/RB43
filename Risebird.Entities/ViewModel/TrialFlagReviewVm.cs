@@ -156,13 +156,17 @@ namespace Risebird.Entities.ViewModel
             return $"/RiseTube/VideoPage?id={interviewId}&irfid={irf}";
         }
 
-        public static string TrialStats(int interviewerId, int irfId, string irfName = null)
+        public static string TrialStats(int interviewerId, int irfId, string irfName = null, string fromIst = null, string toIst = null)
         {
             var url = $"/Interviewer/TrialStats?irfId={irfId}";
             if (interviewerId > 0)
                 url += $"&interviewerId={interviewerId}";
             if (!string.IsNullOrWhiteSpace(irfName))
                 url += $"&irfName={Uri.EscapeDataString(irfName)}";
+            if (!string.IsNullOrWhiteSpace(fromIst))
+                url += $"&from={Uri.EscapeDataString(fromIst)}";
+            if (!string.IsNullOrWhiteSpace(toIst))
+                url += $"&to={Uri.EscapeDataString(toIst)}";
             return url;
         }
     }

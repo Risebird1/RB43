@@ -87,7 +87,7 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsInterviewerAccess, bool? IsBlocked);
         Task<IEnumerable<InterviewerStatsVM>> GetInterviewerStatsAndRatings(int? irfId = null, string clientEmailId = null);
         Task<bool> DeactivateSkillChannelInterviewer(int irfId, string interviewerEmail);
-        Task<IEnumerable<StatsDetailsVM>> GetInterviewerStatsAndRatingsDetails(int interviewerUserId, string type, int? irfId = null, string clientEmailId = null);
+        Task<IEnumerable<StatsDetailsVM>> GetInterviewerStatsAndRatingsDetails(int interviewerUserId, string type, int? irfId = null, string clientEmailId = null, DateTime? fromIst = null, DateTime? toIst = null);
         Task<bool> AddSuspiciousTypeService(SuspiciousInterviewerVM model);
         Task<bool> SaveInterviewerEmploymentVerification(InterviewerProfileVM _interviewer);
         Task<bool> UpdateVideoConfirmationStatus(int status, string Emailid);
