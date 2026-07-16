@@ -15,6 +15,11 @@ namespace Risebird.Business.Interface
         Task<List<ClientPOVM>> GetClientPOList(int clientId, int? month = null, int? year = null, int? billingOwnerId = null, bool openOnly = false);
         Task<List<ClientPOVM>> GetPOHistory(int clientId, int billingType, int? month = null, int? year = null, int? billingOwnerId = null, string ownerEmail = null);
         Task<List<WalletVM>> GetCashCreditHistory(int clientId);
+        /// <summary>
+        /// Returns the BillingOwnerIds of owners whose LATEST PO has consumed >= <paramref name="threshold"/> of its credit.
+        /// Uses FIFO ledger for accuracy. Only meaningful when BillingType = 1 (Billing Owner).
+        /// </summary>
+        Task<HashSet<int?>> GetHighConsumptionOwnerIds(int clientId, decimal threshold = 0.90m);
         Task<bool> UpdatePOStatus(int poId, int clientId, int status);
         Task<AllClientsWalletVM> GetAllClientsWalletSummary(int fromMonth, int fromYear, int toMonth, int toYear);
     }

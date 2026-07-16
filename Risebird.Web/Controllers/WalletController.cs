@@ -462,6 +462,10 @@ namespace Risebird.Web.Controllers
                 ? new SelectList(_irfService.GetClientUser(clientId), "id", "EmailId")
                 : null;
 
+            // Identify billing owners whose latest PO is >= 90% consumed — used for warning badge
+            if (dashboard.BillingType == 1)
+                ViewBag.HighConsumptionOwnerIds = await _walletService.GetHighConsumptionOwnerIds(clientId);
+
             if (TempData["ClientWalletMessage"] != null)
             {
                 ViewBag.Message = TempData["ClientWalletMessage"].ToString();

@@ -178,6 +178,52 @@ namespace Risebird.Business
         }
 
         /// <summary>
+        /// Returns the BillingOwnerIds of all billing owners whose LATEST PO has had
+        /// >= <paramref name="threshold"/> of its credit consumed (default 90 %).
+        /// Consumption is computed using the same FIFO ledger as GetPOHistory so the
+        /// values are accurate and consistent with what the user sees in the PO History popup.
+        /// Only meaningful for BillingType = 1 (Billing Owner scope).
+        /// </summary>
+        public async Task<HashSet<int?>> GetHighConsumptionOwnerIds(int clientId, decimal threshold = 0.90m)
+        {
+            var result = new HashSet<int?>();
+            try
+            {
+                // Fetch ALL POs for the client (no owner / period filter) and all debits
+                var allPos = await GetClientPOList(clientId, null, null, null);
+                if (!allPos.Any()) return result;
+
+                foreach (var po in allPos) MapPOStatus(po);
+
+                var allDebits = await _walletRepository.GetOwnerMonthlyDebits(clientId, billingType: 1);
+
+                // Run an independent FIFO ledger per owner (all-time view — no month cutoff)
+                foreach (var ownerGroup in allPos.GroupBy(p => p.BillingOwnerId))
+                {
+                    var ownerPOs = ownerGroup
+                        .OrderBy(p => p.POYear)
+                        .ThenBy(p => p.POMonth)
+                        .ThenBy(p => p.CreatedOn ?? DateTime.MaxValue)
+                        .ToList();
+
+                    var ownerDebits = allDebits.Where(d => d.BillingOwnerId == ownerGroup.Key);
+                    RunFifoLedger(ownerPOs, ownerDebits, null, null);   // all-time state
+
+                    // "Latest PO" = last in the chronologically sorted list
+                    var latestPO = ownerPOs.Last();
+                    if (latestPO.POCreditAmount > 0
+                        && latestPO.WalletConsumed / latestPO.POCreditAmount >= threshold)
+                    {
+                        result.Add(ownerGroup.Key);
+                    }
+                }
+            }
+            catch { /* non-critical — return empty set on any error */ }
+
+            return result;
+        }
+
+        /// <summary>
         /// Applies the carry-forward FIFO ledger to a sorted PO list using the supplied debits.
         /// Always replays debits month-by-month up to the cutoff date so the result represents
         /// the cumulative state as of that point (never just a single month in isolation).

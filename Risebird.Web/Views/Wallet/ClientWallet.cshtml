@@ -332,11 +332,24 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @{
+                                        var _highConsIds = ViewBag.HighConsumptionOwnerIds as System.Collections.Generic.HashSet<int?> ?? new System.Collections.Generic.HashSet<int?>();
+                                    }
                                     @foreach (var owner in Model.OwnerWallets)
                                     {
-                                        @if (owner.POCredit == 0 && owner.Consumed == 0 && owner.Remaining == 0 && owner.CashBalance == 0) { continue; }
-                                        <tr>
-                                            <td>@owner.BillingOwnerName</td>
+                                        if (owner.POCredit == 0 && owner.Consumed == 0 && owner.Remaining == 0 && owner.CashBalance == 0) { continue; }
+                                        var _isHighConsumption = _highConsIds.Contains((int?)owner.BillingOwnerId);
+                                        <tr class="@(_isHighConsumption ? "table-warning" : "")">
+                                            <td>
+                                                @owner.BillingOwnerName
+                                                @if (_isHighConsumption)
+                                                {
+                                                    <span title="Latest PO is ≥ 90% consumed — consider adding a new PO"
+                                                          style="display:inline-block;margin-left:5px;background:#e65100;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;vertical-align:middle;white-space:nowrap;">
+                                                        ⚠ PO Low
+                                                    </span>
+                                                }
+                                            </td>
                                             <td>@owner.BillingOwnerEmail</td>
                                             <td class="text-right">@(owner.POCredit > 0 ? "₹ " + owner.POCredit.ToString("N0") : "—")</td>
                                             <td class="text-right">@(owner.Consumed > 0 ? "₹ " + owner.Consumed.ToString("N0") : "—")</td>
