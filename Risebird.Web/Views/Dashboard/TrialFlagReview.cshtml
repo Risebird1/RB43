@@ -229,17 +229,23 @@
     .tfr-risk-badge--redo { background: #eaf4fb; color: #1a6fa0; }
     .tfr-risk-badge--fake { background: #f9ebf0; color: #922b5e; }
     .tfr-risk-badge--default { background: #f0f0f0; color: #555; }
-    .tfr-qc-cell { font-size: 12px; line-height: 1.35; }
-    .tfr-qc-verdict { font-weight: 700; text-transform: capitalize; }
-    .tfr-qc-verdict.is-redo { color: #b91c1c; }
-    .tfr-qc-verdict.is-suspicious { color: #a16207; }
-    .tfr-qc-verdict.is-ok { color: #166534; }
+    .tfr-qc-cell { font-size: 12px; line-height: 1.35; max-width: 220px; }
+    .tfr-qc-score { font-size: 16px; font-weight: 700; color: #0f172a; line-height: 1.2; }
+    .tfr-qc-verdict { display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .02em; }
+    .tfr-qc-verdict.is-redo { background: #fee2e2; color: #991b1b; }
+    .tfr-qc-verdict.is-suspicious { background: #ffedd5; color: #9a3412; }
+    .tfr-qc-verdict.is-ok { background: #dcfce7; color: #166534; }
     .tfr-ai-links { display: flex; flex-wrap: wrap; gap: 4px; }
     .tfr-ai-links a { font-size: 11px; font-weight: 600; color: #1d4ed8; text-decoration: none; white-space: nowrap; }
     .tfr-ai-links a:hover { text-decoration: underline; }
-    .tfr-pay-cell { font-size: 11px; }
-    .tfr-pay-total { font-weight: 700; color: #b45309; margin-bottom: 2px; }
-    .tfr-pay-badge { display: inline-block; margin: 1px 2px; padding: 1px 6px; border-radius: 4px; background: #fef3c7; color: #92400e; font-size: 10px; font-weight: 600; }
+    .tfr-flag-badge { display: inline-block; margin: 1px 2px; padding: 1px 6px; border-radius: 4px; background: #fef3c7; color: #92400e; font-size: 10px; font-weight: 600; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
+    .tfr-rating-info {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 16px; height: 16px; margin-left: 4px; border-radius: 50%;
+        border: 1px solid #94a3b8; color: #64748b; font-size: 10px; font-weight: 700;
+        cursor: help; vertical-align: middle; background: #f8fafc;
+    }
+    .tfr-rating-info:hover { border-color: #2563eb; color: #1d4ed8; }
     .tfr-noshow-tag { display: inline-block; margin-left: 2px; padding: 1px 5px; border-radius: 3px; background: #fee2e2; color: #991b1b; font-size: 10px; font-weight: 600; }
     .tfr-filter { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .tfr-filter select { border: 1px solid #cbd5e1; border-radius: 6px; padding: 7px 10px; font-size: 12px; background: #fff; }
@@ -387,17 +393,48 @@
 
     IHtmlContent QcMergeCell(TrialFlagReviewRowVm row)
     {
-        if (string.IsNullOrWhiteSpace(row.QcMergeVerdict))
+        // Red flags = MergedAIQCDetails flags[] only (evidence-filtered). Payment amount/recommendation → tooltip.
+        var mergeFlags = TrialFlagEvidenceBadgeHelper.CollectMergeFlagBadges(row.QcMergeFlagsJson);
+
+        var hasVerdict = !string.IsNullOrWhiteSpace(row.QcMergeVerdict);
+        var hasScore = row.QcMergeScore.HasValue;
+        var hasFlags = mergeFlags.Count > 0;
+        if (!hasVerdict && !hasScore && !hasFlags && row.PaymentDeduction <= 0
+            && string.IsNullOrWhiteSpace(row.PaymentRecommendation)
+            && string.IsNullOrWhiteSpace(row.PaymentRecommendationComments))
             return new Microsoft.AspNetCore.Html.HtmlString(@"<span style=""color:#94a3b8;"">—</span>");
 
-        var v = row.QcMergeVerdict.Trim();
-        var css = v.Equals("redo", StringComparison.OrdinalIgnoreCase) ? "is-redo"
-            : v.Equals("suspicious", StringComparison.OrdinalIgnoreCase) ? "is-suspicious"
-            : "is-ok";
-        var label = char.ToUpperInvariant(v[0]) + v.Substring(1).ToLowerInvariant();
-        var score = row.QcMergeScore.HasValue ? " · " + row.QcMergeScore.Value : "";
-        return new Microsoft.AspNetCore.Html.HtmlString(
-            $@"<div class=""tfr-qc-cell""><span class=""tfr-qc-verdict {css}"">{System.Net.WebUtility.HtmlEncode(label)}</span>{score}</div>");
+        var tipParts = new List<string>();
+        if (row.PaymentDeduction > 0)
+            tipParts.Add("Payment deduction: " + row.PaymentDeduction + "%");
+        if (!string.IsNullOrWhiteSpace(row.PaymentRecommendation))
+            tipParts.Add("Recommendation: " + row.PaymentRecommendation);
+        if (!string.IsNullOrWhiteSpace(row.PaymentRecommendationComments))
+            tipParts.Add(row.PaymentRecommendationComments);
+        // Positive payment reason evidence (tooltip only — never badge on null/empty)
+        foreach (var payFlag in TrialFlagEvidenceBadgeHelper.CollectPaymentReasonBadgesFromJson(row.PaymentReasonValuesJson))
+            tipParts.Add(payFlag);
+        var tip = tipParts.Count > 0 ? System.Net.WebUtility.HtmlEncode(string.Join(" — ", tipParts)) : "";
+
+        var html = $@"<div class=""tfr-qc-cell""{(string.IsNullOrEmpty(tip) ? "" : $@" title=""{tip}""")}">";
+        if (hasScore)
+            html += $@"<div class=""tfr-qc-score"">{row.QcMergeScore.Value}</div>";
+
+        if (hasVerdict)
+        {
+            var v = row.QcMergeVerdict.Trim();
+            var css = v.Equals("redo", StringComparison.OrdinalIgnoreCase) ? "is-redo"
+                : v.Equals("suspicious", StringComparison.OrdinalIgnoreCase) ? "is-suspicious"
+                : "is-ok";
+            var label = char.ToUpperInvariant(v[0]) + v.Substring(1).ToLowerInvariant();
+            html += $@"<div><span class=""tfr-qc-verdict {css}"">{System.Net.WebUtility.HtmlEncode(label)}</span></div>";
+        }
+
+        foreach (var badge in mergeFlags)
+            html += $@"<span class=""tfr-flag-badge"" title=""{System.Net.WebUtility.HtmlEncode(badge)}"">{System.Net.WebUtility.HtmlEncode(badge)}</span>";
+
+        html += "</div>";
+        return new Microsoft.AspNetCore.Html.HtmlString(html);
     }
 
     IHtmlContent AiLinksCell(TrialFlagReviewRowVm row)
@@ -407,36 +444,37 @@
             return new Microsoft.AspNetCore.Html.HtmlString(@"<span style=""color:#94a3b8;"">—</span>");
 
         var t = TrialFlagDrillDownUrls.TranscriptQuality(id, row.IrfId);
-        var r = TrialFlagDrillDownUrls.ReportQuality(id);
-        var c = TrialFlagDrillDownUrls.ContradictionReport(id);
+        var r = TrialFlagDrillDownUrls.ReportAiVerdict(id);
+        var c = TrialFlagDrillDownUrls.QcMergedAiDetails(id); // contradiction section on QC Merge page
+        var q = TrialFlagDrillDownUrls.QcMergedAiDetails(id);
         return new Microsoft.AspNetCore.Html.HtmlString(
             $@"<div class=""tfr-ai-links"">
                 <a href=""{t}"" target=""_blank"" rel=""noopener"">Transcript</a>
                 <a href=""{r}"" target=""_blank"" rel=""noopener"">Report</a>
                 <a href=""{c}"" target=""_blank"" rel=""noopener"">Contradiction</a>
+                <a href=""{q}"" target=""_blank"" rel=""noopener"">QC Merge</a>
             </div>");
     }
 
-    IHtmlContent PaymentCell(TrialFlagReviewRowVm row)
+    IHtmlContent RatingCell(TrialFlagReviewRowVm row, string ratingDetail, string drillUrl)
     {
-        var tipParts = new List<string>();
-        if (!string.IsNullOrWhiteSpace(row.PaymentRecommendation))
-            tipParts.Add("Recommendation: " + row.PaymentRecommendation);
-        if (!string.IsNullOrWhiteSpace(row.PaymentRecommendationComments))
-            tipParts.Add(row.PaymentRecommendationComments);
-        var tip = tipParts.Count > 0 ? System.Net.WebUtility.HtmlEncode(string.Join(" — ", tipParts)) : "";
+        var tip = TrialFlagEvidenceBadgeHelper.IsPositiveEvidence(row.CandidateFeedbackComment)
+            ? System.Net.WebUtility.HtmlEncode(row.CandidateFeedbackComment.Trim())
+            : "";
+        var info = string.IsNullOrEmpty(tip)
+            ? ""
+            : $@" <span class=""tfr-rating-info"" title=""{tip}"" aria-label=""Candidate feedback comment"">i</span>";
 
-        var html = $@"<div class=""tfr-pay-cell""{(string.IsNullOrEmpty(tip) ? "" : $@" title=""{tip}""")}>";
-        if (row.PaymentDeduction > 0)
-            html += $@"<div class=""tfr-pay-total"">{row.PaymentDeduction}%</div>";
-        else
-            html += @"<div class=""tfr-pay-total"" style=""color:#94a3b8;font-weight:400;"">—</div>";
-
-        if (!string.IsNullOrWhiteSpace(row.PaymentDeductionReasons))
-        {
-            foreach (var part in row.PaymentDeductionReasons.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
-                html += $@"<span class=""tfr-pay-badge"">{System.Net.WebUtility.HtmlEncode(part)}</span>";
-        }
+        var statusClass = row.CandidateRatingPass ? "is-pass" : "is-fail";
+        var statusText = row.CandidateRatingPass ? "Pass" : "Fail";
+        var html = $@"<div class=""tfr-factor-cell"">
+            <div class=""tfr-factor-cell__status {statusClass}"">{statusText}</div>";
+        if (!string.IsNullOrWhiteSpace(ratingDetail))
+            html += $@"<div class=""tfr-factor-cell__detail"">{ratingDetail}{info}</div>";
+        else if (!string.IsNullOrEmpty(info))
+            html += $@"<div class=""tfr-factor-cell__detail"">{info}</div>";
+        if (!string.IsNullOrWhiteSpace(drillUrl))
+            html += $@"<a class=""tfr-factor-cell__link"" href=""{drillUrl}"" target=""_blank"" rel=""noopener"">Rating</a>";
         html += "</div>";
         return new Microsoft.AspNetCore.Html.HtmlString(html);
     }
@@ -533,7 +571,6 @@
                     <th>Verdict</th>
                     <th>QC Merge</th>
                     <th>AI links</th>
-                    <th>Payment</th>
                     <th>Risk categories</th>
                     <th>Transcript score</th>
                     <th>Report score</th>
@@ -561,7 +598,8 @@
                     var displaySeverity = ResolveSeverity(row);
                     var hasRatingRisk = !string.IsNullOrWhiteSpace(row.SeverityBreakdown)
                         && row.SeverityBreakdown.IndexOf("CandidateRating", StringComparison.OrdinalIgnoreCase) >= 0;
-                    var ratingHasComment = hasRatingRisk && !string.IsNullOrWhiteSpace(row.CandidateFeedbackComment);
+                    var ratingHasComment = hasRatingRisk
+                        && TrialFlagEvidenceBadgeHelper.IsPositiveEvidence(row.CandidateFeedbackComment);
 
                     <tr class="tfr-main-row" data-search="@searchKey" data-flag-id="@row.TrialFlagId" data-severity="@displaySeverity" data-verdict="@displayVerdict" data-interview-id="@interviewId" data-irf-id="@row.IrfId">
                         @if (isPendingTab)
@@ -592,7 +630,7 @@
                         </td>
                         <td><strong>@row.IrfName</strong> <span style="color:#94a3b8;">(#@row.IrfId)</span></td>
                         <td>
-                            <a href="@TrialFlagDrillDownUrls.TranscriptQuality(interviewId, row.IrfId)" target="_blank" rel="noopener">#@interviewId</a>
+                            <a href="@TrialFlagDrillDownUrls.ClientReport(interviewId, row.IrfId)" target="_blank" rel="noopener">#@interviewId</a>
                             <div style="color:#64748b;font-size:12px;">@FormatIst(row.TriggeringInterviewDate)</div>
                             <div style="color:#94a3b8;font-size:11px;">Flagged @FormatIst(row.FlaggedAtUtc)</div>
                             <button type="button" class="tfr-detail-toggle btn-tfr-details" data-flag-id="@row.TrialFlagId">Details</button>
@@ -604,17 +642,10 @@
                         <td><span class="@verdictClass">@VerdictLabel(displayVerdict)</span></td>
                         <td>@QcMergeCell(row)</td>
                         <td>@AiLinksCell(row)</td>
-                        <td>@PaymentCell(row)</td>
                         <td class="tfr-risk-col">@RiskCategoryBadges(row)</td>
                         <td>@FactorCell(row.TranscriptQualityPass, transcriptDetail, TrialFlagDrillDownUrls.TranscriptQuality(interviewId, row.IrfId), "Transcript")</td>
-                        <td>@FactorCell(row.ReportQualityPass, reportDetail, TrialFlagDrillDownUrls.ReportQuality(interviewId), "QC report")</td>
-                        <td>
-                            @FactorCell(row.CandidateRatingPass, ratingDetail, TrialFlagDrillDownUrls.CandidateRating(interviewId), "Rating")
-                            @if (ratingHasComment)
-                            {
-                                <div class="tfr-candidate-comment"><strong>Candidate feedback:</strong> @row.CandidateFeedbackComment</div>
-                            }
-                        </td>
+                        <td>@FactorCell(row.ReportQualityPass, reportDetail, TrialFlagDrillDownUrls.ReportAiVerdict(interviewId), "Report AI")</td>
+                        <td>@RatingCell(row, ratingDetail, TrialFlagDrillDownUrls.CandidateRating(interviewId))</td>
                         <td>@FactorCell(row.JoinTimePass, joinDetail, timingUrl, "Timing")</td>
                         <td>@FactorCell(row.InterviewDurationPass, durationDetail, timingUrl, "Timing")</td>
                         @if (!isPendingTab)
@@ -630,7 +661,7 @@
                         }
                     </tr>
                     <tr class="tfr-detail-row" data-flag-id="@row.TrialFlagId" style="display:none;">
-                        <td colspan="15">
+                        <td colspan="14">
                             <div style="font-size:12px;font-weight:700;color:#0f172a;margin-bottom:6px;">AI Evaluations</div>
                             <div class="tfr-ai-body" data-interview-id="@interviewId" data-irf-id="@row.IrfId">Loading…</div>
                             @if (!string.IsNullOrWhiteSpace(row.SeverityBreakdown))
@@ -638,10 +669,19 @@
                                 <div style="margin-top:10px;font-size:12px;font-weight:700;color:#0f172a;">Flag breakdown</div>
                                 @SeverityBreakdownPills(row)
                             }
-                            @if (!string.IsNullOrWhiteSpace(row.PaymentRecommendation) || !string.IsNullOrWhiteSpace(row.PaymentRecommendationComments))
+                            @if (ratingHasComment)
                             {
-                                <div style="margin-top:10px;font-size:12px;font-weight:700;color:#0f172a;">Payment recommendation</div>
+                                <div style="margin-top:10px;font-size:12px;font-weight:700;color:#0f172a;">Candidate feedback</div>
+                                <div class="tfr-candidate-comment">@row.CandidateFeedbackComment</div>
+                            }
+                            @if (row.PaymentDeduction > 0 || !string.IsNullOrWhiteSpace(row.PaymentRecommendation) || !string.IsNullOrWhiteSpace(row.PaymentRecommendationComments))
+                            {
+                                <div style="margin-top:10px;font-size:12px;font-weight:700;color:#0f172a;">Payment (from QC Merge tooltip)</div>
                                 <div class="tfr-candidate-comment">
+                                    @if (row.PaymentDeduction > 0)
+                                    {
+                                        <div><strong>Deduction:</strong> @row.PaymentDeduction%</div>
+                                    }
                                     @if (!string.IsNullOrWhiteSpace(row.PaymentRecommendation))
                                     {
                                         <div><strong>@row.PaymentRecommendation</strong></div>
@@ -775,9 +815,13 @@
         }
 
         function aiLink(sourceName, interviewId, irfId) {
+            var id = encodeURIComponent(interviewId);
+            var irf = encodeURIComponent(irfId || '');
             if (sourceName === 'Transcript AI')
-                return '/AIScreener/TransciptAnalysis?interviewId=' + encodeURIComponent(interviewId) + '&irfId=' + encodeURIComponent(irfId || '');
-            return '/Interview/QCMergedAIDetails?interviewId=' + encodeURIComponent(interviewId);
+                return '@TrialFlagDrillDownUrls.TranscriptQuality(0, 0)'.replace('interviewId=0', 'interviewId=' + id).replace('irfId=0', 'irfId=' + irf);
+            if (sourceName === 'Report AI' || sourceName === 'Report AI Score')
+                return '@TrialFlagDrillDownUrls.ReportAiVerdict(0)'.replace('interviewId=0', 'interviewId=' + id);
+            return '@TrialFlagDrillDownUrls.QcMergedAiDetails(0)'.replace('interviewId=0', 'interviewId=' + id);
         }
 
         function renderAiTable(rows, interviewId, irfId) {

@@ -20,7 +20,8 @@ namespace Risebird.Entities.ViewModel
         public const decimal MinDurationRatio = 0.80m;      // actual / required when required > 0
         public const int BackfillBatchSize = 25;            // max inserts per backfill HTTP request
         public const int BackfillCandidateFetchSize = 100;  // candidates to return from SP per click
-        public const int BackfillCandidateScanSize = 800;   // recent QCDone rows SP scans before filtering
+        /// <summary>Active interviewer–IRF pairs need a completed interview within this many days to be backfill candidates.</summary>
+        public const int BackfillActivityWindowDays = 14;
 
         // Trial severity (P0 = worst … P5 = clean)
         public const string SeverityP0 = "P0";
@@ -127,7 +128,12 @@ namespace Risebird.Entities.ViewModel
         public string CandidateFeedbackComment { get; set; }
         public string QcMergeVerdict { get; set; }
         public int? QcMergeScore { get; set; }
+        /// <summary>Raw JSON array from MergedAIQCDetails.flags (category + flag + penalty).</summary>
+        public string QcMergeFlagsJson { get; set; }
         public int PaymentDeduction { get; set; }
+        /// <summary>JSON object of PaymentSLA reason column → raw value (filtered at render via TrialFlagEvidenceBadgeHelper).</summary>
+        public string PaymentReasonValuesJson { get; set; }
+        /// <summary>Legacy CSV of reason labels; prefer PaymentReasonValuesJson + helper.</summary>
         public string PaymentDeductionReasons { get; set; }
         public string PaymentRecommendation { get; set; }
         public string PaymentRecommendationComments { get; set; }
@@ -150,12 +156,26 @@ namespace Risebird.Entities.ViewModel
     /// <summary>Drill-down targets for trial factor review on /Dashboard/TrialFlagReview.</summary>
     public static class TrialFlagDrillDownUrls
     {
+        /// <summary>Client / interview report (Trial Interview ID column).</summary>
+        public static string ClientReport(int interviewId, int irfId) =>
+            $"/Interview/ClientReport?interviewId={interviewId}&irfId={irfId}";
+
         public static string TranscriptQuality(int interviewId, int irfId) =>
             $"/AIScreener/TransciptAnalysis?interviewId={interviewId}&irfId={irfId}";
 
+        /// <summary>Report AI verdict page (AI Links → Report).</summary>
+        public static string ReportAiVerdict(int interviewId) =>
+            $"/Interview/ReportAIDetailsReport?interviewId={interviewId}";
+
+        /// <summary>Alias for Report AI verdict — not QC Merge.</summary>
         public static string ReportQuality(int interviewId) =>
+            ReportAiVerdict(interviewId);
+
+        /// <summary>QC Merge details (also hosts contradiction section on Trial AI Links).</summary>
+        public static string QcMergedAiDetails(int interviewId) =>
             $"/Interview/QCMergedAIDetails?interviewId={interviewId}";
 
+        /// <summary>Dedicated contradiction report page (IRF Audit / evidence). Trial AI Links "Contradiction" uses QcMergedAiDetails.</summary>
         public static string ContradictionReport(int interviewId) =>
             $"/Interview/ContradictionReport?interviewId={interviewId}";
 

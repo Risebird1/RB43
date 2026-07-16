@@ -21,7 +21,7 @@ ORDER BY TableName, IndexName;
 
 PRINT '=== 3. Eligible backfill candidates (should finish in seconds) ===';
 IF OBJECT_ID(N'dbo.usp_GetTrialFlagBackfillCandidates', N'P') IS NOT NULL
-    EXEC dbo.usp_GetTrialFlagBackfillCandidates @MaxRows = 20, @ScanRows = 400;
+    EXEC dbo.usp_GetTrialFlagBackfillCandidates @MaxRows = 20, @ActivityWindowDays = 14;
 ELSE
     PRINT 'Deploy StoredProcedures/usp_GetTrialFlagBackfillCandidates.sql';
 

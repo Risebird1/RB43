@@ -47,7 +47,9 @@ BEGIN
             CAST(NULL AS NVARCHAR(1000)) AS CandidateFeedbackComment,
             CAST(NULL AS VARCHAR(20)) AS QcMergeVerdict,
             CAST(NULL AS INT) AS QcMergeScore,
+            CAST(NULL AS NVARCHAR(MAX)) AS QcMergeFlagsJson,
             CAST(0 AS INT) AS PaymentDeduction,
+            CAST(NULL AS NVARCHAR(MAX)) AS PaymentReasonValuesJson,
             CAST('' AS VARCHAR(500)) AS PaymentDeductionReasons,
             CAST(NULL AS VARCHAR(15)) AS PaymentRecommendation,
             CAST(NULL AS VARCHAR(500)) AS PaymentRecommendationComments
@@ -133,7 +135,18 @@ BEGIN
             q.qcmergescore,
             CASE WHEN @HasMergedJson = 1 THEN TRY_CAST(JSON_VALUE(q.MergedAIQCDetails, '$.total_penalty') AS INT) END
         ) AS QcMergeScore,
+        CASE WHEN @HasMergedJson = 1 THEN JSON_QUERY(q.MergedAIQCDetails, '$.flags') END AS QcMergeFlagsJson,
         ISNULL(ps.PaymentDeduction, 0) AS PaymentDeduction,
+        (SELECT
+            ps.LimitedHandoncoding AS LimitedHandoncoding,
+            ps.WrongStatusUpdates AS WrongStatusUpdates,
+            ps.WeakInfrastructure AS WeakInfrastructure,
+            ps.ProctoringIgnorance AS ProctoringIgnorance,
+            ps.UnethicalPractices AS UnethicalPractices,
+            ps.PoorCommunicationSkills AS PoorCommunicationSkills,
+            ps.AttendanceJoinCompliance AS AttendanceJoinCompliance
+         FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) AS PaymentReasonValuesJson,
+        -- Legacy label CSV (render path prefers PaymentReasonValuesJson + TrialFlagEvidenceBadgeHelper)
         ISNULL(STUFF(CONCAT(
             CASE WHEN UPPER(LTRIM(RTRIM(ISNULL(ps.LimitedHandoncoding, '')))) NOT IN ('', '0', 'NO', 'N', 'FALSE', 'N/A', 'NA', 'NONE') THEN ',LimitedHandoncoding' ELSE '' END,
             CASE WHEN UPPER(LTRIM(RTRIM(ISNULL(ps.WrongStatusUpdates, '')))) NOT IN ('', '0', 'NO', 'N', 'FALSE', 'N/A', 'NA', 'NONE') THEN ',WrongStatusUpdates' ELSE '' END,
