@@ -122,11 +122,16 @@ namespace Risebird.Entities.ViewModel
     {
         public int TransInterviewerId { get; set; }
         public int InterviewerId { get; set; }
+        /// <summary>UserList.id — use for TrialStats / InterviewerStatsDetails drill-through.</summary>
+        public int UserId { get; set; }
         public string InterviewerCodedId { get; set; }
         public string InterviewerEmail { get; set; }
         public int IrfId { get; set; }
         public string IrfName { get; set; }
+        /// <summary>Completed interviews in the selected date window.</summary>
         public int TotalCompleted { get; set; }
+        /// <summary>Lifetime completed on this IRF (display only — not used in ratios).</summary>
+        public int LifetimeCompleted { get; set; }
         public int RiskInterviews { get; set; }
         public int P0Count { get; set; }
         public int P1Count { get; set; }
@@ -138,6 +143,10 @@ namespace Risebird.Entities.ViewModel
         public decimal? HighSevRatio { get; set; }
         public int? WorstSeverityInterviewId { get; set; }
         public string Recommendation { get; set; }
+        public string QcMergeVerdict { get; set; }
+        public int? QcMergeScore { get; set; }
+        public int PaymentDeductionTotal { get; set; }
+        public string PaymentDeductionReasons { get; set; }
     }
 
     /// <summary>

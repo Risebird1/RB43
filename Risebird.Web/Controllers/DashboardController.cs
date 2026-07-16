@@ -8297,7 +8297,7 @@ NEVER:
                 {
                     ok = false,
                     message = "Could not load interviewer risk breakdown. " + detail
-                        + " — Deploy Risebird.DB/HowTo_DeployIrfAuditRiskBreakdown.sql on this database."
+                        + " — Redeploy Risebird.DB/StoredProcedures/usp_GetIrfAuditInterviewerRiskBreakdown.sql on this database."
                 });
             }
         }

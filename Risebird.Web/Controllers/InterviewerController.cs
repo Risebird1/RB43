@@ -4714,15 +4714,45 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>
-        /// IRF stats drill-down from Trial Flag Review. Reuses InterviewerStatsAndRatings view.
+        /// IRF stats drill-down from Trial Flag Review / IRF Audit. Reuses InterviewerStatsAndRatings view.
+        /// Optional from/to (IST calendar dates) filter the completed-interview detail list when provided.
         /// </summary>
         [Authorize]
         [HttpGet]
-        public Task<IActionResult> TrialStats(int irfId, int? interviewerId = null, string irfName = null)
+        public async Task<IActionResult> TrialStats(int irfId, int? interviewerId = null, string irfName = null, DateTime? from = null, DateTime? to = null)
         {
             if (interviewerId.HasValue && interviewerId.Value > 0)
                 ViewBag.HighlightInterviewerId = interviewerId.Value;
-            return InterviewerStatsAndRatings(irfId, irfName);
+
+            string fromIst = null;
+            string toIst = null;
+            if (from.HasValue || to.HasValue)
+            {
+                var toDate = (to ?? from ?? DateTime.UtcNow.AddMinutes(330)).Date;
+                var fromDate = (from ?? toDate.AddDays(-30)).Date;
+                if (fromDate > toDate) fromDate = toDate.AddDays(-30);
+                if ((toDate - fromDate).TotalDays > 90) fromDate = toDate.AddDays(-90);
+                fromIst = fromDate.ToString("yyyy-MM-dd");
+                toIst = toDate.ToString("yyyy-MM-dd");
+                ViewBag.StatsFromIst = fromIst;
+                ViewBag.StatsToIst = toIst;
+            }
+
+            // Direct drill: show exactly the in-window completed interviews for this interviewer.
+            if (interviewerId.HasValue && interviewerId.Value > 0 && !string.IsNullOrEmpty(fromIst) && !string.IsNullOrEmpty(toIst))
+            {
+                return await InterviewerStatsDetails(
+                    userId: interviewerId.Value,
+                    statType: StatsTypes.Completed,
+                    interviewerEmailId: null,
+                    irfId: irfId,
+                    irfName: irfName,
+                    usePl: null,
+                    from: from.HasValue ? from.Value.Date : DateTime.Parse(fromIst),
+                    to: to.HasValue ? to.Value.Date : DateTime.Parse(toIst));
+            }
+
+            return await InterviewerStatsAndRatings(irfId, irfName);
         }
 
         private static bool CanViewInterviewerIrfStats(string profileName)
@@ -4838,17 +4868,18 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> InterviewerStatsDetails(int userId, string statType, string interviewerEmailId = null, int? irfId = null, string irfName = null, string usePl = null)
+        public async Task<IActionResult> InterviewerStatsDetails(int userId, string statType, string interviewerEmailId = null, int? irfId = null, string irfName = null, string usePl = null, DateTime? from = null, DateTime? to = null)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
 
-                if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement"
+                    || profileName == "HR" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "TechSupport")
                 {
                     IEnumerable<StatsDetailsVM> statsDetailsList;
-                    statsDetailsList = await _interviewerService.GetInterviewerStatsAndRatingsDetails(userId, statType, irfId);
+                    statsDetailsList = await _interviewerService.GetInterviewerStatsAndRatingsDetails(userId, statType, irfId, null, from, to);
                     ViewBag.Profile = profileName;
                     ViewBag.StatType = statType;
                     ViewBag.EmailId = interviewerEmailId + "(Interviewer)";
@@ -4858,6 +4889,10 @@ namespace Risebird.Web.Controllers
                         ViewBag.IRFId = irfId.Value;
                         ViewBag.IRFName = irfName;
                     }
+                    if (from.HasValue)
+                        ViewBag.StatsFromIst = from.Value.ToString("yyyy-MM-dd");
+                    if (to.HasValue)
+                        ViewBag.StatsToIst = to.Value.ToString("yyyy-MM-dd");
                     ViewBag.UsePl = string.Empty;
                     if (!string.IsNullOrEmpty(usePl))
                     {
