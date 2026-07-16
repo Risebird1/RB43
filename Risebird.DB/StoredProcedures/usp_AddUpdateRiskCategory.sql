@@ -29,6 +29,11 @@ BEGIN
     -- #13 InterviewerLateJoin bands (minutes)
     DECLARE @LateJoin_P2_Min INT = 5;   -- grade when j > 5
     DECLARE @LateJoin_P1_Min INT = 10;  -- j > 10 → P1; 5 < j <= 10 → P2
+    -- #14–16 PQI Category thresholds (aligned with skill-channel / reliability scores)
+    DECLARE @LessQuestions_Max INT = 5;           -- trigger when QuestionsDiscussed count < 5
+    DECLARE @LessSelectComment_MaxLen INT = 500;  -- select short comment
+    DECLARE @LessRejectComment_MaxLen INT = 250;  -- reject short comment
+    DECLARE @PQI_PLevel INT = 2;                  -- PQI Category → P2
 
     DECLARE @HasMergedJson BIT = CASE
         WHEN COL_LENGTH('dbo.QcInterviewAIevaluation', 'MergedAIQCDetails') IS NOT NULL THEN 1 ELSE 0 END;
@@ -216,6 +221,42 @@ BEGIN
         ) late
         WHERE im.id = @InterviewId
           AND late.JoinMinutes > @LateJoin_P2_Min
+
+        UNION ALL
+        -- #14 LessQuestions (PQI) — fewer than 5 questions discussed (includes 0)
+        SELECT im.id, 'LessQuestions', 'PQI Category', @PQI_PLevel
+        FROM InterviewMeetings im
+        JOIN InterviewComments ic ON ic.InterviewId = im.id
+        WHERE im.id = @InterviewId
+          AND im.confirmationStatus = 1
+          AND ic.MeetingStatus IN (4, 6, 7, 8)
+          AND (
+                SELECT COUNT(qd.id)
+                FROM QuestionsDiscussed qd
+                WHERE qd.InterviewId = im.id
+              ) < @LessQuestions_Max
+
+        UNION ALL
+        -- #15 LessSelectComment (PQI) — select with short interviewer comment
+        SELECT im.id, 'LessSelectComment', 'PQI Category', @PQI_PLevel
+        FROM InterviewMeetings im
+        JOIN InterviewComments ic ON ic.InterviewId = im.id
+        WHERE im.id = @InterviewId
+          AND im.confirmationStatus = 1
+          AND ic.MeetingStatus IN (4, 6, 7, 8)
+          AND ic.InterviewStatus IN (2, 4)
+          AND LEN(ISNULL(ic.InterviewerComment, '')) < @LessSelectComment_MaxLen
+
+        UNION ALL
+        -- #16 LessRejectComment (PQI) — reject with short interviewer comment
+        SELECT im.id, 'LessRejectComment', 'PQI Category', @PQI_PLevel
+        FROM InterviewMeetings im
+        JOIN InterviewComments ic ON ic.InterviewId = im.id
+        WHERE im.id = @InterviewId
+          AND im.confirmationStatus = 1
+          AND ic.MeetingStatus IN (4, 6, 7, 8)
+          AND ic.InterviewStatus IN (3, 5)
+          AND LEN(ISNULL(ic.InterviewerComment, '')) < @LessRejectComment_MaxLen
     )
     SELECT
         @Name              = STRING_AGG(x.Riskcategory, ','),
