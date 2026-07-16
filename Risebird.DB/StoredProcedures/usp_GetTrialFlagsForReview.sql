@@ -4,6 +4,11 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    DECLARE @HasMergedJson BIT = CASE
+        WHEN COL_LENGTH('dbo.QcInterviewAIevaluation', 'MergedAIQCDetails') IS NOT NULL THEN 1 ELSE 0 END;
+    DECLARE @HasAiMergePenalty BIT = CASE
+        WHEN COL_LENGTH('dbo.QcInterviewAIevaluation', 'AIMergeTotalPenalty') IS NOT NULL THEN 1 ELSE 0 END;
+
     IF OBJECT_ID(N'dbo.TrialFlags', N'U') IS NULL
     BEGIN
         SELECT
@@ -25,6 +30,7 @@ BEGIN
             CAST(NULL AS DECIMAL(8,2)) AS JoinTimeMinutes,
             CAST(NULL AS DECIMAL(8,2)) AS InterviewDurationMinutes,
             CAST('' AS VARCHAR(30)) AS OverallVerdict,
+            CAST('' AS VARCHAR(30)) AS DisplayVerdict,
             CAST(NULL AS VARCHAR(4)) AS Severity,
             CAST('' AS VARCHAR(20)) AS ReviewStatus,
             CAST(NULL AS DATETIME) AS FlaggedAtUtc,
@@ -38,7 +44,13 @@ BEGIN
             CAST(NULL AS VARCHAR(MAX)) AS RiskCategoryLabels,
             CAST(NULL AS VARCHAR(500)) AS RiskCategoryReasons,
             CAST(NULL AS VARCHAR(500)) AS SeverityBreakdown,
-            CAST(NULL AS NVARCHAR(1000)) AS CandidateFeedbackComment
+            CAST(NULL AS NVARCHAR(1000)) AS CandidateFeedbackComment,
+            CAST(NULL AS VARCHAR(20)) AS QcMergeVerdict,
+            CAST(NULL AS INT) AS QcMergeScore,
+            CAST(0 AS INT) AS PaymentDeduction,
+            CAST('' AS VARCHAR(500)) AS PaymentDeductionReasons,
+            CAST(NULL AS VARCHAR(15)) AS PaymentRecommendation,
+            CAST(NULL AS VARCHAR(500)) AS PaymentRecommendationComments
         WHERE 1 = 0;
         RETURN;
     END
@@ -62,6 +74,7 @@ BEGIN
         tf.JoinTimeMinutes,
         tf.InterviewDurationMinutes,
         tf.OverallVerdict,
+        CASE WHEN rc.InterviewId IS NOT NULL THEN 'bad_trial' ELSE tf.OverallVerdict END AS DisplayVerdict,
         COALESCE(rc.Severity, tf.Severity) AS Severity,
         tf.ReviewStatus,
         tf.FlaggedAtUtc,
@@ -103,7 +116,35 @@ BEGIN
             CASE WHEN NULLIF(LTRIM(RTRIM(cfd.TimeManagement)), '') IS NOT NULL THEN ' · ' + LTRIM(RTRIM(cfd.TimeManagement)) ELSE '' END,
             CASE WHEN NULLIF(LTRIM(RTRIM(cfd.PoorCommunicationSkills)), '') IS NOT NULL THEN ' · ' + LTRIM(RTRIM(cfd.PoorCommunicationSkills)) ELSE '' END,
             CASE WHEN NULLIF(LTRIM(RTRIM(cfd.InterviewerVideo)), '') IS NOT NULL THEN ' · ' + LTRIM(RTRIM(cfd.InterviewerVideo)) ELSE '' END
-        ), 1, 3, ''), '') AS CandidateFeedbackComment
+        ), 1, 3, ''), '') AS CandidateFeedbackComment,
+        CASE
+            WHEN q.InterviewId IS NULL THEN NULL
+            WHEN ISNULL(q.AIMergeRedoInterview, 0) = 1
+              OR (
+                    @HasMergedJson = 1
+                AND ISNULL(TRY_CAST(JSON_VALUE(q.MergedAIQCDetails, '$.RedoInterview') AS BIT), 0) = 1
+                 ) THEN 'redo'
+            WHEN UPPER(LTRIM(RTRIM(ISNULL(q.AIMergeInterviewerSuspicious, '')))) IN ('YES', 'Y', 'TRUE') THEN 'suspicious'
+            WHEN NULLIF(LTRIM(RTRIM(ISNULL(q.qcmergeverdict, ''))), '') IS NOT NULL THEN LTRIM(RTRIM(q.qcmergeverdict))
+            ELSE 'ok'
+        END AS QcMergeVerdict,
+        COALESCE(
+            CASE WHEN @HasAiMergePenalty = 1 THEN q.AIMergeTotalPenalty END,
+            q.qcmergescore,
+            CASE WHEN @HasMergedJson = 1 THEN TRY_CAST(JSON_VALUE(q.MergedAIQCDetails, '$.total_penalty') AS INT) END
+        ) AS QcMergeScore,
+        ISNULL(ps.PaymentDeduction, 0) AS PaymentDeduction,
+        ISNULL(STUFF(CONCAT(
+            CASE WHEN UPPER(LTRIM(RTRIM(ISNULL(ps.LimitedHandoncoding, '')))) NOT IN ('', '0', 'NO', 'N', 'FALSE', 'N/A', 'NA', 'NONE') THEN ',LimitedHandoncoding' ELSE '' END,
+            CASE WHEN UPPER(LTRIM(RTRIM(ISNULL(ps.WrongStatusUpdates, '')))) NOT IN ('', '0', 'NO', 'N', 'FALSE', 'N/A', 'NA', 'NONE') THEN ',WrongStatusUpdates' ELSE '' END,
+            CASE WHEN UPPER(LTRIM(RTRIM(ISNULL(ps.WeakInfrastructure, '')))) NOT IN ('', '0', 'NO', 'N', 'FALSE', 'N/A', 'NA', 'NONE') THEN ',WeakInfrastructure' ELSE '' END,
+            CASE WHEN UPPER(LTRIM(RTRIM(ISNULL(ps.ProctoringIgnorance, '')))) NOT IN ('', '0', 'NO', 'N', 'FALSE', 'N/A', 'NA', 'NONE') THEN ',ProctoringIgnorance' ELSE '' END,
+            CASE WHEN UPPER(LTRIM(RTRIM(ISNULL(ps.UnethicalPractices, '')))) NOT IN ('', '0', 'NO', 'N', 'FALSE', 'N/A', 'NA', 'NONE') THEN ',UnethicalPractices' ELSE '' END,
+            CASE WHEN UPPER(LTRIM(RTRIM(ISNULL(ps.PoorCommunicationSkills, '')))) NOT IN ('', '0', 'NO', 'N', 'FALSE', 'N/A', 'NA', 'NONE') THEN ',PoorCommunicationSkills' ELSE '' END,
+            CASE WHEN UPPER(LTRIM(RTRIM(ISNULL(ps.AttendanceJoinCompliance, '')))) NOT IN ('', '0', 'NO', 'N', 'FALSE', 'N/A', 'NA', 'NONE') THEN ',AttendanceJoinCompliance' ELSE '' END
+        ), 1, 1, ''), '') AS PaymentDeductionReasons,
+        ps.Recommendation AS PaymentRecommendation,
+        ps.RecommendationComments AS PaymentRecommendationComments
     FROM dbo.TrialFlags tf
     LEFT JOIN dbo.RiskCategory rc ON rc.InterviewId = tf.TriggeringInterviewId
     LEFT JOIN dbo.InterviewComments ic ON ic.InterviewId = tf.TriggeringInterviewId
@@ -113,6 +154,18 @@ BEGIN
         WHERE x.InterviewId = tf.TriggeringInterviewId
         ORDER BY x.Id DESC
     ) cfd
+    OUTER APPLY (
+        SELECT TOP 1 qq.*
+        FROM dbo.QcInterviewAIevaluation qq
+        WHERE qq.InterviewId = tf.TriggeringInterviewId
+        ORDER BY qq.id DESC
+    ) q
+    OUTER APPLY (
+        SELECT TOP 1 pp.*
+        FROM dbo.PaymentSLADetails pp
+        WHERE pp.Interviewid = tf.TriggeringInterviewId
+        ORDER BY pp.id DESC
+    ) ps
     LEFT JOIN dbo.TransInterviewer ti ON ti.id = tf.ChannelId
     LEFT JOIN dbo.IRF irf ON irf.id = tf.IrfId
     LEFT JOIN dbo.InterviewMeetings im ON im.id = tf.TriggeringInterviewId

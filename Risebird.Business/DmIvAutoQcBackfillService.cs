@@ -96,10 +96,13 @@ namespace Risebird.Business
             result.Ok = true;
             result.Processed = processed;
             result.Remaining = remaining;
+
+            var synced = await _monitorRepository.SyncTrialFlagsVerdictFromRiskCategoryAsync();
             result.Message = remaining > 0
-                ? $"Refreshed risk for {processed} interview(s). Click Refresh risk again for ~{remaining}+ more."
-                : $"Refreshed risk for {processed} interview(s). Expand the IRF again to see updated P0–P5 counts.";
-            _log.LogInformation("RiskCategory backfill irf={IrfId}: processed={Processed} remainingHint={Remaining}", irfId, processed, remaining);
+                ? $"Refreshed risk for {processed} interview(s). Synced {synced} trial verdict(s). Click Refresh risk again for ~{remaining}+ more."
+                : $"Refreshed risk for {processed} interview(s). Synced {synced} trial verdict(s). Expand the IRF again to see updated P0–P5 counts.";
+            _log.LogInformation("RiskCategory backfill irf={IrfId}: processed={Processed} remainingHint={Remaining} trialSynced={Synced}",
+                irfId, processed, remaining, synced);
             return result;
         }
 

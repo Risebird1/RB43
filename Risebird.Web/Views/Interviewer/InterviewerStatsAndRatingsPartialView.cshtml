@@ -21,6 +21,8 @@
     {
         clientEmailId = ViewBag.ClientEmailId;
     }
+    string statsFromIst = ViewBag.StatsFromIst as string;
+    string statsToIst = ViewBag.StatsToIst as string;
 }
 <div id="tableID" class="second" style="overflow-x:scroll; max-height: @customHeight" ">
     <table id="listTable" class="table table-striped table-bordered dt-responsive journey" cellspacing="0" width="100%">
@@ -183,7 +185,7 @@
                 @if (item.TotalMeetings > 0)
                 {
                 <td title="Total Meetings">
-                    <a title="Total Meetings" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.All, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl})">@item.TotalMeetings</a>
+                    <a title="Total Meetings" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.All, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">@item.TotalMeetings</a>
                 </td>
                 }
                 else
@@ -194,7 +196,7 @@
                 {
                 @*<td title="Total Completed Meetings" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Completed')">@item.TotalCompletedMeetings</td>*@
                 <td title="Total Completed Meetings">
-                    <a title="Total Completed Meetings" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl})">@item.TotalCompletedMeetings</a>
+                    <a title="Total Completed Meetings" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">@item.TotalCompletedMeetings</a>
                 </td>
                 }
                 else
@@ -207,7 +209,7 @@
                 @item.StatusPending { @(item.TotalMeetings != 0 ? (item.StatusPending * 100 / item.TotalMeetings).ToString() : "NA")% }
                 </td>*@
                 <td title="Status Pending">
-                    <a title="Status Pending" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Pending, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl})">
+                    <a title="Status Pending" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Pending, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">
                         @item.StatusPending { @(item.TotalMeetings != 0 ? (item.StatusPending * 100 / item.TotalMeetings).ToString() : "NA")% }
                     </a>
                 </td>
@@ -222,7 +224,7 @@
                 @item.TotalSelected { @(item.TotalCompletedMeetings != 0 ? (item.TotalSelected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
                 </td>*@
                 <td title="Total Selected">
-                    <a title="Total Selected" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Selected, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl})">
+                    <a title="Total Selected" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Selected, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">
                         @item.TotalSelected { @(item.TotalCompletedMeetings != 0 ? (item.TotalSelected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
                     </a>
                 </td>
@@ -238,7 +240,7 @@
                 @item.TotalBorderLine { @(item.TotalCompletedMeetings != 0 ? (item.TotalBorderLine * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
                 </td>*@
                 <td title="Total Borderline">
-                    <a title="Total Borderline" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Borderline, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl})">
+                    <a title="Total Borderline" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Borderline, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">
                         @item.TotalBorderLine { @(item.TotalCompletedMeetings != 0 ? (item.TotalBorderLine * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
                     </a>
                 </td>
@@ -251,7 +253,7 @@
                 {
 
                 <td title="Total Rejected">
-                    <a title="Total Rejected" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Rejected, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl})">
+                    <a title="Total Rejected" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Rejected, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">
                         @item.TotalRejected { @(item.TotalCompletedMeetings != 0 ? (item.TotalRejected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
                     </a>
                 </td>
@@ -266,7 +268,7 @@
                 @item.TotalProxy { @(item.TotalCompletedMeetings != 0 ? (item.TotalProxy * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
                 </td>*@
                 <td title="Total Proxy">
-                    <a title="Total Proxy" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Proxy, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl})">
+                    <a title="Total Proxy" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Proxy, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">
                         @item.TotalProxy { @(item.TotalCompletedMeetings != 0 ? (item.TotalProxy * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
                     </a>
                 </td>
@@ -281,7 +283,7 @@
                 @item.TotalDropped { @(item.TotalMeetings != 0 ? (item.TotalDropped * 100 / item.TotalMeetings).ToString() : "NA")% }
                 </td>*@
                 <td title="Total Dropped">
-                    <a title="Total Dropped" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Dropped, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl})">
+                    <a title="Total Dropped" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Dropped, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">
                         @item.TotalDropped { @(item.TotalMeetings != 0 ? (item.TotalDropped * 100 / item.TotalMeetings).ToString() : "NA")% }
                     </a>
                 </td>
@@ -294,7 +296,7 @@
                 {
 
                 <td title="No Show(Interviewer)">
-                    <a title="No Show(Interviewer)" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Noshowinterviewer, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl})">
+                    <a title="No Show(Interviewer)" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Noshowinterviewer, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">
                         @item.TotalSelfNoShow { @(item.TotalMeetings != 0 ? (item.TotalSelfNoShow * 100 / item.TotalMeetings).ToString() : "NA")% }
                     </a>
                 </td>
@@ -308,7 +310,7 @@
                 {
 
                 <td title="No Show(Candidate)">
-                    <a title="No Show(Candidate)" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Noshowcandidate, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl})">
+                    <a title="No Show(Candidate)" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Noshowcandidate, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">
                         @item.TotalNoShowCandidate { @(item.TotalMeetings != 0 ? (item.TotalNoShowCandidate * 100 / item.TotalMeetings).ToString() : "NA")% }
                     </a>
                 </td>
@@ -324,7 +326,7 @@
                 {
 
                 <td title="Scheduled">
-                    <a title="Scheduled" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Scheduled, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl})">
+                    <a title="Scheduled" target="_blank" href="@Url.Action("InterviewerStatsDetails", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Scheduled, irfId = irfId, irfName = irfName, interviewerEmailId = item.InterviewerEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">
                         @item.Scheduled { @(item.TotalMeetings != 0 ? (item.Scheduled * 100 / item.TotalMeetings).ToString() : "NA")% }
                     </a>
                 </td>
@@ -339,7 +341,7 @@
                 @if (item.TotalMeetings > 0)
                 {
                 <td title="Total Meetings">
-                    <a title="Total Meetings" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.All, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl})">@item.TotalMeetings</a>
+                    <a title="Total Meetings" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.All, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">@item.TotalMeetings</a>
                 </td>
                 }
                 else
@@ -350,7 +352,7 @@
                 {
                 @*<td title="Total Completed Meetings" style="color:blue!important;cursor:pointer" onclick="openStats('interviewer','@item.UserId', '@item.InterviewerEmailId', '@StatsTypes.Completed')">@item.TotalCompletedMeetings</td>*@
                 <td title="Total Completed Meetings">
-                    <a title="Total Completed Meetings" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl})">@item.TotalCompletedMeetings</a>
+                    <a title="Total Completed Meetings" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Completed, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">@item.TotalCompletedMeetings</a>
                 </td>
                 }
                 else
@@ -363,7 +365,7 @@
                 @item.StatusPending { @(item.TotalMeetings != 0 ? (item.StatusPending * 100 / item.TotalMeetings).ToString() : "NA")% }
                 </td>*@
                 <td title="Status Pending">
-                    <a title="Status Pending" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Pending, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl})">
+                    <a title="Status Pending" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Pending, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">
                         @item.StatusPending { @(item.TotalMeetings != 0 ? (item.StatusPending * 100 / item.TotalMeetings).ToString() : "NA")% }
                     </a>
                 </td>
@@ -378,7 +380,7 @@
                 @item.TotalSelected { @(item.TotalCompletedMeetings != 0 ? (item.TotalSelected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
                 </td>*@
                 <td title="Total Selected">
-                    <a title="Total Selected" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Selected, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl})">
+                    <a title="Total Selected" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Selected, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">
                         @item.TotalSelected { @(item.TotalCompletedMeetings != 0 ? (item.TotalSelected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
                     </a>
                 </td>
@@ -394,7 +396,7 @@
                 @item.TotalBorderLine { @(item.TotalCompletedMeetings != 0 ? (item.TotalBorderLine * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
                 </td>*@
                 <td title="Total Borderline">
-                    <a title="Total Borderline" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Borderline, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl})">
+                    <a title="Total Borderline" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Borderline, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">
                         @item.TotalBorderLine { @(item.TotalCompletedMeetings != 0 ? (item.TotalBorderLine * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
                     </a>
                 </td>
@@ -407,7 +409,7 @@
                 {
 
                 <td title="Total Rejected">
-                    <a title="Total Rejected" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Rejected, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl})">
+                    <a title="Total Rejected" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Rejected, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">
                         @item.TotalRejected { @(item.TotalCompletedMeetings != 0 ? (item.TotalRejected * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
                     </a>
                 </td>
@@ -422,7 +424,7 @@
                 @item.TotalProxy { @(item.TotalCompletedMeetings != 0 ? (item.TotalProxy * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
                 </td>*@
                 <td title="Total Proxy">
-                    <a title="Total Proxy" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Proxy, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl})">
+                    <a title="Total Proxy" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Proxy, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">
                         @item.TotalProxy { @(item.TotalCompletedMeetings != 0 ? (item.TotalProxy * 100 / item.TotalCompletedMeetings).ToString() : "NA")% }
                     </a>
                 </td>
@@ -437,7 +439,7 @@
                 @item.TotalDropped { @(item.TotalMeetings != 0 ? (item.TotalDropped * 100 / item.TotalMeetings).ToString() : "NA")% }
                 </td>*@
                 <td title="Total Dropped">
-                    <a title="Total Dropped" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Dropped, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl})">
+                    <a title="Total Dropped" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Dropped, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">
                         @item.TotalDropped { @(item.TotalMeetings != 0 ? (item.TotalDropped * 100 / item.TotalMeetings).ToString() : "NA")% }
                     </a>
                 </td>
@@ -450,7 +452,7 @@
                 {
 
                 <td title="No Show">
-                    <a title="No Show" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.NoShowAllInclusive, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl})">
+                    <a title="No Show" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.NoShowAllInclusive, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">
                         @(item.TotalNoShowCandidate + item.TotalSelfNoShow) { @(item.TotalMeetings != 0 ? ((item.TotalNoShowCandidate + item.TotalSelfNoShow) * 100 / item.TotalMeetings).ToString() : "NA")% }
                     </a>
                 </td>
@@ -464,7 +466,7 @@
                 {
 
                 <td title="Scheduled">
-                    <a title="Scheduled" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Scheduled, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl})">
+                    <a title="Scheduled" target="_blank" href="@Url.Action("InterviewerStatsDetailsForClient", "Interviewer", new {userId = item.UserId, statType = StatsTypes.Scheduled, irfId = irfId, irfName = irfName, interviewerEmailId = item.NickName, clientEmailId = clientEmailId, usePl = ViewBag.Usepl, from = statsFromIst, to = statsToIst})">
                         @item.Scheduled { @(item.TotalMeetings != 0 ? (item.Scheduled * 100 / item.TotalMeetings).ToString() : "NA")% }
                     </a>
                 </td>

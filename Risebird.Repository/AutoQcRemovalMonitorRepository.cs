@@ -310,7 +310,7 @@ namespace Risebird.Repository
                 if (exists == 0)
                 {
                     throw new InvalidOperationException(
-                        "Stored procedure dbo.usp_GetIrfAuditInterviewerRiskBreakdown was not found. Run Risebird.DB/HowTo_DeployIrfAuditRiskBreakdown.sql.");
+                        "Stored procedure dbo.usp_GetIrfAuditInterviewerRiskBreakdown was not found. Deploy Risebird.DB/StoredProcedures/usp_GetIrfAuditInterviewerRiskBreakdown.sql.");
                 }
 
                 var rows = await con.QueryAsync<IrfAuditInterviewerRiskRowVm>(
@@ -383,6 +383,28 @@ namespace Risebird.Repository
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 throw;
+            }
+        }
+
+        public async Task<int> SyncTrialFlagsVerdictFromRiskCategoryAsync()
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var exists = await con.ExecuteScalarAsync<int>(
+                    "SELECT CASE WHEN OBJECT_ID(N'dbo.usp_SyncTrialFlagsVerdictFromRiskCategory', N'P') IS NOT NULL THEN 1 ELSE 0 END");
+                if (exists == 0)
+                    return 0;
+
+                return await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_SyncTrialFlagsVerdictFromRiskCategory",
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 120);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
             }
         }
     }

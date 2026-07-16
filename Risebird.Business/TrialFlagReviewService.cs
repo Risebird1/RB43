@@ -51,6 +51,7 @@ namespace Risebird.Business
             if (refreshMetrics && rows.Count > 0)
             {
                 await RefreshRiskCategoriesForRowsAsync(rows);
+                await _repository.SyncTrialFlagsVerdictFromRiskCategoryAsync();
                 rows = (await _repository.GetTrialFlagsAsync(normalizedTab)).ToList();
                 await EnrichRowsWithLiveFactorsParallelAsync(rows);
             }

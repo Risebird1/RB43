@@ -1,6 +1,7 @@
 @model Risebird.Entities.ViewModel.TrialFlagReviewPageVm
 @using Risebird.Entities.ViewModel
 @using Microsoft.AspNetCore.Html
+@using System.Collections.Generic
 
 @{
     ViewData["Title"] = "Trial Flag Review";
@@ -228,6 +229,18 @@
     .tfr-risk-badge--redo { background: #eaf4fb; color: #1a6fa0; }
     .tfr-risk-badge--fake { background: #f9ebf0; color: #922b5e; }
     .tfr-risk-badge--default { background: #f0f0f0; color: #555; }
+    .tfr-qc-cell { font-size: 12px; line-height: 1.35; }
+    .tfr-qc-verdict { font-weight: 700; text-transform: capitalize; }
+    .tfr-qc-verdict.is-redo { color: #b91c1c; }
+    .tfr-qc-verdict.is-suspicious { color: #a16207; }
+    .tfr-qc-verdict.is-ok { color: #166534; }
+    .tfr-ai-links { display: flex; flex-wrap: wrap; gap: 4px; }
+    .tfr-ai-links a { font-size: 11px; font-weight: 600; color: #1d4ed8; text-decoration: none; white-space: nowrap; }
+    .tfr-ai-links a:hover { text-decoration: underline; }
+    .tfr-pay-cell { font-size: 11px; }
+    .tfr-pay-total { font-weight: 700; color: #b45309; margin-bottom: 2px; }
+    .tfr-pay-badge { display: inline-block; margin: 1px 2px; padding: 1px 6px; border-radius: 4px; background: #fef3c7; color: #92400e; font-size: 10px; font-weight: 600; }
+    .tfr-noshow-tag { display: inline-block; margin-left: 2px; padding: 1px 5px; border-radius: 3px; background: #fee2e2; color: #991b1b; font-size: 10px; font-weight: 600; }
     .tfr-filter { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .tfr-filter select { border: 1px solid #cbd5e1; border-radius: 6px; padding: 7px 10px; font-size: 12px; background: #fff; }
     .tfr-th-sort { cursor: pointer; user-select: none; }
@@ -254,7 +267,7 @@
     {
         if (!string.IsNullOrWhiteSpace(row.Severity))
             return row.Severity.Trim().ToUpperInvariant();
-        if (string.Equals(row.OverallVerdict, TrialFlagConstants.VerdictGoodTrial, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(row.EffectiveVerdict, TrialFlagConstants.VerdictGoodTrial, StringComparison.OrdinalIgnoreCase))
             return TrialFlagConstants.SeverityClean;
         return TrialFlagConstants.SeverityP4;
     }
@@ -313,6 +326,31 @@
         return new Microsoft.AspNetCore.Html.HtmlString(html);
     }
 
+    string ResolveVerdict(TrialFlagReviewRowVm row)
+    {
+        var verdict = row.EffectiveVerdict;
+        var sev = ResolveSeverity(row);
+        // Invariant: P0–P3 never displays Good Trial
+        if (!string.IsNullOrWhiteSpace(sev)
+            && sev.Length >= 2
+            && sev.StartsWith("P", StringComparison.OrdinalIgnoreCase)
+            && int.TryParse(sev.Substring(1), out var n)
+            && n >= 0 && n <= 3)
+        {
+            return TrialFlagConstants.VerdictBadTrial;
+        }
+        return string.IsNullOrWhiteSpace(verdict) ? TrialFlagConstants.VerdictBadTrial : verdict;
+    }
+
+    string NoShowSpecificLabel(string reasonOrBreakdown)
+    {
+        var text = (reasonOrBreakdown ?? "").ToLowerInvariant();
+        if (text.Contains("interviewer no show")) return "Interviewer No Show";
+        if (text.Contains("candidate no show")) return "Candidate No Show";
+        if (text.Contains("no show")) return "No Show";
+        return null;
+    }
+
     IHtmlContent RiskCategoryBadges(TrialFlagReviewRowVm row)
     {
         if (string.IsNullOrWhiteSpace(row.RiskCategoryLabels))
@@ -333,8 +371,71 @@
                 "Fake Report" => "tfr-risk-badge--fake",
                 _ => "tfr-risk-badge--default"
             };
+            var display = label;
+            if (string.Equals(label, "Fake Report", StringComparison.OrdinalIgnoreCase))
+            {
+                var specific = NoShowSpecificLabel(reason) ?? NoShowSpecificLabel(row.SeverityBreakdown);
+                if (!string.IsNullOrWhiteSpace(specific))
+                    display = specific;
+            }
             var tip = System.Net.WebUtility.HtmlEncode(reason);
-            html += $@"<span class=""tfr-risk-badge {badgeClass}"" title=""{tip}"">{System.Net.WebUtility.HtmlEncode(label)}</span>";
+            html += $@"<span class=""tfr-risk-badge {badgeClass}"" title=""{tip}"">{System.Net.WebUtility.HtmlEncode(display)}</span>";
+        }
+        html += "</div>";
+        return new Microsoft.AspNetCore.Html.HtmlString(html);
+    }
+
+    IHtmlContent QcMergeCell(TrialFlagReviewRowVm row)
+    {
+        if (string.IsNullOrWhiteSpace(row.QcMergeVerdict))
+            return new Microsoft.AspNetCore.Html.HtmlString(@"<span style=""color:#94a3b8;"">—</span>");
+
+        var v = row.QcMergeVerdict.Trim();
+        var css = v.Equals("redo", StringComparison.OrdinalIgnoreCase) ? "is-redo"
+            : v.Equals("suspicious", StringComparison.OrdinalIgnoreCase) ? "is-suspicious"
+            : "is-ok";
+        var label = char.ToUpperInvariant(v[0]) + v.Substring(1).ToLowerInvariant();
+        var score = row.QcMergeScore.HasValue ? " · " + row.QcMergeScore.Value : "";
+        return new Microsoft.AspNetCore.Html.HtmlString(
+            $@"<div class=""tfr-qc-cell""><span class=""tfr-qc-verdict {css}"">{System.Net.WebUtility.HtmlEncode(label)}</span>{score}</div>");
+    }
+
+    IHtmlContent AiLinksCell(TrialFlagReviewRowVm row)
+    {
+        var id = row.TriggeringInterviewId;
+        if (id <= 0)
+            return new Microsoft.AspNetCore.Html.HtmlString(@"<span style=""color:#94a3b8;"">—</span>");
+
+        var t = TrialFlagDrillDownUrls.TranscriptQuality(id, row.IrfId);
+        var r = TrialFlagDrillDownUrls.ReportQuality(id);
+        var c = TrialFlagDrillDownUrls.ContradictionReport(id);
+        return new Microsoft.AspNetCore.Html.HtmlString(
+            $@"<div class=""tfr-ai-links"">
+                <a href=""{t}"" target=""_blank"" rel=""noopener"">Transcript</a>
+                <a href=""{r}"" target=""_blank"" rel=""noopener"">Report</a>
+                <a href=""{c}"" target=""_blank"" rel=""noopener"">Contradiction</a>
+            </div>");
+    }
+
+    IHtmlContent PaymentCell(TrialFlagReviewRowVm row)
+    {
+        var tipParts = new List<string>();
+        if (!string.IsNullOrWhiteSpace(row.PaymentRecommendation))
+            tipParts.Add("Recommendation: " + row.PaymentRecommendation);
+        if (!string.IsNullOrWhiteSpace(row.PaymentRecommendationComments))
+            tipParts.Add(row.PaymentRecommendationComments);
+        var tip = tipParts.Count > 0 ? System.Net.WebUtility.HtmlEncode(string.Join(" — ", tipParts)) : "";
+
+        var html = $@"<div class=""tfr-pay-cell""{(string.IsNullOrEmpty(tip) ? "" : $@" title=""{tip}""")}>";
+        if (row.PaymentDeduction > 0)
+            html += $@"<div class=""tfr-pay-total"">{row.PaymentDeduction}%</div>";
+        else
+            html += @"<div class=""tfr-pay-total"" style=""color:#94a3b8;font-weight:400;"">—</div>";
+
+        if (!string.IsNullOrWhiteSpace(row.PaymentDeductionReasons))
+        {
+            foreach (var part in row.PaymentDeductionReasons.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                html += $@"<span class=""tfr-pay-badge"">{System.Net.WebUtility.HtmlEncode(part)}</span>";
         }
         html += "</div>";
         return new Microsoft.AspNetCore.Html.HtmlString(html);
@@ -430,6 +531,9 @@
                     <th>Trial interview</th>
                     <th class="tfr-th-sort" id="tfrSortSeverity" title="P0 = highest severity … P5 = clean">Severity</th>
                     <th>Verdict</th>
+                    <th>QC Merge</th>
+                    <th>AI links</th>
+                    <th>Payment</th>
                     <th>Risk categories</th>
                     <th>Transcript score</th>
                     <th>Report score</th>
@@ -442,7 +546,8 @@
             <tbody>
                 @foreach (var row in rows)
                 {
-                    var verdictClass = string.Equals(row.OverallVerdict, TrialFlagConstants.VerdictGoodTrial, StringComparison.OrdinalIgnoreCase)
+                    var displayVerdict = ResolveVerdict(row);
+                    var verdictClass = string.Equals(displayVerdict, TrialFlagConstants.VerdictGoodTrial, StringComparison.OrdinalIgnoreCase)
                         ? "tfr-verdict tfr-verdict--good" : "tfr-verdict tfr-verdict--bad";
                     var searchKey = (row.IrfName + " " + row.InterviewerName + " " + row.InterviewerEmail + " " + row.InterviewerCodedId).ToLowerInvariant();
                     var interviewId = row.TriggeringInterviewId;
@@ -458,7 +563,7 @@
                         && row.SeverityBreakdown.IndexOf("CandidateRating", StringComparison.OrdinalIgnoreCase) >= 0;
                     var ratingHasComment = hasRatingRisk && !string.IsNullOrWhiteSpace(row.CandidateFeedbackComment);
 
-                    <tr class="tfr-main-row" data-search="@searchKey" data-flag-id="@row.TrialFlagId" data-severity="@displaySeverity" data-interview-id="@interviewId" data-irf-id="@row.IrfId">
+                    <tr class="tfr-main-row" data-search="@searchKey" data-flag-id="@row.TrialFlagId" data-severity="@displaySeverity" data-verdict="@displayVerdict" data-interview-id="@interviewId" data-irf-id="@row.IrfId">
                         @if (isPendingTab)
                         {
                             <td class="tfr-actions">
@@ -496,7 +601,10 @@
                             @SeverityBadge(row)
                             @SeverityBreakdownPills(row)
                         </td>
-                        <td><span class="@verdictClass">@VerdictLabel(row.OverallVerdict)</span></td>
+                        <td><span class="@verdictClass">@VerdictLabel(displayVerdict)</span></td>
+                        <td>@QcMergeCell(row)</td>
+                        <td>@AiLinksCell(row)</td>
+                        <td>@PaymentCell(row)</td>
                         <td class="tfr-risk-col">@RiskCategoryBadges(row)</td>
                         <td>@FactorCell(row.TranscriptQualityPass, transcriptDetail, TrialFlagDrillDownUrls.TranscriptQuality(interviewId, row.IrfId), "Transcript")</td>
                         <td>@FactorCell(row.ReportQualityPass, reportDetail, TrialFlagDrillDownUrls.ReportQuality(interviewId), "QC report")</td>
@@ -522,13 +630,27 @@
                         }
                     </tr>
                     <tr class="tfr-detail-row" data-flag-id="@row.TrialFlagId" style="display:none;">
-                        <td colspan="@(isPendingTab ? 12 : 12)">
+                        <td colspan="15">
                             <div style="font-size:12px;font-weight:700;color:#0f172a;margin-bottom:6px;">AI Evaluations</div>
                             <div class="tfr-ai-body" data-interview-id="@interviewId" data-irf-id="@row.IrfId">Loading…</div>
                             @if (!string.IsNullOrWhiteSpace(row.SeverityBreakdown))
                             {
                                 <div style="margin-top:10px;font-size:12px;font-weight:700;color:#0f172a;">Flag breakdown</div>
                                 @SeverityBreakdownPills(row)
+                            }
+                            @if (!string.IsNullOrWhiteSpace(row.PaymentRecommendation) || !string.IsNullOrWhiteSpace(row.PaymentRecommendationComments))
+                            {
+                                <div style="margin-top:10px;font-size:12px;font-weight:700;color:#0f172a;">Payment recommendation</div>
+                                <div class="tfr-candidate-comment">
+                                    @if (!string.IsNullOrWhiteSpace(row.PaymentRecommendation))
+                                    {
+                                        <div><strong>@row.PaymentRecommendation</strong></div>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(row.PaymentRecommendationComments))
+                                    {
+                                        <div>@row.PaymentRecommendationComments</div>
+                                    }
+                                </div>
                             }
                         </td>
                     </tr>

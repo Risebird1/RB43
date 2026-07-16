@@ -156,18 +156,22 @@ BEGIN
           AND ic.MeetingStatus NOT IN (1,2,3,5,9)
 
         UNION ALL
-        -- #11 InterviewerVideoOff (PaymentSLADetails) → P0 always
+        -- #11 InterviewerVideoOff → P0 only on explicit "Video Off" text (never NULL/empty/'No'/VideoEnable)
         SELECT im.id, 'InterviewerVideoOff', 'Fake Report', 0
         FROM InterviewMeetings im
-        INNER JOIN PaymentSLADetails ps ON ps.Interviewid = im.id
         WHERE im.id = @InterviewId
-          AND (
-                ISNULL(ps.VideoEnable, 1) = 0
-             OR ISNULL(ps.InterviewerVideo, '') LIKE '%Video Off%'
+          AND EXISTS (
+                SELECT 1
+                FROM PaymentSLADetails p
+                WHERE p.Interviewid = im.id
+                  AND p.InterviewerVideo IS NOT NULL
+                  AND LTRIM(RTRIM(p.InterviewerVideo)) <> ''
+                  AND UPPER(LTRIM(RTRIM(p.InterviewerVideo))) NOT IN ('NO', 'N/A', 'NA', 'NONE')
+                  AND p.InterviewerVideo LIKE '%Video Off%'
               )
 
         UNION ALL
-        -- #12 CandidateRedoRequest → P0 always (distinct from #6 AI redo)
+        -- #12 CandidateRedoRequest → P0 only when a non-rejected RedoInterviews row exists
         SELECT im.id, 'CandidateRedoRequest', 'Redo Requested', 0
         FROM InterviewMeetings im
         WHERE im.id = @InterviewId
@@ -178,7 +182,7 @@ BEGIN
               )
 
         UNION ALL
-        -- #13 InterviewerLateJoin — graded; NULL/unmatched join = not triggered
+        -- #13 InterviewerLateJoin — graded; NULL/unmatched join time = not triggered (CROSS APPLY must match)
         SELECT im.id, 'InterviewerLateJoin',
                CASE WHEN late.JoinMinutes > @LateJoin_P1_Min THEN 'High Severity' ELSE 'Under Review' END,
                CASE WHEN late.JoinMinutes > @LateJoin_P1_Min THEN 1 ELSE 2 END
