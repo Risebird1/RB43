@@ -46,6 +46,7 @@ namespace Risebird.Entities.ViewModel
         public string   LinkedInUrl                 { get; set; }
         public string   LinkedInMatch               { get; set; }
         public int?     LinkedInConfidence          { get; set; }
+        public string   LinkedInReason              { get; set; }
 
         public bool?    OnboardingCompleted         { get; set; }
         public int?     OnboardedUserId             { get; set; }
@@ -187,6 +188,9 @@ namespace Risebird.Entities.ViewModel
 
         [JsonProperty("linkedin_confidence")]
         public int? LinkedInConfidence          { get; set; }
+
+        [JsonProperty("linkedin_reason")]
+        public string LinkedInReason            { get; set; }
     }
 
     public class RelayLinkedInPayload

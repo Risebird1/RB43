@@ -26,6 +26,7 @@ CREATE PROCEDURE [dbo].[usp_InsertNaukriProspectiveInterviewer]
     @LinkedInUrl            NVARCHAR(2000)  = NULL,
     @LinkedInMatch          VARCHAR(10)     = NULL,
     @LinkedInConfidence     INT             = NULL,
+    @LinkedInReason         NVARCHAR(2000)  = NULL,
     @NewId                  INT             OUTPUT
 AS
 BEGIN
@@ -81,6 +82,7 @@ BEGIN
             SET LinkedInUrl        = @LinkedInUrl,
                 LinkedInMatch      = @LinkedInMatch,
                 LinkedInConfidence = @LinkedInConfidence,
+                LinkedInReason     = @LinkedInReason,
                 UpdatedAt          = GETUTCDATE()
             WHERE Id = @NewId AND (LinkedInMatch IS NULL OR LEN(LTRIM(RTRIM(LinkedInMatch))) = 0)
         END
@@ -94,14 +96,14 @@ BEGIN
          KeySkills, CurrentRole, ExperienceYears, Salary, MagName,
          ParsedEmail, ParsedPhone, ResumeParseCompleted,
          ResumeLink, HasAttachment, [Source],
-         LinkedInUrl, LinkedInMatch, LinkedInConfidence, Status, CreatedAt)
+         LinkedInUrl, LinkedInMatch, LinkedInConfidence, LinkedInReason, Status, CreatedAt)
     VALUES
         (@SenderEmail, @Subject, @MailContent, ISNULL(@ReceivedAt, GETUTCDATE()),
          @CandidateName, @Location, @PastExperience, @NoticePeriod, @Education,
          @KeySkills, @CurrentRole, @ExperienceYears, @Salary, @MagName,
          @ParsedEmail, @ParsedPhone, @ResumeParseCompleted,
          @ResumeLink, @HasAttachment, ISNULL(@Source, 'Naukri'),
-         @LinkedInUrl, @LinkedInMatch, @LinkedInConfidence, 'Open', GETUTCDATE())
+         @LinkedInUrl, @LinkedInMatch, @LinkedInConfidence, @LinkedInReason, 'Open', GETUTCDATE())
 
     SET @NewId = SCOPE_IDENTITY()
 

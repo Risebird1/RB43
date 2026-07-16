@@ -215,3 +215,10 @@ BEGIN
     ALTER TABLE NaukriProspectiveInterviewer ADD [LinkedInConfidence] INT NULL
 END
 GO
+
+-- LinkedInReason: the AI verdict's one-line justification for the match/no-match decision.
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'LinkedInReason' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+BEGIN
+    ALTER TABLE NaukriProspectiveInterviewer ADD [LinkedInReason] NVARCHAR(2000) NULL
+END
+GO
