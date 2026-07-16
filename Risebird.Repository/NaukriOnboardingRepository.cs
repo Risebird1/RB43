@@ -95,6 +95,7 @@ namespace Risebird.Repository
                 p.Add("@LinkedInUrl", record.LinkedInUrl);
                 p.Add("@LinkedInMatch", record.LinkedInMatch);
                 p.Add("@LinkedInConfidence", record.LinkedInConfidence);
+                p.Add("@LinkedInReason", record.LinkedInReason);
                 p.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 await con.ExecuteAsync("usp_InsertNaukriProspectiveInterviewer", p,
@@ -606,6 +607,26 @@ namespace Risebird.Repository
                 var rows = await con.QueryFirstOrDefaultAsync<int>(
                     "usp_UpdateNaukriResumeLink",
                     new { Id = id, Link = resumeLink },
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        // Manual-only: overwrite the LinkedIn profile URL from the operator UI. Leaves the original
+        // match/confidence/reason verdict untouched.
+        public async Task<bool> UpdateLinkedInUrlAsync(int id, string linkedInUrl)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var rows = await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_UpdateNaukriLinkedInUrl",
+                    new { Id = id, LinkedInUrl = linkedInUrl },
                     commandType: CommandType.StoredProcedure, commandTimeout: 30);
                 return rows > 0;
             }

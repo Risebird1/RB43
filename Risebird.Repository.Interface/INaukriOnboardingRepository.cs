@@ -74,6 +74,9 @@ namespace Risebird.Repository.Interface
 
         Task<bool> UpdateResumeLinkAsync(int id, string resumeLink);
 
+        // Manual-only: overwrite the LinkedIn profile URL from the operator UI (verdict left intact).
+        Task<bool> UpdateLinkedInUrlAsync(int id, string linkedInUrl);
+
         Task<List<MagDropdownItem>> GetAllMasterAssessmentGroupsAsync();
 
         Task<dynamic> SaveManualOverrideAsync(int id, string fieldName, string oldValue, string newValue, string changedBy);

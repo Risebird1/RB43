@@ -27,6 +27,11 @@ IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE Name = N'LinkedInConfidence' AND 
     ALTER TABLE NaukriProspectiveInterviewer ADD [LinkedInConfidence] INT NULL;
 GO
 
+-- LinkedInReason: the AI verdict's one-line justification for the match/no-match decision.
+IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE Name = N'LinkedInReason' AND Object_ID = Object_ID(N'NaukriProspectiveInterviewer'))
+    ALTER TABLE NaukriProspectiveInterviewer ADD [LinkedInReason] NVARCHAR(2000) NULL;
+GO
+
 -------------------------------------------------------------------------------------------------
 -- 2) Self-verification diagnostics
 -------------------------------------------------------------------------------------------------

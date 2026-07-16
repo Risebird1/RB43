@@ -844,7 +844,8 @@
                                                             : "background:#fde2e1;color:#a12622;border:1px solid #dc3545;";
                                                         string liConf = r.LinkedInConfidence.HasValue ? (" " + r.LinkedInConfidence.Value + "%") : "";
                                                         string liTitle = "LinkedIn verification: " + (liMatched ? "Match" : "No match") + liConf
-                                                            + (string.IsNullOrWhiteSpace(r.LinkedInUrl) ? "" : (" \u2014 " + r.LinkedInUrl));
+                                                            + (string.IsNullOrWhiteSpace(r.LinkedInUrl) ? "" : (" \u2014 " + r.LinkedInUrl))
+                                                            + (string.IsNullOrWhiteSpace(r.LinkedInReason) ? "" : ("\n" + r.LinkedInReason));
                                                         <br /><span class="badge" style="@liCss font-size:9.5px;" title="@liTitle"><i class="fab fa-linkedin me-1"></i>@(liMatched ? "Verified" : "No match")@liConf</span>
                                                     }
                                                 </td>
@@ -1205,6 +1206,16 @@
                                 <span><i class="fab fa-linkedin me-1" style="color:#0a66c2;"></i>LinkedIn Verification:</span>
                                 <span class="value" id="mgmLinkedIn">\u2014</span>
                             </div>
+                            <div id="mgmLinkedInReasonRow" style="display:none;font-size:11.5px;color:#5a6169;margin-top:3px;padding-left:2px;">
+                                <i class="fas fa-quote-left me-1" style="font-size:9px;opacity:.6;"></i><span id="mgmLinkedInReason"></span>
+                            </div>
+                            <!-- MANUAL-ONLY: operators can correct/attach the LinkedIn profile URL. -->
+                            <div class="input-group input-group-sm mt-2" style="max-width:560px;">
+                                <span class="input-group-text" style="font-size:11px;"><i class="fab fa-linkedin me-1" style="color:#0a66c2;"></i>Profile URL</span>
+                                <input type="url" class="form-control" id="mgmLinkedInUrlInput" placeholder="https://www.linkedin.com/in/..." style="font-size:11.5px;" />
+                                <button type="button" class="btn btn-outline-primary" id="btnSaveLinkedInUrl" style="font-size:11px;"><i class="fas fa-save me-1"></i>Save</button>
+                            </div>
+                            <div id="mgmLinkedInUrlMsg" style="font-size:10.5px;margin-top:2px;"></div>
                         </div>
                     </div>
 
@@ -1381,9 +1392,11 @@
                                                 <strong style="font-size:13px;">Employment Verification</strong>
                                                 <div class="text-muted mt-1" style="font-size:11.5px;" id="mStep1Subtitle">Verify the prospect's current employment via Signzy</div>
                                             </div>
-                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <div class="d-flex align-items-center gap-2 flex-shrink-0 flex-wrap">
                                                 <button type="button" class="btn btn-warning btn-sm mgm-action-btn text-white" id="btnTriggerEV"><i class="fas fa-building me-1"></i>Verify Employment</button>
                                                 <button type="button" class="btn btn-outline-warning btn-sm mgm-action-btn" id="btnRetryEV" style="display:none;"><i class="fas fa-redo me-1"></i>Retry EV</button>
+                                                <!-- MANUAL-ONLY: operator approves employment on judgement, LinkedIn-verified or not. -->
+                                                <button type="button" class="btn btn-outline-success btn-sm mgm-action-btn" id="btnApproveEVManual" title="Approve employment manually and advance the funnel"><i class="fas fa-user-check me-1"></i>Approve Manually</button>
                                             </div>
                                         </div>
                                         <div class="mgm-result-block" id="mStep1Result" style="display:none;"></div>
@@ -1640,14 +1653,29 @@
     // "LinkedIn Verified" Relay flow. Absent for prospects from the original (non-verified) agent.
     function renderLinkedInVerdict(r) {
         var el = $('#mgmLinkedIn');
+
+        // Editable URL input reflects the current stored URL (blank if 'None'/empty).
+        var urlVal = (r.linkedInUrl && String(r.linkedInUrl).toLowerCase() !== 'none') ? r.linkedInUrl : '';
+        $('#mgmLinkedInUrlInput').val(urlVal);
+        $('#mgmLinkedInUrlMsg').text('');
+
+        // Reason line (from the AI verdict), shown whenever present.
+        if (r.linkedInReason) {
+            $('#mgmLinkedInReason').text(r.linkedInReason);
+            $('#mgmLinkedInReasonRow').show();
+        } else {
+            $('#mgmLinkedInReason').text('');
+            $('#mgmLinkedInReasonRow').hide();
+        }
+
         if (!r.linkedInMatch) { el.html('<span class="text-muted">Not verified via LinkedIn</span>'); return; }
         var matched = String(r.linkedInMatch).toUpperCase() === 'YES';
         var conf = (r.linkedInConfidence !== null && r.linkedInConfidence !== undefined) ? (' (' + r.linkedInConfidence + '% confidence)') : '';
         var html = matched
             ? '<span class="employed-yes"><i class="fas fa-check-circle me-1"></i>Match</span>' + conf
             : '<span class="employed-no"><i class="fas fa-times-circle me-1"></i>No match</span>' + conf;
-        if (r.linkedInUrl) {
-            html += ' &mdash; <a href="' + $('<span>').text(r.linkedInUrl).html() + '" target="_blank" rel="noopener" style="font-size:11.5px;">View profile <i class="fas fa-external-link-alt" style="font-size:9px;"></i></a>';
+        if (urlVal) {
+            html += ' &mdash; <a href="' + $('<span>').text(urlVal).html() + '" target="_blank" rel="noopener" style="font-size:11.5px;">View profile <i class="fas fa-external-link-alt" style="font-size:9px;"></i></a>';
         }
         el.html(html);
     }
@@ -2019,6 +2047,9 @@
         $('#mgmParsedEmail').text('\u2014'); $('#mgmParsedPhone').text('\u2014');
         $('#mgmCompany').text('\u2014'); $('#mgmEmployed').text('\u2014');
         $('#mgmLinkedIn').text('\u2014');
+        $('#mgmLinkedInReason').text(''); $('#mgmLinkedInReasonRow').hide();
+        $('#mgmLinkedInUrlInput').val(''); $('#mgmLinkedInUrlMsg').text('');
+        $('#btnSaveLinkedInUrl').prop('disabled',false).html('<i class="fas fa-save me-1"></i>Save');
         $('#magDropdown').hide();
         $('#step2MagDisplay').text('\u2014');
 
@@ -2033,6 +2064,7 @@
         $('#mStep1Result, #mStep2Result, #mStep3Result, #mStep4Result').hide().empty();
         $('#btnTriggerEV').prop('disabled',false).html('<i class="fas fa-building me-1"></i>Verify Employment').show();
         $('#btnRetryEV').hide();
+        $('#btnApproveEVManual').prop('disabled',false).html('<i class="fas fa-user-check me-1"></i>Approve Manually').show();
         $('#btnRunAIAnalysis').prop('disabled',false).html('<i class="fas fa-robot me-1"></i>Run AI Analysis');
         $('#btnManualOnboard').prop('disabled',false).html('<i class="fas fa-paper-plane me-1"></i>Send Acknowledgement');
         $('#btnResendAck').hide();
@@ -2894,7 +2926,7 @@
         card.removeClass('pending completed failed disabled');
         if (state === 'completed') {
             card.addClass('completed');
-            if (step === 1) { $('#btnTriggerEV').hide(); $('#btnRetryEV').hide(); $('#mStep1Subtitle').html('<span class="text-success" style="font-size:11px;">Employment verified</span>'); }
+            if (step === 1) { $('#btnTriggerEV').hide(); $('#btnRetryEV').hide(); $('#btnApproveEVManual').hide(); $('#mStep1Subtitle').html('<span class="text-success" style="font-size:11px;">Employment verified</span>'); }
             if (step === 2) { $('#btnRunAIAnalysis').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Analyzed'); $('#mStep2Subtitle').html('<span class="text-success" style="font-size:11px;">AI analysis complete</span>'); }
             if (step === 3) { $('#btnManualOnboard').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Acknowledgement Sent'); $('#mStep3Subtitle').html('<span class="text-success" style="font-size:11px;">Profile created &amp; acknowledgement sent</span>'); }
             if (step === 4) { $('#btnCheckOnboarding').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Onboarded'); $('#mStep4Subtitle').html('<span class="text-success" style="font-size:11px;">Interviewer onboarded</span>'); }
@@ -2924,6 +2956,96 @@
     $('#btnTriggerEV, #btnRetryEV').on('click', function () {
         triggerEmploymentVerification(false);
     });
+
+    // MANUAL-ONLY: save a corrected/attached LinkedIn profile URL. Verdict (match/confidence/reason)
+    // is preserved server-side; only the URL changes.
+    $('#btnSaveLinkedInUrl').on('click', function () {
+        if (!currentRecordId) return;
+        var btn = $(this);
+        var url = ($('#mgmLinkedInUrlInput').val() || '').trim();
+        var msg = $('#mgmLinkedInUrlMsg');
+        if (url && !/^https?:\/\//i.test(url)) {
+            msg.html('<span class="text-danger">Enter a full URL starting with http(s)://</span>');
+            return;
+        }
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Saving...');
+        msg.html('');
+        $.ajax({
+            url: '@Url.Action("UpdateLinkedInUrl", "NaukriOnboarding")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId, linkedInUrl: url },
+            success: function (res) {
+                btn.prop('disabled', false).html('<i class="fas fa-save me-1"></i>Save');
+                if (res && res.success) {
+                    if (currentRecord) currentRecord.linkedInUrl = res.linkedInUrl;
+                    renderLinkedInVerdict(currentRecord || {});
+                    msg.html('<span class="text-success"><i class="fas fa-check-circle me-1"></i>LinkedIn URL saved.</span>');
+                } else {
+                    msg.html('<span class="text-danger">' + $('<span>').text((res && res.error) || 'Could not save URL.').html() + '</span>');
+                }
+            },
+            error: function () {
+                btn.prop('disabled', false).html('<i class="fas fa-save me-1"></i>Save');
+                msg.html('<span class="text-danger">Request failed. Try again.</span>');
+            }
+        });
+    });
+
+    // MANUAL-ONLY: approve employment on operator judgement (LinkedIn-verified or not) and advance the
+    // funnel. Never used by automation, which always runs Signzy (+ LinkedIn fallback).
+    $('#btnApproveEVManual').on('click', function () {
+        manualApproveEmployment(false);
+    });
+
+    function manualApproveEmployment(overrideIntent) {
+        if (!currentRecordId || !currentRecord) return;
+        if (!overrideIntent && !confirm('Manually approve this prospect as employment-verified and advance the funnel?\n\nUse this only when you are satisfied the prospect is suitable, regardless of Signzy or LinkedIn.')) return;
+
+        var btn = $('#btnApproveEVManual');
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Approving...');
+        $('#mStep1Subtitle').text('Approving employment manually...');
+
+        // Prefill company from any known value; server falls back to the current-role company.
+        var company = currentRecord.employmentCompanyName || '';
+
+        $.ajax({
+            url: '@Url.Action("ManualApproveEmployment", "NaukriOnboarding")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId, companyName: company, overrideIntent: overrideIntent === true },
+            success: function (res) {
+                if (res && res.intentBlocked) {
+                    btn.prop('disabled', false).html('<i class="fas fa-user-check me-1"></i>Approve Manually');
+                    $('#mStep1Subtitle').html('Verify the prospect\'s current employment via Signzy');
+                    if (confirm((res.error || 'Intent not confirmed.') + '\n\nThis prospect is being handled manually. Override the intent check and approve anyway?')) {
+                        manualApproveEmployment(true);
+                    }
+                    return;
+                }
+                if (res && res.success) {
+                    var comp = res.companyName || company || '';
+                    var html = '<span class="text-success"><i class="fas fa-user-check me-1"></i>Manually approved</span>';
+                    if (comp) html += ' &mdash; <strong>' + $('<span>').text(comp).html() + '</strong>';
+                    html += ' <span class="employed-yes">(Employed)</span>';
+                    html += '<br/><span style="font-size:11px;" class="text-muted">Approved by operator judgement — Signzy/LinkedIn not required.</span>';
+                    mMarkStep(1, 'completed', html);
+                    $('#mgmCompany').text(comp);
+                    $('#mgmEmployed').html('<span class="employed-yes">Yes</span>');
+                    if (currentRecord) {
+                        currentRecord.employmentVerified = true;
+                        currentRecord.employmentCompanyName = comp;
+                        currentRecord.employmentIsEmployed = true;
+                    }
+                } else {
+                    btn.prop('disabled', false).html('<i class="fas fa-user-check me-1"></i>Approve Manually');
+                    $('#mStep1Subtitle').html('Verify the prospect\'s current employment via Signzy');
+                    alert((res && res.error) || 'Could not approve employment.');
+                }
+            },
+            error: function () {
+                btn.prop('disabled', false).html('<i class="fas fa-user-check me-1"></i>Approve Manually');
+                $('#mStep1Subtitle').html('Verify the prospect\'s current employment via Signzy');
+                alert('Request failed. Try again.');
+            }
+        });
+    }
 
     // overrideIntent: when true the operator has explicitly chosen to bypass the intent-confirmation
     // gate for this manually-handled prospect. Automation never uses this path, so intent stays
