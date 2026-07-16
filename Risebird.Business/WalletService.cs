@@ -92,14 +92,137 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<List<ClientPOVM>> GetPOHistory(int clientId)
+        public async Task<List<ClientPOVM>> GetPOHistory(int clientId, int billingType, int? month = null, int? year = null, int? billingOwnerId = null, string ownerEmail = null)
         {
-            var list = await GetClientPOList(clientId);
-            foreach (var po in list)
-            {
+            bool isOwnerScope = billingOwnerId.HasValue || !string.IsNullOrEmpty(ownerEmail);
+
+            // For the per-owner view, always fetch ALL client POs and filter in C# by email.
+            // This is resilient to BillingOwnerId int-ID mismatches across different user entities
+            // while BillingOwnerEmail is the stable, canonical owner identifier.
+            var allPos = await GetClientPOList(clientId, null, null, null);
+            foreach (var po in allPos)
                 MapPOStatus(po);
+
+            List<ClientPOVM> list;
+            if (isOwnerScope)
+            {
+                // Match by email (preferred) or fall back to ID
+                list = allPos.Where(p =>
+                    (!string.IsNullOrEmpty(ownerEmail) &&
+                     string.Equals(p.BillingOwnerEmail, ownerEmail, StringComparison.OrdinalIgnoreCase))
+                    ||
+                    (string.IsNullOrEmpty(ownerEmail) && billingOwnerId.HasValue &&
+                     p.BillingOwnerId == billingOwnerId.Value)
+                ).ToList();
             }
+            else
+            {
+                list = allPos;
+            }
+
+            if (!list.Any()) return list;
+
+            try
+            {
+                if (isOwnerScope)
+                {
+                    // ── Per-owner view ────────────────────────────────────────────────────────
+                    // Use the BillingOwnerId from the matched PO records to query debits.
+                    // This ensures the debit query uses the same ID that was stored in Wallet.
+                    var resolvedOwnerId = billingOwnerId
+                        ?? list.Select(p => p.BillingOwnerId).FirstOrDefault(id => id.HasValue);
+
+                    var ownerDebits = await _walletRepository.GetOwnerMonthlyDebits(
+                        clientId, billingType, resolvedOwnerId);
+
+                    var sortedPOs = list
+                        .OrderBy(p => p.POYear)
+                        .ThenBy(p => p.POMonth)
+                        .ThenBy(p => p.CreatedOn ?? DateTime.MaxValue)
+                        .ToList();
+
+                    RunFifoLedger(sortedPOs, ownerDebits, month, year);
+                }
+                else if (billingType == 1)
+                {
+                    // ── Overall, Billing-Owner scope: independent FIFO ledger per owner ───────
+                    var allDebits = await _walletRepository.GetOwnerMonthlyDebits(clientId, billingType);
+
+                    foreach (var ownerGroup in list.GroupBy(p => p.BillingOwnerId))
+                    {
+                        var ownerId    = ownerGroup.Key;
+                        var ownerPOs   = ownerGroup
+                            .OrderBy(p => p.POYear)
+                            .ThenBy(p => p.POMonth)
+                            .ThenBy(p => p.CreatedOn ?? DateTime.MaxValue)
+                            .ToList();
+                        var ownerDebits = allDebits.Where(d => d.BillingOwnerId == ownerId);
+                        RunFifoLedger(ownerPOs, ownerDebits, month, year);
+                    }
+                }
+                else
+                {
+                    // ── Overall, Client scope: single shared pool ────────────────────────────
+                    var allDebits = await _walletRepository.GetOwnerMonthlyDebits(clientId, billingType);
+                    var sortedPOs = list
+                        .OrderBy(p => p.POYear)
+                        .ThenBy(p => p.POMonth)
+                        .ThenBy(p => p.CreatedOn ?? DateTime.MaxValue)
+                        .ToList();
+                    RunFifoLedger(sortedPOs, allDebits, month, year);
+                }
+            }
+            catch { /* non-critical — WalletConsumed stays 0 */ }
+
             return list;
+        }
+
+        /// <summary>
+        /// Applies the carry-forward FIFO ledger to a sorted PO list using the supplied debits.
+        /// Always replays debits month-by-month up to the cutoff date so the result represents
+        /// the cumulative state as of that point (never just a single month in isolation).
+        ///   Month-filter → cutoff = that month (shows "snapshot as of month-end")
+        ///   All-data     → cutoff = latest PO month (shows all-time state)
+        /// </summary>
+        private static void RunFifoLedger(
+            List<ClientPOVM> sortedPOs,
+            IEnumerable<WalletMonthDebitVM> debits,
+            int? filterMonth, int? filterYear)
+        {
+            // Determine the cutoff: include all debits up to and including this month
+            var cutoff = filterMonth.HasValue && filterYear.HasValue
+                ? new DateTime(filterYear.Value, filterMonth.Value, 1)
+                : (sortedPOs.Any()
+                    ? sortedPOs.Max(p => new DateTime(p.POYear, p.POMonth, 1))
+                    : DateTime.MinValue);
+
+            // Replay each month's debits chronologically (oldest first) up to the cutoff
+            var orderedDebits = debits
+                .Where(d => new DateTime(d.Year, d.Month, 1) <= cutoff)
+                .OrderBy(d => d.Year)
+                .ThenBy(d => d.Month);
+
+            foreach (var debit in orderedDebits)
+                ApplyFifo(sortedPOs, debit.TotalDebit);
+        }
+
+        /// <summary>
+        /// Drains <paramref name="amount"/> from the PO pool using FIFO (oldest PO first).
+        /// Each PO absorbs as much as possible without exceeding its credit amount.
+        /// Any excess beyond total PO credit is silently ignored.
+        /// </summary>
+        private static void ApplyFifo(List<ClientPOVM> sortedPOs, decimal amount)
+        {
+            var rem = amount;
+            foreach (var po in sortedPOs)
+            {
+                if (rem <= 0) break;
+                var available = po.POCreditAmount - po.WalletConsumed;
+                if (available <= 0) continue;
+                var consume = Math.Min(rem, available);
+                po.WalletConsumed += consume;
+                rem -= consume;
+            }
         }
 
         public async Task<List<WalletVM>> GetCashCreditHistory(int clientId)

@@ -66,7 +66,9 @@ namespace Risebird.Entities.ViewModel
         public string   MiddleName { get; set; } = "";  // TODO: add MiddleName to UserList if required by tax authority
         public string   LastName  { get; set; }
         public string   Email     { get; set; }
-        public string   PAN       { get; set; }
+        public string   PAN           { get; set; }
+        public bool     IsPanVerified { get; set; }
+        public string   NameAtPan     { get; set; }
         public string   AccountNumber { get; set; }
         public string   IFSCCode      { get; set; }
         public string   AccountName   { get; set; }
@@ -125,11 +127,13 @@ namespace Risebird.Entities.ViewModel
 
     public class ChallanInterviewerVM
     {
-        public int     Userid     { get; set; }
-        public string  FullName   { get; set; }
-        public string  PAN        { get; set; }
-        public decimal AmountPaid { get; set; }
-        public decimal TdsAmount  { get; set; }
+        public int     Userid        { get; set; }
+        public string  FullName      { get; set; }
+        public string  PAN           { get; set; }
+        public bool    IsPanVerified { get; set; }
+        public string  NameAtPan     { get; set; }
+        public decimal AmountPaid    { get; set; }
+        public decimal TdsAmount     { get; set; }
     }
 
     // -----------------------------------------------------------------------

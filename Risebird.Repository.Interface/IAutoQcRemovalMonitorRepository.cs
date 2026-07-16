@@ -26,5 +26,13 @@ namespace Risebird.Repository.Interface
         Task RecordPerIrfBackfillRunAsync(Guid runId, int irfId, DateTime fromUtc, DateTime toUtc, int verdictsScanned, int newFlagsSet, int alreadyFlaggedSkipped, string executedBy);
 
         Task<IReadOnlyList<IrfAuditDirectoryRowVm>> GetIrfAuditDirectoryAsync(DateTime fromIst, DateTime toIst);
+
+        Task<IReadOnlyList<IrfAuditInterviewerRiskRowVm>> GetIrfAuditInterviewerRiskBreakdownAsync(int irfId, DateTime fromIst, DateTime toIst);
+
+        Task<IReadOnlyList<IrfAuditInterviewerRiskDetailVm>> GetIrfAuditInterviewerRiskInterviewDetailsAsync(int irfId, DateTime fromIst, DateTime toIst, int? transInterviewerId = null);
+
+        Task<IReadOnlyList<int>> GetRiskCategoryBackfillCandidatesByIrfAsync(int irfId, DateTime fromIst, DateTime toIst, int maxRows);
+
+        Task<int> SyncTrialFlagsVerdictFromRiskCategoryAsync();
     }
 }

@@ -7,6 +7,8 @@ CREATE TABLE [dbo].[RiskCategory](
 	[InterviewId] [int] NOT NULL,
 	[Name]        [varchar](max) NULL,
 	[Description] [varchar](500) NULL,
+	[Severity]    [varchar](4) NULL,
+	[SeverityBreakdown] [varchar](500) NULL,
 	[CreatedOn]   [datetime] NOT NULL CONSTRAINT [DF_RiskCategory_CreatedOn] DEFAULT (GETDATE()),
 	[ModifiedOn]  [datetime] NULL,
  CONSTRAINT [PK_RiskCategory] PRIMARY KEY CLUSTERED

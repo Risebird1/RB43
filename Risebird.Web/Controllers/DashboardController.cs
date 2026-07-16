@@ -86,6 +86,7 @@ namespace Risebird.Web.Controllers
         private readonly IQcInterviewAIMergeJobService _qcInterviewAIMergeJobService;
         private readonly IAutoQcRemovalMonitorService _autoQcRemovalMonitorService;
         private readonly IDmIvAutoQcBackfillService _autoQcBackfillService;
+        private readonly IDmIvAutoQcRemovalService _autoQcRemovalService;
         private readonly ITrialFlagReviewService _trialFlagReviewService;
         private readonly ITrialJudgmentService _trialJudgmentService;
         private readonly IClientRepository _clientRepository;
@@ -111,6 +112,7 @@ namespace Risebird.Web.Controllers
             IQcInterviewAIMergeJobService qcInterviewAIMergeJobService,
             IAutoQcRemovalMonitorService autoQcRemovalMonitorService,
             IDmIvAutoQcBackfillService autoQcBackfillService,
+            IDmIvAutoQcRemovalService autoQcRemovalService,
             ITrialFlagReviewService trialFlagReviewService,
             ITrialJudgmentService trialJudgmentService,
             IClientRepository clientRepository)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
@@ -157,6 +159,7 @@ namespace Risebird.Web.Controllers
             _qcInterviewAIMergeJobService = qcInterviewAIMergeJobService;
             _autoQcRemovalMonitorService = autoQcRemovalMonitorService;
             _autoQcBackfillService = autoQcBackfillService;
+            _autoQcRemovalService = autoQcRemovalService;
             _trialFlagReviewService = trialFlagReviewService;
             _trialJudgmentService = trialJudgmentService;
             _clientRepository = clientRepository;
@@ -8035,6 +8038,41 @@ NEVER:
             }
         }
 
+        /// <summary>
+        /// AI evaluation summary for a trial triggering interview (Report / Transcript / Contradiction / Merge).
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InterviewAiRiskSummary(int interviewId, int? irfId = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { ok = false, message = "Unauthorized" });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsTrialFlagReviewerProfile(profileName))
+                    return Json(new { ok = false, message = "Not authorized." });
+
+                if (interviewId <= 0)
+                    return Json(new { ok = false, message = "Invalid interview." });
+
+                var rows = await _trialFlagReviewService.GetInterviewAiRiskSummaryAsync(interviewId);
+                return Json(new
+                {
+                    ok = true,
+                    interviewId,
+                    irfId,
+                    rows
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, message = "Failed to load AI risk summary. Deploy usp_GetInterviewAiRiskSummary." });
+            }
+        }
+
         [Authorize]
         [HttpPost]
         [IgnoreAntiforgeryToken]
@@ -8211,6 +8249,126 @@ NEVER:
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { ok = false, message = "Backfill failed; see logs." });
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> IrfAuditInterviewerRisk(int irfId, DateTime? from = null, DateTime? to = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { ok = false, message = "Unauthorized" });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsAutoQcOpsProfile(profileName))
+                    return Json(new { ok = false, message = "Not authorized." });
+
+                if (irfId <= 0)
+                    return Json(new { ok = false, message = "Invalid IRF." });
+
+                var (fromIst, toIst, _) = NormalizeDirectoryIstDateRange(from, to, null);
+                var rows = await _autoQcBackfillService.GetIrfAuditInterviewerRiskBreakdownAsync(irfId, fromIst, toIst);
+                IReadOnlyList<IrfAuditInterviewerRiskDetailVm> details;
+                try
+                {
+                    details = await _autoQcBackfillService.GetIrfAuditInterviewerRiskInterviewDetailsAsync(irfId, fromIst, toIst);
+                }
+                catch
+                {
+                    details = Array.Empty<IrfAuditInterviewerRiskDetailVm>();
+                }
+                return Json(new
+                {
+                    ok = true,
+                    irfId,
+                    from = fromIst.ToString("yyyy-MM-dd"),
+                    to = toIst.ToString("yyyy-MM-dd"),
+                    rows,
+                    details
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                var detail = ex.GetBaseException()?.Message ?? ex.Message;
+                return Json(new
+                {
+                    ok = false,
+                    message = "Could not load interviewer risk breakdown. " + detail
+                        + " — Redeploy Risebird.DB/StoredProcedures/usp_GetIrfAuditInterviewerRiskBreakdown.sql on this database."
+                });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> RefreshIrfRiskCategory(int irfId, DateTime? from = null, DateTime? to = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { ok = false, message = "Unauthorized" });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsAutoQcOpsProfile(profileName))
+                    return Json(new { ok = false, message = "Not authorized." });
+
+                if (irfId <= 0)
+                    return Json(new { ok = false, message = "Invalid IRF." });
+
+                var (fromIst, toIst, _) = NormalizeDirectoryIstDateRange(from, to, null);
+                var result = await _autoQcBackfillService.BackfillRiskCategoryForIrfAsync(irfId, fromIst, toIst);
+                return Json(new
+                {
+                    ok = result.Ok,
+                    message = result.Message,
+                    inserted = result.Processed,
+                    remaining = result.Remaining
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, message = "Risk refresh failed. Deploy usp_GetRiskCategoryBackfillCandidatesByIrf and usp_AddUpdateRiskCategory." });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> RemoveInterviewerFromIrfRiskAudit(
+            int transInterviewerId,
+            int irfId,
+            string comment = null,
+            string riskSummary = null,
+            int? worstSeverityInterviewId = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { ok = false, message = "Unauthorized" });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsAutoQcOpsProfile(profileName))
+                    return Json(new { ok = false, message = "Not authorized." });
+
+                var email = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? profileName;
+                var result = await _autoQcRemovalService.RemoveForRiskAuditAsync(
+                    transInterviewerId,
+                    irfId,
+                    email,
+                    riskSummary,
+                    worstSeverityInterviewId,
+                    comment);
+                return Json(new { ok = result.Ok, message = result.Message });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, message = "Remove failed." });
             }
         }
 

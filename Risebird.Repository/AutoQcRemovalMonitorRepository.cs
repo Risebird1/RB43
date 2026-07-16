@@ -299,5 +299,113 @@ namespace Risebird.Repository
                     ex);
             }
         }
+
+        public async Task<IReadOnlyList<IrfAuditInterviewerRiskRowVm>> GetIrfAuditInterviewerRiskBreakdownAsync(int irfId, DateTime fromIst, DateTime toIst)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var exists = await con.ExecuteScalarAsync<int>(
+                    "SELECT CASE WHEN OBJECT_ID(N'dbo.usp_GetIrfAuditInterviewerRiskBreakdown', N'P') IS NOT NULL THEN 1 ELSE 0 END");
+                if (exists == 0)
+                {
+                    throw new InvalidOperationException(
+                        "Stored procedure dbo.usp_GetIrfAuditInterviewerRiskBreakdown was not found. Deploy Risebird.DB/StoredProcedures/usp_GetIrfAuditInterviewerRiskBreakdown.sql.");
+                }
+
+                var rows = await con.QueryAsync<IrfAuditInterviewerRiskRowVm>(
+                    "usp_GetIrfAuditInterviewerRiskBreakdown",
+                    new { IrfId = irfId, FromIst = fromIst.Date, ToIst = toIst.Date },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 90);
+                return rows?.ToList() ?? new List<IrfAuditInterviewerRiskRowVm>();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                throw;
+            }
+        }
+
+        public async Task<IReadOnlyList<IrfAuditInterviewerRiskDetailVm>> GetIrfAuditInterviewerRiskInterviewDetailsAsync(
+            int irfId, DateTime fromIst, DateTime toIst, int? transInterviewerId = null)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var exists = await con.ExecuteScalarAsync<int>(
+                    "SELECT CASE WHEN OBJECT_ID(N'dbo.usp_GetIrfAuditInterviewerRiskInterviewDetails', N'P') IS NOT NULL THEN 1 ELSE 0 END");
+                if (exists == 0)
+                {
+                    // Soft-degrade: summary still works if detail SP not deployed yet.
+                    return Array.Empty<IrfAuditInterviewerRiskDetailVm>();
+                }
+
+                var rows = await con.QueryAsync<IrfAuditInterviewerRiskDetailVm>(
+                    "usp_GetIrfAuditInterviewerRiskInterviewDetails",
+                    new
+                    {
+                        IrfId = irfId,
+                        FromIst = fromIst.Date,
+                        ToIst = toIst.Date,
+                        TransInterviewerId = transInterviewerId
+                    },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 90);
+                return rows?.ToList() ?? new List<IrfAuditInterviewerRiskDetailVm>();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                throw;
+            }
+        }
+
+        public async Task<IReadOnlyList<int>> GetRiskCategoryBackfillCandidatesByIrfAsync(int irfId, DateTime fromIst, DateTime toIst, int maxRows)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var rows = await con.QueryAsync<int>(
+                    "usp_GetRiskCategoryBackfillCandidatesByIrf",
+                    new
+                    {
+                        IrfId = irfId,
+                        FromIst = fromIst.Date,
+                        ToIst = toIst.Date,
+                        MaxRows = maxRows
+                    },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 120);
+                return rows?.ToList() ?? new List<int>();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                throw;
+            }
+        }
+
+        public async Task<int> SyncTrialFlagsVerdictFromRiskCategoryAsync()
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var exists = await con.ExecuteScalarAsync<int>(
+                    "SELECT CASE WHEN OBJECT_ID(N'dbo.usp_SyncTrialFlagsVerdictFromRiskCategory', N'P') IS NOT NULL THEN 1 ELSE 0 END");
+                if (exists == 0)
+                    return 0;
+
+                return await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_SyncTrialFlagsVerdictFromRiskCategory",
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 120);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
     }
 }

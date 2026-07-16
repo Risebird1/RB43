@@ -1,5 +1,5 @@
-using Risebird.Business.Interface;
 using Risebird.Entities.ViewModel;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Risebird.Business.Interface
@@ -11,5 +11,7 @@ namespace Risebird.Business.Interface
         Task<TrialFlagReviewActionResultVm> KeepOnIrfAsync(int trialFlagId, string reviewerEmail, string comment);
 
         Task<TrialFlagReviewActionResultVm> RemoveFromIrfAsync(int trialFlagId, string reviewerEmail, string comment);
+
+        Task<IReadOnlyList<InterviewAiRiskSummaryRowVm>> GetInterviewAiRiskSummaryAsync(int interviewId);
     }
 }

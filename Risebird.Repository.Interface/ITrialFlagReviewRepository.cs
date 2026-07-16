@@ -12,6 +12,10 @@ namespace Risebird.Repository.Interface
 
         Task<IReadOnlyList<TrialFlagReviewRowVm>> GetTrialFlagsAsync(string reviewStatus);
 
+        Task<int> SyncTrialFlagsVerdictFromRiskCategoryAsync();
+
+        Task<IReadOnlyList<InterviewAiRiskSummaryRowVm>> GetInterviewAiRiskSummaryAsync(int interviewId);
+
         Task<TrialFlagReviewRowVm> GetTrialFlagByIdAsync(int trialFlagId);
 
         Task<bool> UpdateReviewAsync(int trialFlagId, string reviewStatus, string reviewedBy, string reviewerComment);
