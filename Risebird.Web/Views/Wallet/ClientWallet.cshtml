@@ -321,7 +321,7 @@
                             @{
                                 var _highConsIds   = ViewBag.HighConsumptionOwnerIds as System.Collections.Generic.HashSet<int?> ?? new System.Collections.Generic.HashSet<int?>();
                                 var _openingBals   = ViewBag.POOpeningBalances as System.Collections.Generic.Dictionary<int, decimal>;
-                                var _showOpening   = _openingBals != null && _openingBals.Any(kv => kv.Value > 0);
+                                var _showOpening   = _openingBals != null && _openingBals.Any(kv => kv.Value != 0m);
                             }
                             <table class="table table-striped table-bordered journey">
                                 <thead>
@@ -347,7 +347,8 @@
                                     {
                                         if (owner.POCredit == 0 && owner.Consumed == 0 && owner.Remaining == 0 && owner.CashBalance == 0) { continue; }
                                         var _isHighConsumption = _highConsIds.Contains((int?)owner.BillingOwnerId);
-                                        var _openingBal = _openingBals != null && _openingBals.TryGetValue(owner.BillingOwnerId, out var _ob) ? _ob : 0m;
+                                        var _openingBal    = _openingBals != null && _openingBals.TryGetValue(owner.BillingOwnerId, out var _ob) ? _ob : (decimal?)null;
+                                        var _hasOpeningBal = _openingBal.HasValue && _openingBal.Value != 0m;
                                         <tr class="@(_isHighConsumption ? "table-warning" : "")">
                                             <td>
                                                 @owner.BillingOwnerName
@@ -362,8 +363,18 @@
                                             <td>@owner.BillingOwnerEmail</td>
                                             @if (_showOpening)
                                             {
-                                                <td class="text-right" style="color:#5c6bc0;font-weight:600;">
-                                                    @(_openingBal > 0 ? "₹ " + _openingBal.ToString("N0") : "—")
+                                                var _obColor = !_openingBal.HasValue || _openingBal.Value == 0m
+                                                    ? "inherit"
+                                                    : _openingBal.Value < 0 ? "#c62828" : "#5c6bc0";
+                                                <td class="text-right" style="color:@_obColor;font-weight:600;">
+                                                    @if (_hasOpeningBal)
+                                                    {
+                                                        @("₹ " + _openingBal!.Value.ToString("N0"))
+                                                    }
+                                                    else
+                                                    {
+                                                        <span style="color:#aaa;">—</span>
+                                                    }
                                                 </td>
                                             }
                                             <td class="text-right">@(owner.POCredit > 0 ? "₹ " + owner.POCredit.ToString("N0") : "—")</td>

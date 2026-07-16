@@ -214,8 +214,8 @@ namespace Risebird.Business
                                      || (d.Year == selectedYear && d.Month < selectedMonth)))
                         .Sum(d => d.TotalDebit);
 
-                    // Net carry-forward (floor at zero — can't be negative)
-                    result[ownerId] = Math.Max(0m, prePOCredit - preConsumed);
+                    // Net carry-forward (can be negative if debits exceeded credit)
+                    result[ownerId] = prePOCredit - preConsumed;
                 }
             }
             catch { /* non-critical — returns empty dict on error */ }
