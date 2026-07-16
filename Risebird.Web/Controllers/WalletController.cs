@@ -462,9 +462,25 @@ namespace Risebird.Web.Controllers
                 ? new SelectList(_irfService.GetClientUser(clientId), "id", "EmailId")
                 : null;
 
-            // Identify billing owners whose latest PO is >= 90% consumed — used for warning badge
             if (dashboard.BillingType == 1)
+            {
+                // Identify billing owners whose latest PO is >= 90% consumed — used for warning badge
                 ViewBag.HighConsumptionOwnerIds = await _walletService.GetHighConsumptionOwnerIds(clientId);
+
+                // PO Opening Balance = gross PO credit registered before the selected period.
+                // This shows how much credit was already in the pool entering this month.
+                // For the "all-time" scope, opening balance is zero (no prior period exists).
+                if (!allDetails)
+                {
+                    var allPOs = await _walletService.GetClientPOList(clientId);
+                    ViewBag.POOpeningBalances = allPOs
+                        .Where(p => p.BillingOwnerId.HasValue
+                                 && (p.POYear < selectedYear
+                                     || (p.POYear == selectedYear && p.POMonth < selectedMonth)))
+                        .GroupBy(p => p.BillingOwnerId!.Value)
+                        .ToDictionary(g => g.Key, g => g.Sum(p => p.POCreditAmount));
+                }
+            }
 
             if (TempData["ClientWalletMessage"] != null)
             {

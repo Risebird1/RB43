@@ -163,6 +163,8 @@ namespace Risebird.Entities.ViewModel
         public int BillingOwnerId { get; set; }
         public string BillingOwnerName { get; set; }
         public string BillingOwnerEmail { get; set; }
+        /// <summary>Gross PO credit registered in periods BEFORE the selected month (carry-forward pool).</summary>
+        public decimal POOpeningBalance { get; set; }
         public decimal POCredit { get; set; }
         public decimal Consumed { get; set; }
         public decimal Remaining { get; set; }

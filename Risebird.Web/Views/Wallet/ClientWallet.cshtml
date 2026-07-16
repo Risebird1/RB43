@@ -318,11 +318,22 @@
                     {
                         <h5 style="margin:20px 0 12px;font-weight:600;">Per-Owner Wallets — @Model.DetailsPeriodLabel</h5>
                         <div class="table-responsive">
+                            @{
+                                var _highConsIds   = ViewBag.HighConsumptionOwnerIds as System.Collections.Generic.HashSet<int?> ?? new System.Collections.Generic.HashSet<int?>();
+                                var _openingBals   = ViewBag.POOpeningBalances as System.Collections.Generic.Dictionary<int, decimal>;
+                                var _showOpening   = _openingBals != null && _openingBals.Any(kv => kv.Value > 0);
+                            }
                             <table class="table table-striped table-bordered journey">
                                 <thead>
                                     <tr>
                                         <th>Billing Owner</th>
                                         <th>Email</th>
+                                        @if (_showOpening)
+                                        {
+                                            <th class="text-right" title="Total PO credit registered in months before the selected period (carry-forward pool)">
+                                                PO Opening Balance
+                                            </th>
+                                        }
                                         <th class="text-right">PO Credit</th>
                                         <th class="text-right">Consumed</th>
                                         <th class="text-right">Remaining</th>
@@ -332,13 +343,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @{
-                                        var _highConsIds = ViewBag.HighConsumptionOwnerIds as System.Collections.Generic.HashSet<int?> ?? new System.Collections.Generic.HashSet<int?>();
-                                    }
                                     @foreach (var owner in Model.OwnerWallets)
                                     {
                                         if (owner.POCredit == 0 && owner.Consumed == 0 && owner.Remaining == 0 && owner.CashBalance == 0) { continue; }
                                         var _isHighConsumption = _highConsIds.Contains((int?)owner.BillingOwnerId);
+                                        var _openingBal = _openingBals != null && _openingBals.TryGetValue(owner.BillingOwnerId, out var _ob) ? _ob : 0m;
                                         <tr class="@(_isHighConsumption ? "table-warning" : "")">
                                             <td>
                                                 @owner.BillingOwnerName
@@ -351,6 +360,12 @@
                                                 }
                                             </td>
                                             <td>@owner.BillingOwnerEmail</td>
+                                            @if (_showOpening)
+                                            {
+                                                <td class="text-right" style="color:#5c6bc0;font-weight:600;">
+                                                    @(_openingBal > 0 ? "₹ " + _openingBal.ToString("N0") : "—")
+                                                </td>
+                                            }
                                             <td class="text-right">@(owner.POCredit > 0 ? "₹ " + owner.POCredit.ToString("N0") : "—")</td>
                                             <td class="text-right">@(owner.Consumed > 0 ? "₹ " + owner.Consumed.ToString("N0") : "—")</td>
                                             <td class="text-right">@(owner.POCredit > 0 || owner.Consumed > 0 ? "₹ " + owner.Remaining.ToString("N0") : "—")</td>
