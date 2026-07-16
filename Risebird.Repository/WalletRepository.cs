@@ -268,6 +268,26 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<(List<ClientPOVM> POs, List<WalletMonthDebitVM> Debits)> GetAllClientsPOData()
+        {
+            try
+            {
+                using var con = new SqlConnection(connectionString);
+                using var multi = await con.QueryMultipleAsync(
+                    "usp_GetAllClientsPOData",
+                    commandType: CommandType.StoredProcedure);
+
+                var pos    = (await multi.ReadAsync<ClientPOVM>()).ToList();
+                var debits = (await multi.ReadAsync<WalletMonthDebitVM>()).ToList();
+                return (pos, debits);
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return (new List<ClientPOVM>(), new List<WalletMonthDebitVM>());
+            }
+        }
+
         public async Task<AllClientsWalletVM> GetAllClientsWalletSummary(int fromMonth, int fromYear, int toMonth, int toYear)
         {
             var vm = new AllClientsWalletVM

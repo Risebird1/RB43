@@ -29,9 +29,11 @@ BEGIN
     -- #13 InterviewerLateJoin bands (minutes)
     DECLARE @LateJoin_P2_Min INT = 5;   -- grade when j > 5
     DECLARE @LateJoin_P1_Min INT = 10;  -- j > 10 → P1; 5 < j <= 10 → P2
-    -- #14–#16 PLI mirrors (fixed P2)
-    DECLARE @FewerQuestions_MaxCount INT = 5;       -- Lessquestion: Count(qd.id) < 5
-    DECLARE @ShortRejectComment_MaxLen INT = 250;   -- Shortrejectcomment: Len(InterviewerComment) < 250
+    -- #14–16 PQI Category thresholds (aligned with skill-channel / reliability scores)
+    DECLARE @LessQuestions_Max INT = 5;           -- trigger when QuestionsDiscussed count < 5
+    DECLARE @LessSelectComment_MaxLen INT = 500;  -- select short comment
+    DECLARE @LessRejectComment_MaxLen INT = 250;  -- reject short comment
+    DECLARE @PQI_PLevel INT = 2;                  -- PQI Category → P2
 
     DECLARE @HasMergedJson BIT = CASE
         WHEN COL_LENGTH('dbo.QcInterviewAIevaluation', 'MergedAIQCDetails') IS NOT NULL THEN 1 ELSE 0 END;
@@ -221,43 +223,40 @@ BEGIN
           AND late.JoinMinutes > @LateJoin_P2_Min
 
         UNION ALL
-        -- #14 LessDurationContent → P2 (PLI 'Lessduration': duration short of plan but not a full miss)
-        SELECT im.id, 'LessDurationContent', 'High Severity', 2
+        -- #14 LessQuestions (PQI) — fewer than 5 questions discussed (includes 0)
+        SELECT im.id, 'LessQuestions', 'PQI Category', @PQI_PLevel
         FROM InterviewMeetings im
         JOIN InterviewComments ic ON ic.InterviewId = im.id
-        JOIN IRF ON IRF.IRFId = im.IRFId
-        JOIN PlanTypeChargesMaster pt ON pt.CompanyType = IRF.CompanyType
-             AND pt.PlanTypeEnumValue = IRF.Heuristicsscore
-             AND pt.CountryType = IRF.JobCountry
         WHERE im.id = @InterviewId
+          AND im.confirmationStatus = 1
           AND ic.MeetingStatus IN (4, 6, 7, 8)
-          AND NULLIF(ic.VideoDuration, 0) IS NOT NULL
-          AND NULLIF(pt.DurationSelectedMin, 0) IS NOT NULL
-          AND (ic.VideoDuration - pt.DurationSelectedMin) < 0
-          AND (ic.VideoDuration - pt.DurationSelectedMin) > -pt.DurationSelectedMin
+          AND (
+                SELECT COUNT(qd.id)
+                FROM QuestionsDiscussed qd
+                WHERE qd.InterviewId = im.id
+              ) < @LessQuestions_Max
 
         UNION ALL
-        -- #15 FewerQuestionsAsked → P2 (PLI 'Lessquestion': Count(qd) < 5; no rows = not scored)
-        SELECT im.id, 'FewerQuestionsAsked', 'High Severity', 2
+        -- #15 LessSelectComment (PQI) — select with short interviewer comment
+        SELECT im.id, 'LessSelectComment', 'PQI Category', @PQI_PLevel
         FROM InterviewMeetings im
         JOIN InterviewComments ic ON ic.InterviewId = im.id
         WHERE im.id = @InterviewId
-          AND ISNULL(im.confirmationStatus, 0) = 1
+          AND im.confirmationStatus = 1
           AND ic.MeetingStatus IN (4, 6, 7, 8)
-          AND EXISTS (SELECT 1 FROM QuestionsDiscussed qd WHERE qd.InterviewId = im.id)
-          AND (SELECT COUNT(*) FROM QuestionsDiscussed qd WHERE qd.InterviewId = im.id) < @FewerQuestions_MaxCount
+          AND ic.InterviewStatus IN (2, 4)
+          AND LEN(ISNULL(ic.InterviewerComment, '')) < @LessSelectComment_MaxLen
 
         UNION ALL
-        -- #16 ShortRejectComment → P2 (PLI 'Shortrejectcomment': reject status + short comment)
-        SELECT im.id, 'ShortRejectComment', 'High Severity', 2
+        -- #16 LessRejectComment (PQI) — reject with short interviewer comment
+        SELECT im.id, 'LessRejectComment', 'PQI Category', @PQI_PLevel
         FROM InterviewMeetings im
         JOIN InterviewComments ic ON ic.InterviewId = im.id
         WHERE im.id = @InterviewId
-          AND ISNULL(im.confirmationStatus, 0) = 1
+          AND im.confirmationStatus = 1
           AND ic.MeetingStatus IN (4, 6, 7, 8)
           AND ic.InterviewStatus IN (3, 5)
-          AND ic.InterviewerComment IS NOT NULL
-          AND LEN(ic.InterviewerComment) < @ShortRejectComment_MaxLen
+          AND LEN(ISNULL(ic.InterviewerComment, '')) < @LessRejectComment_MaxLen
     )
     SELECT
         @Name              = STRING_AGG(x.Riskcategory, ','),

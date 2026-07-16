@@ -4163,7 +4163,7 @@ WHERE si.SuspiciousStatus = 1",
             IEnumerable<Users> clients = new List<Users>();
             try
             {
-                var query = "select * from ClientUser where ClientId = @ClientId and RoleId!=9";
+                var query = "select * from ClientUser where ClientId = @ClientId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@ClientId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
