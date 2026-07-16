@@ -124,7 +124,7 @@
         <div class="modal-content">
             <div class="modal-header" style="background:linear-gradient(135deg,#1565c0,#1976d2);color:#fff;">
                 <h5 class="modal-title" id="poHistoryModalTitle" style="font-family:Roboto,sans-serif;font-weight:700;">PO History</h5>
-                <button type="button" class="close" data-dismiss="modal" style="color:#fff;opacity:1;">&times;</button>
+                <button type="button" class="close" data-bs-dismiss="modal" style="color:#fff;opacity:1;">&times;</button>
             </div>
             <div class="modal-body" id="poHistoryBody" style="min-height:120px;">
                 <div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></div>
@@ -326,27 +326,21 @@ else
             <tbody>
                 @foreach (var po in pos)
                 {
-                    var pct      = po.POCreditAmount > 0 ? (int)Math.Round(po.WalletConsumed / po.POCreditAmount * 100) : 0;
-                    var isOverConsumed  = po.WalletRemaining < 0;
-                    var isFullyConsumed = po.WalletRemaining <= 0;
+                    // Cap individual PO display at credit — overflow shown only at owner total level
+                    var displayConsumed  = Math.Min(po.WalletConsumed, po.POCreditAmount);
+                    var displayRemaining = Math.Max(0m, po.WalletRemaining);
+                    var pct      = po.POCreditAmount > 0 ? Math.Min(100, (int)Math.Round(displayConsumed / po.POCreditAmount * 100)) : 0;
+                    var isFullyConsumed = displayRemaining <= 0;
                     var isCurrent       = po.POYear == today.Year && po.POMonth == today.Month;
-                    var rowCss   = isOverConsumed ? "table-danger" : isFullyConsumed ? "row-completed" : isCurrent ? "row-current" : po.WalletConsumed > 0 ? "row-carry" : "";
-                    var barColor = pct >= 100 ? "#c62828" : pct >= 90 ? "#e53935" : pct >= 70 ? "#ef6c00" : "#1976d2";
-                    var remColor = isOverConsumed ? "#b71c1c" : po.WalletRemaining > 0 ? "#1565c0" : "#2e7d32";
+                    var rowCss   = isFullyConsumed ? "row-completed" : isCurrent ? "row-current" : po.WalletConsumed > 0 ? "row-carry" : "";
+                    var barColor = pct >= 100 ? "#2e7d32" : pct >= 90 ? "#c62828" : pct >= 70 ? "#ef6c00" : "#1976d2";
                     <tr class="@rowCss">
                         <td style="white-space:nowrap;">@(po.PeriodLabel ?? CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(po.POMonth) + " " + po.POYear)</td>
                         <td style="font-size:11px;color:#666;">@(string.IsNullOrEmpty(po.PONumber) ? "—" : po.PONumber)</td>
                         <td class="text-right" style="font-weight:600;color:#1565c0;">₹ @po.POCreditAmount.ToString("N0")</td>
-                        <td class="text-right" style="color:#2e7d32;font-weight:600;">@(po.WalletConsumed > 0 ? "₹ " + po.WalletConsumed.ToString("N0") : "—")</td>
-                        <td class="text-right" style="font-weight:700;color:@remColor;">
-                            @if (isOverConsumed)
-                            {
-                                <span title="Over-consumed — new PO required">⚠ ₹ @po.WalletRemaining.ToString("N0")</span>
-                            }
-                            else
-                            {
-                                @("₹ " + po.WalletRemaining.ToString("N0"))
-                            }
+                        <td class="text-right" style="color:#2e7d32;font-weight:600;">@(displayConsumed > 0 ? "₹ " + displayConsumed.ToString("N0") : "—")</td>
+                        <td class="text-right" style="font-weight:600;color:@(displayRemaining > 0 ? "#1565c0" : "#2e7d32");">
+                            ₹ @displayRemaining.ToString("N0")
                         </td>
                         <td>
                             <div class="pct-wrap">

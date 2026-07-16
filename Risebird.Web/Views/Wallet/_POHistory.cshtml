@@ -188,13 +188,12 @@
                     if (filterMonth.HasValue && classification == "future") { continue; }
 
                     // Use FIFO-computed values when available; fall back to cash-credit-received.
+                    // Cap consumed at POCreditAmount on individual rows — overflow shows only in owner total.
                     var consumed  = fifoApplied
-                        ? po.WalletConsumed
+                        ? Math.Min(po.WalletConsumed, po.POCreditAmount)
                         : Math.Min(po.CashCreditReceived, po.POCreditAmount);
-                    var remaining = fifoApplied
-                        ? po.WalletRemaining
-                        : po.POCreditAmount - consumed;
-                    var usedPct   = po.POCreditAmount > 0 ? (int)Math.Round(consumed / po.POCreditAmount * 100) : 0;
+                    var remaining = Math.Max(0m, po.POCreditAmount - consumed);
+                    var usedPct   = po.POCreditAmount > 0 ? Math.Min(100, (int)Math.Round(consumed / po.POCreditAmount * 100)) : 0;
 
                     string rowCss = classification switch {
                         "carryforward" => "po-carry-fwd",
@@ -228,19 +227,8 @@
                         <td class="text-right" style="white-space:nowrap;color:@(consumed > 0 ? "#2e7d32" : "inherit");">
                             @(consumed > 0 ? "₹ " + consumed.ToString("N0") : "—")
                         </td>
-                        <td class="text-right" style="white-space:nowrap;font-weight:700;color:@(remaining < 0 ? "#b71c1c" : remaining > 0 ? "#1565c0" : "#2e7d32");">
-                            @if (po.POCreditAmount > 0)
-                            {
-                                if (remaining < 0)
-                                {
-                                    <span title="Over-consumed — new PO required">⚠ ₹ @remaining.ToString("N0")</span>
-                                }
-                                else
-                                {
-                                    @("₹ " + remaining.ToString("N0"))
-                                }
-                            }
-                            else { <text>—</text> }
+                        <td class="text-right" style="white-space:nowrap;font-weight:600;color:@(remaining > 0 ? "#1565c0" : "#2e7d32");">
+                            @(po.POCreditAmount > 0 ? "₹ " + remaining.ToString("N0") : "—")
                         </td>
                         <td style="min-width:100px;">
                             @if (po.POCreditAmount > 0)
