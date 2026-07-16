@@ -460,6 +460,73 @@ namespace Risebird.Business
 
             return vm;
         }
+
+        /// <summary>
+        /// Single-call PO Summary: fetches all PO + debit rows in one SP round-trip,
+        /// applies per-client / per-owner FIFO in memory, and returns grouped results
+        /// sorted by descending overall consumption %.
+        /// </summary>
+        public async Task<List<ClientPOGroupVM>> GetAllClientsPOSummary()
+        {
+            var (allPOs, allDebits) = await _walletRepository.GetAllClientsPOData();
+
+            // Map status labels (same helper used in GetPOHistory)
+            foreach (var po in allPOs) MapPOStatus(po);
+
+            var result = new List<ClientPOGroupVM>();
+
+            // Group POs by client
+            var byClient = allPOs.GroupBy(p => p.ClientId);
+
+            foreach (var clientGroup in byClient)
+            {
+                var clientId   = clientGroup.Key;
+                var clientPOs  = clientGroup.ToList();
+                var billingType = clientPOs.First().BillingType;
+                var clientName  = clientPOs.First().ClientName ?? clientId.ToString();
+                var billingModel = clientPOs.First().BillingModel;
+
+                // Client debits from all-clients debit set
+                var clientDebits = allDebits.Where(d => d.ClientId == clientId).ToList();
+
+                // Run FIFO per owner (BT=1) or client-wide (BT=3)
+                if (billingType == 1)
+                {
+                    foreach (var ownerGroup in clientPOs.GroupBy(p => p.BillingOwnerId))
+                    {
+                        var ownerPOs = ownerGroup
+                            .OrderBy(p => p.POYear).ThenBy(p => p.POMonth)
+                            .ThenBy(p => p.CreatedOn ?? DateTime.MaxValue).ToList();
+                        var ownerDebits = clientDebits.Where(d => d.BillingOwnerId == ownerGroup.Key);
+                        RunFifoLedger(ownerPOs, ownerDebits, null, null);
+                    }
+                }
+                else
+                {
+                    var sortedPOs = clientPOs
+                        .OrderBy(p => p.POYear).ThenBy(p => p.POMonth)
+                        .ThenBy(p => p.CreatedOn ?? DateTime.MaxValue).ToList();
+                    RunFifoLedger(sortedPOs, clientDebits, null, null);
+                }
+
+                string modelDesc = System.Enum.IsDefined(typeof(BillingModelEnum), billingModel)
+                    ? ((BillingModelEnum)billingModel).GetDescription()
+                    : (billingModel > 0 ? $"M{billingModel}" : "—");
+
+                result.Add(new ClientPOGroupVM
+                {
+                    ClientId         = clientId,
+                    ClientName       = clientName,
+                    BillingType      = billingType,
+                    BillingModelDesc = modelDesc,
+                    POs              = clientPOs
+                });
+            }
+
+            return result
+                .OrderByDescending(c => c.TotalCredit > 0 ? c.TotalConsumed / c.TotalCredit : 0)
+                .ToList();
+        }
     }
 }
 

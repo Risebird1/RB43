@@ -29,6 +29,13 @@ namespace Risebird.Business.Interface
         Task<Dictionary<int, decimal>> GetOwnerOpeningBalances(int clientId, int selectedMonth, int selectedYear);
         Task<bool> UpdatePOStatus(int poId, int clientId, int status);
         Task<AllClientsWalletVM> GetAllClientsWalletSummary(int fromMonth, int fromYear, int toMonth, int toYear);
+
+        /// <summary>
+        /// Fetches all PO + debit data in a single SP call and applies per-client/per-owner
+        /// FIFO distribution in memory. Returns one <see cref="ClientPOGroupVM"/> per client
+        /// that has at least one PO, sorted by descending overall consumption percentage.
+        /// </summary>
+        Task<List<ClientPOGroupVM>> GetAllClientsPOSummary();
     }
 }
 

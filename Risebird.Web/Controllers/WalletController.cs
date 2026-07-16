@@ -750,6 +750,21 @@ namespace Risebird.Web.Controllers
 
         #endregion
 
+        #region PO Summary Report
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> POSummaryList()
+        {
+            if (!IsFinanceOrAdmin()) return RedirectToAction("SignOut", "Session");
+
+            // Single SP call fetches all PO + debit data; FIFO is applied in memory
+            var summary = await _walletService.GetAllClientsPOSummary();
+            return View(summary);
+        }
+
+        #endregion
+
         private bool IsFinanceOrAdmin()
         {
             if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
