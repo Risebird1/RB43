@@ -147,7 +147,8 @@ namespace Risebird.Entities.ViewModel
 
         /// <summary>Actual wallet debit (interview charges) consumed against this PO — populated by FIFO distribution in WalletService.</summary>
         public decimal WalletConsumed { get; set; }
-        public decimal WalletRemaining => Math.Max(0, POCreditAmount - WalletConsumed);
+        /// <summary>Negative means debits exceeded PO credit (over-consumed). Not clamped to 0.</summary>
+        public decimal WalletRemaining => POCreditAmount - WalletConsumed;
     }
 
     /// <summary>Groups all FIFO-computed POs for one client, used on the PO Summary report page.</summary>
@@ -182,7 +183,8 @@ namespace Risebird.Entities.ViewModel
         public string  POPeriodLabel    { get; set; }
         public decimal POCreditAmount   { get; set; }
         public decimal WalletConsumed   { get; set; }
-        public decimal WalletRemaining  => Math.Max(0, POCreditAmount - WalletConsumed);
+        /// <summary>Negative means over-consumed. Not clamped to 0.</summary>
+        public decimal WalletRemaining  => POCreditAmount - WalletConsumed;
         public int     ConsumedPct      => POCreditAmount > 0
                                             ? (int)Math.Round(WalletConsumed / POCreditAmount * 100)
                                             : 0;

@@ -228,8 +228,19 @@
                         <td class="text-right" style="white-space:nowrap;color:@(consumed > 0 ? "#2e7d32" : "inherit");">
                             @(consumed > 0 ? "₹ " + consumed.ToString("N0") : "—")
                         </td>
-                        <td class="text-right" style="white-space:nowrap;font-weight:600;color:@(remaining > 0 ? "#c62828" : "#2e7d32");">
-                            @(po.POCreditAmount > 0 ? "₹ " + remaining.ToString("N0") : "—")
+                        <td class="text-right" style="white-space:nowrap;font-weight:700;color:@(remaining < 0 ? "#b71c1c" : remaining > 0 ? "#1565c0" : "#2e7d32");">
+                            @if (po.POCreditAmount > 0)
+                            {
+                                if (remaining < 0)
+                                {
+                                    <span title="Over-consumed — new PO required">⚠ ₹ @remaining.ToString("N0")</span>
+                                }
+                                else
+                                {
+                                    @("₹ " + remaining.ToString("N0"))
+                                }
+                            }
+                            else { <text>—</text> }
                         </td>
                         <td style="min-width:100px;">
                             @if (po.POCreditAmount > 0)

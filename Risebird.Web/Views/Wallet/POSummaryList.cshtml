@@ -259,8 +259,17 @@ else
                             <div class="owner-totals">
                                 <span>Credit: <strong style="color:#1565c0;">₹ @ownerCredit.ToString("N0")</strong></span>
                                 <span>Consumed: <strong style="color:#2e7d32;">₹ @ownerConsumed.ToString("N0")</strong></span>
-                                <span>Remaining: <strong style="color:#c62828;">₹ @ownerRemaining.ToString("N0")</strong></span>
-                                <span><strong style="color:@(ownerPct>=90?"#c62828":ownerPct>=70?"#e65100":"#555");">@ownerPct%</strong></span>
+                                <span>Remaining:
+                                    @if (ownerRemaining < 0)
+                                    {
+                                        <strong style="color:#b71c1c;" title="Over-consumed — new PO required">⚠ ₹ @ownerRemaining.ToString("N0")</strong>
+                                    }
+                                    else
+                                    {
+                                        <strong style="color:#c62828;">₹ @ownerRemaining.ToString("N0")</strong>
+                                    }
+                                </span>
+                                <span><strong style="color:@(ownerPct>=100?"#b71c1c":ownerPct>=90?"#c62828":ownerPct>=70?"#e65100":"#555");">@ownerPct%</strong></span>
                             </div>
                             <button class="btn btn-xs btn-outline-info" style="font-size:11px;padding:2px 8px;margin-left:8px;"
                                     onclick="openPOHistory(@client.ClientId, @(og.Key.BillingOwnerId ?? 0), '@safeOwnerName', '@ownerEmail')">
@@ -318,16 +327,27 @@ else
                 @foreach (var po in pos)
                 {
                     var pct      = po.POCreditAmount > 0 ? (int)Math.Round(po.WalletConsumed / po.POCreditAmount * 100) : 0;
+                    var isOverConsumed  = po.WalletRemaining < 0;
                     var isFullyConsumed = po.WalletRemaining <= 0;
                     var isCurrent       = po.POYear == today.Year && po.POMonth == today.Month;
-                    var rowCss   = isFullyConsumed ? "row-completed" : isCurrent ? "row-current" : po.WalletConsumed > 0 ? "row-carry" : "";
-                    var barColor = pct >= 100 ? "#2e7d32" : pct >= 90 ? "#c62828" : pct >= 70 ? "#ef6c00" : "#1976d2";
+                    var rowCss   = isOverConsumed ? "table-danger" : isFullyConsumed ? "row-completed" : isCurrent ? "row-current" : po.WalletConsumed > 0 ? "row-carry" : "";
+                    var barColor = pct >= 100 ? "#c62828" : pct >= 90 ? "#e53935" : pct >= 70 ? "#ef6c00" : "#1976d2";
+                    var remColor = isOverConsumed ? "#b71c1c" : po.WalletRemaining > 0 ? "#1565c0" : "#2e7d32";
                     <tr class="@rowCss">
                         <td style="white-space:nowrap;">@(po.PeriodLabel ?? CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(po.POMonth) + " " + po.POYear)</td>
                         <td style="font-size:11px;color:#666;">@(string.IsNullOrEmpty(po.PONumber) ? "—" : po.PONumber)</td>
                         <td class="text-right" style="font-weight:600;color:#1565c0;">₹ @po.POCreditAmount.ToString("N0")</td>
                         <td class="text-right" style="color:#2e7d32;font-weight:600;">@(po.WalletConsumed > 0 ? "₹ " + po.WalletConsumed.ToString("N0") : "—")</td>
-                        <td class="text-right" style="font-weight:600;color:@(po.WalletRemaining > 0 ? "#c62828" : "#2e7d32");">₹ @po.WalletRemaining.ToString("N0")</td>
+                        <td class="text-right" style="font-weight:700;color:@remColor;">
+                            @if (isOverConsumed)
+                            {
+                                <span title="Over-consumed — new PO required">⚠ ₹ @po.WalletRemaining.ToString("N0")</span>
+                            }
+                            else
+                            {
+                                @("₹ " + po.WalletRemaining.ToString("N0"))
+                            }
+                        </td>
                         <td>
                             <div class="pct-wrap">
                                 <div class="pct-track">

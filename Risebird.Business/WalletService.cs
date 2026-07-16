@@ -300,8 +300,8 @@ namespace Risebird.Business
 
         /// <summary>
         /// Drains <paramref name="amount"/> from the PO pool using FIFO (oldest PO first).
-        /// Each PO absorbs as much as possible without exceeding its credit amount.
-        /// Any excess beyond total PO credit is silently ignored.
+        /// If total debits exceed total PO credit, the overflow is added to the last PO,
+        /// making its WalletConsumed > POCreditAmount and WalletRemaining negative.
         /// </summary>
         private static void ApplyFifo(List<ClientPOVM> sortedPOs, decimal amount)
         {
@@ -315,6 +315,10 @@ namespace Risebird.Business
                 po.WalletConsumed += consume;
                 rem -= consume;
             }
+            // Overflow: total debits exceed total PO credit — push excess onto the last PO
+            // so WalletRemaining goes negative, signalling the account is over-consumed.
+            if (rem > 0 && sortedPOs.Count > 0)
+                sortedPOs[sortedPOs.Count - 1].WalletConsumed += rem;
         }
 
         public async Task<List<WalletVM>> GetCashCreditHistory(int clientId)
