@@ -133,12 +133,14 @@ namespace Risebird.Business
 
             if (candidates.Count == 0)
             {
-                messages.Add("No eligible interviews found. Requires: usp_GetTrialFlagBackfillCandidates deployed, QCDone=1, first completed on IRF, TransInterviewer row linked via UserId/email/nickname, not already flagged.");
+                messages.Add("No eligible pairs found. Requires: usp_GetTrialFlagBackfillCandidates deployed, TransInterviewer.IsActive=1, IRF in date window, >=1 completed interview in last "
+                    + TrialFlagConstants.BackfillActivityWindowDays
+                    + " days, no TrialFlags row for (InterviewerId, IrfId). Triggering interview = first completed on IRF; QCDone/merge still required at evaluate time.");
                 return new TrialFlagBackfillResultVm { Messages = messages };
             }
 
             var batch = candidates.Take(TrialFlagConstants.BackfillCandidateFetchSize).ToList();
-            messages.Add($"Trying up to {batch.Count} recent QC-merged interview(s); stops after {TrialFlagConstants.BackfillBatchSize} insert(s). Click again to process more.");
+            messages.Add($"Trying up to {batch.Count} active interviewer–IRF pair(s) with recent completed interviews; stops after {TrialFlagConstants.BackfillBatchSize} insert(s). Click again to process more.");
 
             foreach (var candidate in batch)
             {
@@ -157,19 +159,19 @@ namespace Risebird.Business
                     else if (!string.IsNullOrWhiteSpace(result.SkipReason))
                     {
                         skipped++;
-                        messages.Add($"Skipped interview {candidate.InterviewId}: {result.SkipReason}");
+                        messages.Add($"Skipped pair interview={candidate.InterviewId} irf={candidate.IrfId}: {result.SkipReason}");
                     }
                     else
                     {
                         skipped++;
-                        messages.Add($"Skipped interview {candidate.InterviewId}: no insert and no skip reason.");
+                        messages.Add($"Skipped pair interview={candidate.InterviewId} irf={candidate.IrfId}: no insert and no skip reason.");
                     }
                 }
                 catch (Exception ex)
                 {
                     failed++;
-                    messages.Add($"Failed interview {candidate.InterviewId}: {ex.Message}");
-                    _log.LogError(ex, "TrialJudgment backfill failed for interviewId={InterviewId}", candidate.InterviewId);
+                    messages.Add($"Failed pair interview={candidate.InterviewId} irf={candidate.IrfId}: {ex.Message}");
+                    _log.LogError(ex, "TrialJudgment backfill failed for interviewId={InterviewId} irfId={IrfId}", candidate.InterviewId, candidate.IrfId);
                 }
             }
 
@@ -188,7 +190,8 @@ namespace Risebird.Business
                 return messages;
 
             var skipReasons = messages
-                .Where(m => m.StartsWith("Skipped interview ", StringComparison.OrdinalIgnoreCase))
+                .Where(m => m.StartsWith("Skipped pair ", StringComparison.OrdinalIgnoreCase)
+                         || m.StartsWith("Skipped interview ", StringComparison.OrdinalIgnoreCase))
                 .Select(m =>
                 {
                     var idx = m.IndexOf(':');
