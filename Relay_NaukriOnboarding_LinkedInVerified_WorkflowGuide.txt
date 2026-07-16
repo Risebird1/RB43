@@ -239,8 +239,9 @@ Server-side wiring (already in place):
     the Manage modal (LinkedIn Verification row).
   - Manual operator tools in the Manage modal (manual-only, never automation):
       * Edit the LinkedIn profile URL (UpdateLinkedInUrl -> usp_UpdateNaukriLinkedInUrl)
-      * "Approve Manually" — mark employment-verified on judgement and advance the
-        funnel (ManualApproveEmployment; reuses UpdateEmploymentVerification + funnel).
+  - There is NO manual bypass of Employment Verification: a prospect advances only
+    when Signzy passes OR the LinkedIn fallback applies (profile link + confidence
+    >= 80). Failing both is terminal — the prospect cannot proceed or be onboarded.
   - Migration: Risebird.DB/Migrations/AddLinkedInVerificationToNaukriProspectiveInterviewer.sql
     (now also adds LinkedInReason) + StoredProcedures/usp_UpdateNaukriLinkedInUrl.sql
 
