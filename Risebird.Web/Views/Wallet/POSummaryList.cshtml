@@ -1,0 +1,437 @@
+@model List<Risebird.Entities.ViewModel.ClientPOGroupVM>
+@using System.Globalization
+
+@{
+    ViewData["Title"]        = "PO Summary";
+    ViewBag.PageHeader       = "PO Summary";
+    Layout                   = "~/Views/Shared/_Layout.cshtml";
+    var totalClients  = Model.Count;
+    var totalPOs      = Model.Sum(c => c.POs.Count);
+    var totalCredit   = Model.Sum(c => c.TotalCredit);
+    var totalConsumed = Model.Sum(c => c.TotalConsumed);
+    var totalRemaining= Model.Sum(c => c.TotalRemaining);
+}
+
+<link href="~/Newassets/css/irf.css?v=54321" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+
+<style>
+    /* ── Summary stats ── */
+    .pos-stat-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
+    .pos-stat {
+        flex:1; min-width:120px; background:#fff; border:1px solid #e0e0e0;
+        border-radius:8px; padding:10px 14px; text-align:center;
+    }
+    .pos-stat .lbl { font-size:11px; color:#888; text-transform:uppercase; letter-spacing:.3px; font-family:Roboto,sans-serif; font-weight:500; }
+    .pos-stat .val { font-size:19px; font-weight:700; font-family:Roboto,sans-serif; }
+    .val.blue  { color:#1565c0; }
+    .val.green { color:#2e7d32; }
+    .val.red   { color:#c62828; }
+    .val.grey  { color:#555;    }
+
+    /* ── Filter bar ── */
+    .pos-filter-bar {
+        background:#f5f7ff; border:1px solid #c5cae9; border-radius:8px;
+        padding:10px 16px; margin-bottom:18px;
+        display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+    }
+    .pos-filter-bar label { font-size:12px; color:#555; font-family:Roboto,sans-serif; margin:0; }
+
+    /* ── Client card ── */
+    .client-card {
+        border:1px solid #e0e0e0; border-radius:8px;
+        margin-bottom:20px; overflow:hidden;
+        box-shadow:0 1px 4px rgba(0,0,0,.06);
+    }
+    .client-card-header {
+        background:#e8eaf6; padding:10px 14px;
+        display:flex; align-items:center; gap:8px; flex-wrap:nowrap;
+        cursor:pointer; user-select:none; overflow:hidden;
+    }
+    .client-card-header:hover { background:#dde0f5; }
+    .client-card-header .client-name {
+        font-size:14px; font-weight:700; font-family:Roboto,sans-serif; color:#1a237e;
+        text-decoration:none; flex:1; min-width:0; overflow:hidden;
+        text-overflow:ellipsis; white-space:nowrap;
+    }
+    .client-card-header .client-name:hover { text-decoration:underline; }
+    .badge-bt { font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; white-space:nowrap; }
+    .badge-bt1 { background:#e3f2fd; color:#1565c0; border:1px solid #90caf9; }
+    .badge-bt3 { background:#f3e5f5; color:#6a1b9a; border:1px solid #ce93d8; }
+    .badge-model { font-size:10px; font-weight:600; padding:2px 8px; border-radius:10px;
+                   background:#fff8e1; color:#e65100; border:1px solid #ffcc80; white-space:nowrap; }
+    .client-totals {
+        display:flex; gap:12px; font-size:12px; font-family:Roboto,sans-serif;
+        color:#555; flex-shrink:0; white-space:nowrap;
+    }
+    .client-totals span strong { font-weight:700; }
+    .toggle-icon { font-size:13px; color:#888; margin-left:8px; transition:transform .2s; }
+    .collapsed .toggle-icon { transform:rotate(-90deg); }
+
+    /* ── Owner section ── */
+    .owner-section { border-bottom:1px solid #f0f0f0; }
+    .owner-section:last-child { border-bottom:none; }
+    .owner-header {
+        background:#fafafa; padding:8px 16px;
+        display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    }
+    .owner-name { font-size:13px; font-weight:700; font-family:Roboto,sans-serif; color:#333; }
+    .owner-email { font-size:12px; color:#777; font-family:Roboto,sans-serif; }
+    .owner-totals { margin-left:auto; display:flex; gap:14px; font-size:12px; font-family:Roboto,sans-serif; }
+
+    /* ── PO table ── */
+    .po-sum-table th {
+        background:#e8eaf6 !important; color:#3949ab !important;
+        font-size:11px; font-family:Roboto,sans-serif; font-weight:600;
+        white-space:nowrap; padding:6px 10px !important;
+        border:1px solid #c5cae9 !important; vertical-align:middle !important;
+    }
+    .po-sum-table td {
+        font-size:12px; font-family:Roboto,sans-serif; color:#444;
+        vertical-align:middle !important; padding:6px 10px !important;
+    }
+    .po-sum-table tbody tr:hover { background:#f3f4ff; }
+    .po-sum-table tr.row-completed  { opacity:.65; }
+    .po-sum-table tr.row-carry { background:#fffde7; }
+    .po-sum-table tr.row-carry:hover { background:#fff9c4; }
+    .po-sum-table tr.row-current { background:#e8f5e9; }
+    .po-sum-table tr.row-current:hover { background:#c8e6c9; }
+
+    /* ── % bar ── */
+    .pct-wrap { display:flex; align-items:center; gap:5px; min-width:100px; }
+    .pct-track { flex:1; height:6px; background:#eee; border-radius:3px; overflow:hidden; }
+    .pct-fill  { height:100%; border-radius:3px; }
+
+    /* ── Status tag ── */
+    .po-tag { display:inline-block; font-size:10px; font-weight:700; padding:2px 7px;
+              border-radius:10px; letter-spacing:.3px; white-space:nowrap; }
+    .tag-done  { background:#f1f8e9; color:#33691e; border:1px solid #aed581; }
+    .tag-carry { background:#fff8e1; color:#e65100; border:1px solid #ffcc80; }
+    .tag-cur   { background:#e3f2fd; color:#1565c0; border:1px solid #90caf9; }
+    .tag-open  { background:#fce4ec; color:#880e4f; border:1px solid #f48fb1; }
+
+    /* ── Empty ── */
+    .pos-empty { text-align:center; padding:50px; color:#aaa; font-family:Roboto,sans-serif; }
+</style>
+
+<div class="main-panel" id="main-panel">
+<div class="pt30">
+<div class="col-md-12 nopad" style="margin:0;padding:0 12px;">
+
+<!-- PO History modal (reuse existing endpoint) -->
+<div class="modal fade" id="poHistoryModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" style="background:linear-gradient(135deg,#1565c0,#1976d2);color:#fff;">
+                <h5 class="modal-title" id="poHistoryModalTitle" style="font-family:Roboto,sans-serif;font-weight:700;">PO History</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" style="color:#fff;opacity:1;">&times;</button>
+            </div>
+            <div class="modal-body" id="poHistoryBody" style="min-height:120px;">
+                <div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Page header -->
+<div class="card-header bg-w clearfix" style="border-radius:8px;margin-bottom:16px;">
+    <div class="pull-left">
+        <h4 style="color:#fff;margin:0;font-family:Roboto,sans-serif;font-weight:700;">
+            <i class="fa fa-list-alt" style="margin-right:8px;"></i>PO Consumption Summary — All Clients
+        </h4>
+        <p style="color:rgba(255,255,255,.8);margin:4px 0 0;font-size:12px;font-family:Roboto,sans-serif;">
+            FIFO-based consumed &amp; remaining per billing owner across all clients. Sorted by highest consumption.
+        </p>
+    </div>
+    <div class="pull-right" style="padding-top:6px;">
+        <a href="@Url.Action("POAlertList","Wallet")" class="btn btn-sm btn-warning" style="font-weight:700;">
+            <i class="fa fa-exclamation-triangle"></i> Alert List (≥90%)
+        </a>
+    </div>
+</div>
+
+<!-- Stats bar -->
+<div class="pos-stat-bar">
+    <div class="pos-stat"><div class="lbl">Clients</div><div class="val grey">@totalClients</div></div>
+    <div class="pos-stat"><div class="lbl">Total POs</div><div class="val grey">@totalPOs</div></div>
+    <div class="pos-stat"><div class="lbl">Total PO Credit</div><div class="val blue">₹ @totalCredit.ToString("N0")</div></div>
+    <div class="pos-stat"><div class="lbl">Total Consumed</div><div class="val green">₹ @totalConsumed.ToString("N0")</div></div>
+    <div class="pos-stat"><div class="lbl">Total Remaining</div><div class="val red">₹ @totalRemaining.ToString("N0")</div></div>
+</div>
+
+<!-- Filter bar -->
+<div class="pos-filter-bar">
+    <label>Search client:</label>
+    <input type="text" id="clientSearch" class="form-control form-control-sm"
+           placeholder="Type client name…" style="max-width:220px;"
+           oninput="filterClients(this.value)">
+    <label style="margin-left:12px;">Show:</label>
+    <label style="font-weight:600;cursor:pointer;"><input type="radio" name="showFilter" value="all" checked onchange="applyShowFilter()"> All</label>
+    <label style="font-weight:600;cursor:pointer;"><input type="radio" name="showFilter" value="active" onchange="applyShowFilter()"> Active only (carry-forward / open)</label>
+    <label style="font-weight:600;cursor:pointer;"><input type="radio" name="showFilter" value="alert" onchange="applyShowFilter()"> ≥ 90% consumed</label>
+    <button class="btn btn-sm btn-outline-secondary" style="margin-left:auto;" onclick="expandAll()">Expand All</button>
+    <button class="btn btn-sm btn-outline-secondary" onclick="collapseAll()">Collapse All</button>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="pos-empty">
+        <i class="fa fa-inbox fa-2x" style="display:block;margin-bottom:10px;"></i>
+        No PO records found across any client.
+    </div>
+}
+else
+{
+    @foreach (var client in Model)
+    {
+        var now       = DateTime.Today;
+        var clientPct = client.TotalCredit > 0 ? (int)Math.Round(client.TotalConsumed / client.TotalCredit * 100) : 0;
+        var cardId    = $"card-{client.ClientId}";
+        // Max latest-PO % across all owners — used for card-level alert filter
+        var clientLatestPct = 0;
+        foreach (var owGrp in client.POs.GroupBy(p => p.BillingOwnerId))
+        {
+            var lp = owGrp.OrderByDescending(x => x.POYear).ThenByDescending(x => x.POMonth)
+                          .ThenByDescending(x => x.CreatedOn ?? DateTime.MinValue).FirstOrDefault();
+            if (lp != null && lp.POCreditAmount > 0)
+            {
+                var lPct = (int)Math.Round(lp.WalletConsumed / lp.POCreditAmount * 100);
+                if (lPct > clientLatestPct) clientLatestPct = lPct;
+            }
+        }
+
+        <div class="client-card" data-client="@client.ClientName.ToLower()" data-pct="@clientPct" data-latestpct="@clientLatestPct">
+            <!-- Header (toggle) -->
+            <div class="client-card-header" onclick="toggleCard('@cardId')">
+                <a href="@Url.Action("ClientWallet","Wallet", new { clientId = client.ClientId })"
+                   class="client-name" onclick="event.stopPropagation()">
+                    @client.ClientName
+                </a>
+                <span class="badge-model">@client.BillingModelDesc</span>
+                <span class="badge-bt @(client.BillingType == 1 ? "badge-bt1" : "badge-bt3")">
+                    @(client.BillingType == 1 ? "Billing Owner" : "Client")
+                </span>
+                <div class="client-totals">
+                    <span>Credit: <strong style="color:#1565c0;">₹ @client.TotalCredit.ToString("N0")</strong></span>
+                    <span>Consumed: <strong style="color:#2e7d32;">₹ @client.TotalConsumed.ToString("N0")</strong></span>
+                    <span>Remaining: <strong style="color:#c62828;">₹ @client.TotalRemaining.ToString("N0")</strong></span>
+                    <span>
+                        <strong style="color:@(clientPct>=90?"#c62828":clientPct>=70?"#e65100":"#555");">
+                            @clientPct%
+                        </strong>
+                    </span>
+                </div>
+                <span class="toggle-icon"><i class="fa fa-chevron-down"></i></span>
+            </div>
+
+            <!-- Body -->
+            <div id="@cardId" style="display:none;">
+            @if (client.BillingType == 1)
+            {
+                <!-- Group POs by billing owner -->
+                var byOwner = client.POs
+                    .GroupBy(p => new { p.BillingOwnerId, p.BillingOwnerName, p.BillingOwnerEmail })
+                    .OrderBy(g => g.Key.BillingOwnerName);
+
+                foreach (var og in byOwner)
+                {
+                    var ownerCredit    = og.Sum(p => p.POCreditAmount);
+                    var ownerConsumed  = og.Sum(p => p.WalletConsumed);
+                    var ownerRemaining = og.Sum(p => p.WalletRemaining);
+                    var ownerPct       = ownerCredit > 0 ? (int)Math.Round(ownerConsumed / ownerCredit * 100) : 0;
+                    var ownerName      = og.Key.BillingOwnerName ?? "—";
+                    var ownerEmail     = og.Key.BillingOwnerEmail ?? "";
+                    var safeOwnerName   = ownerName.Replace("'", "\\'");
+                    // Latest PO % — drives the ⚠ Low badge (active PO running low)
+                    var latestOwnerPO  = og.OrderByDescending(p => p.POYear).ThenByDescending(p => p.POMonth)
+                                           .ThenByDescending(p => p.CreatedOn ?? DateTime.MinValue).FirstOrDefault();
+                    var latestOwnerPct = latestOwnerPO != null && latestOwnerPO.POCreditAmount > 0
+                                            ? (int)Math.Round(latestOwnerPO.WalletConsumed / latestOwnerPO.POCreditAmount * 100) : 0;
+
+                    <div class="owner-section" data-ownerpct="@ownerPct" data-ownerlatestpct="@latestOwnerPct">
+                        <div class="owner-header">
+                            <span class="owner-name">@ownerName</span>
+                            <span class="owner-email">@ownerEmail</span>
+                            @if (latestOwnerPct >= 90)
+                            {
+                                <span style="background:#e53935;color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;">⚠ Low (@latestOwnerPct%)</span>
+                            }
+                            <div class="owner-totals">
+                                <span>Credit: <strong style="color:#1565c0;">₹ @ownerCredit.ToString("N0")</strong></span>
+                                <span>Consumed: <strong style="color:#2e7d32;">₹ @ownerConsumed.ToString("N0")</strong></span>
+                                <span>Remaining:
+                                    @if (ownerRemaining < 0)
+                                    {
+                                        <strong style="color:#b71c1c;" title="Over-consumed — new PO required">⚠ ₹ @ownerRemaining.ToString("N0")</strong>
+                                    }
+                                    else
+                                    {
+                                        <strong style="color:#c62828;">₹ @ownerRemaining.ToString("N0")</strong>
+                                    }
+                                </span>
+                                <span><strong style="color:@(ownerPct>=100?"#b71c1c":ownerPct>=90?"#c62828":ownerPct>=70?"#e65100":"#555");">@ownerPct%</strong></span>
+                            </div>
+                            <button class="btn btn-xs btn-outline-info" style="font-size:11px;padding:2px 8px;margin-left:8px;"
+                                    onclick="openPOHistory(@client.ClientId, @(og.Key.BillingOwnerId ?? 0), '@safeOwnerName', '@ownerEmail')">
+                                PO History
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                        @{ RenderPOTable(og.OrderBy(p => p.POYear).ThenBy(p => p.POMonth).ThenBy(p => p.CreatedOn ?? DateTime.MaxValue).ToList(), now); }
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <!-- Client-wide table -->
+                <div class="owner-header">
+                    <span class="owner-name">Client-Level PO Pool</span>
+                    <div class="owner-totals" style="margin-left:auto;">
+                        <span>Credit: <strong style="color:#1565c0;">₹ @client.TotalCredit.ToString("N0")</strong></span>
+                        <span>Consumed: <strong style="color:#2e7d32;">₹ @client.TotalConsumed.ToString("N0")</strong></span>
+                        <span>Remaining: <strong style="color:#c62828;">₹ @client.TotalRemaining.ToString("N0")</strong></span>
+                    </div>
+                    <button class="btn btn-xs btn-outline-info" style="font-size:11px;padding:2px 8px;margin-left:8px;"
+                            onclick="openPOHistory(@client.ClientId, 0, '@client.ClientName.Replace("'", "\\'")', '')">
+                        PO History
+                    </button>
+                </div>
+                <div class="table-responsive">
+                @{ RenderPOTable(client.POs.OrderBy(p => p.POYear).ThenBy(p => p.POMonth).ThenBy(p => p.CreatedOn ?? DateTime.MaxValue).ToList(), now); }
+                </div>
+            }
+            </div>
+        </div>
+    }
+}
+
+@{
+    void RenderPOTable(List<Risebird.Entities.ViewModel.ClientPOVM> pos, DateTime today)
+    {
+        <table class="table table-bordered table-sm po-sum-table" style="margin:0;">
+            <thead>
+                <tr>
+                    <th>Period</th>
+                    <th>PO Number</th>
+                    <th class="text-right">PO Credit</th>
+                    <th class="text-right">Consumed</th>
+                    <th class="text-right">Remaining</th>
+                    <th>Consumption</th>
+                    <th>Status</th>
+                    <th>Added By</th>
+                    <th>Added On</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var po in pos)
+                {
+                    // Cap individual PO display at credit — overflow shown only at owner total level
+                    var displayConsumed  = Math.Min(po.WalletConsumed, po.POCreditAmount);
+                    var displayRemaining = Math.Max(0m, po.WalletRemaining);
+                    var pct      = po.POCreditAmount > 0 ? Math.Min(100, (int)Math.Round(displayConsumed / po.POCreditAmount * 100)) : 0;
+                    var isFullyConsumed = displayRemaining <= 0;
+                    var isCurrent       = po.POYear == today.Year && po.POMonth == today.Month;
+                    var rowCss   = isFullyConsumed ? "row-completed" : isCurrent ? "row-current" : po.WalletConsumed > 0 ? "row-carry" : "";
+                    var barColor = pct >= 100 ? "#2e7d32" : pct >= 90 ? "#c62828" : pct >= 70 ? "#ef6c00" : "#1976d2";
+                    <tr class="@rowCss">
+                        <td style="white-space:nowrap;">@(po.PeriodLabel ?? CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(po.POMonth) + " " + po.POYear)</td>
+                        <td style="font-size:11px;color:#666;">@(string.IsNullOrEmpty(po.PONumber) ? "—" : po.PONumber)</td>
+                        <td class="text-right" style="font-weight:600;color:#1565c0;">₹ @po.POCreditAmount.ToString("N0")</td>
+                        <td class="text-right" style="color:#2e7d32;font-weight:600;">@(displayConsumed > 0 ? "₹ " + displayConsumed.ToString("N0") : "—")</td>
+                        <td class="text-right" style="font-weight:600;color:@(displayRemaining > 0 ? "#1565c0" : "#2e7d32");">
+                            ₹ @displayRemaining.ToString("N0")
+                        </td>
+                        <td>
+                            <div class="pct-wrap">
+                                <div class="pct-track">
+                                    <div class="pct-fill" style="width:@(Math.Min(pct,100))%;background:@barColor;"></div>
+                                </div>
+                                <span style="font-size:11px;font-weight:700;color:@barColor;min-width:32px;text-align:right;">@pct%</span>
+                            </div>
+                        </td>
+                        <td>
+                            @if (isFullyConsumed) { <span class="po-tag tag-done">Fully Consumed</span> }
+                            else if (isCurrent)   { <span class="po-tag tag-cur">Current</span> }
+                            else if (po.WalletConsumed > 0) { <span class="po-tag tag-carry">Carry Forward</span> }
+                            else                  { <span class="po-tag tag-open">Open</span> }
+                        </td>
+                        <td style="font-size:11px;color:#555;">@(po.CreatedBy ?? "—")</td>
+                        <td style="white-space:nowrap;font-size:11px;color:#555;">@(po.CreatedOn?.ToString("dd MMM yyyy") ?? "—")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+<script>
+    /* ── Collapse/expand ── */
+    function toggleCard(id) {
+        var el = document.getElementById(id);
+        var card = el.closest('.client-card');
+        if (el.style.display === 'none') {
+            el.style.display = '';
+            card.querySelector('.toggle-icon').style.transform = '';
+        } else {
+            el.style.display = 'none';
+            card.querySelector('.toggle-icon').style.transform = 'rotate(-90deg)';
+        }
+    }
+    function expandAll()   { document.querySelectorAll('.client-card [id^="card-"]').forEach(el => { el.style.display = ''; el.closest('.client-card').querySelector('.toggle-icon').style.transform = ''; }); }
+    function collapseAll() { document.querySelectorAll('.client-card [id^="card-"]').forEach(el => { el.style.display = 'none'; el.closest('.client-card').querySelector('.toggle-icon').style.transform = 'rotate(-90deg)'; }); }
+
+    /* ── Client name search ── */
+    function filterClients(q) {
+        var lower = q.toLowerCase().trim();
+        document.querySelectorAll('.client-card').forEach(function (card) {
+            var name = card.dataset.client || '';
+            card.style.display = (!lower || name.includes(lower)) ? '' : 'none';
+        });
+    }
+
+    /* ── Show filter (all / active / alert) ── */
+    function applyShowFilter() {
+        var val = document.querySelector('input[name="showFilter"]:checked').value;
+
+        document.querySelectorAll('.client-card').forEach(function (card) {
+            var pct       = parseInt(card.dataset.pct       || '0', 10);
+            var latestPct = parseInt(card.dataset.latestpct || '0', 10);
+
+            var showCard;
+            if (val === 'all')         showCard = true;
+            else if (val === 'active') showCard = (pct > 0 && pct < 100);
+            // alert: show card if any owner's latest active PO >= 90%
+            else                       showCard = (latestPct >= 90);
+
+            card.style.display = showCard ? '' : 'none';
+
+            // Filter individual owner sections
+            card.querySelectorAll('.owner-section').forEach(function (sec) {
+                if (!showCard || val === 'all') { sec.style.display = ''; return; }
+                var oPct    = parseInt(sec.dataset.ownerpct       || '0', 10);
+                var oLatest = parseInt(sec.dataset.ownerlatestpct || '0', 10);
+                if (val === 'active') sec.style.display = (oPct > 0 && oPct < 100) ? '' : 'none';
+                // alert: show owner section only if their latest PO >= 90%
+                else                  sec.style.display = (oLatest >= 90) ? '' : 'none';
+            });
+        });
+    }
+
+    /* ── PO History modal ── */
+    function openPOHistory(clientId, ownerId, ownerName, ownerEmail) {
+        var title = ownerId > 0 ? 'PO History — ' + ownerName : 'PO History — ' + ownerName;
+        document.getElementById('poHistoryModalTitle').textContent = title;
+        document.getElementById('poHistoryBody').innerHTML = '<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></div>';
+        $('#poHistoryModal').modal('show');
+        var params = { clientId: clientId };
+        if (ownerId > 0) { params.billingOwnerId = ownerId; params.ownerEmail = ownerEmail; }
+        $.get('/Wallet/GetPOHistory', params, function (html) {
+            document.getElementById('poHistoryBody').innerHTML = html;
+        });
+    }
+</script>
+
+</div><!-- col-md-12 -->
+</div><!-- pt30 -->
+</div><!-- main-panel -->

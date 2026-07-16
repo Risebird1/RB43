@@ -89,7 +89,7 @@ namespace Risebird.Business
                 return "dbo.TrialFlags does not exist on this database. Run Risebird.DB/Tables/TrialFlags.sql, then redeploy usp_GetTrialFlagsForReview.";
 
             if (totalRows == 0)
-                return "dbo.TrialFlags exists but has 0 rows. Rows are inserted only when trial judgment runs after QC AI merge on a first completed interview. If merges already finished before the producer was deployed, run POST /Dashboard/BackfillTrialFlags (or redeploy Azure Functions so future merges insert automatically). See Risebird.DB/HowTo_DiagnoseTrialFlagReview.sql.";
+                return "dbo.TrialFlags exists but has 0 rows. Rows are inserted only when trial judgment runs after QC AI merge on a first completed interview. If merges already finished before the producer was deployed, run POST /Dashboard/BackfillTrialFlags (or redeploy Azure Functions so future merges insert automatically).";
 
             if (loadedRows == 0 && totalRows > 0)
                 return "TrialFlags has rows but usp_GetTrialFlagsForReview returned none. Redeploy the latest stored procedure on this database.";
@@ -256,4 +256,4 @@ namespace Risebird.Business
             new TrialFlagReviewActionResultVm { Ok = false, Message = message };
     }
 }
-
+

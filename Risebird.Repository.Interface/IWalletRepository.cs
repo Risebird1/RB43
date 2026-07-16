@@ -17,6 +17,12 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdatePOStatus(int poId, int clientId, int status);
         Task<AllClientsWalletVM> GetAllClientsWalletSummary(int fromMonth, int fromYear, int toMonth, int toYear);
         Task<List<WalletMonthDebitVM>> GetOwnerMonthlyDebits(int clientId, int billingType, int? billingOwnerId = null);
+
+        /// <summary>
+        /// Returns all ClientPO rows (RS1) and all wallet-debit monthly totals (RS2)
+        /// for every client in a single stored-procedure call.
+        /// </summary>
+        Task<(List<ClientPOVM> POs, List<WalletMonthDebitVM> Debits)> GetAllClientsPOData();
     }
 }
 

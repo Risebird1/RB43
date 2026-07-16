@@ -123,6 +123,7 @@ namespace Risebird.Entities.ViewModel
     {
         public int id { get; set; }
         public int ClientId { get; set; }
+        public string ClientName { get; set; }     // populated by all-clients SP
         public int BillingType { get; set; }
         public int? BillingOwnerId { get; set; }
         public int BillingModel { get; set; }
@@ -146,13 +147,55 @@ namespace Risebird.Entities.ViewModel
 
         /// <summary>Actual wallet debit (interview charges) consumed against this PO — populated by FIFO distribution in WalletService.</summary>
         public decimal WalletConsumed { get; set; }
-        public decimal WalletRemaining => Math.Max(0, POCreditAmount - WalletConsumed);
+        /// <summary>Negative means debits exceeded PO credit (over-consumed). Not clamped to 0.</summary>
+        public decimal WalletRemaining => POCreditAmount - WalletConsumed;
+    }
+
+    /// <summary>Groups all FIFO-computed POs for one client, used on the PO Summary report page.</summary>
+    public class ClientPOGroupVM
+    {
+        public int    ClientId         { get; set; }
+        public string ClientName       { get; set; }
+        public int    BillingType      { get; set; }   // 1=Billing Owner, 3=Client
+        public string BillingModelDesc { get; set; }
+        public List<ClientPOVM> POs    { get; set; } = new List<ClientPOVM>();
+        public decimal TotalCredit     => POs.Sum(p => p.POCreditAmount);
+        public decimal TotalConsumed   => POs.Sum(p => p.WalletConsumed);
+        public decimal TotalRemaining  => POs.Sum(p => p.WalletRemaining);
+    }
+
+    /// <summary>
+    /// One row on the PO Consumption Alert page — latest PO per billing owner >= threshold consumed.
+    /// </summary>
+    public class POConsumptionAlertRowVM
+    {
+        public int    ClientId          { get; set; }
+        public string ClientName        { get; set; }
+        public int    BillingType       { get; set; }
+        public string BillingModelDesc  { get; set; }
+        public string BillingTypeName   => BillingType == 1 ? "Billing Owner" : "Client";
+        public int?   BillingOwnerId    { get; set; }
+        public string BillingOwnerName  { get; set; }
+        public string BillingOwnerEmail { get; set; }
+        public string  PONumber         { get; set; }
+        public int     POMonth          { get; set; }
+        public int     POYear           { get; set; }
+        public string  POPeriodLabel    { get; set; }
+        public decimal POCreditAmount   { get; set; }
+        public decimal WalletConsumed   { get; set; }
+        /// <summary>Negative means over-consumed. Not clamped to 0.</summary>
+        public decimal WalletRemaining  => POCreditAmount - WalletConsumed;
+        public int     ConsumedPct      => POCreditAmount > 0
+                                            ? (int)Math.Round(WalletConsumed / POCreditAmount * 100)
+                                            : 0;
     }
 
     /// <summary>Total wallet debits per billing owner (or client) per calendar month, used for FIFO distribution.</summary>
     public class WalletMonthDebitVM
     {
+        public int  ClientId       { get; set; }   // populated only for all-clients queries
         public int? BillingOwnerId { get; set; }   // null = client-scope (BillingType 3)
+        public int  BillingType    { get; set; }
         public int  Month          { get; set; }
         public int  Year           { get; set; }
         public decimal TotalDebit  { get; set; }
@@ -163,6 +206,8 @@ namespace Risebird.Entities.ViewModel
         public int BillingOwnerId { get; set; }
         public string BillingOwnerName { get; set; }
         public string BillingOwnerEmail { get; set; }
+        /// <summary>Gross PO credit registered in periods BEFORE the selected month (carry-forward pool).</summary>
+        public decimal POOpeningBalance { get; set; }
         public decimal POCredit { get; set; }
         public decimal Consumed { get; set; }
         public decimal Remaining { get; set; }
