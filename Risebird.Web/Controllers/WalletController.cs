@@ -750,6 +750,93 @@ namespace Risebird.Web.Controllers
 
         #endregion
 
+        #region PO Alert List
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> POAlertList()
+        {
+            if (!IsFinanceOrAdmin()) return RedirectToAction("SignOut", "Session");
+
+            const decimal threshold = 0.90m;
+
+            // Reuse the same single-SP bulk load; filter to M2 and >= threshold
+            var allSummary = await _walletService.GetAllClientsPOSummary();
+
+            var alerts = new List<POConsumptionAlertRowVM>();
+
+            foreach (var client in allSummary)
+            {
+                // Only M2 billing model
+                if (!client.BillingModelDesc.StartsWith("M2", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                if (client.BillingType == 1)
+                {
+                    // Per billing owner — check latest PO per owner
+                    foreach (var ownerGroup in client.POs.GroupBy(p => new { p.BillingOwnerId, p.BillingOwnerName, p.BillingOwnerEmail }))
+                    {
+                        var latestPO = ownerGroup
+                            .OrderByDescending(p => p.POYear).ThenByDescending(p => p.POMonth)
+                            .ThenByDescending(p => p.CreatedOn ?? DateTime.MinValue).FirstOrDefault();
+                        if (latestPO == null || latestPO.POCreditAmount <= 0) continue;
+                        var pct = latestPO.WalletConsumed / latestPO.POCreditAmount;
+                        if (pct < threshold) continue;
+
+                        alerts.Add(new POConsumptionAlertRowVM
+                        {
+                            ClientId         = client.ClientId,
+                            ClientName       = client.ClientName,
+                            BillingType      = client.BillingType,
+                            BillingModelDesc = client.BillingModelDesc,
+                            BillingOwnerId   = ownerGroup.Key.BillingOwnerId,
+                            BillingOwnerName = ownerGroup.Key.BillingOwnerName,
+                            BillingOwnerEmail= ownerGroup.Key.BillingOwnerEmail,
+                            PONumber         = latestPO.PONumber,
+                            POMonth          = latestPO.POMonth,
+                            POYear           = latestPO.POYear,
+                            POCreditAmount   = latestPO.POCreditAmount,
+                            WalletConsumed   = latestPO.WalletConsumed
+                        });
+                    }
+                }
+                else
+                {
+                    // Client-wide — check latest PO overall
+                    var latestPO = client.POs
+                        .OrderByDescending(p => p.POYear).ThenByDescending(p => p.POMonth)
+                        .ThenByDescending(p => p.CreatedOn ?? DateTime.MinValue).FirstOrDefault();
+                    if (latestPO == null || latestPO.POCreditAmount <= 0) continue;
+                    var pct = latestPO.WalletConsumed / latestPO.POCreditAmount;
+                    if (pct < threshold) continue;
+
+                    alerts.Add(new POConsumptionAlertRowVM
+                    {
+                        ClientId         = client.ClientId,
+                        ClientName       = client.ClientName,
+                        BillingType      = client.BillingType,
+                        BillingModelDesc = client.BillingModelDesc,
+                        BillingOwnerId   = null,
+                        BillingOwnerName = null,
+                        BillingOwnerEmail= null,
+                        PONumber         = latestPO.PONumber,
+                        POMonth          = latestPO.POMonth,
+                        POYear           = latestPO.POYear,
+                        POCreditAmount   = latestPO.POCreditAmount,
+                        WalletConsumed   = latestPO.WalletConsumed
+                    });
+                }
+            }
+
+            alerts = alerts.OrderByDescending(a => a.ConsumedPct).ToList();
+            ViewBag.Threshold    = (int)(threshold * 100);
+            ViewBag.TotalClients = allSummary.Count(c => c.BillingModelDesc.StartsWith("M2", StringComparison.OrdinalIgnoreCase));
+
+            return View(alerts);
+        }
+
+        #endregion
+
         #region PO Summary Report
 
         [Authorize]

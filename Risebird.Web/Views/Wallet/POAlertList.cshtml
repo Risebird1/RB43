@@ -1,0 +1,246 @@
+@model List<Risebird.Entities.ViewModel.POConsumptionAlertRowVM>
+@using System.Globalization
+
+@{
+    ViewData["Title"]  = "PO Alert List";
+    ViewBag.PageHeader = "PO Alert List";
+    Layout             = "~/Views/Shared/_Layout.cshtml";
+
+    var threshold    = ViewBag.Threshold ?? 90;
+    var totalClients = ViewBag.TotalClients ?? 0;
+    var totalAlerts  = Model.Count;
+    var mfi          = new DateTimeFormatInfo();
+}
+
+<link href="~/Newassets/css/irf.css?v=54321" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+
+<style>
+    /* ── Stat bar ── */
+    .pal-stat-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+    .pal-stat {
+        flex:1; min-width:110px; background:#fff; border:1px solid #e0e0e0;
+        border-radius:8px; padding:10px 14px; text-align:center;
+        box-shadow:0 1px 3px rgba(0,0,0,.05);
+    }
+    .pal-stat .lbl { font-size:11px; color:#888; text-transform:uppercase; letter-spacing:.3px; font-family:Roboto,sans-serif; font-weight:500; }
+    .pal-stat .val { font-size:20px; font-weight:700; font-family:Roboto,sans-serif; }
+
+    /* ── Filter bar ── */
+    .pal-filter {
+        background:#f5f7ff; border:1px solid #c5cae9; border-radius:8px;
+        padding:10px 16px; margin-bottom:16px;
+        display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+    }
+    .pal-filter label { font-size:12px; color:#555; font-family:Roboto,sans-serif; margin:0; }
+
+    /* ── Alert table ── */
+    .pal-table th {
+        background:#e8eaf6 !important; color:#3949ab !important;
+        font-size:11px; font-family:Roboto,sans-serif; font-weight:700;
+        white-space:nowrap; padding:8px 12px !important;
+        border:1px solid #c5cae9 !important; vertical-align:middle !important;
+    }
+    .pal-table td {
+        font-size:12px; font-family:Roboto,sans-serif; color:#444;
+        vertical-align:middle !important; padding:8px 12px !important;
+        border:1px solid #e8eaf6 !important;
+    }
+    .pal-table tbody tr:hover { background:#f3f4ff; }
+
+    /* ── Consumption bar ── */
+    .pct-wrap  { display:flex; align-items:center; gap:6px; min-width:110px; }
+    .pct-track { flex:1; height:7px; background:#eee; border-radius:4px; overflow:hidden; }
+    .pct-fill  { height:100%; border-radius:4px; }
+
+    /* ── Badges ── */
+    .badge-bt1    { background:#e3f2fd; color:#1565c0; border:1px solid #90caf9; font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; white-space:nowrap; }
+    .badge-bt3    { background:#f3e5f5; color:#6a1b9a; border:1px solid #ce93d8; font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; white-space:nowrap; }
+    .badge-model  { background:#fff8e1; color:#e65100; border:1px solid #ffcc80; font-size:10px; font-weight:600; padding:2px 8px; border-radius:10px; white-space:nowrap; }
+
+    /* ── Empty ── */
+    .pal-empty { text-align:center; padding:60px; color:#aaa; font-family:Roboto,sans-serif; }
+</style>
+
+<div class="main-panel" id="main-panel">
+<div class="pt30">
+<div class="col-md-12 nopad" style="margin:0;padding:0 12px;">
+
+<!-- Header -->
+<div class="card-header bg-w clearfix" style="border-radius:8px;margin-bottom:16px;">
+    <div class="pull-left">
+        <h4 style="color:#fff;margin:0;font-family:Roboto,sans-serif;font-weight:700;">
+            <i class="fa fa-exclamation-triangle" style="margin-right:8px;"></i>PO Alert List — Latest PO ≥ @threshold% Consumed
+        </h4>
+        <p style="color:rgba(255,255,255,.8);margin:4px 0 0;font-size:12px;font-family:Roboto,sans-serif;">
+            M2 clients where the latest PO of any billing owner has consumed ≥ @threshold%. Sorted by highest consumption.
+        </p>
+    </div>
+    <div class="pull-right" style="padding-top:6px;">
+        <a href="@Url.Action("POSummaryList","Wallet")" class="btn btn-sm btn-outline-light" style="font-weight:600;">
+            <i class="fa fa-list-alt"></i> Full PO Summary
+        </a>
+    </div>
+</div>
+
+<!-- Stat bar -->
+<div class="pal-stat-bar">
+    <div class="pal-stat"><div class="lbl">M2 Clients</div><div class="val" style="color:#555;">@totalClients</div></div>
+    <div class="pal-stat"><div class="lbl">Alert Rows</div><div class="val" style="color:#c62828;">@totalAlerts</div></div>
+    <div class="pal-stat"><div class="lbl">Threshold</div><div class="val" style="color:#e65100;">≥ @threshold%</div></div>
+</div>
+
+<!-- Filter bar -->
+<div class="pal-filter">
+    <label>Search:</label>
+    <input type="text" id="palSearch" class="form-control form-control-sm"
+           placeholder="Client or owner name…" style="max-width:220px;"
+           oninput="filterRows(this.value)">
+    <label style="margin-left:12px;">Show:</label>
+    <label style="font-weight:600;cursor:pointer;"><input type="radio" name="palFilter" value="all" checked onchange="applyPalFilter()"> All (≥@threshold%)</label>
+    <label style="font-weight:600;cursor:pointer;"><input type="radio" name="palFilter" value="critical" onchange="applyPalFilter()"> Critical (≥95%)</label>
+    <label style="font-weight:600;cursor:pointer;"><input type="radio" name="palFilter" value="full" onchange="applyPalFilter()"> Fully Consumed (100%)</label>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="pal-empty">
+        <i class="fa fa-check-circle fa-3x" style="color:#4caf50;display:block;margin-bottom:12px;"></i>
+        <strong style="font-size:18px;color:#4caf50;">All Clear!</strong>
+        <p style="margin-top:8px;font-size:13px;">No M2 clients have a latest PO consumed ≥ @threshold%.</p>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-bordered pal-table" id="palTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Client</th>
+                    <th>Billing Type</th>
+                    <th>Billing Owner</th>
+                    <th>PO Period</th>
+                    <th>PO Number</th>
+                    <th>PO Credit</th>
+                    <th>Consumed</th>
+                    <th>Remaining</th>
+                    <th>Consumption</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int rowNum = 0; }
+                @foreach (var row in Model)
+                {
+                    rowNum++;
+                    var pct      = row.ConsumedPct;
+                    var barColor = pct >= 100 ? "#c62828" : pct >= 95 ? "#e53935" : "#ef6c00";
+                    var rowClass = pct >= 100 ? "table-danger" : pct >= 95 ? "table-warning" : "";
+                    var period   = mfi.GetMonthName(row.POMonth) + " " + row.POYear;
+
+                    <tr class="pal-row @rowClass" data-pct="@pct"
+                        data-search="@((row.ClientName + " " + (row.BillingOwnerName ?? "")).ToLower())">
+                        <td style="color:#888;font-size:11px;">@rowNum</td>
+                        <td>
+                            <a href="@Url.Action("ClientWallet","Wallet", new { clientId = row.ClientId })"
+                               style="font-weight:700;color:#1a237e;font-size:13px;">
+                                @row.ClientName
+                            </a>
+                            <br><span class="badge-model">@row.BillingModelDesc</span>
+                        </td>
+                        <td>
+                            <span class="@(row.BillingType == 1 ? "badge-bt1" : "badge-bt3")">
+                                @row.BillingTypeName
+                            </span>
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(row.BillingOwnerName))
+                            {
+                                <span style="font-weight:600;font-size:12px;">@row.BillingOwnerName</span><br>
+                                <span style="color:#777;font-size:11px;">@row.BillingOwnerEmail</span>
+                            }
+                            else
+                            {
+                                <span style="color:#aaa;font-size:11px;">—</span>
+                            }
+                        </td>
+                        <td style="white-space:nowrap;">@period</td>
+                        <td style="font-size:11px;color:#555;">@row.PONumber</td>
+                        <td style="white-space:nowrap;color:#1565c0;font-weight:600;">₹ @row.POCreditAmount.ToString("N0")</td>
+                        <td style="white-space:nowrap;color:#2e7d32;font-weight:600;">₹ @row.WalletConsumed.ToString("N0")</td>
+                        <td style="white-space:nowrap;color:#c62828;font-weight:600;">₹ @row.WalletRemaining.ToString("N0")</td>
+                        <td>
+                            <div class="pct-wrap">
+                                <div class="pct-track">
+                                    <div class="pct-fill" style="width:@Math.Min(100,pct)%;background:@barColor;"></div>
+                                </div>
+                                <span style="font-size:12px;font-weight:700;color:@barColor;white-space:nowrap;">@pct%</span>
+                            </div>
+                        </td>
+                        <td style="white-space:nowrap;">
+                            <a href="@Url.Action("ClientWallet","Wallet", new { clientId = row.ClientId })"
+                               class="btn btn-xs btn-outline-primary" style="font-size:11px;padding:2px 7px;margin:1px;">
+                                <i class="fa fa-wallet"></i> Wallet
+                            </a>
+                            <button class="btn btn-xs btn-outline-info" style="font-size:11px;padding:2px 7px;margin:1px;"
+                                    onclick="openOwnerHistory(@row.ClientId, @(row.BillingOwnerId ?? 0), '@((row.BillingOwnerName ?? row.ClientName).Replace("'","\\'"  ))', '@(row.BillingOwnerEmail ?? "")')">
+                                <i class="fa fa-history"></i> PO History
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<!-- PO History modal -->
+<div class="modal fade" id="poHistoryModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" style="background:linear-gradient(135deg,#1565c0,#1976d2);color:#fff;">
+                <h5 class="modal-title" id="poHistoryModalTitle" style="font-family:Roboto,sans-serif;font-weight:700;">PO History</h5>
+                <button type="button" class="close" data-dismiss="modal" style="color:#fff;opacity:1;">&times;</button>
+            </div>
+            <div class="modal-body" id="poHistoryBody" style="min-height:120px;">
+                <div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div><!-- col-md-12 -->
+</div><!-- pt30 -->
+</div><!-- main-panel -->
+
+<script>
+    function filterRows(q) {
+        var lower = q.toLowerCase().trim();
+        document.querySelectorAll('.pal-row').forEach(function (tr) {
+            var s = tr.dataset.search || '';
+            tr.style.display = (!lower || s.includes(lower)) ? '' : 'none';
+        });
+    }
+
+    function applyPalFilter() {
+        var val = document.querySelector('input[name="palFilter"]:checked').value;
+        document.querySelectorAll('.pal-row').forEach(function (tr) {
+            var pct = parseInt(tr.dataset.pct || '0', 10);
+            if (val === 'all')      tr.style.display = '';
+            else if (val === 'critical') tr.style.display = (pct >= 95) ? '' : 'none';
+            else                         tr.style.display = (pct >= 100) ? '' : 'none';
+        });
+    }
+
+    function openOwnerHistory(clientId, ownerId, ownerName, ownerEmail) {
+        document.getElementById('poHistoryModalTitle').textContent = 'PO History — ' + ownerName;
+        document.getElementById('poHistoryBody').innerHTML = '<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></div>';
+        $('#poHistoryModal').modal('show');
+        var params = { clientId: clientId };
+        if (ownerId > 0) { params.billingOwnerId = ownerId; params.ownerEmail = ownerEmail; }
+        $.get('/Wallet/GetPOHistory', params, function (html) {
+            document.getElementById('poHistoryBody').innerHTML = html;
+        });
+    }
+</script>

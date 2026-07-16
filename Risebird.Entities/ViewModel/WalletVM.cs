@@ -171,6 +171,7 @@ namespace Risebird.Entities.ViewModel
         public int    ClientId          { get; set; }
         public string ClientName        { get; set; }
         public int    BillingType       { get; set; }
+        public string BillingModelDesc  { get; set; }
         public string BillingTypeName   => BillingType == 1 ? "Billing Owner" : "Client";
         public int?   BillingOwnerId    { get; set; }
         public string BillingOwnerName  { get; set; }
