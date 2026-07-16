@@ -178,6 +178,52 @@ namespace Risebird.Business
         }
 
         /// <summary>
+        /// Returns the net PO Opening Balance per billing owner at the start of the selected month.
+        ///   Opening Balance = Σ(PO credit before month) − Σ(wallet debits before month)
+        /// A value of zero means the owner had no carry-forward credit entering the month.
+        /// </summary>
+        public async Task<Dictionary<int, decimal>> GetOwnerOpeningBalances(int clientId, int selectedMonth, int selectedYear)
+        {
+            var result = new Dictionary<int, decimal>();
+            try
+            {
+                // All POs for the client (no period filter — we filter in memory below)
+                var allPOs = await GetClientPOList(clientId, null, null, null);
+
+                // All monthly debit totals (BillingType 1 = Billing Owner scope)
+                var allDebits = await _walletRepository.GetOwnerMonthlyDebits(clientId, billingType: 1);
+
+                var ownerIds = allPOs
+                    .Where(p => p.BillingOwnerId.HasValue)
+                    .Select(p => p.BillingOwnerId!.Value)
+                    .Distinct();
+
+                foreach (var ownerId in ownerIds)
+                {
+                    // PO credit registered strictly before the 1st of selectedMonth
+                    var prePOCredit = allPOs
+                        .Where(p => p.BillingOwnerId == ownerId
+                                 && (p.POYear < selectedYear
+                                     || (p.POYear == selectedYear && p.POMonth < selectedMonth)))
+                        .Sum(p => p.POCreditAmount);
+
+                    // Wallet debits that occurred strictly before the 1st of selectedMonth
+                    var preConsumed = allDebits
+                        .Where(d => d.BillingOwnerId == ownerId
+                                 && (d.Year < selectedYear
+                                     || (d.Year == selectedYear && d.Month < selectedMonth)))
+                        .Sum(d => d.TotalDebit);
+
+                    // Net carry-forward (floor at zero — can't be negative)
+                    result[ownerId] = Math.Max(0m, prePOCredit - preConsumed);
+                }
+            }
+            catch { /* non-critical — returns empty dict on error */ }
+
+            return result;
+        }
+
+        /// <summary>
         /// Returns the BillingOwnerIds of all billing owners whose LATEST PO has had
         /// >= <paramref name="threshold"/> of its credit consumed (default 90 %).
         /// Consumption is computed using the same FIFO ledger as GetPOHistory so the

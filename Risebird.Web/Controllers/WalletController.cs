@@ -467,19 +467,11 @@ namespace Risebird.Web.Controllers
                 // Identify billing owners whose latest PO is >= 90% consumed — used for warning badge
                 ViewBag.HighConsumptionOwnerIds = await _walletService.GetHighConsumptionOwnerIds(clientId);
 
-                // PO Opening Balance = gross PO credit registered before the selected period.
-                // This shows how much credit was already in the pool entering this month.
-                // For the "all-time" scope, opening balance is zero (no prior period exists).
+                // PO Opening Balance = net credit carry-forward entering the selected month
+                // = Σ(PO credit before month) − Σ(debits before month)
+                // Hidden automatically for the "All Time" scope (no prior period).
                 if (!allDetails)
-                {
-                    var allPOs = await _walletService.GetClientPOList(clientId);
-                    ViewBag.POOpeningBalances = allPOs
-                        .Where(p => p.BillingOwnerId.HasValue
-                                 && (p.POYear < selectedYear
-                                     || (p.POYear == selectedYear && p.POMonth < selectedMonth)))
-                        .GroupBy(p => p.BillingOwnerId!.Value)
-                        .ToDictionary(g => g.Key, g => g.Sum(p => p.POCreditAmount));
-                }
+                    ViewBag.POOpeningBalances = await _walletService.GetOwnerOpeningBalances(clientId, selectedMonth, selectedYear);
             }
 
             if (TempData["ClientWalletMessage"] != null)
