@@ -131,8 +131,12 @@ namespace Risebird.Repository
                 SeverityBreakdown = row.SeverityBreakdown,
                 CandidateFeedbackComment = row.CandidateFeedbackComment,
                 QcMergeVerdict = row.QcMergeVerdict,
-                QcMergeScore = row.QcMergeScore,
+                QcMergeTotalPenalty = row.QcMergeTotalPenalty,
+                QcMergeQcScore = row.QcMergeQcScore,
+                QcMergeScore = row.QcMergeScore ?? row.QcMergeTotalPenalty,
+                QcMergeFlagsJson = row.QcMergeFlagsJson,
                 PaymentDeduction = row.PaymentDeduction,
+                PaymentReasonValuesJson = row.PaymentReasonValuesJson,
                 PaymentDeductionReasons = row.PaymentDeductionReasons,
                 PaymentRecommendation = row.PaymentRecommendation,
                 PaymentRecommendationComments = row.PaymentRecommendationComments
@@ -204,8 +208,12 @@ namespace Risebird.Repository
             public string SeverityBreakdown { get; set; }
             public string CandidateFeedbackComment { get; set; }
             public string QcMergeVerdict { get; set; }
+            public int? QcMergeTotalPenalty { get; set; }
+            public int? QcMergeQcScore { get; set; }
             public int? QcMergeScore { get; set; }
+            public string QcMergeFlagsJson { get; set; }
             public int PaymentDeduction { get; set; }
+            public string PaymentReasonValuesJson { get; set; }
             public string PaymentDeductionReasons { get; set; }
             public string PaymentRecommendation { get; set; }
             public string PaymentRecommendationComments { get; set; }
