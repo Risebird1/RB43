@@ -913,64 +913,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        // ── Manual: approve Employment Verification by operator judgement ────────────
-        // MANUAL-ONLY. Lets an operator mark the prospect as employment-verified regardless of Signzy or
-        // the LinkedIn verdict, when they are satisfied the prospect is suitable, and advances the funnel
-        // to EmploymentVerified. The automated pipeline never calls this — automation always goes through
-        // Signzy (+ LinkedIn fallback). The intent gate still applies, with an explicit operator override.
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ManualApproveEmployment(int id, string companyName = null, bool overrideIntent = false)
-        {
-            if (HttpContext.Session.GetString("email") == null)
-                return Json(new { success = false, error = "Not signed in." });
-
-            try
-            {
-                var record = await _repository.GetByIdAsync(id);
-                if (record == null)
-                    return Json(new { success = false, error = "Record not found." });
-
-                var user = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
-
-                // Intent gate (with operator override, logged for accountability).
-                if (!string.Equals(record.Intent, "Interested", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (!overrideIntent)
-                    {
-                        string intentMsg = string.IsNullOrEmpty(record.Intent)
-                            ? "Intent has not been confirmed yet. Collect the prospect's intent (email reply or AI Plivo call) before approving Employment Verification."
-                            : $"Intent is '{record.Intent}'. Employment Verification can only proceed once the prospect's intent is confirmed as 'Interested'.";
-                        return Json(new { success = false, error = intentMsg, intentBlocked = true });
-                    }
-
-                    await _repository.InsertHistoryAsync(id, "IntentOverride", record.Intent ?? "\u2014",
-                        $"Operator manually bypassed the intent gate to approve Employment Verification (intent was '{(string.IsNullOrEmpty(record.Intent) ? "not confirmed" : record.Intent)}').", user);
-                }
-
-                string company = !string.IsNullOrWhiteSpace(companyName)
-                    ? companyName.Trim()
-                    : (ExtractCompanyFromRole(record.CurrentRole) ?? record.EmploymentCompanyName);
-                string details = $"Manually approved as employed by {user} (operator judgement — Signzy/LinkedIn not required).";
-
-                var ok = await _repository.UpdateEmploymentVerificationAsync(id, true, company, true, details);
-                if (ok)
-                {
-                    await _repository.InsertHistoryAsync(id, "EmploymentVerification", "\u2014",
-                        $"Company: {company ?? "N/A"}, Employed: Yes — PASSED (manually approved by operator). {details}", user);
-                    await _repository.AdvanceFunnelStageAsync(id, "EmploymentVerified", "InProgress");
-                }
-
-                return Json(new { success = ok, verified = true, isEmployed = true, companyName = company });
-            }
-            catch (Exception ex)
-            {
-                await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(new { success = false, error = ex.Message });
-            }
-        }
-
         // ── Step 3: Analyze Resume (AI) ─────────────────────────────────────────────
 
         [HttpPost]
