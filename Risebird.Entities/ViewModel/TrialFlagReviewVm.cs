@@ -127,6 +127,11 @@ namespace Risebird.Entities.ViewModel
         /// <summary>Candidate feedback traits / comment text when CandidateRating risk is present.</summary>
         public string CandidateFeedbackComment { get; set; }
         public string QcMergeVerdict { get; set; }
+        /// <summary>Total penalty (AIMergeTotalPenalty / MergedAIQCDetails.total_penalty) — same as QCMergedAIDetails "Total Penalty".</summary>
+        public int? QcMergeTotalPenalty { get; set; }
+        /// <summary>QC score (qcmergescore / MergedAIQCDetails.total_qcmerge_score) — same as QCMergedAIDetails "Score" / QC Score.</summary>
+        public int? QcMergeQcScore { get; set; }
+        /// <summary>Legacy alias — prefer <see cref="QcMergeTotalPenalty"/>.</summary>
         public int? QcMergeScore { get; set; }
         /// <summary>Raw JSON array from MergedAIQCDetails.flags (category + flag + penalty).</summary>
         public string QcMergeFlagsJson { get; set; }
@@ -171,11 +176,11 @@ namespace Risebird.Entities.ViewModel
         public static string ReportQuality(int interviewId) =>
             ReportAiVerdict(interviewId);
 
-        /// <summary>QC Merge details (also hosts contradiction section on Trial AI Links).</summary>
+        /// <summary>QC Merge details page.</summary>
         public static string QcMergedAiDetails(int interviewId) =>
             $"/Interview/QCMergedAIDetails?interviewId={interviewId}";
 
-        /// <summary>Dedicated contradiction report page (IRF Audit / evidence). Trial AI Links "Contradiction" uses QcMergedAiDetails.</summary>
+        /// <summary>Contradiction report — same target as RiskCategory / PaymentSLA / Stats evidence.</summary>
         public static string ContradictionReport(int interviewId) =>
             $"/Interview/ContradictionReport?interviewId={interviewId}";
 

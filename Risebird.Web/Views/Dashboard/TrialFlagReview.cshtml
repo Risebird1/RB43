@@ -229,16 +229,54 @@
     .tfr-risk-badge--redo { background: #eaf4fb; color: #1a6fa0; }
     .tfr-risk-badge--fake { background: #f9ebf0; color: #922b5e; }
     .tfr-risk-badge--default { background: #f0f0f0; color: #555; }
-    .tfr-qc-cell { font-size: 12px; line-height: 1.35; max-width: 220px; }
-    .tfr-qc-score { font-size: 16px; font-weight: 700; color: #0f172a; line-height: 1.2; }
-    .tfr-qc-verdict { display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .02em; }
+    .tfr-qc-cell { font-size: 12px; line-height: 1.4; max-width: 220px; }
+    .tfr-qc-metrics { display: flex; flex-direction: column; gap: 3px; margin-bottom: 5px; }
+    .tfr-qc-metric {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 8px;
+        line-height: 1.25;
+    }
+    .tfr-qc-metric__label {
+        font-size: 11px;
+        color: #64748b;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+    .tfr-qc-metric__value {
+        font-size: 12px;
+        font-weight: 700;
+        color: #0f172a;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.01em;
+    }
+    .tfr-qc-metric__value.is-ok { color: #166534; }
+    .tfr-qc-metric__value.is-warn { color: #a16207; }
+    .tfr-qc-metric__value.is-danger { color: #b91c1c; }
+    .tfr-qc-verdict { display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .02em; margin: 2px 0 4px; }
     .tfr-qc-verdict.is-redo { background: #fee2e2; color: #991b1b; }
     .tfr-qc-verdict.is-suspicious { background: #ffedd5; color: #9a3412; }
     .tfr-qc-verdict.is-ok { background: #dcfce7; color: #166534; }
+    .tfr-flag-badges { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; margin-top: 2px; }
+    .tfr-flag-badge {
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: #fef3c7;
+        color: #92400e;
+        font-size: 10px;
+        font-weight: 600;
+        white-space: normal;
+        word-break: break-word;
+        line-height: 1.35;
+    }
     .tfr-ai-links { display: flex; flex-wrap: wrap; gap: 4px; }
     .tfr-ai-links a { font-size: 11px; font-weight: 600; color: #1d4ed8; text-decoration: none; white-space: nowrap; }
     .tfr-ai-links a:hover { text-decoration: underline; }
-    .tfr-flag-badge { display: inline-block; margin: 1px 2px; padding: 1px 6px; border-radius: 4px; background: #fef3c7; color: #92400e; font-size: 10px; font-weight: 600; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
     .tfr-rating-info {
         display: inline-flex; align-items: center; justify-content: center;
         width: 16px; height: 16px; margin-left: 4px; border-radius: 50%;
@@ -396,10 +434,13 @@
         // Red flags = MergedAIQCDetails flags[] only (evidence-filtered). Payment amount/recommendation → tooltip.
         var mergeFlags = TrialFlagEvidenceBadgeHelper.CollectMergeFlagBadges(row.QcMergeFlagsJson);
 
+        var totalPenalty = row.QcMergeTotalPenalty ?? row.QcMergeScore;
+        var qcScore = row.QcMergeQcScore;
         var hasVerdict = !string.IsNullOrWhiteSpace(row.QcMergeVerdict);
-        var hasScore = row.QcMergeScore.HasValue;
+        var hasPenalty = totalPenalty.HasValue;
+        var hasQcScore = qcScore.HasValue;
         var hasFlags = mergeFlags.Count > 0;
-        if (!hasVerdict && !hasScore && !hasFlags && row.PaymentDeduction <= 0
+        if (!hasVerdict && !hasPenalty && !hasQcScore && !hasFlags && row.PaymentDeduction <= 0
             && string.IsNullOrWhiteSpace(row.PaymentRecommendation)
             && string.IsNullOrWhiteSpace(row.PaymentRecommendationComments))
             return new Microsoft.AspNetCore.Html.HtmlString(@"<span style=""color:#94a3b8;"">—</span>");
@@ -411,14 +452,39 @@
             tipParts.Add("Recommendation: " + row.PaymentRecommendation);
         if (!string.IsNullOrWhiteSpace(row.PaymentRecommendationComments))
             tipParts.Add(row.PaymentRecommendationComments);
-        // Positive payment reason evidence (tooltip only — never badge on null/empty)
         foreach (var payFlag in TrialFlagEvidenceBadgeHelper.CollectPaymentReasonBadgesFromJson(row.PaymentReasonValuesJson))
             tipParts.Add(payFlag);
         var tip = tipParts.Count > 0 ? System.Net.WebUtility.HtmlEncode(string.Join(" — ", tipParts)) : "";
 
-        var html = $@"<div class=""tfr-qc-cell""{(string.IsNullOrEmpty(tip) ? "" : $@" title=""{tip}""")}">";
-        if (hasScore)
-            html += $@"<div class=""tfr-qc-score"">{row.QcMergeScore.Value}</div>";
+        var tipAttr = string.IsNullOrEmpty(tip) ? string.Empty : (" title=\"" + tip + "\"");
+        var html = "<div class=\"tfr-qc-cell\"" + tipAttr + ">";
+
+        // Compact label + value (same thresholds as QCMergedAIDetails, no chips)
+        if (hasPenalty || hasQcScore)
+        {
+            html += "<div class=\"tfr-qc-metrics\">";
+            if (hasPenalty)
+            {
+                var pTone = totalPenalty.Value >= 10 ? "is-danger"
+                    : totalPenalty.Value >= 5 ? "is-warn"
+                    : "is-ok";
+                html += "<div class=\"tfr-qc-metric\">"
+                    + "<span class=\"tfr-qc-metric__label\">Total penalty :</span>"
+                    + "<span class=\"tfr-qc-metric__value " + pTone + "\">" + totalPenalty.Value + "</span>"
+                    + "</div>";
+            }
+            if (hasQcScore)
+            {
+                var sTone = qcScore.Value >= 8 ? "is-ok"
+                    : qcScore.Value >= 5 ? "is-warn"
+                    : "is-danger";
+                html += "<div class=\"tfr-qc-metric\">"
+                    + "<span class=\"tfr-qc-metric__label\">QC score :</span>"
+                    + "<span class=\"tfr-qc-metric__value " + sTone + "\">" + qcScore.Value + "</span>"
+                    + "</div>";
+            }
+            html += "</div>";
+        }
 
         if (hasVerdict)
         {
@@ -427,11 +493,17 @@
                 : v.Equals("suspicious", StringComparison.OrdinalIgnoreCase) ? "is-suspicious"
                 : "is-ok";
             var label = char.ToUpperInvariant(v[0]) + v.Substring(1).ToLowerInvariant();
-            html += $@"<div><span class=""tfr-qc-verdict {css}"">{System.Net.WebUtility.HtmlEncode(label)}</span></div>";
+            html += "<div><span class=\"tfr-qc-verdict " + css + "\">" + System.Net.WebUtility.HtmlEncode(label) + "</span></div>";
         }
 
-        foreach (var badge in mergeFlags)
-            html += $@"<span class=""tfr-flag-badge"" title=""{System.Net.WebUtility.HtmlEncode(badge)}"">{System.Net.WebUtility.HtmlEncode(badge)}</span>";
+        if (hasFlags)
+        {
+            html += "<div class=\"tfr-flag-badges\">";
+            foreach (var badge in mergeFlags)
+                html += "<span class=\"tfr-flag-badge\" title=\"" + System.Net.WebUtility.HtmlEncode(badge) + "\">"
+                    + System.Net.WebUtility.HtmlEncode(badge) + "</span>";
+            html += "</div>";
+        }
 
         html += "</div>";
         return new Microsoft.AspNetCore.Html.HtmlString(html);
@@ -445,7 +517,7 @@
 
         var t = TrialFlagDrillDownUrls.TranscriptQuality(id, row.IrfId);
         var r = TrialFlagDrillDownUrls.ReportAiVerdict(id);
-        var c = TrialFlagDrillDownUrls.QcMergedAiDetails(id); // contradiction section on QC Merge page
+        var c = TrialFlagDrillDownUrls.ContradictionReport(id);
         var q = TrialFlagDrillDownUrls.QcMergedAiDetails(id);
         return new Microsoft.AspNetCore.Html.HtmlString(
             $@"<div class=""tfr-ai-links"">
@@ -821,6 +893,8 @@
                 return '@TrialFlagDrillDownUrls.TranscriptQuality(0, 0)'.replace('interviewId=0', 'interviewId=' + id).replace('irfId=0', 'irfId=' + irf);
             if (sourceName === 'Report AI' || sourceName === 'Report AI Score')
                 return '@TrialFlagDrillDownUrls.ReportAiVerdict(0)'.replace('interviewId=0', 'interviewId=' + id);
+            if (sourceName === 'Contradiction AI Score' || sourceName === 'Contradiction')
+                return '@TrialFlagDrillDownUrls.ContradictionReport(0)'.replace('interviewId=0', 'interviewId=' + id);
             return '@TrialFlagDrillDownUrls.QcMergedAiDetails(0)'.replace('interviewId=0', 'interviewId=' + id);
         }
 

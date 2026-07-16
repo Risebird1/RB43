@@ -46,6 +46,8 @@ BEGIN
             CAST(NULL AS VARCHAR(500)) AS SeverityBreakdown,
             CAST(NULL AS NVARCHAR(1000)) AS CandidateFeedbackComment,
             CAST(NULL AS VARCHAR(20)) AS QcMergeVerdict,
+            CAST(NULL AS INT) AS QcMergeTotalPenalty,
+            CAST(NULL AS INT) AS QcMergeQcScore,
             CAST(NULL AS INT) AS QcMergeScore,
             CAST(NULL AS NVARCHAR(MAX)) AS QcMergeFlagsJson,
             CAST(0 AS INT) AS PaymentDeduction,
@@ -132,7 +134,15 @@ BEGIN
         END AS QcMergeVerdict,
         COALESCE(
             CASE WHEN @HasAiMergePenalty = 1 THEN q.AIMergeTotalPenalty END,
+            CASE WHEN @HasMergedJson = 1 THEN TRY_CAST(JSON_VALUE(q.MergedAIQCDetails, '$.total_penalty') AS INT) END
+        ) AS QcMergeTotalPenalty,
+        COALESCE(
             q.qcmergescore,
+            CASE WHEN @HasMergedJson = 1 THEN TRY_CAST(JSON_VALUE(q.MergedAIQCDetails, '$.total_qcmerge_score') AS INT) END
+        ) AS QcMergeQcScore,
+        -- Legacy: same as Total Penalty (do not conflate with QC score)
+        COALESCE(
+            CASE WHEN @HasAiMergePenalty = 1 THEN q.AIMergeTotalPenalty END,
             CASE WHEN @HasMergedJson = 1 THEN TRY_CAST(JSON_VALUE(q.MergedAIQCDetails, '$.total_penalty') AS INT) END
         ) AS QcMergeScore,
         CASE WHEN @HasMergedJson = 1 THEN JSON_QUERY(q.MergedAIQCDetails, '$.flags') END AS QcMergeFlagsJson,
