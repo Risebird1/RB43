@@ -257,7 +257,9 @@ namespace Risebird.Business
 
         internal static void ApplyRiskVerdictAndSeverity(TrialJudgmentResultVm judgment, RiskCategory risk)
         {
-            var riskPresent = risk != null && !string.IsNullOrWhiteSpace(risk.Description);
+            // Live risk only when Severity is non-null (husk / Description-only row is NOT risk).
+            // Never null-coalesce missing severity to P0.
+            var riskPresent = risk != null && !string.IsNullOrWhiteSpace(risk.Severity);
             var factorPass = string.Equals(
                 judgment.OverallVerdict,
                 TrialFlagConstants.VerdictGoodTrial,
@@ -266,9 +268,7 @@ namespace Risebird.Business
             if (riskPresent)
             {
                 judgment.OverallVerdict = TrialFlagConstants.VerdictBadTrial;
-                judgment.Severity = !string.IsNullOrWhiteSpace(risk.Severity)
-                    ? risk.Severity
-                    : TrialFlagConstants.SeverityP0;
+                judgment.Severity = risk.Severity;
                 return;
             }
 
