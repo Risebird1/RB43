@@ -78,8 +78,32 @@ BEGIN
         tf.JoinTimeMinutes,
         tf.InterviewDurationMinutes,
         tf.OverallVerdict,
-        CASE WHEN rc.InterviewId IS NOT NULL THEN 'bad_trial' ELSE tf.OverallVerdict END AS DisplayVerdict,
-        COALESCE(rc.Severity, tf.Severity) AS Severity,
+        -- DisplayVerdict: live risk only when rc.Severity IS NOT NULL (husk/NULL row is NOT risk).
+        -- Otherwise factor-based: all six Pass bits = good_trial, else bad_trial. Never trust stale tf alone for risk.
+        CASE
+            WHEN rc.Severity IS NOT NULL THEN 'bad_trial'
+            WHEN ISNULL(tf.TranscriptQualityPass, 0) = 1
+             AND ISNULL(tf.ReportQualityPass, 0) = 1
+             AND ISNULL(tf.DecisionQualityPass, 0) = 1
+             AND ISNULL(tf.CandidateRatingPass, 0) = 1
+             AND ISNULL(tf.JoinTimePass, 0) = 1
+             AND ISNULL(tf.InterviewDurationPass, 0) = 1
+            THEN 'good_trial'
+            ELSE 'bad_trial'
+        END AS DisplayVerdict,
+        -- DisplaySeverity: live rc.Severity when present; else P4 (factor fail) / P5 (clean).
+        -- NEVER fall back to tf.Severity; NEVER default NULL to P0.
+        CASE
+            WHEN rc.Severity IS NOT NULL THEN rc.Severity
+            WHEN ISNULL(tf.TranscriptQualityPass, 0) = 1
+             AND ISNULL(tf.ReportQualityPass, 0) = 1
+             AND ISNULL(tf.DecisionQualityPass, 0) = 1
+             AND ISNULL(tf.CandidateRatingPass, 0) = 1
+             AND ISNULL(tf.JoinTimePass, 0) = 1
+             AND ISNULL(tf.InterviewDurationPass, 0) = 1
+            THEN 'P5'
+            ELSE 'P4'
+        END AS Severity,
         tf.ReviewStatus,
         tf.FlaggedAtUtc,
         tf.ReviewedAtUtc,
