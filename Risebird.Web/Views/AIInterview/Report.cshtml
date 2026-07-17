@@ -484,6 +484,591 @@
             margin: 18px 0;
         }
 
+    /* ── Audio Adaptive: AI Analysis (video-report style) ───────────────── */
+    .rb-ai-adaptive-report {
+        padding: 4px 8px 8px;
+        background: #fff;
+        color: #334155;
+        line-height: 1.55;
+    }
+
+    .rb-ai-adaptive-report > *:first-child {
+        margin-top: 0;
+    }
+
+    .rb-ai-adaptive-report h2,
+    .rb-ai-adaptive-report h3,
+    .rb-ai-adaptive-report h4 {
+        color: #0f172a;
+        margin: 22px 0 10px;
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    .rb-ai-adaptive-report table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 6px 0 12px;
+        font-size: 12px;
+        table-layout: fixed;
+        background: #fff;
+        border: 1px solid #e8edf2;
+        border-radius: 8px;
+        overflow: visible;
+        box-shadow: none;
+        max-width: 100% !important;
+    }
+
+    .rb-ai-adaptive-report th,
+    .rb-ai-adaptive-report td {
+        border: none;
+        border-bottom: 1px solid #eef2f6;
+        padding: 4px 8px;
+        text-align: left;
+        vertical-align: middle;
+        word-wrap: break-word;
+        line-height: 1.3;
+        color: #334155;
+    }
+
+    .rb-ai-adaptive-report tr:last-child td {
+        border-bottom: none;
+    }
+
+    .rb-ai-adaptive-report th {
+        background: #f1f5f9;
+        color: #64748b;
+        font-weight: 700;
+        font-size: 10.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        padding: 5px 8px;
+        border-bottom: 1px solid #e2e8f0;
+        white-space: nowrap;
+    }
+
+    .rb-ai-adaptive-report tbody tr:nth-child(even) td,
+    .rb-ai-adaptive-report tr:nth-child(even) td {
+        background: #f8fafc;
+    }
+
+    .rb-ai-adaptive-report tbody tr:hover td {
+        background: #f1f5f9;
+    }
+
+    /* Compact competency / score rating tables — wrap text, no scroll */
+    .rb-ai-adaptive-report h2.rb-adaptive-table-title,
+    .rb-ai-adaptive-report h3.rb-adaptive-table-title,
+    .rb-ai-adaptive-report h4.rb-adaptive-table-title,
+    .rb-ai-adaptive-report .rb-adaptive-table-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 10px;
+        padding: 0 0 8px;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid #eef2f6;
+        border-radius: 0;
+        color: #1e293b;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        line-height: 1.3;
+        text-transform: uppercase;
+    }
+
+    .rb-ai-adaptive-report h2.rb-adaptive-table-title::before,
+    .rb-ai-adaptive-report h3.rb-adaptive-table-title::before,
+    .rb-ai-adaptive-report h4.rb-adaptive-table-title::before {
+        content: none;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-table-title i {
+        color: #3b82f6;
+        font-size: 14px;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-section-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 14px;
+        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+        margin: 0 0 14px;
+    }
+
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table {
+        width: 100% !important;
+        max-width: 100% !important;
+        table-layout: fixed;
+        font-size: 12px;
+        margin: 0 0 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        overflow: visible;
+        border-collapse: collapse;
+    }
+
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table thead th,
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table tr:first-child th,
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table tr:first-child td.rb-adaptive-th {
+        background: #f1f5f9 !important;
+        color: #475569 !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        text-transform: none;
+        letter-spacing: 0.01em;
+        padding: 8px 10px !important;
+        border: none !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        text-align: left;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table th:not(:first-child),
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table tr:first-child th:not(:first-child),
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table tr:first-child td.rb-adaptive-th:not(:first-child) {
+        text-align: center;
+    }
+
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table td {
+        padding: 8px 10px !important;
+        vertical-align: top;
+        line-height: 1.4;
+        border: none !important;
+        border-bottom: 1px solid #eef2f6 !important;
+        overflow: visible;
+        text-overflow: clip;
+        white-space: normal;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table tr:last-child td {
+        border-bottom: none !important;
+    }
+
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table td:first-child {
+        text-align: left;
+        font-weight: 600;
+        color: #1e293b;
+        width: 34%;
+    }
+
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table td.rb-adaptive-text-col {
+        text-align: left !important;
+        white-space: normal !important;
+        font-weight: 400;
+        color: #334155;
+        width: auto;
+    }
+
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table td.rb-adaptive-metric-col {
+        text-align: center !important;
+        white-space: nowrap;
+        vertical-align: middle;
+        width: 1%;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-clamp {
+        display: block;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-clamp__short,
+    .rb-ai-adaptive-report .rb-adaptive-clamp__full {
+        white-space: pre-wrap;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        line-height: 1.45;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-clamp.is-expanded .rb-adaptive-clamp__short {
+        display: none;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-clamp:not(.is-expanded) .rb-adaptive-clamp__full {
+        display: none;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-clamp__toggle {
+        display: inline-block;
+        margin-top: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #2563eb;
+        cursor: pointer;
+        text-decoration: none;
+        background: none;
+        border: none;
+        padding: 0;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-clamp__toggle:hover {
+        text-decoration: underline;
+        color: #1d4ed8;
+    }
+
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table .rb-adaptive-score {
+        font-weight: 700;
+        color: #0f172a;
+        font-variant-numeric: tabular-nums;
+        font-size: 12px;
+    }
+
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table .rb-adaptive-bar {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        width: 100%;
+        max-width: 120px;
+        margin: 0 auto;
+        vertical-align: middle;
+    }
+
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table .rb-adaptive-bar__track {
+        flex: 1 1 auto;
+        height: 6px;
+        min-width: 48px;
+        background: #e2e8f0;
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table .rb-adaptive-bar__fill {
+        display: block;
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #38bdf8 0%, #22c55e 100%);
+    }
+
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table .rb-adaptive-bar__fill--low { background: #ef4444; }
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table .rb-adaptive-bar__fill--mid { background: #eab308; }
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table .rb-adaptive-bar__fill--high { background: #22c55e; }
+
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table .rb-adaptive-stars {
+        display: inline-flex;
+        gap: 1px;
+        color: #f59e0b;
+        font-size: 11px;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .rb-ai-adaptive-report table.rb-adaptive-rating-table .rb-adaptive-stars .rb-star-empty {
+        color: #cbd5e1;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-rating-pill {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        line-height: 1.3;
+        white-space: nowrap;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-rating-pill--excellent { background: #dcfce7; color: #15803d; }
+    .rb-ai-adaptive-report .rb-adaptive-rating-pill--good { background: #dbeafe; color: #1d4ed8; }
+    .rb-ai-adaptive-report .rb-adaptive-rating-pill--average { background: #fef9c3; color: #a16207; }
+    .rb-ai-adaptive-report .rb-adaptive-rating-pill--below { background: #ffedd5; color: #c2410c; }
+    .rb-ai-adaptive-report .rb-adaptive-rating-pill--poor { background: #fee2e2; color: #b91c1c; }
+    .rb-ai-adaptive-report .rb-adaptive-rating-pill--neutral { background: #f1f5f9; color: #475569; }
+
+    .rb-ai-adaptive-report .rb-adaptive-table-wrap {
+        overflow: visible !important;
+        max-height: none !important;
+        margin: 0 0 14px;
+        border-radius: 8px;
+        width: 100%;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-table-wrap > table {
+        margin: 0;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .rb-ai-adaptive-report table {
+        max-width: 100% !important;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-overview {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin: 0 0 16px;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-metrics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-metric-card {
+        flex: 1 1 180px;
+        background: rgba(151, 202, 244, 0.12);
+        border: 1px solid rgba(151, 202, 244, 0.28);
+        border-radius: 10px;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-metric-card__label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #475569;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-metric-card__value {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #0f172a;
+        white-space: nowrap;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-two-col {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-panel {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 14px;
+        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+        min-width: 0;
+        height: 100%;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-panel--comment .rb-adaptive-field__value {
+        font-size: 12.5px;
+        line-height: 1.45;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-panel__head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 10px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #eef2f6;
+        font-size: 12px;
+        font-weight: 700;
+        color: #1e293b;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-panel__head i {
+        color: #3b82f6;
+        font-size: 14px;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-panel--comment .rb-adaptive-panel__head i {
+        color: #eab308;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-panel .rb-adaptive-table-wrap,
+    .rb-ai-adaptive-report .rb-adaptive-panel table.rb-adaptive-rating-table {
+        margin: 0;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-panel table.rb-adaptive-rating-table th,
+    .rb-ai-adaptive-report .rb-adaptive-panel table.rb-adaptive-rating-table td {
+        padding: 4px 8px !important;
+        font-size: 11.5px;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-panel table.rb-adaptive-rating-table th {
+        padding: 6px 8px !important;
+        font-size: 10px !important;
+        background: #eef6ff !important;
+        color: #1e3a5f !important;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-field {
+        margin: 0 0 10px;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-field:last-child {
+        margin-bottom: 0;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-field__label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: #64748b;
+        margin-bottom: 4px;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-field__value {
+        font-size: 13px;
+        color: #334155;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-verdict-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-verdict-badge--reject {
+        background: #fdebf3;
+        color: #ee4936;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-verdict-badge--select {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-verdict-badge--neutral {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    @@media (max-width: 991px) {
+        .rb-ai-adaptive-report .rb-adaptive-two-col {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .rb-ai-adaptive-report hr {
+
+        border: 0;
+        border-top: 1px solid #e8edf2;
+        margin: 20px 0;
+    }
+
+    .rb-ai-adaptive-report p {
+        margin: 0 0 10px;
+        font-size: 13.5px;
+        color: #475569;
+        line-height: 1.6;
+    }
+
+    .rb-ai-adaptive-report ul,
+    .rb-ai-adaptive-report ol {
+        margin: 0 0 14px;
+        padding-left: 22px;
+        color: #475569;
+        font-size: 13.5px;
+    }
+
+    .rb-ai-adaptive-report li {
+        margin-bottom: 8px;
+        line-height: 1.55;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-q-block {
+        padding: 16px 4px 18px;
+        margin: 0;
+        border-bottom: 1px solid #e8edf2;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-q-block:last-child {
+        border-bottom: none;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-q-head {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin: 0 0 10px;
+        padding: 0;
+        border: none;
+        font-size: 14.5px;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1.45;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-q-head::before {
+        content: "\f00c";
+        font-family: FontAwesome;
+        flex-shrink: 0;
+        width: 26px;
+        height: 26px;
+        margin-top: 1px;
+        border-radius: 50%;
+        background: #22c55e;
+        color: #fff;
+        font-size: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 26px;
+        text-align: center;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-label {
+        display: inline-block;
+        font-weight: 700;
+        font-size: 12px;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        margin-right: 4px;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-label--strength,
+    .rb-ai-adaptive-report .rb-adaptive-label--verdict {
+        color: #15803d;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-label--weakness {
+        color: #dc2626;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-label--evidence {
+        color: #2563eb;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-pill {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        vertical-align: middle;
+        margin-left: 4px;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-pill--positive {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-pill--negative {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-pill--neutral {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
     .rb-report-actions {
         display: flex;
         gap: 16px;
@@ -770,11 +1355,14 @@
     .rb-ai-rubric-table th,
     .rb-ai-questions-table th {
         background: #f1f5f9;
-        font-size: 10.5px;
+        font-size: 11px;
         font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        color: #64748b;
+        text-transform: none;
+        letter-spacing: 0.01em;
+        color: #475569;
+        border: none;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 8px 10px;
     }
 
     .rb-ai-rubric-table tbody tr:nth-child(even),
@@ -2525,20 +3113,22 @@
                 </div>
             </div>
         }
-        <div style="display:flex; align-items:center; margin: 32px 0 0px 0; gap: 0;">
-            <div style="flex:1; height:2px; background: linear-gradient(90deg, transparent 0%, #4eda92 40%, #56e0cb 100%); border-radius:2px; opacity:0.5;"></div>
-            <div style="display:flex; align-items:center; gap:8px; padding: 0 18px; background:#fff; position:relative; z-index:1;">
-                <span style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; background: linear-gradient(135deg, #4eda92 0%, #56e0cb 100%); box-shadow: 0 2px 8px rgba(78,218,146,0.35);">
-                    <i class="fa fa-robot" style="color:#fff; font-size:15px;"></i>
-                </span>
-                <span style="font-size:17px; font-weight:600; color:#000; letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap;">AI Analysis &amp; Recommendations</span>
+      
+            <div style="display:flex; align-items:center; margin: 32px 0 0px 0; gap: 0;">
+                <div style="flex:1; height:2px; background: linear-gradient(90deg, transparent 0%, #4eda92 40%, #56e0cb 100%); border-radius:2px; opacity:0.5;"></div>
+                <div style="display:flex; align-items:center; gap:8px; padding: 0 18px; background:#fff; position:relative; z-index:1;">
+                    <span style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; background: linear-gradient(135deg, #4eda92 0%, #56e0cb 100%); box-shadow: 0 2px 8px rgba(78,218,146,0.35);">
+                        <i class="fa fa-robot" style="color:#fff; font-size:15px;"></i>
+                    </span>
+                    <span style="font-size:17px; font-weight:600; color:#000; letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap;">AI Analysis &amp; Recommendations</span>
+                </div>
+                <div style="flex:1; height:2px; background: linear-gradient(90deg, #56e0cb 0%, #4eda92 60%, transparent 100%); border-radius:2px; opacity:0.5;"></div>
             </div>
-            <div style="flex:1; height:2px; background: linear-gradient(90deg, #56e0cb 0%, #4eda92 60%, transparent 100%); border-radius:2px; opacity:0.5;"></div>
-        </div>
+        
 
 
         <div>
-            <div class="rb-report-section" style="margin-bottom:20px;">
+            <div class="rb-report-section" style="margin-bottom:20px; @(ViewBag.IsAdaptive == true ? "margin-top:0;border-top:none;border-radius:0 0 10px 10px;" : "")">
 
                 <div class="rb-analysis-content">
                     @if (Model.AIInterviewEvaluation != null)
@@ -2812,7 +3402,7 @@
                     }
                     else if (!string.IsNullOrWhiteSpace(Model.RawAIReportHtml))
                     {
-                        <div class="rb-ai-raw-report">
+                        <div class="@(ViewBag.IsAdaptive == true ? "rb-ai-adaptive-report" : "rb-ai-raw-report")" id="@(ViewBag.IsAdaptive == true ? "rb-adaptive-ai-analysis" : null)">
                             @Html.Raw(Model.RawAIReportHtml)
                         </div>
                     }
@@ -3635,6 +4225,748 @@
             }
         });
     }
+</script>
+<script>
+    /* Audio Adaptive only: restyle AI Analysis HTML to match video-report checklist look */
+    document.addEventListener('DOMContentLoaded', function () {
+        var root = document.getElementById('rb-adaptive-ai-analysis');
+        if (!root) return;
+
+        function trimPreambleBeforeCompetency() {
+            function textOf(el) {
+                return ((el && el.textContent) || '').replace(/\s+/g, ' ').trim();
+            }
+
+            function isCompetencyStart(el) {
+                if (!el || el.nodeType !== 1) return false;
+                var t = textOf(el);
+                if (/competenc(y|ies)?\s*rating/i.test(t) && t.length < 120) return true;
+                if (/technical skills analysis|skill[- ]?wise\s*(breakdown|analysis)|score\s*rubric/i.test(t) && t.length < 120) return true;
+                if (el.tagName === 'TABLE') {
+                    var header = '';
+                    Array.prototype.forEach.call(el.querySelectorAll('th'), function (th) {
+                        header += ' ' + (th.textContent || '');
+                    });
+                    if (!header.trim() && el.rows.length) {
+                        Array.prototype.forEach.call(el.rows[0].cells, function (cell) {
+                            header += ' ' + (cell.textContent || '');
+                        });
+                    }
+                    return /competenc|skill\s*name|self.?rating|ai.?rating|rubric/i.test(header);
+                }
+                return false;
+            }
+
+            // Prefer an explicit competency/score heading, else first matching table
+            var start = null;
+            var nodes = root.querySelectorAll('h1, h2, h3, h4, h5, p, div, table, strong, b, span');
+            for (var i = 0; i < nodes.length; i++) {
+                if (isCompetencyStart(nodes[i])) {
+                    start = nodes[i];
+                    break;
+                }
+            }
+            if (!start) return;
+
+            // Walk up to a direct child of root so we can remove preceding siblings cleanly
+            var cut = start;
+            while (cut.parentElement && cut.parentElement !== root) {
+                cut = cut.parentElement;
+            }
+            if (cut.parentElement !== root) return;
+
+            var prev = cut.previousSibling;
+            while (prev) {
+                var remove = prev;
+                prev = prev.previousSibling;
+                root.removeChild(remove);
+            }
+
+            // Strip leading preamble inside the same wrapper as the competency block
+            if (cut !== start) {
+                var cur = start;
+                while (cur && cur !== cut) {
+                    var p = cur.parentElement;
+                    if (!p) break;
+                    var sib = cur.previousSibling;
+                    while (sib) {
+                        var rm = sib;
+                        sib = sib.previousSibling;
+                        p.removeChild(rm);
+                    }
+                    cur = p;
+                }
+            }
+        }
+
+        trimPreambleBeforeCompetency();
+
+        function decorateLabels(el) {
+            if (!el || el.nodeType !== 1) return;
+            if (el.classList && (el.classList.contains('rb-adaptive-label') || el.classList.contains('rb-adaptive-pill'))) return;
+
+            if (el.children && el.children.length) {
+                var hasNestedBlock = false;
+                for (var i = 0; i < el.children.length; i++) {
+                    var tag = el.children[i].tagName;
+                    if (tag === 'TABLE' || tag === 'UL' || tag === 'OL' || tag === 'H2' || tag === 'H3' || tag === 'H4' || tag === 'DIV') {
+                        hasNestedBlock = true;
+                        break;
+                    }
+                }
+                if (hasNestedBlock) {
+                    Array.prototype.forEach.call(el.children, decorateLabels);
+                    return;
+                }
+            }
+
+            var html = el.innerHTML;
+            if (!html) return;
+            var text = el.textContent || '';
+            if (!/Strength|Weakness|AI ANALYSIS|EVIDENCE|Verdict|Areas of Improvement/i.test(text)) return;
+
+            var next = html
+                .replace(/\b(AI\s*ANALYSIS\s*:\s*VERDICT)\s*:?/gi, '<span class="rb-adaptive-label rb-adaptive-label--verdict">$1</span>')
+                .replace(/\b(EVIDENCE\s+FROM\s+TRANSCRIPT)\s*:?/gi, '<span class="rb-adaptive-label rb-adaptive-label--evidence">$1</span>')
+                .replace(/\b(Strengths?)\s*:/gi, '<span class="rb-adaptive-label rb-adaptive-label--strength">$1:</span>')
+                .replace(/\b(Weaknesses?)\s*:/gi, '<span class="rb-adaptive-label rb-adaptive-label--weakness">$1:</span>')
+                .replace(/\b(Areas of Improvement)\s*:/gi, '<span class="rb-adaptive-label rb-adaptive-label--weakness">$1:</span>')
+                .replace(/(Verdict\s*:?\s*)(Positive)\b/gi, '$1<span class="rb-adaptive-pill rb-adaptive-pill--positive">$2</span>')
+                .replace(/(Verdict\s*:?\s*)(Negative)\b/gi, '$1<span class="rb-adaptive-pill rb-adaptive-pill--negative">$2</span>');
+            if (next !== html) el.innerHTML = next;
+        }
+
+        function isQuestionHeading(el) {
+            var t = (el.textContent || '').replace(/\s+/g, ' ').trim();
+            if (!t || t.length > 400) return false;
+            if (/^\d+[\.\)]\s+\S/.test(t)) return true;
+            if (/^Q\d+[\.:)\s]/i.test(t)) return true;
+            if (/^Question\s*\d+/i.test(t)) return true;
+            return false;
+        }
+
+        var heads = [];
+        Array.prototype.forEach.call(root.querySelectorAll('h2, h3, h4, p, li'), function (el) {
+            if (el.closest('table')) return;
+            if (el.querySelector('h2, h3, h4, table')) return;
+            if (isQuestionHeading(el)) {
+                el.classList.add('rb-adaptive-q-head');
+                heads.push(el);
+            }
+        });
+
+        heads.forEach(function (head) {
+            if (head.parentElement && head.parentElement.classList.contains('rb-adaptive-q-block')) return;
+            var block = document.createElement('div');
+            block.className = 'rb-adaptive-q-block';
+            head.parentNode.insertBefore(block, head);
+            block.appendChild(head);
+
+            var sibling = block.nextSibling;
+            while (sibling) {
+                if (sibling.nodeType === 1) {
+                    if (sibling.classList && sibling.classList.contains('rb-adaptive-q-head')) break;
+                    if (sibling.classList && sibling.classList.contains('rb-adaptive-q-block')) break;
+                    var tag = sibling.tagName;
+                    if (tag === 'HR' || tag === 'TABLE') break;
+                    if ((tag === 'H2' || tag === 'H3' || tag === 'H4') && isQuestionHeading(sibling)) break;
+                }
+                var move = sibling;
+                sibling = sibling.nextSibling;
+                block.appendChild(move);
+            }
+        });
+
+        function ratingPillClass(text) {
+            var t = (text || '').toLowerCase().trim();
+            if (!t) return null;
+            if (/excellent|outstanding|strong|selected|hire|high/.test(t)) return 'rb-adaptive-rating-pill--excellent';
+            if (/good|above average|proficient|pass|positive/.test(t)) return 'rb-adaptive-rating-pill--good';
+            if (/average|moderate|fair|ok|adequate/.test(t)) return 'rb-adaptive-rating-pill--average';
+            if (/below|needs improvement|borderline|caution/.test(t)) return 'rb-adaptive-rating-pill--below';
+            if (/poor|weak|fail|reject|negative|low/.test(t)) return 'rb-adaptive-rating-pill--poor';
+            return 'rb-adaptive-rating-pill--neutral';
+        }
+
+        function enhanceRatingTables() {
+            var clampId = 0;
+
+            function parseScore(raw) {
+                if (!raw) return null;
+                var m = String(raw).match(/(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)/);
+                if (m) return { value: parseFloat(m[1]), max: parseFloat(m[2]) };
+                m = String(raw).match(/^(\d+(?:\.\d+)?)\s*%$/);
+                if (m) return { value: parseFloat(m[1]), max: 100 };
+                m = String(raw).match(/^(\d+(?:\.\d+)?)$/);
+                if (m) return { value: parseFloat(m[1]), max: null };
+                return null;
+            }
+
+            function escapeHtml(s) {
+                return String(s)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;');
+            }
+
+            function barHtml(value, max) {
+                if (max == null || max <= 0) max = 10;
+                var pct = Math.max(0, Math.min(100, (value / max) * 100));
+                var tone = pct >= 70 ? 'rb-adaptive-bar__fill--high' : (pct >= 40 ? 'rb-adaptive-bar__fill--mid' : 'rb-adaptive-bar__fill--low');
+                return '<div class="rb-adaptive-bar" title="' + value + ' / ' + max + '">' +
+                    '<span class="rb-adaptive-score">' + value + '</span>' +
+                    '<span class="rb-adaptive-bar__track"><span class="rb-adaptive-bar__fill ' + tone + '" style="width:' + pct.toFixed(1) + '%;"></span></span>' +
+                    '</div>';
+            }
+
+            function starsHtml(value, max) {
+                if (max == null || max <= 0) max = 5;
+                var filled = Math.round((value / max) * 5);
+                filled = Math.max(0, Math.min(5, filled));
+                var html = '<span class="rb-adaptive-stars" aria-label="' + value + ' of ' + max + '">';
+                for (var i = 1; i <= 5; i++) {
+                    html += '<i class="fa fa-star' + (i <= filled ? '' : ' rb-star-empty') + '"></i>';
+                }
+                return html + '</span>';
+            }
+
+            function applyClamp(cell, raw, limit) {
+                limit = limit || 140;
+                if (!raw || raw.length <= limit) {
+                    cell.classList.add('rb-adaptive-text-col');
+                    cell.textContent = raw;
+                    return;
+                }
+                clampId += 1;
+                var id = 'rb-clamp-' + clampId;
+                var shortText = raw.substring(0, limit).replace(/\s+\S*$/, '') + '…';
+                cell.classList.add('rb-adaptive-text-col');
+                cell.innerHTML =
+                    '<div class="rb-adaptive-clamp" id="' + id + '">' +
+                    '<div class="rb-adaptive-clamp__short">' + escapeHtml(shortText) + '</div>' +
+                    '<div class="rb-adaptive-clamp__full">' + escapeHtml(raw) + '</div>' +
+                    '<button type="button" class="rb-adaptive-clamp__toggle" data-clamp="' + id + '" aria-expanded="false">Read more</button>' +
+                    '</div>';
+            }
+
+            function isTextColumn(col, idx, scored, raw) {
+                if (/question|comment|remark|feedback|evidence|description|observation|note|detail|analysis|reason/.test(col)) return true;
+                if (idx === 0 && raw && raw.length > 40 && !scored) return true;
+                if (!scored && raw && raw.length > 60 && !/rating|verdict|grade|level|status|result/.test(col)) return true;
+                return false;
+            }
+
+            // Style section titles above rating/rubric tables
+            Array.prototype.forEach.call(root.querySelectorAll('h2, h3, h4, p, strong, b, div'), function (el) {
+                if (el.querySelector('table, h2, h3, h4')) return;
+                var t = ((el.textContent || '').replace(/\s+/g, ' ').trim());
+                if (!t || t.length > 80) return;
+                if (/competenc(y|ies)?\s*rating|score\s*rubric|skill[- ]?wise|technical skills analysis|rubric score/i.test(t)) {
+                    el.classList.add('rb-adaptive-table-title');
+                }
+            });
+
+            Array.prototype.forEach.call(root.querySelectorAll('table'), function (table) {
+                table.removeAttribute('width');
+                table.style.width = '100%';
+                table.style.maxWidth = '100%';
+                table.style.tableLayout = 'fixed';
+                Array.prototype.forEach.call(table.querySelectorAll('[width]'), function (el) {
+                    el.removeAttribute('width');
+                });
+
+                var headerText = '';
+                Array.prototype.forEach.call(table.querySelectorAll('th'), function (th) {
+                    headerText += ' ' + (th.textContent || '');
+                });
+                if (!headerText.trim() && table.rows.length) {
+                    Array.prototype.forEach.call(table.rows[0].cells, function (cell) {
+                        headerText += ' ' + (cell.textContent || '');
+                    });
+                }
+                var h = headerText.toLowerCase();
+                var isRatingTable = /competenc|skill|score|rating|weight|self.?rating|ai.?rating|max.?rating|weighted|rubric|question|comment|remark/.test(h);
+
+                if (!table.parentElement || !table.parentElement.classList.contains('rb-adaptive-table-wrap')) {
+                    var wrap = document.createElement('div');
+                    wrap.className = 'rb-adaptive-table-wrap';
+                    table.parentNode.insertBefore(wrap, table);
+                    wrap.appendChild(table);
+                }
+
+                if (!isRatingTable) return;
+
+                table.classList.add('rb-adaptive-rating-table');
+
+                var headers = [];
+                var headerCells = table.querySelectorAll('thead th');
+                var headerRowIsTd = false;
+                if (!headerCells.length && table.rows.length) {
+                    headerCells = table.rows[0].querySelectorAll('th, td');
+                    headerRowIsTd = table.rows[0].querySelector('th') == null;
+                }
+                Array.prototype.forEach.call(headerCells, function (cell, idx) {
+                    headers[idx] = ((cell.textContent || '').toLowerCase().trim());
+                    if (headerRowIsTd) cell.classList.add('rb-adaptive-th');
+                });
+
+                var maxColIdx = -1;
+                headers.forEach(function (col, idx) {
+                    if (/^max|max score|max rating/.test(col)) maxColIdx = idx;
+                });
+
+                var bodyRows = table.tBodies.length
+                    ? Array.prototype.slice.call(table.tBodies[0].rows)
+                    : Array.prototype.slice.call(table.rows, table.querySelector('th') || headerRowIsTd ? 1 : 0);
+
+                // If first row was used as header via td, skip it
+                if (headerRowIsTd && bodyRows.length && bodyRows[0] === table.rows[0]) {
+                    bodyRows = bodyRows.slice(1);
+                }
+
+                bodyRows.forEach(function (row) {
+                    var rowMax = null;
+                    if (maxColIdx >= 0 && row.cells[maxColIdx]) {
+                        var mx = parseScore((row.cells[maxColIdx].textContent || '').trim());
+                        if (mx) rowMax = mx.value;
+                    }
+
+                    Array.prototype.forEach.call(row.cells, function (cell, idx) {
+                        if (cell.querySelector('.rb-adaptive-bar, .rb-adaptive-rating-pill, .rb-adaptive-stars, .rb-adaptive-clamp')) return;
+                        var raw = (cell.textContent || '').replace(/\s+/g, ' ').trim();
+                        if (!raw) return;
+                        var col = headers[idx] || '';
+                        var scored = parseScore(raw);
+
+                        // Long question / comment / competency text → wrap + read more
+                        if (isTextColumn(col, idx, scored, raw)) {
+                            applyClamp(cell, raw, /question|comment|remark|feedback|evidence|analysis/.test(col) ? 120 : 160);
+                            return;
+                        }
+
+                        if (idx === 0) {
+                            cell.classList.add('rb-adaptive-text-col');
+                            if (raw.length > 160) {
+                                applyClamp(cell, raw, 160);
+                            }
+                            return;
+                        }
+
+                        // Text rating / status → pill
+                        if (/rating|verdict|grade|level|result|status/.test(col) && !scored) {
+                            var pillClass = ratingPillClass(raw);
+                            if (pillClass && !/★|⭐|☆/.test(raw)) {
+                                cell.classList.add('rb-adaptive-metric-col');
+                                cell.innerHTML = '<span class="rb-adaptive-rating-pill ' + pillClass + '">' + escapeHtml(raw) + '</span>';
+                            } else if (raw.length > 80) {
+                                applyClamp(cell, raw, 100);
+                            }
+                            return;
+                        }
+
+                        // Numeric score → bar / stars
+                        if (scored && (/score|ai.?rating|self.?rating|rating|weight|percent|%/.test(col) || scored.max != null)) {
+                            cell.classList.add('rb-adaptive-metric-col');
+                            var max = scored.max != null ? scored.max : (rowMax != null ? rowMax : 10);
+                            if (/rating/.test(col) && max <= 5) {
+                                cell.innerHTML = starsHtml(scored.value, max);
+                            } else if (/max/.test(col)) {
+                                cell.innerHTML = '<span class="rb-adaptive-score">' + escapeHtml(raw) + '</span>';
+                            } else {
+                                cell.innerHTML = barHtml(scored.value, max);
+                            }
+                            return;
+                        }
+
+                        if (/^\d+(\.\d+)?%?$/.test(raw) || /^\d+(\.\d+)?\s*\/\s*\d+/.test(raw)) {
+                            cell.classList.add('rb-adaptive-metric-col');
+                            cell.innerHTML = '<span class="rb-adaptive-score">' + escapeHtml(raw) + '</span>';
+                            return;
+                        }
+
+                        // Remaining long prose in any cell
+                        if (raw.length > 100) {
+                            applyClamp(cell, raw, 120);
+                        }
+                    });
+                });
+            });
+
+            // Read more / less handlers (event delegation)
+            if (!root._rbClampBound) {
+                root._rbClampBound = true;
+                root.addEventListener('click', function (e) {
+                    var btn = e.target.closest ? e.target.closest('.rb-adaptive-clamp__toggle') : null;
+                    if (!btn) return;
+                    e.preventDefault();
+                    var id = btn.getAttribute('data-clamp');
+                    var box = id ? document.getElementById(id) : btn.parentElement;
+                    if (!box) return;
+                    var expanded = box.classList.toggle('is-expanded');
+                    btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+                    btn.textContent = expanded ? 'Read less' : 'Read more';
+                });
+            }
+        }
+
+        function layoutRubricAndSummary() {
+            function t(el) { return ((el && el.textContent) || '').replace(/\s+/g, ' ').trim(); }
+            function escapeHtml(s) {
+                return String(s == null ? '' : s)
+                    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+            function verdictClass(v) {
+                var x = (v || '').toLowerCase();
+                if (/reject|not recommended|fail|no hire|poor/.test(x)) return 'rb-adaptive-verdict-badge--reject';
+                if (/select|recommend|hire|pass|strong/.test(x)) return 'rb-adaptive-verdict-badge--select';
+                return 'rb-adaptive-verdict-badge--neutral';
+            }
+            var clampSeq = 0;
+            function clampHtml(raw, limit) {
+                limit = limit || 160;
+                raw = (raw || '').trim();
+                if (!raw) return '';
+                if (raw.length <= limit) {
+                    return '<div class="rb-adaptive-field__value">' + escapeHtml(raw) + '</div>';
+                }
+                clampSeq += 1;
+                var id = 'rb-summary-clamp-' + clampSeq;
+                var shortText = raw.substring(0, limit).replace(/\s+\S*$/, '') + '…';
+                return '<div class="rb-adaptive-field__value">' +
+                    '<div class="rb-adaptive-clamp" id="' + id + '">' +
+                    '<div class="rb-adaptive-clamp__short">' + escapeHtml(shortText) + '</div>' +
+                    '<div class="rb-adaptive-clamp__full">' + escapeHtml(raw) + '</div>' +
+                    '<button type="button" class="rb-adaptive-clamp__toggle" data-clamp="' + id + '" aria-expanded="false">Read more</button>' +
+                    '</div></div>';
+            }
+
+            var fields = {
+                techScore: null,
+                commScore: null,
+                verdict: null,
+                finalComment: null,
+                commReason: null,
+                llmSuspected: null,
+                llmEvidence: null
+            };
+            var toRemove = [];
+
+            function captureFromText(raw, el) {
+                if (!raw) return false;
+                var m;
+                var matched = false;
+                m = raw.match(/Overall\s+Technical\s+Score\s*:\s*(.+)$/i);
+                if (m) { fields.techScore = m[1].trim(); matched = true; }
+                m = raw.match(/Overall\s+Communication\s+Score\s*:\s*(.+)$/i);
+                if (m) { fields.commScore = m[1].trim(); matched = true; }
+                m = raw.match(/Final\s+Verdict\s*:\s*(.+)$/i);
+                if (m) { fields.verdict = m[1].trim(); matched = true; }
+                m = raw.match(/Final\s+Comment\s*:\s*([\s\S]+)$/i);
+                if (m) { fields.finalComment = m[1].trim(); matched = true; }
+                m = raw.match(/Communication\s+Score\s+Reasoning\s*:\s*([\s\S]+)$/i);
+                if (m) { fields.commReason = m[1].trim(); matched = true; }
+                m = raw.match(/LLM\s+Response\s+Suspected\s*:\s*(.+)$/i);
+                if (m) { fields.llmSuspected = m[1].trim(); matched = true; }
+                m = raw.match(/Evidence\s+Comment\s*:\s*([\s\S]+)$/i);
+                if (m) { fields.llmEvidence = m[1].trim(); matched = true; }
+                if (/^LLM\s+Detection$/i.test(raw)) matched = true;
+                if (matched && el) toRemove.push(el);
+                return matched;
+            }
+
+            Array.prototype.forEach.call(root.querySelectorAll('p, div, li, h2, h3, h4, span, strong, b'), function (el) {
+                if (el.closest('table')) return;
+                if (el.closest('.rb-adaptive-overview')) return;
+                if (el.querySelector('table, .rb-adaptive-overview')) return;
+                var raw = t(el);
+                if (!raw || raw.length > 2500) return;
+                if (/Final\s+Comment\s*:|Communication\s+Score\s+Reasoning\s*:|Evidence\s+Comment\s*:/i.test(raw) ||
+                    /Overall\s+Technical\s+Score\s*:|Overall\s+Communication\s+Score\s*:|Final\s+Verdict\s*:|LLM\s+Response\s+Suspected\s*:|^LLM\s+Detection$/i.test(raw)) {
+                    // Label-only node → pull value from following sibling text
+                    if (/^(Overall\s+Technical\s+Score|Overall\s+Communication\s+Score|Final\s+Verdict|Final\s+Comment|Communication\s+Score\s+Reasoning|LLM\s+Response\s+Suspected|Evidence\s+Comment)\s*:?\s*$/i.test(raw)) {
+                        var next = el.nextElementSibling;
+                        var nextText = t(next);
+                        if (nextText) {
+                            captureFromText(raw.replace(/\s*:?\s*$/, '') + ': ' + nextText, el);
+                            if (next) toRemove.push(next);
+                            return;
+                        }
+                    }
+                    captureFromText(raw, el);
+                }
+            });
+
+            // Fallback: parse whole section text if labels were in a single block
+            if (!fields.techScore && !fields.verdict && !fields.finalComment) {
+                var blob = root.innerText || root.textContent || '';
+                var ts = blob.match(/Overall\s+Technical\s+Score\s*:\s*([^\n\r]+)/i);
+                if (ts) fields.techScore = ts[1].trim();
+                var fv = blob.match(/Final\s+Verdict\s*:\s*([^\n\r]+)/i);
+                if (fv) fields.verdict = fv[1].trim();
+                var fc = blob.match(/Final\s+Comment\s*:\s*([\s\S]*?)(?=Overall\s+Communication\s+Score\s*:|Communication\s+Score\s+Reasoning\s*:|LLM\s+Detection|$)/i);
+                if (fc) fields.finalComment = fc[1].trim();
+                var cs = blob.match(/Overall\s+Communication\s+Score\s*:\s*([^\n\r]+)/i);
+                if (cs) fields.commScore = cs[1].trim();
+                var cr = blob.match(/Communication\s+Score\s+Reasoning\s*:\s*([\s\S]*?)(?=LLM\s+Detection|LLM\s+Response\s+Suspected\s*:|$)/i);
+                if (cr) fields.commReason = cr[1].trim();
+                var ls = blob.match(/LLM\s+Response\s+Suspected\s*:\s*([^\n\r]+)/i);
+                if (ls) fields.llmSuspected = ls[1].trim();
+                var le = blob.match(/Evidence\s+Comment\s*:\s*([\s\S]*?)(?=Questions\s+Discussed|Competenc|$)/i);
+                if (le) fields.llmEvidence = le[1].trim();
+            }
+
+            var rubricTable = null;
+            Array.prototype.forEach.call(root.querySelectorAll('table'), function (table) {
+                if (rubricTable) return;
+                var header = '';
+                Array.prototype.forEach.call(table.querySelectorAll('th'), function (th) { header += ' ' + (th.textContent || ''); });
+                if (!header.trim() && table.rows.length) {
+                    Array.prototype.forEach.call(table.rows[0].cells, function (cell) { header += ' ' + (cell.textContent || ''); });
+                }
+                var h = header.toLowerCase();
+                if (/rubric|expected|observed|competenc|skill\s*name|self.?rating|ai.?rating|weight/.test(h)) {
+                    rubricTable = table;
+                }
+            });
+
+            var hasSummary = fields.techScore || fields.commScore || fields.verdict || fields.finalComment || fields.commReason || fields.llmSuspected || fields.llmEvidence;
+            if (!rubricTable && !hasSummary) return;
+            if (root.querySelector('.rb-adaptive-overview')) return;
+
+            var overview = document.createElement('div');
+            overview.className = 'rb-adaptive-overview';
+
+            if (fields.techScore || fields.commScore) {
+                var metrics = document.createElement('div');
+                metrics.className = 'rb-adaptive-metrics';
+                if (fields.techScore) {
+                    metrics.innerHTML += '<div class="rb-adaptive-metric-card"><span class="rb-adaptive-metric-card__label">Overall Skill Score</span><span class="rb-adaptive-metric-card__value">' + escapeHtml(fields.techScore) + '</span></div>';
+                }
+                if (fields.commScore) {
+                    metrics.innerHTML += '<div class="rb-adaptive-metric-card"><span class="rb-adaptive-metric-card__label">Communication Score</span><span class="rb-adaptive-metric-card__value">' + escapeHtml(fields.commScore) + '</span></div>';
+                }
+                overview.appendChild(metrics);
+            }
+
+            var twoCol = document.createElement('div');
+            twoCol.className = 'rb-adaptive-two-col';
+
+            var left = document.createElement('div');
+            left.className = 'rb-adaptive-panel';
+            left.innerHTML = '<div class="rb-adaptive-panel__head"><i class="fa fa-list-alt"></i> Score Rubric</div>';
+            if (rubricTable) {
+                var wrap = rubricTable.closest('.rb-adaptive-table-wrap') || rubricTable;
+                var probe = wrap.previousElementSibling;
+                if (probe && /rubric|competenc|skill/i.test(t(probe)) && t(probe).length < 80) {
+                    probe.parentNode.removeChild(probe);
+                }
+                left.appendChild(wrap);
+                rubricTable.classList.add('rb-adaptive-rating-table');
+            } else {
+                left.innerHTML += '<p style="margin:0;color:#94a3b8;font-size:12.5px;">No rubric summary found.</p>';
+            }
+            twoCol.appendChild(left);
+
+            var right = document.createElement('div');
+            right.className = 'rb-adaptive-panel rb-adaptive-panel--comment';
+            var rightHtml = '<div class="rb-adaptive-panel__head"><i class="fa fa-commenting-o"></i> AI Interviewer Comment</div>';
+            if (fields.verdict) {
+                rightHtml += '<div class="rb-adaptive-field"><span class="rb-adaptive-field__label">Final Verdict</span><span class="rb-adaptive-verdict-badge ' + verdictClass(fields.verdict) + '">' + escapeHtml(fields.verdict) + '</span></div>';
+            }
+            if (fields.finalComment) {
+                rightHtml += '<div class="rb-adaptive-field"><span class="rb-adaptive-field__label">Final Comment</span>' + clampHtml(fields.finalComment, 150) + '</div>';
+            }
+            if (fields.commReason) {
+                rightHtml += '<div class="rb-adaptive-field"><span class="rb-adaptive-field__label">Communication Analysis</span>' + clampHtml(fields.commReason, 150) + '</div>';
+            }
+            if (fields.llmSuspected || fields.llmEvidence) {
+                rightHtml += '<div class="rb-adaptive-field"><span class="rb-adaptive-field__label">LLM Detection</span>';
+                if (fields.llmSuspected) {
+                    rightHtml += '<div class="rb-adaptive-field__value"><strong>Suspected:</strong> ' + escapeHtml(fields.llmSuspected) + '</div>';
+                }
+                if (fields.llmEvidence) {
+                    rightHtml += '<div class="rb-adaptive-field" style="margin-top:6px;margin-bottom:0;"><span class="rb-adaptive-field__label" style="text-transform:none;letter-spacing:0;">Evidence</span>' + clampHtml(fields.llmEvidence, 120) + '</div>';
+                }
+                rightHtml += '</div>';
+            }
+            if (!fields.verdict && !fields.finalComment && !fields.commReason && !fields.llmSuspected && !fields.llmEvidence) {
+                rightHtml += '<p style="margin:0;color:#94a3b8;font-size:12.5px;">No comment found.</p>';
+            }
+            right.innerHTML = rightHtml;
+            twoCol.appendChild(right);
+
+            overview.appendChild(twoCol);
+            root.insertBefore(overview, root.firstChild);
+
+            var seen = {};
+            toRemove.forEach(function (el) {
+                if (!el || !el.parentNode || seen[el]) return;
+                if (overview.contains(el)) return;
+                seen[el] = true;
+                el.parentNode.removeChild(el);
+            });
+
+            // Remove leftover duplicate summary lines still in the raw HTML
+            Array.prototype.forEach.call(root.querySelectorAll('p, div, li, h2, h3, h4, strong, b, span'), function (el) {
+                if (!el.parentNode || overview.contains(el) || el.closest('table')) return;
+                if (el.querySelector('table, .rb-adaptive-overview, .rb-adaptive-q-block, .rb-adaptive-panel')) return;
+                var raw = t(el);
+                if (!raw) return;
+                if (/^(Overall\s+Technical\s+Score|Overall\s+Communication\s+Score|Final\s+Verdict|Final\s+Comment|Communication\s+Score\s+Reasoning|LLM\s+Detection|LLM\s+Response\s+Suspected|Evidence\s+Comment)\s*:?\s*$/i.test(raw) ||
+                    /^(Overall\s+Technical\s+Score|Overall\s+Communication\s+Score|Final\s+Verdict|Final\s+Comment|Communication\s+Score\s+Reasoning|LLM\s+Detection|LLM\s+Response\s+Suspected|Evidence\s+Comment)\s*:/i.test(raw)) {
+                    el.parentNode.removeChild(el);
+                }
+            });
+
+            // After competency/rubric table: drop stray <hr>, LLM Detection headings, and empty leftovers
+            Array.prototype.forEach.call(root.querySelectorAll('hr'), function (hr) {
+                if (!hr.parentNode || overview.contains(hr)) return;
+                hr.parentNode.removeChild(hr);
+            });
+
+            Array.prototype.forEach.call(root.querySelectorAll('h1, h2, h3, h4, h5, p, div, strong, b, span'), function (el) {
+                if (!el.parentNode || overview.contains(el) || el.closest('table')) return;
+                if (el.querySelector && el.querySelector('table, .rb-adaptive-overview, .rb-adaptive-q-block, .rb-adaptive-panel, .rb-adaptive-q-head')) return;
+                var raw = t(el);
+                if (!raw) {
+                    // remove empty wrappers left behind
+                    if ((el.tagName === 'P' || el.tagName === 'DIV') && !el.children.length) {
+                        el.parentNode.removeChild(el);
+                    }
+                    return;
+                }
+                if (/^LLM\s*Detection$/i.test(raw) ||
+                    /^LLM\s+Response\s+Suspected\s*:/i.test(raw) ||
+                    /^Evidence\s+Comment\s*:/i.test(raw)) {
+                    el.parentNode.removeChild(el);
+                }
+            });
+        }
+
+        enhanceRatingTables();
+        layoutRubricAndSummary();
+        styleCompetencyHeadingLikeRubric();
+        cleanupLeftoverLlmAndHrs();
+        decorateLabels(root);
+
+        function styleCompetencyHeadingLikeRubric() {
+            function txt(el) { return ((el && el.textContent) || '').replace(/\s+/g, ' ').trim(); }
+            Array.prototype.forEach.call(root.querySelectorAll('h1, h2, h3, h4, h5, p, div, strong, b'), function (el) {
+                if (el.closest('.rb-adaptive-overview') || el.closest('.rb-adaptive-panel')) return;
+                if (el.querySelector && el.querySelector('table')) return;
+                var raw = txt(el);
+                if (!raw || raw.length > 80) return;
+                if (!/competenc(y|ies)?\s*rating/i.test(raw)) return;
+
+                var head = document.createElement('div');
+                head.className = 'rb-adaptive-panel__head rb-adaptive-table-title';
+                head.innerHTML = '<i class="fa fa-list-alt"></i> <span>Competency Ratings</span>';
+
+                // Wrap heading + following table in a section card like Score Rubric panel
+                var card = document.createElement('div');
+                card.className = 'rb-adaptive-section-card';
+                el.parentNode.insertBefore(card, el);
+                card.appendChild(head);
+
+                var node = el.nextSibling;
+                el.parentNode.removeChild(el);
+
+                // Move immediate following table/wrap into the card
+                while (node) {
+                    var next = node.nextSibling;
+                    if (node.nodeType === 3 && !String(node.textContent || '').trim()) {
+                        card.appendChild(node);
+                        node = next;
+                        continue;
+                    }
+                    if (node.nodeType === 1) {
+                        if (node.tagName === 'TABLE' || (node.classList && node.classList.contains('rb-adaptive-table-wrap'))) {
+                            card.appendChild(node);
+                            break;
+                        }
+                        if (node.querySelector && node.querySelector('table.rb-adaptive-rating-table, table')) {
+                            card.appendChild(node);
+                            break;
+                        }
+                        break;
+                    }
+                    break;
+                }
+            });
+        }
+
+        function cleanupLeftoverLlmAndHrs() {
+            function txt(el) { return ((el && el.textContent) || '').replace(/\s+/g, ' ').trim(); }
+            function isLlmJunk(raw) {
+                if (!raw) return false;
+                return /^LLM\s*Detection$/i.test(raw) ||
+                    /^LLM\s+Detection\s*:/i.test(raw) ||
+                    /^LLM\s+Response\s+Suspected\s*:/i.test(raw) ||
+                    /^Evidence\s+Comment\s*:/i.test(raw) ||
+                    /^Suspected\s*:/i.test(raw);
+            }
+
+            // Remove all hrs outside overview
+            Array.prototype.forEach.call(root.querySelectorAll('hr'), function (hr) {
+                if (!hr.parentNode || hr.closest('.rb-adaptive-overview')) return;
+                hr.parentNode.removeChild(hr);
+            });
+
+            // Remove LLM Detection blocks anywhere below overview / after tables
+            Array.prototype.slice.call(root.querySelectorAll('h1, h2, h3, h4, h5, p, div, strong, b, span, li')).forEach(function (el) {
+                if (!el.parentNode || el.closest('.rb-adaptive-overview') || el.closest('table')) return;
+                if (el.closest('.rb-adaptive-panel') || el.closest('.rb-adaptive-section-card')) return;
+                if (el.querySelector && el.querySelector('table, .rb-adaptive-overview, .rb-adaptive-q-block, .rb-adaptive-panel, .rb-adaptive-q-head, .rb-adaptive-clamp, .rb-adaptive-section-card')) return;
+                var raw = txt(el);
+                if (isLlmJunk(raw)) {
+                    el.parentNode.removeChild(el);
+                }
+            });
+
+            // After first rating table / section card: strip consecutive junk siblings (hr, llm h3/text)
+            var anchors = root.querySelectorAll('.rb-adaptive-overview, .rb-adaptive-section-card, table.rb-adaptive-rating-table');
+            Array.prototype.forEach.call(anchors, function (anchor) {
+                var cut = anchor;
+                while (cut.parentElement && cut.parentElement !== root) cut = cut.parentElement;
+                if (cut.parentElement !== root) return;
+                var sib = cut.nextSibling;
+                while (sib) {
+                    var next = sib.nextSibling;
+                    if (sib.nodeType === 3) {
+                        if (!String(sib.textContent || '').trim()) {
+                            cut.parentNode.removeChild(sib);
+                        } else if (/LLM\s*Detection/i.test(sib.textContent || '')) {
+                            cut.parentNode.removeChild(sib);
+                        } else {
+                            break;
+                        }
+                        sib = next;
+                        continue;
+                    }
+                    if (sib.nodeType !== 1) { sib = next; continue; }
+                    if (sib.classList && (sib.classList.contains('rb-adaptive-q-block') || sib.classList.contains('rb-adaptive-section-card') || sib.classList.contains('rb-adaptive-overview'))) break;
+                    if (sib.querySelector && sib.querySelector('.rb-adaptive-q-head, .rb-adaptive-q-block, table')) break;
+                    var tag = sib.tagName;
+                    var raw = txt(sib);
+                    if (tag === 'HR' || isLlmJunk(raw) || !raw) {
+                        cut.parentNode.removeChild(sib);
+                        sib = next;
+                        continue;
+                    }
+                    // Stop when real content (questions etc.) begins
+                    if (/question|competenc|analysis|strength|weakness|evidence from transcript/i.test(raw) && !isLlmJunk(raw)) break;
+                    if (/LLM/i.test(raw) && raw.length < 80) {
+                        cut.parentNode.removeChild(sib);
+                        sib = next;
+                        continue;
+                    }
+                    break;
+                }
+            });
+        }
+
+    });
 </script>
 <script>
     function GetSentimentAnalysis(videoId) {
