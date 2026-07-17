@@ -22,5 +22,6 @@
         public static readonly string QcInterviewAIAssistantId = "QcInterviewAIMerge";
         public static readonly string ContradictionReportAIAssistantId = "ContradictionReport";
         public static readonly string PaymentTicketReviewAssistantId = "PaymentTicketReview";
+        public static readonly string LinkedInVerificationAssistantId = "LinkedInVerification";
     }
 }

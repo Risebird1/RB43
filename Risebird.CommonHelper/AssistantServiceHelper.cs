@@ -40,6 +40,7 @@ namespace Risebird.CommonHelper
         private readonly string QcInterviewAIMergeAssistantId;
         private readonly string ContradictionReportAIAssistantId;
         private readonly string PaymentTicketReviewAssistantId;
+        private readonly string LinkedInVerificationAssistantId;
 
         //private readonly List<string> candidateResumesVectorStoreId;
         public AssistantServiceHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, IOpenAIApiLogger openAIApiLogger)
@@ -66,6 +67,7 @@ namespace Risebird.CommonHelper
             QcInterviewAIMergeAssistantId = _configuration["OpenAI:QcInterviewAIMergeAssistantId"];
             ContradictionReportAIAssistantId = _configuration["OpenAI:ContradictionReportAIAssistantId"];
             PaymentTicketReviewAssistantId = _configuration["OpenAI:PaymentTicketReviewAssistantId"];
+            LinkedInVerificationAssistantId = _configuration["OpenAI:LinkedInVerificationAssistantId"];
         }
 
         public async Task<RunResult> ScreenAsync(ScreeningRequest requestModel)
@@ -292,6 +294,11 @@ namespace Risebird.CommonHelper
                     {
                         assistantId = PaymentTicketReviewAssistantId;
                         operationType = "PaymentTicketReview";
+                    }
+                    else if (profileType == ProfileNames.LinkedInVerificationAssistantId)
+                    {
+                        assistantId = LinkedInVerificationAssistantId;
+                        operationType = "LinkedInVerification";
                     }
                     else
                     {
@@ -1673,6 +1680,58 @@ namespace Risebird.CommonHelper
                         break;
                     pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                 }
+                if (runStatus == "completed")
+                    await RetrieveRunStepsForTokenUsage(runId, threadId);
+
+                return await ListRunMessages(threadId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Calls the LinkedIn-verification assistant (OpenAI:LinkedInVerificationAssistantId) with a
+        /// composed message describing the prospect (name, email, phone, current role, and any candidate-
+        /// supplied LinkedIn URL) and returns the raw RunResult. The assistant judges whether the URL is a
+        /// genuine profile for this person — or, when no URL is given, tries to identify one — and returns
+        /// a JSON verdict (linkedin_match / confidence / linkedin_url / reason).
+        /// </summary>
+        public async Task<RunResult> GenerateLinkedInVerification(string composedMessage)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(composedMessage))
+                    return null;
+
+                string threadId = await CreateThreadAsync(plainAssistantMessage: composedMessage);
+                if (string.IsNullOrEmpty(threadId))
+                    return null;
+
+                string runId = await CreateRun(threadId, ProfileNames.LinkedInVerificationAssistantId);
+                await Task.Delay(10000);
+                if (string.IsNullOrEmpty(runId))
+                    return null;
+
+                string runStatus = string.Empty;
+                int pollInterval = 10000;
+                int maxPollInterval = 30000;
+                int maxAttempts = 12;
+                int attempts = 0;
+
+                while (runStatus != "completed")
+                {
+                    await Task.Delay(pollInterval);
+                    runStatus = await RetrieveRun(runId, threadId);
+                    attempts++;
+                    if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
+                        || runStatus == null || attempts >= maxAttempts)
+                        break;
+                    pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
+                }
+
                 if (runStatus == "completed")
                     await RetrieveRunStepsForTokenUsage(runId, threadId);
 

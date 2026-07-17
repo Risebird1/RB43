@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.PlivoCXModels;
@@ -239,7 +240,7 @@ namespace Risebird.Web.Controllers
                         record.IsExistingInterviewer, record.ExistingUserId, record.ExistingProfileId,
                         record.EmploymentVerified, record.EmploymentCompanyName,
                         record.EmploymentIsEmployed, record.EmploymentDetails,
-                        record.LinkedInUrl, record.LinkedInMatch, record.LinkedInConfidence,
+                        record.LinkedInUrl, record.LinkedInMatch, record.LinkedInConfidence, record.LinkedInReason,
                         record.ResumeAIAnalysisCompleted, record.ResumeAIAnalysisResult,
                         record.AIVerdict, record.AIFitmentScore,
                         record.OnboardingCompleted, record.OnboardedUserId, record.OnboardedProfileId,
@@ -865,6 +866,226 @@ namespace Risebird.Web.Controllers
                     }
                 }
                 return Json(new { success = ok, verified, isEmployed, viaLinkedInFallback, companyName });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Manual: edit the LinkedIn profile URL ───────────────────────────────────
+        // MANUAL-ONLY. Lets an operator correct/attach the LinkedIn profile URL from the Manage modal
+        // (e.g. when the AI verdict picked the wrong profile or found none). The stored match/confidence/
+        // reason verdict is preserved; only the URL is overwritten. The automated pipeline never calls this.
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateLinkedInUrl(int id, string linkedInUrl)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var record = await _repository.GetByIdAsync(id);
+                if (record == null)
+                    return Json(new { success = false, error = "Record not found." });
+
+                string newUrl = string.IsNullOrWhiteSpace(linkedInUrl) ? null : linkedInUrl.Trim();
+                string oldUrl = record.LinkedInUrl;
+
+                var ok = await _repository.UpdateLinkedInUrlAsync(id, newUrl);
+                if (ok)
+                {
+                    var user = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+                    await _repository.InsertHistoryAsync(id, "LinkedInUrlUpdated",
+                        string.IsNullOrWhiteSpace(oldUrl) ? "\u2014" : oldUrl,
+                        string.IsNullOrWhiteSpace(newUrl) ? "\u2014" : newUrl,
+                        user);
+                }
+
+                return Json(new { success = ok, linkedInUrl = newUrl });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // Minimum AI-verification confidence for the operator to be allowed to advance the prospect
+        // via the LinkedIn second-opinion path.
+        private const int LinkedInAIVerifyMinConfidence = 80;
+
+        // ── Manual: AI "second opinion" LinkedIn verification ───────────────────────
+        // MANUAL-ONLY. Because the Relay agent's Google-search LinkedIn lookup is often unreliable, an
+        // operator can paste/attach a LinkedIn URL (or leave it blank) and ask an OpenAI assistant to
+        // judge whether the URL genuinely belongs to this person — or, when blank, to find a matching
+        // profile from the prospect's name/email/phone/role. The returned verdict (match/confidence/
+        // url/reason) is persisted and shown in the UI. Only a match with confidence >= 80 lets the
+        // operator advance the prospect (via ApproveEmploymentViaLinkedInAI). Automation never calls this.
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> VerifyLinkedInWithAI(int id, string linkedInUrl)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var record = await _repository.GetByIdAsync(id);
+                if (record == null)
+                    return Json(new { success = false, error = "Record not found." });
+
+                if (string.IsNullOrWhiteSpace(_configuration["OpenAI:LinkedInVerificationAssistantId"])
+                    || _configuration["OpenAI:LinkedInVerificationAssistantId"].Contains("REPLACE_WITH"))
+                    return Json(new { success = false, error = "LinkedIn verification assistant is not configured yet (OpenAI:LinkedInVerificationAssistantId)." });
+
+                // The text box may or may not hold a value; pass whatever the operator provided (may be null).
+                string suppliedUrl = string.IsNullOrWhiteSpace(linkedInUrl) ? null : linkedInUrl.Trim();
+
+                // Compose the second-opinion request with all relevant prospect data.
+                var sb = new System.Text.StringBuilder();
+                sb.AppendLine("Verify this person's LinkedIn identity and return ONLY the JSON verdict described in your instructions.");
+                sb.AppendLine();
+                sb.AppendLine("PROSPECT DETAILS:");
+                sb.AppendLine($"- Name: {record.CandidateName ?? "(unknown)"}");
+                sb.AppendLine($"- Email: {record.ParsedEmail ?? "(unknown)"}");
+                sb.AppendLine($"- Phone: {record.ParsedPhone ?? "(unknown)"}");
+                sb.AppendLine($"- Current role / company: {record.CurrentRole ?? "(unknown)"}");
+                sb.AppendLine($"- Location: {record.Location ?? "(unknown)"}");
+                sb.AppendLine($"- Total experience (years): {record.ExperienceYears ?? "(unknown)"}");
+                sb.AppendLine($"- Past experience: {record.PastExperience ?? "(unknown)"}");
+                sb.AppendLine($"- Education: {record.Education ?? "(unknown)"}");
+                sb.AppendLine($"- Key skills: {record.KeySkills ?? "(unknown)"}");
+                sb.AppendLine();
+                sb.AppendLine(suppliedUrl != null
+                    ? $"CANDIDATE-SUPPLIED LINKEDIN URL (verify whether it genuinely belongs to the person above): {suppliedUrl}"
+                    : "CANDIDATE-SUPPLIED LINKEDIN URL: none provided. Use the details above to identify the most likely genuine LinkedIn profile for this person.");
+
+                var aiResponse = await _assistantServiceHelper.GenerateLinkedInVerification(sb.ToString());
+                var raw = aiResponse?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value;
+                if (string.IsNullOrWhiteSpace(raw))
+                    return Json(new { success = false, error = "The AI assistant returned no response. Try again." });
+
+                // Parse the JSON verdict robustly (the assistant is configured for JSON-only output).
+                string match = null, reason = null, verdictUrl = null;
+                int? confidence = null;
+                try
+                {
+                    int s = raw.IndexOf('{'); int e = raw.LastIndexOf('}');
+                    string jsonSlice = (s >= 0 && e > s) ? raw.Substring(s, e - s + 1) : raw;
+                    var jo = JObject.Parse(jsonSlice);
+                    match = (string)jo["linkedin_match"];
+                    reason = (string)jo["reason"];
+                    verdictUrl = (string)jo["linkedin_url"];
+                    var confTok = jo["confidence"];
+                    if (confTok != null && confTok.Type != JTokenType.Null)
+                    {
+                        if (confTok.Type == JTokenType.Integer || confTok.Type == JTokenType.Float)
+                            confidence = (int)Math.Round((double)confTok);
+                        else if (int.TryParse(new string((confTok.ToString() ?? "").Where(char.IsDigit).ToArray()), out int cParsed))
+                            confidence = cParsed;
+                    }
+                }
+                catch (Exception parseEx)
+                {
+                    await _logger.LogMessage(LogLevelInfo.Exception, parseEx);
+                    return Json(new { success = false, error = "Could not read the AI verdict. Raw response was not valid JSON." });
+                }
+
+                bool matchedYes = string.Equals(match?.Trim(), "YES", StringComparison.OrdinalIgnoreCase);
+
+                // Final URL to store: the assistant's confirmed/found URL when present & real, else the
+                // operator-supplied URL.
+                string finalUrl = (!string.IsNullOrWhiteSpace(verdictUrl)
+                                   && !string.Equals(verdictUrl.Trim(), "None", StringComparison.OrdinalIgnoreCase))
+                                   ? verdictUrl.Trim()
+                                   : suppliedUrl;
+
+                await _repository.UpdateLinkedInVerdictAsync(id, finalUrl, matchedYes ? "YES" : "NO", confidence, reason);
+
+                var user = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+                await _repository.InsertHistoryAsync(id, "LinkedInAIVerified", "\u2014",
+                    $"AI second-opinion: {(matchedYes ? "YES" : "NO")} (confidence {confidence?.ToString() ?? "—"}) — {finalUrl ?? "no url"}"
+                    + (string.IsNullOrWhiteSpace(reason) ? "" : $" — {reason}")
+                    + $" (requested by {user})", user);
+
+                bool canProceed = matchedYes && confidence.HasValue && confidence.Value >= LinkedInAIVerifyMinConfidence;
+
+                return Json(new
+                {
+                    success = true,
+                    linkedInMatch = matchedYes ? "YES" : "NO",
+                    confidence,
+                    linkedInUrl = finalUrl,
+                    reason,
+                    canProceed,
+                    threshold = LinkedInAIVerifyMinConfidence
+                });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        // ── Manual: advance the prospect on the strength of the AI LinkedIn verdict ──
+        // MANUAL-ONLY. Marks Employment Verification satisfied and advances the funnel, but ONLY when the
+        // stored LinkedIn verdict (as produced by VerifyLinkedInWithAI) is a match with confidence >= 80.
+        // The gate is re-checked server-side here so it cannot be bypassed from the client.
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApproveEmploymentViaLinkedInAI(int id, bool overrideIntent = false)
+        {
+            if (HttpContext.Session.GetString("email") == null)
+                return Json(new { success = false, error = "Not signed in." });
+
+            try
+            {
+                var record = await _repository.GetByIdAsync(id);
+                if (record == null)
+                    return Json(new { success = false, error = "Record not found." });
+
+                var user = HttpContext.Session.GetString("email")?.Trim('"') ?? "System";
+
+                // Authoritative gate: only a YES match with confidence >= 80 may advance.
+                bool matchedYes = string.Equals(record.LinkedInMatch?.Trim(), "YES", StringComparison.OrdinalIgnoreCase);
+                bool strong = matchedYes && record.LinkedInConfidence.HasValue && record.LinkedInConfidence.Value >= LinkedInAIVerifyMinConfidence;
+                if (!strong)
+                    return Json(new { success = false, error = $"Cannot advance: the LinkedIn verification must be a match with confidence >= {LinkedInAIVerifyMinConfidence}. Run 'AI Verify LinkedIn' first." });
+
+                // Intent gate (with operator override, logged for accountability).
+                if (!string.Equals(record.Intent, "Interested", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!overrideIntent)
+                    {
+                        string intentMsg = string.IsNullOrEmpty(record.Intent)
+                            ? "Intent has not been confirmed yet. Collect the prospect's intent (email reply or AI Plivo call) before advancing."
+                            : $"Intent is '{record.Intent}'. Employment Verification can only proceed once the prospect's intent is confirmed as 'Interested'.";
+                        return Json(new { success = false, error = intentMsg, intentBlocked = true });
+                    }
+
+                    await _repository.InsertHistoryAsync(id, "IntentOverride", record.Intent ?? "\u2014",
+                        $"Operator manually bypassed the intent gate to advance via LinkedIn AI verification (intent was '{(string.IsNullOrEmpty(record.Intent) ? "not confirmed" : record.Intent)}').", user);
+                }
+
+                string company = ExtractCompanyFromRole(record.CurrentRole) ?? record.EmploymentCompanyName;
+                string details = $"Accepted as employed via AI LinkedIn verification (confidence {record.LinkedInConfidence}). Profile: {record.LinkedInUrl ?? "N/A"}. Approved by {user}.";
+
+                var ok = await _repository.UpdateEmploymentVerificationAsync(id, true, company, true, details);
+                if (ok)
+                {
+                    await _repository.InsertHistoryAsync(id, "EmploymentVerification", "\u2014",
+                        $"Company: {company ?? "N/A"}, Employed: Yes — PASSED (via AI LinkedIn verification, confidence {record.LinkedInConfidence}). {details}", user);
+                    await _repository.AdvanceFunnelStageAsync(id, "EmploymentVerified", "InProgress");
+                }
+
+                return Json(new { success = ok, verified = true, isEmployed = true, companyName = company });
             }
             catch (Exception ex)
             {
@@ -2025,7 +2246,8 @@ namespace Risebird.Web.Controllers
                     Source          = "Naukri",
                     LinkedInUrl        = payload.LinkedInUrl?.Trim(),
                     LinkedInMatch      = payload.LinkedInMatch?.Trim(),
-                    LinkedInConfidence = payload.LinkedInConfidence
+                    LinkedInConfidence = payload.LinkedInConfidence,
+                    LinkedInReason     = payload.LinkedInReason?.Trim()
                 };
 
                 var newId = await _repository.InsertAsync(record);
@@ -2039,7 +2261,9 @@ namespace Risebird.Web.Controllers
                             $"Email: {relayEmail ?? "—"}, Phone: {relayPhone ?? "—"} (extracted by Relay agent)", "Relay Webhook");
                     if (!string.IsNullOrWhiteSpace(record.LinkedInMatch))
                         await _repository.InsertHistoryAsync(newId, "LinkedInVerified", "\u2014",
-                            $"LinkedIn: {record.LinkedInMatch} (confidence {record.LinkedInConfidence?.ToString() ?? "—"}) — {record.LinkedInUrl ?? "no url"} (verified by Relay agent)", "Relay Webhook");
+                            $"LinkedIn: {record.LinkedInMatch} (confidence {record.LinkedInConfidence?.ToString() ?? "—"}) — {record.LinkedInUrl ?? "no url"}"
+                            + (string.IsNullOrWhiteSpace(record.LinkedInReason) ? "" : $" — {record.LinkedInReason}")
+                            + " (verified by Relay agent)", "Relay Webhook");
                 }
 
                 return Ok(new

@@ -178,6 +178,98 @@ namespace Risebird.Business
         }
 
         /// <summary>
+        /// Returns the net PO Opening Balance per billing owner at the start of the selected month.
+        ///   Opening Balance = Σ(PO credit before month) − Σ(wallet debits before month)
+        /// A value of zero means the owner had no carry-forward credit entering the month.
+        /// </summary>
+        public async Task<Dictionary<int, decimal>> GetOwnerOpeningBalances(int clientId, int selectedMonth, int selectedYear)
+        {
+            var result = new Dictionary<int, decimal>();
+            try
+            {
+                // All POs for the client (no period filter — we filter in memory below)
+                var allPOs = await GetClientPOList(clientId, null, null, null);
+
+                // All monthly debit totals (BillingType 1 = Billing Owner scope)
+                var allDebits = await _walletRepository.GetOwnerMonthlyDebits(clientId, billingType: 1);
+
+                var ownerIds = allPOs
+                    .Where(p => p.BillingOwnerId.HasValue)
+                    .Select(p => p.BillingOwnerId!.Value)
+                    .Distinct();
+
+                foreach (var ownerId in ownerIds)
+                {
+                    // PO credit registered strictly before the 1st of selectedMonth
+                    var prePOCredit = allPOs
+                        .Where(p => p.BillingOwnerId == ownerId
+                                 && (p.POYear < selectedYear
+                                     || (p.POYear == selectedYear && p.POMonth < selectedMonth)))
+                        .Sum(p => p.POCreditAmount);
+
+                    // Wallet debits that occurred strictly before the 1st of selectedMonth
+                    var preConsumed = allDebits
+                        .Where(d => d.BillingOwnerId == ownerId
+                                 && (d.Year < selectedYear
+                                     || (d.Year == selectedYear && d.Month < selectedMonth)))
+                        .Sum(d => d.TotalDebit);
+
+                    // Net carry-forward (can be negative if debits exceeded credit)
+                    result[ownerId] = prePOCredit - preConsumed;
+                }
+            }
+            catch { /* non-critical — returns empty dict on error */ }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns the BillingOwnerIds of all billing owners whose LATEST PO has had
+        /// >= <paramref name="threshold"/> of its credit consumed (default 90 %).
+        /// Consumption is computed using the same FIFO ledger as GetPOHistory so the
+        /// values are accurate and consistent with what the user sees in the PO History popup.
+        /// Only meaningful for BillingType = 1 (Billing Owner scope).
+        /// </summary>
+        public async Task<HashSet<int?>> GetHighConsumptionOwnerIds(int clientId, decimal threshold = 0.90m)
+        {
+            var result = new HashSet<int?>();
+            try
+            {
+                // Fetch ALL POs for the client (no owner / period filter) and all debits
+                var allPos = await GetClientPOList(clientId, null, null, null);
+                if (!allPos.Any()) return result;
+
+                foreach (var po in allPos) MapPOStatus(po);
+
+                var allDebits = await _walletRepository.GetOwnerMonthlyDebits(clientId, billingType: 1);
+
+                // Run an independent FIFO ledger per owner (all-time view — no month cutoff)
+                foreach (var ownerGroup in allPos.GroupBy(p => p.BillingOwnerId))
+                {
+                    var ownerPOs = ownerGroup
+                        .OrderBy(p => p.POYear)
+                        .ThenBy(p => p.POMonth)
+                        .ThenBy(p => p.CreatedOn ?? DateTime.MaxValue)
+                        .ToList();
+
+                    var ownerDebits = allDebits.Where(d => d.BillingOwnerId == ownerGroup.Key);
+                    RunFifoLedger(ownerPOs, ownerDebits, null, null);   // all-time state
+
+                    // "Latest PO" = last in the chronologically sorted list
+                    var latestPO = ownerPOs.Last();
+                    if (latestPO.POCreditAmount > 0
+                        && latestPO.WalletConsumed / latestPO.POCreditAmount >= threshold)
+                    {
+                        result.Add(ownerGroup.Key);
+                    }
+                }
+            }
+            catch { /* non-critical — return empty set on any error */ }
+
+            return result;
+        }
+
+        /// <summary>
         /// Applies the carry-forward FIFO ledger to a sorted PO list using the supplied debits.
         /// Always replays debits month-by-month up to the cutoff date so the result represents
         /// the cumulative state as of that point (never just a single month in isolation).
@@ -208,8 +300,8 @@ namespace Risebird.Business
 
         /// <summary>
         /// Drains <paramref name="amount"/> from the PO pool using FIFO (oldest PO first).
-        /// Each PO absorbs as much as possible without exceeding its credit amount.
-        /// Any excess beyond total PO credit is silently ignored.
+        /// If total debits exceed total PO credit, the overflow is added to the last PO,
+        /// making its WalletConsumed > POCreditAmount and WalletRemaining negative.
         /// </summary>
         private static void ApplyFifo(List<ClientPOVM> sortedPOs, decimal amount)
         {
@@ -223,6 +315,10 @@ namespace Risebird.Business
                 po.WalletConsumed += consume;
                 rem -= consume;
             }
+            // Overflow: total debits exceed total PO credit — push excess onto the last PO
+            // so WalletRemaining goes negative, signalling the account is over-consumed.
+            if (rem > 0 && sortedPOs.Count > 0)
+                sortedPOs[sortedPOs.Count - 1].WalletConsumed += rem;
         }
 
         public async Task<List<WalletVM>> GetCashCreditHistory(int clientId)
@@ -367,6 +463,73 @@ namespace Risebird.Business
             }
 
             return vm;
+        }
+
+        /// <summary>
+        /// Single-call PO Summary: fetches all PO + debit rows in one SP round-trip,
+        /// applies per-client / per-owner FIFO in memory, and returns grouped results
+        /// sorted by descending overall consumption %.
+        /// </summary>
+        public async Task<List<ClientPOGroupVM>> GetAllClientsPOSummary()
+        {
+            var (allPOs, allDebits) = await _walletRepository.GetAllClientsPOData();
+
+            // Map status labels (same helper used in GetPOHistory)
+            foreach (var po in allPOs) MapPOStatus(po);
+
+            var result = new List<ClientPOGroupVM>();
+
+            // Group POs by client
+            var byClient = allPOs.GroupBy(p => p.ClientId);
+
+            foreach (var clientGroup in byClient)
+            {
+                var clientId   = clientGroup.Key;
+                var clientPOs  = clientGroup.ToList();
+                var billingType = clientPOs.First().BillingType;
+                var clientName  = clientPOs.First().ClientName ?? clientId.ToString();
+                var billingModel = clientPOs.First().BillingModel;
+
+                // Client debits from all-clients debit set
+                var clientDebits = allDebits.Where(d => d.ClientId == clientId).ToList();
+
+                // Run FIFO per owner (BT=1) or client-wide (BT=3)
+                if (billingType == 1)
+                {
+                    foreach (var ownerGroup in clientPOs.GroupBy(p => p.BillingOwnerId))
+                    {
+                        var ownerPOs = ownerGroup
+                            .OrderBy(p => p.POYear).ThenBy(p => p.POMonth)
+                            .ThenBy(p => p.CreatedOn ?? DateTime.MaxValue).ToList();
+                        var ownerDebits = clientDebits.Where(d => d.BillingOwnerId == ownerGroup.Key);
+                        RunFifoLedger(ownerPOs, ownerDebits, null, null);
+                    }
+                }
+                else
+                {
+                    var sortedPOs = clientPOs
+                        .OrderBy(p => p.POYear).ThenBy(p => p.POMonth)
+                        .ThenBy(p => p.CreatedOn ?? DateTime.MaxValue).ToList();
+                    RunFifoLedger(sortedPOs, clientDebits, null, null);
+                }
+
+                string modelDesc = System.Enum.IsDefined(typeof(BillingModelEnum), billingModel)
+                    ? ((BillingModelEnum)billingModel).GetDescription()
+                    : (billingModel > 0 ? $"M{billingModel}" : "—");
+
+                result.Add(new ClientPOGroupVM
+                {
+                    ClientId         = clientId,
+                    ClientName       = clientName,
+                    BillingType      = billingType,
+                    BillingModelDesc = modelDesc,
+                    POs              = clientPOs
+                });
+            }
+
+            return result
+                .OrderByDescending(c => c.TotalCredit > 0 ? c.TotalConsumed / c.TotalCredit : 0)
+                .ToList();
         }
     }
 }

@@ -45,6 +45,7 @@ namespace Risebird.Entities.Data
         public string   LinkedInUrl                 { get; set; }
         public string   LinkedInMatch               { get; set; }
         public int?     LinkedInConfidence          { get; set; }
+        public string   LinkedInReason              { get; set; }
 
         public bool?    OnboardingCompleted         { get; set; }
         public int?     OnboardedUserId             { get; set; }

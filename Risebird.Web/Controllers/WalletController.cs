@@ -462,6 +462,18 @@ namespace Risebird.Web.Controllers
                 ? new SelectList(_irfService.GetClientUser(clientId), "id", "EmailId")
                 : null;
 
+            if (dashboard.BillingType == 1)
+            {
+                // Identify billing owners whose latest PO is >= 90% consumed — used for warning badge
+                ViewBag.HighConsumptionOwnerIds = await _walletService.GetHighConsumptionOwnerIds(clientId);
+
+                // PO Opening Balance = net credit carry-forward entering the selected month
+                // = Σ(PO credit before month) − Σ(debits before month)
+                // Hidden automatically for the "All Time" scope (no prior period).
+                if (!allDetails)
+                    ViewBag.POOpeningBalances = await _walletService.GetOwnerOpeningBalances(clientId, selectedMonth, selectedYear);
+            }
+
             if (TempData["ClientWalletMessage"] != null)
             {
                 ViewBag.Message = TempData["ClientWalletMessage"].ToString();
@@ -734,6 +746,108 @@ namespace Risebird.Web.Controllers
 
             var model = await _walletService.GetAllClientsWalletSummary(fm, fy, tm, ty);
             return View(model);
+        }
+
+        #endregion
+
+        #region PO Alert List
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> POAlertList()
+        {
+            if (!IsFinanceOrAdmin()) return RedirectToAction("SignOut", "Session");
+
+            const decimal threshold = 0.90m;
+
+            // Reuse the same single-SP bulk load; filter to M2 and >= threshold
+            var allSummary = await _walletService.GetAllClientsPOSummary();
+
+            var alerts = new List<POConsumptionAlertRowVM>();
+
+            foreach (var client in allSummary)
+            {
+                // Only M2 billing model
+                if (!client.BillingModelDesc.StartsWith("M2", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                if (client.BillingType == 1)
+                {
+                    // Per billing owner — check latest PO per owner
+                    foreach (var ownerGroup in client.POs.GroupBy(p => new { p.BillingOwnerId, p.BillingOwnerName, p.BillingOwnerEmail }))
+                    {
+                        var latestPO = ownerGroup
+                            .OrderByDescending(p => p.POYear).ThenByDescending(p => p.POMonth)
+                            .ThenByDescending(p => p.CreatedOn ?? DateTime.MinValue).FirstOrDefault();
+                        if (latestPO == null || latestPO.POCreditAmount <= 0) continue;
+                        var pct = latestPO.WalletConsumed / latestPO.POCreditAmount;
+                        if (pct < threshold) continue;
+
+                        alerts.Add(new POConsumptionAlertRowVM
+                        {
+                            ClientId         = client.ClientId,
+                            ClientName       = client.ClientName,
+                            BillingType      = client.BillingType,
+                            BillingModelDesc = client.BillingModelDesc,
+                            BillingOwnerId   = ownerGroup.Key.BillingOwnerId,
+                            BillingOwnerName = ownerGroup.Key.BillingOwnerName,
+                            BillingOwnerEmail= ownerGroup.Key.BillingOwnerEmail,
+                            PONumber         = latestPO.PONumber,
+                            POMonth          = latestPO.POMonth,
+                            POYear           = latestPO.POYear,
+                            POCreditAmount   = latestPO.POCreditAmount,
+                            WalletConsumed   = latestPO.WalletConsumed
+                        });
+                    }
+                }
+                else
+                {
+                    // Client-wide — check latest PO overall
+                    var latestPO = client.POs
+                        .OrderByDescending(p => p.POYear).ThenByDescending(p => p.POMonth)
+                        .ThenByDescending(p => p.CreatedOn ?? DateTime.MinValue).FirstOrDefault();
+                    if (latestPO == null || latestPO.POCreditAmount <= 0) continue;
+                    var pct = latestPO.WalletConsumed / latestPO.POCreditAmount;
+                    if (pct < threshold) continue;
+
+                    alerts.Add(new POConsumptionAlertRowVM
+                    {
+                        ClientId         = client.ClientId,
+                        ClientName       = client.ClientName,
+                        BillingType      = client.BillingType,
+                        BillingModelDesc = client.BillingModelDesc,
+                        BillingOwnerId   = null,
+                        BillingOwnerName = null,
+                        BillingOwnerEmail= null,
+                        PONumber         = latestPO.PONumber,
+                        POMonth          = latestPO.POMonth,
+                        POYear           = latestPO.POYear,
+                        POCreditAmount   = latestPO.POCreditAmount,
+                        WalletConsumed   = latestPO.WalletConsumed
+                    });
+                }
+            }
+
+            alerts = alerts.OrderByDescending(a => a.ConsumedPct).ToList();
+            ViewBag.Threshold    = (int)(threshold * 100);
+            ViewBag.TotalClients = allSummary.Count(c => c.BillingModelDesc.StartsWith("M2", StringComparison.OrdinalIgnoreCase));
+
+            return View(alerts);
+        }
+
+        #endregion
+
+        #region PO Summary Report
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> POSummaryList()
+        {
+            if (!IsFinanceOrAdmin()) return RedirectToAction("SignOut", "Session");
+
+            // Single SP call fetches all PO + debit data; FIFO is applied in memory
+            var summary = await _walletService.GetAllClientsPOSummary();
+            return View(summary);
         }
 
         #endregion

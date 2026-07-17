@@ -157,6 +157,39 @@ NEW STEP B — AI verdict (reasoning step over the search results)
     "reason": "<one concise sentence explaining the decision>"
   }
 
+  ────────────────────────────────────────────────
+  TROUBLESHOOTING — reason = "No LinkedIn profile was provided in the search
+  results" / confidence = 0 on MANY prospects
+  ────────────────────────────────────────────────
+  This almost always means the AI verdict step is NOT actually receiving the
+  Google Search results (the {{Search Google.results}} reference is resolving to
+  empty), so the model correctly reports it saw nothing. Check, in order:
+
+  1. FIELD REFERENCE: In the verdict step's prompt, the results line MUST be a
+     real @-mention of the Search Google step's output field (e.g.
+     {{Search Google -> results}} / organic results), not the literal text
+     "{{Search Google.results}}". Re-insert it with the @ picker and confirm it
+     shows as a highlighted token. If the step is named differently (e.g. it is
+     the step labelled "Extract with AI" #5 in your build), reference THAT step's
+     search-results output.
+  2. STEP ORDER: Search Google must run BEFORE the verdict step. If the verdict
+     step sits above the search step, it has no results yet.
+  3. SEARCH QUERY: The query should be specific, e.g.
+        {{candidate_name}} {{current_role}} LinkedIn
+     (add city if names are common). A bare name often returns no LinkedIn hit.
+  4. RESULTS SHAPE: Some Search Google outputs expose results as a list/object,
+     not a single string. If the field renders blank, map the specific subfield
+     (title/link/snippet) or use "Format as text"/a loop so the model gets
+     readable text rather than an empty object.
+  5. VERIFY WITH A TEST RUN: Open the verdict step's Input tab on a real run and
+     confirm the search results are visible there. If the Input is empty, it is a
+     wiring problem (steps 1-4), NOT a prompt-wording problem.
+
+  NOTE: Because LinkedIn is now only a server-side FALLBACK to Signzy, a NO /
+  confidence 0 no longer blocks anyone — the prospect still reaches the webhook
+  and is verified by Signzy. Fixing the wiring just restores LinkedIn as a useful
+  fallback and improves the audit reason shown in the UI.
+
 
 ────────────────────────────────────────────────
 STEP C — (REMOVED) verification gate
@@ -184,24 +217,44 @@ STEP C — (REMOVED) verification gate
 ================================================================================
 RECORD THE LINKEDIN VERDICT ON THE SERVER  (IMPLEMENTED)
 ================================================================================
-The server now persists the LinkedIn verdict. Add these three keys to the
+The server now persists the LinkedIn verdict. Add these FOUR keys to the
 Step 8 (Custom HTTP request) JSON body, mapping the values from the verdict AI
 step (step 5) via the @ field picker — NOT literal text:
 
     "linkedin_url":        {{step 5 -> linkedin_url}}
     "linkedin_match":      {{step 5 -> linkedin_match}}
     "linkedin_confidence": {{step 5 -> confidence}}
+    "linkedin_reason":     {{step 5 -> reason}}      <-- NEW: send the reason too
 
 Server-side wiring (already in place):
-  - RelayNaukriPayload gains linkedin_url / linkedin_match / linkedin_confidence
-    (Risebird.Entities/ViewModel/NaukriProspectiveInterviewerVM.cs)
+  - RelayNaukriPayload gains linkedin_url / linkedin_match / linkedin_confidence /
+    linkedin_reason (Risebird.Entities/ViewModel/NaukriProspectiveInterviewerVM.cs)
   - NaukriOnboardingController.Webhook() maps them onto the record and writes a
-    "LinkedInVerified" history entry
+    "LinkedInVerified" history entry (now including the reason)
   - NaukriProspectiveInterviewer table + entity + VM gain LinkedInUrl /
-    LinkedInMatch / LinkedInConfidence columns/props
+    LinkedInMatch / LinkedInConfidence / LinkedInReason columns/props
   - usp_InsertNaukriProspectiveInterviewer persists them (and backfills on the
     duplicate path); repository InsertAsync passes the params
+  - The reason is shown in the UI: the prospects table LinkedIn badge tooltip and
+    the Manage modal (LinkedIn Verification row).
+  - Manual operator tools in the Manage modal (manual-only, never automation):
+      * Edit the LinkedIn profile URL (UpdateLinkedInUrl -> usp_UpdateNaukriLinkedInUrl)
+      * "AI Verify LinkedIn" second opinion (VerifyLinkedInWithAI): because Relay's
+        Google search for the profile is often unreliable, an operator can paste a
+        URL (or leave it blank) and send the prospect's name/email/phone/role/etc. to
+        a dedicated OpenAI assistant (OpenAI:LinkedInVerificationAssistantId). The
+        assistant judges authenticity — or finds a profile when none is given — and
+        returns {linkedin_match, confidence, linkedin_url, reason}, which is persisted
+        (usp_UpdateNaukriLinkedInVerdict) and shown in the modal.
+      * "Approve & Advance" (ApproveEmploymentViaLinkedInAI): enabled ONLY when that
+        AI verdict is a match with confidence >= 80. It marks EV satisfied and moves
+        the prospect to EmploymentVerified. The >= 80 gate is re-checked server-side.
+  - There is NO unconditional manual bypass of Employment Verification: a prospect
+    advances only when Signzy passes, OR the LinkedIn fallback applies (link +
+    confidence >= 80), OR an operator's AI LinkedIn verification returns a match with
+    confidence >= 80. Failing all of these is terminal — no onboarding.
   - Migration: Risebird.DB/Migrations/AddLinkedInVerificationToNaukriProspectiveInterviewer.sql
+    (now also adds LinkedInReason) + StoredProcedures/usp_UpdateNaukriLinkedInUrl.sql
 
 Notes:
   - The webhook deserializes with MissingMemberHandling.Ignore, so sending the
