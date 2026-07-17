@@ -104,7 +104,7 @@ namespace Risebird.Repository
                     new
                     {
                         MaxRows = TrialFlagConstants.BackfillCandidateFetchSize,
-                        ScanRows = TrialFlagConstants.BackfillCandidateScanSize
+                        ActivityWindowDays = TrialFlagConstants.BackfillActivityWindowDays
                     },
                     commandType: CommandType.StoredProcedure,
                     commandTimeout: 90);

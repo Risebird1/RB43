@@ -1,5 +1,36 @@
 @model List<Risebird.Entities.ViewModel.WalletVM>
 
+<style>
+    .cash-hist-table th {
+        background: #e8eaf6 !important;
+        color: #3949ab !important;
+        font-size: 12px;
+        font-family: Roboto, sans-serif;
+        font-weight: 600;
+        white-space: nowrap;
+        padding: 8px 10px !important;
+        border: 1px solid #c5cae9 !important;
+        vertical-align: middle !important;
+    }
+    .cash-hist-table td {
+        font-size: 12px;
+        font-family: Roboto, sans-serif;
+        color: #444;
+        vertical-align: middle !important;
+        padding: 7px 10px !important;
+        /* allow long text to wrap */
+        word-break: break-word;
+        white-space: normal;
+    }
+    /* columns that should never wrap */
+    .cash-hist-table td.nowrap { white-space: nowrap; }
+    /* cap max-width on heavy-text columns */
+    .cash-hist-table td.col-ref     { max-width: 200px; }
+    .cash-hist-table td.col-owner   { max-width: 180px; }
+    .cash-hist-table td.col-addedby { max-width: 180px; }
+    .cash-hist-table tbody tr:hover { background: #f3f4ff; }
+</style>
+
 <div class="wallet-history-panel">
     <p class="text-muted" style="font-size:13px;margin-bottom:12px;">
         Overall cash credit additions posted to wallet (all periods).
@@ -7,12 +38,16 @@
     @if (Model != null && Model.Any())
     {
         var totalCash = Model.Sum(x => x.Credit);
-        <div style="margin-bottom:12px;">
-            <span class="badge badge-success">Total Cash Added: &#8377;@totalCash.ToString("N0")</span>
-            <span class="badge badge-secondary">@Model.Count entries</span>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
+            <span style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;border-radius:6px;padding:5px 14px;font-size:13px;font-family:Roboto,sans-serif;font-weight:600;">
+                &#8377; @totalCash.ToString("N0") <span style="font-weight:400;color:#555;font-size:12px;">Total Cash Added</span>
+            </span>
+            <span style="background:#e3f2fd;color:#1565c0;border:1px solid #90caf9;border-radius:6px;padding:5px 14px;font-size:13px;font-family:Roboto,sans-serif;font-weight:600;">
+                @Model.Count <span style="font-weight:400;color:#555;font-size:12px;">Entries</span>
+            </span>
         </div>
         <div class="table-responsive">
-            <table class="table table-striped table-bordered table-sm journey">
+            <table class="table table-striped table-bordered table-sm journey cash-hist-table">
                 <thead>
                     <tr>
                         <th>Transaction Date</th>
@@ -29,17 +64,17 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td>@(item.TransactionDate?.ToString("dd MMM yyyy") ?? "—")</td>
-                            <td>@(string.IsNullOrEmpty(item.TransactionRefNumber) ? "—" : item.TransactionRefNumber)</td>
+                            <td class="nowrap">@(item.TransactionDate?.ToString("dd MMM yyyy") ?? "—")</td>
+                            <td class="col-ref">@(string.IsNullOrEmpty(item.TransactionRefNumber) ? "—" : item.TransactionRefNumber)</td>
                             @if ((int)ViewBag.BillingType == 1)
                             {
-                                <td>@(string.IsNullOrEmpty(item.BillingOwnerEmail) ? "—" : item.BillingOwnerEmail)</td>
+                                <td class="col-owner">@(string.IsNullOrEmpty(item.BillingOwnerEmail) ? "—" : item.BillingOwnerEmail)</td>
                             }
-                            <td>@(string.IsNullOrEmpty(item.PONumber) ? "—" : item.PONumber)</td>
-                            <td class="text-right">&#8377; @item.Credit.ToString("N0")</td>
-                            <td>@item.TransactionType</td>
-                            <td>@item.CreatedBy</td>
-                            <td>@(item.CreatedOn?.ToString("dd MMM yyyy HH:mm") ?? "—")</td>
+                            <td class="col-ref">@(string.IsNullOrEmpty(item.PONumber) ? "—" : item.PONumber)</td>
+                            <td class="text-right nowrap" style="font-weight:600;color:#1565c0;">&#8377; @item.Credit.ToString("N0")</td>
+                            <td class="nowrap">@item.TransactionType</td>
+                            <td class="col-addedby">@item.CreatedBy</td>
+                            <td class="nowrap">@(item.CreatedOn?.ToString("dd MMM yyyy HH:mm") ?? "—")</td>
                         </tr>
                     }
                 </tbody>
