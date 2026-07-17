@@ -9,6 +9,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using Risebird.Web.Services;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -24,15 +25,17 @@ namespace Risebird.Web.Controllers
         private IIRFService _irfService;
         private IApplicationErrorLogger _applicationErrorLogger;
         private IProjectService _projectService;
+        private readonly IRisebirdSessionBootstrapService _sessionBootstrap;
         private static List<MeetingVM> _modelDetails;
         private static string Searchvalue;
-        public ProjectController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IIRFService irfService, IIRFRepository irfRepository)
+        public ProjectController(IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IIRFService irfService, IIRFRepository irfRepository, IRisebirdSessionBootstrapService sessionBootstrap)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
             _projectService = projectService;
             _irfService = irfService;
             _irfRepository = irfRepository;
+            _sessionBootstrap = sessionBootstrap;
         }
 
         [Authorize]
@@ -352,12 +355,13 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                // Session check — return empty for AJAX caller; never redirect (redirect HTML injected into page causes overlay)
-                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
-                    return new EmptyResult();
+                // Never redirect from an AJAX endpoint — doing so injects HTML into #tableID and causes the multi-device overlay.
+                // If the session is empty (expired or different server instance), re-hydrate from the Azure B2C auth cookie.
+                if (HttpContext.Session.GetString("email") == null)
+                    await _sessionBootstrap.EnsureSessionAsync(HttpContext);
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
-                if (profileName != "Admin" && profileName != "HR" && profileName != "Client" && profileName != "SupportAdmin")
+                if (string.IsNullOrEmpty(profileName) || (profileName != "Admin" && profileName != "HR" && profileName != "Client" && profileName != "SupportAdmin"))
                     return new EmptyResult();
 
                 var projectModel = new Project();
@@ -401,6 +405,10 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                // Re-hydrate session from Azure B2C cookie if empty (handles session expiry / server switch)
+                if (HttpContext.Session.GetString("email") == null)
+                    await _sessionBootstrap.EnsureSessionAsync(HttpContext);
+
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
