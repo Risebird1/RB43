@@ -1216,6 +1216,15 @@
                                 <button type="button" class="btn btn-outline-primary" id="btnSaveLinkedInUrl" style="font-size:11px;"><i class="fas fa-save me-1"></i>Save</button>
                             </div>
                             <div id="mgmLinkedInUrlMsg" style="font-size:10.5px;margin-top:2px;"></div>
+
+                            <!-- MANUAL-ONLY: AI "second opinion" on the LinkedIn profile. The URL box above
+                                 may be empty — the assistant then tries to find a matching profile. Only a
+                                 match with confidence >= 80 unlocks the "Approve & Advance" action. -->
+                            <div class="d-flex align-items-center gap-2 flex-wrap mt-2">
+                                <button type="button" class="btn btn-outline-info btn-sm" id="btnAIVerifyLinkedIn" style="font-size:11px;" title="Send this prospect's details to the AI assistant for a second opinion on the LinkedIn profile"><i class="fas fa-robot me-1"></i>AI Verify LinkedIn</button>
+                                <button type="button" class="btn btn-success btn-sm" id="btnApproveViaLinkedInAI" style="font-size:11px;display:none;" title="Advance the prospect on the strength of the AI LinkedIn verification"><i class="fas fa-arrow-right me-1"></i>Approve &amp; Advance</button>
+                            </div>
+                            <div id="mgmLinkedInAIResult" style="display:none;font-size:11.5px;margin-top:6px;padding:8px 10px;border-radius:6px;border:1px solid #e2e6ea;background:#f8f9fa;"></div>
                         </div>
                     </div>
 
@@ -2048,6 +2057,9 @@
         $('#mgmLinkedInReason').text(''); $('#mgmLinkedInReasonRow').hide();
         $('#mgmLinkedInUrlInput').val(''); $('#mgmLinkedInUrlMsg').text('');
         $('#btnSaveLinkedInUrl').prop('disabled',false).html('<i class="fas fa-save me-1"></i>Save');
+        $('#btnAIVerifyLinkedIn').prop('disabled',false).html('<i class="fas fa-robot me-1"></i>AI Verify LinkedIn');
+        $('#btnApproveViaLinkedInAI').hide().prop('disabled',false).html('<i class="fas fa-arrow-right me-1"></i>Approve &amp; Advance');
+        $('#mgmLinkedInAIResult').hide().html('');
         $('#magDropdown').hide();
         $('#step2MagDisplay').text('\u2014');
 
@@ -2923,7 +2935,7 @@
         card.removeClass('pending completed failed disabled');
         if (state === 'completed') {
             card.addClass('completed');
-            if (step === 1) { $('#btnTriggerEV').hide(); $('#btnRetryEV').hide(); $('#mStep1Subtitle').html('<span class="text-success" style="font-size:11px;">Employment verified</span>'); }
+            if (step === 1) { $('#btnTriggerEV').hide(); $('#btnRetryEV').hide(); $('#btnApproveViaLinkedInAI').hide(); $('#mStep1Subtitle').html('<span class="text-success" style="font-size:11px;">Employment verified</span>'); }
             if (step === 2) { $('#btnRunAIAnalysis').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Analyzed'); $('#mStep2Subtitle').html('<span class="text-success" style="font-size:11px;">AI analysis complete</span>'); }
             if (step === 3) { $('#btnManualOnboard').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Acknowledgement Sent'); $('#mStep3Subtitle').html('<span class="text-success" style="font-size:11px;">Profile created &amp; acknowledgement sent</span>'); }
             if (step === 4) { $('#btnCheckOnboarding').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Onboarded'); $('#mStep4Subtitle').html('<span class="text-success" style="font-size:11px;">Interviewer onboarded</span>'); }
@@ -2986,6 +2998,127 @@
             }
         });
     });
+
+    // MANUAL-ONLY: AI "second opinion" LinkedIn verification. The URL box may or may not hold a value;
+    // whatever is there (or nothing) is sent along with the prospect's data. Only a match with
+    // confidence >= 80 unlocks the "Approve & Advance" button.
+    $('#btnAIVerifyLinkedIn').on('click', function () {
+        if (!currentRecordId) return;
+        var btn = $(this);
+        var url = ($('#mgmLinkedInUrlInput').val() || '').trim();
+        var box = $('#mgmLinkedInAIResult');
+
+        $('#btnApproveViaLinkedInAI').hide();
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Verifying with AI (up to ~2 min)...');
+        box.show().css({ 'border-color': '#e2e6ea', 'background': '#f8f9fa' })
+           .html('<span class="text-muted"><i class="fas fa-robot me-1"></i>Asking the AI assistant for a second opinion...</span>');
+
+        $.ajax({
+            url: '@Url.Action("VerifyLinkedInWithAI", "NaukriOnboarding")', type: 'POST', timeout: 180000,
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId, linkedInUrl: url },
+            success: function (res) {
+                btn.prop('disabled', false).html('<i class="fas fa-robot me-1"></i>Re-run AI Verify');
+                if (!res || !res.success) {
+                    box.css({ 'border-color': '#f5c6cb', 'background': '#fff5f5' })
+                       .html('<span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>' + $('<span>').text((res && res.error) || 'AI verification failed.').html() + '</span>');
+                    return;
+                }
+
+                var matched = String(res.linkedInMatch).toUpperCase() === 'YES';
+                var conf = (res.confidence !== null && res.confidence !== undefined) ? res.confidence : null;
+                var threshold = res.threshold || 80;
+
+                // Reflect the persisted verdict back into the record + the verification display/inputs.
+                if (currentRecord) {
+                    currentRecord.linkedInMatch = res.linkedInMatch;
+                    currentRecord.linkedInConfidence = conf;
+                    currentRecord.linkedInUrl = res.linkedInUrl;
+                    currentRecord.linkedInReason = res.reason;
+                    renderLinkedInVerdict(currentRecord);
+                }
+
+                var head = matched
+                    ? '<span class="employed-yes"><i class="fas fa-check-circle me-1"></i>Genuine match</span>'
+                    : '<span class="employed-no"><i class="fas fa-times-circle me-1"></i>Not a confident match</span>';
+                if (conf !== null) head += ' <strong>(' + conf + '% confidence)</strong>';
+
+                var html = '<div>' + head + '</div>';
+                if (res.linkedInUrl) {
+                    html += '<div style="margin-top:3px;"><a href="' + $('<span>').text(res.linkedInUrl).html() + '" target="_blank" rel="noopener">' + $('<span>').text(res.linkedInUrl).html() + ' <i class="fas fa-external-link-alt" style="font-size:9px;"></i></a></div>';
+                }
+                if (res.reason) {
+                    html += '<div class="text-muted" style="margin-top:3px;"><i class="fas fa-quote-left me-1" style="font-size:9px;opacity:.6;"></i>' + $('<span>').text(res.reason).html() + '</div>';
+                }
+
+                if (res.canProceed) {
+                    html += '<div class="text-success" style="margin-top:5px;font-weight:600;"><i class="fas fa-unlock me-1"></i>Verified with &ge; ' + threshold + '% confidence — you may advance this prospect.</div>';
+                    box.css({ 'border-color': '#badbcc', 'background': '#f0fbf5' });
+                    $('#btnApproveViaLinkedInAI').show().prop('disabled', false);
+                } else {
+                    html += '<div class="text-danger" style="margin-top:5px;font-weight:600;"><i class="fas fa-lock me-1"></i>Below the ' + threshold + '% match threshold — the prospect cannot be advanced via LinkedIn.</div>';
+                    box.css({ 'border-color': '#f5c6cb', 'background': '#fff5f5' });
+                    $('#btnApproveViaLinkedInAI').hide();
+                }
+                box.html(html);
+            },
+            error: function (xhr, status) {
+                btn.prop('disabled', false).html('<i class="fas fa-robot me-1"></i>Re-run AI Verify');
+                var m = status === 'timeout' ? 'The AI assistant took too long to respond. Try again.' : 'Request failed. Try again.';
+                box.css({ 'border-color': '#f5c6cb', 'background': '#fff5f5' })
+                   .html('<span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>' + m + '</span>');
+            }
+        });
+    });
+
+    // MANUAL-ONLY: advance the prospect on the strength of the AI LinkedIn verdict (>= 80% match).
+    // The server re-checks the stored verdict, so this cannot be forced from the client.
+    $('#btnApproveViaLinkedInAI').on('click', function () {
+        approveViaLinkedInAI(false);
+    });
+
+    function approveViaLinkedInAI(overrideIntent) {
+        if (!currentRecordId) return;
+        if (!overrideIntent && !confirm('Advance this prospect into the next stage based on the AI LinkedIn verification (>= 80% match)?')) return;
+
+        var btn = $('#btnApproveViaLinkedInAI');
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Advancing...');
+
+        $.ajax({
+            url: '@Url.Action("ApproveEmploymentViaLinkedInAI", "NaukriOnboarding")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId, overrideIntent: overrideIntent === true },
+            success: function (res) {
+                if (res && res.intentBlocked) {
+                    btn.prop('disabled', false).html('<i class="fas fa-arrow-right me-1"></i>Approve &amp; Advance');
+                    if (confirm((res.error || 'Intent not confirmed.') + '\n\nThis prospect is being handled manually. Override the intent check and advance anyway?')) {
+                        approveViaLinkedInAI(true);
+                    }
+                    return;
+                }
+                if (res && res.success) {
+                    var comp = res.companyName || '';
+                    var html = '<span class="text-success"><i class="fab fa-linkedin me-1"></i>Verified via LinkedIn (AI second opinion)</span>';
+                    if (comp) html += ' &mdash; <strong>' + $('<span>').text(comp).html() + '</strong>';
+                    html += ' <span class="employed-yes">(Employed)</span>';
+                    mMarkStep(1, 'completed', html);
+                    $('#mgmCompany').text(comp);
+                    $('#mgmEmployed').html('<span class="employed-yes">Yes</span>');
+                    $('#btnApproveViaLinkedInAI').hide();
+                    if (currentRecord) {
+                        currentRecord.employmentVerified = true;
+                        currentRecord.employmentCompanyName = comp;
+                        currentRecord.employmentIsEmployed = true;
+                    }
+                } else {
+                    btn.prop('disabled', false).html('<i class="fas fa-arrow-right me-1"></i>Approve &amp; Advance');
+                    alert((res && res.error) || 'Could not advance the prospect.');
+                }
+            },
+            error: function () {
+                btn.prop('disabled', false).html('<i class="fas fa-arrow-right me-1"></i>Approve &amp; Advance');
+                alert('Request failed. Try again.');
+            }
+        });
+    }
 
     // overrideIntent: when true the operator has explicitly chosen to bypass the intent-confirmation
     // gate for this manually-handled prospect. Automation never uses this path, so intent stays
