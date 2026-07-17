@@ -352,46 +352,65 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                // Session check — return empty for AJAX caller; never redirect (redirect HTML injected into page causes overlay)
-                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
-                    return new EmptyResult();
-
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
-                if (profileName != "Admin" && profileName != "HR" && profileName != "Client" && profileName != "SupportAdmin")
-                    return new EmptyResult();
-
-                var projectModel = new Project();
-                var irfList = _projectService.GetAllIRF();
-                if (int.TryParse(clientId, out var cid) && cid != 0)
-                    irfList = irfList.Where(x => x.ClientId == cid).ToList();
-
-                irfList = SkillSetsevaluate == 2
-                    ? irfList.Where(x => x.SkillSetsevaluate == 2).ToList()
-                    : irfList.Where(x => x.SkillSetsevaluate != 2).ToList();
-
-                var objList = new List<ProjectIRFMapping>();
-                foreach (var item in irfList)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    objList.Add(new ProjectIRFMapping
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SupportAdmin")
                     {
-                        IRFId         = item.id,
-                        IRFName       = item.IRFId,
-                        IsAdded       = false,
-                        PrimarySkills = item.JDTiltle.Split("|")[0],
-                        Client        = item.ClientCompName
-                    });
+                        var projectModel = new Project();
+                        var irfList = _projectService.GetAllIRF();
+                        if (Convert.ToInt32(clientId) != 0)
+                        {
+                            irfList = irfList.Where(x => x.ClientId == Convert.ToInt32(clientId)).ToList();
+                        }
+                        //if(irfList.Count()==0)
+                        //{
+                        //    return new EmptyResult();
+                        //}
+                        if (SkillSetsevaluate == 2)
+                        {
+                            irfList = irfList.Where(x => x.SkillSetsevaluate == 2).ToList();
+                        }
+                        else
+                        {
+                            irfList = irfList.Where(x => x.SkillSetsevaluate != 2).ToList();
+                        }
+                        var objList = new List<ProjectIRFMapping>();
+                        foreach (var item in irfList)
+                        {
+
+                            var obj = new ProjectIRFMapping();
+                            obj.IRFId = item.id;
+                            obj.IRFName = item.IRFId;
+                            obj.IsAdded = false;
+                            //obj.id = 0;
+                            obj.PrimarySkills = item.JDTiltle.Split("|")[0];
+                            //obj.ProjectId = 0;
+                            obj.Client = item.ClientCompName;
+                            objList.Add(obj);
+                        }
+                        projectModel.ProjectIRFMappings = (IList<ProjectIRFMapping>)(objList);
+                        if (projectModel.ProjectIRFMappings.Count() == 0)
+                        {
+                            return new EmptyResult();
+                        }
+                        return PartialView("GetFilteredIRF", projectModel);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
                 }
-                projectModel.ProjectIRFMappings = (IList<ProjectIRFMapping>)objList;
-
-                if (!projectModel.ProjectIRFMappings.Any())
-                    return new EmptyResult();
-
-                return PartialView("GetFilteredIRF", projectModel);
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return new EmptyResult();
+                return null;
             }
 
         }
@@ -482,18 +501,18 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        return new EmptyResult();
+                        return RedirectToAction("SignOut", "Session");
                     }
                 }
                 else
                 {
-                    return new EmptyResult();
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return new EmptyResult();
+                return null;
             }
 
         }
