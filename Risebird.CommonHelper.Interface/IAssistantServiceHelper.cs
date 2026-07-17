@@ -25,5 +25,12 @@ namespace Risebird.CommonHelper.Interface
         /// the composed ticket context and returns the raw RunResult for verdict parsing.
         /// </summary>
         Task<RunResult> GeneratePaymentTicketReview(string composedMessage);
+
+        /// <summary>
+        /// Calls the LinkedIn-verification assistant with a composed prospect context (name, email,
+        /// phone, current role, and any candidate-supplied LinkedIn URL) and returns the raw RunResult
+        /// carrying a JSON verdict (linkedin_match / confidence / linkedin_url / reason).
+        /// </summary>
+        Task<RunResult> GenerateLinkedInVerification(string composedMessage);
     }
 }
