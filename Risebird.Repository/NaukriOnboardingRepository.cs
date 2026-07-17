@@ -637,6 +637,32 @@ namespace Risebird.Repository
             }
         }
 
+        // Manual-only: overwrite the full LinkedIn verdict (URL + match + confidence + reason) with the
+        // result of an operator-triggered AI second-opinion verification.
+        public async Task<bool> UpdateLinkedInVerdictAsync(int id, string linkedInUrl, string linkedInMatch, int? linkedInConfidence, string linkedInReason)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var p = new DynamicParameters();
+                p.Add("@Id", id);
+                p.Add("@LinkedInUrl", linkedInUrl);
+                p.Add("@LinkedInMatch", linkedInMatch);
+                p.Add("@LinkedInConfidence", linkedInConfidence);
+                p.Add("@LinkedInReason", linkedInReason);
+
+                var rows = await con.QueryFirstOrDefaultAsync<int>(
+                    "usp_UpdateNaukriLinkedInVerdict", p,
+                    commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public async Task<List<MagDropdownItem>> GetAllMasterAssessmentGroupsAsync()
         {
             try

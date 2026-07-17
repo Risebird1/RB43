@@ -155,6 +155,55 @@
     #loadingOverlay .spinner-border { width:3rem; height:3rem; }
     #loadingOverlay .loading-text { margin-top:15px; font-weight:500; color:#495057; }
 
+    /* Page shell — keep chrome inside viewport; scroll only where intended */
+    .nk-page { max-width:100%; min-width:0; overflow-x:clip; }
+    .nk-page-head {
+        display:flex;
+        flex-wrap:wrap;
+        align-items:flex-start;
+        justify-content:space-between;
+        gap:10px 14px;
+        margin-bottom:12px;
+        min-width:0;
+    }
+    .nk-page-head__title { flex:1 1 200px; min-width:0; }
+    .nk-page-head__title h4 {
+        font-size:1.15rem;
+        font-weight:700;
+        margin:0;
+        line-height:1.3;
+        color:#0f172a;
+    }
+    .nk-page-head__title p {
+        font-size:12px;
+        color:#64748b !important;
+        margin:4px 0 0;
+        line-height:1.35;
+    }
+    .nk-page-actions {
+        display:flex;
+        flex-wrap:wrap;
+        gap:6px;
+        align-items:center;
+        justify-content:flex-end;
+        max-width:100%;
+        min-width:0;
+    }
+    .nk-page-actions .btn {
+        font-size:11.5px !important;
+        font-weight:600;
+        padding:0.32rem 0.65rem !important;
+        line-height:1.3 !important;
+        border-radius:6px !important;
+        white-space:nowrap;
+    }
+    @@media (max-width: 900px) {
+        .nk-page-actions { width:100%; justify-content:flex-start; }
+        .nk-page-actions .btn .nk-btn-label { display:none; }
+        .nk-page-actions .btn i { margin-right:0 !important; }
+        .nk-page-actions .btn { padding:0.38rem 0.55rem !important; min-width:34px; }
+    }
+
     .nk-filter-control {
         width: 100%;
         min-width: 0;
@@ -182,13 +231,15 @@
     .nk-funnel-panel,
     .nk-funnel-panel .card-body,
     .nk-table-card,
-    .nk-table-card .card-body { overflow: visible; }
+    .nk-table-card .card-body { overflow: visible; min-width: 0; }
 
     .nk-filter-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
-        gap: 5px 7px;
+        grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+        gap: 6px 8px;
         align-items: center;
+        width: 100%;
+        min-width: 0;
     }
     .nk-filter-grid__wide { grid-column: span 2; min-width: 0; }
     @@media (max-width: 640px) { .nk-filter-grid__wide { grid-column: span 1; } }
@@ -198,85 +249,178 @@
         flex-wrap: wrap;
         gap: 6px;
         justify-content: flex-end;
-        padding-top: 3px;
+        padding-top: 4px;
         border-top: 1px solid #eef2f7;
-        margin-top: 1px;
+        margin-top: 2px;
     }
     .nk-filter-actions .btn { font-size: 11px !important; padding: 4px 10px !important; line-height: 1.25 !important; border-radius: 5px !important; }
 
     .badge { width:auto;padding:5px!important;}
-    .nk-stat .stat-value { font-size:1.5rem; font-weight:700; }
-    .nk-stat .stat-label { font-size:13px; font-weight:500; color:#495057; }
+    .nk-stats { margin-bottom:12px !important; }
+    .nk-stat {
+        border:1px solid #e8eef5 !important;
+        border-radius:8px !important;
+        padding:0.55rem 0.4rem !important;
+        background:#fff;
+        height:100%;
+    }
+    .nk-stat .stat-value { font-size:1.2rem; font-weight:700; line-height:1.15; }
+    .nk-stat .stat-label { font-size:11px; font-weight:600; color:#64748b; margin-top:2px; letter-spacing:.02em; text-transform:uppercase; }
 
     .nk-funnel-panel {
-        border: 1px solid #dbeafe !important;
-        border-left: 4px solid #0d6efd !important;
-        border-radius: 10px;
-        background: linear-gradient(180deg, #f8fbff 0%, #fff 100%);
+        border: 1px solid #e5e7eb !important;
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: none !important;
         overflow: visible;
+        margin-bottom: 12px !important;
+    }
+    .nk-funnel-panel > .card-body { padding: 0 !important; }
+    .nk-funnel-section {
+        padding: 0.55rem 0.7rem;
+        min-width: 0;
+        max-width: 100%;
+    }
+    .nk-funnel-section + .nk-funnel-section {
+        border-top: 1px solid #f1f5f9;
     }
     .nk-funnel-head {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        gap: 10px 12px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid #e8eef7;
-        margin-bottom: 10px;
+        gap: 5px 6px;
+        max-width: 100%;
+        min-width: 0;
+        padding: 0;
+        margin: 0;
+        border: 0;
     }
-    .nk-funnel-title { font-size:12px; font-weight:700; color:#1e293b; text-transform:uppercase; letter-spacing:.04em; white-space:nowrap; }
-    .nk-funnel-total { font-size:11px; font-weight:600; color:#0d6efd; background:#eaf1ff; border:1px solid #cfe0ff; border-radius:20px; padding:3px 10px; white-space:nowrap; }
-    .nk-funnel-divider { width:1px; align-self:stretch; min-height:22px; background:#dbeafe; margin:0 2px; flex-shrink:0; }
+    .nk-funnel-title {
+        font-size: 10.5px;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        white-space: nowrap;
+    }
+    .nk-funnel-title i { display: none; }
+    .nk-funnel-total {
+        font-size: 10px;
+        font-weight: 600;
+        color: #475569;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        padding: 1px 6px;
+        white-space: nowrap;
+    }
+    .nk-funnel-divider { display: none; }
     .nk-funnel-pills-track {
         display: flex;
         flex-wrap: wrap;
-        gap: 6px;
+        gap: 4px;
         align-items: center;
         max-width: 100%;
+        min-width: 0;
+        flex: 1 1 100%;
+        margin-top: 2px;
     }
     .nk-funnel-pill {
-        display:inline-flex;
-        align-items:center;
-        gap:6px;
-        text-decoration:none;
-        background:#fff;
-        border:1px solid #e2e8f0;
-        border-radius:999px;
-        padding:4px 8px 4px 12px;
-        transition:all .12s;
-        max-width:100%;
-        box-shadow:0 1px 2px rgba(15,23,42,.04);
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        text-decoration: none;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        padding: 2px 6px 2px 7px;
+        transition: background .1s, border-color .1s;
+        max-width: 100%;
     }
-    .nk-funnel-pill:hover { background:#f8fafc; border-color:#cbd5e1; transform: translateY(-1px); }
-    .nk-funnel-pill.active { background:#0d6efd; border-color:#0d6efd; box-shadow:0 2px 8px rgba(13,110,253,.28); }
-    .nk-funnel-pill-label { font-size:11px; font-weight:600; color:#475569; white-space:nowrap; line-height:1.2; }
-    .nk-funnel-pill.active .nk-funnel-pill-label { color:#fff; }
-    .nk-funnel-pill-count { font-size:10px; font-weight:700; color:#1e293b; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:12px; min-width:24px; text-align:center; padding:1px 7px; line-height:1.35; }
-    .nk-funnel-pill.active .nk-funnel-pill-count { color:#0d6efd; background:#fff; border-color:#fff; }
-    .nk-pill-glyph { font-size:10px; color:#fff; flex-shrink:0; }
+    .nk-funnel-pill:hover { background: #fff; border-color: #cbd5e1; }
+    .nk-funnel-pill.active {
+        background: #0f172a;
+        border-color: #0f172a;
+        box-shadow: none;
+    }
+    .nk-funnel-pill-label { font-size: 10px; font-weight: 600; color: #475569; white-space: nowrap; line-height: 1.2; }
+    .nk-funnel-pill.active .nk-funnel-pill-label { color: #fff; }
+    .nk-funnel-pill-count {
+        font-size: 9.5px;
+        font-weight: 700;
+        color: #334155;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 3px;
+        min-width: 18px;
+        text-align: center;
+        padding: 0 4px;
+        line-height: 1.35;
+    }
+    .nk-funnel-pill.active .nk-funnel-pill-count { color: #0f172a; background: #fff; border-color: #fff; }
+    .nk-pill-glyph { font-size: 10px; color: #fff; flex-shrink: 0; }
 
-    .nk-funnel-pill.active.mode-reached { background:#198754; border-color:#198754; box-shadow:0 2px 8px rgba(25,135,84,.28); }
-    .nk-funnel-pill.active.mode-reached .nk-funnel-pill-count { color:#198754; }
-    .nk-funnel-pill.active.mode-not { background:#b54708; border-color:#b54708; box-shadow:0 2px 8px rgba(181,71,8,.28); }
-    .nk-funnel-pill.active.mode-not .nk-funnel-pill-count { color:#b54708; }
+    .nk-funnel-pill.active.mode-reached { background: #166534; border-color: #166534; box-shadow: none; }
+    .nk-funnel-pill.active.mode-reached .nk-funnel-pill-count { color: #166534; }
+    .nk-funnel-pill.active.mode-not { background: #9a3412; border-color: #9a3412; box-shadow: none; }
+    .nk-funnel-pill.active.mode-not .nk-funnel-pill-count { color: #9a3412; }
 
-    /* "Reached at least" cumulative funnel strip */
-    .nk-reach-strip { margin-bottom:2px; }
-    .nk-reach-head { display:flex; align-items:baseline; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
-    .nk-reach-title { font-size:12.5px; font-weight:700; color:#312e81; letter-spacing:.2px; }
-    .nk-reach-sub { font-size:10.5px; color:#94a3b8; }
-    .nk-reach-bars { display:flex; align-items:flex-end; gap:6px; }
-    .nk-reach-col { flex:1 1 0; min-width:54px; display:flex; flex-direction:column; align-items:center; gap:3px; padding:4px 2px; border-radius:8px; transition:background .12s; }
-    .nk-reach-col:hover { background:#f5f3ff; }
-    .nk-reach-count { font-size:13px; font-weight:700; color:#1e1b4b; line-height:1.1; }
-    .nk-reach-track { width:100%; height:6px; background:#eef2ff; border-radius:999px; overflow:hidden; }
-    .nk-reach-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,#6366f1,#818cf8); }
-    .nk-reach-pct { font-size:9.5px; font-weight:600; color:#6366f1; line-height:1; }
-    .nk-reach-label { font-size:9.5px; color:#64748b; text-align:center; line-height:1.15; white-space:normal; }
-    .nk-reach-foot { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:10px; }
-    .nk-reach-foot-lbl { font-size:10.5px; font-weight:600; color:#64748b; }
-    .nk-reach-chip { font-size:10px; font-weight:600; color:#334155; background:#fff; border:1px solid #e2e8f0; border-left:3px solid var(--c,#94a3b8); border-radius:6px; padding:2px 8px; white-space:nowrap; }
-    .nk-reach-divider { margin:14px 0 12px; border:0; border-top:1px dashed #e2e8f0; }
+    /* "Reached at least" — compact, contained strip */
+    .nk-reach-strip { margin: 0; min-width: 0; max-width: 100%; }
+    .nk-reach-head { display: flex; align-items: baseline; gap: 6px; margin-bottom: 5px; flex-wrap: wrap; }
+    .nk-reach-title {
+        font-size: 10.5px;
+        font-weight: 700;
+        color: #64748b;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+    }
+    .nk-reach-title i { display: none; }
+    .nk-reach-sub { font-size: 10px; color: #94a3b8; }
+    .nk-reach-bars {
+        display: flex;
+        align-items: flex-end;
+        gap: 3px;
+        width: 100%;
+        min-width: 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 1px;
+        scrollbar-width: thin;
+        margin-bottom: 20px;
+    }
+    .nk-reach-col {
+        flex: 1 1 0;
+        min-width: 44px;
+        max-width: 96px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        padding: 2px 1px;
+        border-radius: 4px;
+    }
+    .nk-reach-col:hover { background: #f8fafc; }
+    .nk-reach-count { font-size: 11px; font-weight: 700; color: #0f172a; line-height: 1.1; }
+    .nk-reach-track { width: 100%; height: 4px; background: #f1f5f9; border-radius: 999px; overflow: hidden; }
+    .nk-reach-fill { height: 100%; border-radius: 999px; background: #64748b; }
+    .nk-reach-pct { font-size: 8.5px; font-weight: 600; color: #94a3b8; line-height: 1; }
+    .nk-reach-label { font-size: 8.5px; color: #64748b; text-align: center; line-height: 1.15; white-space: normal; word-break: break-word; max-width: 100%; }
+    .nk-reach-foot { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; margin-top: 6px; max-width: 100%; }
+    .nk-reach-foot-lbl { font-size: 9.5px; font-weight: 600; color: #94a3b8; }
+    .nk-reach-chip {
+        font-size: 9px;
+        font-weight: 600;
+        color: #475569;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-left: 2px solid var(--c, #94a3b8);
+        border-radius: 3px;
+        padding: 1px 6px;
+        white-space: nowrap;
+    }
+    .nk-reach-divider { display: none; }
 
     .nk-funnel-mode { display:inline-flex; border:1px solid #dbeafe; border-radius:999px; overflow:hidden; background:#fff; flex-shrink:0; box-shadow:0 1px 2px rgba(15,23,42,.04); }
     .nk-mode-btn { font-size:10px; font-weight:600; color:#64748b; text-decoration:none; padding:3px 8px; border-right:1px solid #e2e8f0; white-space:nowrap; transition:all .12s; line-height:1.25; }
@@ -341,7 +485,7 @@
         -webkit-overflow-scrolling: touch;
         max-width: 100%;
         min-width: 0;
-        max-height: calc(100vh - 300px);
+        max-height: calc(100vh - 260px);
     }
 
     .col-num { width: 42px; } .col-date { width: 108px; white-space:nowrap; }
@@ -374,15 +518,230 @@
     #nkTable .action-btns .btn-delete-record { background:linear-gradient(180deg,#f8d7da 0%,#f1aeb5 100%) !important; border:1px solid #dc3545; color:#842029 !important; min-width:10px; padding:0.28rem 0.45rem; }
     #nkTable .action-btns .btn-delete-record:hover { background:#f5c2c7 !important; color:#58151c !important; }
 
-    #main-panel .content.client .container-fluid { min-width:0; overflow:visible; }
+    #main-panel .content.client .container-fluid { min-width:0; overflow-x:clip; max-width:100%; }
 
+    /* ── Manage modal: viewport-bounded flex column (status strips + body scroll) ── */
+    #manageModal.modal { --mgm-pad: 0.75rem; }
+    #manageModal .modal-dialog {
+        max-width: min(1100px, calc(100vw - 1.5rem));
+        margin: var(--mgm-pad) auto;
+        height: calc(100vh - 1.5rem);
+        max-height: calc(100vh - 1.5rem);
+        display: flex;
+        align-items: stretch;
+    }
+    #manageModal .modal-content {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 12px 40px rgba(0,0,0,.18), 0 0 1px rgba(0,0,0,.08);
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-height: 100%;
+        min-height: 0;
+        overflow: hidden; /* contain — was visible (caused floating spill) */
+    }
+    #manageModal .modal-header.mgm-header {
+        flex: 0 0 auto;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        color: #fff;
+        border: 0;
+        padding: 0.65rem 0.9rem;
+        gap: 0.5rem;
+        align-items: center;
+        flex-wrap: nowrap;
+    }
+    #manageModal .mgm-header .modal-title-wrap { flex: 1 1 auto; min-width: 0; }
+    #manageModal .mgm-header .modal-title {
+        font-size: 0.95rem;
+        color: #fff;
+        font-weight: 600;
+        line-height: 1.3;
+        margin: 0;
+        word-wrap: break-word;
+    }
+    #manageModal .mgm-header .btn-close {
+        filter: invert(1) grayscale(100%) brightness(200%);
+        opacity: .85;
+        padding: 0.4rem;
+        margin: 0;
+    }
+    #manageModal .mgm-record-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.2);
+        border-radius: 6px;
+        padding: 3px 8px;
+        color: #e2e8f0;
+        white-space: nowrap;
+    }
+    #manageModal .mgm-record-chip .lbl { font-weight: 500; opacity: .75; font-size: 10px; text-transform: uppercase; letter-spacing: .03em; }
+    #manageModal .mgm-record-chip #mgmRecordNo { color: #fff; }
+
+    #manageModal .mgm-status-strip {
+        flex: 0 0 auto;
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0 !important;
+        padding: 0.4rem 0.9rem !important;
+        gap: 0.45rem !important;
+    }
+    #manageModal .mgm-status-btns .btn {
+        font-size: 11px !important;
+        padding: 0.22rem 0.55rem !important;
+        line-height: 1.3 !important;
+        border-radius: 6px !important;
+        font-weight: 500;
+    }
+    #manageModal .mgm-status-badge-wrap .badge {
+        font-size: 11px !important;
+        font-weight: 600;
+        padding: 0.28rem 0.55rem !important;
+        border-radius: 6px;
+    }
+    #manageModal #mgmAssigneeSelect {
+        font-size: 11.5px !important;
+        min-width: 160px !important;
+        max-width: 220px;
+        height: 28px;
+        padding: 0.15rem 0.45rem;
+    }
+    #manageModal #mgmAssigneeSave { font-size: 11px !important; padding: 0.22rem 0.55rem !important; }
+
+    #manageModal .modal-body#mgmBody {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        font-size: 12px;
+        background: #fafbfc;
+        padding: 0.75rem 0.9rem !important;
+    }
+    #manageModal .modal-footer.mgm-footer {
+        flex: 0 0 auto;
+        border-top: 1px solid #e9ecef;
+        background: #f8fafc;
+        padding: 0.45rem 0.9rem;
+    }
+    #manageModal .mgm-footer .btn {
+        font-size: 11.5px !important;
+        padding: 0.32rem 0.75rem !important;
+        border-radius: 6px !important;
+        font-weight: 500;
+    }
+    #manageModal .mgm-footer .btn-refresh-manage { border: 1px solid #ced4da; background: #fff; color: #495057; }
+    #manageModal .mgm-footer .btn-refresh-manage:hover { background: #f8f9fa; border-color: #adb5bd; color: #212529; }
+
+    #manageModal .mgm-meta { font-size: 11.5px; color: #64748b; line-height: 1.55; }
+    #manageModal .mgm-meta strong { color: #0f172a; font-weight: 600; }
+    #manageModal .mgm-section-title {
+        font-size: 10.5px;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        margin-bottom: 3px;
+    }
+    #manageModal .mgm-mail-body {
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-size: 12px;
+        line-height: 1.55;
+        background: #f8f9fa;
+        border-radius: 6px;
+        padding: 8px 10px;
+        border: 1px solid #e9ecef;
+        max-height: 140px;
+        overflow-y: auto;
+    }
+    #manageModal .mgm-action-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 7px;
+        padding: 8px 10px;
+        margin-bottom: 8px;
+        background: #fff;
+        transition: border-color .15s;
+        overflow: visible;
+    }
+    #manageModal .mgm-action-card.completed { border-color: #198754; background: #f0fdf4; }
+    #manageModal .mgm-action-card.failed { border-color: #dc3545; background: #fef2f2; }
+    #manageModal .mgm-action-card.pending { border-color: #e2e8f0; }
+    #manageModal .mgm-action-card.disabled { opacity: .55; pointer-events: none; }
+    #manageModal .mgm-step-number {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+    #manageModal .mgm-step-number.pending { background: #e9ecef; color: #6c757d; }
+    #manageModal .mgm-step-number.completed { background: #198754; color: #fff; }
+    #manageModal .mgm-step-number.failed { background: #dc3545; color: #fff; }
+    #manageModal .mgm-step-number.running { background: #0d6efd; color: #fff; }
+    #manageModal .mgm-action-btn {
+        min-width: 0;
+        font-size: 11px !important;
+        font-weight: 600;
+        padding: 0.28rem 0.65rem !important;
+        line-height: 1.3 !important;
+        border-radius: 6px !important;
+    }
+    #manageModal .mgm-btn-view-resume {
+        font-size: 11px !important;
+        padding: 0.28rem 0.55rem !important;
+        line-height: 1.3 !important;
+        border-radius: 6px !important;
+    }
+    #manageModal .mgm-action-btn:disabled { opacity: .88; cursor: not-allowed; }
+    #manageModal .mgm-result-block {
+        font-size: 11.5px;
+        margin-top: 6px;
+        padding: 6px 9px;
+        border-radius: 5px;
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        max-height: 140px;
+        overflow-y: auto;
+    }
+    #manageModal .mgm-info-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 5px 8px;
+        border-radius: 6px;
+        background: #fff;
+        border: 1px solid #e9ecef;
+        margin-bottom: 5px;
+        font-size: 11.5px;
+    }
+    #manageModal .mgm-info-row .label,
+    #manageModal .mgm-info-row > span:first-child { font-weight: 600; color: #475569; flex: 0 0 auto; white-space: nowrap; }
+    #manageModal .mgm-info-row .value { color: #0f172a; flex: 1 1 auto; min-width: 0; word-break: break-word; overflow-wrap: anywhere; line-height: 1.4; }
+    #manageModal .mgm-profile-grid { margin-bottom: 0.65rem !important; }
+    #manageModal .mgm-pipeline-title { font-size: 12px !important; margin-bottom: 0.55rem !important; }
+    #manageModal hr { margin: 0.55rem 0; opacity: .25; }
+    #manageModal .mgm-action-card > .d-flex { gap: 0.55rem !important; }
+    #manageModal .mgm-action-card .text-muted { font-size: 11px !important; }
+    #manageModal .mgm-action-card strong { font-size: 12px !important; }
+    #manageModal #magDropdown {
+        z-index: 5;
+        max-height: min(280px, 40vh);
+    }
+    #manageModal #magList { max-height: 220px; }
+
+    /* legacy class hooks still used by shared markup outside #manageModal scope */
     .mgm-header { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%); color:#fff; border:0; padding:1rem 1.25rem; flex-wrap:wrap; gap:0.75rem; align-items:flex-start; }
     .mgm-header .modal-title-wrap { flex:1 1 220px; min-width:0; }
     .mgm-header .modal-title { font-size:1.05rem; color:#fff;font-weight:600; line-height:1.35; margin:0; word-wrap:break-word; }
     .mgm-header .btn-close { filter:invert(1) grayscale(100%) brightness(200%); opacity:.85; }
-    #manageModal .modal-content { border:none; border-radius:12px; overflow:visible; box-shadow:0 12px 40px rgba(0,0,0,.18),0 0 1px rgba(0,0,0,.08); }
-    #manageModal .modal-body { font-size:12.5px; background:#fafbfc; overflow:visible; }
-    #manageModal .modal-dialog { overflow:visible; }
     .mgm-meta { font-size:12.5px; color:#6c757d; }
     .mgm-meta strong { color:#212529; }
     .mgm-section-title { font-size:12px; font-weight:700; color:#6c757d; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
@@ -407,7 +766,7 @@
     .mgm-footer .btn { font-size:12px !important; padding:0.45rem 1rem !important; border-radius:8px !important; font-weight:500; }
     .mgm-footer .btn-refresh-manage { border:1px solid #ced4da; background:#fff; color:#495057; }
     .mgm-footer .btn-refresh-manage:hover { background:#f8f9fa; border-color:#adb5bd; color:#212529; }
-    .nk-page-refresh { font-size:12px !important; font-weight:600; padding:0.4rem 0.9rem !important; border-radius:8px !important; border:1px solid #9fd89f !important; background:linear-gradient(180deg,#e8f8e8 0%,#d4edda 100%) !important; color:#0f5132 !important; box-shadow:0 1px 3px rgba(25,135,84,.12); }
+    .nk-page-refresh { font-size:11.5px !important; font-weight:600; padding:0.32rem 0.65rem !important; border-radius:6px !important; border:1px solid #9fd89f !important; background:linear-gradient(180deg,#e8f8e8 0%,#d4edda 100%) !important; color:#0f5132 !important; }
     .nk-page-refresh:hover { background:#d1e7dd !important; border-color:#75b879 !important; color:#0a3622 !important; }
     .mgm-action-btn:disabled { opacity:.88; cursor:not-allowed; }
     .mgm-result-block { font-size:12px; margin-top:8px; padding:8px 12px; border-radius:6px; background:#f8f9fa; border:1px solid #e9ecef; max-height:200px; overflow-y:auto; }
@@ -504,33 +863,35 @@
     #magList .mag-no-results { padding:12px; text-align:center; color:#6c757d; font-size:12px; }
 
     /* Priority intent-collection panel */
-    .nk-priority-divider { margin:12px 0 10px; border:0; border-top:1px dashed #fde0c2; }
-    .nk-priority-head { display:flex; flex-wrap:wrap; align-items:baseline; gap:8px; margin-bottom:8px; }
-    .nk-priority-title { font-size:12px; font-weight:700; color:#b54708; text-transform:uppercase; letter-spacing:.04em; white-space:nowrap; }
-    .nk-priority-sub { font-size:11px; color:#94734a; line-height:1.3; }
-    .nk-priority-sub strong { color:#b54708; }
-    .nk-priority-body { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
-    .nk-priority-chips { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
-    .nk-priority-empty { font-size:11px; color:#94a3b8; font-style:italic; }
+    .nk-priority { min-width:0; max-width:100%; }
+    .nk-priority-divider { display: none; }
+    .nk-priority-head { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 8px; margin-bottom:5px; min-width:0; }
+    .nk-priority-title { font-size:10.5px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.04em; white-space:nowrap; }
+    .nk-priority-title i { display: none; }
+    .nk-priority-sub { font-size:10px; color:#94a3b8; line-height:1.35; flex:1 1 200px; min-width:0; }
+    .nk-priority-sub strong { color:#475569; }
+    .nk-priority-body { display:flex; flex-wrap:wrap; align-items:center; gap:6px; min-width:0; max-width:100%; }
+    .nk-priority-chips { display:flex; flex-wrap:wrap; gap:5px; align-items:center; min-width:0; max-width:100%; }
+    .nk-priority-empty { font-size:10.5px; color:#94a3b8; font-style:italic; }
     .nk-priority-chip {
-        display:inline-flex; align-items:center; gap:7px;
-        background:#fff7ed; border:1px solid #fed7aa; color:#9a3412;
-        border-radius:999px; padding:4px 6px 4px 11px; font-size:11.5px; font-weight:600;
-        box-shadow:0 1px 2px rgba(180,71,8,.08);
+        display:inline-flex; align-items:center; gap:6px;
+        background:#f8fafc; border:1px solid #e5e7eb; color:#334155;
+        border-radius:4px; padding:2px 4px 2px 8px; font-size:10.5px; font-weight:600;
+        max-width:100%;
     }
-    .nk-priority-chip .nk-priority-chip-ag { font-weight:500; color:#c2754a; }
+    .nk-priority-chip .nk-priority-chip-ag { font-weight:500; color:#64748b; }
     .nk-priority-chip .nk-priority-chip-x {
         display:inline-flex; align-items:center; justify-content:center;
-        width:16px; height:16px; border-radius:50%; background:#fed7aa; color:#9a3412;
-        cursor:pointer; font-size:9px; border:0; line-height:1; transition:background .12s;
+        width:15px; height:15px; border-radius:3px; background:#e2e8f0; color:#64748b;
+        cursor:pointer; font-size:8px; border:0; line-height:1; transition:background .12s; flex-shrink:0;
     }
-    .nk-priority-chip .nk-priority-chip-x:hover { background:#fb923c; color:#fff; }
+    .nk-priority-chip .nk-priority-chip-x:hover { background:#cbd5e1; color:#0f172a; }
     .nk-priority-addbtn {
-        display:inline-flex; align-items:center; font-size:11.5px; font-weight:600;
-        color:#b54708; background:#fff; border:1px dashed #fdba74; border-radius:999px;
-        padding:5px 12px; cursor:pointer; transition:all .12s;
+        display:inline-flex; align-items:center; font-size:10.5px; font-weight:600;
+        color:#475569; background:#fff; border:1px dashed #cbd5e1; border-radius:4px;
+        padding:3px 8px; cursor:pointer; transition:all .12s;
     }
-    .nk-priority-addbtn:hover { background:#fff7ed; border-color:#fb923c; }
+    .nk-priority-addbtn:hover { background:#f8fafc; border-color:#94a3b8; }
     .nk-priority-addbtn:disabled { opacity:.5; cursor:not-allowed; }
     #nkPriorityDropdown {
         display:none; position:absolute; z-index:1090; background:#fff;
@@ -558,24 +919,24 @@
 <div class="main-panel" id="main-panel">
     <div class="pt30">
         <div class="content client">
-            <div class="container-fluid py-4">
+            <div class="container-fluid py-3 nk-page">
 
-                <div class="row mb-3 align-items-center">
-                    <div class="col">
-                        <h4 class="fw-bold mb-0"><i class="fas fa-user-graduate text-primary me-2"></i>Prospective Interviewer Onboarding</h4>
-                        <p class="text-muted mb-0 mt-1">Prospective interviewers sourced from Naukri / LinkedIn, processed via Relay.app</p>
+                <div class="nk-page-head">
+                    <div class="nk-page-head__title">
+                        <h4><i class="fas fa-user-graduate text-primary me-2"></i>Prospective Interviewer Onboarding</h4>
+                        <p>Naukri / LinkedIn prospects via Relay.app</p>
                     </div>
-                    <div class="col-auto d-flex gap-2">
-                        <button type="button" class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#bulkAssignModal" title="Distribute a MAG's tickets to a single operator"><i class="fas fa-people-arrows me-1"></i>Bulk Assign</button>
-                        <a href="@Url.Action("Performance", "NaukriOnboarding")" class="btn btn-sm btn-outline-info" title="Operator activity between dates"><i class="fas fa-user-clock me-1"></i>Performance</a>
-                        <a href="@Url.Action("BatchCall", "NaukriOnboarding")" class="btn btn-sm btn-outline-success"><i class="fas fa-phone-volume me-1"></i>Batch Call</a>
-                        <a href="@Url.Action("ProspectProgress", "NaukriOnboarding")" class="btn btn-sm btn-outline-primary"><i class="fas fa-chart-line me-1"></i>Progress Tracker</a>
-                        <button type="button" class="btn btn-sm nk-page-refresh" onclick="location.reload()" title="Reload this page"><i class="fas fa-sync-alt me-1"></i>Refresh</button>
+                    <div class="nk-page-actions">
+                        <button type="button" class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#bulkAssignModal" title="Distribute a MAG's tickets to a single operator"><i class="fas fa-people-arrows me-1"></i><span class="nk-btn-label">Bulk Assign</span></button>
+                        <a href="@Url.Action("Performance", "NaukriOnboarding")" class="btn btn-sm btn-outline-info" title="Operator activity between dates"><i class="fas fa-user-clock me-1"></i><span class="nk-btn-label">Performance</span></a>
+                        <a href="@Url.Action("BatchCall", "NaukriOnboarding")" class="btn btn-sm btn-outline-success" title="Batch Call"><i class="fas fa-phone-volume me-1"></i><span class="nk-btn-label">Batch Call</span></a>
+                        <a href="@Url.Action("ProspectProgress", "NaukriOnboarding")" class="btn btn-sm btn-outline-primary" title="Progress Tracker"><i class="fas fa-chart-line me-1"></i><span class="nk-btn-label">Progress Tracker</span></a>
+                        <button type="button" class="btn btn-sm nk-page-refresh" onclick="location.reload()" title="Reload this page"><i class="fas fa-sync-alt me-1"></i><span class="nk-btn-label">Refresh</span></button>
                     </div>
                 </div>
 
-                @if (TempData["Success"] != null) { <div class="alert alert-success alert-dismissible fade show"><i class="fas fa-check-circle me-2"></i>@TempData["Success"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div> }
-                @if (TempData["Error"] != null) { <div class="alert alert-danger alert-dismissible fade show"><i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div> }
+                @if (TempData["Success"] != null) { <div class="alert alert-success alert-dismissible fade show py-2"><i class="fas fa-check-circle me-2"></i>@TempData["Success"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div> }
+                @if (TempData["Error"] != null) { <div class="alert alert-danger alert-dismissible fade show py-2"><i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div> }
 
                 @{
                    // Global status breakdown across all matched records (not just the current page).
@@ -585,22 +946,23 @@
                    int cardIP = ViewBag.InProgressCount != null ? (int)ViewBag.InProgressCount : 0;
                    int cardClosed = ViewBag.ClosedCount != null ? (int)ViewBag.ClosedCount : 0;
                    int cardOnboarded = ViewBag.OnboardedCount != null ? (int)ViewBag.OnboardedCount : 0; }
-                <div class="row g-3 mb-4">
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat" title="All @(hasFilters ? "matched" : "") records. Open + In Progress + Closed + Onboarded add up to this."><div class="stat-value text-primary">@totalCount</div><div class="stat-label">@(hasFilters ? "Matched" : "Total")</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat" title="Open tickets (not yet onboarded)"><div class="stat-value text-warning">@cardOpen</div><div class="stat-label">Open</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat" title="In-progress tickets (not yet onboarded)"><div class="stat-value text-info">@cardIP</div><div class="stat-label">In Progress</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat" title="Closed without onboarding (e.g. not interested, unsubscribed). Onboarded prospects are counted separately."><div class="stat-value text-secondary">@cardClosed</div><div class="stat-label">Closed</div></div></div>
-                    <div class="col-6 col-sm-3 col-md-2"><div class="card border-0 shadow-sm text-center py-3 nk-stat" title="Successfully onboarded (a closed/successful outcome, shown separately from Closed)"><div class="stat-value" style="color:#0f5132;">@cardOnboarded</div><div class="stat-label">Onboarded</div></div></div>
+                <div class="row g-2 nk-stats">
+                    <div class="col-6 col-sm-4 col-md"><div class="card border-0 shadow-sm text-center nk-stat" title="All @(hasFilters ? "matched" : "") records. Open + In Progress + Closed + Onboarded add up to this."><div class="stat-value text-primary">@totalCount</div><div class="stat-label">@(hasFilters ? "Matched" : "Total")</div></div></div>
+                    <div class="col-6 col-sm-4 col-md"><div class="card border-0 shadow-sm text-center nk-stat" title="Open tickets (not yet onboarded)"><div class="stat-value text-warning">@cardOpen</div><div class="stat-label">Open</div></div></div>
+                    <div class="col-6 col-sm-4 col-md"><div class="card border-0 shadow-sm text-center nk-stat" title="In-progress tickets (not yet onboarded)"><div class="stat-value text-info">@cardIP</div><div class="stat-label">In Progress</div></div></div>
+                    <div class="col-6 col-sm-4 col-md"><div class="card border-0 shadow-sm text-center nk-stat" title="Closed without onboarding (e.g. not interested, unsubscribed). Onboarded prospects are counted separately."><div class="stat-value text-secondary">@cardClosed</div><div class="stat-label">Closed</div></div></div>
+                    <div class="col-6 col-sm-4 col-md"><div class="card border-0 shadow-sm text-center nk-stat" title="Successfully onboarded (a closed/successful outcome, shown separately from Closed)"><div class="stat-value" style="color:#0f5132;">@cardOnboarded</div><div class="stat-label">Onboarded</div></div></div>
                 </div>
 
-                <div class="card border-0 shadow-sm mb-4 nk-funnel-panel">
-                    <div class="card-body py-3 px-3">
+                <div class="card border-0 nk-funnel-panel">
+                    <div class="card-body">
                         @if (reachTop > 0)
                         {
+                            <div class="nk-funnel-section">
                             <div class="nk-reach-strip">
                                 <div class="nk-reach-head">
-                                    <span class="nk-reach-title"><i class="fas fa-stream me-1"></i>Reached at least</span>
-                                    <span class="nk-reach-sub">cumulative — how far prospects have ever progressed (credits records that later branched off)</span>
+                                    <span class="nk-reach-title">Reached at least</span>
+                                    <span class="nk-reach-sub">Cumulative progress (includes later branch-offs)</span>
                                 </div>
                                 <div class="nk-reach-bars">
                                     @{ int reachPrev = 0; }
@@ -625,21 +987,22 @@
                                     int rNs = reachOf("NotStarted");
                                 }
                                 <div class="nk-reach-foot">
-                                    <span class="nk-reach-foot-lbl">Off the happy path:</span>
+                                    <span class="nk-reach-foot-lbl">Off path:</span>
                                     <span class="nk-reach-chip" style="--c:#dc3545;">Duplicate @rDup.ToString("N0")</span>
                                     <span class="nk-reach-chip" style="--c:#e35d6a;">Not Interested @rNi.ToString("N0")</span>
                                     <span class="nk-reach-chip" style="--c:#adb5bd;">Cold @rCold.ToString("N0")</span>
                                     <span class="nk-reach-chip" style="--c:#d9480f;">Not Qualified @rNq.ToString("N0")</span>
                                     <span class="nk-reach-chip" style="--c:#94a3b8;">Not started @rNs.ToString("N0")</span>
-                                    <span class="nk-reach-chip" style="--c:#0d6efd;">Entered pipeline @reachTop.ToString("N0") of @reachTotal.ToString("N0")</span>
+                                    <span class="nk-reach-chip" style="--c:#64748b;">Entered @reachTop.ToString("N0") / @reachTotal.ToString("N0")</span>
                                 </div>
                             </div>
-                            <hr class="nk-reach-divider" />
+                            </div>
                         }
+                        <div class="nk-funnel-section">
                         <div class="nk-funnel-head">
-                            <span class="nk-funnel-title"><i class="fas fa-filter me-1"></i>Funnel Stages</span>
+                            <span class="nk-funnel-title">Funnel</span>
                             <span class="nk-funnel-total" title="Sum across all stages equals the @(hasFilters ? "matched" : "total") records">@totalCount total</span>
-                            <span class="nk-funnel-divider"></span>
+                            <div class="nk-funnel-pills-track">
                             @{ int nkKnownSum = 0; }
                             @foreach (var fs in funnelStages)
                             {
@@ -659,15 +1022,17 @@
                                     <span class="nk-funnel-pill-count">@nkOther</span>
                                 </span>
                             }
+                            </div>
+                        </div>
                         </div>
 
-                        <hr class="nk-priority-divider" />
+                        <div class="nk-funnel-section">
                         <div class="nk-priority" id="nkPriorityPanel">
                             <div class="nk-priority-head">
-                                <span class="nk-priority-title"><i class="fas fa-bolt me-1"></i>Priority Intent Collection</span>
+                                <span class="nk-priority-title">Priority Intent Collection</span>
                                 <span class="nk-priority-sub">
-                                    Aggressively call prospects in these MAGs who are stuck at <strong>Interest Collection</strong>
-                                    to capture intent fast. Bypasses the usual call caps, runs 8&nbsp;AM&ndash;10&nbsp;PM IST, and resets daily. Max 2 MAGs.
+                                    Call prospects in these MAGs stuck at <strong>Interest Collection</strong>
+                                    (bypasses call caps, 8&nbsp;AM&ndash;10&nbsp;PM IST, resets daily). Max 2 MAGs.
                                 </span>
                             </div>
                             <div class="nk-priority-body">
@@ -675,7 +1040,7 @@
                                     <span class="nk-priority-empty">No priority MAGs set.</span>
                                 </div>
                                 <div class="mag-dropdown-wrap" id="nkPriorityAddWrap">
-                                    <button type="button" class="nk-priority-addbtn" id="nkPriorityAddBtn"><i class="fas fa-plus me-1"></i>Add priority MAG</button>
+                                    <button type="button" class="nk-priority-addbtn" id="nkPriorityAddBtn"><i class="fas fa-plus me-1"></i>Add MAG</button>
                                     <div id="nkPriorityDropdown">
                                         <input type="text" id="nkPrioritySearch" class="form-control form-control-sm" placeholder="Search MAG..." />
                                         <div id="nkPriorityList"></div>
@@ -683,16 +1048,17 @@
                                 </div>
                             </div>
                         </div>
+                        </div>
                     </div>
                 </div>
 
                 <form asp-action="Index" asp-controller="NaukriOnboarding" method="get" id="filterForm">
                     <input type="hidden" name="page" value="1" />
                     <input type="hidden" name="pageSize" value="@pageSize" />
-                    <div class="card border-0 shadow-sm mb-3">
-                        <div class="card-body py-2 px-3">
-                            <div class="d-flex align-items-center gap-2" style="flex-wrap:nowrap;width:100%;">
-                                <select name="status" class="form-select nk-filter-control" style="flex:1 1 0;min-width:120px;max-width:155px;" onchange="document.getElementById('filterForm').submit()" title="Operational ticket status">
+                    <div class="card border-0 shadow-sm mb-3 nk-filter-card">
+                        <div class="card-body">
+                            <div class="nk-filter-grid">
+                                <select name="status" class="form-select nk-filter-control" onchange="document.getElementById('filterForm').submit()" title="Operational ticket status">
                                     <option value="">All statuses</option>
                                     @if (selStatus == "Open") { <option value="Open" selected>Open</option> } else { <option value="Open">Open</option> }
                                     @if (selStatus == "InProgress") { <option value="InProgress" selected>In Progress</option> } else { <option value="InProgress">In Progress</option> }
@@ -1105,48 +1471,48 @@
 
 <!-- ══════════════════════ Manage Modal ══════════════════════ -->
 <div class="modal fade" id="manageModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header mgm-header">
                 <div class="modal-title-wrap pe-2">
                     <h5 class="modal-title"><i class="fas fa-user-graduate me-2"></i>Onboard Naukri Prospect</h5>
                 </div>
-                <div class="d-flex align-items-start gap-2 ms-auto flex-shrink-0">
-                    <div style="position:relative;top:17px;right:30px;"><span class="lbl">Record no.</span> <span id="mgmRecordNo">#\u2014</span></div>
+                <div class="d-flex align-items-center gap-2 ms-auto flex-shrink-0">
+                    <span class="mgm-record-chip"><span class="lbl">Record</span> <span id="mgmRecordNo">#\u2014</span></span>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
             </div>
 
-            <div class="mgm-status-strip px-3 px-md-4 py-2 d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div class="mgm-status-strip d-flex align-items-center justify-content-between flex-wrap">
                 <div class="d-flex align-items-center gap-2 flex-wrap mgm-status-badge-wrap">
-                    <strong class="text-muted" style="font-size:12.5px;">Status</strong>
+                    <strong class="text-muted" style="font-size:11px;">Status</strong>
                     <span class="badge" id="mgmStatusBadge">Open</span>
-                    <span class="badge" id="mgmAutomationBadge" style="display:none;font-size:11px;"></span>
+                    <span class="badge" id="mgmAutomationBadge" style="display:none;font-size:10.5px;"></span>
                 </div>
                 <div class="d-flex align-items-center gap-2 flex-wrap mgm-status-btns" id="mgmStatusActions">
-                    <span class="text-muted" style="font-size:12px;">Change to</span>
+                    <span class="text-muted" style="font-size:11px;">Change to</span>
                     <button type="button" class="btn btn-outline-primary btn-sm btn-mgm-status" data-status="InProgress"><i class="fas fa-hourglass-half me-1"></i>In Progress</button>
                     <button type="button" class="btn btn-outline-secondary btn-sm btn-mgm-status" data-status="Closed"><i class="fas fa-times-circle me-1"></i>Close</button>
                     <button type="button" class="btn btn-outline-warning btn-sm btn-mgm-status" data-status="Open"><i class="fas fa-redo me-1"></i>Reopen</button>
                 </div>
             </div>
 
-            <div class="mgm-status-strip px-3 px-md-4 py-2 d-flex align-items-center flex-wrap gap-2" style="border-top:1px dashed #e2e8f0;">
-                <strong class="text-muted" style="font-size:12.5px;"><i class="fas fa-user-tag me-1"></i>Assigned to</strong>
-                <span id="mgmAssigneeName" class="badge bg-light text-dark border" style="font-size:11.5px;">Unassigned</span>
-                <div id="mgmAssigneeEditWrap" class="d-flex align-items-center gap-1">
-                    <select id="mgmAssigneeSelect" class="form-select form-select-sm" style="font-size:12px;min-width:220px;width:auto;">
+            <div class="mgm-status-strip d-flex align-items-center flex-wrap" style="border-top:0;border-bottom:1px solid #e2e8f0;">
+                <strong class="text-muted" style="font-size:11px;"><i class="fas fa-user-tag me-1"></i>Assigned to</strong>
+                <span id="mgmAssigneeName" class="badge bg-light text-dark border" style="font-size:11px;">Unassigned</span>
+                <div id="mgmAssigneeEditWrap" class="d-flex align-items-center gap-1 flex-wrap">
+                    <select id="mgmAssigneeSelect" class="form-select form-select-sm">
                         <option value="">Loading…</option>
                     </select>
-                    <button type="button" id="mgmAssigneeSave" class="btn btn-success btn-sm" style="font-size:11px;"><i class="fas fa-check me-1"></i>Assign</button>
+                    <button type="button" id="mgmAssigneeSave" class="btn btn-success btn-sm"><i class="fas fa-check me-1"></i>Assign</button>
                 </div>
             </div>
 
-            <div class="modal-body pt-3" id="mgmBody">
-                <div class="text-center py-4 text-muted" id="mgmLoading"><i class="fas fa-spinner fa-spin me-2"></i>Loading record details...</div>
+            <div class="modal-body" id="mgmBody">
+                <div class="text-center py-3 text-muted" id="mgmLoading"><i class="fas fa-spinner fa-spin me-2"></i>Loading record details...</div>
 
                 <div id="mgmContent" style="display:none;">
-                    <div class="row mb-3">
+                    <div class="row g-2 mgm-profile-grid">
                         <div class="col-md-6">
                             <div class="mgm-meta">
                                 <span><strong>Candidate:</strong> <span id="mgmName"></span></span><br/>
@@ -1169,13 +1535,13 @@
                         </div>
                     </div>
 
-                    <div class="row mb-3">
+                    <div class="row g-2 mb-2">
                         <div class="col-md-6">
                             <div class="mgm-info-row">
                                 <span><i class="fas fa-envelope me-1"></i>Parsed Email:</span>
                                 <span class="value" id="mgmParsedEmail">\u2014</span>
                             </div>
-                            <div id="mgmInviteEmailStatus" style="font-size:11px;margin-top:2px;"></div>
+                            <div id="mgmInviteEmailStatus" style="font-size:10.5px;margin-top:1px;"></div>
                         </div>
                         <div class="col-md-6">
                             <div class="mgm-info-row">
@@ -1185,7 +1551,7 @@
                         </div>
                     </div>
 
-                    <div class="row mb-3">
+                    <div class="row g-2 mb-2">
                         <div class="col-md-6">
                             <div class="mgm-info-row">
                                 <span><i class="fas fa-building me-1"></i>Company:</span>
@@ -1200,33 +1566,42 @@
                         </div>
                     </div>
 
-                    <div class="row mb-3">
+                    <div class="row g-2 mb-2">
                         <div class="col-12">
                             <div class="mgm-info-row">
                                 <span><i class="fab fa-linkedin me-1" style="color:#0a66c2;"></i>LinkedIn Verification:</span>
                                 <span class="value" id="mgmLinkedIn">\u2014</span>
                             </div>
-                            <div id="mgmLinkedInReasonRow" style="display:none;font-size:11.5px;color:#5a6169;margin-top:3px;padding-left:2px;">
+                            <div id="mgmLinkedInReasonRow" style="display:none;font-size:11px;color:#5a6169;margin-top:2px;padding-left:2px;">
                                 <i class="fas fa-quote-left me-1" style="font-size:9px;opacity:.6;"></i><span id="mgmLinkedInReason"></span>
                             </div>
                             <!-- MANUAL-ONLY: operators can correct/attach the LinkedIn profile URL. -->
-                            <div class="input-group input-group-sm mt-2" style="max-width:560px;">
-                                <span class="input-group-text" style="font-size:11px;"><i class="fab fa-linkedin me-1" style="color:#0a66c2;"></i>Profile URL</span>
-                                <input type="url" class="form-control" id="mgmLinkedInUrlInput" placeholder="https://www.linkedin.com/in/..." style="font-size:11.5px;" />
+                            <div class="input-group input-group-sm mt-1" style="max-width:560px;">
+                                <span class="input-group-text" style="font-size:10.5px;"><i class="fab fa-linkedin me-1" style="color:#0a66c2;"></i>Profile URL</span>
+                                <input type="url" class="form-control" id="mgmLinkedInUrlInput" placeholder="https://www.linkedin.com/in/..." style="font-size:11px;" />
                                 <button type="button" class="btn btn-outline-primary" id="btnSaveLinkedInUrl" style="font-size:11px;"><i class="fas fa-save me-1"></i>Save</button>
                             </div>
-                            <div id="mgmLinkedInUrlMsg" style="font-size:10.5px;margin-top:2px;"></div>
+                            <div id="mgmLinkedInUrlMsg" style="font-size:10px;margin-top:2px;"></div>
+
+                            <!-- MANUAL-ONLY: AI "second opinion" on the LinkedIn profile. The URL box above
+                                 may be empty — the assistant then tries to find a matching profile. Only a
+                                 match with confidence >= 80 unlocks the "Approve & Advance" action. -->
+                            <div class="d-flex align-items-center gap-2 flex-wrap mt-1">
+                                <button type="button" class="btn btn-outline-info btn-sm" id="btnAIVerifyLinkedIn" style="font-size:11px;" title="Send this prospect's details to the AI assistant for a second opinion on the LinkedIn profile"><i class="fas fa-robot me-1"></i>AI Verify LinkedIn</button>
+                                <button type="button" class="btn btn-success btn-sm" id="btnApproveViaLinkedInAI" style="font-size:11px;display:none;" title="Advance the prospect on the strength of the AI LinkedIn verification"><i class="fas fa-arrow-right me-1"></i>Approve &amp; Advance</button>
+                            </div>
+                            <div id="mgmLinkedInAIResult" style="display:none;font-size:11px;margin-top:5px;padding:6px 8px;border-radius:6px;border:1px solid #e2e6ea;background:#f8f9fa;"></div>
                         </div>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-12"><div class="mgm-section-title">Key Skills</div><div style="font-size:12px;" id="mgmSkills" class="mgm-ellipsis-skills"></div></div>
+                    <div class="row g-2 mb-2">
+                        <div class="col-12"><div class="mgm-section-title">Key Skills</div><div style="font-size:11.5px;" id="mgmSkills" class="mgm-ellipsis-skills"></div></div>
                     </div>
-                    <div class="mb-3"><div class="mgm-section-title">Email Subject</div><div style="font-size:12.5px;" id="mgmSubject"></div></div>
+                    <div class="mb-2"><div class="mgm-section-title">Email Subject</div><div style="font-size:12px;" id="mgmSubject"></div></div>
 
                     <hr/>
 
-                    <h6 class="fw-bold mb-3" style="font-size:13px;"><i class="fas fa-tasks me-2 text-primary"></i>Onboarding Pipeline</h6>
+                    <h6 class="fw-bold mgm-pipeline-title"><i class="fas fa-tasks me-2 text-primary"></i>Onboarding Pipeline</h6>
 
                     <!-- Step 1: Parse Resume -->
                     <div class="mgm-action-card pending" id="step1Card">
@@ -1912,7 +2287,7 @@
 
     // Compact one-line delivery summary (used in the modal header next to the parsed email).
     function buildEmailBadge(label, d) {
-        if (!d || !d.sent) return '<span style="color:#6c757d;"><i class="fas fa-clock me-1"></i>' + label + ' not sent yet</span>';
+        if (!d || !d.sent) return '<span style="color:#6c757d;">' + label + ' not sent yet</span>';
         var ev = (d.deliveryEvent || '').toLowerCase();
         var style, icon, text;
         if (d.hasBounced || ev === 'bounce' || ev === 'dropped') {
@@ -1979,7 +2354,7 @@
                 + '<i class="fas fa-stream me-1"></i>' + d.events.length + ' event' + (d.events.length > 1 ? 's' : '') + ' — show / hide timeline</div>'
                 + '<div id="' + tid + '" class="evt-timeline" style="display:none;">' + rows + '</div>';
         } else {
-            html += '<div class="evt-pending"><i class="fas fa-clock me-1"></i>No delivery events received from SendGrid yet.</div>';
+            html += '<div class="evt-pending">No delivery events received from SendGrid yet.</div>';
         }
         html += '</div>';
         $el.html(html);
@@ -2048,6 +2423,9 @@
         $('#mgmLinkedInReason').text(''); $('#mgmLinkedInReasonRow').hide();
         $('#mgmLinkedInUrlInput').val(''); $('#mgmLinkedInUrlMsg').text('');
         $('#btnSaveLinkedInUrl').prop('disabled',false).html('<i class="fas fa-save me-1"></i>Save');
+        $('#btnAIVerifyLinkedIn').prop('disabled',false).html('<i class="fas fa-robot me-1"></i>AI Verify LinkedIn');
+        $('#btnApproveViaLinkedInAI').hide().prop('disabled',false).html('<i class="fas fa-arrow-right me-1"></i>Approve &amp; Advance');
+        $('#mgmLinkedInAIResult').hide().html('');
         $('#magDropdown').hide();
         $('#step2MagDisplay').text('\u2014');
 
@@ -2616,7 +2994,7 @@
                     updateStatusBadge('Onboarded');
                     if (currentRecord) { currentRecord.selfRegistrationCompleted = true; currentRecord.onboardingCompleted = true; currentRecord.onboardedUserId = res.userId; }
                 } else if (res.success) {
-                    $('#step4Result').html('<span class="text-muted" style="font-size:12px;"><i class="fas fa-clock me-1"></i>' + (res.reason || 'Prospect has not yet completed self-registration.') + '</span>').show();
+                    $('#step4Result').html('<span class="text-muted" style="font-size:12px;">' + (res.reason || 'Prospect has not yet completed self-registration.') + '</span>').show();
                     $('#step4Subtitle').text('Waiting for prospect to respond or self-register...');
                 } else {
                     $('#step4Result').html('<span class="text-danger" style="font-size:12px;">' + (res.error || 'Error checking.') + '</span>').show();
@@ -2795,8 +3173,8 @@
                         + '<div class="ht-body"><div class="ht-transition">'
                         + '<i class="' + cfg.icon + ' me-2" style="font-size:11px;color:' + cfg.color + '" title="' + cfg.label + '"></i>'
                         + arrow + '</div>'
-                        + '<div class="ht-meta"><i class="fas fa-user me-1"></i>' + h.changedBy
-                        + ' &nbsp;&middot;&nbsp; <i class="fas fa-clock me-1"></i>' + h.changedAt
+                        + '<div class="ht-meta">' + h.changedBy
+                        + ' · ' + h.changedAt
                         + '</div></div></li>'
                     );
                 });
@@ -2923,7 +3301,7 @@
         card.removeClass('pending completed failed disabled');
         if (state === 'completed') {
             card.addClass('completed');
-            if (step === 1) { $('#btnTriggerEV').hide(); $('#btnRetryEV').hide(); $('#mStep1Subtitle').html('<span class="text-success" style="font-size:11px;">Employment verified</span>'); }
+            if (step === 1) { $('#btnTriggerEV').hide(); $('#btnRetryEV').hide(); $('#btnApproveViaLinkedInAI').hide(); $('#mStep1Subtitle').html('<span class="text-success" style="font-size:11px;">Employment verified</span>'); }
             if (step === 2) { $('#btnRunAIAnalysis').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Analyzed'); $('#mStep2Subtitle').html('<span class="text-success" style="font-size:11px;">AI analysis complete</span>'); }
             if (step === 3) { $('#btnManualOnboard').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Acknowledgement Sent'); $('#mStep3Subtitle').html('<span class="text-success" style="font-size:11px;">Profile created &amp; acknowledgement sent</span>'); }
             if (step === 4) { $('#btnCheckOnboarding').prop('disabled',true).html('<i class="fas fa-check me-1"></i>Onboarded'); $('#mStep4Subtitle').html('<span class="text-success" style="font-size:11px;">Interviewer onboarded</span>'); }
@@ -2986,6 +3364,127 @@
             }
         });
     });
+
+    // MANUAL-ONLY: AI "second opinion" LinkedIn verification. The URL box may or may not hold a value;
+    // whatever is there (or nothing) is sent along with the prospect's data. Only a match with
+    // confidence >= 80 unlocks the "Approve & Advance" button.
+    $('#btnAIVerifyLinkedIn').on('click', function () {
+        if (!currentRecordId) return;
+        var btn = $(this);
+        var url = ($('#mgmLinkedInUrlInput').val() || '').trim();
+        var box = $('#mgmLinkedInAIResult');
+
+        $('#btnApproveViaLinkedInAI').hide();
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Verifying with AI (up to ~2 min)...');
+        box.show().css({ 'border-color': '#e2e6ea', 'background': '#f8f9fa' })
+           .html('<span class="text-muted"><i class="fas fa-robot me-1"></i>Asking the AI assistant for a second opinion...</span>');
+
+        $.ajax({
+            url: '@Url.Action("VerifyLinkedInWithAI", "NaukriOnboarding")', type: 'POST', timeout: 180000,
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId, linkedInUrl: url },
+            success: function (res) {
+                btn.prop('disabled', false).html('<i class="fas fa-robot me-1"></i>Re-run AI Verify');
+                if (!res || !res.success) {
+                    box.css({ 'border-color': '#f5c6cb', 'background': '#fff5f5' })
+                       .html('<span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>' + $('<span>').text((res && res.error) || 'AI verification failed.').html() + '</span>');
+                    return;
+                }
+
+                var matched = String(res.linkedInMatch).toUpperCase() === 'YES';
+                var conf = (res.confidence !== null && res.confidence !== undefined) ? res.confidence : null;
+                var threshold = res.threshold || 80;
+
+                // Reflect the persisted verdict back into the record + the verification display/inputs.
+                if (currentRecord) {
+                    currentRecord.linkedInMatch = res.linkedInMatch;
+                    currentRecord.linkedInConfidence = conf;
+                    currentRecord.linkedInUrl = res.linkedInUrl;
+                    currentRecord.linkedInReason = res.reason;
+                    renderLinkedInVerdict(currentRecord);
+                }
+
+                var head = matched
+                    ? '<span class="employed-yes"><i class="fas fa-check-circle me-1"></i>Genuine match</span>'
+                    : '<span class="employed-no"><i class="fas fa-times-circle me-1"></i>Not a confident match</span>';
+                if (conf !== null) head += ' <strong>(' + conf + '% confidence)</strong>';
+
+                var html = '<div>' + head + '</div>';
+                if (res.linkedInUrl) {
+                    html += '<div style="margin-top:3px;"><a href="' + $('<span>').text(res.linkedInUrl).html() + '" target="_blank" rel="noopener">' + $('<span>').text(res.linkedInUrl).html() + ' <i class="fas fa-external-link-alt" style="font-size:9px;"></i></a></div>';
+                }
+                if (res.reason) {
+                    html += '<div class="text-muted" style="margin-top:3px;"><i class="fas fa-quote-left me-1" style="font-size:9px;opacity:.6;"></i>' + $('<span>').text(res.reason).html() + '</div>';
+                }
+
+                if (res.canProceed) {
+                    html += '<div class="text-success" style="margin-top:5px;font-weight:600;"><i class="fas fa-unlock me-1"></i>Verified with &ge; ' + threshold + '% confidence — you may advance this prospect.</div>';
+                    box.css({ 'border-color': '#badbcc', 'background': '#f0fbf5' });
+                    $('#btnApproveViaLinkedInAI').show().prop('disabled', false);
+                } else {
+                    html += '<div class="text-danger" style="margin-top:5px;font-weight:600;"><i class="fas fa-lock me-1"></i>Below the ' + threshold + '% match threshold — the prospect cannot be advanced via LinkedIn.</div>';
+                    box.css({ 'border-color': '#f5c6cb', 'background': '#fff5f5' });
+                    $('#btnApproveViaLinkedInAI').hide();
+                }
+                box.html(html);
+            },
+            error: function (xhr, status) {
+                btn.prop('disabled', false).html('<i class="fas fa-robot me-1"></i>Re-run AI Verify');
+                var m = status === 'timeout' ? 'The AI assistant took too long to respond. Try again.' : 'Request failed. Try again.';
+                box.css({ 'border-color': '#f5c6cb', 'background': '#fff5f5' })
+                   .html('<span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i>' + m + '</span>');
+            }
+        });
+    });
+
+    // MANUAL-ONLY: advance the prospect on the strength of the AI LinkedIn verdict (>= 80% match).
+    // The server re-checks the stored verdict, so this cannot be forced from the client.
+    $('#btnApproveViaLinkedInAI').on('click', function () {
+        approveViaLinkedInAI(false);
+    });
+
+    function approveViaLinkedInAI(overrideIntent) {
+        if (!currentRecordId) return;
+        if (!overrideIntent && !confirm('Advance this prospect into the next stage based on the AI LinkedIn verification (>= 80% match)?')) return;
+
+        var btn = $('#btnApproveViaLinkedInAI');
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Advancing...');
+
+        $.ajax({
+            url: '@Url.Action("ApproveEmploymentViaLinkedInAI", "NaukriOnboarding")', type: 'POST',
+            data: { __RequestVerificationToken: verificationToken, id: currentRecordId, overrideIntent: overrideIntent === true },
+            success: function (res) {
+                if (res && res.intentBlocked) {
+                    btn.prop('disabled', false).html('<i class="fas fa-arrow-right me-1"></i>Approve &amp; Advance');
+                    if (confirm((res.error || 'Intent not confirmed.') + '\n\nThis prospect is being handled manually. Override the intent check and advance anyway?')) {
+                        approveViaLinkedInAI(true);
+                    }
+                    return;
+                }
+                if (res && res.success) {
+                    var comp = res.companyName || '';
+                    var html = '<span class="text-success"><i class="fab fa-linkedin me-1"></i>Verified via LinkedIn (AI second opinion)</span>';
+                    if (comp) html += ' &mdash; <strong>' + $('<span>').text(comp).html() + '</strong>';
+                    html += ' <span class="employed-yes">(Employed)</span>';
+                    mMarkStep(1, 'completed', html);
+                    $('#mgmCompany').text(comp);
+                    $('#mgmEmployed').html('<span class="employed-yes">Yes</span>');
+                    $('#btnApproveViaLinkedInAI').hide();
+                    if (currentRecord) {
+                        currentRecord.employmentVerified = true;
+                        currentRecord.employmentCompanyName = comp;
+                        currentRecord.employmentIsEmployed = true;
+                    }
+                } else {
+                    btn.prop('disabled', false).html('<i class="fas fa-arrow-right me-1"></i>Approve &amp; Advance');
+                    alert((res && res.error) || 'Could not advance the prospect.');
+                }
+            },
+            error: function () {
+                btn.prop('disabled', false).html('<i class="fas fa-arrow-right me-1"></i>Approve &amp; Advance');
+                alert('Request failed. Try again.');
+            }
+        });
+    }
 
     // overrideIntent: when true the operator has explicitly chosen to bypass the intent-confirmation
     // gate for this manually-handled prospect. Automation never uses this path, so intent stays

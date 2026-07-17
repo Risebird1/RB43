@@ -309,11 +309,10 @@
 
     string ResolveSeverity(TrialFlagReviewRowVm row)
     {
-        if (!string.IsNullOrWhiteSpace(row.Severity))
-            return row.Severity.Trim().ToUpperInvariant();
-        if (string.Equals(row.EffectiveVerdict, TrialFlagConstants.VerdictGoodTrial, StringComparison.OrdinalIgnoreCase))
-            return TrialFlagConstants.SeverityClean;
-        return TrialFlagConstants.SeverityP4;
+        // Missing severity renders as empty (UI shows '—') and sorts last — never default to P0.
+        if (string.IsNullOrWhiteSpace(row.Severity))
+            return "";
+        return row.Severity.Trim().ToUpperInvariant();
     }
 
     string SeverityCssClass(string severity)
@@ -334,6 +333,11 @@
     IHtmlContent SeverityBadge(TrialFlagReviewRowVm row)
     {
         var sev = ResolveSeverity(row);
+        if (string.IsNullOrEmpty(sev))
+        {
+            return new Microsoft.AspNetCore.Html.HtmlString(
+                @"<span class=""tfr-severity tfr-severity--na"" title=""No severity"">—</span>");
+        }
         var rankHint = sev switch
         {
             "P0" => "P0 = highest / most severe",
@@ -374,7 +378,7 @@
     {
         var verdict = row.EffectiveVerdict;
         var sev = ResolveSeverity(row);
-        // Invariant: P0–P3 never displays Good Trial
+        // Invariant: P0–P3 never displays Good Trial (only when severity is present)
         if (!string.IsNullOrWhiteSpace(sev)
             && sev.Length >= 2
             && sev.StartsWith("P", StringComparison.OrdinalIgnoreCase)
@@ -814,7 +818,10 @@
         var $mainRows = $tbody.find('tr.tfr-main-row');
 
         function severityRank(sev) {
-            var m = (sev || '').match(/^P(\d)$/i);
+            // P0=0 … P5=5; missing/NULL/'—' sort LAST (after P5), never before P0.
+            var s = (sev || '').toString().trim().toUpperCase();
+            if (!s || s === '—' || s === '-') return 99;
+            var m = s.match(/^P(\d)$/i);
             return m ? parseInt(m[1], 10) : 99;
         }
 

@@ -239,9 +239,20 @@ Server-side wiring (already in place):
     the Manage modal (LinkedIn Verification row).
   - Manual operator tools in the Manage modal (manual-only, never automation):
       * Edit the LinkedIn profile URL (UpdateLinkedInUrl -> usp_UpdateNaukriLinkedInUrl)
-  - There is NO manual bypass of Employment Verification: a prospect advances only
-    when Signzy passes OR the LinkedIn fallback applies (profile link + confidence
-    >= 80). Failing both is terminal — the prospect cannot proceed or be onboarded.
+      * "AI Verify LinkedIn" second opinion (VerifyLinkedInWithAI): because Relay's
+        Google search for the profile is often unreliable, an operator can paste a
+        URL (or leave it blank) and send the prospect's name/email/phone/role/etc. to
+        a dedicated OpenAI assistant (OpenAI:LinkedInVerificationAssistantId). The
+        assistant judges authenticity — or finds a profile when none is given — and
+        returns {linkedin_match, confidence, linkedin_url, reason}, which is persisted
+        (usp_UpdateNaukriLinkedInVerdict) and shown in the modal.
+      * "Approve & Advance" (ApproveEmploymentViaLinkedInAI): enabled ONLY when that
+        AI verdict is a match with confidence >= 80. It marks EV satisfied and moves
+        the prospect to EmploymentVerified. The >= 80 gate is re-checked server-side.
+  - There is NO unconditional manual bypass of Employment Verification: a prospect
+    advances only when Signzy passes, OR the LinkedIn fallback applies (link +
+    confidence >= 80), OR an operator's AI LinkedIn verification returns a match with
+    confidence >= 80. Failing all of these is terminal — no onboarding.
   - Migration: Risebird.DB/Migrations/AddLinkedInVerificationToNaukriProspectiveInterviewer.sql
     (now also adds LinkedInReason) + StoredProcedures/usp_UpdateNaukriLinkedInUrl.sql
 
