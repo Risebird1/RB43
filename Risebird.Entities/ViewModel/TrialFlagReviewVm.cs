@@ -109,7 +109,7 @@ namespace Risebird.Entities.ViewModel
         public decimal? JoinTimeMinutes { get; set; }
         public decimal? InterviewDurationMinutes { get; set; }
         public string OverallVerdict { get; set; }
-        /// <summary>Read-time verdict: bad_trial when RiskCategory exists for triggering interview.</summary>
+        /// <summary>Read-time verdict: bad_trial only when live RiskCategory.Severity is non-null.</summary>
         public string DisplayVerdict { get; set; }
         public string ReviewStatus { get; set; }
         public DateTime FlaggedAtUtc { get; set; }

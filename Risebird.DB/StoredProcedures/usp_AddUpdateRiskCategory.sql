@@ -1,6 +1,11 @@
 CREATE OR ALTER PROCEDURE [dbo].[usp_AddUpdateRiskCategory]
     @InterviewId INT
 AS
+/*
+  Invariant: a RiskCategory row exists IFF at least one check currently fires for @InterviewId.
+  Severity and Description are NEVER NULL on a surviving row.
+  When zero checks fire: DELETE any existing row (do not leave a husk with NULL fields).
+*/
 BEGIN
     SET NOCOUNT ON;
 
@@ -271,9 +276,10 @@ BEGIN
     IF @MinPLevel IS NOT NULL
         SET @Severity = 'P' + CAST(@MinPLevel AS VARCHAR(1));
 
-    IF ISNULL(LTRIM(RTRIM(@Description)), '') = ''
+    -- Step 2 upsert: row exists only when at least one check fired (Description non-empty, Severity set).
+    IF ISNULL(LTRIM(RTRIM(@Description)), '') = '' OR @Severity IS NULL
     BEGIN
-        -- No checks triggered: remove stale RiskCategory row (do not leave NULL severity)
+        -- Zero checks (or incomplete aggregate): DELETE husk if present; otherwise no-op.
         DELETE FROM RiskCategory WHERE InterviewId = @InterviewId;
     END
     ELSE IF EXISTS (SELECT 1 FROM RiskCategory WHERE InterviewId = @InterviewId)
