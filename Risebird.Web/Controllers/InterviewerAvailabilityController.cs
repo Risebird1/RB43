@@ -36,6 +36,7 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper                     _fileMimeTypeHelper;
         private readonly IPlivoCXService                         _plivoCXService;
         private readonly IPlivoCXCallRepository                  _cpRepo;
+        private readonly IInterviewerListingSearchRepository     _interviewerListingSearchRepository;
 
         public InterviewerAvailabilityController(
             IInterviewerEmailAvailabilityRepository repository,
@@ -51,7 +52,8 @@ namespace Risebird.Web.Controllers
             IAzureStorageHelper                     azureStorageHelper,
             IFileMimeTypeHelper                     fileMimeTypeHelper,
             IPlivoCXService                         plivoCXService,
-            IPlivoCXCallRepository                  cpRepo)
+            IPlivoCXCallRepository                  cpRepo,
+            IInterviewerListingSearchRepository     interviewerListingSearchRepository)
         {
             _repository             = repository;
             _logger                 = logger;
@@ -67,6 +69,7 @@ namespace Risebird.Web.Controllers
             _fileMimeTypeHelper     = fileMimeTypeHelper;
             _plivoCXService         = plivoCXService;
             _cpRepo                 = cpRepo;
+            _interviewerListingSearchRepository = interviewerListingSearchRepository;
         }
 
         // ── Dashboard ───────────────────────────────────────────────────────────────
@@ -391,6 +394,7 @@ namespace Risebird.Web.Controllers
 
                 if (ok)
                 {
+                    await TrySyncInterviewerListingAsync(record.InterviewerProfileId.Value);
                     string fromStatus = record.Status ?? "Open";
                     await _repository.UpdateEmailAvailabilityStatusAsync(id, "Closed", modifiedBy);
                     await _repository.InsertHistoryAsync(id, "ProfileDropped", "Active", "Dropped (Isavailable=4)", modifiedBy);
@@ -2176,6 +2180,30 @@ namespace Risebird.Web.Controllers
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        private async Task TrySyncInterviewerListingAsync(int interviewerProfileId)
+        {
+            if (_interviewerListingSearchRepository == null
+                || !_interviewerListingSearchRepository.IsEnabled
+                || interviewerProfileId <= 0)
+                return;
+
+            try
+            {
+                var synced = await _interviewerListingSearchRepository.UpsertInterviewerAsync(interviewerProfileId);
+                if (!synced)
+                {
+                    await _logger.LogMessage(
+                        LogLevelInfo.Exception,
+                        new InvalidOperationException(
+                            $"Interviewer Azure Search upsert returned false for interviewerProfileId={interviewerProfileId}."));
+                }
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
     }

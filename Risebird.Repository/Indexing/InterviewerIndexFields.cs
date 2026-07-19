@@ -53,5 +53,44 @@ namespace Risebird.Repository.Indexing
             MobileNumber,
             PrimarySkill
         };
+
+        /// <summary>Fields retrieved for <c>/Interviewer/Index</c> (keep in sync with ToListViewModel).</summary>
+        public static readonly IReadOnlyList<string> ListViewSelect = new[]
+        {
+            Key,
+            UserId,
+            FirstName,
+            LastName,
+            NickName,
+            EmailId,
+            MobileNumber,
+            PrimarySkill,
+            AssessmentGroupId,
+            Senioritylevel,
+            PerHourRateIndia,
+            PerHourRateOutside,
+            CompentencyLevel,
+            ProfileType,
+            CompanyType,
+            Country,
+            IsLeadInterviewer,
+            IsActive,
+            IsInterviewerAccess,
+            IsApproved,
+            IsInterested,
+            IsDeleted,
+            Isavailable,
+            AvailabilityStatusValue,
+            VideoConfirmation,
+            ResumeLink,
+            CodedResumeLink,
+            City,
+            CurrentRole,
+            Experience,
+            PreferredDomain,
+            UniqueId,
+            AvailabilityResponseDate,
+            IsHoldPayment
+        };
     }
 }

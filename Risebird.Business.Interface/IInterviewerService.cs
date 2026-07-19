@@ -1,4 +1,5 @@
 using Risebird.Entities.Data;
+using Risebird.Entities.Search;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,16 @@ namespace Risebird.Business.Interface
 {
     public interface IInterviewerService
     {
-        List<InterviewerProfileVM> GetInterviewers();
+        Task<List<InterviewerProfileVM>> GetInterviewers();
+
+        /// <summary>
+        /// Paged interviewer roster for <c>/Interviewer/Index</c> (Azure Search when enabled).
+        /// </summary>
+        Task<InterviewerSearchPageResult> GetInterviewersPage(
+            int pageNumber,
+            int pageSize,
+            string searchValue = null,
+            InterviewFilter filter = null);
         //Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser);
         bool AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList, out int userId, out string uniqueid, bool? isApplicant = false);
         Exception LastAddProfileException { get; }

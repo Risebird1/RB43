@@ -6,6 +6,7 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
@@ -15,11 +16,18 @@ namespace Risebird.Business
         private readonly IUserRepository _userRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IPasswordHelper _passwordHelper;
-        public UserService(IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger, IPasswordHelper passwordHelper)
+        private readonly IInterviewerListingSearchRepository _interviewerListingSearchRepository;
+
+        public UserService(
+            IUserRepository userRepository,
+            IApplicationErrorLogger applicationErrorLogger,
+            IPasswordHelper passwordHelper,
+            IInterviewerListingSearchRepository interviewerListingSearchRepository)
         {
             _userRepository = userRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _passwordHelper = passwordHelper;
+            _interviewerListingSearchRepository = interviewerListingSearchRepository;
         }
 
         public async Task<List<Menu>> GetMenuBasedOnUserEmailld(string emailId, string sessionId = null)
@@ -123,7 +131,11 @@ namespace Risebird.Business
         {
             try
             {
-                return await _userRepository.DeleteUser(id);
+                var profileId = await TryResolveInterviewerProfileIdByUserIdAsync(id);
+                var result = await _userRepository.DeleteUser(id);
+                if (result && profileId > 0)
+                    await TryRemoveInterviewerListingAsync(profileId);
+                return result;
             }
 
             catch (Exception e)
@@ -137,7 +149,11 @@ namespace Risebird.Business
         {
             try
             {
-                return await _userRepository.UpdateUser(user);
+                var result = await _userRepository.UpdateUser(user);
+                // Name / email / IsActive on UserList are indexed for interviewer listing.
+                if (result && user != null && user.Id > 0)
+                    await TrySyncInterviewerListingByUserIdAsync(user.Id);
+                return result;
             }
 
             catch (Exception e)
@@ -965,6 +981,65 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+
+        private async Task TrySyncInterviewerListingByUserIdAsync(int userId)
+        {
+            if (_interviewerListingSearchRepository == null
+                || !_interviewerListingSearchRepository.IsEnabled
+                || userId <= 0)
+                return;
+
+            try
+            {
+                // No-op / false when the user is not an interviewer — expected for client users.
+                await _interviewerListingSearchRepository.UpsertInterviewerByUserIdAsync(userId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        private async Task<int> TryResolveInterviewerProfileIdByUserIdAsync(int userId)
+        {
+            if (_interviewerListingSearchRepository == null || userId <= 0)
+                return 0;
+
+            try
+            {
+                var docs = await _interviewerListingSearchRepository.GetIndexDocumentsFromDatabaseAsync(userId: userId);
+                return docs?.FirstOrDefault()?.InterviewerProfileId ?? 0;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        private async Task TryRemoveInterviewerListingAsync(int interviewerProfileId)
+        {
+            if (_interviewerListingSearchRepository == null
+                || !_interviewerListingSearchRepository.IsEnabled
+                || interviewerProfileId <= 0)
+                return;
+
+            try
+            {
+                var removed = await _interviewerListingSearchRepository.RemoveInterviewerAsync(interviewerProfileId);
+                if (!removed)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Exception,
+                        new InvalidOperationException(
+                            $"Interviewer Azure Search remove returned false for interviewerProfileId={interviewerProfileId}."));
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
     }

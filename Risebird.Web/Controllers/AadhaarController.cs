@@ -855,7 +855,7 @@ namespace Risebird.Web.Controllers
         #endregion
         public async Task EVInterviewer()
         {
-            var model = _interviewerService.GetInterviewers();
+            var model = await _interviewerService.GetInterviewers();
             int i = 0;
             //Start: Employment Verification
             //foreach (var item in model)

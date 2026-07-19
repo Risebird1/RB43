@@ -22,10 +22,20 @@ namespace Risebird.Repository.Interface
         Task<bool> RemoveInterviewerAsync(int interviewerProfileId);
 
         /// <summary>
-        /// Loads all non-deleted interviewers for the Index page (controller still applies
-        /// in-memory filters/paging). Returns null on disable/error so callers fall back to SQL.
+        /// Obsolete for Index: do not download the full roster (can be 60k+ docs).
+        /// Returns null so callers fall back to SQL. Use <see cref="SearchPageAsync"/> instead.
         /// </summary>
         Task<IEnumerable<InterviewerProfileVM>> SearchAllAsync(string searchValue = null);
+
+        /// <summary>
+        /// Paged roster query for <c>/Interviewer/Index</c>.
+        /// Returns null on disable/error so callers fall back to SQL.
+        /// </summary>
+        Task<InterviewerSearchPageResult> SearchPageAsync(
+            int pageNumber,
+            int pageSize,
+            string searchValue = null,
+            InterviewFilter filter = null);
 
         Task<IEnumerable<InterviewerIndexDocument>> GetIndexDocumentsFromDatabaseAsync(
             int? interviewerProfileId = null,

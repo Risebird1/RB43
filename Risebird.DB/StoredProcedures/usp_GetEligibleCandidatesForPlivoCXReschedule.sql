@@ -119,14 +119,22 @@ BEGIN
         AND ISNULL(irf.IsPaused, 0)  = 0
         AND ISNULL(irf.IsDeleted, 0) = 0
 
-        -- 5. Has at least one interview meeting that requires rescheduling
+        -- 5. Has at least one *recent* interview meeting that requires rescheduling
+        --    (last 15 days IST). Aligns with schedule SP so old history does not
+        --    permanently divert candidates into reschedule-only.
         AND EXISTS (
             SELECT 1
             FROM   InterviewMeetings im
-            JOIN   InterviewComments ic ON ic.InterviewId = im.id
+            OUTER APPLY (
+                SELECT TOP (1) ic0.MeetingStatus
+                FROM dbo.InterviewComments ic0
+                WHERE ic0.InterviewId = im.id
+                ORDER BY ic0.id DESC
+            ) ic
             WHERE  im.candidateEmail       = u.EmailId
               AND  im.IRFId               = irf.IRFId
               AND  ISNULL(im.IsDeleted, 0) = 0
+              AND  im.interviewDate       >= DATEADD(DAY, -15, @NowIST)
               AND  (
                        ic.MeetingStatus IN (1, 3, 5, 9)
                     OR im.confirmationStatus = '2'

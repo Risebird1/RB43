@@ -4,8 +4,10 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using Risebird.Entities.Search;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using System.Collections.Generic;
 
 namespace Risebird.Business.Tests.Fixtures
 {
@@ -32,7 +34,16 @@ namespace Risebird.Business.Tests.Fixtures
             ListingSearch.Setup(x => x.UpsertInterviewerByEmailAsync(It.IsAny<string>())).ReturnsAsync(true);
             ListingSearch.Setup(x => x.RemoveInterviewerAsync(It.IsAny<int>())).ReturnsAsync(true);
             ListingSearch.Setup(x => x.SearchAllAsync(It.IsAny<string>()))
-                .ReturnsAsync(new List<InterviewerProfileVM>());
+                .ReturnsAsync((IEnumerable<InterviewerProfileVM>)null);
+            ListingSearch.Setup(x => x.SearchPageAsync(
+                    It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<InterviewFilter>()))
+                .ReturnsAsync(new InterviewerSearchPageResult
+                {
+                    Items = new List<InterviewerProfileVM>(),
+                    TotalCount = 0,
+                    PageNumber = 1,
+                    PageSize = 10
+                });
 
             Logger.Setup(x => x.LogMessage(It.IsAny<LogLevelInfo>(), It.IsAny<Exception>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);

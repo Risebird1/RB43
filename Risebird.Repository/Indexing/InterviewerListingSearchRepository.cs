@@ -4,7 +4,9 @@ using Azure.Search.Documents.Indexes.Models;
 using Azure.Search.Documents.Models;
 using Dapper;
 using Microsoft.Extensions.Configuration;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
 using Risebird.Entities.Search;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Indexing;
@@ -188,64 +190,211 @@ namespace Risebird.Repository
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<InterviewerProfileVM>> SearchAllAsync(string searchValue = null)
+        public Task<IEnumerable<InterviewerProfileVM>> SearchAllAsync(string searchValue = null)
+        {
+            // Full-roster download is not viable (production index is 60k+ documents).
+            // Index page must use SearchPageAsync; export/JSON paths use SQL GetInterviewers.
+            return Task.FromResult<IEnumerable<InterviewerProfileVM>>(null);
+        }
+
+        /// <inheritdoc />
+        public async Task<InterviewerSearchPageResult> SearchPageAsync(
+            int pageNumber,
+            int pageSize,
+            string searchValue = null,
+            InterviewFilter filter = null)
         {
             if (!IsEnabled)
                 return null;
 
+            if (pageNumber < 1)
+                pageNumber = 1;
+            if (pageSize < 1)
+                pageSize = PageSize > 0 ? PageSize : 10;
+            if (pageSize > 1000)
+                pageSize = 1000;
+
             try
             {
                 var searchClient = CreateSearchClient();
-                var results = new List<InterviewerProfileVM>();
-                var pageSize = Math.Max(PageSize, 100);
-                var skip = 0;
+                using var timeoutCts = new System.Threading.CancellationTokenSource(TimeSpan.FromSeconds(20));
 
-                while (true)
+                var options = new SearchOptions
                 {
-                    var options = new SearchOptions
+                    Filter = BuildSearchFilter(filter),
+                    Size = pageSize,
+                    Skip = (pageNumber - 1) * pageSize,
+                    IncludeTotalCount = true,
+                    OrderBy =
                     {
-                        Filter = $"{InterviewerIndexFields.IsDeleted} eq false",
-                        Size = pageSize,
-                        Skip = skip,
-                        IncludeTotalCount = true,
-                        OrderBy = { $"{InterviewerIndexFields.FirstName} asc", $"{InterviewerIndexFields.LastName} asc" }
-                    };
-
-                    foreach (var field in InterviewerIndexFields.ListViewSearch)
-                        options.SearchFields.Add(field);
-
-                    var query = string.IsNullOrWhiteSpace(searchValue) ? "*" : searchValue.Trim();
-                    var response = await searchClient.SearchAsync<SearchDocument>(query, options);
-                    var batchCount = 0;
-
-                    await foreach (var result in response.Value.GetResultsAsync())
-                    {
-                        if (result.Document != null)
-                        {
-                            results.Add(InterviewerIndexDocumentMapper.ToListViewModel(result.Document));
-                            batchCount++;
-                        }
+                        $"{InterviewerIndexFields.FirstName} asc",
+                        $"{InterviewerIndexFields.LastName} asc"
                     }
+                };
 
-                    if (batchCount < pageSize)
-                        break;
+                foreach (var field in InterviewerIndexFields.ListViewSearch)
+                    options.SearchFields.Add(field);
 
-                    skip += pageSize;
-                    if (skip >= 100000)
-                        break;
+                foreach (var field in InterviewerIndexFields.ListViewSelect)
+                    options.Select.Add(field);
+
+                var query = string.IsNullOrWhiteSpace(searchValue) ? "*" : searchValue.Trim();
+                var response = await searchClient.SearchAsync<SearchDocument>(query, options, timeoutCts.Token);
+                var items = new List<InterviewerProfileVM>();
+
+                await foreach (var result in response.Value.GetResultsAsync().WithCancellation(timeoutCts.Token))
+                {
+                    if (result.Document != null)
+                        items.Add(InterviewerIndexDocumentMapper.ToListViewModel(result.Document));
                 }
 
-                return results;
+                return new InterviewerSearchPageResult
+                {
+                    Items = items,
+                    TotalCount = response.Value.TotalCount ?? items.Count,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+            }
+            catch (OperationCanceledException ex)
+            {
+                await LogExceptionAsync(ex, "SearchPageAsync timed out after 20s — falling back to SQL.");
+                return null;
             }
             catch (RequestFailedException ex)
             {
-                await LogExceptionAsync(ex, "SearchAllAsync Azure request failed.");
+                await LogExceptionAsync(ex, "SearchPageAsync Azure request failed.");
                 return null;
             }
             catch (Exception ex)
             {
-                await LogExceptionAsync(ex, "SearchAllAsync failed.");
+                await LogExceptionAsync(ex, "SearchPageAsync failed.");
                 return null;
+            }
+        }
+
+        private static string BuildSearchFilter(InterviewFilter filter)
+        {
+            var filters = new List<string> { $"{InterviewerIndexFields.IsDeleted} eq false" };
+
+            if (filter == null)
+            {
+                filters.Add($"{InterviewerIndexFields.IsActive} eq true");
+                return string.Join(" and ", filters);
+            }
+
+            AppendBoolInFilter(filters, InterviewerIndexFields.IsActive, filter.IsActive, defaultWhenEmpty: true);
+            AppendBoolInFilter(filters, InterviewerIndexFields.IsInterested, filter.IsInterested, defaultWhenEmpty: null);
+            AppendLeadInterviewerFilter(filters, filter.IsLeadInterviewer);
+
+            AzureSearchOData.AppendInFilter(filters, InterviewerIndexFields.Senioritylevel, filter.Senioritylevel);
+            AzureSearchOData.AppendInFilter(filters, InterviewerIndexFields.CompanyType, filter.CompanyType);
+            AzureSearchOData.AppendInFilter(filters, InterviewerIndexFields.Country, filter.Domain);
+            AzureSearchOData.AppendInFilter(
+                filters,
+                InterviewerIndexFields.PerHourRateIndia,
+                MapEnumDescriptionsToIds<IndiaPrice>(filter.IndianRate));
+            AzureSearchOData.AppendInFilter(
+                filters,
+                InterviewerIndexFields.PerHourRateOutside,
+                MapEnumDescriptionsToIds<OutSideIndiaPrice>(filter.OutSideIndiaRate));
+
+            // ProfileType / CompentencyLevel are stored as numeric strings; UI filters use descriptions.
+            AzureSearchOData.AppendInFilter(
+                filters,
+                InterviewerIndexFields.ProfileType,
+                MapEnumDescriptionsToIds<Heuristicsscorelevel>(filter.ProfileType));
+            AzureSearchOData.AppendInFilter(
+                filters,
+                InterviewerIndexFields.CompentencyLevel,
+                MapEnumDescriptionsToIds<CompetencyLevel>(filter.CompentencyLevel));
+
+            AppendCollectionAnyFilter(filters, InterviewerIndexFields.AssessmentGroupNames, filter.AssessmentGroup);
+
+            return string.Join(" and ", filters);
+        }
+
+        private static void AppendBoolInFilter(
+            IList<string> filters,
+            string fieldName,
+            bool[] values,
+            bool? defaultWhenEmpty)
+        {
+            if (values != null && values.Length > 0)
+            {
+                var distinct = values.Distinct().ToList();
+                if (distinct.Count == 1)
+                    filters.Add($"{fieldName} eq {distinct[0].ToString().ToLowerInvariant()}");
+                else
+                    filters.Add($"({string.Join(" or ", distinct.Select(v => $"{fieldName} eq {v.ToString().ToLowerInvariant()}"))})");
+                return;
+            }
+
+            if (defaultWhenEmpty.HasValue)
+                filters.Add($"{fieldName} eq {defaultWhenEmpty.Value.ToString().ToLowerInvariant()}");
+        }
+
+        private static void AppendLeadInterviewerFilter(IList<string> filters, string[] values)
+        {
+            if (values == null || values.Length == 0)
+                return;
+
+            var bools = new List<bool>();
+            foreach (var value in values)
+            {
+                if (bool.TryParse(value, out var parsed))
+                    bools.Add(parsed);
+                else if (string.Equals(value, "Yes", StringComparison.OrdinalIgnoreCase)
+                      || string.Equals(value, "Lead Interviewer", StringComparison.OrdinalIgnoreCase))
+                    bools.Add(true);
+                else if (string.Equals(value, "No", StringComparison.OrdinalIgnoreCase)
+                      || string.Equals(value, "Not a Lead Interviewer", StringComparison.OrdinalIgnoreCase))
+                    bools.Add(false);
+            }
+
+            if (bools.Count == 0)
+                return;
+
+            AppendBoolInFilter(filters, InterviewerIndexFields.IsLeadInterviewer, bools.Distinct().ToArray(), defaultWhenEmpty: null);
+        }
+
+        private static void AppendCollectionAnyFilter(IList<string> filters, string fieldName, IEnumerable<string> values)
+        {
+            if (filters == null || string.IsNullOrWhiteSpace(fieldName) || values == null)
+                return;
+
+            var clauses = values
+                .Where(v => !string.IsNullOrWhiteSpace(v))
+                .Select(v => $"{fieldName}/any(a: a eq '{AzureSearchOData.Escape(v.Trim())}')")
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (clauses.Count == 0)
+                return;
+
+            filters.Add(clauses.Count == 1 ? clauses[0] : $"({string.Join(" or ", clauses)})");
+        }
+
+        private static IEnumerable<string> MapEnumDescriptionsToIds<TEnum>(IEnumerable<string> descriptions)
+            where TEnum : struct, Enum
+        {
+            if (descriptions == null)
+                yield break;
+
+            var map = Enum.GetValues(typeof(TEnum))
+                .Cast<Enum>()
+                .ToDictionary(
+                    e => e.GetDescription(),
+                    e => Convert.ToInt32(e, CultureInfo.InvariantCulture).ToString(CultureInfo.InvariantCulture),
+                    StringComparer.OrdinalIgnoreCase);
+
+            foreach (var description in descriptions.Where(d => !string.IsNullOrWhiteSpace(d)))
+            {
+                var trimmed = description.Trim();
+                if (map.TryGetValue(trimmed, out var id))
+                    yield return id;
+                else if (int.TryParse(trimmed, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
+                    yield return trimmed; // already an id
             }
         }
     }

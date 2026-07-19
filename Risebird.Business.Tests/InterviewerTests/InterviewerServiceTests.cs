@@ -69,7 +69,7 @@ namespace Risebird.Business.Tests.InterviewerTests
         }
 
         [Fact]
-        public async Task DeleteInterviewerProfile_upserts_by_user_id()
+        public async Task DeleteInterviewerProfile_removes_from_search_index()
         {
             var fixture = new InterviewerServiceFixture();
             var sut = fixture.CreateSut();
@@ -77,7 +77,9 @@ namespace Risebird.Business.Tests.InterviewerTests
             var result = await sut.DeleteInterviewerProfile(9);
 
             Assert.True(result);
-            fixture.ListingSearch.Verify(x => x.UpsertInterviewerByUserIdAsync(9), Times.Once);
+            fixture.Repository.Verify(x => x.GetInterviewerProfileById(9), Times.Once);
+            fixture.ListingSearch.Verify(x => x.RemoveInterviewerAsync(55), Times.Once);
+            fixture.ListingSearch.Verify(x => x.UpsertInterviewerByUserIdAsync(It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
@@ -235,21 +237,21 @@ namespace Risebird.Business.Tests.InterviewerTests
         }
 
         [Fact]
-        public void GetInterviewers_uses_search_when_enabled()
+        public async Task GetInterviewers_uses_sql_repository()
         {
             var fixture = new InterviewerServiceFixture();
             var sut = fixture.CreateSut();
-            fixture.ListingSearch.Setup(x => x.SearchAllAsync(It.IsAny<string>()))
+            fixture.Repository.Setup(x => x.GetInterviewers())
                 .ReturnsAsync(new List<InterviewerProfileVM>
                 {
                     new() { id = 1, EmailId = "a@test.com" }
                 });
 
-            var result = sut.GetInterviewers();
+            var result = await sut.GetInterviewers();
 
             Assert.Single(result);
-            fixture.ListingSearch.Verify(x => x.SearchAllAsync(null), Times.Once);
-            fixture.Repository.Verify(x => x.GetInterviewers(), Times.Never);
+            fixture.Repository.Verify(x => x.GetInterviewers(), Times.Once);
+            fixture.ListingSearch.Verify(x => x.SearchAllAsync(It.IsAny<string>()), Times.Never);
         }
 
         [Fact]

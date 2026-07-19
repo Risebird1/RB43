@@ -2,6 +2,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using Risebird.Entities.Search;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
@@ -47,24 +48,147 @@ namespace Risebird.Business
         }
 
         #region Interviewer Profile Service Functions
-        public List<InterviewerProfileVM> GetInterviewers()
+        public async Task<List<InterviewerProfileVM>> GetInterviewers()
         {
             try
             {
-                if (_interviewerListingSearchRepository.IsEnabled)
-                {
-                    var searchResults = _interviewerListingSearchRepository.SearchAllAsync().GetAwaiter().GetResult();
-                    if (searchResults != null)
-                        return searchResults.ToList();
-                }
-
-                return _interviewerRepository.GetInterviewers().Result.ToList();
+                // Full roster for export/JSON — SQL only.
+                // Azure SearchAll of 60k+ docs is not viable; Index uses GetInterviewersPage.
+                var interviewers = await _interviewerRepository.GetInterviewers();
+                return interviewers?.ToList();
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+
+        public async Task<InterviewerSearchPageResult> GetInterviewersPage(
+            int pageNumber,
+            int pageSize,
+            string searchValue = null,
+            InterviewFilter filter = null)
+        {
+            try
+            {
+                if (pageNumber < 1)
+                    pageNumber = 1;
+                if (pageSize < 1)
+                    pageSize = 10;
+
+                if (_interviewerListingSearchRepository.IsEnabled)
+                {
+                    // UI seniority dropdown posts names; index stores numeric ids.
+                    filter = NormalizeInterviewerSearchFilter(filter);
+
+                    var searchPage = await _interviewerListingSearchRepository
+                        .SearchPageAsync(pageNumber, pageSize, searchValue, filter);
+
+                    if (searchPage != null)
+                        return searchPage;
+                }
+
+                // SQL fallback: load, filter in memory, then page (same semantics as legacy Index).
+                var all = (await _interviewerRepository.GetInterviewers())?.ToList()
+                    ?? new List<InterviewerProfileVM>();
+
+                if (!string.IsNullOrWhiteSpace(searchValue))
+                {
+                    var sv = searchValue.ToUpperInvariant().Trim();
+                    all = all.Where(x =>
+                        (!string.IsNullOrEmpty(x.FirstName) && x.FirstName.ToUpperInvariant().Contains(sv)) ||
+                        (!string.IsNullOrEmpty(x.LastName) && x.LastName.ToUpperInvariant().Contains(sv)) ||
+                        (!string.IsNullOrEmpty(x.EmailId) && x.EmailId.ToUpperInvariant().Contains(sv)) ||
+                        (!string.IsNullOrEmpty(x.NickName) && x.NickName.ToUpperInvariant().Contains(sv)) ||
+                        (!string.IsNullOrEmpty(x.MobileNumber) && x.MobileNumber.Contains(sv)) ||
+                        (x.PrimarySkill != null && x.PrimarySkill.ToUpperInvariant().Contains(sv))).ToList();
+                }
+
+                // Match default Index filter when no session filter: active only.
+                if (filter == null)
+                    all = all.Where(x => x.IsActive).ToList();
+                else
+                    all = ApplyInterviewFilterInMemory(all, filter);
+
+                var total = all.Count;
+                var items = all
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
+                return new InterviewerSearchPageResult
+                {
+                    Items = items,
+                    TotalCount = total,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new InterviewerSearchPageResult
+                {
+                    Items = Array.Empty<InterviewerProfileVM>(),
+                    TotalCount = 0,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+            }
+        }
+
+        private InterviewFilter NormalizeInterviewerSearchFilter(InterviewFilter filter)
+        {
+            if (filter == null)
+                return null;
+
+            if (filter.Senioritylevel != null && filter.Senioritylevel.Length > 0)
+            {
+                var levels = _irfRepository.GetSenioritylevel()?.ToList();
+                if (levels != null && levels.Count > 0)
+                {
+                    filter.Senioritylevel = filter.Senioritylevel
+                        .Select(value =>
+                        {
+                            if (string.IsNullOrWhiteSpace(value))
+                                return value;
+                            var trimmed = value.Trim();
+                            if (int.TryParse(trimmed, out _))
+                                return trimmed;
+                            var match = levels.FirstOrDefault(l =>
+                                string.Equals(l.Name, trimmed, StringComparison.OrdinalIgnoreCase));
+                            return match != null ? match.Id.ToString() : trimmed;
+                        })
+                        .Where(v => !string.IsNullOrWhiteSpace(v))
+                        .ToArray();
+                }
+            }
+
+            return filter;
+        }
+
+        private static List<InterviewerProfileVM> ApplyInterviewFilterInMemory(
+            List<InterviewerProfileVM> model,
+            InterviewFilter filter)
+        {
+            // Lightweight SQL-fallback filtering (enum description conversion happens in controller).
+            return model.Where(c =>
+                (filter.IsActive != null && filter.IsActive.Length > 0
+                    ? filter.IsActive.Contains(c.IsActive)
+                    : c.IsActive) &&
+                (filter.IsInterested == null || filter.IsInterested.Length == 0
+                    || filter.IsInterested.Contains(c.IsInterested)) &&
+                (filter.Senioritylevel == null || filter.Senioritylevel.Length == 0
+                    || filter.Senioritylevel.Contains(c.Senioritylevel)) &&
+                (filter.CompanyType == null || filter.CompanyType.Length == 0
+                    || filter.CompanyType.Contains(c.CompanyType)) &&
+                (filter.Domain == null || filter.Domain.Length == 0
+                    || filter.Domain.Contains(c.Country)) &&
+                (filter.IndianRate == null || filter.IndianRate.Length == 0
+                    || filter.IndianRate.Contains(c.PerHourRateIndia)) &&
+                (filter.OutSideIndiaRate == null || filter.OutSideIndiaRate.Length == 0
+                    || filter.OutSideIndiaRate.Contains(c.PerHourRateOutside))).ToList();
         }
         //public async Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList)
         //{
@@ -350,9 +474,17 @@ namespace Risebird.Business
         {
             try
             {
-                var result = _interviewerRepository.DeleteInterviewerProfile(UserId).Result;
-                if (result)
-                    await TrySyncInterviewerListingSearchByUserIdAsync(UserId);
+                // Hard delete removes the SQL row — capture profile id first so we can
+                // Remove the Azure Search document (upsert-after-delete cannot find the row).
+                var profileId = 0;
+                var profiles = await _interviewerRepository.GetInterviewerProfileById(UserId);
+                var profile = profiles?.FirstOrDefault();
+                if (profile != null)
+                    profileId = profile.id;
+
+                var result = await _interviewerRepository.DeleteInterviewerProfile(UserId);
+                if (result && profileId > 0)
+                    await TryRemoveInterviewerListingSearchAsync(profileId);
                 return result;
             }
             catch (Exception e)
@@ -2284,6 +2416,28 @@ namespace Risebird.Business
         private void TrySyncInterviewerListingSearch(int interviewerProfileId)
         {
             TrySyncInterviewerListingSearchAsync(interviewerProfileId).GetAwaiter().GetResult();
+        }
+
+        private async Task TryRemoveInterviewerListingSearchAsync(int interviewerProfileId)
+        {
+            if (!_interviewerListingSearchRepository.IsEnabled || interviewerProfileId <= 0)
+                return;
+
+            try
+            {
+                var removed = await _interviewerListingSearchRepository.RemoveInterviewerAsync(interviewerProfileId);
+                if (!removed)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Exception,
+                        new InvalidOperationException(
+                            $"Interviewer Azure Search remove returned false for interviewerProfileId={interviewerProfileId}."));
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
         }
 
         private async Task TrySyncInterviewerListingSearchAsync(int interviewerProfileId)

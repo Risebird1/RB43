@@ -36,8 +36,9 @@ namespace Risebird.Business
         private readonly IZoomHelper _zoomHelper;
         private readonly IZohoMeetingHelper _zoho;
         private readonly ICashfreePayoutService _cashfreePayoutService;
+        private readonly IInterviewerListingSearchRepository _interviewerListingSearchRepository;
 
-        public MeetingService(IMeetingRespository meetingRespository, IZoomHelper zoomHelper, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository, ICandidateRepository candidateRepository, ICandidateService candidateService, IZohoMeetingHelper zoho, ICashfreePayoutService cashfreePayoutService)
+        public MeetingService(IMeetingRespository meetingRespository, IZoomHelper zoomHelper, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository, ICandidateRepository candidateRepository, ICandidateService candidateService, IZohoMeetingHelper zoho, ICashfreePayoutService cashfreePayoutService, IInterviewerListingSearchRepository interviewerListingSearchRepository)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -56,6 +57,7 @@ namespace Risebird.Business
             _zoomHelper = zoomHelper;
             _zoho = zoho;
             _cashfreePayoutService = cashfreePayoutService;
+            _interviewerListingSearchRepository = interviewerListingSearchRepository;
         }
 
         public async Task<List<MeetingVM>> GetMeetingList()
@@ -3862,7 +3864,11 @@ namespace Risebird.Business
         {
             try
             {
-                return await _meetingRespository.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc);
+                var result = await _meetingRespository.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc);
+                // Status 1/4 update InterviewerProfile.Isavailable (listing field).
+                if (result != null && result.Item1)
+                    await TrySyncInterviewerListingByUniqueIdAsync(uniqueid);
+                return result;
             }
             catch (Exception ex)
             {
@@ -4744,7 +4750,10 @@ namespace Risebird.Business
         {
             try
             {
-                return await _meetingRespository.UpdateInterviewerAvailbilityStatusCampaignLevel(status, uniqueid, campaignId, rsc);
+                var result = await _meetingRespository.UpdateInterviewerAvailbilityStatusCampaignLevel(status, uniqueid, campaignId, rsc);
+                if (result)
+                    await TrySyncInterviewerListingByUniqueIdAsync(uniqueid);
+                return result;
             }
             catch (Exception ex)
             {
@@ -5087,6 +5096,30 @@ namespace Risebird.Business
                 return cleaned;
             }
             return null;
+        }
+
+        private async Task TrySyncInterviewerListingByUniqueIdAsync(string uniqueId)
+        {
+            if (_interviewerListingSearchRepository == null
+                || !_interviewerListingSearchRepository.IsEnabled
+                || string.IsNullOrWhiteSpace(uniqueId))
+                return;
+
+            try
+            {
+                var synced = await _interviewerListingSearchRepository.UpsertInterviewerByUniqueIdAsync(uniqueId);
+                if (!synced)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Exception,
+                        new InvalidOperationException(
+                            $"Interviewer Azure Search upsert returned false for uniqueId='{uniqueId}'."));
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
         }
     }
 }
