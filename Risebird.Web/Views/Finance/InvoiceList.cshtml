@@ -719,6 +719,7 @@
                                                     <th>Owner</th>
                                                     @if (paidHasAnyRemark) { <th>Latest Remark</th> }
                                                     <th>UTR / Trxn</th>
+                                                    <th>Payment Date</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
@@ -736,6 +737,7 @@
                                                     <th>Owner</th>
                                                     @if (paidHasAnyRemark) { <th>Latest Remark</th> }
                                                     <th>UTR / Trxn</th>
+                                                    <th>Payment Date</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </tfoot>
@@ -743,7 +745,7 @@
                                                 @if (!paidList.Any())
                                                 {
                                                     <tr>
-                                                        <td colspan="@(paidHasAnyRemark ? 13 : 12)" class="text-center">No paid invoices found for the selected period.</td>
+                                                        <td colspan="@(paidHasAnyRemark ? 14 : 13)" class="text-center">No paid invoices found for the selected period.</td>
                                                     </tr>
                                                 }
                                                 @{ int paidRow = 1; }
@@ -769,6 +771,9 @@
                                                             </td>
                                                         }
                                                         <td>@item.UTRTrxn</td>
+                                                        <td style="white-space:nowrap;">
+                                                            @(item.PaymentDate.HasValue ? item.PaymentDate.Value.ToString("dd MMM yyyy") : "—")
+                                                        </td>
                                                         <td class="text-center">
                                                             <a href="@Url.Action("ViewInvoice","Finance", new { invoiceId = item.id })"
                                                                target="_blank" class="btn btn-sm btn-outline-primary" title="View / Edit Invoice">
@@ -810,6 +815,7 @@
                                                     <th>Owner</th>
                                                     @if (hasAnyRemark) { <th>Latest Remark</th> }
                                                     <th>UTR / Trxn</th>
+                                                    <th>Payment Date</th>
                                                     <th class="col-duedate">Due Date</th>
                                                     <th class="col-expecteddate">Expected Date</th>
                                                     <th class="col-aging">Aging</th>
@@ -830,6 +836,7 @@
                                                     <th>Owner</th>
                                                     @if (hasAnyRemark) { <th>Latest Remark</th> }
                                                     <th>UTR / Trxn</th>
+                                                    <th>Payment Date</th>
                                                     <th class="col-duedate">Due Date</th>
                                                     <th class="col-expecteddate">Expected Date</th>
                                                     <th class="col-aging">Aging</th>
@@ -840,7 +847,7 @@
                                                 @if (!Model.Any())
                                                 {
                                                     <tr>
-                                                        <td colspan="@(hasAnyRemark ? 16 : 15)" class="text-center">No records found for the selected month.</td>
+                                                        <td colspan="@(hasAnyRemark ? 17 : 16)" class="text-center">No records found for the selected month.</td>
                                                     </tr>
                                                 }
                                                 @{ int rowNo = 1; }
@@ -880,6 +887,9 @@
                                                             </td>
                                                         }
                                                         <td>@(item.BillingModel != 1 && item.BillingModel != 0 ? item.UTRTrxn : "")</td>
+                                                        <td style="white-space:nowrap;">
+                                                            @(item.PaymentDate.HasValue ? item.PaymentDate.Value.ToString("dd MMM yyyy") : "—")
+                                                        </td>
                                                         <td class="col-duedate">
                                                             @(item.Status == 5 ? "—" : mDueDate.HasValue ? mDueDate.Value.ToString("dd MMM yyyy") : "—")
                                                         </td>

@@ -40,10 +40,18 @@ BEGIN
         gi.InvoiceMonth,
         gi.InvoiceYear,
         gi.CreatedOn,
-        gi.ModifiedOn
+        gi.ModifiedOn,
+        w.PaymentDate
     FROM GeneratedInvoices gi
     LEFT JOIN Client   c  ON c.id  = gi.ClientId
     LEFT JOIN UserList ul ON ul.id = gi.BillingOwnerId
+    OUTER APPLY (
+        SELECT TOP 1 w.TransactionDate AS PaymentDate
+        FROM Wallet w
+        WHERE w.InvoiceId = gi.id
+          AND w.TransactionType = 'CashCredit'
+        ORDER BY w.id DESC
+    ) w
     WHERE gi.Status = 5
       AND (@FromYear  = 0 OR (gi.InvoiceYear * 100 + gi.InvoiceMonth) >= (@FromYear * 100 + @FromMonth))
       AND (@ToYear    = 0 OR (gi.InvoiceYear * 100 + gi.InvoiceMonth) <= (@ToYear   * 100 + @ToMonth))

@@ -567,6 +567,8 @@ namespace Risebird.Entities.ViewModel
         public DateTime? ModifiedOn { get; set; }
         public string CreditPeriod { get; set; }
         public DateTime? ExpectedDate { get; set; }
+        /// <summary>Cash credit payment date from Wallet.TransactionDate (CashCredit for this invoice).</summary>
+        public DateTime? PaymentDate { get; set; }
     }
 
     public class InvoiceListFilter
