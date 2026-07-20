@@ -20,7 +20,9 @@ CREATE PROCEDURE usp_InsertClientPO
     @POYear          INT,
     @PODocumentUrl   VARCHAR(500) = NULL,
     @CreatedBy       VARCHAR(200) = NULL,
-    @Remarks         VARCHAR(500) = NULL
+    @Remarks         VARCHAR(500) = NULL,
+    @POQuantity      INT = NULL,
+    @AddedDate       DATETIME = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -35,13 +37,15 @@ BEGIN
         ClientId, BillingType, BillingOwnerId, BillingModel,
         PONumber, POCreditAmount, CashCreditReceived,
         POMonth, POYear, PODocumentUrl, Status,
-        Remarks, CreatedBy, CreatedOn, ModifiedOn
+        Remarks, CreatedBy, CreatedOn, ModifiedOn,
+        POQuantity, AddedDate
     )
     VALUES (
         @ClientId, @BillingType, @BillingOwnerId, @BillingModel,
         @PONumber, @POCreditAmount, 0,
         @POMonth, @POYear, @PODocumentUrl, @Status,
-        @Remarks, @CreatedBy, @Now, @Now
+        @Remarks, @CreatedBy, @Now, @Now,
+        @POQuantity, ISNULL(@AddedDate, @Now)
     );
 
     SELECT CAST(SCOPE_IDENTITY() AS INT) AS NewClientPOId;

@@ -52,3 +52,23 @@ BEGIN
     END
 END
 GO
+
+-- PO Quantity (optional units / line quantity on the PO)
+IF NOT EXISTS (
+    SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_NAME = N'ClientPO' AND COLUMN_NAME = N'POQuantity'
+)
+BEGIN
+    ALTER TABLE [dbo].[ClientPO] ADD [POQuantity] [int] NULL
+END
+GO
+
+-- Explicit Added Date (defaults to CreatedOn when null for legacy rows)
+IF NOT EXISTS (
+    SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_NAME = N'ClientPO' AND COLUMN_NAME = N'AddedDate'
+)
+BEGIN
+    ALTER TABLE [dbo].[ClientPO] ADD [AddedDate] [datetime] NULL
+END
+GO
