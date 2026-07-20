@@ -170,6 +170,7 @@
                     @if (filterMonth.HasValue) { <th>Type</th> }
                     <th>PO Number</th>
                     @if (billingType == 1 && !ownerFiltered) { <th>Billing Owner</th> }
+                    <th class="text-right">PO Quantity</th>
                     <th class="text-right">PO Credit</th>
                     <th class="text-right">Consumed</th>
                     <th class="text-right">Remaining</th>
@@ -221,6 +222,7 @@
                         {
                             <td>@(string.IsNullOrEmpty(po.BillingOwnerEmail) ? "—" : po.BillingOwnerEmail)</td>
                         }
+                        <td class="text-right">@(po.POQuantity.HasValue ? po.POQuantity.Value.ToString("N0") : "—")</td>
                         <td class="text-right" style="white-space:nowrap;font-weight:600;color:#1565c0;">
                             @(po.POCreditAmount > 0 ? "₹ " + po.POCreditAmount.ToString("N0") : "—")
                         </td>
@@ -243,7 +245,7 @@
                             else { <span style="color:#aaa;">—</span> }
                         </td>
                         <td style="white-space:nowrap;">@(po.CreatedBy ?? "—")</td>
-                        <td style="white-space:nowrap;">@(po.CreatedOn?.ToString("dd MMM yyyy HH:mm") ?? "—")</td>
+                        <td style="white-space:nowrap;">@(po.EffectiveAddedDate?.ToString("dd MMM yyyy") ?? "—")</td>
                         <td>
                             @if (!string.IsNullOrEmpty(po.PODocumentUrl))
                             {

@@ -36,10 +36,18 @@ BEGIN
         gi.CreatedOn,
         gi.ModifiedOn,
         gi.CreditPeriod,
-        gi.ExpectedDate
+        gi.ExpectedDate,
+        w.PaymentDate
     FROM GeneratedInvoices gi
     LEFT JOIN Client   c  ON c.id  = gi.ClientId
     LEFT JOIN UserList ul ON ul.id = gi.BillingOwnerId
+    OUTER APPLY (
+        SELECT TOP 1 w.TransactionDate AS PaymentDate
+        FROM Wallet w
+        WHERE w.InvoiceId = gi.id
+          AND w.TransactionType = 'CashCredit'
+        ORDER BY w.id DESC
+    ) w
     WHERE gi.InvoiceMonth = @Month
       AND gi.InvoiceYear  = @Year
     ORDER BY c.Name, gi.id
