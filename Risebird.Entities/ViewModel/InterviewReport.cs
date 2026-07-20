@@ -440,6 +440,7 @@ namespace Risebird.Entities.ViewModel
         public string VideoLink { get; set; }
         public string ClientName { get; set; }
         public string InterviewerEmailid { get; set; }
+        public string PAN { get; set; }
         public string AssessmentGroupId { get; set; }
         public int? VideoDuration { get; set; }
         public string ChannelOwner { get; set; }
@@ -567,6 +568,8 @@ namespace Risebird.Entities.ViewModel
         public DateTime? ModifiedOn { get; set; }
         public string CreditPeriod { get; set; }
         public DateTime? ExpectedDate { get; set; }
+        /// <summary>Cash credit payment date from Wallet.TransactionDate (CashCredit for this invoice).</summary>
+        public DateTime? PaymentDate { get; set; }
     }
 
     public class InvoiceListFilter
