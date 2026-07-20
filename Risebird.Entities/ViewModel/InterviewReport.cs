@@ -440,6 +440,7 @@ namespace Risebird.Entities.ViewModel
         public string VideoLink { get; set; }
         public string ClientName { get; set; }
         public string InterviewerEmailid { get; set; }
+        public string PAN { get; set; }
         public string AssessmentGroupId { get; set; }
         public int? VideoDuration { get; set; }
         public string ChannelOwner { get; set; }
