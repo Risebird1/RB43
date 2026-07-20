@@ -40,6 +40,14 @@ namespace Risebird.Repository
             services.AddScoped<IInterviewerListingSearchRepository, InterviewerListingSearchRepository>();
             services.AddScoped<IListingIndexRepository>(sp => sp.GetRequiredService<IInterviewerListingSearchRepository>());
 
+            // Raised issue (support ticket) plugin.
+            services.AddScoped<IRaisedIssueListingSearchRepository, RaisedIssueListingSearchRepository>();
+            services.AddScoped<IListingIndexRepository>(sp => sp.GetRequiredService<IRaisedIssueListingSearchRepository>());
+
+            // Template (ClonableSkillChannel) plugin.
+            services.AddScoped<ITemplateListingSearchRepository, TemplateListingSearchRepository>();
+            services.AddScoped<IListingIndexRepository>(sp => sp.GetRequiredService<ITemplateListingSearchRepository>());
+
             services.AddScoped<IListingIndexRepositoryResolver, ListingIndexRepositoryResolver>();
 
             return services;

@@ -252,6 +252,17 @@ namespace Risebird.Repository
 
                     if (await cmdUpdateIRF.ExecuteNonQueryAsync() != 0)
                     {
+                        // Resolve new id for Azure Search upsert (SP does not OUTPUT it).
+                        using (var idCmd = new SqlCommand(
+                            "SELECT TOP 1 id FROM dbo.ClonableSkillChannel WHERE Name = @Name ORDER BY id DESC",
+                            con))
+                        {
+                            idCmd.Parameters.AddWithValue("@Name", templateDetails.TemplateName ?? (object)DBNull.Value);
+                            var scalar = await idCmd.ExecuteScalarAsync();
+                            if (scalar != null && scalar != DBNull.Value)
+                                templateDetails.ClonableSkillChannelId = Convert.ToInt32(scalar);
+                        }
+
                         con.Close();
                     }
 
@@ -653,14 +664,12 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> CreateTemplateFromMAG(List<TransSkill> techRubrics, int assessmentGroupId, string loggedInUser)
+        public async Task<int> CreateTemplateFromMAG(List<TransSkill> techRubrics, int assessmentGroupId, string loggedInUser)
         {
             try
             {
-
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-
                     DataTable techSkillDt = new DataTable();
 
                     if (techRubrics != null && techRubrics.Count() > 0)
@@ -678,14 +687,10 @@ namespace Risebird.Repository
 
                         foreach (var item in techRubrics)
                         {
-                            if (string.IsNullOrEmpty(item.Concepts))//|| irfDetails.TechRubricType == TechRubricTypes.Basic
-                            {
+                            if (string.IsNullOrEmpty(item.Concepts))
                                 item.Concepts = "";
-                            }
-                            if (string.IsNullOrEmpty(item.Natureofquestion))// || irfDetails.TechRubricType == TechRubricTypes.Basic
-                            {
+                            if (string.IsNullOrEmpty(item.Natureofquestion))
                                 item.Natureofquestion = "";
-                            }
 
                             techSkillDt.Rows.Add(0, item.LevelId, item.SkillId, item.Weightage, item.Concepts, item.Natureofquestion, item.Timelimit, item.isEliminationskill, item.SkillSet, item.SkillName);
                         }
@@ -709,30 +714,37 @@ namespace Risebird.Repository
                         cmdCreateTemplate.Parameters["@TechSkillBulkData"].Value = techSkillDt;
                     }
 
-
                     con.Open();
+                    await cmdCreateTemplate.ExecuteNonQueryAsync();
 
-                    if (await cmdCreateTemplate.ExecuteNonQueryAsync() != 0)
+                    int newId = 0;
+                    using (var idCmd = new SqlCommand(
+                        @"SELECT TOP 1 csc.id
+                          FROM dbo.ClonableSkillChannel csc
+                          INNER JOIN dbo.IRF irfc ON irfc.id = csc.CreatedFromIRFId
+                          WHERE irfc.AssessmentGroupId = @assessmentGroupId
+                          ORDER BY csc.id DESC",
+                        con))
                     {
-                        con.Close();
+                        idCmd.Parameters.AddWithValue("@assessmentGroupId", assessmentGroupId);
+                        var scalar = await idCmd.ExecuteScalarAsync();
+                        if (scalar != null && scalar != DBNull.Value)
+                            newId = Convert.ToInt32(scalar);
                     }
 
-                    return true;
-
+                    con.Close();
+                    return newId;
                 }
-
             }
-
             catch (SqlException e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return 0;
             }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return 0;
             }
         }
         public async Task<IEnumerable<SkillComment>> GetDeliveryHeadSampleQuestions(int id, string emailId = null)

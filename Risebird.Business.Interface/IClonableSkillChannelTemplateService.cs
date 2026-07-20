@@ -10,7 +10,13 @@ namespace Risebird.Business.Interface
         Task<bool> CreateClonableSkillChannel(ClonableSkillChannelVM model, string loggedInUser);
         Task<ClonableSkillChannelVM> PopulateDropDownsForTemplate(ClonableSkillChannelVM model, bool isEdit = false);
         Task<ClonableSkillChannelVM> GetClonableSkillChannel(int id);
-        Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels();
+
+        /// <summary>
+        /// Gets all clonable skill channels (templates). When Azure Search (TemplateListing) is enabled,
+        /// tries the search index first (with <paramref name="filter"/> applied via OData) and falls back
+        /// to SQL when disabled or on error.
+        /// </summary>
+        Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels(ClonableTemplatesFilter filter = null);
         Task<bool> UpdateClonableSkillChannel(ClonableSkillChannelVM model, string loggedInUser);
         Task<IRFVm> GetTemplateDataForPopulatingSkillChannel(int id, string clientEmailId = null);
         Task<IRFVm> PopulateDropDownsForSkillChannel(IRFVm model, string clientEmailId = null);

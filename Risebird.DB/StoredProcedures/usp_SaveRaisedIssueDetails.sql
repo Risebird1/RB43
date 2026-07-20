@@ -16,11 +16,10 @@ Create Procedure usp_SaveRaisedIssueDetails
 @RequestedBy varchar(200),
 @RequestedOn datetime,
 @Requester varchar(50),
-@interviewId int
+@interviewId int,
+@NewId int = NULL OUTPUT
 AS  
 BEGIN  
-    DECLARE @NewId INT;
-
     INSERT INTO RaisedIssues(RequestType, Comment, AttachmentURL, RequestedBy, RequestedOn, Status, Requester, interviewId)
     VALUES (@RequestType, @Comment, @AttachmentURL, @RequestedBy, @RequestedOn, 'Open', @Requester, @interviewId);
 

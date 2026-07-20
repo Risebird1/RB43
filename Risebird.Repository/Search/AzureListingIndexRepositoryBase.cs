@@ -207,9 +207,17 @@ namespace Risebird.Repository.Search
                 {
                     var payload = batch.Select(ToAzureDocument).ToList();
                     var response = await searchClient.MergeOrUploadDocumentsAsync(payload);
+                    var results = response?.Value?.Results;
+                    if (results == null || results.Count == 0)
+                    {
+                        await LogExceptionAsync(
+                            new InvalidOperationException("Azure Search returned no indexing results for batch upload."),
+                            "MergeOrUploadDocumentsAsync empty response.");
+                        continue;
+                    }
 
-                    await LogFailedIndexingResultsAsync(response.Value.Results, "MergeOrUploadDocumentsAsync");
-                    indexed += response.Value.Results.Count(r => r.Succeeded);
+                    await LogFailedIndexingResultsAsync(results, "MergeOrUploadDocumentsAsync");
+                    indexed += results.Count(r => r.Succeeded);
                 }
                 catch (Exception ex)
                 {

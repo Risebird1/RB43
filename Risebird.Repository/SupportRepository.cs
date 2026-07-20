@@ -183,11 +183,13 @@ namespace Risebird.Repository
                 parameters.Add("@RequestedOn", DateTime.Now);
                 parameters.Add("@Requester", model.Requester);
                 parameters.Add("@interviewId", model.interviewId);
+                parameters.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(con, "usp_SaveRaisedIssueDetails", parameters,
                         commandType: CommandType.StoredProcedure);
+                    model.id = parameters.Get<int>("@NewId");
                     return true;
                 }
             }

@@ -35,6 +35,7 @@ namespace Risebird.Business
         private readonly IClonableSkillChannelTemplateRepository _clonableSkillChannelTemplateRepository;
         //private readonly IClientRepository _clientRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ITemplateListingSearchRepository _templateListingSearchRepository;
 
 
         public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger,
@@ -43,7 +44,8 @@ namespace Risebird.Business
             ITwilioHelper twilioHelper, ICalendlyHelper calendlyHelper, ICandidateRepository candidateRepository,
             IInterviewSchedulerRepository interviewSchedulerRepository,
             IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository, IUserRepository userRepository,
-            IIrfListingSearchRepository irfListingSearchRepository)
+            IIrfListingSearchRepository irfListingSearchRepository,
+            ITemplateListingSearchRepository templateListingSearchRepository)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -61,6 +63,7 @@ namespace Risebird.Business
             //_clientRepository = clientRepository;
             _userRepository = userRepository;
             _irfListingSearchRepository = irfListingSearchRepository;
+            _templateListingSearchRepository = templateListingSearchRepository;
 
         }
 
@@ -3047,6 +3050,7 @@ namespace Risebird.Business
                 if (result.Item1)
                 {
                     await TrySyncIrfListingSearchByNameAsync(irfDetails.IRFId);
+                    await TrySyncTemplateListingSearchAsync(irfDetails.CreatedFromTemplateId);
 
                     var clientName = await _clientService.GetClientName(irfDetails.ClientId);
                     //send mail to the HR here
@@ -3213,6 +3217,7 @@ namespace Risebird.Business
                 if (result.Item1)
                 {
                     await TrySyncIrfListingSearchByNameAsync(irfDetails.IRFId);
+                    await TrySyncTemplateListingSearchAsync(irfDetails.CreatedFromTemplateId);
 
                     var clientName = await _clientService.GetClientName(irfDetails.ClientId);
                     //send mail to the HR here
@@ -3353,6 +3358,7 @@ namespace Risebird.Business
                 if (result.Item1)
                 {
                     await TrySyncIrfListingSearchByNameAsync(irfDetails.IRFId);
+                    await TrySyncTemplateListingSearchAsync(irfDetails.CreatedFromTemplateId);
 
                     var clientName = await _clientService.GetClientName(irfDetails.ClientId);
                     //send mail to the HR here
@@ -3440,6 +3446,7 @@ namespace Risebird.Business
                 if (result.Item1)
                 {
                     await TrySyncIrfListingSearchByNameAsync(irfDetails.IRFId);
+                    await TrySyncTemplateListingSearchAsync(irfDetails.CreatedFromTemplateId);
 
                     var activityTrackerModel = new ActivityTrackerVM();
                     activityTrackerModel.ActivityType = (int)ActivityTypes.AddSkillsChannel;
@@ -5092,6 +5099,21 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+
+        private async Task TrySyncTemplateListingSearchAsync(int clonableSkillChannelId)
+        {
+            if (!_templateListingSearchRepository.IsEnabled || clonableSkillChannelId <= 0)
+                return;
+
+            try
+            {
+                await _templateListingSearchRepository.UpsertTemplateAsync(clonableSkillChannelId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
 

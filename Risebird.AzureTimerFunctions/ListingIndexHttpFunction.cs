@@ -17,7 +17,7 @@ namespace Risebird.AzureTimerFunctions
     /// <para>
     /// Full crawl:
     ///   POST/GET /api/ListingIndex/{listingKey}/FullCrawl?code=&lt;key&gt;
-    ///   listingKey examples: IrfListing, CandidateListing, InterviewerListing
+    ///   listingKey examples: IrfListing, InterviewerListing, RaisedIssueListing, TemplateListing
     /// </para>
     /// <para>
     /// Single upsert:
