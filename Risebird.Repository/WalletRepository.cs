@@ -105,7 +105,7 @@ namespace Risebird.Repository
             return false;
         }
 
-        public async Task<int> SaveClientPO(int clientId, int billingType, int billingModel, decimal poCreditAmount, int poMonth, int poYear, string createdBy, int? billingOwnerId = null, string poNumber = null, string poDocumentUrl = null, string remarks = null)
+        public async Task<int> SaveClientPO(int clientId, int billingType, int billingModel, decimal poCreditAmount, int poMonth, int poYear, string createdBy, int? billingOwnerId = null, string poNumber = null, string poDocumentUrl = null, string remarks = null, int? poQuantity = null, DateTime? addedDate = null)
         {
             try
             {
@@ -123,6 +123,8 @@ namespace Risebird.Repository
                     parameters.Add("@PODocumentUrl", poDocumentUrl);
                     parameters.Add("@CreatedBy", createdBy);
                     parameters.Add("@Remarks", remarks);
+                    parameters.Add("@POQuantity", poQuantity);
+                    parameters.Add("@AddedDate", addedDate);
                     var result = await SqlMapper.QueryAsync<int>(con, "usp_InsertClientPO", parameters, commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
@@ -191,6 +193,34 @@ namespace Risebird.Repository
                         "UPDATE ClientPO SET Status = @Status, ModifiedOn = @ModifiedOn WHERE id = @POId AND ClientId = @ClientId",
                         parameters);
                     return affected > 0;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<bool> UpdateClientPO(int poId, int clientId, string poNumber, decimal poCreditAmount, int poMonth, int poYear, int? poQuantity, DateTime? addedDate, string poDocumentUrl = null, bool updateDocument = false)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@POId", poId);
+                    parameters.Add("@ClientId", clientId);
+                    parameters.Add("@PONumber", poNumber);
+                    parameters.Add("@POCreditAmount", poCreditAmount);
+                    parameters.Add("@POMonth", poMonth);
+                    parameters.Add("@POYear", poYear);
+                    parameters.Add("@POQuantity", poQuantity);
+                    parameters.Add("@AddedDate", addedDate);
+                    parameters.Add("@PODocumentUrl", poDocumentUrl);
+                    parameters.Add("@UpdateDocument", updateDocument);
+                    var result = await SqlMapper.QueryAsync<bool>(con, "usp_UpdateClientPO", parameters, commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
