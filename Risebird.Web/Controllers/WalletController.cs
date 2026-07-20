@@ -609,7 +609,8 @@ namespace Risebird.Web.Controllers
         [Authorize]
         [HttpPost]
         public async Task<JsonResult> AddPOCreditPoints(int clientId, int creditAmount, int month, int year,
-            DateTime? transactionDate = null, string transactionRefNumber = null, int? billingOwnerId = null, IFormFile poFile = null)
+            DateTime? transactionDate = null, string transactionRefNumber = null, int? billingOwnerId = null, IFormFile poFile = null,
+            int? poQuantity = null, DateTime? addedDate = null)
         {
             if (!IsFinanceOrAdmin()) return Json(new { success = false, message = "Unauthorized." });
 
@@ -626,6 +627,8 @@ namespace Risebird.Web.Controllers
                 return Json(new { success = false, message = "Billing owner is required for this client." });
             }
             if (creditAmount <= 0) return Json(new { success = false, message = "Enter a valid PO credit amount." });
+            if (poQuantity.HasValue && poQuantity.Value < 0)
+                return Json(new { success = false, message = "PO quantity cannot be negative." });
 
             var invoicePDF = await UploadPdfAsync(poFile);
             if (poFile != null && poFile.Length > 0 && invoicePDF == null)
@@ -637,7 +640,8 @@ namespace Risebird.Web.Controllers
             var poId = await _walletService.SaveClientPO(
                 clientId, billingType, client.BillingModel, creditAmount, month, year, emailid,
                 billingType == 1 ? billingOwnerId : null,
-                transactionRefNumber, invoicePDF, "PO credit registered — cash credit to be added later in wallet");
+                transactionRefNumber, invoicePDF, "PO credit registered — cash credit to be added later in wallet",
+                poQuantity, addedDate);
 
             return Json(new
             {
@@ -645,6 +649,50 @@ namespace Risebird.Web.Controllers
                 message = poId > 0
                     ? "PO registered successfully. Add cash credit later to post amount into wallet."
                     : "Failed to register PO."
+            });
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> UpdateClientPO(int poId, int clientId, int creditAmount, int month, int year,
+            string transactionRefNumber = null, int? poQuantity = null, DateTime? addedDate = null, IFormFile poFile = null)
+        {
+            if (!IsFinanceOrAdmin()) return Json(new { success = false, message = "Unauthorized." });
+            if (poId <= 0) return Json(new { success = false, message = "Invalid PO." });
+            if (creditAmount <= 0) return Json(new { success = false, message = "Enter a valid PO credit amount." });
+            if (month < 1 || month > 12 || year < 2000) return Json(new { success = false, message = "Enter a valid PO month." });
+            if (poQuantity.HasValue && poQuantity.Value < 0)
+                return Json(new { success = false, message = "PO quantity cannot be negative." });
+
+            var existing = (await _walletService.GetClientPOList(clientId)).FirstOrDefault(x => x.id == poId);
+            if (existing == null) return Json(new { success = false, message = "PO not found." });
+            if (creditAmount < existing.CashCreditReceived)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = $"PO credit cannot be less than cash already received (₹ {existing.CashCreditReceived:N0})."
+                });
+            }
+
+            string invoicePDF = null;
+            var updateDocument = false;
+            if (poFile != null && poFile.Length > 0)
+            {
+                invoicePDF = await UploadPdfAsync(poFile);
+                if (invoicePDF == null)
+                    return Json(new { success = false, message = "Only PDF files are allowed." });
+                updateDocument = true;
+            }
+
+            var result = await _walletService.UpdateClientPO(
+                poId, clientId, transactionRefNumber, creditAmount, month, year,
+                poQuantity, addedDate, invoicePDF, updateDocument);
+
+            return Json(new
+            {
+                success = result,
+                message = result ? "PO information updated successfully." : "Failed to update PO information."
             });
         }
 

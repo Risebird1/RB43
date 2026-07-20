@@ -25,6 +25,8 @@ BEGIN
         cp.CashCreditReceived,
         cp.POMonth,
         cp.POYear,
+        cp.POQuantity,
+        cp.AddedDate,
         cp.PODocumentUrl,
         cp.Status,
         cp.Remarks,
