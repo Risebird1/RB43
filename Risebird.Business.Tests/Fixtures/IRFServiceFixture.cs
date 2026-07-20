@@ -15,6 +15,7 @@ namespace Risebird.Business.Tests.Fixtures
     {
         public Mock<IIRFRepository> Repository { get; } = new(MockBehavior.Loose);
         public Mock<IIrfListingSearchRepository> ListingSearch { get; } = new(MockBehavior.Loose);
+        public Mock<ITemplateListingSearchRepository> TemplateListingSearch { get; } = new(MockBehavior.Loose);
         public Mock<INotificationHelper> NotificationHelper { get; } = new(MockBehavior.Loose);
         public Mock<IApplicationErrorLogger> Logger { get; } = new(MockBehavior.Loose);
         public Mock<IClientService> ClientService { get; } = new(MockBehavior.Loose);
@@ -36,6 +37,10 @@ namespace Risebird.Business.Tests.Fixtures
             ListingSearch.Setup(x => x.SearchAsync(
                     It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<IRFFilter>()))
                 .ReturnsAsync(new List<IrfEntity>());
+
+            TemplateListingSearch.SetupGet(x => x.IsEnabled).Returns(false);
+            TemplateListingSearch.Setup(x => x.UpsertTemplateAsync(It.IsAny<int>())).ReturnsAsync(true);
+            TemplateListingSearch.Setup(x => x.RemoveTemplateAsync(It.IsAny<int>())).ReturnsAsync(true);
 
             Logger.Setup(x => x.LogMessage(It.IsAny<LogLevelInfo>(), It.IsAny<Exception>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
@@ -116,7 +121,8 @@ namespace Risebird.Business.Tests.Fixtures
                 InterviewSchedulerRepository.Object,
                 ClonableTemplateRepository.Object,
                 UserRepository.Object,
-                ListingSearch.Object);
+                ListingSearch.Object,
+                TemplateListingSearch.Object);
         }
     }
 }
