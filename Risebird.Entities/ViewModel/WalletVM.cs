@@ -133,6 +133,9 @@ namespace Risebird.Entities.ViewModel
         public decimal PendingCashCredit => POCreditAmount - CashCreditReceived;
         public int POMonth { get; set; }
         public int POYear { get; set; }
+        public int? POQuantity { get; set; }
+        /// <summary>User-facing added date. Falls back to CreatedOn when null (legacy rows).</summary>
+        public DateTime? AddedDate { get; set; }
         public string PODocumentUrl { get; set; }
         public int Status { get; set; }
         public string StatusDesc { get; set; }
@@ -141,6 +144,8 @@ namespace Risebird.Entities.ViewModel
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public DateTime? ModifiedOn { get; set; }
+        /// <summary>Display date for Added On — prefers AddedDate, else CreatedOn.</summary>
+        public DateTime? EffectiveAddedDate => AddedDate ?? CreatedOn;
         public string BillingOwnerEmail { get; set; }
         public string BillingOwnerName { get; set; }
         public string PeriodLabel { get; set; }
