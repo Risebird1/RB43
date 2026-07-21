@@ -119,6 +119,14 @@ namespace Risebird.Entities.ViewModel
         public string InterviewerName { get; set; }
         public string InterviewerEmail { get; set; }
         public string InterviewerCodedId { get; set; }
+        /// <summary>UserList.id for UndoSuspiciousInterviewer.</summary>
+        public int? InterviewerUserId { get; set; }
+        /// <summary>UserList.MobileNumber as digits string; null/0 not projected.</summary>
+        public string InterviewerMobileNumber { get; set; }
+        /// <summary>InterviewerProfile.AltMobileNumber when present.</summary>
+        public string InterviewerAltMobileNumber { get; set; }
+        /// <summary>True when SuspiciousInterviewer.SuspiciousStatus = 1 for this user.</summary>
+        public bool IsSuspicious { get; set; }
         public string IrfName { get; set; }
         public string Severity { get; set; }
         public string RiskCategoryLabels { get; set; }

@@ -40,6 +40,10 @@ BEGIN
             CAST('' AS NVARCHAR(200)) AS InterviewerName,
             CAST('' AS VARCHAR(200)) AS InterviewerEmail,
             CAST('' AS VARCHAR(50)) AS InterviewerCodedId,
+            CAST(NULL AS INT) AS InterviewerUserId,
+            CAST(NULL AS VARCHAR(20)) AS InterviewerMobileNumber,
+            CAST(NULL AS NVARCHAR(200)) AS InterviewerAltMobileNumber,
+            CAST(0 AS BIT) AS IsSuspicious,
             CAST('' AS NVARCHAR(200)) AS IrfName,
             CAST(NULL AS VARCHAR(MAX)) AS RiskCategoryLabels,
             CAST(NULL AS VARCHAR(500)) AS RiskCategoryReasons,
@@ -127,6 +131,13 @@ BEGIN
             NULLIF(LTRIM(RTRIM(ipViaInterviewer.NickName)), ''),
             ''
         ) AS InterviewerCodedId,
+        ru.UserId AS InterviewerUserId,
+        CASE
+            WHEN ru.MobileNumber IS NULL OR ru.MobileNumber = 0 THEN NULL
+            ELSE CAST(ru.MobileNumber AS VARCHAR(20))
+        END AS InterviewerMobileNumber,
+        NULLIF(LTRIM(RTRIM(ip.AltMobileNumber)), '') AS InterviewerAltMobileNumber,
+        CAST(CASE WHEN ISNULL(si.id, 0) > 0 THEN 1 ELSE 0 END AS BIT) AS IsSuspicious,
         COALESCE(
             NULLIF(LTRIM(RTRIM(irf.IRFId)), ''),
             NULLIF(LTRIM(RTRIM(irfViaInterview.IRFId)), ''),
@@ -222,32 +233,32 @@ BEGIN
     LEFT JOIN dbo.UserList ulViaInterviewer ON ulViaInterviewer.id = iv.UserId
     LEFT JOIN dbo.InterviewerProfile ipViaInterviewer ON ipViaInterviewer.UserId = iv.UserId
     OUTER APPLY (
-        SELECT TOP 1 x.UserId, x.EmailId
+        SELECT TOP 1 x.UserId, x.EmailId, x.MobileNumber
         FROM (
-            SELECT ul.id AS UserId, ul.EmailId, 1 AS Priority
+            SELECT ul.id AS UserId, ul.EmailId, ul.MobileNumber, 1 AS Priority
             FROM dbo.UserList ul
             WHERE im.interviewer IS NOT NULL
               AND LTRIM(RTRIM(ul.EmailId)) = LTRIM(RTRIM(im.interviewer))
             UNION ALL
-            SELECT ul.id, ul.EmailId, 2
+            SELECT ul.id, ul.EmailId, ul.MobileNumber, 2
             FROM dbo.UserList ul
             WHERE im.interviewer IS NOT NULL AND ul.EmailId = im.interviewer
             UNION ALL
-            SELECT ip.UserId, ul.EmailId, 3
+            SELECT ip.UserId, ul.EmailId, ul.MobileNumber, 3
             FROM dbo.InterviewerProfile ip
             INNER JOIN dbo.UserList ul ON ul.id = ip.UserId
             WHERE im.interviewer IS NOT NULL
               AND LTRIM(RTRIM(ip.NickName)) = LTRIM(RTRIM(im.interviewer))
             UNION ALL
-            SELECT ul.id AS UserId, ul.EmailId, 4 AS Priority
+            SELECT ul.id AS UserId, ul.EmailId, ul.MobileNumber, 4 AS Priority
             FROM dbo.UserList ul
             WHERE ti.UserId IS NOT NULL AND ul.id = ti.UserId
             UNION ALL
-            SELECT ul.id, ul.EmailId, 5
+            SELECT ul.id, ul.EmailId, ul.MobileNumber, 5
             FROM dbo.UserList ul
             WHERE iv.UserId IS NOT NULL AND ul.id = iv.UserId
             UNION ALL
-            SELECT ul.id, ul.EmailId, 6
+            SELECT ul.id, ul.EmailId, ul.MobileNumber, 6
             FROM dbo.UserList ul
             WHERE ipViaTi.UserId IS NOT NULL AND ul.id = ipViaTi.UserId
         ) x
@@ -255,6 +266,7 @@ BEGIN
         ORDER BY x.Priority
     ) ru
     LEFT JOIN dbo.InterviewerProfile ip ON ip.UserId = ru.UserId
+    LEFT JOIN dbo.SuspiciousInterviewer si ON si.UserId = ru.UserId AND ISNULL(si.SuspiciousStatus, 0) = 1
     WHERE (@ReviewStatus IS NULL OR tf.ReviewStatus = @ReviewStatus)
     ORDER BY tf.FlaggedAtUtc DESC, tf.Id DESC;
 END
