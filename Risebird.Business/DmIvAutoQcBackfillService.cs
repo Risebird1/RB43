@@ -1,7 +1,9 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
@@ -17,17 +19,20 @@ namespace Risebird.Business
         private readonly IAutoQcRemovalMonitorRepository _monitorRepository;
         private readonly IDmIvAutoQcFlagService _autoQcFlagService;
         private readonly IRiskCategoryService _riskCategoryService;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly ILogger<DmIvAutoQcBackfillService> _log;
 
         public DmIvAutoQcBackfillService(
             IAutoQcRemovalMonitorRepository monitorRepository,
             IDmIvAutoQcFlagService autoQcFlagService,
             IRiskCategoryService riskCategoryService,
+            IApplicationErrorLogger applicationErrorLogger,
             ILogger<DmIvAutoQcBackfillService> log)
         {
             _monitorRepository = monitorRepository;
             _autoQcFlagService = autoQcFlagService;
             _riskCategoryService = riskCategoryService;
+            _applicationErrorLogger = applicationErrorLogger;
             _log = log;
         }
 
@@ -44,6 +49,7 @@ namespace Risebird.Business
             _monitorRepository.GetIrfAuditInterviewerRiskInterviewDetailsAsync(irfId, fromIst, toIst, transInterviewerId);
 
         public async Task<IrfAuditRiskBackfillResultVm> BackfillRiskCategoryForIrfAsync(int irfId, DateTime fromIst, DateTime toIst,
+            bool ignoreMassFireGuard = false,
             CancellationToken cancellationToken = default)
         {
             var result = new IrfAuditRiskBackfillResultVm();
@@ -56,53 +62,77 @@ namespace Risebird.Business
 
             var batchSize = DmIvAutoQcAuditConstants.RiskCategoryBackfillBatchSize;
             var maxBatches = DmIvAutoQcAuditConstants.RiskCategoryBackfillMaxBatches;
-            var processed = 0;
-            var remaining = 0;
+            var maxInterviews = batchSize * maxBatches;
 
-            for (var batchIndex = 0; batchIndex < maxBatches; batchIndex++)
+            // Single candidate fetch for the whole run so the mass-fire guard can evaluate
+            // before any write (prefer-missing ordering from SP).
+            cancellationToken.ThrowIfCancellationRequested();
+            var candidates = (await _monitorRepository.GetRiskCategoryBackfillCandidatesByIrfAsync(
+                irfId, fromIst, toIst, maxInterviews + 1)).ToList();
+
+            if (candidates.Count == 0)
+            {
+                result.Ok = true;
+                result.Processed = 0;
+                result.Remaining = 0;
+                result.Message = "No interviews in window to refresh.";
+                return result;
+            }
+
+            var interviewIds = candidates.Take(maxInterviews).ToList();
+            var remainingHint = Math.Max(0, candidates.Count - interviewIds.Count);
+
+            // Dry-run evaluate all — mass-fire guard runs before any write.
+            var dryRuns = new List<RiskCategory>(interviewIds.Count);
+            foreach (var interviewId in interviewIds)
             {
                 cancellationToken.ThrowIfCancellationRequested();
+                var eval = await _riskCategoryService.EvaluateRiskCategoryDryRun(interviewId);
+                dryRuns.Add(eval ?? new RiskCategory { InterviewId = interviewId });
+            }
 
-                var candidates = (await _monitorRepository.GetRiskCategoryBackfillCandidatesByIrfAsync(
-                    irfId, fromIst, toIst, batchSize + 1)).ToList();
-
-                if (candidates.Count == 0)
+            if (!ignoreMassFireGuard)
+            {
+                var guard = RiskCategoryMassFireGuard.Evaluate(dryRuns);
+                if (guard.ShouldAbort)
                 {
-                    remaining = 0;
-                    break;
+                    var abortMsg = guard.Message
+                        ?? $"aborted: {guard.CheckName} fired on {guard.FireRatePct:0}% of {guard.SampleSize} interviews — investigate";
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, abortMsg);
+                    _log.LogWarning(
+                        "RiskCategory backfill ABORTED irf={IrfId}: check={Check} rate={Rate:0}% sample={Sample} (ignoreMassFireGuard=false)",
+                        irfId, guard.CheckName, guard.FireRatePct, guard.SampleSize);
+
+                    result.Ok = false;
+                    result.Aborted = true;
+                    result.AbortedCheckName = guard.CheckName;
+                    result.AbortedFireRatePct = guard.FireRatePct;
+                    result.Processed = 0;
+                    result.Remaining = interviewIds.Count + remainingHint;
+                    result.Message = abortMsg + " (pass ignoreMassFireGuard=1 to override after investigating)";
+                    return result;
                 }
+            }
 
-                var batch = candidates.Take(batchSize).ToList();
-                remaining = Math.Max(0, candidates.Count - batch.Count);
-
-                foreach (var interviewId in batch)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    var ok = await _riskCategoryService.AddUpdateRiskCategory(interviewId);
-                    if (ok)
-                        processed++;
-                }
-
-                // Prefer-missing ordering: once only existing (severity-filled) rows remain,
-                // one pass is enough; further loops would re-process forever.
-                if (remaining == 0)
-                    break;
-
-                // If everything remaining already has Severity (ORDER BY puts them last),
-                // candidate list still returns them — stop after first full regrade pass of missing ones.
-                // Heuristic: if this batch did not shrink the "prefer missing" set, continue until maxBatches.
+            var processed = 0;
+            foreach (var interviewId in interviewIds)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var ok = await _riskCategoryService.AddUpdateRiskCategory(interviewId);
+                if (ok)
+                    processed++;
             }
 
             result.Ok = true;
             result.Processed = processed;
-            result.Remaining = remaining;
+            result.Remaining = remainingHint;
 
             var synced = await _monitorRepository.SyncTrialFlagsVerdictFromRiskCategoryAsync();
-            result.Message = remaining > 0
-                ? $"Refreshed risk for {processed} interview(s). Synced {synced} trial verdict(s). Click Refresh risk again for ~{remaining}+ more."
+            result.Message = remainingHint > 0
+                ? $"Refreshed risk for {processed} interview(s). Synced {synced} trial verdict(s). Click Refresh risk again for ~{remainingHint}+ more."
                 : $"Refreshed risk for {processed} interview(s). Synced {synced} trial verdict(s). Expand the IRF again to see updated P0–P5 counts.";
-            _log.LogInformation("RiskCategory backfill irf={IrfId}: processed={Processed} remainingHint={Remaining} trialSynced={Synced}",
-                irfId, processed, remaining, synced);
+            _log.LogInformation("RiskCategory backfill irf={IrfId}: processed={Processed} remainingHint={Remaining} trialSynced={Synced} ignoreMassFire={Ignore}",
+                irfId, processed, remainingHint, synced, ignoreMassFireGuard);
             return result;
         }
 

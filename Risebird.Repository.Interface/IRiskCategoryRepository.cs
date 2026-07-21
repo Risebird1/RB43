@@ -24,5 +24,10 @@ namespace Risebird.Repository.Interface
         /// InterviewId, builds a comma-separated Name and UPSERTs one row into RiskCategory.
         /// </summary>
         Task<bool> AddUpdateRiskCategory(int interviewId);
+
+        /// <summary>
+        /// Evaluates risk checks for the interview without writing (usp_AddUpdateRiskCategory @DryRun=1).
+        /// </summary>
+        Task<RiskCategory> EvaluateRiskCategoryDryRun(int interviewId);
     }
 }

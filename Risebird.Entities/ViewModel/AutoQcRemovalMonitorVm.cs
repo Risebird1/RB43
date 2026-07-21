@@ -170,6 +170,10 @@ namespace Risebird.Entities.ViewModel
         public string Message { get; set; }
         public int Processed { get; set; }
         public int Remaining { get; set; }
+        /// <summary>True when the mass-fire circuit breaker aborted before any write.</summary>
+        public bool Aborted { get; set; }
+        public string AbortedCheckName { get; set; }
+        public double? AbortedFireRatePct { get; set; }
     }
 
     public class IrfAuditRiskRemoveResultVm

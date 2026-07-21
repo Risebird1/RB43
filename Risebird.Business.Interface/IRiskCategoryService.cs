@@ -22,5 +22,10 @@ namespace Risebird.Business.Interface
         /// InterviewId and saves (insert or update) one row in RiskCategory.
         /// </summary>
         Task<bool> AddUpdateRiskCategory(int interviewId);
+
+        /// <summary>
+        /// Evaluates risk checks without persisting (used by backfill mass-fire guard).
+        /// </summary>
+        Task<RiskCategory> EvaluateRiskCategoryDryRun(int interviewId);
     }
 }
