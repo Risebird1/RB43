@@ -105,9 +105,10 @@
         flex-wrap: nowrap;
         align-items: center;
         gap: 6px;
-        min-width: 196px;
+        min-width: 168px;
     }
-    .tfr-insights-btn {
+    .tfr-insights-btn,
+    .tfr-mark-suspicious-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -117,12 +118,23 @@
         border-radius: 8px;
         border: 1px solid #cbd5e1;
         background: #fff;
-        color: #b45309;
         cursor: pointer;
         flex-shrink: 0;
+        box-sizing: border-box;
+        line-height: 1;
     }
+    .tfr-insights-btn { color: #b45309; }
     .tfr-insights-btn:hover { background: #fffbeb; border-color: #fbbf24; }
     .tfr-insights-btn i { font-size: 14px; }
+    .tfr-mark-suspicious-btn { color: #9a3412; background: #ffedd5; border-color: #fdba74; }
+    .tfr-mark-suspicious-btn:hover { background: #fed7aa; border-color: #fb923c; }
+    .tfr-mark-suspicious-btn img {
+        width: 14px;
+        height: 14px;
+        display: block;
+        /* white PNG → red */
+        filter: brightness(0) saturate(100%) invert(22%) sepia(90%) saturate(3000%) hue-rotate(348deg) brightness(95%) contrast(95%);
+    }
     .tfr-suspicious-badge {
         display: inline-flex;
         align-items: center;
@@ -144,18 +156,6 @@
     }
     .tfr-phone a { color: #2563eb; text-decoration: none; }
     .tfr-phone a:hover { text-decoration: underline; }
-    .tfr-action-btn--suspicious {
-        background: linear-gradient(180deg, #fff7ed 0%, #ffedd5 100%);
-        border-color: #fdba74;
-        color: #9a3412;
-        min-width: 0;
-        flex: 0 0 auto;
-        padding: 8px;
-    }
-    .tfr-action-btn--suspicious:hover {
-        background: #ffedd5;
-        border-color: #fb923c;
-    }
     .tfr-action-btn--undo-suspicious {
         background: #fff;
         border-color: #fecaca;
@@ -169,12 +169,12 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 5px;
+        gap: 4px;
         flex: 1 1 0;
-        min-width: 88px;
-        padding: 8px 10px;
-        border-radius: 8px;
-        font-size: 12px;
+        min-width: 72px;
+        padding: 5px 8px;
+        border-radius: 7px;
+        font-size: 11px;
         font-weight: 600;
         line-height: 1;
         cursor: pointer;
@@ -182,8 +182,8 @@
         transition: background .15s ease, border-color .15s ease, box-shadow .15s ease, transform .12s ease, color .15s ease;
     }
     .tfr-action-btn svg {
-        width: 14px;
-        height: 14px;
+        width: 12px;
+        height: 12px;
         flex-shrink: 0;
         opacity: .92;
     }
@@ -794,10 +794,11 @@
                                     }
                                     else if (!string.IsNullOrWhiteSpace(row.InterviewerEmail))
                                     {
-                                        <button type="button" class="tfr-action-btn tfr-action-btn--suspicious btn-tfr-mark-suspicious"
+                                        <button type="button" class="tfr-mark-suspicious-btn btn-tfr-mark-suspicious"
                                                 data-email="@row.InterviewerEmail"
-                                                title="Mark interviewer as suspicious">
-                                            <img src="/img/suspicious.png" width="14" height="14" alt="" />
+                                                title="Mark interviewer as suspicious"
+                                                aria-label="Mark interviewer as suspicious">
+                                            <img src="/img/suspicious.png" alt="" />
                                         </button>
                                     }
                                 </div>
@@ -836,12 +837,12 @@
                             }
                             else if (!isPendingTab && !string.IsNullOrWhiteSpace(row.InterviewerEmail))
                             {
-                                <button type="button" class="tfr-action-btn tfr-action-btn--suspicious btn-tfr-mark-suspicious"
+                                <button type="button" class="tfr-mark-suspicious-btn btn-tfr-mark-suspicious"
                                         style="margin-top:4px;"
                                         data-email="@row.InterviewerEmail"
-                                        title="Mark interviewer as suspicious">
-                                    <img src="/img/suspicious.png" width="14" height="14" alt="" />
-                                    <span>Mark</span>
+                                        title="Mark interviewer as suspicious"
+                                        aria-label="Mark interviewer as suspicious">
+                                    <img src="/img/suspicious.png" alt="" />
                                 </button>
                             }
                             @if (!isPendingTab && !string.IsNullOrWhiteSpace(row.InterviewerEmail))
