@@ -18,6 +18,14 @@ namespace Risebird.Entities.ViewModel
         /// <summary>Max batches per Refresh-risk HTTP call (avoids timeout while filling empty IRFs).</summary>
         public const int RiskCategoryBackfillMaxBatches = 5;
 
+        /// <summary>
+        /// Backfill mass-fire circuit breaker: abort before write when any single check
+        /// fires on more than this percent of interviews in the run.
+        /// </summary>
+        public const int MassFireThresholdPct = 40;
+        /// <summary>Minimum interviews in a backfill run before the mass-fire guard applies.</summary>
+        public const int MassFireMinSample = 20;
+
         /// <summary>Triggers auto-removal (item 59).</summary>
         public const string VerdictSuspicious = "suspicious";
         /// <summary>Triggers auto-removal (item 59).</summary>

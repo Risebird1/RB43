@@ -80,6 +80,7 @@ namespace Risebird.Repository
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@InterviewId", interviewId);
+                // Do not pass @DryRun on write — keeps forward/QC path working before the new SP is deployed.
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -97,6 +98,31 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+
+        public async Task<RiskCategory> EvaluateRiskCategoryDryRun(int interviewId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@InterviewId", interviewId);
+                parameters.Add("@DryRun", true);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryFirstOrDefaultAsync<RiskCategory>(
+                        con, "usp_AddUpdateRiskCategory", parameters, commandType: StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
     }
 }
