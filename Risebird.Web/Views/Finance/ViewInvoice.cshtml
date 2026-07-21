@@ -27,6 +27,20 @@
     .line-items-table th      { background:#e8eaf6; font-size:12px; font-weight:700; }
     .line-items-table td, .line-items-table th { vertical-align:middle; }
     .tag-edit { font-size:10px; color:#999; font-style:italic; margin-left:4px; }
+    .sez-statement-banner {
+        display: none;
+        background: #fff59d;
+        border: 2px solid #f9a825;
+        color: #000;
+        font-weight: 700;
+        font-size: 12px;
+        text-align: center;
+        padding: 10px 12px;
+        margin: 0 15px 12px;
+        line-height: 1.45;
+        text-transform: uppercase;
+        letter-spacing: .2px;
+    }
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -39,9 +53,21 @@
                         @Model.InvoiceNumber &nbsp;|&nbsp; @Model.ClientName &nbsp;|&nbsp; @periodLabel
                     </label>
                 </div>
+                <div class="pull-right">
+                    <a href="@Url.Action("InvoicePdf", "Finance", new { invoiceId = Model.id })"
+                       target="_blank"
+                       class="mdc-button mdc-button--raised mdc-ripple-upgraded"
+                       title="Generate Invoice PDF">
+                        <span class="mdc-button__label" style="font-size:12px;">
+                            <i class="fa fa-file-pdf"></i> Generate Invoice PDF
+                        </span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
+
+    <div id="sezStatementBanner" class="sez-statement-banner"></div>
 
     @if (ViewBag.Message != null)
     {
@@ -347,12 +373,35 @@
         return '0%';
     }
 
+    function sezSupplyStatement(taxScenario) {
+        if (taxScenario === 2) {
+            return 'SUPPLY MEANT FOR EXPORT/SUPPLY TO SEZ UNIT OR SEZ DEVELOPER FOR AUTHORISED OPERATIONS UNDER BOND OR LETTER OF UNDERTAKING WITHOUT PAYMENT OF IGST';
+        }
+        if (taxScenario === 3) {
+            return 'SUPPLY MEANT FOR EXPORT/SUPPLY TO SEZ UNIT OR SEZ DEVELOPER FOR AUTHORISED OPERATIONS UNDER BOND OR LETTER OF UNDERTAKING WITH PAYMENT OF IGST';
+        }
+        return '';
+    }
+
+    function refreshSezStatementBanner() {
+        var ts = parseInt($('#editTaxScenario').val() || 0);
+        var text = sezSupplyStatement(ts);
+        var $banner = $('#sezStatementBanner');
+        if (text) {
+            $banner.text(text).show();
+        } else {
+            $banner.hide().text('');
+        }
+    }
+
     // Recalculate and update GST label when Tax Scenario changes
     $('#editTaxScenario').on('change', function () {
         var ts = parseInt($(this).val());
         $('#spnGSTLabel').text(taxScenarioGstLabel(ts));
+        refreshSezStatementBanner();
         refreshTotals();
     });
+    refreshSezStatementBanner();
 
     // Live recalculate when unit rate changes
     $('#tblLineItemsBody').on('input', '.unit-rate-input', function () {

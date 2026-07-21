@@ -2045,6 +2045,54 @@ namespace Risebird.Web.Controllers
             return RedirectToAction("SignOut", "Session");
         }
 
+        /// <summary>
+        /// Printable / downloadable tax invoice PDF for a generated invoice.
+        /// Shows SEZ supply statement at top when TaxScenario is SEZ without/with Tax.
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InvoicePdf(int invoiceId)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    var invoice = await _meetingService.GetGeneratedInvoiceById(invoiceId);
+                    if (invoice == null)
+                    {
+                        TempData["InvoiceListMessage"] = "Error: Invoice not found.";
+                        return RedirectToAction("InvoiceList");
+                    }
+
+                    ViewBag.SellerName = _configuration["RisebirdDetails:AccountName"]
+                        ?? TdsConstants.DeductorName;
+                    ViewBag.SellerAddress = _configuration["RisebirdDetails:Address"];
+                    ViewBag.SellerGSTIN = _configuration["RisebirdDetails:GSTIN"];
+                    ViewBag.SellerPAN = _configuration["RisebirdDetails:PAN"];
+                    ViewBag.SellerTAN = _configuration["RisebirdDetails:TAN"];
+                    ViewBag.SellerEmail = "finance@risebird.io";
+                    ViewBag.SellerStateName = _configuration["RisebirdDetails:StateName"];
+                    ViewBag.SellerStateCode = _configuration["RisebirdDetails:StateCode"];
+                    ViewBag.LUTBondNo = _configuration["RisebirdDetails:LUTBondNo"];
+                    ViewBag.LUTValidFrom = _configuration["RisebirdDetails:LUTValidFrom"];
+                    ViewBag.LUTValidTo = _configuration["RisebirdDetails:LUTValidTo"];
+                    ViewBag.HSNSAC = _configuration["RisebirdDetails:HSNSAC"] ?? "998399";
+
+                    try
+                    {
+                        var client = await _clientService.GetClient(invoice.ClientId);
+                        ViewBag.BuyerAddress = client?.OfficeAddress;
+                    }
+                    catch { /* buyer address optional */ }
+
+                    return View(invoice);
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            return RedirectToAction("SignOut", "Session");
+        }
+
         [Authorize]
         [HttpGet]
         public async Task<JsonResult> GetInvoiceById(int invoiceId)

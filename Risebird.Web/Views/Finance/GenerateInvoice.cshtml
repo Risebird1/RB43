@@ -49,6 +49,21 @@
         border: 1px solid #90caf9;
     }
 
+    .sez-statement-banner {
+        display: none;
+        background: #fff59d;
+        border: 2px solid #f9a825;
+        color: #000;
+        font-weight: 700;
+        font-size: 12px;
+        text-align: center;
+        padding: 10px 12px;
+        margin: 0 0 16px;
+        line-height: 1.45;
+        text-transform: uppercase;
+        letter-spacing: .2px;
+    }
+
     .gen-inv-card {
         background: #fff;
         border-radius: 10px;
@@ -414,6 +429,8 @@
         </div>
     }
 
+        <div id="sezStatementBanner" class="sez-statement-banner"></div>
+
         <form id="invoiceForm" method="post" action="@Url.Action("SaveGeneratedInvoice","Finance")">
             @Html.AntiForgeryToken()
             <input type="hidden" id="hidId"                   name="id"                   value="0" />
@@ -727,9 +744,12 @@
         $('#ddlYear').change(onClientOrPeriodChange);
 
         $('#ddlTaxScenario').change(function () {
+            var ts = parseInt($(this).val());
             var sub = parseFloat($('#hidSubtotal').val()) || 0;
-            recalcTotals(sub, parseInt($(this).val()));
+            refreshSezStatementBanner(ts);
+            recalcTotals(sub, ts);
         });
+        refreshSezStatementBanner(parseInt($('#ddlTaxScenario').val() || 0));
 
         var initClientId = parseInt('@(ViewBag.PreFillClientId ?? 0)') || 0;
         if (initClientId > 0) {
@@ -844,6 +864,7 @@
 
         var taxScenario = data.gstApplicable ? 1 : 0;
         $('#ddlTaxScenario').val(taxScenario);
+        refreshSezStatementBanner(taxScenario);
 
         // ── Billing Owner field ──────────────────────────────────────────────
         if (data.billingType === BILLING_TYPE_OWNER) {
@@ -983,6 +1004,26 @@
             case 2: return 'SEZ without Tax (0%)';
             case 3: return 'SEZ with Tax (18%)';
             default: return 'GST (Non-GST)';
+        }
+    }
+
+    function sezSupplyStatement(taxScenario) {
+        if (taxScenario === 2) {
+            return 'SUPPLY MEANT FOR EXPORT/SUPPLY TO SEZ UNIT OR SEZ DEVELOPER FOR AUTHORISED OPERATIONS UNDER BOND OR LETTER OF UNDERTAKING WITHOUT PAYMENT OF IGST';
+        }
+        if (taxScenario === 3) {
+            return 'SUPPLY MEANT FOR EXPORT/SUPPLY TO SEZ UNIT OR SEZ DEVELOPER FOR AUTHORISED OPERATIONS UNDER BOND OR LETTER OF UNDERTAKING WITH PAYMENT OF IGST';
+        }
+        return '';
+    }
+
+    function refreshSezStatementBanner(taxScenario) {
+        var text = sezSupplyStatement(taxScenario);
+        var $banner = $('#sezStatementBanner');
+        if (text) {
+            $banner.text(text).show();
+        } else {
+            $banner.hide().text('');
         }
     }
 
