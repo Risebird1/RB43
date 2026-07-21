@@ -132,11 +132,17 @@ BEGIN
             ''
         ) AS InterviewerCodedId,
         ru.UserId AS InterviewerUserId,
+        -- Compare as strings — never `= 0` (that casts nvarchar phones like '+919…' to int and overflows).
         CASE
-            WHEN ru.MobileNumber IS NULL OR ru.MobileNumber = 0 THEN NULL
-            ELSE CAST(ru.MobileNumber AS VARCHAR(20))
+            WHEN ru.MobileNumber IS NULL THEN NULL
+            WHEN LTRIM(RTRIM(CAST(ru.MobileNumber AS VARCHAR(30)))) IN ('', '0') THEN NULL
+            ELSE LTRIM(RTRIM(CAST(ru.MobileNumber AS VARCHAR(30))))
         END AS InterviewerMobileNumber,
-        NULLIF(LTRIM(RTRIM(ip.AltMobileNumber)), '') AS InterviewerAltMobileNumber,
+        CASE
+            WHEN NULLIF(LTRIM(RTRIM(ip.AltMobileNumber)), '') IS NULL THEN NULL
+            WHEN LTRIM(RTRIM(ip.AltMobileNumber)) IN ('0', '+0') THEN NULL
+            ELSE LTRIM(RTRIM(ip.AltMobileNumber))
+        END AS InterviewerAltMobileNumber,
         CAST(CASE WHEN ISNULL(si.id, 0) > 0 THEN 1 ELSE 0 END AS BIT) AS IsSuspicious,
         COALESCE(
             NULLIF(LTRIM(RTRIM(irf.IRFId)), ''),
