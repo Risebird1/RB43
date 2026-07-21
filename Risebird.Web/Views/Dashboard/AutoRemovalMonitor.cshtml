@@ -1559,17 +1559,42 @@
             var irfId = $(this).data('irf-id');
             var $btn = $(this);
             $btn.prop('disabled', true).text('Refreshing…');
-            $.post(riskRefreshUrl, { irfId: irfId, from: dirFromVal, to: dirToVal })
+            function enableBtn() { $btn.prop('disabled', false).text('Refresh risk'); }
+            function postRefresh(ignoreMassFireGuard) {
+                return $.post(riskRefreshUrl, {
+                    irfId: irfId,
+                    from: dirFromVal,
+                    to: dirToVal,
+                    ignoreMassFireGuard: !!ignoreMassFireGuard
+                });
+            }
+            function applyResult(res) {
+                showToast((res && res.message) || (res && res.ok ? 'Risk refreshed.' : 'Refresh failed.'), !!(res && res.ok));
+                var $main = $('tr.irf-audit-main-row[data-irf-id="' + irfId + '"]');
+                loadRiskBreakdown($main, true);
+            }
+            postRefresh(false)
                 .done(function (res) {
-                    showToast((res && res.message) || (res && res.ok ? 'Risk refreshed.' : 'Refresh failed.'), !!(res && res.ok));
-                    var $main = $('tr.irf-audit-main-row[data-irf-id="' + irfId + '"]');
-                    loadRiskBreakdown($main, true);
-                    if (res && res.ok && res.remaining > 0) {
-                        // leave button enabled so ops can click again for next batch
+                    if (res && res.aborted) {
+                        var override = window.confirm(
+                            (res.message || 'Mass-fire guard aborted this risk refresh.')
+                            + '\n\nOverride the mass-fire guard and write anyway? Only after investigating the check.');
+                        if (!override) {
+                            showToast(res.message || 'Risk refresh aborted.', false);
+                            enableBtn();
+                            return;
+                        }
+                        $btn.text('Overriding…');
+                        postRefresh(true)
+                            .done(applyResult)
+                            .fail(function () { showToast('Risk refresh failed.', false); })
+                            .always(enableBtn);
+                        return;
                     }
+                    applyResult(res);
+                    enableBtn();
                 })
-                .fail(function () { showToast('Risk refresh failed.', false); })
-                .always(function () { $btn.prop('disabled', false).text('Refresh risk'); });
+                .fail(function () { showToast('Risk refresh failed.', false); enableBtn(); });
         });
 
         $(document).on('click', '.btn-risk-remove', function () {

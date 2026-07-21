@@ -1,4 +1,7 @@
 using Risebird.Business.Interface;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
@@ -17,17 +20,20 @@ namespace Risebird.Business
         private readonly IMeetingService _meetingService;
         private readonly IRiskCategoryService _riskCategoryService;
         private readonly ITrialJudgmentRepository _trialJudgmentRepository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public TrialFlagReviewService(
             ITrialFlagReviewRepository repository,
             IMeetingService meetingService,
             IRiskCategoryService riskCategoryService,
-            ITrialJudgmentRepository trialJudgmentRepository)
+            ITrialJudgmentRepository trialJudgmentRepository,
+            IApplicationErrorLogger applicationErrorLogger)
         {
             _repository = repository;
             _meetingService = meetingService;
             _riskCategoryService = riskCategoryService;
             _trialJudgmentRepository = trialJudgmentRepository;
+            _applicationErrorLogger = applicationErrorLogger;
         }
 
         public async Task<TrialFlagReviewPageVm> GetPageAsync(string tab, bool refreshMetrics = false)
@@ -119,21 +125,56 @@ namespace Risebird.Business
                 .Distinct()
                 .ToList();
 
-            using var gate = new SemaphoreSlim(LiveMetricsConcurrency);
-            var tasks = interviewIds.Select(async interviewId =>
-            {
-                await gate.WaitAsync();
-                try
-                {
-                    await _riskCategoryService.AddUpdateRiskCategory(interviewId);
-                }
-                finally
-                {
-                    gate.Release();
-                }
-            });
+            if (interviewIds.Count == 0)
+                return;
 
-            await Task.WhenAll(tasks);
+            // Global refresh path: dry-run then mass-fire guard before any write.
+            var dryRuns = new RiskCategory[interviewIds.Count];
+            using (var gate = new SemaphoreSlim(LiveMetricsConcurrency))
+            {
+                var evalTasks = interviewIds.Select(async (interviewId, index) =>
+                {
+                    await gate.WaitAsync();
+                    try
+                    {
+                        dryRuns[index] = await _riskCategoryService.EvaluateRiskCategoryDryRun(interviewId)
+                            ?? new RiskCategory { InterviewId = interviewId };
+                    }
+                    finally
+                    {
+                        gate.Release();
+                    }
+                });
+                await Task.WhenAll(evalTasks);
+            }
+
+            var guard = RiskCategoryMassFireGuard.Evaluate(dryRuns);
+            if (guard.ShouldAbort)
+            {
+                var abortMsg = guard.Message
+                    ?? $"aborted: {guard.CheckName} fired on {guard.FireRatePct:0}% of {guard.SampleSize} interviews — investigate";
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                    "TrialFlagReview risk refresh " + abortMsg + " — skipped writes");
+                // Do not throw: keep the Trial Flag Review page usable; ops re-runs after the check fix.
+                return;
+            }
+
+            using (var gate = new SemaphoreSlim(LiveMetricsConcurrency))
+            {
+                var writeTasks = interviewIds.Select(async interviewId =>
+                {
+                    await gate.WaitAsync();
+                    try
+                    {
+                        await _riskCategoryService.AddUpdateRiskCategory(interviewId);
+                    }
+                    finally
+                    {
+                        gate.Release();
+                    }
+                });
+                await Task.WhenAll(writeTasks);
+            }
         }
 
         /// <summary>

@@ -8305,7 +8305,7 @@ NEVER:
         [Authorize]
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public async Task<IActionResult> RefreshIrfRiskCategory(int irfId, DateTime? from = null, DateTime? to = null)
+        public async Task<IActionResult> RefreshIrfRiskCategory(int irfId, DateTime? from = null, DateTime? to = null, bool ignoreMassFireGuard = false)
         {
             try
             {
@@ -8320,13 +8320,16 @@ NEVER:
                     return Json(new { ok = false, message = "Invalid IRF." });
 
                 var (fromIst, toIst, _) = NormalizeDirectoryIstDateRange(from, to, null);
-                var result = await _autoQcBackfillService.BackfillRiskCategoryForIrfAsync(irfId, fromIst, toIst);
+                var result = await _autoQcBackfillService.BackfillRiskCategoryForIrfAsync(irfId, fromIst, toIst, ignoreMassFireGuard);
                 return Json(new
                 {
                     ok = result.Ok,
                     message = result.Message,
                     inserted = result.Processed,
-                    remaining = result.Remaining
+                    remaining = result.Remaining,
+                    aborted = result.Aborted,
+                    abortedCheckName = result.AbortedCheckName,
+                    abortedFireRatePct = result.AbortedFireRatePct
                 });
             }
             catch (Exception ex)
