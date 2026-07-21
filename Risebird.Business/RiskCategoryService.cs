@@ -60,5 +60,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<RiskCategory> EvaluateRiskCategoryDryRun(int interviewId)
+        {
+            try
+            {
+                return await _riskCategoryRepository.EvaluateRiskCategoryDryRun(interviewId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
