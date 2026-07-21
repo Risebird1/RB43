@@ -10,7 +10,7 @@ CREATE TABLE [dbo].[GeneratedInvoices](
     [BillingOwnerEmail][varchar](200) NULL,
     [CreditPeriod]     [varchar](100) NULL,
     [GSTNumber]        [varchar](100) NULL,
-    [TaxScenario]      [int] NULL DEFAULT 0,   -- 0=Non-GST 1=GST18%
+    [TaxScenario]      [int] NULL DEFAULT 0,   -- 0=Non-GST 1=GST18% 2=SEZ without Tax 3=SEZ with Tax
     [IRN]              [varchar](200) NULL,
     [EInvoiceFileLink] [varchar](MAX) NULL,
     [Subtotal]         [decimal](18,2) NULL DEFAULT 0,

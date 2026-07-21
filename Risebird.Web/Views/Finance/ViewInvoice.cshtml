@@ -27,6 +27,20 @@
     .line-items-table th      { background:#e8eaf6; font-size:12px; font-weight:700; }
     .line-items-table td, .line-items-table th { vertical-align:middle; }
     .tag-edit { font-size:10px; color:#999; font-style:italic; margin-left:4px; }
+    .sez-statement-banner {
+        display: none;
+        background: #fff59d;
+        border: 2px solid #f9a825;
+        color: #000;
+        font-weight: 700;
+        font-size: 12px;
+        text-align: center;
+        padding: 10px 12px;
+        margin: 0 15px 12px;
+        line-height: 1.45;
+        text-transform: uppercase;
+        letter-spacing: .2px;
+    }
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -39,9 +53,21 @@
                         @Model.InvoiceNumber &nbsp;|&nbsp; @Model.ClientName &nbsp;|&nbsp; @periodLabel
                     </label>
                 </div>
+                <div class="pull-right">
+                    <a href="@Url.Action("InvoicePdf", "Finance", new { invoiceId = Model.id })"
+                       target="_blank"
+                       class="mdc-button mdc-button--raised mdc-ripple-upgraded"
+                       title="Generate Invoice PDF">
+                        <span class="mdc-button__label" style="font-size:12px;">
+                            <i class="fa fa-file-pdf"></i> Generate Invoice PDF
+                        </span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
+
+    <div id="sezStatementBanner" class="sez-statement-banner"></div>
 
     @if (ViewBag.Message != null)
     {
@@ -158,6 +184,8 @@
                     <select id="editTaxScenario" class="form-control editable-field">
                         @if (Model.TaxScenario == 0) { <option value="0" selected="selected">Non-GST (0%)</option> } else { <option value="0">Non-GST (0%)</option> }
                         @if (Model.TaxScenario == 1) { <option value="1" selected="selected">GST 18%</option> } else { <option value="1">GST 18%</option> }
+                        @if (Model.TaxScenario == 2) { <option value="2" selected="selected">SEZ without Tax</option> } else { <option value="2">SEZ without Tax</option> }
+                        @if (Model.TaxScenario == 3) { <option value="3" selected="selected">SEZ with Tax</option> } else { <option value="3">SEZ with Tax</option> }
                     </select>
                 </div>
                 <div class="col-md-4 mt-3">
@@ -280,7 +308,7 @@
                     <td class="val-col">&#8377; <span id="spnSubtotal">@Model.Subtotal.ToString("N2")</span></td>
                 </tr>
                 <tr>
-                    <td class="label-col">GST (<span id="spnGSTLabel">@Html.Raw(Model.TaxScenario == 1 ? "18%" : "0%")</span>)</td>
+                    <td class="label-col">GST (<span id="spnGSTLabel">@Html.Raw(Model.TaxScenario == 1 || Model.TaxScenario == 3 ? "18%" : Model.TaxScenario == 2 ? "SEZ 0%" : "0%")</span>)</td>
                     <td class="val-col">&#8377; <span id="spnGSTAmount">@Model.GSTAmount.ToString("N2")</span></td>
                 </tr>
                 <tr class="invoice-value-row">
@@ -334,12 +362,46 @@
         }
     });
 
+    function isGstTaxScenario(taxScenario) {
+        // 1 = GST 18%, 3 = SEZ with Tax
+        return taxScenario === 1 || taxScenario === 3;
+    }
+
+    function taxScenarioGstLabel(taxScenario) {
+        if (taxScenario === 1 || taxScenario === 3) return '18%';
+        if (taxScenario === 2) return 'SEZ 0%';
+        return '0%';
+    }
+
+    function sezSupplyStatement(taxScenario) {
+        if (taxScenario === 2) {
+            return 'SUPPLY MEANT FOR EXPORT/SUPPLY TO SEZ UNIT OR SEZ DEVELOPER FOR AUTHORISED OPERATIONS UNDER BOND OR LETTER OF UNDERTAKING WITHOUT PAYMENT OF IGST';
+        }
+        if (taxScenario === 3) {
+            return 'SUPPLY MEANT FOR EXPORT/SUPPLY TO SEZ UNIT OR SEZ DEVELOPER FOR AUTHORISED OPERATIONS UNDER BOND OR LETTER OF UNDERTAKING WITH PAYMENT OF IGST';
+        }
+        return '';
+    }
+
+    function refreshSezStatementBanner() {
+        var ts = parseInt($('#editTaxScenario').val() || 0);
+        var text = sezSupplyStatement(ts);
+        var $banner = $('#sezStatementBanner');
+        if (text) {
+            $banner.text(text).show();
+        } else {
+            $banner.hide().text('');
+        }
+    }
+
     // Recalculate and update GST label when Tax Scenario changes
     $('#editTaxScenario').on('change', function () {
         var ts = parseInt($(this).val());
-        $('#spnGSTLabel').text(ts === 1 ? '18%' : '0%');
+        $('#spnGSTLabel').text(taxScenarioGstLabel(ts));
+        refreshSezStatementBanner();
         refreshTotals();
     });
+    refreshSezStatementBanner();
 
     // Live recalculate when unit rate changes
     $('#tblLineItemsBody').on('input', '.unit-rate-input', function () {
@@ -361,7 +423,7 @@
         $('#tblLineItemsBody .line-total-cell').each(function () {
             subtotal += parseFloat($(this).text().replace(/,/g, '') || 0);
         });
-        var gstAmount     = taxScenario === 1 ? Math.round(subtotal * 18 / 100 * 100) / 100 : 0;
+        var gstAmount     = isGstTaxScenario(taxScenario) ? Math.round(subtotal * 18 / 100 * 100) / 100 : 0;
         var invoiceValue  = subtotal + gstAmount;
         var tdsAmount     = Math.round(subtotal * 10 / 100 * 100) / 100;
         var netReceivable = invoiceValue - tdsAmount;
@@ -393,7 +455,7 @@
         });
 
         var subtotal      = lineItems.reduce(function (s, li) { return s + li.lineTotal; }, 0);
-        var gstAmount     = taxScenario === 1 ? Math.round(subtotal * 18 / 100 * 100) / 100 : 0;
+        var gstAmount     = isGstTaxScenario(taxScenario) ? Math.round(subtotal * 18 / 100 * 100) / 100 : 0;
         var invoiceValue  = subtotal + gstAmount;
         var tdsAmount     = Math.round(subtotal * 10 / 100 * 100) / 100;
         var netReceivable = invoiceValue - tdsAmount;

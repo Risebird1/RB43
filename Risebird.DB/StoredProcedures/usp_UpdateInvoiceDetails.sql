@@ -42,7 +42,7 @@ BEGIN
         LatestRemark        =  @LatestRemark,
         UTRTrxn             = CASE WHEN @UTRTrxn IS NOT NULL AND @UTRTrxn != '' THEN @UTRTrxn ELSE UTRTrxn END,
         CashCreditAmount    = @CashCreditAmount,
-        TaxScenario         = CASE WHEN @TaxScenario != 0 THEN @TaxScenario ELSE TaxScenario END,
+        TaxScenario         = @TaxScenario,
         InvoiceBaseAmount   = @Subtotal,
         NetReceivableAmount = @NetReceivable,
         ModifiedOn          = GETDATE()

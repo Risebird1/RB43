@@ -1,0 +1,725 @@
+@model Risebird.Entities.ViewModel.InvoiceDetailVM
+@using System.Globalization
+@using System.Text
+@{
+    ViewData["Title"] = "e-Invoice - " + Model.InvoiceNumber;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var months = new[] { "", "January", "February", "March", "April", "May", "June",
+                         "July", "August", "September", "October", "November", "December" };
+    var periodLabel = (Model.InvoiceMonth >= 1 && Model.InvoiceMonth <= 12
+                        ? months[Model.InvoiceMonth] : Model.InvoiceMonth.ToString())
+                      + " " + Model.InvoiceYear;
+    var invoiceDate = Model.CreatedOn?.ToString("d-MMM-yy", CultureInfo.InvariantCulture)
+                      ?? DateTime.Now.ToString("d-MMM-yy", CultureInfo.InvariantCulture);
+
+    string sezStatement = null;
+    if (Model.TaxScenario == 2)
+    {
+        sezStatement = "SUPPLY MEANT FOR EXPORT/SUPPLY TO SEZ UNIT OR SEZ DEVELOPER FOR AUTHORISED OPERATIONS UNDER BOND OR LETTER OF UNDERTAKING WITHOUT PAYMENT OF IGST";
+    }
+    else if (Model.TaxScenario == 3)
+    {
+        sezStatement = "SUPPLY MEANT FOR EXPORT/SUPPLY TO SEZ UNIT OR SEZ DEVELOPER FOR AUTHORISED OPERATIONS UNDER BOND OR LETTER OF UNDERTAKING WITH PAYMENT OF IGST";
+    }
+
+    var gstRatePct = Model.TaxScenario == 1 || Model.TaxScenario == 3 ? 18m : 0m;
+    var gstRateLabel = gstRatePct.ToString("0") + " %";
+    var hasTax = gstRatePct > 0;
+
+    var sellerName = ViewBag.SellerName as string ?? "";
+    var sellerAddress = ViewBag.SellerAddress as string ?? "";
+    var sellerGstin = ViewBag.SellerGSTIN as string ?? "";
+    var sellerEmail = ViewBag.SellerEmail as string ?? "finance@risebird.io";
+    var sellerStateName = ViewBag.SellerStateName as string ?? GetStateNameFromGstin(sellerGstin);
+    var sellerStateCode = ViewBag.SellerStateCode as string ?? GetStateCodeFromGstin(sellerGstin);
+
+    var buyerName = Model.ClientName ?? "";
+    var buyerAddress = ViewBag.BuyerAddress as string ?? "";
+    var buyerGstin = Model.GSTNumber ?? "";
+    var buyerStateCode = GetStateCodeFromGstin(buyerGstin);
+    var buyerStateName = GetStateNameFromGstin(buyerGstin);
+    var placeOfSupply = !string.IsNullOrWhiteSpace(buyerStateName)
+        ? buyerStateName + (!string.IsNullOrWhiteSpace(buyerStateCode) ? " (" + buyerStateCode + ")" : "")
+        : "";
+
+    var lutBondNo = ViewBag.LUTBondNo as string ?? "";
+    var lutFrom = ViewBag.LUTValidFrom as string ?? "";
+    var lutTo = ViewBag.LUTValidTo as string ?? "";
+    var hsnSac = ViewBag.HSNSAC as string ?? "998399";
+    var creditPeriod = Model.CreditPeriod ?? "";
+    var irn = Model.IRN ?? "";
+    var lineItems = Model.LineItems ?? new List<Risebird.Entities.ViewModel.InvoiceLineItemVM>();
+    var totalQty = lineItems.Sum(x => x.Qty);
+    var totalAmount = Model.InvoiceValue;
+    var amountInWords = AmountToWords(totalAmount);
+
+    // QR payload: IRN + Total Interviews + Total Amount (scannable plain text)
+    var qrPayload = new StringBuilder();
+    qrPayload.Append("Invoice No: ").Append(Model.InvoiceNumber ?? "").Append('\n');
+    qrPayload.Append("IRN: ").Append(string.IsNullOrWhiteSpace(irn) ? "N/A" : irn.Trim()).Append('\n');
+    qrPayload.Append("Total Interviews: ").Append(totalQty).Append('\n');
+    qrPayload.Append("Total Amount: ").Append(totalAmount.ToString("0.00", CultureInfo.InvariantCulture));
+    var qrText = qrPayload.ToString();
+
+    string GetStateCodeFromGstin(string gstin)
+    {
+        if (string.IsNullOrWhiteSpace(gstin) || gstin.Length < 2) return "";
+        return gstin.Substring(0, 2);
+    }
+
+    string GetStateNameFromGstin(string gstin)
+    {
+        var code = GetStateCodeFromGstin(gstin);
+        return code switch
+        {
+            "01" => "Jammu & Kashmir",
+            "02" => "Himachal Pradesh",
+            "03" => "Punjab",
+            "04" => "Chandigarh",
+            "05" => "Uttarakhand",
+            "06" => "Haryana",
+            "07" => "Delhi",
+            "08" => "Rajasthan",
+            "09" => "Uttar Pradesh",
+            "10" => "Bihar",
+            "11" => "Sikkim",
+            "12" => "Arunachal Pradesh",
+            "13" => "Nagaland",
+            "14" => "Manipur",
+            "15" => "Mizoram",
+            "16" => "Tripura",
+            "17" => "Meghalaya",
+            "18" => "Assam",
+            "19" => "West Bengal",
+            "20" => "Jharkhand",
+            "21" => "Odisha",
+            "22" => "Chhattisgarh",
+            "23" => "Madhya Pradesh",
+            "24" => "Gujarat",
+            "27" => "Maharashtra",
+            "29" => "Karnataka",
+            "30" => "Goa",
+            "32" => "Kerala",
+            "33" => "Tamil Nadu",
+            "34" => "Puducherry",
+            "36" => "Telangana",
+            "37" => "Andhra Pradesh",
+            _ => ""
+        };
+    }
+
+    string AmountToWords(decimal amount)
+    {
+        if (amount == 0) return "INR Zero Only";
+        long rupees = (long)Math.Floor(amount);
+        int paise = (int)Math.Round((amount - rupees) * 100);
+        var sb = new StringBuilder("INR ");
+        sb.Append(NumberToWords(rupees));
+        if (paise > 0)
+        {
+            sb.Append(" and ");
+            sb.Append(NumberToWords(paise));
+            sb.Append(" Paise");
+        }
+        sb.Append(" Only");
+        return sb.ToString();
+    }
+
+    string NumberToWords(long number)
+    {
+        if (number == 0) return "Zero";
+        if (number < 0) return "Minus " + NumberToWords(Math.Abs(number));
+
+        string[] unitsMap = { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+            "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
+        string[] tensMap = { "Zero", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
+
+        var words = "";
+        if ((number / 10000000) > 0)
+        {
+            words += NumberToWords(number / 10000000) + " Crore ";
+            number %= 10000000;
+        }
+        if ((number / 100000) > 0)
+        {
+            words += NumberToWords(number / 100000) + " Lakh ";
+            number %= 100000;
+        }
+        if ((number / 1000) > 0)
+        {
+            words += NumberToWords(number / 1000) + " Thousand ";
+            number %= 1000;
+        }
+        if ((number / 100) > 0)
+        {
+            words += NumberToWords(number / 100) + " Hundred ";
+            number %= 100;
+        }
+        if (number > 0)
+        {
+            if (words != "") words += "and ";
+            if (number < 20) words += unitsMap[number];
+            else
+            {
+                words += tensMap[number / 10];
+                if ((number % 10) > 0) words += "-" + unitsMap[number % 10];
+            }
+        }
+        return words.Trim();
+    }
+}
+
+<style>
+    .inv-pdf-actions { margin: 12px 0 16px; }
+    .einvoice-page {
+        background: #fff;
+        max-width: 1100px;
+        margin: 0 auto 40px;
+        padding: 10px;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #000;
+        font-size: 11px;
+        line-height: 1.35;
+    }
+    /* Reset site-wide styles that can distort invoice cells */
+    #invoicePdfContent, #invoicePdfContent * {
+        border-radius: 0 !important;
+        box-shadow: none !important;
+    }
+    #invoicePdfContent strong {
+        display: inline !important;
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: auto !important;
+        height: auto !important;
+        line-height: inherit !important;
+    }
+    .einvoice-box {
+        border: 1px solid #000;
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .einvoice-box td, .einvoice-box th {
+        border: 1px solid #000;
+        padding: 4px 6px;
+        vertical-align: top;
+    }
+    .einvoice-box .no-border { border: none !important; }
+    .einvoice-box .no-border td { border: none !important; padding: 1px 0; }
+    .sez-statement {
+        background: #fff59d;
+        border: 1px solid #000;
+        border-bottom: none;
+        color: #000;
+        font-weight: 700;
+        font-size: 11px;
+        text-align: center;
+        padding: 8px 10px;
+        text-transform: uppercase;
+        letter-spacing: .15px;
+    }
+    .irn-row td { font-size: 10px; }
+    .irn-label { font-weight: 700; white-space: nowrap; width: 70px; }
+    .qr-cell { width: 130px; text-align: center; vertical-align: middle !important; }
+    .qr-cell img { width: 110px; height: 110px; }
+    .party-name { font-weight: 700; font-size: 12px; margin-bottom: 2px; }
+    .meta-label { font-size: 10px; color: #222; }
+    .meta-value { font-weight: 700; font-size: 12px; }
+    .section-head {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: none;
+        margin-bottom: 2px;
+    }
+    #invoicePdfContent .items-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+    #invoicePdfContent .items-table th,
+    #invoicePdfContent .items-table td {
+        border: 1px solid #000 !important;
+        padding: 6px 6px !important;
+        font-size: 11px !important;
+        overflow: visible;
+        vertical-align: middle !important;
+        color: #000 !important;
+        background: #fff !important;
+        max-width: none !important;
+    }
+    #invoicePdfContent .items-table th {
+        font-weight: 700;
+        text-align: center;
+        font-size: 10px !important;
+        line-height: 1.25;
+    }
+    #invoicePdfContent .items-table .inv-amt {
+        text-align: right !important;
+        white-space: nowrap !important;
+        font-variant-numeric: tabular-nums;
+        font-family: Consolas, "Courier New", monospace !important;
+        font-size: 11px !important;
+        display: table-cell !important;
+        float: none !important;
+        width: auto !important;
+        height: auto !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+        padding: 6px !important;
+        background: #fff !important;
+        border: 1px solid #000 !important;
+        border-radius: 0 !important;
+        line-height: 1.35 !important;
+        position: static !important;
+    }
+    #invoicePdfContent .items-table .ctr {
+        text-align: center !important;
+        white-space: nowrap !important;
+    }
+    #invoicePdfContent .items-table .col-si { width: 5%; }
+    #invoicePdfContent .items-table .col-desc { width: 30%; }
+    #invoicePdfContent .items-table .col-hsn { width: 9%; }
+    #invoicePdfContent .items-table .col-gst { width: 8%; }
+    #invoicePdfContent .items-table .col-qty { width: 8%; }
+    #invoicePdfContent .items-table .col-rate-incl { width: 14%; }
+    #invoicePdfContent .items-table .col-rate { width: 12%; }
+    #invoicePdfContent .items-table .col-amt { width: 14%; }
+    #invoicePdfContent .desc-main { font-weight: 700; white-space: normal; word-break: break-word; }
+    #invoicePdfContent .desc-sub { font-style: italic; font-size: 10px; color: #222; white-space: normal; word-break: break-word; }
+    #invoicePdfContent .total-row td { font-weight: 700; }
+    .words-cell { font-size: 11px; }
+    .eoe { text-align: right; font-weight: 700; }
+    .tax-title {
+        text-align: center;
+        font-weight: 700;
+        font-size: 13px;
+        letter-spacing: 1px;
+        padding: 4px;
+        border: 1px solid #000;
+        border-bottom: none;
+    }
+    #invoiceQrCode img, #invoiceQrCode canvas {
+        width: 110px !important;
+        height: 110px !important;
+    }
+    @@media print {
+        .no-print, .navbar, .sidebar, footer, .inv-pdf-actions { display: none !important; }
+        .main-panel { margin: 0 !important; padding: 0 !important; }
+        .einvoice-page { max-width: 100% !important; margin: 0 !important; box-shadow: none !important; }
+    }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30" style="padding: 0 16px;">
+        <div class="inv-pdf-actions no-print">
+            <button type="button" id="btnDownloadInvoicePdf" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                <span class="mdc-button__label">Download PDF</span>
+            </button>
+            <a href="@Url.Action("ViewInvoice", "Finance", new { invoiceId = Model.id })"
+               class="mdc-button mdc-button--outlined mdc-ripple-upgraded" style="margin-left:8px;">
+                Back to Invoice
+            </a>
+        </div>
+
+        <div class="einvoice-page canvas_div_pdf" id="invoicePdfContent">
+            @if (!string.IsNullOrEmpty(sezStatement))
+            {
+                <div class="sez-statement">@sezStatement</div>
+            }
+            <div class="tax-title">TAX INVOICE</div>
+
+            @* ── IRN + QR ── *@
+            <table class="einvoice-box" style="border-bottom:none;">
+                <tr class="irn-row">
+                    <td style="width:78%;">
+                        <table class="no-border" style="width:100%;">
+                            <tr>
+                                <td class="irn-label">IRN :</td>
+                                <td style="word-break:break-all;">@(string.IsNullOrWhiteSpace(irn) ? "" : irn)</td>
+                            </tr>
+                            <tr>
+                                <td class="irn-label">Ack No. :</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="irn-label">Ack Date :</td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="qr-cell">
+                        <div id="invoiceQrCode"
+                             title="IRN, Total Interviews, Total Amount"
+                             style="width:110px;height:110px;margin:0 auto;"></div>
+                    </td>
+                </tr>
+            </table>
+
+            @* ── Parties (left) + Invoice meta (right) ── *@
+            <table class="einvoice-box" style="border-top:none;border-bottom:none;">
+                <tr>
+                    <td style="width:52%;padding:0;">
+                        <table class="einvoice-box" style="border:none;width:100%;">
+                            <tr>
+                                <td style="border-left:none;border-top:none;">
+                                    <div class="party-name">@sellerName</div>
+                                    <div>@sellerAddress</div>
+                                    <div>GSTIN/UIN: <strong>@sellerGstin</strong></div>
+                                    <div>
+                                        State Name : @sellerStateName@(string.IsNullOrWhiteSpace(sellerStateCode) ? "" : ", Code : " + sellerStateCode)
+                                    </div>
+                                    <div>E-Mail : @sellerEmail</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-left:none;">
+                                    <div class="section-head">Consignee (Ship to)</div>
+                                    <div class="party-name">@buyerName</div>
+                                    @if (!string.IsNullOrWhiteSpace(buyerAddress))
+                                    {
+                                        <div>@buyerAddress</div>
+                                    }
+                                    <div>GSTIN/UIN : <strong>@buyerGstin</strong></div>
+                                    <div>
+                                        State Name : @buyerStateName@(string.IsNullOrWhiteSpace(buyerStateCode) ? "" : ", Code : " + buyerStateCode)
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-left:none;border-bottom:none;">
+                                    <div class="section-head">Buyer (Bill to)</div>
+                                    <div class="party-name">@buyerName</div>
+                                    @if (!string.IsNullOrWhiteSpace(buyerAddress))
+                                    {
+                                        <div>@buyerAddress</div>
+                                    }
+                                    <div>GSTIN/UIN : <strong>@buyerGstin</strong></div>
+                                    <div>
+                                        State Name : @buyerStateName@(string.IsNullOrWhiteSpace(buyerStateCode) ? "" : ", Code : " + buyerStateCode)
+                                    </div>
+                                    <div>Place of Supply : @placeOfSupply</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="width:48%;padding:0;">
+                        <table class="einvoice-box" style="border:none;width:100%;height:100%;">
+                            <tr>
+                                <td style="width:50%;border-top:none;">
+                                    <div class="meta-label">Invoice No.</div>
+                                    <div class="meta-value">@Model.InvoiceNumber</div>
+                                </td>
+                                <td style="width:50%;border-top:none;border-right:none;">
+                                    <div class="meta-label">Dated</div>
+                                    <div class="meta-value">@invoiceDate</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="meta-label">Delivery Note</div>
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td style="border-right:none;">
+                                    <div class="meta-label">Mode/Terms of Payment</div>
+                                    <div>@creditPeriod</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="meta-label">Reference No. &amp; Date.</div>
+                                    <div>@periodLabel</div>
+                                </td>
+                                <td style="border-right:none;">
+                                    <div class="meta-label">Other References</div>
+                                    <div>&nbsp;</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="meta-label">Buyer's Order No.</div>
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td style="border-right:none;">
+                                    <div class="meta-label">Dated</div>
+                                    <div>&nbsp;</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="meta-label">Dispatch Doc No.</div>
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td style="border-right:none;">
+                                    <div class="meta-label">Delivery Note Date</div>
+                                    <div>&nbsp;</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="meta-label">Dispatched through</div>
+                                    <div>&nbsp;</div>
+                                </td>
+                                <td style="border-right:none;">
+                                    <div class="meta-label">Destination</div>
+                                    <div>&nbsp;</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="border-right:none;">
+                                    <div class="meta-label">Bill of Lading/LR-RR No.</div>
+                                    @if (Model.TaxScenario == 2 || Model.TaxScenario == 3)
+                                    {
+                                        <div style="margin-top:4px;">
+                                            <strong>LUT/Bond No. :</strong> @lutBondNo
+                                        </div>
+                                        @if (!string.IsNullOrWhiteSpace(lutFrom) || !string.IsNullOrWhiteSpace(lutTo))
+                                        {
+                                            <div>
+                                                <strong>Valid :</strong>
+                                                From: @lutFrom
+                                                &nbsp;&nbsp; To: @lutTo
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div>&nbsp;</div>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="border-right:none;border-bottom:none;min-height:48px;">
+                                    <div class="meta-label">Terms of Delivery</div>
+                                    <div style="min-height:36px;">&nbsp;</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+            @* ── Line items (no "per/Interviews" column — Rate Incl / Rate / Amount are separate) ── *@
+            <table class="items-table" style="border-top:none;">
+                <colgroup>
+                    <col class="col-si" />
+                    <col class="col-desc" />
+                    <col class="col-hsn" />
+                    <col class="col-gst" />
+                    <col class="col-qty" />
+                    <col class="col-rate-incl" />
+                    <col class="col-rate" />
+                    <col class="col-amt" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th class="col-si">SI<br />No.</th>
+                        <th class="col-desc">Description of Services</th>
+                        <th class="col-hsn">HSN/SAC</th>
+                        <th class="col-gst">GST<br />Rate</th>
+                        <th class="col-qty">Quantity</th>
+                        <th class="col-rate-incl">Rate<br /><span style="font-weight:400;">(Incl. of Tax)</span></th>
+                        <th class="col-rate">Rate</th>
+                        <th class="col-amt">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int si = 1; }
+                    @foreach (var item in lineItems)
+                    {
+                        // Rate = stored unit rate; Rate (Incl. of Tax) = Rate * (1 + GST%) at runtime
+                        var baseRate = item.UnitRate;
+                        var rateInclTax = hasTax
+                            ? Math.Round(baseRate * (1m + (gstRatePct / 100m)), 2, MidpointRounding.AwayFromZero)
+                            : baseRate;
+                        var lineAmount = item.LineTotal > 0
+                            ? item.LineTotal
+                            : Math.Round(baseRate * item.Qty, 2, MidpointRounding.AwayFromZero);
+                        <tr>
+                            <td class="ctr">@si</td>
+                            <td>
+                                <div class="desc-main">@(string.IsNullOrWhiteSpace(item.ProductName) ? "Services" : item.ProductName)</div>
+                                @if (!string.IsNullOrWhiteSpace(item.Description))
+                                {
+                                    <div class="desc-sub">@item.Description</div>
+                                }
+                            </td>
+                            <td class="ctr">@hsnSac</td>
+                            <td class="ctr">@gstRateLabel</td>
+                            <td class="ctr">@item.Qty</td>
+                            <td class="inv-amt">@rateInclTax.ToString("0.00", CultureInfo.InvariantCulture)</td>
+                            <td class="inv-amt">@baseRate.ToString("0.00", CultureInfo.InvariantCulture)</td>
+                            <td class="inv-amt">@lineAmount.ToString("0.00", CultureInfo.InvariantCulture)</td>
+                        </tr>
+                        si++;
+                    }
+                    @if (!lineItems.Any())
+                    {
+                        <tr>
+                            <td colspan="8" class="ctr">No line items</td>
+                        </tr>
+                    }
+
+                    @* Tax breakup rows *@
+                    @if (hasTax)
+                    {
+                        <tr>
+                            <td></td>
+                            <td colspan="6" style="text-align:right;">
+                                @(Model.TaxScenario == 3 ? "IGST" : "GST") @gstRateLabel
+                            </td>
+                            <td class="inv-amt">@Model.GSTAmount.ToString("0.00", CultureInfo.InvariantCulture)</td>
+                        </tr>
+                    }
+                    else if (Model.TaxScenario == 2)
+                    {
+                        <tr>
+                            <td></td>
+                            <td colspan="6" style="text-align:right;">IGST 0 %</td>
+                            <td class="inv-amt">0.00</td>
+                        </tr>
+                    }
+
+                    <tr class="total-row">
+                        <td></td>
+                        <td>Total</td>
+                        <td></td>
+                        <td></td>
+                        <td class="ctr">@totalQty</td>
+                        <td></td>
+                        <td></td>
+                        <td class="inv-amt">&#8377; @Model.InvoiceValue.ToString("0.00", CultureInfo.InvariantCulture)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            @* ── Amount in words + E.&O.E. ── *@
+            <table class="einvoice-box" style="border-top:none;">
+                <tr>
+                    <td class="words-cell" style="border-right:none;">
+                        Amount Chargeable (in words)<br />
+                        <strong>@amountInWords</strong>
+                    </td>
+                    <td class="eoe" style="width:90px;border-left:none;vertical-align:middle;">
+                        E. &amp; O.E
+                    </td>
+                </tr>
+            </table>
+
+            @if (!string.IsNullOrEmpty(sezStatement))
+            {
+                <table class="einvoice-box" style="border-top:none;">
+                    <tr>
+                        <td style="font-size:10px;font-weight:700;text-transform:uppercase;background:#fffde7;">
+                            @sezStatement
+                        </td>
+                    </tr>
+                </table>
+            }
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+    (function () {
+        var pdfFileName = '@(Model.InvoiceNumber?.Replace("\\", "-").Replace("/", "-").Replace("'", "") ?? "e-Invoice").pdf';
+
+        // Local QR: encodes Invoice No, IRN, Total Interviews, Total Amount
+        var qrPayload = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(qrText));
+        var qrHost = document.getElementById('invoiceQrCode');
+        if (qrHost && typeof QRCode !== 'undefined' && qrPayload) {
+            new QRCode(qrHost, {
+                text: qrPayload,
+                width: 110,
+                height: 110,
+                correctLevel: QRCode.CorrectLevel.M
+            });
+        }
+
+        function setDownloadBusy(busy) {
+            var btn = document.getElementById('btnDownloadInvoicePdf');
+            if (!btn) return;
+            btn.disabled = !!busy;
+            btn.style.opacity = busy ? '0.6' : '1';
+            var label = btn.querySelector('.mdc-button__label');
+            if (label) label.textContent = busy ? 'Generating…' : 'Download PDF';
+        }
+
+        function getInvoicePDF() {
+            if (typeof html2canvas === 'undefined') {
+                alert('PDF library (html2canvas) is not loaded. Please refresh the page.');
+                return;
+            }
+            if (typeof jsPDF === 'undefined') {
+                alert('PDF library (jsPDF) is not loaded. Please refresh the page.');
+                return;
+            }
+
+            var el = document.getElementById('invoicePdfContent');
+            if (!el) {
+                alert('Invoice content not found.');
+                return;
+            }
+
+            setDownloadBusy(true);
+
+            var HTML_Width = el.offsetWidth || 900;
+            var HTML_Height = el.offsetHeight || 1200;
+            var margin = 12;
+            var PDF_Width = HTML_Width + (margin * 2);
+            var PDF_Height = Math.floor(PDF_Width * 1.414) + (margin * 2);
+            var pageCount = Math.max(0, Math.ceil(HTML_Height / PDF_Height) - 1);
+
+            html2canvas(el, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: false,
+                logging: false,
+                backgroundColor: '#ffffff',
+                scrollX: 0,
+                scrollY: 0,
+                windowWidth: document.documentElement.offsetWidth
+            }).then(function (canvas) {
+                var imgData;
+                try {
+                    imgData = canvas.toDataURL('image/jpeg', 0.98);
+                } catch (securityErr) {
+                    console.error(securityErr);
+                    setDownloadBusy(false);
+                    if (confirm('PDF capture failed due to browser security. Use Print → Save as PDF instead?')) {
+                        window.print();
+                    }
+                    return;
+                }
+
+                var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+                pdf.addImage(imgData, 'JPEG', margin, margin, HTML_Width, HTML_Height);
+                for (var i = 1; i <= pageCount; i++) {
+                    pdf.addPage(PDF_Width, PDF_Height);
+                    pdf.addImage(imgData, 'JPEG', margin, margin - (PDF_Height * i), HTML_Width, HTML_Height);
+                }
+                pdf.save(pdfFileName);
+                setDownloadBusy(false);
+            }).catch(function (err) {
+                console.error(err);
+                setDownloadBusy(false);
+                if (confirm('PDF download failed. Use Print → Save as PDF instead?')) {
+                    window.print();
+                }
+            });
+        }
+
+        var btn = document.getElementById('btnDownloadInvoicePdf');
+        if (btn) {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                getInvoicePDF();
+            });
+        }
+
+        // Expose for manual retry if needed
+        window.getInvoicePDF = getInvoicePDF;
+    })();
+</script>
