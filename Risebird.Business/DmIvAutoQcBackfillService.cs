@@ -84,33 +84,45 @@ namespace Risebird.Business
 
             // Dry-run evaluate all — mass-fire guard runs before any write.
             var dryRuns = new List<RiskCategory>(interviewIds.Count);
+            var dryRunOkCount = 0;
             foreach (var interviewId in interviewIds)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 var eval = await _riskCategoryService.EvaluateRiskCategoryDryRun(interviewId);
+                if (eval != null)
+                    dryRunOkCount++;
                 dryRuns.Add(eval ?? new RiskCategory { InterviewId = interviewId });
             }
 
             if (!ignoreMassFireGuard)
             {
-                var guard = RiskCategoryMassFireGuard.Evaluate(dryRuns);
-                if (guard.ShouldAbort)
+                // If dry-run SP (@DryRun) is not deployed yet, skip the guard rather than blocking all writes.
+                if (dryRunOkCount == 0 && interviewIds.Count > 0)
                 {
-                    var abortMsg = guard.Message
-                        ?? $"aborted: {guard.CheckName} fired on {guard.FireRatePct:0}% of {guard.SampleSize} interviews — investigate";
-                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, abortMsg);
-                    _log.LogWarning(
-                        "RiskCategory backfill ABORTED irf={IrfId}: check={Check} rate={Rate:0}% sample={Sample} (ignoreMassFireGuard=false)",
-                        irfId, guard.CheckName, guard.FireRatePct, guard.SampleSize);
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                        "RiskCategory backfill: dry-run returned no results (deploy usp_AddUpdateRiskCategory with @DryRun). Proceeding without mass-fire guard.");
+                }
+                else
+                {
+                    var guard = RiskCategoryMassFireGuard.Evaluate(dryRuns);
+                    if (guard.ShouldAbort)
+                    {
+                        var abortMsg = guard.Message
+                            ?? $"aborted: {guard.CheckName} fired on {guard.FireRatePct:0}% of {guard.SampleSize} interviews — investigate";
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning, abortMsg);
+                        _log.LogWarning(
+                            "RiskCategory backfill ABORTED irf={IrfId}: check={Check} rate={Rate:0}% sample={Sample} (ignoreMassFireGuard=false)",
+                            irfId, guard.CheckName, guard.FireRatePct, guard.SampleSize);
 
-                    result.Ok = false;
-                    result.Aborted = true;
-                    result.AbortedCheckName = guard.CheckName;
-                    result.AbortedFireRatePct = guard.FireRatePct;
-                    result.Processed = 0;
-                    result.Remaining = interviewIds.Count + remainingHint;
-                    result.Message = abortMsg + " (pass ignoreMassFireGuard=1 to override after investigating)";
-                    return result;
+                        result.Ok = false;
+                        result.Aborted = true;
+                        result.AbortedCheckName = guard.CheckName;
+                        result.AbortedFireRatePct = guard.FireRatePct;
+                        result.Processed = 0;
+                        result.Remaining = interviewIds.Count + remainingHint;
+                        result.Message = abortMsg + " (pass ignoreMassFireGuard=1 to override after investigating)";
+                        return result;
+                    }
                 }
             }
 

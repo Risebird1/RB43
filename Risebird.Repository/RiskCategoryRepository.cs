@@ -80,7 +80,7 @@ namespace Risebird.Repository
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@InterviewId", interviewId);
-                parameters.Add("@DryRun", false);
+                // Do not pass @DryRun on write — keeps forward/QC path working before the new SP is deployed.
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

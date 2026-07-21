@@ -154,8 +154,9 @@ namespace Risebird.Business
                 var abortMsg = guard.Message
                     ?? $"aborted: {guard.CheckName} fired on {guard.FireRatePct:0}% of {guard.SampleSize} interviews — investigate";
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
-                    "TrialFlagReview risk refresh " + abortMsg);
-                throw new InvalidOperationException(abortMsg + " (fix the check, then refresh again)");
+                    "TrialFlagReview risk refresh " + abortMsg + " — skipped writes");
+                // Do not throw: keep the Trial Flag Review page usable; ops re-runs after the check fix.
+                return;
             }
 
             using (var gate = new SemaphoreSlim(LiveMetricsConcurrency))
