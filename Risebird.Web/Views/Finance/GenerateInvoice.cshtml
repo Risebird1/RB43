@@ -516,6 +516,8 @@
                             <select id="ddlTaxScenario" name="TaxScenario" class="form-control">
                                 <option value="0">Non-GST</option>
                                 <option value="1">GST 18%</option>
+                                <option value="2">SEZ without Tax</option>
+                                <option value="3">SEZ with Tax</option>
                             </select>
                         </div>
                     </div>
@@ -970,9 +972,23 @@
         $('#hidLineItemsJson').val(JSON.stringify(items));
     }
 
+    function isGstTaxScenario(taxScenario) {
+        // 1 = GST 18%, 3 = SEZ with Tax
+        return taxScenario === 1 || taxScenario === 3;
+    }
+
+    function taxScenarioLabel(taxScenario) {
+        switch (taxScenario) {
+            case 1: return 'GST 18%';
+            case 2: return 'SEZ without Tax (0%)';
+            case 3: return 'SEZ with Tax (18%)';
+            default: return 'GST (Non-GST)';
+        }
+    }
+
     function recalcTotals(subtotal, taxScenario) {
         subtotal = parseFloat(subtotal) || 0;
-        var gstAmt     = taxScenario === 1 ? Math.round(subtotal * 18) / 100 : 0;
+        var gstAmt     = isGstTaxScenario(taxScenario) ? Math.round(subtotal * 18) / 100 : 0;
         var invValue   = subtotal + gstAmt;
         var tdsAmt     = Math.round(subtotal * 10) / 100;
         var netRec     = invValue - tdsAmt;
@@ -980,8 +996,8 @@
         var sym = getCurrencySymbol(billingCurrency);
         $('#tdTotSubtotal').text(sym + ' ' + formatNum(subtotal));
         $('#tdGSTAmount').text(sym + ' ' + formatNum(gstAmt));
-        $('#tdGSTLabel').text(taxScenario === 1 ? 'GST 18%' : 'GST (Non-GST)');
-        $('#trGST').css('opacity', taxScenario === 1 ? 1 : 0.4);
+        $('#tdGSTLabel').text(taxScenarioLabel(taxScenario));
+        $('#trGST').css('opacity', isGstTaxScenario(taxScenario) ? 1 : 0.4);
         $('#tdInvoiceValue').text(sym + ' ' + formatNum(invValue));
         $('#tdTDSAmount').text('- ' + sym + ' ' + formatNum(tdsAmt));
         $('#tdNetReceivable').text(sym + ' ' + formatNum(netRec));
