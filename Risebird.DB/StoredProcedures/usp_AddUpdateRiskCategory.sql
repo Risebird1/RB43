@@ -1,13 +1,25 @@
 CREATE OR ALTER PROCEDURE [dbo].[usp_AddUpdateRiskCategory]
-    @InterviewId INT
+    @InterviewId INT,
+    @DryRun BIT = 0
 AS
 /*
   Invariant: a RiskCategory row exists IFF at least one check currently fires for @InterviewId.
   Severity and Description are NEVER NULL on a surviving row.
   When zero checks fire: DELETE any existing row (do not leave a husk with NULL fields).
+
+  @DryRun = 1: evaluate checks and return InterviewId/Name/Description/Severity/SeverityBreakdown
+  without writing. Used by RiskCategory backfill mass-fire circuit breaker.
 */
 BEGIN
     SET NOCOUNT ON;
+
+    -- Part 1 — InterviewerVideoOff confirmed violation tokens (exact match after trim; case-insensitive).
+    -- Product: only "Interviewer Video off" means interviewer video was off (SLA + candidate feedback).
+    -- Explicitly NOT matched: "Video Off When Mandatory" (checklist option text on compliant rows —
+    -- LIKE '%Video Off%' mass-fired; legacy usp_AddorUpdatePaymentSLADetails abandoned that pattern).
+    DECLARE @InterviewerVideoOffViolations TABLE (Token NVARCHAR(100) PRIMARY KEY);
+    INSERT INTO @InterviewerVideoOffViolations (Token) VALUES
+        (N'INTERVIEWER VIDEO OFF');
 
     -- Tunable thresholds (named constants)
     DECLARE @DeficitMoreThan10_Min INT = 10;
@@ -166,18 +178,30 @@ BEGIN
           AND ic.MeetingStatus NOT IN (1,2,3,5,9)
 
         UNION ALL
-        -- #11 InterviewerVideoOff → P0 only on explicit "Video Off" text (never NULL/empty/'No'/VideoEnable)
+        -- #11 InterviewerVideoOff → P0 only on exact allowlisted tokens (never NULL/empty/'No'/VideoEnable)
+        -- Source: PaymentSLADetails.InterviewerVideo (CSV tokens) OR CandidateFeedbackDetails.InterviewerVideo
         SELECT im.id, 'InterviewerVideoOff', 'Fake Report', 0
         FROM InterviewMeetings im
         WHERE im.id = @InterviewId
           AND EXISTS (
                 SELECT 1
-                FROM PaymentSLADetails p
-                WHERE p.Interviewid = im.id
-                  AND p.InterviewerVideo IS NOT NULL
-                  AND LTRIM(RTRIM(p.InterviewerVideo)) <> ''
-                  AND UPPER(LTRIM(RTRIM(p.InterviewerVideo))) NOT IN ('NO', 'N/A', 'NA', 'NONE')
-                  AND p.InterviewerVideo LIKE '%Video Off%'
+                FROM (
+                    SELECT UPPER(LTRIM(RTRIM(s.value))) AS Token
+                    FROM dbo.PaymentSLADetails p
+                    CROSS APPLY STRING_SPLIT(p.InterviewerVideo, ',') s
+                    WHERE p.Interviewid = im.id
+                      AND p.InterviewerVideo IS NOT NULL
+                      AND LTRIM(RTRIM(p.InterviewerVideo)) <> ''
+                      AND UPPER(LTRIM(RTRIM(p.InterviewerVideo))) NOT IN ('NO', 'N/A', 'NA', 'NONE')
+                    UNION ALL
+                    SELECT UPPER(LTRIM(RTRIM(cfd.InterviewerVideo)))
+                    FROM dbo.CandidateFeedbackDetails cfd
+                    WHERE cfd.InterviewId = im.id
+                      AND cfd.InterviewerVideo IS NOT NULL
+                      AND LTRIM(RTRIM(cfd.InterviewerVideo)) <> ''
+                      AND UPPER(LTRIM(RTRIM(cfd.InterviewerVideo))) NOT IN ('NO', 'N/A', 'NA', 'NONE')
+                ) t
+                INNER JOIN @InterviewerVideoOffViolations v ON v.Token = t.Token
               )
 
         UNION ALL
@@ -275,6 +299,18 @@ BEGIN
     -- Overall severity = MIN(PLevel); P0 = highest severity … P5 = clean
     IF @MinPLevel IS NOT NULL
         SET @Severity = 'P' + CAST(@MinPLevel AS VARCHAR(1));
+
+    -- Dry-run: return evaluated fields without mutating RiskCategory (backfill circuit breaker).
+    IF ISNULL(@DryRun, 0) = 1
+    BEGIN
+        SELECT
+            @InterviewId AS InterviewId,
+            @Name AS Name,
+            @Description AS Description,
+            @Severity AS Severity,
+            @SeverityBreakdown AS SeverityBreakdown;
+        RETURN;
+    END
 
     -- Step 2 upsert: row exists only when at least one check fired (Description non-empty, Severity set).
     IF ISNULL(LTRIM(RTRIM(@Description)), '') = '' OR @Severity IS NULL
