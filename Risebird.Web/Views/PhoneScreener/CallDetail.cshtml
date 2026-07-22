@@ -1,0 +1,258 @@
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+@model Risebird.Entities.ViewModel.PhoneScreenCallResultVM
+@{
+    ViewBag.Title = "AI Phone Screen — Candidate Call Detail";
+
+    JObject structured = null;
+    if (!string.IsNullOrWhiteSpace(Model.StructuredDataJson))
+    {
+        try { structured = JObject.Parse(Model.StructuredDataJson); } catch { structured = null; }
+    }
+
+    string prettyStructured = null;
+    if (structured != null) { prettyStructured = structured.ToString(Formatting.Indented); }
+
+    string prettyRaw = null;
+    if (!string.IsNullOrWhiteSpace(Model.RawJson))
+    {
+        try { prettyRaw = JToken.Parse(Model.RawJson).ToString(Formatting.Indented); }
+        catch { prettyRaw = Model.RawJson; }
+    }
+
+    JArray transcriptArr = null;
+    if (!string.IsNullOrWhiteSpace(Model.Transcript))
+    {
+        try { transcriptArr = JArray.Parse(Model.Transcript); } catch { transcriptArr = null; }
+    }
+}
+
+@functions {
+    static string Prettify(string key)
+    {
+        if (string.IsNullOrEmpty(key)) return key;
+        var parts = key.Replace("_", " ").Replace("-", " ").Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        for (var i = 0; i < parts.Length; i++)
+            parts[i] = char.ToUpper(parts[i][0]) + (parts[i].Length > 1 ? parts[i].Substring(1) : "");
+        return string.Join(" ", parts);
+    }
+
+    static string DisplayValue(JToken t)
+    {
+        if (t == null || t.Type == JTokenType.Null) return "-";
+        if (t.Type == JTokenType.Boolean) return t.Value<bool>() ? "Yes" : "No";
+        if (t.Type == JTokenType.Object || t.Type == JTokenType.Array) return null; // signals nested
+        var s = t.ToString();
+        return string.IsNullOrWhiteSpace(s) ? "-" : s;
+    }
+}
+
+<div class="ps-wrap ps-detail">
+    <div class="ps-d-head">
+        <a class="ps-btn ps-btn-back" href="@Url.Action("Outcomes", "PhoneScreener", new { id = Model.IRFId, irfName = Model.IRFName })">← All Calls</a>
+        <div class="ps-d-title">
+            <span class="ps-d-name">@Model.CandidateName</span>
+            @if (!string.IsNullOrEmpty(Model.Status)) { <span class="ps-badge ps-st-@Model.Status">@Model.Status</span> }
+            @if (!string.IsNullOrEmpty(Model.SuccessEvaluation))
+            {
+                if (Model.SuccessEvaluation.Equals("PASS", StringComparison.OrdinalIgnoreCase)) { <span class="ps-badge ps-pass">PASS</span> }
+                else if (Model.SuccessEvaluation.Equals("FAIL", StringComparison.OrdinalIgnoreCase)) { <span class="ps-badge ps-fail">FAIL</span> }
+                else { <span class="ps-neutral">@Model.SuccessEvaluation</span> }
+            }
+            @if (!string.IsNullOrEmpty(Model.Provider)) { <span class="ps-chip">@Model.Provider.ToUpper()</span> }
+        </div>
+    </div>
+
+    <div class="ps-card ps-meta">
+        <div><span class="ps-meta-lbl">Phone</span><span class="ps-meta-val">@(string.IsNullOrEmpty(Model.Phone) ? "-" : Model.Phone)</span></div>
+        <div><span class="ps-meta-lbl">Email</span><span class="ps-meta-val">@(string.IsNullOrEmpty(Model.CandidateEmail) ? "-" : Model.CandidateEmail)</span></div>
+        <div><span class="ps-meta-lbl">Agent</span><span class="ps-meta-val">@(string.IsNullOrEmpty(Model.IRFName) ? "-" : Model.IRFName)</span></div>
+        <div><span class="ps-meta-lbl">Provider</span><span class="ps-meta-val">@(string.IsNullOrEmpty(Model.Provider) ? "-" : Model.Provider.ToUpper())</span></div>
+        <div><span class="ps-meta-lbl">Started</span><span class="ps-meta-val">@(Model.StartedAt.HasValue ? Model.StartedAt.Value.ToString("dd MMM yyyy, HH:mm") : "-")</span></div>
+        <div><span class="ps-meta-lbl">Duration</span><span class="ps-meta-val">@Model.DurationDisplay</span></div>
+        <div><span class="ps-meta-lbl">Ended Reason</span><span class="ps-meta-val">@(string.IsNullOrEmpty(Model.EndedReason) ? "-" : Model.EndedReason)</span></div>
+    </div>
+
+    <div class="ps-card ps-rec">
+        <div class="ps-rec-head">Recording</div>
+        @if (!string.IsNullOrEmpty(Model.RecordingUrl))
+        {
+            <audio controls preload="none" class="ps-audio" src="@Model.RecordingUrl"></audio>
+        }
+        else
+        {
+            <div class="ps-dash">-</div>
+        }
+    </div>
+
+    <div class="ps-card ps-tabs-card">
+        <div class="ps-tabs">
+            <button class="ps-tab active" data-tab="analysis">Analysis</button>
+            <button class="ps-tab" data-tab="structured">Structured Output</button>
+            <button class="ps-tab" data-tab="transcript">Transcript</button>
+        </div>
+
+        <div class="ps-tab-body" data-body="analysis">
+            @if (Model.Status != "ended")
+            {
+                <div class="ps-note">Analysis is available after the call ends.</div>
+            }
+            else
+            {
+                <p class="ps-summary-para">@(string.IsNullOrEmpty(Model.Summary) ? "No summary available." : Model.Summary)</p>
+                @if (!string.IsNullOrEmpty(Model.SuccessEvaluation))
+                {
+                    <div style="margin:8px 0 16px;">
+                        @if (Model.SuccessEvaluation.Equals("PASS", StringComparison.OrdinalIgnoreCase)) { <span class="ps-badge ps-pass">PASS</span> }
+                        else if (Model.SuccessEvaluation.Equals("FAIL", StringComparison.OrdinalIgnoreCase)) { <span class="ps-badge ps-fail">FAIL</span> }
+                        else { <span class="ps-neutral">@Model.SuccessEvaluation</span> }
+                    </div>
+                }
+
+                @if (structured != null && structured.HasValues)
+                {
+                    <div class="ps-kv-grid">
+                        @foreach (var prop in structured.Properties())
+                        {
+                            var val = DisplayValue(prop.Value);
+                            <div class="ps-kv">
+                                <div class="ps-kv-key">@Prettify(prop.Name)</div>
+                                @if (val == null)
+                                {
+                                    <div class="ps-kv-val"><a href="#" class="ps-viewjson" data-tabjump="structured">view JSON →</a></div>
+                                }
+                                else
+                                {
+                                    <div class="ps-kv-val">@val</div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="ps-note">No structured data returned for this call.</div>
+                }
+            }
+        </div>
+
+        <div class="ps-tab-body" data-body="structured" style="display:none;">
+            @if (!string.IsNullOrEmpty(prettyStructured))
+            {
+                <pre class="ps-code">@prettyStructured</pre>
+            }
+            else
+            {
+                <div class="ps-note">No structured data.</div>
+            }
+            @if (!string.IsNullOrEmpty(prettyRaw))
+            {
+                <details class="ps-raw">
+                    <summary>Raw provider payload</summary>
+                    <pre class="ps-code">@prettyRaw</pre>
+                </details>
+            }
+        </div>
+
+        <div class="ps-tab-body" data-body="transcript" style="display:none;">
+            @if (Model.Status != "ended")
+            {
+                <div class="ps-note">Transcript is available after the call ends.</div>
+            }
+            else if (transcriptArr != null)
+            {
+                <div class="ps-chat">
+                    @foreach (var turn in transcriptArr)
+                    {
+                        var speaker = (turn["speaker"] ?? turn["role"])?.ToString() ?? "";
+                        var text = (turn["text"] ?? turn["content"])?.ToString() ?? "";
+                        var isAi = speaker.ToLower().Contains("ai") || speaker.ToLower().Contains("agent") || speaker.ToLower().Contains("assistant") || speaker.ToLower().Contains("bot");
+                        <div class="ps-bubble-row @(isAi ? "ai" : "cand")">
+                            <div class="ps-bubble-ico @(isAi ? "ai" : "cand")">@(isAi ? "AI" : "C")</div>
+                            <div class="ps-bubble @(isAi ? "ai" : "cand")">@text</div>
+                        </div>
+                    }
+                </div>
+            }
+            else if (!string.IsNullOrEmpty(Model.Transcript))
+            {
+                <pre class="ps-transcript-text">@Model.Transcript</pre>
+            }
+            else
+            {
+                <div class="ps-note">No transcript available.</div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .ps-wrap { --teal:#1caf9a; --teal-dark:#128873; --teal-soft:#e0f5f1; --red:#E04B4A; --red-soft:#fbe9e9;
+        --green:#7fae3f; --green-soft:#eef4e0; --orange:#f0930f; --orange-soft:#fdf0da; --bg:#f2f4f4;
+        --card:#fff; --border:#e2e6e8; --ink:#232a30; --ink2:#6f7b85;
+        font-family:"Segoe UI",-apple-system,Helvetica,Arial,sans-serif; color:var(--ink); font-size:14px; padding:8px 4px 40px; }
+    .ps-wrap * { box-sizing:border-box; }
+    .ps-d-head { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:16px; }
+    .ps-d-title { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .ps-d-name { font-size:19px; font-weight:700; }
+    .ps-btn { display:inline-block; border:none; cursor:pointer; border-radius:7px; padding:7px 13px; font-size:13px; font-weight:600; text-decoration:none; }
+    .ps-btn-back { background:#fff; border:1px solid var(--border); color:var(--teal-dark); }
+    .ps-card { background:var(--card); border:1px solid var(--border); border-radius:10px; margin-bottom:18px;
+        box-shadow:0 1px 2px rgba(18,24,30,.05),0 10px 30px rgba(18,24,30,.07); }
+    .ps-meta { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:14px; padding:18px; }
+    .ps-meta-lbl { display:block; font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink2); }
+    .ps-meta-val { display:block; font-size:13.5px; margin-top:3px; word-break:break-word; }
+    .ps-rec { padding:18px; background:#14171c; border:none; color:#fff; }
+    .ps-rec-head { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:#9fb0b6; margin-bottom:10px; }
+    .ps-audio { width:100%; }
+    .ps-badge { display:inline-block; border-radius:999px; font-size:11px; font-weight:700; padding:3px 10px; }
+    .ps-badge::before { content:""; display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:6px; vertical-align:middle; background:currentColor; }
+    .ps-st-queued { background:#eceff1; color:#6f7b85; }
+    .ps-st-ringing, .ps-st-in-progress { background:var(--orange-soft); color:#b6710a; }
+    .ps-st-ended { background:var(--teal-soft); color:var(--teal-dark); }
+    .ps-pass { background:var(--green-soft); color:#4c7016; }
+    .ps-fail { background:var(--red-soft); color:#b23433; }
+    .ps-neutral { font-size:12px; color:var(--ink2); }
+    .ps-chip { display:inline-block; font-size:11px; padding:1px 7px; border-radius:999px; background:#eef2f3; color:#6f7b85; }
+    .ps-dash { color:var(--ink2); }
+    .ps-tabs { display:flex; gap:2px; background:#fafbfb; border-bottom:1px solid var(--border); }
+    .ps-tab { background:transparent; border:none; padding:12px 18px; font-size:13px; font-weight:600; color:var(--ink2); cursor:pointer; border-bottom:2px solid transparent; }
+    .ps-tab.active { color:var(--teal-dark); border-bottom-color:var(--teal); }
+    .ps-tab-body { padding:20px; }
+    .ps-note { color:var(--ink2); font-size:13px; }
+    .ps-summary-para { max-width:78ch; line-height:1.6; }
+    .ps-kv-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-top:8px; }
+    .ps-kv { border:1px solid var(--border); border-radius:7px; padding:10px 12px; }
+    .ps-kv-key { font-size:10px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink2); }
+    .ps-kv-val { font-size:13.5px; font-weight:600; margin-top:4px; word-break:break-word; }
+    .ps-viewjson { color:var(--teal-dark); font-weight:600; text-decoration:none; }
+    .ps-code { background:#14171c; color:#e6edf3; border-radius:8px; padding:16px; font-size:12.5px; overflow:auto;
+        font-family:Consolas,"Courier New",monospace; white-space:pre; }
+    .ps-raw { margin-top:14px; }
+    .ps-raw summary { cursor:pointer; color:var(--teal-dark); font-weight:600; font-size:13px; }
+    .ps-transcript-text { white-space:pre-wrap; font-size:13.5px; line-height:1.6; font-family:inherit; background:transparent; }
+    .ps-chat { display:flex; flex-direction:column; gap:12px; max-width:760px; }
+    .ps-bubble-row { display:flex; gap:10px; align-items:flex-start; }
+    .ps-bubble-row.cand { flex-direction:row-reverse; }
+    .ps-bubble-ico { width:30px; height:30px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; }
+    .ps-bubble-ico.ai { background:var(--teal); } .ps-bubble-ico.cand { background:var(--orange); }
+    .ps-bubble { border-radius:8px; padding:10px 14px; font-size:13.5px; line-height:1.5; }
+    .ps-bubble.ai { background:var(--teal-soft); } .ps-bubble.cand { background:#f2f4f5; }
+</style>
+
+@section Scripts {
+    <script>
+        (function () {
+            var tabs = document.querySelectorAll('.ps-tab');
+            var bodies = document.querySelectorAll('.ps-tab-body');
+            function activate(name) {
+                tabs.forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-tab') === name); });
+                bodies.forEach(function (b) { b.style.display = (b.getAttribute('data-body') === name) ? '' : 'none'; });
+            }
+            tabs.forEach(function (t) { t.addEventListener('click', function () { activate(t.getAttribute('data-tab')); }); });
+            document.querySelectorAll('.ps-viewjson').forEach(function (a) {
+                a.addEventListener('click', function (e) { e.preventDefault(); activate(a.getAttribute('data-tabjump')); });
+            });
+        })();
+    </script>
+}

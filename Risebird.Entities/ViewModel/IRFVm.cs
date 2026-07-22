@@ -283,6 +283,10 @@ namespace Risebird.Entities.ViewModel
 
         [DisplayName("AssistantId")]
         public string OpenAIAssistantId { get; set; }
+
+        [DisplayName("Plivo Phone Screener Assistant URL")]
+        public string PlivoAssistantUrl { get; set; }
+
         [DisplayName("Tech QC Required")]
         public bool IsTechQC { get; set; }
         public bool isMultiLingual { get; set; }

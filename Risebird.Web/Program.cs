@@ -282,6 +282,11 @@ builder.Services.AddScoped<IResumeParsingService, ResumeParsingService>();
 builder.Services.AddScoped<IInterviewerEmailAvailabilityRepository, InterviewerEmailAvailabilityRepository>();
 // ============================================
 
+// AI Phone Screener (Plivo CX conversational voice agent)
+// ============================================
+builder.Services.AddScoped<IPhoneScreenRepository, PhoneScreenRepository>();
+// ============================================
+
 // Naukri Prospective Interviewer Onboarding
 // ============================================
 builder.Services.AddScoped<INaukriOnboardingRepository, NaukriOnboardingRepository>();

@@ -33,5 +33,12 @@ namespace Risebird.CommonHelper.Interface
         /// Uses PlivoCX:AvailabilityTriggerEndpointUrl.
         /// </summary>
         Task<PlivoCXTriggerResponse> TriggerAvailabilityCallAsync(PlivoCXAvailabilityTriggerRequest request);
+
+        /// <summary>
+        /// Triggers an outbound call against an explicitly supplied Plivo CX flow trigger URL.
+        /// Used by the Phone Screener, where each skill channel (IRF) maps to its own
+        /// Plivo assistant URL rather than a single global endpoint in appsettings.
+        /// </summary>
+        Task<PlivoCXTriggerResponse> TriggerByUrlAsync(string triggerUrl, object request);
     }
 }

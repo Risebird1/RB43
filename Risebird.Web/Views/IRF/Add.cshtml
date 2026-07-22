@@ -99,6 +99,16 @@
                                                         @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, "Select Client Name", new { @class = "select-css form-control", @onchange = "ClientChanged(this.value)" })
                                                     </div>
                                                 </div>
+                                                <div class="col-md-8 col-sm-8 pull-left">
+                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.PlivoAssistantUrl, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        </div>
+                                                        @Html.EditorFor(model => model.PlivoAssistantUrl, new { htmlAttributes = new { @class = "form-control text-box single-line", @placeholder = "https://agentflow.plivo.com/v1/account/.../flow/..." } })
+                                                        @Html.ValidationMessageFor(model => model.PlivoAssistantUrl, "", new { @id = "error_PlivoAssistantUrl", @class = "text-danger" })
+                                                        <small class="text-muted">Plivo CX Phone Screener flow trigger URL for calling candidates in this skill channel (optional).</small>
+                                                    </div>
+                                                </div>
                                                 @* <div class="col-md-4 col-sm-4 pull-left">
                                             <div class="form-group" style="margin-bottom:20px;">
                                             <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Risebird Scheduler</label>
