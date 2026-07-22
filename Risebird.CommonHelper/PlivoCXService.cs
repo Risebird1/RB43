@@ -63,6 +63,9 @@ namespace Risebird.CommonHelper
         public Task<PlivoCXTriggerResponse> TriggerAvailabilityCallAsync(PlivoCXAvailabilityTriggerRequest request)
             => PostTriggerAsync(_availabilityTriggerEndpointUrl, request, "PlivoCX:AvailabilityTriggerEndpointUrl");
 
+        public Task<PlivoCXTriggerResponse> TriggerByUrlAsync(string triggerUrl, object request)
+            => PostTriggerAsync(triggerUrl, request, "PlivoAssistantUrl (skill channel)");
+
         private async Task<PlivoCXTriggerResponse> PostTriggerAsync(
             string triggerUrl, object request, string configKeyName)
         {
