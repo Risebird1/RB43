@@ -124,6 +124,10 @@ namespace Risebird.Repository
                 InterviewerName = row.InterviewerName,
                 InterviewerEmail = row.InterviewerEmail,
                 InterviewerCodedId = row.InterviewerCodedId,
+                InterviewerUserId = row.InterviewerUserId,
+                InterviewerMobileNumber = row.InterviewerMobileNumber,
+                InterviewerAltMobileNumber = row.InterviewerAltMobileNumber,
+                IsSuspicious = row.IsSuspicious,
                 IrfName = row.IrfName,
                 Severity = row.Severity,
                 RiskCategoryLabels = row.RiskCategoryLabels,
@@ -201,6 +205,10 @@ namespace Risebird.Repository
             public string InterviewerName { get; set; }
             public string InterviewerEmail { get; set; }
             public string InterviewerCodedId { get; set; }
+            public int? InterviewerUserId { get; set; }
+            public string InterviewerMobileNumber { get; set; }
+            public string InterviewerAltMobileNumber { get; set; }
+            public bool IsSuspicious { get; set; }
             public string IrfName { get; set; }
             public string Severity { get; set; }
             public string RiskCategoryLabels { get; set; }
