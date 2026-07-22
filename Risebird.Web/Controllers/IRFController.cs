@@ -90,6 +90,7 @@ namespace Risebird.Web.Controllers
         private readonly IPlivoCXService _plivoCXService;
         private readonly IInterviewerEmailAvailabilityRepository _eaRepository;
         private readonly ITransInterviewerAuditRepository _transInterviewerAuditRepository;
+        private readonly IPhoneScreenRepository _phoneScreenRepository;
         private readonly IServiceScopeFactory _scopeFactory;
 
 
@@ -102,6 +103,7 @@ namespace Risebird.Web.Controllers
             IPlivoCXService plivoCXService,
             IInterviewerEmailAvailabilityRepository eaRepository,
             ITransInterviewerAuditRepository transInterviewerAuditRepository,
+            IPhoneScreenRepository phoneScreenRepository,
             IServiceScopeFactory scopeFactory)
         {
             _scopeFactory = scopeFactory;
@@ -138,6 +140,7 @@ namespace Risebird.Web.Controllers
             _plivoCXService = plivoCXService;
             _eaRepository = eaRepository;
             _transInterviewerAuditRepository = transInterviewerAuditRepository;
+            _phoneScreenRepository = phoneScreenRepository;
         }
 
         [Authorize]
@@ -944,6 +947,7 @@ namespace Risebird.Web.Controllers
                         await checkSkillSetandCombine(irfDetails);
                         if (await _irfService.AddIRFDetails(irfDetails, emailId, domain))
                         {
+                            await _phoneScreenRepository.SetIRFPlivoAssistantUrlAsync(irfDetails.id > 0 ? irfDetails.id : (int?)null, irfDetails.IRFId, irfDetails.PlivoAssistantUrl);
                             //create an index with the same name as that of this skill channel in affinda for using the search and match tool
 
                             //var isIndexCreated = await _affIndaResumeParserHelper.CreateIndex(irfDetails.IRFId);
@@ -2149,6 +2153,7 @@ namespace Risebird.Web.Controllers
                     model = await _irfService.GetEditIRF(id, templateId, isClone);
                     if (model == null)
                         return RedirectToAction("Index");
+                    model.PlivoAssistantUrl = await _phoneScreenRepository.GetIRFPlivoAssistantUrlAsync(id);
                     model.IsClone = isClone;
                     model.LoggedEmail = emailid;
                     int abc;
@@ -2353,6 +2358,7 @@ namespace Risebird.Web.Controllers
                         {
                             if (await _irfService.UpdateIRF(model, emailId))
                             {
+                                await _phoneScreenRepository.SetIRFPlivoAssistantUrlAsync(model.id, model.IRFId, model.PlivoAssistantUrl);
                                 TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " has been saved Successfully!";
                                 return RedirectToAction("Index");
                             }
@@ -7785,6 +7791,8 @@ namespace Risebird.Web.Controllers
 
                             var irfDetails = await _irfService.GetSkillChannelDetailsByName(model.IRFId);
 
+                            await _phoneScreenRepository.SetIRFPlivoAssistantUrlAsync(irfDetails?.id, model.IRFId, model.PlivoAssistantUrl);
+
                             FireAndForgetRequestToSendAvailabilityMails(model.AssessmentGroupId, irfDetails.id, result.Item2, irfDetails.PrimarySkillInvite, model.IRFId, model.JDTiltle);
 
                             TempData["SuccessErrorMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
@@ -8394,6 +8402,7 @@ namespace Risebird.Web.Controllers
                         //End: Auto Generate Scheduling Link
                         if (await _irfService.EditSkillChannelCreatedFromTemplate(model, emailId))
                         {
+                            await _phoneScreenRepository.SetIRFPlivoAssistantUrlAsync(model.id, model.IRFId, model.PlivoAssistantUrl);
                             TempData["SuccessErrorMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
                             TempData["SuccessErrorMessage2"] = model.CalendlyLink;
                             return RedirectToAction("Index");
