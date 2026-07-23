@@ -1056,7 +1056,8 @@
             var display = (row.channelOwner || row.ChannelOwner || '').toString().trim();
             var email = (row.channelOwnerEmail || row.ChannelOwnerEmail || '').toString().trim();
             var name = display;
-            var m = display.match(/^(.*?)\s*\(([^()\s@]+@[^()\s]+)\)\s*$/);
+            // Razor: @@ → @ in the emitted JS regex
+            var m = display.match(/^(.*?)\s*\(([^()\s@@]+@@[^()\s]+)\)\s*$/);
             if (m) {
                 name = (m[1] || '').trim();
                 if (!email) email = (m[2] || '').trim();
