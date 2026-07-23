@@ -49,7 +49,10 @@ BEGIN
         LEFT JOIN dbo.RiskCategory rc ON rc.InterviewId = tf.TriggeringInterviewId
         LEFT JOIN dbo.IRF irf ON irf.id = tf.IrfId
         LEFT JOIN dbo.UserList ulco ON ulco.id = irf.RisebirdHr
-        WHERE (@ReviewStatus IS NULL OR tf.ReviewStatus = @ReviewStatus)
+        WHERE (
+                @ReviewStatus IS NULL
+             OR LOWER(LTRIM(RTRIM(ISNULL(tf.ReviewStatus, '')))) = LOWER(LTRIM(RTRIM(@ReviewStatus)))
+          )
     )
     SELECT
         ChannelOwnerEmail,

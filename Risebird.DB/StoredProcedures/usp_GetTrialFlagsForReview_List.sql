@@ -239,7 +239,10 @@ BEGIN
         ) ru
         LEFT JOIN dbo.InterviewerProfile ip ON ip.UserId = ru.UserId
         LEFT JOIN dbo.SuspiciousInterviewer si ON si.UserId = ru.UserId AND ISNULL(si.SuspiciousStatus, 0) = 1
-        WHERE (@ReviewStatus IS NULL OR tf.ReviewStatus = @ReviewStatus)
+        WHERE (
+                @ReviewStatus IS NULL
+             OR LOWER(LTRIM(RTRIM(ISNULL(tf.ReviewStatus, '')))) = LOWER(LTRIM(RTRIM(@ReviewStatus)))
+          )
           AND (
                 @SearchTrim IS NULL
              OR COALESCE(irf.IRFId, irfViaInterview.IRFId, im.IRFId, '') LIKE N'%' + @SearchTrim + N'%'
@@ -252,7 +255,7 @@ BEGIN
           )
           AND (
                 @OwnerTrim IS NULL
-             OR LTRIM(RTRIM(ulco.EmailId)) = @OwnerTrim
+             OR LOWER(LTRIM(RTRIM(ISNULL(ulco.EmailId, '')))) = LOWER(@OwnerTrim)
           )
     )
     SELECT

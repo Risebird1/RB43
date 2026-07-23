@@ -1276,7 +1276,18 @@
                     }
                     var rows = res.data || res.Data || [];
                     if (!rows.length) {
-                        $tbody.html('<tr><td colspan="10" class="tfr-empty">No ' + esc(activeTab) + ' trial flags on this page.</td></tr>');
+                        var pending = res.pendingCount != null ? res.pendingCount : res.PendingCount;
+                        var kept = res.keptCount != null ? res.keptCount : res.KeptCount;
+                        var removed = res.removedCount != null ? res.removedCount : res.RemovedCount;
+                        var emptyMsg = 'No ' + esc(activeTab) + ' trial flags on this page.';
+                        if (activeTab === 'pending' && pending === 0 && ((kept || 0) > 0 || (removed || 0) > 0)) {
+                            emptyMsg = 'No pending flags. Kept: ' + (kept || 0) + ', Removed: ' + (removed || 0) + '. Switch tabs above, or run Backfill if the queue should have new trials.';
+                        } else if (activeTab === 'pending' && pending === 0 && (kept || 0) === 0 && (removed || 0) === 0) {
+                            emptyMsg = 'dbo.TrialFlags has no rows yet. Use Backfill trial flags, or wait for new first-interview QC merges.';
+                        } else if (activeTab === 'pending' && (pending || 0) > 0) {
+                            emptyMsg = 'Pending count is ' + pending + ' but this page returned 0 rows. Redeploy usp_GetTrialFlagsForReview_List (ReviewStatus filter), then Reload.';
+                        }
+                        $tbody.html('<tr><td colspan="10" class="tfr-empty">' + emptyMsg + '</td></tr>');
                         $('#tfrSearchEmpty').toggleClass('is-visible', !!searchTerm);
                     } else {
                         $('#tfrSearchEmpty').removeClass('is-visible');

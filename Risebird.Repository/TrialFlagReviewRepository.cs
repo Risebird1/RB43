@@ -64,9 +64,9 @@ namespace Risebird.Repository
             {
                 using var con = new SqlConnection(_connectionString);
                 var rows = await con.QueryAsync<StatusCountRow>(
-                    @"SELECT ReviewStatus, COUNT(*) AS Cnt
+                    @"SELECT LTRIM(RTRIM(ReviewStatus)) AS ReviewStatus, COUNT(*) AS Cnt
                       FROM dbo.TrialFlags
-                      GROUP BY ReviewStatus");
+                      GROUP BY LTRIM(RTRIM(ReviewStatus))");
 
                 var pending = 0;
                 var kept = 0;
