@@ -2,7 +2,7 @@
 @using Newtonsoft.Json.Linq
 @model Risebird.Entities.ViewModel.PhoneScreenCallResultVM
 @{
-    ViewBag.Title = "AI Phone Screen — Candidate Call Detail";
+    ViewBag.Title = "AI Phone Screen — Call Detail";
 
     JObject structured = null;
     if (!string.IsNullOrWhiteSpace(Model.StructuredDataJson))
@@ -25,6 +25,9 @@
     {
         try { transcriptArr = JArray.Parse(Model.Transcript); } catch { transcriptArr = null; }
     }
+
+    var initials = string.IsNullOrWhiteSpace(Model.CandidateName) ? "?" :
+        string.Join("", Model.CandidateName.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Take(2).Select(w => char.ToUpper(w[0])));
 }
 
 @functions {
@@ -41,55 +44,107 @@
     {
         if (t == null || t.Type == JTokenType.Null) return "-";
         if (t.Type == JTokenType.Boolean) return t.Value<bool>() ? "Yes" : "No";
-        if (t.Type == JTokenType.Object || t.Type == JTokenType.Array) return null; // signals nested
+        if (t.Type == JTokenType.Object || t.Type == JTokenType.Array) return null;
         var s = t.ToString();
         return string.IsNullOrWhiteSpace(s) ? "-" : s;
     }
 }
 
-<div class="ps-wrap ps-detail">
-    <div class="ps-d-head">
-        <a class="ps-btn ps-btn-back" href="@Url.Action("Outcomes", "PhoneScreener", new { id = Model.IRFId, irfName = Model.IRFName })">← All Calls</a>
-        <div class="ps-d-title">
-            <span class="ps-d-name">@Model.CandidateName</span>
-            @if (!string.IsNullOrEmpty(Model.Status)) { <span class="ps-badge ps-st-@Model.Status">@Model.Status</span> }
-            @if (!string.IsNullOrEmpty(Model.SuccessEvaluation))
-            {
-                if (Model.SuccessEvaluation.Equals("PASS", StringComparison.OrdinalIgnoreCase)) { <span class="ps-badge ps-pass">PASS</span> }
-                else if (Model.SuccessEvaluation.Equals("FAIL", StringComparison.OrdinalIgnoreCase)) { <span class="ps-badge ps-fail">FAIL</span> }
-                else { <span class="ps-neutral">@Model.SuccessEvaluation</span> }
-            }
-            @if (!string.IsNullOrEmpty(Model.Provider)) { <span class="ps-chip">@Model.Provider.ToUpper()</span> }
+<script>
+    var Header = "<div>AI Phone Screen</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<div class="main-panel" id="main-panel">
+<div class="ps-page ps-detail">
+    <div class="ps-header">
+        <div class="ps-header__main">
+            <div class="ps-header__eyebrow">Call detail</div>
+            <div class="ps-header__title-row">
+                <span class="ps-avatar" aria-hidden="true">@initials</span>
+                <div>
+                    <h1 class="ps-header__title">@(string.IsNullOrEmpty(Model.CandidateName) ? "Candidate" : Model.CandidateName)</h1>
+                    <div class="ps-header__meta">
+                        @if (!string.IsNullOrEmpty(Model.Status))
+                        {
+                            <span class="ps-badge ps-st-@Model.Status">@Model.Status</span>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.SuccessEvaluation))
+                        {
+                            if (Model.SuccessEvaluation.Equals("PASS", StringComparison.OrdinalIgnoreCase))
+                            { <span class="ps-badge ps-pass">PASS</span> }
+                            else if (Model.SuccessEvaluation.Equals("FAIL", StringComparison.OrdinalIgnoreCase))
+                            { <span class="ps-badge ps-fail">FAIL</span> }
+                            else
+                            { <span class="ps-meta-chip">@Model.SuccessEvaluation</span> }
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Provider))
+                        {
+                            <span class="ps-meta-chip">@Model.Provider.ToUpper()</span>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.IRFName))
+                        {
+                            <span class="ps-meta-chip">@Model.IRFName</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ps-header__actions">
+            <a class="ps-btn ps-btn--ghost" href="@Url.Action("Outcomes", "PhoneScreener", new { id = Model.IRFId, irfName = Model.IRFName })">← All calls</a>
         </div>
     </div>
 
-    <div class="ps-card ps-meta">
-        <div><span class="ps-meta-lbl">Phone</span><span class="ps-meta-val">@(string.IsNullOrEmpty(Model.Phone) ? "-" : Model.Phone)</span></div>
-        <div><span class="ps-meta-lbl">Email</span><span class="ps-meta-val">@(string.IsNullOrEmpty(Model.CandidateEmail) ? "-" : Model.CandidateEmail)</span></div>
-        <div><span class="ps-meta-lbl">Agent</span><span class="ps-meta-val">@(string.IsNullOrEmpty(Model.IRFName) ? "-" : Model.IRFName)</span></div>
-        <div><span class="ps-meta-lbl">Provider</span><span class="ps-meta-val">@(string.IsNullOrEmpty(Model.Provider) ? "-" : Model.Provider.ToUpper())</span></div>
-        <div><span class="ps-meta-lbl">Started</span><span class="ps-meta-val">@(Model.StartedAt.HasValue ? Model.StartedAt.Value.ToString("dd MMM yyyy, HH:mm") : "-")</span></div>
-        <div><span class="ps-meta-lbl">Duration</span><span class="ps-meta-val">@Model.DurationDisplay</span></div>
-        <div><span class="ps-meta-lbl">Ended Reason</span><span class="ps-meta-val">@(string.IsNullOrEmpty(Model.EndedReason) ? "-" : Model.EndedReason)</span></div>
+    <div class="ps-meta-grid">
+        <div class="ps-meta-item">
+            <span class="ps-meta-lbl">Phone</span>
+            <span class="ps-meta-val">@(string.IsNullOrEmpty(Model.Phone) ? "—" : Model.Phone)</span>
+        </div>
+        <div class="ps-meta-item">
+            <span class="ps-meta-lbl">Email</span>
+            <span class="ps-meta-val">@(string.IsNullOrEmpty(Model.CandidateEmail) ? "—" : Model.CandidateEmail)</span>
+        </div>
+        <div class="ps-meta-item">
+            <span class="ps-meta-lbl">Started</span>
+            <span class="ps-meta-val">@(Model.StartedAt.HasValue ? Model.StartedAt.Value.ToString("dd MMM yyyy, HH:mm") : "—")</span>
+        </div>
+        <div class="ps-meta-item">
+            <span class="ps-meta-lbl">Duration</span>
+            <span class="ps-meta-val">@Model.DurationDisplay</span>
+        </div>
+        <div class="ps-meta-item">
+            <span class="ps-meta-lbl">Ended reason</span>
+            <span class="ps-meta-val">@(string.IsNullOrEmpty(Model.EndedReason) ? "—" : Model.EndedReason)</span>
+        </div>
+        <div class="ps-meta-item">
+            <span class="ps-meta-lbl">Provider</span>
+            <span class="ps-meta-val">@(string.IsNullOrEmpty(Model.Provider) ? "—" : Model.Provider.ToUpper())</span>
+        </div>
     </div>
 
-    <div class="ps-card ps-rec">
-        <div class="ps-rec-head">Recording</div>
+    <div class="ps-panel ps-rec-panel">
+        <div class="ps-rec-head">
+            <span class="ps-rec-title">Recording</span>
+            @if (!string.IsNullOrEmpty(Model.RecordingUrl))
+            {
+                <a class="ps-rec-link" href="@Model.RecordingUrl" target="_blank" rel="noopener">Open file</a>
+            }
+        </div>
         @if (!string.IsNullOrEmpty(Model.RecordingUrl))
         {
             <audio controls preload="none" class="ps-audio" src="@Model.RecordingUrl"></audio>
         }
         else
         {
-            <div class="ps-dash">-</div>
+            <div class="ps-note">No recording available.</div>
         }
     </div>
 
-    <div class="ps-card ps-tabs-card">
-        <div class="ps-tabs">
-            <button class="ps-tab active" data-tab="analysis">Analysis</button>
-            <button class="ps-tab" data-tab="structured">Structured Output</button>
-            <button class="ps-tab" data-tab="transcript">Transcript</button>
+    <div class="ps-panel">
+        <div class="ps-tabs" role="tablist">
+            <button type="button" class="ps-tab active" data-tab="analysis" role="tab">Analysis</button>
+            <button type="button" class="ps-tab" data-tab="structured" role="tab">Structured</button>
+            <button type="button" class="ps-tab" data-tab="transcript" role="tab">Transcript</button>
         </div>
 
         <div class="ps-tab-body" data-body="analysis">
@@ -102,10 +157,13 @@
                 <p class="ps-summary-para">@(string.IsNullOrEmpty(Model.Summary) ? "No summary available." : Model.Summary)</p>
                 @if (!string.IsNullOrEmpty(Model.SuccessEvaluation))
                 {
-                    <div style="margin:8px 0 16px;">
-                        @if (Model.SuccessEvaluation.Equals("PASS", StringComparison.OrdinalIgnoreCase)) { <span class="ps-badge ps-pass">PASS</span> }
-                        else if (Model.SuccessEvaluation.Equals("FAIL", StringComparison.OrdinalIgnoreCase)) { <span class="ps-badge ps-fail">FAIL</span> }
-                        else { <span class="ps-neutral">@Model.SuccessEvaluation</span> }
+                    <div class="ps-eval-row">
+                        @if (Model.SuccessEvaluation.Equals("PASS", StringComparison.OrdinalIgnoreCase))
+                        { <span class="ps-badge ps-pass">PASS</span> }
+                        else if (Model.SuccessEvaluation.Equals("FAIL", StringComparison.OrdinalIgnoreCase))
+                        { <span class="ps-badge ps-fail">FAIL</span> }
+                        else
+                        { <span class="ps-meta-chip">@Model.SuccessEvaluation</span> }
                     </div>
                 }
 
@@ -119,7 +177,7 @@
                                 <div class="ps-kv-key">@Prettify(prop.Name)</div>
                                 @if (val == null)
                                 {
-                                    <div class="ps-kv-val"><a href="#" class="ps-viewjson" data-tabjump="structured">view JSON →</a></div>
+                                    <div class="ps-kv-val"><a href="#" class="ps-viewjson" data-tabjump="structured">View JSON →</a></div>
                                 }
                                 else
                                 {
@@ -185,59 +243,324 @@
         </div>
     </div>
 </div>
+</div>
 
 <style>
-    .ps-wrap { --teal:#1caf9a; --teal-dark:#128873; --teal-soft:#e0f5f1; --red:#E04B4A; --red-soft:#fbe9e9;
-        --green:#7fae3f; --green-soft:#eef4e0; --orange:#f0930f; --orange-soft:#fdf0da; --bg:#f2f4f4;
-        --card:#fff; --border:#e2e6e8; --ink:#232a30; --ink2:#6f7b85;
-        font-family:"Segoe UI",-apple-system,Helvetica,Arial,sans-serif; color:var(--ink); font-size:14px; padding:8px 4px 40px; }
-    .ps-wrap * { box-sizing:border-box; }
-    .ps-d-head { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:16px; }
-    .ps-d-title { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-    .ps-d-name { font-size:19px; font-weight:700; }
-    .ps-btn { display:inline-block; border:none; cursor:pointer; border-radius:7px; padding:7px 13px; font-size:13px; font-weight:600; text-decoration:none; }
-    .ps-btn-back { background:#fff; border:1px solid var(--border); color:var(--teal-dark); }
-    .ps-card { background:var(--card); border:1px solid var(--border); border-radius:10px; margin-bottom:18px;
-        box-shadow:0 1px 2px rgba(18,24,30,.05),0 10px 30px rgba(18,24,30,.07); }
-    .ps-meta { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:14px; padding:18px; }
-    .ps-meta-lbl { display:block; font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink2); }
-    .ps-meta-val { display:block; font-size:13.5px; margin-top:3px; word-break:break-word; }
-    .ps-rec { padding:18px; background:#14171c; border:none; color:#fff; }
-    .ps-rec-head { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:#9fb0b6; margin-bottom:10px; }
-    .ps-audio { width:100%; }
-    .ps-badge { display:inline-block; border-radius:999px; font-size:11px; font-weight:700; padding:3px 10px; }
-    .ps-badge::before { content:""; display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:6px; vertical-align:middle; background:currentColor; }
-    .ps-st-queued { background:#eceff1; color:#6f7b85; }
-    .ps-st-ringing, .ps-st-in-progress { background:var(--orange-soft); color:#b6710a; }
-    .ps-st-ended { background:var(--teal-soft); color:var(--teal-dark); }
-    .ps-pass { background:var(--green-soft); color:#4c7016; }
-    .ps-fail { background:var(--red-soft); color:#b23433; }
-    .ps-neutral { font-size:12px; color:var(--ink2); }
-    .ps-chip { display:inline-block; font-size:11px; padding:1px 7px; border-radius:999px; background:#eef2f3; color:#6f7b85; }
-    .ps-dash { color:var(--ink2); }
-    .ps-tabs { display:flex; gap:2px; background:#fafbfb; border-bottom:1px solid var(--border); }
-    .ps-tab { background:transparent; border:none; padding:12px 18px; font-size:13px; font-weight:600; color:var(--ink2); cursor:pointer; border-bottom:2px solid transparent; }
-    .ps-tab.active { color:var(--teal-dark); border-bottom-color:var(--teal); }
-    .ps-tab-body { padding:20px; }
-    .ps-note { color:var(--ink2); font-size:13px; }
-    .ps-summary-para { max-width:78ch; line-height:1.6; }
-    .ps-kv-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-top:8px; }
-    .ps-kv { border:1px solid var(--border); border-radius:7px; padding:10px 12px; }
-    .ps-kv-key { font-size:10px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink2); }
-    .ps-kv-val { font-size:13.5px; font-weight:600; margin-top:4px; word-break:break-word; }
-    .ps-viewjson { color:var(--teal-dark); font-weight:600; text-decoration:none; }
-    .ps-code { background:#14171c; color:#e6edf3; border-radius:8px; padding:16px; font-size:12.5px; overflow:auto;
-        font-family:Consolas,"Courier New",monospace; white-space:pre; }
-    .ps-raw { margin-top:14px; }
-    .ps-raw summary { cursor:pointer; color:var(--teal-dark); font-weight:600; font-size:13px; }
-    .ps-transcript-text { white-space:pre-wrap; font-size:13.5px; line-height:1.6; font-family:inherit; background:transparent; }
-    .ps-chat { display:flex; flex-direction:column; gap:12px; max-width:760px; }
-    .ps-bubble-row { display:flex; gap:10px; align-items:flex-start; }
-    .ps-bubble-row.cand { flex-direction:row-reverse; }
-    .ps-bubble-ico { width:30px; height:30px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; }
-    .ps-bubble-ico.ai { background:var(--teal); } .ps-bubble-ico.cand { background:var(--orange); }
-    .ps-bubble { border-radius:8px; padding:10px 14px; font-size:13.5px; line-height:1.5; }
-    .ps-bubble.ai { background:var(--teal-soft); } .ps-bubble.cand { background:#f2f4f5; }
+    .ps-page {
+        --ps-teal: #128873;
+        --ps-teal-soft: #e0f5f1;
+        --ps-border: #e2e8f0;
+        --ps-ink: #0f172a;
+        --ps-muted: #64748b;
+        --ps-bg: #f8fafc;
+        max-width: 1100px;
+        padding: 16px 20px 32px;
+        color: var(--ps-ink);
+        font-size: 13px;
+    }
+    .ps-page * { box-sizing: border-box; }
+
+    .ps-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+    }
+    .ps-header__eyebrow {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: var(--ps-teal);
+        margin-bottom: 4px;
+    }
+    .ps-header__title-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .ps-header__title {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--ps-ink);
+        line-height: 1.25;
+    }
+    .ps-header__meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+        align-items: center;
+    }
+    .ps-header__actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+    .ps-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        background: #42a5f5;
+        margin-top: 2px;
+    }
+
+    .ps-meta-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        background: #fff;
+        border: 1px solid var(--ps-border);
+        color: var(--ps-muted);
+    }
+
+    .ps-badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 2px 8px;
+        line-height: 1.4;
+        text-transform: lowercase;
+    }
+    .ps-st-queued { background: #f1f5f9; color: #64748b; }
+    .ps-st-ringing, .ps-st-in-progress { background: #fff7ed; color: #c2410c; }
+    .ps-st-ended { background: var(--ps-teal-soft); color: var(--ps-teal); }
+    .ps-pass { background: #dcfce7; color: #166534; text-transform: uppercase; }
+    .ps-fail { background: #fee2e2; color: #991b1b; text-transform: uppercase; }
+
+    .ps-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.2;
+        text-decoration: none;
+        border: 1px solid transparent;
+        cursor: pointer;
+        background: #fff;
+    }
+    .ps-btn--ghost {
+        border-color: var(--ps-border);
+        color: #334155;
+        background: #fff;
+    }
+    .ps-btn--ghost:hover { background: var(--ps-bg); }
+
+    .ps-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 8px;
+        margin-bottom: 10px;
+        background: #fff;
+        border: 1px solid var(--ps-border);
+        border-radius: 8px;
+        padding: 10px 12px;
+    }
+    .ps-meta-item { min-width: 0; }
+    .ps-meta-lbl {
+        display: block;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: var(--ps-muted);
+    }
+    .ps-meta-val {
+        display: block;
+        margin-top: 3px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--ps-ink);
+        word-break: break-word;
+        line-height: 1.3;
+    }
+
+    .ps-panel {
+        background: #fff;
+        border: 1px solid var(--ps-border);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 10px;
+    }
+
+    .ps-rec-panel { padding: 10px 12px 12px; }
+    .ps-rec-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+    .ps-rec-title {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: var(--ps-muted);
+    }
+    .ps-rec-link {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ps-teal);
+        text-decoration: none;
+    }
+    .ps-rec-link:hover { text-decoration: underline; }
+    .ps-audio { width: 100%; height: 36px; }
+
+    .ps-tabs {
+        display: flex;
+        gap: 0;
+        background: var(--ps-bg);
+        border-bottom: 1px solid var(--ps-border);
+        padding: 0 4px;
+    }
+    .ps-tab {
+        background: transparent;
+        border: none;
+        padding: 9px 12px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--ps-muted);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+    }
+    .ps-tab:hover { color: var(--ps-ink); }
+    .ps-tab.active { color: var(--ps-teal); border-bottom-color: var(--ps-teal); }
+    .ps-tab-body { padding: 14px 14px 16px; }
+
+    .ps-note { color: var(--ps-muted); font-size: 12.5px; }
+    .ps-summary-para {
+        margin: 0;
+        max-width: 78ch;
+        line-height: 1.55;
+        font-size: 13px;
+        color: #334155;
+    }
+    .ps-eval-row { margin: 10px 0 12px; }
+
+    .ps-kv-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 8px;
+        margin-top: 4px;
+    }
+    .ps-kv {
+        border: 1px solid var(--ps-border);
+        border-radius: 6px;
+        padding: 8px 10px;
+        background: var(--ps-bg);
+    }
+    .ps-kv-key {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: var(--ps-muted);
+    }
+    .ps-kv-val {
+        font-size: 12.5px;
+        font-weight: 600;
+        margin-top: 3px;
+        word-break: break-word;
+        color: var(--ps-ink);
+        line-height: 1.35;
+    }
+    .ps-viewjson {
+        color: var(--ps-teal);
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 12px;
+    }
+    .ps-viewjson:hover { text-decoration: underline; }
+
+    .ps-code {
+        background: #0f172a;
+        color: #e2e8f0;
+        border-radius: 6px;
+        padding: 12px;
+        font-size: 12px;
+        overflow: auto;
+        max-height: 420px;
+        font-family: Consolas, "Courier New", monospace;
+        white-space: pre;
+        margin: 0;
+    }
+    .ps-raw { margin-top: 12px; }
+    .ps-raw summary {
+        cursor: pointer;
+        color: var(--ps-teal);
+        font-weight: 600;
+        font-size: 12.5px;
+        margin-bottom: 8px;
+    }
+    .ps-transcript-text {
+        white-space: pre-wrap;
+        font-size: 13px;
+        line-height: 1.55;
+        font-family: inherit;
+        background: transparent;
+        margin: 0;
+        color: #334155;
+    }
+
+    .ps-chat {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-width: 720px;
+    }
+    .ps-bubble-row {
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+    }
+    .ps-bubble-row.cand { flex-direction: row-reverse; }
+    .ps-bubble-ico {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 700;
+        color: #fff;
+    }
+    .ps-bubble-ico.ai { background: var(--ps-teal); }
+    .ps-bubble-ico.cand { background: #b45309; }
+    .ps-bubble {
+        border-radius: 8px;
+        padding: 8px 11px;
+        font-size: 12.5px;
+        line-height: 1.45;
+        max-width: 85%;
+    }
+    .ps-bubble.ai { background: var(--ps-teal-soft); color: #0f3d36; }
+    .ps-bubble.cand { background: #f1f5f9; color: #334155; }
+
+    @@media (max-width: 900px) {
+        .ps-meta-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @@media (max-width: 560px) {
+        .ps-meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
 </style>
 
 @section Scripts {
@@ -249,9 +572,14 @@
                 tabs.forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-tab') === name); });
                 bodies.forEach(function (b) { b.style.display = (b.getAttribute('data-body') === name) ? '' : 'none'; });
             }
-            tabs.forEach(function (t) { t.addEventListener('click', function () { activate(t.getAttribute('data-tab')); }); });
+            tabs.forEach(function (t) {
+                t.addEventListener('click', function () { activate(t.getAttribute('data-tab')); });
+            });
             document.querySelectorAll('.ps-viewjson').forEach(function (a) {
-                a.addEventListener('click', function (e) { e.preventDefault(); activate(a.getAttribute('data-tabjump')); });
+                a.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    activate(a.getAttribute('data-tabjump'));
+                });
             });
         })();
     </script>
