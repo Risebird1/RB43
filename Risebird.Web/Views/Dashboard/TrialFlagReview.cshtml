@@ -234,6 +234,9 @@
     .tfr-action-row--primary .tfr-action-btn {
         flex: 1 1 0;
         min-width: 0;
+        padding: 4px 5px;
+        font-size: 10px;
+        letter-spacing: -0.01em;
     }
     .tfr-action-row--secondary {
         justify-content: flex-start;
@@ -267,12 +270,23 @@
         height: 11px;
     }
     .tfr-cell-stack .tfr-insights-btn i { font-size: 11px; }
+    /* Kept/Removed Undo: same footprint as .tfr-suspicious-badge */
     .tfr-cell-stack .tfr-action-btn--undo-suspicious {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
         margin-top: 4px;
-        height: 22px;
-        padding: 0 7px;
+        height: auto;
+        min-height: 0;
+        min-width: 0;
+        padding: 2px 8px;
+        border-radius: 999px;
         font-size: 10px;
-        border-radius: 5px;
+        font-weight: 700;
+        letter-spacing: .02em;
+        line-height: 1.35;
+        text-transform: uppercase;
+        box-sizing: border-box;
     }
     .tfr-insights-btn { color: #b45309; }
     .tfr-insights-btn:hover { background: #fffbeb; border-color: #fbbf24; }
