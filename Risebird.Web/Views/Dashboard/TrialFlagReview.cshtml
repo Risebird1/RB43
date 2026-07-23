@@ -59,17 +59,80 @@
 <style>
     .tfr-page { padding: 16px; max-width: 100%; box-sizing: border-box; }
 
-    /* Fit Actions…Risk Categories without horizontal scroll at ~1366px */
+    .tfr-table-wrap {
+        overflow-x: auto;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        background: #fff;
+    }
+    .tfr-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        table-layout: fixed;
+    }
+    .tfr-table th, .tfr-table td {
+        border-bottom: 1px solid #e2e8f0;
+        padding: 10px 10px;
+        text-align: left;
+        vertical-align: top;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        white-space: normal;
+        min-width: 0;
+    }
+    .tfr-table th {
+        background: #f8fafc;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+        color: #64748b;
+        white-space: normal;
+    }
+    .tfr-table tbody tr:hover { background: #f8fafc; }
+
+    /* Column width hints so Interviewer/IRF/Owner/Reviewed don't collide */
+    .tfr-table th:nth-child(1), .tfr-table td:nth-child(1) { width: 11%; } /* Actions or Interviewer */
+    .tfr-col-interviewer { width: 14%; }
+    .tfr-col-irf { width: 12%; }
+    .tfr-col-owner { width: 13%; }
+    .tfr-col-interview { width: 11%; }
+    .tfr-col-priority { width: 8%; }
+    .tfr-col-verdict { width: 7%; }
+    .tfr-col-qc { width: 8%; }
+    .tfr-col-ai { width: 8%; }
+    .tfr-col-risk { width: 10%; }
+    .tfr-col-reviewed { width: 12%; }
+
+    .tfr-cell-stack { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .tfr-cell-stack__primary { font-weight: 600; color: #0f172a; line-height: 1.35; }
+    .tfr-cell-stack__secondary { font-size: 11px; color: #64748b; line-height: 1.35; word-break: break-all; }
+    .tfr-cell-stack__meta { font-size: 11px; color: #94a3b8; line-height: 1.35; }
+
+    .tfr-interviewer__name {
+        font-weight: 600; color: #0f172a; font-size: 13px;
+        overflow-wrap: anywhere; word-break: break-word;
+    }
+    .tfr-interviewer__coded { margin-top: 4px; font-size: 12px; color: #475569; overflow-wrap: anywhere; }
+    .tfr-interviewer__coded-label { color: #94a3b8; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; font-weight: 600; margin-right: 4px; }
+    .tfr-interviewer__email { margin-top: 3px; font-size: 11px; color: #64748b; word-break: break-all; }
+
+    .tfr-reviewed-cell { min-width: 0; }
+    .tfr-reviewed-cell__when { font-size: 12px; color: #0f172a; overflow-wrap: anywhere; }
+    .tfr-reviewed-cell__by { margin-top: 2px; font-size: 12px; color: #64748b; word-break: break-all; }
+    .tfr-reviewed-cell__comment {
+        margin-top: 4px; font-size: 12px; color: #475569;
+        white-space: normal; overflow-wrap: anywhere; word-break: break-word;
+    }
+
     @@media (max-width: 1400px) {
         .tfr-page { padding: 12px; }
-        .tfr-table { font-size: 12px; table-layout: fixed; }
+        .tfr-table { font-size: 12px; }
         .tfr-table th, .tfr-table td { padding: 8px 6px; }
-        .tfr-table-wrap { overflow-x: hidden; }
         .tfr-qc-cell { min-width: 0; }
-        .tfr-risk-col { min-width: 0; max-width: 140px; }
-        .tfr-interviewer__email { word-break: break-all; }
+        .tfr-risk-col { min-width: 0; max-width: none; }
         .tfr-ai-links a { font-size: 10px; }
-        .tfr-action-group { gap: 4px; }
+        .tfr-action-group { gap: 4px; min-width: 0; flex-wrap: wrap; }
         .tfr-header__row p { min-width: 0; }
     }
     @@media (min-width: 1401px) {
@@ -86,6 +149,7 @@
         display: inline-flex; align-items: center; gap: 4px;
         padding: 3px 8px; border-radius: 999px; background: #fff;
         border: 1px solid #e2e8f0; font-size: 11px; font-weight: 600; cursor: pointer;
+        max-width: 100%; white-space: normal; overflow-wrap: anywhere;
     }
     .tfr-owner-chip__p0 { color: #b91c1c; }
     .tfr-owner-chip.is-active { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; }
@@ -93,6 +157,7 @@
     .tfr-priority__badge {
         display: inline-block; border-radius: 999px; padding: 2px 9px;
         font-size: 11px; font-weight: 700; line-height: 1.35;
+        white-space: normal;
     }
     .tfr-priority__badge--critical { background: #fee2e2; color: #991b1b; }
     .tfr-priority__badge--medium { background: #ffedd5; color: #9a3412; }
@@ -103,8 +168,8 @@
         height: 32px; border: 1px solid #cbd5e1; border-radius: 6px;
         font-size: 12px; padding: 0 8px; background: #fff; color: #334155; max-width: 220px;
     }
-    .tfr-qc-cell { min-width: 96px; font-size: 12px; }
-    .tfr-qc-metric { display: flex; gap: 4px; align-items: baseline; }
+    .tfr-qc-cell { min-width: 0; font-size: 12px; }
+    .tfr-qc-metric { display: flex; gap: 4px; align-items: baseline; flex-wrap: wrap; }
     .tfr-qc-metric__label { color: #64748b; font-size: 10px; }
     .tfr-qc-metric__value { font-weight: 700; }
     .tfr-qc-metric__value.is-danger { color: #b91c1c; }
@@ -129,11 +194,6 @@
     .tfr-alert { padding: 12px 14px; border-radius: 8px; margin-bottom: 14px; font-size: 13px; }
     .tfr-alert--error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
     .tfr-alert--info { background: #f8fafc; border: 1px solid #e2e8f0; color: #64748b; }
-    .tfr-table-wrap { overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; }
-    .tfr-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .tfr-table th, .tfr-table td { border-bottom: 1px solid #e2e8f0; padding: 10px 12px; text-align: left; vertical-align: top; }
-    .tfr-table th { background: #f8fafc; font-size: 11px; text-transform: uppercase; letter-spacing: .03em; color: #64748b; white-space: nowrap; }
-    .tfr-table tbody tr:hover { background: #f8fafc; }
     .tfr-btn { appearance: none; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; padding: 5px 10px; font-size: 12px; cursor: pointer; margin: 2px 4px 2px 0; text-decoration: none; color: #334155; display: inline-block; }
     .tfr-btn:hover { background: #f1f5f9; }
     .tfr-btn--primary { background: #2563eb; border-color: #2563eb; color: #fff; }
@@ -150,18 +210,18 @@
     .tfr-factor-cell__link { display: inline-block; margin-top: 4px; font-size: 11px; color: #2563eb; text-decoration: none; }
     .tfr-factor-cell__link:hover { text-decoration: underline; }
     .tfr-actions {
-        width: 1%;
-        white-space: nowrap;
-        padding: 12px 14px;
+        width: 10%;
+        white-space: normal;
+        padding: 12px 10px;
         vertical-align: middle;
     }
     .tfr-action-group {
         display: flex;
         flex-direction: row;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
         align-items: center;
         gap: 6px;
-        min-width: 168px;
+        min-width: 0;
     }
     .tfr-insights-btn,
     .tfr-mark-suspicious-btn {
@@ -277,10 +337,6 @@
         outline: 2px solid #3b82f6;
         outline-offset: 2px;
     }
-    .tfr-interviewer__name { font-weight: 600; color: #0f172a; font-size: 13px; }
-    .tfr-interviewer__coded { margin-top: 4px; font-size: 12px; color: #475569; }
-    .tfr-interviewer__coded-label { color: #94a3b8; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; font-weight: 600; margin-right: 4px; }
-    .tfr-interviewer__email { margin-top: 3px; font-size: 11px; color: #64748b; }
     .tfr-pagination { display: none; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 10px 12px; background: #f8fafc; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b; }
     .tfr-pagination.is-visible { display: flex; }
     .tfr-pagination__btns { display: flex; gap: 4px; align-items: center; }
@@ -353,7 +409,10 @@
         border-radius: 6px; font-size: 12px; color: #475569; line-height: 1.4;
     }
     .tfr-candidate-comment strong { color: #0f172a; }
-    .tfr-risk-col { min-width: 160px; max-width: 280px; }
+    .tfr-col-actions { width: 10%; }
+    .tfr-risk-col { min-width: 0; }
+    .tfr-ai-links { display: flex; flex-wrap: wrap; gap: 4px; }
+    .tfr-ai-links a { font-size: 11px; font-weight: 600; color: #1d4ed8; text-decoration: none; white-space: normal; overflow-wrap: anywhere; }
     .tfr-risk-badges { display: flex; flex-wrap: wrap; gap: 3px; }
     .tfr-risk-badge {
         display: inline-block;
@@ -413,8 +472,6 @@
         word-break: break-word;
         line-height: 1.35;
     }
-    .tfr-ai-links { display: flex; flex-wrap: wrap; gap: 4px; }
-    .tfr-ai-links a { font-size: 11px; font-weight: 600; color: #1d4ed8; text-decoration: none; white-space: nowrap; }
     .tfr-ai-links a:hover { text-decoration: underline; }
     .tfr-rating-info {
         display: inline-flex; align-items: center; justify-content: center;
@@ -763,17 +820,17 @@
         <table class="tfr-table" id="tfrTable" style="width:100%;">
             <thead>
                 <tr>
-                    @if (isPendingTab) { <th>Actions</th> }
-                    <th>Interviewer</th>
-                    <th>IRF</th>
-                    <th>Channel owner</th>
-                    <th>Trial interview</th>
-                    <th title="Mapped from severity P0-P5">Client priority</th>
-                    <th>Verdict</th>
-                    <th>QC Merge</th>
-                    <th>AI links</th>
-                    <th>Risk categories</th>
-                    @if (!isPendingTab) { <th>Reviewed</th> }
+                    @if (isPendingTab) { <th class="tfr-col-actions">Actions</th> }
+                    <th class="tfr-col-interviewer">Interviewer</th>
+                    <th class="tfr-col-irf">IRF</th>
+                    <th class="tfr-col-owner">Channel owner</th>
+                    <th class="tfr-col-interview">Trial interview</th>
+                    <th class="tfr-col-priority" title="Mapped from severity P0-P5">Client priority</th>
+                    <th class="tfr-col-verdict">Verdict</th>
+                    <th class="tfr-col-qc">QC Merge</th>
+                    <th class="tfr-col-ai">AI links</th>
+                    <th class="tfr-col-risk">Risk categories</th>
+                    @if (!isPendingTab) { <th class="tfr-col-reviewed">Reviewed</th> }
                 </tr>
             </thead>
             <tbody id="tfrTbody">
@@ -978,7 +1035,8 @@
             var alt = displayPhone(row.interviewerAltMobileNumber || row.InterviewerAltMobileNumber);
             var altH = telHref(row.interviewerAltMobileNumber || row.InterviewerAltMobileNumber);
             var uid = row.interviewerUserId || row.InterviewerUserId || 0;
-            var html = '<td><div class="tfr-interviewer__name">' + esc(name) + '</div>'
+            var html = '<td class="tfr-col-interviewer"><div class="tfr-cell-stack">'
+                + '<div class="tfr-interviewer__name">' + esc(name) + '</div>'
                 + '<div class="tfr-interviewer__coded"><span class="tfr-interviewer__coded-label">Coded</span> ' + esc(coded || '—') + '</div>';
             if (email && email.toLowerCase() !== String(name).toLowerCase())
                 html += '<div class="tfr-interviewer__email">' + esc(email) + '</div>';
@@ -989,15 +1047,55 @@
                 if (uid > 0)
                     html += '<button type="button" class="tfr-action-btn tfr-action-btn--undo-suspicious btn-tfr-undo-suspicious" style="margin-top:4px;" data-user-id="' + uid + '" data-email="' + esc(email) + '">Undo</button>';
             }
-            html += '</td>';
+            html += '</div></td>';
             return html;
         }
+
+        /** Channel owner: name on first line, email on next (never "Name (email)" inline). */
+        function channelOwnerHtml(row) {
+            var display = (row.channelOwner || row.ChannelOwner || '').toString().trim();
+            var email = (row.channelOwnerEmail || row.ChannelOwnerEmail || '').toString().trim();
+            var name = display;
+            var m = display.match(/^(.*?)\s*\(([^()\s@]+@[^()\s]+)\)\s*$/);
+            if (m) {
+                name = (m[1] || '').trim();
+                if (!email) email = (m[2] || '').trim();
+            }
+            if (!name && email) name = email;
+            if (!name) return '<td class="tfr-col-owner"><span class="tfr-cell-stack__meta">—</span></td>';
+            var html = '<td class="tfr-col-owner"><div class="tfr-cell-stack">';
+            if (email && name.toLowerCase() !== email.toLowerCase()) {
+                html += '<div class="tfr-cell-stack__primary">' + esc(name) + '</div>';
+                html += '<div class="tfr-cell-stack__secondary">' + esc(email) + '</div>';
+            } else {
+                html += '<div class="tfr-cell-stack__primary">' + esc(name) + '</div>';
+            }
+            html += '</div></td>';
+            return html;
+        }
+
+        function irfHtml(irfName, irfId) {
+            return '<td class="tfr-col-irf"><div class="tfr-cell-stack">'
+                + '<div class="tfr-cell-stack__primary">' + esc(irfName || ('IRF #' + irfId)) + '</div>'
+                + '<div class="tfr-cell-stack__meta">#' + esc(irfId) + '</div>'
+                + '</div></td>';
+        }
+
+        function reviewedHtml(row) {
+            var html = '<td class="tfr-col-reviewed tfr-reviewed-cell"><div class="tfr-cell-stack">'
+                + '<div class="tfr-reviewed-cell__when">' + esc(formatIst(row.reviewedAtUtc || row.ReviewedAtUtc)) + '</div>'
+                + '<div class="tfr-reviewed-cell__by">' + esc(row.reviewedBy || row.ReviewedBy || '—') + '</div>';
+            var cmt = row.reviewerComment || row.ReviewerComment;
+            if (cmt) html += '<div class="tfr-reviewed-cell__comment">' + esc(cmt) + '</div>';
+            html += '</div></td>';
+            return html;
+        }
+
         function buildMainRow(row) {
             var flagId = row.trialFlagId || row.TrialFlagId;
             var interviewId = row.triggeringInterviewId || row.TriggeringInterviewId || 0;
             var irfId = row.irfId || row.IrfId || 0;
             var irfName = row.irfName || row.IrfName || '';
-            var owner = row.channelOwner || row.ChannelOwner || '';
             var sev = (row.severity || row.Severity || '').toString().toUpperCase() || '—';
             var verdict = row.displayVerdict || row.DisplayVerdict || row.overallVerdict || row.OverallVerdict || 'bad_trial';
             var verdictClass = (verdict || '').toLowerCase() === 'good_trial' ? 'tfr-verdict tfr-verdict--good' : 'tfr-verdict tfr-verdict--bad';
@@ -1005,23 +1103,21 @@
             var html = '<tr class="tfr-main-row" data-flag-id="' + flagId + '" data-interview-id="' + interviewId + '" data-irf-id="' + irfId + '" data-email="' + esc(email) + '">'
                 + actionsHtml(row)
                 + interviewerHtml(row)
-                + '<td><strong>' + esc(irfName || ('#' + irfId)) + '</strong> <span style="color:#94a3b8;">(#' + irfId + ')</span></td>'
-                + '<td style="font-size:12px;color:#475569;">' + esc(owner || '—') + '</td>'
-                + '<td><a href="/Interview/ClientReport?interviewId=' + interviewId + '&irfId=' + irfId + '" target="_blank" rel="noopener">#' + interviewId + '</a>'
-                + '<div style="color:#64748b;font-size:12px;">' + esc(formatIst(row.triggeringInterviewDate || row.TriggeringInterviewDate)) + '</div>'
-                + '<div style="color:#94a3b8;font-size:11px;">Flagged ' + esc(formatIst(row.flaggedAtUtc || row.FlaggedAtUtc)) + '</div>'
-                + '<button type="button" class="tfr-detail-toggle btn-tfr-details" data-flag-id="' + flagId + '">Details</button></td>'
-                + '<td>' + clientPriorityHtml(row) + '</td>'
-                + '<td><span class="' + verdictClass + '">' + esc(verdictLabel(verdict)) + '</span></td>'
-                + '<td>' + qcMergeHtml(row) + '</td>'
-                + '<td>' + aiLinksHtml(interviewId, irfId) + '</td>'
-                + '<td class="tfr-risk-col">' + riskBadgesHtml(row) + '</td>';
+                + irfHtml(irfName, irfId)
+                + channelOwnerHtml(row)
+                + '<td class="tfr-col-interview"><div class="tfr-cell-stack">'
+                + '<a href="/Interview/ClientReport?interviewId=' + interviewId + '&irfId=' + irfId + '" target="_blank" rel="noopener">#' + interviewId + '</a>'
+                + '<div class="tfr-cell-stack__secondary">' + esc(formatIst(row.triggeringInterviewDate || row.TriggeringInterviewDate)) + '</div>'
+                + '<div class="tfr-cell-stack__meta">Flagged ' + esc(formatIst(row.flaggedAtUtc || row.FlaggedAtUtc)) + '</div>'
+                + '<button type="button" class="tfr-detail-toggle btn-tfr-details" data-flag-id="' + flagId + '">Details</button>'
+                + '</div></td>'
+                + '<td class="tfr-col-priority">' + clientPriorityHtml(row) + '</td>'
+                + '<td class="tfr-col-verdict"><span class="' + verdictClass + '">' + esc(verdictLabel(verdict)) + '</span></td>'
+                + '<td class="tfr-col-qc">' + qcMergeHtml(row) + '</td>'
+                + '<td class="tfr-col-ai">' + aiLinksHtml(interviewId, irfId) + '</td>'
+                + '<td class="tfr-col-risk tfr-risk-col">' + riskBadgesHtml(row) + '</td>';
             if (!isPendingTab) {
-                html += '<td><div>' + esc(formatIst(row.reviewedAtUtc || row.ReviewedAtUtc)) + '</div>'
-                    + '<div style="color:#64748b;font-size:12px;">' + esc(row.reviewedBy || row.ReviewedBy || '—') + '</div>';
-                var cmt = row.reviewerComment || row.ReviewerComment;
-                if (cmt) html += '<div style="margin-top:4px;font-size:12px;color:#475569;">' + esc(cmt) + '</div>';
-                html += '</td>';
+                html += reviewedHtml(row);
             }
             html += '</tr>';
             html += '<tr class="tfr-detail-row" data-flag-id="' + flagId + '" style="display:none;"><td colspan="10"><div class="tfr-detail-body">Expand to load detail…</div></td></tr>';
