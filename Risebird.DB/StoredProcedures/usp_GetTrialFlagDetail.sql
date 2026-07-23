@@ -17,6 +17,7 @@ CREATE OR ALTER PROCEDURE [dbo].[usp_GetTrialFlagDetail]
 AS
 BEGIN
     SET NOCOUNT ON;
+    -- Prefer row versions over blocking writers when RCS is enabled (Part 2).
     SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
     IF @TrialFlagId IS NULL OR @TrialFlagId <= 0

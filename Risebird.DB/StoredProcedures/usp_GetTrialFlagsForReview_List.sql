@@ -2,12 +2,21 @@
 ================================================================================
 usp_GetTrialFlagsForReview_List — TIER 1 light grid (paginated)
 
-PERFORMANCE (fixes "wait operation timed out" on Pending):
-  Stage 1 — filter/sort/page on TrialFlags + RiskCategory only (default pending load).
-             Search/owner joins run only when those filters are set.
-  Stage 2 — enrich ONLY the paged rows (≤ @PageSize) with QC + interviewer APPLY.
+MAINTAINER RULE:
+  New GRID columns belong here ONLY if they are cheap keyed probes
+  (unique-key / indexed joins). Anything heavy (JSON_VALUE, OUTER APPLY over
+  QcInterviewAIevaluation / PaymentSLADetails / CandidateFeedbackDetails,
+  free-text aggregations) MUST go in usp_GetTrialFlagDetail.
+  NO JSON parsing, NO PaymentSLA, NO candidate feedback, NO QC-merge fields here.
 
-  Never run UserList multi-branch APPLY or QC APPLY across the full queue.
+PERFORMANCE:
+  Stage 1 — filter/sort/page on TrialFlags + RiskCategory only (default pending).
+             Search/owner joins run only when those filters are set.
+  Stage 2 — enrich ONLY the paged rows (≤ @PageSize) with interviewer APPLY +
+             RiskCategory/IRF/owner labels — never across the full queue.
+
+  Prefer row versions over blocking writers when RCS is enabled (Part 2).
+  Do NOT raise the default command timeout to paper over cost.
 ================================================================================
 */
 CREATE OR ALTER PROCEDURE [dbo].[usp_GetTrialFlagsForReview_List]
@@ -20,6 +29,7 @@ CREATE OR ALTER PROCEDURE [dbo].[usp_GetTrialFlagsForReview_List]
 AS
 BEGIN
     SET NOCOUNT ON;
+    -- Prefer row versions over blocking writers when RCS is enabled (Part 2).
     SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 
     IF @Offset IS NULL OR @Offset < 0 SET @Offset = 0;
@@ -47,14 +57,9 @@ BEGIN
             CAST(NULL AS NVARCHAR(200)) AS InterviewerAltMobileNumber, CAST(0 AS BIT) AS IsSuspicious,
             CAST('' AS NVARCHAR(200)) AS IrfName, CAST(NULL AS VARCHAR(200)) AS ChannelOwnerEmail,
             CAST(NULL AS NVARCHAR(300)) AS ChannelOwner, CAST(NULL AS VARCHAR(MAX)) AS RiskCategoryLabels,
-            CAST(NULL AS VARCHAR(500)) AS RiskCategoryReasons, CAST(NULL AS VARCHAR(20)) AS QcMergeVerdict,
-            CAST(NULL AS INT) AS QcMergeTotalPenalty, CAST(NULL AS INT) AS QcMergeQcScore,
-            CAST(NULL AS INT) AS QcMergeScore, CAST(0 AS INT) AS TotalRows;
+            CAST(NULL AS VARCHAR(500)) AS RiskCategoryReasons, CAST(0 AS INT) AS TotalRows;
         RETURN;
     END;
-
-    DECLARE @HasAiMergePenalty BIT = CASE
-        WHEN COL_LENGTH('dbo.QcInterviewAIevaluation', 'AIMergeTotalPenalty') IS NOT NULL THEN 1 ELSE 0 END;
 
     IF OBJECT_ID('tempdb..#TfrPage') IS NOT NULL DROP TABLE #TfrPage;
     CREATE TABLE #TfrPage (
@@ -227,9 +232,7 @@ BEGIN
             CAST(NULL AS NVARCHAR(200)) AS InterviewerAltMobileNumber, CAST(0 AS BIT) AS IsSuspicious,
             CAST('' AS NVARCHAR(200)) AS IrfName, CAST(NULL AS VARCHAR(200)) AS ChannelOwnerEmail,
             CAST(NULL AS NVARCHAR(300)) AS ChannelOwner, CAST(NULL AS VARCHAR(MAX)) AS RiskCategoryLabels,
-            CAST(NULL AS VARCHAR(500)) AS RiskCategoryReasons, CAST(NULL AS VARCHAR(20)) AS QcMergeVerdict,
-            CAST(NULL AS INT) AS QcMergeTotalPenalty, CAST(NULL AS INT) AS QcMergeQcScore,
-            CAST(NULL AS INT) AS QcMergeScore, CAST(0 AS INT) AS TotalRows;
+            CAST(NULL AS VARCHAR(500)) AS RiskCategoryReasons, CAST(0 AS INT) AS TotalRows;
         DROP TABLE #TfrPage;
         RETURN;
     END;
@@ -294,16 +297,6 @@ BEGIN
         END AS ChannelOwner,
         rc.Name AS RiskCategoryLabels,
         rc.Description AS RiskCategoryReasons,
-        CASE
-            WHEN q.InterviewId IS NULL THEN NULL
-            WHEN ISNULL(q.AIMergeRedoInterview, 0) = 1 THEN 'redo'
-            WHEN UPPER(LTRIM(RTRIM(ISNULL(q.AIMergeInterviewerSuspicious, '')))) IN ('YES', 'Y', 'TRUE') THEN 'suspicious'
-            WHEN NULLIF(LTRIM(RTRIM(ISNULL(q.qcmergeverdict, ''))), '') IS NOT NULL THEN LTRIM(RTRIM(q.qcmergeverdict))
-            ELSE 'ok'
-        END AS QcMergeVerdict,
-        CASE WHEN @HasAiMergePenalty = 1 THEN q.AIMergeTotalPenalty ELSE NULL END AS QcMergeTotalPenalty,
-        q.qcmergescore AS QcMergeQcScore,
-        CASE WHEN @HasAiMergePenalty = 1 THEN q.AIMergeTotalPenalty ELSE NULL END AS QcMergeScore,
         p.TotalRows
     FROM #TfrPage p
     LEFT JOIN dbo.RiskCategory rc ON rc.InterviewId = p.TriggeringInterviewId
@@ -316,15 +309,6 @@ BEGIN
     LEFT JOIN dbo.InterviewerProfile ipViaTi ON ipViaTi.id = COALESCE(ti.InterviewerId, p.InterviewerId)
     LEFT JOIN dbo.UserList ulViaInterviewer ON ulViaInterviewer.id = iv.UserId
     LEFT JOIN dbo.InterviewerProfile ipViaInterviewer ON ipViaInterviewer.UserId = iv.UserId
-    OUTER APPLY (
-        SELECT TOP 1
-            qq.InterviewId, qq.qcmergeverdict, qq.qcmergescore,
-            qq.AIMergeRedoInterview, qq.AIMergeInterviewerSuspicious,
-            CASE WHEN @HasAiMergePenalty = 1 THEN qq.AIMergeTotalPenalty END AS AIMergeTotalPenalty
-        FROM dbo.QcInterviewAIevaluation qq
-        WHERE qq.InterviewId = p.TriggeringInterviewId
-        ORDER BY qq.id DESC
-    ) q
     OUTER APPLY (
         SELECT TOP 1 x.UserId, x.EmailId, x.MobileNumber
         FROM (

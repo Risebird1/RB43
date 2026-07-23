@@ -886,7 +886,6 @@
                     <th class="tfr-col-interview">Trial interview</th>
                     <th class="tfr-col-priority" title="Mapped from severity P0-P5">Client priority</th>
                     <th class="tfr-col-verdict">Verdict</th>
-                    <th class="tfr-col-qc">QC Merge</th>
                     <th class="tfr-col-ai">AI links</th>
                     <th class="tfr-col-risk">Risk categories</th>
                     @if (!isPendingTab) { <th class="tfr-col-reviewed">Reviewed</th> }
@@ -1009,30 +1008,6 @@
                 mod = meta.Css || meta.css || 'low';
             }
             return '<div class="tfr-priority"><span class="tfr-priority__badge tfr-priority__badge--' + esc(mod) + '">' + esc(badge) + '</span></div>';
-        }
-        function qcMergeHtml(row) {
-            var v = row.qcMergeVerdict || row.QcMergeVerdict;
-            var pen = row.qcMergeTotalPenalty != null ? row.qcMergeTotalPenalty : row.QcMergeTotalPenalty;
-            var qc = row.qcMergeQcScore != null ? row.qcMergeQcScore : row.QcMergeQcScore;
-            if (!v && pen == null && qc == null) return '<span style="color:#94a3b8;">\u2014</span>';
-            var html = '<div class="tfr-qc-cell">';
-            if (pen != null || qc != null) {
-                html += '<div class="tfr-qc-metrics">';
-                if (pen != null) {
-                    var pTone = pen >= 10 ? 'is-danger' : (pen >= 5 ? 'is-warn' : 'is-ok');
-                    html += '<div class="tfr-qc-metric"><span class="tfr-qc-metric__label">Penalty</span><span class="tfr-qc-metric__value ' + pTone + '">' + esc(pen) + '</span></div>';
-                }
-                if (qc != null) {
-                    var sTone = qc >= 8 ? 'is-ok' : (qc >= 5 ? 'is-warn' : 'is-danger');
-                    html += '<div class="tfr-qc-metric"><span class="tfr-qc-metric__label">QC</span><span class="tfr-qc-metric__value ' + sTone + '">' + esc(qc) + '</span></div>';
-                }
-                html += '</div>';
-            }
-            if (v) {
-                var css = (String(v).toLowerCase() === 'redo') ? 'is-redo' : (String(v).toLowerCase() === 'suspicious' ? 'is-suspicious' : 'is-ok');
-                html += '<div><span class="tfr-qc-verdict ' + css + '">' + esc(v) + '</span></div>';
-            }
-            return html + '</div>';
         }
         function riskBadgesHtml(row) {
             var labels = (row.riskCategoryLabels || row.RiskCategoryLabels || '');
@@ -1177,7 +1152,6 @@
                 + '</div></td>'
                 + '<td class="tfr-col-priority">' + clientPriorityHtml(row) + '</td>'
                 + '<td class="tfr-col-verdict"><span class="' + verdictClass + '">' + esc(verdictLabel(verdict)) + '</span></td>'
-                + '<td class="tfr-col-qc">' + qcMergeHtml(row) + '</td>'
                 + '<td class="tfr-col-ai">' + aiLinksHtml(interviewId, irfId) + '</td>'
                 + '<td class="tfr-col-risk tfr-risk-col">' + riskBadgesHtml(row) + '</td>';
             if (!isPendingTab) {
