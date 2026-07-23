@@ -58,6 +58,45 @@
 
 <style>
     .tfr-page { padding: 16px; max-width: 1800px; }
+
+    .tfr-owner-strip {
+        display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+        margin-bottom: 12px; padding: 8px 10px; background: #f8fafc;
+        border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; color: #334155;
+    }
+    .tfr-owner-strip__label { font-weight: 700; color: #64748b; text-transform: uppercase; font-size: 10px; letter-spacing: .04em; margin-right: 4px; }
+    .tfr-owner-chip {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 3px 8px; border-radius: 999px; background: #fff;
+        border: 1px solid #e2e8f0; font-size: 11px; font-weight: 600; cursor: pointer;
+    }
+    .tfr-owner-chip__p0 { color: #b91c1c; }
+    .tfr-owner-chip.is-active { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; }
+    .tfr-priority { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+    .tfr-priority__badge {
+        display: inline-block; border-radius: 999px; padding: 2px 9px;
+        font-size: 11px; font-weight: 700; line-height: 1.35;
+    }
+    .tfr-priority__badge--critical { background: #fee2e2; color: #991b1b; }
+    .tfr-priority__badge--medium { background: #ffedd5; color: #9a3412; }
+    .tfr-priority__badge--low { background: #f1f5f9; color: #475569; }
+    .tfr-priority__badge--clear { background: #dcfce7; color: #166534; }
+    .tfr-filter { display: flex; align-items: center; gap: 6px; }
+    .tfr-filter select {
+        height: 32px; border: 1px solid #cbd5e1; border-radius: 6px;
+        font-size: 12px; padding: 0 8px; background: #fff; color: #334155; max-width: 220px;
+    }
+    .tfr-qc-cell { min-width: 96px; font-size: 12px; }
+    .tfr-qc-metric { display: flex; gap: 4px; align-items: baseline; }
+    .tfr-qc-metric__label { color: #64748b; font-size: 10px; }
+    .tfr-qc-metric__value { font-weight: 700; }
+    .tfr-qc-metric__value.is-danger { color: #b91c1c; }
+    .tfr-qc-metric__value.is-warn { color: #b45309; }
+    .tfr-qc-metric__value.is-ok { color: #166534; }
+    .tfr-qc-verdict { display: inline-block; border-radius: 999px; padding: 1px 7px; font-size: 10px; font-weight: 700; text-transform: capitalize; }
+    .tfr-qc-verdict.is-redo { background: #fee2e2; color: #991b1b; }
+    .tfr-qc-verdict.is-suspicious { background: #ffedd5; color: #9a3412; }
+    .tfr-qc-verdict.is-ok { background: #dcfce7; color: #166534; }
     .tfr-header { margin-bottom: 16px; }
     .tfr-header h2 { margin: 0 0 6px; font-size: 20px; color: #0f172a; }
     .tfr-header__row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
@@ -656,7 +695,13 @@
                     <option value="P5">P5 (clean)</option>
                 </select>
             </div>
-            <div class="tfr-search">
+            
+            <div class="tfr-filter">
+                <label for="tfrOwnerFilter" style="font-size:11px;color:#64748b;white-space:nowrap;">Channel owner</label>
+                <select id="tfrOwnerFilter" aria-label="Filter by channel owner">
+                    <option value="">All owners</option>
+                </select>
+            </div><div class="tfr-search">
                 <div class="tfr-search__box">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
                     <input type="search" id="tfrSearch" class="tfr-search__input" placeholder="Search IRF, interviewer, ownerâ€¦" autocomplete="off" />
@@ -693,6 +738,10 @@
         <div class="tfr-alert tfr-alert--info"><strong>No trial flags to show.</strong> @(Model.EmptyStateHint ?? "dbo.TrialFlags missing.")</div>
     }
 
+    <div class="tfr-owner-strip" id="tfrOwnerStrip" aria-live="polite">
+        <span class="tfr-owner-strip__label">P0s by owner</span>
+        <span id="tfrOwnerStripBody" style="color:#94a3b8;">Loading...</span>
+    </div>
     <div class="tfr-table-wrap">
         <table class="tfr-table" id="tfrTable" style="width:100%;">
             <thead>
@@ -702,8 +751,9 @@
                     <th>IRF</th>
                     <th>Channel owner</th>
                     <th>Trial interview</th>
-                    <th title="P0 = highest severity â€¦ P5 = clean">Severity</th>
+                    <th title="Mapped from severity P0-P5">Client priority</th>
                     <th>Verdict</th>
+                    <th>QC Merge</th>
                     <th>AI links</th>
                     <th>Risk categories</th>
                     @if (!isPendingTab) { <th>Reviewed</th> }
@@ -756,6 +806,8 @@
         var currentPage = 1;
         var searchTerm = '';
         var severityFilter = '';
+        var channelOwnerFilter = '';
+        var ownerSummaries = [];
         var drawSeq = 0;
         var totalFiltered = 0;
         var detailCache = {};
@@ -796,6 +848,42 @@
             var href = telHref(mobile);
             if (!href) return null;
             return '+91 ' + href.replace('tel:+91', '');
+        }
+
+        function clientPriorityHtml(sev) {
+            var p = (sev || '').toString().toUpperCase();
+            if (!p || p === '-' || p === '\u2014') p = '';
+            var tier = 'Low', mod = 'low';
+            if (p === 'P0' || p === 'P1') { tier = 'Critical'; mod = 'critical'; }
+            else if (p === 'P2' || p === 'P3') { tier = 'Medium'; mod = 'medium'; }
+            else if (p === 'P5') { tier = 'Clear'; mod = 'clear'; }
+            else if (p === 'P4') { tier = 'Low'; mod = 'low'; }
+            var label = p ? (tier + ' \u00b7 ' + p) : tier;
+            return '<div class="tfr-priority"><span class="tfr-priority__badge tfr-priority__badge--' + mod + '">' + esc(label) + '</span></div>';
+        }
+        function qcMergeHtml(row) {
+            var v = row.qcMergeVerdict || row.QcMergeVerdict;
+            var pen = row.qcMergeTotalPenalty != null ? row.qcMergeTotalPenalty : row.QcMergeTotalPenalty;
+            var qc = row.qcMergeQcScore != null ? row.qcMergeQcScore : row.QcMergeQcScore;
+            if (!v && pen == null && qc == null) return '<span style="color:#94a3b8;">\u2014</span>';
+            var html = '<div class="tfr-qc-cell">';
+            if (pen != null || qc != null) {
+                html += '<div class="tfr-qc-metrics">';
+                if (pen != null) {
+                    var pTone = pen >= 10 ? 'is-danger' : (pen >= 5 ? 'is-warn' : 'is-ok');
+                    html += '<div class="tfr-qc-metric"><span class="tfr-qc-metric__label">Penalty</span><span class="tfr-qc-metric__value ' + pTone + '">' + esc(pen) + '</span></div>';
+                }
+                if (qc != null) {
+                    var sTone = qc >= 8 ? 'is-ok' : (qc >= 5 ? 'is-warn' : 'is-danger');
+                    html += '<div class="tfr-qc-metric"><span class="tfr-qc-metric__label">QC</span><span class="tfr-qc-metric__value ' + sTone + '">' + esc(qc) + '</span></div>';
+                }
+                html += '</div>';
+            }
+            if (v) {
+                var css = (String(v).toLowerCase() === 'redo') ? 'is-redo' : (String(v).toLowerCase() === 'suspicious' ? 'is-suspicious' : 'is-ok');
+                html += '<div><span class="tfr-qc-verdict ' + css + '">' + esc(v) + '</span></div>';
+            }
+            return html + '</div>';
         }
         function riskBadgesHtml(row) {
             var labels = (row.riskCategoryLabels || row.RiskCategoryLabels || '');
@@ -890,8 +978,9 @@
                 + '<div style="color:#64748b;font-size:12px;">' + esc(formatIst(row.triggeringInterviewDate || row.TriggeringInterviewDate)) + '</div>'
                 + '<div style="color:#94a3b8;font-size:11px;">Flagged ' + esc(formatIst(row.flaggedAtUtc || row.FlaggedAtUtc)) + '</div>'
                 + '<button type="button" class="tfr-detail-toggle btn-tfr-details" data-flag-id="' + flagId + '">Details</button></td>'
-                + '<td><span class="' + severityCss(sev) + '">' + esc(sev) + '</span></td>'
+                + '<td>' + clientPriorityHtml(sev) + '</td>'
                 + '<td><span class="' + verdictClass + '">' + esc(verdictLabel(verdict)) + '</span></td>'
+                + '<td>' + qcMergeHtml(row) + '</td>'
                 + '<td>' + aiLinksHtml(interviewId, irfId) + '</td>'
                 + '<td class="tfr-risk-col">' + riskBadgesHtml(row) + '</td>';
             if (!isPendingTab) {
@@ -920,6 +1009,10 @@
             html += '<div class="tfr-ai-body" data-interview-id="' + interviewId + '" data-irf-id="' + irfId + '">Loadingâ€¦</div>';
 
             var breakdown = d.severityBreakdown || d.SeverityBreakdown;
+            var sevDetail = d.severity || d.Severity || '';
+            if (sevDetail) {
+                html += '<div style="margin-top:8px;font-size:12px;"><strong>Client priority:</strong> ' + clientPriorityHtml(sevDetail) + '</div>';
+            }
             if (breakdown) {
                 html += '<div style="margin-top:10px;font-size:12px;font-weight:700;">Flag breakdown</div><div class="tfr-candidate-comment">' + esc(breakdown) + '</div>';
             }
@@ -943,12 +1036,17 @@
             var dur = d.interviewDurationMinutes != null ? d.interviewDurationMinutes : d.InterviewDurationMinutes;
             html += factorLine(!!(d.transcriptQualityPass || d.TranscriptQualityPass), 'Transcript', tScore != null ? (tScore + '/10') : null, '/AIScreener/TransciptAnalysis?interviewId=' + interviewId + '&irfId=' + irfId);
             html += factorLine(!!(d.reportQualityPass || d.ReportQualityPass), 'Report', rScore != null ? (rScore + '/100') : null, '/Interview/ReportAIDetailsReport?interviewId=' + interviewId);
-            html += factorLine(!!(d.candidateRatingPass || d.CandidateRatingPass), 'Candidate rating', rating != null ? (rating + '/5') : null, '/Interview/PaymentSlaDetails?interviewId=' + interviewId + '&returnBack=0&actionstatus=SLACompleted');
+            var ratingDetail = rating != null ? (rating + '/5') : null;
+            var fb = d.candidateFeedbackComment || d.CandidateFeedbackComment;
+            var ratingHtml = factorLine(!!(d.candidateRatingPass || d.CandidateRatingPass), 'Candidate rating', ratingDetail, '/Interview/PaymentSlaDetails?interviewId=' + interviewId + '&returnBack=0&actionstatus=SLACompleted');
+            if (fb) {
+                ratingHtml = ratingHtml.replace('</div></div>', ' <span class="tfr-rating-info" title="' + esc(fb) + '" aria-label="Candidate feedback comment">i</span></div></div>');
+            }
+            html += ratingHtml;
             html += factorLine(!!(d.joinTimePass || d.JoinTimePass), 'Join time', join != null ? (join + ' min') : null, null);
             html += factorLine(!!(d.interviewDurationPass || d.InterviewDurationPass), 'Duration', dur != null ? (dur + ' min') : null, null);
             html += '</div>';
 
-            var fb = d.candidateFeedbackComment || d.CandidateFeedbackComment;
             if (fb) {
                 html += '<div style="margin-top:10px;font-size:12px;font-weight:700;">Candidate feedback</div><div class="tfr-candidate-comment">' + esc(fb) + '</div>';
             }
@@ -1015,6 +1113,38 @@
             });
         }
 
+
+        function renderOwnerStrip(summaries) {
+            ownerSummaries = summaries || [];
+            var $sel = $('#tfrOwnerFilter');
+            var cur = channelOwnerFilter;
+            var opts = '<option value="">All owners</option>';
+            ownerSummaries.forEach(function (o) {
+                var email = o.channelOwnerEmail || o.ChannelOwnerEmail || '';
+                var label = o.channelOwner || o.ChannelOwner || email || '(unassigned)';
+                var p0 = o.p0Count != null ? o.p0Count : (o.P0Count || 0);
+                var tot = o.totalCount != null ? o.totalCount : (o.TotalCount || 0);
+                opts += '<option value="' + esc(email) + '"' + (email === cur ? ' selected' : '') + '>' + esc(label) + ' (' + p0 + ' P0 / ' + tot + ')</option>';
+            });
+            $sel.html(opts);
+            var list = ownerSummaries.slice();
+            if (cur) list = list.filter(function (o) { return (o.channelOwnerEmail || o.ChannelOwnerEmail || '') === cur; });
+            if (!list.length) {
+                $('#tfrOwnerStripBody').html('<span style="color:#94a3b8;">No owners on this tab.</span>');
+                return;
+            }
+            var body = '';
+            list.forEach(function (o) {
+                var email = o.channelOwnerEmail || o.ChannelOwnerEmail || '';
+                var label = o.channelOwner || o.ChannelOwner || email || '(unassigned)';
+                var p0 = o.p0Count != null ? o.p0Count : (o.P0Count || 0);
+                var tot = o.totalCount != null ? o.totalCount : (o.TotalCount || 0);
+                var active = email === cur ? ' is-active' : '';
+                body += '<button type="button" class="tfr-owner-chip' + active + '" data-owner="' + esc(email) + '">'
+                    + esc(label) + ' : <span class="tfr-owner-chip__p0">' + p0 + ' P0</span> Â· ' + tot + ' total</button>';
+            });
+            $('#tfrOwnerStripBody').html(body);
+        }
         function updateCounts(res) {
             if (res.pendingCount != null) $('#tfrCountPending').text('(' + res.pendingCount + ')');
             if (res.keptCount != null) $('#tfrCountKept').text('(' + res.keptCount + ')');
@@ -1053,7 +1183,8 @@
                     start: (currentPage - 1) * PAGE_SIZE,
                     length: PAGE_SIZE,
                     search: searchTerm,
-                    severity: severityFilter
+                    severity: severityFilter,
+                    channelOwner: channelOwnerFilter
                 }
             }).done(function (res) {
                 if (myDraw !== drawSeq) return;
@@ -1064,6 +1195,7 @@
                     return;
                 }
                 updateCounts(res);
+                renderOwnerStrip(res.ownerSummaries || res.OwnerSummaries || []);
                 totalFiltered = res.recordsFiltered || 0;
                 var rows = res.data || [];
                 if (!rows.length) {
@@ -1104,6 +1236,18 @@
         });
         $('#tfrSeverityFilter').on('change', function () {
             severityFilter = ($(this).val() || '').toUpperCase();
+            currentPage = 1;
+            loadPage();
+        });
+        $('#tfrOwnerFilter').on('change', function () {
+            channelOwnerFilter = ($(this).val() || '').trim();
+            currentPage = 1;
+            loadPage();
+        });
+        $(document).on('click', '.tfr-owner-chip', function () {
+            var email = ($(this).data('owner') || '').toString();
+            channelOwnerFilter = email;
+            $('#tfrOwnerFilter').val(email);
             currentPage = 1;
             loadPage();
         });

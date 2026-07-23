@@ -83,7 +83,8 @@ namespace Risebird.Business
 
             var counts = await _repository.GetStatusCountsAsync();
             var (rows, total) = await _repository.GetTrialFlagsListAsync(
-                tab, offset, pageSize, request.Search, request.Severity);
+                tab, offset, pageSize, request.Search, request.Severity, request.ChannelOwner);
+            var owners = await _repository.GetOwnerSummariesAsync(tab);
 
             return new TrialFlagReviewListResultVm
             {
@@ -93,7 +94,8 @@ namespace Risebird.Business
                 Data = rows,
                 PendingCount = counts.Pending,
                 KeptCount = counts.Kept,
-                RemovedCount = counts.Removed
+                RemovedCount = counts.Removed,
+                OwnerSummaries = owners
             };
         }
 

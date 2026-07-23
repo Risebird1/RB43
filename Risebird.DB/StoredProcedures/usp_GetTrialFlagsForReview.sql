@@ -7,7 +7,7 @@ Replaced by the lazy two-tier read model (trial-read-architecture):
   • usp_GetTrialFlagDetail           — on-demand heavy row detail
 
 This stub remains so accidental callers fail fast instead of timing out production.
-Do not restore the wide single-shot query. See docs/trial-flag-review-read-architecture.md.
+Do not restore the wide single-shot query.
 ================================================================================
 */
 CREATE OR ALTER PROCEDURE [dbo].[usp_GetTrialFlagsForReview]

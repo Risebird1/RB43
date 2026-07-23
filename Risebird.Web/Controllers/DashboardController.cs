@@ -8050,7 +8050,8 @@ NEVER:
             int start = 0,
             int length = 25,
             string search = null,
-            string severity = null)
+            string severity = null,
+            string channelOwner = null)
         {
             try
             {
@@ -8072,6 +8073,7 @@ NEVER:
                     PageSize = length <= 0 ? 25 : length,
                     Search = search,
                     Severity = severity,
+                    ChannelOwner = channelOwner,
                     Draw = draw
                 });
 
@@ -8084,6 +8086,7 @@ NEVER:
                     pendingCount = result.PendingCount,
                     keptCount = result.KeptCount,
                     removedCount = result.RemovedCount,
+                    ownerSummaries = result.OwnerSummaries,
                     error = result.Error
                 });
             }

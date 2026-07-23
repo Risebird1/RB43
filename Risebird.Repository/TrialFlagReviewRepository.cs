@@ -90,7 +90,7 @@ namespace Risebird.Repository
         }
 
         public async Task<(IReadOnlyList<TrialFlagReviewRowVm> Rows, int TotalRows)> GetTrialFlagsListAsync(
-            string reviewStatus, int offset, int pageSize, string search = null, string severity = null)
+            string reviewStatus, int offset, int pageSize, string search = null, string severity = null, string channelOwner = null)
         {
             var sw = Stopwatch.StartNew();
             try
@@ -104,7 +104,8 @@ namespace Risebird.Repository
                         Offset = Math.Max(0, offset),
                         PageSize = pageSize <= 0 ? 25 : Math.Min(pageSize, 200),
                         Search = string.IsNullOrWhiteSpace(search) ? null : search.Trim(),
-                        Severity = string.IsNullOrWhiteSpace(severity) ? null : severity.Trim()
+                        Severity = string.IsNullOrWhiteSpace(severity) ? null : severity.Trim(),
+                        ChannelOwner = string.IsNullOrWhiteSpace(channelOwner) ? null : channelOwner.Trim()
                     },
                     commandType: CommandType.StoredProcedure)).ToList();
 
@@ -113,7 +114,7 @@ namespace Risebird.Repository
                     "usp_GetTrialFlagsForReview_List",
                     sw.Elapsed,
                     SlowQueryWarnSecondsList,
-                    $"status={reviewStatus};offset={offset};pageSize={pageSize};search={search};severity={severity};rows={rows.Count}");
+                    $"status={reviewStatus};offset={offset};pageSize={pageSize};search={search};severity={severity};owner={channelOwner};rows={rows.Count}");
 
                 var total = rows.FirstOrDefault()?.TotalRows ?? 0;
                 return (rows.Select(MapListRow).ToList(), total);
@@ -122,6 +123,24 @@ namespace Risebird.Repository
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 throw;
+            }
+        }
+
+        public async Task<IReadOnlyList<TrialFlagOwnerSummaryVm>> GetOwnerSummariesAsync(string reviewStatus)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var rows = await con.QueryAsync<TrialFlagOwnerSummaryVm>(
+                    "usp_GetTrialFlagOwnerSummary",
+                    new { ReviewStatus = string.IsNullOrWhiteSpace(reviewStatus) ? null : reviewStatus.Trim() },
+                    commandType: CommandType.StoredProcedure);
+                return rows?.ToList() ?? new List<TrialFlagOwnerSummaryVm>();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Array.Empty<TrialFlagOwnerSummaryVm>();
             }
         }
 
@@ -186,9 +205,14 @@ namespace Risebird.Repository
                 IsSuspicious = row.IsSuspicious,
                 IrfName = row.IrfName,
                 ChannelOwner = row.ChannelOwner,
+                ChannelOwnerEmail = row.ChannelOwnerEmail,
                 Severity = row.Severity,
                 RiskCategoryLabels = row.RiskCategoryLabels,
-                RiskCategoryReasons = row.RiskCategoryReasons
+                RiskCategoryReasons = row.RiskCategoryReasons,
+                QcMergeVerdict = row.QcMergeVerdict,
+                QcMergeTotalPenalty = row.QcMergeTotalPenalty,
+                QcMergeQcScore = row.QcMergeQcScore,
+                QcMergeScore = row.QcMergeScore ?? row.QcMergeTotalPenalty
             };
 
         private static TrialFlagReviewRowVm MapDetailRow(TrialFlagDetailDbRow row) =>
@@ -287,10 +311,15 @@ namespace Risebird.Repository
             public string InterviewerAltMobileNumber { get; set; }
             public bool IsSuspicious { get; set; }
             public string IrfName { get; set; }
+            public string ChannelOwnerEmail { get; set; }
             public string ChannelOwner { get; set; }
             public string Severity { get; set; }
             public string RiskCategoryLabels { get; set; }
             public string RiskCategoryReasons { get; set; }
+            public string QcMergeVerdict { get; set; }
+            public int? QcMergeTotalPenalty { get; set; }
+            public int? QcMergeQcScore { get; set; }
+            public int? QcMergeScore { get; set; }
             public int TotalRows { get; set; }
         }
 

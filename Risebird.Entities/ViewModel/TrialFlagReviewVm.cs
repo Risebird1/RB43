@@ -90,7 +90,25 @@ namespace Risebird.Entities.ViewModel
         public bool LiveMetrics { get; set; }
     }
 
-    /// <summary>DataTables-compatible / AJAX list page result.</summary>
+    public class TrialFlagReviewListRequest
+    {
+        public string Tab { get; set; }
+        public int Offset { get; set; }
+        public int PageSize { get; set; } = 25;
+        public string Search { get; set; }
+        public int Draw { get; set; }
+        public string Severity { get; set; }
+        public string ChannelOwner { get; set; }
+    }
+
+    public class TrialFlagOwnerSummaryVm
+    {
+        public string ChannelOwnerEmail { get; set; }
+        public string ChannelOwner { get; set; }
+        public int P0Count { get; set; }
+        public int TotalCount { get; set; }
+    }
+
     public class TrialFlagReviewListResultVm
     {
         public int Draw { get; set; }
@@ -101,16 +119,7 @@ namespace Risebird.Entities.ViewModel
         public int PendingCount { get; set; }
         public int KeptCount { get; set; }
         public int RemovedCount { get; set; }
-    }
-
-    public class TrialFlagReviewListRequest
-    {
-        public string Tab { get; set; }
-        public int Offset { get; set; }
-        public int PageSize { get; set; } = 25;
-        public string Search { get; set; }
-        public int Draw { get; set; }
-        public string Severity { get; set; }
+        public IReadOnlyList<TrialFlagOwnerSummaryVm> OwnerSummaries { get; set; } = Array.Empty<TrialFlagOwnerSummaryVm>();
     }
 
     public class TrialFlagReviewRowVm
@@ -152,8 +161,10 @@ namespace Risebird.Entities.ViewModel
         /// <summary>True when SuspiciousInterviewer.SuspiciousStatus = 1 for this user.</summary>
         public bool IsSuspicious { get; set; }
         public string IrfName { get; set; }
-        /// <summary>IRF.RisebirdHr → UserList.EmailId (cheap keyed probe; List tier).</summary>
+        /// <summary>Display: "Name (email)" or email — IRF.RisebirdHr → UserList.</summary>
         public string ChannelOwner { get; set; }
+        /// <summary>Raw owner email for filter keys.</summary>
+        public string ChannelOwnerEmail { get; set; }
         public string Severity { get; set; }
         public string RiskCategoryLabels { get; set; }
         public string RiskCategoryReasons { get; set; }
