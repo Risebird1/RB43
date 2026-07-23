@@ -132,7 +132,8 @@
         .tfr-qc-cell { min-width: 0; }
         .tfr-risk-col { min-width: 0; max-width: none; }
         .tfr-ai-links a { font-size: 10px; }
-        .tfr-action-group { gap: 4px; min-width: 0; flex-wrap: wrap; }
+        .tfr-action-group { gap: 4px; min-width: 0; }
+        .tfr-action-row { gap: 4px; }
         .tfr-header__row p { min-width: 0; }
     }
     @@media (min-width: 1401px) {
@@ -217,11 +218,25 @@
     }
     .tfr-action-group {
         display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+        min-width: 0;
+    }
+    .tfr-action-row {
+        display: flex;
         flex-direction: row;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         align-items: center;
         gap: 6px;
         min-width: 0;
+    }
+    .tfr-action-row--primary .tfr-action-btn {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+    .tfr-action-row--secondary {
+        justify-content: flex-start;
     }
     .tfr-insights-btn,
     .tfr-mark-suspicious-btn {
@@ -238,6 +253,26 @@
         flex-shrink: 0;
         box-sizing: border-box;
         line-height: 1;
+    }
+    /* Compact icon/undo controls in Interviewer column (Kept/Removed) */
+    .tfr-cell-stack .tfr-mark-suspicious-btn,
+    .tfr-cell-stack .tfr-insights-btn {
+        width: 22px;
+        height: 22px;
+        border-radius: 5px;
+        margin-top: 4px;
+    }
+    .tfr-cell-stack .tfr-mark-suspicious-btn img {
+        width: 11px;
+        height: 11px;
+    }
+    .tfr-cell-stack .tfr-insights-btn i { font-size: 11px; }
+    .tfr-cell-stack .tfr-action-btn--undo-suspicious {
+        margin-top: 4px;
+        height: 22px;
+        padding: 0 7px;
+        font-size: 10px;
+        border-radius: 5px;
     }
     .tfr-insights-btn { color: #b45309; }
     .tfr-insights-btn:hover { background: #fffbeb; border-color: #fbbf24; }
@@ -273,13 +308,23 @@
     .tfr-phone a { color: #2563eb; text-decoration: none; }
     .tfr-phone a:hover { text-decoration: underline; }
     .tfr-action-btn--undo-suspicious {
-        background: #fff;
-        border-color: #fecaca;
-        color: #991b1b;
+        background: #fdecec;
+        border-color: #f5c2c7;
+        color: #9f1239;
         min-width: 0;
         flex: 0 0 auto;
-        padding: 8px 10px;
-        font-size: 11px;
+        padding: 4px 8px;
+        font-size: 10px;
+        font-weight: 600;
+        height: 28px;
+        box-shadow: none;
+    }
+    .tfr-action-btn--undo-suspicious:hover {
+        background: #f8d7da;
+        border-color: #f1aeb5;
+        color: #881337;
+        transform: none;
+        box-shadow: none;
     }
     .tfr-action-btn {
         display: inline-flex;
@@ -1013,17 +1058,20 @@
             var name = row.interviewerName || row.InterviewerName || '';
             var irf = row.irfName || row.IrfName || '';
             var html = '<td class="tfr-actions"><div class="tfr-action-group">'
+                + '<div class="tfr-action-row tfr-action-row--primary">'
                 + '<button type="button" class="tfr-action-btn tfr-action-btn--keep btn-tfr-keep" data-flag-id="' + flagId + '" data-interviewer="' + esc(name) + '" data-irf="' + esc(irf) + '"><span>Keep</span></button>'
-                + '<button type="button" class="tfr-action-btn tfr-action-btn--remove btn-tfr-remove" data-flag-id="' + flagId + '" data-interviewer="' + esc(name) + '" data-irf="' + esc(irf) + '"><span>Remove</span></button>';
-            if (email) {
-                html += '<button type="button" class="tfr-insights-btn dm-v4-iv-insights-btn dm-v4-iv-insights-btn--global" data-email="' + esc(email) + '" title="Insights"><i class="fa fa-lightbulb-o"></i></button>';
-            }
+                + '<button type="button" class="tfr-action-btn tfr-action-btn--remove btn-tfr-remove" data-flag-id="' + flagId + '" data-interviewer="' + esc(name) + '" data-irf="' + esc(irf) + '"><span>Remove</span></button>'
+                + '</div>'
+                + '<div class="tfr-action-row tfr-action-row--secondary">';
             if ((row.isSuspicious || row.IsSuspicious) && uid > 0) {
                 html += '<button type="button" class="tfr-action-btn tfr-action-btn--undo-suspicious btn-tfr-undo-suspicious" data-user-id="' + uid + '" data-email="' + esc(email) + '">Undo</button>';
             } else if (email) {
                 html += '<button type="button" class="tfr-mark-suspicious-btn btn-tfr-mark-suspicious" data-email="' + esc(email) + '" title="Mark suspicious"><img src="/img/suspicious.png" alt="" /></button>';
             }
-            html += '</div></td>';
+            if (email) {
+                html += '<button type="button" class="tfr-insights-btn dm-v4-iv-insights-btn dm-v4-iv-insights-btn--global" data-email="' + esc(email) + '" title="Insights"><i class="fa fa-lightbulb-o"></i></button>';
+            }
+            html += '</div></div></td>';
             return html;
         }
         function interviewerHtml(row) {
@@ -1044,8 +1092,10 @@
             if (altH && alt && altH !== phoneH) html += '<div class="tfr-phone tfr-phone--alt"><a href="' + altH + '">' + esc(alt) + '</a></div>';
             if (row.isSuspicious || row.IsSuspicious) {
                 html += '<span class="tfr-suspicious-badge"><i class="fa fa-user-secret"></i> Suspicious</span>';
-                if (uid > 0)
-                    html += '<button type="button" class="tfr-action-btn tfr-action-btn--undo-suspicious btn-tfr-undo-suspicious" style="margin-top:4px;" data-user-id="' + uid + '" data-email="' + esc(email) + '">Undo</button>';
+                if (!isPendingTab && uid > 0)
+                    html += '<button type="button" class="tfr-action-btn tfr-action-btn--undo-suspicious btn-tfr-undo-suspicious" data-user-id="' + uid + '" data-email="' + esc(email) + '">Undo</button>';
+            } else if (!isPendingTab && email) {
+                html += '<button type="button" class="tfr-mark-suspicious-btn btn-tfr-mark-suspicious" data-email="' + esc(email) + '" title="Mark suspicious"><img src="/img/suspicious.png" alt="" /></button>';
             }
             html += '</div></td>';
             return html;
@@ -1056,7 +1106,6 @@
             var display = (row.channelOwner || row.ChannelOwner || '').toString().trim();
             var email = (row.channelOwnerEmail || row.ChannelOwnerEmail || '').toString().trim();
             var name = display;
-            // Razor: @@ → @ in the emitted JS regex
             var m = display.match(/^(.*?)\s*\(([^()\s@@]+@@[^()\s]+)\)\s*$/);
             if (m) {
                 name = (m[1] || '').trim();
