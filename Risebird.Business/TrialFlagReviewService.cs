@@ -81,10 +81,17 @@ namespace Risebird.Business
             var offset = Math.Max(0, request.Offset);
             var pageSize = request.PageSize <= 0 ? 25 : Math.Min(request.PageSize, 200);
 
-            var counts = await _repository.GetStatusCountsAsync();
-            var (rows, total) = await _repository.GetTrialFlagsListAsync(
+            // List must not wait on owner strip — run in parallel; owner failure returns empty.
+            var countsTask = _repository.GetStatusCountsAsync();
+            var listTask = _repository.GetTrialFlagsListAsync(
                 tab, offset, pageSize, request.Search, request.Severity, request.ChannelOwner);
-            var owners = await _repository.GetOwnerSummariesAsync(tab);
+            var ownersTask = _repository.GetOwnerSummariesAsync(tab);
+
+            await Task.WhenAll(countsTask, listTask, ownersTask);
+
+            var counts = await countsTask;
+            var (rows, total) = await listTask;
+            var owners = await ownersTask;
 
             return new TrialFlagReviewListResultVm
             {

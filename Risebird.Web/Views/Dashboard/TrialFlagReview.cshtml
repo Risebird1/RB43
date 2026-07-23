@@ -819,8 +819,16 @@
         var detailUrl = '@Url.Action("TrialFlagReviewDetail", "Dashboard")';
         var activeTab = '@activeTab';
         var isPendingTab = @(isPendingTab ? "true" : "false");
-        // Single source: TrialFlagClientPriority.BuildJsMap() — retune C# only.
-        var CLIENT_PRIORITY_MAP = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(TrialFlagClientPriority.BuildJsMap()));
+        // Mirrors TrialFlagClientPriority (ASCII-only; keep in sync with C# helper).
+        var CLIENT_PRIORITY_MAP = {
+            'P0': { Tier: 'Critical', Css: 'critical', Badge: 'Critical · P0' },
+            'P1': { Tier: 'Critical', Css: 'critical', Badge: 'Critical · P1' },
+            'P2': { Tier: 'Medium', Css: 'medium', Badge: 'Medium · P2' },
+            'P3': { Tier: 'Medium', Css: 'medium', Badge: 'Medium · P3' },
+            'P4': { Tier: 'Low', Css: 'low', Badge: 'Low · P4' },
+            'P5': { Tier: 'Clear', Css: 'clear', Badge: 'Clear · P5' },
+            '': { Tier: 'Low', Css: 'low', Badge: 'Low' }
+        };
         var PAGE_SIZE = 25;
         var currentPage = 1;
         var searchTerm = '';
@@ -1241,35 +1249,56 @@
         }
 
         function loadPage() {
+            if (typeof $ === 'undefined' || !$tbody || !$tbody.length) {
+                console.error('TrialFlagReview: jQuery or #tfrTbody missing');
+                return;
+            }
             var myDraw = ++drawSeq;
-            $tbody.html('<tr class="tfr-loading-row"><td colspan="10" class="tfr-empty">Loading…</td></tr>');
+            $tbody.html('<tr class="tfr-loading-row"><td colspan="10" class="tfr-empty">Loading...</td></tr>');
             $.ajax({
                 url: listUrl,
                 type: 'GET',
                 dataType: 'json',
+                timeout: 60000,
                 data: listQuery(myDraw)
             }).done(function (res) {
                 if (myDraw !== drawSeq) return;
-                if (res.error) {
-                    $tbody.html('<tr><td colspan="10" class="tfr-empty" style="color:#b91c1c;">' + esc(res.error) + '</td></tr>');
-                    totalFiltered = 0;
-                    renderPager();
-                    return;
+                try {
+                    if (!res) {
+                        $tbody.html('<tr><td colspan="10" class="tfr-empty" style="color:#b91c1c;">Empty list response.</td></tr>');
+                        return;
+                    }
+                    if (res.error || res.Error) {
+                        $tbody.html('<tr><td colspan="10" class="tfr-empty" style="color:#b91c1c;">' + esc(res.error || res.Error) + '</td></tr>');
+                        totalFiltered = 0;
+                        renderPager();
+                        return;
+                    }
+                    var rows = res.data || res.Data || [];
+                    if (!rows.length) {
+                        $tbody.html('<tr><td colspan="10" class="tfr-empty">No ' + esc(activeTab) + ' trial flags on this page.</td></tr>');
+                        $('#tfrSearchEmpty').toggleClass('is-visible', !!searchTerm);
+                    } else {
+                        $('#tfrSearchEmpty').removeClass('is-visible');
+                        var html = '';
+                        for (var i = 0; i < rows.length; i++) {
+                            html += buildMainRow(rows[i]);
+                        }
+                        $tbody.html(html);
+                    }
+                    applyListMeta(res);
+                } catch (ex) {
+                    console.error('TrialFlagReview list render failed', ex);
+                    $tbody.html('<tr><td colspan="10" class="tfr-empty" style="color:#b91c1c;">List render failed: ' + esc(ex && ex.message ? ex.message : ex) + '</td></tr>');
                 }
-                applyListMeta(res);
-                var rows = res.data || [];
-                if (!rows.length) {
-                    $tbody.html('<tr><td colspan="10" class="tfr-empty">No ' + esc(activeTab) + ' trial flags on this page.</td></tr>');
-                    $('#tfrSearchEmpty').toggleClass('is-visible', !!searchTerm);
-                } else {
-                    $('#tfrSearchEmpty').removeClass('is-visible');
-                    var html = '';
-                    rows.forEach(function (r) { html += buildMainRow(r); });
-                    $tbody.html(html);
-                }
-            }).fail(function (xhr) {
+            }).fail(function (xhr, status) {
                 if (myDraw !== drawSeq) return;
-                $tbody.html('<tr><td colspan="10" class="tfr-empty" style="color:#b91c1c;">List request failed' + (xhr.status ? ' (HTTP ' + xhr.status + ')' : '') + '. Deploy usp_GetTrialFlagsForReview_List.</td></tr>');
+                var msg = 'List request failed';
+                if (status === 'timeout') msg += ' (timed out). Check usp_GetTrialFlagsForReview_List on the database.';
+                else if (xhr && xhr.status) msg += ' (HTTP ' + xhr.status + '). Deploy usp_GetTrialFlagsForReview_List.';
+                else msg += '. Deploy usp_GetTrialFlagsForReview_List + usp_GetTrialFlagOwnerSummary.';
+                $tbody.html('<tr><td colspan="10" class="tfr-empty" style="color:#b91c1c;">' + msg + '</td></tr>');
+                $('#tfrOwnerStripBody').html('<span style="color:#b91c1c;">Owner strip unavailable</span>');
             });
         }
 
@@ -1449,7 +1478,13 @@
         });
 
         // DataTables-compatible server-side list (custom pager UI; same endpoint contract).
-        loadPage();
+        if (typeof $ === 'undefined') {
+            console.error('TrialFlagReview: jQuery not loaded — grid cannot fetch.');
+            var el = document.getElementById('tfrTbody');
+            if (el) el.innerHTML = '<tr><td colspan="10" class="tfr-empty" style="color:#b91c1c;">jQuery failed to load; cannot load trial flags.</td></tr>';
+        } else {
+            $(function () { loadPage(); });
+        }
     })();
 </script>
 @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")

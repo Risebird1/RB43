@@ -133,7 +133,14 @@ namespace Risebird.Repository
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                throw;
+                var msg = ex.GetBaseException()?.Message ?? ex.Message;
+                if (msg != null
+                    && msg.IndexOf("Could not find stored procedure", StringComparison.OrdinalIgnoreCase) >= 0
+                    && msg.IndexOf("usp_GetTrialFlagsForReview_List", StringComparison.OrdinalIgnoreCase) < 0)
+                {
+                    msg = "usp_GetTrialFlagsForReview_List is not deployed on this database. " + msg;
+                }
+                throw new InvalidOperationException(msg, ex);
             }
         }
 
