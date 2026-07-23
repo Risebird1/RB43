@@ -23,12 +23,20 @@ namespace Risebird.Repository
 
         private readonly string _connectionString;
         private readonly IApplicationErrorLogger _logger;
+        private readonly int _artificialDelayMsList;
+        private readonly int _artificialDelayMsDetail;
 
         public TrialFlagReviewRepository(IConfiguration configuration, IApplicationErrorLogger logger)
         {
             _connectionString = configuration["ConnectionString:DBConnectionString"];
             _logger = logger;
+            // Staging/dev only: set TrialFlagReview:ArtificialDelayMsList/Detail > warn thresholds to prove slow-query logging.
+            _artificialDelayMsList = ParseNonNegativeMs(configuration["TrialFlagReview:ArtificialDelayMsList"]);
+            _artificialDelayMsDetail = ParseNonNegativeMs(configuration["TrialFlagReview:ArtificialDelayMsDetail"]);
         }
+
+        private static int ParseNonNegativeMs(string raw) =>
+            int.TryParse(raw, out var ms) && ms > 0 ? ms : 0;
 
         public async Task<(bool TableExists, int TotalRows)> GetDiagnosticsAsync()
         {
@@ -109,6 +117,9 @@ namespace Risebird.Repository
                     },
                     commandType: CommandType.StoredProcedure)).ToList();
 
+                if (_artificialDelayMsList > 0)
+                    await Task.Delay(_artificialDelayMsList);
+
                 sw.Stop();
                 await WarnIfSlowAsync(
                     "usp_GetTrialFlagsForReview_List",
@@ -154,6 +165,9 @@ namespace Risebird.Repository
                     "usp_GetTrialFlagDetail",
                     new { TrialFlagId = trialFlagId },
                     commandType: CommandType.StoredProcedure);
+
+                if (_artificialDelayMsDetail > 0)
+                    await Task.Delay(_artificialDelayMsDetail);
 
                 sw.Stop();
                 await WarnIfSlowAsync(
