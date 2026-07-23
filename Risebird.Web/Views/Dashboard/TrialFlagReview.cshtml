@@ -57,7 +57,24 @@
 </script>
 
 <style>
-    .tfr-page { padding: 16px; max-width: 1800px; }
+    .tfr-page { padding: 16px; max-width: 100%; box-sizing: border-box; }
+
+    /* Fit Actions…Risk Categories without horizontal scroll at ~1366px */
+    @@media (max-width: 1400px) {
+        .tfr-page { padding: 12px; }
+        .tfr-table { font-size: 12px; table-layout: fixed; }
+        .tfr-table th, .tfr-table td { padding: 8px 6px; }
+        .tfr-table-wrap { overflow-x: hidden; }
+        .tfr-qc-cell { min-width: 0; }
+        .tfr-risk-col { min-width: 0; max-width: 140px; }
+        .tfr-interviewer__email { word-break: break-all; }
+        .tfr-ai-links a { font-size: 10px; }
+        .tfr-action-group { gap: 4px; }
+        .tfr-header__row p { min-width: 0; }
+    }
+    @@media (min-width: 1401px) {
+        .tfr-page { max-width: 1800px; }
+    }
 
     .tfr-owner-strip {
         display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
@@ -661,7 +678,7 @@
             : "";
         var info = string.IsNullOrEmpty(tip)
             ? ""
-            : $@" <span class=""tfr-rating-info"" title=""{tip}"" aria-label=""Candidate feedback comment"">i</span>";
+            : $@" <span class=""tfr-rating-info"" title=""{tip}"" aria-label=""Candidate feedback comment"">ⓘ</span>";
 
         var statusClass = row.CandidateRatingPass ? "is-pass" : "is-fail";
         var statusText = row.CandidateRatingPass ? "Pass" : "Fail";
@@ -739,7 +756,7 @@
     }
 
     <div class="tfr-owner-strip" id="tfrOwnerStrip" aria-live="polite">
-        <span class="tfr-owner-strip__label">P0s by owner</span>
+        <span class="tfr-owner-strip__label">P0s by owner (active tab)</span>
         <span id="tfrOwnerStripBody" style="color:#94a3b8;">Loading...</span>
     </div>
     <div class="tfr-table-wrap">
@@ -802,6 +819,8 @@
         var detailUrl = '@Url.Action("TrialFlagReviewDetail", "Dashboard")';
         var activeTab = '@activeTab';
         var isPendingTab = @(isPendingTab ? "true" : "false");
+        // Single source: TrialFlagClientPriority.BuildJsMap() — retune C# only.
+        var CLIENT_PRIORITY_MAP = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(TrialFlagClientPriority.BuildJsMap()));
         var PAGE_SIZE = 25;
         var currentPage = 1;
         var searchTerm = '';
@@ -850,16 +869,22 @@
             return '+91 ' + href.replace('tel:+91', '');
         }
 
-        function clientPriorityHtml(sev) {
-            var p = (sev || '').toString().toUpperCase();
-            if (!p || p === '-' || p === '\u2014') p = '';
-            var tier = 'Low', mod = 'low';
-            if (p === 'P0' || p === 'P1') { tier = 'Critical'; mod = 'critical'; }
-            else if (p === 'P2' || p === 'P3') { tier = 'Medium'; mod = 'medium'; }
-            else if (p === 'P5') { tier = 'Clear'; mod = 'clear'; }
-            else if (p === 'P4') { tier = 'Low'; mod = 'low'; }
-            var label = p ? (tier + ' \u00b7 ' + p) : tier;
-            return '<div class="tfr-priority"><span class="tfr-priority__badge tfr-priority__badge--' + mod + '">' + esc(label) + '</span></div>';
+        function clientPriorityHtml(rowOrSev) {
+            var badge = null, mod = null, sev = '';
+            if (rowOrSev && typeof rowOrSev === 'object') {
+                badge = rowOrSev.clientPriorityBadge || rowOrSev.ClientPriorityBadge;
+                mod = rowOrSev.clientPriorityCss || rowOrSev.ClientPriorityCss;
+                sev = (rowOrSev.severity || rowOrSev.Severity || '').toString().toUpperCase();
+            } else {
+                sev = (rowOrSev || '').toString().toUpperCase();
+            }
+            if (!badge || !mod) {
+                var key = (/^P[0-5]$/.test(sev) ? sev : '');
+                var meta = CLIENT_PRIORITY_MAP[key] || CLIENT_PRIORITY_MAP[''] || {};
+                badge = meta.Badge || meta.badge || 'Low';
+                mod = meta.Css || meta.css || 'low';
+            }
+            return '<div class="tfr-priority"><span class="tfr-priority__badge tfr-priority__badge--' + esc(mod) + '">' + esc(badge) + '</span></div>';
         }
         function qcMergeHtml(row) {
             var v = row.qcMergeVerdict || row.QcMergeVerdict;
@@ -978,7 +1003,7 @@
                 + '<div style="color:#64748b;font-size:12px;">' + esc(formatIst(row.triggeringInterviewDate || row.TriggeringInterviewDate)) + '</div>'
                 + '<div style="color:#94a3b8;font-size:11px;">Flagged ' + esc(formatIst(row.flaggedAtUtc || row.FlaggedAtUtc)) + '</div>'
                 + '<button type="button" class="tfr-detail-toggle btn-tfr-details" data-flag-id="' + flagId + '">Details</button></td>'
-                + '<td>' + clientPriorityHtml(sev) + '</td>'
+                + '<td>' + clientPriorityHtml(row) + '</td>'
                 + '<td><span class="' + verdictClass + '">' + esc(verdictLabel(verdict)) + '</span></td>'
                 + '<td>' + qcMergeHtml(row) + '</td>'
                 + '<td>' + aiLinksHtml(interviewId, irfId) + '</td>'
@@ -1011,11 +1036,31 @@
             var breakdown = d.severityBreakdown || d.SeverityBreakdown;
             var sevDetail = d.severity || d.Severity || '';
             if (sevDetail) {
-                html += '<div style="margin-top:8px;font-size:12px;"><strong>Client priority:</strong> ' + clientPriorityHtml(sevDetail) + '</div>';
+                html += '<div style="margin-top:8px;font-size:12px;"><strong>Client priority:</strong> ' + clientPriorityHtml(d) + '</div>';
             }
             if (breakdown) {
-                html += '<div style="margin-top:10px;font-size:12px;font-weight:700;">Flag breakdown</div><div class="tfr-candidate-comment">' + esc(breakdown) + '</div>';
+                html += '<div style="margin-top:10px;font-size:12px;font-weight:700;">Severity breakdown</div><div class="tfr-candidate-comment">' + esc(breakdown) + '</div>';
             }
+
+            html += '<div style="margin-top:12px;font-size:12px;font-weight:700;">Raw metrics</div>';
+            html += '<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:12px;">';
+            var tScore = d.transcriptQualityScore != null ? d.transcriptQualityScore : d.TranscriptQualityScore;
+            var rScore = d.reportQualityScore != null ? d.reportQualityScore : d.ReportQualityScore;
+            var rating = d.candidateRating != null ? d.candidateRating : d.CandidateRating;
+            var join = d.joinTimeMinutes != null ? d.joinTimeMinutes : d.JoinTimeMinutes;
+            var dur = d.interviewDurationMinutes != null ? d.interviewDurationMinutes : d.InterviewDurationMinutes;
+            html += factorLine(!!(d.transcriptQualityPass || d.TranscriptQualityPass), 'Transcript score', tScore != null ? (tScore + '/10') : null, '/AIScreener/TransciptAnalysis?interviewId=' + interviewId + '&irfId=' + irfId);
+            html += factorLine(!!(d.reportQualityPass || d.ReportQualityPass), 'Report score', rScore != null ? (rScore + '/100') : null, '/Interview/ReportAIDetailsReport?interviewId=' + interviewId);
+            var ratingDetail = rating != null ? (rating + '/5') : null;
+            var fb = d.candidateFeedbackComment || d.CandidateFeedbackComment;
+            var ratingHtml = factorLine(!!(d.candidateRatingPass || d.CandidateRatingPass), 'Candidate rating', ratingDetail, '/Interview/PaymentSlaDetails?interviewId=' + interviewId + '&returnBack=0&actionstatus=SLACompleted');
+            if (fb) {
+                ratingHtml = ratingHtml.replace('</div></div>', ' <span class="tfr-rating-info" title="' + esc(fb) + '" aria-label="Candidate feedback comment">\u24D8</span></div></div>');
+            }
+            html += ratingHtml;
+            html += factorLine(!!(d.joinTimePass || d.JoinTimePass), 'Join time', join != null ? (join + ' min') : null, null);
+            html += factorLine(!!(d.interviewDurationPass || d.InterviewDurationPass), 'Duration', dur != null ? (dur + ' min') : null, null);
+            html += '</div>';
 
             html += '<div style="margin-top:12px;font-size:12px;font-weight:700;">QC Merge</div>';
             var v = d.qcMergeVerdict || d.QcMergeVerdict;
@@ -1028,24 +1073,7 @@
             if (!v && pen == null && qc == null) html += '—';
             html += '</div>';
 
-            html += '<div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:12px;">';
-            var tScore = d.transcriptQualityScore != null ? d.transcriptQualityScore : d.TranscriptQualityScore;
-            var rScore = d.reportQualityScore != null ? d.reportQualityScore : d.ReportQualityScore;
-            var rating = d.candidateRating != null ? d.candidateRating : d.CandidateRating;
-            var join = d.joinTimeMinutes != null ? d.joinTimeMinutes : d.JoinTimeMinutes;
-            var dur = d.interviewDurationMinutes != null ? d.interviewDurationMinutes : d.InterviewDurationMinutes;
-            html += factorLine(!!(d.transcriptQualityPass || d.TranscriptQualityPass), 'Transcript', tScore != null ? (tScore + '/10') : null, '/AIScreener/TransciptAnalysis?interviewId=' + interviewId + '&irfId=' + irfId);
-            html += factorLine(!!(d.reportQualityPass || d.ReportQualityPass), 'Report', rScore != null ? (rScore + '/100') : null, '/Interview/ReportAIDetailsReport?interviewId=' + interviewId);
-            var ratingDetail = rating != null ? (rating + '/5') : null;
-            var fb = d.candidateFeedbackComment || d.CandidateFeedbackComment;
-            var ratingHtml = factorLine(!!(d.candidateRatingPass || d.CandidateRatingPass), 'Candidate rating', ratingDetail, '/Interview/PaymentSlaDetails?interviewId=' + interviewId + '&returnBack=0&actionstatus=SLACompleted');
-            if (fb) {
-                ratingHtml = ratingHtml.replace('</div></div>', ' <span class="tfr-rating-info" title="' + esc(fb) + '" aria-label="Candidate feedback comment">i</span></div></div>');
-            }
-            html += ratingHtml;
-            html += factorLine(!!(d.joinTimePass || d.JoinTimePass), 'Join time', join != null ? (join + ' min') : null, null);
-            html += factorLine(!!(d.interviewDurationPass || d.InterviewDurationPass), 'Duration', dur != null ? (dur + ' min') : null, null);
-            html += '</div>';
+            /* metrics already rendered above — skip legacy duplicate block */
 
             if (fb) {
                 html += '<div style="margin-top:10px;font-size:12px;font-weight:700;">Candidate feedback</div><div class="tfr-candidate-comment">' + esc(fb) + '</div>';
@@ -1134,13 +1162,16 @@
                 return;
             }
             var body = '';
+            if (cur) {
+                body += '<button type="button" class="tfr-btn" id="tfrOwnerClear" style="margin:0;font-size:11px;">Clear owner filter</button>';
+            }
             list.forEach(function (o) {
                 var email = o.channelOwnerEmail || o.ChannelOwnerEmail || '';
                 var label = o.channelOwner || o.ChannelOwner || email || '(unassigned)';
                 var p0 = o.p0Count != null ? o.p0Count : (o.P0Count || 0);
                 var tot = o.totalCount != null ? o.totalCount : (o.TotalCount || 0);
                 var active = email === cur ? ' is-active' : '';
-                body += '<button type="button" class="tfr-owner-chip' + active + '" data-owner="' + esc(email) + '">'
+                body += '<button type="button" class="tfr-owner-chip' + active + '" data-owner="' + esc(email) + '" title="Filter to this owner">'
                     + esc(label) + ' : <span class="tfr-owner-chip__p0">' + p0 + ' P0</span> · ' + tot + ' total</button>';
             });
             $('#tfrOwnerStripBody').html(body);
@@ -1276,6 +1307,12 @@
             var email = ($(this).data('owner') || '').toString();
             channelOwnerFilter = email;
             $('#tfrOwnerFilter').val(email);
+            currentPage = 1;
+            loadPage();
+        });
+        $(document).on('click', '#tfrOwnerClear', function () {
+            channelOwnerFilter = '';
+            $('#tfrOwnerFilter').val('');
             currentPage = 1;
             loadPage();
         });

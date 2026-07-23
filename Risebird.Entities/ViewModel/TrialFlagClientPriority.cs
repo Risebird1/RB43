@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Risebird.Entities.ViewModel
 {
     /// <summary>
@@ -42,9 +45,36 @@ namespace Risebird.Entities.ViewModel
         public static string BadgeLabel(string severity)
         {
             var p = (severity ?? "").Trim().ToUpperInvariant();
-            if (string.IsNullOrEmpty(p) || p == "—" || p == "-")
+            if (string.IsNullOrEmpty(p) || p == "—" || p == "-" || p == "–")
                 return Low;
             return FromSeverity(p) + " · " + p;
         }
+
+        /// <summary>
+        /// P0–P5 (+ blank) → tier/css/badge for JS injection so the AJAX grid
+        /// cannot drift from this map.
+        /// </summary>
+        public static IReadOnlyDictionary<string, TrialFlagClientPriorityMeta> BuildJsMap()
+        {
+            var keys = new[] { "P0", "P1", "P2", "P3", "P4", "P5", "" };
+            var map = new Dictionary<string, TrialFlagClientPriorityMeta>(StringComparer.OrdinalIgnoreCase);
+            foreach (var key in keys)
+            {
+                map[key] = new TrialFlagClientPriorityMeta
+                {
+                    Tier = FromSeverity(key),
+                    Css = CssModifier(key),
+                    Badge = BadgeLabel(key)
+                };
+            }
+            return map;
+        }
+    }
+
+    public sealed class TrialFlagClientPriorityMeta
+    {
+        public string Tier { get; set; }
+        public string Css { get; set; }
+        public string Badge { get; set; }
     }
 }

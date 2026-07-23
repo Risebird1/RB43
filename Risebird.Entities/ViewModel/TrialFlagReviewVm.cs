@@ -166,6 +166,12 @@ namespace Risebird.Entities.ViewModel
         /// <summary>Raw owner email for filter keys.</summary>
         public string ChannelOwnerEmail { get; set; }
         public string Severity { get; set; }
+        /// <summary>Client-friendly tier from <see cref="TrialFlagClientPriority"/> (Critical/Medium/Low/Clear).</summary>
+        public string ClientPriorityTier => TrialFlagClientPriority.FromSeverity(Severity);
+        /// <summary>Badge text e.g. "Critical · P0" — single map in TrialFlagClientPriority.</summary>
+        public string ClientPriorityBadge => TrialFlagClientPriority.BadgeLabel(Severity);
+        /// <summary>CSS modifier: critical | medium | low | clear.</summary>
+        public string ClientPriorityCss => TrialFlagClientPriority.CssModifier(Severity);
         public string RiskCategoryLabels { get; set; }
         public string RiskCategoryReasons { get; set; }
         public string SeverityBreakdown { get; set; }
