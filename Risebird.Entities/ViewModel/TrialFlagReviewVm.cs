@@ -78,6 +78,7 @@ namespace Risebird.Entities.ViewModel
     public class TrialFlagReviewPageVm
     {
         public string ActiveTab { get; set; } = TrialFlagConstants.ReviewPending;
+        /// <summary>Always empty on initial shell render — rows load via AJAX List endpoint.</summary>
         public IReadOnlyList<TrialFlagReviewRowVm> Rows { get; set; } = Array.Empty<TrialFlagReviewRowVm>();
         public string LoadError { get; set; }
         public int PendingCount { get; set; }
@@ -87,6 +88,29 @@ namespace Risebird.Entities.ViewModel
         public int TotalRowsInTable { get; set; }
         public string EmptyStateHint { get; set; }
         public bool LiveMetrics { get; set; }
+    }
+
+    /// <summary>DataTables-compatible / AJAX list page result.</summary>
+    public class TrialFlagReviewListResultVm
+    {
+        public int Draw { get; set; }
+        public int RecordsTotal { get; set; }
+        public int RecordsFiltered { get; set; }
+        public IReadOnlyList<TrialFlagReviewRowVm> Data { get; set; } = Array.Empty<TrialFlagReviewRowVm>();
+        public string Error { get; set; }
+        public int PendingCount { get; set; }
+        public int KeptCount { get; set; }
+        public int RemovedCount { get; set; }
+    }
+
+    public class TrialFlagReviewListRequest
+    {
+        public string Tab { get; set; }
+        public int Offset { get; set; }
+        public int PageSize { get; set; } = 25;
+        public string Search { get; set; }
+        public int Draw { get; set; }
+        public string Severity { get; set; }
     }
 
     public class TrialFlagReviewRowVm
@@ -128,6 +152,8 @@ namespace Risebird.Entities.ViewModel
         /// <summary>True when SuspiciousInterviewer.SuspiciousStatus = 1 for this user.</summary>
         public bool IsSuspicious { get; set; }
         public string IrfName { get; set; }
+        /// <summary>IRF.RisebirdHr → UserList.EmailId (cheap keyed probe; List tier).</summary>
+        public string ChannelOwner { get; set; }
         public string Severity { get; set; }
         public string RiskCategoryLabels { get; set; }
         public string RiskCategoryReasons { get; set; }

@@ -10,7 +10,12 @@ namespace Risebird.Repository.Interface
 
         Task<(int Pending, int Kept, int Removed)> GetStatusCountsAsync();
 
-        Task<IReadOnlyList<TrialFlagReviewRowVm>> GetTrialFlagsAsync(string reviewStatus);
+        /// <summary>Paginated light grid — usp_GetTrialFlagsForReview_List.</summary>
+        Task<(IReadOnlyList<TrialFlagReviewRowVm> Rows, int TotalRows)> GetTrialFlagsListAsync(
+            string reviewStatus, int offset, int pageSize, string search = null, string severity = null);
+
+        /// <summary>Heavy per-row detail — usp_GetTrialFlagDetail.</summary>
+        Task<TrialFlagReviewRowVm> GetTrialFlagDetailAsync(int trialFlagId);
 
         Task<int> SyncTrialFlagsVerdictFromRiskCategoryAsync();
 

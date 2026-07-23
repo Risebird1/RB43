@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,6 +16,11 @@ namespace Risebird.Repository
 {
     public class TrialFlagReviewRepository : ITrialFlagReviewRepository
     {
+        /// <summary>List slow-query warning threshold (seconds). Do not raise command timeout.</summary>
+        public const double SlowQueryWarnSecondsList = 3.0;
+        /// <summary>Detail slow-query warning threshold (seconds).</summary>
+        public const double SlowQueryWarnSecondsDetail = 2.0;
+
         private readonly string _connectionString;
         private readonly IApplicationErrorLogger _logger;
 
@@ -83,18 +89,109 @@ namespace Risebird.Repository
             public int Cnt { get; set; }
         }
 
-        public async Task<IReadOnlyList<TrialFlagReviewRowVm>> GetTrialFlagsAsync(string reviewStatus)
+        public async Task<(IReadOnlyList<TrialFlagReviewRowVm> Rows, int TotalRows)> GetTrialFlagsListAsync(
+            string reviewStatus, int offset, int pageSize, string search = null, string severity = null)
         {
-            using var con = new SqlConnection(_connectionString);
-            var rows = await con.QueryAsync<TrialFlagReviewRowDbRow>(
-                "usp_GetTrialFlagsForReview",
-                new { ReviewStatus = string.IsNullOrWhiteSpace(reviewStatus) ? null : reviewStatus.Trim() },
-                commandType: CommandType.StoredProcedure,
-                commandTimeout: 60);
-            return rows?.Select(MapTrialFlagReviewRow).ToList() ?? new List<TrialFlagReviewRowVm>();
+            var sw = Stopwatch.StartNew();
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var rows = (await con.QueryAsync<TrialFlagListDbRow>(
+                    "usp_GetTrialFlagsForReview_List",
+                    new
+                    {
+                        ReviewStatus = string.IsNullOrWhiteSpace(reviewStatus) ? null : reviewStatus.Trim(),
+                        Offset = Math.Max(0, offset),
+                        PageSize = pageSize <= 0 ? 25 : Math.Min(pageSize, 200),
+                        Search = string.IsNullOrWhiteSpace(search) ? null : search.Trim(),
+                        Severity = string.IsNullOrWhiteSpace(severity) ? null : severity.Trim()
+                    },
+                    commandType: CommandType.StoredProcedure)).ToList();
+
+                sw.Stop();
+                await WarnIfSlowAsync(
+                    "usp_GetTrialFlagsForReview_List",
+                    sw.Elapsed,
+                    SlowQueryWarnSecondsList,
+                    $"status={reviewStatus};offset={offset};pageSize={pageSize};search={search};severity={severity};rows={rows.Count}");
+
+                var total = rows.FirstOrDefault()?.TotalRows ?? 0;
+                return (rows.Select(MapListRow).ToList(), total);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                throw;
+            }
         }
 
-        private static TrialFlagReviewRowVm MapTrialFlagReviewRow(TrialFlagReviewRowDbRow row) =>
+        public async Task<TrialFlagReviewRowVm> GetTrialFlagDetailAsync(int trialFlagId)
+        {
+            var sw = Stopwatch.StartNew();
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var row = await con.QueryFirstOrDefaultAsync<TrialFlagDetailDbRow>(
+                    "usp_GetTrialFlagDetail",
+                    new { TrialFlagId = trialFlagId },
+                    commandType: CommandType.StoredProcedure);
+
+                sw.Stop();
+                await WarnIfSlowAsync(
+                    "usp_GetTrialFlagDetail",
+                    sw.Elapsed,
+                    SlowQueryWarnSecondsDetail,
+                    $"trialFlagId={trialFlagId}");
+
+                return row == null ? null : MapDetailRow(row);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                throw;
+            }
+        }
+
+        private async Task WarnIfSlowAsync(string proc, TimeSpan elapsed, double warnSeconds, string parameters)
+        {
+            if (elapsed.TotalSeconds < warnSeconds)
+                return;
+            await _logger.LogMessage(
+                LogLevelInfo.Warning,
+                $"Slow trial-flag query: {proc} took {elapsed.TotalMilliseconds:0}ms (warn>{warnSeconds * 1000:0}ms). {parameters}");
+        }
+
+        private static TrialFlagReviewRowVm MapListRow(TrialFlagListDbRow row) =>
+            new TrialFlagReviewRowVm
+            {
+                TrialFlagId = row.TrialFlagId,
+                InterviewerId = row.InterviewerId,
+                IrfId = row.IrfId,
+                ChannelId = row.ChannelId,
+                TriggeringInterviewId = row.TriggeringInterviewId,
+                TriggeringInterviewDate = row.TriggeringInterviewDate,
+                OverallVerdict = row.OverallVerdict,
+                DisplayVerdict = row.DisplayVerdict,
+                ReviewStatus = row.ReviewStatus,
+                FlaggedAtUtc = row.FlaggedAtUtc,
+                ReviewedAtUtc = row.ReviewedAtUtc,
+                ReviewedBy = row.ReviewedBy,
+                ReviewerComment = row.ReviewerComment,
+                InterviewerName = row.InterviewerName,
+                InterviewerEmail = row.InterviewerEmail,
+                InterviewerCodedId = row.InterviewerCodedId,
+                InterviewerUserId = row.InterviewerUserId,
+                InterviewerMobileNumber = row.InterviewerMobileNumber,
+                InterviewerAltMobileNumber = row.InterviewerAltMobileNumber,
+                IsSuspicious = row.IsSuspicious,
+                IrfName = row.IrfName,
+                ChannelOwner = row.ChannelOwner,
+                Severity = row.Severity,
+                RiskCategoryLabels = row.RiskCategoryLabels,
+                RiskCategoryReasons = row.RiskCategoryReasons
+            };
+
+        private static TrialFlagReviewRowVm MapDetailRow(TrialFlagDetailDbRow row) =>
             new TrialFlagReviewRowVm
             {
                 TrialFlagId = row.TrialFlagId,
@@ -121,14 +218,6 @@ namespace Risebird.Repository
                 ReviewedAtUtc = row.ReviewedAtUtc,
                 ReviewedBy = row.ReviewedBy,
                 ReviewerComment = row.ReviewerComment,
-                InterviewerName = row.InterviewerName,
-                InterviewerEmail = row.InterviewerEmail,
-                InterviewerCodedId = row.InterviewerCodedId,
-                InterviewerUserId = row.InterviewerUserId,
-                InterviewerMobileNumber = row.InterviewerMobileNumber,
-                InterviewerAltMobileNumber = row.InterviewerAltMobileNumber,
-                IsSuspicious = row.IsSuspicious,
-                IrfName = row.IrfName,
                 Severity = row.Severity,
                 RiskCategoryLabels = row.RiskCategoryLabels,
                 RiskCategoryReasons = row.RiskCategoryReasons,
@@ -160,8 +249,7 @@ namespace Risebird.Repository
 
                 var updated = await con.QueryFirstOrDefaultAsync<int>(
                     "usp_SyncTrialFlagsVerdictFromRiskCategory",
-                    commandType: CommandType.StoredProcedure,
-                    commandTimeout: 120);
+                    commandType: CommandType.StoredProcedure);
                 return updated;
             }
             catch (SqlException ex)
@@ -176,7 +264,37 @@ namespace Risebird.Repository
             }
         }
 
-        private sealed class TrialFlagReviewRowDbRow
+        private sealed class TrialFlagListDbRow
+        {
+            public int TrialFlagId { get; set; }
+            public int InterviewerId { get; set; }
+            public int IrfId { get; set; }
+            public int ChannelId { get; set; }
+            public int TriggeringInterviewId { get; set; }
+            public DateTime TriggeringInterviewDate { get; set; }
+            public string OverallVerdict { get; set; }
+            public string DisplayVerdict { get; set; }
+            public string ReviewStatus { get; set; }
+            public DateTime FlaggedAtUtc { get; set; }
+            public DateTime? ReviewedAtUtc { get; set; }
+            public string ReviewedBy { get; set; }
+            public string ReviewerComment { get; set; }
+            public string InterviewerName { get; set; }
+            public string InterviewerEmail { get; set; }
+            public string InterviewerCodedId { get; set; }
+            public int? InterviewerUserId { get; set; }
+            public string InterviewerMobileNumber { get; set; }
+            public string InterviewerAltMobileNumber { get; set; }
+            public bool IsSuspicious { get; set; }
+            public string IrfName { get; set; }
+            public string ChannelOwner { get; set; }
+            public string Severity { get; set; }
+            public string RiskCategoryLabels { get; set; }
+            public string RiskCategoryReasons { get; set; }
+            public int TotalRows { get; set; }
+        }
+
+        private sealed class TrialFlagDetailDbRow
         {
             public int TrialFlagId { get; set; }
             public int InterviewerId { get; set; }
@@ -202,14 +320,6 @@ namespace Risebird.Repository
             public DateTime? ReviewedAtUtc { get; set; }
             public string ReviewedBy { get; set; }
             public string ReviewerComment { get; set; }
-            public string InterviewerName { get; set; }
-            public string InterviewerEmail { get; set; }
-            public string InterviewerCodedId { get; set; }
-            public int? InterviewerUserId { get; set; }
-            public string InterviewerMobileNumber { get; set; }
-            public string InterviewerAltMobileNumber { get; set; }
-            public bool IsSuspicious { get; set; }
-            public string IrfName { get; set; }
             public string Severity { get; set; }
             public string RiskCategoryLabels { get; set; }
             public string RiskCategoryReasons { get; set; }
@@ -240,8 +350,7 @@ namespace Risebird.Repository
                 var rows = await con.QueryAsync<InterviewAiRiskSummaryRowVm>(
                     "usp_GetInterviewAiRiskSummary",
                     new { InterviewId = interviewId },
-                    commandType: CommandType.StoredProcedure,
-                    commandTimeout: 60);
+                    commandType: CommandType.StoredProcedure);
                 return rows?.ToList() ?? new List<InterviewAiRiskSummaryRowVm>();
             }
             catch (Exception ex)
@@ -315,8 +424,7 @@ WHERE tf.Id = @TrialFlagId;";
                         ReviewedBy = reviewedBy,
                         ReviewerComment = reviewerComment
                     },
-                    commandType: CommandType.StoredProcedure,
-                    commandTimeout: 30);
+                    commandType: CommandType.StoredProcedure);
             }
             catch (SqlException ex)
             {

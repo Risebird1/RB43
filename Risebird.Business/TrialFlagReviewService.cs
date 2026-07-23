@@ -19,7 +19,6 @@ namespace Risebird.Business
         private readonly ITrialFlagReviewRepository _repository;
         private readonly IMeetingService _meetingService;
         private readonly IRiskCategoryService _riskCategoryService;
-        private readonly ITrialJudgmentRepository _trialJudgmentRepository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public TrialFlagReviewService(
@@ -32,11 +31,14 @@ namespace Risebird.Business
             _repository = repository;
             _meetingService = meetingService;
             _riskCategoryService = riskCategoryService;
-            _trialJudgmentRepository = trialJudgmentRepository;
             _applicationErrorLogger = applicationErrorLogger;
+            // Intentionally unused: DI signature kept; live factor enrich is Detail-tier.
+#pragma warning disable IDE0060
+            _ = trialJudgmentRepository;
+#pragma warning restore IDE0060
         }
 
-        public async Task<TrialFlagReviewPageVm> GetPageAsync(string tab, bool refreshMetrics = false)
+        public async Task<TrialFlagReviewPageVm> GetPageShellAsync(string tab)
         {
             var normalizedTab = NormalizeTab(tab);
             var (tableExists, totalRows) = await _repository.GetDiagnosticsAsync();
@@ -52,34 +54,51 @@ namespace Risebird.Business
                 removedCount = counts.Removed;
             }
 
-            var rows = (await _repository.GetTrialFlagsAsync(normalizedTab)).ToList();
-
-            if (refreshMetrics && rows.Count > 0)
-            {
-                await RefreshRiskCategoriesForRowsAsync(rows);
-                await _repository.SyncTrialFlagsVerdictFromRiskCategoryAsync();
-                rows = (await _repository.GetTrialFlagsAsync(normalizedTab)).ToList();
-                await EnrichRowsWithLiveFactorsParallelAsync(rows);
-            }
-
             var loadedRows = pendingCount + keptCount + removedCount;
 
             return new TrialFlagReviewPageVm
             {
                 ActiveTab = normalizedTab,
-                Rows = rows,
+                Rows = Array.Empty<TrialFlagReviewRowVm>(),
                 PendingCount = pendingCount,
                 KeptCount = keptCount,
                 RemovedCount = removedCount,
                 TrialFlagsTableExists = tableExists,
                 TotalRowsInTable = totalRows,
-                LiveMetrics = refreshMetrics,
-                EmptyStateHint = BuildEmptyStateHint(tableExists, totalRows, loadedRows, rows.Count, normalizedTab, pendingCount, keptCount, removedCount)
+                LiveMetrics = false,
+                EmptyStateHint = BuildEmptyStateHint(tableExists, totalRows, loadedRows, 0, normalizedTab, pendingCount, keptCount, removedCount)
             };
         }
 
-        private static bool ReviewStatusMatches(string actual, string expected) =>
-            string.Equals(actual?.Trim(), expected, StringComparison.OrdinalIgnoreCase);
+        /// <summary>Legacy alias — shell only (list is AJAX).</summary>
+        public Task<TrialFlagReviewPageVm> GetPageAsync(string tab, bool refreshMetrics = false) =>
+            GetPageShellAsync(tab);
+
+        public async Task<TrialFlagReviewListResultVm> GetListAsync(TrialFlagReviewListRequest request)
+        {
+            request ??= new TrialFlagReviewListRequest();
+            var tab = NormalizeTab(request.Tab);
+            var offset = Math.Max(0, request.Offset);
+            var pageSize = request.PageSize <= 0 ? 25 : Math.Min(request.PageSize, 200);
+
+            var counts = await _repository.GetStatusCountsAsync();
+            var (rows, total) = await _repository.GetTrialFlagsListAsync(
+                tab, offset, pageSize, request.Search, request.Severity);
+
+            return new TrialFlagReviewListResultVm
+            {
+                Draw = request.Draw,
+                RecordsTotal = total,
+                RecordsFiltered = total,
+                Data = rows,
+                PendingCount = counts.Pending,
+                KeptCount = counts.Kept,
+                RemovedCount = counts.Removed
+            };
+        }
+
+        public Task<TrialFlagReviewRowVm> GetDetailAsync(int trialFlagId) =>
+            _repository.GetTrialFlagDetailAsync(trialFlagId);
 
         private static string BuildEmptyStateHint(
             bool tableExists,
@@ -92,13 +111,13 @@ namespace Risebird.Business
             int removedCount)
         {
             if (!tableExists)
-                return "dbo.TrialFlags does not exist on this database. Run Risebird.DB/Tables/TrialFlags.sql, then redeploy usp_GetTrialFlagsForReview.";
+                return "dbo.TrialFlags does not exist on this database. Run Risebird.DB/Tables/TrialFlags.sql, then deploy List/Detail procs.";
 
             if (totalRows == 0)
-                return "dbo.TrialFlags exists but has 0 rows. Rows are inserted only when trial judgment runs after QC AI merge on a first completed interview. If merges already finished before the producer was deployed, run POST /Dashboard/BackfillTrialFlags (or redeploy Azure Functions so future merges insert automatically).";
+                return "dbo.TrialFlags exists but has 0 rows. Rows are inserted only when trial judgment runs after QC AI merge on a first completed interview. If merges already finished before the producer was deployed, run POST /Dashboard/BackfillTrialFlags.";
 
             if (loadedRows == 0 && totalRows > 0)
-                return "TrialFlags has rows but usp_GetTrialFlagsForReview returned none. Redeploy the latest stored procedure on this database.";
+                return "TrialFlags has rows but tab counts are empty. Check ReviewStatus values (pending/kept/removed).";
 
             if (filteredRows == 0)
             {
@@ -108,31 +127,25 @@ namespace Risebird.Business
                     return $"No kept flags. Pending: {pendingCount}, Removed: {removedCount}.";
                 if (activeTab == TrialFlagConstants.ReviewRemoved && removedCount == 0)
                     return $"No removed flags. Pending: {pendingCount}, Kept: {keptCount}.";
-                return "Rows exist but none match this tab. Check ReviewStatus values in TrialFlags (expected: pending, kept, removed).";
             }
 
             return null;
         }
 
-        private async Task RefreshRiskCategoriesForRowsAsync(IReadOnlyList<TrialFlagReviewRowVm> rows)
+        public async Task RefreshLiveMetricsForInterviewIdsAsync(IReadOnlyList<int> interviewIds)
         {
-            if (rows == null || rows.Count == 0)
+            if (interviewIds == null || interviewIds.Count == 0)
                 return;
 
-            var interviewIds = rows
-                .Select(r => r.TriggeringInterviewId)
-                .Where(id => id > 0)
-                .Distinct()
-                .ToList();
-
-            if (interviewIds.Count == 0)
+            var ids = interviewIds.Where(id => id > 0).Distinct().ToList();
+            if (ids.Count == 0)
                 return;
 
-            // Global refresh path: dry-run then mass-fire guard before any write.
-            var dryRuns = new RiskCategory[interviewIds.Count];
+            // Batched: dry-run all → mass-fire guard → sequential writes (no long ambient transaction).
+            var dryRuns = new RiskCategory[ids.Count];
             using (var gate = new SemaphoreSlim(LiveMetricsConcurrency))
             {
-                var evalTasks = interviewIds.Select(async (interviewId, index) =>
+                var evalTasks = ids.Select(async (interviewId, index) =>
                 {
                     await gate.WaitAsync();
                     try
@@ -155,13 +168,12 @@ namespace Risebird.Business
                     ?? $"aborted: {guard.CheckName} fired on {guard.FireRatePct:0}% of {guard.SampleSize} interviews — investigate";
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
                     "TrialFlagReview risk refresh " + abortMsg + " — skipped writes");
-                // Do not throw: keep the Trial Flag Review page usable; ops re-runs after the check fix.
                 return;
             }
 
             using (var gate = new SemaphoreSlim(LiveMetricsConcurrency))
             {
-                var writeTasks = interviewIds.Select(async interviewId =>
+                var writeTasks = ids.Select(async interviewId =>
                 {
                     await gate.WaitAsync();
                     try
@@ -175,63 +187,8 @@ namespace Risebird.Business
                 });
                 await Task.WhenAll(writeTasks);
             }
-        }
 
-        /// <summary>
-        /// Re-evaluate trial factors from current interview + QC merge data (optional refresh path).
-        /// </summary>
-        private async Task EnrichRowsWithLiveFactorsParallelAsync(IReadOnlyList<TrialFlagReviewRowVm> rows)
-        {
-            if (rows == null || rows.Count == 0)
-                return;
-
-            using var gate = new SemaphoreSlim(LiveMetricsConcurrency);
-            var tasks = rows.Select(async row =>
-            {
-                if (row.TriggeringInterviewId <= 0)
-                    return;
-
-                await gate.WaitAsync();
-                try
-                {
-                    await EnrichRowWithLiveFactorsAsync(row);
-                }
-                finally
-                {
-                    gate.Release();
-                }
-            });
-
-            await Task.WhenAll(tasks);
-        }
-
-        private async Task EnrichRowWithLiveFactorsAsync(TrialFlagReviewRowVm row)
-        {
-            try
-            {
-                var ctx = await _trialJudgmentRepository.GetContextAsync(row.TriggeringInterviewId);
-                if (ctx == null)
-                    return;
-
-                var stored = await _trialJudgmentRepository.GetStoredMergeResultAsync(row.TriggeringInterviewId);
-                var judgment = TrialJudgmentService.EvaluateFactors(ctx, stored?.MergeResult);
-
-                row.TranscriptQualityPass = judgment.TranscriptQualityPass;
-                row.ReportQualityPass = judgment.ReportQualityPass;
-                row.DecisionQualityPass = judgment.DecisionQualityPass;
-                row.CandidateRatingPass = judgment.CandidateRatingPass;
-                row.JoinTimePass = judgment.JoinTimePass;
-                row.InterviewDurationPass = judgment.InterviewDurationPass;
-                row.TranscriptQualityScore = ctx.TranscriptQualityScore;
-                row.ReportQualityScore = ctx.ReportQualityScore;
-                row.CandidateRating = ctx.CandidateRating;
-                row.JoinTimeMinutes = ctx.JoinTimeMinutes;
-                row.InterviewDurationMinutes = ctx.InterviewDurationMinutes;
-            }
-            catch
-            {
-                // Keep stored snapshot columns when live evaluation fails.
-            }
+            await _repository.SyncTrialFlagsVerdictFromRiskCategoryAsync();
         }
 
         public async Task<TrialFlagReviewActionResultVm> KeepOnIrfAsync(int trialFlagId, string reviewerEmail, string comment)
@@ -297,4 +254,3 @@ namespace Risebird.Business
             new TrialFlagReviewActionResultVm { Ok = false, Message = message };
     }
 }
-
