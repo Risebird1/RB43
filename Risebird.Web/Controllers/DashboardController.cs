@@ -8040,7 +8040,8 @@ NEVER:
         }
 
         /// <summary>
-        /// DataTables serverSide / AJAX list — light List proc only (no JSON / PaymentSLA).
+        /// AJAX list — light List proc only (no JSON / PaymentSLA / QC-merge).
+        /// Request/response uses DataTables server-side fields (draw/start/length/records*).
         /// </summary>
         [Authorize]
         [HttpGet]
