@@ -81,17 +81,25 @@ namespace Risebird.Business
             var offset = Math.Max(0, request.Offset);
             var pageSize = request.PageSize <= 0 ? 25 : Math.Min(request.PageSize, 200);
 
-            // List must not wait on owner strip — run in parallel; owner failure returns empty.
+            // List is critical path; owner strip must not block or fail the grid.
             var countsTask = _repository.GetStatusCountsAsync();
             var listTask = _repository.GetTrialFlagsListAsync(
                 tab, offset, pageSize, request.Search, request.Severity, request.ChannelOwner);
-            var ownersTask = _repository.GetOwnerSummariesAsync(tab);
 
-            await Task.WhenAll(countsTask, listTask, ownersTask);
+            await Task.WhenAll(countsTask, listTask);
 
             var counts = await countsTask;
             var (rows, total) = await listTask;
-            var owners = await ownersTask;
+
+            IReadOnlyList<TrialFlagOwnerSummaryVm> owners = Array.Empty<TrialFlagOwnerSummaryVm>();
+            try
+            {
+                owners = await _repository.GetOwnerSummariesAsync(tab);
+            }
+            catch
+            {
+                owners = Array.Empty<TrialFlagOwnerSummaryVm>();
+            }
 
             return new TrialFlagReviewListResultVm
             {
