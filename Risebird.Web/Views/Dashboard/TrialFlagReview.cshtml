@@ -2,6 +2,7 @@
 @using Risebird.Entities.ViewModel
 @using Microsoft.AspNetCore.Html
 @using System.Collections.Generic
+@using System.Linq
 
 @{
     ViewData["Title"] = "Trial Flag Review";
@@ -24,6 +25,29 @@
         if (string.Equals(verdict, TrialFlagConstants.VerdictBadTrial, StringComparison.OrdinalIgnoreCase))
             return "Bad trial";
         return verdict ?? "—";
+    }
+
+    /// <summary>Build tel:+91… href from UserList.MobileNumber digits; null if missing/invalid.</summary>
+    string TelHref(string mobile)
+    {
+        if (string.IsNullOrWhiteSpace(mobile)) return null;
+        var digits = new string(mobile.Where(char.IsDigit).ToArray());
+        if (string.IsNullOrEmpty(digits) || digits == "0") return null;
+        if (digits.Length > 10)
+            digits = digits.Substring(digits.Length - 10);
+        if (digits.Length != 10) return null;
+        return "tel:+91" + digits;
+    }
+
+    string DisplayPhone(string mobile)
+    {
+        if (string.IsNullOrWhiteSpace(mobile)) return null;
+        var digits = new string(mobile.Where(char.IsDigit).ToArray());
+        if (string.IsNullOrEmpty(digits) || digits == "0") return null;
+        if (digits.Length > 10)
+            digits = digits.Substring(digits.Length - 10);
+        if (digits.Length != 10) return mobile.Trim();
+        return "+91 " + digits;
     }
 }
 
@@ -79,19 +103,78 @@
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
-        gap: 8px;
-        min-width: 196px;
+        align-items: center;
+        gap: 6px;
+        min-width: 168px;
+    }
+    .tfr-insights-btn,
+    .tfr-mark-suspicious-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        background: #fff;
+        cursor: pointer;
+        flex-shrink: 0;
+        box-sizing: border-box;
+        line-height: 1;
+    }
+    .tfr-insights-btn { color: #b45309; }
+    .tfr-insights-btn:hover { background: #fffbeb; border-color: #fbbf24; }
+    .tfr-insights-btn i { font-size: 14px; }
+    .tfr-mark-suspicious-btn { color: #9a3412; background: #ffedd5; border-color: #fdba74; }
+    .tfr-mark-suspicious-btn:hover { background: #fed7aa; border-color: #fb923c; }
+    .tfr-mark-suspicious-btn img {
+        width: 14px;
+        height: 14px;
+        display: block;
+        /* white PNG → red */
+        filter: brightness(0) saturate(100%) invert(22%) sepia(90%) saturate(3000%) hue-rotate(348deg) brightness(95%) contrast(95%);
+    }
+    .tfr-suspicious-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 4px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .02em;
+        text-transform: uppercase;
+        background: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+    .tfr-phone {
+        margin-top: 3px;
+        font-size: 12px;
+    }
+    .tfr-phone a { color: #2563eb; text-decoration: none; }
+    .tfr-phone a:hover { text-decoration: underline; }
+    .tfr-action-btn--undo-suspicious {
+        background: #fff;
+        border-color: #fecaca;
+        color: #991b1b;
+        min-width: 0;
+        flex: 0 0 auto;
+        padding: 8px 10px;
+        font-size: 11px;
     }
     .tfr-action-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 5px;
+        gap: 4px;
         flex: 1 1 0;
-        min-width: 88px;
-        padding: 8px 10px;
-        border-radius: 8px;
-        font-size: 12px;
+        min-width: 72px;
+        padding: 5px 8px;
+        border-radius: 7px;
+        font-size: 11px;
         font-weight: 600;
         line-height: 1;
         cursor: pointer;
@@ -99,8 +182,8 @@
         transition: background .15s ease, border-color .15s ease, box-shadow .15s ease, transform .12s ease, color .15s ease;
     }
     .tfr-action-btn svg {
-        width: 14px;
-        height: 14px;
+        width: 12px;
+        height: 12px;
         flex-shrink: 0;
         opacity: .92;
     }
@@ -676,8 +759,12 @@
                         && row.SeverityBreakdown.IndexOf("CandidateRating", StringComparison.OrdinalIgnoreCase) >= 0;
                     var ratingHasComment = hasRatingRisk
                         && TrialFlagEvidenceBadgeHelper.IsPositiveEvidence(row.CandidateFeedbackComment);
+                    var phoneHref = TelHref(row.InterviewerMobileNumber);
+                    var phoneLabel = DisplayPhone(row.InterviewerMobileNumber);
+                    var altPhoneHref = TelHref(row.InterviewerAltMobileNumber);
+                    var altPhoneLabel = DisplayPhone(row.InterviewerAltMobileNumber);
 
-                    <tr class="tfr-main-row" data-search="@searchKey" data-flag-id="@row.TrialFlagId" data-severity="@displaySeverity" data-verdict="@displayVerdict" data-interview-id="@interviewId" data-irf-id="@row.IrfId">
+                    <tr class="tfr-main-row" data-search="@searchKey" data-flag-id="@row.TrialFlagId" data-severity="@displaySeverity" data-verdict="@displayVerdict" data-interview-id="@interviewId" data-irf-id="@row.IrfId" data-email="@(row.InterviewerEmail ?? "")" data-user-id="@(row.InterviewerUserId ?? 0)">
                         @if (isPendingTab)
                         {
                             <td class="tfr-actions">
@@ -690,6 +777,30 @@
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
                                         <span>Remove</span>
                                     </button>
+                                    @if (!string.IsNullOrWhiteSpace(row.InterviewerEmail))
+                                    {
+                                        <button type="button" class="tfr-insights-btn dm-v4-iv-insights-btn dm-v4-iv-insights-btn--global"
+                                                data-email="@row.InterviewerEmail"
+                                                title="Insights (all channels)" aria-label="Insights (all channels)">
+                                            <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                                        </button>
+                                    }
+                                    @if (row.IsSuspicious && row.InterviewerUserId.HasValue && row.InterviewerUserId.Value > 0)
+                                    {
+                                        <button type="button" class="tfr-action-btn tfr-action-btn--undo-suspicious btn-tfr-undo-suspicious"
+                                                data-user-id="@row.InterviewerUserId.Value"
+                                                data-email="@(row.InterviewerEmail ?? "")"
+                                                title="Undo suspicious mark">Undo</button>
+                                    }
+                                    else if (!string.IsNullOrWhiteSpace(row.InterviewerEmail))
+                                    {
+                                        <button type="button" class="tfr-mark-suspicious-btn btn-tfr-mark-suspicious"
+                                                data-email="@row.InterviewerEmail"
+                                                title="Mark interviewer as suspicious"
+                                                aria-label="Mark interviewer as suspicious">
+                                            <img src="/img/suspicious.png" alt="" />
+                                        </button>
+                                    }
                                 </div>
                             </td>
                         }
@@ -702,6 +813,47 @@
                             @if (!string.IsNullOrWhiteSpace(row.InterviewerEmail) && !string.Equals(row.InterviewerEmail, interviewerDisplayName, StringComparison.OrdinalIgnoreCase))
                             {
                                 <div class="tfr-interviewer__email">@row.InterviewerEmail</div>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(phoneHref) && !string.IsNullOrWhiteSpace(phoneLabel))
+                            {
+                                <div class="tfr-phone"><a href="@phoneHref">@phoneLabel</a></div>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(altPhoneHref) && !string.IsNullOrWhiteSpace(altPhoneLabel)
+                                 && !string.Equals(altPhoneHref, phoneHref, StringComparison.OrdinalIgnoreCase))
+                            {
+                                <div class="tfr-phone tfr-phone--alt"><a href="@altPhoneHref" title="Alt mobile">@altPhoneLabel</a></div>
+                            }
+                            @if (row.IsSuspicious)
+                            {
+                                <span class="tfr-suspicious-badge"><i class="fa fa-user-secret" aria-hidden="true"></i> Suspicious</span>
+                                @if (row.InterviewerUserId.HasValue && row.InterviewerUserId.Value > 0)
+                                {
+                                    <button type="button" class="tfr-action-btn tfr-action-btn--undo-suspicious btn-tfr-undo-suspicious"
+                                            style="margin-top:4px;"
+                                            data-user-id="@row.InterviewerUserId.Value"
+                                            data-email="@(row.InterviewerEmail ?? "")"
+                                            title="Undo suspicious mark">Undo</button>
+                                }
+                            }
+                            else if (!isPendingTab && !string.IsNullOrWhiteSpace(row.InterviewerEmail))
+                            {
+                                <button type="button" class="tfr-mark-suspicious-btn btn-tfr-mark-suspicious"
+                                        style="margin-top:4px;"
+                                        data-email="@row.InterviewerEmail"
+                                        title="Mark interviewer as suspicious"
+                                        aria-label="Mark interviewer as suspicious">
+                                    <img src="/img/suspicious.png" alt="" />
+                                </button>
+                            }
+                            @if (!isPendingTab && !string.IsNullOrWhiteSpace(row.InterviewerEmail))
+                            {
+                                <div style="margin-top:6px;">
+                                    <button type="button" class="tfr-insights-btn dm-v4-iv-insights-btn dm-v4-iv-insights-btn--global"
+                                            data-email="@row.InterviewerEmail"
+                                            title="Insights (all channels)" aria-label="Insights (all channels)">
+                                        <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                                    </button>
+                                </div>
                             }
                         </td>
                         <td><strong>@row.IrfName</strong> <span style="color:#94a3b8;">(#@row.IrfId)</span></td>
@@ -1077,5 +1229,87 @@
             .attr('title', 'P0 highest first')
             .text('Severity ↑ (P0 first)');
         renderPagination();
+
+        // Global insights (all channels) — same as DM InsightsDetails(email) with empty IrfId
+        $(document).on('click', '.dm-v4-iv-insights-btn--global', function (e) {
+            e.preventDefault();
+            var email = ($(this).data('email') || '').toString().trim();
+            if (!email || typeof InsightsDetails !== 'function') return;
+            InsightsDetails(email);
+        });
+
+        $(document).on('click', '.btn-tfr-mark-suspicious', function (e) {
+            e.preventDefault();
+            var email = ($(this).data('email') || '').toString().trim();
+            if (!email) return;
+            if (typeof SuspiciousTypeDetails === 'function') {
+                SuspiciousTypeDetails(email);
+            }
+        });
+
+        $(document).on('click', '.btn-tfr-undo-suspicious', function (e) {
+            e.preventDefault();
+            var userId = parseInt($(this).data('user-id'), 10);
+            var email = ($(this).data('email') || '').toString();
+            if (!userId) {
+                showToast('Missing interviewer user id for undo.', false);
+                return;
+            }
+            if (!window.confirm('Undo suspicious mark for ' + (email || ('user #' + userId)) + '?')) return;
+            var $btn = $(this).prop('disabled', true);
+            $.ajax({
+                url: '/Dashboard/UndoSuspiciousInterviewer',
+                type: 'POST',
+                data: { UserId: userId },
+                dataType: 'json'
+            }).done(function (res) {
+                var msg = (typeof res === 'string') ? res : (res && res.message) || 'Undo complete.';
+                var ok = typeof res === 'string'
+                    ? msg.toLowerCase().indexOf('success') >= 0
+                    : !!(res && res.ok);
+                showToast(msg, ok);
+                if (ok) setTimeout(function () { location.reload(); }, 900);
+                else $btn.prop('disabled', false);
+            }).fail(function () {
+                showToast('Undo suspicious failed.', false);
+                $btn.prop('disabled', false);
+            });
+        });
+    })();
+</script>
+
+@await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
+@await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
+<script>
+    // After shared partial: toast + reload instead of alert() on this page only
+    (function () {
+        if (typeof window.SaveSuspiciousInterViewer !== 'function') return;
+        var showToast = function (message, ok) {
+            var $t = $('#tfrToast');
+            if (!$t.length) { alert(message); return; }
+            $t.removeClass('tfr-toast--ok tfr-toast--err').addClass(ok ? 'tfr-toast--ok' : 'tfr-toast--err').text(message).addClass('is-show');
+            setTimeout(function () { $t.removeClass('is-show'); }, 6000);
+        };
+        window.SaveSuspiciousInterViewer = function () {
+            var comment = ($('#Comment').val() || '').trim();
+            var emailId = $('#hdnInterviewerEmail').val();
+            if (!comment) {
+                showToast('Please enter a comment.', false);
+                return;
+            }
+            $.ajax({
+                url: '/Interviewer/AddSuspiciousTypeComment',
+                data: { Email: emailId, Comment: comment },
+                type: 'POST'
+            }).done(function (data) {
+                var msg = (typeof data === 'string') ? data : (data && data.message) || 'Saved.';
+                var ok = msg.toLowerCase().indexOf('success') >= 0;
+                showToast(msg, ok);
+                if (typeof closeSuspiciousTypeModal === 'function') closeSuspiciousTypeModal();
+                if (ok) setTimeout(function () { location.reload(); }, 900);
+            }).fail(function () {
+                showToast('Failed to mark suspicious.', false);
+            });
+        };
     })();
 </script>
