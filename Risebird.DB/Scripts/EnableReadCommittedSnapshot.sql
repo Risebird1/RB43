@@ -3,7 +3,6 @@
 -- instead of waiting on writer locks during RiskCategory / TrialFlags backfills.
 --
 -- Prerequisites: verify tempdb headroom; test whole portal on staging first.
--- See Docs/trial-flag-review-read-architecture.md Part 2.
 
 /*
 ALTER DATABASE [YOUR_DB_NAME] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
