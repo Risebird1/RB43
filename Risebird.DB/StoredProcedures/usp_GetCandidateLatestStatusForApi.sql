@@ -106,7 +106,8 @@ CASE
     ELSE CandidateLatestStatus    
 END AS CandidateLatestStatus,    
 ipr.NickName as InterviewerCodedName ,PrimarySkill.TechScore,SecondarySkill.TechScoreTwo,IRF.SkillSetsevaluate,    
-addedOn, statusUpdatedAt,ic.AudioTranscriptFileLink,im.Cancellationsource,im.CodeSnippet,im.CodeSnippetTwo,tctv.ClientHRAttemptContact,im.Cancellationreason,ca.id as CandidateId      
+addedOn, statusUpdatedAt,ic.AudioTranscriptFileLink,im.Cancellationsource,im.CodeSnippet,im.CodeSnippetTwo,tctv.ClientHRAttemptContact,im.Cancellationreason,ca.id as CandidateId,    
+im.SessionId, ISNULL(IRF.IsAIInterview, 0) as IsAIInterview      
 --from @TemporaryCandidateTableVariable tctv       
 from @TemporaryCandidateTableFinal tctv    
 left join InterviewMeetings im on im.id = tctv.InterviewId          
