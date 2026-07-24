@@ -1,70 +1,114 @@
 @model Risebird.Entities.ViewModel.PhoneScreenOutcomesVM
 @{
     ViewBag.Title = "AI Phone Screen — Campaign Outcomes";
+    var total = Model.CallsPlaced <= 0 ? 1 : Model.CallsPlaced;
+    var qPct = Model.QualifiedPass * 100.0 / total;
+    var cPct = Model.ConnectedNotQualified * 100.0 / total;
+    var uPct = Model.Unanswered * 100.0 / total;
 }
 
-<div class="ps-wrap">
-    <div class="ps-hero">
-        <div class="ps-hero-glow"></div>
-        <div class="ps-hero-top">
-            <div>
-                <div class="ps-eyebrow">AI PHONE SCREEN · CAMPAIGN</div>
-                <h1 class="ps-h1">@(string.IsNullOrEmpty(Model.IRFName) ? Model.IRFCode : Model.IRFName)</h1>
-                <div class="ps-sub">
-                    @Model.IRFCode
-                    @if (!string.IsNullOrEmpty(Model.ClientName)) { <text> · @Model.ClientName</text> }
-                    · @(Model.HasAssistantConfigured ? "Plivo assistant configured" : "No assistant configured")
-                    @if (Model.LaunchDate.HasValue) { <text> · @Model.LaunchDate.Value.ToString("dd MMM yyyy")</text> }
-                </div>
-            </div>
-            <div class="ps-hero-actions">
-                <a class="ps-btn ps-btn-ghost" href="@Url.Action("GetCandidates", "Candidate", new { id = Model.IRFId, irfName = Model.IRFName })">Back to Candidates</a>
+<script>
+    var Header = "<div>AI Phone Screen</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<div class="main-panel" id="main-panel">
+<div class="ps-page">
+    <div class="ps-header">
+        <div class="ps-header__main">
+            <div class="ps-header__eyebrow">Campaign outcomes</div>
+            <h1 class="ps-header__title">@(string.IsNullOrEmpty(Model.IRFName) ? Model.IRFCode : Model.IRFName)</h1>
+            <div class="ps-header__meta">
+                <span class="ps-meta-chip">@Model.IRFCode</span>
+                @if (!string.IsNullOrEmpty(Model.ClientName))
+                {
+                    <span class="ps-meta-chip">@Model.ClientName</span>
+                }
+                @if (Model.LaunchDate.HasValue)
+                {
+                    <span class="ps-meta-chip">@Model.LaunchDate.Value.ToString("dd MMM yyyy")</span>
+                }
+                @if (Model.HasAssistantConfigured)
+                {
+                    <span class="ps-meta-chip ps-meta-chip--ok">Assistant ready</span>
+                }
+                else
+                {
+                    <span class="ps-meta-chip ps-meta-chip--warn">No assistant</span>
+                }
             </div>
         </div>
-
-        <div class="ps-metrics">
-            <div class="ps-metric"><div class="ps-metric-val" data-count="@Model.CallsPlaced">0</div><div class="ps-metric-lbl">Calls Placed</div></div>
-            <div class="ps-metric"><div class="ps-metric-val ps-c-green" data-count="@Model.QualifiedPass">0</div><div class="ps-metric-lbl">Qualified / Pass</div></div>
-            <div class="ps-metric"><div class="ps-metric-val ps-c-orange" data-count="@Model.InProgress">0</div><div class="ps-metric-lbl">In Progress</div></div>
-            <div class="ps-metric"><div class="ps-metric-val ps-c-red" data-count="@Model.FailedOrNoAnswer">0</div><div class="ps-metric-lbl">Failed / No Answer</div></div>
+        <div class="ps-header__actions">
+            <a class="ps-btn ps-btn--ghost" href="@Url.Action("GetCandidates", "Candidate", new { id = Model.IRFId, irfName = Model.IRFName })">← Candidates</a>
         </div>
+    </div>
 
-        @{
-            var total = Model.CallsPlaced <= 0 ? 1 : Model.CallsPlaced;
-            var qPct = Model.QualifiedPass * 100.0 / total;
-            var cPct = Model.ConnectedNotQualified * 100.0 / total;
-            var uPct = Model.Unanswered * 100.0 / total;
-        }
-        <div class="ps-funnel">
-            <div class="ps-funnel-bar">
-                <span class="ps-seg ps-seg-q" style="width:@qPct.ToString("0.##")%"></span>
-                <span class="ps-seg ps-seg-c" style="width:@cPct.ToString("0.##")%"></span>
-                <span class="ps-seg ps-seg-u" style="width:@uPct.ToString("0.##")%"></span>
+    <div class="ps-stats">
+        <div class="ps-stat">
+            <div class="ps-stat__val" data-count="@Model.CallsPlaced">@Model.CallsPlaced</div>
+            <div class="ps-stat__lbl">Calls placed</div>
+        </div>
+        <div class="ps-stat">
+            <div class="ps-stat__val ps-stat__val--pass" data-count="@Model.QualifiedPass">@Model.QualifiedPass</div>
+            <div class="ps-stat__lbl">Qualified</div>
+        </div>
+        <div class="ps-stat">
+            <div class="ps-stat__val ps-stat__val--prog" data-count="@Model.InProgress">@Model.InProgress</div>
+            <div class="ps-stat__lbl">In progress</div>
+        </div>
+        <div class="ps-stat">
+            <div class="ps-stat__val ps-stat__val--fail" data-count="@Model.FailedOrNoAnswer">@Model.FailedOrNoAnswer</div>
+            <div class="ps-stat__lbl">Failed / no answer</div>
+        </div>
+        <div class="ps-stat ps-stat--funnel">
+            <div class="ps-funnel-bar" title="Qualified / Connected / Unanswered">
+                <span class="ps-funnel-seg ps-funnel-seg--q" style="width:@qPct.ToString("0.##")%"></span>
+                <span class="ps-funnel-seg ps-funnel-seg--c" style="width:@cPct.ToString("0.##")%"></span>
+                <span class="ps-funnel-seg ps-funnel-seg--u" style="width:@uPct.ToString("0.##")%"></span>
             </div>
-            <div class="ps-legend">
-                <span><i class="sw sw-q"></i>Qualified</span>
-                <span><i class="sw sw-c"></i>Connected · not qualified</span>
-                <span><i class="sw sw-u"></i>Unanswered</span>
+            <div class="ps-funnel-legend">
+                <span><i class="ps-dot ps-dot--q"></i>Qualified</span>
+                <span><i class="ps-dot ps-dot--c"></i>Connected</span>
+                <span><i class="ps-dot ps-dot--u"></i>Unanswered</span>
             </div>
         </div>
     </div>
 
     @if (!Model.HasAssistantConfigured)
     {
-        <div class="ps-warn">
-            No Plivo assistant URL is mapped to this skill channel. Add it on the skill channel's
-            <a href="@Url.Action("EditIRF", "IRF", new { id = Model.IRFId, clonevalue = 0 })">edit page</a>
+        <div class="ps-alert ps-alert--warn">
+            No Plivo assistant URL is mapped to this skill channel.
+            <a href="@Url.Action("EditIRF", "IRF", new { id = Model.IRFId, clonevalue = 0 })">Configure on edit IRF</a>
             before placing calls.
         </div>
     }
 
-    <div class="ps-card">
-        <div class="ps-card-head">
-            <input type="text" id="psSearch" class="ps-search" placeholder="Search candidates…" />
-            <span class="ps-count"><span id="psCount">@Model.Rows.Count</span> candidates</span>
+    <div class="ps-panel">
+        <div class="ps-toolbar">
+            <div class="ps-search-box" id="psSearchBox">
+                <span class="ps-search-ico" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+                </span>
+                <input type="search" id="psSearch" class="ps-search-inp" placeholder="Search name, email, or phone…" autocomplete="off" />
+                <button type="button" class="ps-search-reset" id="psSearchClear" title="Clear" aria-label="Clear search" hidden>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="ps-toolbar__right">
+                <label class="ps-pagesize">
+                    <span>Show</span>
+                    <select id="psPageSize" aria-label="Rows per page">
+                        <option value="10">10</option>
+                        <option value="25" selected>25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </label>
+                <span class="ps-count" id="psCountLabel"><span id="psCount">@Model.Rows.Count</span> candidates</span>
+            </div>
         </div>
 
-        <div class="ps-table-scroll">
+        <div class="ps-table-wrap">
             <table class="ps-table" id="psTable">
                 <thead>
                     <tr>
@@ -75,13 +119,15 @@
                         <th>Result</th>
                         <th>Summary</th>
                         <th>Recording</th>
-                        <th class="ps-ta-right">Actions</th>
+                        <th class="ps-col-actions">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if (!Model.Rows.Any())
                     {
-                        <tr><td colspan="8" class="ps-empty">No AI phone screen calls yet. Push candidates from the candidate list.</td></tr>
+                        <tr>
+                            <td colspan="8" class="ps-empty">No AI phone screen calls yet. Push candidates from the candidate list.</td>
+                        </tr>
                     }
                     @foreach (var r in Model.Rows)
                     {
@@ -90,63 +136,86 @@
                         <tr class="ps-row" data-callid="@(r.CallId ?? 0)" data-search="@((r.CandidateName + " " + r.CandidateEmail + " " + r.Phone))">
                             <td>
                                 <div class="ps-cand">
-                                    <div class="ps-avatar">@initials</div>
-                                    <div>
-                                        <div class="ps-cand-name">@r.CandidateName</div>
-                                        <div class="ps-cand-phone">@r.Phone</div>
+                                    <div class="ps-avatar" aria-hidden="true">@initials</div>
+                                    <div class="ps-cand__text">
+                                        <div class="ps-cand__name">@r.CandidateName</div>
+                                        <div class="ps-cand__sub">
+                                            @if (!string.IsNullOrWhiteSpace(r.Phone)) { <span>@r.Phone</span> }
+                                            @if (!string.IsNullOrWhiteSpace(r.CandidateEmail))
+                                            {
+                                                if (!string.IsNullOrWhiteSpace(r.Phone)) { <span class="ps-sep">·</span> }
+                                                <span>@r.CandidateEmail</span>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                             </td>
-                            <td class="ps-status-cell">
+                            <td>
                                 @if (r.HasCall)
                                 {
                                     <span class="ps-badge ps-st-@r.Status">@r.Status</span>
-                                    @if (!string.IsNullOrEmpty(r.EndedReason)) { <div class="ps-ended">@r.EndedReason</div> }
-                                    @if (!string.IsNullOrEmpty(r.Provider)) { <span class="ps-chip">@r.Provider.ToUpper()</span> }
+                                    @if (!string.IsNullOrEmpty(r.EndedReason))
+                                    {
+                                        <div class="ps-muted">@r.EndedReason</div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(r.Provider))
+                                    {
+                                        <span class="ps-chip">@r.Provider.ToUpper()</span>
+                                    }
                                 }
                                 else
                                 {
                                     <span class="ps-badge ps-st-queued">not called</span>
                                 }
                             </td>
-                            <td class="ps-num">@(r.StartedAt.HasValue ? r.StartedAt.Value.ToString("dd MMM, HH:mm") : "-")</td>
-                            <td class="ps-num">@r.DurationDisplay</td>
+                            <td class="ps-num">@(r.StartedAt.HasValue ? r.StartedAt.Value.ToString("dd MMM, HH:mm") : "—")</td>
+                            <td class="ps-num">@(string.IsNullOrEmpty(r.DurationDisplay) ? "—" : r.DurationDisplay)</td>
                             <td>
                                 @{
                                     var res = r.SuccessEvaluation;
                                 }
-                                @if (string.IsNullOrEmpty(res)) { <span class="ps-dash">-</span> }
+                                @if (string.IsNullOrEmpty(res)) { <span class="ps-muted">—</span> }
                                 else if (res.Equals("PASS", StringComparison.OrdinalIgnoreCase)) { <span class="ps-badge ps-pass">PASS</span> }
                                 else if (res.Equals("FAIL", StringComparison.OrdinalIgnoreCase)) { <span class="ps-badge ps-fail">FAIL</span> }
-                                else { <span class="ps-neutral">@res</span> }
+                                else { <span class="ps-muted">@res</span> }
                             </td>
-                            <td class="ps-summary" title="@r.Summary">@(string.IsNullOrEmpty(r.Summary) ? "-" : r.Summary)</td>
+                            <td class="ps-summary" title="@r.Summary">@(string.IsNullOrEmpty(r.Summary) ? "—" : r.Summary)</td>
                             <td>
                                 @if (!string.IsNullOrEmpty(r.RecordingUrl))
                                 {
-                                    <span class="ps-wave">@for (var i = 0; i < 14; i++){<i style="height:@(5 + ((i * 7) % 14))px"></i>}</span>
-                                }
-                                else { <span class="ps-dash">-</span> }
-                            </td>
-                            <td class="ps-ta-right">
-                                <button type="button" class="ps-btn ps-btn-call"
-                                        data-candidate="@r.CandidateId"
-                                        @(Model.HasAssistantConfigured ? "" : "disabled")>
-                                    Call
-                                </button>
-                                @if (r.HasCall && r.CallId.HasValue)
-                                {
-                                    <a class="ps-btn ps-btn-view" href="@Url.Action("CallDetail", "PhoneScreener", new { id = r.CallId.Value })">View</a>
+                                    <a class="ps-rec-link" href="@r.RecordingUrl" target="_blank" rel="noopener" title="Open recording">Recording</a>
                                 }
                                 else
                                 {
-                                    <button type="button" class="ps-btn ps-btn-view" disabled title="No call yet">View</button>
+                                    <span class="ps-muted">—</span>
                                 }
+                            </td>
+                            <td class="ps-col-actions">
+                                <div class="ps-actions">
+                                    <button type="button" class="ps-btn ps-btn--call ps-btn-call"
+                                            data-candidate="@r.CandidateId"
+                                            @(!Model.HasAssistantConfigured ? "disabled" : null)>
+                                        Call
+                                    </button>
+                                    @if (r.HasCall && r.CallId.HasValue)
+                                    {
+                                        <a class="ps-btn ps-btn--secondary" href="@Url.Action("CallDetail", "PhoneScreener", new { id = r.CallId.Value })" target="_blank" rel="noopener noreferrer">View</a>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="ps-btn ps-btn--secondary" disabled title="No call yet">View</button>
+                                    }
+                                </div>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
+        </div>
+
+        <div class="ps-pager" id="psPager" hidden>
+            <span class="ps-pager__info" id="psPagerInfo"></span>
+            <div class="ps-pager__nav" id="psPagerNav"></div>
         </div>
     </div>
 
@@ -154,148 +223,620 @@
     @Html.AntiForgeryToken()
     <input type="hidden" id="psIrfId" value="@Model.IRFId" />
 </div>
+</div>
 
 <style>
-    .ps-wrap { --teal:#1caf9a; --teal-dark:#128873; --teal-soft:#e0f5f1; --red:#E04B4A; --red-soft:#fbe9e9;
-        --green:#7fae3f; --green-soft:#eef4e0; --orange:#f0930f; --orange-soft:#fdf0da; --bg:#f2f4f4;
-        --card:#fff; --border:#e2e6e8; --ink:#232a30; --ink2:#6f7b85;
-        font-family:"Segoe UI",-apple-system,Helvetica,Arial,sans-serif; color:var(--ink); font-size:14px; padding:8px 4px 40px; }
-    .ps-wrap * { box-sizing:border-box; }
-    .ps-hero { position:relative; overflow:hidden; border-radius:12px; padding:24px 28px;
-        background:linear-gradient(120deg,#10322c 0%,#14473d 55%,#176053 100%); color:#fff; }
-    .ps-hero-glow { position:absolute; top:-80px; right:-60px; width:280px; height:280px; border-radius:50%;
-        background:radial-gradient(circle, rgba(28,175,154,.45), transparent 70%); pointer-events:none; }
-    .ps-hero-top { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; position:relative; z-index:1; }
-    .ps-eyebrow { font-size:11px; font-weight:700; letter-spacing:.1em; color:#7fd6c7; }
-    .ps-h1 { font-size:21px; font-weight:700; margin:6px 0 4px; }
-    .ps-sub { font-size:12.5px; color:#b9d8d1; }
-    .ps-hero-actions { display:flex; gap:8px; flex-shrink:0; }
-    .ps-metrics { display:flex; gap:34px; margin:22px 0 6px; position:relative; z-index:1; flex-wrap:wrap; }
-    .ps-metric-val { font-size:30px; font-weight:700; line-height:1; }
-    .ps-metric-lbl { font-size:11px; text-transform:uppercase; color:#9fc9c0; margin-top:4px; letter-spacing:.04em; }
-    .ps-c-green { color:#8fe3a8; } .ps-c-orange { color:#ffca7a; } .ps-c-red { color:#ff9d92; }
-    .ps-funnel { margin-top:16px; position:relative; z-index:1; }
-    .ps-funnel-bar { height:12px; border-radius:999px; background:rgba(255,255,255,.12); overflow:hidden; display:flex; }
-    .ps-seg { height:100%; transition:width .6s ease; }
-    .ps-seg-q { background:#2fbfa9; } .ps-seg-c { background:#7fd6c7; } .ps-seg-u { background:#cfeee9; }
-    .ps-legend { display:flex; gap:18px; margin-top:8px; font-size:11.5px; color:#cfe6e0; }
-    .ps-legend .sw { display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:6px; }
-    .sw-q { background:#2fbfa9; } .sw-c { background:#7fd6c7; } .sw-u { background:#cfeee9; }
-    .ps-warn { margin-top:14px; background:var(--orange-soft); border:1px solid #f3d19a; color:#8a5a09;
-        padding:10px 14px; border-radius:8px; font-size:13px; }
-    .ps-warn a { color:var(--teal-dark); font-weight:600; }
-    .ps-card { margin-top:18px; background:var(--card); border:1px solid var(--border); border-radius:10px;
-        box-shadow:0 1px 2px rgba(18,24,30,.05),0 10px 30px rgba(18,24,30,.07); overflow:hidden; }
-    .ps-card-head { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; gap:12px; }
-    .ps-search { max-width:300px; width:100%; background:var(--bg); border:1px solid var(--border); border-radius:7px; padding:8px 12px; font-size:13px; }
-    .ps-count { font-size:12px; color:var(--ink2); }
-    .ps-table-scroll { overflow-x:auto; }
-    .ps-table { width:100%; border-collapse:collapse; min-width:900px; }
-    .ps-table thead th { font-size:10.5px; text-transform:uppercase; letter-spacing:.03em; color:var(--ink2);
-        background:#fafbfb; text-align:left; padding:10px 14px; border-bottom:1px solid var(--border); }
-    .ps-table tbody td { padding:12px 14px; border-bottom:1px solid var(--border); vertical-align:middle; }
-    .ps-row:hover { background:#f4faf8; }
-    .ps-row.ps-flash { animation:psFlash .9s ease; }
-    @@keyframes psFlash { 0%{background:var(--teal-soft);} 100%{background:transparent;} }
-    .ps-cand { display:flex; align-items:center; gap:10px; }
-    .ps-avatar { width:34px; height:34px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center;
-        color:#fff; font-size:12px; font-weight:700; background:linear-gradient(135deg,#1caf9a,#128873); }
-    .ps-cand-name { font-size:13.5px; font-weight:700; }
-    .ps-cand-phone { font-size:11.5px; color:var(--ink2); }
-    .ps-num { font-variant-numeric:tabular-nums; font-size:13px; }
-    .ps-badge { display:inline-block; border-radius:999px; font-size:11px; font-weight:700; padding:3px 10px; }
-    .ps-badge::before { content:""; display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:6px; vertical-align:middle; background:currentColor; }
-    .ps-st-queued { background:#eceff1; color:#6f7b85; }
-    .ps-st-ringing, .ps-st-in-progress { background:var(--orange-soft); color:#b6710a; }
-    .ps-st-ringing::before, .ps-st-in-progress::before { animation:psBlink 1s infinite; }
-    @@keyframes psBlink { 0%,100%{opacity:1;} 50%{opacity:.25;} }
-    .ps-st-ended { background:var(--teal-soft); color:var(--teal-dark); }
-    .ps-ended { font-size:11px; color:var(--ink2); margin-top:3px; }
-    .ps-chip { display:inline-block; font-size:11px; padding:1px 7px; border-radius:999px; background:#eef2f3; color:#6f7b85; margin-top:3px; }
-    .ps-pass { background:var(--green-soft); color:#4c7016; }
-    .ps-fail { background:var(--red-soft); color:#b23433; }
-    .ps-neutral { font-size:12px; color:var(--ink2); }
-    .ps-dash { color:var(--ink2); }
-    .ps-summary { font-size:12px; color:var(--ink2); max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .ps-wave { display:inline-flex; align-items:flex-end; gap:2px; height:18px; }
-    .ps-wave i { width:3px; background:var(--teal); border-radius:2px; display:block; }
-    .ps-empty { text-align:center; color:var(--ink2); padding:40px 10px; }
-    .ps-ta-right { text-align:right; white-space:nowrap; }
-    .ps-btn { display:inline-block; border:none; cursor:pointer; border-radius:7px; padding:7px 13px; font-size:13px; font-weight:600; text-decoration:none; }
-    .ps-btn-ghost { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.25); color:#fff; }
-    .ps-btn-call { background:var(--teal); color:#fff; box-shadow:0 4px 14px rgba(28,175,154,.35); margin-right:6px; }
-    .ps-btn-call:disabled { background:#bcd; opacity:.5; cursor:not-allowed; box-shadow:none; }
-    .ps-btn-view { background:#fff; border:1px solid var(--border); color:var(--teal-dark); }
-    .ps-btn-view[disabled] { color:#b0bcc4; cursor:not-allowed; }
-    .ps-toasts { position:fixed; right:20px; bottom:20px; display:flex; flex-direction:column; gap:10px; z-index:9999; }
-    .ps-toast { background:#171a21; color:#fff; border-radius:9px; padding:12px 16px; font-size:13px; display:flex; align-items:center; gap:10px;
-        box-shadow:0 10px 30px rgba(0,0,0,.3); animation:psSlide .25s ease; }
-    .ps-toast .dot { width:8px; height:8px; border-radius:50%; }
-    .ps-toast .dot.ok { background:#2fbfa9; } .ps-toast .dot.fail { background:var(--red); } .ps-toast .dot.info { background:#7fd6c7; }
-    @@keyframes psSlide { from{transform:translateX(30px);opacity:0;} to{transform:translateX(0);opacity:1;} }
-    @@media (prefers-reduced-motion: reduce) { .ps-seg,.ps-toast,.ps-row.ps-flash,.ps-st-ringing::before,.ps-st-in-progress::before { animation:none!important; transition:none!important; } }
+    .ps-page {
+        --ps-teal: #128873;
+        --ps-teal-soft: #e0f5f1;
+        --ps-border: #e2e8f0;
+        --ps-ink: #0f172a;
+        --ps-muted: #64748b;
+        --ps-bg: #f8fafc;
+        max-width: 1600px;
+        padding: 16px 20px 32px;
+        color: var(--ps-ink);
+        font-size: 13px;
+    }
+    .ps-page * { box-sizing: border-box; }
+
+    .ps-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+    }
+    .ps-header__eyebrow {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: var(--ps-teal);
+        margin-bottom: 2px;
+    }
+    .ps-header__title {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--ps-ink);
+        line-height: 1.25;
+    }
+    .ps-header__meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+    }
+    .ps-meta-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        background: #fff;
+        border: 1px solid var(--ps-border);
+        color: var(--ps-muted);
+    }
+    .ps-meta-chip--ok { background: var(--ps-teal-soft); border-color: #9fe0d4; color: var(--ps-teal); }
+    .ps-meta-chip--warn { background: #fff7ed; border-color: #fed7aa; color: #9a3412; }
+    .ps-header__actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+    .ps-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(180px, 1.4fr);
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    .ps-stat {
+        background: #fff;
+        border: 1px solid var(--ps-border);
+        border-radius: 8px;
+        padding: 10px 12px;
+        min-width: 0;
+    }
+    .ps-stat__val {
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1.1;
+        font-variant-numeric: tabular-nums;
+        color: var(--ps-ink);
+    }
+    .ps-stat__val--pass { color: #166534; }
+    .ps-stat__val--prog { color: #b45309; }
+    .ps-stat__val--fail { color: #b91c1c; }
+    .ps-stat__lbl {
+        margin-top: 3px;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--ps-muted);
+        text-transform: uppercase;
+        letter-spacing: .03em;
+    }
+    .ps-stat--funnel { display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+    .ps-funnel-bar {
+        height: 8px;
+        border-radius: 999px;
+        background: #e2e8f0;
+        overflow: hidden;
+        display: flex;
+    }
+    .ps-funnel-seg { height: 100%; }
+    .ps-funnel-seg--q { background: #128873; }
+    .ps-funnel-seg--c { background: #5ec4b4; }
+    .ps-funnel-seg--u { background: #c5e8e2; }
+    .ps-funnel-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size: 11px;
+        color: var(--ps-muted);
+    }
+    .ps-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 2px;
+        margin-right: 4px;
+        vertical-align: middle;
+    }
+    .ps-dot--q { background: #128873; }
+    .ps-dot--c { background: #5ec4b4; }
+    .ps-dot--u { background: #c5e8e2; }
+
+    .ps-alert {
+        margin-bottom: 12px;
+        padding: 9px 12px;
+        border-radius: 8px;
+        font-size: 12.5px;
+        line-height: 1.4;
+    }
+    .ps-alert--warn {
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        color: #9a3412;
+    }
+    .ps-alert a { color: var(--ps-teal); font-weight: 600; }
+
+    .ps-panel {
+        background: #fff;
+        border: 1px solid var(--ps-border);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .ps-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--ps-border);
+        background: var(--ps-bg);
+    }
+    .ps-search-box {
+        display: flex;
+        align-items: center;
+        background: #fff;
+        border: 1px solid var(--ps-border);
+        border-radius: 8px;
+        height: 34px;
+        min-width: 240px;
+        max-width: 340px;
+        flex: 1;
+        overflow: hidden;
+        transition: border-color .15s, box-shadow .15s;
+    }
+    .ps-search-box:focus-within {
+        border-color: #5ec4b4;
+        box-shadow: 0 0 0 3px rgba(18, 136, 115, .14);
+    }
+    .ps-search-ico {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        flex-shrink: 0;
+        color: #94a3b8;
+    }
+    .ps-search-inp {
+        flex: 1 1 auto;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 12.5px;
+        color: #334155;
+        padding: 0;
+        height: 100%;
+        min-width: 0;
+    }
+    .ps-search-inp::placeholder { color: #94a3b8; }
+    .ps-search-inp::-webkit-search-cancel-button { display: none; }
+    .ps-search-reset {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        flex-shrink: 0;
+        border: none;
+        background: transparent;
+        color: #94a3b8;
+        cursor: pointer;
+        padding: 0;
+    }
+    .ps-search-reset:hover { color: #64748b; }
+    .ps-search-reset[hidden] { display: none !important; }
+    .ps-toolbar__right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+    }
+    .ps-pagesize {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: var(--ps-muted);
+        margin: 0;
+    }
+    .ps-pagesize select {
+        height: 30px;
+        border: 1px solid var(--ps-border);
+        border-radius: 6px;
+        background: #fff;
+        font-size: 12px;
+        color: #334155;
+        padding: 0 6px;
+        cursor: pointer;
+    }
+    .ps-count { font-size: 12px; color: var(--ps-muted); white-space: nowrap; }
+
+    .ps-pager {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 10px 12px;
+        border-top: 1px solid var(--ps-border);
+        background: var(--ps-bg);
+    }
+    .ps-pager[hidden] { display: none !important; }
+    .ps-pager__info { font-size: 12px; color: var(--ps-muted); }
+    .ps-pager__nav { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+    .ps-page-btn {
+        min-width: 30px;
+        height: 30px;
+        padding: 0 8px;
+        border: 1px solid var(--ps-border);
+        border-radius: 6px;
+        background: #fff;
+        color: #334155;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        line-height: 1;
+    }
+    .ps-page-btn:hover:not(:disabled):not(.is-active) { background: #f1f5f9; }
+    .ps-page-btn.is-active {
+        background: var(--ps-teal);
+        border-color: var(--ps-teal);
+        color: #fff;
+        cursor: default;
+    }
+    .ps-page-btn:disabled { opacity: .45; cursor: not-allowed; }
+    .ps-page-ellipsis {
+        padding: 0 4px;
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .ps-table-wrap { overflow-x: auto; }
+    .ps-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 920px;
+    }
+    .ps-table thead th {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: var(--ps-muted);
+        background: #f8fafc;
+        text-align: left;
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--ps-border);
+        white-space: nowrap;
+    }
+    .ps-table tbody td {
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--ps-border);
+        vertical-align: middle;
+    }
+    .ps-row:hover { background: #f4faf8; }
+    .ps-row.ps-flash { animation: psFlash .8s ease; }
+    @@keyframes psFlash {
+        0% { background: var(--ps-teal-soft); }
+        100% { background: transparent; }
+    }
+
+    .ps-cand { display: flex; align-items: center; gap: 8px; min-width: 160px; }
+    .ps-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        background: #42a5f5;
+    }
+    .ps-cand__name { font-size: 12.5px; font-weight: 600; color: var(--ps-ink); line-height: 1.25; }
+    .ps-cand__sub { font-size: 11px; color: var(--ps-muted); margin-top: 1px; line-height: 1.3; }
+    .ps-sep { margin: 0 3px; color: #cbd5e1; }
+    .ps-num { font-variant-numeric: tabular-nums; font-size: 12px; color: #334155; white-space: nowrap; }
+    .ps-muted { color: var(--ps-muted); font-size: 11.5px; }
+    .ps-summary {
+        font-size: 12px;
+        color: var(--ps-muted);
+        max-width: 220px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .ps-badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 2px 8px;
+        line-height: 1.4;
+        text-transform: lowercase;
+    }
+    .ps-st-queued { background: #f1f5f9; color: #64748b; }
+    .ps-st-ringing, .ps-st-in-progress { background: #fff7ed; color: #c2410c; }
+    .ps-st-ended { background: var(--ps-teal-soft); color: var(--ps-teal); }
+    .ps-pass { background: #dcfce7; color: #166534; text-transform: uppercase; }
+    .ps-fail { background: #fee2e2; color: #991b1b; text-transform: uppercase; }
+    .ps-chip {
+        display: inline-block;
+        margin-top: 3px;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 1px 6px;
+        border-radius: 999px;
+        background: #f1f5f9;
+        color: #64748b;
+    }
+
+    .ps-rec-link {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ps-teal);
+        text-decoration: none;
+    }
+    .ps-rec-link:hover { text-decoration: underline; }
+
+    .ps-col-actions { text-align: right; white-space: nowrap; width: 1%; }
+    .ps-actions { display: inline-flex; gap: 6px; align-items: center; justify-content: flex-end; }
+    .ps-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.2;
+        text-decoration: none;
+        border: 1px solid transparent;
+        cursor: pointer;
+        background: #fff;
+    }
+    .ps-btn--ghost {
+        border-color: var(--ps-border);
+        color: #334155;
+        background: #fff;
+    }
+    .ps-btn--ghost:hover { background: var(--ps-bg); }
+    .ps-btn--call {
+        background: #42a5f5;
+        color: #fff;
+        border-color: #42a5f5;
+    }
+    .ps-btn--call:hover { background: #1e88e5; border-color: #1e88e5; }
+    .ps-btn--call:disabled,
+    .ps-btn-call:disabled {
+        background: #94a3b8;
+        border-color: #94a3b8;
+        opacity: .7;
+        cursor: not-allowed;
+    }
+    .ps-btn--secondary {
+        border-color: var(--ps-border);
+        color: var(--ps-teal);
+        background: #fff;
+    }
+    .ps-btn--secondary:hover { background: var(--ps-teal-soft); }
+    .ps-btn--secondary[disabled] { color: #94a3b8; cursor: not-allowed; background: #f8fafc; }
+
+    .ps-empty {
+        text-align: center;
+        color: var(--ps-muted);
+        padding: 28px 12px;
+        font-size: 13px;
+    }
+
+    .ps-toasts {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        z-index: 9999;
+    }
+    .ps-toast {
+        background: #0f172a;
+        color: #fff;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 12.5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, .25);
+        animation: psSlide .2s ease;
+    }
+    .ps-toast .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .ps-toast .dot.ok { background: #2dd4bf; }
+    .ps-toast .dot.fail { background: #f87171; }
+    .ps-toast .dot.info { background: #94a3b8; }
+    @@keyframes psSlide {
+        from { transform: translateY(8px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    @@media (max-width: 1100px) {
+        .ps-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .ps-stat--funnel { grid-column: 1 / -1; }
+    }
+    @@media (prefers-reduced-motion: reduce) {
+        .ps-row.ps-flash, .ps-toast { animation: none !important; }
+    }
 </style>
 
 @section Scripts {
     <script>
         (function () {
             var placeUrl = '@Url.Action("PlaceCall", "PhoneScreener")';
-            var token = document.querySelector('#psToasts') ? document.querySelector('input[name="__RequestVerificationToken"]') : null;
+            var token = document.querySelector('input[name="__RequestVerificationToken"]');
             var irfId = document.getElementById('psIrfId').value;
-
-            // count-up animation
-            document.querySelectorAll('.ps-metric-val').forEach(function (el) {
-                var target = parseInt(el.getAttribute('data-count') || '0', 10);
-                var start = null, dur = 500;
-                function step(ts) { if (!start) start = ts; var p = Math.min((ts - start) / dur, 1);
-                    el.textContent = Math.round(p * target); if (p < 1) requestAnimationFrame(step); }
-                requestAnimationFrame(step);
-            });
 
             function toast(msg, kind) {
                 var wrap = document.getElementById('psToasts');
-                var t = document.createElement('div'); t.className = 'ps-toast';
-                t.innerHTML = '<span class="dot ' + (kind || 'info') + '"></span><span>' + msg + '</span>';
+                var t = document.createElement('div');
+                t.className = 'ps-toast';
+                t.innerHTML = '<span class="dot ' + (kind || 'info') + '"></span><span></span>';
+                t.querySelector('span:last-child').textContent = msg;
                 wrap.appendChild(t);
-                setTimeout(function () { t.style.opacity = '0'; setTimeout(function () { t.remove(); }, 300); }, 3400);
+                setTimeout(function () {
+                    t.style.opacity = '0';
+                    setTimeout(function () { t.remove(); }, 250);
+                }, 3400);
             }
 
-            // search filter
             var search = document.getElementById('psSearch');
-            if (search) {
-                search.addEventListener('input', function () {
-                    var q = this.value.toLowerCase(); var n = 0;
-                    document.querySelectorAll('#psTable tbody tr.ps-row').forEach(function (row) {
-                        var hay = (row.getAttribute('data-search') || '').toLowerCase();
-                        var show = hay.indexOf(q) !== -1; row.style.display = show ? '' : 'none'; if (show) n++;
-                    });
-                    document.getElementById('psCount').textContent = n;
+            var clearBtn = document.getElementById('psSearchClear');
+            var pageSizeEl = document.getElementById('psPageSize');
+            var pager = document.getElementById('psPager');
+            var pagerInfo = document.getElementById('psPagerInfo');
+            var pagerNav = document.getElementById('psPagerNav');
+            var page = 1;
+
+            function matchedRows() {
+                var q = ((search && search.value) || '').toLowerCase().trim();
+                return Array.prototype.slice.call(document.querySelectorAll('#psTable tbody tr.ps-row')).filter(function (row) {
+                    if (!q) return true;
+                    var hay = (row.getAttribute('data-search') || '').toLowerCase();
+                    return hay.indexOf(q) !== -1;
                 });
             }
 
-            // place call
+            function pageButtons(totalPages, current) {
+                var pages = [];
+                if (totalPages <= 7) {
+                    for (var i = 1; i <= totalPages; i++) pages.push(i);
+                    return pages;
+                }
+                pages.push(1);
+                var start = Math.max(2, current - 1);
+                var end = Math.min(totalPages - 1, current + 1);
+                if (start > 2) pages.push('…');
+                for (var p = start; p <= end; p++) pages.push(p);
+                if (end < totalPages - 1) pages.push('…');
+                pages.push(totalPages);
+                return pages;
+            }
+
+            function render() {
+                var rows = matchedRows();
+                var total = rows.length;
+                var size = parseInt((pageSizeEl && pageSizeEl.value) || '25', 10) || 25;
+                var totalPages = Math.max(1, Math.ceil(total / size) || 1);
+                if (page > totalPages) page = totalPages;
+                if (page < 1) page = 1;
+
+                var startIdx = (page - 1) * size;
+                var endIdx = Math.min(startIdx + size, total);
+
+                document.querySelectorAll('#psTable tbody tr.ps-row').forEach(function (row) {
+                    row.style.display = 'none';
+                });
+                rows.forEach(function (row, i) {
+                    row.style.display = (i >= startIdx && i < endIdx) ? '' : 'none';
+                });
+
+                var countEl = document.getElementById('psCount');
+                if (countEl) countEl.textContent = total;
+                if (clearBtn) clearBtn.hidden = !((search && search.value) || '').trim();
+
+                if (!pager) return;
+                if (total === 0) {
+                    pager.hidden = true;
+                    return;
+                }
+                pager.hidden = false;
+                var from = total === 0 ? 0 : startIdx + 1;
+                pagerInfo.textContent = 'Showing ' + from + '–' + endIdx + ' of ' + total;
+                pagerNav.innerHTML = '';
+
+                function addBtn(label, targetPage, opts) {
+                    opts = opts || {};
+                    var btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'ps-page-btn' + (opts.active ? ' is-active' : '');
+                    btn.textContent = label;
+                    btn.disabled = !!opts.disabled;
+                    if (!opts.disabled && !opts.active) {
+                        btn.addEventListener('click', function () {
+                            page = targetPage;
+                            render();
+                        });
+                    }
+                    pagerNav.appendChild(btn);
+                }
+
+                addBtn('Prev', page - 1, { disabled: page <= 1 });
+                pageButtons(totalPages, page).forEach(function (item) {
+                    if (item === '…') {
+                        var span = document.createElement('span');
+                        span.className = 'ps-page-ellipsis';
+                        span.textContent = '…';
+                        pagerNav.appendChild(span);
+                    } else {
+                        addBtn(String(item), item, { active: item === page });
+                    }
+                });
+                addBtn('Next', page + 1, { disabled: page >= totalPages });
+            }
+
+            if (search) {
+                search.addEventListener('input', function () { page = 1; render(); });
+            }
+            if (clearBtn) {
+                clearBtn.addEventListener('click', function () {
+                    search.value = '';
+                    search.focus();
+                    page = 1;
+                    render();
+                });
+            }
+            if (pageSizeEl) {
+                pageSizeEl.addEventListener('change', function () { page = 1; render(); });
+            }
+            render();
+
             document.querySelectorAll('.ps-btn-call').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     if (btn.disabled) return;
                     var candidateId = btn.getAttribute('data-candidate');
-                    btn.disabled = true; var original = btn.textContent; btn.textContent = 'Calling…';
+                    btn.disabled = true;
+                    var original = btn.textContent;
+                    btn.textContent = 'Calling…';
                     var data = { candidateId: candidateId, irfId: irfId };
                     if (token) data.__RequestVerificationToken = token.value;
                     fetch(placeUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: Object.keys(data).map(function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(data[k]); }).join('&')
+                        body: Object.keys(data).map(function (k) {
+                            return encodeURIComponent(k) + '=' + encodeURIComponent(data[k]);
+                        }).join('&')
                     }).then(function (r) { return r.json(); }).then(function (res) {
                         if (res.success) {
                             toast(res.message || 'Call placed.', 'ok');
-                            var row = btn.closest('tr.ps-row'); if (row) { row.classList.add('ps-flash'); setTimeout(function(){ location.reload(); }, 1200); }
+                            var row = btn.closest('tr.ps-row');
+                            if (row) {
+                                row.classList.add('ps-flash');
+                                setTimeout(function () { location.reload(); }, 1100);
+                            }
                         } else {
                             toast(res.message || 'Could not place the call.', 'fail');
-                            btn.disabled = false; btn.textContent = original;
+                            btn.disabled = false;
+                            btn.textContent = original;
                         }
                     }).catch(function () {
                         toast('Network error placing the call.', 'fail');
-                        btn.disabled = false; btn.textContent = original;
+                        btn.disabled = false;
+                        btn.textContent = original;
                     });
                 });
             });
