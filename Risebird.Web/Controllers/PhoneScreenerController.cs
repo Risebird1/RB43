@@ -146,6 +146,10 @@ namespace Risebird.Web.Controllers
                 if (call == null)
                     return RedirectToAction("Index", "Home");
 
+                // Best-effort: if the call has ended but the recording/transcript never
+                // arrived on the webhook, pull them from Plivo's REST APIs by call UUID.
+                call = await TryBackfillMediaAsync(call);
+
                 var header = await _phoneScreenRepository.GetIRFHeaderAsync(call.IRFId);
                 var vm = MapToResultVM(call, header);
                 return View(vm);
@@ -196,7 +200,8 @@ namespace Risebird.Web.Controllers
                                ?? _configuration["PlivoCX:AvailabilityCallerId"]
                                ?? _configuration["Plivo:FromNumber"]
                                ?? "+918031136547";
-                candidate.Phone = "+918105232468";
+                //candidate.Phone = "+918105232468";
+                //candidate.Phone = "+918888571923";
 
                 // Pre-save the call row so the webhook can resolve it via log_id.
                 var callRecord = new PhoneScreenCall
@@ -296,11 +301,29 @@ namespace Risebird.Web.Controllers
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> Webhook()
         {
-            string rawBody;
+            string rawBody = null;
+            PhoneScreenHangupPayload payload = null;
+
             try
             {
-                using (var reader = new StreamReader(Request.Body))
-                    rawBody = await reader.ReadToEndAsync();
+                if (Request.HasFormContentType)
+                {
+                    // Plivo's RECORDING/HANGUP event callbacks may post form-encoded or
+                    // multipart data (with the recording as a file part). Read the fields.
+                    var form = await Request.ReadFormAsync();
+                    var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                    foreach (var kv in form)
+                        if (!dict.ContainsKey(kv.Key)) dict[kv.Key] = kv.Value.ToString();
+                    rawBody = JsonConvert.SerializeObject(dict);
+                    payload = MapPayload(dict);
+                }
+                else
+                {
+                    using (var reader = new StreamReader(Request.Body))
+                        rawBody = await reader.ReadToEndAsync();
+                    if (!string.IsNullOrWhiteSpace(rawBody))
+                        payload = ParseHangupPayload(rawBody);
+                }
             }
             catch (Exception ex)
             {
@@ -308,20 +331,19 @@ namespace Risebird.Web.Controllers
                 return Content("Error: could not read request body.", "text/html");
             }
 
-            if (string.IsNullOrWhiteSpace(rawBody))
-                return Content("Error: empty request body.", "text/html");
-
-            var payload = ParseHangupPayload(rawBody);
             if (payload == null)
                 return Content("Error: could not parse payload.", "text/html");
 
-            // Resolve the call record: log_id (our row PK) first, then conversation_id.
+            // Resolve the call record: our row PK (log_id) → conversation_id → call_uuid.
             PhoneScreenCall existing = null;
             if (!string.IsNullOrWhiteSpace(payload.LogId) && int.TryParse(payload.LogId, out var logId))
                 existing = await _phoneScreenRepository.GetCallByIdAsync(logId);
 
             if (existing == null && !string.IsNullOrWhiteSpace(payload.ConversationId))
                 existing = await _phoneScreenRepository.GetCallByConversationIdAsync(payload.ConversationId);
+
+            if (existing == null && !string.IsNullOrWhiteSpace(payload.CallUUID))
+                existing = await _phoneScreenRepository.GetCallByExternalCallIdAsync(payload.CallUUID);
 
             if (existing == null)
                 return Content("OK. No matching call record found.", "text/html");
@@ -333,91 +355,211 @@ namespace Risebird.Web.Controllers
         }
 
         // ────────────────────────────────────────────────────────────────────
+        // Manual media backfill (button on the Call Detail screen)
+        // ────────────────────────────────────────────────────────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RefreshMedia(int id)
+        {
+            if (!IsAuthorized(out _))
+                return Json(new { success = false, message = "Session expired. Please sign in again." });
+
+            try
+            {
+                var call = await _phoneScreenRepository.GetCallByIdAsync(id);
+                if (call == null)
+                    return Json(new { success = false, message = "Call not found." });
+
+                if (string.IsNullOrWhiteSpace(call.ExternalCallId))
+                    return Json(new { success = false, message = "No Plivo call UUID has been recorded for this call yet." });
+
+                var media = await _plivoCXService.FetchCallMediaAsync(call.ExternalCallId);
+                if (media == null || !media.Found)
+                    return Json(new
+                    {
+                        success = false,
+                        message = media?.Error ?? "Plivo has no recording/transcript for this call yet. It can take a short while after the call ends — try again shortly."
+                    });
+
+                await _phoneScreenRepository.UpdateCallFromWebhookAsync(new PhoneScreenCall
+                {
+                    Id = call.Id,
+                    RecordingUrl = media.RecordingUrl,
+                    Transcript = media.Transcript,
+                    DurationSeconds = call.DurationSeconds ?? media.DurationSeconds
+                });
+
+                return Json(new
+                {
+                    success = true,
+                    recordingUrl = media.RecordingUrl,
+                    hasTranscript = !string.IsNullOrWhiteSpace(media.Transcript),
+                    message = "Recording and transcript refreshed."
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not refresh media. Please try again." });
+            }
+        }
+
+        // ────────────────────────────────────────────────────────────────────
         // Helpers
         // ────────────────────────────────────────────────────────────────────
 
+        /// <summary>
+        /// If a completed call is missing its recording or transcript, resolve them
+        /// from Plivo's Voice REST APIs by call UUID and merge into the stored row.
+        /// </summary>
+        private async Task<PhoneScreenCall> TryBackfillMediaAsync(PhoneScreenCall call)
+        {
+            try
+            {
+                if (call == null) return call;
+
+                var ended = CanonicalStatus(call.Status) == "ended";
+                var needsMedia = string.IsNullOrWhiteSpace(call.RecordingUrl) ||
+                                 string.IsNullOrWhiteSpace(call.Transcript);
+                if (!ended || !needsMedia || string.IsNullOrWhiteSpace(call.ExternalCallId))
+                    return call;
+
+                var media = await _plivoCXService.FetchCallMediaAsync(call.ExternalCallId);
+                if (media == null || !media.Found)
+                    return call;
+
+                // Only supply values that are currently missing (repository coalesces).
+                await _phoneScreenRepository.UpdateCallFromWebhookAsync(new PhoneScreenCall
+                {
+                    Id = call.Id,
+                    RecordingUrl = string.IsNullOrWhiteSpace(call.RecordingUrl) ? media.RecordingUrl : null,
+                    Transcript = string.IsNullOrWhiteSpace(call.Transcript) ? media.Transcript : null,
+                    DurationSeconds = call.DurationSeconds ?? media.DurationSeconds
+                });
+
+                return await _phoneScreenRepository.GetCallByIdAsync(call.Id) ?? call;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return call;
+            }
+        }
+
+        // Property names Plivo may use for the transcript/summary that arrive as an
+        // object or array rather than a plain string — capture their raw JSON whole.
+        private static readonly HashSet<string> RawCaptureKeys =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "transcript", "transcription", "chat_transcript", "chat_history",
+                "messages", "summary", "conversation_summary", "call_summary"
+            };
+
+        /// <summary>
+        /// Parses any JSON webhook shape (flat, {"json":{...}} wrapper, or the nested
+        /// Plivo CX event envelope) by flattening every leaf into a case-insensitive
+        /// dictionary and mapping known field aliases. Resilient to nesting changes.
+        /// </summary>
         private PhoneScreenHangupPayload ParseHangupPayload(string rawBody)
         {
-            // Strategy 1: flat JSON
             try
             {
-                var flat = JsonConvert.DeserializeObject<PhoneScreenHangupPayload>(rawBody,
-                    new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Ignore });
-                if (flat != null && (!string.IsNullOrEmpty(flat.LogId) || !string.IsNullOrEmpty(flat.ConversationId)))
-                    return flat;
+                var root = JToken.Parse(rawBody);
+                var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                FlattenJson(null, root, dict);
+                var payload = MapPayload(dict);
+                if (payload != null && dict.Count > 0)
+                    return payload;
             }
             catch (Exception ex)
             {
                 _ = _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-
-            // Strategy 2: wrapper {"none":{},"json":{...}} used by flow HTTP nodes
-            try
-            {
-                var wrapper = JsonConvert.DeserializeObject<Dictionary<string, object>>(rawBody);
-                if (wrapper != null && wrapper.ContainsKey("json"))
-                {
-                    var innerJson = wrapper["json"]?.ToString();
-                    if (!string.IsNullOrEmpty(innerJson))
-                        return JsonConvert.DeserializeObject<PhoneScreenHangupPayload>(innerJson,
-                            new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Ignore });
-                }
-            }
-            catch (Exception ex)
-            {
-                _ = _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-
-            // Strategy 3: nested Plivo CX event envelope — flatten event_data.*
-            try
-            {
-                var root = JObject.Parse(rawBody);
-                var ed = root.SelectToken("data.object.event_data") ?? root.SelectToken("event_data");
-                if (ed != null)
-                {
-                    string Val(string key)
-                    {
-                        var direct = ed[key];
-                        if (direct != null) return direct.ToString();
-                        // keys may be prefixed with node name e.g. "Screener.log_id"
-                        foreach (var prop in ed.Children<JProperty>())
-                            if (prop.Name.EndsWith("." + key, StringComparison.OrdinalIgnoreCase) ||
-                                prop.Name.Equals(key, StringComparison.OrdinalIgnoreCase))
-                                return prop.Value?.ToString();
-                        return null;
-                    }
-
-                    return new PhoneScreenHangupPayload
-                    {
-                        ConversationId = root.SelectToken("data.object.conversation_id")?.ToString(),
-                        CallUUID = root.SelectToken("data.object.call_uuid")?.ToString(),
-                        LogId = Val("log_id"),
-                        CallStatus = Val("call_status"),
-                        EndedReason = Val("ended_reason"),
-                        Duration = Val("duration"),
-                        RecordingUrl = Val("recording_url"),
-                        Transcript = Val("transcript"),
-                        Summary = Val("summary"),
-                        Qualified = Val("qualified"),
-                        FailedCriteria = Val("failed_criteria"),
-                        Disposition = Val("disposition"),
-                        Degree = Val("degree"),
-                        GradYear = Val("grad_year"),
-                        Location = Val("location"),
-                        Joining = Val("joining"),
-                        Laptop = Val("laptop"),
-                        CompComfort = Val("comp_comfort"),
-                        Availability = Val("availability"),
-                        Notes = Val("notes")
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                _ = _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-
             return null;
+        }
+
+        private static void FlattenJson(string name, JToken token, Dictionary<string, string> acc)
+        {
+            switch (token.Type)
+            {
+                case JTokenType.Object:
+                    if (name != null && RawCaptureKeys.Contains(StripNode(name)))
+                        Put(acc, name, token.ToString(Formatting.None));
+                    foreach (var p in ((JObject)token).Properties())
+                        FlattenJson(p.Name, p.Value, acc);
+                    break;
+                case JTokenType.Array:
+                    if (name != null && RawCaptureKeys.Contains(StripNode(name)))
+                        Put(acc, name, token.ToString(Formatting.None));
+                    else
+                        foreach (var item in (JArray)token)
+                            FlattenJson(name, item, acc);
+                    break;
+                default:
+                    if (name != null) Put(acc, name, token.ToString());
+                    break;
+            }
+        }
+
+        private static void Put(Dictionary<string, string> acc, string name, string val)
+        {
+            if (string.IsNullOrEmpty(name)) return;
+            void Set(string k)
+            {
+                if (!string.IsNullOrEmpty(k) &&
+                    (!acc.TryGetValue(k, out var existing) || string.IsNullOrWhiteSpace(existing)))
+                    acc[k] = val;
+            }
+            Set(name);
+            Set(StripNode(name));
+        }
+
+        // Strips a node-name prefix from event_data keys, e.g. "Screener.log_id" → "log_id".
+        private static string StripNode(string key)
+        {
+            if (string.IsNullOrEmpty(key)) return key;
+            var dot = key.LastIndexOf('.');
+            return (dot >= 0 && dot < key.Length - 1) ? key.Substring(dot + 1) : key;
+        }
+
+        private static PhoneScreenHangupPayload MapPayload(Dictionary<string, string> d)
+        {
+            if (d == null || d.Count == 0) return null;
+
+            string G(params string[] keys)
+            {
+                foreach (var k in keys)
+                    if (d.TryGetValue(k, out var v) && !string.IsNullOrWhiteSpace(v)) return v;
+                return null;
+            }
+
+            return new PhoneScreenHangupPayload
+            {
+                LogId          = G("log_id", "logid"),
+                ConversationId = G("conversation_id", "conversationid", "conversation_uuid"),
+                CallUUID       = G("call_uuid", "calluuid", "uuid", "call_id", "callid"),
+                CallStatus     = G("call_status", "callstatus", "status"),
+                EndedReason    = G("ended_reason", "hangup_cause", "hangup_reason", "hangup_cause_name", "hangup_source"),
+                Duration       = G("duration", "recording_duration", "call_duration", "billed_duration", "duration_seconds"),
+                RecordingUrl   = G("recording_url", "record_url", "recordurl", "recording_uri"),
+                Transcript     = G("transcript", "transcription", "chat_transcript", "chat_history", "messages"),
+                Summary        = G("summary", "conversation_summary", "call_summary"),
+                Qualified      = G("qualified"),
+                FailedCriteria = G("failed_criteria"),
+                Disposition    = G("disposition"),
+                Degree         = G("degree"),
+                GradYear       = G("grad_year"),
+                Location       = G("location"),
+                Joining        = G("joining"),
+                Laptop         = G("laptop"),
+                CompComfort    = G("comp_comfort"),
+                Availability   = G("availability"),
+                Notes          = G("notes"),
+                CandidateName  = G("candidate_name"),
+                CandidateEmail = G("candidate_email"),
+                PhoneNumber    = G("phone_number")
+            };
         }
 
         private static PhoneScreenCall BuildUpdateFromPayload(int callId, PhoneScreenHangupPayload p, string rawBody)

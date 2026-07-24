@@ -32,6 +32,23 @@ namespace Risebird.Entities.Data.PlivoCXModels
     }
 
     /// <summary>
+    /// Recording + transcript resolved out-of-band from Plivo's REST APIs
+    /// (Voice Recording API + Transcription API) keyed by the call UUID.
+    /// Used as a fallback when the Recording URL event callback does not deliver
+    /// the media to our webhook (e.g. recording processed after hangup, or the
+    /// event payload shape differs from what the webhook parsed).
+    /// </summary>
+    public class PhoneScreenMediaResult
+    {
+        public string RecordingUrl { get; set; }
+        public string RecordingId { get; set; }
+        public string Transcript { get; set; }
+        public int? DurationSeconds { get; set; }
+        public bool Found => !string.IsNullOrWhiteSpace(RecordingUrl) || !string.IsNullOrWhiteSpace(Transcript);
+        public string Error { get; set; }
+    }
+
+    /// <summary>
     /// Flat JSON body the Plivo CX Phone Screener agent (and its failure-branch
     /// HTTP nodes) POST back to /PhoneScreener/Webhook when a call concludes.
     /// Every field is optional; the webhook degrades gracefully on partial data.

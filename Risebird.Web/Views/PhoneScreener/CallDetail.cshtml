@@ -74,16 +74,26 @@
     </div>
 
     <div class="ps-card ps-rec">
-        <div class="ps-rec-head">Recording</div>
+        <div class="ps-rec-head">
+            <span>Recording</span>
+            @if (Model.Status == "ended")
+            {
+                <button type="button" id="ps-refresh-media" class="ps-refresh-btn" data-callid="@Model.CallId">
+                    Refresh recording &amp; transcript
+                </button>
+            }
+        </div>
         @if (!string.IsNullOrEmpty(Model.RecordingUrl))
         {
             <audio controls preload="none" class="ps-audio" src="@Model.RecordingUrl"></audio>
         }
         else
         {
-            <div class="ps-dash">-</div>
+            <div class="ps-note" id="ps-rec-empty">No recording available yet. It may take a short while after the call ends&mdash;use Refresh to pull it from Plivo.</div>
         }
+        <div id="ps-refresh-msg" class="ps-note" style="display:none;"></div>
     </div>
+    @Html.AntiForgeryToken()
 
     <div class="ps-card ps-tabs-card">
         <div class="ps-tabs">
@@ -203,8 +213,12 @@
     .ps-meta-lbl { display:block; font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink2); }
     .ps-meta-val { display:block; font-size:13.5px; margin-top:3px; word-break:break-word; }
     .ps-rec { padding:18px; background:#14171c; border:none; color:#fff; }
-    .ps-rec-head { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:#9fb0b6; margin-bottom:10px; }
+    .ps-rec-head { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:#9fb0b6; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
     .ps-audio { width:100%; }
+    .ps-refresh-btn { background:transparent; border:1px solid #3a4650; color:#cdd9de; font-size:11px; font-weight:600; letter-spacing:.02em; text-transform:none; padding:5px 12px; border-radius:6px; cursor:pointer; }
+    .ps-refresh-btn:hover { background:#20262d; color:#fff; }
+    .ps-refresh-btn:disabled { opacity:.55; cursor:default; }
+    .ps-rec .ps-note { color:#9fb0b6; }
     .ps-badge { display:inline-block; border-radius:999px; font-size:11px; font-weight:700; padding:3px 10px; }
     .ps-badge::before { content:""; display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:6px; vertical-align:middle; background:currentColor; }
     .ps-st-queued { background:#eceff1; color:#6f7b85; }
@@ -253,6 +267,46 @@
             document.querySelectorAll('.ps-viewjson').forEach(function (a) {
                 a.addEventListener('click', function (e) { e.preventDefault(); activate(a.getAttribute('data-tabjump')); });
             });
+
+            var refreshBtn = document.getElementById('ps-refresh-media');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function () {
+                    var callId = refreshBtn.getAttribute('data-callid');
+                    var msg = document.getElementById('ps-refresh-msg');
+                    var tokenEl = document.querySelector('input[name="__RequestVerificationToken"]');
+                    refreshBtn.disabled = true;
+                    refreshBtn.textContent = 'Refreshing…';
+                    if (msg) { msg.style.display = 'none'; }
+
+                    var form = new FormData();
+                    form.append('id', callId);
+                    if (tokenEl) { form.append('__RequestVerificationToken', tokenEl.value); }
+
+                    fetch('@Url.Action("RefreshMedia", "PhoneScreener")', {
+                        method: 'POST',
+                        body: form,
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (data && data.success && (data.recordingUrl || data.hasTranscript)) {
+                            location.reload();
+                            return;
+                        }
+                        refreshBtn.disabled = false;
+                        refreshBtn.textContent = 'Refresh recording & transcript';
+                        if (msg) {
+                            msg.textContent = (data && data.message) ? data.message : 'Nothing new available yet.';
+                            msg.style.display = '';
+                        }
+                    })
+                    .catch(function () {
+                        refreshBtn.disabled = false;
+                        refreshBtn.textContent = 'Refresh recording & transcript';
+                        if (msg) { msg.textContent = 'Refresh failed. Please try again.'; msg.style.display = ''; }
+                    });
+                });
+            }
         })();
     </script>
 }
