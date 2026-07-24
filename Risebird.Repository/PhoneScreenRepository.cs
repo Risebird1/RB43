@@ -182,6 +182,25 @@ SELECT CAST(SCOPE_IDENTITY() AS int);";
             }
         }
 
+        public async Task<PhoneScreenCall> GetCallByExternalCallIdAsync(string externalCallId)
+        {
+            if (string.IsNullOrWhiteSpace(externalCallId)) return null;
+            try
+            {
+                using (var con = new SqlConnection(_connectionString))
+                {
+                    return await con.QueryFirstOrDefaultAsync<PhoneScreenCall>(
+                        "SELECT TOP 1 * FROM PhoneScreenCalls WHERE ExternalCallId = @externalCallId ORDER BY Id DESC",
+                        new { externalCallId });
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public async Task<IEnumerable<PhoneScreenCall>> GetCallsByIRFAsync(int irfId)
         {
             try
