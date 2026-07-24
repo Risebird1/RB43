@@ -1,4 +1,5 @@
 using Amazon.Rekognition.Model;
+using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -9,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
@@ -124,6 +126,93 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
+        }
+
+        public async Task<AIInterviewEvaluation> GetParsedAIInterviewEvaluationBySessionId(Guid sessionId)
+        {
+            try
+            {
+                var aiReportJson = await _aiInterviewerRepository.GetReportOfAIInterviewByAssistant(sessionId);
+                if (string.IsNullOrWhiteSpace(aiReportJson))
+                {
+                    return null;
+                }
+
+                InterviewReportResult aiReport = null;
+                try
+                {
+                    aiReport = JsonConvert.DeserializeObject<InterviewReportResult>(aiReportJson);
+                }
+                catch
+                {
+                    aiReport = null;
+                }
+
+                var evaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault());
+                if (evaluation != null)
+                {
+                    var videoDetails = await _aiInterviewerRepository.GetBotInterviewVideoDetails(sessionId);
+                    EnrichQuestionRatingsWithActualQuestions(evaluation, videoDetails);
+                }
+                return evaluation;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        private void EnrichQuestionRatingsWithActualQuestions(AIInterviewEvaluation evaluation, List<BotInterviewQuestionVideos> videoDetails)
+        {
+            if (evaluation?.QuestionRatings == null || videoDetails == null || !videoDetails.Any())
+                return;
+
+            for (int i = 0; i < evaluation.QuestionRatings.Count; i++)
+            {
+                var qr = evaluation.QuestionRatings[i];
+                if (string.IsNullOrWhiteSpace(qr.Question) || Regex.IsMatch(qr.Question, @"^Q\d+$"))
+                {
+                    int index;
+                    var match = Regex.Match(qr.Question ?? "", @"\d+");
+                    if (match.Success)
+                        index = int.Parse(match.Value) - 1;
+                    else
+                        index = i;
+
+                    if (index >= 0 && index < videoDetails.Count && !string.IsNullOrWhiteSpace(videoDetails[index].question))
+                    {
+                        qr.Question = videoDetails[index].question;
+                    }
+                }
+            }
+        }
+
+        private AIInterviewEvaluation TryParseEvaluation(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return null;
+
+            var cleaned = raw.Trim();
+            if (cleaned.StartsWith("```json")) cleaned = cleaned.Substring(6).TrimStart();
+            if (cleaned.EndsWith("```")) cleaned = cleaned.Substring(0, cleaned.Length - 3).TrimEnd();
+            cleaned = cleaned.TrimStart('n');
+
+            try
+            {
+                var strict = JsonConvert.DeserializeObject<AIInterviewEvaluation>(cleaned);
+                if (strict != null &&
+                    (strict.QuestionRatings != null || strict.RubricScoreSummary != null || strict.LlmDetection != null ||
+                     !string.IsNullOrEmpty(strict.FinalVerdict) || !string.IsNullOrEmpty(strict.FinalComment) ||
+                     strict.OverallTechnicalScore != 0 || strict.OverallCommunicationScore != 0))
+                {
+                    return strict;
+                }
+            }
+            catch
+            {
+                // Not structured JSON (e.g. adaptive interviews return ready-to-render HTML) -> no evaluation.
+            }
+            return null;
         }
 
         public async Task LogTranscript(Guid sessionId, string role, string message, int? deliveryHeadQuestionId = null)

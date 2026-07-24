@@ -294,7 +294,7 @@ namespace Risebird.Services.Controllers
                                                     zoomLink.meetingid = "";
                                                     zoomLink.join_url = "";
                                                     zoomLink.accountemail = "AI";
-                                                    meetingplatform = "AI";
+                                                    meetingplatform = MeetingPlatforms.AIInterview;
                                                 }
                                                 string textreminder = string.Empty;
                                                 textreminder = item.Phone;
