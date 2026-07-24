@@ -64,6 +64,9 @@ namespace Risebird.Business
             var maxBatches = DmIvAutoQcAuditConstants.RiskCategoryBackfillMaxBatches;
             var maxInterviews = batchSize * maxBatches;
 
+            // Reader/writer isolation (trial-read-architecture Part 2):
+            // Never wrap the full IRF/90-day window in one SqlTransaction — each interview
+            // evaluate/write commits independently so Trial Flag Review List readers are not blocked.
             // Single candidate fetch for the whole run so the mass-fire guard can evaluate
             // before any write (prefer-missing ordering from SP).
             cancellationToken.ThrowIfCancellationRequested();
