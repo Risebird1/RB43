@@ -40,5 +40,13 @@ namespace Risebird.CommonHelper.Interface
         /// Plivo assistant URL rather than a single global endpoint in appsettings.
         /// </summary>
         Task<PlivoCXTriggerResponse> TriggerByUrlAsync(string triggerUrl, object request);
+
+        /// <summary>
+        /// Fetches the call recording URL and (best-effort) transcript for a completed
+        /// call using Plivo's Voice REST APIs (Recording API + Transcription API),
+        /// keyed by the Plivo call UUID. Fallback for when the Recording URL event
+        /// callback did not deliver these to our webhook. Never throws.
+        /// </summary>
+        Task<PhoneScreenMediaResult> FetchCallMediaAsync(string callUuid);
     }
 }

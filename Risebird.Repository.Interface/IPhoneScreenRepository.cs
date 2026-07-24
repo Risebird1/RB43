@@ -21,6 +21,7 @@ namespace Risebird.Repository.Interface
         Task<int> InsertCallAsync(PhoneScreenCall call);
         Task<PhoneScreenCall> GetCallByIdAsync(int id);
         Task<PhoneScreenCall> GetCallByConversationIdAsync(string conversationId);
+        Task<PhoneScreenCall> GetCallByExternalCallIdAsync(string externalCallId);
         Task<IEnumerable<PhoneScreenCall>> GetCallsByIRFAsync(int irfId);
         Task<bool> UpdateCallTriggerResultAsync(int id, string status, string conversationId, string externalCallId);
         Task<bool> UpdateCallFromWebhookAsync(PhoneScreenCall data);
