@@ -122,12 +122,14 @@
         </div>
     </div>
 
-    <div class="ps-panel ps-rec-panel">
+    <div class="ps-card ps-rec">
         <div class="ps-rec-head">
-            <span class="ps-rec-title">Recording</span>
-            @if (!string.IsNullOrEmpty(Model.RecordingUrl))
+            <span>Recording</span>
+            @if (Model.Status == "ended")
             {
-                <a class="ps-rec-link" href="@Model.RecordingUrl" target="_blank" rel="noopener">Open file</a>
+                <button type="button" id="ps-refresh-media" class="ps-refresh-btn" data-callid="@Model.CallId">
+                    Refresh recording &amp; transcript
+                </button>
             }
         </div>
         @if (!string.IsNullOrEmpty(Model.RecordingUrl))
@@ -136,9 +138,11 @@
         }
         else
         {
-            <div class="ps-note">No recording available.</div>
+            <div class="ps-note" id="ps-rec-empty">No recording available yet. It may take a short while after the call ends&mdash;use Refresh to pull it from Plivo.</div>
         }
+        <div id="ps-refresh-msg" class="ps-note" style="display:none;"></div>
     </div>
+    @Html.AntiForgeryToken()
 
     <div class="ps-panel">
         <div class="ps-tabs" role="tablist">
@@ -581,6 +585,46 @@
                     activate(a.getAttribute('data-tabjump'));
                 });
             });
+
+            var refreshBtn = document.getElementById('ps-refresh-media');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function () {
+                    var callId = refreshBtn.getAttribute('data-callid');
+                    var msg = document.getElementById('ps-refresh-msg');
+                    var tokenEl = document.querySelector('input[name="__RequestVerificationToken"]');
+                    refreshBtn.disabled = true;
+                    refreshBtn.textContent = 'Refreshing…';
+                    if (msg) { msg.style.display = 'none'; }
+
+                    var form = new FormData();
+                    form.append('id', callId);
+                    if (tokenEl) { form.append('__RequestVerificationToken', tokenEl.value); }
+
+                    fetch('@Url.Action("RefreshMedia", "PhoneScreener")', {
+                        method: 'POST',
+                        body: form,
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (data && data.success && (data.recordingUrl || data.hasTranscript)) {
+                            location.reload();
+                            return;
+                        }
+                        refreshBtn.disabled = false;
+                        refreshBtn.textContent = 'Refresh recording & transcript';
+                        if (msg) {
+                            msg.textContent = (data && data.message) ? data.message : 'Nothing new available yet.';
+                            msg.style.display = '';
+                        }
+                    })
+                    .catch(function () {
+                        refreshBtn.disabled = false;
+                        refreshBtn.textContent = 'Refresh recording & transcript';
+                        if (msg) { msg.textContent = 'Refresh failed. Please try again.'; msg.style.display = ''; }
+                    });
+                });
+            }
         })();
     </script>
 }

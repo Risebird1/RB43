@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data.PlivoCXModels;
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -33,6 +34,10 @@ namespace Risebird.CommonHelper
         private readonly string     _onboardingTriggerEndpointUrl;
         private readonly string     _availabilityTriggerEndpointUrl;
 
+        // Plivo Voice REST API credentials (recording + transcription fallback).
+        private readonly string     _voiceAuthId;
+        private readonly string     _voiceBasicAuth;
+
         public PlivoCXService(IConfiguration configuration)
         {
             var authId    = configuration["PlivoCX:ApiAuthId"]    ?? string.Empty;
@@ -41,6 +46,13 @@ namespace Risebird.CommonHelper
             _rescheduleTriggerEndpointUrl = configuration["PlivoCX:RescheduleTriggerEndpointUrl"] ?? string.Empty;
             _onboardingTriggerEndpointUrl = configuration["PlivoCX:OnboardingTriggerEndpointUrl"] ?? string.Empty;
             _availabilityTriggerEndpointUrl = configuration["PlivoCX:AvailabilityTriggerEndpointUrl"] ?? string.Empty;
+
+            // Voice API uses the account auth id/token (falls back to the CX creds,
+            // which share the same auth id on this account).
+            _voiceAuthId = configuration["Plivo:AuthId"] ?? authId;
+            var voiceToken = configuration["Plivo:AuthToken"] ?? authToken;
+            _voiceBasicAuth = Convert.ToBase64String(
+                Encoding.ASCII.GetBytes($"{_voiceAuthId}:{voiceToken}"));
 
             _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Authorization =
@@ -65,6 +77,96 @@ namespace Risebird.CommonHelper
 
         public Task<PlivoCXTriggerResponse> TriggerByUrlAsync(string triggerUrl, object request)
             => PostTriggerAsync(triggerUrl, request, "PlivoAssistantUrl (skill channel)");
+
+        /// <summary>
+        /// Resolves recording URL + transcript for a call via Plivo's Voice REST APIs.
+        /// Step 1: GET /Recording/?call_uuid=... to find the recording (url, id, duration).
+        /// Step 2: GET /Transcription/{recording_id}/ for the transcript text; if the
+        ///         transcription has not been generated yet, request its creation
+        ///         (POST) so it is available on a later refresh. Never throws.
+        /// </summary>
+        public async Task<PhoneScreenMediaResult> FetchCallMediaAsync(string callUuid)
+        {
+            var result = new PhoneScreenMediaResult();
+            if (string.IsNullOrWhiteSpace(callUuid) || string.IsNullOrWhiteSpace(_voiceAuthId))
+            {
+                result.Error = "Missing call UUID or Plivo Voice credentials.";
+                return result;
+            }
+
+            try
+            {
+                // ── Recording ────────────────────────────────────────────────
+                var recUrl = $"https://api.plivo.com/v1/Account/{_voiceAuthId}/Recording/" +
+                             $"?call_uuid={Uri.EscapeDataString(callUuid)}&limit=1";
+                var recBody = await SendVoiceApiAsync(HttpMethod.Get, recUrl);
+                string recordingId = null;
+
+                if (!string.IsNullOrWhiteSpace(recBody))
+                {
+                    var recJson = JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(recBody);
+                    var obj = recJson?["objects"]?.FirstOrDefault();
+                    if (obj != null)
+                    {
+                        result.RecordingUrl = obj["recording_url"]?.ToString();
+                        recordingId = obj["recording_id"]?.ToString();
+                        if (int.TryParse(obj["duration"]?.ToString(), out var dur))
+                            result.DurationSeconds = dur;
+                        result.RecordingId = recordingId;
+                    }
+                }
+
+                // ── Transcript ───────────────────────────────────────────────
+                if (!string.IsNullOrWhiteSpace(recordingId))
+                {
+                    var txUrl = $"https://api.plivo.com/v1/Account/{_voiceAuthId}/Transcription/{recordingId}/?type=diarized";
+                    var txBody = await SendVoiceApiAsync(HttpMethod.Get, txUrl);
+                    if (!string.IsNullOrWhiteSpace(txBody))
+                    {
+                        var txJson = JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(txBody);
+                        var text = txJson?["transcription"]?.ToString();
+                        if (!string.IsNullOrWhiteSpace(text) && text.Trim() != "{}")
+                            result.Transcript = text;
+                    }
+
+                    // Not transcribed yet — request creation so a later refresh succeeds.
+                    if (string.IsNullOrWhiteSpace(result.Transcript))
+                    {
+                        var createUrl = $"https://api.plivo.com/v1/Account/{_voiceAuthId}/Transcription/{recordingId}/";
+                        _ = await SendVoiceApiAsync(HttpMethod.Post, createUrl,
+                            "{\"transcription_callback_url\":\"\"}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Error = ex.Message;
+            }
+
+            return result;
+        }
+
+        private async Task<string> SendVoiceApiAsync(HttpMethod method, string url, string jsonBody = null)
+        {
+            try
+            {
+                using (var req = new HttpRequestMessage(method, url))
+                {
+                    req.Headers.Authorization = new AuthenticationHeaderValue("Basic", _voiceBasicAuth);
+                    req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    if (jsonBody != null)
+                        req.Content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+                    var resp = await _httpClient.SendAsync(req);
+                    if (!resp.IsSuccessStatusCode) return null;
+                    return await resp.Content.ReadAsStringAsync();
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
 
         private async Task<PlivoCXTriggerResponse> PostTriggerAsync(
             string triggerUrl, object request, string configKeyName)
