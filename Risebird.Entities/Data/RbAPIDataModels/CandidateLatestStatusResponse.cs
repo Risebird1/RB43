@@ -127,6 +127,8 @@ namespace Risebird.Entities.Data.RbAPIDataModels
         public string Cancellationreason { get; set; }
         public string ClientHRAttemptContact { get; set; }
         public int CandidateId { get; set; }
+        public bool IsAIInterview { get; set; }
+        public string SessionId { get; set; }
     }
     public class SkillsSetsDetails
     {

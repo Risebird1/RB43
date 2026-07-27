@@ -156,7 +156,8 @@ ic.InterviewStatus, ic.InterviewerComment, ic.VideoLink, im.confirmationStatus, 
 ice.MeetingStatus as MeetingStatusTwo,ice.InterviewStatus as InterviewStatusTwo,            
 ice.InterviewerComment as InterviewerCommentTwo,        
 ipr.NickName as InterviewerCodedName ,PrimarySkill.TechScore,SecondarySkill.TechScoreTwo,IRF.SkillSetsevaluate,tctv.addedOn,tctv.statusUpdatedAt,        
-Case When CandidateLatestStatus like '%FUTURESCHEDULE%' then 'SCHEDULED' else CandidateLatestStatus end as CandidateLatestStatus,Project.ProjectUniqueid as jobId,ic.AudioTranscriptFileLink,im.CodeSnippet,im.CodeSnippetTwo,tctv.ClientHRAttemptContact,ca.id as CandidateId     
+Case When CandidateLatestStatus like '%FUTURESCHEDULE%' then 'SCHEDULED' else CandidateLatestStatus end as CandidateLatestStatus,Project.ProjectUniqueid as jobId,ic.AudioTranscriptFileLink,im.CodeSnippet,im.CodeSnippetTwo,tctv.ClientHRAttemptContact,ca.id as CandidateId,     
+im.SessionId, ISNULL(IRF.IsAIInterview, 0) as IsAIInterview     
   
 from @TemporaryCandidateTableVariable tctv                  
 join InterviewMeetings im on im.id = tctv.InterviewId                  

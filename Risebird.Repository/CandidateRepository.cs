@@ -1615,6 +1615,8 @@ namespace Risebird.Repository
                                     Cancellationreason = dt.Rows[i]["Cancellationreason"] != null ? dt.Rows[i]["Cancellationreason"].ToString() : string.Empty,
                                     ClientHRAttemptContact = dt.Rows[i]["ClientHRAttemptContact"] != null ? dt.Rows[i]["ClientHRAttemptContact"].ToString() : string.Empty,
                                     CandidateId = !string.IsNullOrEmpty(dt.Rows[i]["CandidateId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["CandidateId"]) : 0,
+                                    IsAIInterview = dt.Columns.Contains("IsAIInterview") && !string.IsNullOrEmpty(dt.Rows[i]["IsAIInterview"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsAIInterview"]) : false,
+                                    SessionId = dt.Columns.Contains("SessionId") && dt.Rows[i]["SessionId"] != null ? dt.Rows[i]["SessionId"].ToString() : string.Empty,
                                 });
                             }
                             _resultVM = listCandidates;
@@ -1758,6 +1760,8 @@ namespace Risebird.Repository
                                     ClientHRAttemptContact = dt.Rows[i]["ClientHRAttemptContact"] != null ? dt.Rows[i]["ClientHRAttemptContact"].ToString() : string.Empty,
 
                                     CandidateId = !string.IsNullOrEmpty(dt.Rows[i]["CandidateId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["CandidateId"]) : 0,
+                                    IsAIInterview = dt.Columns.Contains("IsAIInterview") && !string.IsNullOrEmpty(dt.Rows[i]["IsAIInterview"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsAIInterview"]) : false,
+                                    SessionId = dt.Columns.Contains("SessionId") && dt.Rows[i]["SessionId"] != null ? dt.Rows[i]["SessionId"].ToString() : string.Empty,
                                 });
                             }
                             _resultVM = listCandidates;

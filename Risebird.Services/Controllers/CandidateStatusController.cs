@@ -4,6 +4,7 @@ using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data.RbAPIDataModels;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 
 namespace Risebird.Services.Controllers
@@ -18,8 +19,9 @@ namespace Risebird.Services.Controllers
         private readonly ICandidateService _candidateService;
         private readonly IIRFRepository _irfRepository;
         private readonly ICandidateRepository _candidateRepository;
+        private readonly IAIInterviewerService _aiInterviewerService;
 
-        public CandidateStatusController(IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IEncryptionHelper encryptionHelper, ICandidateService candidateService, IIRFRepository irfRepository, ICandidateRepository candidateRepository)
+        public CandidateStatusController(IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IEncryptionHelper encryptionHelper, ICandidateService candidateService, IIRFRepository irfRepository, ICandidateRepository candidateRepository, IAIInterviewerService aiInterviewerService)
         {
             _clientService = clientService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -27,6 +29,7 @@ namespace Risebird.Services.Controllers
             _candidateService = candidateService;
             _irfRepository = irfRepository;
             _candidateRepository = candidateRepository;
+            _aiInterviewerService = aiInterviewerService;
         }
 
 
@@ -160,6 +163,18 @@ namespace Risebird.Services.Controllers
                             model.retrievedAt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ");
                             foreach (var item in result)
                             {
+                                //For AI interviews the evaluation (scores, per-question ratings, rubric)
+                                //is persisted as an assistant-generated JSON report keyed by SessionId,
+                                //not in the standard InterviewComments/TechSkillReport tables. Fetch and
+                                //parse it so the response carries the same fields as an interviewer-led one.
+                                AIInterviewEvaluation aiEvaluation = null;
+                                string aiVideoUrl = string.Empty;
+                                if (item.IsAIInterview && !string.IsNullOrWhiteSpace(item.SessionId) && Guid.TryParse(item.SessionId, out var aiSessionId))
+                                {
+                                    aiEvaluation = await _aiInterviewerService.GetParsedAIInterviewEvaluationBySessionId(aiSessionId);
+                                    var aiVideos = await _aiInterviewerService.GetBotInterviewVideoDetails(aiSessionId);
+                                    aiVideoUrl = aiVideos?.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v.VideoLink) && v.VideoLink != "no-video")?.VideoLink ?? string.Empty;
+                                }
                                 if (item.InterviewStatusTwo != null && item.InterviewStatusTwo > 0)
                                 {
                                     item.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(item.InterviewStatusTwo)).GetDescription();
@@ -207,13 +222,44 @@ namespace Risebird.Services.Controllers
                                         score = score
                                     });
                                 }
+                                //Overlay the AI-generated evaluation onto the primary skill so AI interview
+                                //candidates return the same shape (tech score, questions, rubric) as regular ones.
+                                var primaryTechScore = item.TechScoreone;
+                                var primaryInterviewerComment = item.InterviewerComment;
+                                if (aiEvaluation != null)
+                                {
+                                    primaryTechScore = (int)Math.Round(aiEvaluation.OverallTechnicalScore);
+                                    if (!string.IsNullOrWhiteSpace(aiEvaluation.FinalComment))
+                                    {
+                                        primaryInterviewerComment = aiEvaluation.FinalComment;
+                                    }
+                                    if (aiEvaluation.QuestionRatings != null)
+                                    {
+                                        _questions = aiEvaluation.QuestionRatings.Select(q => new QuestionCommentsDetails
+                                        {
+                                            question = q.Question,
+                                            skillName = item.JDTiltle,
+                                            rating = string.IsNullOrWhiteSpace(q.Verdict) ? q.Score.ToString() : q.Verdict
+                                        }).ToList();
+                                    }
+                                    if (aiEvaluation.RubricScoreSummary != null)
+                                    {
+                                        _skillset = aiEvaluation.RubricScoreSummary.Select(r => new SkillsSetsDetails
+                                        {
+                                            skillName = r.RubricItem,
+                                            EvaluatedAt = r.ObservedLevel,
+                                            Evaluatedscore = string.IsNullOrWhiteSpace(r.ObservedLevel) ? r.Score.ToString() : (r.ObservedLevel + "/" + r.ExpectedLevel),
+                                            score = r.Score.ToString()
+                                        }).ToList();
+                                    }
+                                }
                                 _skills.Add(new SkillDetails
                                 {
                                     isPrimary = true,
                                     skillName = item.JDTiltle,
                                     status = item.CandidateLatestStatus,
-                                    techscore = item.TechScoreone,
-                                    interviewerComment = item.InterviewerComment,
+                                    techscore = primaryTechScore,
+                                    interviewerComment = primaryInterviewerComment,
                                     CodeSnippet = item.CodeSnippet,
                                     questions = _questions,
                                     skillset = _skillset
@@ -269,8 +315,8 @@ namespace Risebird.Services.Controllers
                                     candidateEmailId = item.candidateEmail,
                                     interviewer = item.InterviewerCodedName,
                                     reportUrl = executiveurl,
-                                    communicationScore = item.CommunicationalProficiency,
-                                    videoUrl = item.VideoLink,
+                                    communicationScore = aiEvaluation != null ? (int)Math.Round(aiEvaluation.OverallCommunicationScore) : item.CommunicationalProficiency,
+                                    videoUrl = aiEvaluation != null && !string.IsNullOrWhiteSpace(aiVideoUrl) ? aiVideoUrl : item.VideoLink,
                                     transcriptUrl = item.TranscriptLink,
                                     skills = _skills,
                                     createdOn = item.createdOn?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
@@ -396,6 +442,18 @@ namespace Risebird.Services.Controllers
                         {
                             foreach (var result in results)
                             {
+                                //For AI interviews the evaluation (scores, per-question ratings, rubric)
+                                //is persisted as an assistant-generated JSON report keyed by SessionId,
+                                //not in the standard InterviewComments/TechSkillReport tables. Fetch and
+                                //parse it so the response carries the same fields as an interviewer-led one.
+                                AIInterviewEvaluation aiEvaluation = null;
+                                string aiVideoUrl = string.Empty;
+                                if (result.IsAIInterview && !string.IsNullOrWhiteSpace(result.SessionId) && Guid.TryParse(result.SessionId, out var aiSessionId))
+                                {
+                                    aiEvaluation = await _aiInterviewerService.GetParsedAIInterviewEvaluationBySessionId(aiSessionId);
+                                    var aiVideos = await _aiInterviewerService.GetBotInterviewVideoDetails(aiSessionId);
+                                    aiVideoUrl = aiVideos?.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v.VideoLink) && v.VideoLink != "no-video")?.VideoLink ?? string.Empty;
+                                }
                                 if (result.InterviewStatusTwo != null && result.InterviewStatusTwo > 0)
                                 {
                                     result.InterviewStatusTwoDesc = ((InterviewStatus)Convert.ToInt32(result.InterviewStatusTwo)).GetDescription();
@@ -447,6 +505,37 @@ namespace Risebird.Services.Controllers
                                 {
                                     result.Cancellationsource = "";
                                 }
+                                //Overlay the AI-generated evaluation onto the primary skill so AI interview
+                                //candidates return the same shape (tech score, questions, rubric) as regular ones.
+                                var primaryTechScore = result.TechScoreone;
+                                var primaryInterviewerComment = result.InterviewerComment;
+                                if (aiEvaluation != null)
+                                {
+                                    primaryTechScore = (int)Math.Round(aiEvaluation.OverallTechnicalScore);
+                                    if (!string.IsNullOrWhiteSpace(aiEvaluation.FinalComment))
+                                    {
+                                        primaryInterviewerComment = aiEvaluation.FinalComment;
+                                    }
+                                    if (aiEvaluation.QuestionRatings != null)
+                                    {
+                                        _questions = aiEvaluation.QuestionRatings.Select(q => new QuestionCommentsDetails
+                                        {
+                                            question = q.Question,
+                                            skillName = result.JDTiltle,
+                                            rating = string.IsNullOrWhiteSpace(q.Verdict) ? q.Score.ToString() : q.Verdict
+                                        }).ToList();
+                                    }
+                                    if (aiEvaluation.RubricScoreSummary != null)
+                                    {
+                                        _skillset = aiEvaluation.RubricScoreSummary.Select(r => new SkillsSetsDetails
+                                        {
+                                            skillName = r.RubricItem,
+                                            EvaluatedAt = r.ObservedLevel,
+                                            Evaluatedscore = string.IsNullOrWhiteSpace(r.ObservedLevel) ? r.Score.ToString() : (r.ObservedLevel + "/" + r.ExpectedLevel),
+                                            score = r.Score.ToString()
+                                        }).ToList();
+                                    }
+                                }
                                 _skills.Add(new SkillDetails
                                 {
                                     isPrimary = true,
@@ -454,8 +543,8 @@ namespace Risebird.Services.Controllers
                                     status = result.CandidateLatestStatus,
                                     Cancellationsource = result.Cancellationsource,
                                     Cancellationreason = result.Cancellationreason,
-                                    techscore = result.TechScoreone,
-                                    interviewerComment = result.InterviewerComment,
+                                    techscore = primaryTechScore,
+                                    interviewerComment = primaryInterviewerComment,
                                     CodeSnippet = result.CodeSnippet,
                                     questions = _questions,
                                     skillset = _skillset
@@ -513,8 +602,8 @@ namespace Risebird.Services.Controllers
                                     candidateEmailId = result.candidateEmail,
                                     interviewer = result.InterviewerCodedName,
                                     reportUrl = executiveurl,
-                                    communicationScore = result.CommunicationalProficiency,
-                                    videoUrl = result.VideoLink,
+                                    communicationScore = aiEvaluation != null ? (int)Math.Round(aiEvaluation.OverallCommunicationScore) : result.CommunicationalProficiency,
+                                    videoUrl = aiEvaluation != null && !string.IsNullOrWhiteSpace(aiVideoUrl) ? aiVideoUrl : result.VideoLink,
                                     transcriptUrl = result.TranscriptLink,
                                     skills = _skills,
                                     createdOn = result.createdOn?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
