@@ -4,6 +4,8 @@
 @{
     ViewData["Title"] = "AI Interview";
     Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+    // Dark theme only for adaptive (audio) interviews — video keeps the original light UI.
+    ViewBag.AiInterviewDarkTheme = Model.IsAdaptive == true;
 }
 @await Html.PartialAsync("_RisebirdProctoringAiInterview")
 <!-- CodeMirror CSS -->
@@ -1829,17 +1831,17 @@
     }
 
         .rb-phone-q-dot.rb-q-dot-active {
-            background: #4eda92;
+            background: #9ea3a0;
             color: white;
-            border-color: #4eda92;
-            box-shadow: 0 3px 10px rgba(78,218,146,0.4);
+            border-color: #cdd8d2;
+            box-shadow: 0 3px 10px rgb(180 182 181 / 21%);
             transform: scale(1.12);
         }
 
         .rb-phone-q-dot.rb-q-dot-done {
-            background: #d0f5e7;
-            color: #2dba74;
-            border-color: #a8edce;
+            background: #d2d9d6b8;
+            color: #9c9999;
+            border-color: #b1b6b4;
         }
 
     .rb-phone-question-preview {
@@ -1989,6 +1991,17 @@
             color: #4eda92;
         }
 
+    .rb-audio-timer-label {
+        font-size: 0.65rem;
+        color: #aaa;
+    }
+
+    #audioTimerDisplay {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #1a1a2e;
+    }
+
     @@media (max-width: 768px) {
         .rb-phone-card {
             width: 240px;
@@ -2017,6 +2030,10 @@
         }
     }
 </style>
+@if (ViewBag.AiInterviewDarkTheme == true)
+{
+    <link rel="stylesheet" href="~/css/ai-interview-dark-theme.css?v=24" />
+}
 <div class="rb-aiinterview-container">
     <!-- Header -->
     <div class="rb-header">
@@ -2199,9 +2216,9 @@
 
                     <!-- Timer display for audio mode -->
                     <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-                        <div class="rb-audio-util-btn" style="cursor:default;font-size:0.7rem;flex-direction:column;height:auto;padding:8px 12px;border-radius:12px;width:auto;gap:2px;">
-                            <span style="font-size:0.65rem;color:#aaa;">Time Left</span>
-                            <span id="audioTimerDisplay" style="font-size:0.85rem;font-weight:700;color:#1a1a2e;">--:--</span>
+                        <div class="rb-audio-util-btn rb-audio-timer-chip" style="cursor:default;font-size:0.7rem;flex-direction:column;height:auto;padding:8px 12px;border-radius:12px;width:auto;gap:2px;">
+                            <span class="rb-audio-timer-label" style="font-size:0.65rem;">Time Left</span>
+                            <span id="audioTimerDisplay" style="font-size:0.85rem;font-weight:700;">--:--</span>
                         </div>
                     </div>
 
