@@ -322,6 +322,7 @@ namespace Risebird.Repository
                             _resultVM.TimeZoneoffset = !string.IsNullOrEmpty(dt.Rows[0]["TimeZoneoffset"].ToString()) ? Convert.ToInt32(dt.Rows[0]["TimeZoneoffset"]) : 0;
 
                             _resultVM.JDTiltle = !string.IsNullOrEmpty(dt.Rows[0]["JDTiltle"].ToString()) ? dt.Rows[0]["JDTiltle"].ToString() : null;
+                            _resultVM.JDLink = !string.IsNullOrEmpty(dt.Rows[0]["JDLink"].ToString()) ? dt.Rows[0]["JDLink"].ToString() : null;
                             _resultVM.ThreadId = !string.IsNullOrEmpty(dt.Rows[0]["ThreadId"].ToString()) ? dt.Rows[0]["ThreadId"].ToString() : null;
                             _resultVM.resumeLink = !string.IsNullOrEmpty(dt.Rows[0]["resumeLink"].ToString()) ? dt.Rows[0]["resumeLink"].ToString() : null;
                             _resultVM.candidateName = !string.IsNullOrEmpty(dt.Rows[0]["candidateName"].ToString()) ? dt.Rows[0]["candidateName"].ToString() : null;
