@@ -447,6 +447,7 @@ namespace Risebird.Web.Controllers
 
                             string resumeStringContent = string.Empty;
                             string techSkillsJson = string.Empty;
+                            string jobDescriptionStringContent = string.Empty;
 
                             if (!string.IsNullOrEmpty(meetingDetails.resumeLink))
                             {
@@ -456,15 +457,21 @@ namespace Risebird.Web.Controllers
                             {
                                 techSkillsJson = meetingDetails.TechSkillsInJson;
                             }
+                            // For adaptive AI interviews, the assistant now also expects the job description as a string.
+                            // The JD file (pdf/doc) is stored against the skill channel/IRF; convert it to text the same way the resume is handled.
+                            if (meetingDetails.AIInterviewType == (int)AIInterviewTypeEnum.Adaptive && !string.IsNullOrEmpty(meetingDetails.JDLink))
+                            {
+                                jobDescriptionStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(meetingDetails.JDLink);
+                            }
                             string candidatePrompt;
                             if (!string.IsNullOrEmpty(resumeStringContent))
                             {
-                                candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The resume of the candidate in string format is as follows:{resumeStringContent ?? string.Empty}. Proceed as per the instructions fed to you.";
+                                candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The resume of the candidate in string format is as follows:{resumeStringContent ?? string.Empty}. The job description in string format is as follows:{jobDescriptionStringContent ?? string.Empty}. Proceed as per the instructions fed to you.";
 
                             }
                             else
                             {
-                                candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The candidate's resume is not available. Proceed without the resume as per the instructions fed to you.";
+                                candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The candidate's resume is not available. The job description in string format is as follows:{jobDescriptionStringContent ?? string.Empty}. Proceed without the resume as per the instructions fed to you.";
 
                             }
                             var result = await _api.StartConversation(sid, candidatePrompt, meetingDetails.AssistantId);
@@ -642,6 +649,7 @@ namespace Risebird.Web.Controllers
                             {
                                 string resumeStringContent = string.Empty;
                                 string techSkillsJson = string.Empty;
+                                string jobDescriptionStringContent = string.Empty;
 
                                 if (!string.IsNullOrEmpty(meetingDetails.resumeLink))
                                 {
@@ -650,6 +658,12 @@ namespace Risebird.Web.Controllers
                                 if (!string.IsNullOrEmpty(meetingDetails.TechSkillsInJson))
                                 {
                                     techSkillsJson = meetingDetails.TechSkillsInJson;
+                                }
+                                // For adaptive AI interviews, the assistant now also expects the job description as a string.
+                                // The JD file (pdf/doc) is stored against the skill channel/IRF; convert it to text the same way the resume is handled.
+                                if (meetingDetails.AIInterviewType == (int)AIInterviewTypeEnum.Adaptive && !string.IsNullOrEmpty(meetingDetails.JDLink))
+                                {
+                                    jobDescriptionStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(meetingDetails.JDLink);
                                 }
                                 string candidatePrompt;
                                 //if (!string.IsNullOrEmpty(resumeStringContent))
@@ -678,12 +692,12 @@ namespace Risebird.Web.Controllers
                                 ////
                                 if (!string.IsNullOrEmpty(resumeStringContent))
                                 {
-                                    candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The resume of the candidate in string format is as follows:{resumeStringContent ?? string.Empty}. Proceed as per the instructions fed to you.";
+                                    candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The resume of the candidate in string format is as follows:{resumeStringContent ?? string.Empty}. The job description in string format is as follows:{jobDescriptionStringContent ?? string.Empty}. Proceed as per the instructions fed to you.";
 
                                 }
                                 else
                                 {
-                                    candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The candidate's resume is not available. Proceed without the resume as per the instructions fed to you.";
+                                    candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The candidate's resume is not available. The job description in string format is as follows:{jobDescriptionStringContent ?? string.Empty}. Proceed without the resume as per the instructions fed to you.";
 
                                 }
                                 var result = await _api.StartConversation(sid, candidatePrompt, meetingDetails.AssistantId);
