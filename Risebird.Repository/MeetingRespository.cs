@@ -4581,7 +4581,8 @@ namespace Risebird.Repository
                 List<RBInterviewDetails> _list = new List<RBInterviewDetails>();
                 var query = @"Select ph.id, ul.EmailId as InterviewerEmailid, ul.FirstName, ph.PaymentDate as Date, ph.Status,
                     ph.Amount as Points, ip.AssessmentGroupId, ph.TotalAmount, ph.TransferId, ph.CfTransferId, ph.TransferUtr, ph.PayoutStatus, ph.TransactionDate, ph.Comment,
-                    ISNULL(NULLIF(tic.VerifiedPAN, ''), tic.PAN) as PAN
+                    ISNULL(NULLIF(tic.VerifiedPAN, ''), tic.PAN) as PAN,
+                    tic.NameAtPan, tic.NameAtBank
                     from PaymentHistory ph
                     join Userlist ul on ul.id = ph.Userid
                     join InterviewerProfile ip on ip.Userid = ul.id
