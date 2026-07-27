@@ -170,6 +170,8 @@
                                                             <th>Interviewer</th>
                                                             <th>Email-Id</th>
                                                             <th>PAN</th>
+                                                            <th>Name as Pan</th>
+                                                            <th>Name as Bank Account</th>
                                                             <th>Total Amount</th>
                                                             <th>Paid Amount</th>
                                                             <th>TDS deduction</th>
@@ -190,6 +192,8 @@
                                                             <th>Interviewer</th>
                                                             <th>Email-Id</th>
                                                             <th>PAN</th>
+                                                            <th>Name as Pan</th>
+                                                            <th>Name as Bank Account</th>
                                                             <th>Total Amount</th>
                                                             <th>Paid Amount</th>
                                                             <th>TDS deduction</th>
@@ -207,7 +211,7 @@
                                                     <tbody id="tblbodyPayment">
                                                         @if (Model.Count() == 0)
                                                         {
-                                                            <tr><td colspan="15" style="text-align:center">No Result found</td></tr>
+                                                            <tr><td colspan="17" style="text-align:center">No Result found</td></tr>
                                                         }
                                                         @foreach (var item in Model)
                                                         {
@@ -216,6 +220,8 @@
                                                                 <td>@item.FirstName</td>
                                                                 <td>@item.InterviewerEmailid<input type="hidden" id="hidcomment_@item.id" value="@item.InterviewerEmailid" /></td>
                                                                 <td>@(string.IsNullOrWhiteSpace(item.PAN) ? "" : item.PAN)</td>
+                                                                <td>@(string.IsNullOrWhiteSpace(item.NameAtPan) ? "" : item.NameAtPan)</td>
+                                                                <td>@(string.IsNullOrWhiteSpace(item.NameAtBank) ? "" : item.NameAtBank)</td>
                                                                 <td>@item.TotalAmount</td>
                                                                 <td>@item.Points</td>
                                                                 @if (item.Status == "Advance")
