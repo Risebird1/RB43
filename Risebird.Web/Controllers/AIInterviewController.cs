@@ -1954,7 +1954,8 @@ namespace Risebird.Web.Controllers
                 }
 
                 var reportModel = new AIInterviewReportWrapperClass();
-                reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
+                reportModel.videoQuestionDetails = await RefreshBotInterviewMediaSasUrlsAsync(
+                    await _aiinterviewerService.GetBotInterviewVideoDetails(seId));
                 //reportModel.chatMessageViewModel = chatMessageModel; 
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault());
                 EnrichQuestionRatingsWithActualQuestions(reportModel.AIInterviewEvaluation, reportModel.videoQuestionDetails);
@@ -2094,7 +2095,8 @@ namespace Risebird.Web.Controllers
                 }
 
                 AIInterviewReportWrapperClass reportModel = new AIInterviewReportWrapperClass();
-                reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
+                reportModel.videoQuestionDetails = await RefreshBotInterviewMediaSasUrlsAsync(
+                    await _aiinterviewerService.GetBotInterviewVideoDetails(seId));
                 //reportModel.chatMessageViewModel = chatMessageModel;
 
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault()); //JsonConvert.DeserializeObject<AIInterviewEvaluation>(cleaned);
@@ -2395,7 +2397,8 @@ namespace Risebird.Web.Controllers
                 }
 
                 var reportModel = new AIInterviewReportWrapperClass();
-                reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
+                reportModel.videoQuestionDetails = await RefreshBotInterviewMediaSasUrlsAsync(
+                    await _aiinterviewerService.GetBotInterviewVideoDetails(seId));
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault());
                 EnrichQuestionRatingsWithActualQuestions(reportModel.AIInterviewEvaluation, reportModel.videoQuestionDetails);
                 reportModel.CandidateEmail = meetingDetails?.candidateEmail;
@@ -2419,6 +2422,193 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Report", new { seId });
             }
+        }
+
+        /// <summary>
+        /// Opens question/answer video via a resolved, playable blob URL.
+        /// Avoids sending users to Azure XML BlobNotFound/AuthenticationFailed pages.
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> PlayBotInterviewVideo(Guid seId, int qid, string kind = "answer")
+        {
+            try
+            {
+                var videos = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
+                var item = videos?.FirstOrDefault(v => v.id == qid);
+                if (item == null)
+                {
+                    return Content(
+                        "<html><body style='font-family:Arial;padding:24px'><h3>Video not found</h3><p>No video record exists for this question.</p></body></html>",
+                        "text/html");
+                }
+
+                var isQuestion = string.Equals(kind, "question", StringComparison.OrdinalIgnoreCase);
+                string playableUrl = null;
+                if (isQuestion)
+                {
+                    // Prefer current sample-question URL (often in /videos/) — same as Report page.
+                    playableUrl = await ResolveBotInterviewPlayableUrlAsync(item.AIQuestionVideoLink);
+                    if (string.IsNullOrWhiteSpace(playableUrl))
+                        playableUrl = await ResolveBotInterviewPlayableUrlAsync(item.BotSynthesizedVideoLink);
+                }
+                else
+                {
+                    playableUrl = await ResolveBotInterviewPlayableUrlAsync(item.VideoLink);
+                }
+
+                if (string.IsNullOrWhiteSpace(playableUrl))
+                {
+                    return Content(
+                        "<html><body style='font-family:Arial;padding:24px'>" +
+                        "<h3>Video file missing</h3>" +
+                        "<p>The question/answer video file could not be found in Azure Blob Storage " +
+                        "(checked <code>videos</code> and <code>botinterviewvideo</code>).</p>" +
+                        "</body></html>",
+                        "text/html");
+                }
+
+                // Step 1 (from PDF): land only on this page — do not load/redirect/open the blob yet.
+                // Step 2: user clicks Open → navigate to the playable blob URL.
+                var safeHref = System.Net.WebUtility.HtmlEncode(playableUrl);
+                var label = isQuestion ? "question" : "answer";
+                var html =
+                    "<!DOCTYPE html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>" +
+                    "<title>Open " + label + " video</title>" +
+                    "<style>" +
+                    "body{font-family:Segoe UI,Arial,sans-serif;padding:28px;background:#f7f9fb;color:#1a1a2e;margin:0;}" +
+                    "h1{font-size:20px;margin:0 0 10px 0;}" +
+                    "p{margin:0 0 18px 0;color:#555;font-size:14px;}" +
+                    "a.btn{display:inline-block;padding:12px 18px;background:#4eda92;color:#0b0b18;font-weight:700;" +
+                    "text-decoration:none;border-radius:6px;}" +
+                    "a.back{display:inline-block;margin-left:14px;color:#0c7bb3;font-size:14px;}" +
+                    "</style></head><body>" +
+                    "<h1>Open " + label + " video</h1>" +
+                    "<p>Click the button below to play the video.</p>" +
+                    "<a class='btn' href='" + safeHref + "' target='_blank' rel='noopener noreferrer'>Open " + label + " video</a>" +
+                    "<a class='back' href='javascript:history.back()'>Back</a>" +
+                    "</body></html>";
+                return Content(html, "text/html");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Content(
+                    "<html><body style='font-family:Arial;padding:24px'><h3>Unable to open video</h3><p>Please try again from the Report page.</p></body></html>",
+                    "text/html");
+            }
+        }
+
+        /// <summary>
+        /// Media may live in private containers (videos for AI question clips, botinterviewvideo for
+        /// candidate answers). DB often stores bare URLs or expired SAS. Resolve to an existing blob + fresh SAS.
+        /// </summary>
+        private async Task<List<BotInterviewQuestionVideos>> RefreshBotInterviewMediaSasUrlsAsync(List<BotInterviewQuestionVideos> videos)
+        {
+            if (videos == null || videos.Count == 0)
+                return videos;
+
+            foreach (var v in videos)
+            {
+                // Same source as Report: prefer SkillChannelSampleQuestions.AIQuestionVideoLink (/videos/...).
+                var questionUrl = await ResolveBotInterviewPlayableUrlAsync(v.AIQuestionVideoLink);
+                if (string.IsNullOrWhiteSpace(questionUrl))
+                    questionUrl = await ResolveBotInterviewPlayableUrlAsync(v.BotSynthesizedVideoLink);
+                v.BotSynthesizedVideoLink = questionUrl;
+
+                v.VideoLink = await ResolveBotInterviewPlayableUrlAsync(v.VideoLink);
+                v.BotAudioLink = await ResolveBotInterviewPlayableUrlAsync(v.BotAudioLink);
+                v.CandidateAnswerAudioLink = await ResolveBotInterviewPlayableUrlAsync(v.CandidateAnswerAudioLink);
+            }
+
+            return videos;
+        }
+
+        private async Task<string> ResolveBotInterviewPlayableUrlAsync(string storedUrl)
+        {
+            if (string.IsNullOrWhiteSpace(storedUrl)
+                || string.Equals(storedUrl, "no-video", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            var isRisebirdBlob = storedUrl.IndexOf("risebirdportal.blob.core.windows.net", StringComparison.OrdinalIgnoreCase) >= 0
+                || storedUrl.IndexOf(".blob.core.windows.net", StringComparison.OrdinalIgnoreCase) >= 0;
+
+            // Non-Azure links (e.g. temporary Synthesia) — leave as-is.
+            if (!isRisebirdBlob)
+                return storedUrl;
+
+            if (!Uri.TryCreate(storedUrl.Split('?')[0], UriKind.Absolute, out var uri))
+                return null;
+
+            var segments = uri.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            if (segments.Length < 2)
+                return null;
+
+            var urlContainer = Uri.UnescapeDataString(segments[0]);
+            var blobName = Uri.UnescapeDataString(string.Join("/", segments.Skip(1)));
+            if (string.IsNullOrWhiteSpace(blobName))
+                return null;
+
+            // Question AI clips are historically in "videos"; candidate answers in "botinterviewvideo".
+            var containersToTry = new List<string>();
+            if (!string.IsNullOrWhiteSpace(urlContainer))
+                containersToTry.Add(urlContainer);
+            foreach (var c in new[] { "videos", "botinterviewvideo" })
+            {
+                if (!containersToTry.Contains(c, StringComparer.OrdinalIgnoreCase))
+                    containersToTry.Add(c);
+            }
+
+            var nameCandidates = new List<string> { blobName };
+            if (!Path.HasExtension(blobName))
+            {
+                nameCandidates.Add(blobName + ".mp4");
+                nameCandidates.Add(blobName + ".webm");
+            }
+            else
+            {
+                var withoutExt = Path.GetFileNameWithoutExtension(blobName);
+                nameCandidates.Add(withoutExt);
+                nameCandidates.Add(Path.ChangeExtension(blobName, ".mp4"));
+                nameCandidates.Add(Path.ChangeExtension(blobName, ".webm"));
+                nameCandidates.Add(withoutExt + ".mp4");
+                nameCandidates.Add(withoutExt + ".webm");
+            }
+
+            foreach (var containerName in containersToTry)
+            {
+                string sasToken = null;
+                try
+                {
+                    sasToken = _sasUrlHelper.CreateSasUrl(containerName);
+                }
+                catch
+                {
+                    // try next container
+                }
+
+                try
+                {
+                    var container = _azureStorageHelper.GetCloudBlobContainer(containerName);
+                    foreach (var candidate in nameCandidates.Distinct(StringComparer.OrdinalIgnoreCase))
+                    {
+                        var blob = container.GetBlockBlobReference(candidate);
+                        if (blob == null || !await blob.ExistsAsync())
+                            continue;
+
+                        var baseUrl = blob.Uri.ToString().Split('?')[0];
+                        return string.IsNullOrWhiteSpace(sasToken) ? baseUrl : baseUrl + "?" + sasToken;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                }
+            }
+
+            return null;
         }
 
         private string CleanMessage(string input)
@@ -2543,10 +2733,11 @@ namespace Risebird.Web.Controllers
                 using (var httpClient = new HttpClient { Timeout = TimeSpan.FromMinutes(5) })
                 using (var myStream = await httpClient.GetStreamAsync(synthesiaDownloadUrl))
                 {
-                    var fileName = $"aiVideo_{id}_{DateTime.UtcNow:yyyyMMddTHHmmss}";
+                    var fileName = $"aiVideo_{id}_{DateTime.UtcNow:yyyy-MM-ddTHH:mm:ss}";
                     try
                     {
-                        uploadedVideoUrl = await _azureStorageHelper.InsertBlobCloudCompare(fileName, "botinterviewvideo", null, myStream);
+                        // Match Report / historical AI question videos: container "videos"
+                        uploadedVideoUrl = await _azureStorageHelper.InsertBlobCloudCompare(fileName, "videos", null, myStream, contentType: "video/mp4");
                     }
                     catch (Exception ex)
                     {

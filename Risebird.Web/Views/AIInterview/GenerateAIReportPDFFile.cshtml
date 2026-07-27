@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "AI Interview Report";
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    var isVideoInterview = ViewBag.IsAdaptive != true;
 }
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -259,6 +260,131 @@
         border: 1px solid #e8f4ee;
     }
 
+    /* Video interview Q&A — same playable players as AIInterview/Report */
+    .qa-report-row {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        margin-bottom: 8px;
+    }
+    .qa-report-row td {
+        vertical-align: top;
+        border: none !important;
+        background: transparent !important;
+        padding: 8px 10px !important;
+    }
+    .qa-report-col {
+        width: 50%;
+    }
+    .qa-report-sep {
+        width: 2%;
+        background: linear-gradient(180deg, transparent 0%, #d8eee6 20%, #4eda92 50%, #d8eee6 80%, transparent 100%) !important;
+        min-height: 180px;
+    }
+    .qa-block-lbl {
+        font-size: 10.5px;
+        font-weight: 700;
+        color: #4eda92;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        border-left: none;
+        padding-left: 0;
+        margin-bottom: 10px;
+    }
+    .qa-report-player {
+        width: 100%;
+        max-width: 435px;
+        border-radius: 8px;
+        background: #0d1117;
+        display: block;
+    }
+    .qa-report-player.pdf-snapshot-hide {
+        display: none !important;
+    }
+    .qa-video-snapshot {
+        display: none;
+        width: 100%;
+        max-width: 435px;
+        border-radius: 8px;
+        background: #0d1117;
+    }
+    .qa-video-snapshot.pdf-snapshot-show {
+        display: block !important;
+    }
+    .qa-media-placeholder {
+        display: none;
+        width: 100%;
+        max-width: 435px;
+        min-height: 160px;
+        background: linear-gradient(135deg, #eef5f2 0%, #f7f9fb 100%);
+        color: #7a8f86;
+        text-align: center;
+        font-size: 12px;
+        line-height: 1.4;
+        padding-top: 60px;
+        border-radius: 8px;
+        border: 1px solid #d8eee6;
+    }
+    .qa-media-placeholder i {
+        display: block;
+        font-size: 28px;
+        margin-bottom: 8px;
+        color: #4eda92;
+    }
+    .qa-open-link-box {
+        display: block;
+        width: 100%;
+        max-width: 435px;
+        min-height: 120px;
+        background: linear-gradient(135deg, #eef5f2 0%, #f7f9fb 100%);
+        border: 1px solid #d8eee6;
+        border-radius: 8px;
+        text-align: center;
+        padding-top: 42px;
+        box-sizing: border-box;
+    }
+    .qa-video-link {
+        display: inline-block;
+        font-size: 14px;
+        font-weight: 700;
+        color: #0c7bb3 !important;
+        text-decoration: none;
+        padding: 8px 14px;
+        border: 1px solid #0c7bb3;
+        border-radius: 6px;
+        background: #fff;
+    }
+    .qa-video-link i {
+        margin-right: 6px;
+    }
+    .qa-video-link:hover {
+        text-decoration: underline;
+        background: #f0faff;
+    }
+    .pdf-toolbar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: #0b0b18;
+        color: #fff;
+        padding: 10px 16px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
+        font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    .pdf-toolbar p { margin: 0; font-size: 13px; color: #c9d1d9; }
+    .pdf-toolbar button {
+        background: #4eda92;
+        color: #0b0b18;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 14px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
     /* ══ FOOTER ════════════════════════════════════════ */
     .pdf-footer {
         background: #f4f6f8; border-top: 1px solid #dde;
@@ -409,6 +535,13 @@
 </style>
 
 <div id="main-panel" style="display:none;">
+@if (isVideoInterview)
+{
+    <div class="pdf-toolbar">
+        <p><i class="fa fa-info-circle" style="margin-right:6px;color:#4eda92;"></i>PDF includes clickable <b>Open question/answer video</b> links (videos play in the browser — PDF cannot embed live players).</p>
+        <button type="button" id="btnDownloadPdf" onclick="getPDF()">Download PDF</button>
+    </div>
+}
 <div id="pdfdownload">
 
     <!-- ══════════════════ HEADER ══════════════════════ -->
@@ -803,29 +936,92 @@
         <div class="pb pb-pad"></div>
         <div class="sec-wrap" style="padding-bottom:16px;">
             <div class="sec-head">
-                <span class="sec-num">@qaSecNum</span><i class="fa fa-video-camera" style="margin-right:7px;"></i>Video Responses
+                <span class="sec-num">@qaSecNum</span>
+                @if (isVideoInterview)
+                {
+                    <i class="fa fa-video-camera" style="margin-right:7px;"></i><text>Video Responses</text>
+                }
+                else
+                {
+                    <i class="fa fa-volume-up" style="margin-right:7px;"></i><text>Audio Responses</text>
+                }
             </div>
             <div style="font-size:14px;color:#1a1a2e;font-weight:400;margin-bottom:14px;padding-left:2px;">
                 <i class="fa fa-comments" style="margin-right:7px;color:#4eda92;font-size:14px;"></i>Question &amp; Answer Responses
             </div>
-            @{int qNum = 1;}
+            @{int qNum = 1;
+              var pdfSessionId = Model.SessionId;
+            }
             @foreach (var vd in Model.videoQuestionDetails)
             {
+                var ans = (vd.CandidateAnswer ?? "Answer not available")
+                    .Replace("\\r\\n", "\n").Replace("\\n", "\n").Replace("\\r", "\n").Trim();
+                // Prefer resolved Report URL (/videos/...) then stored synthesised link
+                var questionVideoUrl = !string.IsNullOrEmpty(vd.BotSynthesizedVideoLink)
+                    ? vd.BotSynthesizedVideoLink
+                    : vd.AIQuestionVideoLink;
+                // PDF links go only to PlayBotInterviewVideo (landing page). Blob opens after user clicks Open there.
+                var questionPlayUrl = Url.Action("PlayBotInterviewVideo", "AIInterview", new { seId = pdfSessionId, qid = vd.id, kind = "question" }, Context.Request.Scheme);
+                var answerPlayUrl = Url.Action("PlayBotInterviewVideo", "AIInterview", new { seId = pdfSessionId, qid = vd.id, kind = "answer" }, Context.Request.Scheme);
+                var hasQuestionVideo = !string.IsNullOrEmpty(questionVideoUrl) || vd.DeliveryHeadQuestionId > 0 || !string.IsNullOrEmpty(vd.AIQuestionVideoLink);
+                var hasAnswerVideo = !string.IsNullOrEmpty(vd.VideoLink);
                 <div class="qa-card">
-                    <div class="qa-q">
-                        <table class="qa-q-inner" border="0" cellpadding="0" cellspacing="0" style="border:none!important;background:transparent!important;"><tr style="border:none!important;">
-                            <td class="qa-q-num-cell" style="border:none!important;background:transparent!important;"><span class="qa-qnum">@qNum</span></td>
-                            <td style="border:none!important;background:transparent!important;"><div class="qa-qtext">@(vd.question ?? "Question not available")</div></td>
-                        </tr></table>
-                    </div>
-                    <div class="qa-ans">
-                        <div class="qa-ans-lbl">Candidate Answer</div>
-                        @{
-                            var ans = (vd.CandidateAnswer ?? "Answer not available")
-                                .Replace("\\r\\n", "\n").Replace("\\n", "\n").Replace("\\r", "\n").Trim();
-                        }
-                        <div class="qa-ans-text">@ans</div>
-                    </div>
+                    @if (isVideoInterview)
+                    {
+                        @* PDF cannot play HTML5 video — always render clickable Open links (same videos as Report). *@
+                        <table class="qa-report-row" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td class="qa-report-col">
+                                    <div class="qa-block-lbl"><span class="qa-qnum" style="margin-right:6px;">@qNum</span>Question</div>
+                                    <div class="qa-open-link-box">
+                                        @if (hasQuestionVideo)
+                                        {
+                                            <a class="qa-video-link" href="@questionPlayUrl" target="_blank" rel="noopener noreferrer">
+                                                <i class="fa fa-play-circle"></i>Open question video
+                                            </a>
+                                            <div style="margin-top:8px;font-size:11px;color:#666;">Click to play video</div>
+                                        }
+                                        else
+                                        {
+                                            <div style="font-size:12px;color:#888;">Question video not available</div>
+                                        }
+                                    </div>
+                                    <div class="qa-qtext" style="margin-top:10px;">@(vd.question ?? "Question not available")</div>
+                                </td>
+                                <td class="qa-report-sep"></td>
+                                <td class="qa-report-col">
+                                    <div class="qa-block-lbl"><span class="qa-qnum" style="margin-right:6px;">@qNum</span>Answer</div>
+                                    <div class="qa-open-link-box">
+                                        @if (hasAnswerVideo)
+                                        {
+                                            <a class="qa-video-link" href="@answerPlayUrl" target="_blank" rel="noopener noreferrer">
+                                                <i class="fa fa-play-circle"></i>Open answer video
+                                            </a>
+                                            <div style="margin-top:8px;font-size:11px;color:#666;">Click to play video</div>
+                                        }
+                                        else
+                                        {
+                                            <div style="font-size:12px;color:#888;">Answer video not available</div>
+                                        }
+                                    </div>
+                                    <div class="qa-ans-text" style="margin-top:10px;">@ans</div>
+                                </td>
+                            </tr>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="qa-q">
+                            <table class="qa-q-inner" border="0" cellpadding="0" cellspacing="0" style="border:none!important;background:transparent!important;"><tr style="border:none!important;">
+                                <td class="qa-q-num-cell" style="border:none!important;background:transparent!important;"><span class="qa-qnum">@qNum</span></td>
+                                <td style="border:none!important;background:transparent!important;"><div class="qa-qtext">@(vd.question ?? "Question not available")</div></td>
+                            </tr></table>
+                        </div>
+                        <div class="qa-ans">
+                            <div class="qa-ans-lbl">Candidate Answer</div>
+                            <div class="qa-ans-text">@ans</div>
+                        </div>
+                    }
                 </div>
                 qNum++;
             }
@@ -842,33 +1038,61 @@
 <script>
     document.getElementById('main-panel').style.display = 'block';
 
-    window.onload = function () { getPDF(); };
+    var pdfStarted = false;
+
+    window.onload = function () {
+        getPDF();
+    };
 
     function getPDF() {
-        var d    = new Date();
+        if (pdfStarted) return;
+        pdfStarted = true;
+
+        var d = new Date();
         var name = document.getElementById('CandidateName').value || 'AIInterviewReport';
-        var fn   = name + '_AIReport_' + d.getDate() + '_' + (d.getMonth()+1) + '_' + d.getFullYear() + '.pdf';
-        var el   = document.getElementById('pdfdownload');
+        var fn = name + '_AIReport_' + d.getDate() + '_' + (d.getMonth() + 1) + '_' + d.getFullYear() + '.pdf';
+        var el = document.getElementById('pdfdownload');
+        var btn = document.getElementById('btnDownloadPdf');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Preparing PDF...';
+        }
 
         html2pdf()
             .from(el)
             .set({
-                margin:      [0, 0, 0, 0],
-                filename:    fn,
-                image:       { type: 'jpeg', quality: 0.97 },
+                margin: [0, 0, 0, 0],
+                filename: fn,
+                image: { type: 'jpeg', quality: 0.97 },
+                enableLinks: true,
                 html2canvas: {
-                    scale:           2,
-                    useCORS:         true,
-                    allowTaint:      true,
-                    logging:         false,
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: false,
                     letterRendering: true,
-                    width:           794
+                    width: 794
                 },
-                jsPDF:     { unit: 'mm', format: 'a4', orientation: 'p' },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'p' },
                 pagebreak: { mode: 'css', avoid: ['.qa-card', '.ql-row', '.vbox-row'] }
             })
-            .save();
-
-        setTimeout(function () { window.close(); }, 9000);
+            .save()
+            .then(function () {
+                pdfStarted = false;
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = 'Download PDF';
+                }
+                window.setTimeout(function () { window.close(); }, 1500);
+            })
+            .catch(function (err) {
+                console.error('PDF download failed', err);
+                pdfStarted = false;
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = 'Download PDF';
+                }
+                alert('PDF download failed. Please try again.');
+            });
     }
 </script>
