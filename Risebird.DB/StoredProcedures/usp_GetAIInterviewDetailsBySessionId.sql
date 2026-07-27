@@ -22,7 +22,7 @@ set @aiInterviewType  = (select AIInterviewType from IRF where id = @irfId)
 
   
 select im.id as InterviewId, im.interviewDate, im.AssistantId, im.candidateEmail, ulc.MobileNumber, im.interviewer,  
-im.TimeLeftInSeconds, im.TimeZonesValue, im.TimeZoneoffset, irf.JDTiltle, iss.ThreadId, ca.ResumeLink as resumeLink,
+im.TimeLeftInSeconds, im.TimeZonesValue, im.TimeZoneoffset, irf.JDTiltle, irf.JDLink, iss.ThreadId, ca.ResumeLink as resumeLink,
 ISNULL(ad.matchPercentage, 0) as MatchScorePercentage,
 ISNULL(ad.id, 0) as AadharVerificationId, ic.MeetingStatus, ic.InterviewStatus,
 case when (im.candidateName is not null and im.candidateName != '')  then im.candidateName else ulc.FirstName end as candidateName,

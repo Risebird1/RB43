@@ -402,6 +402,7 @@ namespace Risebird.Entities.ViewModel
         public string ThreadId { get; set; } // id of the open ai thread created by the assistant that conducts the interview
         public int TimeLeftInSeconds { get; set; } //applicable only for AI interviews conducted using assistants through sessions/openai-threads
         public string TechSkillsInJson { get; set; }
+        //public string JDLink { get; set; } // url to the job description file (pdf/doc) for the skill channel; used to build the adaptive AI interview prompt
         public bool IsAdaptive { get; set; }//refers to the type of ai interview a skill channel is created for (adaptive or preset); applicable only in case of an ai interview skill channel
         public int AIInterviewType { get; set; }
         public string QuestionAnswerSetInJson { get; set; }
