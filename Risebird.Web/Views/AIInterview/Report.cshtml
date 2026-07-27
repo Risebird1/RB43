@@ -7,6 +7,8 @@
 @{
     ViewData["Title"] = "AI Interview Report";
     Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+    // Dark theme only for adaptive (audio) interviews — video keeps the original light UI.
+    ViewBag.AiInterviewDarkTheme = ViewBag.IsAdaptive == true;
 }
 
 <style>
@@ -1899,18 +1901,23 @@
 
     .rb-candidate-meta {
         display: flex;
-        gap: 24px;
+        gap: 10px;
         flex-wrap: wrap;
+        font-size: 13.5px;
+    }
+
+    .rb-candidate-meta,
+    .rb-candidate-meta * {
+        font-size: 13.5px;
     }
 
     .rb-candidate-email,
     .rb-candidate-date {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 4px;
         color: #666;
-        /*  font-size: 0.95rem; */
-        padding: 8px 12px;
+        padding: 5px 8px;
         background: rgba(151, 202, 244, 0.1);
         border-radius: 8px;
         border: 1px solid rgba(151, 202, 244, 0.2);
@@ -1919,7 +1926,7 @@
         .rb-candidate-email i,
         .rb-candidate-date i {
             color: #97caf4;
-            font-size: 0.9rem;
+            font-size: 12.5px;
         }
 
         .rb-candidate-email span,
@@ -2732,6 +2739,10 @@
         }
     }
 </style>
+@if (ViewBag.AiInterviewDarkTheme == true)
+{
+    <link rel="stylesheet" href="~/css/ai-interview-dark-theme.css?v=24" />
+}
 <div class="rb-report-container">
     <div class="rb-report-header">
         <div class="rb-report-title-section">
@@ -3114,15 +3125,15 @@
             </div>
         }
       
-            <div style="display:flex; align-items:center; margin: 32px 0 0px 0; gap: 0;">
-                <div style="flex:1; height:2px; background: linear-gradient(90deg, transparent 0%, #4eda92 40%, #56e0cb 100%); border-radius:2px; opacity:0.5;"></div>
-                <div style="display:flex; align-items:center; gap:8px; padding: 0 18px; background:#fff; position:relative; z-index:1;">
-                    <span style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; background: linear-gradient(135deg, #4eda92 0%, #56e0cb 100%); box-shadow: 0 2px 8px rgba(78,218,146,0.35);">
+            <div class="rb-ai-analysis-divider @(ViewBag.IsAdaptive == true ? "rb-ai-analysis-divider--adaptive" : "")" style="display:flex; align-items:center; margin: 32px 0 0px 0; gap: 0;">
+                <div class="rb-ai-analysis-divider__line rb-ai-analysis-divider__line--left" style="flex:1; height:2px; background: linear-gradient(90deg, transparent 0%, #4eda92 40%, #56e0cb 100%); border-radius:2px; opacity:0.5;"></div>
+                <div class="rb-ai-analysis-divider__label" style="display:flex; align-items:center; gap:8px; padding: 0 18px; background:#fff; position:relative; z-index:1;">
+                    <span class="rb-ai-analysis-divider__icon" style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; background: linear-gradient(135deg, #4eda92 0%, #56e0cb 100%); box-shadow: 0 2px 8px rgba(78,218,146,0.35);">
                         <i class="fa fa-robot" style="color:#fff; font-size:15px;"></i>
                     </span>
-                    <span style="font-size:17px; font-weight:600; color:#000; letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap;">AI Analysis &amp; Recommendations</span>
+                    <span class="rb-ai-analysis-divider__title" style="font-size:17px; font-weight:600; color:#000; letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap;">AI Analysis &amp; Recommendations</span>
                 </div>
-                <div style="flex:1; height:2px; background: linear-gradient(90deg, #56e0cb 0%, #4eda92 60%, transparent 100%); border-radius:2px; opacity:0.5;"></div>
+                <div class="rb-ai-analysis-divider__line rb-ai-analysis-divider__line--right" style="flex:1; height:2px; background: linear-gradient(90deg, #56e0cb 0%, #4eda92 60%, transparent 100%); border-radius:2px; opacity:0.5;"></div>
             </div>
         
 

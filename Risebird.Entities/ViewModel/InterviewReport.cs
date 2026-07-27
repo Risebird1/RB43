@@ -420,6 +420,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsBankVerified { get; set; }
         public bool IsPanVerified { get; set; }
         public string NameAtPan { get; set; }
+        public string NameAtBank { get; set; }
         public DateTime? PanVerifiedOn { get; set; }
         public string VerifiedPAN { get; set; }
         public bool IsActive { get; set; }
