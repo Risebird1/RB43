@@ -57,6 +57,7 @@ BEGIN
  if(@Confirmationstatus=1)
  begin
   Exec usp_AddCandidateStatusWebHookData @candiateEmailId, @irfName, 'scheduled' 
+  Exec usp_AddAIInterviewStatusWebHookData @candiateEmailId, @irfName, 'scheduled' 
   end
 END
 
