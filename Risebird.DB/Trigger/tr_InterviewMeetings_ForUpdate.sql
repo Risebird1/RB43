@@ -90,6 +90,7 @@ set @OldConfirmationstatus=(Select top (1) confirmationStatus From InterviewMeet
  if(@Confirmationstatus=2 and @Confirmationstatus!=@OldConfirmationstatus)
  begin
   Exec usp_AddCandidateStatusWebHookData @candidateEmailId, @irfName, 'cancelled' 
+  Exec usp_AddAIInterviewStatusWebHookData @candidateEmailId, @irfName, 'cancelled' 
   end
  if(@RedoInterview=1)
  begin
