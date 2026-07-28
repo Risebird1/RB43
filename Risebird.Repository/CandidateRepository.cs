@@ -1883,6 +1883,67 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<IEnumerable<AIInterviewStatusWebHookData>> GetAIInterviewStatusForWebHook(bool isStaging = false)
+        {
+            try
+            {
+                if (isStaging)
+                {
+                    connectionString = connectionStringForTesting;
+                }
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeNow", DateTime.Now);
+                    var result = await SqlMapper.QueryAsync<AIInterviewStatusWebHookData>(con, "usp_GetAIInterviewStatusWebHookData", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> DeleteDeliveredAIInterviewStatusForWebHook(List<int> data, bool isStaging = false)
+        {
+            try
+            {
+                if (isStaging)
+                {
+                    connectionString = connectionStringForTesting;
+                }
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable dataDt = new DataTable();
+                    dataDt.Columns.Add("id", typeof(int));
+
+                    foreach (var item in data)
+                    {
+                        dataDt.Rows.Add(item);
+                    }
+
+                    SqlCommand cmd = new SqlCommand("usp_AIInterviewStatusWebHookDataBulkDelete", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@AIInterviewWebHookBulkData", SqlDbType.Structured));
+                    cmd.Parameters["@AIInterviewWebHookBulkData"].Value = dataDt;
+                    con.Open();
+                    if (await cmd.ExecuteNonQueryAsync() != 0)
+                    {
+                        con.Close();
+                    }
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
         public async Task<IEnumerable<CandidateTimelineVM>> GetAllCandidateSearchbyDateStatus(DateTime startDate, DateTime endDate, int datatype, string emailId = null)
         {
             try

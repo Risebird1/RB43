@@ -51,6 +51,7 @@ BEGIN
 	Select @irfName = IRFId from InterviewMeetings where id = @interviewId
 
 	Exec usp_AddCandidateStatusWebHookData @candiateEmailId, @irfName, 'completed' 
+	Exec usp_AddAIInterviewStatusWebHookData @candiateEmailId, @irfName, 'completed' 
  End
 
   if(@meetingStatus in (1, 5, 9) and @oldmeetingStatus not in (1, 5, 9))
@@ -59,6 +60,7 @@ BEGIN
 	Select @irfName = IRFId from InterviewMeetings where id = @interviewId
 
 	Exec usp_AddCandidateStatusWebHookData @candiateEmailId, @irfName, 'noshow' 
+	Exec usp_AddAIInterviewStatusWebHookData @candiateEmailId, @irfName, 'noshow' 
  End
   
   if(@meetingStatus in (3) and @oldmeetingStatus not in (3))
@@ -67,6 +69,7 @@ BEGIN
 	Select @irfName = IRFId from InterviewMeetings where id = @interviewId
 
 	Exec usp_AddCandidateStatusWebHookData @candiateEmailId, @irfName, 'dropped' 
+	Exec usp_AddAIInterviewStatusWebHookData @candiateEmailId, @irfName, 'dropped' 
  End
  
 
