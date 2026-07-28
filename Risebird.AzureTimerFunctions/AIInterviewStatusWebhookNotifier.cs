@@ -33,7 +33,7 @@ namespace Risebird.AzureTimerFunctions
         }
 
         [Function("AIInterviewStatusWebhookNotifier")]
-        public async Task Run([TimerTrigger("0 0 * * * *")] TimerInfo myTimer)
+        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer)
         {
             log.LogInformation($"AIInterviewStatusWebhookNotifier started executing at: {DateTime.Now}");
 
