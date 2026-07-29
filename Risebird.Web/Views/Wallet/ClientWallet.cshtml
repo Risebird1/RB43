@@ -353,7 +353,7 @@
                                         }
                                         <th class="text-right">PO Credit</th>
                                         <th class="text-right">Consumed</th>
-                                        <th class="text-right">Remaining</th>
+                                        <th class="text-right" title="Opening Balance + PO Credit − Consumed">Remaining</th>
                                         <th class="text-right">Cash</th>
                                         <th>State</th>
                                         <th class="text-center">Actions</th>
@@ -362,10 +362,10 @@
                                 <tbody>
                                     @foreach (var owner in Model.OwnerWallets)
                                     {
-                                        if (owner.POCredit == 0 && owner.Consumed == 0 && owner.Remaining == 0 && owner.CashBalance == 0) { continue; }
                                         var _isHighConsumption = _highConsIds.Contains((int?)owner.BillingOwnerId);
                                         var _openingBal    = _openingBals != null && _openingBals.TryGetValue(owner.BillingOwnerId, out var _ob) ? _ob : (decimal?)null;
                                         var _hasOpeningBal = _openingBal.HasValue && _openingBal.Value != 0m;
+                                        if (owner.POCredit == 0 && owner.Consumed == 0 && owner.Remaining == 0 && owner.CashBalance == 0 && !_hasOpeningBal) { continue; }
                                         <tr class="@(_isHighConsumption ? "table-warning" : "")">
                                             <td>
                                                 @owner.BillingOwnerName
@@ -396,7 +396,13 @@
                                             }
                                             <td class="text-right">@(owner.POCredit > 0 ? "₹ " + owner.POCredit.ToString("N0") : "—")</td>
                                             <td class="text-right">@(owner.Consumed > 0 ? "₹ " + owner.Consumed.ToString("N0") : "—")</td>
-                                            <td class="text-right">@(owner.POCredit > 0 || owner.Consumed > 0 ? "₹ " + owner.Remaining.ToString("N0") : "—")</td>
+                                            @{
+                                                var _showRemaining = owner.POCredit > 0 || owner.Consumed > 0 || _hasOpeningBal;
+                                                var _remColor = owner.Remaining < 0 ? "#c62828" : "inherit";
+                                            }
+                                            <td class="text-right" style="color:@_remColor;font-weight:600;" title="Opening Balance + PO Credit − Consumed">
+                                                @(_showRemaining ? "₹ " + owner.Remaining.ToString("N0") : "—")
+                                            </td>
                                             <td class="text-right">@(owner.CashBalance != 0 ? "₹ " + owner.CashBalance.ToString("N0") : "—")</td>
                                             <td>
                                                 <span class="badge @owner.StateCss" style="white-space:nowrap;display:inline-block;min-width:100px;text-align:center;font-size:11px;padding:4px 8px;">

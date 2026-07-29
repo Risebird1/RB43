@@ -215,6 +215,7 @@ namespace Risebird.Entities.ViewModel
         public decimal POOpeningBalance { get; set; }
         public decimal POCredit { get; set; }
         public decimal Consumed { get; set; }
+        /// <summary>Remaining = POOpeningBalance + POCredit − Consumed.</summary>
         public decimal Remaining { get; set; }
         public decimal CashBalance { get; set; }
         public string State { get; set; }

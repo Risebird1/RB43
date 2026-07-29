@@ -85,6 +85,16 @@ BEGIN
     Add CancellationReason varchar(50)
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'BillingOwner')
+      AND Object_ID = Object_ID(N'InterviewMeetingsHistory'))
+BEGIN
+    ALTER TABLE InterviewMeetingsHistory
+    ADD BillingOwner INT NULL
+END
+
 End
 
 Go
