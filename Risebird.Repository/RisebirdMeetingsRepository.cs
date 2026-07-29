@@ -43,6 +43,22 @@ namespace Risebird.Repository
             _applicationErrorLogger = applicationErrorLogger;
             _irfService = irfService;
         }
+        public string GetSessionIdByInterviewId(int interviewId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return con.QueryFirstOrDefault<string>("SELECT SessionId FROM InterviewMeetings WHERE id = @id", new { id = interviewId });
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public bool AddOrUpdateMeeting(DateTime interviewDate, string interviewDuration, string candidateName, string candidateEmail, string resumeLink,
             string zoomLink, string IRFID, string zoommeetingId, string interviewOnDevice, string textreminder, string staffingAgenecy, string ClientHrContact, int TimeZoneoffset, string TimeZonesValue, string MeetingPlatForm, out int interviewIdOut, string zoomAccountEmail = null, string requestType = null)
         {
