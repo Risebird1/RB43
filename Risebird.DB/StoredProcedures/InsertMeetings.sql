@@ -62,13 +62,15 @@ begin try
  IF NOT EXISTS (SELECT 1   FROM   InterviewMeetings    WHERE  candidateEmail = @candidateEmail and interviewDate=@interviewDate and IRFId= @IRFId)            
  Begin      
      
- declare @isAIInterview bit, @sessionId varchar(200), @timeLeftInSeconds int, @irfIntIdVal int, @aiInterviewType int    
+ declare @isAIInterview bit, @sessionId varchar(200), @timeLeftInSeconds int, @irfIntIdVal int, @aiInterviewType int, @billingOwner int    
     
  set @isAIInterview = (select IsAIInterview from IRF where IRFId= @IRFId)    
     
  set @irfIntIdVal = (select id from IRF where IRFId= @IRFId)    
   
  set @aiInterviewType = (select AIInterviewType from IRF where IRFId= @IRFId)  
+
+ set @billingOwner = (select BillingOwner from IRF where IRFId = @IRFId)
     
  if(@isAIInterview = 1)    
  Begin    
@@ -111,7 +113,8 @@ begin try
    ,[SessionId]    
    ,[TimeLeftInSeconds]  
    ,[MeetingPlatForm]
-   ,[RequestType])            
+   ,[RequestType]
+   ,[BillingOwner])            
    VALUES            
       (@IRFId,            
  @interviewDate,            
@@ -140,7 +143,8 @@ begin try
  @sessionId,    
  @timeLeftInSeconds,  
  @MeetingPlatForm,
- @requestType)            
+ @requestType,
+ @billingOwner)            
             
  set @InterviewId=SCOPE_IDENTITY()            
  set @interviewIdOutput = @InterviewId            
@@ -171,7 +175,8 @@ begin try
    ,[ZoomMeetingId]=@zoomMeetingId    
    ,[TimeZoneoffset]=@TimeZoneoffset    
    ,[TimeZonesValue]=@TimeZonesValue  
-   ,[MeetingPlatForm]=@MeetingPlatForm  
+   ,[MeetingPlatForm]=@MeetingPlatForm
+   ,[BillingOwner]=ISNULL((SELECT BillingOwner FROM IRF WHERE IRFId = @IRFId), BillingOwner)
   WHERE     id=@InterviewId            
              
              

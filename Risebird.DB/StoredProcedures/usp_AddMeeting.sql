@@ -42,9 +42,10 @@ Begin
 declare @InterviewId int;   
   
   
-declare  @irfIntId int  
+declare  @irfIntId int, @billingOwner int  
      
    set @irfIntId =(select id from IRF where IRFId=@IRFId)  
+   set @billingOwner = (select BillingOwner from IRF where IRFId = @IRFId)
    set @candidateEmail = trim(@candidateEmail)
   
 IF NOT EXISTS (SELECT 1   FROM   InterviewMeetings    WHERE  candidateEmail = @candidateEmail and interviewDate=@interviewDate)  
@@ -71,7 +72,8 @@ Begin
       ,[sCreatedBy]  
       ,[dtCreatedOn]  
       ,[MobileNumber]  
-      ,[ZoomMeetingId]  
+      ,[ZoomMeetingId]
+      ,[BillingOwner]
       )  
    VALUES  
       (@IRFId,  
@@ -94,7 +96,8 @@ Begin
  'System',  
  GETUTCDATE(),  
  @MobileNumber,  
- @zoomMeetingId  
+ @zoomMeetingId,
+ @billingOwner
  )  
   
  set @InterviewId=SCOPE_IDENTITY()  
