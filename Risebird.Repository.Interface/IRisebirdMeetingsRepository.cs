@@ -6,5 +6,6 @@ namespace Risebird.Repository.Interface
     {
         bool AddOrUpdateMeeting(DateTime interviewDate, string interviewDuration, string candidateName, string candidateEmail, string resumeLink,
             string zoomLink, string IRFID, string zoommeetingId, string interviewOnDevice, string textreminder, string staffingAgenecy, string ClientHrContact, int TimeZoneoffset, string TimeZonesValue, string MeetingPlatForm, out int interviewIdOut, string zoomAccountEmail = null, string requestType = null);
+        string GetSessionIdByInterviewId(int interviewId);
     }
 }
