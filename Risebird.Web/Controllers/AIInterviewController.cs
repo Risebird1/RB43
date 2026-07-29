@@ -474,6 +474,8 @@ namespace Risebird.Web.Controllers
                                 candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The candidate's resume is not available. The job description in string format is as follows:{jobDescriptionStringContent ?? string.Empty}. Proceed without the resume as per the instructions fed to you.";
 
                             }
+                            // Ask the assistant to flag the end of the interview so we can auto-complete it (see AdaptiveInterviewCompletionMarker).
+                            candidatePrompt += AdaptiveCompletionInstruction;
                             var result = await _api.StartConversation(sid, candidatePrompt, meetingDetails.AssistantId);
 
                             var model = new ChatMessageViewModel
@@ -542,6 +544,13 @@ namespace Risebird.Web.Controllers
                                     if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 35)
                                     //if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 3)
                                     {
+                                        // Reload after the interviewer already concluded: finish instead of re-showing the closing message.
+                                        if (MessageSignalsInterviewCompletion(latestEntry.Message))
+                                        {
+                                            model.candidateName = meetingDetails.candidateName;
+                                            return await CompleteAdaptiveInterviewAsync(model);
+                                        }
+
                                         var candidateLatestEntry = transcript.Where(x => x.Role.ToLower() == "user")?.FirstOrDefault();
                                         foreach (var question in allQuestions)
                                         {
@@ -570,6 +579,13 @@ namespace Risebird.Web.Controllers
                                         model.ChatLog.Add(new ChatLine { Role = "User", Message = latestEntry.Message });
                                         var replies = await _api.SendReply(sid, latestEntry.Message, meetingDetails.AssistantId);
                                         //var question = allQuestions.FirstOrDefault().Message;
+
+                                        // The assistant may conclude the interview on this resume turn; if so, complete it.
+                                        if (RepliesSignalInterviewCompletion(replies))
+                                        {
+                                            model.candidateName = meetingDetails.candidateName;
+                                            return await CompleteAdaptiveInterviewAsync(model);
+                                        }
 
                                         foreach (var reply in replies)
                                         {
@@ -700,6 +716,8 @@ namespace Risebird.Web.Controllers
                                     candidatePrompt = $"You will now interview the candidate for {meetingDetails.JDTiltle} according to the tech rubric in json here: {techSkillsJson}. The candidate's resume is not available. The job description in string format is as follows:{jobDescriptionStringContent ?? string.Empty}. Proceed without the resume as per the instructions fed to you.";
 
                                 }
+                                // Ask the assistant to flag the end of the interview so we can auto-complete it (see AdaptiveInterviewCompletionMarker).
+                                candidatePrompt += AdaptiveCompletionInstruction;
                                 var result = await _api.StartConversation(sid, candidatePrompt, meetingDetails.AssistantId);
 
                                 model = new ChatMessageViewModel
@@ -1402,16 +1420,18 @@ namespace Risebird.Web.Controllers
                     var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(model.SessionId)
                         ?? Enumerable.Empty<TranscriptConv>();
                     var assistantQuestionCount = CountAssistantQuestions(transcript);
-                    if (assistantQuestionCount == 35)
+                    // Safety-net completion: the assistant should normally end the interview via the completion
+                    // marker (handled in the else branch below), but if it keeps asking questions we still stop
+                    // once the hard cap is reached so the interview can never run forever.
+                    if (assistantQuestionCount >= AdaptiveMaxAssistantQuestions)
                     {
                         var payloadError = ValidatePresetAnswerPayloadBeforeSave(model, userMessage);
                         if (payloadError != null) return payloadError;
 
                         bool iscandidateVideoSavedTodb = await UploadBotInterviewVideo(model, question, userMessage);
-                        var exitModel = new AIInterviewExitModalViewModel();
                         if (!iscandidateVideoSavedTodb)
                         {
-                            exitModel = new AIInterviewExitModalViewModel
+                            var exitModel = new AIInterviewExitModalViewModel
                             {
                                 Title = "Error!",
                                 Message = "Error saving video Response. Please check your network's connectivity.",
@@ -1429,26 +1449,8 @@ namespace Risebird.Web.Controllers
 
                         await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
 
-                        // INTERVIEW COMPLETE - Return ExitModalPartial view
-                        //update the db for MeetingStatus = 4 here.
-                        await _aiinterviewerService.UpdateMeetingCompletedStatusForAIInterview(model.SessionId.ToString());
-                        _api.GenerateReport(model.SessionId, string.Empty, (int)AIInterviewTypeEnum.Adaptive);
-
-
-                        exitModel = new AIInterviewExitModalViewModel
-                        {
-                            Title = "Interview Complete",
-                            Message = "The interviewer is through with all the questions. This interview is now closed.",
-                            IconClass = "fa-check-circle",
-                            IconColor = "#28a745",
-                            ButtonText = "Close",
-                            ButtonClass = "btn-success",
-                            CandidateName = model.candidateName ?? "Candidate",
-                            InterviewDate = DateTime.Now,
-                            SessionId = model.SessionId.ToString(),
-                            IsFromIndex = true
-                        };
-                        return View("ExitModalPartial", exitModel);
+                        // INTERVIEW COMPLETE - mark completed, generate the report and show the exit modal.
+                        return await CompleteAdaptiveInterviewAsync(model);
                     }
                     else
                     {
@@ -1481,6 +1483,15 @@ namespace Risebird.Web.Controllers
                             await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         }
 
+                        // The candidate's answer to the previous question is already saved (UploadBotInterviewVideo
+                        // above) and logged by the API. If the assistant now signals it is done, close the interview
+                        // instead of trying to render another question - this is the adaptive equivalent of the preset
+                        // flow completing when it runs out of questions.
+                        if (RepliesSignalInterviewCompletion(replies))
+                        {
+                            return await CompleteAdaptiveInterviewAsync(model);
+                        }
+
                         model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
 
                         if (replies != null)
@@ -1493,15 +1504,31 @@ namespace Risebird.Web.Controllers
 
                         var latestReply = CleanMessage(replies?.FirstOrDefault());
 
+                        // Assistant returned nothing usable (empty/failed run). Treat it as the end of the interview
+                        // and complete gracefully rather than reloading a blank question or surfacing a generic error.
+                        if (string.IsNullOrWhiteSpace(latestReply))
+                        {
+                            return await CompleteAdaptiveInterviewAsync(model);
+                        }
+
                         //current question changes to the latest reply by the assistant and is set only after the earlier question-answer response is saved using UploadBotInterviewVideo()
                         model.CurrentQuestion = latestReply;
 
                         if (!string.IsNullOrEmpty(model.CurrentQuestion))//&& string.IsNullOrEmpty(model.AIInterviewerAudioLink)
                         {
-                            var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(model.CurrentQuestion);
-                            var base64Audio = Convert.ToBase64String(audioBytes);
-                            ViewData["AssistantAudioBase64"] = base64Audio;
-                            model.AIInterviewerAudioLink = await UploadAIInterviewerAudio(audioBytes, model.SessionId);
+                            // Text-to-speech is best-effort: if it fails we still show the next question (with text),
+                            // rather than dumping the candidate to the generic "Error submitting answer" screen.
+                            try
+                            {
+                                var audioBytes = await _speechToTextService.ConvertTextToSpeechAsync(model.CurrentQuestion);
+                                var base64Audio = Convert.ToBase64String(audioBytes);
+                                ViewData["AssistantAudioBase64"] = base64Audio;
+                                model.AIInterviewerAudioLink = await UploadAIInterviewerAudio(audioBytes, model.SessionId);
+                            }
+                            catch (Exception ttsEx)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ttsEx);
+                            }
 
                         }
 
@@ -2004,7 +2031,7 @@ namespace Risebird.Web.Controllers
             }
             else
             {
-                string candidatePrompt = "Consider the interview finished. I want you to generate a report for this interview, as directed in the instructions. Format your response for readability as this response will be fed as it is into a Razor (.cshtml) page.";
+                string candidatePrompt = AdaptiveReportGenerationPrompt;
                 InterviewReportResult aiReport = null;
                 if (redo)
                 {
@@ -2653,6 +2680,7 @@ namespace Risebird.Web.Controllers
             if (string.IsNullOrWhiteSpace(input)) return "";
 
             return input
+                .Replace(AdaptiveInterviewCompletionMarker, "", StringComparison.OrdinalIgnoreCase) // Strip the internal completion marker so it is never shown/spoken to the candidate
                 .Replace("#", "")        // Remove Markdown headers
                 .Replace("**", "")       // Remove bold formatting if present
                 .Trim();                 // Trim whitespace

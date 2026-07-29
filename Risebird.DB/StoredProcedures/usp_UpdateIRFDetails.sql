@@ -192,19 +192,16 @@ BEGIN
   
  --tech skills    
 
- --check whether a report for the skill channel has already been filled, if yes, dont allow changes to the score rubric
-
- declare @reportExists int = 0
-
- set @reportExists = (select top 1 tsr.id from TechSkillReport tsr 
- join InterviewMeetings im on im.id=tsr.InterviewId
- join IRF on irf.irfid = im.irfId
- where irf.id = @id)
-
- if(@reportExists is null or @reportExists = 0)
- Begin
-  delete from TransTechSkill where IRFId=@id    
-    
+ -- TransTechSkill is the editable score-rubric TEMPLATE for the channel. Completed interview
+ -- evaluations are snapshotted separately into TechSkillReport (which keeps its own SkillName,
+ -- SkillSet, WeightageRequired/WeightageActual and level columns), so refreshing the rubric here
+ -- never rewrites historical reports. A previous revision wrapped this refresh in an
+ -- "only if no TechSkillReport exists yet" guard; that silently discarded rubric edits on any
+ -- channel that already had a filled report while the overall save still committed (the user saw a
+ -- "saved" confirmation but the rubric never changed). Always refresh the rubric, matching the DM
+ -- save path (usp_TechSkillBulkInsert), which has no such guard.
+ delete from TransTechSkill where IRFId=@id    
+   
 	INSERT INTO [dbo].[TransTechSkill](        
 	[IRFId] ,        
 	[LevelId],        
@@ -212,7 +209,6 @@ BEGIN
 	[Weightage],[Concepts],[Natureofquestion],[Timelimit],[isEliminationskill],[SkillSet], [SkillName])        
         
 	SELECT * FROM @TechSkillBulkData   
- End   
   
  --interviewers  
   

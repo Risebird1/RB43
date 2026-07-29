@@ -105,6 +105,27 @@ namespace Risebird.Business
                 var challanLinks = challanLinksTask.Result ?? new List<InterviewerChallanLink>();
                 var paymentItems = paymentItemsTask.Result ?? new List<PaymentHistoryItem>();
 
+                // Ensure one row per week; sum TDS deposited when multiple challan lines exist
+                pending = pending
+                    .GroupBy(p => p.WeekNumber)
+                    .Select(g =>
+                    {
+                        var first = g.First();
+                        var tdsDue = g.Max(x => x.TdsDue);
+                        var tdsDeposited = g.Sum(x => x.TdsDeposited);
+                        return new PendingTdsWeekVM
+                        {
+                            WeekNumber   = g.Key,
+                            WeekRange    = first.WeekRange,
+                            TdsDue       = tdsDue,
+                            TdsDeposited = tdsDeposited,
+                            Outstanding  = tdsDue - tdsDeposited,
+                            IsPaid       = g.All(x => x.IsPaid)
+                        };
+                    })
+                    .OrderBy(p => p.WeekNumber)
+                    .ToList();
+
                 var challanByUser = challanLinks
                     .GroupBy(l => l.Userid)
                     .ToDictionary(
