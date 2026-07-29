@@ -1,168 +1,71 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.daytimes_report>
-@{
+﻿@{
     ViewData["Title"] = "Scheduler List";
+    ViewBag.PageHeader = "Scheduler List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <script>
     var Header = "<div id='myinterview_1'>Scheduler List</div>";
     $('#txtpageHeader').empty().html(Header);
 </script>
-<link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+
 <div class="main-panel" id="main-panel">
-
-    <div class="loader text-center">
-        <img src="~/Newassets/img/lazyload.gif" />
-    </div>
-    <div class="pt30 videocon ">
-        <div class="col-md-12 nopad">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
-                <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" value="Create Event" onclick="CreateEvent()"></div>
-
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"><h4 class="card-title">Scheduler List</h4></div>
+                </div>
+                <div class="pull-right">
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" onclick="CreateEvent()">
+                        <span class="fa fa-plus-square"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Create Event</font></span>
+                    </button>
+                </div>
             </div>
-
         </div>
     </div>
     <div class="content client">
         <div class="row bl-bg">
             <div class="col-md-12">
                 <div class="mdc-card card bl-bg">
-
                     <div class="mdc-card-wrapper__text-section">
-                        <div class="loader text-center">
-                            <img src="~/Newassets/img/lazyload.gif" />
-                        </div>
-                        <div id="skill_card">
-                            <input id="skill_irf_count" type="hidden" value="@Model.Count()" />
-                            <div class="row">
-                                <div class="col-md-12">
-                                    @foreach (var item in Model)
-                                    {
-                                        <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6 pull-left" style="margin-top: 15px;">
-                                            <div class="card-content-holder border card-blue">
-                                                <div class="card-header">
-                                                    <div class="row">
-                                                        <div class=" col-md-11 col-sm-11 rightpad">
-                                                            <h6 class="event-name"> @item.EventName</h6>
-                                                        </div>
-
-                                                        <div class="col-md-1 col-sm-1 card-header-buttons action">
-                                                            <button id="skill_17" class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                                <span onclick="javascript:EditIRF('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- irf body-->
-                                                <div class="card-body">
-                                                    <div class="col-md-12 scheduling">
-                                                        <div class="statusInfo">
-                                                            <div class="group inner list-group-item-text">
-                                                                <div class="row clearfix">
-                                                                    <div class="client-field">
-                                                                        <span> Skill Channel: </span>@item.SkillChannel
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row clearfix">
-                                                                    <div class="client-field">
-                                                                        <span> Duration: </span>@item.duration
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row clearfix">
-                                                                    <div class="client-field">
-                                                                        <span> Start Date: </span>@item.StartDate
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row clearfix">
-                                                                    <div class="client-field">
-                                                                        <span> End Date: </span>@item.EndDate
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="card-footer action scheduling">
-                                                    <div class="col-md-12 nopad">
-                                                        <div class="active-stat" id="irf-card-footer">
-                                                            @if (@item.IsActive)
-                                                            {
-                                                                <h6 style="color: green;"> Active</h6>
-                                                            }
-                                                            else
-                                                            {
-                                                                <h6 style="color: black;"> Deactive</h6>
-                                                            }
-                                                        </div>
-                                                        <div class="stats-bttm-btn pull-right">
-                                                            <a hidden id="resumeLink_@item.id" target="_blank" href=@item.EventUrl></a>
-                                                            <div class="action-btn">
-                                                                <button class="copy-btn" onclick="copyToClipboard('resumeLink_@item.id', 'special_text_@item.id')">
-                                                                    <p class="special-text">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" /></svg>
-                                                                        <span id="special_text_@item.id" class="special-text__tooltip">
-                                                                            Copy Link
-                                                                        </span>
-                                                                    </p>
-                                                                </button>
-
-
-                                                                @if (item.IsActive)
-                                                                {
-                                                                    <div class="text-center">
-                                                                        <div class="switch-btn">
-                                                                            <div class="material-toggle" onclick="DeactiveEvent(@item.id)" title="Click here to Deactive">
-                                                                                <input class="switch" id="MoveToCP_@item.id" type="checkbox" checked="checked" value="false" name="Deactive">
-                                                                                <label for="Deactive" class=""></label>
-                                                                            </div>
-
-                                                                        </div>
-                                                                    </div>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <div class="text-center">
-                                                                        <div class="switch-btn">
-                                                                            <div class="material-toggle" onclick="ActiveEvent(@item.id)" title="Click here to Active">
-                                                                                <input class="switch" id="MoveToCP_@item.id" type="checkbox" value="false" name="Active">
-                                                                                <label for="Active" class=""></label>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                }
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    }
-                                </div>
-                            </div>
+                        <div class="dataloading">
+                            <table id="schedulerList" class="table table-striped table-bordered w-full" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Event Name</th>
+                                        <th>Skill Channel</th>
+                                        <th>Duration</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Status</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
 
 <script>
+    var editIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>';
+    var copyIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>';
+    var onIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/></svg>';
+    var offIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zM7 15c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/></svg>';
+
     function CreateEvent() {
         window.location.href = "/InterviewScheduler/AddEvent";
     }
     function EditIRF(eventid) {
         window.location.href = "/InterviewScheduler/EditEvent?eventid=" + eventid;
-    }
-    function copyToClipboard(elementId, indicatorId) {
-        var element = document.getElementById(elementId);
-        var href = element.href;
-        var temp = $("<input>");
-        $("body").append(temp);
-        temp.val(href).select();
-        document.execCommand("copy");
-        temp.remove();
-        $('#' + indicatorId).text('Copied');
     }
     function DeactiveEvent(eventid) {
         window.location.href = "/InterviewScheduler/DeactivateEvent?eventid=" + eventid;
@@ -170,4 +73,118 @@
     function ActiveEvent(eventid) {
         window.location.href = "/InterviewScheduler/ActivateEvent?eventid=" + eventid;
     }
+    function copyEventUrl(url, btn) {
+        var temp = $("<input>");
+        $("body").append(temp);
+        temp.val(url).select();
+        document.execCommand("copy");
+        temp.remove();
+        var $btn = $(btn);
+        var prev = $btn.attr("title");
+        $btn.attr("title", "Copied");
+        setTimeout(function () { $btn.attr("title", prev || "Copy Link"); }, 1500);
+    }
+
+    function escapeHtml(text) {
+        if (text == null) return "";
+        return String(text)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    }
+
+    $(document).ready(function () {
+        $('#schedulerList').DataTable({
+            processing: true,
+            serverSide: true,
+            searching: true,
+            ordering: false,
+            pageLength: 25,
+            lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+            searchDelay: 400,
+            pagingType: "full_numbers",
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search event / skill channel",
+                processing: "Loading..."
+            },
+            ajax: {
+                url: "/InterviewScheduler/SchedulerListData",
+                type: "GET",
+                dataSrc: "data",
+                error: function () {
+                    // Keep table usable if a request fails
+                }
+            },
+            columns: [
+                {
+                    data: "eventName",
+                    render: function (data, type, row) {
+                        return '<span style="white-space:normal;">' + escapeHtml(row.eventName || row.EventName) + '</span>';
+                    }
+                },
+                {
+                    data: "skillChannel",
+                    render: function (data, type, row) {
+                        return '<span style="white-space:normal;">' + escapeHtml(row.skillChannel || row.SkillChannel) + '</span>';
+                    }
+                },
+                {
+                    data: "duration",
+                    render: function (data, type, row) {
+                        return escapeHtml(row.duration != null ? row.duration : row.Duration);
+                    }
+                },
+                {
+                    data: "startDate",
+                    render: function (data, type, row) {
+                        return escapeHtml(row.startDate || row.StartDate);
+                    }
+                },
+                {
+                    data: "endDate",
+                    render: function (data, type, row) {
+                        return escapeHtml(row.endDate || row.EndDate);
+                    }
+                },
+                {
+                    data: "status",
+                    render: function (data, type, row) {
+                        var active = row.isActive === true || row.IsActive === true || (row.status || row.Status) === "Active";
+                        if (active) {
+                            return '<span style="color:green;font-weight:600;">Active</span>';
+                        }
+                        return '<span style="color:#666;font-weight:600;">Deactive</span>';
+                    }
+                },
+                {
+                    data: null,
+                    orderable: false,
+                    className: "text-center",
+                    render: function (data, type, row) {
+                        var id = row.id || row.Id;
+                        var url = row.eventUrl || row.EventUrl || "";
+                        var active = row.isActive === true || row.IsActive === true;
+                        var html = '<span style="white-space:nowrap;">';
+                        html += '<button class="mdc-fab app-fab--absolute" title="Edit" onclick="EditIRF(' + id + ')">'
+                            + '<span class="mdc-fab__icon material-icons">' + editIcon + '</span></button> ';
+                        html += '<button class="mdc-fab app-fab--absolute" title="Copy Link" data-url="' + escapeHtml(url) + '" onclick="copyEventUrl(this.getAttribute(\'data-url\'), this)">'
+                            + '<span class="mdc-fab__icon material-icons">' + copyIcon + '</span></button> ';
+                        if (active) {
+                            html += '<button class="mdc-fab app-fab--absolute" title="Click here to Deactive" onclick="DeactiveEvent(' + id + ')">'
+                                + '<span class="mdc-fab__icon material-icons">' + onIcon + '</span></button>';
+                        } else {
+                            html += '<button class="mdc-fab app-fab--absolute" title="Click here to Active" onclick="ActiveEvent(' + id + ')">'
+                                + '<span class="mdc-fab__icon material-icons">' + offIcon + '</span></button>';
+                        }
+                        html += '</span>';
+                        return html;
+                    }
+                }
+            ]
+        });
+    });
 </script>

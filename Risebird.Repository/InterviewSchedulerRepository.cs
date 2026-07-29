@@ -36,20 +36,79 @@ namespace Risebird.Repository
         {
             try
             {
-                //var query = "Select * from ScheduleInterviewEvent where ISNull(IsSingleUse,0)!=1 order by id desc";
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    //var result = await con.QueryAsync<daytimes_report>(query, null);
-                    var result = await SqlMapper.QueryAsync<daytimes_report>(con, "usp_GetSchedulerEventList", null,
-                        commandType: CommandType.StoredProcedure);
-                    return result.ToList();
-                }
+                var paged = await FetchEventListPaged(null, 0, 200);
+                return paged?.Data ?? new List<daytimes_report>();
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task<SchedulerEventListResult> FetchEventListPaged(string search, int offset, int pageSize)
+        {
+            var result = new SchedulerEventListResult();
+            try
+            {
+                if (offset < 0) offset = 0;
+                if (pageSize < 1) pageSize = 25;
+                if (pageSize > 200) pageSize = 200;
+
+                var searchTrim = string.IsNullOrWhiteSpace(search) ? null : search.Trim();
+
+                // Inline SQL so list works without waiting on SP redeploy; mirrors usp_GetSchedulerEventList.
+                const string sql = @"
+SELECT COUNT(1)
+FROM dbo.ScheduleInterviewEvent WITH (NOLOCK)
+WHERE ISNULL(IsSingleUse, 0) <> 1
+  AND (
+        @Search IS NULL
+        OR EventName LIKE N'%' + @Search + N'%'
+        OR SkillChannel LIKE N'%' + @Search + N'%'
+      );
+
+SELECT
+    id,
+    EventName,
+    SkillChannel,
+    duration,
+    StartDate,
+    EndDate,
+    Uniqueid,
+    IsActive
+FROM dbo.ScheduleInterviewEvent WITH (NOLOCK)
+WHERE ISNULL(IsSingleUse, 0) <> 1
+  AND (
+        @Search IS NULL
+        OR EventName LIKE N'%' + @Search + N'%'
+        OR SkillChannel LIKE N'%' + @Search + N'%'
+      )
+ORDER BY id DESC
+OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;";
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    using (var multi = await con.QueryMultipleAsync(sql, new
+                    {
+                        Search = searchTrim,
+                        Offset = offset,
+                        PageSize = pageSize
+                    }))
+                    {
+                        var total = await multi.ReadFirstAsync<int>();
+                        var rows = (await multi.ReadAsync<daytimes_report>()).ToList();
+                        result.Data = rows;
+                        result.RecordsTotal = total;
+                        result.RecordsFiltered = total;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return result;
         }
         public async Task<bool> CreateEvent(daytimes_report model)
         {
