@@ -470,8 +470,38 @@ namespace Risebird.Web.Controllers
                 // PO Opening Balance = net credit carry-forward entering the selected month
                 // = Σ(PO credit before month) − Σ(debits before month)
                 // Hidden automatically for the "All Time" scope (no prior period).
+                // Remaining = Opening Balance + PO Credit − Consumed
                 if (!allDetails)
-                    ViewBag.POOpeningBalances = await _walletService.GetOwnerOpeningBalances(clientId, selectedMonth, selectedYear);
+                {
+                    var openingBalances = await _walletService.GetOwnerOpeningBalances(clientId, selectedMonth, selectedYear);
+                    ViewBag.POOpeningBalances = openingBalances;
+
+                    foreach (var owner in dashboard.OwnerWallets)
+                    {
+                        var opening = openingBalances != null
+                            && openingBalances.TryGetValue(owner.BillingOwnerId, out var ob)
+                            ? ob
+                            : 0m;
+                        owner.POOpeningBalance = opening;
+                        owner.Remaining = opening + owner.POCredit - owner.Consumed;
+
+                        if (owner.POCredit <= 0)
+                        {
+                            owner.State = dashboard.BillingModel == (int)BillingModelEnum.M2 ? "Awaiting PO" : "No PO";
+                            owner.StateCss = "badge-warning";
+                        }
+                        else if (owner.Remaining <= 0)
+                        {
+                            owner.State = "PO exhausted";
+                            owner.StateCss = "badge-danger";
+                        }
+                        else
+                        {
+                            owner.State = "Active";
+                            owner.StateCss = "badge-success";
+                        }
+                    }
+                }
             }
 
             if (TempData["ClientWalletMessage"] != null)
