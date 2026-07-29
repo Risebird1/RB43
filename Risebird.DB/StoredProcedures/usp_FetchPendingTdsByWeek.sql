@@ -51,8 +51,7 @@ BEGIN
                 ELSE 4
             END AS WeekNumber,
             ph.TotalAmount,
-			ROUND(ph.TotalAmount * 0.10,0) as Tds,
-            --ISNULL(tic.IsBankVerified, 0) AS IsVerified
+            ROUND(ph.TotalAmount * 0.10, 0) AS Tds,
             1 AS IsVerified
         FROM PaymentHistory ph
         JOIN UserList ul ON ul.id = ph.Userid
@@ -62,20 +61,33 @@ BEGIN
           AND ph.PaymentDate < @EndDate
           AND ph.TotalAmount > 0
           AND (ph.Status = 'Done' OR ph.PayoutStatus = 'TRANSFER_SUCCESS')
+    ),
+    -- One row per week: sum all challan deposits for that week
+    ChallansByWeek AS (
+        SELECT
+            WeekNumber,
+            SUM(ISNULL(TdsAmount, 0)) AS TdsDeposited,
+            CASE
+                WHEN COUNT(*) > 0 AND MIN(CAST(ISNULL(IsPaid, 0) AS INT)) = 1 THEN 1
+                ELSE 0
+            END AS IsPaid
+        FROM TdsChallan
+        WHERE FinancialYear = @FinancialYear
+          AND Quarter = @Quarter
+        GROUP BY WeekNumber
     )
     SELECT
         w.WeekNumber,
         w.WeekRange,
-		ISNULL(SUM(CASE WHEN p.IsVerified = 1 THEN p.Tds ELSE 0 END), 0) AS TdsDue,
-        ISNULL(tc.TdsAmount, 0)                                                                     AS TdsDeposited,
-        ISNULL(SUM(CASE WHEN p.IsVerified = 1 THEN p.Tds ELSE 0 END), 0)- ISNULL(tc.TdsAmount, 0)   AS Outstanding,
-        ISNULL(tc.IsPaid, 0)                                                                        AS IsPaid
+        ISNULL(SUM(CASE WHEN p.IsVerified = 1 THEN p.Tds ELSE 0 END), 0) AS TdsDue,
+        ISNULL(MAX(tc.TdsDeposited), 0) AS TdsDeposited,
+        ISNULL(SUM(CASE WHEN p.IsVerified = 1 THEN p.Tds ELSE 0 END), 0)
+            - ISNULL(MAX(tc.TdsDeposited), 0) AS Outstanding,
+        ISNULL(MAX(tc.IsPaid), 0) AS IsPaid
     FROM Weeks w
     LEFT JOIN PayoutsByWeek p ON p.WeekNumber = w.WeekNumber
-    LEFT JOIN TdsChallan tc ON tc.FinancialYear = @FinancialYear
-                            AND tc.Quarter = @Quarter
-                            AND tc.WeekNumber = w.WeekNumber
-    GROUP BY w.WeekNumber, w.WeekRange, tc.TdsAmount, tc.IsPaid
+    LEFT JOIN ChallansByWeek tc ON tc.WeekNumber = w.WeekNumber
+    GROUP BY w.WeekNumber, w.WeekRange
     ORDER BY w.WeekNumber;
 END
 GO
