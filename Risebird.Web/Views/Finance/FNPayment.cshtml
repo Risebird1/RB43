@@ -526,11 +526,12 @@
                                             <th>Name / Email</th>
                                             <th style="width:100px;">Amount</th>
                                             <th style="width:110px;">Bank Verified</th>
+                                            <th style="width:110px;">PAN Verified</th>
                                             <th style="width:60px;text-align:center;">Details</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tblBatchPayoutBody">
-                                        <tr><td colspan="5" class="text-center">No interviewers with pending amount found.</td></tr>
+                                        <tr><td colspan="6" class="text-center">No interviewers with pending amount found.</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -1032,9 +1033,32 @@
     // seeded from the server-rendered Razor model on first page load.
     var currentTableData = [];
 
+    function batchPanVerifiedLabel(row) {
+        var isPanVerified = row.isPanVerified === true || row.isPanVerified === 'true' || row.IsPanVerified === true;
+        if (!isPanVerified) {
+            return '<span class="text-danger" title="PAN not verified">No</span>';
+        }
+        var panNum = row.verifiedPAN || row.VerifiedPAN || '—';
+        var panName = row.nameAtPan || row.NameAtPan || '—';
+        var panDate = row.panVerifiedOn || row.PanVerifiedOn || '';
+        if (panDate && panDate.toString().length >= 10) {
+            var d = new Date(panDate);
+            panDate = isNaN(d.getTime()) ? panDate : d.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()] + ' ' + d.getFullYear();
+        }
+        return '<span class="text-success">Yes</span>'
+            + '<span class="pan-info-wrap">'
+            +   '<i class="pan-info-icon">i</i>'
+            +   '<span class="pan-tooltip-box">'
+            +     'PAN: ' + panNum + '<br/>'
+            +     'Name: ' + panName + '<br/>'
+            +     'On: ' + (panDate || '—')
+            +   '</span>'
+            + '</span>';
+    }
+
     function openBatchPayoutModal() {
         document.getElementById('tblBatchPayoutBody').innerHTML =
-            '<tr><td colspan="5" class="text-center"><img src="/Newassets/img/lazyload.gif" style="height:30px;" /></td></tr>';
+            '<tr><td colspan="6" class="text-center"><img src="/Newassets/img/lazyload.gif" style="height:30px;" /></td></tr>';
         document.getElementById('chkSelectAllBatch').checked = false;
         document.getElementById('spnBatchSelected').textContent = '0 interviewer(s) selected';
         document.getElementById('divBatchResult').style.display = 'none';
@@ -1050,13 +1074,13 @@
                 var tbody = document.getElementById('tblBatchPayoutBody');
                 var html = '';
                 if (!resp.success) {
-                    html = '<tr><td colspan="5" class="text-center text-danger">' + (resp.message || 'Failed to load.') + '</td></tr>';
+                    html = '<tr><td colspan="6" class="text-center text-danger">' + (resp.message || 'Failed to load.') + '</td></tr>';
                     tbody.innerHTML = html;
                     return;
                 }
                 var list = resp.data || [];
                 if (list.length === 0) {
-                    html = '<tr><td colspan="5" class="text-center">No interviewers with pending amount and verified bank account found.</td></tr>';
+                    html = '<tr><td colspan="6" class="text-center">No interviewers with pending amount, verified bank account, and verified PAN found.</td></tr>';
                     tbody.innerHTML = html;
                     return;
                 }
@@ -1066,7 +1090,8 @@
                     html += '<td style="text-align:center;"><input type="checkbox" class="chkBatchInterviewer" data-id="' + row.id + '" data-amount="' + row.amount + '" data-email="' + (row.email || '') + '" onchange="updateBatchCount()" /></td>';
                     html += '<td>' + (row.email || '') + '</td>';
                     html += '<td>' + row.amount + '</td>';
-                    html += '<td><span class="text-success">Yes</span></td>';
+                    html += '<td><span class="text-success" title="Bank account verified">Yes</span></td>';
+                    html += '<td>' + batchPanVerifiedLabel(row) + '</td>';
                     html += '<td style="text-align:center;">'
                          +    '<button onclick="viewBatchInterviewerDetails(' + row.id + ',\'' + (row.email || '') + '\')" '
                          +      'title="View payment details" '
@@ -1083,7 +1108,7 @@
             },
             error: function () {
                 document.getElementById('tblBatchPayoutBody').innerHTML =
-                    '<tr><td colspan="4" class="text-center text-danger">Failed to load interviewers. Please try again.</td></tr>';
+                    '<tr><td colspan="6" class="text-center text-danger">Failed to load interviewers. Please try again.</td></tr>';
             }
         });
     }

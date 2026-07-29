@@ -62,6 +62,7 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [TimeLeftInSeconds][int] NULL,
     [MeetingPlatForm][varchar](25),
     [RequestType][varchar](30) NULL,
+    [BillingOwner][int] NULL,
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -486,6 +487,18 @@ BEGIN
     Add RequestType VARCHAR(30) NULL
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'BillingOwner')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    -- Snapshot of IRF.BillingOwner (UserList.id) at interview create time
+    ALTER TABLE InterviewMeetings
+    ADD BillingOwner INT NULL
+END
+
 END
 GO
+
 

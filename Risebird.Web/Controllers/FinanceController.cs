@@ -741,7 +741,7 @@ namespace Risebird.Web.Controllers
 
         /// <summary>
         /// Returns all interviewers from the current session-cached FNPayment list
-        /// that have a pending payable amount AND a verified bank account.
+        /// that have a pending payable amount, a verified bank account, and a verified PAN.
         /// Used to populate the Batch Payout modal with the full (unpaginated) dataset.
         /// </summary>
         [HttpGet]
@@ -755,8 +755,18 @@ namespace Risebird.Web.Controllers
 
                 var allItems = JsonConvert.DeserializeObject<List<Risebird.Entities.ViewModel.RBInterviewDetails>>(sessionData);
                 var candidates = allItems
-                    .Where(x => x.Points > 0 && x.IsBankVerified)
-                    .Select(x => new { x.id, email = x.Comment, amount = x.Points, x.IsBankVerified })
+                    .Where(x => x.Points > 0 && x.IsBankVerified && x.IsPanVerified)
+                    .Select(x => new
+                    {
+                        x.id,
+                        email = x.Comment,
+                        amount = x.Points,
+                        x.IsBankVerified,
+                        x.IsPanVerified,
+                        x.VerifiedPAN,
+                        x.NameAtPan,
+                        x.PanVerifiedOn
+                    })
                     .ToList();
 
                 return Json(new { success = true, data = candidates });
