@@ -340,7 +340,18 @@ namespace Risebird.Services.Controllers
                                                         }
                                                     }
                                                     string accountEmail = "hire@risebird.io";
-                                                    _ScheduleCandidateStatus.meetingLink = zoomLink.join_url;
+                                                    var meetingLinkToReturn = zoomLink.join_url;
+                                                    if (jdDetails.MeetingPlatform == MeetingPlatforms.AIInterview && interviewId != 0)
+                                                    {
+                                                        //AI interviews have no external meeting URL; the candidate joins via the
+                                                        //AI interview portal using the SessionId generated for this meeting.
+                                                        var aiSessionId = _risebirdMeetings.GetSessionIdByInterviewId(interviewId);
+                                                        if (!string.IsNullOrWhiteSpace(aiSessionId))
+                                                        {
+                                                            meetingLinkToReturn = "https://portal.risebird.io/AIInterview/Index?sid=" + aiSessionId;
+                                                        }
+                                                    }
+                                                    _ScheduleCandidateStatus.meetingLink = meetingLinkToReturn;
                                                     _ScheduleCandidateStatus.onboardingStatus = "successful";
                                                     //Send Mail Notification
                                                     var candidateUniqueId = await _candidateService.GetCandidateUniqueId(item.EmailId);
