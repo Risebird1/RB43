@@ -959,11 +959,14 @@
                 // Prefer resolved Report URL (/videos/...) then stored synthesised link
                 var questionVideoUrl = !string.IsNullOrEmpty(vd.BotSynthesizedVideoLink)
                     ? vd.BotSynthesizedVideoLink
-                    : vd.AIQuestionVideoLink;
-                // PDF links go only to PlayBotInterviewVideo (landing page). Blob opens after user clicks Open there.
+                    : null;
+                // PDF links go only to PlayBotInterviewVideo (landing page).
+                // After RefreshBotInterviewMediaSasUrlsAsync, BotSynthesizedVideoLink / VideoLink are
+                // playable Azure SAS URLs (or null if the blob does not exist) — do not show Open
+                // links based on DeliveryHeadQuestionId / raw AIQuestionVideoLink alone.
                 var questionPlayUrl = Url.Action("PlayBotInterviewVideo", "AIInterview", new { seId = pdfSessionId, qid = vd.id, kind = "question" }, Context.Request.Scheme);
                 var answerPlayUrl = Url.Action("PlayBotInterviewVideo", "AIInterview", new { seId = pdfSessionId, qid = vd.id, kind = "answer" }, Context.Request.Scheme);
-                var hasQuestionVideo = !string.IsNullOrEmpty(questionVideoUrl) || vd.DeliveryHeadQuestionId > 0 || !string.IsNullOrEmpty(vd.AIQuestionVideoLink);
+                var hasQuestionVideo = !string.IsNullOrEmpty(questionVideoUrl);
                 var hasAnswerVideo = !string.IsNullOrEmpty(vd.VideoLink);
                 <div class="qa-card">
                     @if (isVideoInterview)

@@ -2459,34 +2459,71 @@ namespace Risebird.Web.Controllers
 
                 if (string.IsNullOrWhiteSpace(playableUrl))
                 {
-                    return Content(
-                        "<html><body style='font-family:Arial;padding:24px'>" +
-                        "<h3>Video file missing</h3>" +
-                        "<p>The question/answer video file could not be found in Azure Blob Storage " +
+                    var kindLabel = isQuestion ? "question" : "answer";
+                    var missingHtml =
+                        "<!DOCTYPE html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>" +
+                        "<title>" + char.ToUpper(kindLabel[0]) + kindLabel.Substring(1) + " video unavailable</title>" +
+                        "<style>" +
+                        "body{font-family:Segoe UI,Arial,sans-serif;padding:28px;background:#f7f9fb;color:#1a1a2e;margin:0;}" +
+                        ".card{max-width:560px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:22px 24px;" +
+                        "box-shadow:0 4px 16px rgba(15,23,42,.06);}" +
+                        "h1{font-size:18px;margin:0 0 10px 0;}" +
+                        "p{margin:0 0 10px 0;color:#475569;font-size:14px;line-height:1.5;}" +
+                        "code{font-size:12px;background:#f1f5f9;padding:1px 6px;border-radius:4px;}" +
+                        "a.back-pdf{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:10px 16px;" +
+                        "background:#fff;color:#0f172a;font-size:13px;font-weight:700;text-decoration:none;" +
+                        "border:1px solid #e2e8f0;border-radius:8px;box-shadow:0 1px 3px rgba(15,23,42,.06);}" +
+                        "a.back-pdf:hover{background:#f0fdf6;border-color:#4eda92;}" +
+                        "a.back-pdf .chev{display:inline-flex;width:18px;height:18px;border-radius:50%;" +
+                        "align-items:center;justify-content:center;background:#4eda92;color:#0b0b18;font-size:12px;font-weight:700;}" +
+                        "</style></head><body><div class='card'>" +
+                        "<h1>" + char.ToUpper(kindLabel[0]) + kindLabel.Substring(1) + " video unavailable</h1>" +
+                        "<p>No playable " + kindLabel + " video file was found in Azure Blob Storage " +
                         "(checked <code>videos</code> and <code>botinterviewvideo</code>).</p>" +
-                        "</body></html>",
-                        "text/html");
+                        "<p>The PDF link is only shown when a file resolves successfully. " +
+                        "If you still reached this page, the stored URL may be missing, deleted, or invalid.</p>" +
+                        "<a class='back-pdf' href='javascript:history.back()' title='Return to the AI interview PDF'>" +
+                        "<span class='chev' aria-hidden='true'>&#8592;</span><span>Back to PDF</span></a>" +
+                        "</div></body></html>";
+                    return Content(missingHtml, "text/html");
                 }
 
-                // Step 1 (from PDF): land only on this page — do not load/redirect/open the blob yet.
-                // Step 2: user clicks Open → navigate to the playable blob URL.
                 var safeHref = System.Net.WebUtility.HtmlEncode(playableUrl);
                 var label = isQuestion ? "question" : "answer";
+                var titleLabel = char.ToUpper(label[0]) + label.Substring(1);
                 var html =
                     "<!DOCTYPE html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>" +
-                    "<title>Open " + label + " video</title>" +
+                    "<title>" + titleLabel + " video</title>" +
                     "<style>" +
-                    "body{font-family:Segoe UI,Arial,sans-serif;padding:28px;background:#f7f9fb;color:#1a1a2e;margin:0;}" +
-                    "h1{font-size:20px;margin:0 0 10px 0;}" +
-                    "p{margin:0 0 18px 0;color:#555;font-size:14px;}" +
-                    "a.btn{display:inline-block;padding:12px 18px;background:#4eda92;color:#0b0b18;font-weight:700;" +
-                    "text-decoration:none;border-radius:6px;}" +
-                    "a.back{display:inline-block;margin-left:14px;color:#0c7bb3;font-size:14px;}" +
+                    "body{font-family:Segoe UI,Arial,sans-serif;padding:24px;background:#f7f9fb;color:#1a1a2e;margin:0;}" +
+                    ".topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 18px 0;flex-wrap:wrap;}" +
+                    "h1{font-size:20px;margin:0;font-weight:700;}" +
+                    ".player{max-width:900px;background:#0b0b18;border-radius:10px;overflow:hidden;" +
+                    "box-shadow:0 8px 24px rgba(0,0,0,.12);}" +
+                    "video{display:block;width:100%;max-height:80vh;background:#000;}" +
+                    "a.back-pdf{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;" +
+                    "background:#fff;color:#0f172a;font-size:13px;font-weight:700;text-decoration:none;" +
+                    "border:1px solid #e2e8f0;border-radius:8px;box-shadow:0 1px 3px rgba(15,23,42,.06);" +
+                    "transition:background .15s ease,border-color .15s ease,box-shadow .15s ease,transform .15s ease;}" +
+                    "a.back-pdf:hover{background:#f0fdf6;border-color:#4eda92;box-shadow:0 2px 8px rgba(78,218,146,.25);}" +
+                    "a.back-pdf:active{transform:translateY(1px);}" +
+                    "a.back-pdf .chev{display:inline-flex;width:18px;height:18px;border-radius:50%;" +
+                    "align-items:center;justify-content:center;background:#4eda92;color:#0b0b18;" +
+                    "font-size:12px;line-height:1;font-weight:700;}" +
+                    "a.back-pdf-bottom{margin-top:18px;}" +
                     "</style></head><body>" +
-                    "<h1>Open " + label + " video</h1>" +
-                    "<p>Click the button below to play the video.</p>" +
-                    "<a class='btn' href='" + safeHref + "' target='_blank' rel='noopener noreferrer'>Open " + label + " video</a>" +
-                    "<a class='back' href='javascript:history.back()'>Back</a>" +
+                    "<div class='topbar'>" +
+                    "<h1>" + titleLabel + " video</h1>" +
+                    "<a class='back-pdf' href='javascript:history.back()' title='Return to the AI interview PDF'>" +
+                    "<span class='chev' aria-hidden='true'>&#8592;</span><span>Back to PDF</span></a>" +
+                    "</div>" +
+                    "<div class='player'>" +
+                    "<video controls playsinline preload='metadata' src='" + safeHref + "'>" +
+                    "Your browser does not support HTML5 video. " +
+                    "<a href='" + safeHref + "' target='_blank' rel='noopener noreferrer'>Open video</a>" +
+                    "</video></div>" +
+                    "<a class='back-pdf back-pdf-bottom' href='javascript:history.back()' title='Return to the AI interview PDF'>" +
+                    "<span class='chev' aria-hidden='true'>&#8592;</span><span>Back to PDF</span></a>" +
                     "</body></html>";
                 return Content(html, "text/html");
             }
