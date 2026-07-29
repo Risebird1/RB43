@@ -2030,7 +2030,7 @@ namespace Risebird.Web.Controllers
             }
             else
             {
-                string candidatePrompt = "Consider the interview finished. I want you to generate a report for this interview, as directed in the instructions. Format your response for readability as this response will be fed as it is into a Razor (.cshtml) page.";
+                string candidatePrompt = AdaptiveReportGenerationPrompt;
                 InterviewReportResult aiReport = null;
                 if (redo)
                 {
@@ -2464,6 +2464,14 @@ namespace Risebird.Web.Controllers
             " Once you have no more questions to ask and the interview is complete, do not ask any further questions;" +
             " end your final closing message with the exact marker [[INTERVIEW_COMPLETE]] on its own line.";
 
+        // Prompt that triggers the adaptive interviewer assistant to produce its evaluation report. For adaptive
+        // interviews the OpenAIApi Report endpoint forwards this text straight to the assistant as the instruction
+        // (unlike preset, which builds its own JSON prompt), so it MUST be the real report prompt - never empty -
+        // otherwise the assistant returns free-form prose and the structured sections (e.g. the score rubric) come
+        // back empty. Kept identical to the on-demand Report() generation prompt so both paths yield the same report.
+        private const string AdaptiveReportGenerationPrompt =
+            "Consider the interview finished. I want you to generate a report for this interview, as directed in the instructions. Format your response for readability as this response will be fed as it is into a Razor (.cshtml) page.";
+
         private static bool RepliesSignalInterviewCompletion(IEnumerable<string> replies)
         {
             return replies != null && replies.Any(reply =>
@@ -2483,7 +2491,9 @@ namespace Risebird.Web.Controllers
         private async Task<IActionResult> CompleteAdaptiveInterviewAsync(ChatMessageViewModel model)
         {
             await _aiinterviewerService.UpdateMeetingCompletedStatusForAIInterview(model.SessionId.ToString());
-            _api.GenerateReport(model.SessionId, string.Empty, (int)AIInterviewTypeEnum.Adaptive);
+            // Use the real report prompt (not string.Empty). For adaptive interviews the assistant is driven by
+            // this prompt, and an empty prompt produces a report with no structured rubric/question data.
+            _api.GenerateReport(model.SessionId, AdaptiveReportGenerationPrompt, (int)AIInterviewTypeEnum.Adaptive);
 
             var exitModel = new AIInterviewExitModalViewModel
             {
