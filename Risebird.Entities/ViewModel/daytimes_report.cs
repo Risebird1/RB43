@@ -61,7 +61,17 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Number of days Slot open at a time")]
         public int TimeSlotDays { get; set; }
         public string sourcevalue { get; set; }
+        /// <summary>Populated by paged list query (COUNT for DataTables).</summary>
+        public int TotalRows { get; set; }
     }
+
+    public class SchedulerEventListResult
+    {
+        public List<daytimes_report> Data { get; set; } = new List<daytimes_report>();
+        public int RecordsTotal { get; set; }
+        public int RecordsFiltered { get; set; }
+    }
+
     public class ScheculeInterview
     {
         public string Name { get; set; }

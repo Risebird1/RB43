@@ -61,15 +61,56 @@ namespace Risebird.Web.Controllers
         }
 
         #region Scheduling Confirmation Page
-        public async Task<IActionResult> SchedulerList()
+        public IActionResult SchedulerList()
         {
-            var model = new List<daytimes_report>();
-            model = await _interviewSchedulerservice.FetchEventList();
-            foreach (var item in model)
+            // Empty shell — rows load via SchedulerListData (server-side paging).
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SchedulerListData(int draw = 1, int start = 0, int length = 25, string search = null)
+        {
+            try
             {
-                item.EventUrl = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + item.Uniqueid;
+                if (string.IsNullOrWhiteSpace(search))
+                    search = Request.Query["search[value]"].FirstOrDefault();
+
+                var pageSize = length <= 0 ? 25 : length;
+                var result = await _interviewSchedulerservice.FetchEventListPaged(search, start, pageSize)
+                             ?? new SchedulerEventListResult();
+
+                var host = Request.Host.ToString();
+                var data = (result.Data ?? new List<daytimes_report>()).Select(item => new
+                {
+                    item.id,
+                    item.EventName,
+                    item.SkillChannel,
+                    item.duration,
+                    StartDate = item.StartDate.ToString("dd-MMM-yyyy HH:mm"),
+                    EndDate = item.EndDate.ToString("dd-MMM-yyyy HH:mm"),
+                    Status = item.IsActive ? "Active" : "Deactive",
+                    item.IsActive,
+                    EventUrl = "https://" + host + "/InterviewScheduler/ScheduleEvent?id=" + item.Uniqueid
+                });
+
+                return Json(new
+                {
+                    draw,
+                    recordsTotal = result.RecordsTotal,
+                    recordsFiltered = result.RecordsFiltered,
+                    data
+                });
             }
-            return View(model);
+            catch
+            {
+                return Json(new
+                {
+                    draw,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = Array.Empty<object>()
+                });
+            }
         }
 
         public async Task<IActionResult> AddEvent()
