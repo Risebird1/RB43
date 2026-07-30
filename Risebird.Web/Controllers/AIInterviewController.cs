@@ -1242,8 +1242,8 @@ namespace Risebird.Web.Controllers
                                         QuestionId = model.CurrentQuestionId,
                                         SampleText = model.TypingSampleText,
                                         TypedText = model.TypedText,
-                                    TimeStarted = TryParseInterviewDateTime(model.TypingStartTime) ?? DateTime.Now,
-                                    TimeCompleted = TryParseInterviewDateTime(model.TypingEndTime) ?? DateTime.Now,
+                                        TimeStarted = TryParseInterviewDateTime(model.TypingStartTime) ?? DateTime.Now,
+                                        TimeCompleted = TryParseInterviewDateTime(model.TypingEndTime) ?? DateTime.Now,
                                         TimeTakenInSeconds = model.TypingTimeTaken,
                                         TotalCharacters = analysisResult?.meta?.user_total_words_typed ?? 0,
                                         CorrectCharacters = analysisResult?.counts?.correct_words ?? 0,
@@ -1603,6 +1603,82 @@ namespace Risebird.Web.Controllers
         private static int CountAssistantQuestions(IEnumerable<TranscriptConv> transcript)
         {
             return transcript?.Count(x => string.Equals(x.Role, "assistant", StringComparison.OrdinalIgnoreCase)) ?? 0;
+        }
+
+        /// <summary>
+        /// Internal token the adaptive assistant appends when it ends the interview.
+        /// Stripped in CleanMessage so it is never shown/spoken to the candidate.
+        /// </summary>
+        private const string AdaptiveInterviewCompletionMarker = "[[ADAPTIVE_INTERVIEW_COMPLETE]]";
+
+        /// <summary>
+        /// Appended to the start-of-interview prompt so the assistant flags completion for auto-exit.
+        /// </summary>
+        private const string AdaptiveCompletionInstruction =
+            " When you have finished the interview (topics adequately covered, or the candidate cannot continue productively), " +
+            "give a brief polite closing message to the candidate, then append exactly this marker at the very end of your message " +
+            "(do not mention, read aloud, or explain the marker to the candidate): " +
+            AdaptiveInterviewCompletionMarker;
+
+        /// <summary>
+        /// Hard cap / safety net so adaptive interviews cannot run forever. Matches Index resume limits of 35.
+        /// </summary>
+        private const int AdaptiveMaxAssistantQuestions = 35;
+
+        /// <summary>
+        /// Prompt for adaptive report generation. Adaptive replies are rendered as HTML when JSON parse fails.
+        /// </summary>
+        private const string AdaptiveReportGenerationPrompt =
+            "Based on the full interview conversation in this thread, generate a complete evaluation report as clean HTML only " +
+            "(no markdown code fences, no preamble). Include these sections with these exact labels where applicable: " +
+            "Overall Technical Score; Overall Communication Score; Final Verdict; Final Comment; Communication Score Reasoning; " +
+            "LLM Detection / LLM Response Suspected and Evidence Comment; " +
+            "a Score Rubric table (columns: Rubric Item, Expected, Observed, Score); " +
+            "Competency Ratings or Questions Discussed & Competency Rating; " +
+            "and question-by-question analysis with Strengths, Weaknesses, and Evidence from transcript where useful. " +
+            "Use simple semantic HTML (h2/h3, p, table, ul/li) suitable for embedding in a report page.";
+
+        private static bool MessageSignalsInterviewCompletion(string message)
+        {
+            return !string.IsNullOrWhiteSpace(message)
+                && message.IndexOf(AdaptiveInterviewCompletionMarker, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private static bool RepliesSignalInterviewCompletion(IEnumerable<string> replies)
+        {
+            return replies != null && replies.Any(MessageSignalsInterviewCompletion);
+        }
+
+        /// <summary>
+        /// Mark the adaptive interview completed, kick off report generation, and show the exit modal.
+        /// </summary>
+        private async Task<IActionResult> CompleteAdaptiveInterviewAsync(ChatMessageViewModel model)
+        {
+            await _aiinterviewerService.UpdateMeetingCompletedStatusForAIInterview(model.SessionId.ToString());
+
+            // Same fire-and-forget pattern as preset completion.
+            _ = _api.GenerateReport(
+                model.SessionId,
+                AdaptiveReportGenerationPrompt,
+                (int)AIInterviewTypeEnum.Adaptive,
+                isExit: true);
+
+            var exitModel = new AIInterviewExitModalViewModel
+            {
+                Title = "Interview Complete",
+                Message = "The interviewer is through with all the questions. This interview is now closed.",
+                IconClass = "fa-check-circle",
+                IconColor = "#28a745",
+                ButtonText = "Close",
+                ButtonClass = "btn-success",
+                CandidateName = model.candidateName ?? "Candidate",
+                InterviewDate = DateTime.Now,
+                SessionId = model.SessionId.ToString(),
+                ExitTime = DateTime.Now,
+                IsFromIndex = true
+            };
+
+            return View("ExitModalPartial", exitModel);
         }
 
         private static DateTime? TryParseInterviewDateTime(string value)
@@ -1981,7 +2057,8 @@ namespace Risebird.Web.Controllers
                 }
 
                 var reportModel = new AIInterviewReportWrapperClass();
-                reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
+                reportModel.videoQuestionDetails = await RefreshBotInterviewMediaSasUrlsAsync(
+                    await _aiinterviewerService.GetBotInterviewVideoDetails(seId));
                 //reportModel.chatMessageViewModel = chatMessageModel; 
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault());
                 EnrichQuestionRatingsWithActualQuestions(reportModel.AIInterviewEvaluation, reportModel.videoQuestionDetails);
@@ -2121,7 +2198,8 @@ namespace Risebird.Web.Controllers
                 }
 
                 AIInterviewReportWrapperClass reportModel = new AIInterviewReportWrapperClass();
-                reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
+                reportModel.videoQuestionDetails = await RefreshBotInterviewMediaSasUrlsAsync(
+                    await _aiinterviewerService.GetBotInterviewVideoDetails(seId));
                 //reportModel.chatMessageViewModel = chatMessageModel;
 
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault()); //JsonConvert.DeserializeObject<AIInterviewEvaluation>(cleaned);
@@ -2422,7 +2500,8 @@ namespace Risebird.Web.Controllers
                 }
 
                 var reportModel = new AIInterviewReportWrapperClass();
-                reportModel.videoQuestionDetails = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
+                reportModel.videoQuestionDetails = await RefreshBotInterviewMediaSasUrlsAsync(
+                    await _aiinterviewerService.GetBotInterviewVideoDetails(seId));
                 reportModel.AIInterviewEvaluation = TryParseEvaluation(aiReport?.Replies?.FirstOrDefault());
                 EnrichQuestionRatingsWithActualQuestions(reportModel.AIInterviewEvaluation, reportModel.videoQuestionDetails);
                 reportModel.CandidateEmail = meetingDetails?.candidateEmail;
@@ -2448,68 +2527,228 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        // Adaptive AI interviews are driven by the OpenAI assistant, which decides how many questions to ask
-        // and when the interview is over. Unlike preset interviews (which run out of DB-backed questions),
-        // there is no fixed pool to exhaust, so completion has to be signalled by the assistant itself.
-        // We instruct the assistant (in the opening prompt) to append this exact marker to its final message
-        // once it has no more questions, and detect it here to close the interview deterministically.
-        private const string AdaptiveInterviewCompletionMarker = "[[INTERVIEW_COMPLETE]]";
-
-        // Hard cap on the number of assistant questions for an adaptive interview. Acts purely as a safety net
-        // in case the assistant never emits the completion marker; normal completion is marker-driven.
-        private const int AdaptiveMaxAssistantQuestions = 35;
-
-        // Appended to the adaptive interviewer's opening prompt so the assistant tells us when it is done.
-        private const string AdaptiveCompletionInstruction =
-            " Once you have no more questions to ask and the interview is complete, do not ask any further questions;" +
-            " end your final closing message with the exact marker [[INTERVIEW_COMPLETE]] on its own line.";
-
-        // Prompt that triggers the adaptive interviewer assistant to produce its evaluation report. For adaptive
-        // interviews the OpenAIApi Report endpoint forwards this text straight to the assistant as the instruction
-        // (unlike preset, which builds its own JSON prompt), so it MUST be the real report prompt - never empty -
-        // otherwise the assistant returns free-form prose and the structured sections (e.g. the score rubric) come
-        // back empty. Kept identical to the on-demand Report() generation prompt so both paths yield the same report.
-        private const string AdaptiveReportGenerationPrompt =
-            "Consider the interview finished. I want you to generate a report for this interview, as directed in the instructions. Format your response for readability as this response will be fed as it is into a Razor (.cshtml) page.";
-
-        private static bool RepliesSignalInterviewCompletion(IEnumerable<string> replies)
+        /// <summary>
+        /// Opens question/answer video via a resolved, playable blob URL.
+        /// Avoids sending users to Azure XML BlobNotFound/AuthenticationFailed pages.
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> PlayBotInterviewVideo(Guid seId, int qid, string kind = "answer")
         {
-            return replies != null && replies.Any(reply =>
-                !string.IsNullOrEmpty(reply) &&
-                reply.IndexOf(AdaptiveInterviewCompletionMarker, StringComparison.OrdinalIgnoreCase) >= 0);
-        }
-
-        private static bool MessageSignalsInterviewCompletion(string message)
-        {
-            return !string.IsNullOrEmpty(message) &&
-                message.IndexOf(AdaptiveInterviewCompletionMarker, StringComparison.OrdinalIgnoreCase) >= 0;
-        }
-
-        // Marks an adaptive AI interview as completed, kicks off report generation (fire-and-forget, mirroring
-        // the preset flow), and returns the "Interview Complete" exit modal. Centralised so every adaptive
-        // completion path behaves identically to the preset one.
-        private async Task<IActionResult> CompleteAdaptiveInterviewAsync(ChatMessageViewModel model)
-        {
-            await _aiinterviewerService.UpdateMeetingCompletedStatusForAIInterview(model.SessionId.ToString());
-            // Use the real report prompt (not string.Empty). For adaptive interviews the assistant is driven by
-            // this prompt, and an empty prompt produces a report with no structured rubric/question data.
-            _api.GenerateReport(model.SessionId, AdaptiveReportGenerationPrompt, (int)AIInterviewTypeEnum.Adaptive);
-
-            var exitModel = new AIInterviewExitModalViewModel
+            try
             {
-                Title = "Interview Complete",
-                Message = "The interviewer is through with all the questions. This interview is now closed.",
-                IconClass = "fa-check-circle",
-                IconColor = "#28a745",
-                ButtonText = "Close",
-                ButtonClass = "btn-success",
-                CandidateName = model.candidateName ?? "Candidate",
-                InterviewDate = DateTime.Now,
-                SessionId = model.SessionId.ToString(),
-                ExitTime = DateTime.Now,
-                IsFromIndex = true
-            };
-            return View("ExitModalPartial", exitModel);
+                var videos = await _aiinterviewerService.GetBotInterviewVideoDetails(seId);
+                var item = videos?.FirstOrDefault(v => v.id == qid);
+                if (item == null)
+                {
+                    return Content(
+                        "<html><body style='font-family:Arial;padding:24px'><h3>Video not found</h3><p>No video record exists for this question.</p></body></html>",
+                        "text/html");
+                }
+
+                var isQuestion = string.Equals(kind, "question", StringComparison.OrdinalIgnoreCase);
+                string playableUrl = null;
+                if (isQuestion)
+                {
+                    // Prefer current sample-question URL (often in /videos/) — same as Report page.
+                    playableUrl = await ResolveBotInterviewPlayableUrlAsync(item.AIQuestionVideoLink);
+                    if (string.IsNullOrWhiteSpace(playableUrl))
+                        playableUrl = await ResolveBotInterviewPlayableUrlAsync(item.BotSynthesizedVideoLink);
+                }
+                else
+                {
+                    playableUrl = await ResolveBotInterviewPlayableUrlAsync(item.VideoLink);
+                }
+
+                if (string.IsNullOrWhiteSpace(playableUrl))
+                {
+                    var kindLabel = isQuestion ? "question" : "answer";
+                    var missingHtml =
+                        "<!DOCTYPE html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>" +
+                        "<title>" + char.ToUpper(kindLabel[0]) + kindLabel.Substring(1) + " video unavailable</title>" +
+                        "<style>" +
+                        "body{font-family:Segoe UI,Arial,sans-serif;padding:28px;background:#f7f9fb;color:#1a1a2e;margin:0;}" +
+                        ".card{max-width:560px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:22px 24px;" +
+                        "box-shadow:0 4px 16px rgba(15,23,42,.06);}" +
+                        "h1{font-size:18px;margin:0 0 10px 0;}" +
+                        "p{margin:0 0 10px 0;color:#475569;font-size:14px;line-height:1.5;}" +
+                        "code{font-size:12px;background:#f1f5f9;padding:1px 6px;border-radius:4px;}" +
+                        "a.back-pdf{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:10px 16px;" +
+                        "background:#fff;color:#0f172a;font-size:13px;font-weight:700;text-decoration:none;" +
+                        "border:1px solid #e2e8f0;border-radius:8px;box-shadow:0 1px 3px rgba(15,23,42,.06);}" +
+                        "a.back-pdf:hover{background:#f0fdf6;border-color:#4eda92;}" +
+                        "a.back-pdf .chev{display:inline-flex;width:18px;height:18px;border-radius:50%;" +
+                        "align-items:center;justify-content:center;background:#4eda92;color:#0b0b18;font-size:12px;font-weight:700;}" +
+                        "</style></head><body><div class='card'>" +
+                        "<h1>" + char.ToUpper(kindLabel[0]) + kindLabel.Substring(1) + " video unavailable</h1>" +
+                        "<p>No playable " + kindLabel + " video file was found in Azure Blob Storage " +
+                        "(checked <code>videos</code> and <code>botinterviewvideo</code>).</p>" +
+                        "<p>The PDF link is only shown when a file resolves successfully. " +
+                        "If you still reached this page, the stored URL may be missing, deleted, or invalid.</p>" +
+                        "<a class='back-pdf' href='javascript:history.back()' title='Return to the AI interview PDF'>" +
+                        "<span class='chev' aria-hidden='true'>&#8592;</span><span>Back to PDF</span></a>" +
+                        "</div></body></html>";
+                    return Content(missingHtml, "text/html");
+                }
+
+                var safeHref = System.Net.WebUtility.HtmlEncode(playableUrl);
+                var label = isQuestion ? "question" : "answer";
+                var titleLabel = char.ToUpper(label[0]) + label.Substring(1);
+                var html =
+                    "<!DOCTYPE html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>" +
+                    "<title>" + titleLabel + " video</title>" +
+                    "<style>" +
+                    "body{font-family:Segoe UI,Arial,sans-serif;padding:24px;background:#f7f9fb;color:#1a1a2e;margin:0;}" +
+                    ".topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 18px 0;flex-wrap:wrap;}" +
+                    "h1{font-size:20px;margin:0;font-weight:700;}" +
+                    ".player{max-width:900px;background:#0b0b18;border-radius:10px;overflow:hidden;" +
+                    "box-shadow:0 8px 24px rgba(0,0,0,.12);}" +
+                    "video{display:block;width:100%;max-height:80vh;background:#000;}" +
+                    "a.back-pdf{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;" +
+                    "background:#fff;color:#0f172a;font-size:13px;font-weight:700;text-decoration:none;" +
+                    "border:1px solid #e2e8f0;border-radius:8px;box-shadow:0 1px 3px rgba(15,23,42,.06);" +
+                    "transition:background .15s ease,border-color .15s ease,box-shadow .15s ease,transform .15s ease;}" +
+                    "a.back-pdf:hover{background:#f0fdf6;border-color:#4eda92;box-shadow:0 2px 8px rgba(78,218,146,.25);}" +
+                    "a.back-pdf:active{transform:translateY(1px);}" +
+                    "a.back-pdf .chev{display:inline-flex;width:18px;height:18px;border-radius:50%;" +
+                    "align-items:center;justify-content:center;background:#4eda92;color:#0b0b18;" +
+                    "font-size:12px;line-height:1;font-weight:700;}" +
+                    "a.back-pdf-bottom{margin-top:18px;}" +
+                    "</style></head><body>" +
+                    "<div class='topbar'>" +
+                    "<h1>" + titleLabel + " video</h1>" +
+                    "<a class='back-pdf' href='javascript:history.back()' title='Return to the AI interview PDF'>" +
+                    "<span class='chev' aria-hidden='true'>&#8592;</span><span>Back to PDF</span></a>" +
+                    "</div>" +
+                    "<div class='player'>" +
+                    "<video controls playsinline preload='metadata' src='" + safeHref + "'>" +
+                    "Your browser does not support HTML5 video. " +
+                    "<a href='" + safeHref + "' target='_blank' rel='noopener noreferrer'>Open video</a>" +
+                    "</video></div>" +
+                    "<a class='back-pdf back-pdf-bottom' href='javascript:history.back()' title='Return to the AI interview PDF'>" +
+                    "<span class='chev' aria-hidden='true'>&#8592;</span><span>Back to PDF</span></a>" +
+                    "</body></html>";
+                return Content(html, "text/html");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Content(
+                    "<html><body style='font-family:Arial;padding:24px'><h3>Unable to open video</h3><p>Please try again from the Report page.</p></body></html>",
+                    "text/html");
+            }
+        }
+
+        /// <summary>
+        /// Media may live in private containers (videos for AI question clips, botinterviewvideo for
+        /// candidate answers). DB often stores bare URLs or expired SAS. Resolve to an existing blob + fresh SAS.
+        /// </summary>
+        private async Task<List<BotInterviewQuestionVideos>> RefreshBotInterviewMediaSasUrlsAsync(List<BotInterviewQuestionVideos> videos)
+        {
+            if (videos == null || videos.Count == 0)
+                return videos;
+
+            foreach (var v in videos)
+            {
+                // Same source as Report: prefer SkillChannelSampleQuestions.AIQuestionVideoLink (/videos/...).
+                var questionUrl = await ResolveBotInterviewPlayableUrlAsync(v.AIQuestionVideoLink);
+                if (string.IsNullOrWhiteSpace(questionUrl))
+                    questionUrl = await ResolveBotInterviewPlayableUrlAsync(v.BotSynthesizedVideoLink);
+                v.BotSynthesizedVideoLink = questionUrl;
+
+                v.VideoLink = await ResolveBotInterviewPlayableUrlAsync(v.VideoLink);
+                v.BotAudioLink = await ResolveBotInterviewPlayableUrlAsync(v.BotAudioLink);
+                v.CandidateAnswerAudioLink = await ResolveBotInterviewPlayableUrlAsync(v.CandidateAnswerAudioLink);
+            }
+
+            return videos;
+        }
+
+        private async Task<string> ResolveBotInterviewPlayableUrlAsync(string storedUrl)
+        {
+            if (string.IsNullOrWhiteSpace(storedUrl)
+                || string.Equals(storedUrl, "no-video", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            var isRisebirdBlob = storedUrl.IndexOf("risebirdportal.blob.core.windows.net", StringComparison.OrdinalIgnoreCase) >= 0
+                || storedUrl.IndexOf(".blob.core.windows.net", StringComparison.OrdinalIgnoreCase) >= 0;
+
+            // Non-Azure links (e.g. temporary Synthesia) — leave as-is.
+            if (!isRisebirdBlob)
+                return storedUrl;
+
+            if (!Uri.TryCreate(storedUrl.Split('?')[0], UriKind.Absolute, out var uri))
+                return null;
+
+            var segments = uri.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            if (segments.Length < 2)
+                return null;
+
+            var urlContainer = Uri.UnescapeDataString(segments[0]);
+            var blobName = Uri.UnescapeDataString(string.Join("/", segments.Skip(1)));
+            if (string.IsNullOrWhiteSpace(blobName))
+                return null;
+
+            // Question AI clips are historically in "videos"; candidate answers in "botinterviewvideo".
+            var containersToTry = new List<string>();
+            if (!string.IsNullOrWhiteSpace(urlContainer))
+                containersToTry.Add(urlContainer);
+            foreach (var c in new[] { "videos", "botinterviewvideo" })
+            {
+                if (!containersToTry.Contains(c, StringComparer.OrdinalIgnoreCase))
+                    containersToTry.Add(c);
+            }
+
+            var nameCandidates = new List<string> { blobName };
+            if (!Path.HasExtension(blobName))
+            {
+                nameCandidates.Add(blobName + ".mp4");
+                nameCandidates.Add(blobName + ".webm");
+            }
+            else
+            {
+                var withoutExt = Path.GetFileNameWithoutExtension(blobName);
+                nameCandidates.Add(withoutExt);
+                nameCandidates.Add(Path.ChangeExtension(blobName, ".mp4"));
+                nameCandidates.Add(Path.ChangeExtension(blobName, ".webm"));
+                nameCandidates.Add(withoutExt + ".mp4");
+                nameCandidates.Add(withoutExt + ".webm");
+            }
+
+            foreach (var containerName in containersToTry)
+            {
+                string sasToken = null;
+                try
+                {
+                    sasToken = _sasUrlHelper.CreateSasUrl(containerName);
+                }
+                catch
+                {
+                    // try next container
+                }
+
+                try
+                {
+                    var container = _azureStorageHelper.GetCloudBlobContainer(containerName);
+                    foreach (var candidate in nameCandidates.Distinct(StringComparer.OrdinalIgnoreCase))
+                    {
+                        var blob = container.GetBlockBlobReference(candidate);
+                        if (blob == null || !await blob.ExistsAsync())
+                            continue;
+
+                        var baseUrl = blob.Uri.ToString().Split('?')[0];
+                        return string.IsNullOrWhiteSpace(sasToken) ? baseUrl : baseUrl + "?" + sasToken;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                }
+            }
+
+            return null;
         }
 
         private string CleanMessage(string input)
@@ -2635,10 +2874,11 @@ namespace Risebird.Web.Controllers
                 using (var httpClient = new HttpClient { Timeout = TimeSpan.FromMinutes(5) })
                 using (var myStream = await httpClient.GetStreamAsync(synthesiaDownloadUrl))
                 {
-                    var fileName = $"aiVideo_{id}_{DateTime.UtcNow:yyyyMMddTHHmmss}";
+                    var fileName = $"aiVideo_{id}_{DateTime.UtcNow:yyyy-MM-ddTHH:mm:ss}";
                     try
                     {
-                        uploadedVideoUrl = await _azureStorageHelper.InsertBlobCloudCompare(fileName, "botinterviewvideo", null, myStream);
+                        // Match Report / historical AI question videos: container "videos"
+                        uploadedVideoUrl = await _azureStorageHelper.InsertBlobCloudCompare(fileName, "videos", null, myStream, contentType: "video/mp4");
                     }
                     catch (Exception ex)
                     {
