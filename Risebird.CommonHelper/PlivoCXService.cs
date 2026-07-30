@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data.PlivoCXModels;
 using System;
@@ -81,11 +82,14 @@ namespace Risebird.CommonHelper
         /// <summary>
         /// Resolves recording URL + transcript for a call via Plivo's Voice REST APIs.
         /// Step 1: GET /Recording/?call_uuid=... to find the recording (url, id, duration).
-        /// Step 2: GET /Transcription/{recording_id}/ for the transcript text; if the
-        ///         transcription has not been generated yet, request its creation
-        ///         (POST) so it is available on a later refresh. Never throws.
+        /// Step 2: GET /Transcription/{recording_id}/ for the transcript text. If no
+        ///         transcription resource exists yet (404), request one asynchronously
+        ///         via POST with our webhook as the callback so Plivo posts the finished
+        ///         transcript back to us later (its payload carries the call UUID).
+        ///         A transcription that already exists but is still processing is left
+        ///         alone to avoid re-transcribe charges. Never throws.
         /// </summary>
-        public async Task<PhoneScreenMediaResult> FetchCallMediaAsync(string callUuid)
+        public async Task<PhoneScreenMediaResult> FetchCallMediaAsync(string callUuid, string transcriptionCallbackUrl = null)
         {
             var result = new PhoneScreenMediaResult();
             if (string.IsNullOrWhiteSpace(callUuid) || string.IsNullOrWhiteSpace(_voiceAuthId))
@@ -104,7 +108,7 @@ namespace Risebird.CommonHelper
 
                 if (!string.IsNullOrWhiteSpace(recBody))
                 {
-                    var recJson = JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(recBody);
+                    var recJson = JsonConvert.DeserializeObject<JObject>(recBody);
                     var obj = recJson?["objects"]?.FirstOrDefault();
                     if (obj != null)
                     {
@@ -119,22 +123,34 @@ namespace Risebird.CommonHelper
                 // ── Transcript ───────────────────────────────────────────────
                 if (!string.IsNullOrWhiteSpace(recordingId))
                 {
-                    var txUrl = $"https://api.plivo.com/v1/Account/{_voiceAuthId}/Transcription/{recordingId}/?type=diarized";
+                    var txUrl = $"https://api.plivo.com/v1/Account/{_voiceAuthId}/Transcription/{recordingId}/";
                     var txBody = await SendVoiceApiAsync(HttpMethod.Get, txUrl);
+
                     if (!string.IsNullOrWhiteSpace(txBody))
                     {
-                        var txJson = JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(txBody);
-                        var text = txJson?["transcription"]?.ToString();
-                        if (!string.IsNullOrWhiteSpace(text) && text.Trim() != "{}")
-                            result.Transcript = text;
-                    }
+                        // A transcription resource exists — extract the text if ready.
+                        var txJson = JsonConvert.DeserializeObject<JObject>(txBody);
+                        var txTok = txJson?["transcription"];
+                        string text = null;
+                        if (txTok != null && txTok.Type != JTokenType.Null)
+                            text = txTok.Type == JTokenType.String
+                                ? txTok.ToString()
+                                : txTok.ToString(Formatting.None);
 
-                    // Not transcribed yet — request creation so a later refresh succeeds.
-                    if (string.IsNullOrWhiteSpace(result.Transcript))
+                        if (!string.IsNullOrWhiteSpace(text) &&
+                            text.Trim() != "{}" && text.Trim() != "[]")
+                            result.Transcript = text;
+                        // else: it exists but is still processing — leave it, do not recreate.
+                    }
+                    else
                     {
+                        // No transcription yet (404). Kick one off; when it's ready Plivo
+                        // posts it to our webhook, which stores it (resolved by call UUID).
                         var createUrl = $"https://api.plivo.com/v1/Account/{_voiceAuthId}/Transcription/{recordingId}/";
-                        _ = await SendVoiceApiAsync(HttpMethod.Post, createUrl,
-                            "{\"transcription_callback_url\":\"\"}");
+                        var createBody = string.IsNullOrWhiteSpace(transcriptionCallbackUrl)
+                            ? "{}"
+                            : JsonConvert.SerializeObject(new { transcription_callback_url = transcriptionCallbackUrl });
+                        _ = await SendVoiceApiAsync(HttpMethod.Post, createUrl, createBody);
                     }
                 }
             }

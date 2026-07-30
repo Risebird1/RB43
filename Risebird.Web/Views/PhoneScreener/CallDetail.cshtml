@@ -127,7 +127,7 @@
             <span>Recording</span>
             @if (Model.Status == "ended")
             {
-                <button type="button" id="ps-refresh-media" class="ps-refresh-btn" data-callid="@Model.CallId">
+                <button type="button" class="ps-refresh-btn ps-refresh-trigger" data-callid="@Model.CallId">
                     Refresh recording &amp; transcript
                 </button>
             }
@@ -242,7 +242,13 @@
             }
             else
             {
-                <div class="ps-note">No transcript available.</div>
+                <div class="ps-transcript-empty">
+                    <div class="ps-note">No transcript available yet. Plivo transcribes the recording after the call; this can take a little while.</div>
+                    <button type="button" class="ps-btn ps-btn--secondary ps-refresh-trigger" data-callid="@Model.CallId">
+                        Fetch transcript &amp; recording
+                    </button>
+                    <div class="ps-refresh-msg2 ps-note" style="display:none;"></div>
+                </div>
             }
         </div>
     </div>
@@ -364,6 +370,15 @@
         background: #fff;
     }
     .ps-btn--ghost:hover { background: var(--ps-bg); }
+    .ps-btn--secondary {
+        border-color: var(--ps-border);
+        color: #334155;
+        background: #fff;
+    }
+    .ps-btn--secondary:hover { background: var(--ps-bg); }
+    .ps-btn--secondary:disabled { opacity: .55; cursor: default; }
+
+    .ps-transcript-empty { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
 
     .ps-meta-grid {
         display: grid;
@@ -586,21 +601,23 @@
                 });
             });
 
-            var refreshBtn = document.getElementById('ps-refresh-media');
-            if (refreshBtn) {
-                refreshBtn.addEventListener('click', function () {
-                    var callId = refreshBtn.getAttribute('data-callid');
-                    var msg = document.getElementById('ps-refresh-msg');
+            var refreshUrl = '@Url.Action("RefreshMedia", "PhoneScreener")';
+            document.querySelectorAll('.ps-refresh-trigger').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var callId = btn.getAttribute('data-callid');
                     var tokenEl = document.querySelector('input[name="__RequestVerificationToken"]');
-                    refreshBtn.disabled = true;
-                    refreshBtn.textContent = 'Refreshing…';
+                    var original = btn.textContent;
+                    // message target: sibling .ps-refresh-msg2 (transcript tab) or shared #ps-refresh-msg
+                    var msg = btn.parentNode.querySelector('.ps-refresh-msg2') || document.getElementById('ps-refresh-msg');
+                    btn.disabled = true;
+                    btn.textContent = 'Fetching…';
                     if (msg) { msg.style.display = 'none'; }
 
                     var form = new FormData();
                     form.append('id', callId);
                     if (tokenEl) { form.append('__RequestVerificationToken', tokenEl.value); }
 
-                    fetch('@Url.Action("RefreshMedia", "PhoneScreener")', {
+                    fetch(refreshUrl, {
                         method: 'POST',
                         body: form,
                         headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -611,20 +628,20 @@
                             location.reload();
                             return;
                         }
-                        refreshBtn.disabled = false;
-                        refreshBtn.textContent = 'Refresh recording & transcript';
+                        btn.disabled = false;
+                        btn.textContent = original;
                         if (msg) {
                             msg.textContent = (data && data.message) ? data.message : 'Nothing new available yet.';
                             msg.style.display = '';
                         }
                     })
                     .catch(function () {
-                        refreshBtn.disabled = false;
-                        refreshBtn.textContent = 'Refresh recording & transcript';
+                        btn.disabled = false;
+                        btn.textContent = original;
                         if (msg) { msg.textContent = 'Refresh failed. Please try again.'; msg.style.display = ''; }
                     });
                 });
-            }
+            });
         })();
     </script>
 }
