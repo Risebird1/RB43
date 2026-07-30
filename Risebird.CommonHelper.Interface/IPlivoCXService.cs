@@ -46,7 +46,11 @@ namespace Risebird.CommonHelper.Interface
         /// call using Plivo's Voice REST APIs (Recording API + Transcription API),
         /// keyed by the Plivo call UUID. Fallback for when the Recording URL event
         /// callback did not deliver these to our webhook. Never throws.
+        ///
+        /// If a transcription does not exist yet, one is requested asynchronously with
+        /// <paramref name="transcriptionCallbackUrl"/> so Plivo posts the finished
+        /// transcript back to our webhook (it includes the call UUID for resolution).
         /// </summary>
-        Task<PhoneScreenMediaResult> FetchCallMediaAsync(string callUuid);
+        Task<PhoneScreenMediaResult> FetchCallMediaAsync(string callUuid, string transcriptionCallbackUrl = null);
     }
 }
