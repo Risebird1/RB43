@@ -18,7 +18,7 @@ BEGIN
 -- are not silently dropped. SkillChannelSampleQuestions only applies to the Preset flow (AIInterviewType = 2).
 -- For Adaptive sessions (AIInterviewType = 1) DeliveryHeadQuestionId is always NULL, so sq columns
 -- will be NULL after the left join -- that is expected and correct.
-select biqv.*, sq.IsFlaggedForSentimentAnalysis from BotInterviewQuestionVideos biqv 
+select biqv.*, sq.IsFlaggedForSentimentAnalysis, sq.AIQuestionVideoLink from BotInterviewQuestionVideos biqv 
 left join SkillChannelSampleQuestions sq on sq.id = biqv.DeliveryHeadQuestionId
 where biqv.SessionId = @SessionId
 and (
