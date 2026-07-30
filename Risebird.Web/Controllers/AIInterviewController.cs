@@ -1242,8 +1242,8 @@ namespace Risebird.Web.Controllers
                                         QuestionId = model.CurrentQuestionId,
                                         SampleText = model.TypingSampleText,
                                         TypedText = model.TypedText,
-                                    TimeStarted = TryParseInterviewDateTime(model.TypingStartTime) ?? DateTime.Now,
-                                    TimeCompleted = TryParseInterviewDateTime(model.TypingEndTime) ?? DateTime.Now,
+                                        TimeStarted = TryParseInterviewDateTime(model.TypingStartTime) ?? DateTime.Now,
+                                        TimeCompleted = TryParseInterviewDateTime(model.TypingEndTime) ?? DateTime.Now,
                                         TimeTakenInSeconds = model.TypingTimeTaken,
                                         TotalCharacters = analysisResult?.meta?.user_total_words_typed ?? 0,
                                         CorrectCharacters = analysisResult?.counts?.correct_words ?? 0,
@@ -1603,6 +1603,82 @@ namespace Risebird.Web.Controllers
         private static int CountAssistantQuestions(IEnumerable<TranscriptConv> transcript)
         {
             return transcript?.Count(x => string.Equals(x.Role, "assistant", StringComparison.OrdinalIgnoreCase)) ?? 0;
+        }
+
+        /// <summary>
+        /// Internal token the adaptive assistant appends when it ends the interview.
+        /// Stripped in CleanMessage so it is never shown/spoken to the candidate.
+        /// </summary>
+        private const string AdaptiveInterviewCompletionMarker = "[[ADAPTIVE_INTERVIEW_COMPLETE]]";
+
+        /// <summary>
+        /// Appended to the start-of-interview prompt so the assistant flags completion for auto-exit.
+        /// </summary>
+        private const string AdaptiveCompletionInstruction =
+            " When you have finished the interview (topics adequately covered, or the candidate cannot continue productively), " +
+            "give a brief polite closing message to the candidate, then append exactly this marker at the very end of your message " +
+            "(do not mention, read aloud, or explain the marker to the candidate): " +
+            AdaptiveInterviewCompletionMarker;
+
+        /// <summary>
+        /// Hard cap / safety net so adaptive interviews cannot run forever. Matches Index resume limits of 35.
+        /// </summary>
+        private const int AdaptiveMaxAssistantQuestions = 35;
+
+        /// <summary>
+        /// Prompt for adaptive report generation. Adaptive replies are rendered as HTML when JSON parse fails.
+        /// </summary>
+        private const string AdaptiveReportGenerationPrompt =
+            "Based on the full interview conversation in this thread, generate a complete evaluation report as clean HTML only " +
+            "(no markdown code fences, no preamble). Include these sections with these exact labels where applicable: " +
+            "Overall Technical Score; Overall Communication Score; Final Verdict; Final Comment; Communication Score Reasoning; " +
+            "LLM Detection / LLM Response Suspected and Evidence Comment; " +
+            "a Score Rubric table (columns: Rubric Item, Expected, Observed, Score); " +
+            "Competency Ratings or Questions Discussed & Competency Rating; " +
+            "and question-by-question analysis with Strengths, Weaknesses, and Evidence from transcript where useful. " +
+            "Use simple semantic HTML (h2/h3, p, table, ul/li) suitable for embedding in a report page.";
+
+        private static bool MessageSignalsInterviewCompletion(string message)
+        {
+            return !string.IsNullOrWhiteSpace(message)
+                && message.IndexOf(AdaptiveInterviewCompletionMarker, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private static bool RepliesSignalInterviewCompletion(IEnumerable<string> replies)
+        {
+            return replies != null && replies.Any(MessageSignalsInterviewCompletion);
+        }
+
+        /// <summary>
+        /// Mark the adaptive interview completed, kick off report generation, and show the exit modal.
+        /// </summary>
+        private async Task<IActionResult> CompleteAdaptiveInterviewAsync(ChatMessageViewModel model)
+        {
+            await _aiinterviewerService.UpdateMeetingCompletedStatusForAIInterview(model.SessionId.ToString());
+
+            // Same fire-and-forget pattern as preset completion.
+            _ = _api.GenerateReport(
+                model.SessionId,
+                AdaptiveReportGenerationPrompt,
+                (int)AIInterviewTypeEnum.Adaptive,
+                isExit: true);
+
+            var exitModel = new AIInterviewExitModalViewModel
+            {
+                Title = "Interview Complete",
+                Message = "The interviewer is through with all the questions. This interview is now closed.",
+                IconClass = "fa-check-circle",
+                IconColor = "#28a745",
+                ButtonText = "Close",
+                ButtonClass = "btn-success",
+                CandidateName = model.candidateName ?? "Candidate",
+                InterviewDate = DateTime.Now,
+                SessionId = model.SessionId.ToString(),
+                ExitTime = DateTime.Now,
+                IsFromIndex = true
+            };
+
+            return View("ExitModalPartial", exitModel);
         }
 
         private static DateTime? TryParseInterviewDateTime(string value)
