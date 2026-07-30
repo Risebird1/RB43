@@ -481,6 +481,9 @@
                             <button type="button" class="pcs-nav-pill" title="View candidate resumes" onclick="location.href='@Url.Action("Resumes", "Candidate", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'">
                                 <i class="fa fa-file-alt" style="font-size:10px;"></i> Resumes
                             </button>
+                            <button type="button" class="pcs-nav-pill" style="background:#e0f5f1;border-color:#9fe0d4;color:#128873;" title="AI Phone Screen — call &amp; screen candidates" onclick="location.href='@Url.Action("Outcomes", "PhoneScreener", new { id = ViewBag.IRFId, irfName = ViewBag.IRFName})'">
+                                <i class="fa fa-phone-alt" style="font-size:10px;"></i> AI Phone Screen
+                            </button>
                         }
                     }
 

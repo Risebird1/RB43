@@ -4,6 +4,11 @@ CREATE OR ALTER PROCEDURE [dbo].[usp_GetRiskCategoryBackfillCandidatesByIrf]
     @ToIst   DATE = NULL,
     @MaxRows INT = 100
 AS
+/*
+  Returns interview IDs for RiskCategory backfill within the IRF date window.
+  Prefer-missing first (empty / NULL Severity), then existing rows so corrective
+  re-grades (e.g. after a check predicate fix) can rewrite SeverityBreakdown.
+*/
 BEGIN
     SET NOCOUNT ON;
 
@@ -24,10 +29,9 @@ BEGIN
 
     IF @MaxRows IS NULL OR @MaxRows <= 0
         SET @MaxRows = 100;
-    IF @MaxRows > 500
-        SET @MaxRows = 500;
+    IF @MaxRows > 1000
+        SET @MaxRows = 1000;
 
-    -- Only interviews that still need a RiskCategory / Severity row.
     SELECT TOP (@MaxRows)
         im.id AS InterviewId
     FROM dbo.InterviewMeetings im
@@ -38,10 +42,13 @@ BEGIN
       AND ic.MeetingStatus IN (4, 6, 7, 8)
       AND CAST(DATEADD(MINUTE, 330, im.interviewDate) AS DATE) >= @FromIst
       AND CAST(DATEADD(MINUTE, 330, im.interviewDate) AS DATE) <= @ToIst
-      AND (
-            rc.InterviewId IS NULL
-         OR NULLIF(LTRIM(RTRIM(ISNULL(rc.Severity, ''))), '') IS NULL
-          )
-    ORDER BY im.interviewDate DESC, im.id DESC;
+    ORDER BY
+        CASE
+            WHEN rc.InterviewId IS NULL
+              OR NULLIF(LTRIM(RTRIM(ISNULL(rc.Severity, ''))), '') IS NULL
+            THEN 0 ELSE 1
+        END,
+        im.interviewDate DESC,
+        im.id DESC;
 END
 GO

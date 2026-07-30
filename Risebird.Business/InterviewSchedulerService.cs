@@ -41,6 +41,19 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<SchedulerEventListResult> FetchEventListPaged(string search, int offset, int pageSize)
+        {
+            try
+            {
+                return await _interviewSchedulerRepository.FetchEventListPaged(search, offset, pageSize);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new SchedulerEventListResult();
+            }
+        }
+
         public async Task<bool> CreateEvent(daytimes_report model)
         {
             try

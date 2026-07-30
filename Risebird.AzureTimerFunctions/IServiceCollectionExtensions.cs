@@ -72,6 +72,8 @@ namespace Risebird.AzureFunctions
             services.AddScoped<ITrialJudgmentRepository, TrialJudgmentRepository>();
             services.AddScoped<ITrialJudgmentService, TrialJudgmentService>();
             services.AddScoped<IAutoQcRemovalMonitorRepository, AutoQcRemovalMonitorRepository>();
+            services.AddScoped<IRiskCategoryRepository, RiskCategoryRepository>();
+            services.AddScoped<IRiskCategoryService, RiskCategoryService>();
             services.AddScoped<IDmIvAutoQcBackfillService, DmIvAutoQcBackfillService>();
             services.AddScoped<IAutoQcRemovalMonitorService, AutoQcRemovalMonitorService>();
             services.AddScoped<IPdfReaderHelper, PdfReaderHelper>();

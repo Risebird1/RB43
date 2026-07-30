@@ -33,5 +33,24 @@ namespace Risebird.CommonHelper.Interface
         /// Uses PlivoCX:AvailabilityTriggerEndpointUrl.
         /// </summary>
         Task<PlivoCXTriggerResponse> TriggerAvailabilityCallAsync(PlivoCXAvailabilityTriggerRequest request);
+
+        /// <summary>
+        /// Triggers an outbound call against an explicitly supplied Plivo CX flow trigger URL.
+        /// Used by the Phone Screener, where each skill channel (IRF) maps to its own
+        /// Plivo assistant URL rather than a single global endpoint in appsettings.
+        /// </summary>
+        Task<PlivoCXTriggerResponse> TriggerByUrlAsync(string triggerUrl, object request);
+
+        /// <summary>
+        /// Fetches the call recording URL and (best-effort) transcript for a completed
+        /// call using Plivo's Voice REST APIs (Recording API + Transcription API),
+        /// keyed by the Plivo call UUID. Fallback for when the Recording URL event
+        /// callback did not deliver these to our webhook. Never throws.
+        ///
+        /// If a transcription does not exist yet, one is requested asynchronously with
+        /// <paramref name="transcriptionCallbackUrl"/> so Plivo posts the finished
+        /// transcript back to our webhook (it includes the call UUID for resolution).
+        /// </summary>
+        Task<PhoneScreenMediaResult> FetchCallMediaAsync(string callUuid, string transcriptionCallbackUrl = null);
     }
 }

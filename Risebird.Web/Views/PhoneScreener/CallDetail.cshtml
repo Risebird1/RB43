@@ -1,0 +1,647 @@
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+@model Risebird.Entities.ViewModel.PhoneScreenCallResultVM
+@{
+    ViewBag.Title = "AI Phone Screen — Call Detail";
+
+    JObject structured = null;
+    if (!string.IsNullOrWhiteSpace(Model.StructuredDataJson))
+    {
+        try { structured = JObject.Parse(Model.StructuredDataJson); } catch { structured = null; }
+    }
+
+    string prettyStructured = null;
+    if (structured != null) { prettyStructured = structured.ToString(Formatting.Indented); }
+
+    string prettyRaw = null;
+    if (!string.IsNullOrWhiteSpace(Model.RawJson))
+    {
+        try { prettyRaw = JToken.Parse(Model.RawJson).ToString(Formatting.Indented); }
+        catch { prettyRaw = Model.RawJson; }
+    }
+
+    JArray transcriptArr = null;
+    if (!string.IsNullOrWhiteSpace(Model.Transcript))
+    {
+        try { transcriptArr = JArray.Parse(Model.Transcript); } catch { transcriptArr = null; }
+    }
+
+    var initials = string.IsNullOrWhiteSpace(Model.CandidateName) ? "?" :
+        string.Join("", Model.CandidateName.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Take(2).Select(w => char.ToUpper(w[0])));
+}
+
+@functions {
+    static string Prettify(string key)
+    {
+        if (string.IsNullOrEmpty(key)) return key;
+        var parts = key.Replace("_", " ").Replace("-", " ").Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        for (var i = 0; i < parts.Length; i++)
+            parts[i] = char.ToUpper(parts[i][0]) + (parts[i].Length > 1 ? parts[i].Substring(1) : "");
+        return string.Join(" ", parts);
+    }
+
+    static string DisplayValue(JToken t)
+    {
+        if (t == null || t.Type == JTokenType.Null) return "-";
+        if (t.Type == JTokenType.Boolean) return t.Value<bool>() ? "Yes" : "No";
+        if (t.Type == JTokenType.Object || t.Type == JTokenType.Array) return null;
+        var s = t.ToString();
+        return string.IsNullOrWhiteSpace(s) ? "-" : s;
+    }
+}
+
+<script>
+    var Header = "<div>AI Phone Screen</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<div class="main-panel" id="main-panel">
+<div class="ps-page ps-detail">
+    <div class="ps-header">
+        <div class="ps-header__main">
+            <div class="ps-header__eyebrow">Call detail</div>
+            <div class="ps-header__title-row">
+                <span class="ps-avatar" aria-hidden="true">@initials</span>
+                <div>
+                    <h1 class="ps-header__title">@(string.IsNullOrEmpty(Model.CandidateName) ? "Candidate" : Model.CandidateName)</h1>
+                    <div class="ps-header__meta">
+                        @if (!string.IsNullOrEmpty(Model.Status))
+                        {
+                            <span class="ps-badge ps-st-@Model.Status">@Model.Status</span>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.SuccessEvaluation))
+                        {
+                            if (Model.SuccessEvaluation.Equals("PASS", StringComparison.OrdinalIgnoreCase))
+                            { <span class="ps-badge ps-pass">PASS</span> }
+                            else if (Model.SuccessEvaluation.Equals("FAIL", StringComparison.OrdinalIgnoreCase))
+                            { <span class="ps-badge ps-fail">FAIL</span> }
+                            else
+                            { <span class="ps-meta-chip">@Model.SuccessEvaluation</span> }
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Provider))
+                        {
+                            <span class="ps-meta-chip">@Model.Provider.ToUpper()</span>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.IRFName))
+                        {
+                            <span class="ps-meta-chip">@Model.IRFName</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ps-header__actions">
+            <a class="ps-btn ps-btn--ghost" href="@Url.Action("Outcomes", "PhoneScreener", new { id = Model.IRFId, irfName = Model.IRFName })">← All calls</a>
+        </div>
+    </div>
+
+    <div class="ps-meta-grid">
+        <div class="ps-meta-item">
+            <span class="ps-meta-lbl">Phone</span>
+            <span class="ps-meta-val">@(string.IsNullOrEmpty(Model.Phone) ? "—" : Model.Phone)</span>
+        </div>
+        <div class="ps-meta-item">
+            <span class="ps-meta-lbl">Email</span>
+            <span class="ps-meta-val">@(string.IsNullOrEmpty(Model.CandidateEmail) ? "—" : Model.CandidateEmail)</span>
+        </div>
+        <div class="ps-meta-item">
+            <span class="ps-meta-lbl">Started</span>
+            <span class="ps-meta-val">@(Model.StartedAt.HasValue ? Model.StartedAt.Value.ToString("dd MMM yyyy, HH:mm") : "—")</span>
+        </div>
+        <div class="ps-meta-item">
+            <span class="ps-meta-lbl">Duration</span>
+            <span class="ps-meta-val">@Model.DurationDisplay</span>
+        </div>
+        <div class="ps-meta-item">
+            <span class="ps-meta-lbl">Ended reason</span>
+            <span class="ps-meta-val">@(string.IsNullOrEmpty(Model.EndedReason) ? "—" : Model.EndedReason)</span>
+        </div>
+        <div class="ps-meta-item">
+            <span class="ps-meta-lbl">Provider</span>
+            <span class="ps-meta-val">@(string.IsNullOrEmpty(Model.Provider) ? "—" : Model.Provider.ToUpper())</span>
+        </div>
+    </div>
+
+    <div class="ps-card ps-rec">
+        <div class="ps-rec-head">
+            <span>Recording</span>
+            @if (Model.Status == "ended")
+            {
+                <button type="button" class="ps-refresh-btn ps-refresh-trigger" data-callid="@Model.CallId">
+                    Refresh recording &amp; transcript
+                </button>
+            }
+        </div>
+        @if (!string.IsNullOrEmpty(Model.RecordingUrl))
+        {
+            <audio controls preload="none" class="ps-audio" src="@Model.RecordingUrl"></audio>
+        }
+        else
+        {
+            <div class="ps-note" id="ps-rec-empty">No recording available yet. It may take a short while after the call ends&mdash;use Refresh to pull it from Plivo.</div>
+        }
+        <div id="ps-refresh-msg" class="ps-note" style="display:none;"></div>
+    </div>
+    @Html.AntiForgeryToken()
+
+    <div class="ps-panel">
+        <div class="ps-tabs" role="tablist">
+            <button type="button" class="ps-tab active" data-tab="analysis" role="tab">Analysis</button>
+            <button type="button" class="ps-tab" data-tab="structured" role="tab">Structured</button>
+            <button type="button" class="ps-tab" data-tab="transcript" role="tab">Transcript</button>
+        </div>
+
+        <div class="ps-tab-body" data-body="analysis">
+            @if (Model.Status != "ended")
+            {
+                <div class="ps-note">Analysis is available after the call ends.</div>
+            }
+            else
+            {
+                <p class="ps-summary-para">@(string.IsNullOrEmpty(Model.Summary) ? "No summary available." : Model.Summary)</p>
+                @if (!string.IsNullOrEmpty(Model.SuccessEvaluation))
+                {
+                    <div class="ps-eval-row">
+                        @if (Model.SuccessEvaluation.Equals("PASS", StringComparison.OrdinalIgnoreCase))
+                        { <span class="ps-badge ps-pass">PASS</span> }
+                        else if (Model.SuccessEvaluation.Equals("FAIL", StringComparison.OrdinalIgnoreCase))
+                        { <span class="ps-badge ps-fail">FAIL</span> }
+                        else
+                        { <span class="ps-meta-chip">@Model.SuccessEvaluation</span> }
+                    </div>
+                }
+
+                @if (structured != null && structured.HasValues)
+                {
+                    <div class="ps-kv-grid">
+                        @foreach (var prop in structured.Properties())
+                        {
+                            var val = DisplayValue(prop.Value);
+                            <div class="ps-kv">
+                                <div class="ps-kv-key">@Prettify(prop.Name)</div>
+                                @if (val == null)
+                                {
+                                    <div class="ps-kv-val"><a href="#" class="ps-viewjson" data-tabjump="structured">View JSON →</a></div>
+                                }
+                                else
+                                {
+                                    <div class="ps-kv-val">@val</div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="ps-note">No structured data returned for this call.</div>
+                }
+            }
+        </div>
+
+        <div class="ps-tab-body" data-body="structured" style="display:none;">
+            @if (!string.IsNullOrEmpty(prettyStructured))
+            {
+                <pre class="ps-code">@prettyStructured</pre>
+            }
+            else
+            {
+                <div class="ps-note">No structured data.</div>
+            }
+            @if (!string.IsNullOrEmpty(prettyRaw))
+            {
+                <details class="ps-raw">
+                    <summary>Raw provider payload</summary>
+                    <pre class="ps-code">@prettyRaw</pre>
+                </details>
+            }
+        </div>
+
+        <div class="ps-tab-body" data-body="transcript" style="display:none;">
+            @if (Model.Status != "ended")
+            {
+                <div class="ps-note">Transcript is available after the call ends.</div>
+            }
+            else if (transcriptArr != null)
+            {
+                <div class="ps-chat">
+                    @foreach (var turn in transcriptArr)
+                    {
+                        var speaker = (turn["speaker"] ?? turn["role"])?.ToString() ?? "";
+                        var text = (turn["text"] ?? turn["content"])?.ToString() ?? "";
+                        var isAi = speaker.ToLower().Contains("ai") || speaker.ToLower().Contains("agent") || speaker.ToLower().Contains("assistant") || speaker.ToLower().Contains("bot");
+                        <div class="ps-bubble-row @(isAi ? "ai" : "cand")">
+                            <div class="ps-bubble-ico @(isAi ? "ai" : "cand")">@(isAi ? "AI" : "C")</div>
+                            <div class="ps-bubble @(isAi ? "ai" : "cand")">@text</div>
+                        </div>
+                    }
+                </div>
+            }
+            else if (!string.IsNullOrEmpty(Model.Transcript))
+            {
+                <pre class="ps-transcript-text">@Model.Transcript</pre>
+            }
+            else
+            {
+                <div class="ps-transcript-empty">
+                    <div class="ps-note">No transcript available yet. Plivo transcribes the recording after the call; this can take a little while.</div>
+                    <button type="button" class="ps-btn ps-btn--secondary ps-refresh-trigger" data-callid="@Model.CallId">
+                        Fetch transcript &amp; recording
+                    </button>
+                    <div class="ps-refresh-msg2 ps-note" style="display:none;"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+</div>
+
+<style>
+    .ps-page {
+        --ps-teal: #128873;
+        --ps-teal-soft: #e0f5f1;
+        --ps-border: #e2e8f0;
+        --ps-ink: #0f172a;
+        --ps-muted: #64748b;
+        --ps-bg: #f8fafc;
+        max-width: 1100px;
+        padding: 16px 20px 32px;
+        color: var(--ps-ink);
+        font-size: 13px;
+    }
+    .ps-page * { box-sizing: border-box; }
+
+    .ps-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+    }
+    .ps-header__eyebrow {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: var(--ps-teal);
+        margin-bottom: 4px;
+    }
+    .ps-header__title-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .ps-header__title {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--ps-ink);
+        line-height: 1.25;
+    }
+    .ps-header__meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+        align-items: center;
+    }
+    .ps-header__actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+    .ps-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        background: #42a5f5;
+        margin-top: 2px;
+    }
+
+    .ps-meta-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        background: #fff;
+        border: 1px solid var(--ps-border);
+        color: var(--ps-muted);
+    }
+
+    .ps-badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 2px 8px;
+        line-height: 1.4;
+        text-transform: lowercase;
+    }
+    .ps-st-queued { background: #f1f5f9; color: #64748b; }
+    .ps-st-ringing, .ps-st-in-progress { background: #fff7ed; color: #c2410c; }
+    .ps-st-ended { background: var(--ps-teal-soft); color: var(--ps-teal); }
+    .ps-pass { background: #dcfce7; color: #166534; text-transform: uppercase; }
+    .ps-fail { background: #fee2e2; color: #991b1b; text-transform: uppercase; }
+
+    .ps-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.2;
+        text-decoration: none;
+        border: 1px solid transparent;
+        cursor: pointer;
+        background: #fff;
+    }
+    .ps-btn--ghost {
+        border-color: var(--ps-border);
+        color: #334155;
+        background: #fff;
+    }
+    .ps-btn--ghost:hover { background: var(--ps-bg); }
+    .ps-btn--secondary {
+        border-color: var(--ps-border);
+        color: #334155;
+        background: #fff;
+    }
+    .ps-btn--secondary:hover { background: var(--ps-bg); }
+    .ps-btn--secondary:disabled { opacity: .55; cursor: default; }
+
+    .ps-transcript-empty { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+
+    .ps-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 8px;
+        margin-bottom: 10px;
+        background: #fff;
+        border: 1px solid var(--ps-border);
+        border-radius: 8px;
+        padding: 10px 12px;
+    }
+    .ps-meta-item { min-width: 0; }
+    .ps-meta-lbl {
+        display: block;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: var(--ps-muted);
+    }
+    .ps-meta-val {
+        display: block;
+        margin-top: 3px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--ps-ink);
+        word-break: break-word;
+        line-height: 1.3;
+    }
+
+    .ps-panel {
+        background: #fff;
+        border: 1px solid var(--ps-border);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 10px;
+    }
+
+    .ps-rec-panel { padding: 10px 12px 12px; }
+    .ps-rec-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+    .ps-rec-title {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: var(--ps-muted);
+    }
+    .ps-rec-link {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ps-teal);
+        text-decoration: none;
+    }
+    .ps-rec-link:hover { text-decoration: underline; }
+    .ps-audio { width: 100%; height: 36px; }
+
+    .ps-tabs {
+        display: flex;
+        gap: 0;
+        background: var(--ps-bg);
+        border-bottom: 1px solid var(--ps-border);
+        padding: 0 4px;
+    }
+    .ps-tab {
+        background: transparent;
+        border: none;
+        padding: 9px 12px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--ps-muted);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+    }
+    .ps-tab:hover { color: var(--ps-ink); }
+    .ps-tab.active { color: var(--ps-teal); border-bottom-color: var(--ps-teal); }
+    .ps-tab-body { padding: 14px 14px 16px; }
+
+    .ps-note { color: var(--ps-muted); font-size: 12.5px; }
+    .ps-summary-para {
+        margin: 0;
+        max-width: 78ch;
+        line-height: 1.55;
+        font-size: 13px;
+        color: #334155;
+    }
+    .ps-eval-row { margin: 10px 0 12px; }
+
+    .ps-kv-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 8px;
+        margin-top: 4px;
+    }
+    .ps-kv {
+        border: 1px solid var(--ps-border);
+        border-radius: 6px;
+        padding: 8px 10px;
+        background: var(--ps-bg);
+    }
+    .ps-kv-key {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: var(--ps-muted);
+    }
+    .ps-kv-val {
+        font-size: 12.5px;
+        font-weight: 600;
+        margin-top: 3px;
+        word-break: break-word;
+        color: var(--ps-ink);
+        line-height: 1.35;
+    }
+    .ps-viewjson {
+        color: var(--ps-teal);
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 12px;
+    }
+    .ps-viewjson:hover { text-decoration: underline; }
+
+    .ps-code {
+        background: #0f172a;
+        color: #e2e8f0;
+        border-radius: 6px;
+        padding: 12px;
+        font-size: 12px;
+        overflow: auto;
+        max-height: 420px;
+        font-family: Consolas, "Courier New", monospace;
+        white-space: pre;
+        margin: 0;
+    }
+    .ps-raw { margin-top: 12px; }
+    .ps-raw summary {
+        cursor: pointer;
+        color: var(--ps-teal);
+        font-weight: 600;
+        font-size: 12.5px;
+        margin-bottom: 8px;
+    }
+    .ps-transcript-text {
+        white-space: pre-wrap;
+        font-size: 13px;
+        line-height: 1.55;
+        font-family: inherit;
+        background: transparent;
+        margin: 0;
+        color: #334155;
+    }
+
+    .ps-chat {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-width: 720px;
+    }
+    .ps-bubble-row {
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+    }
+    .ps-bubble-row.cand { flex-direction: row-reverse; }
+    .ps-bubble-ico {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 700;
+        color: #fff;
+    }
+    .ps-bubble-ico.ai { background: var(--ps-teal); }
+    .ps-bubble-ico.cand { background: #b45309; }
+    .ps-bubble {
+        border-radius: 8px;
+        padding: 8px 11px;
+        font-size: 12.5px;
+        line-height: 1.45;
+        max-width: 85%;
+    }
+    .ps-bubble.ai { background: var(--ps-teal-soft); color: #0f3d36; }
+    .ps-bubble.cand { background: #f1f5f9; color: #334155; }
+
+    @@media (max-width: 900px) {
+        .ps-meta-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @@media (max-width: 560px) {
+        .ps-meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+</style>
+
+@section Scripts {
+    <script>
+        (function () {
+            var tabs = document.querySelectorAll('.ps-tab');
+            var bodies = document.querySelectorAll('.ps-tab-body');
+            function activate(name) {
+                tabs.forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-tab') === name); });
+                bodies.forEach(function (b) { b.style.display = (b.getAttribute('data-body') === name) ? '' : 'none'; });
+            }
+            tabs.forEach(function (t) {
+                t.addEventListener('click', function () { activate(t.getAttribute('data-tab')); });
+            });
+            document.querySelectorAll('.ps-viewjson').forEach(function (a) {
+                a.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    activate(a.getAttribute('data-tabjump'));
+                });
+            });
+
+            var refreshUrl = '@Url.Action("RefreshMedia", "PhoneScreener")';
+            document.querySelectorAll('.ps-refresh-trigger').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var callId = btn.getAttribute('data-callid');
+                    var tokenEl = document.querySelector('input[name="__RequestVerificationToken"]');
+                    var original = btn.textContent;
+                    // message target: sibling .ps-refresh-msg2 (transcript tab) or shared #ps-refresh-msg
+                    var msg = btn.parentNode.querySelector('.ps-refresh-msg2') || document.getElementById('ps-refresh-msg');
+                    btn.disabled = true;
+                    btn.textContent = 'Fetching…';
+                    if (msg) { msg.style.display = 'none'; }
+
+                    var form = new FormData();
+                    form.append('id', callId);
+                    if (tokenEl) { form.append('__RequestVerificationToken', tokenEl.value); }
+
+                    fetch(refreshUrl, {
+                        method: 'POST',
+                        body: form,
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (data && data.success && (data.recordingUrl || data.hasTranscript)) {
+                            location.reload();
+                            return;
+                        }
+                        btn.disabled = false;
+                        btn.textContent = original;
+                        if (msg) {
+                            msg.textContent = (data && data.message) ? data.message : 'Nothing new available yet.';
+                            msg.style.display = '';
+                        }
+                    })
+                    .catch(function () {
+                        btn.disabled = false;
+                        btn.textContent = original;
+                        if (msg) { msg.textContent = 'Refresh failed. Please try again.'; msg.style.display = ''; }
+                    });
+                });
+            });
+        })();
+    </script>
+}

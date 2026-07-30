@@ -10,6 +10,7 @@ namespace Risebird.Business.Interface
     public interface IInterviewSchedulerService
     {
         Task<List<daytimes_report>> FetchEventList();
+        Task<SchedulerEventListResult> FetchEventListPaged(string search, int offset, int pageSize);
         Task<bool> CreateEvent(daytimes_report model);
         Task<daytimes_report> FetchEventById(int eventid);
         Task<List<daytimes_second>> FetchTimeslotsByEventId(int eventid);

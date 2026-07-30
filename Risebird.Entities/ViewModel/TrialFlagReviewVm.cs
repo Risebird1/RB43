@@ -78,6 +78,7 @@ namespace Risebird.Entities.ViewModel
     public class TrialFlagReviewPageVm
     {
         public string ActiveTab { get; set; } = TrialFlagConstants.ReviewPending;
+        /// <summary>Always empty on initial shell render — rows load via AJAX List endpoint.</summary>
         public IReadOnlyList<TrialFlagReviewRowVm> Rows { get; set; } = Array.Empty<TrialFlagReviewRowVm>();
         public string LoadError { get; set; }
         public int PendingCount { get; set; }
@@ -87,6 +88,38 @@ namespace Risebird.Entities.ViewModel
         public int TotalRowsInTable { get; set; }
         public string EmptyStateHint { get; set; }
         public bool LiveMetrics { get; set; }
+    }
+
+    public class TrialFlagReviewListRequest
+    {
+        public string Tab { get; set; }
+        public int Offset { get; set; }
+        public int PageSize { get; set; } = 25;
+        public string Search { get; set; }
+        public int Draw { get; set; }
+        public string Severity { get; set; }
+        public string ChannelOwner { get; set; }
+    }
+
+    public class TrialFlagOwnerSummaryVm
+    {
+        public string ChannelOwnerEmail { get; set; }
+        public string ChannelOwner { get; set; }
+        public int P0Count { get; set; }
+        public int TotalCount { get; set; }
+    }
+
+    public class TrialFlagReviewListResultVm
+    {
+        public int Draw { get; set; }
+        public int RecordsTotal { get; set; }
+        public int RecordsFiltered { get; set; }
+        public IReadOnlyList<TrialFlagReviewRowVm> Data { get; set; } = Array.Empty<TrialFlagReviewRowVm>();
+        public string Error { get; set; }
+        public int PendingCount { get; set; }
+        public int KeptCount { get; set; }
+        public int RemovedCount { get; set; }
+        public IReadOnlyList<TrialFlagOwnerSummaryVm> OwnerSummaries { get; set; } = Array.Empty<TrialFlagOwnerSummaryVm>();
     }
 
     public class TrialFlagReviewRowVm
@@ -119,8 +152,26 @@ namespace Risebird.Entities.ViewModel
         public string InterviewerName { get; set; }
         public string InterviewerEmail { get; set; }
         public string InterviewerCodedId { get; set; }
+        /// <summary>UserList.id for UndoSuspiciousInterviewer.</summary>
+        public int? InterviewerUserId { get; set; }
+        /// <summary>UserList.MobileNumber as digits string; null/0 not projected.</summary>
+        public string InterviewerMobileNumber { get; set; }
+        /// <summary>InterviewerProfile.AltMobileNumber when present.</summary>
+        public string InterviewerAltMobileNumber { get; set; }
+        /// <summary>True when SuspiciousInterviewer.SuspiciousStatus = 1 for this user.</summary>
+        public bool IsSuspicious { get; set; }
         public string IrfName { get; set; }
+        /// <summary>Display: "Name (email)" or email — IRF.RisebirdHr → UserList.</summary>
+        public string ChannelOwner { get; set; }
+        /// <summary>Raw owner email for filter keys.</summary>
+        public string ChannelOwnerEmail { get; set; }
         public string Severity { get; set; }
+        /// <summary>Client-friendly tier from <see cref="TrialFlagClientPriority"/> (Critical/Medium/Low/Clear).</summary>
+        public string ClientPriorityTier => TrialFlagClientPriority.FromSeverity(Severity);
+        /// <summary>Badge text e.g. "Critical · P0" — single map in TrialFlagClientPriority.</summary>
+        public string ClientPriorityBadge => TrialFlagClientPriority.BadgeLabel(Severity);
+        /// <summary>CSS modifier: critical | medium | low | clear.</summary>
+        public string ClientPriorityCss => TrialFlagClientPriority.CssModifier(Severity);
         public string RiskCategoryLabels { get; set; }
         public string RiskCategoryReasons { get; set; }
         public string SeverityBreakdown { get; set; }

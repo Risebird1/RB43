@@ -2,6 +2,7 @@
 @using Risebird.Entities.ViewModel
 @using Microsoft.AspNetCore.Html
 @using System.Collections.Generic
+@using System.Linq
 
 @{
     ViewData["Title"] = "Trial Flag Review";
@@ -25,6 +26,29 @@
             return "Bad trial";
         return verdict ?? "—";
     }
+
+    /// <summary>Build tel:+91… href from UserList.MobileNumber digits; null if missing/invalid.</summary>
+    string TelHref(string mobile)
+    {
+        if (string.IsNullOrWhiteSpace(mobile)) return null;
+        var digits = new string(mobile.Where(char.IsDigit).ToArray());
+        if (string.IsNullOrEmpty(digits) || digits == "0") return null;
+        if (digits.Length > 10)
+            digits = digits.Substring(digits.Length - 10);
+        if (digits.Length != 10) return null;
+        return "tel:+91" + digits;
+    }
+
+    string DisplayPhone(string mobile)
+    {
+        if (string.IsNullOrWhiteSpace(mobile)) return null;
+        var digits = new string(mobile.Where(char.IsDigit).ToArray());
+        if (string.IsNullOrEmpty(digits) || digits == "0") return null;
+        if (digits.Length > 10)
+            digits = digits.Substring(digits.Length - 10);
+        if (digits.Length != 10) return mobile.Trim();
+        return "+91 " + digits;
+    }
 }
 
 <script>
@@ -33,7 +57,129 @@
 </script>
 
 <style>
-    .tfr-page { padding: 16px; max-width: 1800px; }
+    .tfr-page { padding: 16px; max-width: 100%; box-sizing: border-box; }
+
+    .tfr-table-wrap {
+        overflow-x: auto;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        background: #fff;
+    }
+    .tfr-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        table-layout: fixed;
+    }
+    .tfr-table th, .tfr-table td {
+        border-bottom: 1px solid #e2e8f0;
+        padding: 10px 10px;
+        text-align: left;
+        vertical-align: top;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        white-space: normal;
+        min-width: 0;
+    }
+    .tfr-table th {
+        background: #f8fafc;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+        color: #64748b;
+        white-space: normal;
+    }
+    .tfr-table tbody tr:hover { background: #f8fafc; }
+
+    /* Column width hints so Interviewer/IRF/Owner/Reviewed don't collide */
+    .tfr-table th:nth-child(1), .tfr-table td:nth-child(1) { width: 11%; } /* Actions or Interviewer */
+    .tfr-col-interviewer { width: 14%; }
+    .tfr-col-irf { width: 12%; }
+    .tfr-col-owner { width: 13%; }
+    .tfr-col-interview { width: 11%; }
+    .tfr-col-priority { width: 8%; }
+    .tfr-col-verdict { width: 7%; }
+    .tfr-col-qc { width: 8%; }
+    .tfr-col-ai { width: 8%; }
+    .tfr-col-risk { width: 10%; }
+    .tfr-col-reviewed { width: 12%; }
+
+    .tfr-cell-stack { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .tfr-cell-stack__primary { font-weight: 600; color: #0f172a; line-height: 1.35; }
+    .tfr-cell-stack__secondary { font-size: 11px; color: #64748b; line-height: 1.35; word-break: break-all; }
+    .tfr-cell-stack__meta { font-size: 11px; color: #94a3b8; line-height: 1.35; }
+
+    .tfr-interviewer__name {
+        font-weight: 600; color: #0f172a; font-size: 13px;
+        overflow-wrap: anywhere; word-break: break-word;
+    }
+    .tfr-interviewer__coded { margin-top: 4px; font-size: 12px; color: #475569; overflow-wrap: anywhere; }
+    .tfr-interviewer__coded-label { color: #94a3b8; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; font-weight: 600; margin-right: 4px; }
+    .tfr-interviewer__email { margin-top: 3px; font-size: 11px; color: #64748b; word-break: break-all; }
+
+    .tfr-reviewed-cell { min-width: 0; }
+    .tfr-reviewed-cell__when { font-size: 12px; color: #0f172a; overflow-wrap: anywhere; }
+    .tfr-reviewed-cell__by { margin-top: 2px; font-size: 12px; color: #64748b; word-break: break-all; }
+    .tfr-reviewed-cell__comment {
+        margin-top: 4px; font-size: 12px; color: #475569;
+        white-space: normal; overflow-wrap: anywhere; word-break: break-word;
+    }
+
+    @@media (max-width: 1400px) {
+        .tfr-page { padding: 12px; }
+        .tfr-table { font-size: 12px; }
+        .tfr-table th, .tfr-table td { padding: 8px 6px; }
+        .tfr-qc-cell { min-width: 0; }
+        .tfr-risk-col { min-width: 0; max-width: none; }
+        .tfr-ai-links a { font-size: 10px; }
+        .tfr-action-group { gap: 4px; min-width: 0; }
+        .tfr-action-row { gap: 4px; }
+        .tfr-header__row p { min-width: 0; }
+    }
+    @@media (min-width: 1401px) {
+        .tfr-page { max-width: 1800px; }
+    }
+
+    .tfr-owner-strip {
+        display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+        margin-bottom: 12px; padding: 8px 10px; background: #f8fafc;
+        border: 1px solid #e2e8f0; border-radius: 8px; font-size: 12px; color: #334155;
+    }
+    .tfr-owner-strip__label { font-weight: 700; color: #64748b; text-transform: uppercase; font-size: 10px; letter-spacing: .04em; margin-right: 4px; }
+    .tfr-owner-chip {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 3px 8px; border-radius: 999px; background: #fff;
+        border: 1px solid #e2e8f0; font-size: 11px; font-weight: 600; cursor: pointer;
+        max-width: 100%; white-space: normal; overflow-wrap: anywhere;
+    }
+    .tfr-owner-chip__p0 { color: #b91c1c; }
+    .tfr-owner-chip.is-active { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; }
+    .tfr-priority { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+    .tfr-priority__badge {
+        display: inline-block; border-radius: 999px; padding: 2px 9px;
+        font-size: 11px; font-weight: 700; line-height: 1.35;
+        white-space: normal;
+    }
+    .tfr-priority__badge--critical { background: #fee2e2; color: #991b1b; }
+    .tfr-priority__badge--medium { background: #ffedd5; color: #9a3412; }
+    .tfr-priority__badge--low { background: #f1f5f9; color: #475569; }
+    .tfr-priority__badge--clear { background: #dcfce7; color: #166534; }
+    .tfr-filter { display: flex; align-items: center; gap: 6px; }
+    .tfr-filter select {
+        height: 32px; border: 1px solid #cbd5e1; border-radius: 6px;
+        font-size: 12px; padding: 0 8px; background: #fff; color: #334155; max-width: 220px;
+    }
+    .tfr-qc-cell { min-width: 0; font-size: 12px; }
+    .tfr-qc-metric { display: flex; gap: 4px; align-items: baseline; flex-wrap: wrap; }
+    .tfr-qc-metric__label { color: #64748b; font-size: 10px; }
+    .tfr-qc-metric__value { font-weight: 700; }
+    .tfr-qc-metric__value.is-danger { color: #b91c1c; }
+    .tfr-qc-metric__value.is-warn { color: #b45309; }
+    .tfr-qc-metric__value.is-ok { color: #166534; }
+    .tfr-qc-verdict { display: inline-block; border-radius: 999px; padding: 1px 7px; font-size: 10px; font-weight: 700; text-transform: capitalize; }
+    .tfr-qc-verdict.is-redo { background: #fee2e2; color: #991b1b; }
+    .tfr-qc-verdict.is-suspicious { background: #ffedd5; color: #9a3412; }
+    .tfr-qc-verdict.is-ok { background: #dcfce7; color: #166534; }
     .tfr-header { margin-bottom: 16px; }
     .tfr-header h2 { margin: 0 0 6px; font-size: 20px; color: #0f172a; }
     .tfr-header__row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
@@ -49,11 +195,6 @@
     .tfr-alert { padding: 12px 14px; border-radius: 8px; margin-bottom: 14px; font-size: 13px; }
     .tfr-alert--error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
     .tfr-alert--info { background: #f8fafc; border: 1px solid #e2e8f0; color: #64748b; }
-    .tfr-table-wrap { overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; }
-    .tfr-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .tfr-table th, .tfr-table td { border-bottom: 1px solid #e2e8f0; padding: 10px 12px; text-align: left; vertical-align: top; }
-    .tfr-table th { background: #f8fafc; font-size: 11px; text-transform: uppercase; letter-spacing: .03em; color: #64748b; white-space: nowrap; }
-    .tfr-table tbody tr:hover { background: #f8fafc; }
     .tfr-btn { appearance: none; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; padding: 5px 10px; font-size: 12px; cursor: pointer; margin: 2px 4px 2px 0; text-decoration: none; color: #334155; display: inline-block; }
     .tfr-btn:hover { background: #f1f5f9; }
     .tfr-btn--primary { background: #2563eb; border-color: #2563eb; color: #fff; }
@@ -70,28 +211,145 @@
     .tfr-factor-cell__link { display: inline-block; margin-top: 4px; font-size: 11px; color: #2563eb; text-decoration: none; }
     .tfr-factor-cell__link:hover { text-decoration: underline; }
     .tfr-actions {
-        width: 1%;
-        white-space: nowrap;
-        padding: 12px 14px;
+        width: 10%;
+        white-space: normal;
+        padding: 12px 10px;
         vertical-align: middle;
     }
     .tfr-action-group {
         display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+        min-width: 0;
+    }
+    .tfr-action-row {
+        display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
-        gap: 8px;
-        min-width: 196px;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+    }
+    .tfr-action-row--primary .tfr-action-btn {
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 4px 5px;
+        font-size: 9px;
+        letter-spacing: -0.01em;
+    }
+    .tfr-action-row--secondary {
+        justify-content: flex-start;
+    }
+    .tfr-insights-btn,
+    .tfr-mark-suspicious-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        background: #fff;
+        cursor: pointer;
+        flex-shrink: 0;
+        box-sizing: border-box;
+        line-height: 1;
+    }
+    /* Compact icon/undo controls in Interviewer column (Kept/Removed) */
+    .tfr-cell-stack .tfr-mark-suspicious-btn,
+    .tfr-cell-stack .tfr-insights-btn {
+        width: 22px;
+        height: 22px;
+        border-radius: 5px;
+        margin-top: 4px;
+    }
+    .tfr-cell-stack .tfr-mark-suspicious-btn img {
+        width: 11px;
+        height: 11px;
+    }
+    .tfr-cell-stack .tfr-insights-btn i { font-size: 11px; }
+    /* Kept/Removed Undo: same footprint as .tfr-suspicious-badge */
+    .tfr-cell-stack .tfr-action-btn--undo-suspicious {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 4px;
+        height: auto;
+        min-height: 0;
+        min-width: 0;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .02em;
+        line-height: 1.35;
+        text-transform: uppercase;
+        box-sizing: border-box;
+    }
+    .tfr-insights-btn { color: #b45309; }
+    .tfr-insights-btn:hover { background: #fffbeb; border-color: #fbbf24; }
+    .tfr-insights-btn i { font-size: 14px; }
+    .tfr-mark-suspicious-btn { color: #9a3412; background: #ffedd5; border-color: #fdba74; }
+    .tfr-mark-suspicious-btn:hover { background: #fed7aa; border-color: #fb923c; }
+    .tfr-mark-suspicious-btn img {
+        width: 14px;
+        height: 14px;
+        display: block;
+        /* white PNG â†’ red */
+        filter: brightness(0) saturate(100%) invert(22%) sepia(90%) saturate(3000%) hue-rotate(348deg) brightness(95%) contrast(95%);
+    }
+    .tfr-suspicious-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 4px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .02em;
+        text-transform: uppercase;
+        background: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+    .tfr-phone {
+        margin-top: 3px;
+        font-size: 12px;
+    }
+    .tfr-phone a { color: #2563eb; text-decoration: none; }
+    .tfr-phone a:hover { text-decoration: underline; }
+    .tfr-action-btn--undo-suspicious {
+        background: #fdecec;
+        border-color: #f5c2c7;
+        color: #9f1239;
+        min-width: 0;
+        flex: 0 0 auto;
+        padding: 4px 8px;
+        font-size: 10px;
+        font-weight: 600;
+        height: 28px;
+        box-shadow: none;
+    }
+    .tfr-action-btn--undo-suspicious:hover {
+        background: #f8d7da;
+        border-color: #f1aeb5;
+        color: #881337;
+        transform: none;
+        box-shadow: none;
     }
     .tfr-action-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 5px;
+        gap: 4px;
         flex: 1 1 0;
-        min-width: 88px;
-        padding: 8px 10px;
-        border-radius: 8px;
-        font-size: 12px;
+        min-width: 72px;
+        padding: 5px 8px;
+        border-radius: 7px;
+        font-size: 11px;
         font-weight: 600;
         line-height: 1;
         cursor: pointer;
@@ -99,8 +357,8 @@
         transition: background .15s ease, border-color .15s ease, box-shadow .15s ease, transform .12s ease, color .15s ease;
     }
     .tfr-action-btn svg {
-        width: 14px;
-        height: 14px;
+        width: 12px;
+        height: 12px;
         flex-shrink: 0;
         opacity: .92;
     }
@@ -138,10 +396,6 @@
         outline: 2px solid #3b82f6;
         outline-offset: 2px;
     }
-    .tfr-interviewer__name { font-weight: 600; color: #0f172a; font-size: 13px; }
-    .tfr-interviewer__coded { margin-top: 4px; font-size: 12px; color: #475569; }
-    .tfr-interviewer__coded-label { color: #94a3b8; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; font-weight: 600; margin-right: 4px; }
-    .tfr-interviewer__email { margin-top: 3px; font-size: 11px; color: #64748b; }
     .tfr-pagination { display: none; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 10px 12px; background: #f8fafc; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b; }
     .tfr-pagination.is-visible { display: flex; }
     .tfr-pagination__btns { display: flex; gap: 4px; align-items: center; }
@@ -214,7 +468,10 @@
         border-radius: 6px; font-size: 12px; color: #475569; line-height: 1.4;
     }
     .tfr-candidate-comment strong { color: #0f172a; }
-    .tfr-risk-col { min-width: 160px; max-width: 280px; }
+    .tfr-col-actions { width: 10%; }
+    .tfr-risk-col { min-width: 0; }
+    .tfr-ai-links { display: flex; flex-wrap: wrap; gap: 4px; }
+    .tfr-ai-links a { font-size: 11px; font-weight: 600; color: #1d4ed8; text-decoration: none; white-space: normal; overflow-wrap: anywhere; }
     .tfr-risk-badges { display: flex; flex-wrap: wrap; gap: 3px; }
     .tfr-risk-badge {
         display: inline-block;
@@ -274,8 +531,6 @@
         word-break: break-word;
         line-height: 1.35;
     }
-    .tfr-ai-links { display: flex; flex-wrap: wrap; gap: 4px; }
-    .tfr-ai-links a { font-size: 11px; font-weight: 600; color: #1d4ed8; text-decoration: none; white-space: nowrap; }
     .tfr-ai-links a:hover { text-decoration: underline; }
     .tfr-rating-info {
         display: inline-flex; align-items: center; justify-content: center;
@@ -435,7 +690,7 @@
 
     IHtmlContent QcMergeCell(TrialFlagReviewRowVm row)
     {
-        // Red flags = MergedAIQCDetails flags[] only (evidence-filtered). Payment amount/recommendation → tooltip.
+        // Red flags = MergedAIQCDetails flags[] only (evidence-filtered). Payment amount/recommendation â†’ tooltip.
         var mergeFlags = TrialFlagEvidenceBadgeHelper.CollectMergeFlagBadges(row.QcMergeFlagsJson);
 
         var totalPenalty = row.QcMergeTotalPenalty ?? row.QcMergeScore;
@@ -463,7 +718,7 @@
         var tipAttr = string.IsNullOrEmpty(tip) ? string.Empty : (" title=\"" + tip + "\"");
         var html = "<div class=\"tfr-qc-cell\"" + tipAttr + ">";
 
-        // Compact label + value (same thresholds as QCMergedAIDetails, no chips)
+        //Compact label + value (same thresholds as QCMergedAIDetails, no chips)
         if (hasPenalty || hasQcScore)
         {
             html += "<div class=\"tfr-qc-metrics\">";
@@ -539,7 +794,7 @@
             : "";
         var info = string.IsNullOrEmpty(tip)
             ? ""
-            : $@" <span class=""tfr-rating-info"" title=""{tip}"" aria-label=""Candidate feedback comment"">i</span>";
+            : $@" <span class=""tfr-rating-info"" title=""{tip}"" aria-label=""Candidate feedback comment"">ⓘ</span>";
 
         var statusClass = row.CandidateRatingPass ? "is-pass" : "is-fail";
         var statusText = row.CandidateRatingPass ? "Pass" : "Fail";
@@ -555,52 +810,46 @@
         return new Microsoft.AspNetCore.Html.HtmlString(html);
     }
 }
-
 <div class="main-panel tfr-page" id="main-panel">
     <div class="tfr-header">
         <button type="button" class="tfr-btn" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'">Back</button>
         <h2 style="margin-top:12px;">Trial Flag Review</h2>
         <div class="tfr-header__row">
-            <p>First-interview trial outcomes per interviewer–IRF pair. Review each factor, open drill-downs for context, then keep or remove inline.</p>
-            @if (rows.Any())
-            {
-                <div class="tfr-filter">
-                    <label for="tfrSeverityFilter" style="font-size:11px;color:#64748b;white-space:nowrap;" title="P0 = highest severity … P5 = clean">Severity</label>
-                    <select id="tfrSeverityFilter" aria-label="Filter by severity (P0 highest … P5 clean)">
-                        <option value="">All</option>
-                        <option value="P0">P0 (highest)</option>
-                        <option value="P1">P1</option>
-                        <option value="P2">P2</option>
-                        <option value="P3">P3</option>
-                        <option value="P4">P4</option>
-                        <option value="P5">P5 (clean)</option>
-                    </select>
+            <p>First-interview trial outcomes per interviewer–IRF pair. Light list loads instantly; expand a row for QC merge, factors, and payment detail.</p>
+            <div class="tfr-filter">
+                <label for="tfrSeverityFilter" style="font-size:11px;color:#64748b;white-space:nowrap;" title="P0 = highest severity … P5 = clean">Severity</label>
+                <select id="tfrSeverityFilter" aria-label="Filter by severity (P0 highest … P5 clean)">
+                    <option value="">All</option>
+                    <option value="P0">P0 (highest)</option>
+                    <option value="P1">P1</option>
+                    <option value="P2">P2</option>
+                    <option value="P3">P3</option>
+                    <option value="P4">P4</option>
+                    <option value="P5">P5 (clean)</option>
+                </select>
+            </div>
+            
+            <div class="tfr-filter">
+                <label for="tfrOwnerFilter" style="font-size:11px;color:#64748b;white-space:nowrap;">Channel owner</label>
+                <select id="tfrOwnerFilter" aria-label="Filter by channel owner">
+                    <option value="">All owners</option>
+                </select>
+            </div><div class="tfr-search">
+                <div class="tfr-search__box">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+                    <input type="search" id="tfrSearch" class="tfr-search__input" placeholder="Search IRF, interviewer, owner…" autocomplete="off" />
                 </div>
-                <div class="tfr-search">
-                    <div class="tfr-search__box">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
-                        <input type="search" id="tfrSearch" class="tfr-search__input" placeholder="Search IRF or interviewer..." autocomplete="off" />
-                    </div>
-                    <button type="button" class="tfr-btn" id="tfrSearchClear" style="display:none;">Clear</button>
-                </div>
-            }
+                <button type="button" class="tfr-btn" id="tfrSearchClear" style="display:none;">Clear</button>
+            </div>
         </div>
     </div>
 
     <div class="tfr-tabs">
-        <a class="tfr-tab @(activeTab == TrialFlagConstants.ReviewPending ? "is-active" : "")" href="@Url.Action("TrialFlagReview", new { tab = TrialFlagConstants.ReviewPending })">Pending<span class="tfr-tab__count">(@Model.PendingCount)</span></a>
-        <a class="tfr-tab @(activeTab == TrialFlagConstants.ReviewKept ? "is-active" : "")" href="@Url.Action("TrialFlagReview", new { tab = TrialFlagConstants.ReviewKept })">Kept<span class="tfr-tab__count">(@Model.KeptCount)</span></a>
-        <a class="tfr-tab @(activeTab == TrialFlagConstants.ReviewRemoved ? "is-active" : "")" href="@Url.Action("TrialFlagReview", new { tab = TrialFlagConstants.ReviewRemoved })">Removed<span class="tfr-tab__count">(@Model.RemovedCount)</span></a>
-        @if (rows.Any())
-        {
-            <a class="tfr-btn" style="margin-left:auto;" href="@Url.Action("TrialFlagReview", new { tab = activeTab, refresh = true })" title="Recompute risk categories and trial factors for rows on this tab">Refresh live metrics</a>
-        }
+        <a class="tfr-tab @(activeTab == TrialFlagConstants.ReviewPending ? "is-active" : "")" href="@Url.Action("TrialFlagReview", new { tab = TrialFlagConstants.ReviewPending })" data-tab="@TrialFlagConstants.ReviewPending">Pending<span class="tfr-tab__count" id="tfrCountPending">(@Model.PendingCount)</span></a>
+        <a class="tfr-tab @(activeTab == TrialFlagConstants.ReviewKept ? "is-active" : "")" href="@Url.Action("TrialFlagReview", new { tab = TrialFlagConstants.ReviewKept })" data-tab="@TrialFlagConstants.ReviewKept">Kept<span class="tfr-tab__count" id="tfrCountKept">(@Model.KeptCount)</span></a>
+        <a class="tfr-tab @(activeTab == TrialFlagConstants.ReviewRemoved ? "is-active" : "")" href="@Url.Action("TrialFlagReview", new { tab = TrialFlagConstants.ReviewRemoved })" data-tab="@TrialFlagConstants.ReviewRemoved">Removed<span class="tfr-tab__count" id="tfrCountRemoved">(@Model.RemovedCount)</span></a>
+        <button type="button" class="tfr-btn" style="margin-left:auto;" id="btnTfrReload" title="Reload current page">Reload</button>
     </div>
-
-    @if (Model.LiveMetrics && rows.Any())
-    {
-        <div class="tfr-alert tfr-alert--info">Showing live risk and factor metrics for this tab. Normal page loads use stored snapshots for speed.</div>
-    }
 
     @if (isPendingTab && Model.TrialFlagsTableExists && string.IsNullOrWhiteSpace(loadError))
     {
@@ -615,166 +864,39 @@
 
     @if (!string.IsNullOrWhiteSpace(loadError))
     {
-        <div class="tfr-alert tfr-alert--error"><strong>Could not load trial flags.</strong> @loadError</div>
+        <div class="tfr-alert tfr-alert--error"><strong>Could not load trial flag shell.</strong> @loadError</div>
     }
-    else if (!rows.Any())
+    else if (!Model.TrialFlagsTableExists)
     {
-        <div class="tfr-alert tfr-alert--info">
-            @if (!string.IsNullOrWhiteSpace(Model.EmptyStateHint))
-            {
-                <strong>No @(activeTab) trial flags to show.</strong> @Model.EmptyStateHint
-            }
-            else
-            {
-                <strong>No @(activeTab) trial flags found.</strong>
-            }
-            @if (Model.TrialFlagsTableExists)
-            {
-                <div style="margin-top:8px;font-size:12px;color:#64748b;">Database: <code>TrialFlags</code> has @Model.TotalRowsInTable total row(s). Pending @Model.PendingCount · Kept @Model.KeptCount · Removed @Model.RemovedCount.</div>
-            }
-        </div>
+        <div class="tfr-alert tfr-alert--info"><strong>No trial flags to show.</strong> @(Model.EmptyStateHint ?? "dbo.TrialFlags missing.")</div>
     }
 
+    <div class="tfr-owner-strip" id="tfrOwnerStrip" aria-live="polite">
+        <span class="tfr-owner-strip__label">P0s by owner (active tab)</span>
+        <span id="tfrOwnerStripBody" style="color:#94a3b8;">Loading...</span>
+    </div>
     <div class="tfr-table-wrap">
-        <table class="tfr-table">
+        <table class="tfr-table" id="tfrTable" style="width:100%;">
             <thead>
                 <tr>
-                    @if (isPendingTab) { <th>Actions</th> }
-                    <th>Interviewer</th>
-                    <th>IRF</th>
-                    <th>Trial interview</th>
-                    <th class="tfr-th-sort" id="tfrSortSeverity" title="P0 = highest severity … P5 = clean">Severity</th>
-                    <th>Verdict</th>
-                    <th>QC Merge</th>
-                    <th>AI links</th>
-                    <th>Risk categories</th>
-                    <th>Transcript score</th>
-                    <th>Report score</th>
-                    <th>Candidate rating</th>
-                    <th>Join time</th>
-                    <th>Duration</th>
-                    @if (!isPendingTab) { <th>Reviewed</th> }
+                    @if (isPendingTab) { <th class="tfr-col-actions">Actions</th> }
+                    <th class="tfr-col-interviewer">Interviewer</th>
+                    <th class="tfr-col-irf">IRF</th>
+                    <th class="tfr-col-owner">Channel owner</th>
+                    <th class="tfr-col-interview">Trial interview</th>
+                    <th class="tfr-col-priority" title="Mapped from severity P0-P5">Client priority</th>
+                    <th class="tfr-col-verdict">Verdict</th>
+                    <th class="tfr-col-ai">AI links</th>
+                    <th class="tfr-col-risk">Risk categories</th>
+                    @if (!isPendingTab) { <th class="tfr-col-reviewed">Reviewed</th> }
                 </tr>
             </thead>
-            <tbody>
-                @foreach (var row in rows)
-                {
-                    var displayVerdict = ResolveVerdict(row);
-                    var verdictClass = string.Equals(displayVerdict, TrialFlagConstants.VerdictGoodTrial, StringComparison.OrdinalIgnoreCase)
-                        ? "tfr-verdict tfr-verdict--good" : "tfr-verdict tfr-verdict--bad";
-                    var searchKey = (row.IrfName + " " + row.InterviewerName + " " + row.InterviewerEmail + " " + row.InterviewerCodedId).ToLowerInvariant();
-                    var interviewId = row.TriggeringInterviewId;
-                    var transcriptDetail = row.TranscriptQualityScore.HasValue ? row.TranscriptQualityScore.Value.ToString("0.##") + "/10" : null;
-                    var reportDetail = row.ReportQualityScore.HasValue ? row.ReportQualityScore.Value.ToString("0.##") + "/100" : null;
-                    var ratingDetail = row.CandidateRating.HasValue ? row.CandidateRating.Value.ToString("0.##") + "/5" : null;
-                    var joinDetail = row.JoinTimeMinutes.HasValue ? row.JoinTimeMinutes.Value.ToString("0.##") + " min" : null;
-                    var durationDetail = row.InterviewDurationMinutes.HasValue ? row.InterviewDurationMinutes.Value.ToString("0.##") + " min" : null;
-                    var timingUrl = TrialFlagDrillDownUrls.InterviewTiming(interviewId, row.IrfName);
-                    var interviewerDisplayName = !string.IsNullOrWhiteSpace(row.InterviewerName) ? row.InterviewerName : row.InterviewerEmail;
-                    var displaySeverity = ResolveSeverity(row);
-                    var hasRatingRisk = !string.IsNullOrWhiteSpace(row.SeverityBreakdown)
-                        && row.SeverityBreakdown.IndexOf("CandidateRating", StringComparison.OrdinalIgnoreCase) >= 0;
-                    var ratingHasComment = hasRatingRisk
-                        && TrialFlagEvidenceBadgeHelper.IsPositiveEvidence(row.CandidateFeedbackComment);
-
-                    <tr class="tfr-main-row" data-search="@searchKey" data-flag-id="@row.TrialFlagId" data-severity="@displaySeverity" data-verdict="@displayVerdict" data-interview-id="@interviewId" data-irf-id="@row.IrfId">
-                        @if (isPendingTab)
-                        {
-                            <td class="tfr-actions">
-                                <div class="tfr-action-group">
-                                    <button type="button" class="tfr-action-btn tfr-action-btn--keep btn-tfr-keep" data-flag-id="@row.TrialFlagId" data-interviewer="@row.InterviewerName" data-irf="@row.IrfName" title="Keep interviewer on this IRF">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
-                                        <span>Keep</span>
-                                    </button>
-                                    <button type="button" class="tfr-action-btn tfr-action-btn--remove btn-tfr-remove" data-flag-id="@row.TrialFlagId" data-interviewer="@row.InterviewerName" data-irf="@row.IrfName" title="Remove interviewer from this IRF">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                                        <span>Remove</span>
-                                    </button>
-                                </div>
-                            </td>
-                        }
-                        <td>
-                            <div class="tfr-interviewer__name">@(interviewerDisplayName ?? "—")</div>
-                            <div class="tfr-interviewer__coded">
-                                <span class="tfr-interviewer__coded-label">Coded</span>
-                                @(string.IsNullOrWhiteSpace(row.InterviewerCodedId) ? "—" : row.InterviewerCodedId)
-                            </div>
-                            @if (!string.IsNullOrWhiteSpace(row.InterviewerEmail) && !string.Equals(row.InterviewerEmail, interviewerDisplayName, StringComparison.OrdinalIgnoreCase))
-                            {
-                                <div class="tfr-interviewer__email">@row.InterviewerEmail</div>
-                            }
-                        </td>
-                        <td><strong>@row.IrfName</strong> <span style="color:#94a3b8;">(#@row.IrfId)</span></td>
-                        <td>
-                            <a href="@TrialFlagDrillDownUrls.ClientReport(interviewId, row.IrfId)" target="_blank" rel="noopener">#@interviewId</a>
-                            <div style="color:#64748b;font-size:12px;">@FormatIst(row.TriggeringInterviewDate)</div>
-                            <div style="color:#94a3b8;font-size:11px;">Flagged @FormatIst(row.FlaggedAtUtc)</div>
-                            <button type="button" class="tfr-detail-toggle btn-tfr-details" data-flag-id="@row.TrialFlagId">Details</button>
-                        </td>
-                        <td>
-                            @SeverityBadge(row)
-                            @SeverityBreakdownPills(row)
-                        </td>
-                        <td><span class="@verdictClass">@VerdictLabel(displayVerdict)</span></td>
-                        <td>@QcMergeCell(row)</td>
-                        <td>@AiLinksCell(row)</td>
-                        <td class="tfr-risk-col">@RiskCategoryBadges(row)</td>
-                        <td>@FactorCell(row.TranscriptQualityPass, transcriptDetail, TrialFlagDrillDownUrls.TranscriptQuality(interviewId, row.IrfId), "Transcript")</td>
-                        <td>@FactorCell(row.ReportQualityPass, reportDetail, TrialFlagDrillDownUrls.ReportAiVerdict(interviewId), "Report AI")</td>
-                        <td>@RatingCell(row, ratingDetail, TrialFlagDrillDownUrls.CandidateRating(interviewId))</td>
-                        <td>@FactorCell(row.JoinTimePass, joinDetail, timingUrl, "Timing")</td>
-                        <td>@FactorCell(row.InterviewDurationPass, durationDetail, timingUrl, "Timing")</td>
-                        @if (!isPendingTab)
-                        {
-                            <td>
-                                <div>@FormatIst(row.ReviewedAtUtc)</div>
-                                <div style="color:#64748b;font-size:12px;">@(row.ReviewedBy ?? "—")</div>
-                                @if (!string.IsNullOrWhiteSpace(row.ReviewerComment))
-                                {
-                                    <div style="margin-top:4px;font-size:12px;color:#475569;">@row.ReviewerComment</div>
-                                }
-                            </td>
-                        }
-                    </tr>
-                    <tr class="tfr-detail-row" data-flag-id="@row.TrialFlagId" style="display:none;">
-                        <td colspan="14">
-                            <div style="font-size:12px;font-weight:700;color:#0f172a;margin-bottom:6px;">AI Evaluations</div>
-                            <div class="tfr-ai-body" data-interview-id="@interviewId" data-irf-id="@row.IrfId">Loading…</div>
-                            @if (!string.IsNullOrWhiteSpace(row.SeverityBreakdown))
-                            {
-                                <div style="margin-top:10px;font-size:12px;font-weight:700;color:#0f172a;">Flag breakdown</div>
-                                @SeverityBreakdownPills(row)
-                            }
-                            @if (ratingHasComment)
-                            {
-                                <div style="margin-top:10px;font-size:12px;font-weight:700;color:#0f172a;">Candidate feedback</div>
-                                <div class="tfr-candidate-comment">@row.CandidateFeedbackComment</div>
-                            }
-                            @if (row.PaymentDeduction > 0 || !string.IsNullOrWhiteSpace(row.PaymentRecommendation) || !string.IsNullOrWhiteSpace(row.PaymentRecommendationComments))
-                            {
-                                <div style="margin-top:10px;font-size:12px;font-weight:700;color:#0f172a;">Payment (from QC Merge tooltip)</div>
-                                <div class="tfr-candidate-comment">
-                                    @if (row.PaymentDeduction > 0)
-                                    {
-                                        <div><strong>Deduction:</strong> @row.PaymentDeduction%</div>
-                                    }
-                                    @if (!string.IsNullOrWhiteSpace(row.PaymentRecommendation))
-                                    {
-                                        <div><strong>@row.PaymentRecommendation</strong></div>
-                                    }
-                                    @if (!string.IsNullOrWhiteSpace(row.PaymentRecommendationComments))
-                                    {
-                                        <div>@row.PaymentRecommendationComments</div>
-                                    }
-                                </div>
-                            }
-                        </td>
-                    </tr>
-                }
+            <tbody id="tfrTbody">
+                <tr class="tfr-loading-row"><td colspan="10" class="tfr-empty">Loading…</td></tr>
             </tbody>
         </table>
-        <div id="tfrSearchEmpty" class="tfr-search-empty">No rows match your search.</div>
-        <div id="tfrPagination" class="tfr-pagination" aria-label="Trial flag pagination">
+        <div id="tfrSearchEmpty" class="tfr-search-empty">No rows match.</div>
+        <div id="tfrPagination" class="tfr-pagination is-visible" aria-label="Trial flag pagination">
             <span id="tfrPageInfo"></span>
             <div class="tfr-pagination__btns" id="tfrPageBtns"></div>
         </div>
@@ -808,103 +930,326 @@
         var removeUrl = '@Url.Action("RemoveTrialFlagReviewer", "Dashboard")';
         var backfillUrl = '@Url.Action("BackfillTrialFlags", "Dashboard")';
         var aiSummaryUrl = '@Url.Action("InterviewAiRiskSummary", "Dashboard")';
-        var PAGE_SIZE = 30;
+        var listUrl = '@Url.Action("TrialFlagReviewList", "Dashboard")';
+        var detailUrl = '@Url.Action("TrialFlagReviewDetail", "Dashboard")';
+        var activeTab = '@activeTab';
+        var isPendingTab = @(isPendingTab ? "true" : "false");
+        // Mirrors TrialFlagClientPriority (ASCII-only; keep in sync with C# helper).
+        var CLIENT_PRIORITY_MAP = {
+            'P0': { Tier: 'Critical', Css: 'critical', Badge: 'Critical · P0' },
+            'P1': { Tier: 'Critical', Css: 'critical', Badge: 'Critical · P1' },
+            'P2': { Tier: 'Medium', Css: 'medium', Badge: 'Medium · P2' },
+            'P3': { Tier: 'Medium', Css: 'medium', Badge: 'Medium · P3' },
+            'P4': { Tier: 'Low', Css: 'low', Badge: 'Low · P4' },
+            'P5': { Tier: 'Clear', Css: 'clear', Badge: 'Clear · P5' },
+            '': { Tier: 'Low', Css: 'low', Badge: 'Low' }
+        };
+        var PAGE_SIZE = 25;
         var currentPage = 1;
         var searchTerm = '';
         var severityFilter = '';
-        // Ascending numeric rank = P0 first (most severe). Sort label: ↑ = worst first.
-        var severitySortAsc = true;
-        var $tbody = $('.tfr-table tbody');
-        var $mainRows = $tbody.find('tr.tfr-main-row');
+        var channelOwnerFilter = '';
+        var ownerSummaries = [];
+        var drawSeq = 0;
+        var totalFiltered = 0;
+        var detailCache = {};
+        var detailInflight = {};
+        var $tbody = $('#tfrTbody');
 
-        function severityRank(sev) {
-            // P0=0 … P5=5; missing/NULL/'—' sort LAST (after P5), never before P0.
-            var s = (sev || '').toString().trim().toUpperCase();
-            if (!s || s === '—' || s === '-') return 99;
-            var m = s.match(/^P(\d)$/i);
-            return m ? parseInt(m[1], 10) : 99;
+        function esc(s) {
+            return $('<div/>').text(s == null ? '' : String(s)).html();
         }
-
+        function formatIst(utc) {
+            if (!utc) return '—';
+            var d = new Date(utc);
+            if (isNaN(d.getTime())) return '—';
+            var ist = new Date(d.getTime() + 5.5 * 60 * 60 * 1000);
+            function p(n) { return n < 10 ? '0' + n : '' + n; }
+            return ist.getUTCFullYear() + '-' + p(ist.getUTCMonth() + 1) + '-' + p(ist.getUTCDate())
+                + ' ' + p(ist.getUTCHours()) + ':' + p(ist.getUTCMinutes()) + ' IST';
+        }
+        function verdictLabel(v) {
+            if ((v || '').toLowerCase() === 'good_trial') return 'Good trial';
+            if ((v || '').toLowerCase() === 'bad_trial') return 'Bad trial';
+            return v || '—';
+        }
         function severityCss(p) {
             var s = (p || '').toString().toUpperCase();
             if (/^P[0-5]$/.test(s)) return 'tfr-severity tfr-severity--' + s.toLowerCase();
             return 'tfr-severity tfr-severity--na';
         }
-
-        function getMatchedRows() {
-            var $matched = $mainRows;
-            if (searchTerm) {
-                $matched = $matched.filter(function () {
-                    return ($(this).attr('data-search') || '').indexOf(searchTerm) >= 0;
-                });
-            }
-            if (severityFilter) {
-                $matched = $matched.filter(function () {
-                    return ($(this).attr('data-severity') || '').toUpperCase() === severityFilter;
-                });
-            }
-            return $matched;
+        function telHref(mobile) {
+            if (!mobile) return null;
+            var digits = String(mobile).replace(/\D/g, '');
+            if (!digits || digits === '0') return null;
+            if (digits.length > 10) digits = digits.slice(-10);
+            if (digits.length !== 10) return null;
+            return 'tel:+91' + digits;
+        }
+        function displayPhone(mobile) {
+            var href = telHref(mobile);
+            if (!href) return null;
+            return '+91 ' + href.replace('tel:+91', '');
         }
 
-        function applySeveritySort() {
-            var rows = $mainRows.get();
-            rows.sort(function (a, b) {
-                var ra = severityRank($(a).attr('data-severity'));
-                var rb = severityRank($(b).attr('data-severity'));
-                return severitySortAsc ? (ra - rb) : (rb - ra);
-            });
-            $.each(rows, function (_, row) {
-                var $main = $(row);
-                var flagId = $main.attr('data-flag-id');
-                var $detail = $tbody.find('tr.tfr-detail-row[data-flag-id="' + flagId + '"]');
-                $tbody.append($main);
-                if ($detail.length) $tbody.append($detail);
-            });
-            $mainRows = $tbody.find('tr.tfr-main-row');
-        }
-
-        function renderPagination() {
-            var $matched = getMatchedRows();
-            var total = $matched.length;
-            var $bar = $('#tfrPagination');
-            $tbody.find('tr').hide();
-            $('#tfrSearchEmpty').toggleClass('is-visible', total === 0 && searchTerm.length > 0 && $mainRows.length > 0);
-            if (total === 0) { $bar.removeClass('is-visible'); return; }
-            var totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-            if (currentPage > totalPages) currentPage = totalPages;
-            var start = (currentPage - 1) * PAGE_SIZE;
-            $matched.slice(start, start + PAGE_SIZE).each(function () {
-                var $main = $(this).show();
-                var flagId = $main.attr('data-flag-id');
-                var $detail = $tbody.find('tr.tfr-detail-row[data-flag-id="' + flagId + '"]');
-                if ($detail.data('open')) $detail.show();
-            });
-            if (total <= PAGE_SIZE) { $bar.removeClass('is-visible'); return; }
-            $('#tfrPageInfo').text('Showing ' + (start + 1) + '–' + Math.min(start + PAGE_SIZE, total) + ' of ' + total);
-            var html = '<button type="button" class="tfr-btn tfr-pg-prev"' + (currentPage <= 1 ? ' disabled' : '') + '>&lsaquo;</button>';
-            var startPage = Math.max(1, currentPage - 2);
-            var endPage = Math.min(totalPages, startPage + 4);
-            startPage = Math.max(1, endPage - 4);
-            for (var p = startPage; p <= endPage; p++) {
-                html += '<button type="button" class="tfr-btn tfr-pg' + (p === currentPage ? ' is-active' : '') + '" data-page="' + p + '">' + p + '</button>';
+        function clientPriorityHtml(rowOrSev) {
+            var badge = null, mod = null, sev = '';
+            if (rowOrSev && typeof rowOrSev === 'object') {
+                badge = rowOrSev.clientPriorityBadge || rowOrSev.ClientPriorityBadge;
+                mod = rowOrSev.clientPriorityCss || rowOrSev.ClientPriorityCss;
+                sev = (rowOrSev.severity || rowOrSev.Severity || '').toString().toUpperCase();
+            } else {
+                sev = (rowOrSev || '').toString().toUpperCase();
             }
-            html += '<button type="button" class="tfr-btn tfr-pg-next"' + (currentPage >= totalPages ? ' disabled' : '') + '>&rsaquo;</button>';
-            $('#tfrPageBtns').html(html);
-            $bar.addClass('is-visible');
+            if (!badge || !mod) {
+                var key = (/^P[0-5]$/.test(sev) ? sev : '');
+                var meta = CLIENT_PRIORITY_MAP[key] || CLIENT_PRIORITY_MAP[''] || {};
+                badge = meta.Badge || meta.badge || 'Low';
+                mod = meta.Css || meta.css || 'low';
+            }
+            return '<div class="tfr-priority"><span class="tfr-priority__badge tfr-priority__badge--' + esc(mod) + '">' + esc(badge) + '</span></div>';
+        }
+        function riskBadgesHtml(row) {
+            var labels = (row.riskCategoryLabels || row.RiskCategoryLabels || '');
+            if (!labels) return '<span style="color:#94a3b8;font-size:12px;">—</span>';
+            var parts = labels.split(',').map(function (x) { return x.trim(); }).filter(Boolean);
+            var reasons = (row.riskCategoryReasons || row.RiskCategoryReasons || '').split(',');
+            var html = '<div class="tfr-risk-badges">';
+            parts.forEach(function (label, i) {
+                var reason = (reasons[i] || label).trim();
+                var badgeClass = 'tfr-risk-badge--default';
+                if (label === 'High Severity') badgeClass = 'tfr-risk-badge--high';
+                else if (label === 'Under Review') badgeClass = 'tfr-risk-badge--review';
+                else if (label === 'Redo Requested') badgeClass = 'tfr-risk-badge--redo';
+                else if (label === 'Fake Report') badgeClass = 'tfr-risk-badge--fake';
+                html += '<span class="tfr-risk-badge ' + badgeClass + '" title="' + esc(reason) + '">' + esc(label) + '</span>';
+            });
+            return html + '</div>';
+        }
+        function aiLinksHtml(interviewId, irfId) {
+            if (!interviewId) return '<span style="color:#94a3b8;">—</span>';
+            var t = '/AIScreener/TransciptAnalysis?interviewId=' + interviewId + '&irfId=' + (irfId || 0);
+            var r = '/Interview/ReportAIDetailsReport?interviewId=' + interviewId;
+            var c = '/Interview/ContradictionReport?interviewId=' + interviewId;
+            var q = '/Interview/QCMergedAIDetails?interviewId=' + interviewId;
+            return '<div class="tfr-ai-links">'
+                + '<a href="' + t + '" target="_blank" rel="noopener">Transcript</a>'
+                + '<a href="' + r + '" target="_blank" rel="noopener">Report</a>'
+                + '<a href="' + c + '" target="_blank" rel="noopener">Contradiction</a>'
+                + '<a href="' + q + '" target="_blank" rel="noopener">QC Merge</a>'
+                + '</div>';
+        }
+        function actionsHtml(row) {
+            if (!isPendingTab) return '';
+            var email = row.interviewerEmail || row.InterviewerEmail || '';
+            var uid = row.interviewerUserId || row.InterviewerUserId || 0;
+            var flagId = row.trialFlagId || row.TrialFlagId;
+            var name = row.interviewerName || row.InterviewerName || '';
+            var irf = row.irfName || row.IrfName || '';
+            var html = '<td class="tfr-actions"><div class="tfr-action-group">'
+                + '<div class="tfr-action-row tfr-action-row--primary">'
+                + '<button type="button" class="tfr-action-btn tfr-action-btn--keep btn-tfr-keep" data-flag-id="' + flagId + '" data-interviewer="' + esc(name) + '" data-irf="' + esc(irf) + '"><span>Keep</span></button>'
+                + '<button type="button" class="tfr-action-btn tfr-action-btn--remove btn-tfr-remove" data-flag-id="' + flagId + '" data-interviewer="' + esc(name) + '" data-irf="' + esc(irf) + '"><span>Remove</span></button>'
+                + '</div>'
+                + '<div class="tfr-action-row tfr-action-row--secondary">';
+            if ((row.isSuspicious || row.IsSuspicious) && uid > 0) {
+                html += '<button type="button" class="tfr-action-btn tfr-action-btn--undo-suspicious btn-tfr-undo-suspicious" data-user-id="' + uid + '" data-email="' + esc(email) + '">Undo</button>';
+            } else if (email) {
+                html += '<button type="button" class="tfr-mark-suspicious-btn btn-tfr-mark-suspicious" data-email="' + esc(email) + '" title="Mark suspicious"><img src="/img/suspicious.png" alt="" /></button>';
+            }
+            if (email) {
+                html += '<button type="button" class="tfr-insights-btn dm-v4-iv-insights-btn dm-v4-iv-insights-btn--global" data-email="' + esc(email) + '" title="Insights"><i class="fa fa-lightbulb-o"></i></button>';
+            }
+            html += '</div></div></td>';
+            return html;
+        }
+        function interviewerHtml(row) {
+            var name = row.interviewerName || row.InterviewerName || '—';
+            var email = row.interviewerEmail || row.InterviewerEmail || '';
+            var coded = row.interviewerCodedId || row.InterviewerCodedId || '';
+            var phone = displayPhone(row.interviewerMobileNumber || row.InterviewerMobileNumber);
+            var phoneH = telHref(row.interviewerMobileNumber || row.InterviewerMobileNumber);
+            var alt = displayPhone(row.interviewerAltMobileNumber || row.InterviewerAltMobileNumber);
+            var altH = telHref(row.interviewerAltMobileNumber || row.InterviewerAltMobileNumber);
+            var uid = row.interviewerUserId || row.InterviewerUserId || 0;
+            var html = '<td class="tfr-col-interviewer"><div class="tfr-cell-stack">'
+                + '<div class="tfr-interviewer__name">' + esc(name) + '</div>'
+                + '<div class="tfr-interviewer__coded"><span class="tfr-interviewer__coded-label">Coded</span> ' + esc(coded || '—') + '</div>';
+            if (email && email.toLowerCase() !== String(name).toLowerCase())
+                html += '<div class="tfr-interviewer__email">' + esc(email) + '</div>';
+            if (phoneH && phone) html += '<div class="tfr-phone"><a href="' + phoneH + '">' + esc(phone) + '</a></div>';
+            if (altH && alt && altH !== phoneH) html += '<div class="tfr-phone tfr-phone--alt"><a href="' + altH + '">' + esc(alt) + '</a></div>';
+            if (row.isSuspicious || row.IsSuspicious) {
+                html += '<span class="tfr-suspicious-badge"><i class="fa fa-user-secret"></i> Suspicious</span>';
+                if (!isPendingTab && uid > 0)
+                    html += '<button type="button" class="tfr-action-btn tfr-action-btn--undo-suspicious btn-tfr-undo-suspicious" data-user-id="' + uid + '" data-email="' + esc(email) + '">Undo</button>';
+            } else if (!isPendingTab && email) {
+                html += '<button type="button" class="tfr-mark-suspicious-btn btn-tfr-mark-suspicious" data-email="' + esc(email) + '" title="Mark suspicious"><img src="/img/suspicious.png" alt="" /></button>';
+            }
+            html += '</div></td>';
+            return html;
         }
 
+        /** Channel owner: name on first line, email on next (never "Name (email)" inline). */
+        function channelOwnerHtml(row) {
+            var display = (row.channelOwner || row.ChannelOwner || '').toString().trim();
+            var email = (row.channelOwnerEmail || row.ChannelOwnerEmail || '').toString().trim();
+            var name = display;
+            var m = display.match(/^(.*?)\s*\(([^()\s@@]+@@[^()\s]+)\)\s*$/);
+            if (m) {
+                name = (m[1] || '').trim();
+                if (!email) email = (m[2] || '').trim();
+            }
+            if (!name && email) name = email;
+            if (!name) return '<td class="tfr-col-owner"><span class="tfr-cell-stack__meta">—</span></td>';
+            var html = '<td class="tfr-col-owner"><div class="tfr-cell-stack">';
+            if (email && name.toLowerCase() !== email.toLowerCase()) {
+                html += '<div class="tfr-cell-stack__primary">' + esc(name) + '</div>';
+                html += '<div class="tfr-cell-stack__secondary">' + esc(email) + '</div>';
+            } else {
+                html += '<div class="tfr-cell-stack__primary">' + esc(name) + '</div>';
+            }
+            html += '</div></td>';
+            return html;
+        }
+
+        function irfHtml(irfName, irfId) {
+            return '<td class="tfr-col-irf"><div class="tfr-cell-stack">'
+                + '<div class="tfr-cell-stack__primary">' + esc(irfName || ('IRF #' + irfId)) + '</div>'
+                + '<div class="tfr-cell-stack__meta">#' + esc(irfId) + '</div>'
+                + '</div></td>';
+        }
+
+        function reviewedHtml(row) {
+            var html = '<td class="tfr-col-reviewed tfr-reviewed-cell"><div class="tfr-cell-stack">'
+                + '<div class="tfr-reviewed-cell__when">' + esc(formatIst(row.reviewedAtUtc || row.ReviewedAtUtc)) + '</div>'
+                + '<div class="tfr-reviewed-cell__by">' + esc(row.reviewedBy || row.ReviewedBy || '—') + '</div>';
+            var cmt = row.reviewerComment || row.ReviewerComment;
+            if (cmt) html += '<div class="tfr-reviewed-cell__comment">' + esc(cmt) + '</div>';
+            html += '</div></td>';
+            return html;
+        }
+
+        function buildMainRow(row) {
+            var flagId = row.trialFlagId || row.TrialFlagId;
+            var interviewId = row.triggeringInterviewId || row.TriggeringInterviewId || 0;
+            var irfId = row.irfId || row.IrfId || 0;
+            var irfName = row.irfName || row.IrfName || '';
+            var sev = (row.severity || row.Severity || '').toString().toUpperCase() || '—';
+            var verdict = row.displayVerdict || row.DisplayVerdict || row.overallVerdict || row.OverallVerdict || 'bad_trial';
+            var verdictClass = (verdict || '').toLowerCase() === 'good_trial' ? 'tfr-verdict tfr-verdict--good' : 'tfr-verdict tfr-verdict--bad';
+            var email = row.interviewerEmail || row.InterviewerEmail || '';
+            var html = '<tr class="tfr-main-row" data-flag-id="' + flagId + '" data-interview-id="' + interviewId + '" data-irf-id="' + irfId + '" data-email="' + esc(email) + '">'
+                + actionsHtml(row)
+                + interviewerHtml(row)
+                + irfHtml(irfName, irfId)
+                + channelOwnerHtml(row)
+                + '<td class="tfr-col-interview"><div class="tfr-cell-stack">'
+                + '<a href="/Interview/ClientReport?interviewId=' + interviewId + '&irfId=' + irfId + '" target="_blank" rel="noopener">#' + interviewId + '</a>'
+                + '<div class="tfr-cell-stack__secondary">' + esc(formatIst(row.triggeringInterviewDate || row.TriggeringInterviewDate)) + '</div>'
+                + '<div class="tfr-cell-stack__meta">Flagged ' + esc(formatIst(row.flaggedAtUtc || row.FlaggedAtUtc)) + '</div>'
+                + '<button type="button" class="tfr-detail-toggle btn-tfr-details" data-flag-id="' + flagId + '">Details</button>'
+                + '</div></td>'
+                + '<td class="tfr-col-priority">' + clientPriorityHtml(row) + '</td>'
+                + '<td class="tfr-col-verdict"><span class="' + verdictClass + '">' + esc(verdictLabel(verdict)) + '</span></td>'
+                + '<td class="tfr-col-ai">' + aiLinksHtml(interviewId, irfId) + '</td>'
+                + '<td class="tfr-col-risk tfr-risk-col">' + riskBadgesHtml(row) + '</td>';
+            if (!isPendingTab) {
+                html += reviewedHtml(row);
+            }
+            html += '</tr>';
+            html += '<tr class="tfr-detail-row" data-flag-id="' + flagId + '" style="display:none;"><td colspan="10"><div class="tfr-detail-body">Expand to load detail…</div></td></tr>';
+            return html;
+        }
+
+        function factorLine(pass, label, detail, href) {
+            var status = pass ? '<span class="tfr-factor-cell__status is-pass">Pass</span>' : '<span class="tfr-factor-cell__status is-fail">Fail</span>';
+            var d = detail ? '<div class="tfr-factor-cell__detail">' + esc(detail) + '</div>' : '';
+            var a = href ? '<a class="tfr-factor-cell__link" href="' + href + '" target="_blank" rel="noopener">' + esc(label) + '</a>' : '';
+            return '<div class="tfr-factor-cell" style="margin-bottom:8px;"><div style="font-size:11px;color:#64748b;">' + esc(label) + '</div>' + status + d + a + '</div>';
+        }
+
+        function renderDetailPanel(detail, interviewId, irfId) {
+            var d = detail || {};
+            var html = '';
+            html += '<div style="font-size:12px;font-weight:700;color:#0f172a;margin-bottom:6px;">AI Evaluations</div>';
+            html += '<div class="tfr-ai-body" data-interview-id="' + interviewId + '" data-irf-id="' + irfId + '">Loading…</div>';
+
+            var breakdown = d.severityBreakdown || d.SeverityBreakdown;
+            var sevDetail = d.severity || d.Severity || '';
+            if (sevDetail) {
+                html += '<div style="margin-top:8px;font-size:12px;"><strong>Client priority:</strong> ' + clientPriorityHtml(d) + '</div>';
+            }
+            if (breakdown) {
+                html += '<div style="margin-top:10px;font-size:12px;font-weight:700;">Severity breakdown</div><div class="tfr-candidate-comment">' + esc(breakdown) + '</div>';
+            }
+
+            html += '<div style="margin-top:12px;font-size:12px;font-weight:700;">Raw metrics</div>';
+            html += '<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:12px;">';
+            var tScore = d.transcriptQualityScore != null ? d.transcriptQualityScore : d.TranscriptQualityScore;
+            var rScore = d.reportQualityScore != null ? d.reportQualityScore : d.ReportQualityScore;
+            var rating = d.candidateRating != null ? d.candidateRating : d.CandidateRating;
+            var join = d.joinTimeMinutes != null ? d.joinTimeMinutes : d.JoinTimeMinutes;
+            var dur = d.interviewDurationMinutes != null ? d.interviewDurationMinutes : d.InterviewDurationMinutes;
+            html += factorLine(!!(d.transcriptQualityPass || d.TranscriptQualityPass), 'Transcript score', tScore != null ? (tScore + '/10') : null, '/AIScreener/TransciptAnalysis?interviewId=' + interviewId + '&irfId=' + irfId);
+            html += factorLine(!!(d.reportQualityPass || d.ReportQualityPass), 'Report score', rScore != null ? (rScore + '/100') : null, '/Interview/ReportAIDetailsReport?interviewId=' + interviewId);
+            var ratingDetail = rating != null ? (rating + '/5') : null;
+            var fb = d.candidateFeedbackComment || d.CandidateFeedbackComment;
+            var ratingHtml = factorLine(!!(d.candidateRatingPass || d.CandidateRatingPass), 'Candidate rating', ratingDetail, '/Interview/PaymentSlaDetails?interviewId=' + interviewId + '&returnBack=0&actionstatus=SLACompleted');
+            if (fb) {
+                ratingHtml = ratingHtml.replace('</div></div>', ' <span class="tfr-rating-info" title="' + esc(fb) + '" aria-label="Candidate feedback comment">\u24D8</span></div></div>');
+            }
+            html += ratingHtml;
+            html += factorLine(!!(d.joinTimePass || d.JoinTimePass), 'Join time', join != null ? (join + ' min') : null, null);
+            html += factorLine(!!(d.interviewDurationPass || d.InterviewDurationPass), 'Duration', dur != null ? (dur + ' min') : null, null);
+            html += '</div>';
+
+            html += '<div style="margin-top:12px;font-size:12px;font-weight:700;">QC Merge</div>';
+            var v = d.qcMergeVerdict || d.QcMergeVerdict;
+            var pen = d.qcMergeTotalPenalty != null ? d.qcMergeTotalPenalty : d.QcMergeTotalPenalty;
+            var qc = d.qcMergeQcScore != null ? d.qcMergeQcScore : d.QcMergeQcScore;
+            html += '<div class="tfr-candidate-comment">';
+            html += v ? ('<div><strong>Verdict:</strong> ' + esc(v) + '</div>') : '';
+            html += pen != null ? ('<div><strong>Total penalty:</strong> ' + esc(pen) + '</div>') : '';
+            html += qc != null ? ('<div><strong>QC score:</strong> ' + esc(qc) + '</div>') : '';
+            if (!v && pen == null && qc == null) html += '—';
+            html += '</div>';
+
+            /* metrics already rendered above — skip legacy duplicate block */
+
+            if (fb) {
+                html += '<div style="margin-top:10px;font-size:12px;font-weight:700;">Candidate feedback</div><div class="tfr-candidate-comment">' + esc(fb) + '</div>';
+            }
+
+            var pay = d.paymentDeduction != null ? d.paymentDeduction : d.PaymentDeduction;
+            var rec = d.paymentRecommendation || d.PaymentRecommendation;
+            var recC = d.paymentRecommendationComments || d.PaymentRecommendationComments;
+            if ((pay && pay > 0) || rec || recC) {
+                html += '<div style="margin-top:10px;font-size:12px;font-weight:700;">Payment</div><div class="tfr-candidate-comment">';
+                if (pay > 0) html += '<div><strong>Deduction:</strong> ' + esc(pay) + '%</div>';
+                if (rec) html += '<div><strong>' + esc(rec) + '</strong></div>';
+                if (recC) html += '<div>' + esc(recC) + '</div>';
+                html += '</div>';
+            }
+            return html;
+        }
+
+        function severityCssAi(p) {
+            var s = (p || '').toString().toUpperCase();
+            if (/^P[0-5]$/.test(s)) return 'tfr-severity tfr-severity--' + s.toLowerCase();
+            return 'tfr-severity tfr-severity--na';
+        }
         function aiLink(sourceName, interviewId, irfId) {
             var id = encodeURIComponent(interviewId);
             var irf = encodeURIComponent(irfId || '');
             if (sourceName === 'Transcript AI')
-                return '@TrialFlagDrillDownUrls.TranscriptQuality(0, 0)'.replace('interviewId=0', 'interviewId=' + id).replace('irfId=0', 'irfId=' + irf);
+                return '/AIScreener/TransciptAnalysis?interviewId=' + id + '&irfId=' + irf;
             if (sourceName === 'Report AI' || sourceName === 'Report AI Score')
-                return '@TrialFlagDrillDownUrls.ReportAiVerdict(0)'.replace('interviewId=0', 'interviewId=' + id);
+                return '/Interview/ReportAIDetailsReport?interviewId=' + id;
             if (sourceName === 'Contradiction AI Score' || sourceName === 'Contradiction')
-                return '@TrialFlagDrillDownUrls.ContradictionReport(0)'.replace('interviewId=0', 'interviewId=' + id);
-            return '@TrialFlagDrillDownUrls.QcMergedAiDetails(0)'.replace('interviewId=0', 'interviewId=' + id);
+                return '/Interview/ContradictionReport?interviewId=' + id;
+            return '/Interview/QCMergedAIDetails?interviewId=' + id;
         }
-
         function renderAiTable(rows, interviewId, irfId) {
             var html = '<table class="tfr-ai-table"><thead><tr><th>Source</th><th>Score / value</th><th>Status</th><th>Report</th></tr></thead><tbody>';
             (rows || []).forEach(function (r) {
@@ -914,51 +1259,192 @@
                 var name = r.sourceName || r.SourceName || '—';
                 var numericish = score != null && score !== '' && !isNaN(Number(score));
                 var notScored = score == null || score === '' || (numericish && Number(score) === 0);
-                var scoreHtml = notScored
-                    ? '<span class="tfr-ai-na">Not scored</span>'
-                    : $('<div/>').text(score).html();
-                // Treat 0/NULL numeric scores as not scored — never Triggered
-                if (notScored && numericish) {
-                    triggered = false;
-                    pLevel = '';
-                }
+                var scoreHtml = notScored ? '<span class="tfr-ai-na">Not scored</span>' : esc(score);
+                if (notScored && numericish) { triggered = false; pLevel = ''; }
                 var statusHtml = triggered && pLevel
-                    ? '<span class="' + severityCss(pLevel) + '" title="P0 = highest severity">' + $('<div/>').text(pLevel).html() + '</span>'
+                    ? '<span class="' + severityCssAi(pLevel) + '">' + esc(pLevel) + '</span>'
                     : '<span class="tfr-ai-ok">OK</span>';
-                var href = aiLink(name, interviewId, irfId);
-                html += '<tr><td>' + $('<div/>').text(name).html() + '</td><td>' + scoreHtml + '</td><td>' + statusHtml
-                    + '</td><td><a href="' + href + '" target="_blank" rel="noopener">Open</a></td></tr>';
+                html += '<tr><td>' + esc(name) + '</td><td>' + scoreHtml + '</td><td>' + statusHtml
+                    + '</td><td><a href="' + aiLink(name, interviewId, irfId) + '" target="_blank" rel="noopener">Open</a></td></tr>';
             });
-            html += '</tbody></table>';
-            return html;
+            return html + '</tbody></table>';
         }
-
         function loadAiSummary($body) {
-            if ($body.data('loaded')) return;
-            var interviewId = $body.data('interview-id');
-            var irfId = $body.data('irf-id');
-            $.ajax({
-                url: aiSummaryUrl,
-                type: 'GET',
-                data: { interviewId: interviewId, irfId: irfId },
-                dataType: 'json'
-            }).done(function (res) {
-                if (!res || !res.ok) {
-                    $body.html('<span class="tfr-ai-na">' + $('<div/>').text((res && res.message) || 'Failed to load.').html() + '</span>');
-                    return;
-                }
-                $body.html(renderAiTable(res.rows || [], interviewId, irfId)).data('loaded', true);
+            if ($body.data('loaded') || $body.data('loading')) return;
+            $body.data('loading', true);
+            var interviewId = parseInt($body.data('interview-id'), 10);
+            var irfId = parseInt($body.data('irf-id'), 10) || 0;
+            $.getJSON(aiSummaryUrl, { interviewId: interviewId, irfId: irfId }).done(function (res) {
+                $body.data('loaded', true).data('loading', false);
+                if (!res || !res.ok) { $body.html('<span style="color:#b91c1c;">' + esc((res && res.message) || 'Failed') + '</span>'); return; }
+                $body.html(renderAiTable(res.rows || [], interviewId, irfId));
             }).fail(function () {
-                $body.html('<span class="tfr-ai-na">Failed to load AI evaluations.</span>');
+                $body.data('loading', false).html('<span style="color:#b91c1c;">Failed to load AI summary.</span>');
             });
         }
 
-        function applySearch() {
-            searchTerm = ($('#tfrSearch').val() || '').trim().toLowerCase();
-            severityFilter = ($('#tfrSeverityFilter').val() || '').trim().toUpperCase();
-            currentPage = 1;
-            $('#tfrSearchClear').toggle(searchTerm.length > 0);
-            renderPagination();
+
+        function renderOwnerStrip(summaries) {
+            ownerSummaries = summaries || [];
+            var $sel = $('#tfrOwnerFilter');
+            var cur = channelOwnerFilter;
+            var opts = '<option value="">All owners</option>';
+            ownerSummaries.forEach(function (o) {
+                var email = o.channelOwnerEmail || o.ChannelOwnerEmail || '';
+                var label = o.channelOwner || o.ChannelOwner || email || '(unassigned)';
+                var p0 = o.p0Count != null ? o.p0Count : (o.P0Count || 0);
+                var tot = o.totalCount != null ? o.totalCount : (o.TotalCount || 0);
+                opts += '<option value="' + esc(email) + '"' + (email === cur ? ' selected' : '') + '>' + esc(label) + ' (' + p0 + ' P0 / ' + tot + ')</option>';
+            });
+            $sel.html(opts);
+            var list = ownerSummaries.slice();
+            if (cur) list = list.filter(function (o) { return (o.channelOwnerEmail || o.ChannelOwnerEmail || '') === cur; });
+            if (!list.length) {
+                $('#tfrOwnerStripBody').html('<span style="color:#94a3b8;">No owners on this tab.</span>');
+                return;
+            }
+            var body = '';
+            if (cur) {
+                body += '<button type="button" class="tfr-btn" id="tfrOwnerClear" style="margin:0;font-size:11px;">Clear owner filter</button>';
+            }
+            list.forEach(function (o) {
+                var email = o.channelOwnerEmail || o.ChannelOwnerEmail || '';
+                var label = o.channelOwner || o.ChannelOwner || email || '(unassigned)';
+                var p0 = o.p0Count != null ? o.p0Count : (o.P0Count || 0);
+                var tot = o.totalCount != null ? o.totalCount : (o.TotalCount || 0);
+                var active = email === cur ? ' is-active' : '';
+                body += '<button type="button" class="tfr-owner-chip' + active + '" data-owner="' + esc(email) + '" title="Filter to this owner">'
+                    + esc(label) + ' : <span class="tfr-owner-chip__p0">' + p0 + ' P0</span> · ' + tot + ' total</button>';
+            });
+            $('#tfrOwnerStripBody').html(body);
+        }
+        function updateCounts(res) {
+            if (res.pendingCount != null) $('#tfrCountPending').text('(' + res.pendingCount + ')');
+            if (res.keptCount != null) $('#tfrCountKept').text('(' + res.keptCount + ')');
+            if (res.removedCount != null) $('#tfrCountRemoved').text('(' + res.removedCount + ')');
+        }
+
+        function renderPager() {
+            var total = totalFiltered;
+            var totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE) || 1);
+            if (currentPage > totalPages) currentPage = totalPages;
+            var start = total === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1;
+            var end = Math.min(currentPage * PAGE_SIZE, total);
+            $('#tfrPageInfo').text(total === 0 ? 'No rows' : ('Showing ' + start + '–' + end + ' of ' + total));
+            var html = '<button type="button" class="tfr-btn tfr-pg-prev"' + (currentPage <= 1 ? ' disabled' : '') + '>&lsaquo;</button>';
+            var startPage = Math.max(1, currentPage - 2);
+            var endPage = Math.min(totalPages, startPage + 4);
+            startPage = Math.max(1, endPage - 4);
+            for (var p = startPage; p <= endPage; p++) {
+                html += '<button type="button" class="tfr-btn tfr-pg' + (p === currentPage ? ' is-active' : '') + '" data-page="' + p + '">' + p + '</button>';
+            }
+            html += '<button type="button" class="tfr-btn tfr-pg-next"' + (currentPage >= totalPages ? ' disabled' : '') + '>&rsaquo;</button>';
+            $('#tfrPageBtns').html(html);
+            $('#tfrPagination').addClass('is-visible');
+        }
+
+        function listQuery(draw) {
+            return {
+                tab: activeTab,
+                draw: draw,
+                start: (currentPage - 1) * PAGE_SIZE,
+                length: PAGE_SIZE,
+                search: searchTerm,
+                severity: severityFilter,
+                channelOwner: channelOwnerFilter
+            };
+        }
+
+        function applyListMeta(res) {
+            updateCounts(res);
+            renderOwnerStrip(res.ownerSummaries || res.OwnerSummaries || []);
+            totalFiltered = res.recordsFiltered || 0;
+            renderPager();
+        }
+
+        /** After Keep/Remove: drop the row from the current tab without a full grid flash. */
+        function removeFlagRows(flagId) {
+            $tbody.find('tr.tfr-main-row[data-flag-id="' + flagId + '"], tr.tfr-detail-row[data-flag-id="' + flagId + '"]').remove();
+            delete detailCache[flagId];
+            delete detailInflight[flagId];
+            if (!$tbody.find('tr.tfr-main-row').length) {
+                loadPage();
+                return;
+            }
+            // Refresh tab counts + owner P0 strip only
+            $.ajax({
+                url: listUrl,
+                type: 'GET',
+                dataType: 'json',
+                data: listQuery(++drawSeq)
+            }).done(function (res) {
+                if (res && !res.error) applyListMeta(res);
+            });
+        }
+
+        function loadPage() {
+            if (typeof $ === 'undefined' || !$tbody || !$tbody.length) {
+                console.error('TrialFlagReview: jQuery or #tfrTbody missing');
+                return;
+            }
+            var myDraw = ++drawSeq;
+            $tbody.html('<tr class="tfr-loading-row"><td colspan="10" class="tfr-empty">Loading...</td></tr>');
+            $.ajax({
+                url: listUrl,
+                type: 'GET',
+                dataType: 'json',
+                timeout: 60000,
+                data: listQuery(myDraw)
+            }).done(function (res) {
+                if (myDraw !== drawSeq) return;
+                try {
+                    if (!res) {
+                        $tbody.html('<tr><td colspan="10" class="tfr-empty" style="color:#b91c1c;">Empty list response.</td></tr>');
+                        return;
+                    }
+                    if (res.error || res.Error) {
+                        $tbody.html('<tr><td colspan="10" class="tfr-empty" style="color:#b91c1c;">' + esc(res.error || res.Error) + '</td></tr>');
+                        totalFiltered = 0;
+                        renderPager();
+                        return;
+                    }
+                    var rows = res.data || res.Data || [];
+                    if (!rows.length) {
+                        var pending = res.pendingCount != null ? res.pendingCount : res.PendingCount;
+                        var kept = res.keptCount != null ? res.keptCount : res.KeptCount;
+                        var removed = res.removedCount != null ? res.removedCount : res.RemovedCount;
+                        var emptyMsg = 'No ' + esc(activeTab) + ' trial flags on this page.';
+                        if (activeTab === 'pending' && pending === 0 && ((kept || 0) > 0 || (removed || 0) > 0)) {
+                            emptyMsg = 'No pending flags. Kept: ' + (kept || 0) + ', Removed: ' + (removed || 0) + '. Switch tabs above, or run Backfill if the queue should have new trials.';
+                        } else if (activeTab === 'pending' && pending === 0 && (kept || 0) === 0 && (removed || 0) === 0) {
+                            emptyMsg = 'dbo.TrialFlags has no rows yet. Use Backfill trial flags, or wait for new first-interview QC merges.';
+                        } else if (activeTab === 'pending' && (pending || 0) > 0) {
+                            emptyMsg = 'Pending count is ' + pending + ' but this page returned 0 rows. Redeploy usp_GetTrialFlagsForReview_List (ReviewStatus filter), then Reload.';
+                        }
+                        $tbody.html('<tr><td colspan="10" class="tfr-empty">' + emptyMsg + '</td></tr>');
+                        $('#tfrSearchEmpty').toggleClass('is-visible', !!searchTerm);
+                    } else {
+                        $('#tfrSearchEmpty').removeClass('is-visible');
+                        var html = '';
+                        for (var i = 0; i < rows.length; i++) {
+                            html += buildMainRow(rows[i]);
+                        }
+                        $tbody.html(html);
+                    }
+                    applyListMeta(res);
+                } catch (ex) {
+                    console.error('TrialFlagReview list render failed', ex);
+                    $tbody.html('<tr><td colspan="10" class="tfr-empty" style="color:#b91c1c;">List render failed: ' + esc(ex && ex.message ? ex.message : ex) + '</td></tr>');
+                }
+            }).fail(function (xhr, status) {
+                if (myDraw !== drawSeq) return;
+                var msg = 'List request failed';
+                if (status === 'timeout') msg += ' (timed out). Check usp_GetTrialFlagsForReview_List on the database.';
+                else if (xhr && xhr.status) msg += ' (HTTP ' + xhr.status + '). Deploy usp_GetTrialFlagsForReview_List.';
+                else msg += '. Deploy usp_GetTrialFlagsForReview_List + usp_GetTrialFlagOwnerSummary.';
+                $tbody.html('<tr><td colspan="10" class="tfr-empty" style="color:#b91c1c;">' + msg + '</td></tr>');
+                $('#tfrOwnerStripBody').html('<span style="color:#b91c1c;">Owner strip unavailable</span>');
+            });
         }
 
         function showToast(message, ok) {
@@ -967,115 +1453,217 @@
             setTimeout(function () { $t.removeClass('is-show'); }, 6000);
         }
 
-        function openModal(action, flagId, interviewer, irf) {
-            $('#tfrModalFlagId').val(flagId);
-            $('#tfrModalAction').val(action);
-            $('#tfrModalComment').val('');
-            $('#tfrModalTitle').text(action === 'keep' ? 'Keep on IRF' : 'Remove from IRF');
-            $('#tfrModalSub').text(interviewer + ' on ' + irf);
-            $('#tfrActionModal').addClass('is-open');
-        }
+        var searchTimer = null;
+        $('#tfrSearch').on('input', function () {
+            searchTerm = ($(this).val() || '').trim();
+            $('#tfrSearchClear').toggle(!!searchTerm);
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(function () { currentPage = 1; loadPage(); }, 280);
+        });
+        $('#tfrSearchClear').on('click', function () {
+            $('#tfrSearch').val('');
+            searchTerm = '';
+            $(this).hide();
+            currentPage = 1;
+            loadPage();
+        });
+        $('#tfrSeverityFilter').on('change', function () {
+            severityFilter = ($(this).val() || '').toUpperCase();
+            currentPage = 1;
+            loadPage();
+        });
+        $('#tfrOwnerFilter').on('change', function () {
+            channelOwnerFilter = ($(this).val() || '').trim();
+            currentPage = 1;
+            loadPage();
+        });
+        $(document).on('click', '.tfr-owner-chip', function () {
+            var email = ($(this).data('owner') || '').toString();
+            channelOwnerFilter = email;
+            $('#tfrOwnerFilter').val(email);
+            currentPage = 1;
+            loadPage();
+        });
+        $(document).on('click', '#tfrOwnerClear', function () {
+            channelOwnerFilter = '';
+            $('#tfrOwnerFilter').val('');
+            currentPage = 1;
+            loadPage();
+        });
+        $('#btnTfrReload').on('click', function () { loadPage(); });
 
-        $('.btn-tfr-keep').on('click', function () {
-            openModal('keep', $(this).data('flag-id'), $(this).data('interviewer'), $(this).data('irf'));
+        $(document).on('click', '.tfr-pg', function () {
+            var p = parseInt($(this).data('page'), 10);
+            if (p && p !== currentPage) { currentPage = p; loadPage(); }
         });
-        $('.btn-tfr-remove').on('click', function () {
-            openModal('remove', $(this).data('flag-id'), $(this).data('interviewer'), $(this).data('irf'));
-        });
-        $('#tfrModalCancel, #tfrActionModal').on('click', function (e) {
-            if (e.target === this) $('#tfrActionModal').removeClass('is-open');
-        });
-        $('.tfr-modal-card').on('click', function (e) { e.stopPropagation(); });
-
-        $('#tfrModalConfirm').on('click', function () {
-            var action = $('#tfrModalAction').val();
-            var url = action === 'keep' ? keepUrl : removeUrl;
-            var $btn = $(this).prop('disabled', true);
-            $.ajax({
-                url: url,
-                type: 'POST',
-                data: {
-                    trialFlagId: $('#tfrModalFlagId').val(),
-                    comment: $('#tfrModalComment').val()
-                },
-                dataType: 'json'
-            }).done(function (res) {
-                showToast(res.message || (res.ok ? 'Saved.' : 'Failed.'), !!res.ok);
-                if (res.ok) setTimeout(function () { location.reload(); }, 1000);
-                else $btn.prop('disabled', false);
-            }).fail(function (xhr) {
-                var msg = 'Request failed';
-                if (xhr.responseJSON && xhr.responseJSON.message) msg = xhr.responseJSON.message;
-                showToast(msg, false);
-                $btn.prop('disabled', false);
-            });
-        });
-
-        $('#tfrSearch').on('input', applySearch);
-        $('#tfrSearchClear').on('click', function () { $('#tfrSearch').val(''); applySearch(); });
-        $('#tfrSeverityFilter').on('change', applySearch);
-        $('#tfrSortSeverity').on('click', function () {
-            severitySortAsc = !severitySortAsc;
-            // ↑ = P0 (highest) first; ↓ = P5 (clean) first
-            $(this).toggleClass('is-active', true)
-                .attr('title', severitySortAsc ? 'P0 highest first' : 'P5 clean first')
-                .text(severitySortAsc ? 'Severity ↑ (P0 first)' : 'Severity ↓ (P5 first)');
-            applySeveritySort();
-            applySearch();
+        $(document).on('click', '.tfr-pg-prev', function () { if (currentPage > 1) { currentPage--; loadPage(); } });
+        $(document).on('click', '.tfr-pg-next', function () {
+            var totalPages = Math.max(1, Math.ceil(totalFiltered / PAGE_SIZE));
+            if (currentPage < totalPages) { currentPage++; loadPage(); }
         });
 
         $(document).on('click', '.btn-tfr-details', function () {
             var flagId = $(this).data('flag-id');
             var $detail = $tbody.find('tr.tfr-detail-row[data-flag-id="' + flagId + '"]');
+            var $main = $tbody.find('tr.tfr-main-row[data-flag-id="' + flagId + '"]');
             var open = !$detail.data('open');
             $detail.data('open', open);
-            $detail.toggle(open);
-            $(this).text(open ? 'Hide details' : 'Details');
-            if (open) loadAiSummary($detail.find('.tfr-ai-body'));
+            if (!open) { $detail.hide(); return; }
+            $detail.show();
+            var $body = $detail.find('.tfr-detail-body');
+            var interviewId = parseInt($main.data('interview-id'), 10);
+            var irfId = parseInt($main.data('irf-id'), 10) || 0;
+
+            function afterDetail(detail) {
+                $body.html(renderDetailPanel(detail, interviewId, irfId));
+                loadAiSummary($body.find('.tfr-ai-body'));
+            }
+
+            if (detailCache[flagId]) {
+                afterDetail(detailCache[flagId]);
+                return;
+            }
+            if (detailInflight[flagId]) return;
+            detailInflight[flagId] = true;
+            $body.html('<div class="tfr-empty">Loading detail…</div>');
+            $.getJSON(detailUrl, { trialFlagId: flagId }).done(function (res) {
+                detailInflight[flagId] = false;
+                if (!res || !res.ok) {
+                    $body.html('<span style="color:#b91c1c;">' + esc((res && res.message) || 'Detail failed') + '</span>');
+                    return;
+                }
+                detailCache[flagId] = res.detail;
+                afterDetail(res.detail);
+            }).fail(function () {
+                detailInflight[flagId] = false;
+                $body.html('<span style="color:#b91c1c;">Detail request failed.</span>');
+            });
+        });
+
+        function openModal(action, flagId, interviewer, irf) {
+            $('#tfrModalAction').val(action);
+            $('#tfrModalFlagId').val(flagId);
+            $('#tfrModalComment').val('');
+            $('#tfrModalTitle').text(action === 'keep' ? 'Keep on IRF' : 'Remove from IRF');
+            $('#tfrModalSub').text((interviewer || '') + ' · ' + (irf || ''));
+            $('#tfrActionModal').attr('aria-hidden', 'false').addClass('is-open');
+        }
+        $('#tfrModalCancel').on('click', function () {
+            $('#tfrActionModal').attr('aria-hidden', 'true').removeClass('is-open');
+        });
+        $(document).on('click', '.btn-tfr-keep', function () {
+            openModal('keep', $(this).data('flag-id'), $(this).data('interviewer'), $(this).data('irf'));
+        });
+        $(document).on('click', '.btn-tfr-remove', function () {
+            openModal('remove', $(this).data('flag-id'), $(this).data('interviewer'), $(this).data('irf'));
+        });
+        $('#tfrModalConfirm').on('click', function () {
+            var action = $('#tfrModalAction').val();
+            var flagId = parseInt($('#tfrModalFlagId').val(), 10);
+            var comment = ($('#tfrModalComment').val() || '').trim();
+            var url = action === 'keep' ? keepUrl : removeUrl;
+            var $btn = $(this).prop('disabled', true);
+            $.ajax({ url: url, type: 'POST', data: { trialFlagId: flagId, comment: comment }, dataType: 'json' })
+                .done(function (res) {
+                    showToast((res && res.message) || (res && res.ok ? 'Done.' : 'Failed.'), !!(res && res.ok));
+                    $('#tfrActionModal').attr('aria-hidden', 'true').removeClass('is-open');
+                    if (res && res.ok) {
+                        removeFlagRows(flagId);
+                    }
+                })
+                .fail(function () { showToast('Action failed.', false); })
+                .always(function () { $btn.prop('disabled', false); });
         });
 
         $('#btnTfrBackfill').on('click', function () {
             var $btn = $(this).prop('disabled', true);
-            $('#tfrBackfillStatus').text('Running backfill...');
-            $.ajax({
-                url: backfillUrl,
-                type: 'GET',
-                dataType: 'json',
-                timeout: 300000
-            }).done(function (res) {
+            $('#tfrBackfillStatus').text('Running…');
+            $.ajax({ url: backfillUrl, type: 'POST', dataType: 'json' }).done(function (res) {
                 $('#tfrBackfillStatus').text(res.message || '');
-                if (res.details && res.details.length) {
-                    console.log('Trial flag backfill details:', res.details);
-                }
                 showToast(res.message || (res.ok ? 'Backfill complete.' : 'Backfill finished.'), !!res.ok);
-                if (res.inserted > 0) setTimeout(function () { location.reload(); }, 1500);
+                if (res.inserted > 0) setTimeout(function () { loadPage(); $btn.prop('disabled', false); }, 800);
                 else $btn.prop('disabled', false);
             }).fail(function (xhr) {
                 var msg = 'Backfill request failed';
                 if (xhr.status) msg += ' (HTTP ' + xhr.status + ')';
-                if (xhr.responseJSON && xhr.responseJSON.message) msg += ': ' + xhr.responseJSON.message;
-                else if (xhr.responseText && xhr.responseText.length < 500) msg += ': ' + xhr.responseText;
                 $('#tfrBackfillStatus').text(msg);
                 showToast(msg, false);
                 $btn.prop('disabled', false);
             });
         });
 
-        $(document).on('click', '.tfr-pg', function () {
-            var p = parseInt($(this).data('page'), 10);
-            if (p && p !== currentPage) { currentPage = p; renderPagination(); }
+        $(document).on('click', '.dm-v4-iv-insights-btn--global', function (e) {
+            e.preventDefault();
+            var email = ($(this).data('email') || '').toString().trim();
+            if (!email || typeof InsightsDetails !== 'function') return;
+            InsightsDetails(email);
         });
-        $(document).on('click', '.tfr-pg-prev', function () { if (currentPage > 1) { currentPage--; renderPagination(); } });
-        $(document).on('click', '.tfr-pg-next', function () {
-            var totalPages = Math.ceil(getMatchedRows().length / PAGE_SIZE);
-            if (currentPage < totalPages) { currentPage++; renderPagination(); }
+        $(document).on('click', '.btn-tfr-mark-suspicious', function (e) {
+            e.preventDefault();
+            var email = ($(this).data('email') || '').toString().trim();
+            if (!email) return;
+            if (typeof SuspiciousTypeDetails === 'function') SuspiciousTypeDetails(email);
+        });
+        $(document).on('click', '.btn-tfr-undo-suspicious', function (e) {
+            e.preventDefault();
+            var userId = parseInt($(this).data('user-id'), 10);
+            var email = ($(this).data('email') || '').toString();
+            if (!userId) { showToast('Missing interviewer user id for undo.', false); return; }
+            if (!window.confirm('Undo suspicious mark for ' + (email || ('user #' + userId)) + '?')) return;
+            var $btn = $(this).prop('disabled', true);
+            $.ajax({ url: '/Dashboard/UndoSuspiciousInterviewer', type: 'POST', data: { UserId: userId }, dataType: 'json' })
+                .done(function (res) {
+                    var msg = (typeof res === 'string') ? res : (res && res.message) || 'Undo complete.';
+                    var ok = typeof res === 'string' ? msg.toLowerCase().indexOf('success') >= 0 : !!(res && res.ok);
+                    showToast(msg, ok);
+                    if (ok) setTimeout(loadPage, 600);
+                    else $btn.prop('disabled', false);
+                })
+                .fail(function () { showToast('Undo suspicious failed.', false); $btn.prop('disabled', false); });
         });
 
-        applySeveritySort();
-        $('#tfrSortSeverity')
-            .addClass('is-active')
-            .attr('title', 'P0 highest first')
-            .text('Severity ↑ (P0 first)');
-        renderPagination();
+        // DataTables-compatible server-side list (custom pager UI; same endpoint contract).
+        if (typeof $ === 'undefined') {
+            console.error('TrialFlagReview: jQuery not loaded — grid cannot fetch.');
+            var el = document.getElementById('tfrTbody');
+            if (el) el.innerHTML = '<tr><td colspan="10" class="tfr-empty" style="color:#b91c1c;">jQuery failed to load; cannot load trial flags.</td></tr>';
+        } else {
+            $(function () { loadPage(); });
+        }
+    })();
+</script>
+@await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
+@await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
+<script>
+    // After shared partial: toast + reload instead of alert() on this page only
+    (function () {
+        if (typeof window.SaveSuspiciousInterViewer !== 'function') return;
+        var showToast = function (message, ok) {
+            var $t = $('#tfrToast');
+            if (!$t.length) { alert(message); return; }
+            $t.removeClass('tfr-toast--ok tfr-toast--err').addClass(ok ? 'tfr-toast--ok' : 'tfr-toast--err').text(message).addClass('is-show');
+            setTimeout(function () { $t.removeClass('is-show'); }, 6000);
+        };
+        window.SaveSuspiciousInterViewer = function () {
+            var comment = ($('#Comment').val() || '').trim();
+            var emailId = $('#hdnInterviewerEmail').val();
+            if (!comment) {
+                showToast('Please enter a comment.', false);
+                return;
+            }
+            $.ajax({
+                url: '/Interviewer/AddSuspiciousTypeComment',
+                data: { Email: emailId, Comment: comment },
+                type: 'POST'
+            }).done(function (data) {
+                var msg = (typeof data === 'string') ? data : (data && data.message) || 'Saved.';
+                var ok = msg.toLowerCase().indexOf('success') >= 0;
+                showToast(msg, ok);
+                if (typeof closeSuspiciousTypeModal === 'function') closeSuspiciousTypeModal();
+                if (ok) setTimeout(function () { location.reload(); }, 900);
+            }).fail(function () {
+                showToast('Failed to mark suspicious.', false);
+            });
+        };
     })();
 </script>

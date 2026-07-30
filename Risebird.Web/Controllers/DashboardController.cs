@@ -8018,7 +8018,8 @@ NEVER:
                 TrialFlagReviewPageVm page;
                 try
                 {
-                    page = await _trialFlagReviewService.GetPageAsync(tab, refresh);
+                    // Shell only — grid loads via TrialFlagReviewList (lazy two-tier read).
+                    page = await _trialFlagReviewService.GetPageShellAsync(tab);
                     ViewBag.LoadError = null;
                 }
                 catch (Exception loadEx)
@@ -8035,6 +8036,102 @@ NEVER:
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        /// <summary>
+        /// AJAX list — light List proc only (no JSON / PaymentSLA / QC-merge).
+        /// Request/response uses DataTables server-side fields (draw/start/length/records*).
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> TrialFlagReviewList(
+            string tab = null,
+            int draw = 1,
+            int start = 0,
+            int length = 25,
+            string search = null,
+            string severity = null,
+            string channelOwner = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { draw, recordsTotal = 0, recordsFiltered = 0, data = Array.Empty<object>(), error = "Unauthorized" });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsTrialFlagReviewerProfile(profileName))
+                    return Json(new { draw, recordsTotal = 0, recordsFiltered = 0, data = Array.Empty<object>(), error = "Not authorized." });
+
+                // DataTables nested search[value]
+                if (string.IsNullOrWhiteSpace(search))
+                    search = Request.Query["search[value]"].FirstOrDefault();
+
+                var result = await _trialFlagReviewService.GetListAsync(new TrialFlagReviewListRequest
+                {
+                    Tab = tab,
+                    Offset = start,
+                    PageSize = length <= 0 ? 25 : length,
+                    Search = search,
+                    Severity = severity,
+                    ChannelOwner = channelOwner,
+                    Draw = draw
+                });
+
+                return Json(new
+                {
+                    draw = result.Draw,
+                    recordsTotal = result.RecordsTotal,
+                    recordsFiltered = result.RecordsFiltered,
+                    data = result.Data,
+                    pendingCount = result.PendingCount,
+                    keptCount = result.KeptCount,
+                    removedCount = result.RemovedCount,
+                    ownerSummaries = result.OwnerSummaries,
+                    error = result.Error
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new
+                {
+                    draw,
+                    recordsTotal = 0,
+                    recordsFiltered = 0,
+                    data = Array.Empty<object>(),
+                    error = ex.GetBaseException()?.Message ?? "List failed. Deploy usp_GetTrialFlagsForReview_List."
+                });
+            }
+        }
+
+        /// <summary>On-demand heavy row detail — usp_GetTrialFlagDetail.</summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> TrialFlagReviewDetail(int trialFlagId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { ok = false, message = "Unauthorized" });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsTrialFlagReviewerProfile(profileName))
+                    return Json(new { ok = false, message = "Not authorized." });
+
+                if (trialFlagId <= 0)
+                    return Json(new { ok = false, message = "Invalid trial flag." });
+
+                var detail = await _trialFlagReviewService.GetDetailAsync(trialFlagId);
+                if (detail == null)
+                    return Json(new { ok = false, message = "Trial flag not found." });
+
+                return Json(new { ok = true, detail });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, message = "Detail failed. Deploy usp_GetTrialFlagDetail." });
             }
         }
 
@@ -8305,7 +8402,7 @@ NEVER:
         [Authorize]
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public async Task<IActionResult> RefreshIrfRiskCategory(int irfId, DateTime? from = null, DateTime? to = null)
+        public async Task<IActionResult> RefreshIrfRiskCategory(int irfId, DateTime? from = null, DateTime? to = null, bool ignoreMassFireGuard = false)
         {
             try
             {
@@ -8320,13 +8417,16 @@ NEVER:
                     return Json(new { ok = false, message = "Invalid IRF." });
 
                 var (fromIst, toIst, _) = NormalizeDirectoryIstDateRange(from, to, null);
-                var result = await _autoQcBackfillService.BackfillRiskCategoryForIrfAsync(irfId, fromIst, toIst);
+                var result = await _autoQcBackfillService.BackfillRiskCategoryForIrfAsync(irfId, fromIst, toIst, ignoreMassFireGuard);
                 return Json(new
                 {
                     ok = result.Ok,
                     message = result.Message,
                     inserted = result.Processed,
-                    remaining = result.Remaining
+                    remaining = result.Remaining,
+                    aborted = result.Aborted,
+                    abortedCheckName = result.AbortedCheckName,
+                    abortedFireRatePct = result.AbortedFireRatePct
                 });
             }
             catch (Exception ex)

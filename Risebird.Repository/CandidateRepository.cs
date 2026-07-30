@@ -1616,6 +1616,8 @@ namespace Risebird.Repository
                                     Cancellationreason = dt.Rows[i]["Cancellationreason"] != null ? dt.Rows[i]["Cancellationreason"].ToString() : string.Empty,
                                     ClientHRAttemptContact = dt.Rows[i]["ClientHRAttemptContact"] != null ? dt.Rows[i]["ClientHRAttemptContact"].ToString() : string.Empty,
                                     CandidateId = !string.IsNullOrEmpty(dt.Rows[i]["CandidateId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["CandidateId"]) : 0,
+                                    IsAIInterview = dt.Columns.Contains("IsAIInterview") && !string.IsNullOrEmpty(dt.Rows[i]["IsAIInterview"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsAIInterview"]) : false,
+                                    SessionId = dt.Columns.Contains("SessionId") && dt.Rows[i]["SessionId"] != null ? dt.Rows[i]["SessionId"].ToString() : string.Empty,
                                 });
                             }
                             _resultVM = listCandidates;
@@ -1759,6 +1761,8 @@ namespace Risebird.Repository
                                     ClientHRAttemptContact = dt.Rows[i]["ClientHRAttemptContact"] != null ? dt.Rows[i]["ClientHRAttemptContact"].ToString() : string.Empty,
 
                                     CandidateId = !string.IsNullOrEmpty(dt.Rows[i]["CandidateId"].ToString()) ? Convert.ToInt32(dt.Rows[i]["CandidateId"]) : 0,
+                                    IsAIInterview = dt.Columns.Contains("IsAIInterview") && !string.IsNullOrEmpty(dt.Rows[i]["IsAIInterview"].ToString()) ? Convert.ToBoolean(dt.Rows[i]["IsAIInterview"]) : false,
+                                    SessionId = dt.Columns.Contains("SessionId") && dt.Rows[i]["SessionId"] != null ? dt.Rows[i]["SessionId"].ToString() : string.Empty,
                                 });
                             }
                             _resultVM = listCandidates;
@@ -1864,6 +1868,67 @@ namespace Risebird.Repository
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.Add(new SqlParameter("@CandidateWebHookBulkData", SqlDbType.Structured));
                     cmd.Parameters["@CandidateWebHookBulkData"].Value = dataDt;
+                    con.Open();
+                    if (await cmd.ExecuteNonQueryAsync() != 0)
+                    {
+                        con.Close();
+                    }
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<IEnumerable<AIInterviewStatusWebHookData>> GetAIInterviewStatusForWebHook(bool isStaging = false)
+        {
+            try
+            {
+                if (isStaging)
+                {
+                    connectionString = connectionStringForTesting;
+                }
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@timeNow", DateTime.Now);
+                    var result = await SqlMapper.QueryAsync<AIInterviewStatusWebHookData>(con, "usp_GetAIInterviewStatusWebHookData", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<bool> DeleteDeliveredAIInterviewStatusForWebHook(List<int> data, bool isStaging = false)
+        {
+            try
+            {
+                if (isStaging)
+                {
+                    connectionString = connectionStringForTesting;
+                }
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable dataDt = new DataTable();
+                    dataDt.Columns.Add("id", typeof(int));
+
+                    foreach (var item in data)
+                    {
+                        dataDt.Rows.Add(item);
+                    }
+
+                    SqlCommand cmd = new SqlCommand("usp_AIInterviewStatusWebHookDataBulkDelete", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@AIInterviewWebHookBulkData", SqlDbType.Structured));
+                    cmd.Parameters["@AIInterviewWebHookBulkData"].Value = dataDt;
                     con.Open();
                     if (await cmd.ExecuteNonQueryAsync() != 0)
                     {

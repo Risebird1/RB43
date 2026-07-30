@@ -7,6 +7,8 @@
 @{
     ViewData["Title"] = "AI Interview Report";
     Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+    // Dark theme only for adaptive (audio) interviews — video keeps the original light UI.
+    ViewBag.AiInterviewDarkTheme = ViewBag.IsAdaptive == true;
 }
 
 <style>
@@ -628,12 +630,6 @@
         vertical-align: middle;
     }
 
-    .rb-ai-adaptive-report table.rb-adaptive-rating-table th:not(:first-child),
-    .rb-ai-adaptive-report table.rb-adaptive-rating-table tr:first-child th:not(:first-child),
-    .rb-ai-adaptive-report table.rb-adaptive-rating-table tr:first-child td.rb-adaptive-th:not(:first-child) {
-        text-align: center;
-    }
-
     .rb-ai-adaptive-report table.rb-adaptive-rating-table td {
         padding: 8px 10px !important;
         vertical-align: top;
@@ -837,19 +833,70 @@
 
     .rb-ai-adaptive-report .rb-adaptive-two-col {
         display: grid;
-        grid-template-columns: 1.15fr 0.85fr;
+        grid-template-columns: 1fr 1fr;
         gap: 12px;
-        align-items: stretch;
+        align-items: start;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-overview .rb-ai-two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        align-items: start;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-overview .rb-ai-panel {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        padding: 12px 14px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06);
+        min-width: 0;
+        height: auto;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-overview .rb-ai-panel__head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 10px;
+        margin-left: 0;
+        padding: 0 0 8px;
+        padding-left: 0;
+        border-bottom: 1px solid #eef2f6;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-overview .rb-ai-panel__head img {
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+        flex-shrink: 0;
+        margin: 0;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-overview .rb-ai-panel__title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #334155;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        margin: 0;
+        padding: 0;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-overview .rb-ai-comment-label {
+        margin-left: 0;
+        padding-left: 0;
     }
 
     .rb-ai-adaptive-report .rb-adaptive-panel {
-        background: #fff;
-        border: 1px solid #e2e8f0;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border: 1px solid #e9ecef;
         border-radius: 12px;
         padding: 12px 14px;
-        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06);
         min-width: 0;
-        height: 100%;
+        height: auto;
     }
 
     .rb-ai-adaptive-report .rb-adaptive-panel--comment .rb-adaptive-field__value {
@@ -862,13 +909,24 @@
         align-items: center;
         gap: 8px;
         margin: 0 0 10px;
-        padding-bottom: 8px;
+        margin-left: 0;
+        padding: 0 0 8px;
+        padding-left: 0;
         border-bottom: 1px solid #eef2f6;
-        font-size: 12px;
-        font-weight: 700;
-        color: #1e293b;
+        font-size: 13px;
+        font-weight: 600;
+        color: #334155;
         text-transform: uppercase;
         letter-spacing: 0.03em;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-panel__head img,
+    .rb-ai-adaptive-report .rb-adaptive-table-title img,
+    .rb-ai-adaptive-report .rb-adaptive-section-card .rb-adaptive-panel__head img {
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+        flex-shrink: 0;
     }
 
     .rb-ai-adaptive-report .rb-adaptive-panel__head i {
@@ -881,21 +939,109 @@
     }
 
     .rb-ai-adaptive-report .rb-adaptive-panel .rb-adaptive-table-wrap,
-    .rb-ai-adaptive-report .rb-adaptive-panel table.rb-adaptive-rating-table {
+    .rb-ai-adaptive-report .rb-adaptive-panel table.rb-adaptive-rating-table,
+    .rb-ai-adaptive-report .rb-ai-panel .rb-adaptive-table-wrap,
+    .rb-ai-adaptive-report .rb-ai-panel .rb-ai-table-wrap,
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-adaptive-rating-table,
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-ai-rubric-table {
         margin: 0;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-ai-rubric-table,
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-adaptive-rating-table.rb-ai-rubric-table {
+        width: 100% !important;
+        max-width: 100% !important;
+        table-layout: fixed;
+        font-size: 12px;
+        border-collapse: collapse;
+        margin: 0;
+    }
+
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-ai-rubric-table th,
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-ai-rubric-table td,
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-adaptive-rating-table.rb-ai-rubric-table th,
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-adaptive-rating-table.rb-ai-rubric-table td {
+        border: 1px solid #e8edf2 !important;
+        padding: 6px 8px !important;
+        vertical-align: top;
+        text-align: left;
+        word-wrap: break-word;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        white-space: normal !important;
+        line-height: 1.45;
+        font-size: 12px;
+        background: transparent !important;
+    }
+
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-ai-rubric-table th.rb-ai-r-level,
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-ai-rubric-table td.rb-ai-r-level {
+        width: 24%;
+        font-size: 12px;
+        color: #64748b;
+        text-align: left;
+    }
+
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-ai-rubric-table th:first-child,
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-ai-rubric-table td:first-child {
+        width: 40%;
+    }
+
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-ai-rubric-table th.rb-ai-r-score,
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-ai-rubric-table td.rb-ai-r-score {
+        width: 12%;
+        text-align: center !important;
+        font-weight: 600;
+    }
+
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-ai-rubric-table th.rb-ai-r-score {
+        color: #475569 !important;
+        font-weight: 700 !important;
+    }
+
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-ai-rubric-table td.rb-ai-r-score {
+        color: #127430 !important;
+    }
+
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-ai-rubric-table thead th,
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-ai-rubric-table tr:first-child th,
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-ai-rubric-table tr:first-child td.rb-adaptive-th,
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-adaptive-rating-table.rb-ai-rubric-table thead th,
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-adaptive-rating-table.rb-ai-rubric-table tr:first-child th,
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-adaptive-rating-table.rb-ai-rubric-table tr:first-child td.rb-adaptive-th {
+        background: #f1f5f9 !important;
+        color: #475569 !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        text-transform: none;
+        letter-spacing: 0.01em;
+        padding: 8px 10px !important;
+        border: none !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        text-align: left !important;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-ai-rubric-table tbody tr:nth-child(even) td,
+    .rb-ai-adaptive-report .rb-ai-panel table.rb-adaptive-rating-table.rb-ai-rubric-table tbody tr:nth-child(even) td {
+        background: #fafbfc !important;
     }
 
     .rb-ai-adaptive-report .rb-adaptive-panel table.rb-adaptive-rating-table th,
     .rb-ai-adaptive-report .rb-adaptive-panel table.rb-adaptive-rating-table td {
-        padding: 4px 8px !important;
-        font-size: 11.5px;
+        padding: 6px 8px !important;
+        font-size: 12px;
     }
 
     .rb-ai-adaptive-report .rb-adaptive-panel table.rb-adaptive-rating-table th {
-        padding: 6px 8px !important;
-        font-size: 10px !important;
-        background: #eef6ff !important;
-        color: #1e3a5f !important;
+        padding: 8px 10px !important;
+        font-size: 11px !important;
+        background: #f1f5f9 !important;
+        color: #475569 !important;
     }
 
     .rb-ai-adaptive-report .rb-adaptive-field {
@@ -948,7 +1094,8 @@
     }
 
     @@media (max-width: 991px) {
-        .rb-ai-adaptive-report .rb-adaptive-two-col {
+        .rb-ai-adaptive-report .rb-adaptive-two-col,
+        .rb-ai-adaptive-report .rb-adaptive-overview .rb-ai-two-col {
             grid-template-columns: 1fr;
         }
     }
@@ -988,6 +1135,14 @@
 
     .rb-ai-adaptive-report .rb-adaptive-q-block:last-child {
         border-bottom: none;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-q-section {
+        margin: 0 0 16px;
+    }
+
+    .rb-ai-adaptive-report .rb-adaptive-q-section .rb-ai-panel__title {
+        text-transform: uppercase;
     }
 
     .rb-ai-adaptive-report .rb-adaptive-q-head {
@@ -1408,17 +1563,47 @@
     }
 
     .rb-ai-rubric-table .rb-ai-r-score {
-        width: 56px;
+        width: 12%;
         text-align: center;
         font-weight: 600;
         color: #127430;
     }
 
+    .rb-ai-rubric-table th.rb-ai-r-score {
+        color: #475569;
+        font-weight: 700;
+    }
+
+    .rb-ai-rubric-table th:first-child,
+    .rb-ai-rubric-table td:first-child {
+        width: 40%;
+    }
+
     .rb-ai-rubric-table .rb-ai-r-level {
-        width: 90px;
+        width: 105px;
         font-size: 12px;
         color: #64748b;
     }
+
+    .rb-adaptive-rating-pill {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        line-height: 1.3;
+        white-space: normal;
+        word-break: break-word;
+        max-width: 100%;
+    }
+
+    .rb-adaptive-rating-pill--excellent { background: #dcfce7; color: #15803d; }
+    .rb-adaptive-rating-pill--good { background: #dbeafe; color: #1d4ed8; }
+    .rb-adaptive-rating-pill--average { background: #fef9c3; color: #a16207; }
+    .rb-adaptive-rating-pill--below { background: #ffedd5; color: #c2410c; }
+    .rb-adaptive-rating-pill--poor { background: #fee2e2; color: #b91c1c; }
+    .rb-adaptive-rating-pill--neutral { background: #f1f5f9; color: #475569; }
 
     .rb-ai-verdict-pill {
         display: inline-block;
@@ -1899,18 +2084,23 @@
 
     .rb-candidate-meta {
         display: flex;
-        gap: 24px;
+        gap: 10px;
         flex-wrap: wrap;
+        font-size: 13.5px;
+    }
+
+    .rb-candidate-meta,
+    .rb-candidate-meta * {
+        font-size: 13.5px;
     }
 
     .rb-candidate-email,
     .rb-candidate-date {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 4px;
         color: #666;
-        /*  font-size: 0.95rem; */
-        padding: 8px 12px;
+        padding: 5px 8px;
         background: rgba(151, 202, 244, 0.1);
         border-radius: 8px;
         border: 1px solid rgba(151, 202, 244, 0.2);
@@ -1919,7 +2109,7 @@
         .rb-candidate-email i,
         .rb-candidate-date i {
             color: #97caf4;
-            font-size: 0.9rem;
+            font-size: 12.5px;
         }
 
         .rb-candidate-email span,
@@ -2732,6 +2922,10 @@
         }
     }
 </style>
+@if (ViewBag.AiInterviewDarkTheme == true)
+{
+    <link rel="stylesheet" href="~/css/ai-interview-dark-theme.css?v=26" />
+}
 <div class="rb-report-container">
     <div class="rb-report-header">
         <div class="rb-report-title-section">
@@ -3114,15 +3308,15 @@
             </div>
         }
       
-            <div style="display:flex; align-items:center; margin: 32px 0 0px 0; gap: 0;">
-                <div style="flex:1; height:2px; background: linear-gradient(90deg, transparent 0%, #4eda92 40%, #56e0cb 100%); border-radius:2px; opacity:0.5;"></div>
-                <div style="display:flex; align-items:center; gap:8px; padding: 0 18px; background:#fff; position:relative; z-index:1;">
-                    <span style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; background: linear-gradient(135deg, #4eda92 0%, #56e0cb 100%); box-shadow: 0 2px 8px rgba(78,218,146,0.35);">
+            <div class="rb-ai-analysis-divider @(ViewBag.IsAdaptive == true ? "rb-ai-analysis-divider--adaptive" : "")" style="display:flex; align-items:center; margin: 32px 0 0px 0; gap: 0;">
+                <div class="rb-ai-analysis-divider__line rb-ai-analysis-divider__line--left" style="flex:1; height:2px; background: linear-gradient(90deg, transparent 0%, #4eda92 40%, #56e0cb 100%); border-radius:2px; opacity:0.5;"></div>
+                <div class="rb-ai-analysis-divider__label" style="display:flex; align-items:center; gap:8px; padding: 0 18px; background:#fff; position:relative; z-index:1;">
+                    <span class="rb-ai-analysis-divider__icon" style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; background: linear-gradient(135deg, #4eda92 0%, #56e0cb 100%); box-shadow: 0 2px 8px rgba(78,218,146,0.35);">
                         <i class="fa fa-robot" style="color:#fff; font-size:15px;"></i>
                     </span>
-                    <span style="font-size:17px; font-weight:600; color:#000; letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap;">AI Analysis &amp; Recommendations</span>
+                    <span class="rb-ai-analysis-divider__title" style="font-size:17px; font-weight:600; color:#000; letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap;">AI Analysis &amp; Recommendations</span>
                 </div>
-                <div style="flex:1; height:2px; background: linear-gradient(90deg, #56e0cb 0%, #4eda92 60%, transparent 100%); border-radius:2px; opacity:0.5;"></div>
+                <div class="rb-ai-analysis-divider__line rb-ai-analysis-divider__line--right" style="flex:1; height:2px; background: linear-gradient(90deg, #56e0cb 0%, #4eda92 60%, transparent 100%); border-radius:2px; opacity:0.5;"></div>
             </div>
         
 
@@ -3143,6 +3337,20 @@
                                     if (v.Contains("select")) return "rb-ai-verdict-pill--select";
                                     if (v == "average") return "rb-ai-verdict-pill--avg";
                                     return "rb-ai-verdict-pill--neutral";
+                                }
+                                string GetRubricLevelPillClass(string level)
+                                {
+                                    if (string.IsNullOrWhiteSpace(level)) return null;
+                                    var v = level.Trim();
+                                    if (v == "—" || v == "-" || v == "–") return null;
+                                    var x = v.ToLowerInvariant();
+                                    if (x.Contains("excellent") || x.Contains("outstanding") || x.Contains("strong") ||
+                                        x.Contains("good") || x.Contains("proficient") || x.Contains("advanced") ||
+                                        x.Contains("senior") || x.Contains("expert") || x.Contains("high") ||
+                                        x.Contains("above") || x.Contains("exceed") || x.Contains("meet") ||
+                                        x.Contains("pass") || x.Contains("positive") || x.Contains("hire"))
+                                        return "rb-adaptive-rating-pill--good";
+                                    return "rb-adaptive-rating-pill--neutral";
                                 }
                                 string GetFvBadgeClass(string verdict)
                                 {
@@ -3262,10 +3470,32 @@
                                                 <tbody>
                                                     @foreach (var r in Model.AIInterviewEvaluation.RubricScoreSummary)
                                                     {
+                                                        var expectedText = string.IsNullOrWhiteSpace(r.ExpectedLevel) ? "—" : r.ExpectedLevel.Trim();
+                                                        var observedText = string.IsNullOrWhiteSpace(r.ObservedLevel) ? "—" : r.ObservedLevel.Trim();
+                                                        var expectedPill = GetRubricLevelPillClass(expectedText);
+                                                        var observedPill = GetRubricLevelPillClass(observedText);
                                                         <tr>
                                                             <td>@r.RubricItem</td>
-                                                            <td class="rb-ai-r-level">@(r.ExpectedLevel ?? "—")</td>
-                                                            <td class="rb-ai-r-level">@(r.ObservedLevel ?? "—")</td>
+                                                            <td class="rb-ai-r-level">
+                                                                @if (expectedPill != null)
+                                                                {
+                                                                    <span class="rb-adaptive-rating-pill @expectedPill">@expectedText</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    @expectedText
+                                                                }
+                                                            </td>
+                                                            <td class="rb-ai-r-level">
+                                                                @if (observedPill != null)
+                                                                {
+                                                                    <span class="rb-adaptive-rating-pill @observedPill">@observedText</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    @observedText
+                                                                }
+                                                            </td>
                                                             <td class="rb-ai-r-score">@r.Score</td>
                                                         </tr>
                                                     }
@@ -4232,6 +4462,20 @@
         var root = document.getElementById('rb-adaptive-ai-analysis');
         if (!root) return;
 
+        // AI HTML often wraps content in <div style="... max-width:800px; margin:0 auto;"> — use full width
+        Array.prototype.forEach.call(root.querySelectorAll('div[style]'), function (el) {
+            var style = el.getAttribute('style');
+            if (!style || !/max-width\s*:\s*800px/i.test(style)) return;
+            var next = style
+                .replace(/max-width\s*:\s*800px\s*;?/gi, '')
+                .replace(/margin\s*:\s*0\s*auto\s*;?/gi, '')
+                .replace(/;\s*;/g, ';')
+                .replace(/^\s*;\s*|\s*;\s*$/g, '')
+                .trim();
+            if (next) el.setAttribute('style', next);
+            else el.removeAttribute('style');
+        });
+
         function trimPreambleBeforeCompetency() {
             function textOf(el) {
                 return ((el && el.textContent) || '').replace(/\s+/g, ' ').trim();
@@ -4486,7 +4730,9 @@
                     });
                 }
                 var h = headerText.toLowerCase();
-                var isRatingTable = /competenc|skill|score|rating|weight|self.?rating|ai.?rating|max.?rating|weighted|rubric|question|comment|remark/.test(h);
+                var isRatingTable = /competenc|skill|score|rating|weight|self.?rating|ai.?rating|max.?rating|weighted|rubric|question|comment|remark|expected|observed/.test(h);
+                var isRubricLike = /rubric|expected|observed|competenc|skill\s*name|self.?rating|ai.?rating|weight/.test(h) &&
+                    !(/question/.test(h) && /verdict|comment/.test(h));
 
                 if (!table.parentElement || !table.parentElement.classList.contains('rb-adaptive-table-wrap')) {
                     var wrap = document.createElement('div');
@@ -4498,6 +4744,11 @@
                 if (!isRatingTable) return;
 
                 table.classList.add('rb-adaptive-rating-table');
+                // Score Rubric tables keep plain cells — normalized later to video UI columns
+                if (isRubricLike) {
+                    table.classList.add('rb-ai-rubric-table');
+                    return;
+                }
 
                 var headers = [];
                 var headerCells = table.querySelectorAll('thead th');
@@ -4656,35 +4907,100 @@
                 if (!raw) return false;
                 var m;
                 var matched = false;
-                m = raw.match(/Overall\s+Technical\s+Score\s*:\s*(.+)$/i);
+                // Stop each value at the next known label so combined blocks don't merge fields
+                var nextLabel = '(?=\\s*(?:Overall\\s+Technical\\s+Score\\s*:|Overall\\s+Communication\\s+Score\\s*:|(?:Overall\\s+)?Communication\\s+Score(?!\\s+Reasoning)\\s*:|Final\\s+Verdict\\s*:|Final\\s+Comment\\s*:|Communication\\s+Score\\s+Reasoning\\s*:|Communication\\s+Comments?\\s*:|LLM\\s+Detection|LLM\\s+Response\\s+Suspected\\s*:|Evidence\\s+Comment\\s*:|$))';
+                m = raw.match(new RegExp('Overall\\s+Technical\\s+Score\\s*:\\s*(.+?)' + nextLabel, 'i'));
                 if (m) { fields.techScore = m[1].trim(); matched = true; }
-                m = raw.match(/Overall\s+Communication\s+Score\s*:\s*(.+)$/i);
+                // Score only — never swallow "Communication Score Reasoning"
+                m = raw.match(new RegExp('(?:Overall\\s+)?Communication\\s+Score(?!\\s+Reasoning)\\s*:\\s*(.+?)' + nextLabel, 'i'));
                 if (m) { fields.commScore = m[1].trim(); matched = true; }
-                m = raw.match(/Final\s+Verdict\s*:\s*(.+)$/i);
+                m = raw.match(new RegExp('Final\\s+Verdict\\s*:\\s*(.+?)' + nextLabel, 'i'));
                 if (m) { fields.verdict = m[1].trim(); matched = true; }
-                m = raw.match(/Final\s+Comment\s*:\s*([\s\S]+)$/i);
+                m = raw.match(new RegExp('Final\\s+Comment\\s*:\\s*([\\s\\S]+?)' + nextLabel, 'i'));
                 if (m) { fields.finalComment = m[1].trim(); matched = true; }
-                m = raw.match(/Communication\s+Score\s+Reasoning\s*:\s*([\s\S]+)$/i);
+                m = raw.match(new RegExp('Communication\\s+Score\\s+Reasoning\\s*:\\s*([\\s\\S]+?)' + nextLabel, 'i'));
                 if (m) { fields.commReason = m[1].trim(); matched = true; }
-                m = raw.match(/LLM\s+Response\s+Suspected\s*:\s*(.+)$/i);
+                if (!fields.commReason) {
+                    m = raw.match(new RegExp('Communication\\s+Comments?\\s*:\\s*([\\s\\S]+?)' + nextLabel, 'i'));
+                    if (m) { fields.commReason = m[1].trim(); matched = true; }
+                }
+                m = raw.match(new RegExp('LLM\\s+Response\\s+Suspected\\s*:\\s*(.+?)' + nextLabel, 'i'));
                 if (m) { fields.llmSuspected = m[1].trim(); matched = true; }
-                m = raw.match(/Evidence\s+Comment\s*:\s*([\s\S]+)$/i);
+                m = raw.match(new RegExp('Evidence\\s+Comment\\s*:\\s*([\\s\\S]+?)' + nextLabel, 'i'));
                 if (m) { fields.llmEvidence = m[1].trim(); matched = true; }
+                // Final Disposition variants (Status / Reason) — only when clearly a disposition line
+                if (!fields.verdict) {
+                    m = raw.match(/^(?:Final\s+)?Status\s*:\s*(.+)$/i);
+                    if (m && m[1].trim().length <= 60 &&
+                        /recommend|select|reject|hire|pass|fail|borderline|average|good|excellent|not\s+recommended|correct|incorrect/i.test(m[1])) {
+                        fields.verdict = m[1].trim();
+                        matched = true;
+                    }
+                }
+                if (!fields.finalComment) {
+                    m = raw.match(/^Reason\s*:\s*([\s\S]+)$/i);
+                    if (m && m[1].trim().length > 20) {
+                        fields.finalComment = m[1].trim();
+                        matched = true;
+                    }
+                }
                 if (/^LLM\s+Detection$/i.test(raw)) matched = true;
                 if (matched && el) toRemove.push(el);
                 return matched;
             }
 
+            function splitMergedVerdictComment() {
+                if (fields.verdict && /Final\s+Comment\s*:/i.test(fields.verdict)) {
+                    var parts = fields.verdict.split(/Final\s+Comment\s*:/i);
+                    fields.verdict = (parts[0] || '').trim();
+                    if (!fields.finalComment && parts[1]) fields.finalComment = parts[1].trim();
+                }
+                // Verdicts are short status phrases — drop accidental trailing prose
+                if (fields.verdict && fields.verdict.length > 80) {
+                    var short = fields.verdict.match(/^(Not\s+Recommended|Recommended|Selected|Rejected|Strong\s+Hire|No\s+Hire|Hire|Pass|Fail|Borderline|Average|Good|Excellent)(?:\b|[.!]|$)/i);
+                    if (short) {
+                        if (!fields.finalComment) {
+                            var rest = fields.verdict.substring(short[0].length).replace(/^[\s contr-]+/, '').trim();
+                            if (rest) fields.finalComment = rest;
+                        }
+                        fields.verdict = short[1];
+                    }
+                }
+            }
+
+            function splitMergedCommScoreReason() {
+                if (fields.commScore && /Communication\s+Score\s+Reasoning\s*:/i.test(fields.commScore)) {
+                    var parts = fields.commScore.split(/Communication\s+Score\s+Reasoning\s*:/i);
+                    fields.commScore = (parts[0] || '').trim();
+                    if (!fields.commReason && parts[1]) fields.commReason = parts[1].trim();
+                }
+                if (fields.commScore && /Communication\s+Comments?\s*:/i.test(fields.commScore)) {
+                    var parts2 = fields.commScore.split(/Communication\s+Comments?\s*:/i);
+                    fields.commScore = (parts2[0] || '').trim();
+                    if (!fields.commReason && parts2[1]) fields.commReason = parts2[1].trim();
+                }
+                // Metric card should show only the numeric score; move prose to reasoning
+                if (fields.commScore && fields.commScore.length > 12) {
+                    var num = fields.commScore.match(/(\d+(?:\.\d+)?\s*\/\s*\d+(?:\.\d+)?|\d+(?:\.\d+)?\s*%|\b\d+(?:\.\d+)?\b)/);
+                    if (num) {
+                        var rest = fields.commScore.replace(num[0], '').replace(/^[\s:\-–—|/]+/, '').trim();
+                        if (rest && !fields.commReason) fields.commReason = rest;
+                        fields.commScore = num[0].replace(/\s+/g, ' ').trim();
+                    }
+                }
+            }
+
             Array.prototype.forEach.call(root.querySelectorAll('p, div, li, h2, h3, h4, span, strong, b'), function (el) {
                 if (el.closest('table')) return;
                 if (el.closest('.rb-adaptive-overview')) return;
-                if (el.querySelector('table, .rb-adaptive-overview')) return;
+                if (el.closest('.rb-adaptive-q-section') || el.closest('.rb-ai-q-card') || el.closest('.rb-ai-panel')) return;
+                if (el.querySelector('table, .rb-adaptive-overview, .rb-adaptive-q-section')) return;
                 var raw = t(el);
                 if (!raw || raw.length > 2500) return;
-                if (/Final\s+Comment\s*:|Communication\s+Score\s+Reasoning\s*:|Evidence\s+Comment\s*:/i.test(raw) ||
-                    /Overall\s+Technical\s+Score\s*:|Overall\s+Communication\s+Score\s*:|Final\s+Verdict\s*:|LLM\s+Response\s+Suspected\s*:|^LLM\s+Detection$/i.test(raw)) {
+                if (/Final\s+Comment\s*:|Communication\s+Score\s+Reasoning\s*:|Communication\s+Comments?\s*:|Evidence\s+Comment\s*:/i.test(raw) ||
+                    /Overall\s+Technical\s+Score\s*:|(?:Overall\s+)?Communication\s+Score\s*:|Final\s+Verdict\s*:|LLM\s+Response\s+Suspected\s*:|^LLM\s+Detection$/i.test(raw)) {
                     // Label-only node → pull value from following sibling text
-                    if (/^(Overall\s+Technical\s+Score|Overall\s+Communication\s+Score|Final\s+Verdict|Final\s+Comment|Communication\s+Score\s+Reasoning|LLM\s+Response\s+Suspected|Evidence\s+Comment)\s*:?\s*$/i.test(raw)) {
+                    if (/^(Overall\s+Technical\s+Score|(?:Overall\s+)?Communication\s+Score(?!\s+Reasoning)|Final\s+Verdict|Final\s+Comment|Communication\s+Score\s+Reasoning|Communication\s+Comments?|LLM\s+Response\s+Suspected|Evidence\s+Comment)\s*:?\s*$/i.test(raw)) {
                         var next = el.nextElementSibling;
                         var nextText = t(next);
                         if (nextText) {
@@ -4697,34 +5013,156 @@
                 }
             });
 
-            // Fallback: parse whole section text if labels were in a single block
-            if (!fields.techScore && !fields.verdict && !fields.finalComment) {
-                var blob = root.innerText || root.textContent || '';
-                var ts = blob.match(/Overall\s+Technical\s+Score\s*:\s*([^\n\r]+)/i);
+            // Fallback: fill any still-missing fields from full section text
+            var blob = root.innerText || root.textContent || '';
+            if (!fields.techScore) {
+                var ts = blob.match(/Overall\s+Technical\s+Score\s*:\s*([^\n\r]+?)(?=\s*(?:Overall\s+Communication|Final\s+Verdict|Final\s+Comment|Communication\s+Score|$))/i);
                 if (ts) fields.techScore = ts[1].trim();
-                var fv = blob.match(/Final\s+Verdict\s*:\s*([^\n\r]+)/i);
+            }
+            if (!fields.verdict) {
+                var fv = blob.match(/Final\s+Verdict\s*:\s*([^\n\r]+?)(?=\s*(?:Final\s+Comment\s*:|$))/i);
                 if (fv) fields.verdict = fv[1].trim();
-                var fc = blob.match(/Final\s+Comment\s*:\s*([\s\S]*?)(?=Overall\s+Communication\s+Score\s*:|Communication\s+Score\s+Reasoning\s*:|LLM\s+Detection|$)/i);
+            }
+            if (!fields.finalComment) {
+                var fc = blob.match(/Final\s+Comment\s*:\s*([\s\S]*?)(?=Overall\s+Communication\s+Score\s*:|(?:Overall\s+)?Communication\s+Score\s*:|Communication\s+Score\s+Reasoning\s*:|LLM\s+Detection|$)/i);
                 if (fc) fields.finalComment = fc[1].trim();
-                var cs = blob.match(/Overall\s+Communication\s+Score\s*:\s*([^\n\r]+)/i);
+            }
+            if (!fields.commScore) {
+                var cs = blob.match(/(?:Overall\s+)?Communication\s+Score(?!\s+Reasoning)\s*:\s*([^\n\r]+?)(?=\s*(?:Communication\s+Score\s+Reasoning\s*:|Communication\s+Comments?\s*:|Final\s+Verdict\s*:|Final\s+Comment\s*:|LLM\s+|$))/i);
                 if (cs) fields.commScore = cs[1].trim();
-                var cr = blob.match(/Communication\s+Score\s+Reasoning\s*:\s*([\s\S]*?)(?=LLM\s+Detection|LLM\s+Response\s+Suspected\s*:|$)/i);
+            }
+            if (!fields.commReason) {
+                var cr = blob.match(/Communication\s+Score\s+Reasoning\s*:\s*([\s\S]*?)(?=LLM\s+Detection|LLM\s+Response\s+Suspected\s*:|Evidence\s+Comment\s*:|Final\s+Verdict\s*:|Final\s+Comment\s*:|$)/i);
                 if (cr) fields.commReason = cr[1].trim();
+            }
+            if (!fields.commReason) {
+                var cc = blob.match(/Communication\s+Comments?\s*:\s*([\s\S]*?)(?=LLM\s+Detection|LLM\s+Response\s+Suspected\s*:|Evidence\s+Comment\s*:|Final\s+Verdict\s*:|Final\s+Comment\s*:|$)/i);
+                if (cc) fields.commReason = cc[1].trim();
+            }
+            if (!fields.llmSuspected) {
                 var ls = blob.match(/LLM\s+Response\s+Suspected\s*:\s*([^\n\r]+)/i);
                 if (ls) fields.llmSuspected = ls[1].trim();
+            }
+            if (!fields.llmEvidence) {
                 var le = blob.match(/Evidence\s+Comment\s*:\s*([\s\S]*?)(?=Questions\s+Discussed|Competenc|$)/i);
                 if (le) fields.llmEvidence = le[1].trim();
+            }
+
+            splitMergedVerdictComment();
+            splitMergedCommScoreReason();
+
+            function colIndex(headers, re) {
+                for (var i = 0; i < headers.length; i++) {
+                    if (re.test(headers[i])) return i;
+                }
+                return -1;
+            }
+
+            function normalizeRubricTableToVideoFormat(table) {
+                if (!table || table.getAttribute('data-rb-rubric-normalized') === '1') return table;
+
+                var headerCells = table.querySelectorAll('thead th');
+                var headerRowIsTd = false;
+                if (!headerCells.length && table.rows.length) {
+                    headerCells = table.rows[0].querySelectorAll('th, td');
+                    headerRowIsTd = table.rows[0].querySelector('th') == null;
+                }
+                var headers = [];
+                Array.prototype.forEach.call(headerCells, function (cell, idx) {
+                    headers[idx] = ((cell.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase());
+                });
+
+                var itemIdx = colIndex(headers, /rubric\s*item|competenc|skill(?:\s*name)?|parameter|item|area|topic|^skill$/);
+                if (itemIdx < 0) itemIdx = 0;
+                var expectedIdx = colIndex(headers, /expected|jd\s*level|required|target|self.?rating/);
+                var observedIdx = colIndex(headers, /observed|candidate\s*level|ai.?rating|actual|demonstrated/);
+                var scoreIdx = colIndex(headers, /^score$|weighted|rating\s*score|max.?rating|points/);
+                if (scoreIdx < 0) scoreIdx = colIndex(headers, /\bscore\b/);
+                // Avoid mapping the same column twice
+                if (scoreIdx === itemIdx || scoreIdx === expectedIdx || scoreIdx === observedIdx) scoreIdx = -1;
+                if (expectedIdx === itemIdx) expectedIdx = -1;
+                if (observedIdx === itemIdx || observedIdx === expectedIdx) observedIdx = -1;
+
+                var bodyRows = table.tBodies.length
+                    ? Array.prototype.slice.call(table.tBodies[0].rows)
+                    : Array.prototype.slice.call(table.rows, (table.querySelector('thead') || headerRowIsTd) ? 1 : 0);
+                if (headerRowIsTd && bodyRows.length && bodyRows[0] === table.rows[0]) {
+                    bodyRows = bodyRows.slice(1);
+                }
+
+                function cellText(row, idx) {
+                    if (idx < 0 || !row.cells[idx]) return '';
+                    return ((row.cells[idx].textContent || '').replace(/\s+/g, ' ').trim());
+                }
+
+                function levelPillHtml(raw) {
+                    var v = (raw || '').trim();
+                    if (!v || v === '—' || v === '-' || v === '–') return escapeHtml('—');
+                    var x = v.toLowerCase();
+                    var pill = 'rb-adaptive-rating-pill--neutral';
+                    if (/excellent|outstanding|strong|good|proficient|advanced|senior|expert|high|above|exceed|meet|pass|positive|hire/.test(x)) {
+                        pill = 'rb-adaptive-rating-pill--good';
+                    }
+                    return '<span class="rb-adaptive-rating-pill ' + pill + '">' + escapeHtml(v) + '</span>';
+                }
+
+                var built = document.createElement('table');
+                built.className = 'rb-ai-rubric-table';
+                built.setAttribute('data-rb-rubric-normalized', '1');
+                built.innerHTML =
+                    '<thead><tr>' +
+                    '<th>Rubric Item</th>' +
+                    '<th class="rb-ai-r-level">Expected</th>' +
+                    '<th class="rb-ai-r-level">Observed</th>' +
+                    '<th class="rb-ai-r-score">Score</th>' +
+                    '</tr></thead><tbody></tbody>';
+                var tbody = built.querySelector('tbody');
+
+                bodyRows.forEach(function (row) {
+                    if (!row.cells || !row.cells.length) return;
+                    var item = cellText(row, itemIdx);
+                    if (!item) return;
+                    var expected = expectedIdx >= 0 ? cellText(row, expectedIdx) : '';
+                    var observed = observedIdx >= 0 ? cellText(row, observedIdx) : '';
+                    var score = scoreIdx >= 0 ? cellText(row, scoreIdx) : '';
+                    // If score empty but a trailing numeric cell exists, use it
+                    if (!score) {
+                        for (var c = row.cells.length - 1; c >= 0; c--) {
+                            if (c === itemIdx || c === expectedIdx || c === observedIdx) continue;
+                            var raw = cellText(row, c);
+                            if (/^\d+(\.\d+)?(\s*\/\s*\d+(\.\d+)?)?%?$/.test(raw)) {
+                                score = raw;
+                                break;
+                            }
+                        }
+                    }
+                    var tr = document.createElement('tr');
+                    tr.innerHTML =
+                        '<td>' + escapeHtml(item) + '</td>' +
+                        '<td class="rb-ai-r-level">' + levelPillHtml(expected) + '</td>' +
+                        '<td class="rb-ai-r-level">' + levelPillHtml(observed) + '</td>' +
+                        '<td class="rb-ai-r-score">' + escapeHtml(score || '—') + '</td>';
+                    tbody.appendChild(tr);
+                });
+
+                if (!tbody.children.length) return table;
+
+                var parent = table.parentNode;
+                if (parent) parent.replaceChild(built, table);
+                return built;
             }
 
             var rubricTable = null;
             Array.prototype.forEach.call(root.querySelectorAll('table'), function (table) {
                 if (rubricTable) return;
+                if (table.closest('.rb-adaptive-q-section') || table.closest('.rb-ai-q-list')) return;
                 var header = '';
                 Array.prototype.forEach.call(table.querySelectorAll('th'), function (th) { header += ' ' + (th.textContent || ''); });
                 if (!header.trim() && table.rows.length) {
                     Array.prototype.forEach.call(table.rows[0].cells, function (cell) { header += ' ' + (cell.textContent || ''); });
                 }
                 var h = header.toLowerCase();
+                if (/question/.test(h) && /verdict|comment/.test(h) && !/competenc|rubric|expected|observed/.test(h)) return;
                 if (/rubric|expected|observed|competenc|skill\s*name|self.?rating|ai.?rating|weight/.test(h)) {
                     rubricTable = table;
                 }
@@ -4750,48 +5188,64 @@
             }
 
             var twoCol = document.createElement('div');
-            twoCol.className = 'rb-adaptive-two-col';
+            twoCol.className = 'rb-ai-two-col';
 
             var left = document.createElement('div');
             left.className = 'rb-adaptive-panel';
-            left.innerHTML = '<div class="rb-adaptive-panel__head"><i class="fa fa-list-alt"></i> Score Rubric</div>';
+            left.innerHTML =
+                '<div class="rb-adaptive-panel__head">' +
+                '<img src="/img/techskill-score.png" alt="" />' +
+                '<span class="rb-ai-panel__title">Score Rubric</span>' +
+                '</div>';
             if (rubricTable) {
                 var wrap = rubricTable.closest('.rb-adaptive-table-wrap') || rubricTable;
                 var probe = wrap.previousElementSibling;
                 if (probe && /rubric|competenc|skill/i.test(t(probe)) && t(probe).length < 80) {
                     probe.parentNode.removeChild(probe);
                 }
+                rubricTable = normalizeRubricTableToVideoFormat(rubricTable);
+                wrap = rubricTable.closest('.rb-adaptive-table-wrap') || rubricTable;
+                if (wrap === rubricTable) {
+                    var newWrap = document.createElement('div');
+                    newWrap.className = 'rb-ai-table-wrap';
+                    newWrap.appendChild(rubricTable);
+                    wrap = newWrap;
+                } else if (wrap.classList) {
+                    wrap.classList.add('rb-ai-table-wrap');
+                }
                 left.appendChild(wrap);
-                rubricTable.classList.add('rb-adaptive-rating-table');
             } else {
-                left.innerHTML += '<p style="margin:0;color:#94a3b8;font-size:12.5px;">No rubric summary found.</p>';
+                left.innerHTML += '<p class="rb-ai-no-data-inline">No rubric summary found.</p>';
             }
             twoCol.appendChild(left);
 
             var right = document.createElement('div');
             right.className = 'rb-adaptive-panel rb-adaptive-panel--comment';
-            var rightHtml = '<div class="rb-adaptive-panel__head"><i class="fa fa-commenting-o"></i> AI Interviewer Comment</div>';
+            var rightHtml =
+                '<div class="rb-adaptive-panel__head">' +
+                '<img src="/img/interviewer-comment.png" alt="" />' +
+                '<span class="rb-ai-panel__title">AI Interviewer Comment</span>' +
+                '</div>';
             if (fields.verdict) {
-                rightHtml += '<div class="rb-adaptive-field"><span class="rb-adaptive-field__label">Final Verdict</span><span class="rb-adaptive-verdict-badge ' + verdictClass(fields.verdict) + '">' + escapeHtml(fields.verdict) + '</span></div>';
+                rightHtml += '<div class="rb-ai-comment-label">Final Verdict</div><div style="margin-bottom:8px;"><span class="rb-adaptive-verdict-badge ' + verdictClass(fields.verdict) + '">' + escapeHtml(fields.verdict) + '</span></div>';
             }
             if (fields.finalComment) {
-                rightHtml += '<div class="rb-adaptive-field"><span class="rb-adaptive-field__label">Final Comment</span>' + clampHtml(fields.finalComment, 150) + '</div>';
+                rightHtml += '<div class="rb-ai-comment-label">Final Comment</div>' + clampHtml(fields.finalComment, 150);
             }
             if (fields.commReason) {
-                rightHtml += '<div class="rb-adaptive-field"><span class="rb-adaptive-field__label">Communication Analysis</span>' + clampHtml(fields.commReason, 150) + '</div>';
+                rightHtml += '<div class="rb-ai-comment-label">Communication Score Reasoning</div>' + clampHtml(fields.commReason, 150);
             }
             if (fields.llmSuspected || fields.llmEvidence) {
-                rightHtml += '<div class="rb-adaptive-field"><span class="rb-adaptive-field__label">LLM Detection</span>';
+                rightHtml += '<div class="rb-ai-comment-label">LLM Detection</div>';
                 if (fields.llmSuspected) {
-                    rightHtml += '<div class="rb-adaptive-field__value"><strong>Suspected:</strong> ' + escapeHtml(fields.llmSuspected) + '</div>';
+                    rightHtml += '<div class="rb-adaptive-field__value" style="margin-bottom:6px;"><strong>Suspected:</strong> ' + escapeHtml(fields.llmSuspected) + '</div>';
                 }
                 if (fields.llmEvidence) {
-                    rightHtml += '<div class="rb-adaptive-field" style="margin-top:6px;margin-bottom:0;"><span class="rb-adaptive-field__label" style="text-transform:none;letter-spacing:0;">Evidence</span>' + clampHtml(fields.llmEvidence, 120) + '</div>';
+                    rightHtml += '<div class="rb-ai-comment-label" style="margin-top:6px;">Evidence</div>' + clampHtml(fields.llmEvidence, 120);
                 }
-                rightHtml += '</div>';
             }
             if (!fields.verdict && !fields.finalComment && !fields.commReason && !fields.llmSuspected && !fields.llmEvidence) {
-                rightHtml += '<p style="margin:0;color:#94a3b8;font-size:12.5px;">No comment found.</p>';
+                rightHtml += '<p class="rb-ai-no-data-inline">No comment found.</p>';
             }
             right.innerHTML = rightHtml;
             twoCol.appendChild(right);
@@ -4813,8 +5267,8 @@
                 if (el.querySelector('table, .rb-adaptive-overview, .rb-adaptive-q-block, .rb-adaptive-panel')) return;
                 var raw = t(el);
                 if (!raw) return;
-                if (/^(Overall\s+Technical\s+Score|Overall\s+Communication\s+Score|Final\s+Verdict|Final\s+Comment|Communication\s+Score\s+Reasoning|LLM\s+Detection|LLM\s+Response\s+Suspected|Evidence\s+Comment)\s*:?\s*$/i.test(raw) ||
-                    /^(Overall\s+Technical\s+Score|Overall\s+Communication\s+Score|Final\s+Verdict|Final\s+Comment|Communication\s+Score\s+Reasoning|LLM\s+Detection|LLM\s+Response\s+Suspected|Evidence\s+Comment)\s*:/i.test(raw)) {
+                if (/^(Overall\s+Technical\s+Score|(?:Overall\s+)?Communication\s+Score|Final\s+Verdict|Final\s+Comment|Communication\s+Score\s+Reasoning|Communication\s+Comments?|LLM\s+Detection|LLM\s+Response\s+Suspected|Evidence\s+Comment)\s*:?\s*$/i.test(raw) ||
+                    /^(Overall\s+Technical\s+Score|(?:Overall\s+)?Communication\s+Score|Final\s+Verdict|Final\s+Comment|Communication\s+Score\s+Reasoning|Communication\s+Comments?|LLM\s+Detection|LLM\s+Response\s+Suspected|Evidence\s+Comment)\s*:/i.test(raw)) {
                     el.parentNode.removeChild(el);
                 }
             });
@@ -4844,6 +5298,168 @@
             });
         }
 
+        function convertQuestionByQuestionToCards() {
+            function txt(el) { return ((el && el.textContent) || '').replace(/\s+/g, ' ').trim(); }
+            function escapeHtml(s) {
+                return String(s == null ? '' : s)
+                    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+            function verdictPillClass(v) {
+                var x = (v || '').toLowerCase();
+                if (/reject|incorrect|fail|poor|negative|no\b/.test(x)) return 'rb-ai-verdict-pill--reject';
+                if (/select|correct|pass|positive|hire|strong|excellent|good/.test(x)) return 'rb-ai-verdict-pill--select';
+                if (/average|fair|moderate|partial/.test(x)) return 'rb-ai-verdict-pill--avg';
+                return 'rb-ai-verdict-pill--neutral';
+            }
+            function colIdx(headers, re) {
+                for (var i = 0; i < headers.length; i++) {
+                    if (re.test(headers[i])) return i;
+                }
+                return -1;
+            }
+            function findSectionTitle(node) {
+                var el = node;
+                for (var hops = 0; hops < 4 && el; hops++) {
+                    var prev = el.previousElementSibling;
+                    while (prev) {
+                        var t = txt(prev);
+                        if (t && t.length < 100 && /question[- ]?by[- ]?question|question\s+ratings?/i.test(t)) return prev;
+                        if (prev.querySelector && prev.querySelector('table')) break;
+                        if (t && t.length > 2) break;
+                        prev = prev.previousElementSibling;
+                    }
+                    el = el.parentElement;
+                    if (el === root) break;
+                }
+                return null;
+            }
+
+            Array.prototype.slice.call(root.querySelectorAll('table')).forEach(function (table) {
+                if (table.closest('.rb-adaptive-overview') || table.closest('.rb-adaptive-panel') || table.closest('.rb-ai-q-list')) return;
+
+                var headerCells = table.querySelectorAll('thead th');
+                var headerRowIsTd = false;
+                if (!headerCells.length && table.rows.length) {
+                    headerCells = table.rows[0].querySelectorAll('th, td');
+                    headerRowIsTd = table.rows[0].querySelector('th') == null;
+                }
+                if (!headerCells.length) return;
+
+                var headers = [];
+                Array.prototype.forEach.call(headerCells, function (cell, idx) {
+                    headers[idx] = txt(cell).toLowerCase();
+                });
+                var headerJoined = headers.join(' ');
+                var hasQuestion = /question/.test(headerJoined);
+                var hasScoreOrVerdict = /score|verdict|rating/.test(headerJoined);
+                var hasComment = /comment|remark|feedback/.test(headerJoined);
+                var isCompetency = /competenc|skill\s*name|self.?rating|ai.?rating|rubric|weight/.test(headerJoined);
+                if (!hasQuestion || !(hasScoreOrVerdict || hasComment) || isCompetency) return;
+
+                var qIdx = colIdx(headers, /^#+$|^no\.?$|^q\.?$|number|s\.?\s*no/i);
+                if (qIdx < 0) qIdx = colIdx(headers, /^question$/);
+                var questionIdx = colIdx(headers, /question/);
+                if (questionIdx < 0) return;
+                // If # and Question are the same column (header is just "Question"), keep num from row index
+                if (qIdx === questionIdx) qIdx = -1;
+                var scoreIdx = colIdx(headers, /^score$|skill\s*score|rating\s*score/);
+                if (scoreIdx < 0) scoreIdx = colIdx(headers, /score/);
+                var verdictIdx = colIdx(headers, /verdict|rating(?!\s*score)|result|status/);
+                var commentIdx = colIdx(headers, /comment|remark|feedback/);
+                var commScoreIdx = colIdx(headers, /comm.*score|communication\s*score/);
+                var commCommentIdx = colIdx(headers, /comm.*comment|communication\s*comment/);
+
+                var bodyRows = table.tBodies.length
+                    ? Array.prototype.slice.call(table.tBodies[0].rows)
+                    : Array.prototype.slice.call(table.rows, (table.querySelector('thead') || headerRowIsTd) ? 1 : 0);
+                if (headerRowIsTd && bodyRows.length && bodyRows[0] === table.rows[0]) {
+                    bodyRows = bodyRows.slice(1);
+                }
+                if (!bodyRows.length) return;
+
+                var titleEl = findSectionTitle(table.parentElement && table.parentElement.classList.contains('rb-adaptive-table-wrap')
+                    ? table.parentElement
+                    : table);
+                var titleText = titleEl ? txt(titleEl) : 'Question-by-Question Ratings';
+
+                var panel = document.createElement('div');
+                panel.className = 'rb-ai-panel rb-ai-panel--full rb-adaptive-q-section';
+                panel.innerHTML =
+                    '<div class="rb-ai-panel__head">' +
+                    '<img src="/img/question-asked.png" alt="" />' +
+                    '<span class="rb-ai-panel__title">' + escapeHtml(titleText) + '</span>' +
+                    '</div>';
+
+                var list = document.createElement('div');
+                list.className = 'rb-ai-q-list';
+
+                bodyRows.forEach(function (row, rowIndex) {
+                    var cells = row.cells;
+                    if (!cells || !cells.length) return;
+                    function cellText(i) {
+                        if (i < 0 || !cells[i]) return '';
+                        return txt(cells[i]);
+                    }
+                    var num = qIdx >= 0 ? cellText(qIdx) : String(rowIndex + 1);
+                    num = (num.match(/\d+/) || [String(rowIndex + 1)])[0];
+                    var question = cellText(questionIdx);
+                    if (!question) return;
+                    var score = scoreIdx >= 0 ? cellText(scoreIdx) : '';
+                    var verdict = verdictIdx >= 0 ? cellText(verdictIdx) : '';
+                    var comment = commentIdx >= 0 ? cellText(commentIdx) : '';
+                    var commScore = commScoreIdx >= 0 ? cellText(commScoreIdx) : '';
+                    var commComment = commCommentIdx >= 0 ? cellText(commCommentIdx) : '';
+
+                    var card = document.createElement('div');
+                    card.className = 'rb-ai-q-card';
+                    var html =
+                        '<div class="rb-ai-q-card__head">' +
+                        '<span class="rb-ai-q-card__num">' + escapeHtml(num) + '</span>' +
+                        '<div class="rb-ai-q-card__text">' + escapeHtml(question) + '</div>' +
+                        '</div>';
+
+                    var metaParts = [];
+                    if (verdict) {
+                        metaParts.push(
+                            '<span class="rb-ai-meta-chip"><strong>Rating</strong> ' +
+                            '<span class="rb-ai-verdict-pill ' + verdictPillClass(verdict) + '">' + escapeHtml(verdict) + '</span></span>'
+                        );
+                    }
+                    if (score) {
+                        metaParts.push('<span class="rb-ai-meta-chip"><strong>Score</strong> ' + escapeHtml(score) + '</span>');
+                    }
+                    if (commScore) {
+                        metaParts.push('<span class="rb-ai-meta-chip"><strong>Comm.</strong> ' + escapeHtml(commScore) + '</span>');
+                    }
+                    if (metaParts.length) {
+                        html += '<div class="rb-ai-q-card__meta">' + metaParts.join('') + '</div>';
+                    }
+                    if (comment) {
+                        html += '<div class="rb-ai-q-card__note"><span class="rb-ai-q-card__note-label">Comment</span>' + escapeHtml(comment) + '</div>';
+                    }
+                    if (commComment) {
+                        html += '<div class="rb-ai-q-card__note"><span class="rb-ai-q-card__note-label">Comm. Comment</span>' + escapeHtml(commComment) + '</div>';
+                    }
+                    card.innerHTML = html;
+                    list.appendChild(card);
+                });
+
+                if (!list.children.length) return;
+                panel.appendChild(list);
+
+                var replaceTarget = table;
+                if (table.parentElement && table.parentElement.classList.contains('rb-adaptive-table-wrap')) {
+                    replaceTarget = table.parentElement;
+                }
+                replaceTarget.parentNode.insertBefore(panel, replaceTarget);
+                replaceTarget.parentNode.removeChild(replaceTarget);
+                if (titleEl && titleEl.parentNode) {
+                    titleEl.parentNode.removeChild(titleEl);
+                }
+            });
+        }
+
+        convertQuestionByQuestionToCards();
         enhanceRatingTables();
         layoutRubricAndSummary();
         styleCompetencyHeadingLikeRubric();
@@ -4856,12 +5472,17 @@
                 if (el.closest('.rb-adaptive-overview') || el.closest('.rb-adaptive-panel')) return;
                 if (el.querySelector && el.querySelector('table')) return;
                 var raw = txt(el);
-                if (!raw || raw.length > 80) return;
-                if (!/competenc(y|ies)?\s*rating/i.test(raw)) return;
+                if (!raw || raw.length > 90) return;
+                if (!/competenc(y|ies)?\s*rating|questions?\s+discussed/i.test(raw)) return;
 
                 var head = document.createElement('div');
                 head.className = 'rb-adaptive-panel__head rb-adaptive-table-title';
-                head.innerHTML = '<i class="fa fa-list-alt"></i> <span>Competency Ratings</span>';
+                var title = /questions?\s+discussed/i.test(raw)
+                    ? 'Questions Discussed &amp; Competency Rating'
+                    : 'Competency Ratings';
+                head.innerHTML =
+                    '<img src="/img/question-asked.png" alt="" />' +
+                    '<span class="rb-ai-panel__title">' + title + '</span>';
 
                 // Wrap heading + following table in a section card like Score Rubric panel
                 var card = document.createElement('div');
@@ -4917,7 +5538,8 @@
             Array.prototype.slice.call(root.querySelectorAll('h1, h2, h3, h4, h5, p, div, strong, b, span, li')).forEach(function (el) {
                 if (!el.parentNode || el.closest('.rb-adaptive-overview') || el.closest('table')) return;
                 if (el.closest('.rb-adaptive-panel') || el.closest('.rb-adaptive-section-card')) return;
-                if (el.querySelector && el.querySelector('table, .rb-adaptive-overview, .rb-adaptive-q-block, .rb-adaptive-panel, .rb-adaptive-q-head, .rb-adaptive-clamp, .rb-adaptive-section-card')) return;
+                if (el.closest('.rb-adaptive-q-section') || el.closest('.rb-ai-q-card') || el.closest('.rb-ai-panel')) return;
+                if (el.querySelector && el.querySelector('table, .rb-adaptive-overview, .rb-adaptive-q-block, .rb-adaptive-panel, .rb-adaptive-q-head, .rb-adaptive-clamp, .rb-adaptive-section-card, .rb-adaptive-q-section, .rb-ai-q-list')) return;
                 var raw = txt(el);
                 if (isLlmJunk(raw)) {
                     el.parentNode.removeChild(el);
@@ -4925,7 +5547,7 @@
             });
 
             // After first rating table / section card: strip consecutive junk siblings (hr, llm h3/text)
-            var anchors = root.querySelectorAll('.rb-adaptive-overview, .rb-adaptive-section-card, table.rb-adaptive-rating-table');
+            var anchors = root.querySelectorAll('.rb-adaptive-overview, .rb-adaptive-section-card, .rb-adaptive-q-section, table.rb-adaptive-rating-table');
             Array.prototype.forEach.call(anchors, function (anchor) {
                 var cut = anchor;
                 while (cut.parentElement && cut.parentElement !== root) cut = cut.parentElement;
@@ -4945,8 +5567,8 @@
                         continue;
                     }
                     if (sib.nodeType !== 1) { sib = next; continue; }
-                    if (sib.classList && (sib.classList.contains('rb-adaptive-q-block') || sib.classList.contains('rb-adaptive-section-card') || sib.classList.contains('rb-adaptive-overview'))) break;
-                    if (sib.querySelector && sib.querySelector('.rb-adaptive-q-head, .rb-adaptive-q-block, table')) break;
+                    if (sib.classList && (sib.classList.contains('rb-adaptive-q-block') || sib.classList.contains('rb-adaptive-section-card') || sib.classList.contains('rb-adaptive-overview') || sib.classList.contains('rb-adaptive-q-section'))) break;
+                    if (sib.querySelector && sib.querySelector('.rb-adaptive-q-head, .rb-adaptive-q-block, .rb-adaptive-q-section, table')) break;
                     var tag = sib.tagName;
                     var raw = txt(sib);
                     if (tag === 'HR' || isLlmJunk(raw) || !raw) {

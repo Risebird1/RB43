@@ -1,0 +1,1015 @@
+/* =============================================================================
+   AI Interview dark theme — ONLY when body.ai-interview-dark is set.
+   Applied exclusively from AIInterview/Index and AIInterview/Report.
+   Does not affect other AIInterview pages or the rest of the app.
+   Palette reference: Screen Risebird dark cards (near-black / charcoal grey).
+   ============================================================================= */
+
+body.ai-interview-dark {
+    --ai-bg: #0b0e14;
+    --ai-surface: #12151c;
+    --ai-card: #161b22;
+    --ai-card-2: #1c2128;
+    --ai-border: #30363d;
+    --ai-border-soft: #21262d;
+    --ai-text: #f0f6fc;
+    --ai-text-muted: #8b949e;
+    --ai-text-dim: #6e7681;
+    --ai-accent: #58a6ff;
+    --ai-accent-soft: rgba(88, 166, 255, 0.15);
+    --ai-green: #3fb950;
+    --ai-green-soft: rgba(63, 185, 80, 0.18);
+    --ai-danger: #f85149;
+    --ai-warn: #d29922;
+    background: var(--ai-bg) !important;
+    color: var(--ai-text) !important;
+}
+
+body.ai-interview-dark,
+body.ai-interview-dark .wrapper {
+    background: var(--ai-bg) !important;
+    min-height: 100vh;
+}
+
+/* Top bar */
+body.ai-interview-dark .navbar,
+body.ai-interview-dark .navbar.top-h,
+body.ai-interview-dark .navbar-transparent {
+    background: var(--ai-surface) !important;
+    border-bottom: 1px solid var(--ai-border-soft) !important;
+    box-shadow: none !important;
+}
+
+body.ai-interview-dark .navbar-brand,
+body.ai-interview-dark #txtpageHeader,
+body.ai-interview-dark .user-mail,
+body.ai-interview-dark .welcome,
+body.ai-interview-dark .mob_h {
+    color: var(--ai-text) !important;
+}
+
+body.ai-interview-dark .clientlogoarea {
+    filter: brightness(1.05);
+}
+
+/* ---- Shared containers ---- */
+body.ai-interview-dark .rb-aiinterview-container,
+body.ai-interview-dark .rb-report-container {
+    background: var(--ai-card) !important;
+    color: var(--ai-text) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45) !important;
+    border: 1px solid var(--ai-border-soft) !important;
+}
+
+body.ai-interview-dark .rb-title,
+body.ai-interview-dark .rb-report-title,
+body.ai-interview-dark .rb-report-title-section h1,
+body.ai-interview-dark .rb-section-header h2,
+body.ai-interview-dark h1,
+body.ai-interview-dark h2,
+body.ai-interview-dark h3,
+body.ai-interview-dark h4 {
+    color: var(--ai-text) !important;
+}
+
+body.ai-interview-dark .rb-title {
+    font-weight: 500 !important;
+}
+
+body.ai-interview-dark .rb-report-subtitle,
+body.ai-interview-dark .rb-report-date,
+body.ai-interview-dark .rb-card-content h3,
+body.ai-interview-dark .rb-analysis-title,
+body.ai-interview-dark .rb-analysis-text,
+body.ai-interview-dark .rb-video-question,
+body.ai-interview-dark label,
+body.ai-interview-dark small {
+    color: var(--ai-text-muted) !important;
+}
+
+body.ai-interview-dark .rb-report-meta {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 12px !important;
+    text-align: right !important;
+}
+
+body.ai-interview-dark .rb-report-date,
+body.ai-interview-dark .rb-report-actions-row {
+    margin: 0 !important;
+}
+
+body.ai-interview-dark p {
+    color: #c8ccd0f7 !important;
+}
+
+body.ai-interview-dark .message-role,
+body.ai-interview-dark .rb-chatgpt-welcome,
+body.ai-interview-dark .message-time,
+body.ai-interview-dark .rb-message-time {
+    color: #fff !important;
+}
+
+body.ai-interview-dark .rb-chatgpt-username,
+body.ai-interview-dark .rb-report-title i,
+body.ai-interview-dark .rb-section-header i {
+    color: #ffffff !important;
+}
+
+body.ai-interview-dark .rb-report-header {
+    border-bottom-color: var(--ai-border) !important;
+}
+
+body.ai-interview-dark .chat-log-container {
+    background: transparent !important;
+}
+
+/* Adaptive assistant audio player — dark chrome (Index #assistantAudio + Report audio.rb-video-element) */
+body.ai-interview-dark #assistantAudio,
+body.ai-interview-dark audio#assistantAudio,
+body.ai-interview-dark audio.rb-video-element {
+    color-scheme: dark;
+    background: #161b22 !important;
+    background-color: #161b22 !important;
+    border: 1px solid #30363d !important;
+    border-radius: 10px !important;
+    outline: none !important;
+    accent-color: #8b949e;
+    height: 35px !important;
+}
+
+body.ai-interview-dark #assistantAudio,
+body.ai-interview-dark audio#assistantAudio {
+    width: 100%;
+    max-width: 100%;
+    margin: 8px 0;
+}
+
+body.ai-interview-dark audio.rb-video-element {
+    max-width: 100%;
+}
+
+body.ai-interview-dark #assistantAudio::-webkit-media-controls-panel,
+body.ai-interview-dark audio.rb-video-element::-webkit-media-controls-panel {
+    background: #161b22 !important;
+    border-radius: 10px;
+}
+
+body.ai-interview-dark #assistantAudio::-webkit-media-controls-enclosure,
+body.ai-interview-dark audio.rb-video-element::-webkit-media-controls-enclosure {
+    background: #161b22 !important;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Adaptive audio controls: upload + timer */
+body.ai-interview-dark .rb-audio-phone-controls {
+    gap: 16px;
+}
+
+body.ai-interview-dark .rb-audio-util-btn {
+    background: #21262d !important;
+    background-image: none !important;
+    color: #c9d1d9 !important;
+    border: 1px solid #30363d !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35) !important;
+}
+
+body.ai-interview-dark .rb-audio-util-btn:hover {
+    background: #30363d !important;
+    color: #fff !important;
+    border-color: #484f58 !important;
+}
+
+body.ai-interview-dark .rb-audio-util-btn i {
+    color: inherit !important;
+}
+
+body.ai-interview-dark #audioTimerDisplay {
+    color: #f0f6fc !important;
+    font-weight: 600 !important;
+}
+
+body.ai-interview-dark .rb-audio-util-btn span {
+    color: #8b949e !important;
+}
+
+body.ai-interview-dark .rb-audio-util-btn #audioTimerDisplay {
+    color: #f0f6fc !important;
+}
+
+body.ai-interview-dark .rb-audio-timer-label {
+    color: #8b949e !important;
+}
+
+body.ai-interview-dark .rb-mic-record-status {
+    color: #d9d6d6 !important;
+}
+
+body.ai-interview-dark .rb-mic-record-status.recording {
+    color: #f85149 !important;
+}
+
+/* Adaptive header timer — label/time on one row; bar on next line (like video) */
+body.ai-interview-dark .rb-timer {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 6px 8px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    color: #f0f6fc !important;
+}
+
+body.ai-interview-dark .rb-timer,
+body.ai-interview-dark .rb-timer b,
+body.ai-interview-dark .rb-timer #timer,
+body.ai-interview-dark .rb-timer i {
+    color: #f0f6fc !important;
+}
+
+body.ai-interview-dark .rb-timer-bar {
+    flex: 0 0 100% !important;
+    display: block !important;
+    background: #30363d !important;
+    border: 1px solid #484f58 !important;
+    margin-left: 21px !important;
+    margin-top: 2px !important;
+    width: 180px !important;
+    max-width: 180px;
+    height: 8px !important;
+}
+
+body.ai-interview-dark .rb-timer-bar-fill {
+    background: #8b949e !important;
+    background-image: none !important;
+}
+
+/* Scroll-to-bottom — dark (adaptive only via this stylesheet) */
+body.ai-interview-dark .scroll-to-bottom {
+    background: #21262d !important;
+    color: #f0f6fc !important;
+    border: 1px solid #30363d !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.ai-interview-dark .scroll-to-bottom:hover {
+    background: #30363d !important;
+    color: #fff !important;
+    border-color: #484f58 !important;
+}
+
+body.ai-interview-dark .scroll-to-bottom.show {
+    display: flex !important;
+}
+
+/* Cards / panels */
+body.ai-interview-dark .rb-summary-card,
+body.ai-interview-dark .rb-analysis-content,
+body.ai-interview-dark .rb-analysis-item,
+body.ai-interview-dark .rb-video-item,
+body.ai-interview-dark .rb-chat-log-report,
+body.ai-interview-dark .rb-question-section,
+body.ai-interview-dark .rb-video-feed,
+body.ai-interview-dark .rb-video-section,
+body.ai-interview-dark .rb-ai-panel,
+body.ai-interview-dark .rb-ai-metric,
+body.ai-interview-dark .rb-adaptive-section-card,
+body.ai-interview-dark .rb-ai-adaptive-report,
+body.ai-interview-dark .rb-ai-raw-report,
+body.ai-interview-dark .rb-candidate-comment,
+body.ai-interview-dark .code-lang-selector,
+body.ai-interview-dark .rb-chatbox-inputrow-box,
+body.ai-interview-dark .rb-chatbox-popup {
+    background: var(--ai-card-2) !important;
+    color: var(--ai-text) !important;
+    border-color: var(--ai-border) !important;
+    box-shadow: none !important;
+}
+
+body.ai-interview-dark .rb-chatbox-container {
+    background: #161b22 !important;
+    color: var(--ai-text) !important;
+    border-color: var(--ai-border) !important;
+    box-shadow: none !important;
+}
+
+body.ai-interview-dark .chat-message {
+    background: #21262d !important;
+}
+
+body.ai-interview-dark .rb-summary-card {
+    background: linear-gradient(160deg, #1c2128 0%, #161b22 100%) !important;
+    border: 1px solid var(--ai-border) !important;
+}
+
+body.ai-interview-dark .rb-summary-card:hover {
+    border-color: #484f58 !important;
+    background: #21262d !important;
+}
+
+/* Adaptive analysis panels — match summary-card dark look */
+body.ai-interview-dark .rb-adaptive-panel,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-panel,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-panel--comment {
+    background: linear-gradient(160deg, #1c2128 0%, #161b22 100%) !important;
+    background-image: linear-gradient(160deg, #1c2128 0%, #161b22 100%) !important;
+    border: 1px solid #30363d !important;
+    box-shadow: none !important;
+    color: #e8ecf4 !important;
+}
+
+body.ai-interview-dark .rb-adaptive-panel:hover,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-panel:hover {
+    border-color: #484f58 !important;
+    background: #21262d !important;
+}
+
+body.ai-interview-dark .rb-adaptive-panel__head,
+body.ai-interview-dark .rb-adaptive-table-title,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-panel__head,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-table-title,
+body.ai-interview-dark .rb-ai-adaptive-report h2.rb-adaptive-table-title,
+body.ai-interview-dark .rb-ai-adaptive-report h3.rb-adaptive-table-title,
+body.ai-interview-dark .rb-ai-adaptive-report h4.rb-adaptive-table-title,
+body.ai-interview-dark .rb-ai-panel__head,
+body.ai-interview-dark .rb-ai-panel__title {
+    color: #f0f6fc !important;
+    border-bottom-color: #30363d !important;
+}
+
+body.ai-interview-dark .rb-adaptive-panel__head i,
+body.ai-interview-dark .rb-adaptive-table-title i,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-panel__head i,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-panel--comment .rb-adaptive-panel__head i,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-table-title i {
+    color: #58a6ff !important;
+}
+
+/* Panel / section heading icons — greyscale silhouette (hides light PNG backplates) */
+body.ai-interview-dark .rb-ai-panel__head img,
+body.ai-interview-dark .rb-adaptive-panel__head img,
+body.ai-interview-dark .rb-adaptive-table-title img,
+body.ai-interview-dark .rb-adaptive-section-card .rb-adaptive-panel__head img,
+body.ai-interview-dark .rb-ai-metric__label img {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    filter: invert(1) grayscale(1) brightness(0.78) contrast(0.95);
+    opacity: 0.9;
+}
+
+body.ai-interview-dark .rb-adaptive-panel .rb-adaptive-field__value,
+body.ai-interview-dark .rb-adaptive-panel--comment .rb-adaptive-field__value,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-panel--comment .rb-adaptive-field__value {
+    color: #c9d1d9 !important;
+}
+
+body.ai-interview-dark .rb-card-value,
+body.ai-interview-dark .rb-ai-metric__value,
+body.ai-interview-dark .rb-video-info h4,
+body.ai-interview-dark .rb-message-header,
+body.ai-interview-dark .rb-bot-message,
+body.ai-interview-dark .rb-user-message {
+    color: var(--ai-text) !important;
+}
+
+body.ai-interview-dark .rb-card-icon {
+    background: var(--ai-accent-soft) !important;
+    color: var(--ai-accent) !important;
+}
+
+/* Chat bubbles */
+body.ai-interview-dark .rb-chat-message-report,
+body.ai-interview-dark .message,
+body.ai-interview-dark .rb-message,
+body.ai-interview-dark .bot-message,
+body.ai-interview-dark .user-message {
+    background: var(--ai-surface) !important;
+    color: var(--ai-text) !important;
+    border-color: var(--ai-border-soft) !important;
+}
+
+body.ai-interview-dark .rb-user-message,
+body.ai-interview-dark .user-message {
+    background: #1f2937 !important;
+}
+
+body.ai-interview-dark .rb-bot-message,
+body.ai-interview-dark .bot-message {
+    background: #15202b !important;
+}
+
+/* Inputs / CodeMirror */
+body.ai-interview-dark .CodeMirror,
+body.ai-interview-dark .CodeMirror-lines,
+body.ai-interview-dark .CodeMirror-scroll,
+body.ai-interview-dark .CodeMirror-gutters,
+body.ai-interview-dark textarea,
+body.ai-interview-dark input[type="text"],
+body.ai-interview-dark input[type="search"],
+body.ai-interview-dark select,
+body.ai-interview-dark .form-control {
+    background: #0d1117 !important;
+    color: var(--ai-text) !important;
+    border-color: var(--ai-border) !important;
+}
+
+body.ai-interview-dark .CodeMirror pre.CodeMirror-line,
+body.ai-interview-dark .CodeMirror-cursor {
+    color: var(--ai-text) !important;
+}
+
+body.ai-interview-dark .rb-chatbox-expand-btn,
+body.ai-interview-dark .rb-chatbox-popup-close {
+    background: var(--ai-card-2) !important;
+    color: var(--ai-text-muted) !important;
+    border-color: var(--ai-border) !important;
+}
+
+body.ai-interview-dark .rb-chatbox-expand-btn:hover {
+    background: var(--ai-accent-soft) !important;
+    color: var(--ai-accent) !important;
+}
+
+/* Buttons */
+body.ai-interview-dark .rb-action-btn,
+body.ai-interview-dark .rb-secondary-btn,
+body.ai-interview-dark .rb-primary-btn,
+body.ai-interview-dark .rb-extend-time,
+body.ai-interview-dark button.rb-action-btn,
+body.ai-interview-dark a.rb-action-btn {
+    background: #21262d !important;
+    color: var(--ai-text) !important;
+    border: 1px solid var(--ai-border) !important;
+    box-shadow: none !important;
+}
+
+body.ai-interview-dark .rb-action-btn:hover,
+body.ai-interview-dark .rb-secondary-btn:hover,
+body.ai-interview-dark .rb-extend-time:hover {
+    background: #30363d !important;
+    border-color: #484f58 !important;
+    color: #fff !important;
+}
+
+body.ai-interview-dark .rb-primary-btn,
+body.ai-interview-dark button[type="submit"].rb-primary-btn,
+body.ai-interview-dark .rb-send-btn,
+body.ai-interview-dark #btnSend,
+body.ai-interview-dark .btn-send {
+    background: #238636 !important;
+    border-color: #2ea043 !important;
+    color: #fff !important;
+}
+
+/* MDC raised buttons (Report edit / Save / Close, etc.) */
+body.ai-interview-dark .mdc-button.mdc-button--raised,
+body.ai-interview-dark .mdc-button.mdc-button--raised.mdc-ripple-upgraded {
+    background: #21262d !important;
+    background-color: #21262d !important;
+    color: #f0f6fc !important;
+    border: 1px solid #30363d !important;
+    box-shadow: none !important;
+}
+
+body.ai-interview-dark .mdc-button.mdc-button--raised:hover,
+body.ai-interview-dark .mdc-button.mdc-button--raised.mdc-ripple-upgraded:hover {
+    background: #30363d !important;
+    background-color: #30363d !important;
+    border-color: #484f58 !important;
+    color: #ffffff !important;
+}
+
+body.ai-interview-dark .mdc-button.mdc-button--raised .mdc-button__label,
+body.ai-interview-dark .mdc-button.mdc-button--raised .mdc-fab__icon,
+body.ai-interview-dark .mdc-button.mdc-button--raised .material-icons,
+body.ai-interview-dark .mdc-button.mdc-button--raised i {
+    color: #f0f6fc !important;
+}
+
+body.ai-interview-dark .mdc-button.mdc-button--raised svg,
+body.ai-interview-dark .mdc-button.mdc-button--raised svg path {
+    fill: #f0f6fc !important;
+}
+
+body.ai-interview-dark .mdc-button.mdc-button--raised.btn-danger {
+    background: #da3633 !important;
+    background-color: #da3633 !important;
+    border-color: #f85149 !important;
+    color: #ffffff !important;
+}
+
+body.ai-interview-dark .mdc-button.mdc-button--raised.btn-danger:hover {
+    background: #f85149 !important;
+    background-color: #f85149 !important;
+    border-color: #ff7b72 !important;
+    color: #ffffff !important;
+}
+
+/* Tables */
+body.ai-interview-dark table,
+body.ai-interview-dark .table,
+body.ai-interview-dark .table-bordered,
+body.ai-interview-dark .rb-ai-adaptive-report table,
+body.ai-interview-dark .rb-ai-raw-report table,
+body.ai-interview-dark .rb-adaptive-rating-table {
+    background: var(--ai-card-2) !important;
+    color: var(--ai-text) !important;
+    border-color: var(--ai-border) !important;
+}
+
+body.ai-interview-dark th,
+body.ai-interview-dark .rb-ai-adaptive-report th,
+body.ai-interview-dark .rb-ai-raw-report th,
+body.ai-interview-dark .rb-adaptive-th {
+    background: #21262d !important;
+    color: var(--ai-text-muted) !important;
+    border-color: var(--ai-border) !important;
+}
+
+body.ai-interview-dark td,
+body.ai-interview-dark .rb-ai-adaptive-report td,
+body.ai-interview-dark .rb-ai-raw-report td {
+    background: transparent !important;
+    color: var(--ai-text) !important;
+    border-color: var(--ai-border-soft) !important;
+}
+
+body.ai-interview-dark .rb-ai-adaptive-report tbody tr:nth-child(even) td,
+body.ai-interview-dark .rb-ai-raw-report tr:nth-child(even) td,
+body.ai-interview-dark .rb-ai-adaptive-report tr:nth-child(even) td {
+    background: rgba(255, 255, 255, 0.03) !important;
+}
+
+body.ai-interview-dark .rb-ai-adaptive-report tbody tr:hover td {
+    background: rgba(88, 166, 255, 0.08) !important;
+}
+
+/* Adaptive rating table — dark header + body (beats Report.cshtml light !important) */
+body.ai-interview-dark .rb-ai-adaptive-report table.rb-adaptive-rating-table {
+    background: #161b22 !important;
+    border: 1px solid #30363d !important;
+    color: #e8ecf4 !important;
+}
+
+body.ai-interview-dark .rb-ai-adaptive-report table.rb-adaptive-rating-table thead th,
+body.ai-interview-dark .rb-ai-adaptive-report table.rb-adaptive-rating-table tr:first-child th,
+body.ai-interview-dark .rb-ai-adaptive-report table.rb-adaptive-rating-table tr:first-child td.rb-adaptive-th,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-panel table.rb-adaptive-rating-table th,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-section-card table.rb-adaptive-rating-table th,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-panel table.rb-adaptive-rating-table thead th,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-section-card table.rb-adaptive-rating-table thead th,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-panel table.rb-adaptive-rating-table tr:first-child th,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-section-card table.rb-adaptive-rating-table tr:first-child th,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-panel table.rb-adaptive-rating-table tr:first-child td.rb-adaptive-th,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-section-card table.rb-adaptive-rating-table tr:first-child td.rb-adaptive-th {
+    background: #21262d !important;
+    color: #c9d1d9 !important;
+    border: none !important;
+    border-bottom: 1px solid #30363d !important;
+}
+
+body.ai-interview-dark .rb-ai-adaptive-report table.rb-adaptive-rating-table td,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-panel table.rb-adaptive-rating-table td,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-section-card table.rb-adaptive-rating-table td {
+    background: transparent !important;
+    color: #e8ecf4 !important;
+    border-color: #30363d !important;
+    border-bottom: 1px solid #21262d !important;
+}
+
+body.ai-interview-dark .rb-ai-adaptive-report table.rb-adaptive-rating-table td:first-child,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-panel table.rb-adaptive-rating-table td:first-child,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-section-card table.rb-adaptive-rating-table td:first-child {
+    color: #f0f6fc !important;
+}
+
+body.ai-interview-dark .rb-ai-adaptive-report table.rb-adaptive-rating-table td.rb-adaptive-text-col,
+body.ai-interview-dark .rb-ai-adaptive-report table.rb-adaptive-rating-table td.rb-adaptive-metric-col {
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+    color: #c9d1d9 !important;
+}
+
+body.ai-interview-dark .rb-ai-adaptive-report table.rb-adaptive-rating-table .rb-adaptive-score {
+    color: #3fb950 !important;
+}
+
+body.ai-interview-dark .rb-ai-adaptive-report table.rb-adaptive-rating-table tbody tr:nth-child(even) td,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-panel table.rb-adaptive-rating-table tbody tr:nth-child(even) td,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-section-card table.rb-adaptive-rating-table tbody tr:nth-child(even) td {
+    background: rgba(255, 255, 255, 0.03) !important;
+}
+
+body.ai-interview-dark .rb-ai-adaptive-report table.rb-adaptive-rating-table tbody tr:hover td,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-panel table.rb-adaptive-rating-table tbody tr:hover td,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-section-card table.rb-adaptive-rating-table tbody tr:hover td {
+    background: rgba(255, 255, 255, 0.06) !important;
+}
+
+body.ai-interview-dark .rb-ai-adaptive-report table.rb-adaptive-rating-table .rb-adaptive-bar__track {
+    background: #0d1117 !important;
+    border: 1px solid #30363d !important;
+}
+
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-clamp__toggle {
+    color: #58a6ff !important;
+}
+
+/* Score Rubric + Questions Discussed section cards */
+body.ai-interview-dark .rb-adaptive-section-card,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-section-card {
+    background: linear-gradient(160deg, #1c2128 0%, #161b22 100%) !important;
+    border: 1px solid #30363d !important;
+    box-shadow: none !important;
+    color: #e8ecf4 !important;
+}
+
+body.ai-interview-dark .rb-adaptive-section-card .rb-adaptive-panel__head,
+body.ai-interview-dark .rb-adaptive-section-card .rb-adaptive-table-title,
+body.ai-interview-dark .rb-adaptive-section-card .rb-ai-panel__title {
+    color: #f0f6fc !important;
+    border-bottom-color: #30363d !important;
+}
+
+/* Questions Discussed cards (video + adaptive card UI) */
+body.ai-interview-dark .rb-ai-q-card {
+    background: #161b22 !important;
+    border: 1px solid #30363d !important;
+    color: #e8ecf4 !important;
+}
+
+body.ai-interview-dark .rb-ai-q-card:nth-child(even) {
+    background: #1c2128 !important;
+}
+
+body.ai-interview-dark .rb-ai-q-card__text {
+    color: #f0f6fc !important;
+}
+
+body.ai-interview-dark .rb-ai-q-card__meta,
+body.ai-interview-dark .rb-ai-q-card__note {
+    color: #c9d1d9 !important;
+}
+
+body.ai-interview-dark .rb-ai-meta-chip {
+    background: #21262d !important;
+    border-color: #30363d !important;
+    color: #c9d1d9 !important;
+}
+
+body.ai-interview-dark .rb-ai-q-card__note-label {
+    color: #8b949e !important;
+}
+
+body.ai-interview-dark .rb-ai-q-card__num {
+    background: linear-gradient(135deg, #238636 0%, #2ea043 100%) !important;
+    color: #fff !important;
+}
+
+/* Score Rubric / questions tables — charcoal cells, no white rows */
+body.ai-interview-dark .rb-ai-rubric-table,
+body.ai-interview-dark .rb-ai-questions-table {
+    background: #161b22 !important;
+    color: #e8ecf4 !important;
+    border-color: #30363d !important;
+}
+
+body.ai-interview-dark .rb-ai-rubric-table th,
+body.ai-interview-dark .rb-ai-questions-table th {
+    background: #21262d !important;
+    color: #c9d1d9 !important;
+    border-color: #30363d !important;
+}
+
+body.ai-interview-dark .rb-ai-rubric-table td,
+body.ai-interview-dark .rb-ai-questions-table td,
+body.ai-interview-dark .rb-ai-rubric-table .rb-ai-r-level,
+body.ai-interview-dark .rb-ai-rubric-table .rb-ai-r-score,
+body.ai-interview-dark .rb-ai-questions-table .rb-ai-q-num,
+body.ai-interview-dark .rb-ai-questions-table .rb-ai-q-text,
+body.ai-interview-dark .rb-ai-questions-table .rb-ai-q-rating,
+body.ai-interview-dark .rb-ai-questions-table .rb-ai-q-score,
+body.ai-interview-dark .rb-ai-questions-table .rb-ai-q-comment,
+body.ai-interview-dark .rb-ai-questions-table .rb-ai-q-comm-score {
+    background: #1c2128 !important;
+    color: #e8ecf4 !important;
+    border-color: #30363d !important;
+}
+
+body.ai-interview-dark .rb-ai-rubric-table tbody tr,
+body.ai-interview-dark .rb-ai-questions-table tbody tr {
+    background: #1c2128 !important;
+}
+
+body.ai-interview-dark .rb-ai-rubric-table tbody tr:nth-child(even),
+body.ai-interview-dark .rb-ai-questions-table tbody tr:nth-child(even),
+body.ai-interview-dark .rb-ai-rubric-table tbody tr:nth-child(even) td,
+body.ai-interview-dark .rb-ai-questions-table tbody tr:nth-child(even) td {
+    background: #21262d !important;
+}
+
+body.ai-interview-dark .rb-ai-rubric-table tbody tr:hover td,
+body.ai-interview-dark .rb-ai-questions-table tbody tr:hover td {
+    background: #262c36 !important;
+}
+
+body.ai-interview-dark .rb-ai-r-score,
+body.ai-interview-dark .rb-ai-rubric-table .rb-ai-r-score {
+    color: #3fb950 !important;
+    background: #1c2128 !important;
+}
+
+body.ai-interview-dark .rb-ai-rubric-table tbody tr:nth-child(even) .rb-ai-r-score {
+    background: #21262d !important;
+}
+
+body.ai-interview-dark .rb-ai-table-wrap {
+    background: transparent !important;
+    border-color: #30363d !important;
+}
+
+/* Adaptive question narrative blocks */
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-q-block {
+    border-bottom-color: #30363d !important;
+}
+
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-q-head {
+    color: #f0f6fc !important;
+}
+
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-q-head::before {
+    background: #238636 !important;
+    color: #fff !important;
+}
+
+/* Adaptive metric cards */
+body.ai-interview-dark .rb-adaptive-metric-card,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-metric-card {
+    background: linear-gradient(160deg, #1c2128 0%, #161b22 100%) !important;
+    background-image: none !important;
+    border: 1px solid #30363d !important;
+    box-shadow: none !important;
+    color: #e8ecf4 !important;
+}
+
+body.ai-interview-dark .rb-adaptive-metric-card__label,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-metric-card__label {
+    color: #8b949e !important;
+}
+
+body.ai-interview-dark .rb-adaptive-metric-card__value,
+body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-metric-card__value {
+    color: #f0f6fc !important;
+}
+
+/* AI Analysis & Recommendations divider + section */
+body.ai-interview-dark .rb-ai-analysis-divider.rb-ai-analysis-divider--adaptive {
+    margin: 0px 0 20px 0 !important;
+}
+
+body.ai-interview-dark .rb-ai-analysis-divider--adaptive .rb-ai-analysis-divider__line,
+body.ai-interview-dark .rb-ai-analysis-divider--adaptive .rb-ai-analysis-divider__line--left,
+body.ai-interview-dark .rb-ai-analysis-divider--adaptive .rb-ai-analysis-divider__line--right {
+    background: linear-gradient(90deg, transparent 0%, #484f58 40%, #6e7681 100%) !important;
+    opacity: 0.85 !important;
+}
+
+body.ai-interview-dark .rb-ai-analysis-divider--adaptive .rb-ai-analysis-divider__label {
+    background: #161b22 !important;
+}
+
+body.ai-interview-dark .rb-ai-analysis-divider--adaptive .rb-ai-analysis-divider__icon {
+    background: #21262d !important;
+    background-image: none !important;
+    border: 1px solid #30363d !important;
+    box-shadow: none !important;
+}
+
+body.ai-interview-dark .rb-ai-analysis-divider--adaptive .rb-ai-analysis-divider__title {
+    color: #f0f6fc !important;
+}
+
+body.ai-interview-dark .rb-ai-analysis-divider--adaptive + div > .rb-report-section,
+body.ai-interview-dark .rb-ai-analysis-divider--adaptive ~ .rb-report-section,
+body.ai-interview-dark .rb-ai-analysis-divider--adaptive + div .rb-analysis-content,
+body.ai-interview-dark .rb-report-section .rb-analysis-content {
+    background: #161b22 !important;
+    border: none !important;
+    border-radius: 12px !important;
+    color: #e8ecf4 !important;
+    box-shadow: none !important;
+}
+
+body.ai-interview-dark .rb-ai-analysis-layout,
+body.ai-interview-dark .rb-ai-metric,
+body.ai-interview-dark .rb-ai-adaptive-report,
+body.ai-interview-dark .rb-adaptive-overview {
+    background: transparent !important;
+    color: #e8ecf4 !important;
+}
+
+body.ai-interview-dark .rb-ai-metric {
+    background: #1c2128 !important;
+    border: 1px solid #30363d !important;
+}
+
+body.ai-interview-dark .rb-ai-metric__label,
+body.ai-interview-dark .rb-ai-metric__main {
+    color: #8b949e !important;
+}
+
+body.ai-interview-dark .rb-ai-metric__value {
+    color: #f0f6fc !important;
+}
+
+/* Pills / badges — keep semantic colors but dark-friendly fills */
+body.ai-interview-dark .rb-adaptive-rating-pill--excellent { background: rgba(63, 185, 80, 0.2) !important; color: #3fb950 !important; }
+body.ai-interview-dark .rb-adaptive-rating-pill--good { background: rgba(88, 166, 255, 0.2) !important; color: #58a6ff !important; }
+body.ai-interview-dark .rb-adaptive-rating-pill--average { background: rgba(210, 153, 34, 0.2) !important; color: #d29922 !important; }
+body.ai-interview-dark .rb-adaptive-rating-pill--below { background: rgba(248, 81, 73, 0.15) !important; color: #ffa198 !important; }
+body.ai-interview-dark .rb-adaptive-rating-pill--poor { background: rgba(248, 81, 73, 0.25) !important; color: #f85149 !important; }
+body.ai-interview-dark .rb-adaptive-rating-pill--neutral { background: #21262d !important; color: var(--ai-text-muted) !important; }
+
+body.ai-interview-dark .rb-status-complete { color: var(--ai-green) !important; }
+body.ai-interview-dark .rb-status-pending { color: var(--ai-warn) !important; }
+
+body.ai-interview-dark .rb-question-separator,
+body.ai-interview-dark .rb-question-separator-decorative {
+    background: var(--ai-border) !important;
+    border-color: var(--ai-border) !important;
+}
+
+body.ai-interview-dark .rb-question-number {
+    background: #21262d !important;
+    background-image: none !important;
+    background-color: #21262d !important;
+    color: #ffffff !important;
+    border: 1px solid #30363d !important;
+    box-shadow: none !important;
+}
+
+/* Video / media chrome */
+body.ai-interview-dark .rb-video-player,
+body.ai-interview-dark video.rb-video-element,
+body.ai-interview-dark .rb-video-placeholder {
+    background: #010409 !important;
+    border-color: var(--ai-border) !important;
+}
+
+/* Summary card icons — white glyphs on dark circles */
+body.ai-interview-dark .rb-card-icon {
+    background: #21262d !important;
+    background-image: none !important;
+    color: #fff !important;
+    border: 1px solid #30363d !important;
+    box-shadow: none !important;
+}
+
+body.ai-interview-dark .rb-card-icon i,
+body.ai-interview-dark .rb-card-icon .fa,
+body.ai-interview-dark .rb-card-icon .fa-comments,
+body.ai-interview-dark .rb-card-icon .fa-video,
+body.ai-interview-dark .rb-card-icon .fa-clock,
+body.ai-interview-dark .rb-card-icon .fa-clock:before {
+    color: #fff !important;
+}
+
+/* Report candidate info card */
+body.ai-interview-dark .rb-candidate-info-card {
+    background: #161b22 !important;
+    background-image: none !important;
+    border: 1px solid #30363d !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+    color: #e8ecf4 !important;
+}
+
+body.ai-interview-dark .rb-candidate-info-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
+    border-color: #484f58 !important;
+    transform: none;
+}
+
+body.ai-interview-dark .rb-candidate-info-card .rb-candidate-avatar {
+    background: #21262d !important;
+    background-image: none !important;
+    color: #fff !important;
+    border: 1px solid #30363d !important;
+    box-shadow: none !important;
+}
+
+body.ai-interview-dark .rb-candidate-info-card .rb-candidate-name {
+    background: transparent !important;
+    color: #f0f6fc !important;
+}
+
+body.ai-interview-dark .rb-candidate-info-card .rb-candidate-email,
+body.ai-interview-dark .rb-candidate-info-card .rb-candidate-date {
+    background: #21262d !important;
+    color: #c9d1d9 !important;
+    border: 1px solid #30363d !important;
+}
+
+body.ai-interview-dark .rb-candidate-meta {
+    gap: 10px !important;
+}
+
+body.ai-interview-dark .rb-candidate-meta,
+body.ai-interview-dark .rb-candidate-meta * {
+    font-size: 13.5px !important;
+}
+
+body.ai-interview-dark .rb-candidate-meta .rb-candidate-email,
+body.ai-interview-dark .rb-candidate-meta .rb-candidate-date {
+    padding: 5px 8px !important;
+    gap: 4px !important;
+}
+
+body.ai-interview-dark .rb-candidate-meta i {
+    font-size: 12.5px !important;
+}
+
+body.ai-interview-dark .rb-candidate-meta a {
+    font-size: 13.5px !important;
+}
+
+body.ai-interview-dark .rb-candidate-info-card .rb-candidate-email i,
+body.ai-interview-dark .rb-candidate-info-card .rb-candidate-date i {
+    color: #fff !important;
+}
+
+body.ai-interview-dark .rb-candidate-info-card .rb-candidate-email span,
+body.ai-interview-dark .rb-candidate-info-card .rb-candidate-date span {
+    color: #e8ecf4 !important;
+}
+
+body.ai-interview-dark .rb-candidate-info-card a {
+    color: #6ea8fe !important;
+}
+
+/* Index video overlay name badge (not report card) */
+body.ai-interview-dark .rb-video-feed .rb-candidate-name {
+    background: rgba(63, 185, 80, 0.85) !important;
+    color: #fff !important;
+}
+
+/* Modals / overlays on these pages */
+body.ai-interview-dark .rb-chatbox-popup-overlay {
+    background-color: rgba(1, 4, 9, 0.72) !important;
+}
+
+body.ai-interview-dark .rb-chatbox-popup-header,
+body.ai-interview-dark .rb-chatbox-popup-title {
+    color: var(--ai-text) !important;
+    border-color: var(--ai-border) !important;
+}
+
+body.ai-interview-dark .swal2-popup,
+body.ai-interview-dark .sweet-alert {
+    background: var(--ai-card) !important;
+    color: var(--ai-text) !important;
+}
+
+/* Links */
+body.ai-interview-dark a:not(.rb-action-btn):not(.btn) {
+    color: var(--ai-accent);
+}
+
+body.ai-interview-dark a:not(.rb-action-btn):not(.btn):hover {
+    color: #79b8ff;
+}
+
+/* Recording / danger accents stay readable */
+body.ai-interview-dark .rb-video-section #btnStart.rb-recording-indicator,
+body.ai-interview-dark .rb-recording-indicator {
+    background: var(--ai-card) !important;
+    color: var(--ai-danger) !important;
+    border-color: var(--ai-danger) !important;
+}
+
+/* Soften green accents used in light theme into muted dark greens / blues */
+body.ai-interview-dark .rb-extend-time {
+    color: var(--ai-accent) !important;
+}
+
+/* Scrollbars (WebKit) */
+body.ai-interview-dark ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+body.ai-interview-dark ::-webkit-scrollbar-track {
+    background: var(--ai-bg);
+}
+body.ai-interview-dark ::-webkit-scrollbar-thumb {
+    background: #30363d;
+    border-radius: 6px;
+}
+body.ai-interview-dark ::-webkit-scrollbar-thumb:hover {
+    background: #484f58;
+}
