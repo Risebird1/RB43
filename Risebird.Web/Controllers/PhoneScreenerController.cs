@@ -348,7 +348,8 @@ namespace Risebird.Web.Controllers
             if (existing == null)
                 return Content("OK. No matching call record found.", "text/html");
 
-            var update = BuildUpdateFromPayload(existing.Id, payload, rawBody);
+            var core = ExtractCore(rawBody);
+            var update = BuildUpdateFromPayload(existing.Id, payload, core, rawBody);
             await _phoneScreenRepository.UpdateCallFromWebhookAsync(update);
 
             return Content($"OK. callId={existing.Id}", "text/html");
@@ -374,7 +375,7 @@ namespace Risebird.Web.Controllers
                 if (string.IsNullOrWhiteSpace(call.ExternalCallId))
                     return Json(new { success = false, message = "No Plivo call UUID has been recorded for this call yet." });
 
-                var media = await _plivoCXService.FetchCallMediaAsync(call.ExternalCallId);
+                var media = await _plivoCXService.FetchCallMediaAsync(call.ExternalCallId, WebhookCallbackUrl());
                 if (media == null || !media.Found)
                     return Json(new
                     {
@@ -425,7 +426,7 @@ namespace Risebird.Web.Controllers
                 if (!ended || !needsMedia || string.IsNullOrWhiteSpace(call.ExternalCallId))
                     return call;
 
-                var media = await _plivoCXService.FetchCallMediaAsync(call.ExternalCallId);
+                var media = await _plivoCXService.FetchCallMediaAsync(call.ExternalCallId, WebhookCallbackUrl());
                 if (media == null || !media.Found)
                     return call;
 
@@ -544,9 +545,9 @@ namespace Risebird.Web.Controllers
                 Duration       = G("duration", "recording_duration", "call_duration", "billed_duration", "duration_seconds"),
                 RecordingUrl   = G("recording_url", "record_url", "recordurl", "recording_uri"),
                 Transcript     = G("transcript", "transcription", "chat_transcript", "chat_history", "messages"),
-                Summary        = G("summary", "conversation_summary", "call_summary"),
+                Summary        = G("observation", "analysis_observation", "disposition_reason", "summary", "conversation_summary", "call_summary", "notes"),
                 Qualified      = G("qualified"),
-                FailedCriteria = G("failed_criteria"),
+                FailedCriteria = G("failed_criteria", "criteria_not_met"),
                 Disposition    = G("disposition"),
                 Degree         = G("degree"),
                 GradYear       = G("grad_year"),
@@ -562,33 +563,23 @@ namespace Risebird.Web.Controllers
             };
         }
 
-        private static PhoneScreenCall BuildUpdateFromPayload(int callId, PhoneScreenHangupPayload p, string rawBody)
+        private static PhoneScreenCall BuildUpdateFromPayload(int callId, PhoneScreenHangupPayload p, JObject core, string rawBody)
         {
             int? duration = null;
             if (int.TryParse(p.Duration, out var d)) duration = d;
 
-            string qualified = null;
-            if (!string.IsNullOrWhiteSpace(p.Qualified))
-                qualified = p.Qualified.Trim().ToLowerInvariant().StartsWith("y") ? "yes" : "no";
+            // The PASS / HOLD / FAIL signal. Newer agents send an ADVANCE / HOLD /
+            // REJECT disposition (with a matching analysis.verdict); older agents send
+            // a yes/no "qualified" flag. Support both, verdict taking precedence.
+            var verdict = core?["analysis"]?["verdict"]?.ToString();
+            var successEval = MapSuccess(p.Disposition, verdict, p.Qualified);
+            var qualified = MapQualified(p.Disposition, verdict, p.Qualified);
 
-            string successEval = null;
-            if (qualified == "yes") successEval = "PASS";
-            else if (qualified == "no") successEval = "FAIL";
-
-            // Assemble the arbitrary structured output the detail screen renders dynamically.
-            var structured = new Dictionary<string, object>();
-            void Add(string k, string v) { if (!string.IsNullOrWhiteSpace(v)) structured[k] = v; }
-            Add("qualified", qualified);
-            Add("failed_criteria", p.FailedCriteria);
-            Add("disposition", p.Disposition);
-            Add("degree", p.Degree);
-            Add("grad_year", p.GradYear);
-            Add("location", p.Location);
-            Add("joining", p.Joining);
-            Add("laptop", p.Laptop);
-            Add("comp_comfort", p.CompComfort);
-            Add("availability", p.Availability);
-            Add("notes", p.Notes);
+            // Capture the whole returned payload (minus routing/echo/media fields) so
+            // any agent's variables — including a nested analysis object — are stored
+            // and rendered by the (already generic) detail screen without code changes.
+            var structuredJson = BuildStructuredData(core)
+                                 ?? BuildStructuredFallback(p);
 
             return new PhoneScreenCall
             {
@@ -607,9 +598,133 @@ namespace Risebird.Web.Controllers
                 Qualified = qualified,
                 FailedCriteria = p.FailedCriteria,
                 Availability = p.Availability,
-                StructuredData = structured.Count > 0 ? JsonConvert.SerializeObject(structured) : null,
+                StructuredData = structuredJson,
                 RawPayload = rawBody
             };
+        }
+
+        // Maps an agent outcome to the UI's PASS / HOLD / FAIL result.
+        private static string MapSuccess(string disposition, string verdict, string qualified)
+        {
+            var v = (verdict ?? disposition)?.Trim().ToUpperInvariant();
+            if (v == "ADVANCE") return "PASS";
+            if (v == "REJECT") return "FAIL";
+            if (v == "HOLD") return "HOLD";
+            if (!string.IsNullOrWhiteSpace(qualified))
+                return qualified.Trim().ToLowerInvariant().StartsWith("y") ? "PASS" : "FAIL";
+            return null;
+        }
+
+        private static string MapQualified(string disposition, string verdict, string qualified)
+        {
+            var v = (verdict ?? disposition)?.Trim().ToUpperInvariant();
+            if (v == "ADVANCE") return "yes";
+            if (v == "REJECT") return "no";
+            if (v == "HOLD") return "hold";
+            if (!string.IsNullOrWhiteSpace(qualified))
+                return qualified.Trim().ToLowerInvariant().StartsWith("y") ? "yes" : "no";
+            return null;
+        }
+
+        // Routing/echo/media keys that should not clutter the structured display
+        // (they are shown elsewhere on the screen or are transport plumbing).
+        private static readonly HashSet<string> StructuredExcludeKeys =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "none", "form_data", "form_urlencoded",
+                "log_id", "logid", "log_identifier",
+                "call_uuid", "calluuid", "uuid", "conversation_id", "conversationid",
+                "call_status", "callstatus",
+                "candidate_name", "candidate_email", "phone_number",
+                "recording_url", "record_url", "recordurl", "recording_uri",
+                "transcript", "transcription"
+            };
+
+        /// <summary>
+        /// Returns the meaningful payload object regardless of envelope: unwraps the
+        /// flow HTTP node's {"json":{...}} body, folds a Plivo CX event envelope's
+        /// data.object/event_data up a level, or returns a flat body as-is.
+        /// </summary>
+        private static JObject ExtractCore(string rawBody)
+        {
+            if (string.IsNullOrWhiteSpace(rawBody)) return null;
+            try
+            {
+                if (!(JToken.Parse(rawBody) is JObject obj)) return null;
+
+                if (obj["json"] is JObject wrapped) return wrapped;
+
+                if (obj.SelectToken("data.object") is JObject dataObj)
+                {
+                    var merged = (JObject)dataObj.DeepClone();
+                    if (dataObj["event_data"] is JObject ed)
+                    {
+                        merged.Remove("event_data");
+                        foreach (var prop in ed.Properties())
+                            merged[StripNode(prop.Name)] = prop.Value;
+                    }
+                    return merged;
+                }
+                return obj;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Serializes the payload as structured data, dropping routing/echo/media keys
+        /// and empty scalar values. Preserves nested objects such as analysis so the
+        /// detail screen can surface score, verdict, observation, and criteria.
+        /// </summary>
+        private static string BuildStructuredData(JObject core)
+        {
+            if (core == null) return null;
+            var clone = (JObject)core.DeepClone();
+
+            foreach (var prop in clone.Properties().ToList())
+            {
+                if (StructuredExcludeKeys.Contains(prop.Name))
+                {
+                    prop.Remove();
+                    continue;
+                }
+                var val = prop.Value;
+                if (val == null || val.Type == JTokenType.Null ||
+                    (val.Type == JTokenType.String && string.IsNullOrWhiteSpace(val.ToString())))
+                    prop.Remove();
+            }
+
+            return clone.HasValues ? clone.ToString(Formatting.None) : null;
+        }
+
+        // Absolute URL of this controller's Webhook action, used as the Plivo
+        // transcription callback so a late transcript posts back and gets stored.
+        private string WebhookCallbackUrl()
+        {
+            try { return Url.Action("Webhook", "PhoneScreener", null, Request.Scheme); }
+            catch { return null; }
+        }
+
+        // Fallback structured data from the strongly-typed base-agent fields, used only
+        // when the raw payload could not be parsed into an object.
+        private static string BuildStructuredFallback(PhoneScreenHangupPayload p)
+        {
+            var structured = new Dictionary<string, object>();
+            void Add(string k, string v) { if (!string.IsNullOrWhiteSpace(v)) structured[k] = v; }
+            Add("qualified", p.Qualified);
+            Add("failed_criteria", p.FailedCriteria);
+            Add("disposition", p.Disposition);
+            Add("degree", p.Degree);
+            Add("grad_year", p.GradYear);
+            Add("location", p.Location);
+            Add("joining", p.Joining);
+            Add("laptop", p.Laptop);
+            Add("comp_comfort", p.CompComfort);
+            Add("availability", p.Availability);
+            Add("notes", p.Notes);
+            return structured.Count > 0 ? JsonConvert.SerializeObject(structured) : null;
         }
 
         private PhoneScreenCallResultVM MapToResultVM(PhoneScreenCall call, PhoneScreenIRFHeader header)
