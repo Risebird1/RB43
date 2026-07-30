@@ -19,6 +19,10 @@ namespace Risebird.Entities.ViewModel
         public string CandidateAnswerAudioLink { get; set; }
         public int DeliveryHeadQuestionId { get; set; }
         public bool IsFlaggedForSentimentAnalysis { get; set; }
+        /// <summary>
+        /// Current AI question video from SkillChannelSampleQuestions (may be newer than BotSynthesizedVideoLink).
+        /// </summary>
+        public string AIQuestionVideoLink { get; set; }
 
     }
 
