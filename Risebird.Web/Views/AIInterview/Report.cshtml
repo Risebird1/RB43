@@ -920,6 +920,15 @@
         letter-spacing: 0.03em;
     }
 
+    .rb-ai-adaptive-report .rb-adaptive-panel__head img,
+    .rb-ai-adaptive-report .rb-adaptive-table-title img,
+    .rb-ai-adaptive-report .rb-adaptive-section-card .rb-adaptive-panel__head img {
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+        flex-shrink: 0;
+    }
+
     .rb-ai-adaptive-report .rb-adaptive-panel__head i {
         color: #3b82f6;
         font-size: 14px;
@@ -1571,7 +1580,7 @@
     }
 
     .rb-ai-rubric-table .rb-ai-r-level {
-        width: 24%;
+        width: 105px;
         font-size: 12px;
         color: #64748b;
     }
@@ -2915,7 +2924,7 @@
 </style>
 @if (ViewBag.AiInterviewDarkTheme == true)
 {
-    <link rel="stylesheet" href="~/css/ai-interview-dark-theme.css?v=24" />
+    <link rel="stylesheet" href="~/css/ai-interview-dark-theme.css?v=26" />
 }
 <div class="rb-report-container">
     <div class="rb-report-header">
@@ -5182,9 +5191,9 @@
             twoCol.className = 'rb-ai-two-col';
 
             var left = document.createElement('div');
-            left.className = 'rb-ai-panel';
+            left.className = 'rb-adaptive-panel';
             left.innerHTML =
-                '<div class="rb-ai-panel__head">' +
+                '<div class="rb-adaptive-panel__head">' +
                 '<img src="/img/techskill-score.png" alt="" />' +
                 '<span class="rb-ai-panel__title">Score Rubric</span>' +
                 '</div>';
@@ -5211,9 +5220,9 @@
             twoCol.appendChild(left);
 
             var right = document.createElement('div');
-            right.className = 'rb-ai-panel';
+            right.className = 'rb-adaptive-panel rb-adaptive-panel--comment';
             var rightHtml =
-                '<div class="rb-ai-panel__head">' +
+                '<div class="rb-adaptive-panel__head">' +
                 '<img src="/img/interviewer-comment.png" alt="" />' +
                 '<span class="rb-ai-panel__title">AI Interviewer Comment</span>' +
                 '</div>';
@@ -5463,12 +5472,17 @@
                 if (el.closest('.rb-adaptive-overview') || el.closest('.rb-adaptive-panel')) return;
                 if (el.querySelector && el.querySelector('table')) return;
                 var raw = txt(el);
-                if (!raw || raw.length > 80) return;
-                if (!/competenc(y|ies)?\s*rating/i.test(raw)) return;
+                if (!raw || raw.length > 90) return;
+                if (!/competenc(y|ies)?\s*rating|questions?\s+discussed/i.test(raw)) return;
 
                 var head = document.createElement('div');
                 head.className = 'rb-adaptive-panel__head rb-adaptive-table-title';
-                head.innerHTML = '<i class="fa fa-list-alt"></i> <span>Competency Ratings</span>';
+                var title = /questions?\s+discussed/i.test(raw)
+                    ? 'Questions Discussed &amp; Competency Rating'
+                    : 'Competency Ratings';
+                head.innerHTML =
+                    '<img src="/img/question-asked.png" alt="" />' +
+                    '<span class="rb-ai-panel__title">' + title + '</span>';
 
                 // Wrap heading + following table in a section card like Score Rubric panel
                 var card = document.createElement('div');
