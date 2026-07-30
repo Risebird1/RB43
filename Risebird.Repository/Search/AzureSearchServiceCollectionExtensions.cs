@@ -48,6 +48,10 @@ namespace Risebird.Repository
             services.AddScoped<ITemplateListingSearchRepository, TemplateListingSearchRepository>();
             services.AddScoped<IListingIndexRepository>(sp => sp.GetRequiredService<ITemplateListingSearchRepository>());
 
+            // Call catalogue (HR /HR/CallCatalogue) plugin.
+            services.AddScoped<ICallCatalogueListingSearchRepository, CallCatalogueListingSearchRepository>();
+            services.AddScoped<IListingIndexRepository>(sp => sp.GetRequiredService<ICallCatalogueListingSearchRepository>());
+
             services.AddScoped<IListingIndexRepositoryResolver, ListingIndexRepositoryResolver>();
 
             return services;

@@ -17,17 +17,20 @@ namespace Risebird.Business
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IPasswordHelper _passwordHelper;
         private readonly IInterviewerListingSearchRepository _interviewerListingSearchRepository;
+        private readonly ICallCatalogueListingSearchRepository _callCatalogueListingSearchRepository;
 
         public UserService(
             IUserRepository userRepository,
             IApplicationErrorLogger applicationErrorLogger,
             IPasswordHelper passwordHelper,
-            IInterviewerListingSearchRepository interviewerListingSearchRepository)
+            IInterviewerListingSearchRepository interviewerListingSearchRepository,
+            ICallCatalogueListingSearchRepository callCatalogueListingSearchRepository)
         {
             _userRepository = userRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _passwordHelper = passwordHelper;
             _interviewerListingSearchRepository = interviewerListingSearchRepository;
+            _callCatalogueListingSearchRepository = callCatalogueListingSearchRepository;
         }
 
         public async Task<List<Menu>> GetMenuBasedOnUserEmailld(string emailId, string sessionId = null)
@@ -748,7 +751,10 @@ namespace Risebird.Business
         {
             try
             {
-                return await _userRepository.SaveCallRecording(interviewid, IRFId, CandidateEmail, WhoCalled, CallSid, RecordingUrl);
+                var result = await _userRepository.SaveCallRecording(interviewid, IRFId, CandidateEmail, WhoCalled, CallSid, RecordingUrl);
+                if (string.Equals(result, "success", StringComparison.OrdinalIgnoreCase))
+                    await TrySyncCallCatalogueCandidateAsync(IRFId, CandidateEmail);
+                return result;
             }
 
             catch (Exception e)
@@ -851,7 +857,10 @@ namespace Risebird.Business
         {
             try
             {
-                return await _userRepository.SaveCallRecordingInterviewer(CandidateEmail, WhoCalled, CallSid, RecordingUrl);
+                var result = await _userRepository.SaveCallRecordingInterviewer(CandidateEmail, WhoCalled, CallSid, RecordingUrl);
+                if (string.Equals(result, "success", StringComparison.OrdinalIgnoreCase))
+                    await TrySyncCallCatalogueInterviewerAsync(CandidateEmail);
+                return result;
             }
 
             catch (Exception e)
@@ -981,6 +990,40 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+
+        private async Task TrySyncCallCatalogueCandidateAsync(string irfId, string candidateEmail)
+        {
+            if (_callCatalogueListingSearchRepository == null
+                || !_callCatalogueListingSearchRepository.IsEnabled
+                || string.IsNullOrWhiteSpace(candidateEmail))
+                return;
+
+            try
+            {
+                await _callCatalogueListingSearchRepository.UpsertCandidateCallCatalogueAsync(irfId, candidateEmail);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        private async Task TrySyncCallCatalogueInterviewerAsync(string interviewerEmail)
+        {
+            if (_callCatalogueListingSearchRepository == null
+                || !_callCatalogueListingSearchRepository.IsEnabled
+                || string.IsNullOrWhiteSpace(interviewerEmail))
+                return;
+
+            try
+            {
+                await _callCatalogueListingSearchRepository.UpsertInterviewerCallCatalogueAsync(interviewerEmail);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
 
