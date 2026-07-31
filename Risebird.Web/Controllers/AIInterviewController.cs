@@ -1636,7 +1636,11 @@ namespace Risebird.Web.Controllers
             "a Score Rubric table (columns: Rubric Item, Expected, Observed, Score); " +
             "Competency Ratings or Questions Discussed & Competency Rating; " +
             "and question-by-question analysis with Strengths, Weaknesses, and Evidence from transcript where useful. " +
-            "Use simple semantic HTML (h2/h3, p, table, ul/li) suitable for embedding in a report page.";
+            "Use simple semantic HTML (h2/h3, p, table, ul/li) suitable for embedding in a report page. " +
+            "After the HTML, append exactly one machine-readable line as an HTML comment and nothing after it, in this " +
+            "exact format: <!--RB_EVAL {\"final_verdict\":\"select|reject|borderline\",\"final_comment\":\"<one or two " +
+            "sentence overall verdict summary>\"} RB_EVAL--> . Use only one of select, reject, or borderline " +
+            "(lowercase) for final_verdict, and make sure the JSON is valid with any inner double quotes escaped.";
 
         private static bool MessageSignalsInterviewCompletion(string message)
         {
@@ -1656,8 +1660,13 @@ namespace Risebird.Web.Controllers
         {
             await _aiinterviewerService.UpdateMeetingCompletedStatusForAIInterview(model.SessionId.ToString());
 
-            // Same fire-and-forget pattern as preset completion.
-            _ = _api.GenerateReport(
+            // Await report generation (previously fire-and-forget). As a not-awaited cross-service HTTP call it could
+            // be abandoned once this request completed, so the report (ReportOfAIInterviewByAssistant, and the
+            // InterviewStatus/InterviewerComment it writes) frequently never got saved - only MeetingStatus, updated
+            // above, changed. Awaiting guarantees the report is generated and persisted at completion time.
+            // GenerateReport swallows its own exceptions and returns null on failure, so awaiting will not break the
+            // completion modal.
+            await _api.GenerateReport(
                 model.SessionId,
                 AdaptiveReportGenerationPrompt,
                 (int)AIInterviewTypeEnum.Adaptive,
