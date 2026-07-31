@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -252,15 +253,58 @@ namespace Risebird.Services.Controllers
                 //save the report in the database.
                 if (replies != null)
                 {
-                    var aiReport = new InterviewReportResult();
-                    var list = new List<string>();
-                    list.Add(replies.FirstOrDefault());
-                    aiReport.Replies = list;
-                    aiReport.SessionId = input.SessionId;
-                    aiReport.ThreadId = threadId;
-                    //save the report in the database.
+                    var rawReply = replies.FirstOrDefault();
 
-                    isReportSavedToDb = await _aIInterviewerService.SaveReportOfAIInterviewByAssistant(input.SessionId, JsonConvert.SerializeObject(aiReport), input.isExit);
+                    int? interviewStatus = null;
+                    string interviewerComment = null;
+                    // Adaptive reports are ready-to-render HTML, so they can't be parsed into the structured
+                    // AIInterviewEvaluation model. To still persist InterviewStatus/InterviewerComment, the assistant
+                    // appends a small machine-readable verdict block (an HTML comment) at the end of the report. Extract
+                    // it here to populate the columns, and strip it from the stored HTML so viewers never see it.
+                    var verdictBlock = ExtractAdaptiveVerdictBlock(rawReply);
+                    if (verdictBlock != null)
+                    {
+                        if (verdictBlock.Verdict == "select")
+                        {
+                            interviewStatus = 2;
+                        }
+                        else if (verdictBlock.Verdict == "reject")
+                        {
+                            interviewStatus = 3;
+                        }
+                        interviewerComment = verdictBlock.Comment;
+                        rawReply = verdictBlock.CleanedHtml;
+                    }
+                    else
+                    {
+                        // Fallback: if the assistant ever returns a fully-structured JSON report, use that verdict.
+                        var aIInterviewEvaluation = TryParseEvaluation(rawReply);
+                        if (aIInterviewEvaluation != null)
+                        {
+                            if (aIInterviewEvaluation.FinalVerdict?.ToLower() == "select")
+                            {
+                                interviewStatus = 2;
+                            }
+                            else if (aIInterviewEvaluation.FinalVerdict?.ToLower() == "reject")
+                            {
+                                interviewStatus = 3;
+                            }
+                            interviewerComment = aIInterviewEvaluation.FinalComment;
+                        }
+                    }
+
+                    var aiReport = new InterviewReportResult
+                    {
+                        Replies = new List<string> { rawReply },
+                        SessionId = input.SessionId,
+                        ThreadId = threadId
+                    };
+
+                    // Intentionally pass meetingStatus = null. The adaptive completion flow has already set
+                    // MeetingStatus = 4 (completed) before this report is generated. Deriving a meetingStatus from
+                    // isExit here (as the preset path does) would overwrite that completed status - e.g. to 3/dropped
+                    // whenever no select/reject verdict is available.
+                    isReportSavedToDb = await _aIInterviewerService.SaveReportOfAIInterviewByAssistant(input.SessionId, JsonConvert.SerializeObject(aiReport), input.isExit, interviewStatus, interviewerComment, null);
 
                 }
 
@@ -404,6 +448,49 @@ namespace Risebird.Services.Controllers
             catch { return null; }
         }
 
+        /// <summary>
+        /// Extracts the machine-readable verdict block the adaptive assistant appends to its HTML report
+        /// (format: <![CDATA[<!--RB_EVAL {"final_verdict":"...","final_comment":"..."} RB_EVAL-->]]>), and returns the
+        /// parsed verdict/comment along with the HTML stripped of that block. Returns null when no block is present.
+        /// </summary>
+        private static AdaptiveVerdictBlock ExtractAdaptiveVerdictBlock(string rawReply)
+        {
+            if (string.IsNullOrEmpty(rawReply)) return null;
 
+            var match = Regex.Match(
+                rawReply,
+                @"<!--\s*RB_EVAL\s*(?<json>\{.*?\})\s*RB_EVAL\s*-->",
+                RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+            if (!match.Success) return null;
+
+            var cleanedHtml = rawReply.Remove(match.Index, match.Length).Trim();
+
+            try
+            {
+                var json = JObject.Parse(match.Groups["json"].Value);
+                var verdict = ((string)(json["final_verdict"] ?? json["finalVerdict"] ?? json["verdict"]))?.Trim().ToLowerInvariant();
+                var comment = (string)(json["final_comment"] ?? json["finalComment"] ?? json["comment"]);
+
+                return new AdaptiveVerdictBlock
+                {
+                    Verdict = verdict,
+                    Comment = string.IsNullOrWhiteSpace(comment) ? null : comment.Trim(),
+                    CleanedHtml = cleanedHtml
+                };
+            }
+            catch
+            {
+                // Malformed block: still strip it from the HTML so it never renders, but leave the columns unset.
+                return new AdaptiveVerdictBlock { CleanedHtml = cleanedHtml };
+            }
+        }
+
+        private sealed class AdaptiveVerdictBlock
+        {
+            public string Verdict { get; set; }
+            public string Comment { get; set; }
+            public string CleanedHtml { get; set; }
+        }
     }
 }
