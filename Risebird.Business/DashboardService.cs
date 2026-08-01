@@ -265,6 +265,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public async Task<string> SetRequirementMapping(SetRequirementDetailsVM request)
+        {
+            try
+            {
+                return await _dashboardRespository.SetRequirementMapping(request);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed";
+            }
+        }
         public async Task<ChannelVM> FetchChannelRequestsByid(int id)
         {
             try
