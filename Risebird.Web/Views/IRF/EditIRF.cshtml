@@ -341,6 +341,17 @@
                                                     </div>
                                                 </div>
 
+                                                <div class="col-md-8 col-sm-8 pull-left">
+                                                    <div class="form-group">
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.PlivoWhatsAppAssistantUrl, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        </div>
+                                                        @Html.EditorFor(model => model.PlivoWhatsAppAssistantUrl, new { htmlAttributes = new { @class = "form-control text-box single-line", @placeholder = "https://agentflow.plivo.com/v1/account/.../flow/..." } })
+                                                        @Html.ValidationMessageFor(model => model.PlivoWhatsAppAssistantUrl, "", new { @id = "error_PlivoWhatsAppAssistantUrl", @class = "text-danger" })
+                                                        <small class="text-muted">Plivo CX WhatsApp Phone Screener flow trigger URL. Candidates in this skill channel are messaged by this assistant.</small>
+                                                    </div>
+                                                </div>
+
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="mb-0">
                                                         @Html.CheckBoxFor(model => model.showChatBox, new { @id = "showChatBox" })

@@ -76,6 +76,54 @@ UPDATE IRF
             }
         }
 
+        public async Task<string> GetIRFPlivoWhatsAppAssistantUrlAsync(int irfId)
+        {
+            try
+            {
+                using (var con = new SqlConnection(_connectionString))
+                {
+                    var result = await con.QueryFirstOrDefaultAsync<string>(
+                        "SELECT PlivoWhatsAppAssistantUrl FROM IRF WHERE id = @id",
+                        new { id = irfId });
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<bool> SetIRFPlivoWhatsAppAssistantUrlAsync(int? irfId, string irfCode, string url)
+        {
+            try
+            {
+                // Match by internal id when known (edit), else by business IRFId (create).
+                const string sql = @"
+UPDATE IRF
+   SET PlivoWhatsAppAssistantUrl = @url
+ WHERE (@id IS NOT NULL AND id = @id)
+    OR (@id IS NULL AND @irfCode IS NOT NULL AND IRFId = @irfCode);";
+
+                using (var con = new SqlConnection(_connectionString))
+                {
+                    var rows = await con.ExecuteAsync(sql, new
+                    {
+                        id = irfId,
+                        irfCode,
+                        url = string.IsNullOrWhiteSpace(url) ? null : url.Trim()
+                    });
+                    return rows > 0;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public async Task<PhoneScreenIRFHeader> GetIRFHeaderAsync(int irfId)
         {
             try
@@ -87,6 +135,7 @@ SELECT TOP 1
        JDTiltle          AS IRFName,
        ClientName        AS ClientName,
        PlivoAssistantUrl AS PlivoAssistantUrl,
+       PlivoWhatsAppAssistantUrl AS PlivoWhatsAppAssistantUrl,
        StartDate         AS StartDate
   FROM IRF
  WHERE id = @id;";
