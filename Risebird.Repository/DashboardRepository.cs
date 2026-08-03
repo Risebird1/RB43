@@ -393,7 +393,11 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select cm.id,cm.Client,cm.Status,cm.IRFIDs,cm.PrimarySkill,cm.CreatedDate,cm.Title,count(cn.id) as InterviewerCount,cm.RequesterEmailid from ChannelManagement cm left join ChannelMInterviewer cn on cm.id=cn.channelid group by cm.id,cm.Client,cm.Status,cm.IRFIDs,cm.PrimarySkill,cm.CreatedDate,cm.Title,cm.RequesterEmailid";
+                var query = @"Select cm.id,cm.Client,cm.EndClient,cm.Status,cm.IRFIDs,cm.PrimarySkill,cm.CreatedDate,cm.Title,
+count(cn.id) as InterviewerCount,cm.RequesterEmailid,cm.MAGId,cm.TemplateId
+from ChannelManagement cm
+left join ChannelMInterviewer cn on cm.id=cn.channelid
+group by cm.id,cm.Client,cm.EndClient,cm.Status,cm.IRFIDs,cm.PrimarySkill,cm.CreatedDate,cm.Title,cm.RequesterEmailid,cm.MAGId,cm.TemplateId";
                 var dynamicParameters = new DynamicParameters();
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -410,6 +414,49 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+        public async Task<string> SetRequirementMapping(SetRequirementDetailsVM request)
+        {
+            try
+            {
+                if (request == null || request.Id <= 0)
+                    return "Failed";
+
+                var magId = request.MAGId.GetValueOrDefault() > 0 ? request.MAGId : null;
+                var templateId = request.TemplateId.GetValueOrDefault() > 0 ? request.TemplateId : null;
+                // Prefer MAG when both are sent.
+                if (magId.HasValue)
+                    templateId = null;
+
+                var query = @"UPDATE ChannelManagement
+SET MAGId=@MAGId, TemplateId=@TemplateId, IRFIDs=@IRFIDs,
+    Status=CASE
+        WHEN ((@MAGId IS NOT NULL OR @TemplateId IS NOT NULL) AND NULLIF(LTRIM(RTRIM(@IRFIDs)),'') IS NOT NULL) THEN 'Processed'
+        ELSE ISNULL(NULLIF(LTRIM(RTRIM(Status)),''),'Pending')
+    END
+WHERE id=@Id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Id", request.Id);
+                dynamicParameters.Add("@MAGId", magId);
+                dynamicParameters.Add("@TemplateId", templateId);
+                dynamicParameters.Add("@IRFIDs", string.IsNullOrWhiteSpace(request.IRFIDs) ? null : request.IRFIDs.Trim());
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var affected = await con.ExecuteAsync(query, dynamicParameters);
+                    return affected > 0 ? "Success" : "Failed";
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Failed";
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "Failed";
             }
         }
         public async Task<ChannelVM> FetchChannelRequestsByid(int id)

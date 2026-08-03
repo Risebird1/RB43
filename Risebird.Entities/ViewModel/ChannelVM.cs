@@ -97,6 +97,7 @@ namespace Risebird.Entities.ViewModel
     {
         public int id { get; set; }
         public string Client { get; set; }
+        public string EndClient { get; set; }
         public string Status { get; set; }
         public int InterviewerCount { get; set; }
         public string IRFIDs { get; set; }
@@ -104,6 +105,19 @@ namespace Risebird.Entities.ViewModel
         public DateTime CreatedDate { get; set; }
         public string Title { get; set; }
         public string RequesterEmailid { get; set; }
+        public int? MAGId { get; set; }
+        public int? TemplateId { get; set; }
+        public bool IsProcessed =>
+            (MAGId.GetValueOrDefault() > 0 || TemplateId.GetValueOrDefault() > 0)
+            && !string.IsNullOrWhiteSpace(IRFIDs);
+    }
+
+    public class SetRequirementDetailsVM
+    {
+        public int Id { get; set; }
+        public int? MAGId { get; set; }
+        public int? TemplateId { get; set; }
+        public string IRFIDs { get; set; }
     }
     public class ChannelInterviewerVM
     {

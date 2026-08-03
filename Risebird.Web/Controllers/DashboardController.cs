@@ -90,6 +90,7 @@ namespace Risebird.Web.Controllers
         private readonly ITrialFlagReviewService _trialFlagReviewService;
         private readonly ITrialJudgmentService _trialJudgmentService;
         private readonly IClientRepository _clientRepository;
+        private readonly IClonableSkillChannelTemplateService _clonableSkillChannelTemplateService;
 
         //private readonly IIRFService _irfService;
 
@@ -115,7 +116,8 @@ namespace Risebird.Web.Controllers
             IDmIvAutoQcRemovalService autoQcRemovalService,
             ITrialFlagReviewService trialFlagReviewService,
             ITrialJudgmentService trialJudgmentService,
-            IClientRepository clientRepository)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
+            IClientRepository clientRepository,
+            IClonableSkillChannelTemplateService clonableSkillChannelTemplateService)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -163,6 +165,7 @@ namespace Risebird.Web.Controllers
             _trialFlagReviewService = trialFlagReviewService;
             _trialJudgmentService = trialJudgmentService;
             _clientRepository = clientRepository;
+            _clonableSkillChannelTemplateService = clonableSkillChannelTemplateService;
         }
 
         private static bool IsTrialFlagReviewerProfile(string profileName)
@@ -3142,7 +3145,7 @@ NEVER:
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                var model = await _dashboardService.FetchChannelRequests();
+                var model = await _dashboardService.FetchChannelRequests() ?? new List<ChannelManagementVM>();
                 ViewBag.Client = "false";
                 if (profileName == "Client")
                 {
@@ -3150,6 +3153,27 @@ NEVER:
                     model = model.Where(x => x.RequesterEmailid.ToUpper() == Emailaddress).ToList();
                     ViewBag.Client = "true";
                 }
+
+                var magList = _interviewerService.FetchAssessmentGroups()
+                    ?.Where(x => x != null && x.id > 0 && !string.IsNullOrWhiteSpace(x.AssessmentGroup))
+                    .GroupBy(x => x.id)
+                    .Select(g => g.First())
+                    .ToDictionary(x => x.id, x => x.AssessmentGroup)
+                    ?? new Dictionary<int, string>();
+                ViewBag.MAGList = magList;
+
+                var templates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels()
+                    ?? Enumerable.Empty<ClonableSkillChannelVM>();
+                var templateList = templates
+                    .Where(x => x != null && x.id > 0)
+                    .GroupBy(x => x.id)
+                    .Select(g => g.First())
+                    .ToDictionary(
+                        x => x.id,
+                        x => !string.IsNullOrWhiteSpace(x.Name) ? x.Name
+                            : (!string.IsNullOrWhiteSpace(x.PrimarySkills) ? x.PrimarySkills : ("Template #" + x.id)));
+                ViewBag.TemplateList = templateList;
+
                 if (TempData["SuccessErrorMessageInterview"] != null)
                 {
                     ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
@@ -3160,6 +3184,67 @@ NEVER:
             else
             {
                 return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> GetIRFsByMAG(int magId)
+        {
+            try
+            {
+                if (magId <= 0)
+                    return Json(new { success = true, data = Array.Empty<object>() });
+
+                var irfs = await _irfRepository.GetAssessmentGroupIRFList(magId)
+                    ?? Enumerable.Empty<AssessmentIRFListVM>();
+                var data = irfs
+                    .Where(x => x != null && !string.IsNullOrWhiteSpace(x.IRFId))
+                    .Select(x => new
+                    {
+                        id = x.id,
+                        irfId = x.IRFId,
+                        label = string.IsNullOrWhiteSpace(x.PrimarySkillInvite)
+                            ? x.IRFId
+                            : (x.IRFId + " — " + x.PrimarySkillInvite)
+                    })
+                    .ToList();
+                return Json(new { success = true, data });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, data = Array.Empty<object>(), message = "Failed to load IRFs." });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> SetRequirementDetails([FromBody] SetRequirementDetailsVM model)
+        {
+            try
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "");
+                if (profileName != "Admin" && profileName != "HR" && profileName != "SeniorHR" && profileName != "SupportAdmin")
+                    return Json(new { success = false, message = "Unauthorized." });
+
+                if (model == null || model.Id <= 0)
+                    return Json(new { success = false, message = "Invalid requirement." });
+
+                var hasMapping = model.MAGId.GetValueOrDefault() > 0 || model.TemplateId.GetValueOrDefault() > 0;
+                if (!hasMapping || string.IsNullOrWhiteSpace(model.IRFIDs))
+                    return Json(new { success = false, message = "Select a MAG or Template and at least one IRF." });
+
+                var result = await _dashboardService.SetRequirementMapping(model);
+                if (result == "Success")
+                    return Json(new { success = true, message = "Requirement mapped successfully." });
+
+                return Json(new { success = false, message = "Failed to save mapping." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Failed to save mapping." });
             }
         }
 
