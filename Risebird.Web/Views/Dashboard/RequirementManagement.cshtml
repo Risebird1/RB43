@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.ChannelManagementVM>
 @using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Mvc.Rendering
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Requirement Management";
@@ -7,15 +8,18 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var items = Model?.ToList() ?? new List<Risebird.Entities.ViewModel.ChannelManagementVM>();
-    var total = items.Count;
-    var processed = items.Count(x => x.IsProcessed);
-    var pending = total - processed;
-    var week = items.Count(x => x.CreatedDate >= DateTime.Now.AddDays(-7));
+    var received = (int)(ViewBag.SegmentAllCount ?? items.Count);
+    var verifiedCount = (int)(ViewBag.SegmentVerifiedCount ?? 0);
+    var externalCount = (int)(ViewBag.SegmentExternalCount ?? 0);
+    var processedCount = (int)(ViewBag.ProcessedCount ?? items.Count(x => x.IsProcessed));
+    var activeSegment = Convert.ToString(ViewBag.ActiveSegment) ?? "All";
 
     var magDict = ViewBag.MAGList as Dictionary<int, string> ?? new Dictionary<int, string>();
     var templateDict = ViewBag.TemplateList as Dictionary<int, string> ?? new Dictionary<int, string>();
     var clients = items.Select(x => x.Client).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(x => x).ToList();
     var isClient = ViewBag.Client == "true";
+    var clientSelect = ViewBag.ClientOptions as SelectList;
+    var roleSelect = ViewBag.ClientRoleOptions as SelectList;
 }
 
 <link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
@@ -77,6 +81,64 @@
     .rm-tile.t-proc .rm-tile__icon { background: #e7f8ee; color: #16a34a; }
     .rm-tile.t-pend .rm-tile__icon { background: #fff3e2; color: #ea8c11; }
     .rm-tile.t-week .rm-tile__icon { background: #e8f1fe; color: #2f6feb; }
+    .rm-tile.t-ext .rm-tile__icon { background: #fff3e2; color: #c2740c; }
+    .rm-tile.t-ver .rm-tile__icon { background: #e7f8ee; color: #15803d; }
+
+    .rm-segments {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin: 0 0 10px;
+    }
+    .rm-seg {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 30px;
+        padding: 0 12px;
+        border-radius: 999px;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        color: #64748b;
+        font-size: 12.5px;
+        font-weight: 600;
+        text-decoration: none !important;
+    }
+    .rm-seg:hover { background: #f8fafc; color: #334155; }
+    .rm-seg.is-active { background: #e8f2fe; border-color: #c3e0fb; color: #1c6fc4; }
+    .rm-seg__n {
+        min-width: 18px;
+        height: 18px;
+        padding: 0 5px;
+        border-radius: 999px;
+        background: #eef2f7;
+        color: #475569;
+        font-size: 11px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .rm-seg.is-active .rm-seg__n { background: #fff; color: #1c6fc4; }
+
+    .rm-req-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 3px;
+        padding: 1px 7px;
+        border-radius: 999px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .02em;
+    }
+    .rm-req-badge.is-ver { background: #e7f8ee; color: #15803d; }
+    .rm-req-badge.is-ext { background: #fff3e2; color: #c2740c; }
+
+    #rmTable tbody tr.is-external td { background: #fffaf3; }
+    #rmTable tbody tr.is-external:hover td { background: #fff4e5; }
+
+    .rm-ico.is-amber { border-color: #f5d0a9; background: #fff3e2; color: #c2740c; }
+    .rm-ico.is-amber:hover { background: #ffe8c7; color: #9a5b08; }
 
     /* ---- card + toolbar ---- */
     .rm-card {
@@ -676,6 +738,12 @@
                         </span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                        <span data-toggle="tooltip" data-placement="top" title="Weekend Drive Planner"
+                              onclick="location.href='@Url.Action("WeekendDrivePlanner", "DashBoard")'">
+                            <font style="font-family: Roboto, sans-serif; font-size:12px;"> Weekend Drive</font>
+                        </span>
+                    </button>
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                         <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Add Requirement"
                               onclick="location.href='@Url.Action("AddRequirement", "DashBoard")'">
                             <font style="font-family:arial;"> Add Requirement</font>
@@ -690,21 +758,27 @@
         <div class="rm-wrap">
             <div class="rm-tiles">
                 <div class="rm-tile">
-                    <span class="rm-tile__icon"><i class="fa fa-list-ul"></i></span>
-                    <span><span class="rm-tile__val">@total</span><span class="rm-tile__lbl">Total</span></span>
+                    <span class="rm-tile__icon"><i class="fa fa-inbox"></i></span>
+                    <span><span class="rm-tile__val">@received</span><span class="rm-tile__lbl">Received</span></span>
+                </div>
+                <div class="rm-tile t-ver">
+                    <span class="rm-tile__icon"><i class="fa fa-check-circle"></i></span>
+                    <span><span class="rm-tile__val">@verifiedCount</span><span class="rm-tile__lbl">From verified clients</span></span>
+                </div>
+                <div class="rm-tile t-ext">
+                    <span class="rm-tile__icon"><i class="fa fa-user-o"></i></span>
+                    <span><span class="rm-tile__val">@externalCount</span><span class="rm-tile__lbl">External / unverified</span></span>
                 </div>
                 <div class="rm-tile t-proc">
                     <span class="rm-tile__icon"><i class="fa fa-check"></i></span>
-                    <span><span class="rm-tile__val">@processed</span><span class="rm-tile__lbl">Processed</span></span>
+                    <span><span class="rm-tile__val">@processedCount</span><span class="rm-tile__lbl">Processed</span></span>
                 </div>
-                <div class="rm-tile t-pend">
-                    <span class="rm-tile__icon"><i class="fa fa-clock-o"></i></span>
-                    <span><span class="rm-tile__val">@pending</span><span class="rm-tile__lbl">Pending</span></span>
-                </div>
-                <div class="rm-tile t-week">
-                    <span class="rm-tile__icon"><i class="fa fa-calendar"></i></span>
-                    <span><span class="rm-tile__val">@week</span><span class="rm-tile__lbl">This week</span></span>
-                </div>
+            </div>
+
+            <div class="rm-segments">
+                <a class="rm-seg @(activeSegment == "All" ? "is-active" : "")" href="@Url.Action("RequirementManagement", "DashBoard", new { segment = "All" })">All <span class="rm-seg__n">@received</span></a>
+                <a class="rm-seg @(activeSegment == "Verified" ? "is-active" : "")" href="@Url.Action("RequirementManagement", "DashBoard", new { segment = "Verified" })">Verified clients <span class="rm-seg__n">@verifiedCount</span></a>
+                <a class="rm-seg @(activeSegment == "External" ? "is-active" : "")" href="@Url.Action("RequirementManagement", "DashBoard", new { segment = "External" })">External-unverified <span class="rm-seg__n">@externalCount</span></a>
             </div>
 
             <div class="rm-card">
@@ -758,7 +832,9 @@
 
                             var statusLabel = i.IsProcessed ? "Processed" : "Pending";
                             var createdIso = i.CreatedDate.ToString("yyyy-MM-dd");
-                            <tr data-created="@createdIso">
+                            var isVerified = string.Equals(i.RequesterType, "Verified", StringComparison.OrdinalIgnoreCase);
+                            var isExternal = !isVerified;
+                            <tr data-created="@createdIso" data-req-type="@(isVerified ? "Verified" : "External")" class="@(isExternal ? "is-external" : "")" data-id="@i.id">
                                 <td>
                                     <span class="rm-title" title="@i.Title">@(string.IsNullOrWhiteSpace(i.Title) ? "—" : i.Title)</span>
                                     @if (!string.IsNullOrWhiteSpace(i.PrimarySkill))
@@ -784,6 +860,14 @@
                                     else
                                     {
                                         <span class="rm-cell-trim" title="@i.RequesterEmailid">@i.RequesterEmailid</span>
+                                    }
+                                    @if (isVerified)
+                                    {
+                                        <span class="rm-req-badge is-ver">Verified client</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="rm-req-badge is-ext">External / unverified</span>
                                     }
                                 </td>
                                 <td>
@@ -816,6 +900,13 @@
                                                     data-irf="@i.IRFIDs" data-name="@i.Title">
                                                 <i class="fa fa-sliders"></i>
                                             </button>
+                                            @if (!isVerified)
+                                            {
+                                                <button type="button" class="rm-ico is-amber js-add-client-user" title="Add client user"
+                                                        data-id="@i.id" data-email="@i.RequesterEmailid" data-name="@i.Title">
+                                                    <i class="fa fa-user-plus"></i>
+                                                </button>
+                                            }
                                         }
                                         <button type="button" class="rm-ico" title="Edit"
                                                 onclick="location.href='@Url.Action("EditRequirement","DashBoard", new { id = i.id })'">
@@ -934,6 +1025,89 @@
     </div>
 </div>
 
+@* Add client user modal *@
+<div class="modal fade rmm" id="rmAddClientUserModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="rmm-badge"><i class="fa fa-user-plus"></i></span>
+                <div class="rmm-head-text">
+                    <h5 class="modal-title">Add client user</h5>
+                    <div class="rmm-sub">
+                        <span class="rmm-sub__tag">Promote</span>
+                        <span class="rmm-sub__name" id="acuReqName">Register this requester</span>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="acuReqId" />
+                <div class="rmm-field">
+                    <label class="rmm-label">Email</label>
+                    <input type="email" id="acuEmail" class="rmm-input" readonly />
+                </div>
+                <div class="rmm-field" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <div>
+                        <label class="rmm-label" for="acuFirst">First name</label>
+                        <input type="text" id="acuFirst" class="rmm-input" />
+                    </div>
+                    <div>
+                        <label class="rmm-label" for="acuLast">Last name</label>
+                        <input type="text" id="acuLast" class="rmm-input" />
+                    </div>
+                </div>
+                <div class="rmm-field" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <div>
+                        <label class="rmm-label" for="acuMobile">Mobile (optional)</label>
+                        <input type="text" id="acuMobile" class="rmm-input" />
+                    </div>
+                    <div>
+                        <label class="rmm-label" for="acuWhatsapp">WhatsApp (optional)</label>
+                        <input type="text" id="acuWhatsapp" class="rmm-input" />
+                    </div>
+                </div>
+                <div class="rmm-field">
+                    <label class="rmm-label" for="acuClient">Client</label>
+                    <select id="acuClient" class="rmm-input">
+                        <option value="">— Select client —</option>
+                        @if (clientSelect != null)
+                        {
+                            foreach (var opt in clientSelect)
+                            {
+                                <option value="@opt.Value">@opt.Text</option>
+                            }
+                        }
+                        <option value="__new__">+ Create new client…</option>
+                    </select>
+                </div>
+                <div class="rmm-field" id="acuNewClientWrap" style="display:none;">
+                    <label class="rmm-label" for="acuNewClient">New client name</label>
+                    <input type="text" id="acuNewClient" class="rmm-input" placeholder="Company name" />
+                </div>
+                <div class="rmm-field">
+                    <label class="rmm-label" for="acuRole">Client role</label>
+                    <select id="acuRole" class="rmm-input">
+                        <option value="">— Select role —</option>
+                        @if (roleSelect != null)
+                        {
+                            foreach (var opt in roleSelect)
+                            {
+                                <option value="@opt.Value">@opt.Text</option>
+                            }
+                        }
+                    </select>
+                    <div class="rmm-hint">A temporary password is generated the same way as Add Client User.</div>
+                </div>
+                <div id="acuMsg" class="rmm-alert" style="display:none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="rmm-btn rmm-btn--ghost" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="rmm-btn rmm-btn--primary" id="acuSaveBtn" onclick="saveAddClientUser()">Register &amp; verify</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
@@ -997,6 +1171,15 @@
             openSetDetails($b.data('id'), $b.data('mag') || 0, $b.data('template') || 0, $b.data('irf') || '', $b.data('name') || '');
         });
 
+        $(document).on('click', '.js-add-client-user', function () {
+            var $b = $(this);
+            openAddClientUser($b.data('id'), $b.data('email') || '', $b.data('name') || '');
+        });
+
+        $('#acuClient').on('change', function () {
+            $('#acuNewClientWrap').toggle(this.value === '__new__');
+        });
+
         $('#rmModeSeg').on('click', '.rmm-seg__btn', function () {
             var mode = $(this).data('mode');
             if (mode === 'mag') {
@@ -1030,14 +1213,82 @@
         });
     });
 
-    function rmModal(action) {
-        var el = document.getElementById('rmSetDetailsModal');
+    function rmModal(action, modalId) {
+        var el = document.getElementById(modalId || 'rmSetDetailsModal');
         if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
             var inst = bootstrap.Modal.getInstance(el) || new bootstrap.Modal(el);
             if (action === 'hide') { inst.hide(); } else { inst.show(); }
         } else {
             $(el).modal(action);
         }
+    }
+
+    function openAddClientUser(id, email, name) {
+        $('#acuReqId').val(id);
+        $('#acuEmail').val(email || '');
+        $('#acuReqName').text(name || email || 'Register this requester');
+        $('#acuFirst').val('');
+        $('#acuLast').val('');
+        $('#acuMobile').val('');
+        $('#acuWhatsapp').val('');
+        $('#acuClient').val('');
+        $('#acuNewClient').val('');
+        $('#acuNewClientWrap').hide();
+        $('#acuRole').val('');
+        $('#acuMsg').hide().empty();
+        // Prefill first/last from email local-part when possible
+        var local = String(email || '').split('@@')[0] || '';
+        var parts = local.replace(/[._-]+/g, ' ').trim().split(/\s+/);
+        if (parts.length >= 1 && parts[0]) $('#acuFirst').val(parts[0].charAt(0).toUpperCase() + parts[0].slice(1));
+        if (parts.length >= 2 && parts[1]) $('#acuLast').val(parts[1].charAt(0).toUpperCase() + parts[1].slice(1));
+        rmModal('show', 'rmAddClientUserModal');
+    }
+
+    function saveAddClientUser() {
+        var payload = {
+            RequirementId: parseInt($('#acuReqId').val(), 10) || 0,
+            EmailId: $.trim($('#acuEmail').val() || ''),
+            FirstName: $.trim($('#acuFirst').val() || ''),
+            LastName: $.trim($('#acuLast').val() || ''),
+            MobileNumber: $.trim($('#acuMobile').val() || ''),
+            WhatsappNumber: $.trim($('#acuWhatsapp').val() || ''),
+            SelectedClientRole: parseInt($('#acuRole').val(), 10) || null,
+            SelectedClient: null,
+            NewClientName: null
+        };
+        var clientVal = $('#acuClient').val();
+        if (clientVal === '__new__') {
+            payload.NewClientName = $.trim($('#acuNewClient').val() || '');
+            if (!payload.NewClientName) {
+                $('#acuMsg').html('<i class="fa fa-exclamation-circle"></i><span>Enter a new client name.</span>').show();
+                return;
+            }
+        } else {
+            payload.SelectedClient = parseInt(clientVal, 10) || null;
+        }
+        if (!payload.RequirementId || !payload.EmailId || !payload.FirstName || !payload.LastName || !payload.SelectedClientRole) {
+            $('#acuMsg').html('<i class="fa fa-exclamation-circle"></i><span>Fill first name, last name, client and role.</span>').show();
+            return;
+        }
+        $('#acuSaveBtn').prop('disabled', true).text('Saving…');
+        $.ajax({
+            url: '@Url.Action("AddClientUserFromRequirement", "DashBoard")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload)
+        }).done(function (res) {
+            if (res && res.ok) {
+                rmModal('hide', 'rmAddClientUserModal');
+                // Move to Verified segment
+                location.href = '@Url.Action("RequirementManagement", "DashBoard")?segment=Verified';
+            } else {
+                $('#acuMsg').html('<i class="fa fa-exclamation-circle"></i>').append($('<span/>').text((res && res.message) || 'Save failed.')).show();
+            }
+        }).fail(function () {
+            $('#acuMsg').html('<i class="fa fa-exclamation-circle"></i><span>Save failed.</span>').show();
+        }).always(function () {
+            $('#acuSaveBtn').prop('disabled', false).text('Register & verify');
+        });
     }
 
     function rmSetHeading(name) {

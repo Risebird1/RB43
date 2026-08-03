@@ -1,0 +1,129 @@
+@model Risebird.Entities.ViewModel.PublicChannelVM
+@{
+    ViewData["Title"] = "Submit a Requirement";
+    ViewBag.PageHeader = "";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<style>
+    .paq-wrap { max-width: 640px; margin: 24px auto 40px; padding: 0 16px; font-family: Roboto, Arial, Helvetica, sans-serif; }
+    .paq-card { background: #fff; border: 1px solid #e8edf2; border-radius: 12px; padding: 22px 22px 18px; box-shadow: 0 2px 8px rgba(15,23,42,.05); }
+    .paq-card h1 { font-size: 20px; font-weight: 700; color: #0f172a; margin: 0 0 4px; }
+    .paq-card .lead { font-size: 13px; color: #64748b; margin-bottom: 18px; }
+    .paq-field { margin-bottom: 14px; }
+    .paq-field label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #7c8798; margin-bottom: 5px; }
+    .paq-field .req { color: #ef4444; }
+    .paq-field input[type=text], .paq-field input[type=email], .paq-field input[type=url], .paq-field input[type=file] {
+        width: 100%; height: 38px; border: 1px solid #dde3ea; border-radius: 8px; padding: 0 12px; font-size: 13.5px; color: #1e293b;
+    }
+    .paq-field input:focus { outline: none; border-color: #7fbdf5; box-shadow: 0 0 0 3px rgba(66,165,245,.16); }
+    .paq-hint { font-size: 11.5px; color: #94a3b8; margin-top: 4px; }
+    .paq-pill { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+    .paq-pill.is-ok { background: #e7f8ee; color: #15803d; }
+    .paq-pill.is-ext { background: #fff3e2; color: #c2740c; }
+    .paq-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
+    .paq-btn { height: 38px; padding: 0 20px; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1px solid transparent; cursor: pointer; }
+    .paq-btn-primary { background: #42a5f5; color: #fff; box-shadow: 0 2px 6px rgba(66,165,245,.32); }
+    .paq-btn-primary:hover { background: #2f8fe0; }
+    .text-danger { font-size: 12px; color: #dc2626; }
+    .validation-summary-errors ul { margin: 0 0 12px; padding-left: 18px; color: #dc2626; font-size: 13px; }
+</style>
+
+<div class="paq-wrap">
+    <div class="paq-card">
+        <h1>Submit a hiring requirement</h1>
+        <p class="lead">Share your email and JD. Our team will map it and follow up — no login required.</p>
+
+        @using (Html.BeginForm("PublicAddRequirement", "DashBoard", FormMethod.Post, new { enctype = "multipart/form-data", id = "paqForm" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(m => m.VerifiedClientId)
+
+            <div class="paq-field">
+                <label for="RequesterEmailid">Work email <span class="req">*</span></label>
+                @Html.TextBoxFor(m => m.RequesterEmailid, new { @class = "", type = "email", placeholder = "you@company.com", autocomplete = "email", required = "required" })
+                @Html.ValidationMessageFor(m => m.RequesterEmailid, "", new { @class = "text-danger" })
+                <div id="paqEmailStatus" style="display:none;"></div>
+            </div>
+
+            <div class="paq-field">
+                <label for="Title">JD title <span class="req">*</span></label>
+                @Html.TextBoxFor(m => m.Title, new { placeholder = "e.g. Senior Java Backend Engineer", required = "required", maxlength = "200" })
+                @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="paq-field">
+                <label for="PrimarySkill">Primary skill <span style="font-weight:500;text-transform:none;letter-spacing:0;color:#94a3b8;">(optional)</span></label>
+                @Html.TextBoxFor(m => m.PrimarySkill, new { placeholder = "e.g. Java, React, Data Engineering", maxlength = "100" })
+            </div>
+
+            <div class="paq-field">
+                <label for="JdFile">JD file <span class="req">*</span></label>
+                <input type="file" id="JdFile" name="JdFile" accept=".pdf,.doc,.docx,.txt" />
+                <div class="paq-hint">Or paste a link below. At least one is required.</div>
+            </div>
+
+            <div class="paq-field">
+                <label for="JdLink">JD link</label>
+                @Html.TextBoxFor(m => m.JdLink, new { type = "url", placeholder = "https://…" })
+                @Html.ValidationMessageFor(m => m.JdLink, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="paq-actions">
+                <button type="submit" class="paq-btn paq-btn-primary" id="paqSubmit">Submit requirement</button>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    (function () {
+        var $email = $('#RequesterEmailid');
+        var $status = $('#paqEmailStatus');
+        var $clientId = $('#VerifiedClientId');
+        var timer;
+
+        function showPill(ok, name) {
+            $status.show();
+            if (ok) {
+                $status.html('<span class="paq-pill is-ok"><i class="fa fa-check-circle"></i> Verified client — ' + $('<div/>').text(name || 'known client').html() + '</span>');
+            } else {
+                $status.html('<span class="paq-pill is-ext"><i class="fa fa-info-circle"></i> External / unverified</span><div class="paq-hint">We will still take your request. Our team can register you as a client user later.</div>');
+            }
+        }
+
+        function verify() {
+            var email = $.trim($email.val() || '');
+            if (!email || email.indexOf('@') < 0) { $status.hide(); $clientId.val(''); return; }
+            $.getJSON('@Url.Action("VerifyRequesterEmail", "DashBoard")', { email: email })
+                .done(function (res) {
+                    if (res && res.ok) {
+                        $clientId.val(res.clientId || '');
+                        showPill(true, res.clientName);
+                    } else {
+                        $clientId.val('');
+                        showPill(false);
+                    }
+                })
+                .fail(function () { $clientId.val(''); showPill(false); });
+        }
+
+        $email.on('blur', verify);
+        $email.on('keyup', function () {
+            clearTimeout(timer);
+            timer = setTimeout(verify, 600);
+        });
+
+        $('#paqForm').on('submit', function () {
+            var file = $('#JdFile')[0].files[0];
+            var link = $.trim($('#JdLink').val() || '');
+            if (!file && !link) {
+                alert('Please upload a JD file or paste a JD link.');
+                return false;
+            }
+            return true;
+        });
+    })();
+</script>

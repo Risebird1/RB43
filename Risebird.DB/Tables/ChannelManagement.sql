@@ -101,7 +101,26 @@ BEGIN
     ADD TemplateId int NULL
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'RequesterType')
+      AND Object_ID = Object_ID(N'ChannelManagement'))
+BEGIN
+    ALTER TABLE ChannelManagement
+    ADD RequesterType varchar(15) NULL
+END
+
+IF EXISTS (
+    SELECT 1 FROM sys.columns
+    WHERE Name = N'Origin' AND Object_ID = Object_ID(N'ChannelManagement')
+      AND max_length > 0 AND max_length < 20)
+BEGIN
+    ALTER TABLE ChannelManagement ALTER COLUMN Origin varchar(20) NULL;
+END
+
 END
 GO
+
 
 

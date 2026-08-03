@@ -78,6 +78,8 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Number of Interviews")]
         public int NumberofInterviews { get; set; }
         public string Origin { get; set; }
+        /// <summary>'Verified' | 'External' — set by public intake / Add client user promotion.</summary>
+        public string RequesterType { get; set; }
         public SelectList Originlist { get; set; }
         [Display(Name = " Engagement Type")]
         public string EngagementType { get; set; }
@@ -92,6 +94,10 @@ namespace Risebird.Entities.ViewModel
         public SelectList PaymentStatuslist { get; set; }
         public string ConfirmationStatus { get; set; }
         public SelectList ConfirmationStatuslist { get; set; }
+        /// <summary>Optional insert override (public intake sets Pending).</summary>
+        public string Status { get; set; }
+        public int? MAGId { get; set; }
+        public int? TemplateId { get; set; }
     }
     public class ChannelManagementVM
     {
@@ -107,9 +113,10 @@ namespace Risebird.Entities.ViewModel
         public string RequesterEmailid { get; set; }
         public int? MAGId { get; set; }
         public int? TemplateId { get; set; }
+        /// <summary>'Verified' | 'External'</summary>
+        public string RequesterType { get; set; }
         public bool IsProcessed =>
-            (MAGId.GetValueOrDefault() > 0 || TemplateId.GetValueOrDefault() > 0)
-            && !string.IsNullOrWhiteSpace(IRFIDs);
+            (MAGId.HasValue || TemplateId.HasValue) && !string.IsNullOrWhiteSpace(IRFIDs);
     }
 
     public class SetRequirementDetailsVM

@@ -555,6 +555,10 @@ app.UseStaticFiles();
 //    opts.MapControllers();
 //});
 app.MapControllerRoute(
+    name: "publicAddRequirement",
+    pattern: "req/new",
+    defaults: new { controller = "Dashboard", action = "PublicAddRequirement" });
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapControllers();

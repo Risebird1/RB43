@@ -1,9 +1,10 @@
 @model Risebird.Entities.ViewModel.DriveWeekendDataVM
 @using System.Linq
-@using System.Text.Json
+@using Microsoft.AspNetCore.Mvc.ViewFeatures
 @{
     var page = Model ?? new Risebird.Entities.ViewModel.DriveWeekendDataVM();
     var rows = page.Rows ?? new List<Risebird.Entities.ViewModel.DriveIRFVM>();
+    var suggestedRows = page.SuggestedThresholdRows ?? new List<Risebird.Entities.ViewModel.DriveIRFVM>();
     var belowRows = page.BelowThresholdRows ?? new List<Risebird.Entities.ViewModel.DriveIRFVM>();
     var weekendStart = page.WeekendStart;
     var weekendEnd = page.WeekendEnd;
@@ -11,6 +12,14 @@
     var threshold = stats?.Threshold ?? 5;
     var totalExpected = rows.Sum(x => x.ExpectedTotal);
     var totalUnassigned = rows.Sum(x => x.UnassignedMorning + x.UnassignedEvening);
+    var bucket = string.IsNullOrWhiteSpace(page.WeekendBucket) ? "This" : page.WeekendBucket;
+    var selectedSpotlight = new HashSet<int>(page.SelectedSpotlightIds ?? new List<int>());
+    var spotlightOptions = page.SpotlightOptions ?? new List<Risebird.Entities.ViewModel.DriveSpotlightOptionVM>();
+    var hasSpotlight = selectedSpotlight.Count > 0;
+    var plannerViewData = new ViewDataDictionary(ViewData);
+    plannerViewData["DriveShowAddSpotlight"] = false;
+    var addSpotlightViewData = new ViewDataDictionary(ViewData);
+    addSpotlightViewData["DriveShowAddSpotlight"] = true;
 }
 
 @if (weekendStart != default)
@@ -26,10 +35,45 @@
     </div>
 }
 
+<div class="drive-spotlight-bar" data-weekend-bucket="@bucket">
+    <div class="drive-spotlight-label">
+        <i class="fas fa-star"></i>
+        Spotlight IRFs for @(bucket == "Next" ? "next" : "this") weekend
+    </div>
+    <p class="drive-spotlight-help">
+        Searchable multiselect chooses which IRFs are in this/next weekend's drive.
+        Selected IRFs persist per weekend bucket. Below-threshold IRFs can still be added manually.
+        Leave empty to show IRFs at/above the threshold (@threshold+).
+    </p>
+    <select id="driveSpotlightIrf" class="form-control" multiple="multiple">
+        @foreach (var opt in spotlightOptions)
+        {
+            if (selectedSpotlight.Contains(opt.IrfIntId))
+            {
+                <option value="@opt.IrfIntId" selected="selected">@opt.Label</option>
+            }
+            else
+            {
+                <option value="@opt.IrfIntId">@opt.Label</option>
+            }
+        }
+    </select>
+    <div class="drive-spotlight-hint">
+        @if (hasSpotlight)
+        {
+            <span><strong>@selectedSpotlight.Count</strong> curated — planner shows spotlight only.</span>
+        }
+        else
+        {
+            <span>No spotlight — planner shows threshold IRFs (IRF / MAG / Rel. / Outreach / Actions taken).</span>
+        }
+    </div>
+</div>
+
 <div class="drive-spec-note">
     <i class="fas fa-info-circle"></i>
     <span>
-        <strong>Drive IRFs</strong> need at least <strong>@threshold</strong> confirmed interviews on the same skill channel this weekend.
+        Drive IRFs need at least <strong>@threshold</strong> confirmed interviews on the same skill channel this weekend.
         Outreach and staffing actions apply only to those rows.
     </span>
 </div>
@@ -37,35 +81,31 @@
 @if (!rows.Any())
 {
     <div class="drive-empty">
-        <div><i class="fas fa-calendar-check"></i></div>
-        @if (stats != null && stats.TotalInterviews > 0 && stats.BelowThresholdIrfCount > 0)
-        {
-            <p>
-                Found @stats.TotalInterviews confirmed interview@(stats.TotalInterviews == 1 ? "" : "s") across @stats.TotalIrfGroups IRF@(stats.TotalIrfGroups == 1 ? "" : "s"),
-                but no single IRF reached the drive threshold of @threshold.
-            </p>
-            <p class="text-muted" style="font-size:11px;margin-top:6px;">
-                Example: 8 interviews across 8 IRFs means ~1 each — none qualify until one IRF has @threshold+ interviews.
-            </p>
-        }
-        else
-        {
-            <p>No confirmed weekend interviews found for this date range.</p>
-            <p class="text-muted" style="font-size:11px;margin-top:6px;">Try switching to the other weekend.</p>
-        }
+        <div><i class="far fa-calendar-check"></i></div>
+        <p>No drive IRFs at/above the threshold for this weekend.</p>
     </div>
 }
 else
 {
     <div class="drive-section-title">Drive IRFs (threshold met)</div>
-    @await Html.PartialAsync("_DriveWeekendTable", rows)
+    @await Html.PartialAsync("_DriveWeekendTable", rows, plannerViewData)
+}
+
+@if (suggestedRows.Any())
+{
+    <div class="drive-below-threshold">
+        <div class="drive-section-title drive-section-title-muted">
+            At/above threshold — not in spotlight — @suggestedRows.Count
+        </div>
+        @await Html.PartialAsync("_DriveWeekendTable", suggestedRows, addSpotlightViewData)
+    </div>
 }
 
 @if (belowRows.Any())
 {
     <div class="drive-below-threshold">
         <div class="drive-section-title drive-section-title-muted">
-            Below drive threshold (@threshold+ required per IRF) — @belowRows.Count IRF@(belowRows.Count == 1 ? "" : "s")
+            Below threshold — add to spotlight — @belowRows.Count
         </div>
         <div class="drive-table-wrap">
             <table class="table drive-table drive-table-muted">
@@ -75,35 +115,43 @@ else
                         <th>Client</th>
                         <th>Demand</th>
                         <th>Unassigned</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var i in belowRows)
-                    {
-                        var unassignedTotal = i.UnassignedMorning + i.UnassignedEvening;
-                        var unassignedClass = unassignedTotal > 0 ? "drive-unassigned-warn" : "drive-unassigned-ok";
-                        <tr>
-                            <td>
-                                <div class="drive-irf-id">@i.IRFId</div>
-                                <div class="drive-irf-skill" title="@i.PrimarySkill">@i.PrimarySkill</div>
-                            </td>
-                            <td>
-                                <div>@i.ClientName</div>
-                                @if (!string.IsNullOrEmpty(i.EndClientName))
-                                {
-                                    <div class="drive-meta-sub">@i.EndClientName</div>
-                                }
-                            </td>
-                            <td>
-                                <span class="drive-badge drive-badge-m" title="Morning">M @i.ExpectedMorning</span>
-                                <span class="drive-badge drive-badge-e" title="Evening">E @i.ExpectedEvening</span>
-                                <span class="drive-badge drive-badge-total">@i.ExpectedTotal</span>
-                            </td>
-                            <td class="@unassignedClass">
-                                M @i.UnassignedMorning / E @i.UnassignedEvening
-                            </td>
-                        </tr>
-                    }
+                @foreach (var i in belowRows)
+                {
+                    var unassignedTotal = i.UnassignedMorning + i.UnassignedEvening;
+                    var unassignedClass = unassignedTotal > 0 ? "drive-unassigned-warn" : "drive-unassigned-ok";
+                    <tr>
+                        <td>
+                            <div class="drive-irf-id">@i.IRFId</div>
+                            <div class="drive-irf-skill" title="@i.PrimarySkill">@i.PrimarySkill</div>
+                        </td>
+                        <td>
+                            <div>@i.ClientName</div>
+                            @if (!string.IsNullOrEmpty(i.EndClientName))
+                            {
+                                <div class="drive-meta-sub">@i.EndClientName</div>
+                            }
+                        </td>
+                        <td>
+                            <span class="drive-badge drive-badge-m" title="Morning">M @i.ExpectedMorning</span>
+                            <span class="drive-badge drive-badge-e" title="Evening">E @i.ExpectedEvening</span>
+                            <span class="drive-badge drive-badge-total">@i.ExpectedTotal</span>
+                        </td>
+                        <td><span class="@unassignedClass">M @i.UnassignedMorning / E @i.UnassignedEvening</span></td>
+                        <td>
+                            @if (i.IrfIntId > 0)
+                            {
+                                <button type="button" class="drive-add-spotlight btn btn-sm btn-outline-primary"
+                                        data-irf-int-id="@i.IrfIntId" title="Add this IRF to weekend spotlight">
+                                    <i class="fa fa-plus"></i> Spotlight
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
                 </tbody>
             </table>
         </div>

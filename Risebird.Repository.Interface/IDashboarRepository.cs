@@ -27,6 +27,10 @@ namespace Risebird.Repository.Interface
         Task<ChannelVM> FetchChannelRequestsByid(int id);
         Task<string> AddChannelRequest(ChannelVM request);
         Task<string> SetRequirementMapping(SetRequirementDetailsVM request);
+        Task<bool> LinkRequirementToClient(int requirementId, int clientId, string clientName = null);
+        Task<IEnumerable<WeekendDriveSpotlightVM>> GetWeekendDriveSpotlight(string bucket);
+        Task<bool> UpsertWeekendDriveSpotlight(int irfId, string weekendBucket, string actionsTaken, bool remove, string userEmail);
+        Task<bool> SyncWeekendDriveSpotlight(string weekendBucket, IEnumerable<int> irfIds, string userEmail);
         Task<List<string>> FetchAdminandHRList();
         Task<string> AddChannelInterviewer(ChannelInterviewerVM request);
         Task<List<ChannelInterviewerVM>> FetchInterviewerBychannelid(int id);
