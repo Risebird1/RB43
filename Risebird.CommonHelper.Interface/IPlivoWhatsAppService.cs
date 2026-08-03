@@ -20,5 +20,13 @@ namespace Risebird.CommonHelper.Interface
         /// Used for clarification or confirmation follow-ups.
         /// </summary>
         Task<PlivoWhatsAppSendResponse> SendSessionMessageAsync(string toPhone, string text);
+
+        /// <summary>
+        /// Triggers an arbitrary Plivo CX WhatsApp flow by its full trigger URL,
+        /// POSTing the supplied payload object as JSON. Used by the AI Phone Screener
+        /// where each skill channel maps to its own WhatsApp agent trigger URL
+        /// (IRF.PlivoWhatsAppAssistantUrl). Mirrors PlivoCXService.TriggerByUrlAsync.
+        /// </summary>
+        Task<PlivoWhatsAppSendResponse> TriggerByUrlAsync(string triggerUrl, object payload);
     }
 }

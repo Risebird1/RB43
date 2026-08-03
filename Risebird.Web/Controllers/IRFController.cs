@@ -948,6 +948,7 @@ namespace Risebird.Web.Controllers
                         if (await _irfService.AddIRFDetails(irfDetails, emailId, domain))
                         {
                             await _phoneScreenRepository.SetIRFPlivoAssistantUrlAsync(irfDetails.id > 0 ? irfDetails.id : (int?)null, irfDetails.IRFId, irfDetails.PlivoAssistantUrl);
+                            await _phoneScreenRepository.SetIRFPlivoWhatsAppAssistantUrlAsync(irfDetails.id > 0 ? irfDetails.id : (int?)null, irfDetails.IRFId, irfDetails.PlivoWhatsAppAssistantUrl);
                             //create an index with the same name as that of this skill channel in affinda for using the search and match tool
 
                             //var isIndexCreated = await _affIndaResumeParserHelper.CreateIndex(irfDetails.IRFId);
@@ -2154,6 +2155,7 @@ namespace Risebird.Web.Controllers
                     if (model == null)
                         return RedirectToAction("Index");
                     model.PlivoAssistantUrl = await _phoneScreenRepository.GetIRFPlivoAssistantUrlAsync(id);
+                    model.PlivoWhatsAppAssistantUrl = await _phoneScreenRepository.GetIRFPlivoWhatsAppAssistantUrlAsync(id);
                     model.IsClone = isClone;
                     model.LoggedEmail = emailid;
                     int abc;
@@ -2359,6 +2361,7 @@ namespace Risebird.Web.Controllers
                             if (await _irfService.UpdateIRF(model, emailId))
                             {
                                 await _phoneScreenRepository.SetIRFPlivoAssistantUrlAsync(model.id, model.IRFId, model.PlivoAssistantUrl);
+                                await _phoneScreenRepository.SetIRFPlivoWhatsAppAssistantUrlAsync(model.id, model.IRFId, model.PlivoWhatsAppAssistantUrl);
                                 TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " has been saved Successfully!";
                                 return RedirectToAction("Index");
                             }
@@ -7792,6 +7795,7 @@ namespace Risebird.Web.Controllers
                             var irfDetails = await _irfService.GetSkillChannelDetailsByName(model.IRFId);
 
                             await _phoneScreenRepository.SetIRFPlivoAssistantUrlAsync(irfDetails?.id, model.IRFId, model.PlivoAssistantUrl);
+                            await _phoneScreenRepository.SetIRFPlivoWhatsAppAssistantUrlAsync(irfDetails?.id, model.IRFId, model.PlivoWhatsAppAssistantUrl);
 
                             FireAndForgetRequestToSendAvailabilityMails(model.AssessmentGroupId, irfDetails.id, result.Item2, irfDetails.PrimarySkillInvite, model.IRFId, model.JDTiltle);
 
@@ -8403,6 +8407,7 @@ namespace Risebird.Web.Controllers
                         if (await _irfService.EditSkillChannelCreatedFromTemplate(model, emailId))
                         {
                             await _phoneScreenRepository.SetIRFPlivoAssistantUrlAsync(model.id, model.IRFId, model.PlivoAssistantUrl);
+                            await _phoneScreenRepository.SetIRFPlivoWhatsAppAssistantUrlAsync(model.id, model.IRFId, model.PlivoWhatsAppAssistantUrl);
                             TempData["SuccessErrorMessage"] = $"Skills Channel '{model.IRFId}' created Successfully!";
                             TempData["SuccessErrorMessage2"] = model.CalendlyLink;
                             return RedirectToAction("Index");

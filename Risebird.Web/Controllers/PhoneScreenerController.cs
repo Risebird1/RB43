@@ -33,6 +33,7 @@ namespace Risebird.Web.Controllers
         private readonly IPhoneScreenRepository _phoneScreenRepository;
         private readonly IIRFService _irfService;
         private readonly IPlivoCXService _plivoCXService;
+        private readonly IPlivoWhatsAppService _plivoWhatsAppService;
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
 
@@ -46,12 +47,14 @@ namespace Risebird.Web.Controllers
             IPhoneScreenRepository phoneScreenRepository,
             IIRFService irfService,
             IPlivoCXService plivoCXService,
+            IPlivoWhatsAppService plivoWhatsAppService,
             IConfiguration configuration,
             IApplicationErrorLogger applicationErrorLogger)
         {
             _phoneScreenRepository = phoneScreenRepository;
             _irfService = irfService;
             _plivoCXService = plivoCXService;
+            _plivoWhatsAppService = plivoWhatsAppService;
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
         }
@@ -88,6 +91,8 @@ namespace Risebird.Web.Controllers
                     ClientName = header?.ClientName,
                     PlivoAssistantUrl = header?.PlivoAssistantUrl,
                     HasAssistantConfigured = !string.IsNullOrWhiteSpace(header?.PlivoAssistantUrl),
+                    PlivoWhatsAppAssistantUrl = header?.PlivoWhatsAppAssistantUrl,
+                    HasWhatsAppAssistantConfigured = !string.IsNullOrWhiteSpace(header?.PlivoWhatsAppAssistantUrl),
                     LaunchDate = header?.StartDate
                 };
 
@@ -108,6 +113,8 @@ namespace Risebird.Web.Controllers
                         row.HasCall = true;
                         row.CallId = call.Id;
                         row.Provider = call.Provider;
+                        row.Channel = (call.Provider ?? "").IndexOf("whatsapp", StringComparison.OrdinalIgnoreCase) >= 0
+                            ? "whatsapp" : "voice";
                         row.RawStatus = call.Status;
                         row.Status = CanonicalStatus(call.Status);
                         row.EndedReason = call.EndedReason;
@@ -261,6 +268,105 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false, message = "Failed to place the call. Please try again." });
+            }
+        }
+
+        // ────────────────────────────────────────────────────────────────────
+        // Start an outbound WhatsApp screening conversation (manual, one candidate)
+        // ────────────────────────────────────────────────────────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PlaceWhatsAppScreen(int candidateId, int irfId)
+        {
+            if (!IsAuthorized(out _))
+                return Json(new { success = false, message = "Session expired. Please sign in again." });
+
+            try
+            {
+                var emailId = GetSessionEmail();
+                var header = await _phoneScreenRepository.GetIRFHeaderAsync(irfId);
+
+                if (header == null)
+                    return Json(new { success = false, message = "Skill channel not found." });
+
+                if (string.IsNullOrWhiteSpace(header.PlivoWhatsAppAssistantUrl))
+                    return Json(new
+                    {
+                        success = false,
+                        message = "No Plivo WhatsApp assistant URL is configured for this skill channel. Add it on the skill channel's edit page."
+                    });
+
+                var candidates = (await _irfService.GetIRFCandidates(irfId, emailId))?.ToList()
+                                 ?? new List<Candidate>();
+                var candidate = candidates.FirstOrDefault(c => c.id == candidateId);
+                if (candidate == null)
+                    return Json(new { success = false, message = "Candidate not found in this skill channel." });
+
+                if (string.IsNullOrWhiteSpace(candidate.Phone))
+                    return Json(new { success = false, message = "Candidate has no phone number on file." });
+
+                // Pre-save the row so the WhatsApp agent's webhook can resolve it via log_id.
+                var callRecord = new PhoneScreenCall
+                {
+                    Provider = "plivo-whatsapp",
+                    IRFId = irfId,
+                    CandidateId = candidate.id,
+                    CandidateMasterId = candidate.CandidateMasterId,
+                    CandidateName = candidate.Name,
+                    CandidateEmail = candidate.EmailId,
+                    Phone = candidate.Phone,
+                    Status = "initiated",
+                    StartedAt = DateTime.UtcNow,
+                    CreatedBy = emailId
+                };
+                var callId = await _phoneScreenRepository.InsertCallAsync(callRecord);
+                if (callId <= 0)
+                    return Json(new { success = false, message = "Could not create the WhatsApp screen record." });
+
+                var triggerRequest = new PhoneScreenWhatsAppTriggerRequest
+                {
+                    PhoneNumber = candidate.Phone,
+                    CandidatePhone = candidate.Phone,
+                    CandidateName = candidate.Name ?? "there",
+                    CandidateEmail = candidate.EmailId,
+                    JobTitle = header.IRFName ?? "the role",
+                    ClientName = header.ClientName,
+                    LogId = callId.ToString(),
+                    LogIdentifier = callId.ToString(),
+                    TodayDate = DateTime.Now.ToString("dddd, dd MMMM yyyy")
+                };
+
+                var response = await _plivoWhatsAppService.TriggerByUrlAsync(
+                    header.PlivoWhatsAppAssistantUrl, triggerRequest);
+
+                if (response != null && string.IsNullOrEmpty(response.Error))
+                {
+                    await _phoneScreenRepository.UpdateCallTriggerResultAsync(
+                        callId, "triggered", response.ConversationId, null);
+                    return Json(new
+                    {
+                        success = true,
+                        callId,
+                        status = "triggered",
+                        message = "WhatsApp screening started. The conversation is now in progress."
+                    });
+                }
+
+                await _phoneScreenRepository.UpdateCallTriggerResultAsync(
+                    callId, "trigger-failed", response?.ConversationId, null);
+                return Json(new
+                {
+                    success = false,
+                    callId,
+                    status = "trigger-failed",
+                    message = "Plivo did not accept the WhatsApp trigger: " + (response?.Error ?? "unknown error")
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Failed to start the WhatsApp screen. Please try again." });
             }
         }
 
