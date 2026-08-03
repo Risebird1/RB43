@@ -81,6 +81,26 @@ BEGIN
     ADD ClientType int NULL
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'MAGId')
+      AND Object_ID = Object_ID(N'ChannelManagement'))
+BEGIN
+    ALTER TABLE ChannelManagement
+    ADD MAGId int NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'TemplateId')
+      AND Object_ID = Object_ID(N'ChannelManagement'))
+BEGIN
+    ALTER TABLE ChannelManagement
+    ADD TemplateId int NULL
+END
+
 END
 GO
 

@@ -1,437 +1,1185 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.ChannelManagementVM>
-@using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
-@using Risebird.Entities.ViewModel
 @inject IHttpContextAccessor HttpContextAccessor
 @{
-    ViewData["Title"] = "Channel Management";
-    ViewBag.PageHeader = "Channel Management";
+    ViewData["Title"] = "Requirement Management";
+    ViewBag.PageHeader = "Requirement Management";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    dynamic filter = null;
-    string strtDte = string.Empty;
-    string endDte = string.Empty;
-    string[] primarySkills = new string[] { };
-    string[] RFID = new string[] { };
-    string[] ArchiveStatus = new string[] { };
-    string[] ClientName = new string[] { };
-    string[] SubscriptionStatus = new string[] { };
-    string[] ClientRole = new string[] { };
-    string[] PrimarySkill = new string[] { };
-}
-@if (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters") != null)
-{
-    filter = JsonConvert.DeserializeObject<IRFFilter>
-(HttpContextAccessor.HttpContext.Session.GetString("IRFfilters"));
-    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
-    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
-    primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
-    RFID = filter.RFID != null ? filter.RFID : new string[] { };
-    ArchiveStatus = filter.ArchiveStatus != null ? filter.ArchiveStatus : new string[] { };
-    SubscriptionStatus = filter.SubscriptionStatus != null ? filter.SubscriptionStatus : new string[] { };
-    ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
-    ClientRole = filter.ClientRole != null ? filter.ClientRole : new string[] { };
-    PrimarySkill = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
 
+    var items = Model?.ToList() ?? new List<Risebird.Entities.ViewModel.ChannelManagementVM>();
+    var total = items.Count;
+    var processed = items.Count(x => x.IsProcessed);
+    var pending = total - processed;
+    var week = items.Count(x => x.CreatedDate >= DateTime.Now.AddDays(-7));
+
+    var magDict = ViewBag.MAGList as Dictionary<int, string> ?? new Dictionary<int, string>();
+    var templateDict = ViewBag.TemplateList as Dictionary<int, string> ?? new Dictionary<int, string>();
+    var clients = items.Select(x => x.Client).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(x => x).ToList();
+    var isClient = ViewBag.Client == "true";
 }
+
 <link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<style>
+    .rm-wrap {
+        padding: 0 6px 20px;
+        font-family: Roboto, Arial, Helvetica, sans-serif;
+    }
+
+    /* ---- summary tiles ---- */
+    .rm-tiles {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin: 10px 0 12px;
+    }
+
+    .rm-tile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #fff;
+        border: 1px solid #e8edf2;
+        border-radius: 8px;
+        padding: 10px 12px;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+    }
+
+    .rm-tile__icon {
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        background: #eef2f7;
+        color: #64748b;
+    }
+
+    .rm-tile__val {
+        font-size: 20px;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1.1;
+    }
+
+    .rm-tile__lbl {
+        font-size: 11px;
+        color: #7c8798;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        font-weight: 600;
+        margin-top: 1px;
+    }
+
+    .rm-tile.t-proc .rm-tile__icon { background: #e7f8ee; color: #16a34a; }
+    .rm-tile.t-pend .rm-tile__icon { background: #fff3e2; color: #ea8c11; }
+    .rm-tile.t-week .rm-tile__icon { background: #e8f1fe; color: #2f6feb; }
+
+    /* ---- card + toolbar ---- */
+    .rm-card {
+        background: #fff;
+        border: 1px solid #e8edf2;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+    }
+
+    .rm-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        padding: 10px 12px;
+        border-bottom: 1px solid #eef2f6;
+        background: #fbfcfd;
+    }
+
+    .rm-search {
+        position: relative;
+        flex: 1 1 220px;
+        min-width: 180px;
+    }
+
+    .rm-search .fa {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 12px;
+        color: #9aa5b4;
+        pointer-events: none;
+    }
+
+    .rm-toolbar input,
+    .rm-toolbar select {
+        height: 32px;
+        border: 1px solid #dde3ea;
+        border-radius: 6px;
+        padding: 0 9px;
+        font-size: 12.5px;
+        color: #334155;
+        background: #fff;
+        outline: none;
+    }
+
+    .rm-toolbar #rmSearch {
+        width: 100%;
+        padding-left: 28px;
+    }
+
+    .rm-toolbar input:focus,
+    .rm-toolbar select:focus {
+        border-color: #56e0cb;
+        box-shadow: 0 0 0 2px rgba(86, 224, 203, .18);
+    }
+
+    .rm-dates {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        color: #94a3b8;
+    }
+
+    .rm-reset {
+        height: 32px;
+        border: 1px solid #dde3ea;
+        background: #fff;
+        border-radius: 6px;
+        font-size: 12.5px;
+        color: #64748b;
+        padding: 0 12px;
+        cursor: pointer;
+    }
+
+    .rm-reset:hover { background: #f1f5f9; color: #334155; }
+
+    /* ---- table ---- */
+    #rmTable {
+        width: 100% !important;
+        margin: 0;
+        border-collapse: collapse;
+    }
+
+    #rmTable thead th {
+        background: #f6f8fa;
+        color: #64748b;
+        font-size: 10.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        padding: 9px 12px;
+        border: none;
+        border-bottom: 1px solid #e8edf2;
+        white-space: nowrap;
+    }
+
+    #rmTable tbody td {
+        font-size: 12.5px;
+        color: #334155;
+        padding: 9px 12px;
+        border: none;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+        line-height: 1.35;
+    }
+
+    #rmTable tbody tr:last-child td { border-bottom: none; }
+    #rmTable tbody tr:hover td { background: #f9fbfd; }
+
+    .rm-title {
+        font-weight: 600;
+        color: #0f172a;
+        font-size: 13px;
+        display: block;
+        max-width: 260px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .rm-sub {
+        display: block;
+        font-size: 11.5px;
+        color: #8b97a8;
+        margin-top: 1px;
+        max-width: 260px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .rm-cell-trim {
+        display: block;
+        max-width: 190px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .rm-muted { color: #b3bcc9; }
+
+    .rm-map-name {
+        font-weight: 600;
+        color: #1e293b;
+        display: block;
+        max-width: 220px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .rm-map-irf {
+        display: inline-block;
+        margin-top: 3px;
+        font-size: 11px;
+        color: #4b5b70;
+        background: #eef2f7;
+        border-radius: 4px;
+        padding: 1px 6px;
+        max-width: 220px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: bottom;
+    }
+
+    .rm-map-none {
+        color: #b3bcc9;
+        font-style: italic;
+        font-size: 12px;
+    }
+
+    .rm-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 26px;
+        height: 22px;
+        padding: 0 7px;
+        border-radius: 5px;
+        background: #eef2f7;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .rm-count.is-zero { background: #f7f8fa; color: #b3bcc9; }
+
+    .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 9px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .02em;
+        white-space: nowrap;
+    }
+
+    .pill:before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .pill.p-proc { background: #e7f8ee; color: #15803d; }
+    .pill.p-pend { background: #fff3e2; color: #c2740c; }
+
+    .rm-date { white-space: nowrap; color: #64748b; font-size: 12px; }
+
+    /* ---- row actions ---- */
+    .rm-actions {
+        display: flex;
+        gap: 5px;
+        justify-content: flex-end;
+    }
+
+    .rm-ico {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        color: #64748b;
+        font-size: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all .15s ease;
+        padding: 0;
+    }
+
+    .rm-ico:hover { background: #f1f5f9; color: #0f172a; border-color: #cbd5e1; }
+    .rm-ico.is-primary { border-color: #c3e0fb; background: #e8f2fe; color: #2f7fe0; }
+    .rm-ico.is-primary:hover { background: #d3e7fd; color: #1c6fc4; }
+
+    /* ---- empty state ---- */
+    .rm-empty {
+        text-align: center;
+        padding: 34px 16px;
+        color: #94a3b8;
+        font-size: 13px;
+    }
+
+    .rm-empty .fa { font-size: 24px; display: block; margin-bottom: 8px; color: #cbd5e1; }
+
+    /* ---- pager ---- */
+    .rm-card .dataTables_paginate {
+        padding: 8px 12px;
+        border-top: 1px solid #eef2f6;
+        background: #fbfcfd;
+        font-size: 12.5px;
+    }
+
+    .rm-card .dataTables_paginate .paginate_button {
+        padding: 3px 9px !important;
+        margin: 0 1px;
+        border-radius: 5px !important;
+        border: 1px solid transparent !important;
+        color: #64748b !important;
+    }
+
+    .rm-card .dataTables_paginate .paginate_button.current {
+        background: #eef2f7 !important;
+        border-color: #dde3ea !important;
+        color: #0f172a !important;
+    }
+
+    /* ---- Set Details modal ---- */
+    .rmm .modal-dialog { max-width: 460px; }
+
+    .rmm .modal-content {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 18px 44px rgba(15, 23, 42, .18);
+    }
+
+    .rmm .modal-header {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 14px 16px;
+        border-bottom: 1px solid #eef2f6;
+        background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
+    }
+
+    .rmm-badge {
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: #e8f2fe;
+        color: #2f7fe0;
+        box-shadow: 0 0 0 3px rgba(66, 165, 245, .10);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+    }
+
+    .rmm-head-text { flex: 1; min-width: 0; }
+
+    .rmm .modal-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1.2;
+        margin: 0;
+        letter-spacing: -.01em;
+    }
+
+    .rmm-sub {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 4px;
+        min-width: 0;
+    }
+
+    .rmm-sub__tag {
+        flex-shrink: 0;
+        font-size: 9.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: #7c8798;
+        background: #eef2f7;
+        border-radius: 4px;
+        padding: 2px 6px;
+        line-height: 1.4;
+    }
+
+    .rmm-sub__name {
+        font-size: 12px;
+        font-weight: 600;
+        color: #445468;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .rmm-sub__name.is-generic { font-weight: 400; color: #94a3b8; }
+
+    .rmm .modal-body { padding: 14px 16px 4px; }
+
+    .rmm .modal-footer {
+        padding: 11px 16px;
+        border-top: 1px solid #eef2f6;
+        background: #fbfcfd;
+        gap: 8px;
+    }
+
+    .rmm-field { margin-bottom: 14px; }
+
+    .rmm-label {
+        display: block;
+        font-size: 10.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        color: #7c8798;
+        margin-bottom: 5px;
+    }
+
+    .rmm-label-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 5px;
+    }
+
+    .rmm-label-row .rmm-label { margin-bottom: 0; }
+
+    .rmm-chip {
+        font-size: 10.5px;
+        font-weight: 700;
+        color: #4b5b70;
+        background: #eef2f7;
+        border-radius: 999px;
+        padding: 2px 8px;
+    }
+
+    .rmm-chip.is-on { background: #e8f2fe; color: #1c6fc4; }
+
+    .rmm-input {
+        width: 100%;
+        height: 34px;
+        border: 1px solid #dde3ea;
+        border-radius: 7px;
+        padding: 0 10px;
+        font-size: 13px;
+        color: #1e293b;
+        background: #fff;
+        outline: none;
+    }
+
+    .rmm-input:focus {
+        border-color: #7fbdf5;
+        box-shadow: 0 0 0 3px rgba(66, 165, 245, .16);
+    }
+
+    .rmm-hint { font-size: 11px; color: #94a3b8; margin-top: 5px; }
+
+    /* segmented mode switch */
+    .rmm-seg {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+        background: #f1f5f9;
+        border-radius: 8px;
+        padding: 3px;
+    }
+
+    .rmm-seg__btn {
+        border: none;
+        background: transparent;
+        border-radius: 6px;
+        height: 30px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #64748b;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all .15s ease;
+    }
+
+    .rmm-seg__btn .fa { font-size: 11px; }
+    .rmm-seg__btn:hover { color: #334155; }
+
+    .rmm-seg__btn.is-active {
+        background: #fff;
+        color: #0f172a;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, .12);
+    }
+
+    /* IRF picker */
+    .rmm-picker {
+        border: 1px solid #dde3ea;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .rmm-picker__bar {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 8px;
+        background: #fbfcfd;
+        border-bottom: 1px solid #eef2f6;
+    }
+
+    .rmm-picker__search { position: relative; flex: 1; min-width: 0; }
+
+    .rmm-picker__search .fa {
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 11px;
+        color: #9aa5b4;
+    }
+
+    .rmm-picker__search input {
+        width: 100%;
+        height: 28px;
+        border: 1px solid #e6ebf1;
+        border-radius: 6px;
+        padding: 0 8px 0 25px;
+        font-size: 12px;
+        color: #334155;
+        background: #fff;
+        outline: none;
+    }
+
+    .rmm-picker__search input:focus { border-color: #cbd5e1; }
+
+    .rmm-link {
+        border: none;
+        background: transparent;
+        font-size: 11.5px;
+        font-weight: 600;
+        color: #2f7fe0;
+        cursor: pointer;
+        padding: 2px 4px;
+        white-space: nowrap;
+    }
+
+    .rmm-link:hover { text-decoration: underline; }
+    .rmm-link.is-muted { color: #94a3b8; }
+
+    .rmm-picker__list {
+        max-height: 178px;
+        overflow-y: auto;
+        background: #fff;
+    }
+
+    .rmm-picker__list::-webkit-scrollbar { width: 6px; }
+    .rmm-picker__list::-webkit-scrollbar-thumb { background: #dde3ea; border-radius: 3px; }
+
+    .rmm-item {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 7px 10px;
+        font-size: 12.5px;
+        color: #334155;
+        cursor: pointer;
+        border-bottom: 1px solid #f4f7fa;
+        margin: 0;
+    }
+
+    .rmm-item:last-child { border-bottom: none; }
+    .rmm-item:hover { background: #f9fbfd; }
+    .rmm-item input { width: 14px; height: 14px; accent-color: #42a5f5; margin: 0; flex-shrink: 0; }
+    .rmm-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .rmm-item.is-hidden { display: none; }
+
+    .rmm-picker__empty {
+        padding: 26px 12px;
+        text-align: center;
+        font-size: 12px;
+        color: #9aa5b4;
+    }
+
+    .rmm-alert {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        background: #fef2f2;
+        border: 1px solid #fecdd3;
+        color: #b91c1c;
+        border-radius: 7px;
+        padding: 8px 10px;
+        font-size: 12px;
+        margin-bottom: 14px;
+    }
+
+    .rmm-btn {
+        height: 34px;
+        padding: 0 16px;
+        border-radius: 7px;
+        font-size: 12.5px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all .15s ease;
+    }
+
+    .rmm-btn--ghost { background: #fff; border-color: #dde3ea; color: #64748b; }
+    .rmm-btn--ghost:hover { background: #f1f5f9; color: #334155; }
+
+    .rmm-btn--primary {
+        background: #42a5f5;
+        color: #fff;
+        padding: 0 20px;
+        box-shadow: 0 2px 6px rgba(66, 165, 245, .32);
+    }
+
+    .rmm-btn--primary:hover { background: #2f8fe0; box-shadow: 0 3px 9px rgba(66, 165, 245, .40); }
+    .rmm-btn--primary:active { background: #2a7fc9; box-shadow: none; }
+    .rmm-btn--primary:disabled { background: #a8d3f7; box-shadow: none; cursor: default; }
+
+    @@media (max-width: 991px) {
+        .rm-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @@media (max-width: 575px) {
+        .rm-tiles { grid-template-columns: 1fr; }
+        .rm-toolbar > * { flex: 1 1 100%; }
+    }
+</style>
+
 <div class="main-panel" id="main-panel">
- 
-    <!--  <div class="panel-header panel-header-sm"></div>-->
-
-
-
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
-                    <div class="mobile-view"> <h4 class="card-title"> Channel Management</h4></div>
+                    <div class="mobile-view"><h4 class="card-title">Requirement Management</h4></div>
                 </div>
-
                 <div class="pull-right">
-                    <div>
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='/Dashboard'" data-original-title="Back to Dashboard"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Back</font></span>
-                        </button>
-
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" onclick="location.href='@Url.Action("AddRequirement", "DashBoard")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Channel</font></span>
-                        </button>
-
-
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter card-title-space" data-bs-toggle="modal" data-bs-target="#filterModal">
-
-                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                            <div class="mdc-button__ripple"></div>
-                        </button>
-
-
-                    </div>
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                        <span data-toggle="tooltip" data-placement="top" title="Back to Dashboard" onclick="location.href='/Dashboard'">
+                            <font style="font-family: Roboto, sans-serif; font-size:12px;"> Back</font>
+                        </span>
+                    </button>
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                        <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Add Requirement"
+                              onclick="location.href='@Url.Action("AddRequirement", "DashBoard")'">
+                            <font style="font-family:arial;"> Add Requirement</font>
+                        </span>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-
-
-
-
-
     <div class="content client">
-        <div class="row bl-bg">
-            <div class="col-md-12">
-                <div class="mdc-card card  bl-bg">
-                    <div class="mdc-card-wrapper__text-section">
-
-
-                        <div class="modal   fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-lg" role="document">
-                                <div class="modal-content">
-                                    <div class="filheader">
-                                        <div class="filavatar">
-                                            <span class="fa fa-filter"></span>
-                                        </div>
-                                        <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
-                                    </div>
-                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-
-
-
-                                    <form action="@Url.Action("RequirementManagement","DashBoard")" method="post" id="form">
-
-                                        <div class="modal-body">
-                                            <div class="row">
-                                                <div class="col-md-6 col-sm-6 border-rv">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
-                                                            Start Date
-                                                        </label>
-                                                        <div class="col-md-12 col-sm-12">
-                                                            <input id="StartDate" name="StartDate" type="date" class="form-control">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
-                                                            End Date
-                                                        </label>
-                                                        <div class="col-md-12 col-sm-12">
-                                                            <input id="EndDate" name="EndDate" type="date" class="form-control">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                @*<div class="col-md-6 col-sm-6 border-rv">
-
-                                                        @if (!Model.IsClientUser && Model.Profile != "CuratedUser")
-                                                        {
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">Client Name</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.IRFList.Select(x => x.ClientCompName).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        }
-
-                                                        @if (Model.Profile == "CuratedUser")
-                                                        {
-                                                            <div class="form-group">
-                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="SubscriptionStatus">Subscription Status</label>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <select id="SubscriptionStatus" name="SubscriptionStatus" class="form-control multiselect" multiple="multiple">
-                                                                        @foreach (var item in Model.IRFList.Select(x => x.SubscriptionStatus).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        }
-
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
-
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">PrimarySkill</label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.IRFList.Select(x => x.JDTiltle).Distinct().ToList())
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group">
-
-                                                            <div>
-                                                                <div class="col-md-12 col-sm-12">
-
-
-                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
-                                                                        <font style="font-size:12px;"> Reset Filter</font>
-                                                                    </button>
-
-
-
-                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
-                                                                        <font style="font-size:12px;"> Apply Filter</font>
-                                                                    </button>
-
-
-
-                                                                </div>
-
-                                                            </div>
-
-
-
-                                                        </div>
-                                                    </div>*@
-
-
-
-
-                                            </div>
-
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <!-- end content-->
-                        <!--  end card  -->
-                        <!-- end col-md-12 -->
-                        <!-- Start Card -->
-
-                        <div class="row">
-                            @foreach (var item in Model)
-                            {
-                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6 card-management" style="margin-top: 15px;">
-                                    <div class="card-content-holder border card-blue">
-                                        <div class="card-header">
-                                            <div class="row">
-                                                <div class=" col-md-12 col-sm-12 first">
-                                                    <h6> @item.Title</h6>
-                                                </div>
-
-                                                <!-- <div class="col-md-7 col-sm-7 card-header-buttons action">
-                                                </div>-->
-                                            </div>
-                                        </div>
-
-                                        <!-- irf body-->
-                                        <div class="card-body">
-                                            <div class="col-md-12">
-                                                @*<div class="statusImg">
-                                                        <img id="statusImage" src="@Url.Content(@item.ImageUrl)" class="img-responsive">
-                                                    </div>*@
-                                                <div class="statusInfo" style="padding:0px 50px">
-                                                    <div class="group inner list-group-item-text">
-                                                        <div class="second">
-                                                            <div class="client-field"> Interviewer Count:</div>  <div class="client-field">@item.InterviewerCount</div>
-                                                        </div>
-                                                        <div class="three"> <span>IRFID:</span><a href="#">@item.IRFIDs</a></div> <br />
-
-                                                        <div class="four">
-                                                            <span>Status:</span> @item.Status
-                                                        </div> <br />
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="card-footer action">
-                                            <div class="col-md-12">
-
-                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 pull-left " id="irf-card-footer">
-
-
-                                                </div>
-
-                                                <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-left ">
-                                                    <button class="mdc-fab app-fab--absolute" aria-label="Interviewer Approved" style="background:#5dc35d !important">
-                                                        <span onclick="location.href='@Url.Action("AddInterviewerList", "DashBoard",new { id=item.id,channelname=item.Title})'" title="Interviewer Approved" class="mdc-fab__icon material-icons">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91l-.01-.01L23 10z" /></svg>
-                                                        </span>
-                                                    </button>
-                                                    <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                        <span onclick="location.href='@Url.Action("EditRequirement","DashBoard",new { id=item.id})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                    </button>
-                                                    @if (ViewBag.Client != "true")
-                                                    {
-                                                        <button class="mdc-fab app-fab--absolute allcur" aria-label="All">
-                                                            <span onclick="location.href='@Url.Action("Interviewer", "DashBoard", new { id = item.id })'" title="Interviewer" class="mdc-fab__icon material-icons">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 5.9c1.16 0 2.1.94 2.1 2.1s-.94 2.1-2.1 2.1S9.9 9.16 9.9 8s.94-2.1 2.1-2.1m0 9c2.97 0 6.1 1.46 6.1 2.1v1.1H5.9V17c0-.64 3.13-2.1 6.1-2.1M12 4C9.79 4 8 5.79 8 8s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 9c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z" /></svg>
-                                                            </span>
-                                                        </button>
-                                                    }
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            }
-                        </div>
-
-                        <!-- End Card-->
-
-                    </div>
-
+        <div class="rm-wrap">
+            <div class="rm-tiles">
+                <div class="rm-tile">
+                    <span class="rm-tile__icon"><i class="fa fa-list-ul"></i></span>
+                    <span><span class="rm-tile__val">@total</span><span class="rm-tile__lbl">Total</span></span>
                 </div>
+                <div class="rm-tile t-proc">
+                    <span class="rm-tile__icon"><i class="fa fa-check"></i></span>
+                    <span><span class="rm-tile__val">@processed</span><span class="rm-tile__lbl">Processed</span></span>
+                </div>
+                <div class="rm-tile t-pend">
+                    <span class="rm-tile__icon"><i class="fa fa-clock-o"></i></span>
+                    <span><span class="rm-tile__val">@pending</span><span class="rm-tile__lbl">Pending</span></span>
+                </div>
+                <div class="rm-tile t-week">
+                    <span class="rm-tile__icon"><i class="fa fa-calendar"></i></span>
+                    <span><span class="rm-tile__val">@week</span><span class="rm-tile__lbl">This week</span></span>
+                </div>
+            </div>
+
+            <div class="rm-card">
+                <div class="rm-toolbar">
+                    <span class="rm-search">
+                        <i class="fa fa-search"></i>
+                        <input type="search" id="rmSearch" placeholder="Search requirement, client, requester…" />
+                    </span>
+                    <select id="rmStatus" title="Status">
+                        <option value="">All statuses</option>
+                        <option value="Processed">Processed</option>
+                        <option value="Pending">Pending</option>
+                    </select>
+                    <select id="rmClient" title="Client">
+                        <option value="">All clients</option>
+                        @foreach (var c in clients)
+                        {
+                            <option value="@c">@c</option>
+                        }
+                    </select>
+                    <span class="rm-dates">
+                        <input type="date" id="rmDateFrom" title="Created from" />
+                        <span>to</span>
+                        <input type="date" id="rmDateTo" title="Created to" />
+                    </span>
+                    <button type="button" class="rm-reset" id="rmReset">Reset</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="rmTable" class="table">
+                        <thead>
+                            <tr>
+                                <th>Requirement</th>
+                                <th>Client</th>
+                                <th>Requester</th>
+                                <th>Mapping</th>
+                                <th style="text-align:center;">Interviewers</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th style="text-align:right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var i in items)
+                        {
+                            string mapName = null;
+                            if (i.MAGId.GetValueOrDefault() > 0 && magDict.ContainsKey(i.MAGId.Value))
+                                mapName = magDict[i.MAGId.Value];
+                            else if (i.TemplateId.GetValueOrDefault() > 0 && templateDict.ContainsKey(i.TemplateId.Value))
+                                mapName = templateDict[i.TemplateId.Value];
+
+                            var statusLabel = i.IsProcessed ? "Processed" : "Pending";
+                            var createdIso = i.CreatedDate.ToString("yyyy-MM-dd");
+                            <tr data-created="@createdIso">
+                                <td>
+                                    <span class="rm-title" title="@i.Title">@(string.IsNullOrWhiteSpace(i.Title) ? "—" : i.Title)</span>
+                                    @if (!string.IsNullOrWhiteSpace(i.PrimarySkill))
+                                    {
+                                        <span class="rm-sub" title="@i.PrimarySkill">@i.PrimarySkill</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (string.IsNullOrWhiteSpace(i.Client))
+                                    {
+                                        <span class="rm-muted">—</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="rm-cell-trim" title="@i.Client">@i.Client</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (string.IsNullOrWhiteSpace(i.RequesterEmailid))
+                                    {
+                                        <span class="rm-muted">—</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="rm-cell-trim" title="@i.RequesterEmailid">@i.RequesterEmailid</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(mapName))
+                                    {
+                                        <span class="rm-map-name" title="@mapName">@mapName</span>
+                                        @if (!string.IsNullOrWhiteSpace(i.IRFIDs))
+                                        {
+                                            <span class="rm-map-irf" title="@i.IRFIDs">@i.IRFIDs</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="rm-map-none">not mapped</span>
+                                    }
+                                </td>
+                                <td style="text-align:center;">
+                                    <span class="rm-count @(i.InterviewerCount == 0 ? "is-zero" : "")">@i.InterviewerCount</span>
+                                </td>
+                                <td data-search="@statusLabel">
+                                    <span class="pill @(i.IsProcessed ? "p-proc" : "p-pend")">@statusLabel</span>
+                                </td>
+                                <td data-order="@createdIso"><span class="rm-date">@i.CreatedDate.ToString("dd MMM yyyy")</span></td>
+                                <td>
+                                    <div class="rm-actions">
+                                        @if (!isClient)
+                                        {
+                                            <button type="button" class="rm-ico is-primary js-set-details" title="Set Details"
+                                                    data-id="@i.id" data-mag="@(i.MAGId ?? 0)" data-template="@(i.TemplateId ?? 0)"
+                                                    data-irf="@i.IRFIDs" data-name="@i.Title">
+                                                <i class="fa fa-sliders"></i>
+                                            </button>
+                                        }
+                                        <button type="button" class="rm-ico" title="Edit"
+                                                onclick="location.href='@Url.Action("EditRequirement","DashBoard", new { id = i.id })'">
+                                            <i class="fa fa-pencil"></i>
+                                        </button>
+                                        @if (!isClient)
+                                        {
+                                            <button type="button" class="rm-ico" title="Interviewers"
+                                                    onclick="location.href='@Url.Action("Interviewer", "DashBoard", new { id = i.id })'">
+                                                <i class="fa fa-users"></i>
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+
+                @if (!items.Any())
+                {
+                    <div class="rm-empty">
+                        <i class="fa fa-inbox"></i>
+                        No requirements yet.
+                    </div>
+                }
             </div>
         </div>
     </div>
 </div>
+
+@* Set Details modal *@
+<div class="modal fade rmm" id="rmSetDetailsModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="rmm-badge"><i class="fa fa-sliders"></i></span>
+                <div class="rmm-head-text">
+                    <h5 class="modal-title" style="text-align:left;">Set Details</h5>
+                    <div class="rmm-sub">
+                        <span class="rmm-sub__tag" id="rmReqTag">Requirement</span>
+                        <span class="rmm-sub__name" id="rmReqName">—</span>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="rmReqId" />
+
+                <div class="rmm-field">
+                    <label class="rmm-label">Map using</label>
+                    <div class="rmm-seg" id="rmModeSeg">
+                        <button type="button" class="rmm-seg__btn is-active" data-mode="mag"><i class="fa fa-sitemap"></i> MAG</button>
+                        <button type="button" class="rmm-seg__btn" data-mode="template"><i class="fa fa-file-text-o"></i> Template</button>
+                    </div>
+                </div>
+
+                <div class="rmm-field" id="rmPaneMag">
+                    <label class="rmm-label" for="rmMagId">Select MAG</label>
+                    <select id="rmMagId" class="rmm-input">
+                        <option value="">— Select MAG —</option>
+                        @foreach (var kv in magDict.OrderBy(x => x.Value))
+                        {
+                            <option value="@kv.Key">@kv.Value</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="rmm-field" id="rmPaneTemplate" style="display:none;">
+                    <label class="rmm-label" for="rmTemplateId">Select Template</label>
+                    <select id="rmTemplateId" class="rmm-input">
+                        <option value="">— Select Template —</option>
+                        @foreach (var kv in templateDict.OrderBy(x => x.Value))
+                        {
+                            <option value="@kv.Key">@kv.Value</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="rmm-field">
+                    <div class="rmm-label-row">
+                        <span class="rmm-label">IRF</span>
+                        <span class="rmm-chip" id="rmIrfCount">0 selected</span>
+                    </div>
+
+                    <div class="rmm-picker" id="rmIrfPicker">
+                        <div class="rmm-picker__bar">
+                            <span class="rmm-picker__search">
+                                <i class="fa fa-search"></i>
+                                <input type="text" id="rmIrfSearch" placeholder="Filter IRFs" autocomplete="off" />
+                            </span>
+                            <button type="button" class="rmm-link" id="rmIrfAll">Select all</button>
+                            <button type="button" class="rmm-link is-muted" id="rmIrfNone">Clear</button>
+                        </div>
+                        <div class="rmm-picker__list" id="rmIrfList">
+                            <div class="rmm-picker__empty">Select a MAG to load its IRFs.</div>
+                        </div>
+                    </div>
+
+                    <div id="rmIrfManualWrap" style="display:none;">
+                        <input type="text" id="rmIrfManual" class="rmm-input" placeholder="e.g. 1024, 1025" />
+                        <div class="rmm-hint">Enter comma-separated IRF ids for this template.</div>
+                    </div>
+                </div>
+
+                <div id="rmSetDetailsMsg" class="rmm-alert" style="display:none;"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="rmm-btn rmm-btn--ghost" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="rmm-btn rmm-btn--primary" id="rmSaveDetailsBtn" onclick="saveSetDetails()">Save details</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
-        function my_code() {
+        window.onload = function () {
             var msg = '@ViewBag.Message';
-            if (msg.toLowerCase().includes("success")) {
-                swal({
-                    title: 'Successful',
-                    text: '@ViewBag.Message',
-                    type: 'success',
-                    showConfirmButton: true
-
-                },
-                    function (value) //confirm
-                    {
-                        location.reload();
-                    }
-                )
-            }
-            else {
-                swal({
-                    title: 'Failed',
-                    text: '@ViewBag.Message',
-                    type: 'error',
-                    showConfirmButton: true
-                },
-                    function ()
-                    {
-                        location.reload();
-                    }
-                )
-            }
-        }
-        window.onload = my_code();
+            swal({
+                title: msg.toLowerCase().includes('success') ? 'Successful' : 'Failed',
+                text: msg,
+                type: msg.toLowerCase().includes('success') ? 'success' : 'error',
+                showConfirmButton: true
+            }, function () { location.reload(); });
+        };
     </script>
 }
 
-
+<script src="~/Newassets/js/jquery.dataTables.min.js"></script>
 <script>
-        $(document).ready(function () {
-            $("#stDateInvoice").val("");
-            $("#EndDateInvoice").val("");
-            $("#srNumberId").val("");
-            $("#poNumberId").val("");
-            $("#requestNumberId").val("");
-            $("#currencyCodeId").val("");
-            $("#projectCodeId").val("");
-            $("#discountId").val("");
-            $("#clientAddressId").val("");
-            document.getElementById("gstCheckId").checked = false;
-            $("#ResetFilter").click(function () {
-                ResetFilter();
-            })
-            if ('@filter' != "") {
-                ApplySessionFilter();
-            }
+    var rmTable;
+    var RM_COL = { client: 1, status: 5, created: 6, actions: 7 };
 
-            $("#RFID").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#ClientName").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#ArchiveStatus").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#SubscriptionStatus").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-            $("#ClientRole").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                buttonWidth: '100%',
-                maxHeight: 200
-            });
-             $("#PrimarySkill").multiselect({
-                includeSelectAllOption: true,
-                selectedClass: 'active1',
-                 buttonWidth: '100%',
-                maxHeight: 200
-            });
+    $(document).ready(function () {
+        rmTable = $('#rmTable').DataTable({
+            pageLength: 25,
+            dom: 'tp',
+            order: [[RM_COL.created, 'desc']],
+            columnDefs: [{ orderable: false, targets: RM_COL.actions }],
+            language: { emptyTable: 'No requirements found.', zeroRecords: 'No requirements match these filters.' }
         });
 
-        function ResetFilter() {
-            window.location.href = "/IRF/ResetIRFFilter";
+        $('#rmSearch').on('keyup', function () { rmTable.search(this.value).draw(); });
+        $('#rmStatus').on('change', function () { rmTable.column(RM_COL.status).search(this.value).draw(); });
+        $('#rmClient').on('change', function () {
+            var v = this.value;
+            rmTable.column(RM_COL.client).search(v ? '^' + $.fn.dataTable.util.escapeRegex(v) + '$' : '', true, false).draw();
+        });
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            if (settings.nTable.id !== 'rmTable') return true;
+            var from = $('#rmDateFrom').val();
+            var to = $('#rmDateTo').val();
+            if (!from && !to) return true;
+            var created = $(rmTable.row(dataIndex).node()).attr('data-created') || '';
+            if (!created) return true;
+            if (from && created < from) return false;
+            if (to && created > to) return false;
+            return true;
+        });
+        $('#rmDateFrom, #rmDateTo').on('change', function () { rmTable.draw(); });
+
+        $('#rmReset').on('click', function () {
+            $('#rmSearch').val('');
+            $('#rmStatus').val('');
+            $('#rmClient').val('');
+            $('#rmDateFrom').val('');
+            $('#rmDateTo').val('');
+            rmTable.search('').columns().search('').draw();
+        });
+
+        $(document).on('click', '.js-set-details', function () {
+            var $b = $(this);
+            openSetDetails($b.data('id'), $b.data('mag') || 0, $b.data('template') || 0, $b.data('irf') || '', $b.data('name') || '');
+        });
+
+        $('#rmModeSeg').on('click', '.rmm-seg__btn', function () {
+            var mode = $(this).data('mode');
+            if (mode === 'mag') {
+                $('#rmTemplateId').val('');
+                $('#rmIrfManual').val('');
+            } else {
+                $('#rmMagId').val('');
+                rmRenderIrfs([]);
+            }
+            rmSetMode(mode);
+        });
+
+        $('#rmMagId').on('change', function () { loadIrfsByMag(this.value, []); });
+
+        $('#rmIrfList').on('change', 'input', rmUpdateIrfCount);
+        $('#rmIrfManual').on('keyup change', rmUpdateIrfCount);
+        $('#rmIrfAll').on('click', function () {
+            $('#rmIrfList .rmm-item:not(.is-hidden) input').prop('checked', true);
+            rmUpdateIrfCount();
+        });
+        $('#rmIrfNone').on('click', function () {
+            $('#rmIrfList input').prop('checked', false);
+            rmUpdateIrfCount();
+        });
+        $('#rmIrfSearch').on('keyup', function () {
+            var q = $.trim(this.value).toLowerCase();
+            $('#rmIrfList .rmm-item').each(function () {
+                var hide = q.length > 0 && $(this).text().toLowerCase().indexOf(q) < 0;
+                $(this).toggleClass('is-hidden', hide);
+            });
+        });
+    });
+
+    function rmModal(action) {
+        var el = document.getElementById('rmSetDetailsModal');
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+            var inst = bootstrap.Modal.getInstance(el) || new bootstrap.Modal(el);
+            if (action === 'hide') { inst.hide(); } else { inst.show(); }
+        } else {
+            $(el).modal(action);
         }
-        function ApplySessionFilter() {
-            var strtDte = '@strtDte';
-            var endDte = '@endDte';
-            var rFID =  @Html.Raw(Json.Serialize(RFID));
-            var clientName =  @Html.Raw(Json.Serialize(ClientName));
-            var archiveStatus =  @Html.Raw(Json.Serialize(ArchiveStatus));
-            var subscriptionStatus =  @Html.Raw(Json.Serialize(SubscriptionStatus));
-            var clientRole =  @Html.Raw(Json.Serialize(ClientRole));
-            var primarySkill= @Html.Raw(Json.Serialize(PrimarySkill));
+    }
 
-            $('input[name=StartDate]').val(strtDte);
-            $('input[name=EndDate]').val(endDte);
-            $("#RFID").val(rFID);
-            $("#ClientName").val(clientName);
-            $("#ArchiveStatus").val(archiveStatus);
-            $("#SubscriptionStatus").val(subscriptionStatus);
-            $("#ClientRole").val(clientRole);
-            $("#PrimarySkill").val(primarySkill);
+    function rmSetHeading(name) {
+        var label = $.trim(name == null ? '' : String(name));
+        $('#rmReqTag').toggle(label.length > 0);
+        $('#rmReqName')
+            .toggleClass('is-generic', label.length === 0)
+            .attr('title', label.length > 0 ? label : null)
+            .text(label.length > 0 ? label : 'Map this requirement to a MAG or Template');
+    }
 
-            var form = $("#form").serialize();
+    function rmParseIds(value) {
+        return String(value || '').split(/[,;]+/).map(function (s) { return s.trim(); }).filter(Boolean);
+    }
 
+    function rmSetMode(mode) {
+        $('#rmModeSeg .rmm-seg__btn').each(function () {
+            $(this).toggleClass('is-active', $(this).data('mode') === mode);
+        });
+        $('#rmPaneMag').toggle(mode === 'mag');
+        $('#rmPaneTemplate').toggle(mode === 'template');
+        $('#rmIrfPicker').toggle(mode === 'mag');
+        $('#rmIrfManualWrap').toggle(mode === 'template');
+        rmUpdateIrfCount();
+    }
+
+    function rmCurrentMode() {
+        return $('#rmModeSeg .rmm-seg__btn.is-active').data('mode') || 'mag';
+    }
+
+    function rmUpdateIrfCount() {
+        var n = rmCurrentMode() === 'template'
+            ? rmParseIds($('#rmIrfManual').val()).length
+            : $('#rmIrfList input:checked').length;
+        $('#rmIrfCount').text(n + ' selected').toggleClass('is-on', n > 0);
+    }
+
+    function rmShowError(message) {
+        $('#rmSetDetailsMsg')
+            .html('<i class="fa fa-exclamation-circle"></i>')
+            .append($('<span/>').text(message))
+            .show();
+    }
+
+    function rmRenderIrfs(list, preselected) {
+        var $list = $('#rmIrfList').empty();
+        var pre = preselected || [];
+        if (!list || !list.length) {
+            $list.append($('<div class="rmm-picker__empty"/>')
+                .text($('#rmMagId').val() ? 'No IRFs found for this MAG.' : 'Select a MAG to load its IRFs.'));
+            rmUpdateIrfCount();
+            return;
+        }
+        list.forEach(function (x) {
+            var id = String(x.irfId);
+            var label = x.label || id;
+            var $item = $('<label class="rmm-item"/>');
+            $('<input type="checkbox"/>').val(id).prop('checked', pre.indexOf(id) >= 0).appendTo($item);
+            $('<span/>').text(label).attr('title', label).appendTo($item);
+            $item.appendTo($list);
+        });
+        rmUpdateIrfCount();
+    }
+
+    function openSetDetails(id, magId, templateId, irfIds, name) {
+        var pre = rmParseIds(irfIds);
+        magId = parseInt(magId, 10) || 0;
+        templateId = parseInt(templateId, 10) || 0;
+
+        $('#rmReqId').val(id);
+        rmSetHeading(name);
+        $('#rmSetDetailsMsg').hide().empty();
+        $('#rmIrfSearch').val('');
+        $('#rmMagId').val(magId > 0 ? String(magId) : '');
+        $('#rmTemplateId').val(templateId > 0 ? String(templateId) : '');
+        $('#rmIrfManual').val('');
+
+        var mode = (magId <= 0 && templateId > 0) ? 'template' : 'mag';
+        if (mode === 'template') {
+            $('#rmIrfManual').val(pre.join(', '));
+            rmRenderIrfs([]);
+            rmSetMode(mode);
+            rmModal('show');
+            return;
         }
 
+        rmSetMode(mode);
+        if (magId > 0) {
+            loadIrfsByMag(magId, pre, function () { rmModal('show'); });
+        } else {
+            rmRenderIrfs([]);
+            rmModal('show');
+        }
+    }
+
+    function loadIrfsByMag(magId, preselected, cb) {
+        var $list = $('#rmIrfList');
+        if (!magId) { rmRenderIrfs([]); if (cb) cb(); return; }
+        $list.html('<div class="rmm-picker__empty">Loading IRFs…</div>');
+        $.getJSON('@Url.Action("GetIRFsByMAG", "DashBoard")', { magId: magId })
+            .done(function (res) { rmRenderIrfs(res && res.data, preselected); })
+            .fail(function () {
+                $list.html('<div class="rmm-picker__empty">Could not load IRFs for this MAG.</div>');
+                rmUpdateIrfCount();
+            })
+            .always(function () { if (cb) cb(); });
+    }
+
+    function saveSetDetails() {
+        var mode = rmCurrentMode();
+        var id = parseInt($('#rmReqId').val(), 10) || 0;
+        var magId = mode === 'mag' ? (parseInt($('#rmMagId').val(), 10) || null) : null;
+        var templateId = mode === 'template' ? (parseInt($('#rmTemplateId').val(), 10) || null) : null;
+        var irfs = mode === 'template'
+            ? rmParseIds($('#rmIrfManual').val())
+            : $('#rmIrfList input:checked').map(function () { return this.value; }).get();
+
+        if (!id) { rmShowError('This requirement could not be identified. Refresh and try again.'); return; }
+        if (!(magId > 0) && !(templateId > 0)) {
+            rmShowError(mode === 'template' ? 'Select a template to continue.' : 'Select a MAG to continue.');
+            return;
+        }
+        if (!irfs.length) { rmShowError('Select at least one IRF.'); return; }
+
+        $('#rmSetDetailsMsg').hide().empty();
+        $('#rmSaveDetailsBtn').prop('disabled', true).text('Saving…');
+        $.ajax({
+            url: '@Url.Action("SetRequirementDetails", "DashBoard")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ Id: id, MAGId: magId, TemplateId: templateId, IRFIDs: irfs.join(',') })
+        }).done(function (res) {
+            if (res && res.success) {
+                rmModal('hide');
+                location.reload();
+            } else {
+                rmShowError((res && res.message) || 'Save failed. Please try again.');
+            }
+        }).fail(function () {
+            rmShowError('Save failed. Please try again.');
+        }).always(function () {
+            $('#rmSaveDetailsBtn').prop('disabled', false).text('Save details');
+        });
+    }
 </script>
-
-
-
-<script type="text/javascript">
-    $(".sb-container").scrollBox();
-</script>
-
-
-

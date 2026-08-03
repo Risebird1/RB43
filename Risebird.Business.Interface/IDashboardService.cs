@@ -26,6 +26,7 @@ namespace Risebird.Business.Interface
         Task<List<ChannelManagementVM>> FetchChannelRequests();
         Task<ChannelVM> FetchChannelRequestsByid(int id);
         Task<string> AddChannelRequest(ChannelVM request);
+        Task<string> SetRequirementMapping(SetRequirementDetailsVM request);
         Task<List<string>> FetchAdminandHRList();
         Task<string> AddChannelInterviewer(ChannelInterviewerVM request);
         Task<List<ChannelInterviewerVM>> FetchInterviewerBychannelid(int id);
