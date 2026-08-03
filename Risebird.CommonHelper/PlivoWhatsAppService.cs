@@ -52,6 +52,35 @@ namespace Risebird.CommonHelper
         public Task<PlivoWhatsAppSendResponse> SendRescheduleMessageAsync(PlivoWhatsAppTriggerContext context)
             => PostTriggerAsync(_rescheduleTriggerUrl, context, "PlivoWhatsApp:RescheduleTriggerEndpointUrl");
 
+        public async Task<PlivoWhatsAppSendResponse> TriggerByUrlAsync(string triggerUrl, object payload)
+        {
+            if (string.IsNullOrEmpty(triggerUrl))
+                throw new InvalidOperationException(
+                    "The WhatsApp assistant URL is not configured for this skill channel. " +
+                    "Copy the trigger URL from cx.plivo.com → your WhatsApp Phone Screener flow → " +
+                    "API Request trigger node → API URL, and set it on the skill channel's edit page.");
+
+            var json    = JsonConvert.SerializeObject(payload);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(triggerUrl, content);
+            var body     = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                return new PlivoWhatsAppSendResponse
+                {
+                    Error           = $"HTTP {(int)response.StatusCode}: {body}",
+                    RawResponseBody = body,
+                    HttpStatusCode  = (int)response.StatusCode
+                };
+
+            var result = JsonConvert.DeserializeObject<PlivoWhatsAppSendResponse>(body)
+                         ?? new PlivoWhatsAppSendResponse { Message = body };
+            result.RawResponseBody = body;
+            result.HttpStatusCode  = (int)response.StatusCode;
+            return result;
+        }
+
         /// <summary>
         /// Not used in the Plivo CX approach — the AI agent handles the full conversation.
         /// Kept for interface compatibility; throws if called.

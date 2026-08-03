@@ -30,11 +30,19 @@
                 }
                 @if (Model.HasAssistantConfigured)
                 {
-                    <span class="ps-meta-chip ps-meta-chip--ok">Assistant ready</span>
+                    <span class="ps-meta-chip ps-meta-chip--ok">Voice agent ready</span>
                 }
                 else
                 {
-                    <span class="ps-meta-chip ps-meta-chip--warn">No assistant</span>
+                    <span class="ps-meta-chip ps-meta-chip--warn">No voice agent</span>
+                }
+                @if (Model.HasWhatsAppAssistantConfigured)
+                {
+                    <span class="ps-meta-chip ps-meta-chip--ok">WhatsApp agent ready</span>
+                }
+                else
+                {
+                    <span class="ps-meta-chip ps-meta-chip--warn">No WhatsApp agent</span>
                 }
             </div>
         </div>
@@ -158,10 +166,10 @@
                                     {
                                         <div class="ps-muted">@r.EndedReason</div>
                                     }
-                                    @if (!string.IsNullOrEmpty(r.Provider))
-                                    {
-                                        <span class="ps-chip">@r.Provider.ToUpper()</span>
+                                    @{
+                                        var chan = (r.Channel ?? "").Equals("whatsapp", StringComparison.OrdinalIgnoreCase) ? "WhatsApp" : "Voice";
                                     }
+                                    <span class="ps-chip ps-chip--@(chan.ToLower())">@chan</span>
                                 }
                                 else
                                 {
@@ -196,6 +204,12 @@
                                             data-candidate="@r.CandidateId"
                                             @(!Model.HasAssistantConfigured ? "disabled" : null)>
                                         Call
+                                    </button>
+                                    <button type="button" class="ps-btn ps-btn--wa ps-btn-wa"
+                                            data-candidate="@r.CandidateId"
+                                            title="@(Model.HasWhatsAppAssistantConfigured ? "Start WhatsApp screening" : "No WhatsApp agent configured")"
+                                            @(!Model.HasWhatsAppAssistantConfigured ? "disabled" : null)>
+                                        WhatsApp
                                     </button>
                                     @if (r.HasCall && r.CallId.HasValue)
                                     {
@@ -576,6 +590,8 @@
         background: #f1f5f9;
         color: #64748b;
     }
+    .ps-chip--whatsapp { background: #e7f9ee; color: #128c4a; }
+    .ps-chip--voice { background: #eaf2fe; color: #1e6fd6; }
 
     .ps-rec-link {
         font-size: 12px;
@@ -615,6 +631,19 @@
     .ps-btn--call:hover { background: #1e88e5; border-color: #1e88e5; }
     .ps-btn--call:disabled,
     .ps-btn-call:disabled {
+        background: #94a3b8;
+        border-color: #94a3b8;
+        opacity: .7;
+        cursor: not-allowed;
+    }
+    .ps-btn--wa {
+        background: #25d366;
+        color: #fff;
+        border-color: #25d366;
+    }
+    .ps-btn--wa:hover { background: #1ebe5b; border-color: #1ebe5b; }
+    .ps-btn--wa:disabled,
+    .ps-btn-wa:disabled {
         background: #94a3b8;
         border-color: #94a3b8;
         opacity: .7;
@@ -678,6 +707,7 @@
     <script>
         (function () {
             var placeUrl = '@Url.Action("PlaceCall", "PhoneScreener")';
+            var waUrl = '@Url.Action("PlaceWhatsAppScreen", "PhoneScreener")';
             var token = document.querySelector('input[name="__RequestVerificationToken"]');
             var irfId = document.getElementById('psIrfId').value;
 
@@ -805,39 +835,49 @@
             }
             render();
 
-            document.querySelectorAll('.ps-btn-call').forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    if (btn.disabled) return;
-                    var candidateId = btn.getAttribute('data-candidate');
-                    btn.disabled = true;
-                    var original = btn.textContent;
-                    btn.textContent = 'Calling…';
-                    var data = { candidateId: candidateId, irfId: irfId };
-                    if (token) data.__RequestVerificationToken = token.value;
-                    fetch(placeUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: Object.keys(data).map(function (k) {
-                            return encodeURIComponent(k) + '=' + encodeURIComponent(data[k]);
-                        }).join('&')
-                    }).then(function (r) { return r.json(); }).then(function (res) {
-                        if (res.success) {
-                            toast(res.message || 'Call placed.', 'ok');
-                            var row = btn.closest('tr.ps-row');
-                            if (row) {
-                                row.classList.add('ps-flash');
-                                setTimeout(function () { location.reload(); }, 1100);
-                            }
-                        } else {
-                            toast(res.message || 'Could not place the call.', 'fail');
-                            btn.disabled = false;
-                            btn.textContent = original;
+            function startConversation(btn, url, workingLabel, okMsg, failMsg) {
+                if (btn.disabled) return;
+                var candidateId = btn.getAttribute('data-candidate');
+                btn.disabled = true;
+                var original = btn.textContent;
+                btn.textContent = workingLabel;
+                var data = { candidateId: candidateId, irfId: irfId };
+                if (token) data.__RequestVerificationToken = token.value;
+                fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: Object.keys(data).map(function (k) {
+                        return encodeURIComponent(k) + '=' + encodeURIComponent(data[k]);
+                    }).join('&')
+                }).then(function (r) { return r.json(); }).then(function (res) {
+                    if (res.success) {
+                        toast(res.message || okMsg, 'ok');
+                        var row = btn.closest('tr.ps-row');
+                        if (row) {
+                            row.classList.add('ps-flash');
+                            setTimeout(function () { location.reload(); }, 1100);
                         }
-                    }).catch(function () {
-                        toast('Network error placing the call.', 'fail');
+                    } else {
+                        toast(res.message || failMsg, 'fail');
                         btn.disabled = false;
                         btn.textContent = original;
-                    });
+                    }
+                }).catch(function () {
+                    toast('Network error. Please try again.', 'fail');
+                    btn.disabled = false;
+                    btn.textContent = original;
+                });
+            }
+
+            document.querySelectorAll('.ps-btn-call').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    startConversation(btn, placeUrl, 'Calling…', 'Call placed.', 'Could not place the call.');
+                });
+            });
+
+            document.querySelectorAll('.ps-btn-wa').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    startConversation(btn, waUrl, 'Starting…', 'WhatsApp screening started.', 'Could not start the WhatsApp screen.');
                 });
             });
         })();
