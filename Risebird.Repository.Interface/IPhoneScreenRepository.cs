@@ -15,6 +15,11 @@ namespace Risebird.Repository.Interface
         // ── Skill channel (IRF) -> Plivo assistant URL mapping ──────────────
         Task<string> GetIRFPlivoAssistantUrlAsync(int irfId);
         Task<bool> SetIRFPlivoAssistantUrlAsync(int? irfId, string irfCode, string url);
+
+        // ── Skill channel (IRF) -> Plivo WhatsApp assistant URL mapping ─────
+        Task<string> GetIRFPlivoWhatsAppAssistantUrlAsync(int irfId);
+        Task<bool> SetIRFPlivoWhatsAppAssistantUrlAsync(int? irfId, string irfCode, string url);
+
         Task<PhoneScreenIRFHeader> GetIRFHeaderAsync(int irfId);
 
         // ── Phone screen call records ───────────────────────────────────────
