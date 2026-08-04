@@ -3,6 +3,7 @@
 @using System.Text.Json
 @{
     var rows = Model?.ToList() ?? new List<Risebird.Entities.ViewModel.DriveIRFVM>();
+    var showAddSpotlight = ViewData["DriveShowAddSpotlight"] as bool? == true;
 }
 
 <div class="drive-table-wrap">
@@ -19,6 +20,10 @@
                 <th>Concurrency</th>
                 <th>Outreach</th>
                 <th>Actions taken</th>
+                @if (showAddSpotlight)
+                {
+                    <th></th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -49,17 +54,17 @@
                         <span class="drive-badge drive-badge-e" title="Evening">E @i.ExpectedEvening</span>
                         <span class="drive-badge drive-badge-total">@i.ExpectedTotal</span>
                     </td>
-                    <td class="@unassignedClass">
-                        M @i.UnassignedMorning / E @i.UnassignedEvening
+                    <td>
+                        <span class="@unassignedClass">M @i.UnassignedMorning / E @i.UnassignedEvening</span>
                     </td>
                     <td>
                         @if (i.IrfIntId > 0)
                         {
-                            <a class="drive-supply-link" href="javascript:void(0);" onclick="openDriveMembers('IRF', @i.IrfIntId, @i.IrfIntId, @irfNameJson)" title="View IRF interviewers">@i.InterviewersInIRF</a>
+                            <a class="drive-supply-link" href="javascript:void(0);" onclick="openDriveMembers('IRF', @i.IrfIntId, @i.IrfIntId, @irfNameJson)" title="View IRF interviewers">@(i.InterviewersInIRF > 0 ? i.InterviewersInIRF.ToString() : "…")</a>
                         }
                         else
                         {
-                            <span class="drive-supply-muted">@i.InterviewersInIRF</span>
+                            <span class="drive-supply-muted">0</span>
                         }
                     </td>
                     <td>
@@ -73,13 +78,13 @@
                         }
                     </td>
                     <td>
-                        @if (i.MAGId > 0 && i.InterviewersInRelatedMAGs > 0)
+                        @if (i.MAGId > 0)
                         {
-                            <a class="drive-supply-link" href="javascript:void(0);" onclick="openDriveRelatedMagMembers(@i.MAGId, @i.IrfIntId, @irfNameJson)" title="View related MAG interviewers">@i.InterviewersInRelatedMAGs</a>
+                            <a class="drive-supply-link" href="javascript:void(0);" onclick="openDriveRelatedMagMembers(@i.MAGId, @i.IrfIntId, @irfNameJson)" title="View related MAG interviewers">@(i.InterviewersInRelatedMAGs > 0 ? i.InterviewersInRelatedMAGs.ToString() : "…")</a>
                         }
                         else
                         {
-                            <span class="drive-supply-muted">@i.InterviewersInRelatedMAGs</span>
+                            <span class="drive-supply-muted">0</span>
                         }
                     </td>
                     <td>
@@ -90,6 +95,18 @@
                     </td>
                     <td>@await Html.PartialAsync("_DriveActions", i)</td>
                     <td>@await Html.PartialAsync("_ActionsTaken", i)</td>
+                    @if (showAddSpotlight)
+                    {
+                        <td>
+                            @if (i.IrfIntId > 0)
+                            {
+                                <button type="button" class="drive-add-spotlight btn btn-sm btn-outline-primary"
+                                        data-irf-int-id="@i.IrfIntId" title="Add this IRF to weekend spotlight">
+                                    <i class="fa fa-plus"></i> Spotlight
+                                </button>
+                            }
+                        </td>
+                    }
                 </tr>
             }
         </tbody>

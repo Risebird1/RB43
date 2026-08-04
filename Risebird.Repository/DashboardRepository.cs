@@ -394,10 +394,20 @@ namespace Risebird.Repository
             try
             {
                 var query = @"Select cm.id,cm.Client,cm.EndClient,cm.Status,cm.IRFIDs,cm.PrimarySkill,cm.CreatedDate,cm.Title,
-count(cn.id) as InterviewerCount,cm.RequesterEmailid,cm.MAGId,cm.TemplateId
+count(cn.id) as InterviewerCount,cm.RequesterEmailid,cm.MAGId,cm.TemplateId,cm.Origin,
+CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM ClientUser cu
+        INNER JOIN UserList ul ON ul.id = cu.UserId
+        WHERE LTRIM(RTRIM(ul.EmailId)) = LTRIM(RTRIM(cm.RequesterEmailid))
+    ) THEN 'Verified'
+    WHEN NULLIF(LTRIM(RTRIM(cm.RequesterType)), '') IS NOT NULL THEN cm.RequesterType
+    ELSE 'External'
+END AS RequesterType
 from ChannelManagement cm
 left join ChannelMInterviewer cn on cm.id=cn.channelid
-group by cm.id,cm.Client,cm.EndClient,cm.Status,cm.IRFIDs,cm.PrimarySkill,cm.CreatedDate,cm.Title,cm.RequesterEmailid,cm.MAGId,cm.TemplateId";
+group by cm.id,cm.Client,cm.EndClient,cm.Status,cm.IRFIDs,cm.PrimarySkill,cm.CreatedDate,cm.Title,cm.RequesterEmailid,cm.MAGId,cm.TemplateId,cm.RequesterType,cm.Origin";
                 var dynamicParameters = new DynamicParameters();
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -459,6 +469,187 @@ WHERE id=@Id";
                 return "Failed";
             }
         }
+        public async Task<bool> LinkRequirementToClient(int requirementId, int clientId, string clientName = null)
+        {
+            try
+            {
+                if (requirementId <= 0 || clientId <= 0)
+                    return false;
+
+                var query = @"UPDATE ChannelManagement
+SET Client = ISNULL(NULLIF(LTRIM(RTRIM(@ClientName)), ''), CAST(@ClientId AS varchar(20))),
+    ClientId = @ClientId,
+    RequesterType = 'Verified'
+WHERE id = @Id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Id", requirementId);
+                dynamicParameters.Add("@ClientId", clientId);
+                dynamicParameters.Add("@ClientName", clientName);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var affected = await con.ExecuteAsync(query, dynamicParameters);
+                    return affected > 0;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        private const string EnsureWeekendDriveSpotlightSql = @"
+IF OBJECT_ID(N'dbo.WeekendDriveSpotlight', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.WeekendDriveSpotlight(
+        id            INT IDENTITY(1,1) PRIMARY KEY,
+        IRFId         INT NOT NULL,
+        WeekendBucket VARCHAR(20) NOT NULL,
+        ActionsTaken  VARCHAR(300) NULL,
+        CreatedAt DATETIME NULL,
+        CreatedBy VARCHAR(150) NULL,
+        ModifiedAt DATETIME NULL,
+        ModifiedBy VARCHAR(150) NULL
+    );
+END
+IF NOT EXISTS (
+    SELECT 1 FROM sys.indexes
+    WHERE name = N'UQ_WeekendDriveSpotlight_IRF_Bucket'
+      AND object_id = OBJECT_ID(N'dbo.WeekendDriveSpotlight')
+)
+BEGIN
+    CREATE UNIQUE INDEX UQ_WeekendDriveSpotlight_IRF_Bucket
+        ON dbo.WeekendDriveSpotlight (IRFId, WeekendBucket);
+END";
+
+        private async Task EnsureWeekendDriveSpotlightTableAsync(SqlConnection con)
+        {
+            await con.ExecuteAsync(EnsureWeekendDriveSpotlightSql);
+        }
+
+        public async Task<IEnumerable<WeekendDriveSpotlightVM>> GetWeekendDriveSpotlight(string bucket)
+        {
+            try
+            {
+                var bucketVal = string.IsNullOrWhiteSpace(bucket) ? "This" : bucket.Trim();
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await con.OpenAsync();
+                    await EnsureWeekendDriveSpotlightTableAsync(con);
+                    var result = await con.QueryAsync<WeekendDriveSpotlightVM>(
+                        @"SELECT id, IRFId, WeekendBucket, ActionsTaken, CreatedAt, CreatedBy, ModifiedAt, ModifiedBy
+                          FROM dbo.WeekendDriveSpotlight
+                          WHERE WeekendBucket = @bucket
+                          ORDER BY IRFId",
+                        new { bucket = bucketVal });
+                    return result ?? Enumerable.Empty<WeekendDriveSpotlightVM>();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Enumerable.Empty<WeekendDriveSpotlightVM>();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Enumerable.Empty<WeekendDriveSpotlightVM>();
+            }
+        }
+        public async Task<bool> UpsertWeekendDriveSpotlight(int irfId, string weekendBucket, string actionsTaken, bool remove, string userEmail)
+        {
+            try
+            {
+                if (irfId <= 0 || string.IsNullOrWhiteSpace(weekendBucket))
+                    return false;
+
+                var bucket = weekendBucket.Trim();
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await con.OpenAsync();
+                    await EnsureWeekendDriveSpotlightTableAsync(con);
+
+                    if (remove)
+                    {
+                        await con.ExecuteAsync(
+                            @"DELETE FROM dbo.WeekendDriveSpotlight
+                              WHERE IRFId = @IRFId AND WeekendBucket = @WeekendBucket",
+                            new { IRFId = irfId, WeekendBucket = bucket });
+                        return true;
+                    }
+
+                    var updated = await con.ExecuteAsync(
+                        @"UPDATE dbo.WeekendDriveSpotlight
+                          SET ActionsTaken = ISNULL(@ActionsTaken, ActionsTaken),
+                              ModifiedAt = GETDATE(),
+                              ModifiedBy = @UserEmail
+                          WHERE IRFId = @IRFId AND WeekendBucket = @WeekendBucket",
+                        new { IRFId = irfId, WeekendBucket = bucket, ActionsTaken = actionsTaken, UserEmail = userEmail });
+
+                    if (updated == 0)
+                    {
+                        await con.ExecuteAsync(
+                            @"INSERT INTO dbo.WeekendDriveSpotlight
+                                (IRFId, WeekendBucket, ActionsTaken, CreatedAt, CreatedBy, ModifiedAt, ModifiedBy)
+                              VALUES
+                                (@IRFId, @WeekendBucket, @ActionsTaken, GETDATE(), @UserEmail, GETDATE(), @UserEmail)",
+                            new { IRFId = irfId, WeekendBucket = bucket, ActionsTaken = actionsTaken, UserEmail = userEmail });
+                    }
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<bool> SyncWeekendDriveSpotlight(string weekendBucket, IEnumerable<int> irfIds, string userEmail)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(weekendBucket))
+                    return false;
+
+                var bucket = weekendBucket.Trim();
+                var desired = (irfIds ?? Enumerable.Empty<int>()).Where(id => id > 0).Distinct().ToHashSet();
+                var existing = (await GetWeekendDriveSpotlight(bucket))?.ToList() ?? new List<WeekendDriveSpotlightVM>();
+                var existingIds = existing.Select(x => x.IRFId).Where(id => id > 0).ToHashSet();
+
+                foreach (var removeId in existingIds.Except(desired))
+                {
+                    if (!await UpsertWeekendDriveSpotlight(removeId, bucket, null, true, userEmail))
+                        return false;
+                }
+                foreach (var addId in desired.Except(existingIds))
+                {
+                    var priorActions = existing.FirstOrDefault(x => x.IRFId == addId)?.ActionsTaken;
+                    if (!await UpsertWeekendDriveSpotlight(addId, bucket, priorActions, false, userEmail))
+                        return false;
+                }
+                return true;
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
         public async Task<ChannelVM> FetchChannelRequestsByid(int id)
         {
             try
@@ -492,8 +683,12 @@ WHERE id=@Id";
                     if (!request.isEditable)
                     {
                         var CreatedDate = DateTime.Now;
-                        var Status = "Pending";
-                        string sqlInsertReport = "INSERT INTO ChannelManagement (Client,ClientId,PrimarySkill,Location,JdLink,CreatedBy,CreatedDate,Status,RequesterEmailid,Title,SeniorityLevel,TurnAroundTimeindays,Comments,NumberofInterviews,PlanType,ClientType) Values (@Client,@ClientId,@PrimarySkill,@Location,@JdLink,@CreatedBy,@CreatedDate,@Status,@RequesterEmailid,@Title,@SeniorityLevel,@TurnAroundTimeindays,@Comments,@NumberofInterviews,@PlanType,@ClientType);";
+                        var Status = string.IsNullOrWhiteSpace(request.Status) ? "Open" : request.Status;
+
+                        string sqlInsertReport = @"INSERT INTO ChannelManagement
+(Client,ClientId,PrimarySkill,Location,JdLink,CreatedBy,CreatedDate,Status,RequesterEmailid,Title,SeniorityLevel,TurnAroundTimeindays,Comments,NumberofInterviews,PlanType,ClientType,Origin,RequesterType,Requester,RequesterMobile,EndClient,MAGId,TemplateId,IRFIDs)
+Values
+(@Client,@ClientId,@PrimarySkill,@Location,@JdLink,@CreatedBy,@CreatedDate,@Status,@RequesterEmailid,@Title,@SeniorityLevel,@TurnAroundTimeindays,@Comments,@NumberofInterviews,@PlanType,@ClientType,@Origin,@RequesterType,@Requester,@RequesterMobile,@EndClient,@MAGId,@TemplateId,@IRFIDs);";
                         var affectedRows = con.ExecuteAsync(sqlInsertReport, new
                         {
                             request.Client,
@@ -511,7 +706,15 @@ WHERE id=@Id";
                             request.Comments,
                             request.NumberofInterviews,
                             PlanType = request.PlanType > 0 ? request.PlanType : (int?)null,
-                            ClientType = request.ClientType > 0 ? request.ClientType : (int?)null
+                            ClientType = request.ClientType > 0 ? request.ClientType : (int?)null,
+                            request.Origin,
+                            request.RequesterType,
+                            request.Requester,
+                            request.RequesterMobile,
+                            request.EndClient,
+                            MAGId = (int?)null,
+                            TemplateId = (int?)null,
+                            IRFIDs = (string)null
                         }).Result;
                     }
                     else

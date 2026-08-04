@@ -22,6 +22,8 @@ using Risebird.Web.Services;
 using Risebird.Web.Services.Proctoring;
 using System;
 using System.IO.Compression;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,6 +71,20 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(90);
     options.Cookie.Name = "Risebirdportal.Session";
     //options.Cookie.HttpOnly = true;
+});
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy("PublicIntake", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            }));
 });
 
 //Configure session state
@@ -539,6 +555,7 @@ app.Use(async (context, next) =>
 
 app.UseSession();
 app.UseRouting();
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<SessionHydrationMiddleware>();

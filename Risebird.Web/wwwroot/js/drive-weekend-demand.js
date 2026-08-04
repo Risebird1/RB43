@@ -1,9 +1,16 @@
 (function () {
     var currentWeekend = 'This';
+    var spotlightSaveTimer = null;
 
     function setActiveToggle(weekend) {
         $('.drive-weekend-toggle').removeClass('active');
         $('.drive-weekend-toggle[data-weekend="' + weekend + '"]').addClass('active');
+    }
+
+    function currentBucket() {
+        var fromDom = $('#driveWeekendContainer .drive-spotlight-bar').data('weekend-bucket');
+        if (fromDom) return fromDom;
+        return currentWeekend === 'Next' ? 'Next' : 'This';
     }
 
     function saveRowActions($select) {
@@ -14,7 +21,9 @@
         $.post('/Dashboard/SaveRowActions', {
             refType: $select.data('reftype'),
             refId: $select.data('refid'),
-            actions: ($select.val() || []).join(',')
+            actions: ($select.val() || []).join(','),
+            irfIntId: $select.data('irf-int-id') || 0,
+            weekendBucket: $select.data('weekend-bucket') || currentBucket()
         });
     }
 
@@ -34,7 +43,7 @@
             includeSelectAllOption: true,
             selectedClass: 'active1',
             buttonWidth: '100%',
-            maxHeight: 220,
+            maxHeight: 200,
             nonSelectedText: 'None selected',
             nSelectedText: ' selected',
             allSelectedText: 'All actions',
@@ -46,6 +55,85 @@
             },
             onDeselectAll: function () {
                 saveRowActions(this.$select);
+            }
+        });
+    };
+
+    function syncSpotlightSelection(reload) {
+        var $sel = $('#driveSpotlightIrf');
+        if (!$sel.length) return;
+        var ids = ($sel.val() || []).join(',');
+        var bucket = currentBucket();
+        $.post('/Dashboard/SyncWeekendDriveSpotlight', {
+            weekendBucket: bucket,
+            irfIds: ids
+        }).done(function (res) {
+            if (res && res.ok) {
+                if (reload !== false) {
+                    loadDriveWeekendData(currentWeekend);
+                }
+                return;
+            }
+            var msg = (res && res.message)
+                ? res.message
+                    : 'Spotlight save failed. Check DB permissions for WeekendDriveSpotlight.';
+            if (window.swal && swal.fire) {
+                swal.fire('Spotlight not saved', msg, 'error');
+            } else {
+                alert(msg);
+            }
+        }).fail(function () {
+            if (window.swal && swal.fire) {
+                swal.fire('Spotlight not saved', 'Request failed. Check you are signed in as Admin/HR.', 'error');
+            }
+        });
+    }
+
+    function upsertSpotlightIrf(irfId, remove) {
+        return $.post('/Dashboard/UpsertWeekendDriveSpotlight', {
+            irfId: irfId,
+            weekendBucket: currentBucket(),
+            remove: !!remove
+        });
+    }
+
+    window.initDriveSpotlightPicker = function () {
+        var $sel = $('#driveSpotlightIrf');
+        if (!$sel.length) {
+            return;
+        }
+        if (!$.fn.multiselect) {
+            $sel.off('change.driveSpotlight').on('change.driveSpotlight', function () {
+                clearTimeout(spotlightSaveTimer);
+                spotlightSaveTimer = setTimeout(function () { syncSpotlightSelection(true); }, 400);
+            });
+            return;
+        }
+        if ($sel.data('multiselect')) {
+            $sel.multiselect('destroy');
+        }
+        $sel.multiselect({
+            includeSelectAllOption: true,
+            enableFiltering: true,
+            enableCaseInsensitiveFiltering: true,
+            filterPlaceholder: 'Search IRFs…',
+            selectedClass: 'active1',
+            buttonWidth: '100%',
+            maxHeight: 200,
+            nonSelectedText: 'Select spotlight IRFs',
+            nSelectedText: ' IRFs selected',
+            allSelectedText: 'All IRFs',
+            onChange: function () {
+                clearTimeout(spotlightSaveTimer);
+                spotlightSaveTimer = setTimeout(function () { syncSpotlightSelection(true); }, 400);
+            },
+            onSelectAll: function () {
+                clearTimeout(spotlightSaveTimer);
+                spotlightSaveTimer = setTimeout(function () { syncSpotlightSelection(true); }, 400);
+            },
+            onDeselectAll: function () {
+                clearTimeout(spotlightSaveTimer);
+                spotlightSaveTimer = setTimeout(function () { syncSpotlightSelection(true); }, 400);
             }
         });
     };
@@ -209,39 +297,56 @@
         });
     };
 
+    var driveLoadXhr = null;
+
     window.loadDriveWeekendData = function (weekend) {
         currentWeekend = weekend || currentWeekend;
         setActiveToggle(currentWeekend);
         $('#driveWeekendLoader').show();
-        $('#driveWeekendContainer').empty();
+        // Keep previous content visible so tab switches don't look "blank forever"
+
+        if (driveLoadXhr && driveLoadXhr.readyState !== 4) {
+            driveLoadXhr.abort();
+        }
 
         var dataUrl = window.driveWeekendDataUrl || '/InterviewDemand/DriveWeekendData';
 
-        $.ajax({
+        driveLoadXhr = $.ajax({
             url: dataUrl,
             data: { weekend: currentWeekend },
+            timeout: 45000,
             success: function (html) {
                 $('#driveWeekendContainer').html(html);
+                if (typeof initDriveSpotlightPicker === 'function') {
+                    initDriveSpotlightPicker();
+                }
                 if (typeof initRowActions === 'function') {
                     initRowActions();
                 }
             },
-            error: function (xhr) {
+            error: function (xhr, status) {
+                if (status === 'abort') {
+                    return;
+                }
                 var message = 'Unable to load weekend drive data.';
-                if (xhr && xhr.status === 401) {
+                if (status === 'timeout') {
+                    message = 'Weekend drive is taking too long. Try again, or reduce DriveThreshold.';
+                } else if (xhr && xhr.status === 401) {
                     message = 'Your session expired. Please sign in again.';
-                } else if (xhr && xhr.responseText) {
+                } else if (xhr && xhr.status) {
                     message += ' (' + xhr.status + ')';
                 }
 
                 $('#driveWeekendContainer').html(
                     '<div class="drive-empty"><div><i class="fas fa-exclamation-circle"></i></div><p>' +
                     message +
-                    '</p><p class="text-muted" style="font-size:11px;margin-top:6px;">Check that usp_DriveWeekendInterviews is deployed, or refresh after rebuilding the app.</p></div>'
+                    '</p></div>'
                 );
             },
-            complete: function () {
-                $('#driveWeekendLoader').hide();
+            complete: function (xhr, status) {
+                if (status !== 'abort') {
+                    $('#driveWeekendLoader').hide();
+                }
             }
         });
     };
@@ -249,6 +354,32 @@
     $(document).ready(function () {
         $(document).on('click', '.drive-weekend-toggle', function () {
             loadDriveWeekendData($(this).data('weekend'));
+        });
+
+        $(document).on('click', '.drive-add-spotlight', function () {
+            var id = parseInt($(this).data('irf-int-id'), 10) || 0;
+            if (!id) return;
+            var $btn = $(this).prop('disabled', true);
+            upsertSpotlightIrf(id, false).done(function (res) {
+                if (res && res.ok) {
+                    loadDriveWeekendData(currentWeekend);
+                    return;
+                }
+                $btn.prop('disabled', false);
+                var msg = (res && res.message)
+                    ? res.message
+                    : 'Spotlight save failed. Check DB permissions for WeekendDriveSpotlight.';
+                if (window.swal && swal.fire) {
+                    swal.fire('Spotlight not saved', msg, 'error');
+                } else {
+                    alert(msg);
+                }
+            }).fail(function () {
+                $btn.prop('disabled', false);
+                if (window.swal && swal.fire) {
+                    swal.fire('Spotlight not saved', 'Request failed. Check you are signed in as Admin/HR.', 'error');
+                }
+            });
         });
 
         var closeMember = document.getElementById('membersPopUp');
@@ -259,6 +390,13 @@
                     modal.style.display = 'none';
                 }
             };
+        }
+
+        if (typeof initDriveSpotlightPicker === 'function') {
+            initDriveSpotlightPicker();
+        }
+        if (typeof initRowActions === 'function') {
+            initRowActions();
         }
 
         if ($('#driveWeekendContainer').children().length === 0) {

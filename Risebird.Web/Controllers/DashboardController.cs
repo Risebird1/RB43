@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Graph.Me.RemoveAllDevicesFromManagement;
 using Newtonsoft.Json;
@@ -13,6 +14,7 @@ using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Constants;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
@@ -90,6 +92,7 @@ namespace Risebird.Web.Controllers
         private readonly ITrialFlagReviewService _trialFlagReviewService;
         private readonly ITrialJudgmentService _trialJudgmentService;
         private readonly IClientRepository _clientRepository;
+        private readonly IClientService _clientService;
         private readonly IClonableSkillChannelTemplateService _clonableSkillChannelTemplateService;
 
         //private readonly IIRFService _irfService;
@@ -117,6 +120,7 @@ namespace Risebird.Web.Controllers
             ITrialFlagReviewService trialFlagReviewService,
             ITrialJudgmentService trialJudgmentService,
             IClientRepository clientRepository,
+            IClientService clientService,
             IClonableSkillChannelTemplateService clonableSkillChannelTemplateService)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
             _dashboardService = dashboardService;
@@ -165,6 +169,7 @@ namespace Risebird.Web.Controllers
             _trialFlagReviewService = trialFlagReviewService;
             _trialJudgmentService = trialJudgmentService;
             _clientRepository = clientRepository;
+            _clientService = clientService;
             _clonableSkillChannelTemplateService = clonableSkillChannelTemplateService;
         }
 
@@ -3137,7 +3142,7 @@ NEVER:
 
         #region ChannelManagement
         [HttpGet]
-        public async Task<IActionResult> RequirementManagement()
+        public async Task<IActionResult> RequirementManagement(string segment = "All")
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -3145,14 +3150,33 @@ NEVER:
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
+
+                if (profileName != "Admin" && profileName != "HR" && profileName != "SeniorHR"
+                    && profileName != "SupportAdmin" && profileName != "Client")
+                    return RedirectToAction("SignOut", "Session");
+
                 var model = await _dashboardService.FetchChannelRequests() ?? new List<ChannelManagementVM>();
                 ViewBag.Client = "false";
                 if (profileName == "Client")
                 {
                     var Emailaddress = emailid.ToUpper();
-                    model = model.Where(x => x.RequesterEmailid.ToUpper() == Emailaddress).ToList();
+                    model = model.Where(x => (x.RequesterEmailid ?? "").ToUpper() == Emailaddress).ToList();
                     ViewBag.Client = "true";
                 }
+
+                ViewBag.SegmentAllCount = model.Count;
+                ViewBag.SegmentVerifiedCount = model.Count(x => string.Equals(x.RequesterType, "Verified", StringComparison.OrdinalIgnoreCase));
+                ViewBag.SegmentExternalCount = model.Count(x => string.Equals(x.RequesterType, "External", StringComparison.OrdinalIgnoreCase)
+                    || string.IsNullOrWhiteSpace(x.RequesterType));
+                ViewBag.ProcessedCount = model.Count(x => x.IsProcessed);
+
+                segment = string.IsNullOrWhiteSpace(segment) ? "All" : segment.Trim();
+                ViewBag.ActiveSegment = segment;
+                if (string.Equals(segment, "Verified", StringComparison.OrdinalIgnoreCase))
+                    model = model.Where(x => string.Equals(x.RequesterType, "Verified", StringComparison.OrdinalIgnoreCase)).ToList();
+                else if (string.Equals(segment, "External", StringComparison.OrdinalIgnoreCase))
+                    model = model.Where(x => string.Equals(x.RequesterType, "External", StringComparison.OrdinalIgnoreCase)
+                        || string.IsNullOrWhiteSpace(x.RequesterType)).ToList();
 
                 var magList = _interviewerService.FetchAssessmentGroups()
                     ?.Where(x => x != null && x.id > 0 && !string.IsNullOrWhiteSpace(x.AssessmentGroup))
@@ -3173,6 +3197,20 @@ NEVER:
                         x => !string.IsNullOrWhiteSpace(x.Name) ? x.Name
                             : (!string.IsNullOrWhiteSpace(x.PrimarySkills) ? x.PrimarySkills : ("Template #" + x.id)));
                 ViewBag.TemplateList = templateList;
+
+                try
+                {
+                    var clients = await _clientService.GetAllClients() ?? Enumerable.Empty<Client>();
+                    ViewBag.ClientOptions = new SelectList(clients.Where(c => c != null && c.id > 0).OrderBy(c => c.Name), "id", "Name");
+                    var roles = await _clientService.GetClientRoles() ?? new List<ClientRole>();
+                    ViewBag.ClientRoleOptions = new SelectList(roles.Where(r => r != null && r.id > 0).OrderBy(r => r.Name), "id", "Name");
+                }
+                catch (Exception ex)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    ViewBag.ClientOptions = new SelectList(Enumerable.Empty<SelectListItem>());
+                    ViewBag.ClientRoleOptions = new SelectList(Enumerable.Empty<SelectListItem>());
+                }
 
                 if (TempData["SuccessErrorMessageInterview"] != null)
                 {
@@ -3246,6 +3284,314 @@ NEVER:
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false, message = "Failed to save mapping." });
             }
+        }
+
+        // --- Public mini Add Requirement (Session 1 / intake hand-off) ---
+        [AllowAnonymous]
+        [HttpGet("/Requirement/Externaluser")]
+        public IActionResult PublicAddRequirement()
+        {
+            return View(new PublicChannelVM());
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [EnableRateLimiting("PublicIntake")]
+        public async Task<JsonResult> VerifyRequesterEmail(string email)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(email))
+                    return Json(new { ok = false, clientId = 0, clientName = (string)null });
+
+                int clientId = await _clientService.GetClientByEmailId(email.Trim());
+                if (clientId > 0)
+                {
+                    var company = await _clientService.GetClientRoleAndCompanyNameByEmailId(email.Trim());
+                    // Tuple: ClientId, Name, LogoLink — use Item2 (Name) per frozen contract
+                    var clientName = company?.Item2;
+                    if (string.IsNullOrWhiteSpace(clientName))
+                        clientName = await _clientService.GetClientName(clientId);
+                    return Json(new { ok = true, clientId, clientName });
+                }
+                return Json(new { ok = false, clientId = 0, clientName = (string)null });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, clientId = 0, clientName = (string)null });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("/Requirement/Externaluser")]
+        [ValidateAntiForgeryToken]
+        [EnableRateLimiting("PublicIntake")]
+        public async Task<IActionResult> PublicAddRequirement(PublicChannelVM m)
+        {
+            try
+            {
+                var hasJd = (m.JdFile != null && m.JdFile.Length > 0) || !string.IsNullOrWhiteSpace(m.JdLink);
+                if (!hasJd)
+                    ModelState.AddModelError("JdLink", "Please upload a JD file or paste a JD link.");
+
+                if (m.JdFile != null && m.JdFile.Length > 0)
+                {
+                    var ext = Path.GetExtension(m.JdFile.FileName)?.ToLowerInvariant();
+                    var allowed = new[] { ".pdf", ".doc", ".docx" };
+                    if (string.IsNullOrEmpty(ext) || !allowed.Contains(ext))
+                        ModelState.AddModelError("JdFile", "JD file must be PDF, DOC, or DOCX.");
+                }
+
+                if (!ModelState.IsValid)
+                    return View(m);
+
+                if (m.JdFile != null && m.JdFile.Length > 0)
+                {
+                    var safeName = $"{DateTime.UtcNow:yyyyMMddHHmmss}_{Path.GetFileName(m.JdFile.FileName)}";
+                    await _azureStorageHelper.InsertBlob(safeName, "resumes", m.JdFile);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                    var blob = containerRef.GetBlockBlobReference(safeName);
+                    m.JdLink = blob.Uri.ToString();
+                }
+
+                // Re-verify server-side — never trust the badge
+                int clientId = await _clientService.GetClientByEmailId(m.RequesterEmailid?.Trim());
+                string clientName = null;
+                if (clientId > 0)
+                {
+                    var company = await _clientService.GetClientRoleAndCompanyNameByEmailId(m.RequesterEmailid.Trim());
+                    clientName = company?.Item2;
+                    if (string.IsNullOrWhiteSpace(clientName))
+                        clientName = await _clientService.GetClientName(clientId);
+                }
+
+                var channel = new ChannelVM
+                {
+                    Client = clientId > 0 ? clientId.ToString() : "",
+                    ClientId = clientId > 0 ? clientId : 0,
+                    RequesterType = clientId > 0 ? "Verified" : "External",
+                    Status = "Pending",
+                    Origin = "Public",
+                    Requester = clientId > 0 ? (clientName ?? "") : "",
+                    RequesterMobile = "",
+                    RequesterEmailid = m.RequesterEmailid?.Trim(),
+                    Title = m.Title?.Trim(),
+                    PrimarySkill = m.PrimarySkill?.Trim() ?? "",
+                    JdLink = m.JdLink?.Trim(),
+                    EndClient = "",
+                    Location = "",
+                    SeniorityLevel = "",
+                    Comments = "",
+                    TurnAroundTimeindays = "0",
+                    NumberofInterviews = 0,
+                    MAGId = null,
+                    TemplateId = null,
+                    IRFIDs = null,
+                    CreatedBy = "PublicForm",
+                    isEditable = false
+                };
+
+                var result = await _dashboardService.AddChannelRequest(channel);
+                if (string.Equals(result, "Success", StringComparison.OrdinalIgnoreCase))
+                {
+                    TempData["PublicReqTitle"] = m.Title;
+                    TempData["PublicReqEmail"] = m.RequesterEmailid;
+                    return RedirectToAction(nameof(PublicRequirementThankYou));
+                }
+
+                ModelState.AddModelError("", "Could not submit your requirement. Please try again.");
+                return View(m);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                ModelState.AddModelError("", "Could not submit your requirement. Please try again.");
+                return View(m);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult PublicRequirementThankYou()
+        {
+            var vm = new PublicChannelVM
+            {
+                Title = TempData["PublicReqTitle"] as string,
+                RequesterEmailid = TempData["PublicReqEmail"] as string
+            };
+            return View("PublicAddRequirementThanks", vm);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> AddClientUserFromRequirement([FromBody] AddClientUserFromRequirementVM model)
+        {
+            try
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "");
+                if (profileName != "Admin" && profileName != "HR" && profileName != "SeniorHR" && profileName != "SupportAdmin")
+                    return Json(new { ok = false, message = "Unauthorized." });
+
+                if (model == null || model.RequirementId <= 0 || string.IsNullOrWhiteSpace(model.EmailId))
+                    return Json(new { ok = false, message = "Invalid request." });
+
+                int clientId = model.SelectedClient.GetValueOrDefault();
+                if (clientId <= 0 && !string.IsNullOrWhiteSpace(model.NewClientName))
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? "";
+                    var newClient = new Client
+                    {
+                        Name = model.NewClientName.Trim(),
+                        Description = model.NewClientName.Trim(),
+                        Createdby = emailid
+                    };
+                    var created = await _clientService.AddClient(newClient);
+                    if (!created)
+                        return Json(new { ok = false, message = "Could not create client." });
+
+                    var all = await _clientService.GetAllClients() ?? Enumerable.Empty<Client>();
+                    clientId = all
+                        .Where(c => c != null && string.Equals(c.Name, model.NewClientName.Trim(), StringComparison.OrdinalIgnoreCase))
+                        .OrderByDescending(c => c.id)
+                        .Select(c => c.id)
+                        .FirstOrDefault();
+                    if (clientId <= 0)
+                        return Json(new { ok = false, message = "Client created but could not resolve id." });
+                }
+
+                if (clientId <= 0 || model.SelectedClientRole.GetValueOrDefault() <= 0)
+                    return Json(new { ok = false, message = "Select a client and client role." });
+
+                var user = new ClientUserVM
+                {
+                    FirstName = model.FirstName?.Trim(),
+                    LastName = model.LastName?.Trim(),
+                    EmailId = model.EmailId.Trim(),
+                    MobileNumber = model.MobileNumber?.Trim(),
+                    WhatsappNumber = model.WhatsappNumber?.Trim(),
+                    SelectedClient = clientId,
+                    SelectedClientRole = model.SelectedClientRole
+                };
+
+                if (string.IsNullOrWhiteSpace(user.FirstName) || string.IsNullOrWhiteSpace(user.LastName))
+                    return Json(new { ok = false, message = "First name and last name are required." });
+
+                bool ok = await _userService.AddClientUser(user);
+                if (ok)
+                {
+                    var clientName = await _clientService.GetClientName(clientId);
+                    await _dashboardService.LinkRequirementToClient(model.RequirementId, clientId, clientName);
+                    return Json(new { ok = true, clientId, clientName, requesterType = "Verified" });
+                }
+                return Json(new { ok = false, message = "Failed to add client user." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, message = "Failed to add client user." });
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> GetWeekendDriveSpotlight(string bucket = "This")
+        {
+            try
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "");
+                if (profileName != "Admin" && profileName != "HR" && profileName != "SeniorHR" && profileName != "SupportAdmin")
+                    return Json(new { success = false, data = Array.Empty<object>() });
+
+                var rows = await _dashboardService.GetWeekendDriveSpotlight(bucket) ?? Enumerable.Empty<WeekendDriveSpotlightVM>();
+                return Json(new { success = true, data = rows });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, data = Array.Empty<object>() });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> UpsertWeekendDriveSpotlight(int irfId, string weekendBucket, string actionsTaken = null, bool remove = false)
+        {
+            try
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "");
+                if (profileName != "Admin" && profileName != "HR" && profileName != "SeniorHR" && profileName != "SupportAdmin")
+                    return Json(new { ok = false, message = "Unauthorized." });
+
+                var email = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? "";
+                var ok = await _dashboardService.UpsertWeekendDriveSpotlight(irfId, weekendBucket, actionsTaken, remove, email);
+                if (!ok)
+                {
+                    return Json(new
+                    {
+                        ok = false,
+                        message = "Spotlight save failed. Check DB permissions to create/write WeekendDriveSpotlight."
+                    });
+                }
+                return Json(new { ok = true });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> SyncWeekendDriveSpotlight(string weekendBucket, string irfIds)
+        {
+            try
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "");
+                if (profileName != "Admin" && profileName != "HR" && profileName != "SeniorHR" && profileName != "SupportAdmin")
+                    return Json(new { ok = false, message = "Unauthorized." });
+
+                var email = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? "";
+                var ids = (irfIds ?? "")
+                    .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => int.TryParse(s.Trim(), out var n) ? n : 0)
+                    .Where(n => n > 0)
+                    .Distinct()
+                    .ToList();
+
+                var ok = await _dashboardService.SyncWeekendDriveSpotlight(
+                    string.IsNullOrWhiteSpace(weekendBucket) ? "This" : weekendBucket.Trim(),
+                    ids,
+                    email);
+                if (!ok)
+                {
+                    return Json(new
+                    {
+                        ok = false,
+                        count = ids.Count,
+                        message = "Spotlight save failed. Check DB permissions to create/write WeekendDriveSpotlight."
+                    });
+                }
+                return Json(new { ok = true, count = ids.Count });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false });
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult WeekendDrivePlanner()
+        {
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "");
+            if (profileName != "Admin" && profileName != "HR" && profileName != "SeniorHR" && profileName != "SupportAdmin")
+                return RedirectToAction("SignOut", "Session");
+
+            // Reuse the existing Weekend Drive planner (InterviewDemand) — spotlight APIs above feed curation.
+            return RedirectToAction("Index", "InterviewDemand");
         }
 
         [Authorize]
@@ -3347,6 +3693,17 @@ NEVER:
             }
             else
             {
+                // Classify from ClientUser (never trust the hidden form field alone)
+                if (!string.IsNullOrWhiteSpace(model.RequesterEmailid))
+                {
+                    var knownClientId = await _clientService.GetClientByEmailId(model.RequesterEmailid.Trim());
+                    model.RequesterType = knownClientId > 0 ? "Verified" : "External";
+                }
+                else if (string.IsNullOrWhiteSpace(model.RequesterType))
+                {
+                    model.RequesterType = "External";
+                }
+
                 var result = await _dashboardService.AddChannelRequest(model);
                 if (result == "Success")
                 {
@@ -8766,7 +9123,7 @@ NEVER:
         }
 
         [HttpPost]
-        public JsonResult SaveRowActions(string refType, string refId, string actions)
+        public async Task<JsonResult> SaveRowActions(string refType, string refId, string actions, int? irfIntId = null, string weekendBucket = null)
         {
             try
             {
@@ -8776,18 +9133,28 @@ NEVER:
                 }
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
-                if (profileName != "Admin" && profileName != "HR")
+                if (profileName != "Admin" && profileName != "HR" && profileName != "SeniorHR" && profileName != "SupportAdmin")
                 {
                     return Json(new { success = false });
                 }
 
                 var emailId = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "") ?? string.Empty;
                 _dashboardService.SaveRowActions(refType, refId, actions ?? string.Empty, emailId);
+
+                // New spec: planner rows are spotlight IRFs — persist ActionsTaken on WeekendDriveSpotlight.
+                if (string.Equals(refType, DriveWeekendActionRefs.RefType, StringComparison.OrdinalIgnoreCase)
+                    && irfIntId.GetValueOrDefault() > 0)
+                {
+                    var bucket = string.IsNullOrWhiteSpace(weekendBucket) ? "This" : weekendBucket.Trim();
+                    await _dashboardService.UpsertWeekendDriveSpotlight(
+                        irfIntId.Value, bucket, actions ?? string.Empty, remove: false, userEmail: emailId);
+                }
+
                 return Json(new { success = true });
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false });
             }
         }
