@@ -32,6 +32,43 @@ namespace Risebird.Entities.Data.PlivoCXModels
     }
 
     /// <summary>
+    /// Payload POSTed to a skill channel's Plivo CX WhatsApp Phone Screener flow
+    /// trigger URL to start an outbound WhatsApp pre-screening conversation. Field
+    /// names match the WhatsApp flow's Start node payload_format (snake_case). There
+    /// is no caller_id (WhatsApp uses the business sender configured on the flow);
+    /// phone_number is the candidate's WhatsApp number.
+    /// </summary>
+    public class PhoneScreenWhatsAppTriggerRequest
+    {
+        [JsonProperty("phone_number")]
+        public string PhoneNumber { get; set; }
+
+        [JsonProperty("candidate_phone")]
+        public string CandidatePhone { get; set; }
+
+        [JsonProperty("candidate_name")]
+        public string CandidateName { get; set; }
+
+        [JsonProperty("candidate_email")]
+        public string CandidateEmail { get; set; }
+
+        [JsonProperty("job_title")]
+        public string JobTitle { get; set; }
+
+        [JsonProperty("client_name")]
+        public string ClientName { get; set; }
+
+        [JsonProperty("log_id")]
+        public string LogId { get; set; }
+
+        [JsonProperty("log_identifier")]
+        public string LogIdentifier { get; set; }
+
+        [JsonProperty("today_date")]
+        public string TodayDate { get; set; }
+    }
+
+    /// <summary>
     /// Recording + transcript resolved out-of-band from Plivo's REST APIs
     /// (Voice Recording API + Transcription API) keyed by the call UUID.
     /// Used as a fallback when the Recording URL event callback does not deliver

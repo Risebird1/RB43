@@ -69,6 +69,7 @@ namespace Risebird.Entities.ViewModel
         public string IRFName { get; set; }
         public string ClientName { get; set; }
         public string PlivoAssistantUrl { get; set; }
+        public string PlivoWhatsAppAssistantUrl { get; set; }
         public DateTime? StartDate { get; set; }
     }
 
@@ -81,6 +82,8 @@ namespace Risebird.Entities.ViewModel
         public string ClientName { get; set; }
         public string PlivoAssistantUrl { get; set; }
         public bool HasAssistantConfigured { get; set; }
+        public string PlivoWhatsAppAssistantUrl { get; set; }
+        public bool HasWhatsAppAssistantConfigured { get; set; }
         public DateTime? LaunchDate { get; set; }
 
         public List<PhoneScreenOutcomeRowVM> Rows { get; set; } = new List<PhoneScreenOutcomeRowVM>();
@@ -105,6 +108,7 @@ namespace Risebird.Entities.ViewModel
         public string Phone { get; set; }
 
         public string Provider { get; set; }
+        public string Channel { get; set; }          // voice | whatsapp
         public string Status { get; set; }          // canonical
         public string RawStatus { get; set; }
         public string EndedReason { get; set; }
