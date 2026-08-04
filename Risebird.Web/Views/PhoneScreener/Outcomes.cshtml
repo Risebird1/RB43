@@ -141,6 +141,7 @@
                     {
                         var initials = string.IsNullOrWhiteSpace(r.CandidateName) ? "?" :
                             string.Join("", r.CandidateName.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Take(2).Select(w => char.ToUpper(w[0])));
+                        var chan = (r.Channel ?? "").Equals("whatsapp", StringComparison.OrdinalIgnoreCase) ? "WhatsApp" : "Voice";
                         <tr class="ps-row" data-callid="@(r.CallId ?? 0)" data-search="@((r.CandidateName + " " + r.CandidateEmail + " " + r.Phone))">
                             <td>
                                 <div class="ps-cand">
@@ -165,9 +166,6 @@
                                     @if (!string.IsNullOrEmpty(r.EndedReason))
                                     {
                                         <div class="ps-muted">@r.EndedReason</div>
-                                    }
-                                    @{
-                                        var chan = (r.Channel ?? "").Equals("whatsapp", StringComparison.OrdinalIgnoreCase) ? "WhatsApp" : "Voice";
                                     }
                                     <span class="ps-chip ps-chip--@(chan.ToLower())">@chan</span>
                                 }
