@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Graph.Me.RemoveAllDevicesFromManagement;
 using Newtonsoft.Json;
@@ -3285,12 +3286,9 @@ NEVER:
             }
         }
 
-        // --- Public mini Add Requirement ---
-        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, List<DateTime>> _publicReqRateLimit
-            = new System.Collections.Concurrent.ConcurrentDictionary<string, List<DateTime>>();
-
+        // --- Public mini Add Requirement (Session 1 / intake hand-off) ---
         [AllowAnonymous]
-        [HttpGet]
+        [HttpGet("/Requirement/Externaluser")]
         public IActionResult PublicAddRequirement()
         {
             return View(new PublicChannelVM());
@@ -3298,46 +3296,52 @@ NEVER:
 
         [AllowAnonymous]
         [HttpGet]
+        [EnableRateLimiting("PublicIntake")]
         public async Task<JsonResult> VerifyRequesterEmail(string email)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(email))
-                    return Json(new { ok = false });
+                    return Json(new { ok = false, clientId = 0, clientName = (string)null });
 
                 int clientId = await _clientService.GetClientByEmailId(email.Trim());
                 if (clientId > 0)
                 {
                     var company = await _clientService.GetClientRoleAndCompanyNameByEmailId(email.Trim());
-                    return Json(new { ok = true, clientId, clientName = company?.Item3 });
+                    // Tuple: ClientId, Name, LogoLink — use Item2 (Name) per frozen contract
+                    var clientName = company?.Item2;
+                    if (string.IsNullOrWhiteSpace(clientName))
+                        clientName = await _clientService.GetClientName(clientId);
+                    return Json(new { ok = true, clientId, clientName });
                 }
-                return Json(new { ok = false });
+                return Json(new { ok = false, clientId = 0, clientName = (string)null });
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(new { ok = false });
+                return Json(new { ok = false, clientId = 0, clientName = (string)null });
             }
         }
 
         [AllowAnonymous]
-        [HttpPost]
+        [HttpPost("/Requirement/Externaluser")]
         [ValidateAntiForgeryToken]
+        [EnableRateLimiting("PublicIntake")]
         public async Task<IActionResult> PublicAddRequirement(PublicChannelVM m)
         {
             try
             {
-                // TODO: rate-limit/captcha — basic per-IP throttle (max 8 submissions / 15 min)
-                var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-                if (!AllowPublicRequirementSubmit(ip))
-                {
-                    ModelState.AddModelError("", "Too many submissions from this network. Please try again later.");
-                    return View(m);
-                }
-
                 var hasJd = (m.JdFile != null && m.JdFile.Length > 0) || !string.IsNullOrWhiteSpace(m.JdLink);
                 if (!hasJd)
                     ModelState.AddModelError("JdLink", "Please upload a JD file or paste a JD link.");
+
+                if (m.JdFile != null && m.JdFile.Length > 0)
+                {
+                    var ext = Path.GetExtension(m.JdFile.FileName)?.ToLowerInvariant();
+                    var allowed = new[] { ".pdf", ".doc", ".docx" };
+                    if (string.IsNullOrEmpty(ext) || !allowed.Contains(ext))
+                        ModelState.AddModelError("JdFile", "JD file must be PDF, DOC, or DOCX.");
+                }
 
                 if (!ModelState.IsValid)
                     return View(m);
@@ -3351,12 +3355,13 @@ NEVER:
                     m.JdLink = blob.Uri.ToString();
                 }
 
+                // Re-verify server-side — never trust the badge
                 int clientId = await _clientService.GetClientByEmailId(m.RequesterEmailid?.Trim());
                 string clientName = null;
                 if (clientId > 0)
                 {
                     var company = await _clientService.GetClientRoleAndCompanyNameByEmailId(m.RequesterEmailid.Trim());
-                    clientName = company?.Item3;
+                    clientName = company?.Item2;
                     if (string.IsNullOrWhiteSpace(clientName))
                         clientName = await _clientService.GetClientName(clientId);
                 }
@@ -3368,7 +3373,7 @@ NEVER:
                     RequesterType = clientId > 0 ? "Verified" : "External",
                     Status = "Pending",
                     Origin = "Public",
-                    Requester = !string.IsNullOrWhiteSpace(clientName) ? clientName : (m.RequesterEmailid ?? ""),
+                    Requester = clientId > 0 ? (clientName ?? "") : "",
                     RequesterMobile = "",
                     RequesterEmailid = m.RequesterEmailid?.Trim(),
                     Title = m.Title?.Trim(),
@@ -3389,7 +3394,11 @@ NEVER:
 
                 var result = await _dashboardService.AddChannelRequest(channel);
                 if (string.Equals(result, "Success", StringComparison.OrdinalIgnoreCase))
-                    return View("PublicAddRequirementThanks", m);
+                {
+                    TempData["PublicReqTitle"] = m.Title;
+                    TempData["PublicReqEmail"] = m.RequesterEmailid;
+                    return RedirectToAction(nameof(PublicRequirementThankYou));
+                }
 
                 ModelState.AddModelError("", "Could not submit your requirement. Please try again.");
                 return View(m);
@@ -3402,19 +3411,16 @@ NEVER:
             }
         }
 
-        private static bool AllowPublicRequirementSubmit(string ip)
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult PublicRequirementThankYou()
         {
-            var now = DateTime.UtcNow;
-            var window = TimeSpan.FromMinutes(15);
-            var list = _publicReqRateLimit.GetOrAdd(ip, _ => new List<DateTime>());
-            lock (list)
+            var vm = new PublicChannelVM
             {
-                list.RemoveAll(t => now - t > window);
-                if (list.Count >= 8)
-                    return false;
-                list.Add(now);
-                return true;
-            }
+                Title = TempData["PublicReqTitle"] as string,
+                RequesterEmailid = TempData["PublicReqEmail"] as string
+            };
+            return View("PublicAddRequirementThanks", vm);
         }
 
         [Authorize]
@@ -3687,6 +3693,17 @@ NEVER:
             }
             else
             {
+                // Classify from ClientUser (never trust the hidden form field alone)
+                if (!string.IsNullOrWhiteSpace(model.RequesterEmailid))
+                {
+                    var knownClientId = await _clientService.GetClientByEmailId(model.RequesterEmailid.Trim());
+                    model.RequesterType = knownClientId > 0 ? "Verified" : "External";
+                }
+                else if (string.IsNullOrWhiteSpace(model.RequesterType))
+                {
+                    model.RequesterType = "External";
+                }
+
                 var result = await _dashboardService.AddChannelRequest(model);
                 if (result == "Success")
                 {

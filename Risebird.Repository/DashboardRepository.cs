@@ -394,10 +394,20 @@ namespace Risebird.Repository
             try
             {
                 var query = @"Select cm.id,cm.Client,cm.EndClient,cm.Status,cm.IRFIDs,cm.PrimarySkill,cm.CreatedDate,cm.Title,
-count(cn.id) as InterviewerCount,cm.RequesterEmailid,cm.MAGId,cm.TemplateId,cm.RequesterType
+count(cn.id) as InterviewerCount,cm.RequesterEmailid,cm.MAGId,cm.TemplateId,cm.Origin,
+CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM ClientUser cu
+        INNER JOIN UserList ul ON ul.id = cu.UserId
+        WHERE LTRIM(RTRIM(ul.EmailId)) = LTRIM(RTRIM(cm.RequesterEmailid))
+    ) THEN 'Verified'
+    WHEN NULLIF(LTRIM(RTRIM(cm.RequesterType)), '') IS NOT NULL THEN cm.RequesterType
+    ELSE 'External'
+END AS RequesterType
 from ChannelManagement cm
 left join ChannelMInterviewer cn on cm.id=cn.channelid
-group by cm.id,cm.Client,cm.EndClient,cm.Status,cm.IRFIDs,cm.PrimarySkill,cm.CreatedDate,cm.Title,cm.RequesterEmailid,cm.MAGId,cm.TemplateId,cm.RequesterType";
+group by cm.id,cm.Client,cm.EndClient,cm.Status,cm.IRFIDs,cm.PrimarySkill,cm.CreatedDate,cm.Title,cm.RequesterEmailid,cm.MAGId,cm.TemplateId,cm.RequesterType,cm.Origin";
                 var dynamicParameters = new DynamicParameters();
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -673,7 +683,7 @@ END";
                     if (!request.isEditable)
                     {
                         var CreatedDate = DateTime.Now;
-                        var Status = string.IsNullOrWhiteSpace(request.Status) ? "Pending" : request.Status;
+                        var Status = string.IsNullOrWhiteSpace(request.Status) ? "Open" : request.Status;
 
                         string sqlInsertReport = @"INSERT INTO ChannelManagement
 (Client,ClientId,PrimarySkill,Location,JdLink,CreatedBy,CreatedDate,Status,RequesterEmailid,Title,SeniorityLevel,TurnAroundTimeindays,Comments,NumberofInterviews,PlanType,ClientType,Origin,RequesterType,Requester,RequesterMobile,EndClient,MAGId,TemplateId,IRFIDs)

@@ -42,6 +42,27 @@
         margin-top: 12px;
         text-align: right;
     }
+
+    .req-type-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 6px;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .req-type-pill.is-verified {
+        background: #e7f8ee;
+        color: #15803d;
+    }
+
+    .req-type-pill.is-external {
+        background: #fff3e2;
+        color: #c2740c;
+    }
 </style>
 <div class="main-panel " id="main-panel">
 
@@ -118,6 +139,9 @@
                                                 <option value="@Model.RequesterEmailid" selected="selected">@Model.RequesterEmailid</option>
                                             }
                                         </select>
+                                        @Html.HiddenFor(model => model.RequesterType)
+                                        @Html.HiddenFor(model => model.Requester)
+                                        <div id="reqEmailStatus" style="display:none;"></div>
                                         @Html.ValidationMessageFor(model => model.RequesterEmailid, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
@@ -172,7 +196,28 @@
                                 <div class="col-lg-4 col-md-6 col-sm-6 pl-1">
                                     <div class="form-group" style="margin-bottom:0px;">
                                         @Html.LabelFor(model => model.SeniorityLevel, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.SeniorityLevel, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @{
+                                            var seniorityOptions = new List<string> { "Junior", "Mid-Level", "Senior", "Lead", "Architect" };
+                                            var currentSeniority = Model.SeniorityLevel ?? "";
+                                        }
+                                        <select id="SeniorityLevel" name="SeniorityLevel" class="form-control" required>
+                                            <option value="">Select Seniority Level</option>
+                                            @if (!string.IsNullOrWhiteSpace(currentSeniority) && !seniorityOptions.Contains(currentSeniority))
+                                            {
+                                                <option value="@currentSeniority" selected="selected">@currentSeniority</option>
+                                            }
+                                            @foreach (var opt in seniorityOptions)
+                                            {
+                                                if (string.Equals(opt, currentSeniority, StringComparison.OrdinalIgnoreCase))
+                                                {
+                                                    <option value="@opt" selected="selected">@opt</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@opt">@opt</option>
+                                                }
+                                            }
+                                        </select>
                                         @Html.ValidationMessageFor(model => model.SeniorityLevel, "", new { @class = "text-danger" })
 
                                     </div>
@@ -510,6 +555,43 @@
 <script>
     var savedRequesterEmail = @Html.Raw(Json.Serialize(Model.RequesterEmailid ?? ""));
 
+    function showRequesterBadge(ok, name) {
+        var $status = $('#reqEmailStatus');
+        $status.show();
+        if (ok) {
+            $status.html('<span class="req-type-pill is-verified"><i class="fa fa-check-circle"></i> Verified requester — ' + $('<div/>').text(name || 'known client').html() + '</span>');
+        } else {
+            $status.html('<span class="req-type-pill is-external"><i class="fa fa-info-circle"></i> New requester</span>');
+        }
+    }
+
+    function verifyRequesterEmail(email) {
+        email = $.trim(email || '');
+        if (!email || email.indexOf('@@') < 0) {
+            $('#reqEmailStatus').hide();
+            $('#RequesterType').val('');
+            return;
+        }
+        $.getJSON('@Url.Action("VerifyRequesterEmail", "DashBoard")', { email: email })
+            .done(function (res) {
+                if (res && res.ok) {
+                    $('#RequesterType').val('Verified');
+                    showRequesterBadge(true, res.clientName);
+                    var $req = $('#Requester');
+                    if ($req.length && !$.trim($req.val() || '')) {
+                        $req.val(res.clientName || '');
+                    }
+                } else {
+                    $('#RequesterType').val('External');
+                    showRequesterBadge(false);
+                }
+            })
+            .fail(function () {
+                $('#RequesterType').val('External');
+                showRequesterBadge(false);
+            });
+    }
+
     function onClientChanged(clientId) {
         $('#ddlRequesterEmail').html('<option value="">Select requester</option>');
         var clientName = $('#ddlClient option:selected').text();
@@ -547,10 +629,15 @@
                             $sel.append('<option value="' + savedRequesterEmail + '">' + savedRequesterEmail + '</option>');
                         }
                         $sel.val(savedRequesterEmail);
+                        verifyRequesterEmail(savedRequesterEmail);
                     }
                 });
             }
         }
+
+        $('#ddlRequesterEmail').on('change blur', function () {
+            verifyRequesterEmail($(this).val());
+        });
 
         $(".autofillHr").autocomplete({
             source: function (request, response) {

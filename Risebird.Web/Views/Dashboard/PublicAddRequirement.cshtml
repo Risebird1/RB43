@@ -22,6 +22,8 @@
     .paq-pill { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
     .paq-pill.is-ok { background: #e7f8ee; color: #15803d; }
     .paq-pill.is-ext { background: #fff3e2; color: #c2740c; }
+    .paq-jd-toggle { display: flex; gap: 16px; margin-bottom: 10px; font-size: 13px; color: #475569; }
+    .paq-jd-toggle label { font-weight: 500; text-transform: none; letter-spacing: 0; cursor: pointer; }
     .paq-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
     .paq-btn { height: 38px; padding: 0 20px; border-radius: 8px; font-size: 13px; font-weight: 600; border: 1px solid transparent; cursor: pointer; }
     .paq-btn-primary { background: #42a5f5; color: #fff; box-shadow: 0 2px 6px rgba(66,165,245,.32); }
@@ -35,8 +37,7 @@
         <h1>Submit a hiring requirement</h1>
         <p class="lead">Share your email and JD. Our team will map it and follow up — no login required.</p>
 
-        @using (Html.BeginForm("PublicAddRequirement", "DashBoard", FormMethod.Post, new { enctype = "multipart/form-data", id = "paqForm" }))
-        {
+        <form action="/Requirement/Externaluser" method="post" enctype="multipart/form-data" id="paqForm">
             @Html.AntiForgeryToken()
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             @Html.HiddenFor(m => m.VerifiedClientId)
@@ -60,21 +61,26 @@
             </div>
 
             <div class="paq-field">
-                <label for="JdFile">JD file <span class="req">*</span></label>
-                <input type="file" id="JdFile" name="JdFile" accept=".pdf,.doc,.docx,.txt" />
-                <div class="paq-hint">Or paste a link below. At least one is required.</div>
-            </div>
-
-            <div class="paq-field">
-                <label for="JdLink">JD link</label>
-                @Html.TextBoxFor(m => m.JdLink, new { type = "url", placeholder = "https://…" })
-                @Html.ValidationMessageFor(m => m.JdLink, "", new { @class = "text-danger" })
+                <label>Job description <span class="req">*</span></label>
+                <div class="paq-jd-toggle">
+                    <label><input type="radio" name="jdMode" value="link" checked="checked" /> Paste link</label>
+                    <label><input type="radio" name="jdMode" value="file" /> Upload file</label>
+                </div>
+                <div id="paqJdLinkWrap">
+                    @Html.TextBoxFor(m => m.JdLink, new { type = "url", placeholder = "https://…" })
+                    @Html.ValidationMessageFor(m => m.JdLink, "", new { @class = "text-danger" })
+                </div>
+                <div id="paqJdFileWrap" style="display:none;">
+                    <input type="file" id="JdFile" name="JdFile" accept=".pdf,.doc,.docx" />
+                    <div class="paq-hint">PDF, DOC, or DOCX.</div>
+                    @Html.ValidationMessageFor(m => m.JdFile, "", new { @class = "text-danger" })
+                </div>
             </div>
 
             <div class="paq-actions">
                 <button type="submit" class="paq-btn paq-btn-primary" id="paqSubmit">Submit requirement</button>
             </div>
-        }
+        </form>
     </div>
 </div>
 
@@ -88,15 +94,15 @@
         function showPill(ok, name) {
             $status.show();
             if (ok) {
-                $status.html('<span class="paq-pill is-ok"><i class="fa fa-check-circle"></i> Verified client — ' + $('<div/>').text(name || 'known client').html() + '</span>');
+                $status.html('<span class="paq-pill is-ok"><i class="fa fa-check-circle"></i> Verified requester — ' + $('<div/>').text(name || 'known client').html() + '</span>');
             } else {
-                $status.html('<span class="paq-pill is-ext"><i class="fa fa-info-circle"></i> External / unverified</span><div class="paq-hint">We will still take your request. Our team can register you as a client user later.</div>');
+                $status.html('<span class="paq-pill is-ext"><i class="fa fa-info-circle"></i> New requester</span><div class="paq-hint">We will still take your request. Our team can register you as a client user later.</div>');
             }
         }
 
         function verify() {
             var email = $.trim($email.val() || '');
-            if (!email || email.indexOf('@') < 0) { $status.hide(); $clientId.val(''); return; }
+            if (!email || email.indexOf('@@') < 0) { $status.hide(); $clientId.val(''); return; }
             $.getJSON('@Url.Action("VerifyRequesterEmail", "DashBoard")', { email: email })
                 .done(function (res) {
                     if (res && res.ok) {
@@ -107,7 +113,14 @@
                         showPill(false);
                     }
                 })
-                .fail(function () { $clientId.val(''); showPill(false); });
+                .fail(function (xhr) {
+                    $clientId.val('');
+                    if (xhr && xhr.status === 429) {
+                        $status.show().html('<span class="paq-pill is-ext">Too many checks — try again shortly.</span>');
+                    } else {
+                        showPill(false);
+                    }
+                });
         }
 
         $email.on('blur', verify);
@@ -116,11 +129,21 @@
             timer = setTimeout(verify, 600);
         });
 
+        $('input[name=jdMode]').on('change', function () {
+            var mode = $('input[name=jdMode]:checked').val();
+            $('#paqJdLinkWrap').toggle(mode === 'link');
+            $('#paqJdFileWrap').toggle(mode === 'file');
+        });
+
         $('#paqForm').on('submit', function () {
-            var file = $('#JdFile')[0].files[0];
+            var mode = $('input[name=jdMode]:checked').val();
+            var file = $('#JdFile')[0] && $('#JdFile')[0].files[0];
             var link = $.trim($('#JdLink').val() || '');
-            if (!file && !link) {
-                alert('Please upload a JD file or paste a JD link.');
+            if (mode === 'file') {
+                if (!file) { alert('Please upload a JD file.'); return false; }
+                $('#JdLink').val('');
+            } else if (!link) {
+                alert('Please paste a JD link.');
                 return false;
             }
             return true;

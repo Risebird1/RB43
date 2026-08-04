@@ -31,7 +31,7 @@ CREATE TABLE [dbo].[ChannelManagement](
 	[TurnAroundTimeindays] [varchar](50) NULL,
 	[Comments] [varchar](max) NULL,
 	[NumberofInterviews] [int] NULL,
-	[Origin] [varchar](5) NULL,
+	[Origin] [varchar](15) NULL,
 	[EngagementType] [varchar](5) NULL,
 	[Stage] [varchar](5) NULL,
 	[ExpectedPrice] [int] NULL,
@@ -41,6 +41,9 @@ CREATE TABLE [dbo].[ChannelManagement](
 	[ClientId] [int] NULL,
 	[PlanType] [int] NULL,
 	[ClientType] [int] NULL,
+	[RequesterType] [varchar](15) NULL,
+	[MAGId] [int] NULL,
+	[TemplateId] [int] NULL,
  CONSTRAINT [PK_ChannelManagement] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -114,9 +117,9 @@ END
 IF EXISTS (
     SELECT 1 FROM sys.columns
     WHERE Name = N'Origin' AND Object_ID = Object_ID(N'ChannelManagement')
-      AND max_length > 0 AND max_length < 20)
+      AND max_length > 0 AND max_length < 15)
 BEGIN
-    ALTER TABLE ChannelManagement ALTER COLUMN Origin varchar(20) NULL;
+    ALTER TABLE ChannelManagement ALTER COLUMN Origin varchar(15) NULL;
 END
 
 END

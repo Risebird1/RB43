@@ -115,6 +115,7 @@ namespace Risebird.Entities.ViewModel
         public int? TemplateId { get; set; }
         /// <summary>'Verified' | 'External'</summary>
         public string RequesterType { get; set; }
+        public string Origin { get; set; }
         public bool IsProcessed =>
             (MAGId.HasValue || TemplateId.HasValue) && !string.IsNullOrWhiteSpace(IRFIDs);
     }
