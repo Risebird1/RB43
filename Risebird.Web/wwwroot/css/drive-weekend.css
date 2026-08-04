@@ -1,4 +1,58 @@
-/* Weekend Drive — compact dashboard table & toolbar */
+/* Spotlight IRF picker */
+.drive-spotlight-bar {
+    margin: 0 0 14px;
+    padding: 12px 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+.drive-spotlight-label {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 8px;
+}
+
+.drive-spotlight-label .fa-star,
+.drive-spotlight-label .fas.fa-star {
+    color: #eab308;
+    margin-right: 4px;
+}
+
+.drive-spotlight-hint {
+    margin-top: 8px;
+    font-size: 11.5px;
+    color: #64748b;
+}
+
+.drive-spotlight-bar .btn-group,
+.drive-spotlight-bar .multiselect {
+    width: 100%;
+}
+
+.drive-spotlight-bar .multiselect.dropdown-toggle {
+    text-align: left;
+    white-space: normal;
+}
+
+.drive-add-spotlight {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    padding: 1px 6px !important;
+    min-height: 0 !important;
+    border-radius: 4px !important;
+    white-space: nowrap;
+}
+
+.drive-add-spotlight .fa,
+.drive-add-spotlight .fas {
+    font-size: 9px;
+}
 
 .drive-page-header {
     display: flex;
@@ -99,17 +153,28 @@
     color: #b45309;
 }
 
+.drive-spotlight-help {
+    margin: 0 0 8px;
+    font-size: 11px;
+    color: #64748b;
+    line-height: 1.4;
+}
+
 .drive-table-wrap {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     background: #fff;
+    max-width: 100%;
 }
 
 .drive-table {
     margin-bottom: 0;
     font-size: 12px;
     white-space: nowrap;
+    min-width: 1100px;
+    width: 100%;
 }
 
 .drive-table thead th {
@@ -174,10 +239,24 @@
 .drive-badge-e { background: #fce7f3; color: #be185d; }
 .drive-badge-total { background: #e2e8f0; color: #334155; font-size: 10px; margin-left: 4px; }
 
-.drive-unassigned-ok { color: #64748b; }
-.drive-unassigned-warn { color: #b45309; font-weight: 600; }
+.drive-unassigned-ok {
+    color: #64748b;
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
 
-.drive-supply-link {
+.drive-unassigned-warn {
+    color: #b45309;
+    font-weight: 600;
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: #fff7ed;
+}
+
+.drive-supply-link,
+.drive-supply-pill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -315,7 +394,7 @@
     display: flex;
     align-items: flex-start;
     gap: 8px;
-    margin: 10px 12px 0;
+    margin: 10px 0 0;
     padding: 8px 10px;
     font-size: 11px;
     color: #475569;
@@ -330,7 +409,7 @@
 }
 
 .drive-section-title {
-    margin: 14px 12px 6px;
+    margin: 14px 0 6px;
     font-size: 12px;
     font-weight: 600;
     color: #1e293b;

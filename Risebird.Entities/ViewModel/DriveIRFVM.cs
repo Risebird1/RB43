@@ -21,6 +21,8 @@ namespace Risebird.Entities.ViewModel
         public string ConcurrentInterview { get; set; }
         public string ActionsTaken { get; set; }
         public DateTime WeekendStart { get; set; }
+        /// <summary>'This' | 'Next' — used when dual-writing ActionsTaken to WeekendDriveSpotlight.</summary>
+        public string WeekendBucket { get; set; }
         public int ExpectedTotal => ExpectedMorning + ExpectedEvening;
     }
 }

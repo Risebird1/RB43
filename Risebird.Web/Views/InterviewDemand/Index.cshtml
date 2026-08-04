@@ -22,7 +22,7 @@
 
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 
-<link rel="stylesheet" href="~/css/drive-weekend.css?v=2026" />
+<link rel="stylesheet" href="~/css/drive-weekend.css?v=20260803e" />
 
 
 
@@ -128,7 +128,7 @@
 
     </script>
 
-    <script src="~/js/drive-weekend-demand.js?v=20260710"></script>
+    <script src="~/js/drive-weekend-demand.js?v=20260803f"></script>
 
     <script type="text/javascript">
 
@@ -175,6 +175,12 @@
 
 
         $(function () {
+
+            if (typeof initDriveSpotlightPicker === 'function') {
+
+                initDriveSpotlightPicker();
+
+            }
 
             if (typeof initRowActions === 'function') {
 
