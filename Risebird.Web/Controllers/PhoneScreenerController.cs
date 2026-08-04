@@ -323,7 +323,7 @@ namespace Risebird.Web.Controllers
                 var callId = await _phoneScreenRepository.InsertCallAsync(callRecord);
                 if (callId <= 0)
                     return Json(new { success = false, message = "Could not create the WhatsApp screen record." });
-
+                //candidate.Phone = "+918888571923";
                 var triggerRequest = new PhoneScreenWhatsAppTriggerRequest
                 {
                     PhoneNumber = candidate.Phone,
