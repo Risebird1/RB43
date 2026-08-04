@@ -7,15 +7,26 @@ using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Enum;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-//using Twilio.Http;
 
 namespace Risebird.CommonHelper
 {
+    /// <summary>
+    /// One-shot assistant operations (screening, QC, rubric generation, resume/transcript analysis,
+    /// contradiction report, payment-ticket + LinkedIn verification, etc.).
+    ///
+    /// Migrated from the deprecated Assistants API (threads / runs / run-steps / messages) to the
+    /// stateless Responses API (POST /v1/responses). Each legacy "create thread -> add message ->
+    /// create run -> poll -> list messages" sequence collapses to a single synchronous Responses call.
+    ///
+    /// The public contract (IAssistantServiceHelper) and the returned RunResult shape are unchanged so
+    /// every caller keeps reading messages.Data[0].Content[0].Text.Value exactly as before. The legacy
+    /// Assistant ids in configuration are reused: their stored model / instructions / tools are read
+    /// once (and cached) and fed into the Responses calls, preserving behaviour.
+    /// </summary>
     public class AssistantServiceHelper : IAssistantServiceHelper
     {
         private readonly IConfiguration _configuration;
@@ -42,7 +53,6 @@ namespace Risebird.CommonHelper
         private readonly string PaymentTicketReviewAssistantId;
         private readonly string LinkedInVerificationAssistantId;
 
-        //private readonly List<string> candidateResumesVectorStoreId;
         public AssistantServiceHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, IOpenAIApiLogger openAIApiLogger)
         {
             _configuration = configuration;
@@ -70,92 +80,201 @@ namespace Risebird.CommonHelper
             LinkedInVerificationAssistantId = _configuration["OpenAI:LinkedInVerificationAssistantId"];
         }
 
+        // ---------------------------------------------------------------------------------------
+        //  Core Responses helpers
+        // ---------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// Resolves the assistant referenced by <paramref name="profileType"/> and returns its id +
+        /// an operation-type label for logging. Mirrors the legacy CreateRun assistant selection.
+        /// </summary>
+        private (string assistantId, string operationType) MapAssistant(string profileType)
+        {
+            if (string.IsNullOrEmpty(profileType))
+                return (rubricGeneratorAssistantId, "RubricGeneration");
+
+            if (profileType == ProfileNames.Candidate)
+                return (candidateScreenerAssistantId, "CandidateScreening");
+            if (profileType == ProfileNames.Interviewer)
+                return (interviewerScreenerAssistantId, "InterviewerScreening");
+            if (profileType == ProfileNames.ResumeParserAIAssistant)
+                return (resumeParserAssistantId, "ResumeParsing");
+            if (profileType == ProfileNames.TranscriptAnalysisAIAssistant)
+                return (aiTranscriptAnalysisAssistantId, "TranscriptAnalysis");
+            if (profileType == ProfileNames.StringResumeAnalysisAIAssistant)
+                return (stringResumeAnalysisAssistantIdV2, "ResumeAnalysis");
+            if (profileType == ProfileNames.StringReportQCAIAssistant)
+                return (stringReportQCAssistantIdStructuredOutput, "ReportQC");
+            if (profileType == ProfileNames.TranscriptToNotesAssistantId)
+                return (AITranscriptToNotesAssistantId, "TranscriptToNotes");
+            if (profileType == ProfileNames.QcInterviewAIAssistantId)
+                return (QcInterviewAIMergeAssistantId, "QcInterviewAIMerge");
+            if (profileType == ProfileNames.ContradictionReportAIAssistantId)
+                return (ContradictionReportAIAssistantId, "ContradictionReport");
+            if (profileType == ProfileNames.PaymentTicketReviewAssistantId)
+                return (PaymentTicketReviewAssistantId, "PaymentTicketReview");
+            if (profileType == ProfileNames.LinkedInVerificationAssistantId)
+                return (LinkedInVerificationAssistantId, "LinkedInVerification");
+
+            // Default (Quality Controller and any unmapped profile).
+            return (reportQCAssistantId, "QualityCheck");
+        }
+
+        /// <summary>
+        /// Executes a single Responses call against the given assistant and returns its output text.
+        /// </summary>
+        private async Task<string> RunAssistantAsync(string assistantId, string operationType, string userInput, bool jsonObject, string fileId = null)
+        {
+            var profile = await OpenAIResponsesGateway.ResolveAssistantAsync(baseUrl, apiKey, assistantId, _openAIApiLogger);
+            var input = OpenAIResponsesGateway.BuildUserInput(userInput, fileId);
+
+            var result = await OpenAIResponsesGateway.CreateResponseAsync(
+                baseUrl: baseUrl,
+                apiKey: apiKey,
+                model: profile.Model,
+                instructions: profile.Instructions,
+                input: input,
+                jsonObjectFormat: jsonObject,
+                tools: profile.Tools,
+                logger: _openAIApiLogger,
+                context: new OpenAIApiLogContext { OperationType = operationType },
+                assistantId: assistantId);
+
+            return result.OutputText;
+        }
+
+        /// <summary>
+        /// Wraps assistant output text into the legacy RunResult shape so existing callers that read
+        /// result.Data[0].Content[0].Text.Value continue to work unchanged.
+        /// </summary>
+        private static RunResult BuildRunResult(string outputText)
+        {
+            if (outputText == null)
+            {
+                // Preserve "no usable output" semantics.
+                return null;
+            }
+
+            return new RunResult
+            {
+                Object = "list",
+                Data = new List<Datum>
+                {
+                    new Datum
+                    {
+                        Role = "assistant",
+                        Content = new List<Content>
+                        {
+                            new Content
+                            {
+                                Type = "text",
+                                Text = new Text { Value = outputText, Annotations = new List<object>() }
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
+        private static bool LooksLikeExtractionFailure(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return false;
+            var lower = text.ToLower();
+            return lower.Contains("persistent issue")
+                || lower.Contains("error")
+                || lower.Contains("issue with extracting")
+                || lower.Contains("it seems");
+        }
+
+        // ---------------------------------------------------------------------------------------
+        //  Public API (unchanged signatures)
+        // ---------------------------------------------------------------------------------------
+
         public async Task<RunResult> ScreenAsync(ScreeningRequest requestModel)
         {
             try
             {
-                string fileId;
-                if (requestModel.Type == ProfileNames.QualityController)
-                {
-                    fileId = await UploadFileAsync(requestModel.ReportUrl);
+                string sourceUrl = requestModel.Type == ProfileNames.QualityController
+                    ? requestModel.ReportUrl
+                    : requestModel.ResumeLink;
 
-                }
-                else if (requestModel.Type == ProfileNames.ResumeParserAIAssistant)
-                {
-                    fileId = await UploadFileAsync(requestModel.ResumeLink);
-                }
-                else
-                {
-                    fileId = await UploadFileAsync(requestModel.ResumeLink);
-                }
-                //if (!string.IsNullOrEmpty(fileId))
-                //{
-                //    await AddFileToVectorStoreAsync(fileId, requestModel.Type);
-                //}
-                //else
-                //{
-                //    return null;
-                //}
-                string threadId = string.Empty;
-                if (!string.IsNullOrEmpty(fileId))
-                {
-                    //await Task.Delay(15000);//60000// try 45000
-                    await Task.Delay(30000);//60000// try 45000
-                    threadId = await CreateThreadAsync(requestModel, fileId);
-                }
-                else
-                {
-                    return null;
-                }
-                string runId;
-                //now create a run
-                if (!string.IsNullOrEmpty(threadId))
-                {
-                    runId = await CreateRun(threadId, requestModel.Type);
-                }
-                else
+                var fileId = await OpenAIResponsesGateway.UploadFileForInputAsync(
+                    baseUrl, apiKey, sourceUrl, _openAIApiLogger,
+                    new OpenAIApiLogContext { OperationType = "FileUpload" });
+
+                if (string.IsNullOrEmpty(fileId))
                 {
                     return null;
                 }
 
-                if (!string.IsNullOrEmpty(runId))
+                string queryContent = ComposeScreeningQuery(requestModel);
+                var (assistantId, operationType) = MapAssistant(requestModel.Type);
+
+                var outputText = await RunAssistantAsync(assistantId, operationType, queryContent, jsonObject: true, fileId: fileId);
+
+                // If the model reported a file-extraction problem, retry once (mirrors legacy RecreateThread).
+                if (LooksLikeExtractionFailure(outputText))
                 {
-                    string runStatus = string.Empty;
-                    int pollInterval = 10000;
-                    int maxPollInterval = 30000;
-                    int maxAttempts = 12;
-                    int attempts = 0;
-
-                    while (runStatus != "completed")
+                    var retryText = await RunAssistantAsync(assistantId, operationType, queryContent, jsonObject: true, fileId: fileId);
+                    if (!LooksLikeExtractionFailure(retryText))
                     {
-                        await Task.Delay(pollInterval);
-                        runStatus = await RetrieveRun(runId, threadId);
-                        attempts++;
-                        if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
-                            || runStatus == null || attempts >= maxAttempts)
-                            break;
-                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
+                        outputText = retryText;
                     }
-
-                    // After run completes, retrieve run steps to capture token usage
-                    if (runStatus == "completed")
-                    {
-                        await RetrieveRunStepsForTokenUsage(runId, threadId);
-                    }
-
-                    var messages = await ListRunMessages(threadId);
-                    if (messages != null && messages.Data.First().Content.FirstOrDefault().Text.Value != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
-                    {
-                        return await RecreateThread(requestModel, fileId, 0);
-                    }
-                    return messages;
                 }
-                else
-                {
+
+                return BuildRunResult(outputText);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        private static string ComposeScreeningQuery(ScreeningRequest requestModel)
+        {
+            if (requestModel.Type == ProfileNames.Candidate)
+            {
+                return $"Evaluate the resume and generate a response in json as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the candidate and generate the fitment score against is {requestModel.JDTitle}.";
+            }
+            if (requestModel.Type == ProfileNames.Interviewer)
+            {
+                return $"Evaluate the resume and generate a response in json as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the interviewer and generate the fitment score against is {requestModel.JDTitle}.";
+            }
+            if (requestModel.Type == ProfileNames.QualityController)
+            {
+                return "Generate an output as per the instructions fed to the assistant.";
+            }
+            // ResumeParserAIAssistant and any other file-based screening.
+            return "Evaluate the resume and generate a response in json as per the instructions fed to you.";
+        }
+
+        public async Task<RunResult> GenerateTechRubric(string jobTitle)
+        {
+            try
+            {
+                var (assistantId, operationType) = MapAssistant(null); // rubric generator
+                var query = $"Generate an output as per the instructions fed to the assistant. The job title you need to generate a tech rubric against is {jobTitle}.";
+                var outputText = await RunAssistantAsync(assistantId, operationType, query, jsonObject: true);
+                return BuildRunResult(outputText);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<RunResult> GenerateTechRubricRevision(string revisionPrompt)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(revisionPrompt))
                     return null;
-                }
 
-
+                var (assistantId, operationType) = MapAssistant(null); // rubric generator
+                var outputText = await RunAssistantAsync(assistantId, operationType, revisionPrompt, jsonObject: true);
+                return BuildRunResult(outputText);
             }
             catch (Exception ex)
             {
@@ -164,694 +283,155 @@ namespace Risebird.CommonHelper
             }
         }
 
-        private async Task<RunResult> RecreateThread(ScreeningRequest requestModel, string fileId, int? counter)
+        public async Task<RunResult> GenerateTranscriptAnalysis(string transcriptData)
         {
-            if (counter == 0)
+            try
             {
-                await Task.Delay(15000);
-                string threadId = string.Empty;
-                if (!string.IsNullOrEmpty(fileId))
-                {
-                    //await Task.Delay(60000);
-                    threadId = await CreateThreadAsync(requestModel, fileId);
-                }
-                else
-                {
+                var (assistantId, operationType) = MapAssistant(ProfileNames.TranscriptAnalysisAIAssistant);
+                var query = $"Generate an output as per the instructions fed to the assistant. The transcript data you need to generate an analysis against is {transcriptData}.";
+                var outputText = await RunAssistantAsync(assistantId, operationType, query, jsonObject: true);
+                return BuildRunResult(outputText);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<RunResult> GenerateQcAnalysisInterviewAIMerge(string userMessageContent, string assistantId, bool useJsonResponseFormat = true)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(userMessageContent))
                     return null;
-                }
-                string runId;
-                //now create a run
-                if (!string.IsNullOrEmpty(threadId))
+
+                // Legacy behaviour selected the Qc-Interview-AI-Merge assistant via profile type
+                // (the passed assistantId was not used for the run); preserved here.
+                var (mappedAssistantId, operationType) = MapAssistant(ProfileNames.QcInterviewAIAssistantId);
+                var outputText = await RunAssistantAsync(mappedAssistantId, operationType, userMessageContent, jsonObject: useJsonResponseFormat);
+                return BuildRunResult(outputText);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<RunResult> GenerateResumeAnalysis(string resumeStringData, string jobTitle)
+        {
+            try
+            {
+                var (assistantId, operationType) = MapAssistant(ProfileNames.StringResumeAnalysisAIAssistant);
+                var query = $"Generate an output as per the instructions fed to the assistant. The job title you need to screen the interviewer and generate the fitment score against is {jobTitle}. The Resume data you need to generate an analysis against is {resumeStringData}.";
+                var outputText = await RunAssistantAsync(assistantId, operationType, query, jsonObject: true);
+                return BuildRunResult(outputText);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<RunResult> GenerateReportQCAnalysis(string reportStringData)
+        {
+            try
+            {
+                var (assistantId, operationType) = MapAssistant(ProfileNames.StringReportQCAIAssistant);
+                var query = $"Generate an output as per the instructions fed to the assistant. The Report data you need to generate an analysis against is {reportStringData}.";
+                var outputText = await RunAssistantAsync(assistantId, operationType, query, jsonObject: true);
+                return BuildRunResult(outputText);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<RunResult> ParseResume(string resumeData)
+        {
+            try
+            {
+                var (assistantId, operationType) = MapAssistant(ProfileNames.ResumeParserAIAssistant);
+                var query = "Evaluate the resume and generate a response in json as per the instructions fed to you.";
+                // The composed prompt references the resume text supplied by the caller.
+                if (!string.IsNullOrEmpty(resumeData))
                 {
-                    runId = await CreateRun(threadId, requestModel.Type);
+                    query = $"{query} The Resume data you need to evaluate is: {resumeData}";
                 }
-                else
-                {
+                var outputText = await RunAssistantAsync(assistantId, operationType, query, jsonObject: true);
+                return BuildRunResult(outputText);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<RunResult> TranscriptToNotes(string transcriptdata)
+        {
+            try
+            {
+                var (assistantId, operationType) = MapAssistant(ProfileNames.TranscriptToNotesAssistantId);
+                var query = $"Generate the Summary for {transcriptdata}";
+                // TranscriptToNotes produces free-form prose, so JSON formatting is intentionally off.
+                var outputText = await RunAssistantAsync(assistantId, operationType, query, jsonObject: false);
+                return BuildRunResult(outputText);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<RunResult> GeneratecontradictionReport(string transcriptSummary)
+        {
+            try
+            {
+                var (assistantId, operationType) = MapAssistant(ProfileNames.ContradictionReportAIAssistantId);
+                var outputText = await RunAssistantAsync(assistantId, operationType, transcriptSummary, jsonObject: true);
+                return BuildRunResult(outputText);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<RunResult> GeneratePaymentTicketReview(string composedMessage)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(composedMessage))
                     return null;
-                }
 
-                if (!string.IsNullOrEmpty(runId))
-                {
-                    string runStatus = string.Empty;
-                    int pollInterval = 10000;
-                    int maxPollInterval = 30000;
-                    int maxAttempts = 12;
-                    int attempts = 0;
+                var (assistantId, operationType) = MapAssistant(ProfileNames.PaymentTicketReviewAssistantId);
+                var outputText = await RunAssistantAsync(assistantId, operationType, composedMessage, jsonObject: true);
+                return BuildRunResult(outputText);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
-                    while (runStatus != "completed")
-                    {
-                        await Task.Delay(pollInterval);
-                        runStatus = await RetrieveRun(runId, threadId);
-                        attempts++;
-                        if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
-                            || runStatus == null || attempts >= maxAttempts)
-                            break;
-                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
-                    }
-
-                    // After run completes, retrieve run steps to capture token usage
-                    if (runStatus == "completed")
-                    {
-                        await RetrieveRunStepsForTokenUsage(runId, threadId);
-                    }
-
-                    var messages = await ListRunMessages(threadId);
-                    if (messages != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
-                    {
-                        counter = counter + 1;
-                        messages = await RecreateThread(requestModel, fileId, counter);
-                    }
-                    return messages;
-                }
-                else
-                {
+        public async Task<RunResult> GenerateLinkedInVerification(string composedMessage)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(composedMessage))
                     return null;
-                }
-            }
-            else
-            {
-                return null;
-            }
 
-        }
-        private async Task<string> CreateRun(string threadId, string profileType = null)
-        {
-            try
-            {
-                HttpClient client = new HttpClient();
-                string assistantId = string.Empty;
-                string operationType = "Unknown";
-
-                if (!string.IsNullOrEmpty(profileType))
-                {
-                    if (profileType == ProfileNames.Candidate)
-                    {
-                        assistantId = candidateScreenerAssistantId;
-                        operationType = "CandidateScreening";
-                    }
-                    else if (profileType == ProfileNames.Interviewer)
-                    {
-                        assistantId = interviewerScreenerAssistantId;
-                        operationType = "InterviewerScreening";
-                    }
-                    else if (profileType == ProfileNames.ResumeParserAIAssistant)
-                    {
-                        assistantId = resumeParserAssistantId;
-                        operationType = "ResumeParsing";
-                    }
-                    else if (profileType == ProfileNames.TranscriptAnalysisAIAssistant)
-                    {
-                        assistantId = aiTranscriptAnalysisAssistantId;
-                        operationType = "TranscriptAnalysis";
-                    }
-                    else if (profileType == ProfileNames.StringResumeAnalysisAIAssistant)
-                    {
-                        //assistantId = stringResumeAnalysisAssistantId;
-                        assistantId = stringResumeAnalysisAssistantIdV2;
-                        operationType = "ResumeAnalysis";
-                    }
-                    else if (profileType == ProfileNames.StringReportQCAIAssistant)
-                    {
-                        assistantId = stringReportQCAssistantIdStructuredOutput;//stringReportQCAssistantId;
-                        operationType = "ReportQC";
-                    }
-                    else if (profileType == ProfileNames.TranscriptToNotesAssistantId)
-                    {
-                        assistantId = AITranscriptToNotesAssistantId;//stringReportQCAssistantId;
-                        operationType = "TranscriptToNotes";
-                    }
-                    else if (profileType == ProfileNames.QcInterviewAIAssistantId)
-                    {
-                        assistantId = QcInterviewAIMergeAssistantId;
-                        operationType = "QcInterviewAIMerge";
-                    }
-                    else if (profileType == ProfileNames.ContradictionReportAIAssistantId)
-                    {
-                        assistantId = ContradictionReportAIAssistantId;
-                        operationType = "ContradictionReport";
-                    }
-                    else if (profileType == ProfileNames.PaymentTicketReviewAssistantId)
-                    {
-                        assistantId = PaymentTicketReviewAssistantId;
-                        operationType = "PaymentTicketReview";
-                    }
-                    else if (profileType == ProfileNames.LinkedInVerificationAssistantId)
-                    {
-                        assistantId = LinkedInVerificationAssistantId;
-                        operationType = "LinkedInVerification";
-                    }
-                    else
-                    {
-                        assistantId = reportQCAssistantId;
-                        operationType = "QualityCheck";
-                    }
-
-                }
-                else
-                {
-                    assistantId = rubricGeneratorAssistantId;
-                    operationType = "RubricGeneration";
-                }
-
-
-
-                // response_format: json_object enforces valid JSON output and reduces output tokens
-                // by preventing the model from wrapping JSON in markdown fences.
-                // Only applies to assistants whose system prompts mention "JSON" (OpenAI requirement).
-                // Excluded for TranscriptToNotes which produces free-form prose, not structured JSON.
-                bool useJsonResponseFormat = profileType != ProfileNames.TranscriptToNotesAssistantId;
-
-                object requestBody = useJsonResponseFormat
-                    ? (object)new { assistant_id = assistantId, response_format = new { type = "json_object" } }
-                    : (object)new { assistant_id = assistantId };
-
-                var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl}/threads/{threadId}/runs")
-                {
-                    Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" },
-                };
-
-                var jsonContent = JsonConvert.SerializeObject(requestBody);
-                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-                request.Content = content;
-
-                var sw = System.Diagnostics.Stopwatch.StartNew();
-                var response = await client.SendAsync(request);
-                sw.Stop();
-
-                var responseContent = await response.Content.ReadAsStringAsync();
-
-                // Extract model from response
-                string modelName = null;
-                string runIdFromResponse = null;
-                try
-                {
-                    var runResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
-                    if (runResponse != null)
-                    {
-                        modelName = runResponse.ContainsKey("model") ? runResponse["model"]?.ToString() : null;
-                        runIdFromResponse = runResponse.ContainsKey("id") ? runResponse["id"]?.ToString() : null;
-                    }
-                }
-                catch { /* Continue even if extraction fails */ }
-
-                // Log the API call
-                await _openAIApiLogger.LogApiCallAsync(
-                    apiEndpoint: $"{baseUrl}/threads/{threadId}/runs",
-                    apiMethod: "POST",
-                    requestPayload: jsonContent,
-                    responsePayload: responseContent,
-                    responseTimeMs: (int)sw.ElapsedMilliseconds,
-                    statusCode: (int)response.StatusCode,
-                    isSuccess: response.IsSuccessStatusCode,
-                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
-                    model: modelName,
-                    assistantId: assistantId,
-                    threadId: threadId,
-                    runId: runIdFromResponse,
-                    fileId: null,
-                    context: new OpenAIApiLogContext
-                    {
-                        OperationType = operationType
-                    });
-
-                response.EnsureSuccessStatusCode();
-                return runIdFromResponse;
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-
-        }
-
-        private async Task<string> RetrieveRun(string runId, string threadId)
-        {
-            try
-            {
-                HttpClient client = new HttpClient();
-
-                var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/threads/{threadId}/runs/{runId}")
-                {
-                    Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" },
-                };
-
-                var sw = System.Diagnostics.Stopwatch.StartNew();
-                var response = await client.SendAsync(request);
-                sw.Stop();
-
-                var responseContent = await response.Content.ReadAsStringAsync();
-
-                // Extract model and assistant from response
-                string modelName = null;
-                string assistantIdFromResponse = null;
-                string statusFromResponse = null;
-                try
-                {
-                    var runResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
-                    if (runResponse != null)
-                    {
-                        modelName = runResponse.ContainsKey("model") ? runResponse["model"]?.ToString() : null;
-                        assistantIdFromResponse = runResponse.ContainsKey("assistant_id") ? runResponse["assistant_id"]?.ToString() : null;
-                        statusFromResponse = runResponse.ContainsKey("status") ? runResponse["status"]?.ToString() : null;
-                        var failedAt = runResponse["failed_at"];
-                        if (failedAt != null)
-                        {
-                            statusFromResponse = "failed";
-                        }
-                    }
-                }
-                catch { /* Continue even if extraction fails */ }
-
-                // Log the API call
-                await _openAIApiLogger.LogApiCallAsync(
-                    apiEndpoint: $"{baseUrl}/threads/{threadId}/runs/{runId}",
-                    apiMethod: "GET",
-                    requestPayload: null,
-                    responsePayload: responseContent,
-                    responseTimeMs: (int)sw.ElapsedMilliseconds,
-                    statusCode: (int)response.StatusCode,
-                    isSuccess: response.IsSuccessStatusCode,
-                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
-                    model: modelName,
-                    assistantId: assistantIdFromResponse,
-                    threadId: threadId,
-                    runId: runId,
-                    fileId: null,
-                    context: new OpenAIApiLogContext
-                    {
-                        OperationType = "RunRetrieval"
-                    });
-
-                response.EnsureSuccessStatusCode();
-                return statusFromResponse;
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-
-        }
-
-        private async Task RetrieveRunStepsForTokenUsage(string runId, string threadId)
-        {
-            try
-            {
-                HttpClient client = new HttpClient();
-
-                var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/threads/{threadId}/runs/{runId}/steps")
-                {
-                    Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }
-                };
-
-                var sw = System.Diagnostics.Stopwatch.StartNew();
-                var response = await client.SendAsync(request);
-                sw.Stop();
-
-                var responseContent = await response.Content.ReadAsStringAsync();
-
-                // Extract model from the parent run context if available
-                string modelName = null;
-                string assistantIdFromResponse = null;
-                try
-                {
-                    var json = JObject.Parse(responseContent);
-                    var dataArray = json["data"] as JArray;
-                    if (dataArray != null && dataArray.Count > 0)
-                    {
-                        var firstStep = dataArray[0] as JObject;
-                        // The model might be in step details
-                        modelName = firstStep?["model"]?.ToString();
-                        assistantIdFromResponse = firstStep?["assistant_id"]?.ToString();
-                    }
-                }
-                catch { /* Continue even if extraction fails */ }
-
-                // Log the API call - this will extract token usage from run steps
-                await _openAIApiLogger.LogApiCallAsync(
-                    apiEndpoint: $"{baseUrl}/threads/{threadId}/runs/{runId}/steps",
-                    apiMethod: "GET",
-                    requestPayload: null,
-                    responsePayload: responseContent,
-                    responseTimeMs: (int)sw.ElapsedMilliseconds,
-                    statusCode: (int)response.StatusCode,
-                    isSuccess: response.IsSuccessStatusCode,
-                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
-                    model: modelName,
-                    assistantId: assistantIdFromResponse,
-                    threadId: threadId,
-                    runId: runId,
-                    fileId: null,
-                    context: new OpenAIApiLogContext
-                    {
-                        OperationType = "RunStepsRetrieval-TokenUsage"
-                    });
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-        }
-
-        private async Task<RunResult> ListRunMessages(string threadId)
-        {
-            try
-            {
-                HttpClient client = new HttpClient();
-
-                var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/threads/{threadId}/messages")
-                {
-                    Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" },
-                };
-
-                var sw = System.Diagnostics.Stopwatch.StartNew();
-                var response = await client.SendAsync(request);
-                sw.Stop();
-
-                var responseContent = await response.Content.ReadAsStringAsync();
-
-                // Log the API call
-                await _openAIApiLogger.LogApiCallAsync(
-                    apiEndpoint: $"{baseUrl}/threads/{threadId}/messages",
-                    apiMethod: "GET",
-                    requestPayload: null,
-                    responsePayload: responseContent,
-                    responseTimeMs: (int)sw.ElapsedMilliseconds,
-                    statusCode: (int)response.StatusCode,
-                    isSuccess: response.IsSuccessStatusCode,
-                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
-                    model: null,
-                    assistantId: null,
-                    threadId: threadId,
-                    runId: null,
-                    fileId: null,
-                    context: new OpenAIApiLogContext
-                    {
-                        OperationType = "MessageRetrieval"
-                    });
-
-                response.EnsureSuccessStatusCode();
-
-                RunResult runResultMessages = JsonConvert.DeserializeObject<RunResult>(responseContent);
-                return runResultMessages;
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-        private async Task<string> UploadFileAsync(string url)
-        {
-
-            try
-            {
-                using (HttpClient resumeClient = new HttpClient())
-                {
-                    var data = await resumeClient.GetByteArrayAsync(url);
-                    var fileContent = new ByteArrayContent(data);
-                    string fcName;
-                    try
-                    {
-                        fcName = url.Split("/").Last().Split("?")[0];
-                    }
-                    catch (Exception)
-                    {
-
-                        fcName = url.Split("/").Last();
-                    }
-                    if (!string.IsNullOrEmpty(fcName) && fcName.Split(".").Last() != "doc")
-                    {
-                        var content = new MultipartFormDataContent
-                        {
-                            { new StringContent("assistants"), "purpose" },
-                            { fileContent, "file", fcName }
-                        };
-
-                        HttpClient client = new HttpClient();
-                        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
-
-                        var sw = System.Diagnostics.Stopwatch.StartNew();
-                        var response = await client.PostAsync($"{baseUrl}/files", content);
-                        sw.Stop();
-
-                        var responseContent = await response.Content.ReadAsStringAsync();
-
-                        // Log the API call
-                        await _openAIApiLogger.LogApiCallAsync(
-                            apiEndpoint: $"{baseUrl}/files",
-                            apiMethod: "POST",
-                            requestPayload: $"{{\"purpose\":\"assistants\",\"file\":\"{fcName}\"}}",
-                            responsePayload: responseContent,
-                            responseTimeMs: (int)sw.ElapsedMilliseconds,
-                            statusCode: (int)response.StatusCode,
-                            isSuccess: response.IsSuccessStatusCode,
-                            errorMessage: response.IsSuccessStatusCode ? null : responseContent,
-                            model: null,
-                            assistantId: null,
-                            threadId: null,
-                            runId: null,
-                            fileId: null,
-                            context: new OpenAIApiLogContext
-                            {
-                                OperationType = "FileUpload"
-                            });
-
-                        response.EnsureSuccessStatusCode();
-
-                        var fileResponse = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
-                        return fileResponse["id"].ToString();
-                    }
-                    else
-                    {
-                        return null;
-                    }
-
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-
-
-        }
-
-        //private async Task<bool> AddFileToVectorStoreAsync(string fileId, string profileType)
-        //{
-        //    try
-        //    {
-        //        HttpClient client = new HttpClient();
-        //        var requestBody = new
-        //        {
-        //            file_id = fileId
-        //        };
-        //        string vectorStoreId;
-        //        if(profileType == ProfileNames.Candidate)
-        //        {
-        //            vectorStoreId = candidateResumesVectorStoreId;
-        //        }
-        //        else if(profileType == ProfileNames.Interviewer)
-        //        {
-        //            vectorStoreId = interviewerResumesVectorStoreId;
-        //        }
-        //        else
-        //        {
-        //            vectorStoreId = reportQCVectorStoreId;
-        //        }
-        //        var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl}/vector_stores/{vectorStoreId}/files");
-
-        //        // Add headers to the request
-        //        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
-        //        request.Headers.Add("OpenAI-Beta", "assistants=v2");
-
-        //        var jsonContent = JsonConvert.SerializeObject(requestBody);
-        //        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-        //        //content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-        //        request.Content = content;
-
-        //        var response = await client.SendAsync(request);
-        //        response.EnsureSuccessStatusCode();
-
-        //        var responseContent = await response.Content.ReadAsStringAsync();
-        //        return true;
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        return false;
-        //    }
-
-        //}
-        private async Task<string> CreateThreadAsync(ScreeningRequest requestModel = null, string fileId = null, string jobTitleForRubrics = null, string transcriptData = null, string resumeStringData = null, string reportStringData = null, string jdTitle = null, string resumeStringDataForParsing = null, string transcripttonotes = null, string plainAssistantMessage = null, string contradictiontranscriptSummary = null)
-        {
-            try
-            {
-                HttpClient client = new HttpClient();
-
-                var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl}/threads")
-                {
-                    Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" }, 
-                };
-
-                string queryContent = string.Empty;
-
-                if (requestModel != null)
-                {
-                    if (requestModel.Type == ProfileNames.Candidate)
-                    {
-                        queryContent = $"Evaluate the resume and generate a response in json as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the candidate and generate the fitment score against is {requestModel.JDTitle}.";
-                    }
-                    else if (requestModel.Type == ProfileNames.Interviewer)
-                    {
-                        queryContent = $"Evaluate the resume and generate a response in json as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the interviewer and generate the fitment score against is {requestModel.JDTitle}.";
-                    }
-                    else if (requestModel.Type == ProfileNames.QualityController)
-                    {
-                        queryContent = $"Generate an output as per the instructions fed to the assistant.";
-
-                    }
-                    else if (requestModel.Type == ProfileNames.ResumeParserAIAssistant)
-                    {
-                        queryContent = $"Evaluate the resume and generate a response in json as per the instructions fed to you.";
-                    }
-
-                }
-                else if (!string.IsNullOrWhiteSpace(plainAssistantMessage))
-                {
-                    queryContent = plainAssistantMessage;
-                }
-                else if (!string.IsNullOrWhiteSpace(contradictiontranscriptSummary))
-                {
-                    queryContent = contradictiontranscriptSummary;
-                }
-                else if (!string.IsNullOrEmpty(jobTitleForRubrics))//case for generating tech skill rubric
-                {
-                    queryContent = $"Generate an output as per the instructions fed to the assistant. The job title you need to generate a tech rubric against is {jobTitleForRubrics}.";
-                }
-                else if (!string.IsNullOrEmpty(transcriptData))
-                {
-                    queryContent = $"Generate an output as per the instructions fed to the assistant. The transcript data you need to generate an analysis against is {transcriptData}.";
-
-                }
-                else if (!string.IsNullOrEmpty(resumeStringData))
-                {
-                    queryContent = $"Generate an output as per the instructions fed to the assistant. The job title you need to screen the interviewer and generate the fitment score against is {jdTitle}. The Resume data you need to generate an analysis against is {resumeStringData}.";
-
-                }
-                else if (!string.IsNullOrEmpty(reportStringData))
-                {
-                    queryContent = $"Generate an output as per the instructions fed to the assistant. The Report data you need to generate an analysis against is {reportStringData}.";
-
-                }
-                else if (!string.IsNullOrEmpty(resumeStringDataForParsing))
-                {
-                    queryContent = $"Evaluate the resume and generate a response in json as per the instructions fed to you.";
-
-                }
-                else if (!string.IsNullOrEmpty(transcripttonotes))
-                {
-                    queryContent = $"Generate the Summary for {transcripttonotes}";
-
-                }
-                var threadRequest = new Thread();
-                if (requestModel != null && !string.IsNullOrEmpty(fileId))
-                {
-                    threadRequest = new Thread
-                    {
-                        messages = new List<Message>
-                    {
-                        new Message {
-                            role = "assistant", content = queryContent,
-                            attachments = new List<object>
-                            {
-                                new
-                                {
-                                    file_id = fileId, // Optional file ID
-                                    tools = new List<object>
-                                    {
-                                        new
-                                        {
-                                            type = "code_interpreter" // Required tool type
-                                        },
-                                        new
-                                        {
-                                            type = "file_search" // Required tool type
-                                        }
-                                    }
-                                }//,
-                                // Additional attachment objects can be added here
-                            }
-                        }
-                    }//,
-
-
-                        //tool_resources = new ToolResources()
-                        //{
-                        //    file_search = new FileSearch
-                        //    {
-                        //        vector_stores = new List<VectorStore>() { new VectorStore { file_ids = new List<string> { fileId } } }
-
-                        //    }
-                        //}
-                    };
-                }
-                else
-                {
-                    threadRequest = new Thread
-                    {
-                        messages = new List<Message>
-                        {
-                            new Message {
-                                role = "assistant", content = queryContent
-
-                            }
-                        }
-
-                    };
-                }
-
-                string jsonContent = JsonConvert.SerializeObject(threadRequest);
-                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-                request.Content = content;
-
-                var sw = System.Diagnostics.Stopwatch.StartNew();
-                var response = await client.SendAsync(request);
-                sw.Stop();
-
-                var responseContent = await response.Content.ReadAsStringAsync();
-
-                // Log the API call
-                await _openAIApiLogger.LogApiCallAsync(
-                    apiEndpoint: $"{baseUrl}/threads",
-                    apiMethod: "POST",
-                    requestPayload: jsonContent,
-                    responsePayload: responseContent,
-                    responseTimeMs: (int)sw.ElapsedMilliseconds,
-                    statusCode: (int)response.StatusCode,
-                    isSuccess: response.IsSuccessStatusCode,
-                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
-                    model: null,
-                    assistantId: null,
-                    threadId: null,
-                    runId: null,
-                    fileId: null,
-                    context: new OpenAIApiLogContext
-                    {
-                        OperationType = "ThreadCreation"
-                    });
-
-                response.EnsureSuccessStatusCode();
-
-                dynamic thread = JsonConvert.DeserializeObject(responseContent);
-
-                //return JsonConvert.DeserializeObject<CandidateScreeningResponse>(responseContent);
-                return thread.id;
+                var (assistantId, operationType) = MapAssistant(ProfileNames.LinkedInVerificationAssistantId);
+                var outputText = await RunAssistantAsync(assistantId, operationType, composedMessage, jsonObject: true);
+                return BuildRunResult(outputText);
             }
             catch (Exception ex)
             {
@@ -860,6 +440,9 @@ namespace Risebird.CommonHelper
             }
         }
 
+        // ---------------------------------------------------------------------------------------
+        //  File / vector-store housekeeping (still valid endpoints; used to prune uploaded inputs).
+        // ---------------------------------------------------------------------------------------
 
         private async Task<FilesList> ListFiles()
         {
@@ -869,7 +452,7 @@ namespace Risebird.CommonHelper
 
                 var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/files")
                 {
-                    Headers = { { "Authorization", $"Bearer {apiKey}" } }//{ "Content-Type", "application/json" },, { "OpenAI-Beta", "assistants=v2" } 
+                    Headers = { { "Authorization", $"Bearer {apiKey}" } }
                 };
 
                 var sw = System.Diagnostics.Stopwatch.StartNew();
@@ -878,7 +461,6 @@ namespace Risebird.CommonHelper
 
                 var responseContent = await response.Content.ReadAsStringAsync();
 
-                // Log the API call
                 await _openAIApiLogger.LogApiCallAsync(
                     apiEndpoint: $"{baseUrl}/files",
                     apiMethod: "GET",
@@ -917,18 +499,15 @@ namespace Risebird.CommonHelper
                 int iteration = 0;
                 int totalDeleted = 0;
 
-                // Loop with circuit breaker to prevent infinite recursion
                 while (iteration < maxIterations)
                 {
                     var filesList = await ListFiles();
 
-                    // No more files to delete
                     if (filesList == null || filesList.data == null || filesList.data.Count() == 0)
                     {
                         return true;
                     }
 
-                    // Delete all files in current batch
                     foreach (var item in filesList.data)
                     {
                         try
@@ -937,7 +516,7 @@ namespace Risebird.CommonHelper
 
                             var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/files/{item.id}")
                             {
-                                Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }
+                                Headers = { { "Authorization", $"Bearer {apiKey}" } }
                             };
 
                             var sw = System.Diagnostics.Stopwatch.StartNew();
@@ -946,7 +525,6 @@ namespace Risebird.CommonHelper
 
                             var responseContent = await response.Content.ReadAsStringAsync();
 
-                            // Log the API call
                             await _openAIApiLogger.LogApiCallAsync(
                                 apiEndpoint: $"{baseUrl}/files/{item.id}",
                                 apiMethod: "DELETE",
@@ -979,7 +557,6 @@ namespace Risebird.CommonHelper
                     iteration++;
                 }
 
-                // Log if we hit the max iterations (potential issue)
                 if (iteration >= maxIterations)
                 {
                     await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
@@ -1003,7 +580,7 @@ namespace Risebird.CommonHelper
 
                 var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/vector_stores")
                 {
-                    Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" },, { "OpenAI-Beta", "assistants=v2" } 
+                    Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }
                 };
 
                 var sw = System.Diagnostics.Stopwatch.StartNew();
@@ -1012,7 +589,6 @@ namespace Risebird.CommonHelper
 
                 var responseContent = await response.Content.ReadAsStringAsync();
 
-                // Log the API call
                 await _openAIApiLogger.LogApiCallAsync(
                     apiEndpoint: $"{baseUrl}/vector_stores",
                     apiMethod: "GET",
@@ -1058,7 +634,7 @@ namespace Risebird.CommonHelper
 
                         var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/vector_stores/{item.id}")
                         {
-                            Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" }, , { "Content-Type", "application/json" } 
+                            Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }
                         };
 
                         var response = client.SendAsync(request).Result;
@@ -1066,7 +642,6 @@ namespace Risebird.CommonHelper
 
                         var responseContent = response.Content.ReadAsStringAsync().Result;
 
-                        // Log the API call (using GetAwaiter().GetResult() for sync context)
                         _openAIApiLogger.LogApiCallAsync(
                             apiEndpoint: $"{baseUrl}/vector_stores/{item.id}",
                             apiMethod: "DELETE",
@@ -1087,33 +662,12 @@ namespace Risebird.CommonHelper
                             }).GetAwaiter().GetResult();
 
                         response.EnsureSuccessStatusCode();
-
-                        //FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
-                        //return files;
                     }
                     );
-                    //foreach (var item in vectorsList?.data)
-                    //{
-                    //    HttpClient client = new HttpClient();
-
-                    //    var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/vector_stores/{item.id}")
-                    //    {
-                    //        Headers = { { "Authorization", $"Bearer {apiKey}" }, { "OpenAI-Beta", "assistants=v2" } }//{ "Content-Type", "application/json" }, , { "Content-Type", "application/json" } 
-                    //    };
-
-                    //    var response = await client.SendAsync(request);
-
-                    //    response.EnsureSuccessStatusCode();
-                    //    var responseContent = await response.Content.ReadAsStringAsync();
-
-                    //    //FilesList files = JsonConvert.DeserializeObject<FilesList>(responseContent);
-                    //    //return files;
-                    //}
                     await DeleteVectors();
                 }
 
                 return true;
-
             }
             catch (Exception ex)
             {
@@ -1121,686 +675,15 @@ namespace Risebird.CommonHelper
                 return false;
             }
         }
-
-
-        public async Task<RunResult> GenerateTechRubric(string jobTitle)
-        {
-            try
-            {
-
-                string threadId = string.Empty;
-                threadId = await CreateThreadAsync(jobTitleForRubrics: jobTitle);
-                //if (!string.IsNullOrEmpty(fileId))
-                //{
-                //    await Task.Delay(15000);//60000
-
-                //}
-                //else
-                //{
-                //    return null;
-                //}
-                string runId;
-                //now create a run
-                if (!string.IsNullOrEmpty(threadId))
-                {
-                    runId = await CreateRun(threadId);
-                }
-                else
-                {
-                    return null;
-                }
-
-                if (!string.IsNullOrEmpty(runId))
-                {
-                    string runStatus = string.Empty;
-                    int pollInterval = 10000;
-                    int maxPollInterval = 30000;
-                    int maxAttempts = 12;
-                    int attempts = 0;
-
-                    while (runStatus != "completed")
-                    {
-                        await Task.Delay(pollInterval);
-                        runStatus = await RetrieveRun(runId, threadId);
-                        attempts++;
-                        if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
-                            || runStatus == null || attempts >= maxAttempts)
-                            break;
-                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
-                    }
-
-                    // After run completes, retrieve run steps to capture token usage
-                    if (runStatus == "completed")
-                    {
-                        await RetrieveRunStepsForTokenUsage(runId, threadId);
-                    }
-
-                    var messages = await ListRunMessages(threadId);
-                    //if (messages != null && messages.Data.First().Content.FirstOrDefault().Text.Value != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
-                    //{
-                    //    return await RecreateThread(requestModel, fileId);
-                    //}
-                    return messages;
-                }
-                else
-                {
-                    return null;
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-
-        public async Task<RunResult> GenerateTechRubricRevision(string revisionPrompt)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(revisionPrompt))
-                    return null;
-
-                string threadId = await CreateThreadAsync(plainAssistantMessage: revisionPrompt);
-                if (string.IsNullOrEmpty(threadId))
-                    return null;
-
-                string runId = await CreateRun(threadId);
-                if (string.IsNullOrEmpty(runId))
-                    return null;
-
-                string runStatus = string.Empty;
-                int pollInterval = 10000;
-                int maxPollInterval = 30000;
-                int maxAttempts = 12;
-                int attempts = 0;
-
-                while (runStatus != "completed")
-                {
-                    await Task.Delay(pollInterval);
-                    runStatus = await RetrieveRun(runId, threadId);
-                    attempts++;
-                    if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
-                        || runStatus == null || attempts >= maxAttempts)
-                        break;
-                    pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
-                }
-
-                if (runStatus == "completed")
-                    await RetrieveRunStepsForTokenUsage(runId, threadId);
-
-                return await ListRunMessages(threadId);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-
-        public async Task<RunResult> GenerateTranscriptAnalysis(string transcriptData)
-        {
-            try
-            {
-
-                string threadId = string.Empty;
-                threadId = await CreateThreadAsync(transcriptData: transcriptData);
-                //if (!string.IsNullOrEmpty(fileId))
-                //{
-                //    await Task.Delay(15000);//60000
-
-                //}
-                //else
-                //{
-                //    return null;
-                //}
-                string runId;
-                //now create a run
-                if (!string.IsNullOrEmpty(threadId))
-                {
-                    runId = await CreateRun(threadId, ProfileNames.TranscriptAnalysisAIAssistant);
-                }
-                else
-                {
-                    return null;
-                }
-                await Task.Delay(10000);
-                if (!string.IsNullOrEmpty(runId))
-                {
-                    string runStatus = string.Empty;
-                    int pollInterval = 10000;
-                    int maxPollInterval = 30000;
-                    int maxAttempts = 12;
-                    int attempts = 0;
-
-                    while (runStatus != "completed")
-                    {
-                        await Task.Delay(pollInterval);
-                        runStatus = await RetrieveRun(runId, threadId);
-                        attempts++;
-                        if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
-                            || runStatus == null || attempts >= maxAttempts)
-                            break;
-                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
-                    }
-
-                    // After run completes, retrieve run steps to capture token usage
-                    if (runStatus == "completed")
-                    {
-                        await RetrieveRunStepsForTokenUsage(runId, threadId);
-                    }
-
-                    var messages = await ListRunMessages(threadId);
-
-                    return messages;
-                }
-                else
-                {
-                    return null;
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-        public async Task<RunResult> GenerateQcAnalysisInterviewAIMerge(string userMessageContent, string assistantId, bool useJsonResponseFormat = true)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(userMessageContent) || string.IsNullOrEmpty(assistantId))
-                    return null;
-
-                string threadId = await CreateThreadAsync(plainAssistantMessage: userMessageContent);
-                if (string.IsNullOrEmpty(threadId))
-                    return null;
-
-                string runId = await CreateRun(threadId, ProfileNames.QcInterviewAIAssistantId);
-                await Task.Delay(10000);
-                if (string.IsNullOrEmpty(runId))
-                    return null;
-
-                string runStatus = string.Empty;
-                int pollInterval = 10000;
-                int maxPollInterval = 30000;
-                int maxAttempts = 12;
-                int attempts = 0;
-                while (runStatus != "completed")
-                {
-                    await Task.Delay(pollInterval);
-                    runStatus = await RetrieveRun(runId, threadId);
-                    attempts++;
-                    if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
-                        || runStatus == null || attempts >= maxAttempts)
-                        break;
-                    pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
-                }
-
-                if (runStatus == "completed")
-                    await RetrieveRunStepsForTokenUsage(runId, threadId);
-
-                var messages = await ListRunMessages(threadId);
-                return messages;
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-        public async Task<RunResult> GeneratecontradictionReport(string transcriptSummary)
-        {
-            try
-            {
-                string threadId = await CreateThreadAsync(contradictiontranscriptSummary: transcriptSummary);
-                if (string.IsNullOrEmpty(threadId))
-                    return null;
-
-                string runId = await CreateRun(threadId, ProfileNames.ContradictionReportAIAssistantId);
-                await Task.Delay(10000);
-                if (string.IsNullOrEmpty(runId))
-                    return null;
-
-                string runStatus = string.Empty;
-                int pollInterval = 10000;
-                int maxPollInterval = 30000;
-                int maxAttempts = 12;
-                int attempts = 0;
-                while (runStatus != "completed")
-                {
-                    await Task.Delay(pollInterval);
-                    runStatus = await RetrieveRun(runId, threadId);
-                    attempts++;
-                    if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
-                        || runStatus == null || attempts >= maxAttempts)
-                        break;
-                    pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
-                }
-
-                if (runStatus == "completed")
-                    await RetrieveRunStepsForTokenUsage(runId, threadId);
-
-                var messages = await ListRunMessages(threadId);
-                return messages;
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-        public async Task<RunResult> ParseResume(string resumeData)
-        {
-            try
-            {
-
-                string threadId = string.Empty;
-                threadId = await CreateThreadAsync(resumeStringDataForParsing: resumeData);
-
-                string runId;
-                //now create a run
-                if (!string.IsNullOrEmpty(threadId))
-                {
-                    runId = await CreateRun(threadId, ProfileNames.ResumeParserAIAssistant);
-                }
-                else
-                {
-                    return null;
-                }
-                await Task.Delay(10000);
-                if (!string.IsNullOrEmpty(runId))
-                {
-                    string runStatus = string.Empty;
-                    int pollInterval = 10000;
-                    int maxPollInterval = 30000;
-                    int maxAttempts = 12;
-                    int attempts = 0;
-
-                    while (runStatus != "completed")
-                    {
-                        await Task.Delay(pollInterval);
-                        runStatus = await RetrieveRun(runId, threadId);
-                        attempts++;
-                        if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
-                            || runStatus == null || attempts >= maxAttempts)
-                            break;
-                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
-                    }
-
-                    // After run completes, retrieve run steps to capture token usage
-                    if (runStatus == "completed")
-                    {
-                        await RetrieveRunStepsForTokenUsage(runId, threadId);
-                    }
-
-                    var messages = await ListRunMessages(threadId);
-
-                    return messages;
-                }
-                else
-                {
-                    return null;
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-
-        public async Task<RunResult> GenerateResumeAnalysis(string resumeStringData, string jobTitle)
-        {
-            try
-            {
-                string threadId = string.Empty;
-                threadId = await CreateThreadAsync(resumeStringData: resumeStringData, jdTitle: jobTitle);
-                string runId;
-                //now create a run
-                if (!string.IsNullOrEmpty(threadId))
-                {
-                    runId = await CreateRun(threadId, ProfileNames.StringResumeAnalysisAIAssistant);
-                }
-                else
-                {
-                    return null;
-                }
-                await Task.Delay(5000);
-                if (!string.IsNullOrEmpty(runId))
-                {
-                    string runStatus = string.Empty;
-                    int pollInterval = 10000;
-                    int maxPollInterval = 30000;
-                    int maxAttempts = 12;
-                    int attempts = 0;
-
-                    while (runStatus != "completed")
-                    {
-                        await Task.Delay(pollInterval);
-                        runStatus = await RetrieveRun(runId, threadId);
-                        attempts++;
-                        if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
-                            || runStatus == null || attempts >= maxAttempts)
-                            break;
-                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
-                    }
-
-                    // After run completes, retrieve run steps to capture token usage
-                    if (runStatus == "completed")
-                    {
-                        await RetrieveRunStepsForTokenUsage(runId, threadId);
-                    }
-
-                    var messages = await ListRunMessages(threadId);
-
-                    return messages;
-                }
-                else
-                {
-                    return null;
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-
-
-        public async Task<RunResult> GenerateReportQCAnalysis(string reportStringData)
-        {
-            try
-            {
-                string threadId = string.Empty;
-                threadId = await CreateThreadAsync(reportStringData: reportStringData);
-                string runId;
-                //now create a run
-                if (!string.IsNullOrEmpty(threadId))
-                {
-                    runId = await CreateRun(threadId, ProfileNames.StringReportQCAIAssistant);
-                }
-                else
-                {
-                    return null;
-                }
-                await Task.Delay(15000);
-                if (!string.IsNullOrEmpty(runId))
-                {
-                    string runStatus = string.Empty;
-                    int pollInterval = 10000;
-                    int maxPollInterval = 30000;
-                    int maxAttempts = 12;
-                    int attempts = 0;
-
-                    while (runStatus != "completed")
-                    {
-                        await Task.Delay(pollInterval);
-                        runStatus = await RetrieveRun(runId, threadId);
-                        attempts++;
-                        if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
-                            || runStatus == null || attempts >= maxAttempts)
-                            break;
-                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
-                    }
-
-                    // After run completes, retrieve run steps to capture token usage
-                    if (runStatus == "completed")
-                    {
-                        await RetrieveRunStepsForTokenUsage(runId, threadId);
-                    }
-
-                    var messages = await ListRunMessages(threadId);
-
-                    return messages;
-                }
-                else
-                {
-                    return null;
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-        public async Task<RunResult> TranscriptToNotes(string transcriptdata)
-        {
-            try
-            {
-
-                string threadId = string.Empty;
-                threadId = await CreateThreadAsync(transcripttonotes: transcriptdata);
-
-                string runId;
-                //now create a run
-                if (!string.IsNullOrEmpty(threadId))
-                {
-                    runId = await CreateRun(threadId, ProfileNames.TranscriptToNotesAssistantId);
-                }
-                else
-                {
-                    return null;
-                }
-                await Task.Delay(10000);
-                if (!string.IsNullOrEmpty(runId))
-                {
-                    string runStatus = string.Empty;
-                    int pollInterval = 10000;
-                    int maxPollInterval = 30000;
-                    int maxAttempts = 12;
-                    int attempts = 0;
-
-                    while (runStatus != "completed")
-                    {
-                        await Task.Delay(pollInterval);
-                        runStatus = await RetrieveRun(runId, threadId);
-                        attempts++;
-                        if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
-                            || runStatus == null || attempts >= maxAttempts)
-                            break;
-                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
-                    }
-
-                    // After run completes, retrieve run steps to capture token usage
-                    if (runStatus == "completed")
-                    {
-                        await RetrieveRunStepsForTokenUsage(runId, threadId);
-                    }
-
-                    var messages = await ListRunMessages(threadId);
-
-                    return messages;
-                }
-                else
-                {
-                    return null;
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Calls assistant asst_kjUOaWfVxQOymoAN1m29MrR8 (Payment Ticket Review) directly
-        /// with a plain-text composed message and returns the assistant reply.
-        /// </summary>
-        public async Task<RunResult> GeneratePaymentTicketReview(string composedMessage)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(composedMessage))
-                    return null;
-
-                string threadId = await CreateThreadAsync(plainAssistantMessage: composedMessage);
-
-                string runId;
-                if (!string.IsNullOrEmpty(threadId))
-                {
-                    runId = await CreateRun(threadId, ProfileNames.PaymentTicketReviewAssistantId);
-                }
-                else
-                {
-                    return null;
-                }
-                await Task.Delay(10000);
-                if (string.IsNullOrEmpty(runId))
-                    return null;
-
-                string runStatus = string.Empty;
-                int pollInterval = 10000;
-                int maxPollInterval = 30000;
-                int maxAttempts = 12;
-                int attempts = 0;
-
-                while (runStatus != "completed")
-                {
-                    await Task.Delay(pollInterval);
-                    runStatus = await RetrieveRun(runId, threadId);
-                    attempts++;
-                    if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
-                        || runStatus == null || attempts >= maxAttempts)
-                        break;
-                    pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
-                }
-                if (runStatus == "completed")
-                    await RetrieveRunStepsForTokenUsage(runId, threadId);
-
-                return await ListRunMessages(threadId);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Calls the LinkedIn-verification assistant (OpenAI:LinkedInVerificationAssistantId) with a
-        /// composed message describing the prospect (name, email, phone, current role, and any candidate-
-        /// supplied LinkedIn URL) and returns the raw RunResult. The assistant judges whether the URL is a
-        /// genuine profile for this person — or, when no URL is given, tries to identify one — and returns
-        /// a JSON verdict (linkedin_match / confidence / linkedin_url / reason).
-        /// </summary>
-        public async Task<RunResult> GenerateLinkedInVerification(string composedMessage)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(composedMessage))
-                    return null;
-
-                string threadId = await CreateThreadAsync(plainAssistantMessage: composedMessage);
-                if (string.IsNullOrEmpty(threadId))
-                    return null;
-
-                string runId = await CreateRun(threadId, ProfileNames.LinkedInVerificationAssistantId);
-                await Task.Delay(10000);
-                if (string.IsNullOrEmpty(runId))
-                    return null;
-
-                string runStatus = string.Empty;
-                int pollInterval = 10000;
-                int maxPollInterval = 30000;
-                int maxAttempts = 12;
-                int attempts = 0;
-
-                while (runStatus != "completed")
-                {
-                    await Task.Delay(pollInterval);
-                    runStatus = await RetrieveRun(runId, threadId);
-                    attempts++;
-                    if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
-                        || runStatus == null || attempts >= maxAttempts)
-                        break;
-                    pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
-                }
-
-                if (runStatus == "completed")
-                    await RetrieveRunStepsForTokenUsage(runId, threadId);
-
-                return await ListRunMessages(threadId);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-    }
-
-    public class VectorStore
-    {
-        public List<string> file_ids { get; set; }
-
-    }
-    public class Message
-    {
-        public string role { get; set; }
-        public string content { get; set; }
-        //public List<AttachmentObj> attachments { get; set; }
-        public List<object> attachments { get; set; }
-    }
-
-    public class AttachmentObj
-    {
-        public string file_id { get; set; }
-        public List<VectorStore> vector_stores { get; set; }
-    }
-
-    public class Thread
-    {
-        //public string assistant_id { get; set; }
-        public List<Message> messages { get; set; }
-        //public ToolResources tool_resources { get; set; }
-    }
-    public class ToolResources
-    {
-        public FileSearch file_search { get; set; }
-    }
-    public class FileSearch
-    {
-        public List<string> vector_store_ids { get; set; }
-        public List<VectorStore> vector_stores { get; set; }
-    }
-    public class MetaData
-    {
-        public string resume { get; set; }
-        public string[] skills { get; set; }
-    }
-
-    public class AssistantRequest
-    {
-        public string assistant_id { get; set; }
-        public Thread thread { get; set; }
-        //public MetaData metadata { get; set; }
     }
 
     public class FilesList
     {
         public List<FileObj> data { get; set; }
-
     }
 
     public class FileObj
     {
         public string id { get; set; }
     }
-
 }

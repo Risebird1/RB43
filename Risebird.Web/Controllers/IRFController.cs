@@ -13188,64 +13188,25 @@ namespace Risebird.Web.Controllers
 
         private async Task<string> FetchAssistantTextResponseAsync(string assistantId, string apiKey, string rubricInput)
         {
-            using (var http = new HttpClient())
-            {
-                http.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
-                http.DefaultRequestHeaders.Add("OpenAI-Beta", "assistants=v2");
-                http.Timeout = TimeSpan.FromSeconds(120);
+            // Migrated from the deprecated Assistants API (thread/message/run polling) to a single
+            // synchronous Responses call. The legacy assistant's stored model + instructions + tools
+            // are resolved (and cached) and fed into /v1/responses, preserving behaviour.
+            var baseUrl = string.IsNullOrWhiteSpace(_configuration?["OpenAI:BaseUrl"])
+                ? "https://api.openai.com/v1"
+                : _configuration["OpenAI:BaseUrl"];
 
-                var threadResp = await http.PostAsync("https://api.openai.com/v1/threads",
-                    new StringContent("{}", System.Text.Encoding.UTF8, "application/json"));
-                var threadJson = Newtonsoft.Json.Linq.JObject.Parse(await threadResp.Content.ReadAsStringAsync());
-                var threadId = threadJson["id"]?.ToString();
-                if (string.IsNullOrEmpty(threadId)) return null;
+            var profile = await Risebird.CommonHelper.OpenAIResponsesGateway.ResolveAssistantAsync(baseUrl, apiKey, assistantId);
 
-                var msgPayload = Newtonsoft.Json.JsonConvert.SerializeObject(new { role = "user", content = rubricInput });
-                var msgResp = await http.PostAsync($"https://api.openai.com/v1/threads/{threadId}/messages",
-                    new StringContent(msgPayload, System.Text.Encoding.UTF8, "application/json"));
-                if (!msgResp.IsSuccessStatusCode) return null;
+            var result = await Risebird.CommonHelper.OpenAIResponsesGateway.CreateResponseAsync(
+                baseUrl: baseUrl,
+                apiKey: apiKey,
+                model: profile.Model,
+                instructions: profile.Instructions,
+                input: rubricInput,
+                tools: profile.Tools,
+                assistantId: assistantId);
 
-                var runPayload = Newtonsoft.Json.JsonConvert.SerializeObject(new { assistant_id = assistantId });
-                var runResp = await http.PostAsync($"https://api.openai.com/v1/threads/{threadId}/runs",
-                    new StringContent(runPayload, System.Text.Encoding.UTF8, "application/json"));
-                var runJson = Newtonsoft.Json.Linq.JObject.Parse(await runResp.Content.ReadAsStringAsync());
-                var runId = runJson["id"]?.ToString();
-                var runStatus = runJson["status"]?.ToString();
-                if (string.IsNullOrEmpty(runId)) return null;
-
-                var pollStart = DateTime.UtcNow;
-                while (runStatus == "queued" || runStatus == "in_progress")
-                {
-                    if ((DateTime.UtcNow - pollStart).TotalSeconds > 90) return null;
-                    await System.Threading.Tasks.Task.Delay(3000);
-                    var statusResp = await http.GetAsync($"https://api.openai.com/v1/threads/{threadId}/runs/{runId}");
-                    var statusJson = Newtonsoft.Json.Linq.JObject.Parse(await statusResp.Content.ReadAsStringAsync());
-                    runStatus = statusJson["status"]?.ToString() ?? "unknown";
-                }
-
-                if (runStatus != "completed") return null;
-
-                var msgsResp = await http.GetAsync($"https://api.openai.com/v1/threads/{threadId}/messages");
-                var msgsJson = Newtonsoft.Json.Linq.JObject.Parse(await msgsResp.Content.ReadAsStringAsync());
-                var dataArr = msgsJson["data"] as Newtonsoft.Json.Linq.JArray;
-                if (dataArr == null) return null;
-
-                foreach (var msg in dataArr)
-                {
-                    if (msg["role"]?.ToString() != "assistant") continue;
-                    var contentArr = msg["content"] as Newtonsoft.Json.Linq.JArray;
-                    if (contentArr == null) continue;
-                    foreach (var block in contentArr)
-                    {
-                        if (block["type"]?.ToString() == "text")
-                        {
-                            var raw = block["text"]?["value"]?.ToString();
-                            if (!string.IsNullOrWhiteSpace(raw)) return raw;
-                        }
-                    }
-                }
-            }
-            return null;
+            return string.IsNullOrWhiteSpace(result?.OutputText) ? null : result.OutputText;
         }
 
         private sealed class RubricQuestionParseResult

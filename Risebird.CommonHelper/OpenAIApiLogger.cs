@@ -182,12 +182,14 @@ namespace Risebird.CommonHelper
             {
                 var json = JObject.Parse(responsePayload);
 
-                // Check for usage object (common in completion/chat APIs)
+                // Check for usage object (common in completion/chat APIs and the Responses API).
+                // Chat/Assistants use prompt_tokens/completion_tokens; the Responses API uses
+                // input_tokens/output_tokens. We normalise both onto prompt/completion here.
                 var usage = json["usage"];
                 if (usage != null)
                 {
-                    var promptTokens = usage["prompt_tokens"]?.Value<int>() ?? 0;
-                    var completionTokens = usage["completion_tokens"]?.Value<int>() ?? 0;
+                    var promptTokens = usage["prompt_tokens"]?.Value<int>() ?? usage["input_tokens"]?.Value<int>() ?? 0;
+                    var completionTokens = usage["completion_tokens"]?.Value<int>() ?? usage["output_tokens"]?.Value<int>() ?? 0;
                     var totalTokens = usage["total_tokens"]?.Value<int>() ?? (promptTokens + completionTokens);
                     
                     if (promptTokens > 0 || completionTokens > 0)
