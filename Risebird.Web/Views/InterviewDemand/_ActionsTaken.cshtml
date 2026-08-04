@@ -15,7 +15,9 @@
             class="form-control multiselect row-actions"
             data-reftype="@DriveWeekendActionRefs.RefType"
             data-refid="@actionRefId"
-            data-weekend-start="@weekendStart">
+            data-weekend-start="@weekendStart"
+            data-irf-int-id="@Model.IrfIntId"
+            data-weekend-bucket="@(Model.WeekendBucket ?? "This")">
         @foreach (var option in DriveRowActions.Options)
         {
             if (selected.Contains(option.Key))

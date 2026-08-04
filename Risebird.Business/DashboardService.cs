@@ -277,6 +277,54 @@ namespace Risebird.Business
                 return "Failed";
             }
         }
+        public async Task<bool> LinkRequirementToClient(int requirementId, int clientId, string clientName = null)
+        {
+            try
+            {
+                return await _dashboardRespository.LinkRequirementToClient(requirementId, clientId, clientName);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<IEnumerable<WeekendDriveSpotlightVM>> GetWeekendDriveSpotlight(string bucket)
+        {
+            try
+            {
+                return await _dashboardRespository.GetWeekendDriveSpotlight(bucket);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Enumerable.Empty<WeekendDriveSpotlightVM>();
+            }
+        }
+        public async Task<bool> UpsertWeekendDriveSpotlight(int irfId, string weekendBucket, string actionsTaken, bool remove, string userEmail)
+        {
+            try
+            {
+                return await _dashboardRespository.UpsertWeekendDriveSpotlight(irfId, weekendBucket, actionsTaken, remove, userEmail);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<bool> SyncWeekendDriveSpotlight(string weekendBucket, IEnumerable<int> irfIds, string userEmail)
+        {
+            try
+            {
+                return await _dashboardRespository.SyncWeekendDriveSpotlight(weekendBucket, irfIds, userEmail);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
         public async Task<ChannelVM> FetchChannelRequestsByid(int id)
         {
             try
