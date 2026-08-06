@@ -20,6 +20,7 @@
     var isClient = ViewBag.Client == "true";
     var clientSelect = ViewBag.ClientOptions as SelectList;
     var roleSelect = ViewBag.ClientRoleOptions as SelectList;
+    var supportPersonCounts = ViewBag.SupportPersonCounts as Dictionary<string, int>;
 }
 
 <link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
@@ -118,6 +119,38 @@
         align-items: center;
         justify-content: center;
     }
+    .rm-support-strip {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 12px;
+        font-size: 12.5px;
+        color: #64748b;
+    }
+    .rm-support-strip__lbl {
+        font-weight: 600;
+        color: #475569;
+        margin-right: 2px;
+    }
+    .rm-support-chip {
+        display: inline-flex;
+        align-items: center;
+        height: 26px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: #eef2f7;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1px solid #e2e8f0;
+    }
+    .rm-support-line {
+        display: block;
+        margin-top: 4px;
+        font-size: 11.5px;
+        color: #64748b;
+    }
     .rm-seg.is-active .rm-seg__n { background: #fff; color: #1c6fc4; }
 
     .rm-req-badge {
@@ -190,6 +223,26 @@
     .rm-toolbar #rmSearch {
         width: 100%;
         padding-left: 28px;
+    }
+
+    .rm-toolbar #rmSearch::placeholder {
+        color: #94a3b8;
+        opacity: 1;
+    }
+
+    .rm-toolbar #rmSearch::-webkit-input-placeholder {
+        color: #94a3b8;
+        opacity: 1;
+    }
+
+    .rm-toolbar #rmSearch::-moz-placeholder {
+        color: #94a3b8;
+        opacity: 1;
+    }
+
+    .rm-toolbar #rmSearch:-ms-input-placeholder {
+        color: #94a3b8;
+        opacity: 1;
     }
 
     .rm-toolbar input:focus,
@@ -750,9 +803,9 @@
                         </span>
                     </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                        <span class="fa fa-external-link" data-toggle="tooltip" data-placement="top" title="Public Requirement"
+                        <span class="fa fa-external-link" data-toggle="tooltip" data-placement="top" title="Submit Interview Request"
                               onclick="window.open('/Requirement/Externaluser', '_blank')">
-                            <font style="font-family:arial;"> Public Requirement</font>
+                            <font style="font-family:arial;">Submit Interview Request</font>
                         </span>
                     </button>
                 </div>
@@ -786,6 +839,17 @@
                 <a class="rm-seg @(activeSegment == "Verified" ? "is-active" : "")" href="@Url.Action("RequirementManagement", "DashBoard", new { segment = "Verified" })">Verified clients <span class="rm-seg__n">@verifiedCount</span></a>
                 <a class="rm-seg @(activeSegment == "External" ? "is-active" : "")" href="@Url.Action("RequirementManagement", "DashBoard", new { segment = "External" })">External-unverified <span class="rm-seg__n">@externalCount</span></a>
             </div>
+
+            @if (supportPersonCounts != null && supportPersonCounts.Count > 0)
+            {
+                <div class="rm-support-strip">
+                    <span class="rm-support-strip__lbl">Requests by Risebird Support Person:</span>
+                    @foreach (var kv in supportPersonCounts)
+                    {
+                        <span class="rm-support-chip">@kv.Key (@kv.Value)</span>
+                    }
+                </div>
+            }
 
             <div class="rm-card">
                 <div class="rm-toolbar">
@@ -895,6 +959,7 @@
                                 </td>
                                 <td data-search="@statusLabel">
                                     <span class="pill @(i.IsProcessed ? "p-proc" : "p-pend")">@statusLabel</span>
+                                    <span class="rm-support-line"><span>Support Person:</span> @(string.IsNullOrWhiteSpace(i.ChannelOwner) ? "-" : i.ChannelOwner)</span>
                                 </td>
                                 <td data-order="@createdIso"><span class="rm-date">@i.CreatedDate.ToString("dd MMM yyyy")</span></td>
                                 <td>
@@ -918,13 +983,6 @@
                                                 onclick="location.href='@Url.Action("EditRequirement","DashBoard", new { id = i.id })'">
                                             <i class="fa fa-pencil"></i>
                                         </button>
-                                        @if (!isClient)
-                                        {
-                                            <button type="button" class="rm-ico" title="Interviewers"
-                                                    onclick="location.href='@Url.Action("Interviewer", "DashBoard", new { id = i.id })'">
-                                                <i class="fa fa-users"></i>
-                                            </button>
-                                        }
                                     </div>
                                 </td>
                             </tr>

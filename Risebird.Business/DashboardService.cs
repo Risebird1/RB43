@@ -325,6 +325,72 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<IEnumerable<IRFAttentionRowVM>> GetIRFAttentionVolumeRows()
+        {
+            try
+            {
+                return await _dashboardRespository.GetIRFAttentionVolumeRows();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Enumerable.Empty<IRFAttentionRowVM>();
+            }
+        }
+
+        public async Task<IEnumerable<IRFAttentionSpotlightVM>> GetActiveIRFAttentionSpotlights()
+        {
+            try
+            {
+                return await _dashboardRespository.GetActiveIRFAttentionSpotlights();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Enumerable.Empty<IRFAttentionSpotlightVM>();
+            }
+        }
+
+        public async Task<IEnumerable<IRFAttentionRowVM>> GetIRFAttentionMetaByIds(IEnumerable<int> irfIds)
+        {
+            try
+            {
+                return await _dashboardRespository.GetIRFAttentionMetaByIds(irfIds);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Enumerable.Empty<IRFAttentionRowVM>();
+            }
+        }
+
+        public async Task<bool> PinIRFAttentionSpotlight(int irfId, string pinnedBy)
+        {
+            try
+            {
+                return await _dashboardRespository.PinIRFAttentionSpotlight(irfId, pinnedBy);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> UnpinIRFAttentionSpotlight(int irfId, string pinnedBy)
+        {
+            try
+            {
+                return await _dashboardRespository.UnpinIRFAttentionSpotlight(irfId, pinnedBy);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public async Task<ChannelVM> FetchChannelRequestsByid(int id)
         {
             try
