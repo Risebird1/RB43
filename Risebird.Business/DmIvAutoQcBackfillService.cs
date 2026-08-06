@@ -19,6 +19,12 @@ namespace Risebird.Business
         private readonly IAutoQcRemovalMonitorRepository _monitorRepository;
         private readonly IDmIvAutoQcFlagService _autoQcFlagService;
         private readonly IRiskCategoryService _riskCategoryService;
+        // Injected per Part A spec ("if ITrialJudgmentService is injectable, call it after risk writes").
+        // BackfillMissingTrialFlagsAsync(int? interviewId = null) is NOT IRF-scoped — calling it here would
+        // process trial-flag candidates across every IRF as a side effect of a single per-IRF risk refresh,
+        // so we deliberately skip that call (TrialFlagsInserted stays 0) and rely on
+        // SyncTrialFlagsVerdictFromRiskCategoryAsync (already IRF-window scoped) for verdict sync.
+        private readonly ITrialJudgmentService _trialJudgmentService;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly ILogger<DmIvAutoQcBackfillService> _log;
 
@@ -26,12 +32,14 @@ namespace Risebird.Business
             IAutoQcRemovalMonitorRepository monitorRepository,
             IDmIvAutoQcFlagService autoQcFlagService,
             IRiskCategoryService riskCategoryService,
+            ITrialJudgmentService trialJudgmentService,
             IApplicationErrorLogger applicationErrorLogger,
             ILogger<DmIvAutoQcBackfillService> log)
         {
             _monitorRepository = monitorRepository;
             _autoQcFlagService = autoQcFlagService;
             _riskCategoryService = riskCategoryService;
+            _trialJudgmentService = trialJudgmentService;
             _applicationErrorLogger = applicationErrorLogger;
             _log = log;
         }
@@ -39,20 +47,27 @@ namespace Risebird.Business
         public Task<AutoQcPerIrfBackfillPreviewVm> GetPerIrfBackfillPreviewAsync(int irfId, DateTime fromUtc, DateTime toUtc) =>
             _monitorRepository.GetPerIrfBackfillPreviewAsync(irfId, fromUtc, toUtc);
 
-        public Task<IReadOnlyList<IrfAuditDirectoryRowVm>> GetIrfAuditDirectoryAsync(DateTime fromIst, DateTime toIst) =>
-            _monitorRepository.GetIrfAuditDirectoryAsync(fromIst, toIst);
+        public Task<IReadOnlyList<IrfAuditDirectoryRowVm>> GetIrfAuditDirectoryAsync(DateTime fromIst, DateTime toIst, string ownerEmail = null, string profileName = null) =>
+            _monitorRepository.GetIrfAuditDirectoryAsync(fromIst, toIst, ownerEmail, profileName);
 
-        public Task<IReadOnlyList<IrfAuditInterviewerRiskRowVm>> GetIrfAuditInterviewerRiskBreakdownAsync(int irfId, DateTime fromIst, DateTime toIst) =>
+        public Task<(IReadOnlyList<IrfAuditInterviewerRiskRowVm> Active, IReadOnlyList<IrfAuditInterviewerRiskRowVm> Removed)> GetIrfAuditInterviewerRiskBreakdownAsync(int irfId, DateTime fromIst, DateTime toIst) =>
             _monitorRepository.GetIrfAuditInterviewerRiskBreakdownAsync(irfId, fromIst, toIst);
 
         public Task<IReadOnlyList<IrfAuditInterviewerRiskDetailVm>> GetIrfAuditInterviewerRiskInterviewDetailsAsync(int irfId, DateTime fromIst, DateTime toIst, int? transInterviewerId = null) =>
             _monitorRepository.GetIrfAuditInterviewerRiskInterviewDetailsAsync(irfId, fromIst, toIst, transInterviewerId);
 
+        public Task<IrfAuditWindowQualityVm> GetIrfAuditWindowQualityAsync(int irfId, DateTime fromIst, DateTime toIst) =>
+            _monitorRepository.GetIrfAuditWindowQualityAsync(irfId, fromIst, toIst);
+
+        public Task<string> GetIrfChannelOwnerEmailAsync(int irfId) =>
+            _monitorRepository.GetIrfChannelOwnerEmailAsync(irfId);
+
         public async Task<IrfAuditRiskBackfillResultVm> BackfillRiskCategoryForIrfAsync(int irfId, DateTime fromIst, DateTime toIst,
             bool ignoreMassFireGuard = false,
+            string executedBy = null,
             CancellationToken cancellationToken = default)
         {
-            var result = new IrfAuditRiskBackfillResultVm();
+            var result = new IrfAuditRiskBackfillResultVm { FromIst = fromIst.Date, ToIst = toIst.Date };
             if (irfId <= 0)
             {
                 result.Ok = false;
@@ -73,6 +88,8 @@ namespace Risebird.Business
             var candidates = (await _monitorRepository.GetRiskCategoryBackfillCandidatesByIrfAsync(
                 irfId, fromIst, toIst, maxInterviews + 1)).ToList();
 
+            result.Scanned = candidates.Count;
+
             if (candidates.Count == 0)
             {
                 result.Ok = true;
@@ -84,6 +101,10 @@ namespace Risebird.Business
 
             var interviewIds = candidates.Take(maxInterviews).ToList();
             var remainingHint = Math.Max(0, candidates.Count - interviewIds.Count);
+
+            // Pre-write snapshot of which candidates already have a RiskCategory row, so we can
+            // classify insert vs. update vs. delete after the write pass (dry-run vs. post-state).
+            var beforeIds = new HashSet<int>(await _monitorRepository.GetExistingRiskCategoryInterviewIdsAsync(interviewIds));
 
             // Dry-run evaluate all — mass-fire guard runs before any write.
             var dryRuns = new List<RiskCategory>(interviewIds.Count);
@@ -130,24 +151,63 @@ namespace Risebird.Business
             }
 
             var processed = 0;
+            var skipped = 0;
+            var skipReasons = new List<string>();
             foreach (var interviewId in interviewIds)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 var ok = await _riskCategoryService.AddUpdateRiskCategory(interviewId);
                 if (ok)
+                {
                     processed++;
+                }
+                else
+                {
+                    skipped++;
+                    if (skipReasons.Count < 10)
+                        skipReasons.Add($"interview {interviewId}: write failed");
+                }
             }
+
+            var afterIds = new HashSet<int>(await _monitorRepository.GetExistingRiskCategoryInterviewIdsAsync(interviewIds));
+            var inserted = afterIds.Count(id => !beforeIds.Contains(id));
+            var deleted = beforeIds.Count(id => !afterIds.Contains(id));
+            var updated = Math.Max(0, processed - inserted - deleted);
 
             result.Ok = true;
             result.Processed = processed;
             result.Remaining = remainingHint;
+            result.Inserted = inserted;
+            result.Updated = updated;
+            result.Deleted = deleted;
+            result.Skipped = skipped;
+            result.SkipReasons = skipReasons.Count > 0 ? string.Join("; ", skipReasons) : null;
 
             var synced = await _monitorRepository.SyncTrialFlagsVerdictFromRiskCategoryAsync();
+            result.SyncUpdates = synced;
+            // TrialFlagsInserted stays 0 — see the ITrialJudgmentService comment on the constructor field.
+            result.TrialFlagsInserted = 0;
+
+            var nowIst = DateTime.UtcNow.AddMinutes(330);
+            result.LastBackfillLabel = $"{nowIst:yyyy-MM-dd HH:mm} IST · {fromIst:dd MMM}–{toIst:dd MMM}";
+
             result.Message = remainingHint > 0
-                ? $"Refreshed risk for {processed} interview(s). Synced {synced} trial verdict(s). Click Refresh risk again for ~{remainingHint}+ more."
-                : $"Refreshed risk for {processed} interview(s). Synced {synced} trial verdict(s). Expand the IRF again to see updated P0–P5 counts.";
-            _log.LogInformation("RiskCategory backfill irf={IrfId}: processed={Processed} remainingHint={Remaining} trialSynced={Synced} ignoreMassFire={Ignore}",
-                irfId, processed, remainingHint, synced, ignoreMassFireGuard);
+                ? $"Scanned {result.Scanned}: {inserted} inserted, {updated} updated, {deleted} deleted, {skipped} skipped. Synced {synced} trial verdict(s). Click Refresh risk again for ~{remainingHint}+ more."
+                : $"Scanned {result.Scanned}: {inserted} inserted, {updated} updated, {deleted} deleted, {skipped} skipped. Synced {synced} trial verdict(s). Expand the IRF again to see updated P0–P5 counts.";
+
+            _log.LogInformation(
+                "RiskCategory backfill irf={IrfId}: scanned={Scanned} processed={Processed} inserted={Inserted} updated={Updated} deleted={Deleted} skipped={Skipped} remainingHint={Remaining} trialSynced={Synced} ignoreMassFire={Ignore}",
+                irfId, result.Scanned, processed, inserted, updated, deleted, skipped, remainingHint, synced, ignoreMassFireGuard);
+
+            try
+            {
+                await _monitorRepository.RecordRiskBackfillRunAsync(irfId, fromIst, toIst, result.Scanned, processed, synced, executedBy, result.Message);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
             return result;
         }
 
