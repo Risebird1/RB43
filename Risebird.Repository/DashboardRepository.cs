@@ -394,7 +394,7 @@ namespace Risebird.Repository
             try
             {
                 var query = @"Select cm.id,cm.Client,cm.EndClient,cm.Status,cm.IRFIDs,cm.PrimarySkill,cm.CreatedDate,cm.Title,
-count(cn.id) as InterviewerCount,cm.RequesterEmailid,cm.MAGId,cm.TemplateId,cm.Origin,
+count(cn.id) as InterviewerCount,cm.RequesterEmailid,cm.MAGId,cm.TemplateId,cm.Origin,cm.ChannelOwner,
 CASE
     WHEN EXISTS (
         SELECT 1
@@ -407,7 +407,7 @@ CASE
 END AS RequesterType
 from ChannelManagement cm
 left join ChannelMInterviewer cn on cm.id=cn.channelid
-group by cm.id,cm.Client,cm.EndClient,cm.Status,cm.IRFIDs,cm.PrimarySkill,cm.CreatedDate,cm.Title,cm.RequesterEmailid,cm.MAGId,cm.TemplateId,cm.RequesterType,cm.Origin";
+group by cm.id,cm.Client,cm.EndClient,cm.Status,cm.IRFIDs,cm.PrimarySkill,cm.CreatedDate,cm.Title,cm.RequesterEmailid,cm.MAGId,cm.TemplateId,cm.RequesterType,cm.Origin,cm.ChannelOwner";
                 var dynamicParameters = new DynamicParameters();
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -686,9 +686,9 @@ END";
                         var Status = string.IsNullOrWhiteSpace(request.Status) ? "Open" : request.Status;
 
                         string sqlInsertReport = @"INSERT INTO ChannelManagement
-(Client,ClientId,PrimarySkill,Location,JdLink,CreatedBy,CreatedDate,Status,RequesterEmailid,Title,SeniorityLevel,TurnAroundTimeindays,Comments,NumberofInterviews,PlanType,ClientType,Origin,RequesterType,Requester,RequesterMobile,EndClient,MAGId,TemplateId,IRFIDs)
+(Client,ClientId,PrimarySkill,Location,JdLink,CreatedBy,CreatedDate,Status,RequesterEmailid,Title,SeniorityLevel,TurnAroundTimeindays,Comments,NumberofInterviews,PlanType,ClientType,Origin,RequesterType,Requester,RequesterMobile,EndClient,MAGId,TemplateId,IRFIDs,ChannelOwner)
 Values
-(@Client,@ClientId,@PrimarySkill,@Location,@JdLink,@CreatedBy,@CreatedDate,@Status,@RequesterEmailid,@Title,@SeniorityLevel,@TurnAroundTimeindays,@Comments,@NumberofInterviews,@PlanType,@ClientType,@Origin,@RequesterType,@Requester,@RequesterMobile,@EndClient,@MAGId,@TemplateId,@IRFIDs);";
+(@Client,@ClientId,@PrimarySkill,@Location,@JdLink,@CreatedBy,@CreatedDate,@Status,@RequesterEmailid,@Title,@SeniorityLevel,@TurnAroundTimeindays,@Comments,@NumberofInterviews,@PlanType,@ClientType,@Origin,@RequesterType,@Requester,@RequesterMobile,@EndClient,@MAGId,@TemplateId,@IRFIDs,@ChannelOwner);";
                         var affectedRows = con.ExecuteAsync(sqlInsertReport, new
                         {
                             request.Client,
@@ -714,12 +714,13 @@ Values
                             request.EndClient,
                             MAGId = (int?)null,
                             TemplateId = (int?)null,
-                            IRFIDs = (string)null
+                            IRFIDs = (string)null,
+                            ChannelOwner = string.IsNullOrWhiteSpace(request.ChannelOwner) ? null : request.ChannelOwner.Trim()
                         }).Result;
                     }
                     else
                     {
-                        var updatequery = "Update ChannelManagement set Client=@Client,ClientId=@ClientId,PrimarySkill=@PrimarySkill,Location=@Location,ExpectedVolume=@ExpectedVolume,JdLink=@JdLink,WeekendDrive=@WeekendDrive,POGenerated=@POGenerated,IPSCreated=@IPSCreated,CalendlyLinkCreated=@CalendlyLinkCreated,CandidateSourcing=@CandidateSourcing,AdditionalComment=@AdditionalComment,HRCoordinator=@HRCoordinator,ProgramManager=@ProgramManager,IRFID=@IRFID,IRFIDs=@IRFIDs,Priority=@Priority,RequesterEmailid=@RequesterEmailid,Title=@Title,SeniorityLevel=@SeniorityLevel,TurnAroundTimeindays=@TurnAroundTimeindays,Comments=@Comments,NumberofInterviews=@NumberofInterviews,Origin=@Origin,EngagementType=@EngagementType,Stage=@Stage,ExpectedPrice=@ExpectedPrice,Expectedrevenue=@Expectedrevenue,PaymentStatus=@PaymentStatus,ConfirmationStatus=@ConfirmationStatus,PlanType=@PlanType,ClientType=@ClientType,Status=@Status where id=@id;";
+                        var updatequery = "Update ChannelManagement set Client=@Client,ClientId=@ClientId,PrimarySkill=@PrimarySkill,Location=@Location,ExpectedVolume=@ExpectedVolume,JdLink=@JdLink,WeekendDrive=@WeekendDrive,POGenerated=@POGenerated,IPSCreated=@IPSCreated,CalendlyLinkCreated=@CalendlyLinkCreated,CandidateSourcing=@CandidateSourcing,AdditionalComment=@AdditionalComment,HRCoordinator=@HRCoordinator,ProgramManager=@ProgramManager,IRFID=@IRFID,IRFIDs=@IRFIDs,Priority=@Priority,RequesterEmailid=@RequesterEmailid,Title=@Title,SeniorityLevel=@SeniorityLevel,TurnAroundTimeindays=@TurnAroundTimeindays,Comments=@Comments,NumberofInterviews=@NumberofInterviews,Origin=@Origin,EngagementType=@EngagementType,Stage=@Stage,ExpectedPrice=@ExpectedPrice,Expectedrevenue=@Expectedrevenue,PaymentStatus=@PaymentStatus,ConfirmationStatus=@ConfirmationStatus,PlanType=@PlanType,ClientType=@ClientType,Status=@Status,ChannelOwner=@ChannelOwner where id=@id;";
                         var updatedynamicParameters = new DynamicParameters();
                         updatedynamicParameters.Add("@id", request.id);
                         updatedynamicParameters.Add("@Client", request.Client);
@@ -755,6 +756,7 @@ Values
                         updatedynamicParameters.Add("@PlanType", request.PlanType > 0 ? request.PlanType : (int?)null);
                         updatedynamicParameters.Add("@ClientType", request.ClientType > 0 ? request.ClientType : (int?)null);
                         updatedynamicParameters.Add("@Status", "Processed");
+                        updatedynamicParameters.Add("@ChannelOwner", string.IsNullOrWhiteSpace(request.ChannelOwner) ? null : request.ChannelOwner.Trim());
                         var results = await con.QueryAsync(updatequery, updatedynamicParameters);
                     }
                     return "Success";
