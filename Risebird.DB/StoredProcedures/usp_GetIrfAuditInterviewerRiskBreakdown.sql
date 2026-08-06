@@ -39,7 +39,11 @@ BEGIN
             CAST(NULL AS VARCHAR(20)) AS QcMergeVerdict,
             CAST(NULL AS INT) AS QcMergeScore,
             CAST(0 AS INT) AS PaymentDeductionTotal,
-            CAST('' AS VARCHAR(500)) AS PaymentDeductionReasons
+            CAST('' AS VARCHAR(500)) AS PaymentDeductionReasons,
+            CAST('' AS VARCHAR(20)) AS ReviewState,
+            CAST(NULL AS VARCHAR(150)) AS ReviewedBy,
+            CAST(NULL AS DATETIME) AS ReviewedAt,
+            CAST(0 AS BIT) AS IsRemoved
         WHERE 1 = 0;
         RETURN;
     END
@@ -87,29 +91,35 @@ BEGIN
             CAST(NULL AS DECIMAL(10,4)) AS RiskRatio, CAST(NULL AS DECIMAL(10,4)) AS HighSevRatio,
             CAST(NULL AS INT) AS WorstSeverityInterviewId, CAST('' AS VARCHAR(20)) AS Recommendation,
             CAST(NULL AS VARCHAR(20)) AS QcMergeVerdict, CAST(NULL AS INT) AS QcMergeScore,
-            CAST(0 AS INT) AS PaymentDeductionTotal, CAST('' AS VARCHAR(500)) AS PaymentDeductionReasons
+            CAST(0 AS INT) AS PaymentDeductionTotal, CAST('' AS VARCHAR(500)) AS PaymentDeductionReasons,
+            CAST('' AS VARCHAR(20)) AS ReviewState, CAST(NULL AS VARCHAR(150)) AS ReviewedBy,
+            CAST(NULL AS DATETIME) AS ReviewedAt, CAST(0 AS BIT) AS IsRemoved
         WHERE 1 = 0;
         RETURN;
     END
 
-    /* ---- Active interviewers on this IRF ---- */
+    /* ---- Active interviewers on this IRF, PLUS inactive interviewers with a RiskAuditRemoval audit
+       entry (Part D "removed in this window" set — kept in the same #Active pool so the existing
+       mapping/aggregation logic below runs once for both; split by IsActiveInterviewer downstream). ---- */
     CREATE TABLE #Active (
         TransInterviewerId INT NOT NULL PRIMARY KEY,
         InterviewerId      INT NULL,
         UserId             INT NULL,
         IrfId              INT NOT NULL,
         InterviewerEmail   VARCHAR(200) NULL,
-        InterviewerCodedId VARCHAR(50) NULL
+        InterviewerCodedId VARCHAR(50) NULL,
+        IsActiveInterviewer BIT NOT NULL DEFAULT 1
     );
 
-    INSERT INTO #Active (TransInterviewerId, InterviewerId, UserId, IrfId, InterviewerEmail, InterviewerCodedId)
+    INSERT INTO #Active (TransInterviewerId, InterviewerId, UserId, IrfId, InterviewerEmail, InterviewerCodedId, IsActiveInterviewer)
     SELECT
         ti.id,
         ti.InterviewerId,
         COALESCE(ti.UserId, iv.UserId, ipr.UserId),
         ti.IRFId,
         NULLIF(LTRIM(RTRIM(COALESCE(ulTi.EmailId, ulIv.EmailId, ulIp.EmailId))), ''),
-        NULLIF(LTRIM(RTRIM(COALESCE(ipTi.NickName, ipr.NickName, ipUser.NickName))), '')
+        NULLIF(LTRIM(RTRIM(COALESCE(ipTi.NickName, ipr.NickName, ipUser.NickName))), ''),
+        ISNULL(ti.IsActive, 0)
     FROM dbo.TransInterviewer ti
     LEFT JOIN dbo.Interviewer iv ON iv.id = ti.InterviewerId
     LEFT JOIN dbo.InterviewerProfile ipr ON ipr.id = ti.InterviewerId
@@ -119,7 +129,13 @@ BEGIN
     LEFT JOIN dbo.InterviewerProfile ipTi ON ipTi.UserId = ti.UserId
     LEFT JOIN dbo.InterviewerProfile ipUser ON ipUser.UserId = COALESCE(ti.UserId, iv.UserId, ipr.UserId)
     WHERE ti.IRFId = @IrfId
-      AND ISNULL(ti.IsActive, 0) = 1;
+      AND (
+            ISNULL(ti.IsActive, 0) = 1
+         OR EXISTS (
+                SELECT 1 FROM dbo.TransInterviewerAuditLog l
+                WHERE l.TransInterviewerId = ti.id AND l.EventType = 'RiskAuditRemoval'
+            )
+          );
 
     CREATE INDEX IX_Active_UserId ON #Active(UserId);
     CREATE INDEX IX_Active_Email ON #Active(InterviewerEmail);
@@ -128,13 +144,15 @@ BEGIN
     /* ---- WINDOW completed interviews ---- */
     CREATE TABLE #Completed (
         InterviewId    INT NOT NULL PRIMARY KEY,
-        InterviewerRaw VARCHAR(200) NOT NULL
+        InterviewerRaw VARCHAR(200) NOT NULL,
+        InterviewDateUtc DATETIME NULL
     );
 
-    INSERT INTO #Completed (InterviewId, InterviewerRaw)
+    INSERT INTO #Completed (InterviewId, InterviewerRaw, InterviewDateUtc)
     SELECT
         im.id,
-        LTRIM(RTRIM(im.interviewer))
+        LTRIM(RTRIM(im.interviewer)),
+        im.interviewDate
     FROM dbo.InterviewMeetings im
     INNER JOIN dbo.InterviewComments ic ON ic.InterviewId = im.id
     WHERE im.IRFId = @IrfName
@@ -357,6 +375,28 @@ BEGIN
         FROM #Mapped m
         INNER JOIN dbo.PaymentSLADetails ps ON ps.Interviewid = m.InterviewId
         GROUP BY m.TransInterviewerId
+    ),
+    -- Part D: latest Keep/Remove decision per interviewer (TransInterviewerAuditLog).
+    LatestReview AS (
+        SELECT
+            l.TransInterviewerId, l.EventType, l.ChangedBy, l.ChangedAt,
+            ROW_NUMBER() OVER (PARTITION BY l.TransInterviewerId ORDER BY l.ChangedAt DESC, l.Id DESC) AS rn
+        FROM dbo.TransInterviewerAuditLog l
+        WHERE l.EventType IN ('RiskAuditRemoval', 'RiskAuditKept')
+    ),
+    ReviewPick AS (
+        SELECT TransInterviewerId, EventType, ChangedBy, ChangedAt
+        FROM LatestReview WHERE rn = 1
+    ),
+    -- NeedsReReview: a Keep exists but a bad (P0-P5) in-window interview happened after the Keep decision.
+    BadAfterKeep AS (
+        SELECT DISTINCT m.TransInterviewerId
+        FROM #Mapped m
+        INNER JOIN #Completed c ON c.InterviewId = m.InterviewId
+        INNER JOIN dbo.RiskCategory rc ON rc.InterviewId = m.InterviewId
+        INNER JOIN ReviewPick rp ON rp.TransInterviewerId = m.TransInterviewerId AND rp.EventType = 'RiskAuditKept'
+        WHERE UPPER(LTRIM(RTRIM(ISNULL(rc.Severity, '')))) LIKE 'P[0-5]'
+          AND c.InterviewDateUtc > rp.ChangedAt
     )
     SELECT
         a.TransInterviewerId,
@@ -397,13 +437,32 @@ BEGIN
         qm.QcMergeVerdict,
         qm.QcMergeScore,
         ISNULL(pa.PaymentDeductionTotal, 0) AS PaymentDeductionTotal,
-        ISNULL(pa.PaymentDeductionReasons, '') AS PaymentDeductionReasons
+        ISNULL(pa.PaymentDeductionReasons, '') AS PaymentDeductionReasons,
+        CASE
+            WHEN a.IsActiveInterviewer = 0 AND rp.EventType = 'RiskAuditRemoval' THEN 'Removed'
+            WHEN rp.EventType = 'RiskAuditKept' AND bak.TransInterviewerId IS NOT NULL THEN 'NeedsReReview'
+            WHEN rp.EventType = 'RiskAuditKept' THEN 'Kept'
+            WHEN ISNULL(ia.TotalCompleted, 0) >= @MinVolume
+                 AND (
+                        CAST(ISNULL(ia.RiskInterviews, 0) AS DECIMAL(18,4)) / NULLIF(ia.TotalCompleted, 0) >= @RemoveRatio
+                     OR CAST(ISNULL(ia.P0Count, 0) + ISNULL(ia.P1Count, 0) AS DECIMAL(18,4)) / NULLIF(ia.TotalCompleted, 0) >= @HighSevRatio_Rem
+                     OR CAST(ISNULL(ia.RiskInterviews, 0) AS DECIMAL(18,4)) / NULLIF(ia.TotalCompleted, 0) >= @WatchRatio
+                     OR ISNULL(ia.P0Count, 0) >= 1
+                     )
+                THEN 'PendingReview'
+            ELSE 'None'
+        END AS ReviewState,
+        rp.ChangedBy AS ReviewedBy,
+        rp.ChangedAt AS ReviewedAt,
+        CAST(CASE WHEN a.IsActiveInterviewer = 0 THEN 1 ELSE 0 END AS BIT) AS IsRemoved
     FROM #Active a
     LEFT JOIN InterviewAgg ia ON ia.TransInterviewerId = a.TransInterviewerId
     LEFT JOIN LifeAgg la ON la.TransInterviewerId = a.TransInterviewerId
     LEFT JOIN WorstInterview wi ON wi.TransInterviewerId = a.TransInterviewerId
     LEFT JOIN QcMerge qm ON qm.TransInterviewerId = a.TransInterviewerId
     LEFT JOIN PayAgg pa ON pa.TransInterviewerId = a.TransInterviewerId
+    LEFT JOIN ReviewPick rp ON rp.TransInterviewerId = a.TransInterviewerId
+    LEFT JOIN BadAfterKeep bak ON bak.TransInterviewerId = a.TransInterviewerId
     ORDER BY
         CASE
             WHEN ISNULL(ia.TotalCompleted, 0) < @MinVolume THEN 3

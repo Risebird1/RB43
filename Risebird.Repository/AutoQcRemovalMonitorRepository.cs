@@ -276,7 +276,7 @@ namespace Risebird.Repository
                 commandTimeout: 30);
         }
 
-        public async Task<IReadOnlyList<IrfAuditDirectoryRowVm>> GetIrfAuditDirectoryAsync(DateTime fromIst, DateTime toIst)
+        public async Task<IReadOnlyList<IrfAuditDirectoryRowVm>> GetIrfAuditDirectoryAsync(DateTime fromIst, DateTime toIst, string ownerEmail = null, string profileName = null)
         {
             try
             {
@@ -284,12 +284,22 @@ namespace Risebird.Repository
                     throw new InvalidOperationException("Database connection string is not configured.");
 
                 using var con = new SqlConnection(_connectionString);
-                var rows = await con.QueryAsync<IrfAuditDirectoryRowVm>(
+                var rows = (await con.QueryAsync<IrfAuditDirectoryRowVm>(
                     "usp_GetIrfAuditDirectory",
-                    new { FromIst = fromIst.Date, ToIst = toIst.Date },
+                    new
+                    {
+                        FromIst = fromIst.Date,
+                        ToIst = toIst.Date,
+                        OwnerEmail = string.IsNullOrWhiteSpace(ownerEmail) ? null : ownerEmail.Trim(),
+                        ProfileName = string.IsNullOrWhiteSpace(profileName) ? null : profileName.Trim()
+                    },
                     commandType: CommandType.StoredProcedure,
-                    commandTimeout: 120);
-                return rows?.ToList() ?? new List<IrfAuditDirectoryRowVm>();
+                    commandTimeout: 120))?.ToList() ?? new List<IrfAuditDirectoryRowVm>();
+
+                foreach (var row in rows)
+                    row.LastBackfillLabel = BuildLastBackfillLabel(row.LastBackfillAtUtc, row.LastRiskBackfillFromIst, row.LastRiskBackfillToIst);
+
+                return rows;
             }
             catch (Exception ex)
             {
@@ -300,7 +310,22 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<IReadOnlyList<IrfAuditInterviewerRiskRowVm>> GetIrfAuditInterviewerRiskBreakdownAsync(int irfId, DateTime fromIst, DateTime toIst)
+        private static string BuildLastBackfillLabel(DateTime? lastBackfillAtUtc, DateTime? riskFromIst, DateTime? riskToIst)
+        {
+            if (!lastBackfillAtUtc.HasValue)
+                return null;
+
+            var utc = DateTime.SpecifyKind(lastBackfillAtUtc.Value, DateTimeKind.Utc);
+            var ist = utc.AddMinutes(330);
+            var stamp = ist.ToString("yyyy-MM-dd HH:mm") + " IST";
+
+            if (riskFromIst.HasValue && riskToIst.HasValue)
+                return $"{stamp} · {riskFromIst.Value:dd MMM}–{riskToIst.Value:dd MMM}";
+
+            return stamp;
+        }
+
+        public async Task<(IReadOnlyList<IrfAuditInterviewerRiskRowVm> Active, IReadOnlyList<IrfAuditInterviewerRiskRowVm> Removed)> GetIrfAuditInterviewerRiskBreakdownAsync(int irfId, DateTime fromIst, DateTime toIst)
         {
             try
             {
@@ -313,12 +338,17 @@ namespace Risebird.Repository
                         "Stored procedure dbo.usp_GetIrfAuditInterviewerRiskBreakdown was not found. Deploy Risebird.DB/StoredProcedures/usp_GetIrfAuditInterviewerRiskBreakdown.sql.");
                 }
 
-                var rows = await con.QueryAsync<IrfAuditInterviewerRiskRowVm>(
+                var rows = (await con.QueryAsync<IrfAuditInterviewerRiskRowVm>(
                     "usp_GetIrfAuditInterviewerRiskBreakdown",
                     new { IrfId = irfId, FromIst = fromIst.Date, ToIst = toIst.Date },
                     commandType: CommandType.StoredProcedure,
-                    commandTimeout: 90);
-                return rows?.ToList() ?? new List<IrfAuditInterviewerRiskRowVm>();
+                    commandTimeout: 90))?.ToList() ?? new List<IrfAuditInterviewerRiskRowVm>();
+
+                // Single result set from the SP, partitioned here by IsRemoved (simpler than QueryMultiple —
+                // same #Active pool is scanned once server-side; see usp_GetIrfAuditInterviewerRiskBreakdown.sql).
+                var active = rows.Where(r => !r.IsRemoved).ToList();
+                var removed = rows.Where(r => r.IsRemoved).ToList();
+                return (active, removed);
             }
             catch (Exception ex)
             {
@@ -405,6 +435,121 @@ namespace Risebird.Repository
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return 0;
+            }
+        }
+
+        public async Task<IReadOnlyList<int>> GetExistingRiskCategoryInterviewIdsAsync(IEnumerable<int> interviewIds)
+        {
+            var ids = interviewIds?.Distinct().ToList() ?? new List<int>();
+            if (ids.Count == 0)
+                return Array.Empty<int>();
+
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var rows = await con.QueryAsync<int>(
+                    "SELECT InterviewId FROM dbo.RiskCategory WHERE InterviewId IN @InterviewIds",
+                    new { InterviewIds = ids },
+                    commandTimeout: 60);
+                return rows?.ToList() ?? new List<int>();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return Array.Empty<int>();
+            }
+        }
+
+        private const string EnsureIrfAuditRiskBackfillRunSql = @"
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'IrfAuditRiskBackfillRun')
+BEGIN
+    CREATE TABLE [dbo].[IrfAuditRiskBackfillRun] (
+        [Id]              INT            IDENTITY(1,1) NOT NULL,
+        [IrfId]           INT            NOT NULL,
+        [ExecutedAtUtc]   DATETIME2      NOT NULL DEFAULT SYSUTCDATETIME(),
+        [FromIst]         DATE           NOT NULL,
+        [ToIst]           DATE           NOT NULL,
+        [Scanned]         INT            NOT NULL DEFAULT 0,
+        [Processed]       INT            NOT NULL DEFAULT 0,
+        [SyncUpdates]     INT            NOT NULL DEFAULT 0,
+        [ExecutedBy]      VARCHAR(150)   NOT NULL,
+        [Message]         VARCHAR(500)   NULL,
+        CONSTRAINT [PK_IrfAuditRiskBackfillRun] PRIMARY KEY CLUSTERED ([Id] ASC)
+    );
+
+    CREATE NONCLUSTERED INDEX [IX_IrfAuditRiskBackfillRun_IrfId]
+        ON [dbo].[IrfAuditRiskBackfillRun] ([IrfId] ASC, [ExecutedAtUtc] DESC);
+END";
+
+        public async Task RecordRiskBackfillRunAsync(int irfId, DateTime fromIst, DateTime toIst, int scanned, int processed, int syncUpdates, string executedBy, string message)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                await con.ExecuteAsync(EnsureIrfAuditRiskBackfillRunSql, commandTimeout: 30);
+                await con.ExecuteAsync(
+                    @"INSERT INTO dbo.IrfAuditRiskBackfillRun (IrfId, ExecutedAtUtc, FromIst, ToIst, Scanned, Processed, SyncUpdates, ExecutedBy, Message)
+                      VALUES (@IrfId, SYSUTCDATETIME(), @FromIst, @ToIst, @Scanned, @Processed, @SyncUpdates, @ExecutedBy, @Message)",
+                    new
+                    {
+                        IrfId = irfId,
+                        FromIst = fromIst.Date,
+                        ToIst = toIst.Date,
+                        Scanned = scanned,
+                        Processed = processed,
+                        SyncUpdates = syncUpdates,
+                        ExecutedBy = string.IsNullOrWhiteSpace(executedBy) ? "System" : executedBy.Trim(),
+                        Message = string.IsNullOrWhiteSpace(message) ? null : (message.Length > 500 ? message.Substring(0, 500) : message)
+                    },
+                    commandTimeout: 30);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        public async Task<string> GetIrfChannelOwnerEmailAsync(int irfId)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var email = await con.QueryFirstOrDefaultAsync<string>(
+                    @"SELECT NULLIF(LTRIM(RTRIM(ul.EmailId)), '')
+                      FROM dbo.IRF irf
+                      LEFT JOIN dbo.UserList ul ON ul.id = irf.RisebirdHr
+                      WHERE irf.id = @IrfId",
+                    new { IrfId = irfId },
+                    commandTimeout: 30);
+                return email;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<IrfAuditWindowQualityVm> GetIrfAuditWindowQualityAsync(int irfId, DateTime fromIst, DateTime toIst)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var exists = await con.ExecuteScalarAsync<int>(
+                    "SELECT CASE WHEN OBJECT_ID(N'dbo.usp_GetIrfAuditWindowQuality', N'P') IS NOT NULL THEN 1 ELSE 0 END");
+                if (exists == 0)
+                    return null;
+
+                return await con.QueryFirstOrDefaultAsync<IrfAuditWindowQualityVm>(
+                    "usp_GetIrfAuditWindowQuality",
+                    new { IrfId = irfId, FromIst = fromIst.Date, ToIst = toIst.Date },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 60);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }
