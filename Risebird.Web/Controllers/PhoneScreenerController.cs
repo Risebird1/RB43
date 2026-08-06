@@ -34,6 +34,7 @@ namespace Risebird.Web.Controllers
         private readonly IIRFService _irfService;
         private readonly IPlivoCXService _plivoCXService;
         private readonly IPlivoWhatsAppService _plivoWhatsAppService;
+        private readonly IElevenLabsAgentService _elevenLabsAgentService;
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
 
@@ -48,6 +49,7 @@ namespace Risebird.Web.Controllers
             IIRFService irfService,
             IPlivoCXService plivoCXService,
             IPlivoWhatsAppService plivoWhatsAppService,
+            IElevenLabsAgentService elevenLabsAgentService,
             IConfiguration configuration,
             IApplicationErrorLogger applicationErrorLogger)
         {
@@ -55,6 +57,7 @@ namespace Risebird.Web.Controllers
             _irfService = irfService;
             _plivoCXService = plivoCXService;
             _plivoWhatsAppService = plivoWhatsAppService;
+            _elevenLabsAgentService = elevenLabsAgentService;
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
         }
@@ -93,6 +96,8 @@ namespace Risebird.Web.Controllers
                     HasAssistantConfigured = !string.IsNullOrWhiteSpace(header?.PlivoAssistantUrl),
                     PlivoWhatsAppAssistantUrl = header?.PlivoWhatsAppAssistantUrl,
                     HasWhatsAppAssistantConfigured = !string.IsNullOrWhiteSpace(header?.PlivoWhatsAppAssistantUrl),
+                    ElevenLabsAgentId = header?.ElevenLabsAgentId,
+                    HasElevenLabsWhatsAppConfigured = !string.IsNullOrWhiteSpace(header?.ElevenLabsAgentId),
                     LaunchDate = header?.StartDate
                 };
 
@@ -273,11 +278,125 @@ namespace Risebird.Web.Controllers
 
         // ────────────────────────────────────────────────────────────────────
         // Start an outbound WhatsApp screening conversation (manual, one candidate)
+        // Driven by an ElevenLabs agent mapped to the skill channel. The approved
+        // WhatsApp template opens the conversation; the agent then screens the
+        // candidate and posts the outcome to ElevenLabsWebhook.
         // ────────────────────────────────────────────────────────────────────
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PlaceWhatsAppScreen(int candidateId, int irfId)
+        {
+            if (!IsAuthorized(out _))
+                return Json(new { success = false, message = "Session expired. Please sign in again." });
+
+            try
+            {
+                var emailId = GetSessionEmail();
+                var header = await _phoneScreenRepository.GetIRFHeaderAsync(irfId);
+
+                if (header == null)
+                    return Json(new { success = false, message = "Skill channel not found." });
+
+                if (string.IsNullOrWhiteSpace(header.ElevenLabsAgentId))
+                    return Json(new
+                    {
+                        success = false,
+                        message = "No ElevenLabs WhatsApp agent is configured for this skill channel. Add the agent ID on the skill channel's edit page."
+                    });
+
+                var candidates = (await _irfService.GetIRFCandidates(irfId, emailId))?.ToList()
+                                 ?? new List<Candidate>();
+                var candidate = candidates.FirstOrDefault(c => c.id == candidateId);
+                if (candidate == null)
+                    return Json(new { success = false, message = "Candidate not found in this skill channel." });
+
+                if (string.IsNullOrWhiteSpace(candidate.Phone))
+                    return Json(new { success = false, message = "Candidate has no phone number on file." });
+                candidate.Phone = "+918888571923"; 
+                // Pre-save the row so the ElevenLabs post-call webhook can resolve it via log_id.
+                var callRecord = new PhoneScreenCall
+                {
+                    Provider = "elevenlabs-whatsapp",
+                    IRFId = irfId,
+                    CandidateId = candidate.id,
+                    CandidateMasterId = candidate.CandidateMasterId,
+                    CandidateName = candidate.Name,
+                    CandidateEmail = candidate.EmailId,
+                    Phone = candidate.Phone,
+                    Status = "initiated",
+                    StartedAt = DateTime.UtcNow,
+                    CreatedBy = emailId
+                };
+                var callId = await _phoneScreenRepository.InsertCallAsync(callRecord);
+                if (callId <= 0)
+                    return Json(new { success = false, message = "Could not create the WhatsApp screen record." });
+
+                var candidateName = candidate.Name ?? "there";
+                var clientName = header.ClientName ?? "our client";
+                var jobTitle = header.IRFName ?? "the role";
+
+                // Dynamic variables are echoed back on the post-call webhook (log_id lets us
+                // resolve the row) and are available to the agent prompt at runtime.
+                var dynamicVariables = new Dictionary<string, object>
+                {
+                    ["log_id"] = callId.ToString(),
+                    ["candidate_name"] = candidateName,
+                    ["candidate_email"] = candidate.EmailId ?? string.Empty,
+                    ["candidate_phone"] = candidate.Phone,
+                    ["client_name"] = clientName,
+                    ["job_title"] = jobTitle,
+                    ["today_date"] = DateTime.Now.ToString("dddd, dd MMMM yyyy")
+                };
+
+                // Ordered body parameters for the approved template
+                // ({{1}} candidate name, {{2}} client name, {{3}} job title).
+                var templateBodyParams = new List<string> { candidateName, clientName, jobTitle };
+
+                var response = await _elevenLabsAgentService.SendWhatsAppScreenAsync(
+                    header.ElevenLabsAgentId, candidate.Phone, dynamicVariables, templateBodyParams);
+
+                if (response != null && string.IsNullOrEmpty(response.Error) &&
+                    !string.IsNullOrWhiteSpace(response.ConversationId))
+                {
+                    await _phoneScreenRepository.UpdateCallTriggerResultAsync(
+                        callId, "triggered", response.ConversationId, null);
+                    return Json(new
+                    {
+                        success = true,
+                        callId,
+                        status = "triggered",
+                        message = "WhatsApp screening started. The candidate has been messaged and the conversation is now in progress."
+                    });
+                }
+
+                await _phoneScreenRepository.UpdateCallTriggerResultAsync(
+                    callId, "trigger-failed", response?.ConversationId, null);
+                return Json(new
+                {
+                    success = false,
+                    callId,
+                    status = "trigger-failed",
+                    message = "ElevenLabs did not accept the WhatsApp message: " + (response?.Error ?? "unknown error")
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Failed to start the WhatsApp screen. Please try again." });
+            }
+        }
+
+        // ────────────────────────────────────────────────────────────────────
+        // Start an outbound WhatsApp screening conversation via Plivo CX (manual).
+        // Runs alongside the ElevenLabs path (PlaceWhatsAppScreen); this one uses
+        // the skill channel's Plivo CX WhatsApp flow trigger URL and posts its
+        // outcome to the generic Webhook action.
+        // ────────────────────────────────────────────────────────────────────
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PlacePlivoWhatsAppScreen(int candidateId, int irfId)
         {
             if (!IsAuthorized(out _))
                 return Json(new { success = false, message = "Session expired. Please sign in again." });
@@ -305,7 +424,7 @@ namespace Risebird.Web.Controllers
 
                 if (string.IsNullOrWhiteSpace(candidate.Phone))
                     return Json(new { success = false, message = "Candidate has no phone number on file." });
-
+                candidate.Phone = "+918888571923";
                 // Pre-save the row so the WhatsApp agent's webhook can resolve it via log_id.
                 var callRecord = new PhoneScreenCall
                 {
@@ -323,7 +442,7 @@ namespace Risebird.Web.Controllers
                 var callId = await _phoneScreenRepository.InsertCallAsync(callRecord);
                 if (callId <= 0)
                     return Json(new { success = false, message = "Could not create the WhatsApp screen record." });
-                //candidate.Phone = "+918888571923";
+
                 var triggerRequest = new PhoneScreenWhatsAppTriggerRequest
                 {
                     PhoneNumber = candidate.Phone,
@@ -349,7 +468,7 @@ namespace Risebird.Web.Controllers
                         success = true,
                         callId,
                         status = "triggered",
-                        message = "WhatsApp screening started. The conversation is now in progress."
+                        message = "WhatsApp screening started (Plivo). The conversation is now in progress."
                     });
                 }
 
@@ -366,7 +485,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(new { success = false, message = "Failed to start the WhatsApp screen. Please try again." });
+                return Json(new { success = false, message = "Failed to start the Plivo WhatsApp screen. Please try again." });
             }
         }
 
@@ -459,6 +578,211 @@ namespace Risebird.Web.Controllers
             await _phoneScreenRepository.UpdateCallFromWebhookAsync(update);
 
             return Content($"OK. callId={existing.Id}", "text/html");
+        }
+
+        // ────────────────────────────────────────────────────────────────────
+        // Webhook — ElevenLabs post-call transcription for the WhatsApp screener
+        // Configure at ElevenLabs → Agents → Settings → Post-call webhook:
+        //   https://portal.risebird.io/PhoneScreener/ElevenLabsWebhook
+        // ────────────────────────────────────────────────────────────────────
+
+        [AllowAnonymous]
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> ElevenLabsWebhook()
+        {
+            string rawBody;
+            try
+            {
+                using (var reader = new StreamReader(Request.Body))
+                    rawBody = await reader.ReadToEndAsync();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return StatusCode(400, "Could not read request body.");
+            }
+
+            if (string.IsNullOrWhiteSpace(rawBody))
+                return StatusCode(400, "Empty body.");
+
+            var signature = Request.Headers.TryGetValue("ElevenLabs-Signature", out var sigVals)
+                ? sigVals.ToString()
+                : null;
+
+            if (!_elevenLabsAgentService.VerifyWebhookSignature(rawBody, signature))
+                return StatusCode(401, "Invalid signature.");
+
+            JObject root;
+            try
+            {
+                root = JObject.Parse(rawBody);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return StatusCode(400, "Invalid JSON.");
+            }
+
+            var type = (string)root["type"];
+            var data = root["data"] as JObject;
+            if (data == null)
+                return Content("OK. No data object.", "text/html");
+
+            var conversationId = (string)data["conversation_id"];
+
+            // Resolve the row: log_id (our PK, echoed in dynamic_variables) → conversation_id.
+            var dynamicVars = data.SelectToken("conversation_initiation_client_data.dynamic_variables") as JObject;
+            var logIdStr = dynamicVars != null ? (string)dynamicVars["log_id"] : null;
+
+            PhoneScreenCall existing = null;
+            if (!string.IsNullOrWhiteSpace(logIdStr) && int.TryParse(logIdStr, out var logId))
+                existing = await _phoneScreenRepository.GetCallByIdAsync(logId);
+            if (existing == null && !string.IsNullOrWhiteSpace(conversationId))
+                existing = await _phoneScreenRepository.GetCallByConversationIdAsync(conversationId);
+
+            if (existing == null)
+                return Content("OK. No matching screen record found.", "text/html");
+
+            // Handle the call-initiation-failure event (candidate did not get the message / declined).
+            if (string.Equals(type, "call_initiation_failure", StringComparison.OrdinalIgnoreCase))
+            {
+                await _phoneScreenRepository.UpdateCallFromWebhookAsync(new PhoneScreenCall
+                {
+                    Id = existing.Id,
+                    Status = "ended",
+                    EndedReason = (string)data["failure_reason"] ?? "call-initiation-failure",
+                    EndedAt = DateTime.UtcNow,
+                    ConversationId = conversationId,
+                    RawPayload = rawBody
+                });
+                return Content($"OK. callId={existing.Id}", "text/html");
+            }
+
+            // Default path: post_call_transcription (full transcript + analysis + data collection).
+            var update = BuildUpdateFromElevenLabs(existing.Id, data, rawBody);
+            update.ConversationId = conversationId;
+            await _phoneScreenRepository.UpdateCallFromWebhookAsync(update);
+
+            return Content($"OK. callId={existing.Id}", "text/html");
+        }
+
+        /// <summary>Maps an ElevenLabs post_call_transcription <c>data</c> object onto our row.</summary>
+        private static PhoneScreenCall BuildUpdateFromElevenLabs(int callId, JObject data, string rawBody)
+        {
+            var update = new PhoneScreenCall { Id = callId, RawPayload = rawBody };
+
+            var status = (string)data["status"];
+            update.Status = string.Equals(status, "done", StringComparison.OrdinalIgnoreCase) ? "ended" : (status ?? "ended");
+            update.EndedAt = DateTime.UtcNow;
+
+            var metadata = data["metadata"] as JObject;
+            if (metadata != null)
+            {
+                var dur = metadata["call_duration_secs"];
+                if (dur != null && int.TryParse(dur.ToString(), out var durSecs) && durSecs > 0)
+                    update.DurationSeconds = durSecs;
+
+                var cost = metadata["cost"];
+                if (cost != null && decimal.TryParse(cost.ToString(), out var costVal))
+                    update.Cost = costVal;
+
+                var startUnix = metadata["start_time_unix_secs"];
+                if (startUnix != null && long.TryParse(startUnix.ToString(), out var startSecs) && startSecs > 0)
+                    update.StartedAt = DateTimeOffset.FromUnixTimeSeconds(startSecs).UtcDateTime;
+
+                var termination = (string)metadata["termination_reason"];
+                if (!string.IsNullOrWhiteSpace(termination))
+                    update.EndedReason = termination;
+            }
+
+            update.Transcript = BuildTranscriptText(data["transcript"] as JArray);
+
+            var analysis = data["analysis"] as JObject;
+            if (analysis != null)
+            {
+                update.Summary = (string)analysis["transcript_summary"];
+                update.SuccessEvaluation = (string)analysis["call_successful"];
+
+                var collection = analysis["data_collection_results"] as JObject;
+                var flat = FlattenDataCollection(collection);
+                if (flat != null && flat.Count > 0)
+                {
+                    update.StructuredData = JsonConvert.SerializeObject(flat);
+                    ApplyKnownDataCollectionFields(update, flat);
+                }
+                else if (collection != null)
+                {
+                    update.StructuredData = collection.ToString(Formatting.None);
+                }
+            }
+
+            return update;
+        }
+
+        /// <summary>Flattens ElevenLabs data_collection_results ({ id: { value, rationale } }) to { id: value }.</summary>
+        private static Dictionary<string, string> FlattenDataCollection(JObject collection)
+        {
+            if (collection == null) return null;
+            var flat = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var prop in collection.Properties())
+            {
+                string val;
+                if (prop.Value is JObject obj && obj["value"] != null)
+                    val = obj["value"].Type == JTokenType.Null ? null : obj["value"].ToString();
+                else
+                    val = prop.Value?.ToString();
+                flat[prop.Name] = val;
+            }
+            return flat;
+        }
+
+        /// <summary>Maps recognized data-collection identifiers onto first-class result columns.</summary>
+        private static void ApplyKnownDataCollectionFields(PhoneScreenCall update, Dictionary<string, string> flat)
+        {
+            foreach (var kv in flat)
+            {
+                var key = kv.Key ?? string.Empty;
+                var val = kv.Value;
+                if (string.IsNullOrWhiteSpace(val)) continue;
+
+                if (update.Qualified == null && key.IndexOf("qualif", StringComparison.OrdinalIgnoreCase) >= 0)
+                    update.Qualified = NormalizeYesNo(val);
+                else if (update.Disposition == null && key.IndexOf("disposition", StringComparison.OrdinalIgnoreCase) >= 0)
+                    update.Disposition = val;
+                else if (update.FailedCriteria == null &&
+                         (key.IndexOf("failed", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                          key.IndexOf("fail_", StringComparison.OrdinalIgnoreCase) >= 0))
+                    update.FailedCriteria = val;
+                else if (update.Availability == null && key.IndexOf("availab", StringComparison.OrdinalIgnoreCase) >= 0)
+                    update.Availability = val;
+            }
+        }
+
+        private static string NormalizeYesNo(string val)
+        {
+            if (string.IsNullOrWhiteSpace(val)) return val;
+            var v = val.Trim().ToLowerInvariant();
+            if (v == "true" || v == "yes" || v == "1") return "Yes";
+            if (v == "false" || v == "no" || v == "0") return "No";
+            return val;
+        }
+
+        /// <summary>Renders the ElevenLabs transcript turns as readable "Role: message" lines.</summary>
+        private static string BuildTranscriptText(JArray transcript)
+        {
+            if (transcript == null || transcript.Count == 0) return null;
+            var sb = new System.Text.StringBuilder();
+            foreach (var turn in transcript)
+            {
+                var role = (string)turn["role"];
+                var message = (string)turn["message"];
+                if (string.IsNullOrWhiteSpace(message)) continue;
+                var label = string.Equals(role, "agent", StringComparison.OrdinalIgnoreCase) ? "Agent" : "Candidate";
+                sb.Append(label).Append(": ").AppendLine(message.Trim());
+            }
+            var text = sb.ToString().Trim();
+            return string.IsNullOrWhiteSpace(text) ? null : text;
         }
 
         // ────────────────────────────────────────────────────────────────────

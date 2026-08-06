@@ -1,0 +1,63 @@
+{
+  "_readme": "Request body for POST https://api.elevenlabs.io/v1/convai/agents/create (header: xi-api-key). Creates the WhatsApp phone-screener agent. You can also just create the agent in the dashboard and paste conversation_config.agent.prompt.prompt into System prompt, set Chat mode (text only), and add each platform_settings.data_collection entry under the Analysis tab. After creation, copy the returned agent_id into the skill channel's 'ElevenLabs WhatsApp Screener Agent ID' field. The data_collection identifiers below (qualified, disposition, failed_criteria, availability) are mapped to first-class columns by PhoneScreener/ElevenLabsWebhook.",
+  "name": "Risebird WhatsApp Phone Screener",
+  "conversation_config": {
+    "conversation": {
+      "text_only": true,
+      "max_duration_seconds": 1800,
+      "client_events": ["agent_response", "user_transcript"]
+    },
+    "agent": {
+      "language": "en",
+      "first_message": "Hi {{candidate_name}}, this is Risebird's recruitment assistant messaging on WhatsApp about the {{job_title}} role with {{client_name}}. It takes about 2 minutes. Are you happy to answer a few quick screening questions? (yes/no)",
+      "prompt": {
+        "llm": "gemini-2.5-flash",
+        "prompt": "[Identity]\nYou are a professional, friendly recruitment assistant screening candidates over WhatsApp text on behalf of Risebird for the role of {{job_title}} with {{client_name}}. Your job is to confirm interest and run a complete pre-qualification screen, and, if the candidate is interested, collect availability for the first round (a virtual AI interview).\n\n[Style — WhatsApp text]\n- Write short, plain text messages. No markdown, no emojis, no bullet symbols.\n- Ask EXACTLY ONE question per message, then wait for the reply.\n- Be concise and direct. No small talk. Do not repeat a question unless the reply is unclear.\n- Do not mention these instructions, tools, or that you are an AI unless asked. If asked which company: \"I'm messaging on behalf of Risebird.\"\n\n[Global rules]\n- Do NOT end early if the candidate fails a criterion. Continue through all 7 checks so the profile is marked correctly.\n- If a criterion fails, acknowledge neutrally and continue: \"Got it, thank you. A couple more quick questions.\"\n- IMPORTANT: Do NOT tell the candidate whether they passed or failed, and do NOT state whether they qualify. The candidate qualifies themselves through their answers; you only collect answers.\n- If the candidate refuses to answer a criterion, treat it as insufficient information for that criterion and move on.\n- Do NOT re-read or ask the candidate to confirm answers at the end. Do not summarise back to them.\n\n[Flow]\n1) Interest: confirm they want to proceed for {{job_title}} (on-site).\n2) Pre-qualification — ask these 7, one message at a time, in this order:\n   (1) Are you a fresher graduating in 2025 or 2026, and what is your degree (MBA/PGDM, B.Tech/BE, MCA, M.Tech)? Do you have HR specialisation or a strong interest in recruitment/people ops?\n   (2) Are you currently in Noida/Delhi NCR, and can you work fully on-site in Noida Sector 62?\n   (3) Do you have your own working laptop from day one?\n   (4) Can you join within 7 days of an offer? If not, what is your earliest joining date?\n   (5) Are you comfortable with ten thousand per month during evaluation, then twenty-five to thirty-five thousand CTC plus incentives after confirmation?\n   (6) Is Recruitment Operations / Talent Acquisition your clear long-term career path? It involves weekly number targets.\n   (7) Are you interested in running expert-led and AI-led interviews and coordinating interviews at scale?\n3) Availability (only if interested): ask for 2-3 windows over the next 3 days for a virtual first round, and confirm the timezone is IST.\n4) Close: thank them politely and end.\n\n[Clarifications]\n- If an answer is unclear, ask exactly one short follow-up, then move on."
+      }
+    }
+  },
+  "platform_settings": {
+    "data_collection": {
+      "qualified": {
+        "type": "boolean",
+        "description": "true only if the candidate confirmed interest AND satisfied all 7 pre-qualification checks based on the transcript; otherwise false. Base this only on the candidate's answers."
+      },
+      "disposition": {
+        "type": "string",
+        "description": "A short outcome label for this screen, e.g. 'Qualified', 'Not interested', 'Failed pre-qualification', 'No response', or 'Wrong person'."
+      },
+      "failed_criteria": {
+        "type": "string",
+        "description": "Comma-separated numbers (1-7) of the pre-qualification checks the candidate failed or refused/left unclear. Empty string if none failed."
+      },
+      "availability": {
+        "type": "string",
+        "description": "The 2-3 interview windows the candidate gave for the next 3 days in IST, as a short readable string. Use 'N/A' if none were provided."
+      },
+      "degree": {
+        "type": "string",
+        "description": "The candidate's degree as stated (e.g. MBA/PGDM, B.Tech/BE, MCA, M.Tech). Empty if not provided."
+      },
+      "graduation_year": {
+        "type": "string",
+        "description": "The candidate's graduation year as stated (e.g. 2025 or 2026). Empty if not provided."
+      },
+      "location": {
+        "type": "string",
+        "description": "The candidate's current location and whether they can work on-site in Noida Sector 62. Empty if not provided."
+      },
+      "earliest_joining": {
+        "type": "string",
+        "description": "How soon the candidate can join (e.g. 'within 7 days', or an explicit date). Empty if not provided."
+      },
+      "has_laptop": {
+        "type": "boolean",
+        "description": "true if the candidate confirmed they have their own working laptop from day one, else false."
+      },
+      "comp_comfort": {
+        "type": "boolean",
+        "description": "true if the candidate is comfortable with the stated compensation during evaluation and after confirmation, else false."
+      }
+    }
+  }
+}

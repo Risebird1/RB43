@@ -352,6 +352,17 @@
                                                     </div>
                                                 </div>
 
+                                                <div class="col-md-8 col-sm-8 pull-left">
+                                                    <div class="form-group">
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.ElevenLabsAgentId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        </div>
+                                                        @Html.EditorFor(model => model.ElevenLabsAgentId, new { htmlAttributes = new { @class = "form-control text-box single-line", @placeholder = "agent_xxxxxxxxxxxxxxxxxxxxxxxxxx" } })
+                                                        @Html.ValidationMessageFor(model => model.ElevenLabsAgentId, "", new { @id = "error_ElevenLabsAgentId", @class = "text-danger" })
+                                                        <small class="text-muted">ElevenLabs WhatsApp Phone Screener agent ID. Candidates in this skill channel are screened over WhatsApp by this agent.</small>
+                                                    </div>
+                                                </div>
+
                                                 <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="mb-0">
                                                         @Html.CheckBoxFor(model => model.showChatBox, new { @id = "showChatBox" })
