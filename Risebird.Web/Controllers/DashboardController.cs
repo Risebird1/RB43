@@ -194,9 +194,36 @@ namespace Risebird.Web.Controllers
                 || profileName == "Quality Controller"
                 || profileName == "SupportAdmin"
                 || profileName == "SeniorHR"
+                || profileName == "HR"
                 || profileName == "InterviewerManagement"
                 || profileName == "SeniorInterviewerManagement"
                 || profileName == "TechSupport";
+        }
+
+        /// <summary>HR/SeniorHR can access IRF Audit but only for IRFs they own as Channel Owner (IRF.RisebirdHr).</summary>
+        private static bool IsIrfAuditOwnerProfile(string profileName) =>
+            profileName == "HR" || profileName == "SeniorHR";
+
+        /// <summary>Ops profiles that can act on any IRF in IRF Audit without an ownership check.</summary>
+        private static bool IsIrfAuditFullAccessProfile(string profileName) =>
+            IsAutoQcOpsProfile(profileName) && !IsIrfAuditOwnerProfile(profileName);
+
+        /// <summary>
+        /// Gate for Keep/Remove actions on IRF Audit: ops profiles act on any IRF; HR/SeniorHR must own the IRF
+        /// (IRF.RisebirdHr → UserList.EmailId matches the signed-in session email).
+        /// </summary>
+        private async Task<bool> CanActOnIrfAsync(int irfId, string email, string profileName)
+        {
+            if (IsIrfAuditFullAccessProfile(profileName))
+                return true;
+            if (!IsIrfAuditOwnerProfile(profileName))
+                return false;
+            if (irfId <= 0 || string.IsNullOrWhiteSpace(email))
+                return false;
+
+            var ownerEmail = await _autoQcBackfillService.GetIrfChannelOwnerEmailAsync(irfId);
+            return !string.IsNullOrWhiteSpace(ownerEmail)
+                && string.Equals(ownerEmail.Trim(), email.Trim(), StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>Date picker values are IST calendar dates; aligns with QCDoneOn storage (IST wall clock).</summary>
@@ -8419,11 +8446,14 @@ NEVER:
                     return RedirectToAction("SignOut", "Session");
 
                 var (fromIst, toIst, activePreset) = NormalizeDirectoryIstDateRange(from, to, preset);
+                var sessionEmail = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? "";
 
                 IReadOnlyList<IrfAuditDirectoryRowVm> directory;
                 try
                 {
-                    directory = await _autoQcBackfillService.GetIrfAuditDirectoryAsync(fromIst, toIst);
+                    // HR/SeniorHR are scoped server-side to IRFs they own (Channel Owner); other ops profiles see all.
+                    var ownerEmailFilter = IsIrfAuditOwnerProfile(profileName) ? sessionEmail : null;
+                    directory = await _autoQcBackfillService.GetIrfAuditDirectoryAsync(fromIst, toIst, ownerEmailFilter, profileName);
                     ViewBag.DirectoryError = null;
                 }
                 catch (Exception loadEx)
@@ -8813,8 +8843,12 @@ NEVER:
                 if (irfId <= 0)
                     return Json(new { ok = false, message = "Invalid IRF." });
 
+                var email = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? "";
+                if (!await CanActOnIrfAsync(irfId, email, profileName))
+                    return Json(new { ok = false, message = "You are not the Channel Owner for this IRF." });
+
                 var (fromIst, toIst, _) = NormalizeDirectoryIstDateRange(from, to, null);
-                var rows = await _autoQcBackfillService.GetIrfAuditInterviewerRiskBreakdownAsync(irfId, fromIst, toIst);
+                var breakdown = await _autoQcBackfillService.GetIrfAuditInterviewerRiskBreakdownAsync(irfId, fromIst, toIst);
                 IReadOnlyList<IrfAuditInterviewerRiskDetailVm> details;
                 try
                 {
@@ -8824,14 +8858,27 @@ NEVER:
                 {
                     details = Array.Empty<IrfAuditInterviewerRiskDetailVm>();
                 }
+
+                IrfAuditWindowQualityVm quality;
+                try
+                {
+                    quality = await _autoQcBackfillService.GetIrfAuditWindowQualityAsync(irfId, fromIst, toIst);
+                }
+                catch
+                {
+                    quality = null;
+                }
+
                 return Json(new
                 {
                     ok = true,
                     irfId,
                     from = fromIst.ToString("yyyy-MM-dd"),
                     to = toIst.ToString("yyyy-MM-dd"),
-                    rows,
-                    details
+                    rows = breakdown.Active,
+                    removed = breakdown.Removed,
+                    details,
+                    quality
                 });
             }
             catch (Exception ex)
@@ -8864,8 +8911,12 @@ NEVER:
                 if (irfId <= 0)
                     return Json(new { ok = false, message = "Invalid IRF." });
 
+                var email = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? profileName;
+                if (!await CanActOnIrfAsync(irfId, email, profileName))
+                    return Json(new { ok = false, message = "You are not the Channel Owner for this IRF." });
+
                 var (fromIst, toIst, _) = NormalizeDirectoryIstDateRange(from, to, null);
-                var result = await _autoQcBackfillService.BackfillRiskCategoryForIrfAsync(irfId, fromIst, toIst, ignoreMassFireGuard);
+                var result = await _autoQcBackfillService.BackfillRiskCategoryForIrfAsync(irfId, fromIst, toIst, ignoreMassFireGuard, email);
                 return Json(new
                 {
                     ok = result.Ok,
@@ -8874,7 +8925,19 @@ NEVER:
                     remaining = result.Remaining,
                     aborted = result.Aborted,
                     abortedCheckName = result.AbortedCheckName,
-                    abortedFireRatePct = result.AbortedFireRatePct
+                    abortedFireRatePct = result.AbortedFireRatePct,
+                    scanned = result.Scanned,
+                    processed = result.Processed,
+                    insertedCount = result.Inserted,
+                    updated = result.Updated,
+                    deleted = result.Deleted,
+                    trialFlagsInserted = result.TrialFlagsInserted,
+                    syncUpdates = result.SyncUpdates,
+                    skipped = result.Skipped,
+                    skipReasons = result.SkipReasons,
+                    fromIst = result.FromIst?.ToString("yyyy-MM-dd"),
+                    toIst = result.ToIst?.ToString("yyyy-MM-dd"),
+                    lastBackfillLabel = result.LastBackfillLabel
                 });
             }
             catch (Exception ex)
@@ -8904,6 +8967,9 @@ NEVER:
                     return Json(new { ok = false, message = "Not authorized." });
 
                 var email = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? profileName;
+                if (!await CanActOnIrfAsync(irfId, email, profileName))
+                    return Json(new { ok = false, message = "You are not the Channel Owner for this IRF." });
+
                 var result = await _autoQcRemovalService.RemoveForRiskAuditAsync(
                     transInterviewerId,
                     irfId,
@@ -8917,6 +8983,45 @@ NEVER:
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { ok = false, message = "Remove failed." });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> KeepInterviewerOnIrfRiskAudit(
+            int transInterviewerId,
+            int irfId,
+            string comment = null,
+            string riskSummary = null,
+            int? worstSeverityInterviewId = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { ok = false, message = "Unauthorized" });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsAutoQcOpsProfile(profileName))
+                    return Json(new { ok = false, message = "Not authorized." });
+
+                var email = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? profileName;
+                if (!await CanActOnIrfAsync(irfId, email, profileName))
+                    return Json(new { ok = false, message = "You are not the Channel Owner for this IRF." });
+
+                var result = await _autoQcRemovalService.KeepForRiskAuditAsync(
+                    transInterviewerId,
+                    irfId,
+                    email,
+                    riskSummary,
+                    worstSeverityInterviewId,
+                    comment);
+                return Json(new { ok = result.Ok, message = result.Message });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, message = "Keep failed." });
             }
         }
 
