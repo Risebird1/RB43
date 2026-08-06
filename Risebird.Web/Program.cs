@@ -282,6 +282,7 @@ builder.Services.AddScoped<IPlivoCXService, PlivoCXService>();
 builder.Services.AddScoped<IPlivoCXCallRepository, PlivoCXCallRepository>();
 builder.Services.AddScoped<IPlivoWhatsAppService, PlivoWhatsAppService>();
 builder.Services.AddScoped<IPlivoWhatsAppRepository, PlivoWhatsAppRepository>();
+builder.Services.AddScoped<IElevenLabsAgentService, ElevenLabsAgentService>();
 // ============================================
 
 // ============================================

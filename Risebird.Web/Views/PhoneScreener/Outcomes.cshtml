@@ -36,13 +36,21 @@
                 {
                     <span class="ps-meta-chip ps-meta-chip--warn">No voice agent</span>
                 }
-                @if (Model.HasWhatsAppAssistantConfigured)
+                @if (Model.HasElevenLabsWhatsAppConfigured)
                 {
-                    <span class="ps-meta-chip ps-meta-chip--ok">WhatsApp agent ready</span>
+                    <span class="ps-meta-chip ps-meta-chip--ok">WhatsApp (11L) ready</span>
                 }
                 else
                 {
-                    <span class="ps-meta-chip ps-meta-chip--warn">No WhatsApp agent</span>
+                    <span class="ps-meta-chip ps-meta-chip--warn">No 11L WhatsApp</span>
+                }
+                @if (Model.HasWhatsAppAssistantConfigured)
+                {
+                    <span class="ps-meta-chip ps-meta-chip--ok">WhatsApp (Plivo) ready</span>
+                }
+                else
+                {
+                    <span class="ps-meta-chip ps-meta-chip--warn">No Plivo WhatsApp</span>
                 }
             </div>
         </div>
@@ -205,9 +213,15 @@
                                     </button>
                                     <button type="button" class="ps-btn ps-btn--wa ps-btn-wa"
                                             data-candidate="@r.CandidateId"
-                                            title="@(Model.HasWhatsAppAssistantConfigured ? "Start WhatsApp screening" : "No WhatsApp agent configured")"
+                                            title="@(Model.HasElevenLabsWhatsAppConfigured ? "Start WhatsApp screening (ElevenLabs)" : "No ElevenLabs WhatsApp agent configured")"
+                                            @(!Model.HasElevenLabsWhatsAppConfigured ? "disabled" : null)>
+                                        WA · 11L
+                                    </button>
+                                    <button type="button" class="ps-btn ps-btn--wa ps-btn-wa-plivo"
+                                            data-candidate="@r.CandidateId"
+                                            title="@(Model.HasWhatsAppAssistantConfigured ? "Start WhatsApp screening (Plivo)" : "No Plivo WhatsApp assistant configured")"
                                             @(!Model.HasWhatsAppAssistantConfigured ? "disabled" : null)>
-                                        WhatsApp
+                                        WA · Plivo
                                     </button>
                                     @if (r.HasCall && r.CallId.HasValue)
                                     {
@@ -706,6 +720,7 @@
         (function () {
             var placeUrl = '@Url.Action("PlaceCall", "PhoneScreener")';
             var waUrl = '@Url.Action("PlaceWhatsAppScreen", "PhoneScreener")';
+            var waPlivoUrl = '@Url.Action("PlacePlivoWhatsAppScreen", "PhoneScreener")';
             var token = document.querySelector('input[name="__RequestVerificationToken"]');
             var irfId = document.getElementById('psIrfId').value;
 
@@ -876,6 +891,12 @@
             document.querySelectorAll('.ps-btn-wa').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     startConversation(btn, waUrl, 'Starting…', 'WhatsApp screening started.', 'Could not start the WhatsApp screen.');
+                });
+            });
+
+            document.querySelectorAll('.ps-btn-wa-plivo').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    startConversation(btn, waPlivoUrl, 'Starting…', 'WhatsApp screening started.', 'Could not start the WhatsApp screen.');
                 });
             });
         })();

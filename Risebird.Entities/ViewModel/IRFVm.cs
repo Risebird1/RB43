@@ -290,6 +290,9 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Plivo WhatsApp Screener Assistant URL")]
         public string PlivoWhatsAppAssistantUrl { get; set; }
 
+        [DisplayName("ElevenLabs WhatsApp Screener Agent ID")]
+        public string ElevenLabsAgentId { get; set; }
+
         [DisplayName("Tech QC Required")]
         public bool IsTechQC { get; set; }
         public bool isMultiLingual { get; set; }
