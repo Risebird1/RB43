@@ -70,6 +70,7 @@ namespace Risebird.Entities.ViewModel
         public string ClientName { get; set; }
         public string PlivoAssistantUrl { get; set; }
         public string PlivoWhatsAppAssistantUrl { get; set; }
+        public string ElevenLabsAgentId { get; set; }
         public DateTime? StartDate { get; set; }
     }
 
@@ -84,6 +85,8 @@ namespace Risebird.Entities.ViewModel
         public bool HasAssistantConfigured { get; set; }
         public string PlivoWhatsAppAssistantUrl { get; set; }
         public bool HasWhatsAppAssistantConfigured { get; set; }
+        public string ElevenLabsAgentId { get; set; }
+        public bool HasElevenLabsWhatsAppConfigured { get; set; }
         public DateTime? LaunchDate { get; set; }
 
         public List<PhoneScreenOutcomeRowVM> Rows { get; set; } = new List<PhoneScreenOutcomeRowVM>();
