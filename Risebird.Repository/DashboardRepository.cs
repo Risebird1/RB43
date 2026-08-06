@@ -650,6 +650,210 @@ END";
                 return false;
             }
         }
+
+        private const string EnsureIRFAttentionSpotlightSql = @"
+IF OBJECT_ID(N'dbo.IRFAttentionSpotlight', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.IRFAttentionSpotlight(
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        IrfId INT NOT NULL,
+        PinnedBy VARCHAR(150) NULL,
+        PinnedAt DATETIME NOT NULL CONSTRAINT DF_IRFAttentionSpotlight_PinnedAt DEFAULT (GETDATE()),
+        Active BIT NOT NULL CONSTRAINT DF_IRFAttentionSpotlight_Active DEFAULT (1)
+    );
+END
+IF NOT EXISTS (
+    SELECT 1 FROM sys.indexes
+    WHERE name = N'UX_IRFAttentionSpotlight_ActiveIrf'
+      AND object_id = OBJECT_ID(N'dbo.IRFAttentionSpotlight')
+)
+BEGIN
+    CREATE UNIQUE INDEX UX_IRFAttentionSpotlight_ActiveIrf
+        ON dbo.IRFAttentionSpotlight (IrfId)
+        WHERE Active = 1;
+END";
+
+        private async Task EnsureIRFAttentionSpotlightTableAsync(SqlConnection con)
+        {
+            await con.ExecuteAsync(EnsureIRFAttentionSpotlightSql);
+        }
+
+        public async Task<IEnumerable<IRFAttentionRowVM>> GetIRFAttentionVolumeRows()
+        {
+            try
+            {
+                // All-future scheduled volume (uncapped). confirmationStatus=1 matches platform "scheduled" convention.
+                var query = @"
+SELECT
+    irf.id AS IrfPk,
+    irf.IRFId AS IrfCode,
+    irf.PrimarySkillInvite AS PrimarySkill,
+    irf.AssessmentGroupId AS MagId,
+    ag.AssessmentGroup AS MagName,
+    COUNT(im.id) AS Volume,
+    SUM(CASE WHEN im.interviewer IS NULL OR LTRIM(RTRIM(im.interviewer)) = '' THEN 1 ELSE 0 END) AS UnassignedCount
+FROM irf
+INNER JOIN InterviewMeetings im ON im.IRFId = irf.IRFId
+LEFT JOIN AssessmentGroup ag ON ag.id = irf.AssessmentGroupId
+WHERE CAST(im.interviewDate AS date) >= CAST(GETDATE() AS date)
+  AND im.confirmationStatus = 1
+GROUP BY irf.id, irf.IRFId, irf.PrimarySkillInvite, irf.AssessmentGroupId, ag.AssessmentGroup
+ORDER BY COUNT(im.id) DESC";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<IRFAttentionRowVM>(query);
+                    return result ?? Enumerable.Empty<IRFAttentionRowVM>();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Enumerable.Empty<IRFAttentionRowVM>();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Enumerable.Empty<IRFAttentionRowVM>();
+            }
+        }
+
+        public async Task<IEnumerable<IRFAttentionSpotlightVM>> GetActiveIRFAttentionSpotlights()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await con.OpenAsync();
+                    await EnsureIRFAttentionSpotlightTableAsync(con);
+                    var result = await con.QueryAsync<IRFAttentionSpotlightVM>(
+                        @"SELECT id, IrfId, PinnedBy, PinnedAt, Active
+                          FROM dbo.IRFAttentionSpotlight
+                          WHERE Active = 1
+                          ORDER BY PinnedAt DESC");
+                    return result ?? Enumerable.Empty<IRFAttentionSpotlightVM>();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Enumerable.Empty<IRFAttentionSpotlightVM>();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Enumerable.Empty<IRFAttentionSpotlightVM>();
+            }
+        }
+
+        public async Task<IEnumerable<IRFAttentionRowVM>> GetIRFAttentionMetaByIds(IEnumerable<int> irfIds)
+        {
+            try
+            {
+                var ids = (irfIds ?? Enumerable.Empty<int>()).Where(x => x > 0).Distinct().ToArray();
+                if (ids.Length == 0)
+                    return Enumerable.Empty<IRFAttentionRowVM>();
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<IRFAttentionRowVM>(
+                        @"SELECT
+                            irf.id AS IrfPk,
+                            irf.IRFId AS IrfCode,
+                            irf.PrimarySkillInvite AS PrimarySkill,
+                            irf.AssessmentGroupId AS MagId,
+                            ag.AssessmentGroup AS MagName,
+                            0 AS Volume,
+                            0 AS UnassignedCount
+                          FROM irf
+                          LEFT JOIN AssessmentGroup ag ON ag.id = irf.AssessmentGroupId
+                          WHERE irf.id IN @ids",
+                        new { ids });
+                    return result ?? Enumerable.Empty<IRFAttentionRowVM>();
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Enumerable.Empty<IRFAttentionRowVM>();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Enumerable.Empty<IRFAttentionRowVM>();
+            }
+        }
+
+        public async Task<bool> PinIRFAttentionSpotlight(int irfId, string pinnedBy)
+        {
+            try
+            {
+                if (irfId <= 0) return false;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await con.OpenAsync();
+                    await EnsureIRFAttentionSpotlightTableAsync(con);
+
+                    // Re-activate existing inactive row if present (dedup)
+                    var reactivated = await con.ExecuteAsync(
+                        @"UPDATE dbo.IRFAttentionSpotlight
+                          SET Active = 1, PinnedBy = @PinnedBy, PinnedAt = GETDATE()
+                          WHERE IrfId = @IrfId AND Active = 0",
+                        new { IrfId = irfId, PinnedBy = pinnedBy });
+                    if (reactivated > 0) return true;
+
+                    var active = await con.ExecuteScalarAsync<int?>(
+                        @"SELECT TOP 1 id FROM dbo.IRFAttentionSpotlight WHERE IrfId = @IrfId AND Active = 1",
+                        new { IrfId = irfId });
+                    if (active.HasValue) return true; // already pinned — no-op
+
+                    await con.ExecuteAsync(
+                        @"INSERT INTO dbo.IRFAttentionSpotlight (IrfId, PinnedBy, PinnedAt, Active)
+                          VALUES (@IrfId, @PinnedBy, GETDATE(), 1)",
+                        new { IrfId = irfId, PinnedBy = pinnedBy });
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> UnpinIRFAttentionSpotlight(int irfId, string pinnedBy)
+        {
+            try
+            {
+                if (irfId <= 0) return false;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await con.OpenAsync();
+                    await EnsureIRFAttentionSpotlightTableAsync(con);
+                    var affected = await con.ExecuteAsync(
+                        @"UPDATE dbo.IRFAttentionSpotlight
+                          SET Active = 0, PinnedBy = ISNULL(@PinnedBy, PinnedBy)
+                          WHERE IrfId = @IrfId AND Active = 1",
+                        new { IrfId = irfId, PinnedBy = pinnedBy });
+                    return affected >= 0;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         public async Task<ChannelVM> FetchChannelRequestsByid(int id)
         {
             try
