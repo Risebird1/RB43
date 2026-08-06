@@ -162,6 +162,9 @@
                                                 <span data-toggle="tooltip" data-placement="top" onclick="window.open('@Url.Action("Index", "InterviewDemand")', '_blank', 'noopener,noreferrer')" title="Plan weekend interview staffing"><font style="font-family:arial;">Weekend Drive</font></span>
                                             </button>
                                         }
+                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded mb-10">
+                                            <span data-toggle="tooltip" data-placement="top" onclick="window.open('@Url.Action("Index", "IRFAttention")', '_blank', 'noopener,noreferrer')" title="High-volume IRFs and spotlight"><font style="font-family:arial;">IRF Attention</font></span>
+                                        </button>
                                         @if (Model.Profile == "Admin" || Model.Profile == "SupportAdmin" || Model.Profile == "SeniorHR" || Model.Profile == "InterviewerManagement")
                                         {
 

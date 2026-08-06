@@ -64,7 +64,11 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Requester EmailAddress")]
         public string RequesterEmailid { get; set; }
         [Display(Name = "Requester Mobile Number")]
+        [StringLength(14, ErrorMessage = "Mobile number cannot exceed 14 digits.")]
+        [RegularExpression(@"^$|^[0-9]{10,14}$", ErrorMessage = "Enter a valid mobile number (10–14 digits only).")]
         public string RequesterMobile { get; set; }
+        [Display(Name = "Risebird Support Person")]
+        public string ChannelOwner { get; set; }
         [Required]
         public string Title { get; set; }
         [Required]
@@ -116,6 +120,7 @@ namespace Risebird.Entities.ViewModel
         /// <summary>'Verified' | 'External'</summary>
         public string RequesterType { get; set; }
         public string Origin { get; set; }
+        public string ChannelOwner { get; set; }
         public bool IsProcessed =>
             (MAGId.HasValue || TemplateId.HasValue) && !string.IsNullOrWhiteSpace(IRFIDs);
     }

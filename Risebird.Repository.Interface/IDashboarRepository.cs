@@ -31,6 +31,11 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<WeekendDriveSpotlightVM>> GetWeekendDriveSpotlight(string bucket);
         Task<bool> UpsertWeekendDriveSpotlight(int irfId, string weekendBucket, string actionsTaken, bool remove, string userEmail);
         Task<bool> SyncWeekendDriveSpotlight(string weekendBucket, IEnumerable<int> irfIds, string userEmail);
+        Task<IEnumerable<IRFAttentionRowVM>> GetIRFAttentionVolumeRows();
+        Task<IEnumerable<IRFAttentionSpotlightVM>> GetActiveIRFAttentionSpotlights();
+        Task<IEnumerable<IRFAttentionRowVM>> GetIRFAttentionMetaByIds(IEnumerable<int> irfIds);
+        Task<bool> PinIRFAttentionSpotlight(int irfId, string pinnedBy);
+        Task<bool> UnpinIRFAttentionSpotlight(int irfId, string pinnedBy);
         Task<List<string>> FetchAdminandHRList();
         Task<string> AddChannelInterviewer(ChannelInterviewerVM request);
         Task<List<ChannelInterviewerVM>> FetchInterviewerBychannelid(int id);
