@@ -1,0 +1,443 @@
+@model Risebird.Entities.ViewModel.IRFAttentionPageVM
+@{
+    ViewData["Title"] = "IRF Attention";
+    ViewBag.PageHeader = "IRF Attention";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var spotlight = Model?.Spotlight ?? new List<Risebird.Entities.ViewModel.IRFAttentionRowVM>();
+    var attention = Model?.Attention ?? new List<Risebird.Entities.ViewModel.IRFAttentionRowVM>();
+    var mags = Model?.MagList ?? new List<Risebird.Entities.ViewModel.AssignmentVM>();
+}
+<link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<style>
+    .ia-page { font-family: Roboto, Arial, Helvetica, sans-serif; }
+    .ia-toolbar {
+        display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between;
+        gap: 8px; padding: 4px 4px 10px; border-bottom: 1px solid #eef2f6; margin-bottom: 10px;
+    }
+    .ia-toolbar h4 { margin: 0; font-size: 16px; font-weight: 700; color: #1e293b; }
+    .ia-toolbar .sub { margin: 2px 0 0; font-size: 12px; color: #64748b; line-height: 1.35; max-width: 520px; }
+    .ia-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .ia-btn {
+        height: 30px; padding: 0 12px; border-radius: 6px; border: 1px solid #dde3ea;
+        background: #fff; color: #334155; font-size: 12px; font-weight: 600; cursor: pointer;
+    }
+    .ia-btn:hover { background: #f8fafc; }
+    .ia-btn-primary { background: #42a5f5; border-color: #42a5f5; color: #fff; }
+    .ia-btn-primary:hover { background: #2f8fe0; color: #fff; }
+    .ia-section {
+        background: #fff; border: 1px solid #e8edf2; border-radius: 8px;
+        margin-bottom: 10px; overflow: hidden;
+    }
+    .ia-section__h {
+        display: flex; align-items: center; justify-content: space-between; gap: 8px;
+        padding: 8px 10px; border-bottom: 1px solid #eef2f6; background: #fbfcfd;
+        font-size: 12.5px; font-weight: 700; color: #334155;
+    }
+    .ia-badge {
+        display: inline-flex; align-items: center; height: 18px; padding: 0 7px;
+        border-radius: 999px; font-size: 10.5px; font-weight: 700; margin-left: 6px;
+    }
+    .ia-badge.is-spot { background: #fff3e2; color: #c2740c; }
+    .ia-badge.is-vol { background: #e8f1fe; color: #2f6feb; }
+    .ia-count { font-weight: 600; color: #94a3b8; font-size: 12px; }
+    .ia-tabs { display: flex; gap: 5px; padding: 8px 10px 0; }
+    .ia-tab {
+        height: 26px; padding: 0 10px; border-radius: 999px; border: 1px solid #e2e8f0;
+        background: #fff; color: #64748b; font-size: 12px; font-weight: 600; cursor: pointer;
+    }
+    .ia-tab.is-active { background: #e8f2fe; border-color: #c3e0fb; color: #1c6fc4; }
+    .ia-table-wrap { padding: 4px 6px 8px; overflow-x: auto; }
+    .ia-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    .ia-table th {
+        text-align: left; padding: 6px 8px; font-size: 10.5px; text-transform: uppercase;
+        letter-spacing: .03em; color: #94a3b8; border-bottom: 1px solid #eef2f6; font-weight: 700;
+    }
+    .ia-table td { padding: 6px 8px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle; }
+    .ia-table tr:last-child td { border-bottom: 0; }
+    .ia-irf { font-weight: 700; color: #0f172a; font-size: 12.5px; }
+    .ia-skill { display: block; font-size: 11px; color: #64748b; margin-top: 1px; }
+    .ia-pin-meta { font-size: 10.5px; color: #94a3b8; margin-top: 1px; }
+    .ia-num { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .ia-num.is-zero { color: #94a3b8; font-weight: 500; }
+    .ia-row-actions { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+    .ia-ico {
+        width: 26px; height: 26px; border-radius: 6px; border: 1px solid #e2e8f0;
+        background: #fff; color: #475569; cursor: pointer; display: inline-flex;
+        align-items: center; justify-content: center; font-size: 12px;
+    }
+    .ia-ico:hover { background: #f8fafc; }
+    .ia-ico.is-amber { color: #c2740c; border-color: #f5d9b0; background: #fff8ef; }
+    .ia-ico.is-danger { color: #b91c1c; border-color: #fecaca; background: #fef2f2; }
+    .ia-empty { padding: 16px 10px; text-align: center; color: #94a3b8; font-size: 12.5px; }
+    .ia-modal-backdrop {
+        display: none; position: fixed; inset: 0; background: rgba(15,23,42,.45);
+        z-index: 10050; align-items: center; justify-content: center; padding: 16px;
+    }
+    .ia-modal-backdrop.is-open { display: flex; }
+    .ia-modal {
+        background: #fff; border-radius: 10px; width: 100%; max-width: 440px;
+        box-shadow: 0 12px 40px rgba(15,23,42,.2); overflow: hidden;
+    }
+    .ia-modal__h { padding: 12px 14px; border-bottom: 1px solid #eef2f6; font-weight: 700; color: #0f172a; font-size: 14px; }
+    .ia-modal__b { padding: 12px 14px; }
+    .ia-modal__f { padding: 10px 14px; border-top: 1px solid #eef2f6; display: flex; justify-content: flex-end; gap: 6px; }
+    .ia-field { margin-bottom: 10px; }
+    .ia-field label { display: block; font-size: 10.5px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
+    .ia-field select, .ia-field input {
+        width: 100%; height: 32px; border: 1px solid #dde3ea; border-radius: 6px;
+        padding: 0 9px; font-size: 12.5px; color: #1e293b;
+    }
+    .ia-hint { font-size: 12px; color: #64748b; margin: 0 0 10px; line-height: 1.4; }
+    .ia-toast {
+        position: fixed; right: 16px; bottom: 16px; z-index: 11000;
+        background: #0f172a; color: #fff; padding: 8px 12px; border-radius: 8px;
+        font-size: 12.5px; display: none;
+    }
+</style>
+
+<script>
+    var Header = "<a href='/IRF/Index' class='breadcrumscolor'>Skills Channel</a>&nbsp;/&nbsp; IRF Attention";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad">
+            <div class="mdc-card card bl-bg ia-page">
+                <div class="ia-toolbar">
+                    <div>
+                        <h4>IRF Attention</h4>
+                        <p class="sub">
+                            Ranked by all-future scheduled volume (highest first).
+                            @if (Model?.AttentionThreshold != null)
+                            {
+                                <text>Showing volume ≥ @Model.AttentionThreshold.</text>
+                            }
+                            else
+                            {
+                                <text>No volume cutoff.</text>
+                            }
+                        </p>
+                    </div>
+                    <div class="ia-actions">
+                        <button type="button" class="ia-btn ia-btn-primary" id="iaOpenPin"><i class="fa fa-thumb-tack"></i> Spotlight IRF</button>
+                        <button type="button" class="ia-btn" id="iaOpenMagLink"><i class="fa fa-link"></i> Cross-MAG link</button>
+                        <a href="/IRF/Index" class="ia-btn" style="text-decoration:none;line-height:30px;"><i class="fa fa-chevron-left"></i> Back</a>
+                    </div>
+                </div>
+
+                <div class="ia-section">
+                    <div class="ia-section__h">
+                        <span>Spotlight<span class="ia-badge is-spot">pinned</span></span>
+                        <span class="ia-count">@spotlight.Count</span>
+                    </div>
+                    <div class="ia-table-wrap">
+                        @if (!spotlight.Any())
+                        {
+                            <div class="ia-empty">No spotlighted IRFs. Pin one for anticipated demand.</div>
+                        }
+                        else
+                        {
+                            <table class="ia-table">
+                                <thead>
+                                    <tr>
+                                        <th>IRF</th>
+                                        <th>MAG</th>
+                                        <th>Vol</th>
+                                        <th>Unasg</th>
+                                        <th style="text-align:right;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var r in spotlight)
+                                {
+                                    <tr data-irf="@r.IrfPk">
+                                        <td>
+                                            <span class="ia-irf">@(string.IsNullOrWhiteSpace(r.IrfCode) ? ("#" + r.IrfPk) : r.IrfCode)</span>
+                                            @if (!string.IsNullOrWhiteSpace(r.PrimarySkill))
+                                            {
+                                                <span class="ia-skill">@r.PrimarySkill</span>
+                                            }
+                                            <div class="ia-pin-meta">
+                                                @(string.IsNullOrWhiteSpace(r.PinnedBy) ? "" : r.PinnedBy)
+                                                @if (r.PinnedAt.HasValue)
+                                                {
+                                                    <text> · @r.PinnedAt.Value.ToString("dd MMM HH:mm")</text>
+                                                }
+                                            </div>
+                                        </td>
+                                        <td>@(string.IsNullOrWhiteSpace(r.MagName) ? "—" : r.MagName)</td>
+                                        <td><span class="ia-num @(r.Volume == 0 ? "is-zero" : "")">@r.Volume</span></td>
+                                        <td><span class="ia-num @(r.UnassignedCount == 0 ? "is-zero" : "")">@r.UnassignedCount</span></td>
+                                        <td>
+                                            <div class="ia-row-actions">
+                                                @if (r.MagId.GetValueOrDefault() > 0)
+                                                {
+                                                    <button type="button" class="ia-ico js-mag-link" title="Cross-MAG entry link" data-mag="@r.MagId"><i class="fa fa-link"></i></button>
+                                                }
+                                                <button type="button" class="ia-ico is-danger js-unpin" title="Unpin" data-irf="@r.IrfPk"><i class="fa fa-thumb-tack"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+
+                <div class="ia-section">
+                    <div class="ia-section__h">
+                        <span>Attention list<span class="ia-badge is-vol">by volume</span></span>
+                        <span class="ia-count">@attention.Count</span>
+                    </div>
+                    <div class="ia-tabs">
+                        <button type="button" class="ia-tab is-active" data-lens="attention">Attention</button>
+                        <button type="button" class="ia-tab" data-lens="unassigned">Unassigned</button>
+                    </div>
+                    <div class="ia-table-wrap">
+                        @if (!attention.Any())
+                        {
+                            <div class="ia-empty">No IRFs with future scheduled volume.</div>
+                        }
+                        else
+                        {
+                            <table class="ia-table" id="iaAttentionTable">
+                                <thead>
+                                    <tr>
+                                        <th>IRF</th>
+                                        <th>MAG</th>
+                                        <th class="ia-col-vol">Vol</th>
+                                        <th class="ia-col-un">Unasg</th>
+                                        <th style="text-align:right;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var r in attention)
+                                {
+                                    <tr data-irf="@r.IrfPk" data-unassigned="@r.UnassignedCount">
+                                        <td>
+                                            <span class="ia-irf">@(string.IsNullOrWhiteSpace(r.IrfCode) ? ("#" + r.IrfPk) : r.IrfCode)</span>
+                                            @if (!string.IsNullOrWhiteSpace(r.PrimarySkill))
+                                            {
+                                                <span class="ia-skill">@r.PrimarySkill</span>
+                                            }
+                                        </td>
+                                        <td>@(string.IsNullOrWhiteSpace(r.MagName) ? "—" : r.MagName)</td>
+                                        <td class="ia-col-vol"><span class="ia-num @(r.Volume == 0 ? "is-zero" : "")">@r.Volume</span></td>
+                                        <td class="ia-col-un"><span class="ia-num @(r.UnassignedCount == 0 ? "is-zero" : "")">@r.UnassignedCount</span></td>
+                                        <td>
+                                            <div class="ia-row-actions">
+                                                @if (r.MagId.GetValueOrDefault() > 0)
+                                                {
+                                                    <button type="button" class="ia-ico js-mag-link" title="Cross-MAG entry link" data-mag="@r.MagId"><i class="fa fa-link"></i></button>
+                                                }
+                                                <button type="button" class="ia-ico is-amber js-pin" title="Pin to spotlight" data-irf="@r.IrfPk"><i class="fa fa-thumb-tack"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="ia-modal-backdrop" id="iaPinModal">
+    <div class="ia-modal">
+        <div class="ia-modal__h">Spotlight an IRF</div>
+        <div class="ia-modal__b">
+            <div class="ia-field">
+                <label for="iaMag">MAG</label>
+                <select id="iaMag">
+                    <option value="">Select MAG</option>
+                    @foreach (var m in mags)
+                    {
+                        <option value="@m.id">@m.AssessmentGroup</option>
+                    }
+                </select>
+            </div>
+            <div class="ia-field">
+                <label for="iaIrfSearch">Search IRFs in MAG</label>
+                <input type="text" id="iaIrfSearch" placeholder="Filter by IRF or skill…" disabled />
+            </div>
+            <div class="ia-field">
+                <label for="iaIrf">IRF</label>
+                <select id="iaIrf" disabled>
+                    <option value="">Select IRF</option>
+                </select>
+            </div>
+        </div>
+        <div class="ia-modal__f">
+            <button type="button" class="ia-btn" id="iaPinCancel">Cancel</button>
+            <button type="button" class="ia-btn ia-btn-primary" id="iaPinConfirm">Pin</button>
+        </div>
+    </div>
+</div>
+
+<div class="ia-modal-backdrop" id="iaMagModal">
+    <div class="ia-modal">
+        <div class="ia-modal__h">Cross-MAG entry link</div>
+        <div class="ia-modal__b">
+            <p class="ia-hint">Standing (non-expiring) link so interviewers from <strong>other</strong> MAGs can enter the target MAG.</p>
+            <div class="ia-field">
+                <label for="iaTargetMag">Target MAG</label>
+                <select id="iaTargetMag">
+                    <option value="">Select target MAG</option>
+                    @foreach (var m in mags)
+                    {
+                        <option value="@m.id">@m.AssessmentGroup</option>
+                    }
+                </select>
+            </div>
+            <div class="ia-field" id="iaMagLinkWrap" style="display:none;">
+                <label>Shareable link</label>
+                <input type="text" id="iaMagLinkOut" readonly onclick="this.select()" />
+            </div>
+        </div>
+        <div class="ia-modal__f">
+            <button type="button" class="ia-btn" id="iaMagCancel">Close</button>
+            <button type="button" class="ia-btn ia-btn-primary" id="iaMagGenerate">Generate</button>
+        </div>
+    </div>
+</div>
+
+<div class="ia-toast" id="iaToast"></div>
+
+<script>
+(function () {
+    function toast(msg) {
+        var $t = $('#iaToast');
+        $t.text(msg).fadeIn(120);
+        setTimeout(function () { $t.fadeOut(200); }, 2200);
+    }
+
+    function post(url, data) {
+        return $.ajax({ url: url, type: 'POST', data: data });
+    }
+
+    $('.ia-tab').on('click', function () {
+        $('.ia-tab').removeClass('is-active');
+        $(this).addClass('is-active');
+        var lens = $(this).data('lens');
+        var $rows = $('#iaAttentionTable tbody tr');
+        if (lens === 'unassigned') {
+            $rows.each(function () {
+                $(this).toggle(parseInt($(this).attr('data-unassigned') || '0', 10) > 0);
+            });
+        } else {
+            $rows.show();
+        }
+    });
+
+    function openModal(id) { $(id).addClass('is-open'); }
+    function closeModal(id) { $(id).removeClass('is-open'); }
+
+    $('#iaOpenPin').on('click', function () { openModal('#iaPinModal'); });
+    $('#iaPinCancel').on('click', function () { closeModal('#iaPinModal'); });
+    $('#iaPinModal').on('click', function (e) { if (e.target === this) closeModal('#iaPinModal'); });
+
+    $('#iaOpenMagLink').on('click', function () {
+        $('#iaMagLinkWrap').hide();
+        $('#iaMagLinkOut').val('');
+        openModal('#iaMagModal');
+    });
+    $('#iaMagCancel').on('click', function () { closeModal('#iaMagModal'); });
+    $('#iaMagModal').on('click', function (e) { if (e.target === this) closeModal('#iaMagModal'); });
+
+    var irfCache = [];
+    $('#iaMag').on('change', function () {
+        var magId = $(this).val();
+        var $irf = $('#iaIrf').html('<option value="">Loading…</option>').prop('disabled', true);
+        $('#iaIrfSearch').val('').prop('disabled', true);
+        irfCache = [];
+        if (!magId) {
+            $irf.html('<option value="">Select IRF</option>');
+            return;
+        }
+        $.getJSON('@Url.Action("GetIRFsByMAG", "DashBoard")', { magId: magId })
+            .done(function (res) {
+                irfCache = (res && res.data) ? res.data : [];
+                fillIrfSelect('');
+                $irf.prop('disabled', false);
+                $('#iaIrfSearch').prop('disabled', false);
+            })
+            .fail(function () {
+                $irf.html('<option value="">Failed to load</option>');
+                toast('Could not load IRFs for MAG');
+            });
+    });
+
+    function fillIrfSelect(q) {
+        q = (q || '').toLowerCase();
+        var $irf = $('#iaIrf').empty().append('<option value="">Select IRF</option>');
+        irfCache.forEach(function (x) {
+            var label = x.label || x.irfId || ('#' + x.id);
+            if (q && label.toLowerCase().indexOf(q) < 0) return;
+            $irf.append($('<option/>').val(x.id).text(label));
+        });
+    }
+
+    $('#iaIrfSearch').on('keyup', function () { fillIrfSelect($(this).val()); });
+
+    $('#iaPinConfirm').on('click', function () {
+        var irfId = parseInt($('#iaIrf').val() || '0', 10);
+        if (!irfId) { toast('Select an IRF'); return; }
+        post('@Url.Action("Pin", "IRFAttention")', { irfId: irfId })
+            .done(function (res) {
+                if (res && res.ok) location.reload();
+                else toast((res && res.message) || 'Pin failed');
+            })
+            .fail(function () { toast('Pin failed'); });
+    });
+
+    $(document).on('click', '.js-pin', function () {
+        post('@Url.Action("Pin", "IRFAttention")', { irfId: $(this).data('irf') })
+            .done(function (res) {
+                if (res && res.ok) location.reload();
+                else toast((res && res.message) || 'Pin failed');
+            })
+            .fail(function () { toast('Pin failed'); });
+    });
+
+    $(document).on('click', '.js-unpin', function () {
+        post('@Url.Action("Unpin", "IRFAttention")', { irfId: $(this).data('irf') })
+            .done(function (res) {
+                if (res && res.ok) location.reload();
+                else toast((res && res.message) || 'Unpin failed');
+            })
+            .fail(function () { toast('Unpin failed'); });
+    });
+
+    function generateMagLink(magId, $out, $wrap) {
+        if (!magId) { toast('Select a target MAG'); return; }
+        post('@Url.Action("GenerateMAGApplicationLink", "IRFAttention")', { targetMagId: magId })
+            .done(function (res) {
+                if (res && res.ok && res.url) {
+                    if ($out && $wrap) {
+                        $out.val(res.url);
+                        $wrap.show();
+                        $out[0].select();
+                    } else {
+                        window.prompt('Cross-MAG entry link (copy):', res.url);
+                    }
+                    toast('Link generated');
+                } else toast((res && res.message) || 'Generate failed');
+            })
+            .fail(function () { toast('Generate failed'); });
+    }
+
+    $('#iaMagGenerate').on('click', function () {
+        generateMagLink($('#iaTargetMag').val(), $('#iaMagLinkOut'), $('#iaMagLinkWrap'));
+    });
+
+    $(document).on('click', '.js-mag-link', function () {
+        generateMagLink($(this).data('mag'), null, null);
+    });
+})();
+</script>

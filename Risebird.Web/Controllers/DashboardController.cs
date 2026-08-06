@@ -3164,6 +3164,12 @@ NEVER:
                     ViewBag.Client = "true";
                 }
 
+                ViewBag.SupportPersonCounts = model
+                    .Where(x => !string.IsNullOrWhiteSpace(x.ChannelOwner))
+                    .GroupBy(x => x.ChannelOwner.Trim())
+                    .OrderByDescending(g => g.Count())
+                    .ToDictionary(g => g.Key, g => g.Count());
+
                 ViewBag.SegmentAllCount = model.Count;
                 ViewBag.SegmentVerifiedCount = model.Count(x => string.Equals(x.RequesterType, "Verified", StringComparison.OrdinalIgnoreCase));
                 ViewBag.SegmentExternalCount = model.Count(x => string.Equals(x.RequesterType, "External", StringComparison.OrdinalIgnoreCase)

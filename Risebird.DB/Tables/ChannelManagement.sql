@@ -44,6 +44,7 @@ CREATE TABLE [dbo].[ChannelManagement](
 	[RequesterType] [varchar](15) NULL,
 	[MAGId] [int] NULL,
 	[TemplateId] [int] NULL,
+	[ChannelOwner] [varchar](150) NULL,
  CONSTRAINT [PK_ChannelManagement] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -112,6 +113,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE ChannelManagement
     ADD RequesterType varchar(15) NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ChannelOwner')
+      AND Object_ID = Object_ID(N'ChannelManagement'))
+BEGIN
+    ALTER TABLE ChannelManagement
+    ADD ChannelOwner varchar(150) NULL
 END
 
 IF EXISTS (
