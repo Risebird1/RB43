@@ -1558,6 +1558,18 @@ namespace Risebird.Repository
                     var skillListsTwo = new List<string>();
                     DataSet dataset = new DataSet();
                     SqlDataAdapter adapter = new SqlDataAdapter();
+                    //Both skillChannelName and jobId are optional (the caller supplies at least one).
+                    //Passing a C# null via AddWithValue makes SQL Server treat the parameter as "not
+                    //supplied" and throw, so normalize missing values to empty string, which the SP
+                    //already interprets as "not provided".
+                    if (string.IsNullOrWhiteSpace(skillChannelName))
+                    {
+                        skillChannelName = "";
+                    }
+                    if (string.IsNullOrWhiteSpace(jobId))
+                    {
+                        jobId = "";
+                    }
                     adapter.SelectCommand = new SqlCommand("usp_GetCandidateLatestStatusForApi", con);
                     adapter.SelectCommand.CommandType = CommandType.StoredProcedure;
                     adapter.SelectCommand.CommandTimeout = 600;
