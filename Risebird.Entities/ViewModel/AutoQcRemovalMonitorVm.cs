@@ -229,4 +229,75 @@ namespace Risebird.Entities.ViewModel
         public bool Ok { get; set; }
         public string Message { get; set; }
     }
+
+    /// <summary>One row on the High-Risk Interviewers overview (canonical UserList.id).</summary>
+    public class InterviewerRiskOverviewRowVm
+    {
+        public int InterviewerId { get; set; }
+        public string CodedId { get; set; }
+        public string InterviewerName { get; set; }
+        public string InterviewerEmail { get; set; }
+        public string MobileNumber { get; set; }
+        public int ChannelsActive { get; set; }
+        public int TotalCompleted { get; set; }
+        public int TotalBad { get; set; }
+        public decimal? OverallRiskRatio { get; set; }
+        public string WorstSeverity { get; set; }
+        public string PriorityTier { get; set; }
+        public int HighRiskChannels { get; set; }
+        public int PendingReviewChannels { get; set; }
+        public bool CoverageIncomplete { get; set; }
+        public int P0Count { get; set; }
+        public int P1Count { get; set; }
+        public int P2Count { get; set; }
+        public int P3Count { get; set; }
+        public int P4Count { get; set; }
+        public int P5Count { get; set; }
+        public int TotalRows { get; set; }
+    }
+
+    public class InterviewerRiskOverviewSummaryVm
+    {
+        public int InterviewersAboveThreshold { get; set; }
+        public int ChannelsAffected { get; set; }
+        public int PendingReviewInterviewers { get; set; }
+    }
+
+    public class InterviewerRiskOverviewPageVm
+    {
+        public IReadOnlyList<InterviewerRiskOverviewRowVm> Rows { get; set; }
+            = Array.Empty<InterviewerRiskOverviewRowVm>();
+        public InterviewerRiskOverviewSummaryVm Summary { get; set; } = new InterviewerRiskOverviewSummaryVm();
+        public int TotalRows { get; set; }
+        public int Offset { get; set; }
+        public int PageSize { get; set; }
+    }
+
+    /// <summary>Per-channel row under an expanded High-Risk interviewer.</summary>
+    public class InterviewerRiskOverviewChannelRowVm
+    {
+        public int TransInterviewerId { get; set; }
+        public int IrfId { get; set; }
+        public string IrfName { get; set; }
+        public string ChannelOwnerEmail { get; set; }
+        public string ChannelOwnerDisplay { get; set; }
+        public int Completed { get; set; }
+        public int Bad { get; set; }
+        public decimal? RiskRatio { get; set; }
+        public int P0Count { get; set; }
+        public int P1Count { get; set; }
+        public int P2Count { get; set; }
+        public int P3Count { get; set; }
+        public int P4Count { get; set; }
+        public int P5Count { get; set; }
+        public string Recommendation { get; set; }
+        public string ReviewState { get; set; }
+        public string ReviewedBy { get; set; }
+        public DateTime? ReviewedAt { get; set; }
+        public int? WorstSeverityInterviewId { get; set; }
+        public DateTime? LastBackfillAtUtc { get; set; }
+        public DateTime? LastBackfillFromIst { get; set; }
+        public DateTime? LastBackfillToIst { get; set; }
+        public bool CoverageIncomplete { get; set; }
+    }
 }

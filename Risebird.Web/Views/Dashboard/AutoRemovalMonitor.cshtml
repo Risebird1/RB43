@@ -14,6 +14,8 @@
     var directoryToIst = ViewBag.DirectoryToIst as string ?? "";
 
     var directoryPreset = ViewBag.DirectoryPreset as string ?? "1m";
+    var expandIrfId = ViewBag.ExpandIrfId as int?;
+    var activeAuditView = ViewBag.ActiveAuditView as string ?? "channels";
     // URL templates from shared helpers — JS fills __INTERVIEW_ID__ / __IRF_ID__
     var tplTranscript = TrialFlagDrillDownUrls.TranscriptQuality(111111111, 222222222)
         .Replace("111111111", "__INTERVIEW_ID__")
@@ -368,6 +370,31 @@
         border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 10px; font-size: 13px; min-width: 220px; background: #fff;
     }
     .irf-actions-cell { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+    .irf-audit-tabs { display: flex; gap: 6px; margin: 12px 0 14px; flex-wrap: wrap; }
+    .irf-audit-tabs .irf-audit-btn.is-active { background: #2563eb; border-color: #2563eb; color: #fff; }
+    .irf-ov-summary {
+        display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center;
+        margin: 0 0 12px; padding: 10px 12px; background: #f8fafc; border: 1px solid #e2e8f0;
+        border-radius: 8px; font-size: 13px; color: #334155;
+    }
+    .irf-ov-summary__stat { font-weight: 600; color: #0f172a; }
+    .irf-ov-summary__link {
+        appearance: none; border: none; background: none; padding: 0; color: #2563eb;
+        font-weight: 600; cursor: pointer; text-decoration: underline;
+    }
+    .irf-ov-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
+    .irf-ov-coverage {
+        display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 4px;
+        background: #fff7ed; border: 1px solid #fdba74; color: #9a3412; font-size: 10px; font-weight: 600;
+    }
+    .irf-ov-priority--critical { color: #b91c1c; font-weight: 700; }
+    .irf-ov-priority--medium { color: #a16207; font-weight: 600; }
+    .irf-ov-priority--low { color: #475569; }
+    .irf-ov-priority--clear { color: #166534; }
+    .irf-ov-channel-link { font-size: 11px; color: #2563eb; }
+    #irfAuditInterviewersPane { display: none; }
+    #irfAuditInterviewersPane.is-active { display: block; }
+    #irfAuditChannelsPane.is-hidden { display: none; }
 
 </style>
 
@@ -377,11 +404,17 @@
 
         <button type="button" class="irf-audit-btn" onclick="location.href='@Url.Action("Dashboard911", "Dashboard")'">Back</button>
 
-        <h2 style="margin-top:12px;">IRF Audit Directory</h2>
+        <h2 style="margin-top:12px;">IRF Audit</h2>
+
+        <div class="irf-audit-tabs" role="tablist">
+            <button type="button" class="irf-audit-btn@(activeAuditView != "interviewers" ? " is-active" : "")" id="tabChannels" data-view="channels">Channels</button>
+            <button type="button" class="irf-audit-btn@(activeAuditView == "interviewers" ? " is-active" : "")" id="tabInterviewers" data-view="interviewers">High-Risk Interviewers</button>
+        </div>
 
         <div class="irf-audit-header__row">
 
-            <p>Active skill channels with completed interviews in the selected period. Use <strong>Backfill</strong> to grade every completed interview in the page window (P0–P5), then review interviewers with Keep / Remove. Channel owners (HR / SeniorHR) see only their IRFs.</p>
+            <p id="irfAuditChannelsBlurb">Active skill channels with completed interviews in the selected period. Use <strong>Backfill</strong> to grade every completed interview in the page window (P0–P5), then review interviewers with Keep / Remove. Channel owners (HR / SeniorHR) see only their IRFs.</p>
+            <p id="irfAuditInterviewersBlurb" style="display:none;">Interviewers with elevated risk across channels in the selected window. Expand a person to act per channel (same Keep/Remove as the channel view). Owners see only their channels.</p>
 
             @if (rows.Any())
 
@@ -408,6 +441,7 @@
         <p class="irf-audit-filter__range">Showing active skill channels with completed interviews from <strong>@directoryFromIst</strong> to <strong>@directoryToIst</strong> (IST).</p>
 
         <form id="irfDirectoryFilter" class="irf-audit-filter" method="get" action="@Url.Action("AutoRemovalMonitor", "Dashboard")">
+            <input type="hidden" name="view" id="dirViewHidden" value="@activeAuditView" />
 
             <div class="irf-audit-filter__presets">
 
@@ -470,6 +504,8 @@
     </div>
 
 
+
+    <div id="irfAuditChannelsPane" class="@(activeAuditView == "interviewers" ? "is-hidden" : "")">
 
     @if (!string.IsNullOrWhiteSpace(directoryError))
 
@@ -585,6 +621,23 @@
 
         </div>
 
+    </div>
+
+    </div><!-- /#irfAuditChannelsPane -->
+
+    <div id="irfAuditInterviewersPane" class="@(activeAuditView == "interviewers" ? "is-active" : "")">
+        <div class="irf-ov-toolbar">
+            <label style="font-size:12px;display:flex;align-items:center;gap:6px;">
+                <input type="checkbox" id="ovShowAll" /> Show all (lift default risk filter)
+            </label>
+            <button type="button" class="irf-audit-btn irf-audit-btn--primary" id="ovRefreshBtn">Refresh</button>
+            <a class="irf-audit-btn" id="ovExportBtn" href="#">Export to Excel</a>
+        </div>
+        <div id="ovSummary" class="irf-ov-summary" style="display:none;"></div>
+        <div id="ovBody" class="irf-audit-table-wrap">
+            <div class="irf-risk-loading" style="padding:16px;">Loading high-risk interviewers…</div>
+        </div>
+        <div id="ovPagination" class="irf-audit-pagination" aria-label="Interviewer overview pagination"></div>
     </div>
 
 </div>
@@ -1811,6 +1864,8 @@
             var transId = $btn.data('trans-id');
             var worstId = $btn.data('worst-id') || null;
             var riskSummary = $btn.attr('data-risk-summary') || '';
+            var interviewerId = $btn.data('interviewer-id');
+            var fromOverview = $btn.data('source') === 'overview';
             if (!confirm('Remove this interviewer from the channel (inactivate)? Writes RiskAuditRemoval. Recoverable — never a delete.')) return;
             var comment = prompt('Optional comment for the audit log:', '') || '';
             $btn.prop('disabled', true);
@@ -1824,8 +1879,13 @@
                 .done(function (res) {
                     showToast((res && res.message) || (res && res.ok ? 'Removed.' : 'Remove failed.'), !!(res && res.ok));
                     if (res && res.ok) {
-                        var $main = $('tr.irf-audit-main-row[data-irf-id="' + irfId + '"]');
-                        loadRiskBreakdown($main, true);
+                        if (fromOverview && interviewerId) {
+                            loadOverviewChannels(interviewerId, true);
+                            loadOverview(ovOffset);
+                        } else {
+                            var $main = $('tr.irf-audit-main-row[data-irf-id="' + irfId + '"]');
+                            loadRiskBreakdown($main, true);
+                        }
                     } else {
                         $btn.prop('disabled', false);
                     }
@@ -1842,6 +1902,8 @@
             var transId = $btn.data('trans-id');
             var worstId = $btn.data('worst-id') || null;
             var riskSummary = $btn.attr('data-risk-summary') || '';
+            var interviewerId = $btn.data('interviewer-id');
+            var fromOverview = $btn.data('source') === 'overview';
             if (!confirm('Keep this interviewer — no channel change. Records RiskAuditKept for audit.')) return;
             var comment = prompt('Optional comment for the audit log:', '') || '';
             $btn.prop('disabled', true);
@@ -1855,8 +1917,13 @@
                 .done(function (res) {
                     showToast((res && res.message) || (res && res.ok ? 'Kept.' : 'Keep failed.'), !!(res && res.ok));
                     if (res && res.ok) {
-                        var $main = $('tr.irf-audit-main-row[data-irf-id="' + irfId + '"]');
-                        loadRiskBreakdown($main, true);
+                        if (fromOverview && interviewerId) {
+                            loadOverviewChannels(interviewerId, true);
+                            loadOverview(ovOffset);
+                        } else {
+                            var $main = $('tr.irf-audit-main-row[data-irf-id="' + irfId + '"]');
+                            loadRiskBreakdown($main, true);
+                        }
                     } else {
                         $btn.prop('disabled', false);
                     }
@@ -1866,6 +1933,312 @@
                     $btn.prop('disabled', false);
                 });
         });
+
+        // ---- High-Risk Interviewers overview (additive; does not alter channel-tab behavior) ----
+        var ovListUrl = '@Url.Action("InterviewerRiskOverview", "Dashboard")';
+        var ovChannelsUrl = '@Url.Action("InterviewerRiskOverviewChannels", "Dashboard")';
+        var ovExportUrl = '@Url.Action("InterviewerRiskOverviewExport", "Dashboard")';
+        var expandIrfIdOnLoad = @(expandIrfId.HasValue ? expandIrfId.Value.ToString() : "null");
+        var initialAuditView = @Html.Raw(Json.Serialize(activeAuditView));
+        var ovOffset = 0;
+        var ovPageSize = 25;
+        var ovPendingOnly = false;
+
+        function setAuditView(view) {
+            var isIv = view === 'interviewers';
+            $('#tabChannels').toggleClass('is-active', !isIv);
+            $('#tabInterviewers').toggleClass('is-active', isIv);
+            $('#irfAuditChannelsPane').toggleClass('is-hidden', isIv);
+            $('#irfAuditInterviewersPane').toggleClass('is-active', isIv);
+            $('#irfAuditChannelsBlurb').toggle(!isIv);
+            $('#irfAuditInterviewersBlurb').toggle(isIv);
+            if (isIv) loadOverview(0);
+            try {
+                var u = new URL(window.location.href);
+                u.searchParams.set('view', isIv ? 'interviewers' : 'channels');
+                window.history.replaceState({}, '', u.toString());
+            } catch (e) { }
+            $('#dirViewHidden').val(isIv ? 'interviewers' : 'channels');
+        }
+
+        $('#tabChannels').on('click', function () { setAuditView('channels'); });
+        $('#tabInterviewers').on('click', function () { setAuditView('interviewers'); });
+
+        function ovShowAll() { return $('#ovShowAll').is(':checked'); }
+
+        function updateExportHref() {
+            var qs = '?from=' + encodeURIComponent(dirFromVal)
+                + '&to=' + encodeURIComponent(dirToVal)
+                + '&showAll=' + (ovShowAll() ? 'true' : 'false')
+                + '&pendingReviewOnly=' + (ovPendingOnly ? 'true' : 'false');
+            $('#ovExportBtn').attr('href', ovExportUrl + qs);
+        }
+
+        function priorityClass(tier) {
+            var t = (tier || '').toLowerCase();
+            if (t === 'critical') return 'irf-ov-priority--critical';
+            if (t === 'medium') return 'irf-ov-priority--medium';
+            if (t === 'low') return 'irf-ov-priority--low';
+            if (t === 'clear') return 'irf-ov-priority--clear';
+            return '';
+        }
+
+        function renderOverviewSummary(summary) {
+            if (!summary) { $('#ovSummary').hide(); return; }
+            var x = summary.interviewersAboveThreshold != null ? summary.interviewersAboveThreshold : summary.InterviewersAboveThreshold;
+            var y = summary.channelsAffected != null ? summary.channelsAffected : summary.ChannelsAffected;
+            var z = summary.pendingReviewInterviewers != null ? summary.pendingReviewInterviewers : summary.PendingReviewInterviewers;
+            var html = '<span><span class="irf-ov-summary__stat">' + (x || 0) + '</span> interviewers above threshold</span>'
+                + '<span>·</span>'
+                + '<span><span class="irf-ov-summary__stat">' + (y || 0) + '</span> channels affected</span>'
+                + '<span>·</span>'
+                + '<button type="button" class="irf-ov-summary__link" id="ovPendingFilterBtn">'
+                + '<span class="irf-ov-summary__stat">' + (z || 0) + '</span> pending review</button>';
+            if (ovPendingOnly) {
+                html += ' <button type="button" class="irf-audit-btn" id="ovClearPendingFilter" style="margin-left:8px;">Clear pending filter</button>';
+            }
+            $('#ovSummary').html(html).show();
+        }
+
+        function renderOverviewRows(rows) {
+            if (!rows || !rows.length) {
+                return '<div class="irf-risk-empty" style="padding:16px;">No interviewers match the current filter/window.</div>';
+            }
+            var html = '<table class="irf-audit-table irf-ov-table"><thead><tr>'
+                + '<th style="width:40px;"></th>'
+                + '<th>Interviewer</th><th>Channels</th><th>Completed</th><th>Bad</th>'
+                + '<th>Overall risk</th><th>Worst</th><th>Priority</th>'
+                + '<th>High-risk ch.</th><th>Pending review</th></tr></thead><tbody>';
+            rows.forEach(function (r) {
+                var id = prop(r, 'interviewerId', 'InterviewerId');
+                var name = prop(r, 'interviewerName', 'InterviewerName') || '';
+                var email = prop(r, 'interviewerEmail', 'InterviewerEmail') || '';
+                var coded = prop(r, 'codedId', 'CodedId') || '';
+                var incomplete = prop(r, 'coverageIncomplete', 'CoverageIncomplete');
+                html += '<tr class="irf-ov-main-row" data-interviewer-id="' + id + '">'
+                    + '<td><button type="button" class="irf-audit-expand btn-ov-expand" data-interviewer-id="' + id + '">View</button></td>'
+                    + '<td><div class="irf-risk-iv-name">' + esc(coded || name || ('#' + id)) + '</div>'
+                    + (email ? '<div class="irf-risk-iv-email">' + esc(email) + '</div>' : '')
+                    + (name && coded ? '<div class="irf-risk-iv-email">' + esc(name) + '</div>' : '')
+                    + (incomplete ? '<span class="irf-ov-coverage" title="One or more channels lack a backfill covering this window">coverage incomplete</span>' : '')
+                    + '</td>'
+                    + '<td>' + (prop(r, 'channelsActive', 'ChannelsActive') || 0) + '</td>'
+                    + '<td>' + (prop(r, 'totalCompleted', 'TotalCompleted') || 0) + '</td>'
+                    + '<td>' + (prop(r, 'totalBad', 'TotalBad') || 0) + '</td>'
+                    + '<td>' + formatRatio(prop(r, 'overallRiskRatio', 'OverallRiskRatio')) + '</td>'
+                    + '<td>' + esc(prop(r, 'worstSeverity', 'WorstSeverity') || '—') + '</td>'
+                    + '<td class="' + priorityClass(prop(r, 'priorityTier', 'PriorityTier')) + '">'
+                    + esc(prop(r, 'priorityTier', 'PriorityTier') || '—') + '</td>'
+                    + '<td>' + (prop(r, 'highRiskChannels', 'HighRiskChannels') || 0) + '</td>'
+                    + '<td>' + (prop(r, 'pendingReviewChannels', 'PendingReviewChannels') || 0) + '</td>'
+                    + '</tr>';
+            });
+            html += '</tbody></table>';
+            return html;
+        }
+
+        function renderOverviewPagination(total) {
+            var $bar = $('#ovPagination');
+            var pages = Math.max(1, Math.ceil(total / ovPageSize));
+            var page = Math.floor(ovOffset / ovPageSize) + 1;
+            if (total <= ovPageSize) { $bar.removeClass('is-visible').empty(); return; }
+            var html = '<span>Showing ' + (ovOffset + 1) + '–' + Math.min(ovOffset + ovPageSize, total) + ' of ' + total + '</span>'
+                + '<div class="irf-audit-pagination__btns">'
+                + '<button type="button" class="irf-audit-btn" id="ovPrev"' + (page <= 1 ? ' disabled' : '') + '>&lsaquo;</button>'
+                + '<span style="padding:0 8px;">Page ' + page + ' / ' + pages + '</span>'
+                + '<button type="button" class="irf-audit-btn" id="ovNext"' + (page >= pages ? ' disabled' : '') + '>&rsaquo;</button>'
+                + '</div>';
+            $bar.html(html).addClass('is-visible');
+        }
+
+        function loadOverview(offset) {
+            ovOffset = Math.max(0, offset || 0);
+            updateExportHref();
+            $('#ovBody').html('<div class="irf-risk-loading" style="padding:16px;">Loading high-risk interviewers…</div>');
+            $.getJSON(ovListUrl, {
+                from: dirFromVal,
+                to: dirToVal,
+                showAll: ovShowAll(),
+                pendingReviewOnly: ovPendingOnly,
+                offset: ovOffset,
+                pageSize: ovPageSize
+            })
+                .done(function (res) {
+                    if (!res || !res.ok) {
+                        $('#ovBody').html('<div class="irf-risk-error" style="padding:16px;">'
+                            + esc((res && res.message) || 'Failed to load overview.') + '</div>');
+                        return;
+                    }
+                    renderOverviewSummary(res.summary);
+                    $('#ovBody').html(renderOverviewRows(res.rows || []));
+                    renderOverviewPagination(res.totalRows || 0);
+                })
+                .fail(function () {
+                    $('#ovBody').html('<div class="irf-risk-error" style="padding:16px;">Failed to load overview.</div>');
+                });
+        }
+
+        function formatBackfillStamp(c) {
+            var at = prop(c, 'lastBackfillAtUtc', 'LastBackfillAtUtc');
+            var from = prop(c, 'lastBackfillFromIst', 'LastBackfillFromIst');
+            var to = prop(c, 'lastBackfillToIst', 'LastBackfillToIst');
+            if (!at) return 'No risk backfill yet';
+            var stamp = fmtDate(at);
+            try {
+                var d = new Date(at);
+                if (!isNaN(d.getTime())) {
+                    var ist = new Date(d.getTime() + 330 * 60000);
+                    stamp = ist.toISOString().slice(0, 16).replace('T', ' ') + ' IST';
+                }
+            } catch (e) { }
+            if (from && to) return stamp + ' · ' + formatShortRange(String(from).slice(0, 10), String(to).slice(0, 10));
+            return stamp;
+        }
+
+        function renderOverviewChannels(interviewerId, channels) {
+            if (!channels || !channels.length) {
+                return '<div class="irf-risk-empty">No in-window channel activity for this interviewer.</div>';
+            }
+            var html = '<table class="irf-risk-table"><thead><tr>'
+                + '<th>Channel</th><th>Owner</th><th class="col-num">Completed</th><th class="col-num">Bad</th>'
+                + '<th>Risk</th><th class="col-num">P0</th><th class="col-num">P1</th><th class="col-num">P2</th>'
+                + '<th class="col-num">P3</th><th class="col-num">P4</th><th class="col-num">P5</th>'
+                + '<th>Rec</th><th>Review</th><th>Last backfill</th><th>Actions</th></tr></thead><tbody>';
+            channels.forEach(function (c) {
+                var irfId = prop(c, 'irfId', 'IrfId');
+                var irfName = prop(c, 'irfName', 'IrfName') || '';
+                var transId = prop(c, 'transInterviewerId', 'TransInterviewerId');
+                var rec = prop(c, 'recommendation', 'Recommendation') || '';
+                var review = prop(c, 'reviewState', 'ReviewState') || 'None';
+                var incomplete = prop(c, 'coverageIncomplete', 'CoverageIncomplete');
+                var worstId = prop(c, 'worstSeverityInterviewId', 'WorstSeverityInterviewId');
+                var channelUrl = '@Url.Action("AutoRemovalMonitor", "Dashboard")'
+                    + '?from=' + encodeURIComponent(dirFromVal)
+                    + '&to=' + encodeURIComponent(dirToVal)
+                    + '&expandIrfId=' + encodeURIComponent(irfId)
+                    + '&view=channels';
+                var summary = 'RiskRatio=' + (prop(c, 'riskRatio', 'RiskRatio') != null ? Number(prop(c, 'riskRatio', 'RiskRatio')).toFixed(2) : 'n/a')
+                    + '; P0=' + (prop(c, 'p0Count', 'P0Count') || 0)
+                    + ',P2=' + (prop(c, 'p2Count', 'P2Count') || 0)
+                    + '; window ' + formatShortRange(dirFromVal, dirToVal).replace(/\s/g, '');
+                var canAct = review === 'PendingReview' || review === 'NeedsReReview' || rec === 'Remove' || rec === 'Watch';
+                html += '<tr>'
+                    + '<td><strong>' + esc(irfName) + '</strong> <span style="color:#94a3b8;">(#' + irfId + ')</span><br/>'
+                    + '<a class="irf-ov-channel-link" href="' + channelUrl + '">Open channel view</a></td>'
+                    + '<td style="font-size:11px;">' + esc(prop(c, 'channelOwnerDisplay', 'ChannelOwnerDisplay') || prop(c, 'channelOwnerEmail', 'ChannelOwnerEmail') || '—') + '</td>'
+                    + '<td class="col-num">' + (prop(c, 'completed', 'Completed') || 0) + '</td>'
+                    + '<td class="col-num">' + (prop(c, 'bad', 'Bad') || 0) + '</td>'
+                    + '<td>' + formatRatio(prop(c, 'riskRatio', 'RiskRatio')) + '</td>'
+                    + '<td class="col-num">' + pBadge(0, prop(c, 'p0Count', 'P0Count')) + '</td>'
+                    + '<td class="col-num">' + pBadge(1, prop(c, 'p1Count', 'P1Count')) + '</td>'
+                    + '<td class="col-num">' + pBadge(2, prop(c, 'p2Count', 'P2Count')) + '</td>'
+                    + '<td class="col-num">' + pBadge(3, prop(c, 'p3Count', 'P3Count')) + '</td>'
+                    + '<td class="col-num">' + pBadge(4, prop(c, 'p4Count', 'P4Count')) + '</td>'
+                    + '<td class="col-num">' + pBadge(5, prop(c, 'p5Count', 'P5Count')) + '</td>'
+                    + '<td><span class="irf-rec ' + recClass(rec) + '">' + esc(rec) + '</span></td>'
+                    + '<td>' + reviewBadge(review, prop(c, 'reviewedBy', 'ReviewedBy'), prop(c, 'reviewedAt', 'ReviewedAt')) + '</td>'
+                    + '<td style="font-size:11px;">' + esc(formatBackfillStamp(c))
+                    + (incomplete ? '<div class="irf-ov-coverage">coverage incomplete — backfill channel</div>' : '')
+                    + '</td><td class="irf-actions-cell">';
+                if (canAct && review !== 'Removed') {
+                    html += '<button type="button" class="irf-audit-btn irf-audit-btn--danger btn-risk-remove"'
+                        + ' data-source="overview" data-interviewer-id="' + interviewerId + '"'
+                        + ' data-trans-id="' + transId + '" data-irf-id="' + irfId + '"'
+                        + ' data-worst-id="' + (worstId || '') + '"'
+                        + ' data-risk-summary="' + esc(summary).replace(/"/g, '&quot;') + '">Remove</button>'
+                        + '<button type="button" class="irf-audit-btn btn-risk-keep"'
+                        + ' data-source="overview" data-interviewer-id="' + interviewerId + '"'
+                        + ' data-trans-id="' + transId + '" data-irf-id="' + irfId + '"'
+                        + ' data-worst-id="' + (worstId || '') + '"'
+                        + ' data-risk-summary="' + esc(summary).replace(/"/g, '&quot;') + '">Keep</button>';
+                } else {
+                    html += '<span style="color:#94a3b8;font-size:11px;">—</span>';
+                }
+                html += '</td></tr>';
+            });
+            html += '</tbody></table>';
+            return html;
+        }
+
+        function loadOverviewChannels(interviewerId, force) {
+            var $main = $('tr.irf-ov-main-row[data-interviewer-id="' + interviewerId + '"]');
+            var $detail = $main.next('.irf-ov-detail-row');
+            if (!$detail.length) {
+                $detail = $('<tr class="irf-ov-detail-row" data-parent-iv="' + interviewerId + '"><td colspan="10"><div class="irf-risk-panel">'
+                    + '<div class="irf-risk-panel__title">Channels for this interviewer</div>'
+                    + '<div class="irf-ov-ch-body"><div class="irf-risk-loading">Loading…</div></div>'
+                    + '</div></td></tr>');
+                $main.after($detail);
+            } else {
+                $detail.show();
+                if (!force) return;
+                $detail.find('.irf-ov-ch-body').html('<div class="irf-risk-loading">Loading…</div>');
+            }
+            $.getJSON(ovChannelsUrl, { interviewerId: interviewerId, from: dirFromVal, to: dirToVal })
+                .done(function (res) {
+                    if (!res || !res.ok) {
+                        $detail.find('.irf-ov-ch-body').html('<div class="irf-risk-error">'
+                            + esc((res && res.message) || 'Failed to load channels.') + '</div>');
+                        return;
+                    }
+                    $detail.find('.irf-ov-ch-body').html(renderOverviewChannels(interviewerId, res.rows || []));
+                })
+                .fail(function () {
+                    $detail.find('.irf-ov-ch-body').html('<div class="irf-risk-error">Failed to load channels.</div>');
+                });
+        }
+
+        $(document).on('click', '.btn-ov-expand', function () {
+            var id = $(this).data('interviewer-id');
+            var $btn = $(this);
+            var open = $btn.hasClass('is-open');
+            if (open) {
+                $btn.removeClass('is-open').text('View');
+                $('tr.irf-ov-main-row[data-interviewer-id="' + id + '"]').next('.irf-ov-detail-row').hide();
+                return;
+            }
+            $btn.addClass('is-open').text('Hide');
+            loadOverviewChannels(id, true);
+        });
+
+        $('#ovRefreshBtn').on('click', function () { loadOverview(ovOffset); });
+        $('#ovShowAll').on('change', function () { loadOverview(0); });
+        $(document).on('click', '#ovPendingFilterBtn', function () {
+            ovPendingOnly = true;
+            loadOverview(0);
+        });
+        $(document).on('click', '#ovClearPendingFilter', function () {
+            ovPendingOnly = false;
+            loadOverview(0);
+        });
+        $(document).on('click', '#ovPrev', function () {
+            loadOverview(Math.max(0, ovOffset - ovPageSize));
+        });
+        $(document).on('click', '#ovNext', function () {
+            loadOverview(ovOffset + ovPageSize);
+        });
+
+        // Auto-expand IRF when deep-linked from overview channel link
+        if (expandIrfIdOnLoad) {
+            setAuditView('channels');
+            var $expandBtn = $('.btn-view-interviewers[data-irf-id="' + expandIrfIdOnLoad + '"]');
+            if ($expandBtn.length) {
+                var $row = $expandBtn.closest('tr.irf-audit-main-row');
+                $irfAuditRows.show();
+                // Jump pagination to the page containing this IRF
+                var idx = $irfAuditRows.index($row);
+                if (idx >= 0) {
+                    irfAuditCurrentPage = Math.floor(idx / IRF_AUDIT_PAGE_SIZE) + 1;
+                    renderIrfAuditPagination();
+                }
+                $expandBtn.trigger('click');
+                try { $row[0].scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) { }
+            }
+        } else if (initialAuditView === 'interviewers') {
+            setAuditView('interviewers');
+        } else {
+            $('#irfAuditInterviewersBlurb').hide();
+        }
 
     })();
 
