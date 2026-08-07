@@ -124,6 +124,58 @@ UPDATE IRF
             }
         }
 
+        // ────────────────────────────────────────────────────────────────────
+        // Skill channel (IRF) -> ElevenLabs WhatsApp agent id mapping
+        // ────────────────────────────────────────────────────────────────────
+
+        public async Task<string> GetIRFElevenLabsAgentIdAsync(int irfId)
+        {
+            try
+            {
+                using (var con = new SqlConnection(_connectionString))
+                {
+                    var result = await con.QueryFirstOrDefaultAsync<string>(
+                        "SELECT ElevenLabsAgentId FROM IRF WHERE id = @id",
+                        new { id = irfId });
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<bool> SetIRFElevenLabsAgentIdAsync(int? irfId, string irfCode, string agentId)
+        {
+            try
+            {
+                // Match by internal id when known (edit), else by business IRFId (create).
+                const string sql = @"
+UPDATE IRF
+   SET ElevenLabsAgentId = @agentId
+ WHERE (@id IS NOT NULL AND id = @id)
+    OR (@id IS NULL AND @irfCode IS NOT NULL AND IRFId = @irfCode);";
+
+                using (var con = new SqlConnection(_connectionString))
+                {
+                    var rows = await con.ExecuteAsync(sql, new
+                    {
+                        id = irfId,
+                        irfCode,
+                        agentId = string.IsNullOrWhiteSpace(agentId) ? null : agentId.Trim()
+                    });
+                    return rows > 0;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public async Task<PhoneScreenIRFHeader> GetIRFHeaderAsync(int irfId)
         {
             try
@@ -136,6 +188,7 @@ SELECT TOP 1
        ClientName        AS ClientName,
        PlivoAssistantUrl AS PlivoAssistantUrl,
        PlivoWhatsAppAssistantUrl AS PlivoWhatsAppAssistantUrl,
+       ElevenLabsAgentId AS ElevenLabsAgentId,
        StartDate         AS StartDate
   FROM IRF
  WHERE id = @id;";
