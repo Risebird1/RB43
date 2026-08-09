@@ -65,7 +65,7 @@ Begin
 			id,
 			ROW_NUMBER() OVER (
 				PARTITION BY email, Split_Message_Id
-				ORDER BY ISNULL(EventTimestampUnix, TRY_CAST([timestamp] AS BIGINT)) DESC, id DESC
+				ORDER BY TRY_CAST([timestamp] AS BIGINT) DESC, id DESC
 			) AS rn
 		FROM FilteredEvents
 	)
