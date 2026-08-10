@@ -62,6 +62,21 @@ namespace Risebird.Business
         public Task<string> GetIrfChannelOwnerEmailAsync(int irfId) =>
             _monitorRepository.GetIrfChannelOwnerEmailAsync(irfId);
 
+        public Task<InterviewerRiskOverviewPageVm> GetInterviewerRiskOverviewAsync(
+            DateTime fromIst, DateTime toIst, string ownerEmail, decimal? minRiskRatio,
+            bool pendingReviewOnly, int offset, int pageSize) =>
+            _monitorRepository.GetInterviewerRiskOverviewAsync(
+                fromIst, toIst, ownerEmail, minRiskRatio, pendingReviewOnly, offset, pageSize);
+
+        public Task<IReadOnlyList<InterviewerRiskOverviewChannelRowVm>> GetInterviewerRiskOverviewChannelsAsync(
+            int interviewerId, DateTime fromIst, DateTime toIst, string ownerEmail) =>
+            _monitorRepository.GetInterviewerRiskOverviewChannelsAsync(interviewerId, fromIst, toIst, ownerEmail);
+
+        public Task<IReadOnlyList<InterviewerRiskOverviewRowVm>> GetInterviewerRiskOverviewExportRowsAsync(
+            DateTime fromIst, DateTime toIst, string ownerEmail, decimal? minRiskRatio, bool pendingReviewOnly) =>
+            _monitorRepository.GetInterviewerRiskOverviewExportRowsAsync(
+                fromIst, toIst, ownerEmail, minRiskRatio, pendingReviewOnly);
+
         public async Task<IrfAuditRiskBackfillResultVm> BackfillRiskCategoryForIrfAsync(int irfId, DateTime fromIst, DateTime toIst,
             bool ignoreMassFireGuard = false,
             string executedBy = null,
