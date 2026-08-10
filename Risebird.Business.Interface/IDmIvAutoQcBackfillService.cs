@@ -24,6 +24,16 @@ namespace Risebird.Business.Interface
         /// <summary>IRF Channel Owner email — used for HR/SeniorHR ownership checks on Keep/Remove actions.</summary>
         Task<string> GetIrfChannelOwnerEmailAsync(int irfId);
 
+        Task<InterviewerRiskOverviewPageVm> GetInterviewerRiskOverviewAsync(
+            DateTime fromIst, DateTime toIst, string ownerEmail, decimal? minRiskRatio,
+            bool pendingReviewOnly, int offset, int pageSize);
+
+        Task<IReadOnlyList<InterviewerRiskOverviewChannelRowVm>> GetInterviewerRiskOverviewChannelsAsync(
+            int interviewerId, DateTime fromIst, DateTime toIst, string ownerEmail);
+
+        Task<IReadOnlyList<InterviewerRiskOverviewRowVm>> GetInterviewerRiskOverviewExportRowsAsync(
+            DateTime fromIst, DateTime toIst, string ownerEmail, decimal? minRiskRatio, bool pendingReviewOnly);
+
         /// <param name="ignoreMassFireGuard">
         /// When true, skip the mass-fire circuit breaker (deliberate re-grade after a check fix).
         /// </param>

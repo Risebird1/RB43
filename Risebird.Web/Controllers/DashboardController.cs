@@ -8434,7 +8434,7 @@ NEVER:
         /// </summary>
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> AutoRemovalMonitor(DateTime? from = null, DateTime? to = null, string preset = null)
+        public async Task<IActionResult> AutoRemovalMonitor(DateTime? from = null, DateTime? to = null, string preset = null, int? expandIrfId = null, string view = null)
         {
             try
             {
@@ -8467,6 +8467,10 @@ NEVER:
                 ViewBag.DirectoryFromIst = fromIst.ToString("yyyy-MM-dd");
                 ViewBag.DirectoryToIst = toIst.ToString("yyyy-MM-dd");
                 ViewBag.DirectoryPreset = activePreset;
+                ViewBag.ExpandIrfId = expandIrfId.GetValueOrDefault() > 0 ? expandIrfId : null;
+                ViewBag.ActiveAuditView = string.Equals(view, "interviewers", StringComparison.OrdinalIgnoreCase)
+                    ? "interviewers"
+                    : "channels";
                 return View(directory);
             }
             catch (Exception ex)
@@ -9022,6 +9026,262 @@ NEVER:
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { ok = false, message = "Keep failed." });
+            }
+        }
+
+        /// <summary>
+        /// High-Risk Interviewers overview — server-paginated, owner-scoped for HR/SeniorHR.
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InterviewerRiskOverview(
+            DateTime? from = null,
+            DateTime? to = null,
+            bool showAll = false,
+            bool pendingReviewOnly = false,
+            int offset = 0,
+            int pageSize = 25)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { ok = false, message = "Unauthorized" });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsAutoQcOpsProfile(profileName))
+                    return Json(new { ok = false, message = "Not authorized." });
+
+                var (fromIst, toIst, _) = NormalizeDirectoryIstDateRange(from, to, null);
+                var sessionEmail = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? "";
+                var ownerEmail = IsIrfAuditOwnerProfile(profileName) ? sessionEmail : null;
+                decimal? minRatio = showAll ? (decimal?)null : DmIvAutoQcAuditConstants.IrfAuditOverviewDefaultMinRiskRatio;
+
+                var page = await _autoQcBackfillService.GetInterviewerRiskOverviewAsync(
+                    fromIst, toIst, ownerEmail, minRatio, pendingReviewOnly, offset, pageSize);
+
+                return Json(new
+                {
+                    ok = true,
+                    from = fromIst.ToString("yyyy-MM-dd"),
+                    to = toIst.ToString("yyyy-MM-dd"),
+                    offset = page.Offset,
+                    pageSize = page.PageSize,
+                    totalRows = page.TotalRows,
+                    summary = page.Summary,
+                    rows = page.Rows,
+                    removeRatio = DmIvAutoQcAuditConstants.IrfAuditRemoveRatio,
+                    defaultMinRiskRatio = DmIvAutoQcAuditConstants.IrfAuditOverviewDefaultMinRiskRatio
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                var detail = ex.GetBaseException()?.Message ?? ex.Message;
+                return Json(new
+                {
+                    ok = false,
+                    message = "Could not load interviewer risk overview. " + detail
+                        + " — Deploy Risebird.DB/StoredProcedures/usp_GetInterviewerRiskOverview.sql."
+                });
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InterviewerRiskOverviewChannels(
+            int interviewerId,
+            DateTime? from = null,
+            DateTime? to = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { ok = false, message = "Unauthorized" });
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsAutoQcOpsProfile(profileName))
+                    return Json(new { ok = false, message = "Not authorized." });
+
+                if (interviewerId <= 0)
+                    return Json(new { ok = false, message = "Invalid interviewer." });
+
+                var (fromIst, toIst, _) = NormalizeDirectoryIstDateRange(from, to, null);
+                var sessionEmail = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? "";
+                var ownerEmail = IsIrfAuditOwnerProfile(profileName) ? sessionEmail : null;
+
+                var rows = await _autoQcBackfillService.GetInterviewerRiskOverviewChannelsAsync(
+                    interviewerId, fromIst, toIst, ownerEmail);
+
+                return Json(new
+                {
+                    ok = true,
+                    interviewerId,
+                    from = fromIst.ToString("yyyy-MM-dd"),
+                    to = toIst.ToString("yyyy-MM-dd"),
+                    rows
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                var detail = ex.GetBaseException()?.Message ?? ex.Message;
+                return Json(new
+                {
+                    ok = false,
+                    message = "Could not load channel breakdown. " + detail
+                        + " — Deploy Risebird.DB/StoredProcedures/usp_GetInterviewerRiskOverviewChannels.sql."
+                });
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InterviewerRiskOverviewExport(
+            DateTime? from = null,
+            DateTime? to = null,
+            bool showAll = false,
+            bool pendingReviewOnly = false)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return RedirectToAction("SignOut", "Session");
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsAutoQcOpsProfile(profileName))
+                    return RedirectToAction("SignOut", "Session");
+
+                var (fromIst, toIst, _) = NormalizeDirectoryIstDateRange(from, to, null);
+                var sessionEmail = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? "";
+                var ownerEmail = IsIrfAuditOwnerProfile(profileName) ? sessionEmail : null;
+                decimal? minRatio = showAll ? (decimal?)null : DmIvAutoQcAuditConstants.IrfAuditOverviewDefaultMinRiskRatio;
+
+                var overviewRows = await _autoQcBackfillService.GetInterviewerRiskOverviewExportRowsAsync(
+                    fromIst, toIst, ownerEmail, minRatio, pendingReviewOnly);
+
+                var channelExport = new List<(InterviewerRiskOverviewRowVm Iv, InterviewerRiskOverviewChannelRowVm Ch)>();
+                foreach (var iv in overviewRows)
+                {
+                    var ch = await _autoQcBackfillService.GetInterviewerRiskOverviewChannelsAsync(
+                        iv.InterviewerId, fromIst, toIst, ownerEmail);
+                    foreach (var c in ch)
+                        channelExport.Add((iv, c));
+                }
+
+                ExcelPackage Ep = new ExcelPackage();
+                var sheet1 = Ep.Workbook.Worksheets.Add("High-Risk Interviewers");
+                sheet1.Cells[1, 1].Value = "InterviewerId";
+                sheet1.Cells[1, 2].Value = "CodedId";
+                sheet1.Cells[1, 3].Value = "Name";
+                sheet1.Cells[1, 4].Value = "Email";
+                sheet1.Cells[1, 5].Value = "Mobile";
+                sheet1.Cells[1, 6].Value = "ChannelsActive";
+                sheet1.Cells[1, 7].Value = "TotalCompleted";
+                sheet1.Cells[1, 8].Value = "TotalBad";
+                sheet1.Cells[1, 9].Value = "OverallRiskRatio";
+                sheet1.Cells[1, 10].Value = "WorstSeverity";
+                sheet1.Cells[1, 11].Value = "PriorityTier";
+                sheet1.Cells[1, 12].Value = "HighRiskChannels";
+                sheet1.Cells[1, 13].Value = "PendingReviewChannels";
+                sheet1.Cells[1, 14].Value = "CoverageIncomplete";
+                sheet1.Cells[1, 15].Value = "P0";
+                sheet1.Cells[1, 16].Value = "P1";
+                sheet1.Cells[1, 17].Value = "P2";
+                sheet1.Cells[1, 18].Value = "P3";
+                sheet1.Cells[1, 19].Value = "P4";
+                sheet1.Cells[1, 20].Value = "P5";
+                sheet1.Cells[1, 21].Value = "WindowFromIst";
+                sheet1.Cells[1, 22].Value = "WindowToIst";
+                sheet1.Cells["A1:V1"].Style.Font.Bold = true;
+
+                var r = 2;
+                foreach (var item in overviewRows)
+                {
+                    sheet1.Cells[r, 1].Value = item.InterviewerId;
+                    sheet1.Cells[r, 2].Value = item.CodedId;
+                    sheet1.Cells[r, 3].Value = item.InterviewerName;
+                    sheet1.Cells[r, 4].Value = item.InterviewerEmail;
+                    sheet1.Cells[r, 5].Value = item.MobileNumber;
+                    sheet1.Cells[r, 6].Value = item.ChannelsActive;
+                    sheet1.Cells[r, 7].Value = item.TotalCompleted;
+                    sheet1.Cells[r, 8].Value = item.TotalBad;
+                    sheet1.Cells[r, 9].Value = item.OverallRiskRatio;
+                    sheet1.Cells[r, 10].Value = item.WorstSeverity;
+                    sheet1.Cells[r, 11].Value = item.PriorityTier;
+                    sheet1.Cells[r, 12].Value = item.HighRiskChannels;
+                    sheet1.Cells[r, 13].Value = item.PendingReviewChannels;
+                    sheet1.Cells[r, 14].Value = item.CoverageIncomplete ? "Yes" : "No";
+                    sheet1.Cells[r, 15].Value = item.P0Count;
+                    sheet1.Cells[r, 16].Value = item.P1Count;
+                    sheet1.Cells[r, 17].Value = item.P2Count;
+                    sheet1.Cells[r, 18].Value = item.P3Count;
+                    sheet1.Cells[r, 19].Value = item.P4Count;
+                    sheet1.Cells[r, 20].Value = item.P5Count;
+                    sheet1.Cells[r, 21].Value = fromIst.ToString("yyyy-MM-dd");
+                    sheet1.Cells[r, 22].Value = toIst.ToString("yyyy-MM-dd");
+                    r++;
+                }
+
+                var sheet2 = Ep.Workbook.Worksheets.Add("Per-Channel Breakdown");
+                sheet2.Cells[1, 1].Value = "InterviewerId";
+                sheet2.Cells[1, 2].Value = "InterviewerEmail";
+                sheet2.Cells[1, 3].Value = "IrfId";
+                sheet2.Cells[1, 4].Value = "IrfName";
+                sheet2.Cells[1, 5].Value = "ChannelOwner";
+                sheet2.Cells[1, 6].Value = "Completed";
+                sheet2.Cells[1, 7].Value = "Bad";
+                sheet2.Cells[1, 8].Value = "RiskRatio";
+                sheet2.Cells[1, 9].Value = "Recommendation";
+                sheet2.Cells[1, 10].Value = "ReviewState";
+                sheet2.Cells[1, 11].Value = "P0";
+                sheet2.Cells[1, 12].Value = "P1";
+                sheet2.Cells[1, 13].Value = "P2";
+                sheet2.Cells[1, 14].Value = "P3";
+                sheet2.Cells[1, 15].Value = "P4";
+                sheet2.Cells[1, 16].Value = "P5";
+                sheet2.Cells[1, 17].Value = "LastBackfillAtUtc";
+                sheet2.Cells[1, 18].Value = "LastBackfillFromIst";
+                sheet2.Cells[1, 19].Value = "LastBackfillToIst";
+                sheet2.Cells[1, 20].Value = "CoverageIncomplete";
+                sheet2.Cells[1, 21].Value = "TransInterviewerId";
+                sheet2.Cells["A1:U1"].Style.Font.Bold = true;
+
+                r = 2;
+                foreach (var pair in channelExport)
+                {
+                    var item = pair.Iv;
+                    var c = pair.Ch;
+                    sheet2.Cells[r, 1].Value = item.InterviewerId;
+                    sheet2.Cells[r, 2].Value = item.InterviewerEmail;
+                    sheet2.Cells[r, 3].Value = c.IrfId;
+                    sheet2.Cells[r, 4].Value = c.IrfName;
+                    sheet2.Cells[r, 5].Value = c.ChannelOwnerDisplay ?? c.ChannelOwnerEmail;
+                    sheet2.Cells[r, 6].Value = c.Completed;
+                    sheet2.Cells[r, 7].Value = c.Bad;
+                    sheet2.Cells[r, 8].Value = c.RiskRatio;
+                    sheet2.Cells[r, 9].Value = c.Recommendation;
+                    sheet2.Cells[r, 10].Value = c.ReviewState;
+                    sheet2.Cells[r, 11].Value = c.P0Count;
+                    sheet2.Cells[r, 12].Value = c.P1Count;
+                    sheet2.Cells[r, 13].Value = c.P2Count;
+                    sheet2.Cells[r, 14].Value = c.P3Count;
+                    sheet2.Cells[r, 15].Value = c.P4Count;
+                    sheet2.Cells[r, 16].Value = c.P5Count;
+                    sheet2.Cells[r, 17].Value = c.LastBackfillAtUtc?.ToString("u");
+                    sheet2.Cells[r, 18].Value = c.LastBackfillFromIst?.ToString("yyyy-MM-dd");
+                    sheet2.Cells[r, 19].Value = c.LastBackfillToIst?.ToString("yyyy-MM-dd");
+                    sheet2.Cells[r, 20].Value = c.CoverageIncomplete ? "Yes" : "No";
+                    sheet2.Cells[r, 21].Value = c.TransInterviewerId;
+                    r++;
+                }
+
+                var fileName = "Risebird_HighRiskInterviewers_" + fromIst.ToString("yyyyMMdd") + "_" + toIst.ToString("yyyyMMdd") + ".xlsx";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("AutoRemovalMonitor", new { from, to, view = "interviewers" });
             }
         }
 

@@ -47,5 +47,15 @@ namespace Risebird.Repository.Interface
 
         /// <summary>Window quality strip (TotalCompleted/BadInterviews/BadRatio/P0..P5) for the IRF Audit drill-down.</summary>
         Task<IrfAuditWindowQualityVm> GetIrfAuditWindowQualityAsync(int irfId, DateTime fromIst, DateTime toIst);
+
+        Task<InterviewerRiskOverviewPageVm> GetInterviewerRiskOverviewAsync(
+            DateTime fromIst, DateTime toIst, string ownerEmail, decimal? minRiskRatio,
+            bool pendingReviewOnly, int offset, int pageSize);
+
+        Task<IReadOnlyList<InterviewerRiskOverviewChannelRowVm>> GetInterviewerRiskOverviewChannelsAsync(
+            int interviewerId, DateTime fromIst, DateTime toIst, string ownerEmail);
+
+        Task<IReadOnlyList<InterviewerRiskOverviewRowVm>> GetInterviewerRiskOverviewExportRowsAsync(
+            DateTime fromIst, DateTime toIst, string ownerEmail, decimal? minRiskRatio, bool pendingReviewOnly);
     }
 }

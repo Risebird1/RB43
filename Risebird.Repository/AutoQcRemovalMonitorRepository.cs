@@ -552,5 +552,121 @@ END";
                 return null;
             }
         }
+
+        public const double SlowQueryWarnSecondsOverview = 2.0;
+        public const double SlowQueryWarnSecondsChannels = 1.0;
+
+        private async Task WarnIfSlowAsync(string proc, TimeSpan elapsed, double warnSeconds, string parameters)
+        {
+            if (elapsed.TotalSeconds < warnSeconds)
+                return;
+            await _logger.LogMessage(
+                LogLevelInfo.Warning,
+                $"Slow IRF Audit query: {proc} took {elapsed.TotalMilliseconds:0}ms (warn>{warnSeconds * 1000:0}ms). {parameters}");
+        }
+
+        public async Task<InterviewerRiskOverviewPageVm> GetInterviewerRiskOverviewAsync(
+            DateTime fromIst, DateTime toIst, string ownerEmail, decimal? minRiskRatio,
+            bool pendingReviewOnly, int offset, int pageSize)
+        {
+            var page = new InterviewerRiskOverviewPageVm { Offset = offset, PageSize = pageSize };
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var exists = await con.ExecuteScalarAsync<int>(
+                    "SELECT CASE WHEN OBJECT_ID(N'dbo.usp_GetInterviewerRiskOverview', N'P') IS NOT NULL THEN 1 ELSE 0 END");
+                if (exists == 0)
+                {
+                    throw new InvalidOperationException(
+                        "Stored procedure dbo.usp_GetInterviewerRiskOverview was not found. Deploy Risebird.DB/StoredProcedures/usp_GetInterviewerRiskOverview.sql.");
+                }
+
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+                using var multi = await con.QueryMultipleAsync(
+                    "usp_GetInterviewerRiskOverview",
+                    new
+                    {
+                        FromIst = fromIst.Date,
+                        ToIst = toIst.Date,
+                        OwnerEmail = string.IsNullOrWhiteSpace(ownerEmail) ? null : ownerEmail.Trim(),
+                        MinRiskRatio = minRiskRatio,
+                        PendingReviewOnly = pendingReviewOnly,
+                        Offset = Math.Max(0, offset),
+                        PageSize = pageSize <= 0 ? 25 : Math.Min(pageSize, 200)
+                    },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 120);
+                var rows = (await multi.ReadAsync<InterviewerRiskOverviewRowVm>())?.ToList()
+                    ?? new List<InterviewerRiskOverviewRowVm>();
+                var summary = await multi.ReadFirstOrDefaultAsync<InterviewerRiskOverviewSummaryVm>()
+                    ?? new InterviewerRiskOverviewSummaryVm();
+                sw.Stop();
+                await WarnIfSlowAsync(
+                    "usp_GetInterviewerRiskOverview",
+                    sw.Elapsed,
+                    SlowQueryWarnSecondsOverview,
+                    $"from={fromIst:yyyy-MM-dd} to={toIst:yyyy-MM-dd} offset={offset} pageSize={pageSize}");
+
+                page.Rows = rows;
+                page.Summary = summary;
+                page.TotalRows = rows.Count > 0 ? rows[0].TotalRows : summary.InterviewersAboveThreshold;
+                return page;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                throw;
+            }
+        }
+
+        public async Task<IReadOnlyList<InterviewerRiskOverviewChannelRowVm>> GetInterviewerRiskOverviewChannelsAsync(
+            int interviewerId, DateTime fromIst, DateTime toIst, string ownerEmail)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var exists = await con.ExecuteScalarAsync<int>(
+                    "SELECT CASE WHEN OBJECT_ID(N'dbo.usp_GetInterviewerRiskOverviewChannels', N'P') IS NOT NULL THEN 1 ELSE 0 END");
+                if (exists == 0)
+                {
+                    throw new InvalidOperationException(
+                        "Stored procedure dbo.usp_GetInterviewerRiskOverviewChannels was not found. Deploy Risebird.DB/StoredProcedures/usp_GetInterviewerRiskOverviewChannels.sql.");
+                }
+
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+                var rows = (await con.QueryAsync<InterviewerRiskOverviewChannelRowVm>(
+                    "usp_GetInterviewerRiskOverviewChannels",
+                    new
+                    {
+                        InterviewerId = interviewerId,
+                        FromIst = fromIst.Date,
+                        ToIst = toIst.Date,
+                        OwnerEmail = string.IsNullOrWhiteSpace(ownerEmail) ? null : ownerEmail.Trim()
+                    },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 90))?.ToList() ?? new List<InterviewerRiskOverviewChannelRowVm>();
+                sw.Stop();
+                await WarnIfSlowAsync(
+                    "usp_GetInterviewerRiskOverviewChannels",
+                    sw.Elapsed,
+                    SlowQueryWarnSecondsChannels,
+                    $"interviewerId={interviewerId} from={fromIst:yyyy-MM-dd} to={toIst:yyyy-MM-dd}");
+                return rows;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                throw;
+            }
+        }
+
+        public async Task<IReadOnlyList<InterviewerRiskOverviewRowVm>> GetInterviewerRiskOverviewExportRowsAsync(
+            DateTime fromIst, DateTime toIst, string ownerEmail, decimal? minRiskRatio, bool pendingReviewOnly)
+        {
+            // Cap export at 2000 interviewers (pageSize max for a single fetch).
+            var page = await GetInterviewerRiskOverviewAsync(
+                fromIst, toIst, ownerEmail, minRiskRatio, pendingReviewOnly, 0, 2000);
+            return page.Rows;
+        }
     }
 }

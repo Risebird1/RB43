@@ -284,7 +284,7 @@
                 <div class="row mb-3 align-items-center">
                     <div class="col">
                         <h4 class="fw-bold mb-0"><i class="fas fa-calendar-check text-primary me-2"></i>Interviewer Email Availability</h4>
-                        <p class="text-muted mb-0 mt-1">Interviewer availability emails processed via Relay.app</p>
+                        <p class="text-muted mb-0 mt-1">Interviewer availability emails processed via n8n</p>
                     </div>
                     <div class="col-auto d-flex gap-2">
                         <a href="@Url.Action("BatchCall", "InterviewerAvailability")" class="btn btn-sm btn-info text-white" title="Batch availability calls by MAG"><i class="fas fa-phone-volume me-1"></i>Batch Call</a>
@@ -336,7 +336,8 @@
                                 </select>
                                 <select name="source" class="form-select ia-filter-control" onchange="document.getElementById('filterForm').submit()">
                                     <option value="">All sources</option>
-                                    @if (selSource == "Relay") { <option value="Relay" selected>Relay</option> } else { <option value="Relay">Relay</option> }
+                                    @if (selSource == "n8n") { <option value="n8n" selected>n8n</option> } else { <option value="n8n">n8n</option> }
+                                    @if (selSource == "Relay") { <option value="Relay" selected>Relay (legacy)</option> } else { <option value="Relay">Relay (legacy)</option> }
                                     @if (selSource == "BatchCall") { <option value="BatchCall" selected>Batch Call</option> } else { <option value="BatchCall">Batch Call</option> }
                                     @if (selSource == "IRFAutoCall") { <option value="IRFAutoCall" selected>IRF Auto-Call</option> } else { <option value="IRFAutoCall">IRF Auto-Call</option> }
                                     @if (selSource == "Campaign") { <option value="Campaign" selected>Campaign</option> } else { <option value="Campaign">Campaign</option> }
@@ -375,7 +376,7 @@
                         {
                             <div class="text-center text-muted py-5">
                                 <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
-                                <span>@(hasFilters ? "No records match the selected filters." : "No interviewer availability emails yet. Once Relay.app routes an email, it will appear here.")</span>
+                                <span>@(hasFilters ? "No records match the selected filters." : "No interviewer availability emails yet. Once n8n routes an email, it will appear here.")</span>
                             </div>
                         }
                         else
@@ -486,12 +487,14 @@
                                                         string srcVal = r.Source ?? "";
                                                         bool isCampaign = srcVal.StartsWith("Campaign", StringComparison.OrdinalIgnoreCase);
                                                         string srcBadge = isCampaign ? "background:#fef3c7;color:#92400e;" : srcVal switch {
+                                                            "n8n" => "background:#ffe4e6;color:#9f1239;",
                                                             "Relay" => "background:#e0f2fe;color:#0369a1;",
                                                             "BatchCall" => "background:#d1fae5;color:#065f46;",
                                                             "IRFAutoCall" => "background:#ede9fe;color:#5b21b6;",
                                                             _ => "background:#f3f4f6;color:#6b7280;"
                                                         };
                                                         string srcLabel = isCampaign ? "Campaign" : srcVal switch {
+                                                            "n8n" => "n8n",
                                                             "Relay" => "Relay",
                                                             "BatchCall" => "Batch Call",
                                                             "IRFAutoCall" => "IRF Auto-Call",
@@ -964,7 +967,7 @@
 
         var srcBadge = $('#mgmSourceBadge');
         if (r.source) {
-            var srcMap = { 'Relay': { bg: '#e0f2fe', fg: '#0369a1', label: 'Relay' }, 'BatchCall': { bg: '#d1fae5', fg: '#065f46', label: 'Batch Call' }, 'IRFAutoCall': { bg: '#ede9fe', fg: '#5b21b6', label: 'IRF Auto-Call' }, 'Campaign': { bg: '#fef3c7', fg: '#92400e', label: 'Campaign' } };
+            var srcMap = { 'n8n': { bg: '#ffe4e6', fg: '#9f1239', label: 'n8n' }, 'Relay': { bg: '#e0f2fe', fg: '#0369a1', label: 'Relay' }, 'BatchCall': { bg: '#d1fae5', fg: '#065f46', label: 'Batch Call' }, 'IRFAutoCall': { bg: '#ede9fe', fg: '#5b21b6', label: 'IRF Auto-Call' }, 'Campaign': { bg: '#fef3c7', fg: '#92400e', label: 'Campaign' } };
             var si = srcMap[r.source] || (r.source && r.source.indexOf('Campaign') === 0 ? { bg: '#fef3c7', fg: '#92400e', label: 'Campaign' } : { bg: '#f3f4f6', fg: '#6b7280', label: r.source });
             srcBadge.css({ background: si.bg, color: si.fg }).text(si.label).show();
         } else { srcBadge.hide(); }

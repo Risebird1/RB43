@@ -45,10 +45,15 @@ BEGIN
     DECLARE @UserId INT = NULL
     DECLARE @InterviewerProfileId INT = NULL
 
+    -- Resolve the interviewer for this email. We must link the record even when the matched
+    -- interviewer is INACTIVE — otherwise the row looks like an anonymous external prospect and
+    -- downstream outreach (which relies on the UserId/IsActive link to skip inactive interviewers)
+    -- keeps re-contacting them. When an email collides across accounts, prefer the active one.
     SELECT TOP 1 @UserId = ul.id, @InterviewerProfileId = ip.Id
     FROM UserList ul
     LEFT JOIN InterviewerProfile ip ON ip.UserId = ul.id
-    WHERE ul.EmailId = @SenderEmail AND ul.IsActive = 1
+    WHERE ul.EmailId = @SenderEmail
+    ORDER BY ul.IsActive DESC, ul.id DESC
 
     INSERT INTO InterviewerEmailAvailability
         (SenderEmail, UserId, InterviewerProfileId, Subject, MailContent, ReceivedAt,
