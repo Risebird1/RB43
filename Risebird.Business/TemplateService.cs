@@ -15,12 +15,14 @@ namespace Risebird.Business
 
         private readonly ITemplateRepository _templateRespository;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly ITemplateListingSearchRepository _templateListingSearchRepository;
 
 
-        public TemplateService(ITemplateRepository templateRespository, IApplicationErrorLogger applicationErrorLogger)
+        public TemplateService(ITemplateRepository templateRespository, IApplicationErrorLogger applicationErrorLogger, ITemplateListingSearchRepository templateListingSearchRepository)
         {
             _templateRespository = templateRespository;
             _applicationErrorLogger = applicationErrorLogger;
+            _templateListingSearchRepository = templateListingSearchRepository;
 
         }
 
@@ -123,13 +125,32 @@ namespace Risebird.Business
         {
             try
             {
-                return await _templateRespository.DeleteClonableSkillChannel(ClonableSkillChannelId, ModifyedBy, action);
+                var result = await _templateRespository.DeleteClonableSkillChannel(ClonableSkillChannelId, ModifyedBy, action);
+                if (result)
+                    await TrySyncTemplateListingSearchAsync(ClonableSkillChannelId);
+
+                return result;
             }
 
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+
+        private async Task TrySyncTemplateListingSearchAsync(int clonableSkillChannelId)
+        {
+            if (!_templateListingSearchRepository.IsEnabled || clonableSkillChannelId <= 0)
+                return;
+
+            try
+            {
+                await _templateListingSearchRepository.UpsertTemplateAsync(clonableSkillChannelId);
+            }
+            catch (Exception syncEx)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, syncEx);
             }
         }
 

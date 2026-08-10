@@ -1,6 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
     <OutputType>Exe</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -8,17 +7,14 @@
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="DinkToPdf" Version="1.0.8" />
-    <!-- Application Insights isn't enabled by default. See https://aka.ms/AAt8mw4. -->
-    <!-- <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.22.0" /> -->
-    <!-- <PackageReference Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="2.0.0" /> -->
-    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker.Core" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.1" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.0" />
-    <PackageReference Include="PdfPig" Version="0.1.10" />
+    <PackageReference Include="DinkToPdf" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Core" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" />
+    <PackageReference Include="PdfPig" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Risebird.Business.Interface\Risebird.Business.Interface.csproj" />
@@ -43,10 +39,5 @@
   </ItemGroup>
   <ItemGroup>
     <Using Include="System.Threading.ExecutionContext" Alias="ExecutionContext" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="MCQCandiadteScore.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Compile>
   </ItemGroup>
 </Project>

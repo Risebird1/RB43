@@ -11,8 +11,9 @@ namespace Risebird.Web.Hepler
         string UserId = string.Empty;
         string CacheId = string.Empty;
         HttpContext httpContext = null;
+        byte[] cachedBytes;
 
-        TokenCache cache = new TokenCache();
+        ITokenCache cache = new TokenCache();
 
         public MSALSessionCache(string userId, HttpContext httpcontext)
         {
@@ -23,11 +24,10 @@ namespace Risebird.Web.Hepler
             Load();
         }
 
-        public TokenCache GetMsalCacheInstance()
+        public ITokenCache GetMsalCacheInstance()
         {
             cache.SetBeforeAccess(BeforeAccessNotification);
             cache.SetAfterAccess(AfterAccessNotification);
-            Load();
             return cache;
         }
 
@@ -47,19 +47,15 @@ namespace Risebird.Web.Hepler
         public void Load()
         {
             SessionLock.EnterReadLock();
-            cache.Deserialize(httpContext.Session.Get(CacheId));
+            cachedBytes = httpContext.Session.Get(CacheId);
             SessionLock.ExitReadLock();
         }
 
-        public void Persist()
+        public void Persist(byte[] bytes)
         {
             SessionLock.EnterWriteLock();
-
-            // Optimistically set HasStateChanged to false. We need to do it early to avoid losing changes made by a concurrent thread.
-            cache.HasStateChanged = false;
-
-            // Reflect changes in the persistent store
-            httpContext.Session.Set(CacheId, cache.Serialize());
+            cachedBytes = bytes;
+            httpContext.Session.Set(CacheId, bytes);
             SessionLock.ExitWriteLock();
         }
 
@@ -68,15 +64,15 @@ namespace Risebird.Web.Hepler
         void BeforeAccessNotification(TokenCacheNotificationArgs args)
         {
             Load();
+            args.TokenCache.DeserializeMsalV3(cachedBytes);
         }
 
         // Triggered right after MSAL accessed the cache.
         void AfterAccessNotification(TokenCacheNotificationArgs args)
         {
-            // if the access operation resulted in a cache update
-            if (cache.HasStateChanged)
+            if (args.HasStateChanged)
             {
-                Persist();
+                Persist(args.TokenCache.SerializeMsalV3());
             }
         }
     }

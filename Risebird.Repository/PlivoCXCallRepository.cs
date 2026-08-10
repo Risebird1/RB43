@@ -17,13 +17,13 @@ namespace Risebird.Repository
 {
     public class PlivoCXCallRepository : IPlivoCXCallRepository
     {
-        private readonly string                  _connectionString;
+        private readonly string _connectionString;
         private readonly IApplicationErrorLogger _logger;
 
         public PlivoCXCallRepository(IConfiguration configuration, IApplicationErrorLogger logger)
         {
             _connectionString = configuration["ConnectionString:DBConnectionString"];
-            _logger           = logger;
+            _logger = logger;
         }
 
         // ── Rich call log view (for the Index page) ───────────────────────────────
@@ -42,15 +42,15 @@ namespace Risebird.Repository
                     "usp_GetPlivoCXCallLogDetails",
                     new
                     {
-                        Page        = page,
-                        PageSize    = pageSize,
-                        Status      = string.IsNullOrWhiteSpace(status)      ? null : status,
-                        Purpose     = string.IsNullOrWhiteSpace(purpose)     ? null : purpose,
-                        Meeting     = string.IsNullOrWhiteSpace(meeting)     ? null : meeting,
+                        Page = page,
+                        PageSize = pageSize,
+                        Status = string.IsNullOrWhiteSpace(status) ? null : status,
+                        Purpose = string.IsNullOrWhiteSpace(purpose) ? null : purpose,
+                        Meeting = string.IsNullOrWhiteSpace(meeting) ? null : meeting,
                         Disposition = string.IsNullOrWhiteSpace(disposition) ? null : disposition,
-                        DateFrom    = dateFrom,
-                        DateTo      = dateTo,
-                        ClientName  = string.IsNullOrWhiteSpace(clientName)  ? null : clientName
+                        DateFrom = dateFrom,
+                        DateTo = dateTo,
+                        ClientName = string.IsNullOrWhiteSpace(clientName) ? null : clientName
                     },
                     commandType: CommandType.StoredProcedure);
                 return results.ToList();
@@ -324,8 +324,8 @@ namespace Risebird.Repository
         {
             try
             {
-                using var conn   = new SqlConnection(_connectionString);
-                var parameters   = new DynamicParameters();
+                using var conn = new SqlConnection(_connectionString);
+                var parameters = new DynamicParameters();
                 parameters.Add("@CandidateId", candidateId, DbType.Int32);
                 await conn.ExecuteAsync(
                     "usp_IncrementCandidateVapiCallAttempts",
@@ -342,11 +342,11 @@ namespace Risebird.Repository
         {
             try
             {
-                using var conn   = new SqlConnection(_connectionString);
-                var parameters   = new DynamicParameters();
+                using var conn = new SqlConnection(_connectionString);
+                var parameters = new DynamicParameters();
                 parameters.Add("@CandidateEmail", candidateEmail, DbType.String);
-                parameters.Add("@IRFId",          irfId,          DbType.Int32);
-                parameters.Add("@HasConfirmed",   dbType: DbType.Boolean, direction: ParameterDirection.Output);
+                parameters.Add("@IRFId", irfId, DbType.Int32);
+                parameters.Add("@HasConfirmed", dbType: DbType.Boolean, direction: ParameterDirection.Output);
                 await conn.ExecuteAsync(
                     "usp_HasConfirmedInterview",
                     parameters,

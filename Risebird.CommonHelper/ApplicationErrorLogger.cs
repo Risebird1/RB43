@@ -33,16 +33,17 @@ namespace Risebird.CommonHelper
                 AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
 
                 var st = new StackTrace(ex, true); // create the stack trace
-                var query = st.GetFrames()         // get the frames
-                              .Select(frame => new
-                              {                   // get the info
+                var frames = st.GetFrames();
+                var query = frames?.Select(frame => new
+                              {
                                   FileName = frame.GetFileName(),
                                   LineNumber = frame.GetFileLineNumber(),
                                   ColumnNumber = frame.GetFileColumnNumber(),
                                   Method = frame.GetMethod(),
-                                  Class = frame.GetMethod().DeclaringType
+                                  Class = frame.GetMethod()?.DeclaringType
                               });
-                if (query != null)
+                var firstFrame = query?.FirstOrDefault();
+                if (firstFrame != null)
                 {
                     var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
                     var exception = new LogData(date, Guid.NewGuid().ToString())
@@ -51,10 +52,10 @@ namespace Risebird.CommonHelper
                         UserEmailId = userEmailid,
                         LogMessage = ex.Message,
                         InnerException = ex.InnerException != null ? ex.InnerException.StackTrace : "NA",
-                        FileName = query.FirstOrDefault()?.FileName?.ToString(),
-                        MethodName = query.FirstOrDefault()?.Method?.ToString(),
-                        ClassName = query.FirstOrDefault()?.Class?.ToString(),
-                        LineNumber = query.FirstOrDefault().LineNumber,
+                        FileName = firstFrame.FileName?.ToString(),
+                        MethodName = firstFrame.Method?.ToString(),
+                        ClassName = firstFrame.Class?.ToString(),
+                        LineNumber = firstFrame.LineNumber,
                         Status = (int)LogStatus.Unresolved
                     };
                     await _azureTableStorageService.InsertEntity("Risebirdlogs", exception);

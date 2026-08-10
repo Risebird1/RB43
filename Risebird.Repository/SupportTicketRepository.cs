@@ -16,13 +16,13 @@ namespace Risebird.Repository
 {
     public class SupportTicketRepository : ISupportTicketRepository
     {
-        private readonly string                  _connectionString;
+        private readonly string _connectionString;
         private readonly IApplicationErrorLogger _logger;
 
         public SupportTicketRepository(IConfiguration configuration, IApplicationErrorLogger logger)
         {
             _connectionString = configuration["ConnectionString:DBConnectionString"];
-            _logger           = logger;
+            _logger = logger;
         }
 
         public async Task<int> InsertTicketAsync(SupportTicket ticket)
@@ -171,11 +171,11 @@ namespace Risebird.Repository
         }
 
         public async Task<int> InsertCandidateResumeAsync(
-            int    irfId,
+            int irfId,
             string resumeLink,
-            int    addedBy,
+            int addedBy,
             string clientHrEmailId,
-            int?   supportTicketId = null)
+            int? supportTicketId = null)
         {
             try
             {
@@ -184,9 +184,9 @@ namespace Risebird.Repository
                     "usp_InsertCandidateResume",
                     new
                     {
-                        IRFId           = irfId,
-                        ResumeLink      = resumeLink,
-                        AddedBy         = addedBy,
+                        IRFId = irfId,
+                        ResumeLink = resumeLink,
+                        AddedBy = addedBy,
                         ClientHREmailId = clientHrEmailId,
                         SupportTicketId = supportTicketId
                     },
@@ -201,13 +201,13 @@ namespace Risebird.Repository
         }
 
         public async Task<List<SupportTicketVM>> GetTicketsAsync(
-            string    status      = null,
-            string    intent      = null,
-            string    senderEmail = null,
-            DateTime? dateFrom    = null,
-            DateTime? dateTo      = null,
-            int       page        = 1,
-            int       pageSize    = 25)
+            string status = null,
+            string intent = null,
+            string senderEmail = null,
+            DateTime? dateFrom = null,
+            DateTime? dateTo = null,
+            int page = 1,
+            int pageSize = 25)
         {
             try
             {
@@ -216,13 +216,13 @@ namespace Risebird.Repository
                     "usp_GetSupportTickets",
                     new
                     {
-                        Status      = string.IsNullOrWhiteSpace(status)      ? null : status,
-                        Intent      = string.IsNullOrWhiteSpace(intent)      ? null : intent,
+                        Status = string.IsNullOrWhiteSpace(status) ? null : status,
+                        Intent = string.IsNullOrWhiteSpace(intent) ? null : intent,
                         SenderEmail = string.IsNullOrWhiteSpace(senderEmail) ? null : senderEmail,
-                        DateFrom    = dateFrom,
-                        DateTo      = dateTo,
-                        Page        = page,
-                        PageSize    = pageSize
+                        DateFrom = dateFrom,
+                        DateTo = dateTo,
+                        Page = page,
+                        PageSize = pageSize
                     },
                     commandType: CommandType.StoredProcedure);
                 return results.ToList();
@@ -279,8 +279,8 @@ namespace Risebird.Repository
                     "usp_AutoMapUserToIRF",
                     new
                     {
-                        SenderEmail    = senderEmail,
-                        JobTitle       = jobTitle,
+                        SenderEmail = senderEmail,
+                        JobTitle = jobTitle,
                         Specialization = specialization
                     },
                     commandType: CommandType.StoredProcedure);
@@ -320,10 +320,10 @@ namespace Risebird.Repository
                     "usp_FindBestIRFForClient",
                     new
                     {
-                        SenderEmail    = senderEmail,
-                        JobTitle       = jobTitle,
+                        SenderEmail = senderEmail,
+                        JobTitle = jobTitle,
                         Specialization = specialization,
-                        CreateMapping  = createMapping
+                        CreateMapping = createMapping
                     },
                     commandType: CommandType.StoredProcedure);
                 return result;
@@ -352,13 +352,13 @@ namespace Risebird.Repository
                     "usp_InsertCandidateResumeForAutoSchedule",
                     new
                     {
-                        IRFId                      = irfId,
-                        ResumeLink                 = resumeLink,
-                        AddedBy                    = addedBy,
-                        ClientHREmailId            = clientHrEmailId,
-                        SupportTicketId            = supportTicketId,
-                        CandidateName              = candidateName,
-                        CandidateEmail             = candidateEmail,
+                        IRFId = irfId,
+                        ResumeLink = resumeLink,
+                        AddedBy = addedBy,
+                        ClientHREmailId = clientHrEmailId,
+                        SupportTicketId = supportTicketId,
+                        CandidateName = candidateName,
+                        CandidateEmail = candidateEmail,
                         ScheduledInterviewDateTime = scheduledInterviewDateTime
                     },
                     commandType: CommandType.StoredProcedure);
@@ -427,18 +427,18 @@ namespace Risebird.Repository
                     "usp_InsertPendingResume",
                     new
                     {
-                        SupportTicketId            = supportTicketId,
-                        ResumeUrl                  = resumeUrl,
-                        ResumeFileName             = resumeFileName,
-                        CandidateName              = candidateName,
-                        CandidateEmail             = candidateEmail,
-                        ResolvedIRFId              = resolvedIRFId,
-                        ResolvedIRFStringId        = resolvedIRFStringId,
-                        ResolvedJobTitle           = resolvedJobTitle,
-                        ResolvedHREmail            = resolvedHREmail,
-                        HasSchedulingData          = hasSchedulingData,
+                        SupportTicketId = supportTicketId,
+                        ResumeUrl = resumeUrl,
+                        ResumeFileName = resumeFileName,
+                        CandidateName = candidateName,
+                        CandidateEmail = candidateEmail,
+                        ResolvedIRFId = resolvedIRFId,
+                        ResolvedIRFStringId = resolvedIRFStringId,
+                        ResolvedJobTitle = resolvedJobTitle,
+                        ResolvedHREmail = resolvedHREmail,
+                        HasSchedulingData = hasSchedulingData,
                         ScheduledInterviewDateTime = scheduledInterviewDateTime,
-                        ScheduleTimezone           = scheduleTimezone
+                        ScheduleTimezone = scheduleTimezone
                     },
                     commandType: CommandType.StoredProcedure);
                 return result;
@@ -558,7 +558,7 @@ namespace Risebird.Repository
             try
             {
                 using var conn = new SqlConnection(_connectionString);
-                
+
                 // Get IRF details for the new IRF
                 var irf = await conn.QueryFirstOrDefaultAsync<dynamic>(@"
                     SELECT irf.id, irf.IRFId AS IRFStringId, irf.JDTiltle, ul.EmailId AS HREmail
@@ -566,10 +566,10 @@ namespace Risebird.Repository
                     LEFT JOIN dbo.UserList ul ON ul.id = irf.RisebirdHr
                     WHERE irf.id = @IRFId",
                     new { IRFId = newIRFId });
-                
+
                 if (irf == null)
                     return false;
-                
+
                 // Update the pending resume with new IRF and track the change
                 await conn.ExecuteAsync(@"
                     UPDATE dbo.SupportTicketPendingResumes 
@@ -581,16 +581,16 @@ namespace Risebird.Repository
                         IRFChangedAt        = GETUTCDATE(),
                         IRFChangeReason     = @Reason
                     WHERE Id = @PendingResumeId",
-                    new 
-                    { 
+                    new
+                    {
                         PendingResumeId = pendingResumeId,
-                        NewIRFId        = newIRFId,
-                        IRFStringId     = (string)irf.IRFStringId,
-                        JDTitle         = (string)irf.JDTiltle,
-                        HREmail         = (string)irf.HREmail,
-                        Reason          = reason
+                        NewIRFId = newIRFId,
+                        IRFStringId = (string)irf.IRFStringId,
+                        JDTitle = (string)irf.JDTiltle,
+                        HREmail = (string)irf.HREmail,
+                        Reason = reason
                     });
-                
+
                 return true;
             }
             catch (Exception ex)
@@ -608,10 +608,10 @@ namespace Risebird.Repository
                 var result = await conn.QueryFirstOrDefaultAsync<dynamic>(
                     "usp_GetTicketCounts",
                     commandType: CommandType.StoredProcedure);
-                
+
                 if (result == null)
                     return (0, 0, 0);
-                
+
                 return (
                     (int)result.ManualReviewCount,
                     (int)result.SystemOnlyCount,
@@ -699,15 +699,15 @@ namespace Risebird.Repository
                     "usp_InsertProcessingLog",
                     new
                     {
-                        SupportTicketId    = supportTicketId,
-                        PendingResumeId    = pendingResumeId,
-                        CandidateResumeId  = candidateResumeId,
-                        Checkpoint         = checkpoint,
-                        Status             = status,
-                        Message            = message,
-                        Details            = details,
-                        ProcessedBy        = processedBy,
-                        DurationMs         = durationMs
+                        SupportTicketId = supportTicketId,
+                        PendingResumeId = pendingResumeId,
+                        CandidateResumeId = candidateResumeId,
+                        Checkpoint = checkpoint,
+                        Status = status,
+                        Message = message,
+                        Details = details,
+                        ProcessedBy = processedBy,
+                        DurationMs = durationMs
                     },
                     commandType: CommandType.StoredProcedure);
                 return logId;
@@ -730,7 +730,7 @@ namespace Risebird.Repository
                     {
                         SupportTicketId = supportTicketId,
                         PendingResumeId = pendingResumeId,
-                        Limit           = limit
+                        Limit = limit
                     },
                     commandType: CommandType.StoredProcedure);
                 return logs.ToList();

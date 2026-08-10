@@ -5,6 +5,12 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Risebird.AzureTimerFunctions
 {
@@ -17,11 +23,13 @@ namespace Risebird.AzureTimerFunctions
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IAffIndaResumeParserHelper _affIndaResumeParserHelper;
         private readonly ISASUrlHelper _sasUrlHelper;
+        private readonly IInterviewerListingSearchRepository _interviewerListingSearchRepository;
         private readonly ILogger log;
 
         public RedactResumes(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
             IInterviewerRepository interviewerRepository,
-            ISASUrlHelper sasUrlHelper, IAffIndaResumeParserHelper affIndaResumeParserHelper)
+            ISASUrlHelper sasUrlHelper, IAffIndaResumeParserHelper affIndaResumeParserHelper,
+            IInterviewerListingSearchRepository interviewerListingSearchRepository)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
@@ -30,6 +38,7 @@ namespace Risebird.AzureTimerFunctions
             _sasUrlHelper = sasUrlHelper;
             _affIndaResumeParserHelper = affIndaResumeParserHelper;
             _interviewerRepository = interviewerRepository;
+            _interviewerListingSearchRepository = interviewerListingSearchRepository;
             log = loggerFactory.CreateLogger<RedactResumes>();
         }
         [Function("RedactResumes")]
@@ -109,6 +118,21 @@ namespace Risebird.AzureTimerFunctions
                 if (interviewerList != null && interviewerList.Count() > 0)
                 {
                     await _interviewerRepository.UpdateInterviewerCodedResumeInBulk(interviewerList);
+
+                    if (_interviewerListingSearchRepository != null && _interviewerListingSearchRepository.IsEnabled)
+                    {
+                        foreach (var interviewer in interviewerList.Where(x => x != null && x.id > 0))
+                        {
+                            try
+                            {
+                                await _interviewerListingSearchRepository.UpsertInterviewerAsync(interviewer.id);
+                            }
+                            catch (Exception syncEx)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, syncEx);
+                            }
+                        }
+                    }
                 }
 
                 log.LogInformation($" RedactResumes : Timer trigger function started finished execution at: {DateTime.Now}");

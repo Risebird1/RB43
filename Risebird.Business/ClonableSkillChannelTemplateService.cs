@@ -26,11 +26,13 @@ namespace Risebird.Business
         private readonly ISkillService _skillService;
         private readonly IClientRepository _clientRepository;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
+        private readonly ITemplateListingSearchRepository _templateListingSearchRepository;
 
         public ClonableSkillChannelTemplateService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, ISkillService skillService,
             IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository,
             IActivityTrackerRepository activityTrackerRepository,
-            IClientRepository clientRepository, IAssistantServiceHelper assistantServiceHelper)
+            IClientRepository clientRepository, IAssistantServiceHelper assistantServiceHelper,
+            ITemplateListingSearchRepository templateListingSearchRepository)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -40,17 +42,43 @@ namespace Risebird.Business
             _activityTrackerRepository = activityTrackerRepository;
             _clientRepository = clientRepository;
             _assistantServiceHelper = assistantServiceHelper;
+            _templateListingSearchRepository = templateListingSearchRepository;
         }
-        public async Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels()
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<ClonableSkillChannelVM>> GetAllClonableSkillChannels(ClonableTemplatesFilter filter = null)
         {
             try
             {
+                if (_templateListingSearchRepository.IsEnabled)
+                {
+                    var searchResult = await _templateListingSearchRepository.SearchAsync(filter);
+                    if (searchResult != null)
+                        return searchResult;
+                }
+
                 return await _clonableSkillChannelTemplateRepository.GetAllClonableSkillChannels();
             }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+
+        /// <summary>Best-effort sync of a single template into the Azure Search index; failures are swallowed.</summary>
+        private async Task TrySyncTemplateListingSearchAsync(int clonableSkillChannelId)
+        {
+            if (!_templateListingSearchRepository.IsEnabled || clonableSkillChannelId <= 0)
+                return;
+
+            try
+            {
+                await _templateListingSearchRepository.UpsertTemplateAsync(clonableSkillChannelId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
             }
         }
         public async Task<ClonableSkillChannelVM> GetTemplateDataFromSourceSkillChannel(int irfId, int assessmentGroupId, bool isNewSkillChannel = false)
@@ -275,6 +303,9 @@ namespace Risebird.Business
                     activityTrackerModel.PerformedBy = loggedInUser;
                     activityTrackerModel.Summary = ActivityTypes.CreateClonableSkillChannel.GetDescription();
                     await _activityTrackerRepository.AddActivity(activityTrackerModel);
+
+                    if (model.ClonableSkillChannelId > 0)
+                        await TrySyncTemplateListingSearchAsync(model.ClonableSkillChannelId);
                 }
 
                 return result;
@@ -456,6 +487,8 @@ namespace Risebird.Business
                     activityTrackerModel.PerformedBy = loggedInUser;
                     activityTrackerModel.Summary = ActivityTypes.UpdateClonableSkillChannel.GetDescription();
                     await _activityTrackerRepository.AddActivity(activityTrackerModel);
+
+                    await TrySyncTemplateListingSearchAsync(model.ClonableSkillChannelId);
                 }
 
                 return result;
@@ -732,7 +765,10 @@ namespace Risebird.Business
 
                         }
                         //create a template using the generataed rubrics
-                        result  = await _clonableSkillChannelTemplateRepository.CreateTemplateFromMAG(techSkills, assessmentGroupId, loggedInUser);
+                        var newTemplateId = await _clonableSkillChannelTemplateRepository.CreateTemplateFromMAG(techSkills, assessmentGroupId, loggedInUser);
+                        result = newTemplateId > 0;
+                        if (result)
+                            await TrySyncTemplateListingSearchAsync(newTemplateId);
                     }
 
                 }

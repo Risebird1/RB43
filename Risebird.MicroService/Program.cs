@@ -80,6 +80,7 @@ namespace Risebird.MicroService
                     services.AddScoped<IApplicationErrorLogger, ApplicationErrorLogger>();
                     services.AddScoped<IDashboarRepository, DashboardRepository>();
                     services.AddScoped<IIRFRepository, IRFRepository>();
+                    services.AddRisebirdAzureSearch(configuration);
                     services.AddScoped<IJoinabilityMatrixRepository, JoinabilityMatrixRepository>();
                     services.AddScoped<IGeneralSkillMatrixRepository, GeneralSkillMatrixRepository>();
                     services.AddScoped<ISelectabilityMatrixRepository, SelectabilityMatrixRepository>();

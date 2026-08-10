@@ -486,28 +486,7 @@ namespace Risebird.Web.Controllers
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
                 ViewBag.CurrentProfile = profileName;
-                var model = await _supportService.GetRaisedIssueDetails(profileName);
-                if (type == "Open")
-                {
-                    model = model.Where(x => x.Status == "Open").ToList();
-                    model = model.Where(x => x.RequestType != "Payment").ToList();
-                }
-                else if (type == "OpenPayment")
-                {
-                    model = model.Where(x => x.Status == "Open").ToList();
-                    model = model.Where(x => x.RequestType == "Payment").ToList();
-                    model = model.Where(x => !x.IsReopened).ToList();
-                }
-                else if (type == "ReOpenPayment")
-                {
-                    model = model.Where(x => x.Status == "Open").ToList();
-                    model = model.Where(x => x.RequestType == "Payment").ToList();
-                    model = model.Where(x => x.IsReopened).ToList();
-                }
-                else
-                {
-                    model = model.Where(x => x.Status != "Open").ToList();
-                }
+                var model = await _supportService.GetRaisedIssueDetails(profileName, type);
                 return View(model);
             }
             else

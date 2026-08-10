@@ -7,7 +7,6 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -166,23 +165,14 @@ namespace Risebird.Repository
                     //    }
                     //}
                     if (normalizedSessionId is null ||
-                        normalizedQuestion is null ||
+                        normalizedVideoLink is null ||
                         normalizedCandidateResponse is null ||
+                        normalizedQuestion is null ||
                         interviewId <= 0)
                     {
                         return false;
                     }
 
-                    var requiresVideo = !isTypingSpeedQuestion && !isListeningComprehension;
-                    if (requiresVideo && normalizedVideoLink is null)
-                    {
-                        return false;
-                    }
-
-                    if (!requiresVideo && normalizedVideoLink is null)
-                    {
-                        normalizedVideoLink = "no-video";
-                    }
 
                     var parameters = new DynamicParameters();
                     parameters.Add("@VideoLink", normalizedVideoLink);
@@ -764,7 +754,7 @@ namespace Risebird.Repository
                     parameters.Add("@OpenAIThreadId", obj.OpenAIThreadId);
                     parameters.Add("@OpenAIRunId", obj.OpenAIRunId);
                     parameters.Add("@CreatedBy", obj.CreatedBy);
-                    
+
                     await SqlMapper.QueryAsync(con, "usp_SaveTypingSpeedAssessment", parameters,
                          commandType: CommandType.StoredProcedure);
                     return true;
@@ -821,7 +811,7 @@ namespace Risebird.Repository
                     parameters.Add("@TimeCompleted", obj.TimeCompleted);
                     parameters.Add("@TimeTakenInSeconds", obj.TimeTakenInSeconds);
                     parameters.Add("@CreatedBy", obj.CreatedBy);
-                    
+
                     await SqlMapper.QueryAsync(con, "usp_SaveListeningComprehensionAssessment", parameters,
                          commandType: CommandType.StoredProcedure);
                     return true;

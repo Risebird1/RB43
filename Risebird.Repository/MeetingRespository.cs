@@ -41,8 +41,9 @@ namespace Risebird.Repository
                 if (string.IsNullOrEmpty(emailId)) return false;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryFirstOrDefaultAsync<bool?>(
-                        "SELECT IsActive FROM UserList WHERE EmailId = @EmailId",
+                    var result = await DapperStoredProcedureHelper.QueryFirstOrDefaultAsync<bool?>(
+                        con,
+                        "usp_IsUserActiveByEmail",
                         new { EmailId = emailId });
                     return result == true;
                 }
@@ -944,13 +945,11 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "update [dbo].[InterviewMeetings] set confirmationStatus=@value where id = @meetingid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@meetingid", meetingid);
-                dynamicParameters.Add("@value", 2);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    _ = await con.QueryAsync<int>(query, dynamicParameters);
+                    await DapperStoredProcedureHelper.ExecuteAsync(con, "usp_CancelInterviewMeetingById", dynamicParameters);
                     return true;
                 }
             }
@@ -1068,13 +1067,11 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from TransTechSkill where IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<TransSkill>(query, dynamicParameters);
-                    return results;
+                    return await DapperStoredProcedureHelper.QueryAsync<TransSkill>(con, "usp_GetTransTechSkillByIRFId", dynamicParameters);
                 }
 
             }
@@ -1088,13 +1085,11 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select tsg.*, gsm.Name as Name from TransSkillGeneral tsg join GeneralSkillMatrix gsm on tsg.type = gsm.Id where IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<TransSkillGeneral>(query, dynamicParameters);
-                    return results;
+                    return await DapperStoredProcedureHelper.QueryAsync<TransSkillGeneral>(con, "usp_GetTransSkillGeneralByIRFIdWithMatrix", dynamicParameters);
                 }
 
             }
@@ -1109,13 +1104,11 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select tj.*, jm.Name as Name from TransJoinability tj join JoinabilityMatrix jm on tj.type = jm.Id where IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<TransJoinability>(query, dynamicParameters);
-                    return results;
+                    return await DapperStoredProcedureHelper.QueryAsync<TransJoinability>(con, "usp_GetTransJoinabilityByIRFIdWithMatrix", dynamicParameters);
                 }
 
             }
@@ -1129,12 +1122,9 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from IRF where IsDeleted= 0";
-
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<IRF>(query);
-                    return results;
+                    return DapperStoredProcedureHelper.Query<IRF>(con, "usp_GetActiveIRFList");
                 }
 
             }
@@ -1149,13 +1139,11 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select ts.*, sm.Name as Name from TransSelectability ts join SelectabilityMatrix sm on ts.type = sm.id where IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<TransSelectability>(query, dynamicParameters);
-                    return results;
+                    return DapperStoredProcedureHelper.Query<TransSelectability>(con, "usp_GetTransSelectabilityByIRFIdWithMatrix", dynamicParameters);
                 }
 
             }
@@ -1628,13 +1616,11 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select JoinabilityReport.*,JoinabilityReport.Type as Name, [Level].[Name] as RequiredLevel from JoinabilityReport inner join [Level] on JoinabilityReport.RequiredLevelId=[Level].id where InterviewId = @id";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@InterviewId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<JoinabilityReport>(query, dynamicParameters);
-                    return results;
+                    return DapperStoredProcedureHelper.Query<JoinabilityReport>(con, "usp_GetInterviewJoinabilityReport", dynamicParameters);
                 }
 
             }
@@ -1649,13 +1635,11 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select SelectabilityReport.*,SelectabilityReport.Type as Name, [Level].[Name] as RequiredLevel from SelectabilityReport inner join [Level] on SelectabilityReport.RequiredLevelId=[Level].id where InterviewId = @id";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@InterviewId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<SelectabilityReport>(query, dynamicParameters);
-                    return results;
+                    return DapperStoredProcedureHelper.Query<SelectabilityReport>(con, "usp_GetInterviewSelectabilityReport", dynamicParameters);
                 }
 
             }
@@ -1670,14 +1654,11 @@ namespace Risebird.Repository
         {
             try
             {
-                // var query = "Select * from QuestionsDiscussed where InterviewId = @id";
-                var query = "Select  qd.id,qd.InterviewId,qd.Comment,qd.SkillName,qd.RatingId,qd.Timing,vc.VideoLink,vc.Priority,qd.SkillSet from QuestionsDiscussed qd Left join VideoQuestionDetails vc on vc.Question=qd.Comment and vc.Interviewid =@id where qd.Interviewid= @id";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@InterviewId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<QuestionsDiscussed>(query, dynamicParameters);
-                    return results;
+                    return DapperStoredProcedureHelper.Query<QuestionsDiscussed>(con, "usp_GetInterviewQuestionsDiscussed", dynamicParameters);
                 }
 
             }
@@ -1692,14 +1673,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select IRFId from IRF where IsDeleted = @IsDeleted and id = @id";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@IsDeleted", 0);
                 dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@IsDeleted", 0);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<string>(query, dynamicParameters);
-                    return results;
+                    return await DapperStoredProcedureHelper.QueryAsync<string>(con, "usp_GetIRFStringIdByIntId", dynamicParameters);
                 }
 
             }
@@ -1754,13 +1733,11 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select ts.*, [LevelTech].[Name] as RequiredLevel, [LevelTechActual].[Name] as ActualLevel from TechSkillReport ts inner join [LevelTech] on ts.RequiredLevelId=[LevelTech].id left join [LevelTech] as [LevelTechActual] on ts.ActualLevelId=[LevelTechActual].id where InterviewId = @id";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@InterviewId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<TechSkillReport>(query, dynamicParameters);
-                    return results;
+                    return DapperStoredProcedureHelper.Query<TechSkillReport>(con, "usp_GetInterviewTechSkillReport", dynamicParameters);
                 }
 
             }
@@ -1775,13 +1752,11 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select SkillGeneralReport.*,SkillGeneralReport.Type as Name, [LevelTech].[Name] as RequiredLevel from SkillGeneralReport inner join [LevelTech] on SkillGeneralReport.RequiredLevelId=[LevelTech].id where InterviewId = @id";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@InterviewId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<SkillGeneralReport>(query, dynamicParameters);
-                    return results;
+                    return DapperStoredProcedureHelper.Query<SkillGeneralReport>(con, "usp_GetInterviewSkillGeneralReport", dynamicParameters);
                 }
 
             }
@@ -1795,14 +1770,11 @@ namespace Risebird.Repository
         {
             try
             {
-                //var query = "select * from ProctoringReport where InterviewId = @id";
-                var query = "select * from ProxyReport where InterviewId = @id";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@InterviewId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<ProctoringReport>(query, dynamicParameters);
-                    return results.FirstOrDefault();
+                    return DapperStoredProcedureHelper.QueryFirstOrDefault<ProctoringReport>(con, "usp_GetInterviewProxyReport", dynamicParameters);
                 }
 
             }
@@ -4293,13 +4265,13 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@userid",       userid);
-                    parameters.Add("@PaymentDate",  PaymentDate);
-                    parameters.Add("@Amount",       Amount);
-                    parameters.Add("@status",       status);
-                    parameters.Add("@Comment",      Comment);
-                    parameters.Add("@TotalAmount",  TotalAmount);
-                    parameters.Add("@TransferId",   transferId);
+                    parameters.Add("@userid", userid);
+                    parameters.Add("@PaymentDate", PaymentDate);
+                    parameters.Add("@Amount", Amount);
+                    parameters.Add("@status", status);
+                    parameters.Add("@Comment", Comment);
+                    parameters.Add("@TotalAmount", TotalAmount);
+                    parameters.Add("@TransferId", transferId);
                     parameters.Add("@CfTransferId", cfTransferId);
                     parameters.Add("@PayoutStatus", payoutStatus);
                     var result = await SqlMapper.QueryAsync<string>(con, "usp_InsertPaymentHistory", parameters,
@@ -4354,16 +4326,16 @@ namespace Risebird.Repository
 
                     var newId = await con.QuerySingleOrDefaultAsync<int>(sql, new
                     {
-                        Userid           = userid,
-                        PaymentDate      = DateTime.Now,
-                        Amount           = amount,
-                        TotalAmount      = totalAmount,
-                        Status           = status,
-                        Comment          = comment,
+                        Userid = userid,
+                        PaymentDate = DateTime.Now,
+                        Amount = amount,
+                        TotalAmount = totalAmount,
+                        Status = status,
+                        Comment = comment,
                         PayoutReferenceId = payoutReferenceId,
-                        PaymentGateway   = paymentGateway,
-                        GatewayStatus    = gatewayStatus,
-                        Fees             = fees
+                        PaymentGateway = paymentGateway,
+                        GatewayStatus = gatewayStatus,
+                        Fees = fees
                     });
 
                     return newId > 0 ? newId.ToString() : "";
@@ -4418,16 +4390,16 @@ namespace Risebird.Repository
             string cfTransferId,
             string payoutStatus,
             string transferUtr = null,
-            string eventTime   = null)
+            string eventTime = null)
         {
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@TransferId",   transferId   ?? string.Empty);
+                parameters.Add("@TransferId", transferId ?? string.Empty);
                 parameters.Add("@CfTransferId", cfTransferId ?? string.Empty);
                 parameters.Add("@PayoutStatus", payoutStatus);
-                parameters.Add("@TransferUtr",  transferUtr);
-                parameters.Add("@EventTime",    string.IsNullOrWhiteSpace(eventTime)
+                parameters.Add("@TransferUtr", transferUtr);
+                parameters.Add("@EventTime", string.IsNullOrWhiteSpace(eventTime)
                                                     ? (DateTime?)null
                                                     : (DateTime.TryParse(eventTime, out var dt) ? dt : (DateTime?)null));
 
@@ -4460,7 +4432,7 @@ namespace Risebird.Repository
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@TransferId",   transferId   ?? string.Empty);
+                parameters.Add("@TransferId", transferId ?? string.Empty);
                 parameters.Add("@CfTransferId", cfTransferId ?? string.Empty);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -4486,35 +4458,35 @@ namespace Risebird.Repository
             string endpoint,
             string requestBody,
             string responseBody,
-            int?   httpStatusCode,
+            int? httpStatusCode,
             string logLevel,
-            string eventType          = null,
-            string transferId         = null,
-            string cfTransferId       = null,
-            string transferStatus     = null,
+            string eventType = null,
+            string transferId = null,
+            string cfTransferId = null,
+            string transferStatus = null,
             string signatureTimestamp = null,
-            string signatureReceived  = null,
-            int?   rowsUpdated        = null,
-            string errorMessage       = null,
-            string callerIp           = null)
+            string signatureReceived = null,
+            int? rowsUpdated = null,
+            string errorMessage = null,
+            string callerIp = null)
         {
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@Endpoint",           endpoint);
-                parameters.Add("@RequestBody",        requestBody);
-                parameters.Add("@ResponseBody",       responseBody);
-                parameters.Add("@HttpStatusCode",     httpStatusCode);
-                parameters.Add("@LogLevel",           logLevel);
-                parameters.Add("@EventType",          eventType);
-                parameters.Add("@TransferId",         transferId);
-                parameters.Add("@CfTransferId",       cfTransferId);
-                parameters.Add("@TransferStatus",     transferStatus);
+                parameters.Add("@Endpoint", endpoint);
+                parameters.Add("@RequestBody", requestBody);
+                parameters.Add("@ResponseBody", responseBody);
+                parameters.Add("@HttpStatusCode", httpStatusCode);
+                parameters.Add("@LogLevel", logLevel);
+                parameters.Add("@EventType", eventType);
+                parameters.Add("@TransferId", transferId);
+                parameters.Add("@CfTransferId", cfTransferId);
+                parameters.Add("@TransferStatus", transferStatus);
                 parameters.Add("@SignatureTimestamp", signatureTimestamp);
-                parameters.Add("@SignatureReceived",  signatureReceived);
-                parameters.Add("@RowsUpdated",        rowsUpdated);
-                parameters.Add("@ErrorMessage",       errorMessage);
-                parameters.Add("@CallerIp",           callerIp);
+                parameters.Add("@SignatureReceived", signatureReceived);
+                parameters.Add("@RowsUpdated", rowsUpdated);
+                parameters.Add("@ErrorMessage", errorMessage);
+                parameters.Add("@CallerIp", callerIp);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -4554,8 +4526,8 @@ namespace Risebird.Repository
             try
             {
                 var parameters = new DynamicParameters();
-                parameters.Add("@id",           id);
-                parameters.Add("@TransferId",   transferId);
+                parameters.Add("@id", id);
+                parameters.Add("@TransferId", transferId);
                 parameters.Add("@CfTransferId", cfTransferId);
                 parameters.Add("@PayoutStatus", payoutStatus);
 
@@ -5294,10 +5266,10 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@FromYear",  fromYear);
+                    parameters.Add("@FromYear", fromYear);
                     parameters.Add("@FromMonth", fromMonth);
-                    parameters.Add("@ToYear",    toYear);
-                    parameters.Add("@ToMonth",   toMonth);
+                    parameters.Add("@ToYear", toYear);
+                    parameters.Add("@ToMonth", toMonth);
                     var result = await SqlMapper.QueryAsync<InvoiceListVM>(con, "usp_GetPaidInvoices", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result.ToList();
@@ -5347,7 +5319,7 @@ namespace Risebird.Repository
                     using (var multi = await SqlMapper.QueryMultipleAsync(con, "usp_GetGeneratedInvoiceById", parameters,
                         commandType: CommandType.StoredProcedure))
                     {
-                        var header    = (await multi.ReadAsync<InvoiceDetailVM>()).FirstOrDefault();
+                        var header = (await multi.ReadAsync<InvoiceDetailVM>()).FirstOrDefault();
                         var lineItems = (await multi.ReadAsync<InvoiceLineItemVM>()).ToList();
                         if (header != null) header.LineItems = lineItems;
                         return header;
@@ -5370,21 +5342,21 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@InvoiceId",         invoiceId);
-                    parameters.Add("@GSTNumber",         gstNumber);
-                    parameters.Add("@CreditPeriod",      creditPeriod);
-                    parameters.Add("@IRN",               irn);
-                    parameters.Add("@EInvoiceFileLink",  eInvoiceFileLink);
-                    parameters.Add("@Status",            status);
-                    parameters.Add("@Subtotal",          subtotal);
-                    parameters.Add("@GSTAmount",         gstAmount);
-                    parameters.Add("@InvoiceValue",      invoiceValue);
-                    parameters.Add("@TDSAmount",         tdsAmount);
-                    parameters.Add("@NetReceivable",     netReceivable);
-                    parameters.Add("@LatestRemark",      latestRemark);
-                    parameters.Add("@UTRTrxn",           utrTrxn);
-                    parameters.Add("@CashCreditAmount",  cashCreditAmount);
-                    parameters.Add("@TaxScenario",       taxScenario);
+                    parameters.Add("@InvoiceId", invoiceId);
+                    parameters.Add("@GSTNumber", gstNumber);
+                    parameters.Add("@CreditPeriod", creditPeriod);
+                    parameters.Add("@IRN", irn);
+                    parameters.Add("@EInvoiceFileLink", eInvoiceFileLink);
+                    parameters.Add("@Status", status);
+                    parameters.Add("@Subtotal", subtotal);
+                    parameters.Add("@GSTAmount", gstAmount);
+                    parameters.Add("@InvoiceValue", invoiceValue);
+                    parameters.Add("@TDSAmount", tdsAmount);
+                    parameters.Add("@NetReceivable", netReceivable);
+                    parameters.Add("@LatestRemark", latestRemark);
+                    parameters.Add("@UTRTrxn", utrTrxn);
+                    parameters.Add("@CashCreditAmount", cashCreditAmount);
+                    parameters.Add("@TaxScenario", taxScenario);
                     var result = await SqlMapper.QueryAsync<dynamic>(con, "usp_UpdateInvoiceDetails", parameters,
                         commandType: CommandType.StoredProcedure);
                     return (result.FirstOrDefault()?.UpdatedRows ?? 0) > 0;
@@ -5426,8 +5398,8 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@LineItemId", lineItemId);
-                    parameters.Add("@UnitRate",   unitRate);
-                    parameters.Add("@LineTotal",  lineTotal);
+                    parameters.Add("@UnitRate", unitRate);
+                    parameters.Add("@LineTotal", lineTotal);
                     await SqlMapper.ExecuteAsync(con, "usp_UpdateInvoiceLineItems", parameters,
                         commandType: CommandType.StoredProcedure);
                 }
@@ -5445,10 +5417,10 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@ClientId",       clientId);
+                    parameters.Add("@ClientId", clientId);
                     parameters.Add("@BillingOwnerId", billingOwnerId);
-                    parameters.Add("@InvoiceMonth",   month);
-                    parameters.Add("@InvoiceYear",    year);
+                    parameters.Add("@InvoiceMonth", month);
+                    parameters.Add("@InvoiceYear", year);
                     var result = await SqlMapper.QueryAsync<DuplicateInvoiceCheckVM>(con, "usp_CheckDuplicateInvoice", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
@@ -5508,28 +5480,28 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("@id",                model.id);
-                    parameters.Add("@ClientId",          model.ClientId);
-                    parameters.Add("@BillingOwnerId",    model.BillingOwnerId);
-                    parameters.Add("@InvoiceNumber",     model.InvoiceNumber);
-                    parameters.Add("@InvoiceMonth",      model.InvoiceMonth);
-                    parameters.Add("@InvoiceYear",       model.InvoiceYear);
+                    parameters.Add("@id", model.id);
+                    parameters.Add("@ClientId", model.ClientId);
+                    parameters.Add("@BillingOwnerId", model.BillingOwnerId);
+                    parameters.Add("@InvoiceNumber", model.InvoiceNumber);
+                    parameters.Add("@InvoiceMonth", model.InvoiceMonth);
+                    parameters.Add("@InvoiceYear", model.InvoiceYear);
                     parameters.Add("@BillingOwnerEmail", model.BillingOwnerEmail);
-                    parameters.Add("@CreditPeriod",      model.CreditPeriod);
-                    parameters.Add("@GSTNumber",         model.GSTNumber);
-                    parameters.Add("@TaxScenario",       model.TaxScenario);
-                    parameters.Add("@IRN",               model.IRN);
-                    parameters.Add("@EInvoiceFileLink",  model.EInvoiceFileLink);
-                    parameters.Add("@Subtotal",          model.Subtotal);
-                    parameters.Add("@GSTAmount",         model.GSTAmount);
-                    parameters.Add("@InvoiceValue",      model.InvoiceValue);
-                    parameters.Add("@TDSAmount",         model.TDSAmount);
-                    parameters.Add("@NetReceivable",     model.NetReceivable);
-                    parameters.Add("@Status",            model.Status);
-                    parameters.Add("@CreatedBy",         model.CreatedBy);
-                    parameters.Add("@CashCreditAmount",  model.CashCreditAmount);
-                    parameters.Add("@UTRTrxn",           model.UTRTrxn);
-                    parameters.Add("@BillingCurrency",   string.IsNullOrEmpty(model.BillingCurrency) ? "INR" : model.BillingCurrency);
+                    parameters.Add("@CreditPeriod", model.CreditPeriod);
+                    parameters.Add("@GSTNumber", model.GSTNumber);
+                    parameters.Add("@TaxScenario", model.TaxScenario);
+                    parameters.Add("@IRN", model.IRN);
+                    parameters.Add("@EInvoiceFileLink", model.EInvoiceFileLink);
+                    parameters.Add("@Subtotal", model.Subtotal);
+                    parameters.Add("@GSTAmount", model.GSTAmount);
+                    parameters.Add("@InvoiceValue", model.InvoiceValue);
+                    parameters.Add("@TDSAmount", model.TDSAmount);
+                    parameters.Add("@NetReceivable", model.NetReceivable);
+                    parameters.Add("@Status", model.Status);
+                    parameters.Add("@CreatedBy", model.CreatedBy);
+                    parameters.Add("@CashCreditAmount", model.CashCreditAmount);
+                    parameters.Add("@UTRTrxn", model.UTRTrxn);
+                    parameters.Add("@BillingCurrency", string.IsNullOrEmpty(model.BillingCurrency) ? "INR" : model.BillingCurrency);
                     var result = await SqlMapper.QueryAsync<dynamic>(con, "usp_SaveGeneratedInvoice", parameters, commandType: CommandType.StoredProcedure);
                     return (int)(result.FirstOrDefault()?.NewId ?? 0);
                 }
@@ -5550,13 +5522,13 @@ namespace Risebird.Repository
                     foreach (var item in lineItems)
                     {
                         var parameters = new DynamicParameters();
-                        parameters.Add("@InvoiceId",   invoiceId);
+                        parameters.Add("@InvoiceId", invoiceId);
                         parameters.Add("@ProductName", item.ProductName);
                         parameters.Add("@Description", item.Description);
-                        parameters.Add("@Qty",         item.Qty);
-                        parameters.Add("@UnitRate",    item.UnitRate);
-                        parameters.Add("@LineTotal",   item.LineTotal);
-                        parameters.Add("@Basis",       item.Basis);
+                        parameters.Add("@Qty", item.Qty);
+                        parameters.Add("@UnitRate", item.UnitRate);
+                        parameters.Add("@LineTotal", item.LineTotal);
+                        parameters.Add("@Basis", item.Basis);
                         await SqlMapper.ExecuteAsync(con, "usp_SaveGeneratedInvoiceLineItems", parameters, commandType: CommandType.StoredProcedure);
                     }
                 }
@@ -6163,7 +6135,7 @@ namespace Risebird.Repository
                                              AccountNumber = c.AccountNumber,
                                              PAN = c.PAN,
                                              IFSCCode = c.IFSCCode,
-                                             MobileNumber=c.MobileNumber
+                                             MobileNumber = c.MobileNumber
                                          }).ToList();
                         return resultset.ToList();
                     }
@@ -8832,6 +8804,27 @@ WHERE im.id IN @InterviewIds";
                     parameters.Add("@candidateId", candidateId);
                     parameters.Add("@uniqueId", uniqueId);
                     var result = await SqlMapper.QueryAsync<UnassignedInterviewVM>(con, "usp_FetchCandidateMeetingsDetails", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<UnassignedInterviewVM> GetInterviewerInterviewDetails(int interviewId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@interviewId", interviewId);
+                    var result = await SqlMapper.QueryAsync<UnassignedInterviewVM>(con, "usp_FetchInterviewerMeetingsDetails", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }

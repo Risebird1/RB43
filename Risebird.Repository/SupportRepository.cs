@@ -83,12 +83,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select * from Support where id = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryAsync<Support>(query, dynamicParameters);
+                    var result = await SqlMapper.QueryAsync<Support>(con, "usp_GetSupportHRById", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
 
@@ -136,12 +136,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "delete from Support where id = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await con.QueryAsync(query, dynamicParameters);
+                    await SqlMapper.QueryAsync(con, "usp_DeleteSupportHR", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return true;
                 }
 
@@ -157,11 +157,10 @@ namespace Risebird.Repository
         {
             try
             {
-                //var query = "Select * from Support";
-                var query = "Select EmailId from support";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<string>(query);
+                    var results = await SqlMapper.QueryAsync<string>(con, "usp_GetSupportHREmails",
+                        commandType: CommandType.StoredProcedure);
                     return results.ToList();
                 }
 
@@ -184,11 +183,13 @@ namespace Risebird.Repository
                 parameters.Add("@RequestedOn", DateTime.Now);
                 parameters.Add("@Requester", model.Requester);
                 parameters.Add("@interviewId", model.interviewId);
+                parameters.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(con, "usp_SaveRaisedIssueDetails", parameters,
                         commandType: CommandType.StoredProcedure);
+                    model.id = parameters.Get<int>("@NewId");
                     return true;
                 }
             }
@@ -348,13 +349,13 @@ namespace Risebird.Repository
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@TicketId",        ticketId);
+                parameters.Add("@TicketId", ticketId);
                 parameters.Add("@AIReviewResponse", aiResponseJson);
-                parameters.Add("@StatusComment",    statusComment);
-                parameters.Add("@ClosedBy",         closedBy);
-                parameters.Add("@ClosedOn",         closedOn);
-                parameters.Add("@CloseTicket",      closeTicket ? 1 : 0);
-                parameters.Add("@ActionByRole",     "System");
+                parameters.Add("@StatusComment", statusComment);
+                parameters.Add("@ClosedBy", closedBy);
+                parameters.Add("@ClosedOn", closedOn);
+                parameters.Add("@CloseTicket", closeTicket ? 1 : 0);
+                parameters.Add("@ActionByRole", "System");
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -376,10 +377,10 @@ namespace Risebird.Repository
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@InterviewId",          interviewId);
-                parameters.Add("@RevisedPenaltyPct",    revisedPenaltyPct);
+                parameters.Add("@InterviewId", interviewId);
+                parameters.Add("@RevisedPenaltyPct", revisedPenaltyPct);
                 parameters.Add("@UpdatedMergedDetails", updatedMergedDetails);
-                parameters.Add("@ReasoningComment",     reasoningComment);
+                parameters.Add("@ReasoningComment", reasoningComment);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

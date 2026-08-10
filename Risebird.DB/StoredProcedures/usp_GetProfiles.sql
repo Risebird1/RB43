@@ -1,0 +1,20 @@
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetProfiles'))
+BEGIN
+    DROP PROCEDURE dbo.usp_GetProfiles
+END
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_GetProfiles]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT *
+    FROM Profile
+END
+GO

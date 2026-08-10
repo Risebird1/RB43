@@ -22,6 +22,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using X.PagedList;
 using X.PagedList.Extensions;
 using static iTextSharp.text.pdf.AcroFields;
 
@@ -121,37 +122,51 @@ namespace Risebird.Web.Controllers
                             TempData.Remove("MessageInterviewer");
 
                         }
-                        var model = _interviewerService.GetInterviewers();
-
-                        // ── STEP 1: restore paginated search value, then filter raw fields first ──
+                        // ── STEP 1: restore paginated search value ──
                         if (string.IsNullOrEmpty(searchValue) && Page > 1)
                         {
                             searchValue = Searchvalueprofile;
                         }
                         Searchvalueprofile = searchValue;
                         ViewBag.Searchvalue = searchValue;
-                        if (!string.IsNullOrEmpty(searchValue))
+
+                        InterviewFilter filter = null;
+                        if (HttpContext.Session.GetString("InterviewerIndexfilters") != null)
                         {
-                            var sv = searchValue.ToUpper().Trim();
-                            model = model.Where(x =>
-                                (!string.IsNullOrEmpty(x.FirstName) && x.FirstName.ToUpper().Contains(sv)) ||
-                                (!string.IsNullOrEmpty(x.LastName) && x.LastName.ToUpper().Contains(sv)) ||
-                                (!string.IsNullOrEmpty(x.EmailId) && x.EmailId.ToUpper().Contains(sv)) ||
-                                (!string.IsNullOrEmpty(x.NickName) && x.NickName.ToUpper().Contains(sv)) ||
-                                (!string.IsNullOrEmpty(x.MobileNumber) && x.MobileNumber.Contains(sv)) ||
-                                (x.PrimarySkill != null && x.PrimarySkill.ToUpper().Contains(sv))
-                            ).ToList();
+                            filter = JsonConvert.DeserializeObject<InterviewFilter>(
+                                HttpContext.Session.GetString("InterviewerIndexfilters"));
                         }
 
-                        // ── STEP 2: convert enum fields (only matching rows) ──────────────────
-                        model = model.Select(x => { x.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.ProfileType)).GetDescription(); x.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(x.CompentencyLevel)).GetDescription(); x.AvailableDetails = ((InterviewerAvailabilityStatus)Convert.ToInt32(x.Isavailable)).GetDescription(); return x; }).ToList();
+                        var pageNumber = Page ?? 1;
+                        if (pageNumber < 1)
+                            pageNumber = 1;
+                        const int pageSize = 10;
 
-                        // ── STEP 3: AssessmentGroupId IDs → names (O(1) lookup, only matching rows)
+                        // Azure Search pages server-side (index is 60k+ docs — never load all).
+                        var pageResult = await _interviewerService.GetInterviewersPage(
+                            pageNumber, pageSize, searchValue, filter);
+                        var model = pageResult?.Items?.ToList() ?? new List<InterviewerProfileVM>();
+                        var totalCount = (int)(pageResult?.TotalCount ?? model.Count);
+
+                        // ── STEP 2: convert enum fields (current page only) ──────────────────
+                        model = model.Select(x =>
+                        {
+                            if (!string.IsNullOrEmpty(x.ProfileType) && int.TryParse(x.ProfileType, out var pt))
+                                x.ProfileType = ((Heuristicsscorelevel)pt).GetDescription();
+                            if (!string.IsNullOrEmpty(x.CompentencyLevel) && int.TryParse(x.CompentencyLevel, out var cl))
+                                x.CompentencyLevel = ((CompetencyLevel)cl).GetDescription();
+                            x.AvailableDetails = ((InterviewerAvailabilityStatus)Convert.ToInt32(x.Isavailable)).GetDescription();
+                            return x;
+                        }).ToList();
+
+                        // ── STEP 3: AssessmentGroupId IDs → names
                         var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
                         var assessmentGroupDictIdx = AssessmentsGroups.ToDictionary(x => x.id, x => x.AssessmentGroup);
                         foreach (var item in model)
                         {
-                            if (!string.IsNullOrEmpty(item.AssessmentGroupId))
+                            if (!string.IsNullOrEmpty(item.AssessmentGroupId)
+                                && item.AssessmentGroupId.Any(char.IsDigit)
+                                && !item.AssessmentGroupId.Contains(' '))
                             {
                                 item.AssessmentGroupId = string.Join(" , ",
                                     item.AssessmentGroupId.Split(',')
@@ -165,41 +180,7 @@ namespace Risebird.Web.Controllers
                             }
                         }
 
-                        // ── STEP 4: session column filters ────────────────────────────────────
-                        if (HttpContext.Session.GetString("InterviewerIndexfilters") != null)
-                        {
-                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("InterviewerIndexfilters"));
-                            filter.Senioritylevel = filter.Senioritylevel == null ? filter.Senioritylevel = model.Select(x => x.Senioritylevel).ToArray() : filter.Senioritylevel = filter.Senioritylevel;
-                            filter.ProfileType = filter.ProfileType == null ? filter.ProfileType = model.Select(x => x.ProfileType).ToArray() : filter.ProfileType = filter.ProfileType;
-                            filter.CompentencyLevel = filter.CompentencyLevel == null ? filter.CompentencyLevel = model.Select(x => x.CompentencyLevel).ToArray() : filter.CompentencyLevel = filter.CompentencyLevel;
-                            filter.IndianRate = filter.IndianRate == null ? filter.IndianRate = model.Select(x => x.PerHourRateIndia).ToArray() : filter.IndianRate = filter.IndianRate;
-                            filter.OutSideIndiaRate = filter.OutSideIndiaRate == null ? filter.OutSideIndiaRate = model.Select(x => x.PerHourRateOutside).ToArray() : filter.OutSideIndiaRate = filter.OutSideIndiaRate;
-                            filter.CompanyType = filter.CompanyType == null ? filter.CompanyType = model.Select(x => x.CompanyType).ToArray() : filter.CompanyType = filter.CompanyType;
-                            filter.Domain = filter.Domain == null ? filter.Domain = model.Select(x => x.Country).ToArray() : filter.Domain = filter.Domain;
-                            filter.AssessmentGroup = filter.AssessmentGroup == null ? filter.AssessmentGroup = model.Select(x => x.AssessmentGroupId).ToArray() : filter.AssessmentGroup = filter.AssessmentGroup;
-                            filter.IsLeadInterviewer = filter.IsLeadInterviewer == null ? filter.IsLeadInterviewer = model.Select(x => x.IsLeadInterviewer.ToString()).ToArray() : filter.IsLeadInterviewer = filter.IsLeadInterviewer;
-                            filter.IsActive = filter.IsActive == null ? filter.IsActive = model.Select(x => x.IsActive).ToArray() : filter.IsActive = filter.IsActive;
-                            filter.IsInterested = filter.IsInterested == null ? filter.IsInterested = model.Select(x => x.IsInterested).ToArray() : filter.IsInterested = filter.IsInterested;
-
-                            model = model.Where(c =>
-                               (filter.Senioritylevel.Count() > 0 ? filter.Senioritylevel.Contains(c.Senioritylevel) : c.Senioritylevel == null)
-                              && (filter.ProfileType.Count() > 0 ? filter.ProfileType.Contains(c.ProfileType) : c.ProfileType == null)
-                              && (filter.CompentencyLevel.Count() > 0 ? filter.CompentencyLevel.Contains(c.CompentencyLevel) : c.CompentencyLevel == null)
-                               && (filter.IndianRate.Count() > 0 ? filter.IndianRate.Contains(c.PerHourRateIndia) : c.PerHourRateIndia == null)
-                              && (filter.OutSideIndiaRate.Count() > 0 ? filter.OutSideIndiaRate.Contains(c.PerHourRateOutside) : c.PerHourRateOutside == null)
-                              && (filter.CompanyType.Count() > 0 ? filter.CompanyType.Contains(c.CompanyType) : c.CompanyType == null)
-                              && (filter.Domain.Count() > 0 ? filter.Domain.Contains(c.Country) : c.Country == null)
-                              && (filter.AssessmentGroup.Count() > 0 ? filter.AssessmentGroup.Contains(c.AssessmentGroupId) : c.AssessmentGroupId == null)
-                              && (filter.IsLeadInterviewer.Count() > 0 ? filter.IsLeadInterviewer.Contains(c.IsLeadInterviewer.ToString()) : c.IsLeadInterviewer.ToString() == null)
-                              && (filter.IsActive.Count() > 0 ? filter.IsActive.Contains(c.IsActive) : c.IsActive == true)
-                              && (filter.IsInterested.Count() > 0 ? filter.IsInterested.Contains(c.IsInterested) : c.IsInterested == true)).ToList();
-                        }
-                        else
-                        {
-                            model = model.Where(x => x.IsActive == true).ToList();
-                        }
-
-                        // ── STEP 5: Seniority IDs → names (O(1) lookup, only rows after all filters)
+                        // ── STEP 4: Seniority IDs → names ──
                         var Senioritylevel = _iRFRepository.GetSenioritylevel();
                         var seniorityDictIdx = Senioritylevel.ToDictionary(x => x.Id, x => x.Name);
                         foreach (var item in model)
@@ -227,50 +208,26 @@ namespace Risebird.Web.Controllers
                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         var Heuristics = from Heuristicsscorelevel s in Enum.GetValues(typeof(Heuristicsscorelevel))
                                          select new { ID = (int)s, Name = s.GetDescription() };
+                        var competencyLevels = from CompetencyLevel s in Enum.GetValues(typeof(CompetencyLevel))
+                                               select new { ID = (int)s, Name = s.GetDescription() };
                         var _isleadinterviewer = from LeadInterviewerenum s in Enum.GetValues(typeof(LeadInterviewerenum))
                                                  select new { ID = (int)s, Name = s.GetDescription() };
-                        //ViewBag.Senioritylevel = model.Select(x => x.Senioritylevel).Distinct();
                         ViewBag.Senioritylevel = Senioritylevel.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
                         ViewBag.ProfileType = Heuristics.Select(x => x.Name).Distinct();
-                        ViewBag.CompentencyLevel = model.Where(x => x.CompentencyLevel != "0").Select(x => x.CompentencyLevel).Distinct();
+                        ViewBag.CompentencyLevel = competencyLevels.Select(x => x.Name).Distinct();
                         ViewBag.IndianRate = IndiaPrice.Select(x => x.Name).Distinct();
                         ViewBag.OutSideIndiaRate = OutSideIndiaPrice.Select(x => x.Name).Distinct();
                         ViewBag.CompanyType = companyTypes.Select(x => x.Name).Distinct();
                         ViewBag.Country = Country.Select(x => x.Name).Distinct();
-                        //ViewBag.AssessmentGroup = model.Select(x => x.AssessmentGroupId).Distinct();
                         ViewBag.AssessmentGroup = AssessmentsGroups.OrderBy(x => x.AssessmentGroup).Select(x => x.AssessmentGroup).Distinct();
                         ViewBag.IsLeadInterviewer = _isleadinterviewer.OrderBy(x => x.Name).Select(x => x.Name).Distinct();
 
-                        ViewBag.TotalCount = model.Count;
+                        ViewBag.TotalCount = totalCount;
+                        ViewBag.PageStartCount = totalCount == 0 ? 0 : pageSize * (pageNumber - 1) + 1;
+                        ViewBag.PageEndCount = totalCount == 0 ? 0 : Math.Min(pageSize * pageNumber, totalCount);
 
-                        ViewBag.PageStartCount = 10 * ((Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page)) - 1) + 1;
-                        int a = model.Count / 10;
-                        if (model.Count % 10 == 0)
-                        {
-                            ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-                        }
-                        else
-                        {
-                            a = a + 1;
-                            if (a == Page)
-                            {
-                                ViewBag.PageEndCount = model.Count;
-                            }
-                            else
-                            {
-                                ViewBag.PageEndCount = 10 * (Convert.ToInt32(Page) == 0 ? 1 : Convert.ToInt32(Page));
-
-                            }
-
-                        }
-                        if (model.Count == 0)
-                        {
-                            ViewBag.PageStartCount = 0;
-                            ViewBag.PageEndCount = 0;
-                        }
                         _modelDetails = model;
-                        return View(model.ToPagedList(Page ?? 1, 10));
-                        // return View(_interviewerService.GetInterviewers());
+                        return View(new StaticPagedList<InterviewerProfileVM>(model, pageNumber, pageSize, totalCount));
                     }
                     else
                     {
@@ -3261,12 +3218,13 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult InterviewerProfileJson(string searchValue)
+        public async Task<JsonResult> InterviewerProfileJson(string searchValue)
         {
             try
             {
                 int Page = 1;
-                var model = _interviewerService.GetInterviewers();
+                var model = await _interviewerService.GetInterviewers()
+                    ?? new List<InterviewerProfileVM>();
 
                 // ── STEP 1: search filter on raw fields (no processing cost yet) ──────────
                 // Applying this first means every expensive step below only runs on the
@@ -3696,9 +3654,10 @@ namespace Risebird.Web.Controllers
                 return Json("Failed");
             }
         }
-        public IActionResult LeadInterviewer(string uniqueid)
+        public async Task<IActionResult> LeadInterviewer(string uniqueid)
         {
-            var model = _interviewerService.GetInterviewers();
+            var model = await _interviewerService.GetInterviewers()
+                ?? new List<InterviewerProfileVM>();
             model = model.Where(x => x.IsLeadInterviewer == true).ToList();
             model = model.Select(x => { x.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.ProfileType)).GetDescription(); x.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(x.CompentencyLevel)).GetDescription(); return x; }).ToList();
             var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();

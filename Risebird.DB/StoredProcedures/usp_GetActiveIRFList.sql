@@ -1,0 +1,18 @@
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetActiveIRFList'))
+BEGIN
+    DROP PROCEDURE dbo.usp_GetActiveIRFList
+END
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_GetActiveIRFList]
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT * FROM dbo.IRF WHERE ISNULL(IsDeleted, 0) = 0;
+END
+GO
