@@ -294,7 +294,7 @@ builder.Services.AddScoped<IResumeParsingService, ResumeParsingService>();
 // ============================================
 
 // ============================================
-// Relay.app Interviewer Email Availability
+// Interviewer Email Availability (n8n; formerly Relay.app)
 // ============================================
 builder.Services.AddScoped<IInterviewerEmailAvailabilityRepository, InterviewerEmailAvailabilityRepository>();
 // ============================================
