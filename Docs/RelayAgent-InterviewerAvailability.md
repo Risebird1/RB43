@@ -1,5 +1,9 @@
 # Relay.app Agent — Interviewer Email Availability
 
+> **Legacy.** Relay.app is shutting down and this agent has been migrated to n8n.
+> See [n8nAgent-InterviewerAvailability.md](n8nAgent-InterviewerAvailability.md) for the
+> live workflow. This document is kept as the reference for what was replaced.
+
 ## Overview
 
 This Relay agent monitors a Gmail inbox for unread emails from interviewers sharing their availability, extracts structured data using GPT-5.4 Mini, optionally uploads resumes to Google Drive, writes a row to a Google Sheet, and POSTs the extracted data to a webhook on our server.

@@ -501,41 +501,12 @@ namespace Risebird.Web.Controllers
                         analysisResult = record.ResumeAIAnalysisResult
                     });
 
-                string resumeUrl = record.ResumeLink;
-                if (string.IsNullOrWhiteSpace(resumeUrl) || string.Equals(resumeUrl, "None", StringComparison.OrdinalIgnoreCase))
-                    resumeUrl = record.ProfileResumeLink;
-
-                if (string.IsNullOrWhiteSpace(resumeUrl))
+                if (!HasResumeCandidate(record.ResumeLink) && !HasResumeCandidate(record.ProfileResumeLink))
                     return Json(new { success = false, error = "No resume link available. Please upload a resume first using the upload button.", needsUpload = true });
 
                 string jobTitle = record.AssessmentGroupName ?? record.MagName ?? record.JobTitle ?? "General";
 
-                string resumeText = null;
-                bool isDocFile = resumeUrl.EndsWith(".doc", StringComparison.OrdinalIgnoreCase)
-                              || resumeUrl.EndsWith(".docx", StringComparison.OrdinalIgnoreCase);
-
-                if (!isDocFile)
-                {
-                    try { resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeUrl); }
-                    catch { }
-                }
-
-                if (string.IsNullOrWhiteSpace(resumeText))
-                {
-                    try
-                    {
-                        string convertedPdfUrl = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resumeUrl);
-                        if (!string.IsNullOrWhiteSpace(convertedPdfUrl))
-                            resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(convertedPdfUrl);
-                    }
-                    catch { }
-                }
-
-                if (string.IsNullOrWhiteSpace(resumeText) && isDocFile)
-                {
-                    try { resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeUrl); }
-                    catch { }
-                }
+                string resumeText = await ExtractResumeTextAsync(record.ResumeLink, record.ProfileResumeLink);
 
                 if (string.IsNullOrWhiteSpace(resumeText))
                     return Json(new
@@ -1538,6 +1509,61 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        // ── Resume text extraction ────────────────────────────────────────────────
+
+        private static bool HasResumeCandidate(string url)
+            => !string.IsNullOrWhiteSpace(url)
+               && !string.Equals(url.Trim(), "None", StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Extracts resume text from the first candidate URL that yields any, falling through
+        /// to the next on failure. The fallback matters because the mail-attachment resume is
+        /// stored as a Google Drive share link, whose viewer page holds no readable PDF bytes;
+        /// the profile resume on Azure blob storage does.
+        /// </summary>
+        private async Task<string> ExtractResumeTextAsync(params string[] candidateUrls)
+        {
+            foreach (var candidate in candidateUrls ?? Array.Empty<string>())
+            {
+                if (!HasResumeCandidate(candidate))
+                    continue;
+
+                var resumeUrl = candidate.Trim();
+                var isDocFile = resumeUrl.EndsWith(".doc", StringComparison.OrdinalIgnoreCase)
+                             || resumeUrl.EndsWith(".docx", StringComparison.OrdinalIgnoreCase);
+
+                string resumeText = null;
+
+                if (!isDocFile)
+                {
+                    try { resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeUrl); }
+                    catch { }
+                }
+
+                if (string.IsNullOrWhiteSpace(resumeText))
+                {
+                    try
+                    {
+                        string convertedPdfUrl = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resumeUrl);
+                        if (!string.IsNullOrWhiteSpace(convertedPdfUrl))
+                            resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(convertedPdfUrl);
+                    }
+                    catch { }
+                }
+
+                if (string.IsNullOrWhiteSpace(resumeText) && isDocFile)
+                {
+                    try { resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeUrl); }
+                    catch { }
+                }
+
+                if (!string.IsNullOrWhiteSpace(resumeText))
+                    return resumeText;
+            }
+
+            return null;
+        }
+
         // ── Checkpoint helpers ────────────────────────────────────────────────────
 
         /// <summary>
@@ -1568,35 +1594,12 @@ namespace Risebird.Web.Controllers
                 // Step 1: Resume Fitment Analysis (if resume exists and not already analyzed)
                 if (record.ResumeAIAnalysisCompleted != true)
                 {
-                    string resumeUrl = record.ResumeLink;
-                    if (string.IsNullOrWhiteSpace(resumeUrl) || string.Equals(resumeUrl, "None", StringComparison.OrdinalIgnoreCase))
-                        resumeUrl = record.ProfileResumeLink;
-
-                    if (!string.IsNullOrWhiteSpace(resumeUrl))
+                    if (HasResumeCandidate(record.ResumeLink) || HasResumeCandidate(record.ProfileResumeLink))
                     {
                         try
                         {
                             string jobTitle = record.AssessmentGroupName ?? record.MagName ?? record.JobTitle ?? "General";
-                            string resumeText = null;
-                            bool isDocFile = resumeUrl.EndsWith(".doc", StringComparison.OrdinalIgnoreCase)
-                                          || resumeUrl.EndsWith(".docx", StringComparison.OrdinalIgnoreCase);
-
-                            if (!isDocFile)
-                            {
-                                try { resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeUrl); }
-                                catch { }
-                            }
-
-                            if (string.IsNullOrWhiteSpace(resumeText))
-                            {
-                                try
-                                {
-                                    string convertedPdfUrl = await _azureStorageHelper.DownloadAndConvertFromDocToPdfAsync(resumeUrl);
-                                    if (!string.IsNullOrWhiteSpace(convertedPdfUrl))
-                                        resumeText = await _pdfReaderHelper.ReadPdfFromUrlAsync(convertedPdfUrl);
-                                }
-                                catch { }
-                            }
+                            string resumeText = await ExtractResumeTextAsync(record.ResumeLink, record.ProfileResumeLink);
 
                             if (!string.IsNullOrWhiteSpace(resumeText))
                             {
@@ -2061,7 +2064,53 @@ namespace Risebird.Web.Controllers
             return phone;
         }
 
-        // ── Relay webhook (Relay.app → our server) ──────────────────────────────────
+        // ── Automation webhook (Relay.app / n8n → our server) ───────────────────────
+
+        // 'X-Relay-Secret' is the original Relay.app header and stays supported so the two
+        // platforms can run side by side during the migration.
+        private static readonly string[] AvailabilityWebhookSecretHeaders =
+            { "X-Webhook-Secret", "X-Relay-Secret", "X-N8N-Secret" };
+
+        private bool IsWebhookSecretValid(string expectedSecret)
+        {
+            if (string.IsNullOrWhiteSpace(expectedSecret))
+                return true;   // validation switched off by configuration
+
+            foreach (var header in AvailabilityWebhookSecretHeaders)
+            {
+                var incoming = Request.Headers[header].ToString();
+                if (!string.IsNullOrEmpty(incoming) && incoming == expectedSecret)
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Parses a webhook timestamp to UTC. Relay sent ISO-8601; n8n forwards Gmail's
+        /// RFC 2822 date, so both have to normalize to a value comparable with UtcNow.
+        /// </summary>
+        private static DateTime? ParseWebhookTimestamp(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return null;
+
+            if (DateTimeOffset.TryParse(value, System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.AssumeUniversal, out var offset))
+                return offset.UtcDateTime;
+
+            return null;
+        }
+
+        /// <summary>
+        /// Normalizes the reported automation platform to the values the availability grid
+        /// filters and badges on. Payloads without a source are legacy Relay.app calls.
+        /// </summary>
+        private static string ResolveWebhookSource(string source)
+        {
+            return string.Equals((source ?? "").Trim(), "n8n", StringComparison.OrdinalIgnoreCase)
+                ? "n8n"
+                : "Relay";
+        }
 
         [AllowAnonymous]
         [HttpPost]
@@ -2071,12 +2120,8 @@ namespace Risebird.Web.Controllers
             try
             {
                 var expectedSecret = _configuration["RelayWebhook:InterviewerAvailabilitySecret"];
-                if (!string.IsNullOrWhiteSpace(expectedSecret))
-                {
-                    var incoming = Request.Headers["X-Relay-Secret"].ToString();
-                    if (incoming != expectedSecret)
-                        return Unauthorized(new { error = "Invalid secret." });
-                }
+                if (!IsWebhookSecretValid(expectedSecret))
+                    return Unauthorized(new { error = "Invalid secret." });
 
                 string rawBody;
                 using (var reader = new StreamReader(Request.Body))
@@ -2091,11 +2136,9 @@ namespace Risebird.Web.Controllers
                 if (payload == null || string.IsNullOrWhiteSpace(payload.SenderEmail))
                     return BadRequest(new { error = "Missing required field: sender_email." });
 
-                DateTime? receivedAt = null;
-                if (!string.IsNullOrWhiteSpace(payload.ReceivedAt) &&
-                    DateTime.TryParse(payload.ReceivedAt, null,
-                        System.Globalization.DateTimeStyles.RoundtripKind, out var parsed))
-                    receivedAt = parsed;
+                var source     = ResolveWebhookSource(payload.Source);
+                var actor      = source == "n8n" ? "n8n" : "Relay.app";
+                var receivedAt = ParseWebhookTimestamp(payload.ReceivedAt);
 
                 if (receivedAt.HasValue && receivedAt.Value < DateTime.UtcNow.AddHours(-46))
                     return Ok(new { success = false, skipped = true, reason = "Email older than 46 hours — skipped." });
@@ -2133,13 +2176,13 @@ namespace Risebird.Web.Controllers
                     ResumeFitment           = payload.ResumeFitment?.Trim(),
                     ResumeLink              = payload.ResumeLink?.Trim(),
                     HasAttachment           = payload.HasAttachment,
-                    Source                  = "Relay"
+                    Source                  = source
                 };
 
                 var newId = await _repository.InsertEmailAvailabilityAsync(record);
 
                 if (newId > 0)
-                    await _repository.InsertHistoryAsync(newId, "RecordCreated", null, "Open", "Relay.app");
+                    await _repository.InsertHistoryAsync(newId, "RecordCreated", null, "Open", actor);
 
                 // Unified Intent — the email reply feeds the same single Intent as the Plivo call.
                 if (newId > 0)
@@ -2150,7 +2193,7 @@ namespace Risebird.Web.Controllers
                     {
                         await _repository.SetUnifiedIntentAsync(newId, emailIntent, "Email", record.ReceivedAt);
                         await _repository.InsertHistoryAsync(newId, "IntentSet", "—",
-                            $"Unified Intent set to '{emailIntent}' (source: Email)", "Relay.app");
+                            $"Unified Intent set to '{emailIntent}' (source: Email)", actor);
 
                         // Unsubscribe in the email reply → deactivate the interviewer system-wide.
                         if (string.Equals(emailIntent, "Unsubscribe", StringComparison.OrdinalIgnoreCase))
@@ -2158,13 +2201,13 @@ namespace Risebird.Web.Controllers
                     }
                 }
 
-                // Auto-close if the Relay-extracted availability intent is favorable
+                // Auto-close if the extracted availability intent is favorable
                 if (newId > 0 && IsFavorableAvailabilityIntent(
                         payload.AvailabilityIntent, payload.MailBodyIntent, payload.ConcernsOrNotInterested))
                 {
                     _ = Task.Run(async () =>
                     {
-                        try { await TryAutoCloseAsync(newId, "Relay AutoClose"); }
+                        try { await TryAutoCloseAsync(newId, $"{actor} AutoClose"); }
                         catch { }
                     });
                 }

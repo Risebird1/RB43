@@ -147,5 +147,10 @@ namespace Risebird.Entities.ViewModel
 
         [JsonProperty("has_attachment")]
         public bool HasAttachment               { get; set; }
+
+        // Identifies the automation platform that produced this payload ('Relay' | 'n8n').
+        // Absent on legacy Relay.app calls, which are treated as 'Relay'.
+        [JsonProperty("source")]
+        public string Source                    { get; set; }
     }
 }
