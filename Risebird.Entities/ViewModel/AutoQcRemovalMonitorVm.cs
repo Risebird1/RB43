@@ -116,6 +116,12 @@ namespace Risebird.Entities.ViewModel
         public int SuspiciousRedoLast90Days { get; set; }
         public int PendingFlagsCount { get; set; }
         public DateTime? LastBackfillAtUtc { get; set; }
+        public string ChannelOwnerEmail { get; set; }
+        public string ChannelOwnerDisplay { get; set; }
+        /// <summary>Computed client-facing label, e.g. "2026-08-06 17:53 IST · 07 Jul–06 Aug".</summary>
+        public string LastBackfillLabel { get; set; }
+        public DateTime? LastRiskBackfillFromIst { get; set; }
+        public DateTime? LastRiskBackfillToIst { get; set; }
     }
 
     public class IrfAuditInterviewerRiskRowVm
@@ -147,6 +153,27 @@ namespace Risebird.Entities.ViewModel
         public int? QcMergeScore { get; set; }
         public int PaymentDeductionTotal { get; set; }
         public string PaymentDeductionReasons { get; set; }
+
+        /// <summary>Removed | Kept | NeedsReReview | PendingReview | None (display as '—').</summary>
+        public string ReviewState { get; set; }
+        public string ReviewedBy { get; set; }
+        public DateTime? ReviewedAt { get; set; }
+        /// <summary>True when this row is inactive-with-RiskAuditRemoval (rendered in the "Removed in this window" section).</summary>
+        public bool IsRemoved { get; set; }
+    }
+
+    /// <summary>IRF-window quality strip — completed vs. bad (RiskCategory P0–P5) for the selected IST window.</summary>
+    public class IrfAuditWindowQualityVm
+    {
+        public int TotalCompleted { get; set; }
+        public int BadInterviews { get; set; }
+        public decimal? BadRatio { get; set; }
+        public int P0Count { get; set; }
+        public int P1Count { get; set; }
+        public int P2Count { get; set; }
+        public int P3Count { get; set; }
+        public int P4Count { get; set; }
+        public int P5Count { get; set; }
     }
 
     /// <summary>
@@ -174,9 +201,30 @@ namespace Risebird.Entities.ViewModel
         public bool Aborted { get; set; }
         public string AbortedCheckName { get; set; }
         public double? AbortedFireRatePct { get; set; }
+
+        /// <summary>Candidates found in window before the per-call cap was applied.</summary>
+        public int Scanned { get; set; }
+        public int Inserted { get; set; }
+        public int Updated { get; set; }
+        public int Deleted { get; set; }
+        /// <summary>Always 0 today — TrialFlags backfill is not IRF-scoped, so it is intentionally skipped here (see BackfillRiskCategoryForIrfAsync).</summary>
+        public int TrialFlagsInserted { get; set; }
+        public int SyncUpdates { get; set; }
+        public int Skipped { get; set; }
+        public string SkipReasons { get; set; }
+        public DateTime? FromIst { get; set; }
+        public DateTime? ToIst { get; set; }
+        /// <summary>Client-facing label, e.g. "2026-08-06 17:53 IST · 07 Jul–06 Aug".</summary>
+        public string LastBackfillLabel { get; set; }
     }
 
     public class IrfAuditRiskRemoveResultVm
+    {
+        public bool Ok { get; set; }
+        public string Message { get; set; }
+    }
+
+    public class IrfAuditRiskKeepResultVm
     {
         public bool Ok { get; set; }
         public string Message { get; set; }

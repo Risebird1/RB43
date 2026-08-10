@@ -12,5 +12,7 @@ namespace Risebird.Entities.ViewModel
         public const string AutoQcFlag = "AutoQcFlag";
         /// <summary>Manual removal from IRF Audit risk breakdown (ops-initiated).</summary>
         public const string RiskAuditRemoval = "RiskAuditRemoval";
+        /// <summary>Manual "keep" decision from IRF Audit risk breakdown (ops-initiated, no deactivation).</summary>
+        public const string RiskAuditKept = "RiskAuditKept";
     }
 }

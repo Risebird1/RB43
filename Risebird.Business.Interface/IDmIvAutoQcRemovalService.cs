@@ -29,5 +29,18 @@ namespace Risebird.Business.Interface
             int? worstSeverityInterviewId,
             string comment = null,
             CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Ops-initiated "keep" decision from IRF Audit risk drill-down. No deactivation, no IsActive change —
+        /// only writes EventType = RiskAuditKept so the breakdown can compute ReviewState (Kept / NeedsReReview).
+        /// </summary>
+        Task<IrfAuditRiskKeepResultVm> KeepForRiskAuditAsync(
+            int transInterviewerId,
+            int irfId,
+            string changedBy,
+            string riskSummary,
+            int? worstSeverityInterviewId,
+            string comment = null,
+            CancellationToken cancellationToken = default);
     }
 }

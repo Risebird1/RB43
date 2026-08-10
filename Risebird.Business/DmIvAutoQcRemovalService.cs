@@ -350,6 +350,53 @@ namespace Risebird.Business
 
             return new IrfAuditRiskRemoveResultVm { Ok = true, Message = "Interviewer removed from IRF." };
         }
+
+        public async Task<IrfAuditRiskKeepResultVm> KeepForRiskAuditAsync(
+            int transInterviewerId,
+            int irfId,
+            string changedBy,
+            string riskSummary,
+            int? worstSeverityInterviewId,
+            string comment = null,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (transInterviewerId <= 0 || irfId <= 0)
+                return new IrfAuditRiskKeepResultVm { Ok = false, Message = "Invalid interviewer or IRF." };
+
+            var actor = string.IsNullOrWhiteSpace(changedBy) ? "System" : changedBy.Trim();
+            var ctx = await _auditRepository.GetContextByTransInterviewerIdAsync(transInterviewerId);
+            if (ctx == null)
+                return new IrfAuditRiskKeepResultVm { Ok = false, Message = "TransInterviewer channel not found." };
+
+            if (ctx.IrfId != irfId)
+                return new IrfAuditRiskKeepResultVm { Ok = false, Message = "Interviewer is not on the selected IRF." };
+
+            var reasonDetail = string.IsNullOrWhiteSpace(riskSummary) ? "Risk audit keep" : riskSummary.Trim();
+            if (!string.IsNullOrWhiteSpace(comment))
+                reasonDetail = reasonDetail + "; comment=" + comment.Trim();
+            if (reasonDetail.Length > 500)
+                reasonDetail = reasonDetail.Substring(0, 500);
+
+            var triggerId = worstSeverityInterviewId.GetValueOrDefault();
+            var fromActive = ctx.IsActive ? "Active" : "Inactive";
+
+            // No IsActive/vet change — Keep is a review decision only.
+            await _auditRepository.InsertAsync(
+                ctx.TransInterviewerId,
+                DmIvInactiveAuditEventTypes.RiskAuditKept,
+                fromActive,
+                "risk_audit_kept",
+                reasonCategory: reasonDetail,
+                triggeringInterviewId: triggerId > 0 ? triggerId : (int?)null,
+                changedBy: actor,
+                auditTag: DmIvAutoQcAuditConstants.RiskAuditTag,
+                auditSource: DmIvAutoQcAuditConstants.SourceRiskAuditManual,
+                extraMetadata: reasonDetail);
+
+            return new IrfAuditRiskKeepResultVm { Ok = true, Message = "Interviewer kept on IRF." };
+        }
     }
 }
 

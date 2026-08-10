@@ -32,6 +32,16 @@
         return utcDt.AddHours(5.5).ToString("yyyy-MM-dd HH:mm") + " IST";
     }
 
+    string FormatLastBackfill(IrfAuditDirectoryRowVm row)
+    {
+        if (!string.IsNullOrWhiteSpace(row.LastBackfillLabel)) return row.LastBackfillLabel;
+        var stamp = FormatIst(row.LastBackfillAtUtc);
+        if (stamp == "—") return "—";
+        if (row.LastRiskBackfillFromIst.HasValue && row.LastRiskBackfillToIst.HasValue)
+            return stamp + " · " + row.LastRiskBackfillFromIst.Value.ToString("dd MMM") + "–" + row.LastRiskBackfillToIst.Value.ToString("dd MMM");
+        return stamp;
+    }
+
 }
 
 <script>
@@ -309,6 +319,55 @@
     .irf-risk-table .btn-risk-remove:disabled {
         opacity: .5;
     }
+    .irf-risk-table .btn-risk-keep {
+        padding: 2px 8px;
+        font-size: 10px;
+        font-weight: 600;
+        line-height: 1.3;
+        border-radius: 4px;
+        margin: 0 0 0 4px;
+        letter-spacing: .02em;
+        background: #fff;
+        border: 1px solid #16a34a;
+        color: #166534;
+    }
+    .irf-risk-table .btn-risk-keep:hover { background: #f0fdf4; }
+    .irf-risk-table .btn-risk-keep:disabled { opacity: .5; }
+    .irf-review-badge {
+        display: inline-block; border-radius: 6px; padding: 2px 8px;
+        font-size: 11px; font-weight: 600; white-space: nowrap;
+    }
+    .irf-review--removed { background: #e2e8f0; color: #475569; }
+    .irf-review--kept { background: #dcfce7; color: #166534; }
+    .irf-review--needs { background: #fef3c7; color: #92400e; }
+    .irf-review--pending { background: #fff; color: #b91c1c; border: 1px solid #f87171; }
+    .irf-review--none { color: #94a3b8; font-weight: 400; }
+    .irf-window-quality {
+        display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px;
+        margin: 0 0 12px; padding: 10px 12px;
+        background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;
+        font-size: 12px; color: #334155;
+    }
+    .irf-window-quality__label { font-weight: 600; color: #0f172a; }
+    .irf-window-quality__chips { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+    .irf-window-quality__chips .irf-p-badge { cursor: default; }
+    .irf-removed-section { margin-top: 14px; border-top: 1px dashed #e2e8f0; padding-top: 10px; }
+    .irf-removed-section summary {
+        cursor: pointer; font-size: 12px; font-weight: 600; color: #64748b;
+        list-style: none; user-select: none;
+    }
+    .irf-removed-section summary::-webkit-details-marker { display: none; }
+    .irf-removed-section[open] summary { color: #334155; margin-bottom: 8px; }
+    .irf-grading-abort {
+        margin: 0 0 10px; padding: 8px 12px; border-radius: 6px;
+        background: #fff7ed; border: 1px solid #fdba74; color: #9a3412; font-size: 12px;
+    }
+    .irf-audit-owner-filter { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .irf-audit-owner-filter label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: #64748b; }
+    .irf-audit-owner-filter select {
+        border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 10px; font-size: 13px; min-width: 220px; background: #fff;
+    }
+    .irf-actions-cell { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
 
 </style>
 
@@ -322,7 +381,7 @@
 
         <div class="irf-audit-header__row">
 
-            <p>Active skill channels with completed interviews in the selected period. Forward triggers set flags only (no auto-removal). Run backfill to populate historical suspicious/redo verdicts.</p>
+            <p>Active skill channels with completed interviews in the selected period. Use <strong>Backfill</strong> to grade every completed interview in the page window (P0–P5), then review interviewers with Keep / Remove. Channel owners (HR / SeniorHR) see only their IRFs.</p>
 
             @if (rows.Any())
 
@@ -334,7 +393,7 @@
 
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
 
-                        <input type="search" id="irfAuditSearch" class="irf-audit-search__input" placeholder="Search by IRF name..." autocomplete="off" />
+                        <input type="search" id="irfAuditSearch" class="irf-audit-search__input" placeholder="Search IRF or channel owner..." autocomplete="off" />
 
                     </div>
 
@@ -388,6 +447,26 @@
 
         </form>
 
+        @if (rows.Any())
+        {
+            var owners = rows
+                .Select(r => string.IsNullOrWhiteSpace(r.ChannelOwnerDisplay) ? (r.ChannelOwnerEmail ?? "") : r.ChannelOwnerDisplay)
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(s => s, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+            <div class="irf-audit-owner-filter">
+                <label for="irfOwnerFilter">Channel Owner</label>
+                <select id="irfOwnerFilter">
+                    <option value="">All owners</option>
+                    @foreach (var owner in owners)
+                    {
+                        <option value="@owner">@owner</option>
+                    }
+                </select>
+            </div>
+        }
+
     </div>
 
 
@@ -430,11 +509,13 @@
 
                     <th>IRF</th>
 
+                    <th>Channel Owner</th>
+
                     <th>Completed (lifetime)</th>
 
-                    <th>Completed (90d)</th>
+                    <th>Completed (window)</th>
 
-                    <th>Suspicious/redo (90d)</th>
+                    <th>Suspicious/redo (window)</th>
 
                     <th>Pending flags</th>
 
@@ -454,7 +535,7 @@
 
                     var pendingClass = row.PendingFlagsCount > 0 ? "pending-flags" : "pending-flags is-zero";
 
-                    <tr data-irf-id="@row.IrfId" data-irf-name="@row.IrfName" class="irf-audit-main-row">
+                    <tr data-irf-id="@row.IrfId" data-irf-name="@row.IrfName" data-channel-owner="@(row.ChannelOwnerDisplay ?? row.ChannelOwnerEmail ?? "")" class="irf-audit-main-row">
 
                         <td>
 
@@ -464,6 +545,8 @@
 
                         <td><strong>@row.IrfName</strong> <span style="color:#94a3b8;">(#@row.IrfId)</span></td>
 
+                        <td>@(string.IsNullOrWhiteSpace(row.ChannelOwnerDisplay) ? (string.IsNullOrWhiteSpace(row.ChannelOwnerEmail) ? "—" : row.ChannelOwnerEmail) : row.ChannelOwnerDisplay)</td>
+
                         <td>@row.TotalCompletedLifetime</td>
 
                         <td>@row.CompletedLast90Days</td>
@@ -472,11 +555,13 @@
 
                         <td class="@pendingClass">@row.PendingFlagsCount</td>
 
-                        <td>@FormatIst(row.LastBackfillAtUtc)</td>
+                        <td class="irf-last-backfill">@FormatLastBackfill(row)</td>
 
                         <td>
 
-                            <button type="button" class="irf-audit-btn irf-audit-btn--primary btn-backfill" data-irf-id="@row.IrfId" data-irf-name="@row.IrfName" data-suspicious-90d="@row.SuspiciousRedoLast90Days">Backfill</button>
+                            <button type="button" class="irf-audit-btn irf-audit-btn--primary btn-risk-backfill" data-irf-id="@row.IrfId" data-irf-name="@row.IrfName" title="Grade all completed interviews in the selected page window">Backfill</button>
+
+                            <button type="button" class="irf-audit-btn btn-backfill" data-irf-id="@row.IrfId" data-irf-name="@row.IrfName" data-suspicious-90d="@row.SuspiciousRedoLast90Days" title="Backfill AutoQc suspicious/redo flags only">QC flags</button>
 
                             <a class="irf-audit-btn" href="/IRF/DeliveryHeadInstruction?irfid=@row.IrfId" target="_blank" rel="noopener">Open DM Approval</a>
 
@@ -919,6 +1004,7 @@
         var irfAuditCurrentPage = 1;
 
         var irfAuditSearchTerm = '';
+        var irfOwnerFilterVal = '';
 
         var $irfAuditRows = $('.irf-audit-table tbody tr.irf-audit-main-row');
 
@@ -926,13 +1012,19 @@
 
         function getIrfAuditMatchedRows() {
 
-            if (!irfAuditSearchTerm) return $irfAuditRows;
-
             return $irfAuditRows.filter(function () {
 
-                var name = ($(this).attr('data-irf-name') || '').toString().toLowerCase();
+                var $row = $(this);
 
-                return name.indexOf(irfAuditSearchTerm) >= 0;
+                var name = ($row.attr('data-irf-name') || '').toString().toLowerCase();
+
+                var owner = ($row.attr('data-channel-owner') || '').toString().toLowerCase();
+
+                if (irfOwnerFilterVal && owner !== irfOwnerFilterVal) return false;
+
+                if (!irfAuditSearchTerm) return true;
+
+                return name.indexOf(irfAuditSearchTerm) >= 0 || owner.indexOf(irfAuditSearchTerm) >= 0;
 
             });
 
@@ -943,6 +1035,8 @@
         function applyIrfAuditSearch() {
 
             irfAuditSearchTerm = ($('#irfAuditSearch').val() || '').trim().toLowerCase();
+
+            irfOwnerFilterVal = ($('#irfOwnerFilter').val() || '').trim().toLowerCase();
 
             irfAuditCurrentPage = 1;
 
@@ -972,7 +1066,7 @@
 
             $irfAuditRows.hide();$('.irf-risk-detail-row').hide();
 
-            $empty.toggleClass('is-visible', total === 0 && irfAuditSearchTerm.length > 0 && $irfAuditRows.length > 0);
+            $empty.toggleClass('is-visible', total === 0 && (irfAuditSearchTerm.length > 0 || irfOwnerFilterVal.length > 0) && $irfAuditRows.length > 0);
 
 
 
@@ -1098,6 +1192,8 @@
 
         $('#irfAuditSearch').on('input', applyIrfAuditSearch);
 
+        $('#irfOwnerFilter').on('change', applyIrfAuditSearch);
+
 
 
         $('#irfAuditSearchClear').on('click', function () {
@@ -1212,6 +1308,7 @@
         var riskBreakdownUrl = '@Url.Action("IrfAuditInterviewerRisk", "Dashboard")';
         var riskRefreshUrl = '@Url.Action("RefreshIrfRiskCategory", "Dashboard")';
         var riskRemoveUrl = '@Url.Action("RemoveInterviewerFromIrfRiskAudit", "Dashboard")';
+        var riskKeepUrl = '@Url.Action("KeepInterviewerOnIrfRiskAudit", "Dashboard")';
         var dirFromVal = '@directoryFromIst';
         var dirToVal = '@directoryToIst';
         var tplTranscript = @Html.Raw(Json.Serialize(tplTranscript));
@@ -1225,6 +1322,37 @@
             if (r === 'watch') return 'irf-rec--watch';
             if (r === 'ok') return 'irf-rec--ok';
             return 'irf-rec--insufficient';
+        }
+
+        function reviewBadge(state, by, at) {
+            var s = (state || 'None').toString();
+            if (s === 'Removed') return '<span class="irf-review-badge irf-review--removed" title="Removed from channel">Removed</span>';
+            if (s === 'Kept') {
+                var tip = 'Kept' + (by ? ' by ' + by : '') + (at ? ' on ' + fmtDate(at) : '');
+                return '<span class="irf-review-badge irf-review--kept" title="' + esc(tip) + '">' + esc(tip) + '</span>';
+            }
+            if (s === 'NeedsReReview') return '<span class="irf-review-badge irf-review--needs" title="New bad interview after Keep">Needs re-review</span>';
+            if (s === 'PendingReview') return '<span class="irf-review-badge irf-review--pending">Pending review</span>';
+            return '<span class="irf-review-badge irf-review--none">—</span>';
+        }
+
+        function renderWindowQuality(q) {
+            if (!q) return '';
+            var total = Number(prop(q, 'totalCompleted', 'TotalCompleted') || 0);
+            var bad = Number(prop(q, 'badInterviews', 'BadInterviews') || 0);
+            var ratio = prop(q, 'badRatio', 'BadRatio');
+            var pct = (ratio === null || ratio === undefined || ratio === '') ? '—' : (Number(ratio) * 100).toFixed(0);
+            return '<div class="irf-window-quality">'
+                + '<span class="irf-window-quality__label">Window quality:</span>'
+                + '<span>' + total + ' completed · ' + bad + ' bad (' + pct + '%)</span>'
+                + '<span class="irf-window-quality__chips">'
+                + 'P0 ' + pBadge(0, prop(q, 'p0Count', 'P0Count'))
+                + ' P1 ' + pBadge(1, prop(q, 'p1Count', 'P1Count'))
+                + ' P2 ' + pBadge(2, prop(q, 'p2Count', 'P2Count'))
+                + ' P3 ' + pBadge(3, prop(q, 'p3Count', 'P3Count'))
+                + ' P4 ' + pBadge(4, prop(q, 'p4Count', 'P4Count'))
+                + ' P5 ' + pBadge(5, prop(q, 'p5Count', 'P5Count'))
+                + '</span></div>';
         }
 
         function pBadge(level, count) {
@@ -1397,7 +1525,8 @@
             return url;
         }
 
-        function buildRiskSummary(row) {
+        function buildRiskSummary(row, fromStr, toStr) {
+            var win = formatShortRange(fromStr || dirFromVal, toStr || dirToVal).replace(/\s/g, '');
             return 'RiskRatio=' + (prop(row,'riskRatio','RiskRatio') != null ? Number(prop(row,'riskRatio','RiskRatio')).toFixed(2) : 'n/a')
                 + '; P0=' + (prop(row,'p0Count','P0Count') || 0)
                 + ',P1=' + (prop(row,'p1Count','P1Count') || 0)
@@ -1405,35 +1534,15 @@
                 + ',P3=' + (prop(row,'p3Count','P3Count') || 0)
                 + ',P4=' + (prop(row,'p4Count','P4Count') || 0)
                 + ',P5=' + (prop(row,'p5Count','P5Count') || 0)
-                + '; WindowCompleted=' + (prop(row,'totalCompleted','TotalCompleted') || 0)
-                + '; Lifetime=' + (prop(row,'lifetimeCompleted','LifetimeCompleted') || 0);
+                + '; window ' + win;
         }
 
-        function renderRiskRows(irfId, rows, details, fromStr, toStr) {
-            if (!rows || !rows.length) {
-                return '<div class="irf-risk-empty">No active interviewers on this IRF.</div>';
-            }
-            var riskSum = 0;
-            rows.forEach(function (r) {
-                riskSum += Number(prop(r,'riskInterviews','RiskInterviews') || 0);
-            });
-            var rangeLabel = formatShortRange(fromStr || dirFromVal, toStr || dirToVal);
+        function renderRiskTableRows(irfId, rows, details, fromStr, toStr, allowActions) {
             var html = '';
-            if (riskSum === 0) {
-                html += '<div class="irf-risk-empty irf-risk-empty--warn">P0–P5 are 0 — no RiskCategory rows yet, or interviews are clean. Click <strong>Refresh risk</strong> to backfill.</div>';
-            }
-            html += '<table class="irf-risk-table"><thead><tr>'
-                + '<th>Interviewer</th>'
-                + '<th class="col-num" title="Completed in selected window">Completed (' + esc(rangeLabel) + ')</th>'
-                + '<th class="col-num" title="Lifetime completed on this IRF (display only)">Lifetime</th>'
-                + '<th class="col-num">P0</th><th class="col-num">P1</th><th class="col-num">P2</th>'
-                + '<th class="col-num">P3</th><th class="col-num">P4</th><th class="col-num">P5</th>'
-                + '<th>Risk ratio</th><th>Recommendation</th>'
-                + '<th>QC Merge</th><th>AI links</th><th>Payment deduction</th>'
-                + '<th>Action</th></tr></thead><tbody>';
             rows.forEach(function (r) {
                 var rec = prop(r,'recommendation','Recommendation') || 'InsufficientData';
-                var canRemove = rec === 'Remove' || rec === 'Watch';
+                var reviewState = prop(r,'reviewState','ReviewState') || 'None';
+                var canAct = allowActions && (reviewState === 'PendingReview' || reviewState === 'NeedsReReview' || rec === 'Remove' || rec === 'Watch');
                 var transId = prop(r,'transInterviewerId','TransInterviewerId');
                 var name = (prop(r,'interviewerCodedId','InterviewerCodedId') || prop(r,'interviewerEmail','InterviewerEmail') || ('#' + transId));
                 var email = prop(r,'interviewerEmail','InterviewerEmail') || '';
@@ -1445,6 +1554,7 @@
                 var qcScore = prop(r,'qcMergeScore','QcMergeScore');
                 var payTotal = prop(r,'paymentDeductionTotal','PaymentDeductionTotal') || 0;
                 var payReasons = prop(r,'paymentDeductionReasons','PaymentDeductionReasons') || '';
+                var summaryAttr = esc(buildRiskSummary(r, fromStr, toStr)).replace(/"/g, '&quot;');
 
                 html += '<tr class="irf-risk-iv-row" data-trans-id="' + transId + '">'
                     + '<td><div class="irf-risk-iv-name">' + esc(name) + '</div>'
@@ -1464,38 +1574,93 @@
                     + '<td class="col-num">' + pBadge(5, prop(r,'p5Count','P5Count')) + '</td>'
                     + '<td>' + formatRatio(prop(r,'riskRatio','RiskRatio')) + '</td>'
                     + '<td><span class="irf-rec ' + recClass(rec) + '">' + esc(rec) + '</span></td>'
+                    + '<td>' + reviewBadge(reviewState, prop(r,'reviewedBy','ReviewedBy'), prop(r,'reviewedAt','ReviewedAt')) + '</td>'
                     + '<td><div class="irf-qc-verdict irf-qc-' + esc(String(qcVerdict).toLowerCase()) + '">' + esc(qcVerdict) + '</div>'
                     + (qcScore != null && qcScore !== '' ? '<div class="irf-qc-score">Score ' + esc(qcScore) + '</div>' : '')
                     + '</td>'
                     + '<td>' + aiLinks(worstId, irfId) + '</td>'
                     + '<td><div class="irf-pay-total">' + (payTotal ? (payTotal + '%') : '—') + '</div>'
                     + payReasonBadges(payReasons) + '</td>'
-                    + '<td>';
-                if (canRemove) {
+                    + '<td class="irf-actions-cell">';
+                if (canAct) {
                     html += '<button type="button" class="irf-audit-btn irf-audit-btn--danger btn-risk-remove"'
                         + ' data-trans-id="' + transId + '"'
                         + ' data-irf-id="' + irfId + '"'
                         + ' data-worst-id="' + (worstId || '') + '"'
-                        + ' data-risk-summary="' + esc(buildRiskSummary(r)).replace(/"/g, '&quot;') + '"'
-                        + '>Remove</button>';
+                        + ' data-risk-summary="' + summaryAttr + '"'
+                        + ' title="Remove from channel (inactivate)">Remove</button>'
+                        + '<button type="button" class="irf-audit-btn btn-risk-keep"'
+                        + ' data-trans-id="' + transId + '"'
+                        + ' data-irf-id="' + irfId + '"'
+                        + ' data-worst-id="' + (worstId || '') + '"'
+                        + ' data-risk-summary="' + summaryAttr + '"'
+                        + ' title="Keep — no action required">Keep</button>';
                 } else {
                     html += '<span style="color:#94a3b8;font-size:11px;">—</span>';
                 }
                 html += '</td></tr>';
                 html += '<tr class="irf-risk-sev-row" data-trans-id="' + transId + '" style="display:none;">'
-                    + '<td colspan="15" class="irf-risk-detail-cell">'
+                    + '<td colspan="16" class="irf-risk-detail-cell">'
                     + renderSeverityGroups(ivDetails, null)
                     + '</td></tr>';
             });
-            html += '</tbody></table>';
             return html;
         }
 
-        function loadRiskBreakdown($mainRow, force) {
+        function renderRiskRows(irfId, rows, removed, details, fromStr, toStr, quality, abortWarning) {
+            var riskSum = 0;
+            (rows || []).forEach(function (r) {
+                riskSum += Number(prop(r,'riskInterviews','RiskInterviews') || 0);
+            });
+            var rangeLabel = formatShortRange(fromStr || dirFromVal, toStr || dirToVal);
+            var html = '';
+            if (abortWarning) {
+                html += '<div class="irf-grading-abort">' + esc(abortWarning) + '</div>';
+            }
+            html += renderWindowQuality(quality);
+            if ((!rows || !rows.length) && (!removed || !removed.length)) {
+                html += '<div class="irf-risk-empty">No active interviewers on this IRF.</div>';
+                return html;
+            }
+            if (riskSum === 0 && rows && rows.length) {
+                html += '<div class="irf-risk-empty irf-risk-empty--warn">P0–P5 are 0 — no RiskCategory rows yet, or interviews are clean. Click <strong>Backfill</strong> / <strong>Refresh risk</strong> to grade the window.</div>';
+            }
+            if (rows && rows.length) {
+                html += '<table class="irf-risk-table"><thead><tr>'
+                    + '<th>Interviewer</th>'
+                    + '<th class="col-num" title="Completed in selected window">Completed (' + esc(rangeLabel) + ')</th>'
+                    + '<th class="col-num" title="Lifetime completed on this IRF (display only)">Lifetime</th>'
+                    + '<th class="col-num">P0</th><th class="col-num">P1</th><th class="col-num">P2</th>'
+                    + '<th class="col-num">P3</th><th class="col-num">P4</th><th class="col-num">P5</th>'
+                    + '<th>Risk ratio</th><th>Recommendation</th><th>Review</th>'
+                    + '<th>QC Merge</th><th>AI links</th><th>Payment deduction</th>'
+                    + '<th>Actions</th></tr></thead><tbody>';
+                html += renderRiskTableRows(irfId, rows, details, fromStr, toStr, true);
+                html += '</tbody></table>';
+            }
+            if (removed && removed.length) {
+                html += '<details class="irf-removed-section">'
+                    + '<summary>Removed in this window (' + removed.length + ')</summary>'
+                    + '<table class="irf-risk-table"><thead><tr>'
+                    + '<th>Interviewer</th>'
+                    + '<th class="col-num">Completed (' + esc(rangeLabel) + ')</th>'
+                    + '<th class="col-num">Lifetime</th>'
+                    + '<th class="col-num">P0</th><th class="col-num">P1</th><th class="col-num">P2</th>'
+                    + '<th class="col-num">P3</th><th class="col-num">P4</th><th class="col-num">P5</th>'
+                    + '<th>Risk ratio</th><th>Recommendation</th><th>Review</th>'
+                    + '<th>QC Merge</th><th>AI links</th><th>Payment deduction</th>'
+                    + '<th>Actions</th></tr></thead><tbody>';
+                html += renderRiskTableRows(irfId, removed, details, fromStr, toStr, false);
+                html += '</tbody></table></details>';
+            }
+            return html;
+        }
+
+        function loadRiskBreakdown($mainRow, force, abortWarning) {
             var irfId = $mainRow.data('irf-id');
             var $detail = $mainRow.next('.irf-risk-detail-row');
             if (!$detail.length) {
-                $detail = $('<tr class="irf-risk-detail-row" data-parent-irf="' + irfId + '"><td colspan="8"><div class="irf-risk-panel">'
+                $detail = $('<tr class="irf-risk-detail-row" data-parent-irf="' + irfId + '"><td colspan="9"><div class="irf-risk-panel">'
                     + '<div class="irf-risk-panel__head">'
                     + '<div class="irf-risk-panel__title">Active interviewers — risk by severity</div>'
                     + '<div>'
@@ -1506,7 +1671,14 @@
                 $mainRow.after($detail);
             } else {
                 $detail.show();
-                if (!force) return;
+                if (!force) {
+                    if (abortWarning) {
+                        var $body = $detail.find('.irf-risk-body');
+                        $body.find('.irf-grading-abort').remove();
+                        $body.prepend('<div class="irf-grading-abort">' + esc(abortWarning) + '</div>');
+                    }
+                    return;
+                }
                 $detail.find('.irf-risk-body').html('<div class="irf-risk-loading">Loading…</div>');
             }
 
@@ -1517,7 +1689,15 @@
                             $detail.find('.irf-risk-body').html('<div class="irf-risk-error">' + ((res && res.message) || 'Failed to load risk breakdown.') + '</div>');
                             return;
                         }
-                        $detail.find('.irf-risk-body').html(renderRiskRows(irfId, res.rows || [], res.details || [], res.from || dirFromVal, res.to || dirToVal));
+                        $detail.find('.irf-risk-body').html(renderRiskRows(
+                            irfId,
+                            res.rows || [],
+                            res.removed || [],
+                            res.details || [],
+                            res.from || dirFromVal,
+                            res.to || dirToVal,
+                            res.quality,
+                            abortWarning || null));
                     })
                     .fail(function () {
                         $detail.find('.irf-risk-body').html('<div class="irf-risk-error">Failed to load risk breakdown.</div>');
@@ -1555,11 +1735,13 @@
             loadRiskBreakdown($main, !$main.next('.irf-risk-detail-row').length);
         });
 
-        $(document).on('click', '.btn-refresh-risk', function () {
+        $(document).on('click', '.btn-refresh-risk, .btn-risk-backfill', function () {
             var irfId = $(this).data('irf-id');
             var $btn = $(this);
-            $btn.prop('disabled', true).text('Refreshing…');
-            function enableBtn() { $btn.prop('disabled', false).text('Refresh risk'); }
+            var isDirBackfill = $btn.hasClass('btn-risk-backfill');
+            var origText = isDirBackfill ? 'Backfill' : 'Refresh risk';
+            $btn.prop('disabled', true).text(isDirBackfill ? 'Backfilling…' : 'Refreshing…');
+            function enableBtn() { $btn.prop('disabled', false).text(origText); }
             function postRefresh(ignoreMassFireGuard) {
                 return $.post(riskRefreshUrl, {
                     irfId: irfId,
@@ -1568,19 +1750,45 @@
                     ignoreMassFireGuard: !!ignoreMassFireGuard
                 });
             }
+            function toastFromResult(res) {
+                if (!res) return 'Refresh failed.';
+                if (res.aborted) return res.message || 'Grading aborted.';
+                var parts = [];
+                if (res.scanned != null) parts.push('scanned ' + res.scanned);
+                if (res.insertedCount != null) parts.push('inserted ' + res.insertedCount);
+                if (res.updated != null) parts.push('updated ' + res.updated);
+                if (res.deleted != null) parts.push('deleted ' + res.deleted);
+                if (res.skipped != null && res.skipped > 0) parts.push('skipped ' + res.skipped);
+                if (res.syncUpdates != null) parts.push('sync ' + res.syncUpdates);
+                return (res.message || (res.ok ? 'Risk refreshed.' : 'Refresh failed.'))
+                    + (parts.length ? ' (' + parts.join(', ') + ')' : '');
+            }
             function applyResult(res) {
-                showToast((res && res.message) || (res && res.ok ? 'Risk refreshed.' : 'Refresh failed.'), !!(res && res.ok));
+                showToast(toastFromResult(res), !!(res && res.ok));
+                if (res && res.lastBackfillLabel) {
+                    $('tr.irf-audit-main-row[data-irf-id="' + irfId + '"] .irf-last-backfill').text(res.lastBackfillLabel);
+                }
                 var $main = $('tr.irf-audit-main-row[data-irf-id="' + irfId + '"]');
-                loadRiskBreakdown($main, true);
+                var $view = $main.find('.btn-view-interviewers');
+                if (!$view.hasClass('is-open')) {
+                    $view.addClass('is-open').attr('aria-expanded', 'true').text('Hide');
+                }
+                loadRiskBreakdown($main, true, null);
             }
             postRefresh(false)
                 .done(function (res) {
                     if (res && res.aborted) {
+                        var abortMsg = 'grading aborted: ' + (res.abortedCheckName || 'check')
+                            + (res.abortedFireRatePct != null ? ' fired on ' + Number(res.abortedFireRatePct).toFixed(0) + '%' : '');
+                        var $main = $('tr.irf-audit-main-row[data-irf-id="' + irfId + '"]');
+                        if ($main.next('.irf-risk-detail-row').length) {
+                            loadRiskBreakdown($main, false, abortMsg + ' — ' + (res.message || ''));
+                        }
                         var override = window.confirm(
                             (res.message || 'Mass-fire guard aborted this risk refresh.')
                             + '\n\nOverride the mass-fire guard and write anyway? Only after investigating the check.');
                         if (!override) {
-                            showToast(res.message || 'Risk refresh aborted.', false);
+                            showToast(abortMsg, false);
                             enableBtn();
                             return;
                         }
@@ -1603,7 +1811,7 @@
             var transId = $btn.data('trans-id');
             var worstId = $btn.data('worst-id') || null;
             var riskSummary = $btn.attr('data-risk-summary') || '';
-            if (!confirm('Remove this interviewer from the IRF? This deactivates their channel and writes a RiskAuditRemoval audit entry. No automatic bulk removal.')) return;
+            if (!confirm('Remove this interviewer from the channel (inactivate)? Writes RiskAuditRemoval. Recoverable — never a delete.')) return;
             var comment = prompt('Optional comment for the audit log:', '') || '';
             $btn.prop('disabled', true);
             $.post(riskRemoveUrl, {
@@ -1624,6 +1832,37 @@
                 })
                 .fail(function () {
                     showToast('Remove failed.', false);
+                    $btn.prop('disabled', false);
+                });
+        });
+
+        $(document).on('click', '.btn-risk-keep', function () {
+            var $btn = $(this);
+            var irfId = $btn.data('irf-id');
+            var transId = $btn.data('trans-id');
+            var worstId = $btn.data('worst-id') || null;
+            var riskSummary = $btn.attr('data-risk-summary') || '';
+            if (!confirm('Keep this interviewer — no channel change. Records RiskAuditKept for audit.')) return;
+            var comment = prompt('Optional comment for the audit log:', '') || '';
+            $btn.prop('disabled', true);
+            $.post(riskKeepUrl, {
+                transInterviewerId: transId,
+                irfId: irfId,
+                comment: comment,
+                riskSummary: riskSummary,
+                worstSeverityInterviewId: worstId
+            })
+                .done(function (res) {
+                    showToast((res && res.message) || (res && res.ok ? 'Kept.' : 'Keep failed.'), !!(res && res.ok));
+                    if (res && res.ok) {
+                        var $main = $('tr.irf-audit-main-row[data-irf-id="' + irfId + '"]');
+                        loadRiskBreakdown($main, true);
+                    } else {
+                        $btn.prop('disabled', false);
+                    }
+                })
+                .fail(function () {
+                    showToast('Keep failed.', false);
                     $btn.prop('disabled', false);
                 });
         });
