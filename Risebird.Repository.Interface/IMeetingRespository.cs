@@ -329,6 +329,7 @@ namespace Risebird.Repository.Interface
         Task<IReadOnlyDictionary<int, QcInterviewAIevaluation>> GetQcInterviewAIevaluationByInterviewIdsAsync(IEnumerable<int> interviewIds);
         Task<IReadOnlyDictionary<int, StatsDetailsPaymentDeductionSummary>> GetPaymentSlaSummaryByInterviewIdsAsync(IEnumerable<int> interviewIds);
         Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId);
+        Task<UnassignedInterviewVM> GetInterviewerInterviewDetails(int interviewId);
         Task<bool> SaveAIInterviewProctorEvaluation(InterviewReport model);
         Task<IEnumerable<PendingVideoMeetingsData>> GetPendingTranscriptMeetings();
         Task<IEnumerable<ZohoParticipantList>> GetZohoLiveMeetingInfomation();

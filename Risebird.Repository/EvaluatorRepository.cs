@@ -167,13 +167,11 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select ts.*, sm.Name as Name from TransSelectability ts join SelectabilityMatrix sm on ts.type = sm.id where IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<TransSelectability>(query, dynamicParameters);
-                    return results;
+                    return await DapperStoredProcedureHelper.QueryAsync<TransSelectability>(con, "usp_GetTransSelectabilityByIRFIdWithMatrix", dynamicParameters);
                 }
 
             }
@@ -294,18 +292,14 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select * from LevelTech";
-
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<LevelTech>(query);
-                    return results;
+                    return await DapperStoredProcedureHelper.QueryAsync<LevelTech>(con, "usp_GetLevelTechList");
                 }
             }
             catch (SqlException ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -313,14 +307,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select SelectabilityReport.*,SelectabilityReport.Type as Name, [Level].[Name] as RequiredLevel from SelectabilityReport inner join [Level] on SelectabilityReport.RequiredLevelId=[Level].id where CandidateId = @id and SelectabilityReport.IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@CandidateId", id);
                 dynamicParameters.Add("@IRFId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<SelectabilityEvaluatorReport>(query, dynamicParameters);
-                    return results;
+                    return await DapperStoredProcedureHelper.QueryAsync<SelectabilityEvaluatorReport>(con, "usp_GetEvaluatorSelectabilityReport", dynamicParameters);
                 }
 
             }
@@ -335,14 +327,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select JoinabilityReport.*,JoinabilityReport.Type as Name, [Level].[Name] as RequiredLevel from JoinabilityReport inner join [Level] on JoinabilityReport.RequiredLevelId=[Level].id where CandidateId = @id and JoinabilityReport.IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@CandidateId", id);
                 dynamicParameters.Add("@IRFId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<JoinabilityHRReport>(query, dynamicParameters);
-                    return results;
+                    return await DapperStoredProcedureHelper.QueryAsync<JoinabilityHRReport>(con, "usp_GetEvaluatorJoinabilityReport", dynamicParameters);
                 }
 
             }
@@ -357,14 +347,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select a.*, Skill.[Name] as SkillName from (select TechSkillEvaluatorReport.*, [LevelTech].[Name] as RequiredLevel from TechSkillEvaluatorReport inner join [LevelTech] on TechSkillEvaluatorReport.RequiredLevelId=[LevelTech].id) as a inner join Skill on a.SkillId = Skill.id where CandidateId = @CandidateId and IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@CandidateId", candidateId);
                 dynamicParameters.Add("@IRFId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<TechSkillEvaluatorReport>(query, dynamicParameters);
-                    return results;
+                    return await DapperStoredProcedureHelper.QueryAsync<TechSkillEvaluatorReport>(con, "usp_GetEvaluatorTechSkillReport", dynamicParameters);
                 }
 
             }
@@ -379,14 +367,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select SkillGeneralEvaluatorReport.*,SkillGeneralEvaluatorReport.[Type] as [Name], [LevelTech].[Name] as RequiredLevel from SkillGeneralEvaluatorReport inner join [LevelTech] on SkillGeneralEvaluatorReport.RequiredLevelId=[LevelTech].id where CandidateId = @CandidateId and IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@CandidateId", candidateId);
                 dynamicParameters.Add("@IRFId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<SkillGeneralEvaluatorReport>(query, dynamicParameters);
-                    return results;
+                    return await DapperStoredProcedureHelper.QueryAsync<SkillGeneralEvaluatorReport>(con, "usp_GetEvaluatorSkillGeneralReport", dynamicParameters);
                 }
 
             }

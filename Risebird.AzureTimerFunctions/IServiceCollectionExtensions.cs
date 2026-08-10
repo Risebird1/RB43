@@ -18,38 +18,38 @@ namespace Risebird.AzureFunctions
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             var serviceProvider = services.BuildServiceProvider();
-            string currentDirectory = string.Empty;
-            // if running in azure  
+            string currentDirectory;
             if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBSITE_INSTANCE_ID")))
             {
                 currentDirectory = Environment.GetEnvironmentVariable("HOME") + @"\site\wwwroot";
             }
-            // running in non azure environments 
             else
             {
                 currentDirectory = Environment.GetEnvironmentVariable("AzureWebJobsScriptRoot");
             }
 
-
-            var configurationBuilder = new ConfigurationBuilder();
-            #region Add the existing config including host.json to builder
-            var existingConfigInstance = serviceProvider.GetService<IConfiguration>();
-            if (existingConfigInstance != null)
+            if (string.IsNullOrWhiteSpace(currentDirectory))
             {
-                configurationBuilder.AddConfiguration(existingConfigInstance);
+                currentDirectory = AppContext.BaseDirectory;
             }
-            #endregion
 
-            var configuration = new ConfigurationBuilder()
+            var existingConfigInstance = serviceProvider.GetService<IConfiguration>();
+
+            var configurationBuilderMerged = new ConfigurationBuilder()
                     .SetBasePath(currentDirectory)
                     .AddJsonFile("appsettings.json", true, true)
                     .AddJsonFile("local.settings.json", true, true)
                     .AddEnvironmentVariables()
-                    .AddCommandLine(Environment.GetCommandLineArgs())
-                    .Build();
+                    .AddCommandLine(Environment.GetCommandLineArgs());
 
+            if (existingConfigInstance != null)
+            {
+                configurationBuilderMerged.AddConfiguration(existingConfigInstance);
+            }
 
-            //services.AddSingleton<IConfiguration>(configuration);
+            var configuration = configurationBuilderMerged.Build();
+
+            services.AddSingleton<IConfiguration>(configuration);
 
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -96,6 +96,7 @@ namespace Risebird.AzureFunctions
             services.AddScoped<IApplicationErrorLogger, ApplicationErrorLogger>();
             services.AddScoped<IDashboarRepository, DashboardRepository>();
             services.AddScoped<IIRFRepository, IRFRepository>();
+            services.AddRisebirdAzureSearch(configuration);
             services.AddScoped<IJoinabilityMatrixRepository, JoinabilityMatrixRepository>();
             services.AddScoped<IGeneralSkillMatrixRepository, GeneralSkillMatrixRepository>();
             services.AddScoped<ISelectabilityMatrixRepository, SelectabilityMatrixRepository>();
@@ -185,6 +186,7 @@ namespace Risebird.AzureFunctions
             services.AddScoped<IOpenAIApiLogger, OpenAIApiLogger>();
             services.AddScoped<IOpenAIInterviewerAssistantHelper, OpenAIInterviewerAssistantHelper>();
             services.AddScoped<IOpenAISpeechToTextService, OpenAISpeechToTextService>();
+            services.AddScoped<IPdfReaderHelper, PdfReaderHelper>();
             services.AddScoped<IResumeOptimizationHelper, ResumeOptimizationHelper>();
             services.AddScoped<ITranscriptOptimizationHelper, TranscriptOptimizationHelper>();
             services.AddScoped<IReportQCOptimizationHelper, ReportQCOptimizationHelper>();

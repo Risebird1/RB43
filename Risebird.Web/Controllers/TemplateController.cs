@@ -55,12 +55,16 @@ namespace Risebird.Web.Controllers
                     {
                         model.ClientId = null;
                     }
-                    model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
-
+                    ClonableTemplatesFilter filter = null;
                     if (HttpContext.Session.GetString("ClonableTemplatesFilters") != null)
                     {
-                        var filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContext.Session.GetString("ClonableTemplatesFilters"));
+                        filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContext.Session.GetString("ClonableTemplatesFilters"));
+                    }
 
+                    model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels(filter);
+
+                    if (filter != null)
+                    {
                         //filter.TemplateName = filter.TemplateName == null ? model.ClonableTemplates.Select(x => x.Name).ToArray() : filter.TemplateName;
                         //filter.AssessmentGroup = filter.AssessmentGroup ?? model.ClonableTemplates.Select(x => x.AssessmentGroupName).ToArray();
                         //filter.CompetencyLevel = filter.CompetencyLevel ?? model.ClonableTemplates.Select(x => x.CompetencyLevelDesc).ToArray();
@@ -266,11 +270,16 @@ namespace Risebird.Web.Controllers
                                 model.ClientId = null;
                             }
                         }
-                        model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
-
+                        ClonableTemplatesFilter filter = null;
                         if (HttpContext.Session.GetString("ClonableTemplatesFilters") != null)
                         {
-                            var filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContext.Session.GetString("ClonableTemplatesFilters"));
+                            filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContext.Session.GetString("ClonableTemplatesFilters"));
+                        }
+
+                        model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels(filter);
+
+                        if (filter != null)
+                        {
 
                             //filter.TemplateName = filter.TemplateName == null ? model.ClonableTemplates.Select(x => x.Name).ToArray() : filter.TemplateName;
                             //filter.AssessmentGroup = filter.AssessmentGroup ?? model.ClonableTemplates.Select(x => x.AssessmentGroupName).ToArray();
@@ -541,11 +550,16 @@ namespace Risebird.Web.Controllers
                                 model.ClientId = null;
                             }
                         }
-                        model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
-
+                        ClonableTemplatesFilter filter = null;
                         if (HttpContext.Session.GetString("ClonableTemplatesFilters") != null)
                         {
-                            var filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContext.Session.GetString("ClonableTemplatesFilters"));
+                            filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContext.Session.GetString("ClonableTemplatesFilters"));
+                        }
+
+                        model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels(filter);
+
+                        if (filter != null)
+                        {
 
                             //filter.TemplateName = filter.TemplateName == null ? model.ClonableTemplates.Select(x => x.Name).ToArray() : filter.TemplateName;
                             //filter.AssessmentGroup = filter.AssessmentGroup ?? model.ClonableTemplates.Select(x => x.AssessmentGroupName).ToArray();
@@ -1277,12 +1291,17 @@ namespace Risebird.Web.Controllers
                         model.ClientId = null;
                     }
 
-                    model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels();
-                    model.ClonableTemplates = model.ClonableTemplates.Where(x => !x.IsDeleted);
-
+                    ClonableTemplatesFilter filter = null;
                     if (HttpContext.Session.GetString("ClonableTemplatesFilters") != null)
                     {
-                        var filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContext.Session.GetString("ClonableTemplatesFilters"));
+                        filter = JsonConvert.DeserializeObject<ClonableTemplatesFilter>(HttpContext.Session.GetString("ClonableTemplatesFilters"));
+                    }
+
+                    model.ClonableTemplates = await _clonableSkillChannelTemplateService.GetAllClonableSkillChannels(filter);
+                    model.ClonableTemplates = model.ClonableTemplates.Where(x => !x.IsDeleted);
+
+                    if (filter != null)
+                    {
 
                         //filter.TemplateName = filter.TemplateName == null ? model.ClonableTemplates.Select(x => x.Name).ToArray() : filter.TemplateName;
                         //filter.AssessmentGroup = filter.AssessmentGroup ?? model.ClonableTemplates.Select(x => x.AssessmentGroupName).ToArray();

@@ -131,7 +131,7 @@ namespace Risebird.Repository
                         parameters.Add("@CampaignId", model.CampaignId);
                         parameters.Add("@IsACS", false);
 
-                        await SqlMapper.QueryAsync(con, "usp_SaveSentMailDetails", parameters,
+                        await SqlMapper.ExecuteAsync(con, "usp_SaveSentMailDetails", parameters,
                              commandType: CommandType.StoredProcedure);
                         return true;
 

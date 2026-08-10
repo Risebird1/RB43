@@ -54,11 +54,10 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from InterviewerSkillsChannel where IsDeleted= 0";
-
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<InterviewerSkillsVM>(query);
+                    var results = await SqlMapper.QueryAsync<InterviewerSkillsVM>(con, "usp_GetInterviewerSkillsChannels",
+                        commandType: CommandType.StoredProcedure);
                     return results;
                 }
 

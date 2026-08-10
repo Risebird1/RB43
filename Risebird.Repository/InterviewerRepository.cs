@@ -1850,12 +1850,11 @@ namespace Risebird.Repository
             try
             {
                 int userid = 0;
-                var query = "Select id from UserList where Emailid = @Emailid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Emailid", emailid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    userid = con.Query<int>(query, dynamicParameters).FirstOrDefault();
+                    userid = DapperStoredProcedureHelper.QueryFirstOrDefault<int>(con, "usp_GetUserIdByEmailId", dynamicParameters);
                 }
                 var finalquery = "Select ia.id,ia.Overview,ia.Senioritylevel,ia.Difficultylevel,ia.TestedSkill,ag.AssessmentGroup,ia.isApproved as IsApproved,@emailid as Createdby from InterviewerAssessments ia join AssessmentGroup ag on ia.Assessmentgroupid=ag.id Where ia.createdby = @createdby";
                 var finaldynamicParameters = new DynamicParameters();
@@ -1879,12 +1878,11 @@ namespace Risebird.Repository
             {
                 int userid = 0;
                 int assessmentid = 0;
-                var query = "Select id from UserList where Emailid = @Emailid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Emailid", _assessment.Createdby);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    userid = con.Query<int>(query, dynamicParameters).FirstOrDefault();
+                    userid = DapperStoredProcedureHelper.QueryFirstOrDefault<int>(con, "usp_GetUserIdByEmailId", dynamicParameters);
                 }
                 //Add Assessment
                 var finaldynamicParameters = new DynamicParameters();
@@ -1993,12 +1991,11 @@ namespace Risebird.Repository
             {
                 int userid = 0;
                 int assessmentid = 0;
-                var query = "Select id from UserList where Emailid = @Emailid";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Emailid", _assessment.Createdby);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    userid = con.Query<int>(query, dynamicParameters).FirstOrDefault();
+                    userid = DapperStoredProcedureHelper.QueryFirstOrDefault<int>(con, "usp_GetUserIdByEmailId", dynamicParameters);
                 }
                 //Add Assessment
                 var finaldynamicParameters = new DynamicParameters();
@@ -2330,26 +2327,23 @@ namespace Risebird.Repository
             {
                 if (type == "Candidate")
                 {
-                    // var query = "Select cr.*,cr.Comment as CommentforInterviewer,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,im.Interviewdate from CandidateRatings cr join InterviewMeetings im on cr.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId where im.confirmationStatus=1  and im.Interviewer=@Emailid";
-                    var query = "Select cfd.*,IRF.JDTiltle as PrimarySkill,im.Interviewer as interviewerEmail,im.CandidateEmail as EmailAddress,im.Interviewdate from CandidateFeedbackDetails cfd join InterviewMeetings im on cfd.Interviewid=im.id join IRF on im.IRFId=IRF.IRFId where im.confirmationStatus=1 and im.Interviewer=@Emailid";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         DynamicParameters parametersRecomm = new DynamicParameters();
                         parametersRecomm.Add("@Emailid", emailid);
-                        var results = await SqlMapper.QueryAsync<InterviewerRating>(con, query, parametersRecomm,
-                                 commandType: CommandType.Text);
+                        var results = await SqlMapper.QueryAsync<InterviewerRating>(con, "usp_FetchCandidateFeedbackByInterviewer", parametersRecomm,
+                                 commandType: CommandType.StoredProcedure);
                         return results.ToList();
                     }
                 }
                 else
                 {
-                    var query = "Select im.id as interviewid,im.interviewdate,im.candidateName as Name,clrs.Comment,clrs.Rating From ClientCommentsForReport clrs join InterviewMeetings im on im.id=clrs.Interviewid join Userlist ul on im.Interviewer=ul.Emailid where ul.Emailid=@Emailid union Select im.id as interviewid,im.interviewdate,im.candidateName as Name,ir.Comment,ir.Rating as StarRating From ClientCommentsForReport ir join InterviewMeetings im on im.id=ir.Interviewid join Userlist ul on im.Interviewer=ul.Emailid where ul.Emailid=@Emailid";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         DynamicParameters parametersRecomm = new DynamicParameters();
                         parametersRecomm.Add("@Emailid", emailid);
-                        var results = await SqlMapper.QueryAsync<InterviewerRating>(con, query, parametersRecomm,
-                                 commandType: CommandType.Text);
+                        var results = await SqlMapper.QueryAsync<InterviewerRating>(con, "usp_FetchClientFeedbackByInterviewer", parametersRecomm,
+                                 commandType: CommandType.StoredProcedure);
                         return results.ToList();
                     }
                 }

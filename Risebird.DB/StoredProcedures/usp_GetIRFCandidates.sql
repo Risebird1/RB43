@@ -1,4 +1,5 @@
 /****** Object:  StoredProcedure [dbo].[usp_GetIRFCandidates]    Script Date: 10-06-2020 9.24.16 PM ******/
+-- Performance (2026-06-17): pre-aggregated comm counts + interview status; removed per-row scalar UDFs
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetIRFCandidates'))
 BEGIN
     DROP PROCEDURE dbo.usp_GetIRFCandidates
@@ -15,6 +16,7 @@ AS
 Begin      
 declare @IRFName varchar(100), @roleId int  
 set @IRFName = (select IRFId from IRF where id =@IRFId)  
+
 declare @tblAttemptStatusCount table (IRFId int, CandidateId int, AttemptsCount int);      
  insert into @tblAttemptStatusCount      
  select IRFId, CandidateId, count(id) from CandidateStatus where IRFId = @IRFId group by IRFId, CandidateId       
@@ -79,7 +81,7 @@ tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumbe
 ca.IsResumeRedactFailed,  
 --si.Uniqueid as SchedulerUniqueid,  
 SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid  
-,CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue,IRF.JDTiltle,ulcho.EmailId as ChannelOwnerEmail,  
+,ISNULL(wc.WhatsappCount, 0) as WhatsappCount, ISNULL(cc.CallsCount, 0) as CallsCount, ISNULL(mc.MailCount, 0) as MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue,IRF.JDTiltle,ulcho.EmailId as ChannelOwnerEmail,  
 cci.IsColdCandidate, ca.AIResumeScreeningVerdict   
 from Candidate ca join IRF on ca.IRFId=IRF.id      
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id        
@@ -116,7 +118,7 @@ tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumbe
 ca.IsResumeRedactFailed,  
 --si.Uniqueid as SchedulerUniqueid,  
 SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid  
-,CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue,IRF.JDTiltle,ulcho.EmailId as ChannelOwnerEmail,  
+,ISNULL(wc.WhatsappCount, 0) as WhatsappCount, ISNULL(cc.CallsCount, 0) as CallsCount, ISNULL(mc.MailCount, 0) as MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue,IRF.JDTiltle,ulcho.EmailId as ChannelOwnerEmail,  
 cci.IsColdCandidate, ca.AIResumeScreeningVerdict    
 from Candidate ca join IRF on ca.IRFId=IRF.id      
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id        
@@ -154,7 +156,7 @@ tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumbe
 ca.IsResumeRedactFailed,  
 --si.Uniqueid as SchedulerUniqueid,  
 SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid  
-,CountTable.WhatsappCount, CountTable.CallsCount, CountTable.MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue, IRF.JDTiltle,
+,ISNULL(wc.WhatsappCount, 0) as WhatsappCount, ISNULL(cc.CallsCount, 0) as CallsCount, ISNULL(mc.MailCount, 0) as MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue, IRF.JDTiltle,
 ulcho.EmailId as ChannelOwnerEmail  
 ,cci.IsColdCandidate, ca.AIResumeScreeningVerdict  
 from Candidate ca join IRF on ca.IRFId=IRF.id      

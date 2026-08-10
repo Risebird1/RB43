@@ -63,7 +63,7 @@ namespace Risebird.AzureTimerFunctions
             try
             {
                 // Only run between 9 AM and 9 PM IST
-                if (currentTime.Hour < 4 || currentTime.Hour >= 17)
+                if (currentTime.Hour < 9 || currentTime.Hour >= 22)
                 {
                     _log.LogInformation($"[PlivoCX-Reschedule] Skipping — {currentTime:HH:mm} is outside business hours (9 AM – 9 PM)");
                     return;

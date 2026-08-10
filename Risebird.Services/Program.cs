@@ -53,6 +53,7 @@ builder.Services.AddScoped<IMeetingRespository, MeetingRespository>();
 builder.Services.AddScoped<IApplicationErrorLogger, ApplicationErrorLogger>();
 builder.Services.AddScoped<IDashboarRepository, DashboardRepository>();
 builder.Services.AddScoped<IIRFRepository, IRFRepository>();
+builder.Services.AddRisebirdAzureSearch(builder.Configuration);
 builder.Services.AddScoped<IIRFService, IRFService>();
 builder.Services.AddScoped<ITwilioHelper, TwilioHelper>();
 builder.Services.AddScoped<IProjectService, ProjectService>();

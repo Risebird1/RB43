@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
-using static System.Data.CommandType;
 
 namespace Risebird.Repository
 {
@@ -33,7 +32,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<Profile>(
-                        con, "select * from Profile", null, commandType: Text);
+                        con, "usp_GetProfiles", null, commandType: CommandType.StoredProcedure);
                 }
             }
             catch (SqlException ex)

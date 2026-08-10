@@ -20,6 +20,7 @@ namespace Risebird.Business
     public class IRFService : IIRFService
     {
         private readonly IIRFRepository _irfRepository;
+        private readonly IIrfListingSearchRepository _irfListingSearchRepository;
         private readonly INotificationHelper _notificationHelper;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IClientService _clientService;
@@ -34,6 +35,7 @@ namespace Risebird.Business
         private readonly IClonableSkillChannelTemplateRepository _clonableSkillChannelTemplateRepository;
         //private readonly IClientRepository _clientRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ITemplateListingSearchRepository _templateListingSearchRepository;
 
 
         public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger,
@@ -41,7 +43,9 @@ namespace Risebird.Business
             IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper,
             ITwilioHelper twilioHelper, ICalendlyHelper calendlyHelper, ICandidateRepository candidateRepository,
             IInterviewSchedulerRepository interviewSchedulerRepository,
-            IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository, IUserRepository userRepository)
+            IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository, IUserRepository userRepository,
+            IIrfListingSearchRepository irfListingSearchRepository,
+            ITemplateListingSearchRepository templateListingSearchRepository)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -58,6 +62,8 @@ namespace Risebird.Business
             _clonableSkillChannelTemplateRepository = clonableSkillChannelTemplateRepository;
             //_clientRepository = clientRepository;
             _userRepository = userRepository;
+            _irfListingSearchRepository = irfListingSearchRepository;
+            _templateListingSearchRepository = templateListingSearchRepository;
 
         }
 
@@ -130,33 +136,45 @@ namespace Risebird.Business
                     //    //await _notificationHelper.SendEmailCheckingInterviewerAvailability(smeEmail, irfDetails.IRFId, client, irfDetails.JDTiltle, irfDetails.PrimarySkillInvite, channelOwner);
 
                     //}
-                    if (irfDetails.SkillChannelSMEs != null && irfDetails.SkillChannelSMEs.Any(x => x.IsSelectedForIRF))
-                    {
-                        //send notification to the sme here
-                        var smeEmails = irfDetails.SkillChannelSMEs.Where(x => x.IsSelectedForIRF)?.Select(x => x.EmailId);
-                        string channelOwner = string.Empty;
-                        var client = (await _clientService.GetClient(irfDetails.ClientId))?.Name;
 
-                        if (irfDetails.RisebirdHr != 0)
+                    // Index first so list search stays in sync even if notifications/activity fail.
+                    if (irfId > 0)
+                        await TrySyncIrfListingSearchAsync(irfId);
+                    else if (!string.IsNullOrWhiteSpace(irfDetails.IRFId))
+                        await TrySyncIrfListingSearchByNameAsync(irfDetails.IRFId);
+
+                    try
+                    {
+                        if (irfDetails.SkillChannelSMEs != null && irfDetails.SkillChannelSMEs.Any(x => x.IsSelectedForIRF))
                         {
-                            channelOwner = (await _userRepository.GetUser(irfDetails.RisebirdHr)).EmailId;
+                            var smeEmails = irfDetails.SkillChannelSMEs.Where(x => x.IsSelectedForIRF)?.Select(x => x.EmailId);
+                            string channelOwner = string.Empty;
+                            var client = (await _clientService.GetClient(irfDetails.ClientId))?.Name;
+
+                            if (irfDetails.RisebirdHr != 0)
+                            {
+                                channelOwner = (await _userRepository.GetUser(irfDetails.RisebirdHr)).EmailId;
+                            }
+                            await _notificationHelper.SendAssignedNotificationToSME(smeEmails, irfDetails.IRFId, client, irfDetails.JDTiltle, irfDetails.PrimarySkillInvite, channelOwner);
                         }
-                        await _notificationHelper.SendAssignedNotificationToSME(smeEmails, irfDetails.IRFId, client, irfDetails.JDTiltle, irfDetails.PrimarySkillInvite, channelOwner);
+
+                        var activityTrackerModel = new ActivityTrackerVM();
+                        activityTrackerModel.ActivityType = (int)ActivityTypes.AddSkillsChannel;
+                        activityTrackerModel.Particulars = irfDetails.IRFId;
+                        activityTrackerModel.PerformedBy = loggedInUser;
+                        activityTrackerModel.Summary = "Skill channel created";
+
+                        if (irfId != 0)
+                        {
+                            activityTrackerModel.ResourceUrl = domain + $"/IRF/EditIRF?id={irfId}";
+                        }
+
+                        await _activityTrackerRepository.AddActivity(activityTrackerModel);
                     }
-
-                    var activityTrackerModel = new ActivityTrackerVM();
-                    activityTrackerModel.ActivityType = (int)ActivityTypes.AddSkillsChannel;
-                    activityTrackerModel.Particulars = irfDetails.IRFId;
-                    activityTrackerModel.PerformedBy = loggedInUser;
-                    activityTrackerModel.Summary = "Skill channel created";
-
-                    if (irfId != 0)
+                    catch (Exception postCreateEx)
                     {
-                        activityTrackerModel.ResourceUrl = domain + $"/IRF/EditIRF?id={irfId}";
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, postCreateEx);
                     }
-
-
-                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
                 }
                 return result;
             }
@@ -451,7 +469,11 @@ namespace Risebird.Business
         {
             try
             {
-                return await _irfRepository.ArchiveIRF(id);
+                var result = await _irfRepository.ArchiveIRF(id);
+                if (result)
+                    await TrySyncIrfListingSearchAsync(id);
+
+                return result;
             }
 
             catch (Exception e)
@@ -464,7 +486,11 @@ namespace Risebird.Business
         {
             try
             {
-                return await _irfRepository.UnArchiveIRF(id);
+                var result = await _irfRepository.UnArchiveIRF(id);
+                if (result)
+                    await TrySyncIrfListingSearchAsync(id);
+
+                return result;
             }
 
             catch (Exception e)
@@ -814,6 +840,9 @@ namespace Risebird.Business
                 var result = await _irfRepository.UpdateIRFDetails(model, interviewerChangesData ?? null, removedInterviewers ?? null, addedNewInterviewers ?? null, removedTechSkills ?? null);
                 if (result.Item1)
                 {
+                    // Index immediately after SQL commit — must not depend on notification/activity success.
+                    await TrySyncIrfListingSearchAsync(model.id);
+
                     // The IRF has already been persisted (committed) at this point. The blocks below are
                     // best-effort side-effects (SME notification, activity tracking). A failure here MUST NOT
                     // turn a successful save into a "Skills Channel edits were not saved." error for the user,
@@ -1629,6 +1658,7 @@ namespace Risebird.Business
                     }
 
                 }
+                await TrySyncIrfListingSearchAsync(irfId);
                 return true;
             }
             catch (Exception ex)
@@ -1655,6 +1685,9 @@ namespace Risebird.Business
                 //}
                 //send mails
 
+                if (updatedMeetings)
+                    TrySyncIrfListingSearchAsync(irfId).GetAwaiter().GetResult();
+
                 return updatedMeetings;
             }
             catch (Exception ex)
@@ -1668,7 +1701,25 @@ namespace Risebird.Business
         {
             try
             {
-                var irfList = (await _irfRepository.GetAllIRFs(emailId, profileName, pageNumber, searchValue, filterModel)).ToList();
+                List<IRF> irfList;
+                var useSearch = _irfListingSearchRepository.IsEnabled;
+
+                if (useSearch)
+                {
+                    var searchResults = await _irfListingSearchRepository.SearchAsync(
+                        emailId, profileName, pageNumber, searchValue, filterModel);
+                    irfList = searchResults?.ToList();
+                }
+                else
+                {
+                    irfList = null;
+                }
+
+                if (irfList == null)
+                {
+                    irfList = (await _irfRepository.GetAllIRFs(emailId, profileName, pageNumber, searchValue, filterModel)).ToList();
+                }
+
                 foreach (var irf in irfList ?? new List<IRF>())
                 {
                     if (irf.TotalBudget != 0)
@@ -2998,6 +3049,9 @@ namespace Risebird.Business
                 var result = await _irfRepository.CreateSkillChannelFromTemplateV1(irfDetails, loggedInUser);
                 if (result.Item1)
                 {
+                    await TrySyncIrfListingSearchByNameAsync(irfDetails.IRFId);
+                    await TrySyncTemplateListingSearchAsync(irfDetails.CreatedFromTemplateId);
+
                     var clientName = await _clientService.GetClientName(irfDetails.ClientId);
                     //send mail to the HR here
 
@@ -3026,7 +3080,6 @@ namespace Risebird.Business
                     {
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
                     }
-
                 }
                 return result;
             }
@@ -3062,13 +3115,22 @@ namespace Risebird.Business
                 var result = await _irfRepository.EditSkillChannelCreatedFromTemplate(irfDetails);
                 if (result)
                 {
-                    var activityTrackerModel = new ActivityTrackerVM();
-                    activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateSkillsChannel;
-                    activityTrackerModel.Particulars = irfDetails.IRFId;
-                    activityTrackerModel.PerformedBy = loggedInUser;
-                    activityTrackerModel.Summary = "Skill channel Updated";
+                    await TrySyncIrfListingSearchAsync(irfDetails.id);
 
-                    await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                    try
+                    {
+                        var activityTrackerModel = new ActivityTrackerVM();
+                        activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateSkillsChannel;
+                        activityTrackerModel.Particulars = irfDetails.IRFId;
+                        activityTrackerModel.PerformedBy = loggedInUser;
+                        activityTrackerModel.Summary = "Skill channel Updated";
+
+                        await _activityTrackerRepository.AddActivity(activityTrackerModel);
+                    }
+                    catch (Exception activityEx)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, activityEx);
+                    }
                 }
                 return result;
             }
@@ -3154,6 +3216,9 @@ namespace Risebird.Business
                 var result = await _irfRepository.CreateSkillChannelFromTemplate(irfDetails, loggedInUser);
                 if (result.Item1)
                 {
+                    await TrySyncIrfListingSearchByNameAsync(irfDetails.IRFId);
+                    await TrySyncTemplateListingSearchAsync(irfDetails.CreatedFromTemplateId);
+
                     var clientName = await _clientService.GetClientName(irfDetails.ClientId);
                     //send mail to the HR here
 
@@ -3184,7 +3249,6 @@ namespace Risebird.Business
                     {
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
                     }
-
                 }
                 return result;
             }
@@ -3293,6 +3357,9 @@ namespace Risebird.Business
                 var result = await _irfRepository.CreateSkillChannelFromTemplateV1(irfDetails, loggedInUser);
                 if (result.Item1)
                 {
+                    await TrySyncIrfListingSearchByNameAsync(irfDetails.IRFId);
+                    await TrySyncTemplateListingSearchAsync(irfDetails.CreatedFromTemplateId);
+
                     var clientName = await _clientService.GetClientName(irfDetails.ClientId);
                     //send mail to the HR here
 
@@ -3322,7 +3389,6 @@ namespace Risebird.Business
                     {
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {irfDetails.TemplateName}; userEmailId : {loggedInUser}");
                     }
-
                 }
                 return result;
             }
@@ -3379,6 +3445,9 @@ namespace Risebird.Business
                 var result = await _irfRepository.CreateSkillChannelFromTemplate(irfDetails, loggedInUser);
                 if (result.Item1)
                 {
+                    await TrySyncIrfListingSearchByNameAsync(irfDetails.IRFId);
+                    await TrySyncTemplateListingSearchAsync(irfDetails.CreatedFromTemplateId);
+
                     var activityTrackerModel = new ActivityTrackerVM();
                     activityTrackerModel.ActivityType = (int)ActivityTypes.AddSkillsChannel;
                     activityTrackerModel.Particulars = irfDetails.IRFId;
@@ -3943,6 +4012,8 @@ namespace Risebird.Business
             try
             {
                 var result = await _irfRepository.UpdateSkillChannelEmbeddableUrl(irfId, embedUrl);
+                if (result)
+                    await TrySyncIrfListingSearchByNameAsync(irfId);
                 return result;
             }
             catch (Exception e)
@@ -4866,6 +4937,8 @@ namespace Risebird.Business
             try
             {
                 var result = await _irfRepository.UpdateNewPriority(irfid, PriorityLevel);
+                if (result)
+                    await TrySyncIrfListingSearchAsync(irfid);
                 return result;
             }
             catch (Exception e)
@@ -4969,7 +5042,10 @@ namespace Risebird.Business
         {
             try
             {
-                return await _irfRepository.UpdateIRFInterviewerBillingCycle(irfId, billingCycle, emailid);
+                var result = await _irfRepository.UpdateIRFInterviewerBillingCycle(irfId, billingCycle, emailid);
+                if (result)
+                    await TrySyncIrfListingSearchAsync(irfId);
+                return result;
             }
             catch (Exception ex)
             {
@@ -5023,6 +5099,72 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+
+        private async Task TrySyncTemplateListingSearchAsync(int clonableSkillChannelId)
+        {
+            if (!_templateListingSearchRepository.IsEnabled || clonableSkillChannelId <= 0)
+                return;
+
+            try
+            {
+                await _templateListingSearchRepository.UpsertTemplateAsync(clonableSkillChannelId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        private async Task TrySyncIrfListingSearchAsync(int irfIntId)
+        {
+            if (!_irfListingSearchRepository.IsEnabled || irfIntId <= 0)
+                return;
+
+            try
+            {
+                var synced = await _irfListingSearchRepository.UpsertIrfAsync(irfIntId);
+                if (!synced)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Exception,
+                        new InvalidOperationException(
+                            $"IRF Azure Search upsert returned false for irfIntId={irfIntId}."));
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        /// <summary>
+        /// Resolves IRF int id by skill-channel name, then upserts the search index.
+        /// Used after template creates where the repo returns flatRate instead of the new id.
+        /// </summary>
+        private async Task TrySyncIrfListingSearchByNameAsync(string irfName)
+        {
+            if (!_irfListingSearchRepository.IsEnabled || string.IsNullOrWhiteSpace(irfName))
+                return;
+
+            try
+            {
+                var created = await _irfRepository.GetSkillChannelDetailsByName(irfName.Trim());
+                if (created != null && created.id > 0)
+                {
+                    await TrySyncIrfListingSearchAsync(created.id);
+                    return;
+                }
+
+                await _applicationErrorLogger.LogMessage(
+                    LogLevelInfo.Exception,
+                    new InvalidOperationException(
+                        $"IRF Azure Search sync by name could not resolve irfName='{irfName}'."));
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
     }

@@ -1,37 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.3.7" />
-    <PackageReference Include="AWSSDK.Rekognition" Version="4.0.2.9" />
-    <PackageReference Include="AWSSDK.S3" Version="4.0.7.13" />
-    <PackageReference Include="Azure.Communication.Email" Version="1.0.1" />
-    <PackageReference Include="Azure.Identity" Version="1.13.1" />
-    <PackageReference Include="Azure.Monitor.Query" Version="1.5.0" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.22.2" />
-    <PackageReference Include="EPPlus" Version="7.4.2" />
-    <PackageReference Include="FileTypeInterrogator" Version="1.1.0" />
-    <PackageReference Include="Google.Apis.Calendar.v3" Version="1.68.0.3557" />
-    <PackageReference Include="Google.Apis.Drive.v3" Version="1.68.0.3574" />
-    <PackageReference Include="Google.Cloud.Storage.V1" Version="4.10.0" />
-    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.22.0" />
-    <PackageReference Include="Microsoft.Azure.ApplicationInsights.Query" Version="1.0.0" />
-    <PackageReference Include="Microsoft.CognitiveServices.Speech.Remoteconversation" Version="1.41.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Graph" Version="5.76.0" />
-    <PackageReference Include="Microsoft.Rest.ClientRuntime.Azure.Authentication" Version="2.4.1" />
-    <PackageReference Include="PdfPig" Version="0.1.10" />
-    <PackageReference Include="RestSharp" Version="112.1.0" />
-    <PackageReference Include="Sendgrid" Version="9.29.3" />
-    <PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="27.1.58" />
-    <PackageReference Include="System.Runtime.Caching" Version="8.0.1" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
-    <PackageReference Include="Twilio" Version="7.6.0" />
+    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" />
+    <PackageReference Include="AWSSDK.Rekognition" />
+    <PackageReference Include="AWSSDK.S3" />
+    <PackageReference Include="Azure.Communication.Email" />
+    <PackageReference Include="Azure.Identity" />
+    <PackageReference Include="Azure.Monitor.Query" />
+    <PackageReference Include="Azure.Storage.Blobs" />
+    <PackageReference Include="EPPlus" />
+    <PackageReference Include="FileTypeInterrogator" />
+    <PackageReference Include="Google.Apis.Calendar.v3" />
+    <PackageReference Include="Google.Apis.Drive.v3" />
+    <PackageReference Include="Google.Cloud.Storage.V1" />
+    <PackageReference Include="Microsoft.ApplicationInsights" />
+    <PackageReference Include="Microsoft.Azure.ApplicationInsights.Query" />
+    <PackageReference Include="Microsoft.CognitiveServices.Speech.Remoteconversation" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
+    <PackageReference Include="Microsoft.Graph" />
+    <PackageReference Include="Microsoft.Rest.ClientRuntime.Azure.Authentication" />
+    <PackageReference Include="PdfPig" />
+    <PackageReference Include="RestSharp" />
+    <PackageReference Include="SendGrid" />
+    <PackageReference Include="Syncfusion.DocIORenderer.Net.Core" />
+    <PackageReference Include="System.Runtime.Caching" />
+    <PackageReference Include="Twilio" />
   </ItemGroup>
 
   <ItemGroup>

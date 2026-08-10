@@ -172,7 +172,8 @@ namespace Risebird.Business.Interface
         Task<int> SaveGeneratedInvoice(GenerateInvoiceVM model);
         List<MeetingVM> GetClientNotScheduledMeetingListByIRFId(string IRFId, string emailId = null);
         Task<List<MeetingVM>> GetClientReScheduledMeetingList(int Clientid, string Emailid, DateTime startdate, DateTime enddate);
-        List<CallCatalogueVM> GetCallCatalogueList(string profile, string Emailid);
+        List<CallCatalogueVM> GetCallCatalogueList(string profile, string Emailid, InterviewFilter filter = null);
+        InterviewFilter PopulateCallCatalogueFilterFacets(List<CallCatalogueVM> meetings, InterviewFilter filter);
         List<string> FetchClientListByIRFID(int IRFID);
         IEnumerable<int> FetchAllInterviewidBySeniorHR(string emailid);
         Task<List<RBInterviewDetails>> GetPaymentHistoryDetailsView(int interviewerid);
@@ -202,7 +203,7 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> GetCompletedInterviewList(DateTime startDate, DateTime endDate);
         Task<QCFormVM> FetchQCFormDetailsById(int interviewid);
         Task<bool> AddorUpdateQCFormReport(QCFormVM model);
-        List<CallCatalogueVM> GetInterviewerCallCatalogueList();
+        List<CallCatalogueVM> GetInterviewerCallCatalogueList(InterviewFilter filter = null);
         Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags, int VideoReward);
         Task<string> GetInterviewerEmailByInterviewId(int interviewId);
         Task<bool> CanApplyQcPenaltyToInterviewPointsAsync(int interviewId, string interviewerEmail);
@@ -284,6 +285,7 @@ namespace Risebird.Business.Interface
         Task<QcInterviewAIevaluation> GetQcInterviewAIevaluationByInterviewId(int interviewId);
         Task<string> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, string cancellationreason);
         Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId);
+        Task<UnassignedInterviewVM> GetInterviewerInterviewDetails(int interviewId);
         Task<bool> SaveAIInterviewProctorEvaluation(InterviewReport model);
         Task<IEnumerable<ZohoParticipantList>> GetZohoLiveMeetingInfomation();
         Task<string> GetQuestionSkillById(string questionText, int irfId, string emailId);

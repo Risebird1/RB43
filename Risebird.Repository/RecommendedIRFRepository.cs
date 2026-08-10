@@ -29,10 +29,10 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select ir.id,IRF.IRFId,ag.AssessmentGroup,ir.AssessmentGroupId,ir.CompetencyLevelId,ir.CountryType,ir.SeniorityLevelId from IRFRecommendations ir join ClonableSkillChannel cs on cs.id=ir.CloneIRFId join IRF on cs.CreatedFromIRFId=IRF.id left join AssessmentGroup ag on ag.id=ir.AssessmentGroupId order by ir.id desc";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<SkillCahnnelDetailsVM>(query, null);
+                    var results = await SqlMapper.QueryAsync<SkillCahnnelDetailsVM>(con, "usp_GetFetchRecommendedIRF", null,
+                        commandType: CommandType.StoredProcedure);
                     return results;
                 }
             }
@@ -50,12 +50,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select ir.CompetencyLevelId as Heuristicsscore,ir.CountryType as JobCountry,AssessmentGroupId from IRFRecommendations ir where ir.CloneIRFId =@id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<IRF>(query, dynamicParameters);
+                    var results = SqlMapper.Query<IRF>(con, "usp_FetchClonableIRFByCloneId", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return results.FirstOrDefault();
                 }
             }
@@ -69,12 +69,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select tts.*, Skill.[Name] as SkillName from TransClonableIRFTechSkill tts join Skill on tts.SkillId=Skill.id  where ClonableIRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<TransSkill>(query, dynamicParameters);
+                    var results = SqlMapper.Query<TransSkill>(con, "usp_GetClonableIRFSkillsByIRFId", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return results;
                 }
             }
@@ -107,12 +107,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select thr.*, HR.UserId from TransClonableIRFHR thr inner join HR  on thr.HRId = HR.id where ClonableIRFId=@irfId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@irfId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<TransHR>(query, dynamicParameters);
+                    var results = SqlMapper.Query<TransHR>(con, "usp_GetClonableIRFTransHRByIRFId", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return results;
                 }
             }
@@ -126,12 +126,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select sk.Name as PrimarySkillInvite,ts.Question Comment From ClonableTemplateQuestions ts join Skill sk on sk.id=ts.Skill where ts.ClonableIRFId=@irfId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@irfId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<SkillComment>(query, dynamicParameters);
+                    var results = SqlMapper.Query<SkillComment>(con, "usp_GetClonableIRFQuestionDiscussedByIRFId", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return results;
                 }
             }

@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
-using static System.Data.CommandType;
 
 namespace Risebird.Repository
 {
@@ -32,7 +31,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<GeneralSkillMatrix>(
-                        con, "select * from GeneralSkillMatrix", null, commandType: Text);
+                        con, "usp_GetGeneralSkillMatrix", null, commandType: CommandType.StoredProcedure);
                 }
 
             }

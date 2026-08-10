@@ -93,7 +93,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var uniques = await SqlMapper.QueryAsync<AadhaarDetails>(
-                        con, "Select EmailId,AadhaarVerified From UserList where uniqueid=@uniqueid", parameters, commandType: System.Data.CommandType.Text);
+                        con, "usp_GetCandidateEmailByUniqueId", parameters, commandType: CommandType.StoredProcedure);
                     return uniques.FirstOrDefault();
                 }
             }
@@ -116,7 +116,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var uniques = await SqlMapper.QueryAsync<string>(
-                        con, "Select uniqueid From UserList where EmailId=@emailid ", parameters, commandType: System.Data.CommandType.Text);
+                        con, "usp_GetUniqueIdByEmailId", parameters, commandType: CommandType.StoredProcedure);
                     return uniques.FirstOrDefault();
                 }
             }
@@ -358,12 +358,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select Count(*) from EmploymentDetails where MobileNumber=@MobileNumber";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@MobileNumber", mobilenumber);
                 using (SqlConnection con = new SqlConnection(employmentconnectionString))
                 {
-                    var results = await con.QueryAsync<int>(query, dynamicParameters);
+                    var results = await SqlMapper.QueryAsync<int>(con, "usp_CheckEmploymentDetailsByMobileNumber", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return results.FirstOrDefault();
                 }
             }

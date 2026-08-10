@@ -98,9 +98,9 @@ BEGIN
     WHERE [CreatedAt] < @VapiPlivoCutoff;
     SET @VapiCallLogRows = @@ROWCOUNT;
 
-    DELETE FROM [dbo].[PlivoCallLogs]
-    WHERE [CreatedAt] < @VapiPlivoCutoff;
-    SET @PlivoCallLogRows = @@ROWCOUNT;
+    --DELETE FROM [dbo].[PlivoCallLogs]
+    --WHERE [CreatedAt] < @VapiPlivoCutoff;
+    --SET @PlivoCallLogRows = @@ROWCOUNT;
 
     DELETE FROM [dbo].[PlivoCXCallLogs]
     WHERE [CreatedAt] < @VapiPlivoCutoff;
@@ -115,6 +115,13 @@ BEGIN
     DELETE FROM [dbo].[OpenAIApiLogs]
     WHERE [LogDate] < @OpenAICutoff;
     SET @OpenAIApiLogRows = @@ROWCOUNT;
+
+    -- Mail ---
+    delete from [dbo].[SentMailDetails]
+    WHERE CreatedAt < @OpenAICutoff;
+
+    delete from [dbo].[SendgridEventData]
+    WHERE CreatedAt < @OpenAICutoff;
 
     -- ── Return summary row ────────────────────────────────────────────────────
     SELECT

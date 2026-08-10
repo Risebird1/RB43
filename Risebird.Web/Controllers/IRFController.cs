@@ -10079,9 +10079,9 @@ namespace Risebird.Web.Controllers
             //_whatsAppVM.Event = "SkillChannel Interviewer Availbility";
 
             var dto = new CampaignMailDTO { interviewers = interviewers, assessentGroupName = assessmentGroupName, campagignId = campaignId };
-            var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/SendCampaignMails";
+            var path = $"https://risebirdazuretimerfunctions.azurewebsites.net/api/SendCampaignMails";
             //var path = $"http://localhost:7071/api/SendCampaignMails";
-            var functionKey = "ok-GN-EaOPcWFO2ft8_m_eIaLSxMgT_0a19YdeFmBSPCAzFuuzQdQg==";
+            var functionKey = "eAasAihxsI0qTnAwlv-ZZIWiGZaZ0swoJS150jxIqU4XAzFuLF0xnA==";
             await _httpClient.SendRequestAsync(HttpMethod.Post, path, dto, functionKey, "", _cancellationToken);
         }
 

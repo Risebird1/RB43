@@ -11,7 +11,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using static System.Data.CommandType;
 
 namespace Risebird.Repository
 {
@@ -37,7 +36,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<Skill>(
-                        con, "select * from Skill where Name is not null", null, commandType: Text);
+                        con, "usp_GetSkillsWithName", null, commandType: CommandType.StoredProcedure);
                 }
             }
             catch (Exception ex)
@@ -180,7 +179,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<SkillLevel>(
-                        con, "select * from Level", null, commandType: Text);
+                        con, "usp_GetAllSkillLevels", null, commandType: CommandType.StoredProcedure);
                 }
             }
             catch (Exception ex)
@@ -321,7 +320,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<Skill>(
-                        con, "select id,CategoryName as Name from AssessmentGroupCategory", null, commandType: Text);
+                        con, "usp_GetAssessmentGroupCategoryList", null, commandType: CommandType.StoredProcedure);
                 }
             }
             catch (Exception ex)
@@ -421,7 +420,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<Skill>(
-                        con, "select id,Title as Name from MCQSets order by Title", null, commandType: Text);
+                        con, "usp_GetMCQSetsDetails", null, commandType: CommandType.StoredProcedure);
                 }
             }
             catch (Exception ex)

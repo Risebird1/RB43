@@ -1,0 +1,20 @@
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetSettings'))
+BEGIN
+    DROP PROCEDURE dbo.usp_GetSettings
+END
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_GetSettings]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT *
+    FROM Settings
+END
+GO

@@ -36,7 +36,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     projects = SqlMapper.Query<Project>(
-                        con, "select * from Project", null, commandType: System.Data.CommandType.Text);
+                        con, "usp_GetAllProjectsList", null, commandType: CommandType.StoredProcedure);
                 }
                 return projects;
             }
@@ -76,12 +76,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select * from Project where id=@id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<Project>(query, dynamicParameters);
+                    var results = con.Query<Project>("usp_GetProjectById", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return results.FirstOrDefault();
                 }
 
@@ -121,13 +121,12 @@ namespace Risebird.Repository
         {
             try
             {
-                //var query = "Select IRF.*, Client.[Name] as ClientCompName,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle from IRF inner join Client on IRF.ClientId = Client.id where IsDeleted = @IsDeleted";
-                var query = "Select IRF.id,IRF.IRFId,IRF.SkillSetsevaluate,IRF.Clientid, Client.[Name] as ClientCompName,Case when irf.SkillSetsevaluate>1  and ISNULL(irf.JDTitleTwo,'')!='' then irf.JDTiltle+' and '+irf.JDTitleTwo else irf.JDTiltle end as JDTiltle from IRF inner join Client on IRF.ClientId = Client.id where IsDeleted = @IsDeleted";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IsDeleted", 0);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<IRF>(query, dynamicParameters);
+                    var results = con.Query<IRF>("usp_GetActiveIRFList", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return results;
                 }
 
@@ -143,21 +142,14 @@ namespace Risebird.Repository
         {
             try
             {
-                string query = string.Empty;
-                if (!string.IsNullOrEmpty(irfIdList))
-                {
-                    query = "Select IRF.id as IRFId,IRF.IRFId as IRFName, Client.[Name] as Client, irf.JDTiltle, IRF.ClientId from IRF inner join Client on IRF.ClientId = Client.id where irf.ClientId=@ClientId and IsDeleted = @IsDeleted and irf.id not in (" + irfIdList + ")";
-                }
-                else
-                {
-                    query = "Select IRF.id as IRFId,IRF.IRFId as IRFName, Client.[Name] as Client, irf.JDTiltle, IRF.ClientId from IRF inner join Client on IRF.ClientId = Client.id where irf.ClientId=@ClientId and IsDeleted = @IsDeleted";
-                }
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IsDeleted", 0);
                 dynamicParameters.Add("@ClientId", clientId);
+                dynamicParameters.Add("@ExcludeIRFIds", irfIdList);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<ProjectIRFMapping>(query, dynamicParameters);
+                    var results = con.Query<ProjectIRFMapping>("usp_GetIRFByClientId", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
                     return results;
                 }
 
@@ -176,42 +168,38 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var query = "select top (1)id from Project order by id desc";
-                    var results = con.Query<int>(query, null);
+                    var results = await con.QueryAsync<int>("usp_GetMaxProjectId", null,
+                        commandType: CommandType.StoredProcedure);
                     Random rnd = new Random();
                     int nums = rnd.Next(10, 99);
                     projectDetails.ProjectUniqueid = "RB" + projectDetails.ClientId.ToString() + (results.FirstOrDefault() + 1).ToString("D5") + nums.ToString();
-                    string sqlInsertReport = "INSERT INTO Project (Name,ClientId, EndClient, Location, ProjectOwnerId, IsDeleted, CreatedOn,ProjectUniqueid,SkillSetsevaluate,ProjectTitle ) Values (@Name,@ClientId,@EndClient, @Location,@ProjectOwnerId, @IsDeleted, @CreatedOn,@ProjectUniqueid,@SkillSetsevaluate,@ProjectTitle);";
-                    var affectedRows = con.Execute(sqlInsertReport, new
-                    {
-                        projectDetails.Name,
-                        projectDetails.ClientId,
-                        projectDetails.EndClient,
-                        projectDetails.Location,
-                        projectDetails.ProjectOwnerId,
-                        projectDetails.CreatedOn,
-                        IsDeleted = false,
-                        projectDetails.ProjectUniqueid,
-                        projectDetails.SkillSetsevaluate,
-                        projectDetails.ProjectTitle
 
-                    });
-                    var projectList = SqlMapper.QueryAsync<Project>(
-                        con, "select * from Project", null, commandType: System.Data.CommandType.Text).Result.AsList();
-                    var projectId = projectList.Where(x => x.Name == projectDetails.Name).Last().id;
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Name", projectDetails.Name);
+                    parameters.Add("@ClientId", projectDetails.ClientId);
+                    parameters.Add("@EndClient", projectDetails.EndClient);
+                    parameters.Add("@Location", projectDetails.Location);
+                    parameters.Add("@ProjectOwnerId", projectDetails.ProjectOwnerId);
+                    parameters.Add("@CreatedOn", projectDetails.CreatedOn);
+                    parameters.Add("@IsDeleted", false);
+                    parameters.Add("@ProjectUniqueid", projectDetails.ProjectUniqueid);
+                    parameters.Add("@SkillSetsevaluate", projectDetails.SkillSetsevaluate);
+                    parameters.Add("@ProjectTitle", projectDetails.ProjectTitle);
+                    parameters.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                    await con.ExecuteAsync("usp_InsertProject", parameters, commandType: CommandType.StoredProcedure);
+                    var projectId = parameters.Get<int>("@NewId");
+
                     if (projectDetails.ProjectIRFMappings != null)
                     {
-                        //update techskillreport table
                         foreach (var item in projectDetails.ProjectIRFMappings)
                         {
-                            string sqlTechReport = "INSERT INTO ProjectIRFMapping (ProjectId,IRFId,IsAdded) Values (@ProjectId, @IRFId, @IsAdded);";
-                            var result1 = con.ExecuteAsync(sqlTechReport, new
-                            {
-                                ProjectId = projectId,
-                                item.IRFId,
-                                item.IsAdded
-
-                            }).Result;
+                            var mappingParameters = new DynamicParameters();
+                            mappingParameters.Add("@ProjectId", projectId);
+                            mappingParameters.Add("@IRFId", item.IRFId);
+                            mappingParameters.Add("@IsAdded", item.IsAdded);
+                            await con.ExecuteAsync("usp_InsertProjectIRFMapping", mappingParameters,
+                                commandType: CommandType.StoredProcedure);
                         }
                     }
 
@@ -299,13 +287,12 @@ namespace Risebird.Repository
                     {
                         foreach (var item in projectDetails.ProjectIRFMappings)
                         {
-                            string sqlQuery = "INSERT INTO ProjectIRFMapping (ProjectId,IRFId,IsAdded) Values (@ProjectId, @IRFId, @IsAdded);";
-                            var affectedRows = con.ExecuteAsync(sqlQuery, new
-                            {
-                                ProjectId = projectDetails.id,
-                                item.IRFId,
-                                item.IsAdded
-                            }).Result;
+                            var mappingParameters = new DynamicParameters();
+                            mappingParameters.Add("@ProjectId", projectDetails.id);
+                            mappingParameters.Add("@IRFId", item.IRFId);
+                            mappingParameters.Add("@IsAdded", item.IsAdded);
+                            await con.ExecuteAsync("usp_InsertProjectIRFMapping", mappingParameters,
+                                commandType: CommandType.StoredProcedure);
                         }
                     }
 
@@ -336,7 +323,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     client = SqlMapper.Query<Client>(
-                        con, "select * from Client", null, commandType: CommandType.Text);
+                        con, "usp_GetAllClients", null, commandType: CommandType.StoredProcedure);
                 }
                 return client;
             }

@@ -201,6 +201,7 @@ namespace Risebird.Web.Controllers
                             recipientType = filter.RecipientType;
                             campaignName = filter.CampaignName;
                             recipients = await _mailService.GetEmailRecipientsLatestActivity(recipientType, filter.StartDate, filter.EndDate, campaignName);
+                            recipients ??= new List<MailRecipientActivityDetailsVM>();
 
                             filter.SkillChannel = filter.SkillChannel == null ? filter.SkillChannel = recipients.Select(x => x.SkillChannelName).ToArray() : filter.SkillChannel = filter.SkillChannel;
                             filter.SentBy = filter.SentBy == null ? filter.SentBy = recipients.Select(x => x.SentBy).ToArray() : filter.SentBy = filter.SentBy;
@@ -221,6 +222,11 @@ namespace Risebird.Web.Controllers
                             }
 
                             recipients = await _mailService.GetEmailRecipientsLatestActivity(recipientType, campaignName: campaignName);
+                        }
+
+                        if (recipients == null)
+                        {
+                            recipients = new List<MailRecipientActivityDetailsVM>();
                         }
 
                         ViewBag.recipientType = recipientType;

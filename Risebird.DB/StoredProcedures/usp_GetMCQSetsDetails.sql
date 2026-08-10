@@ -1,0 +1,17 @@
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetMCQSetsDetails'))
+BEGIN
+    DROP PROCEDURE dbo.usp_GetMCQSetsDetails
+END
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_GetMCQSetsDetails]
+AS
+BEGIN
+    SELECT id, Title AS Name FROM MCQSets ORDER BY Title
+END
+GO

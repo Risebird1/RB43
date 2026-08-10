@@ -332,7 +332,7 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 				from InterviewMeetings im  join InterviewComments ic on ic.InterviewId=im.id                  
 				outer apply(Select max(Joinedon) Joinedon from  InterviewMeetingsJoinTime where Interviewid=im.id) imj            
 				outer apply(Select max(PerformedOn) PerformedOn From PageClickDetails where ButtonAction='JoinMeeting' and Interviewid=im.id and ProfileType='Candidate') imc            
-				where DateDiff(Day,im.interviewDate,Getdate())<30 and im.confirmationStatus=1 and im.ZoomMeetingId in(Select distinct Meetingid from ZoomMeetingTransmission) and (imj.Joinedon is null or imc.PerformedOn is null) and ic.MeetingStatus!=5 and ic.MeetingStatus!=1 and ic.MeetingStatus!=9 and ic.MeetingStatus!=2 and ic.MeetingStatus!=3)x GROUP BY InterviewId) d ON d.InterviewId = im.id
+				where DateDiff(Day,im.interviewDate,Getdate())<30 and im.confirmationStatus=1 and EXISTS (SELECT 1 FROM dbo.ZoomMeetingTransmission zmt WHERE zmt.MeetingId = im.ZoomMeetingId) and (imj.Joinedon is null or imc.PerformedOn is null) and ic.MeetingStatus!=5 and ic.MeetingStatus!=1 and ic.MeetingStatus!=9 and ic.MeetingStatus!=2 and ic.MeetingStatus!=3)x GROUP BY InterviewId) d ON d.InterviewId = im.id
 				where IsNull(IsProctor,0)=0 and (ic.MeetingStatus=4 or ic.MeetingStatus=6 or ic.MeetingStatus=7 or ic.MeetingStatus=8) and tq.id is null and interviewDate<@currentdate and DATEDIFF(DAY, interviewDate,@currentdate)<7 and ISNULL(im.RedoInterview,0)=0 and ISNULL(IRF.IsAIInterview,0)=0
 			end
 		end

@@ -36,8 +36,10 @@ namespace Risebird.Business
         private readonly IZoomHelper _zoomHelper;
         private readonly IZohoMeetingHelper _zoho;
         private readonly ICashfreePayoutService _cashfreePayoutService;
+        private readonly IInterviewerListingSearchRepository _interviewerListingSearchRepository;
+        private readonly ICallCatalogueListingSearchRepository _callCatalogueListingSearchRepository;
 
-        public MeetingService(IMeetingRespository meetingRespository, IZoomHelper zoomHelper, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository, ICandidateRepository candidateRepository, ICandidateService candidateService, IZohoMeetingHelper zoho, ICashfreePayoutService cashfreePayoutService)
+        public MeetingService(IMeetingRespository meetingRespository, IZoomHelper zoomHelper, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository, ICandidateRepository candidateRepository, ICandidateService candidateService, IZohoMeetingHelper zoho, ICashfreePayoutService cashfreePayoutService, IInterviewerListingSearchRepository interviewerListingSearchRepository, ICallCatalogueListingSearchRepository callCatalogueListingSearchRepository)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -56,6 +58,8 @@ namespace Risebird.Business
             _zoomHelper = zoomHelper;
             _zoho = zoho;
             _cashfreePayoutService = cashfreePayoutService;
+            _interviewerListingSearchRepository = interviewerListingSearchRepository;
+            _callCatalogueListingSearchRepository = callCatalogueListingSearchRepository;
         }
 
         public async Task<List<MeetingVM>> GetMeetingList()
@@ -3314,12 +3318,23 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public List<CallCatalogueVM> GetCallCatalogueList(string profile, string Emailid)
+        public List<CallCatalogueVM> GetCallCatalogueList(string profile, string Emailid, InterviewFilter filter = null)
         {
             try
             {
-                var meetings = _meetingRespository.GetCallCatalogueList(profile, Emailid).Result.ToList();
-                return meetings ?? new List<CallCatalogueVM>();
+                if (_callCatalogueListingSearchRepository.IsEnabled)
+                {
+                    var search = _callCatalogueListingSearchRepository
+                        .SearchAsync(profile, Emailid, "Candidate", filter)
+                        .GetAwaiter()
+                        .GetResult();
+                    if (search != null)
+                        return ApplyClientHrFilter(search, filter).ToList();
+                }
+
+                var meetings = _meetingRespository.GetCallCatalogueList(profile, Emailid).Result?.ToList()
+                    ?? new List<CallCatalogueVM>();
+                return ApplyCallCatalogueFilters(meetings, filter);
             }
             catch (Exception ex)
             {
@@ -3862,7 +3877,11 @@ namespace Risebird.Business
         {
             try
             {
-                return await _meetingRespository.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc);
+                var result = await _meetingRespository.UpdateInterviewerAvailbilityStatusForIRF(status, uniqueid, Irfid, rsc);
+                // Status 1/4 update InterviewerProfile.Isavailable (listing field).
+                if (result != null && result.Item1)
+                    await TrySyncInterviewerListingByUniqueIdAsync(uniqueid);
+                return result;
             }
             catch (Exception ex)
             {
@@ -3982,18 +4001,114 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public List<CallCatalogueVM> GetInterviewerCallCatalogueList()
+        public List<CallCatalogueVM> GetInterviewerCallCatalogueList(InterviewFilter filter = null)
         {
             try
             {
-                var meetings = _meetingRespository.GetInterviewerCallCatalogueList().Result.ToList();
-                return meetings ?? new List<CallCatalogueVM>();
+                if (_callCatalogueListingSearchRepository.IsEnabled)
+                {
+                    var search = _callCatalogueListingSearchRepository
+                        .SearchAsync(null, null, "Interviewer", filter)
+                        .GetAwaiter()
+                        .GetResult();
+                    if (search != null)
+                        return search.ToList();
+                }
+
+                var meetings = _meetingRespository.GetInterviewerCallCatalogueList().Result?.ToList()
+                    ?? new List<CallCatalogueVM>();
+                return ApplyCallCatalogueFilters(meetings, filter);
             }
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+
+        public InterviewFilter PopulateCallCatalogueFilterFacets(List<CallCatalogueVM> meetings, InterviewFilter filter)
+        {
+            if (filter == null || meetings == null)
+                return filter;
+
+            filter.PrimarySkill = filter.PrimarySkill ?? meetings
+                .Select(x => x.JDTiltle?.Split('|')[0])
+                .Where(x => x != null)
+                .ToArray();
+            filter.ClientName = filter.ClientName ?? meetings.Select(x => x.ClientName).ToArray();
+            filter.ClientHR = filter.ClientHR ?? meetings.Select(x => x.ClientHr).ToArray();
+            filter.RFID = filter.RFID ?? meetings.Select(x => x.IRFId).ToArray();
+            return filter;
+        }
+
+        private static List<CallCatalogueVM> ApplyCallCatalogueFilters(List<CallCatalogueVM> meetings, InterviewFilter filter)
+        {
+            if (meetings == null)
+                return new List<CallCatalogueVM>();
+
+            if (filter == null)
+            {
+                var defaultStart = DateTime.Now.Date;
+                var defaultEnd = DateTime.Now.Date.AddDays(1);
+                return meetings
+                    .Where(t => t.CalledOn >= defaultStart && t.CalledOn <= defaultEnd)
+                    .ToList();
+            }
+
+            IEnumerable<CallCatalogueVM> query = meetings;
+
+            if (filter.StartDate != null && filter.EndDate != null)
+            {
+                var endDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
+                query = query.Where(t => t.CalledOn >= filter.StartDate && t.CalledOn <= endDate);
+            }
+            else if (filter.StartDate != null)
+            {
+                query = query.Where(t => t.CalledOn >= filter.StartDate);
+            }
+            else if (filter.EndDate != null)
+            {
+                var endDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
+                query = query.Where(t => t.CalledOn <= endDate);
+            }
+
+            var materialized = query.ToList();
+            filter.PrimarySkill = filter.PrimarySkill ?? materialized
+                .Select(x => x.JDTiltle?.Split('|')[0])
+                .Where(x => x != null)
+                .ToArray();
+            filter.ClientName = filter.ClientName ?? materialized.Select(x => x.ClientName).ToArray();
+            filter.ClientHR = filter.ClientHR ?? materialized.Select(x => x.ClientHr).ToArray();
+            filter.RFID = filter.RFID ?? materialized.Select(x => x.IRFId).ToArray();
+
+            return materialized
+                .Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle?.Split('|')[0])
+                    && ((filter.ClientHR != null && filter.ClientHR.Count() > 0)
+                        ? filter.ClientHR.Contains(c.ClientHr)
+                        : c.ClientHr == null)
+                    && ((filter.ClientName != null && filter.ClientName.Count() > 0)
+                        ? filter.ClientName.Contains(c.ClientName)
+                        : c.ClientName == null)
+                    && ((filter.RFID != null && filter.RFID.Count() > 0)
+                        ? filter.RFID.Contains(c.IRFId)
+                        : c.IRFId == null))
+                .ToList();
+        }
+
+        private static IEnumerable<CallCatalogueVM> ApplyClientHrFilter(
+            IEnumerable<CallCatalogueVM> meetings,
+            InterviewFilter filter)
+        {
+            if (meetings == null)
+                return Enumerable.Empty<CallCatalogueVM>();
+
+            if (filter == null)
+                return meetings;
+
+            return meetings.Where(c =>
+                (filter.ClientHR != null && filter.ClientHR.Count() > 0)
+                    ? filter.ClientHR.Contains(c.ClientHr)
+                    : c.ClientHr == null);
         }
         public async Task<bool> ApplyPenaltyQCForm(int interviewid, string interviewer, int redflags, int VideoReward)
         {
@@ -4744,7 +4859,10 @@ namespace Risebird.Business
         {
             try
             {
-                return await _meetingRespository.UpdateInterviewerAvailbilityStatusCampaignLevel(status, uniqueid, campaignId, rsc);
+                var result = await _meetingRespository.UpdateInterviewerAvailbilityStatusCampaignLevel(status, uniqueid, campaignId, rsc);
+                if (result)
+                    await TrySyncInterviewerListingByUniqueIdAsync(uniqueid);
+                return result;
             }
             catch (Exception ex)
             {
@@ -4996,6 +5114,11 @@ namespace Risebird.Business
         {
             return await _meetingRespository.GetCandidateInterviewDetails(uniqueId, irfId, interviewId, candidateId);
         }
+
+        public async Task<UnassignedInterviewVM> GetInterviewerInterviewDetails(int interviewId)
+        {
+            return await _meetingRespository.GetInterviewerInterviewDetails(interviewId);
+        }
         public async Task<bool> SaveAIInterviewProctorEvaluation(InterviewReport model)
         {
             try
@@ -5082,6 +5205,30 @@ namespace Risebird.Business
                 return cleaned;
             }
             return null;
+        }
+
+        private async Task TrySyncInterviewerListingByUniqueIdAsync(string uniqueId)
+        {
+            if (_interviewerListingSearchRepository == null
+                || !_interviewerListingSearchRepository.IsEnabled
+                || string.IsNullOrWhiteSpace(uniqueId))
+                return;
+
+            try
+            {
+                var synced = await _interviewerListingSearchRepository.UpsertInterviewerByUniqueIdAsync(uniqueId);
+                if (!synced)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Exception,
+                        new InvalidOperationException(
+                            $"Interviewer Azure Search upsert returned false for uniqueId='{uniqueId}'."));
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
         }
     }
 }

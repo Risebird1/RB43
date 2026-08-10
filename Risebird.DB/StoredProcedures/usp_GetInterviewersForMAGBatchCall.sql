@@ -40,6 +40,16 @@ BEGIN
           AND LEN(ISNULL(COALESCE(ul.MobileNumber, ea.Phone), '')) >= 10
           AND (@OnlyUncalled = 0 OR ISNULL(ea.PlivoCallStatus, '') = '')
           AND (ul.Id IS NULL OR ul.IsActive = 1)
+          -- An EA row can be UNLINKED (ea.UserId IS NULL) even when the sender is actually a
+          -- registered interviewer — this happens when the record was captured while the
+          -- interviewer was already inactive (usp_InsertInterviewerEmailAvailability only links
+          -- UserId for active users). The join-based IsActive check above cannot catch that case,
+          -- so fall back to an email match to guarantee an inactive interviewer is never re-contacted.
+          AND NOT EXISTS (
+              SELECT 1 FROM UserList ulEmail
+              WHERE ulEmail.EmailId = ea.SenderEmail
+                AND ISNULL(ulEmail.IsActive, 1) = 0
+          )
           AND (ip.Id IS NULL OR (ISNULL(ip.IsDeleted, 0) = 0 AND ISNULL(ip.Isavailable, 0) <> 4))
           AND NOT EXISTS (
               SELECT 1 FROM RecentlyAvailable ra

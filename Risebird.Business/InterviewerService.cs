@@ -2,6 +2,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using Risebird.Entities.Search;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
@@ -24,12 +25,14 @@ namespace Risebird.Business
         private readonly IActivityTrackerRepository _activityTrackerRepository;
         private readonly IEncryptionHelper _encryptionHelper;
         private readonly ICandidateService _candidateService;
+        private readonly IInterviewerListingSearchRepository _interviewerListingSearchRepository;
 
         public InterviewerService(IInterviewerRepository interviewerRepository, IApplicationErrorLogger applicationErrorLogger,
             IUserService userService, IMeetingRespository meetingRespository,
             INotificationHelper notificationHelper, IPasswordHelper passwordHelper,
             IIRFRepository irfRepository, IActivityTrackerRepository activityTrackerRepository, IEncryptionHelper encryptionHelper,
-            ICandidateService candidateService)
+            ICandidateService candidateService,
+            IInterviewerListingSearchRepository interviewerListingSearchRepository)
         {
             _interviewerRepository = interviewerRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -41,20 +44,151 @@ namespace Risebird.Business
             _activityTrackerRepository = activityTrackerRepository;
             _encryptionHelper = encryptionHelper;
             _candidateService = candidateService;
+            _interviewerListingSearchRepository = interviewerListingSearchRepository;
         }
 
         #region Interviewer Profile Service Functions
-        public List<InterviewerProfileVM> GetInterviewers()
+        public async Task<List<InterviewerProfileVM>> GetInterviewers()
         {
             try
             {
-                return _interviewerRepository.GetInterviewers().Result.ToList();
+                // Full roster for export/JSON — SQL only.
+                // Azure SearchAll of 60k+ docs is not viable; Index uses GetInterviewersPage.
+                var interviewers = await _interviewerRepository.GetInterviewers();
+                return interviewers?.ToList();
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+
+        public async Task<InterviewerSearchPageResult> GetInterviewersPage(
+            int pageNumber,
+            int pageSize,
+            string searchValue = null,
+            InterviewFilter filter = null)
+        {
+            try
+            {
+                if (pageNumber < 1)
+                    pageNumber = 1;
+                if (pageSize < 1)
+                    pageSize = 10;
+
+                if (_interviewerListingSearchRepository.IsEnabled)
+                {
+                    // UI seniority dropdown posts names; index stores numeric ids.
+                    filter = NormalizeInterviewerSearchFilter(filter);
+
+                    var searchPage = await _interviewerListingSearchRepository
+                        .SearchPageAsync(pageNumber, pageSize, searchValue, filter);
+
+                    if (searchPage != null)
+                        return searchPage;
+                }
+
+                // SQL fallback: load, filter in memory, then page (same semantics as legacy Index).
+                var all = (await _interviewerRepository.GetInterviewers())?.ToList()
+                    ?? new List<InterviewerProfileVM>();
+
+                if (!string.IsNullOrWhiteSpace(searchValue))
+                {
+                    var sv = searchValue.ToUpperInvariant().Trim();
+                    all = all.Where(x =>
+                        (!string.IsNullOrEmpty(x.FirstName) && x.FirstName.ToUpperInvariant().Contains(sv)) ||
+                        (!string.IsNullOrEmpty(x.LastName) && x.LastName.ToUpperInvariant().Contains(sv)) ||
+                        (!string.IsNullOrEmpty(x.EmailId) && x.EmailId.ToUpperInvariant().Contains(sv)) ||
+                        (!string.IsNullOrEmpty(x.NickName) && x.NickName.ToUpperInvariant().Contains(sv)) ||
+                        (!string.IsNullOrEmpty(x.MobileNumber) && x.MobileNumber.Contains(sv)) ||
+                        (x.PrimarySkill != null && x.PrimarySkill.ToUpperInvariant().Contains(sv))).ToList();
+                }
+
+                // Match default Index filter when no session filter: active only.
+                if (filter == null)
+                    all = all.Where(x => x.IsActive).ToList();
+                else
+                    all = ApplyInterviewFilterInMemory(all, filter);
+
+                var total = all.Count;
+                var items = all
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
+                return new InterviewerSearchPageResult
+                {
+                    Items = items,
+                    TotalCount = total,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new InterviewerSearchPageResult
+                {
+                    Items = Array.Empty<InterviewerProfileVM>(),
+                    TotalCount = 0,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+            }
+        }
+
+        private InterviewFilter NormalizeInterviewerSearchFilter(InterviewFilter filter)
+        {
+            if (filter == null)
+                return null;
+
+            if (filter.Senioritylevel != null && filter.Senioritylevel.Length > 0)
+            {
+                var levels = _irfRepository.GetSenioritylevel()?.ToList();
+                if (levels != null && levels.Count > 0)
+                {
+                    filter.Senioritylevel = filter.Senioritylevel
+                        .Select(value =>
+                        {
+                            if (string.IsNullOrWhiteSpace(value))
+                                return value;
+                            var trimmed = value.Trim();
+                            if (int.TryParse(trimmed, out _))
+                                return trimmed;
+                            var match = levels.FirstOrDefault(l =>
+                                string.Equals(l.Name, trimmed, StringComparison.OrdinalIgnoreCase));
+                            return match != null ? match.Id.ToString() : trimmed;
+                        })
+                        .Where(v => !string.IsNullOrWhiteSpace(v))
+                        .ToArray();
+                }
+            }
+
+            return filter;
+        }
+
+        private static List<InterviewerProfileVM> ApplyInterviewFilterInMemory(
+            List<InterviewerProfileVM> model,
+            InterviewFilter filter)
+        {
+            // Lightweight SQL-fallback filtering (enum description conversion happens in controller).
+            return model.Where(c =>
+                (filter.IsActive != null && filter.IsActive.Length > 0
+                    ? filter.IsActive.Contains(c.IsActive)
+                    : c.IsActive) &&
+                (filter.IsInterested == null || filter.IsInterested.Length == 0
+                    || filter.IsInterested.Contains(c.IsInterested)) &&
+                (filter.Senioritylevel == null || filter.Senioritylevel.Length == 0
+                    || filter.Senioritylevel.Contains(c.Senioritylevel)) &&
+                (filter.CompanyType == null || filter.CompanyType.Length == 0
+                    || filter.CompanyType.Contains(c.CompanyType)) &&
+                (filter.Domain == null || filter.Domain.Length == 0
+                    || filter.Domain.Contains(c.Country)) &&
+                (filter.IndianRate == null || filter.IndianRate.Length == 0
+                    || filter.IndianRate.Contains(c.PerHourRateIndia)) &&
+                (filter.OutSideIndiaRate == null || filter.OutSideIndiaRate.Length == 0
+                    || filter.OutSideIndiaRate.Contains(c.PerHourRateOutside))).ToList();
         }
         //public async Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile, string loggedInUser, out string assessmentGroupList)
         //{
@@ -150,6 +284,12 @@ namespace Risebird.Business
                 
                 if (result)
                 {
+                    // Index first so roster search stays in sync even if email/activity fail.
+                    if (interviewerProfileId > 0)
+                        TrySyncInterviewerListingSearch(interviewerProfileId);
+                    else if (userId > 0)
+                        TrySyncInterviewerListingSearchByUserIdAsync(userId).GetAwaiter().GetResult();
+
                     // Send acknowledgement email ONLY for INSERT operations (new interviewers)
                     // The stored procedure determines if this was an INSERT or UPDATE operation.
                     // Callers that send their own acknowledgement email (e.g. NaukriOnboarding manual
@@ -208,13 +348,20 @@ namespace Risebird.Business
                         }
                     }
 
-                    var activityTrackerModel = new ActivityTrackerVM();
-                    activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateInterviewer;
-                    activityTrackerModel.Particulars = "Interviewer: " + interviewerProfile.EmailId;
-                    activityTrackerModel.PerformedBy = loggedInUser;
-                    activityTrackerModel.Summary = isInsertOperation ? "Add Interviewer" : "Update Interviewer";
-                    activityTrackerModel.ResourceUrl = interviewerProfile.ResourceUrl;
-                    _activityTrackerRepository.AddActivity(activityTrackerModel);
+                    try
+                    {
+                        var activityTrackerModel = new ActivityTrackerVM();
+                        activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateInterviewer;
+                        activityTrackerModel.Particulars = "Interviewer: " + interviewerProfile.EmailId;
+                        activityTrackerModel.PerformedBy = loggedInUser;
+                        activityTrackerModel.Summary = isInsertOperation ? "Add Interviewer" : "Update Interviewer";
+                        activityTrackerModel.ResourceUrl = interviewerProfile.ResourceUrl;
+                        _activityTrackerRepository.AddActivity(activityTrackerModel);
+                    }
+                    catch (Exception activityEx)
+                    {
+                        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, activityEx);
+                    }
 
                 }
                 return result;
@@ -295,13 +442,25 @@ namespace Risebird.Business
                 var result = _interviewerRepository.AddOrEditInterviewerProfile(interviewerProfile, loggedInUser, out assessmentGroupList, out userId, out uniqueid, out isInsertOperation, out editProfileId);
                 if (result)
                 {
-                    var activityTrackerModel = new ActivityTrackerVM();
-                    activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateInterviewer;
-                    activityTrackerModel.Particulars = "Interviewer: " + interviewerProfile.EmailId;
-                    activityTrackerModel.PerformedBy = loggedInUser;
-                    activityTrackerModel.Summary = isInsertOperation ? "Add Interviewer" : "Update Interviewer";
-                    activityTrackerModel.ResourceUrl = interviewerProfile.ResourceUrl;
-                    _activityTrackerRepository.AddActivity(activityTrackerModel);
+                    if (editProfileId > 0)
+                        TrySyncInterviewerListingSearch(editProfileId);
+                    else if (userId > 0)
+                        TrySyncInterviewerListingSearchByUserIdAsync(userId).GetAwaiter().GetResult();
+
+                    try
+                    {
+                        var activityTrackerModel = new ActivityTrackerVM();
+                        activityTrackerModel.ActivityType = (int)ActivityTypes.UpdateInterviewer;
+                        activityTrackerModel.Particulars = "Interviewer: " + interviewerProfile.EmailId;
+                        activityTrackerModel.PerformedBy = loggedInUser;
+                        activityTrackerModel.Summary = isInsertOperation ? "Add Interviewer" : "Update Interviewer";
+                        activityTrackerModel.ResourceUrl = interviewerProfile.ResourceUrl;
+                        _activityTrackerRepository.AddActivity(activityTrackerModel);
+                    }
+                    catch (Exception activityEx)
+                    {
+                        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, activityEx);
+                    }
                 }
                 return result;
             }
@@ -315,7 +474,18 @@ namespace Risebird.Business
         {
             try
             {
-                return _interviewerRepository.DeleteInterviewerProfile(UserId).Result;
+                // Hard delete removes the SQL row — capture profile id first so we can
+                // Remove the Azure Search document (upsert-after-delete cannot find the row).
+                var profileId = 0;
+                var profiles = await _interviewerRepository.GetInterviewerProfileById(UserId);
+                var profile = profiles?.FirstOrDefault();
+                if (profile != null)
+                    profileId = profile.id;
+
+                var result = await _interviewerRepository.DeleteInterviewerProfile(UserId);
+                if (result && profileId > 0)
+                    await TryRemoveInterviewerListingSearchAsync(profileId);
+                return result;
             }
             catch (Exception e)
             {
@@ -574,8 +744,17 @@ namespace Risebird.Business
             try
             {
                 interviewerProfile.InterviewerAvailabilityDetails = interviewerProfile.InterviewerAvailabilityDetails.Where(x => x.Weekday != null).ToList();
-                //Add Method
-                return _interviewerRepository.AddInterviewerMyProfile(interviewerProfile).Result;
+                var result = await _interviewerRepository.AddInterviewerMyProfile(interviewerProfile);
+                if (result)
+                {
+                    if (interviewerProfile.id > 0)
+                        await TrySyncInterviewerListingSearchAsync(interviewerProfile.id);
+                    else if (interviewerProfile.UserId > 0)
+                        await TrySyncInterviewerListingSearchByUserIdAsync(interviewerProfile.UserId);
+                    else if (!string.IsNullOrWhiteSpace(interviewerProfile.EmailId))
+                        await TrySyncInterviewerListingSearchByEmailAsync(interviewerProfile.EmailId);
+                }
+                return result;
             }
             catch (Exception e)
             {
@@ -1080,6 +1259,8 @@ namespace Risebird.Business
 
                 }
                 var result = await _interviewerRepository.InterviewerRecommendation(reportModel);
+                if (result && reportModel.Userid > 0)
+                    await TrySyncInterviewerListingSearchByUserIdAsync(reportModel.Userid);
                 return result;
             }
 
@@ -1236,7 +1417,10 @@ namespace Risebird.Business
         {
             try
             {
-                return _interviewerRepository.UpdateAllIntervieweravailbilityStatus(status, uniqueid);
+                var result = _interviewerRepository.UpdateAllIntervieweravailbilityStatus(status, uniqueid);
+                if (result)
+                    TrySyncInterviewerListingSearchByUniqueIdAsync(uniqueid).GetAwaiter().GetResult();
+                return result;
             }
             catch (Exception ex)
             {
@@ -1423,7 +1607,10 @@ namespace Risebird.Business
         {
             try
             {
-                return await _interviewerRepository.UpdateInterviewerInterest(status, uniqueid);
+                var result = await _interviewerRepository.UpdateInterviewerInterest(status, uniqueid);
+                if (result)
+                    await TrySyncInterviewerListingSearchByUniqueIdAsync(uniqueid);
+                return result;
             }
             catch (SqlTypeException ex)
             {
@@ -1435,7 +1622,15 @@ namespace Risebird.Business
         {
             try
             {
-                return await _interviewerRepository.SaveInterviewerResume(model);
+                var result = await _interviewerRepository.SaveInterviewerResume(model);
+                if (result)
+                {
+                    if (model?.UserId > 0)
+                        await TrySyncInterviewerListingSearchByUserIdAsync(model.UserId);
+                    else if (!string.IsNullOrWhiteSpace(model?.EmailId))
+                        await TrySyncInterviewerListingSearchByEmailAsync(model.EmailId);
+                }
+                return result;
             }
             catch (SqlTypeException ex)
             {
@@ -1518,7 +1713,16 @@ namespace Risebird.Business
         {
             try
             {
-                return await _interviewerRepository.UpdateInterviewerFlag(Emailid, LeadInterviewer, IsApproved, IsInterviewerAccess, IsBlocked);
+                var result = await _interviewerRepository.UpdateInterviewerFlag(Emailid, LeadInterviewer, IsApproved, IsInterviewerAccess, IsBlocked);
+                if (result)
+                {
+                    var profile = await _interviewerRepository.GetInterviewerFlagDetails(Emailid);
+                    if (profile != null && profile.id > 0)
+                        await TrySyncInterviewerListingSearchAsync(profile.id);
+                    else if (profile != null && profile.UserId > 0)
+                        await TrySyncInterviewerListingSearchByUserIdAsync(profile.UserId);
+                }
+                return result;
             }
             catch (SqlTypeException ex)
             {
@@ -1686,7 +1890,10 @@ namespace Risebird.Business
         {
             try
             {
-                return await _interviewerRepository.UpdateVideoConfirmationStatus(status, Emailid);
+                var result = await _interviewerRepository.UpdateVideoConfirmationStatus(status, Emailid);
+                if (result)
+                    await TrySyncInterviewerListingSearchByEmailAsync(Emailid);
+                return result;
             }
             catch (Exception ex)
             {
@@ -1758,7 +1965,15 @@ namespace Risebird.Business
         {
             try
             {
-                return await _interviewerRepository.SaveInterviewerCodedResume(model);
+                var result = await _interviewerRepository.SaveInterviewerCodedResume(model);
+                if (result)
+                {
+                    if (model?.id > 0)
+                        await TrySyncInterviewerListingSearchAsync(model.id);
+                    else if (model?.UserId > 0)
+                        await TrySyncInterviewerListingSearchByUserIdAsync(model.UserId);
+                }
+                return result;
             }
             catch (SqlTypeException ex)
             {
@@ -1771,7 +1986,17 @@ namespace Risebird.Business
         {
             try
             {
-                return await _interviewerRepository.SaveInterviewerResumesAndCodedResume(model);
+                var result = await _interviewerRepository.SaveInterviewerResumesAndCodedResume(model);
+                if (result)
+                {
+                    if (model?.id > 0)
+                        await TrySyncInterviewerListingSearchAsync(model.id);
+                    else if (model?.UserId > 0)
+                        await TrySyncInterviewerListingSearchByUserIdAsync(model.UserId);
+                    else if (!string.IsNullOrWhiteSpace(model?.EmailId))
+                        await TrySyncInterviewerListingSearchByEmailAsync(model.EmailId);
+                }
+                return result;
             }
             catch (SqlTypeException ex)
             {
@@ -1812,6 +2037,7 @@ namespace Risebird.Business
 
                 if (result != null)
                 {
+                    await TrySyncInterviewerListingSearchByUserIdAsync(userId);
                     //sendwelcomeEmailtointerviewer
                     await _notificationHelper.SendWelcomeEmailToInterviewer(result.EmailId, result.UserPassword, result.HMVideoForTargetIRF);
                 }
@@ -2067,7 +2293,10 @@ namespace Risebird.Business
         {
             try
             {
-                return await _interviewerRepository.UpdateInterviewerResume(userId, resumeLink, loggedInUser);
+                var result = await _interviewerRepository.UpdateInterviewerResume(userId, resumeLink, loggedInUser);
+                if (result)
+                    await TrySyncInterviewerListingSearchByUserIdAsync(userId);
+                return result;
             }
             catch (Exception ex)
             {
@@ -2091,7 +2320,10 @@ namespace Risebird.Business
         {
             try
             {
-                return await _interviewerRepository.UpdateInterviewerAvailabilityStatus(userId, availabilityStatus, irfId, loggedInUser);
+                var result = await _interviewerRepository.UpdateInterviewerAvailabilityStatus(userId, availabilityStatus, irfId, loggedInUser);
+                if (result)
+                    await TrySyncInterviewerListingSearchByUserIdAsync(userId);
+                return result;
             }
             catch (Exception ex)
             {
@@ -2141,6 +2373,8 @@ namespace Risebird.Business
             try
             {
                 var flagUpdateResult = await _interviewerRepository.InactivateInterviewer(interviewerId, modifiedBy, comment, blockinterviewer, inactivationType);
+                if (flagUpdateResult)
+                    await TrySyncInterviewerListingSearchByUserIdAsync(interviewerId);
                 return flagUpdateResult;
             }
             catch (Exception ex)
@@ -2154,7 +2388,10 @@ namespace Risebird.Business
         {
             try
             {
-                return await _interviewerRepository.ReactivateInterviewer(userId, reactivatedBy);
+                var result = await _interviewerRepository.ReactivateInterviewer(userId, reactivatedBy);
+                if (result)
+                    await TrySyncInterviewerListingSearchByUserIdAsync(userId);
+                return result;
             }
             catch (Exception ex)
             {
@@ -2173,6 +2410,121 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        private void TrySyncInterviewerListingSearch(int interviewerProfileId)
+        {
+            TrySyncInterviewerListingSearchAsync(interviewerProfileId).GetAwaiter().GetResult();
+        }
+
+        private async Task TryRemoveInterviewerListingSearchAsync(int interviewerProfileId)
+        {
+            if (!_interviewerListingSearchRepository.IsEnabled || interviewerProfileId <= 0)
+                return;
+
+            try
+            {
+                var removed = await _interviewerListingSearchRepository.RemoveInterviewerAsync(interviewerProfileId);
+                if (!removed)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Exception,
+                        new InvalidOperationException(
+                            $"Interviewer Azure Search remove returned false for interviewerProfileId={interviewerProfileId}."));
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        private async Task TrySyncInterviewerListingSearchAsync(int interviewerProfileId)
+        {
+            if (!_interviewerListingSearchRepository.IsEnabled || interviewerProfileId <= 0)
+                return;
+
+            try
+            {
+                var synced = await _interviewerListingSearchRepository.UpsertInterviewerAsync(interviewerProfileId);
+                if (!synced)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Exception,
+                        new InvalidOperationException(
+                            $"Interviewer Azure Search upsert returned false for interviewerProfileId={interviewerProfileId}."));
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        private async Task TrySyncInterviewerListingSearchByUserIdAsync(int userId)
+        {
+            if (!_interviewerListingSearchRepository.IsEnabled || userId <= 0)
+                return;
+
+            try
+            {
+                var synced = await _interviewerListingSearchRepository.UpsertInterviewerByUserIdAsync(userId);
+                if (!synced)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Exception,
+                        new InvalidOperationException(
+                            $"Interviewer Azure Search upsert returned false for userId={userId}."));
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        private async Task TrySyncInterviewerListingSearchByUniqueIdAsync(string uniqueId)
+        {
+            if (!_interviewerListingSearchRepository.IsEnabled || string.IsNullOrWhiteSpace(uniqueId))
+                return;
+
+            try
+            {
+                var synced = await _interviewerListingSearchRepository.UpsertInterviewerByUniqueIdAsync(uniqueId);
+                if (!synced)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Exception,
+                        new InvalidOperationException(
+                            $"Interviewer Azure Search upsert returned false for uniqueId='{uniqueId}'."));
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        private async Task TrySyncInterviewerListingSearchByEmailAsync(string emailId)
+        {
+            if (!_interviewerListingSearchRepository.IsEnabled || string.IsNullOrWhiteSpace(emailId))
+                return;
+
+            try
+            {
+                var synced = await _interviewerListingSearchRepository.UpsertInterviewerByEmailAsync(emailId);
+                if (!synced)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Exception,
+                        new InvalidOperationException(
+                            $"Interviewer Azure Search upsert returned false for emailId='{emailId}'."));
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
     }

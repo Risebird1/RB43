@@ -1041,47 +1041,22 @@ namespace Risebird.Web.Controllers
                             TempData.Remove("SuccessErrorMessageCandidate");
                         }
                         var meetings = new List<CallCatalogueVM>();
+                        InterviewFilter filter = null;
+                        if (HttpContext.Session.GetString("CallCataloguefilters") != null)
+                            filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("CallCataloguefilters"));
+
                         if (type == "Interviewer")
                         {
                             ViewBag.type = "Interviewer";
-                            meetings = _meetingService.GetInterviewerCallCatalogueList();
+                            meetings = _meetingService.GetInterviewerCallCatalogueList(filter);
                         }
                         else
                         {
-                            meetings = _meetingService.GetCallCatalogueList(profileName, emailid);
+                            meetings = _meetingService.GetCallCatalogueList(profileName, emailid, filter);
                         }
-                        if (HttpContext.Session.GetString("CallCataloguefilters") != null)
-                        {
-                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("CallCataloguefilters"));
-                            if (filter.StartDate != null && filter.EndDate != null)
-                            {
-                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
-                                meetings = meetings.Where(t => t.CalledOn >= filter.StartDate && t.CalledOn <= filter.EndDate).ToList();
-                            }
-                            else if (filter.StartDate != null && filter.EndDate == null)
-                            {
-                                meetings = meetings.Where(t => t.CalledOn >= filter.StartDate).ToList();
-                            }
-                            else if (filter.StartDate == null && filter.EndDate != null)
-                            {
-                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
-                                meetings = meetings.Where(t => t.CalledOn <= filter.EndDate).ToList();
-                            }
-                            filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = meetings.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
-                            filter.ClientName = filter.ClientName == null ? filter.ClientName = meetings.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
-                            filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = meetings.Select(x => x.ClientHr).ToArray() : filter.ClientHR = filter.ClientHR;
-                            filter.RFID = filter.RFID == null ? filter.RFID = meetings.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
-                            meetings = meetings.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
-                                                    && ((filter.ClientHR != null && filter.ClientHR.Count() > 0) ? filter.ClientHR.Contains(c.ClientHr) : c.ClientHr == null)
-                                                    && ((filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
-                                                    && ((filter.RFID != null && filter.RFID.Count() > 0) ? filter.RFID.Contains(c.IRFId) : c.IRFId == null)).ToList();
-                        }
-                        else
-                        {
-                            DateTime StartDate = DateTime.Now.Date;
-                            DateTime EndDate = DateTime.Now.Date.AddDays(1);
-                            meetings = meetings.Where(t => t.CalledOn >= StartDate && t.CalledOn <= EndDate).ToList();
-                        }
+
+                        if (filter != null)
+                            filter = _meetingService.PopulateCallCatalogueFilterFacets(meetings, filter);
                         ViewBag.profile = profileName;
                         return View(meetings);
                     }
@@ -1182,39 +1157,13 @@ namespace Risebird.Web.Controllers
 
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var meetings = _meetingService.GetCallCatalogueList(profileName, emailid);
+                        InterviewFilter filter = null;
                         if (HttpContext.Session.GetString("CallCataloguefilters") != null)
-                        {
-                            var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("CallCataloguefilters"));
-                            if (filter.StartDate != null && filter.EndDate != null)
-                            {
-                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
-                                meetings = meetings.Where(t => t.CalledOn >= filter.StartDate && t.CalledOn <= filter.EndDate).ToList();
-                            }
-                            else if (filter.StartDate != null && filter.EndDate == null)
-                            {
-                                meetings = meetings.Where(t => t.CalledOn >= filter.StartDate).ToList();
-                            }
-                            else if (filter.StartDate == null && filter.EndDate != null)
-                            {
-                                filter.EndDate = Convert.ToDateTime(filter.EndDate).AddDays(1);
-                                meetings = meetings.Where(t => t.CalledOn <= filter.EndDate).ToList();
-                            }
-                            filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = meetings.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
-                            filter.ClientName = filter.ClientName == null ? filter.ClientName = meetings.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
-                            filter.ClientHR = filter.ClientHR == null ? filter.ClientHR = meetings.Select(x => x.ClientHr).ToArray() : filter.ClientHR = filter.ClientHR;
-                            filter.RFID = filter.RFID == null ? filter.RFID = meetings.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
-                            meetings = meetings.Where(c => filter.PrimarySkill != null && filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
-                                                    && ((filter.ClientHR != null && filter.ClientHR.Count() > 0) ? filter.ClientHR.Contains(c.ClientHr) : c.ClientHr == null)
-                                                    && ((filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
-                                                    && ((filter.RFID != null && filter.RFID.Count() > 0) ? filter.RFID.Contains(c.IRFId) : c.IRFId == null)).ToList();
-                        }
-                        else
-                        {
-                            DateTime StartDate = DateTime.Now.Date;
-                            DateTime EndDate = DateTime.Now.Date.AddDays(1);
-                            meetings = meetings.Where(t => t.CalledOn >= StartDate && t.CalledOn <= EndDate).ToList();
-                        }
+                            filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("CallCataloguefilters"));
+
+                        var meetings = _meetingService.GetCallCatalogueList(profileName, emailid, filter);
+                        if (filter != null)
+                            filter = _meetingService.PopulateCallCatalogueFilterFacets(meetings, filter);
                         if (meetings != null && meetings.Count() > 0)
                         {
                             Sheet.Cells["A1:AI1"].Style.Font.Bold = true;
