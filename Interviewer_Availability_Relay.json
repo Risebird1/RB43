@@ -1,0 +1,871 @@
+{
+  "exportedAt": "2026-08-10T03:48:55.708+00:00",
+  "exportVersion": "1.0",
+  "metadata": {
+    "templateId": "cmnsud4yq195q0qko2sly1tkj",
+    "name": "Extract interviewer availability from emails",
+    "emoji": "📝",
+    "type": "PLUSPLUS",
+    "revision": 6143
+  },
+  "workflow": {
+    "metadata": {
+      "name": "Extract interviewer availability from emails"
+    },
+    "threads": [
+      {
+        "threadId": "main",
+        "ancestors": [],
+        "steps": [
+          {
+            "stepId": "trigger",
+            "stepType": "gmail.mailReceived",
+            "title": "Email received",
+            "description": "Checks connection periodically and starts run for detected events. Event is automatically detected, concrete implementation depends on integration. Filters are optional and can be used to further limit which events should trigger runs. Can only trigger once per Email.",
+            "connection": "kavita_kaushik@risebird.io (owned by Harshit Jajoo)",
+            "inputs": [
+              {
+                "input": "filter",
+                "$ref": "relay/filter",
+                "value": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "field": "Is unread",
+                          "operator": "equal",
+                          "value": null
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "field": "From",
+                          "operator": "notContains",
+                          "value": "mailer-daemon@googlemail.com"
+                        },
+                        {
+                          "field": "From",
+                          "operator": "notContains",
+                          "value": "mailer-daemon@google.com"
+                        },
+                        {
+                          "field": "From",
+                          "operator": "notContains",
+                          "value": "noreply@google.com"
+                        },
+                        {
+                          "field": "From",
+                          "operator": "notContains",
+                          "value": "postmaster@google.com"
+                        },
+                        {
+                          "field": "From",
+                          "operator": "notContains",
+                          "value": "workspace-noreply@google.com"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "input": "onlyFirst",
+                "title": "Only trigger for first email in conversation",
+                "type": "boolean",
+                "value": false
+              }
+            ],
+            "effectiveOutputSchema": {
+              "$ref": "#/resource-types/gmail.mail"
+            }
+          },
+          {
+            "stepId": "3wfaft",
+            "stepType": "ai.prompt.object",
+            "stepNr": "Step 2",
+            "title": "Prompt GPT 5.4 mini",
+            "inputs": [
+              {
+                "input": "model",
+                "description": "relay models use AI credits, user has no API keys configured",
+                "type": "string",
+                "enum": [
+                  "relay.claude-sonnet-5",
+                  "relay.claude-haiku-4-5",
+                  "relay.claude-opus-4-8",
+                  "relay.claude-fable-5",
+                  "relay.gemini-3.1-flash-lite",
+                  "relay.gemini-3.5-flash",
+                  "relay.gemini-3.1-pro",
+                  "relay.gpt-5.4-mini",
+                  "relay.gpt-5.4-nano",
+                  "relay.gpt-5.5-pro",
+                  "relay.gpt-5.6-sol",
+                  "relay.gpt-5.6-terra",
+                  "relay.gpt-5.6-luna",
+                  "relay.grok-4.3"
+                ],
+                "title": "Model",
+                "value": "relay.gpt-5.4-mini"
+              },
+              {
+                "input": "prompt",
+                "title": "User prompt",
+                "type": "string",
+                "value": "You are an AI assistant that extracts structured interviewer availability data from emails.\n\nGiven the email subject, body, sender information, and optionally a resume attachment, extract the following 13 fields. Return ONLY valid JSON with these exact keys:\n\n{\n  \"job_title\": \"The job title or role mentioned in the subject or body. If not found, use 'N/A'.\",\n  \"name\": \"The sender's full name, extracted from the From field or email signature.\",\n  \"email\": \"The sender's email address.\",\n  \"phone\": \"Phone number found in the body, signature, or resume. If not found, use 'N/A'.\",\n  \"mag_name\": \"The magazine name, project name, or publication referenced in the email. If not found, use 'N/A'.\",\n  \"irf_id\": \"Any IRF ID, reference number, or skill channel ID mentioned. If not found, use 'N/A'.\",\n  \"has_login_credentials\": \"'Yes' if the email mentions login credentials, portal access, or account details. Otherwise 'No'.\",\n  \"slots_per_day\": \"The number of interview slots the interviewer can take per day (e.g. '2', '3'). If not specified, use 'N/A'.\",\n  \"time_frame\": \"One or more of these time windows: '6-10 AM', '10 AM-2 PM', '2-6 PM', '6-10 PM', '10 PM-12 AM'. Comma-separated if multiple. If not specified, use 'N/A'.\",\n  \"availability_intent\": \"A summary of the interviewer's stated availability — dates, times, days of week, or general availability windows. Be specific.\",\n  \"mail_body_intent\": \"A one-line summary of the email's purpose (e.g. 'Sharing availability for next week', 'Requesting slot change', 'Confirming availability').\",\n  \"concerns_or_not_interested\": \"Any hesitations, concerns, conditions, or expressions of disinterest. If none, use 'None'.\",\n  \"resume_fitment\": \"If a resume is attached, assess fitment: 'Strong Fit', 'Moderate Fit', 'Weak Fit'. If no resume, use 'N/A'.\"\n}\n\nRules:\n- Extract phone numbers in their original format (include country code if present)\n- For time_frame, only use the exact window labels listed above\n- For resume_fitment, base your assessment on the resume's relevance to the job title mentioned\n- Always return valid JSON, nothing else"
+              },
+              {
+                "input": "codeSandbox",
+                "description": "Recommendation: OFF, The task involves understanding and extracting specific information from email content and resume text. This is a comprehension task, not one requiring programmatic data transformation or file manipulation. The AI can process this content directly in its context.",
+                "type": "string",
+                "enum": [
+                  "AUTO",
+                  "OFF",
+                  "ON"
+                ],
+                "value": "AUTO"
+              },
+              {
+                "input": "webAccess",
+                "description": "Recommendation: OFF, The task is to extract structured data from an email and optional resume attachment. No instructions require accessing external websites or current web information. The email content and attachment will be provided directly to the AI.",
+                "type": "string",
+                "enum": [
+                  "AUTO",
+                  "OFF",
+                  "ON"
+                ],
+                "value": "AUTO"
+              },
+              {
+                "input": "review",
+                "title": "Review (human-in-the-loop)",
+                "type": "string",
+                "enum": [
+                  "OFF",
+                  "ON"
+                ],
+                "value": "OFF"
+              },
+              {
+                "input": "attachments",
+                "type": "array",
+                "items": {
+                  "type": "any"
+                },
+                "value": [
+                  {
+                    "ref": "trigger"
+                  }
+                ]
+              },
+              {
+                "input": "knowledgeSources",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "title": "Knowledge item ID",
+                  "remoteEnumId": "relay.knowledgeSources"
+                },
+                "value": []
+              },
+              {
+                "input": "outputMode",
+                "type": "string",
+                "enum": [
+                  "text",
+                  "object"
+                ],
+                "value": "object"
+              },
+              {
+                "input": "reasoningEffort",
+                "description": "Defaults to low.",
+                "type": "string",
+                "enum": [
+                  "MINIMAL",
+                  "LOW",
+                  "MEDIUM",
+                  "HIGH"
+                ],
+                "title": "Reasoning effort",
+                "value": null
+              },
+              {
+                "input": "maxTokens",
+                "description": "Defaults to unrestricted.",
+                "type": "number",
+                "title": "Max output tokens",
+                "value": null
+              }
+            ],
+            "userSchema": {
+              "type": "object",
+              "title": "Response",
+              "properties": {
+                "job_title": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string",
+                  "format": "email"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "mag_name": {
+                  "type": "string"
+                },
+                "irf_id": {
+                  "type": "string"
+                },
+                "has_login_credentials": {
+                  "type": "string",
+                  "enum": [
+                    "Yes",
+                    "No"
+                  ]
+                },
+                "slots_per_day": {
+                  "type": "string"
+                },
+                "time_frame": {
+                  "type": "string"
+                },
+                "availability_intent": {
+                  "type": "string",
+                  "description": "Summary of interviewer's stated availability"
+                },
+                "mail_body_intent": {
+                  "type": "string",
+                  "description": "One-line summary of the email's purpose"
+                },
+                "concerns_or_not_interested": {
+                  "type": "string"
+                },
+                "resume_fitment": {
+                  "type": "string",
+                  "enum": [
+                    "Strong Fit",
+                    "Moderate Fit",
+                    "Weak Fit",
+                    "N/A"
+                  ]
+                }
+              },
+              "required": [
+                "job_title",
+                "name",
+                "email",
+                "phone",
+                "mag_name",
+                "irf_id",
+                "has_login_credentials",
+                "slots_per_day",
+                "time_frame",
+                "availability_intent",
+                "mail_body_intent",
+                "concerns_or_not_interested",
+                "resume_fitment"
+              ]
+            },
+            "effectiveOutputSchema": {
+              "$ref": "#/steps/3wfaft/user-schema"
+            }
+          },
+          {
+            "stepId": "9v9d3j",
+            "stepType": "paths",
+            "stepNr": "Step 3",
+            "title": "Select a path",
+            "paths": [
+              {
+                "position": 0,
+                "title": "Has Resume Attachment",
+                "rule": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "subject": {
+                            "ref": "trigger.Attachments"
+                          },
+                          "operator": "notEmpty",
+                          "value": null
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "threadId": "9v9d3j_yivv37"
+              },
+              {
+                "position": 1,
+                "title": null,
+                "rule": "No other path is matching",
+                "threadId": "9v9d3j_nplwq1"
+              }
+            ],
+            "effectiveOutputSchema": {
+              "type": "object",
+              "properties": {
+                "Row": {
+                  "type": "resource",
+                  "resourceTypeId": "sheets.row[130VfvCLo7uHiiZ3-2FsVq8Hf5-UEEKmDftZybhE_-G0::0]"
+                }
+              },
+              "description": "Automatically derived"
+            }
+          },
+          {
+            "stepId": "p3tu8j",
+            "stepType": "http.request",
+            "stepNr": "Step 8",
+            "title": "Custom HTTP request",
+            "inputs": [
+              {
+                "input": "webhookUrl",
+                "title": "Request URL",
+                "type": "string",
+                "value": "https://portal.risebird.io/InterviewerAvailability/Webhook"
+              },
+              {
+                "input": "urlParams",
+                "title": "URL params",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              {
+                "input": "httpMethod",
+                "title": "HTTP method",
+                "type": "string",
+                "enum": [
+                  "POST",
+                  "GET",
+                  "PATCH",
+                  "PUT",
+                  "DELETE"
+                ],
+                "value": "POST"
+              },
+              {
+                "input": "headers",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "value": {
+                  "Content-Type": "application/json",
+                  "X-Relay-Secret": "A72B9F41-E3D8-4A5C-B180-CF81E9D3A742"
+                }
+              },
+              {
+                "input": "encoding",
+                "type": "string",
+                "enum": [
+                  "JSON (application/json)",
+                  "Form (application/x-www-form-urlencoded)",
+                  "Multipart (multipart/form-data)",
+                  "Binary (raw file upload)"
+                ],
+                "value": "JSON (application/json)"
+              },
+              {
+                "input": "bodyJson",
+                "title": "Body",
+                "type": "object",
+                "additionalProperties": true,
+                "value": {
+                  "sender_email": {
+                    "ref": "3wfaft.email"
+                  },
+                  "subject": {
+                    "ref": "trigger.Subject"
+                  },
+                  "mail_content": {
+                    "ref": "trigger.Body"
+                  },
+                  "received_at": {
+                    "ref": "trigger.Send date/time"
+                  },
+                  "job_title": {
+                    "ref": "3wfaft.job_title"
+                  },
+                  "name": {
+                    "ref": "3wfaft.name"
+                  },
+                  "phone": {
+                    "ref": "3wfaft.phone"
+                  },
+                  "mag_name": {
+                    "ref": "3wfaft.mag_name"
+                  },
+                  "irf_id": {
+                    "ref": "3wfaft.irf_id"
+                  },
+                  "slots_per_day": {
+                    "ref": "3wfaft.slots_per_day"
+                  },
+                  "time_frame": {
+                    "ref": "3wfaft.time_frame"
+                  },
+                  "has_login_credentials": {
+                    "ref": "3wfaft.has_login_credentials"
+                  },
+                  "availability_intent": {
+                    "ref": "3wfaft.availability_intent"
+                  },
+                  "mail_body_intent": {
+                    "ref": "3wfaft.mail_body_intent"
+                  },
+                  "concerns_or_not_interested": {
+                    "ref": "3wfaft.concerns_or_not_interested"
+                  },
+                  "resume_fitment": {
+                    "ref": "3wfaft.resume_fitment"
+                  },
+                  "resume_link": "None",
+                  "has_attachment": false
+                }
+              },
+              {
+                "input": "errorHandling",
+                "title": "Error handling",
+                "type": "string",
+                "enum": [
+                  "Fail",
+                  "Continue for client errors (4xx)",
+                  "Continue for all errors"
+                ],
+                "value": "Fail"
+              }
+            ],
+            "userSchema": {
+              "type": "object",
+              "properties": {
+                "payload": {
+                  "type": "object",
+                  "title": "Payload",
+                  "properties": {}
+                },
+                "headers": {
+                  "type": "object",
+                  "title": "Headers",
+                  "properties": {}
+                }
+              }
+            },
+            "effectiveOutputSchema": {
+              "$ref": "#/steps/p3tu8j/user-schema"
+            }
+          }
+        ]
+      },
+      {
+        "threadId": "9v9d3j_yivv37",
+        "ancestors": [
+          "main"
+        ],
+        "parameterId": "9v9d3j_yivv37",
+        "steps": [
+          {
+            "stepId": "lxkuyi",
+            "stepType": "iterator",
+            "stepNr": "Step 4",
+            "title": "For each item in {scope} run these steps",
+            "scope": {
+              "title": "List",
+              "description": "List of items to iterate over. This can only be set to a reference to a list from another step. To loop over a constant list, use a 'transform' step to create the constant.",
+              "type": "array",
+              "items": {
+                "type": "any"
+              },
+              "value": {
+                "ref": "trigger.Attachments"
+              }
+            },
+            "inputs": [
+              {
+                "input": "filter",
+                "$ref": "relay/filter"
+              },
+              {
+                "input": "execution",
+                "description": "Prefer parallel unless sequential execution is required",
+                "type": "string",
+                "enum": [
+                  "PARALLEL",
+                  "SEQUENTIAL"
+                ],
+                "title": "Execution",
+                "value": "PARALLEL"
+              }
+            ],
+            "forEach": {
+              "threadId": "lxkuyi_each",
+              "effectiveParameterSchema": {
+                "type": "file"
+              }
+            },
+            "effectiveOutputSchema": {
+              "type": "object",
+              "properties": {
+                "agg_xhvxqh": {
+                  "title": "Files",
+                  "type": "array",
+                  "items": {
+                    "type": "resource",
+                    "resourceTypeId": "drive.file"
+                  }
+                }
+              },
+              "description": "Automatically derived"
+            }
+          },
+          {
+            "stepId": "y6ubbo",
+            "stepType": "sheets.createRow",
+            "stepNr": "Step 6",
+            "title": "Add row to sheet",
+            "scope": {
+              "title": "Sheet",
+              "type": "resource",
+              "resourceTypeId": "sheets.sheet[130VfvCLo7uHiiZ3-2FsVq8Hf5-UEEKmDftZybhE_-G0]",
+              "value": {
+                "pointer": "sheets.sheet[130VfvCLo7uHiiZ3-2FsVq8Hf5-UEEKmDftZybhE_-G0]/0",
+                "label": "RB Interviewer Email Availability Relay Internal · Sheet1"
+              }
+            },
+            "connection": "kavita_kaushik@risebird.io (owned by Harshit Jajoo)",
+            "inputs": [
+              {
+                "input": "position",
+                "title": "Insert at",
+                "description": "If unset: Bottom of sheet",
+                "type": "string",
+                "enum": [
+                  "Top of sheet",
+                  "Bottom of sheet",
+                  "Append to table"
+                ]
+              },
+              {
+                "input": "Job Title",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.job_title"
+                }
+              },
+              {
+                "input": "Subject",
+                "type": "string",
+                "value": {
+                  "ref": "trigger.Subject"
+                }
+              },
+              {
+                "input": "Name",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.name"
+                }
+              },
+              {
+                "input": "Email",
+                "type": "string",
+                "format": "email",
+                "value": {
+                  "ref": "3wfaft.email"
+                }
+              },
+              {
+                "input": "Phone",
+                "type": "number",
+                "value": {
+                  "ref": "3wfaft.phone"
+                }
+              },
+              {
+                "input": "Availability Intent",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.availability_intent"
+                }
+              },
+              {
+                "input": "Mail Body Intent",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.mail_body_intent"
+                }
+              },
+              {
+                "input": "Concerns or Not Interested Intent",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.concerns_or_not_interested"
+                }
+              },
+              {
+                "input": "Resume Link",
+                "type": "string",
+                "value": {
+                  "ref": "lxkuyi.agg_xhvxqh[0].File URL"
+                }
+              },
+              {
+                "input": "Resume Fitment",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.resume_fitment"
+                }
+              },
+              {
+                "input": "MagName",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.mag_name"
+                }
+              },
+              {
+                "input": "IRF ID",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.irf_id"
+                }
+              },
+              {
+                "input": "Has Login Credentials",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.has_login_credentials"
+                }
+              },
+              {
+                "input": "Slots Per Day",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.slots_per_day"
+                }
+              },
+              {
+                "input": "Time Frame",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.time_frame"
+                }
+              }
+            ],
+            "effectiveOutputSchema": {
+              "$ref": "#/resource-types/sheets.row[130VfvCLo7uHiiZ3-2FsVq8Hf5-UEEKmDftZybhE_-G0::0]"
+            }
+          }
+        ]
+      },
+      {
+        "threadId": "lxkuyi_each",
+        "ancestors": [
+          "main",
+          "9v9d3j_yivv37"
+        ],
+        "parameterId": "lxkuyi_each",
+        "parameter": {
+          "title": "File",
+          "effectiveOutputSchema": {
+            "type": "file"
+          }
+        },
+        "steps": [
+          {
+            "stepId": "xhvxqh",
+            "stepType": "drive.uploadFile",
+            "stepNr": "Step 5",
+            "title": "Upload file",
+            "connection": "kavita_kaushik@risebird.io (owned by Harshit Jajoo)",
+            "inputs": [
+              {
+                "input": "parent",
+                "title": "Parent folder",
+                "description": "If unset: My Drive",
+                "type": "resource",
+                "resourceTypeId": "drive.folder",
+                "value": {
+                  "pointer": "drive.folder/10C8_yxOWifuoZM-PJmkv8ICeBpGES5pe",
+                  "label": "RB Interviewer Email Availability Internal"
+                }
+              },
+              {
+                "input": "file",
+                "type": "file",
+                "value": {
+                  "ref": "lxkuyi_each"
+                }
+              },
+              {
+                "input": "name",
+                "type": "string",
+                "value": {
+                  "ref": "lxkuyi_each.fileName"
+                }
+              }
+            ],
+            "effectiveOutputSchema": {
+              "$ref": "#/resource-types/drive.file"
+            }
+          }
+        ]
+      },
+      {
+        "threadId": "9v9d3j_nplwq1",
+        "ancestors": [
+          "main"
+        ],
+        "parameterId": "9v9d3j_nplwq1",
+        "steps": [
+          {
+            "stepId": "7a6yi8",
+            "stepType": "sheets.createRow",
+            "stepNr": "Step 7",
+            "title": "Add row to sheet",
+            "scope": {
+              "title": "Sheet",
+              "type": "resource",
+              "resourceTypeId": "sheets.sheet[130VfvCLo7uHiiZ3-2FsVq8Hf5-UEEKmDftZybhE_-G0]",
+              "value": {
+                "pointer": "sheets.sheet[130VfvCLo7uHiiZ3-2FsVq8Hf5-UEEKmDftZybhE_-G0]/0",
+                "label": "RB Interviewer Email Availability Relay Internal · Sheet1"
+              }
+            },
+            "connection": "kavita_kaushik@risebird.io (owned by Harshit Jajoo)",
+            "inputs": [
+              {
+                "input": "position",
+                "title": "Insert at",
+                "description": "If unset: Bottom of sheet",
+                "type": "string",
+                "enum": [
+                  "Top of sheet",
+                  "Bottom of sheet",
+                  "Append to table"
+                ]
+              },
+              {
+                "input": "Job Title",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.job_title"
+                }
+              },
+              {
+                "input": "Subject",
+                "type": "string",
+                "value": {
+                  "ref": "trigger.Subject"
+                }
+              },
+              {
+                "input": "Name",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.name"
+                }
+              },
+              {
+                "input": "Email",
+                "type": "string",
+                "format": "email",
+                "value": {
+                  "ref": "3wfaft.email"
+                }
+              },
+              {
+                "input": "Phone",
+                "type": "number",
+                "value": {
+                  "ref": "3wfaft.phone"
+                }
+              },
+              {
+                "input": "Availability Intent",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.availability_intent"
+                }
+              },
+              {
+                "input": "Mail Body Intent",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.mail_body_intent"
+                }
+              },
+              {
+                "input": "Concerns or Not Interested Intent",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.concerns_or_not_interested"
+                }
+              },
+              {
+                "input": "Resume Link",
+                "type": "string",
+                "value": "None"
+              },
+              {
+                "input": "Resume Fitment",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.resume_fitment"
+                }
+              },
+              {
+                "input": "MagName",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.mag_name"
+                }
+              },
+              {
+                "input": "IRF ID",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.irf_id"
+                }
+              },
+              {
+                "input": "Has Login Credentials",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.has_login_credentials"
+                }
+              },
+              {
+                "input": "Slots Per Day",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.has_login_credentials"
+                }
+              },
+              {
+                "input": "Time Frame",
+                "type": "string",
+                "value": {
+                  "ref": "3wfaft.time_frame"
+                }
+              }
+            ],
+            "effectiveOutputSchema": {
+              "$ref": "#/resource-types/sheets.row[130VfvCLo7uHiiZ3-2FsVq8Hf5-UEEKmDftZybhE_-G0::0]"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

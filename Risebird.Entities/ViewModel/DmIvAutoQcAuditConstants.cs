@@ -13,6 +13,15 @@ namespace Risebird.Entities.ViewModel
         public const string SourceRiskAuditManual = "risk_audit_manual";
         public const string RiskAuditTag = "irf_audit_risk_removal";
 
+        // IRF Audit recommendation thresholds — MUST match DECLARE values in
+        // usp_GetIrfAuditInterviewerRiskBreakdown / usp_GetInterviewerRiskOverview*.
+        public const int IrfAuditMinVolume = 3;
+        public const decimal IrfAuditRemoveRatio = 0.50m;
+        public const decimal IrfAuditHighSevRatioRem = 0.25m;
+        public const decimal IrfAuditWatchRatio = 0.25m;
+        /// <summary>Default High-Risk Interviewers list filter (OverallRiskRatio >= this OR any P0).</summary>
+        public const decimal IrfAuditOverviewDefaultMinRiskRatio = 0.25m;
+
         /// <summary>Max interviews processed per Refresh-risk click.</summary>
         public const int RiskCategoryBackfillBatchSize = 100;
         /// <summary>Max batches per Refresh-risk HTTP call (avoids timeout while filling empty IRFs).</summary>
