@@ -828,6 +828,41 @@ namespace Risebird.Repository
             return false;
         }
 
+        public async Task<bool> SaveCodingAssessment(CodingAssessment obj)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", obj.SessionId);
+                    parameters.Add("@QuestionId", obj.QuestionId);
+                    parameters.Add("@QuestionText", obj.QuestionText);
+                    parameters.Add("@CodeLanguage", obj.CodeLanguage);
+                    parameters.Add("@SubmittedCode", obj.SubmittedCode);
+                    parameters.Add("@TimeLimitInMinutes", obj.TimeLimitInMinutes);
+                    parameters.Add("@TimeStarted", obj.TimeStarted);
+                    parameters.Add("@TimeCompleted", obj.TimeCompleted);
+                    parameters.Add("@TimeTakenInSeconds", obj.TimeTakenInSeconds);
+                    parameters.Add("@IsTimeExpired", obj.IsTimeExpired);
+                    parameters.Add("@CreatedBy", obj.CreatedBy);
+
+                    await SqlMapper.QueryAsync(con, "usp_SaveCodingAssessment", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
         public async Task<TypingSpeedSampleText> GetRandomTypingSpeedSampleText()
         {
             try

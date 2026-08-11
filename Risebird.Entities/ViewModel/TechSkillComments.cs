@@ -28,5 +28,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsListeningComprehension { get; set; }
         public string ListeningAudioUrl { get; set; }
         public string ListeningAudioTranscription { get; set; }
+        public bool IsCodingQuestion { get; set; }
+        public int? CodingTimeLimitInMinutes { get; set; }
     }
 }

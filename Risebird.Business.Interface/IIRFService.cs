@@ -159,7 +159,7 @@ namespace Risebird.Business.Interface
         Task<IRFInstructionDetailsVM> GetFormatanddifficultylevel(int irf);
         Task<bool> AddIRFSampleQuestions(TechSkillComments skillComments);
         Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy);
-        Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer);
+        Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer, bool isCodingQuestion = false, int? codingTimeLimitInMinutes = null);
         Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id);
         Task<bool> DeleteSkillChannelSampleQuestions(int id);
         Task<bool> UpdateSkillChannelEmbeddableUrl(string irfId, string embedUrl);
