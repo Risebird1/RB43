@@ -16,6 +16,7 @@
                                                     <th class="table_heading b-right">Skill Name</th>
                                                     <th class="table_heading b-right">Questions</th>
                                                     <th class="table_heading b-right">Expected Answer</th>
+                                                    <th class="table_heading b-right text-center">Coding Question</th>
                                                     <th colspan="2" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
@@ -39,7 +40,19 @@
                                                                 </div>
                                                                 <label id="expectedAnswerError_0" class="text-danger"></label>
                                                             </div>
-                                                        </td>       
+                                                        </td>
+                                                        <td class="b-right text-center">
+                                                            <label style="font-weight:normal;">
+                                                                <input type="checkbox" id="SkillCollection_0__IsCodingQuestion" name="SkillCollection[0].IsCodingQuestion" value="true" onchange="toggleCodingTimeLimit(this)" />
+                                                                Is Coding
+                                                            </label>
+                                                            <div style="margin-top:6px;">
+                                                                <input type="number" min="1" max="180" step="1" placeholder="Time limit (min)" title="Time limit in minutes for this coding question"
+                                                                       id="SkillCollection_0__CodingTimeLimitInMinutes" name="SkillCollection[0].CodingTimeLimitInMinutes"
+                                                                       class="form-control" style="width:100%;" disabled />
+                                                            </div>
+                                                            <label id="codingError_0" class="text-danger coding-error"></label>
+                                                        </td>
                                                         <td class="text-center action-area">
                                                             <div class="sample-btn">
                                                                 <span style="float:right;" id="btnMinus_0" onclick="DeleteQuestionRow(this, 'SkillCollection','Skill','Comment', 'CreatedBy', 'ExpectedAnswer')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
@@ -93,7 +106,7 @@
         var $tr = $ttc.clone();
         //var $tr = $ttc.clone();
         //var trIndexReplaced = $("#QuestionsNewTable tr").length - 1;
-        $tr.find("textarea,select,hidden").attr("name", function () { // find name in the cloned row
+        $tr.find("textarea,select,hidden,input[type=checkbox],input[type=number]").attr("name", function () { // find name in the cloned row
             var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
         }).attr("id", function () { // change id also
@@ -107,6 +120,8 @@
         // reset fields in the new row
         $tr.find("select").val("");
         $tr.find("textarea[type=text]").val("");
+        $tr.find("input[type=checkbox]").prop("checked", false);
+        $tr.find("input[type=number]").val("").prop("disabled", true);
         //$tr.find("textarea[type=text]").removeProp("readonly");
         $tr.find("input[type=hidden]").val('@Model.CreatedBy');
         var rowCount = $('#QuestionsNewTable tr').length;
@@ -139,6 +154,7 @@
 
         $ttlast.find("label").eq(0).attr("id", errorLabelIdValue1);
         $ttlast.find("label").eq(1).attr("id", errorLabelIdValue2);
+        $ttlast.find("label.coding-error").attr("id", "codingError_" + finalIndex);
         
         //$ttlast.find("label").removeAttr("name");
         // Find the affected form
@@ -196,6 +212,14 @@
                     var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
                     elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
                     elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
+
+                    ["IsCodingQuestion", "CodingTimeLimitInMinutes"].forEach(function (suffix) {
+                        var codingElem = document.getElementById(collectionName + "_" + i + "__" + suffix);
+                        if (codingElem) {
+                            codingElem.id = collectionName + "_" + (i - 1) + "__" + suffix;
+                            codingElem.name = collectionName + "[" + (i - 1) + "]." + suffix;
+                        }
+                    });
                 }
             }
         }
@@ -203,6 +227,21 @@
 </script>
 
 <script>
+    // The time limit only applies to coding questions, so it stays disabled (and unposted) otherwise
+    function toggleCodingTimeLimit(checkbox) {
+        var timeLimitInput = $(checkbox).closest('tr').find('input[type=number]');
+        if (checkbox.checked) {
+            timeLimitInput.prop('disabled', false);
+            if (!timeLimitInput.val()) {
+                timeLimitInput.val(15);
+            }
+        }
+        else {
+            timeLimitInput.prop('disabled', true).val('');
+            $(checkbox).closest('tr').find('label.coding-error').html('');
+        }
+    }
+
     function errorMessage() {
         var items = $('[id^=SkillCollection][id$="Comment"]');
         for (j = 0; j < items.length; j++) {
@@ -211,6 +250,21 @@
                 error.textContent = "Question field should not be blank";
                 error.style.color = "red";
                 return false;
+            }
+
+            var codingCheckbox = document.getElementById('SkillCollection_' + j + '__IsCodingQuestion');
+            var codingErrorLabel = document.getElementById('codingError_' + j);
+            if (codingErrorLabel) {
+                codingErrorLabel.innerHTML = "";
+            }
+            if (codingCheckbox && codingCheckbox.checked) {
+                var timeLimit = parseInt($('#SkillCollection_' + j + '__CodingTimeLimitInMinutes').val(), 10);
+                if (isNaN(timeLimit) || timeLimit < 1 || timeLimit > 180) {
+                    if (codingErrorLabel) {
+                        codingErrorLabel.innerHTML = "Enter a time limit between 1 and 180 minutes.";
+                    }
+                    return false;
+                }
             }
         }
         document.getElementById("questionform").submit();

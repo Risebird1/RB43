@@ -32,6 +32,7 @@ namespace Risebird.Business.Interface
         Task<bool> SaveTypingSpeedAssessment(TypingSpeedAssessment obj);
         Task<List<TypingSpeedAssessment>> GetTypingSpeedAssessmentBySessionId(string sessionId);
         Task<bool> SaveListeningComprehensionAssessment(ListeningComprehensionAssessment obj);
+        Task<bool> SaveCodingAssessment(CodingAssessment obj);
         Task<TypingSpeedSampleText> GetRandomTypingSpeedSampleText();
         Task LogAIInterviewException(string sessionId, string httpMethod, Exception ex, LogLevelInfo logLevel = LogLevelInfo.Exception);
     }

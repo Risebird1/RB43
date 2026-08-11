@@ -3967,11 +3967,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer)
+        public async Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer, bool isCodingQuestion = false, int? codingTimeLimitInMinutes = null)
         {
             try
             {
-                return await _irfRepository.UpdateSkillChannelSampleQuestion(id, comment, expectedAnswer);
+                return await _irfRepository.UpdateSkillChannelSampleQuestion(id, comment, expectedAnswer, isCodingQuestion, codingTimeLimitInMinutes);
             }
             catch (Exception e)
             {

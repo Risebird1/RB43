@@ -10,7 +10,7 @@ SET QUOTED_IDENTIFIER ON
 GO  
 Create PROCEDURE [dbo].[usp_AddIRFSampleQuestions]    
 (    
-   @IRFSampleQuestionsBulkData AS [dbo].[AddIRFSampleQuestions_TableTypeV4] READONLY,  --AddIRFSampleQuestions_TableTypeV3,  AddIRFSampleQuestions_TableType, AddIRFSampleQuestions_TableTypeV2
+   @IRFSampleQuestionsBulkData AS [dbo].[AddIRFSampleQuestions_TableTypeV5] READONLY,  --AddIRFSampleQuestions_TableTypeV4, AddIRFSampleQuestions_TableTypeV3,  AddIRFSampleQuestions_TableType, AddIRFSampleQuestions_TableTypeV2
    @IRFId int
 )    
 AS    
@@ -18,8 +18,11 @@ BEGIN
  begin try  
   begin tran 
 	
-   INSERT INTO SkillChannelSampleQuestions([IRFId] ,[Skill],[Comment], CreatedBy, SkillName, ExpectedAnswer)    
-   SELECT tscbd.IRFId, tscbd.Skill, tscbd.Comment, tscbd.CreatedBy, tscbd.SkillName, tscbd.ExpectedAnswer FROM @IRFSampleQuestionsBulkData tscbd
+   INSERT INTO SkillChannelSampleQuestions([IRFId] ,[Skill],[Comment], CreatedBy, SkillName, ExpectedAnswer, IsCodingQuestion, CodingTimeLimitInMinutes)    
+   SELECT tscbd.IRFId, tscbd.Skill, tscbd.Comment, tscbd.CreatedBy, tscbd.SkillName, tscbd.ExpectedAnswer,
+          ISNULL(tscbd.IsCodingQuestion, 0),
+          CASE WHEN ISNULL(tscbd.IsCodingQuestion, 0) = 1 THEN tscbd.CodingTimeLimitInMinutes ELSE NULL END
+   FROM @IRFSampleQuestionsBulkData tscbd
   
 commit tran  
  end try  

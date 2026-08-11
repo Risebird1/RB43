@@ -20,5 +20,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsFlaggedForSentimentAnalysis { get; set; }
         public string GeneratedPayload { get; set; }
         public bool IsGeneratedByAi { get; set; }
+        public bool IsCodingQuestion { get; set; }
+        public int? CodingTimeLimitInMinutes { get; set; }
     }
 }

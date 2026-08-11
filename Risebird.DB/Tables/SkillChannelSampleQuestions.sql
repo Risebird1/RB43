@@ -131,6 +131,26 @@ BEGIN
     Add ListeningAudioTranscription nvarchar(max) NULL
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsCodingQuestion')
+      AND Object_ID = Object_ID(N'SkillChannelSampleQuestions'))
+BEGIN
+    ALTER TABLE SkillChannelSampleQuestions
+    Add IsCodingQuestion bit NULL DEFAULT 0
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CodingTimeLimitInMinutes')
+      AND Object_ID = Object_ID(N'SkillChannelSampleQuestions'))
+BEGIN
+    ALTER TABLE SkillChannelSampleQuestions
+    Add CodingTimeLimitInMinutes int NULL
+END
+
 End
 GO
 
