@@ -11,6 +11,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Business.Interface;
 using Risebird.Repository.Interface;
+using Risebird.Web.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -2139,7 +2140,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        // ── Relay webhook (Relay.app → our server) ──────────────────────────────────
+        // ── Automation webhook (Relay.app / n8n → our server) ───────────────────────
 
         [AllowAnonymous]
         [HttpPost]
@@ -2149,12 +2150,8 @@ namespace Risebird.Web.Controllers
             try
             {
                 var expectedSecret = _configuration["RelayWebhook:NaukriOnboardingSecret"];
-                if (!string.IsNullOrWhiteSpace(expectedSecret))
-                {
-                    var incoming = Request.Headers["X-Relay-Secret"].ToString();
-                    if (incoming != expectedSecret)
-                        return Unauthorized(new { error = "Invalid secret." });
-                }
+                if (!AutomationWebhookHelper.IsSecretValid(Request.Headers, expectedSecret))
+                    return Unauthorized(new { error = "Invalid secret." });
 
                 string rawBody;
                 using (var reader = new StreamReader(Request.Body))
@@ -2169,11 +2166,10 @@ namespace Risebird.Web.Controllers
                 if (payload == null || string.IsNullOrWhiteSpace(payload.SenderEmail))
                     return BadRequest(new { error = "Missing required field: sender_email." });
 
-                DateTime? receivedAt = null;
-                if (!string.IsNullOrWhiteSpace(payload.ReceivedAt) &&
-                    DateTime.TryParse(payload.ReceivedAt, null,
-                        System.Globalization.DateTimeStyles.RoundtripKind, out var parsed))
-                    receivedAt = parsed;
+                var platform = AutomationWebhookHelper.ResolvePlatform(payload.Source);
+                var actor    = platform == "n8n" ? "n8n Webhook" : "Relay Webhook";
+
+                DateTime? receivedAt = AutomationWebhookHelper.ParseTimestamp(payload.ReceivedAt);
 
                 string blobResumeUrl = null;
                 string sourceResumeUrl = payload.ResumeLink?.Trim();
@@ -2216,7 +2212,7 @@ namespace Risebird.Web.Controllers
                 }
 
                 string relayEmail = payload.CandidateEmail?.Trim();
-                // Relay frequently sends phone numbers with hyphens / spaces / country code —
+                // The agents frequently send phone numbers with hyphens / spaces / country code —
                 // sanitise to the bare national number at ingestion.
                 string relayPhone = Risebird.CommonHelper.PhoneNumberHelper.StripCountryCode(payload.CandidatePhone?.Trim());
                 bool preParsed = !string.IsNullOrWhiteSpace(relayEmail)
@@ -2255,15 +2251,15 @@ namespace Risebird.Web.Controllers
                 if (newId > 0)
                 {
                     await _repository.InsertHistoryAsync(newId, "RecordCreated", "\u2014",
-                        $"Candidate: {record.CandidateName}, MAG: {record.MagName}, Source: Naukri", "Relay Webhook");
+                        $"Candidate: {record.CandidateName}, MAG: {record.MagName}, Source: Naukri", actor);
                     if (preParsed)
                         await _repository.InsertHistoryAsync(newId, "RelayPreParsed", "\u2014",
-                            $"Email: {relayEmail ?? "—"}, Phone: {relayPhone ?? "—"} (extracted by Relay agent)", "Relay Webhook");
+                            $"Email: {relayEmail ?? "—"}, Phone: {relayPhone ?? "—"} (extracted by {platform} agent)", actor);
                     if (!string.IsNullOrWhiteSpace(record.LinkedInMatch))
                         await _repository.InsertHistoryAsync(newId, "LinkedInVerified", "\u2014",
                             $"LinkedIn: {record.LinkedInMatch} (confidence {record.LinkedInConfidence?.ToString() ?? "—"}) — {record.LinkedInUrl ?? "no url"}"
                             + (string.IsNullOrWhiteSpace(record.LinkedInReason) ? "" : $" — {record.LinkedInReason}")
-                            + " (verified by Relay agent)", "Relay Webhook");
+                            + $" (verified by {platform} agent)", actor);
                 }
 
                 return Ok(new

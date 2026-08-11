@@ -191,6 +191,12 @@ namespace Risebird.Entities.ViewModel
 
         [JsonProperty("linkedin_reason")]
         public string LinkedInReason            { get; set; }
+
+        // Automation platform that produced this payload ('Relay' | 'n8n'). Absent on legacy
+        // Relay.app calls, which are treated as 'Relay'. Distinct from the prospect's channel
+        // Source, which stays 'Naukri' regardless of which platform ran the workflow.
+        [JsonProperty("source")]
+        public string Source                    { get; set; }
     }
 
     public class RelayLinkedInPayload

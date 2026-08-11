@@ -11,6 +11,7 @@ using Risebird.Entities.Helpers;
 using Risebird.Entities.ViewModel;
 using Risebird.Business.Interface;
 using Risebird.Repository.Interface;
+using Risebird.Web.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -2066,52 +2067,6 @@ namespace Risebird.Web.Controllers
 
         // ── Automation webhook (Relay.app / n8n → our server) ───────────────────────
 
-        // 'X-Relay-Secret' is the original Relay.app header and stays supported so the two
-        // platforms can run side by side during the migration.
-        private static readonly string[] AvailabilityWebhookSecretHeaders =
-            { "X-Webhook-Secret", "X-Relay-Secret", "X-N8N-Secret" };
-
-        private bool IsWebhookSecretValid(string expectedSecret)
-        {
-            if (string.IsNullOrWhiteSpace(expectedSecret))
-                return true;   // validation switched off by configuration
-
-            foreach (var header in AvailabilityWebhookSecretHeaders)
-            {
-                var incoming = Request.Headers[header].ToString();
-                if (!string.IsNullOrEmpty(incoming) && incoming == expectedSecret)
-                    return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Parses a webhook timestamp to UTC. Relay sent ISO-8601; n8n forwards Gmail's
-        /// RFC 2822 date, so both have to normalize to a value comparable with UtcNow.
-        /// </summary>
-        private static DateTime? ParseWebhookTimestamp(string value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-                return null;
-
-            if (DateTimeOffset.TryParse(value, System.Globalization.CultureInfo.InvariantCulture,
-                    System.Globalization.DateTimeStyles.AssumeUniversal, out var offset))
-                return offset.UtcDateTime;
-
-            return null;
-        }
-
-        /// <summary>
-        /// Normalizes the reported automation platform to the values the availability grid
-        /// filters and badges on. Payloads without a source are legacy Relay.app calls.
-        /// </summary>
-        private static string ResolveWebhookSource(string source)
-        {
-            return string.Equals((source ?? "").Trim(), "n8n", StringComparison.OrdinalIgnoreCase)
-                ? "n8n"
-                : "Relay";
-        }
-
         [AllowAnonymous]
         [HttpPost]
         [IgnoreAntiforgeryToken]
@@ -2120,7 +2075,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 var expectedSecret = _configuration["RelayWebhook:InterviewerAvailabilitySecret"];
-                if (!IsWebhookSecretValid(expectedSecret))
+                if (!AutomationWebhookHelper.IsSecretValid(Request.Headers, expectedSecret))
                     return Unauthorized(new { error = "Invalid secret." });
 
                 string rawBody;
@@ -2136,9 +2091,9 @@ namespace Risebird.Web.Controllers
                 if (payload == null || string.IsNullOrWhiteSpace(payload.SenderEmail))
                     return BadRequest(new { error = "Missing required field: sender_email." });
 
-                var source     = ResolveWebhookSource(payload.Source);
+                var source     = AutomationWebhookHelper.ResolvePlatform(payload.Source);
                 var actor      = source == "n8n" ? "n8n" : "Relay.app";
-                var receivedAt = ParseWebhookTimestamp(payload.ReceivedAt);
+                var receivedAt = AutomationWebhookHelper.ParseTimestamp(payload.ReceivedAt);
 
                 if (receivedAt.HasValue && receivedAt.Value < DateTime.UtcNow.AddHours(-46))
                     return Ok(new { success = false, skipped = true, reason = "Email older than 46 hours — skipped." });
