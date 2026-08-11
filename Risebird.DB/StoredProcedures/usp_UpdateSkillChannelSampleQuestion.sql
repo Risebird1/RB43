@@ -12,14 +12,18 @@ GO
 CREATE PROCEDURE [dbo].[usp_UpdateSkillChannelSampleQuestion]
     @id int,
     @comment nvarchar(max),
-    @expectedAnswer nvarchar(max) = NULL
+    @expectedAnswer nvarchar(max) = NULL,
+    @isCodingQuestion bit = 0,
+    @codingTimeLimitInMinutes int = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
 
     UPDATE SkillChannelSampleQuestions
     SET Comment = @comment,
-        ExpectedAnswer = @expectedAnswer
+        ExpectedAnswer = @expectedAnswer,
+        IsCodingQuestion = ISNULL(@isCodingQuestion, 0),
+        CodingTimeLimitInMinutes = CASE WHEN ISNULL(@isCodingQuestion, 0) = 1 THEN @codingTimeLimitInMinutes ELSE NULL END
     WHERE id = @id;
 END
 GO

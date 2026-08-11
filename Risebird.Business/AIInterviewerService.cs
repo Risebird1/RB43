@@ -403,6 +403,19 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<bool> SaveCodingAssessment(CodingAssessment obj)
+        {
+            try
+            {
+                return await _aiInterviewerRepository.SaveCodingAssessment(obj);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         public async Task<TypingSpeedSampleText> GetRandomTypingSpeedSampleText()
         {
             try

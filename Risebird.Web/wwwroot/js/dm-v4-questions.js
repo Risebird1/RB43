@@ -146,11 +146,20 @@
                     var video = q.aiQuestionVideoLink || q.AIQuestionVideoLink || '';
                     var hasComment = !!$.trim(comment);
                     var hasVideo = !!$.trim(video);
+                    var isCoding = q.isCodingQuestion || q.IsCodingQuestion;
+                    var codingTimeLimit = q.codingTimeLimitInMinutes || q.CodingTimeLimitInMinutes;
 
                     html += '<div class="dm-v4-question-row" data-question-id="' + qid + '">';
                     html += '<div class="dm-v4-question-col">';
                     html += '<div class="dm-v4-question-label">Question Q' + (qi + 1) + '</div>';
                     html += '<div class="dm-v4-question-text">' + (hasComment ? escapeHtml(comment) : '<span class="dm-v4-question-text--placeholder">Add question…</span>') + '</div>';
+                    if (isCoding) {
+                        html += '<div class="dm-v4-question-meta"><span class="dm-v4-badge dm-v4-badge--neutral dm-v4-badge--xs">Coding';
+                        if (codingTimeLimit) {
+                            html += ' · ' + escapeHtml(String(codingTimeLimit)) + ' min';
+                        }
+                        html += '</span></div>';
+                    }
                     html += '</div><div class="dm-v4-question-col">';
                     html += '<div class="dm-v4-question-label">Expected answer</div>';
                     html += '<div class="dm-v4-question-text' + (expected ? '' : ' dm-v4-question-text--muted') + '">';

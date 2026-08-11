@@ -9570,6 +9570,24 @@ namespace Risebird.Web.Controllers
                         TempData["SuccessErrorMessageQuestions"] = "The skill-question combination added by you should contain unique entries.";
                         return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
                     }
+
+                    foreach (var question in model.SkillCollection ?? new List<SkillComment>())
+                    {
+                        if (!question.IsCodingQuestion)
+                        {
+                            question.CodingTimeLimitInMinutes = null;
+                            continue;
+                        }
+
+                        if (!question.CodingTimeLimitInMinutes.HasValue
+                            || question.CodingTimeLimitInMinutes.Value < 1
+                            || question.CodingTimeLimitInMinutes.Value > 180)
+                        {
+                            TempData["SuccessErrorMessageQuestions"] = "A coding question needs a time limit between 1 and 180 minutes.";
+                            return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
+                        }
+                    }
+
                     if (await _irfService.AddIRFSampleQuestions(model))
                     {
                         TempData["SuccessErrorMessageQuestions"] = "Question(s) saved Successfully!";
@@ -9727,7 +9745,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> SaveDeliveryHeadSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, int? id = null)
+        public async Task<JsonResult> SaveDeliveryHeadSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, int? id = null, bool isCodingQuestion = false, int? codingTimeLimitInMinutes = null)
         {
             try
             {
@@ -9745,10 +9763,19 @@ namespace Risebird.Web.Controllers
                 {
                     return Json(new { success = false, message = "Question must not exceed 300 characters." });
                 }
+                if (isCodingQuestion
+                    && (!codingTimeLimitInMinutes.HasValue || codingTimeLimitInMinutes.Value < 1 || codingTimeLimitInMinutes.Value > 180))
+                {
+                    return Json(new { success = false, message = "A coding question needs a time limit between 1 and 180 minutes." });
+                }
+                if (!isCodingQuestion)
+                {
+                    codingTimeLimitInMinutes = null;
+                }
                 var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
                 if (id.HasValue && id.Value > 0)
                 {
-                    var ok = await _irfService.UpdateSkillChannelSampleQuestion(id.Value, comment.Trim(), expectedAnswer?.Trim());
+                    var ok = await _irfService.UpdateSkillChannelSampleQuestion(id.Value, comment.Trim(), expectedAnswer?.Trim(), isCodingQuestion, codingTimeLimitInMinutes);
                     return Json(new { success = ok, id = id.Value });
                 }
                 var model = new TechSkillComments
@@ -9762,7 +9789,9 @@ namespace Risebird.Web.Controllers
                             SkillName = skillName.Trim(),
                             Comment = comment.Trim(),
                             ExpectedAnswer = expectedAnswer?.Trim(),
-                            CreatedBy = emailid
+                            CreatedBy = emailid,
+                            IsCodingQuestion = isCodingQuestion,
+                            CodingTimeLimitInMinutes = codingTimeLimitInMinutes
                         }
                     }
                 };

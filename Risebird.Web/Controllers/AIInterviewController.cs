@@ -146,6 +146,8 @@ namespace Risebird.Web.Controllers
                                     model.IsListeningComprehensionQuestion = sampleQuestion.IsListeningComprehension;
                                     model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
                                     model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
+                                    model.IsCodingQuestion = sampleQuestion.IsCodingQuestion;
+                                    model.CodingTimeLimitInMinutes = sampleQuestion.CodingTimeLimitInMinutes;
 
                                     // Fetch random typing sample text from database if it's a typing speed question
                                     if (sampleQuestion.IsTypingSpeedAssessment)
@@ -318,6 +320,8 @@ namespace Risebird.Web.Controllers
                                                 model.IsListeningComprehensionQuestion = sampleQuestion.IsListeningComprehension;
                                                 model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
                                                 model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
+                                                model.IsCodingQuestion = sampleQuestion.IsCodingQuestion;
+                                                model.CodingTimeLimitInMinutes = sampleQuestion.CodingTimeLimitInMinutes;
 
                                                 // Fetch random typing sample text from database if it's a typing speed question
                                                 if (sampleQuestion.IsTypingSpeedAssessment)
@@ -934,8 +938,15 @@ namespace Risebird.Web.Controllers
                     string tranScribedResponse = string.Empty;
                     string codeResponse = string.Empty;
 
+                    // For coding questions the submitted code itself is the answer, so keep it as the transcript entry
+                    if (model.IsCodingQuestion)
+                    {
+                        userMessage = !string.IsNullOrWhiteSpace(model.CodingSubmittedCode)
+                            ? model.CodingSubmittedCode
+                            : "Typed Out";
+                    }
                     // For typing speed or listening comprehension assessments, skip audio transcription
-                    if (model.IsTypingSpeedQuestion || model.IsListeningComprehensionQuestion)
+                    else if (model.IsTypingSpeedQuestion || model.IsListeningComprehensionQuestion)
                     {
                         userMessage = "Typed Out";
                     }
@@ -1304,6 +1315,34 @@ namespace Risebird.Web.Controllers
                             }
                         }
 
+                        // Save coding assessment if this was a coding question
+                        if (model.IsCodingQuestion)
+                        {
+                            try
+                            {
+                                var codingAssessment = new CodingAssessment
+                                {
+                                    SessionId = model.SessionId.ToString(),
+                                    QuestionId = model.CurrentQuestionId,
+                                    QuestionText = model.CurrentQuestion,
+                                    CodeLanguage = model.CodingLanguage,
+                                    SubmittedCode = model.CodingSubmittedCode,
+                                    TimeLimitInMinutes = model.CodingTimeLimitInMinutes,
+                                    TimeStarted = TryParseInterviewDateTime(model.CodingStartTime) ?? DateTime.Now,
+                                    TimeCompleted = TryParseInterviewDateTime(model.CodingEndTime) ?? DateTime.Now,
+                                    TimeTakenInSeconds = model.CodingTimeTaken,
+                                    IsTimeExpired = model.CodingIsTimeExpired,
+                                    CreatedBy = model.candidateName
+                                };
+                                await _aiinterviewerService.SaveCodingAssessment(codingAssessment);
+                            }
+                            catch (Exception ex)
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                // Continue even if coding assessment save fails - don't block the interview
+                            }
+                        }
+
                         await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
 
                         var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(model.InterviewId, model.IRFId);
@@ -1324,6 +1363,15 @@ namespace Risebird.Web.Controllers
                             model.IsListeningComprehensionQuestion = sampleQuestion.IsListeningComprehension;
                             model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
                             model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
+                            model.IsCodingQuestion = sampleQuestion.IsCodingQuestion;
+                            model.CodingTimeLimitInMinutes = sampleQuestion.CodingTimeLimitInMinutes;
+                            // Drop the answer just saved so it is not re-rendered against the next question
+                            model.CodingSubmittedCode = null;
+                            model.CodingLanguage = null;
+                            model.CodingStartTime = null;
+                            model.CodingEndTime = null;
+                            model.CodingTimeTaken = 0;
+                            model.CodingIsTimeExpired = false;
 
                             if (!string.IsNullOrEmpty(model.CurrentQuestion))//&& string.IsNullOrEmpty(model.AIInterviewerAudioLink)
                             {
@@ -1334,6 +1382,8 @@ namespace Risebird.Web.Controllers
                                 model.IsListeningComprehensionQuestion = sampleQuestion.IsListeningComprehension;
                                 model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
                                 model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
+                                model.IsCodingQuestion = sampleQuestion.IsCodingQuestion;
+                                model.CodingTimeLimitInMinutes = sampleQuestion.CodingTimeLimitInMinutes;
 
                                 // Fetch random typing sample text from database if it's a typing speed question
                                 if (sampleQuestion.IsTypingSpeedAssessment)
@@ -1708,7 +1758,8 @@ namespace Risebird.Web.Controllers
 
             if (string.IsNullOrWhiteSpace(userMessage)
                 && !model.IsTypingSpeedQuestion
-                && !model.IsListeningComprehensionQuestion)
+                && !model.IsListeningComprehensionQuestion
+                && !model.IsCodingQuestion)
             {
                 return View("ExitModalPartial", CreateAnswerSubmitErrorView(
                     model.SessionId,
@@ -1718,6 +1769,7 @@ namespace Risebird.Web.Controllers
 
             if (!model.IsTypingSpeedQuestion
                 && !model.IsListeningComprehensionQuestion
+                && !model.IsCodingQuestion
                 && (model.VideoFile == null || model.VideoFile.Length == 0))
             {
                 return View("ExitModalPartial", CreateAnswerSubmitErrorView(

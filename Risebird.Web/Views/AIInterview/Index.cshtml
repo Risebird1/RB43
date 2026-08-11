@@ -2733,8 +2733,10 @@
     function answerSubmitNeedsVideo() {
         const typingField = document.querySelector('input[name="IsTypingSpeedQuestion"]');
         const listeningField = document.querySelector('input[name="IsListeningComprehensionQuestion"]');
+        const codingField = document.querySelector('input[name="IsCodingQuestion"]');
         if (typingField && String(typingField.value).toLowerCase() === 'true') return false;
         if (listeningField && String(listeningField.value).toLowerCase() === 'true') return false;
+        if (codingField && String(codingField.value).toLowerCase() === 'true') return false;
         return true;
     }
 
@@ -5028,6 +5030,363 @@
             addListeningHiddenFormFields();
             showListeningComprehensionModal();
         }, 1000); // Show modal 1 second after page load
+
+    })();
+
+    // ============================================
+    // CODING QUESTION ASSESSMENT
+    // ============================================
+    (function () {
+        const isCodingQuestion = @Json.Serialize(Model.IsCodingQuestion);
+
+        if (!isCodingQuestion) {
+            return; // Not a coding question, skip this functionality
+        }
+
+        const DEFAULT_TIME_LIMIT_MINUTES = 15;
+        const configuredTimeLimit = @Json.Serialize(Model.CodingTimeLimitInMinutes);
+        const timeLimitMinutes = (configuredTimeLimit && configuredTimeLimit > 0) ? configuredTimeLimit : DEFAULT_TIME_LIMIT_MINUTES;
+        const questionText = @Json.Serialize(Model.CurrentQuestion);
+
+        let codingStartTime = null;
+        let codingEndTime = null;
+        let codingInProgress = false;
+        let codingSubmitted = false;
+        let codingEditor = null;
+        let countdownInterval = null;
+
+        function formatClock(totalSeconds) {
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return minutes + ':' + seconds.toString().padStart(2, '0');
+        }
+
+        function currentCode() {
+            if (codingEditor) {
+                return codingEditor.getValue();
+            }
+            const fallback = document.getElementById('codingFallbackArea');
+            return fallback ? fallback.value : '';
+        }
+
+        function buildCodingEditor() {
+            const container = document.getElementById('codingEditorContainer');
+            if (!container) return;
+
+            if (typeof CodeMirror === 'undefined') {
+                // Fall back to a plain textarea so the candidate is never blocked
+                container.innerHTML = '<textarea id="codingFallbackArea" style="width:100%; height:300px; font-family:Consolas,Monaco,monospace; font-size:13px; padding:10px; border:2px solid #ddd; border-radius:6px;"></textarea>';
+                return;
+            }
+
+            codingEditor = CodeMirror(container, {
+                value: '',
+                mode: 'text',
+                theme: 'default',
+                lineNumbers: true,
+                lineWrapping: true,
+                indentUnit: 4,
+                indentWithTabs: false,
+                smartIndent: true,
+                autoCloseBrackets: true,
+                matchBrackets: true,
+                styleActiveLine: true,
+                extraKeys: {
+                    "Tab": function (cm) {
+                        if (cm.somethingSelected()) {
+                            cm.indentSelection("add");
+                        } else {
+                            cm.replaceSelection("    ", "end");
+                        }
+                    },
+                    "Shift-Tab": function (cm) {
+                        cm.indentSelection("subtract");
+                    },
+                    "Ctrl-C": function () { return false; },
+                    "Ctrl-V": function () { return false; },
+                    "Ctrl-X": function () { return false; },
+                    "Cmd-C": function () { return false; },
+                    "Cmd-V": function () { return false; },
+                    "Cmd-X": function () { return false; }
+                }
+            });
+
+            codingEditor.setSize('100%', 320);
+
+            codingEditor.on('contextmenu', function (cm, event) {
+                event.preventDefault();
+                return false;
+            });
+            ['paste', 'copy', 'cut'].forEach(function (evt) {
+                codingEditor.on(evt, function (cm, event) {
+                    event.preventDefault();
+                    return false;
+                });
+            });
+
+            const langSelector = document.getElementById('codingLanguage');
+            if (langSelector) {
+                langSelector.addEventListener('change', function () {
+                    codingEditor.setOption('mode', codeMirrorModeFor(this.value));
+                });
+            }
+
+            setTimeout(function () { codingEditor.refresh(); }, 50);
+        }
+
+        function codeMirrorModeFor(language) {
+            switch (language) {
+                case 'javascript': return 'javascript';
+                case 'json': return { name: 'javascript', json: true };
+                case 'python': return 'python';
+                case 'java': return 'text/x-java';
+                case 'csharp': return 'text/x-csharp';
+                case 'cpp': return 'text/x-c++src';
+                case 'htmlmixed': return 'htmlmixed';
+                case 'css': return 'css';
+                case 'sql': return 'sql';
+                case 'xml': return 'xml';
+                default: return 'text';
+            }
+        }
+
+        function selectedLanguage() {
+            const langSelector = document.getElementById('codingLanguage');
+            return langSelector ? langSelector.value : 'text';
+        }
+
+        function captureCodingFields(isTimeExpired) {
+            codingEndTime = new Date();
+            const timeTaken = codingStartTime ? (codingEndTime - codingStartTime) / 1000 : 0;
+
+            document.getElementById('CodingSubmittedCode').value = currentCode();
+            document.getElementById('CodingLanguage').value = selectedLanguage();
+            document.getElementById('CodingStartTime').value = codingStartTime ? codingStartTime.toISOString() : '';
+            document.getElementById('CodingEndTime').value = codingEndTime.toISOString();
+            document.getElementById('CodingTimeTaken').value = timeTaken.toFixed(2);
+            document.getElementById('CodingIsTimeExpired').value = isTimeExpired ? 'true' : 'false';
+            document.getElementById('CodingTimeLimitInMinutes').value = timeLimitMinutes;
+
+            return timeTaken;
+        }
+
+        function submitCodingAnswer() {
+            const form = document.getElementById('chatForm');
+            if (form) {
+                form.submit();
+            }
+        }
+
+        // When the clock runs out the answer is submitted as-is, without a confirmation prompt
+        function handleTimeExpired() {
+            if (codingSubmitted) return;
+            codingSubmitted = true;
+
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            if (typeof stopRecording === 'function') {
+                stopRecording();
+            }
+            captureCodingFields(true);
+
+            Swal.fire({
+                title: "Time's up!",
+                text: 'Your time limit for this coding question has ended. Your code is being submitted.',
+                icon: 'info',
+                confirmButtonText: 'Continue',
+                confirmButtonColor: '#4eda92',
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            }).then(() => {
+                submitCodingAnswer();
+            });
+        }
+
+        function startCountdown() {
+            const timerValue = document.getElementById('codingTimerValue');
+            let remaining = timeLimitMinutes * 60;
+            if (timerValue) {
+                timerValue.textContent = formatClock(remaining);
+            }
+
+            countdownInterval = setInterval(() => {
+                remaining -= 1;
+                if (timerValue) {
+                    timerValue.textContent = formatClock(Math.max(remaining, 0));
+                    if (remaining <= 60) {
+                        timerValue.style.color = '#dc3545';
+                    }
+                }
+                if (remaining <= 0) {
+                    clearInterval(countdownInterval);
+                    // Firing a new modal replaces the open one, so the editor modal is dismissed here
+                    handleTimeExpired();
+                }
+            }, 1000);
+        }
+
+        function showCodingQuestionModal() {
+            Swal.fire({
+                title: 'Coding Question',
+                html: `
+                    <div style="text-align: left; margin-bottom: 20px;">
+                        <div id="codingQuestionText" style="background:#f8f9fa; padding:15px; border-radius:8px; margin-bottom:15px; border-left:4px solid #4eda92; font-size:14px; color:#333; white-space:pre-wrap;"></div>
+                        <div id="codingInstructions" style="background:#fff8e1; padding:15px; border-radius:8px; margin-bottom:15px; border-left:4px solid #ffc107;">
+                            <strong>Instructions:</strong>
+                            <ul style="margin: 10px 0 0 20px; font-size: 13px; color: #555;">
+                                <li>You have <strong>${timeLimitMinutes} minute${timeLimitMinutes > 1 ? 's' : ''}</strong> to write your solution</li>
+                                <li>Click "Start" to open the code editor and begin the timer</li>
+                                <li>Select the language you are writing in</li>
+                                <li>Copy and paste are disabled</li>
+                                <li>Video recording will run while you code</li>
+                                <li>Your code is submitted automatically when the time runs out</li>
+                            </ul>
+                        </div>
+                        <div id="codingTimerDisplay" style="display:none; text-align:center; margin-bottom:10px; font-size:18px; font-weight:bold; color:#4eda92;">
+                            Time remaining: <span id="codingTimerValue">0:00</span>
+                        </div>
+                        <div id="codingEditorWrapper" style="display:none;">
+                            <div id="codingEditorContainer" style="border:2px solid #ddd; border-radius:6px; overflow:hidden;"></div>
+                            <div style="display:flex; align-items:center; gap:10px; margin-top:10px;">
+                                <label style="font-size:13px; color:#555; margin:0;">Language:</label>
+                                <select id="codingLanguage" class="code-lang-selector" title="Select Programming Language">
+                                    <option value="text">Plain Text</option>
+                                    <option value="javascript">JavaScript</option>
+                                    <option value="python">Python</option>
+                                    <option value="java">Java</option>
+                                    <option value="csharp">C#</option>
+                                    <option value="cpp">C++</option>
+                                    <option value="htmlmixed">HTML</option>
+                                    <option value="css">CSS</option>
+                                    <option value="sql">SQL</option>
+                                    <option value="xml">XML</option>
+                                    <option value="json">JSON</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                showCancelButton: false,
+                showConfirmButton: true,
+                confirmButtonText: '<i class="fa fa-play"></i> Start',
+                confirmButtonColor: '#4eda92',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                width: '800px',
+                didOpen: () => {
+                    const questionHost = document.getElementById('codingQuestionText');
+                    if (questionHost) {
+                        questionHost.textContent = questionText || '';
+                    }
+                },
+                preConfirm: () => {
+                    const confirmBtn = Swal.getConfirmButton();
+
+                    if (!codingInProgress) {
+                        codingInProgress = true;
+                        codingStartTime = new Date();
+
+                        document.getElementById('codingInstructions').style.display = 'none';
+                        document.getElementById('codingEditorWrapper').style.display = 'block';
+                        document.getElementById('codingTimerDisplay').style.display = 'block';
+
+                        buildCodingEditor();
+                        startCountdown();
+
+                        confirmBtn.innerHTML = '<i class="fa fa-check"></i> Submit';
+                        confirmBtn.style.backgroundColor = '#28a745';
+
+                        if (typeof startRecording === 'function') {
+                            startRecording();
+                        }
+
+                        return false; // keep the modal open
+                    }
+
+                    const code = currentCode();
+                    if (!code || code.trim().length === 0) {
+                        Swal.showValidationMessage('Please write your code before submitting!');
+                        return false;
+                    }
+
+                    codingSubmitted = true;
+                    if (countdownInterval) {
+                        clearInterval(countdownInterval);
+                    }
+                    if (typeof stopRecording === 'function') {
+                        stopRecording();
+                    }
+
+                    const timeTaken = captureCodingFields(false);
+
+                    Swal.fire({
+                        title: 'Answer Recorded',
+                        html: `
+                            <div style="text-align: left;">
+                                <p style="margin-bottom: 15px; color: #666;">Your solution has been captured.</p>
+                                <p style="font-size: 14px; color: #666;"><strong>Time taken:</strong> ${formatClock(Math.round(timeTaken))}</p>
+                            </div>
+                        `,
+                        icon: 'success',
+                        confirmButtonText: 'Continue',
+                        confirmButtonColor: '#4eda92',
+                        allowOutsideClick: false
+                    }).then(() => {
+                        Swal.fire({
+                            title: 'Submit Answer?',
+                            text: 'Are you sure you want to submit your coding answer?',
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonColor: '#4eda92',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Submit Answer',
+                            cancelButtonText: 'Cancel',
+                            reverseButtons: false,
+                            focusConfirm: true
+                        }).then((result) => {
+                            if (result.isConfirmed || result.value === true) {
+                                submitCodingAnswer();
+                            } else {
+                                console.log("Coding answer submission cancelled");
+                            }
+                        });
+                    });
+
+                    return true;
+                }
+            });
+        }
+
+        function addCodingHiddenFormFields() {
+            const form = document.getElementById('chatForm');
+            if (!form) return;
+
+            const hiddenFields = [
+                { name: 'IsCodingQuestion', value: 'true' },
+                { name: 'CodingTimeLimitInMinutes', value: timeLimitMinutes },
+                { name: 'CodingLanguage', value: '' },
+                { name: 'CodingSubmittedCode', value: '' },
+                { name: 'CodingStartTime', value: '' },
+                { name: 'CodingEndTime', value: '' },
+                { name: 'CodingTimeTaken', value: '' },
+                { name: 'CodingIsTimeExpired', value: 'false' }
+            ];
+
+            hiddenFields.forEach(field => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = field.name;
+                input.id = field.name;
+                input.value = field.value;
+                form.appendChild(input);
+            });
+        }
+
+        setTimeout(() => {
+            addCodingHiddenFormFields();
+            showCodingQuestionModal();
+        }, 1000);
 
     })();
 </script>
