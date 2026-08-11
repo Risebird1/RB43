@@ -2,6 +2,11 @@
 RELAY.APP  NAUKRI PROSPECTIVE INTERVIEWER ONBOARDING — LINKEDIN-VERIFIED VARIANT
 ================================================================================
 
+*** LEGACY — Relay.app is shutting down. This workflow now runs on n8n. ***
+*** Current documentation: Docs/n8nAgent-NaukriOnboarding.md              ***
+*** Current workflow JSON:  Risebird-n8n-Naukri-Onboarding.json           ***
+*** Kept for reference only; do not build new agents from this file.      ***
+
 OVERVIEW
 --------
 This is a variant of the "Naukri Prospective Interviewer Onboarding" workflow
