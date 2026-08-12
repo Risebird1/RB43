@@ -22,6 +22,8 @@ namespace Risebird.Web.Controllers
     {
         private readonly IIRFService _irfService;
         private readonly IDashboardService _dashboardService;
+        private readonly IInterviewerService _interviewerService;
+        private readonly IEncryptionHelper _encryptionHelper;
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IInterviewerEmailAvailabilityRepository _eaRepository;
@@ -29,12 +31,16 @@ namespace Risebird.Web.Controllers
         public InterviewDemandController(
             IIRFService irfService,
             IDashboardService dashboardService,
+            IInterviewerService interviewerService,
+            IEncryptionHelper encryptionHelper,
             IConfiguration configuration,
             IApplicationErrorLogger applicationErrorLogger,
             IInterviewerEmailAvailabilityRepository eaRepository)
         {
             _irfService = irfService;
             _dashboardService = dashboardService;
+            _interviewerService = interviewerService;
+            _encryptionHelper = encryptionHelper;
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _eaRepository = eaRepository;
@@ -43,7 +49,7 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            if (!IsAdminOrHr(out _))
+            if (!TryGetSessionUser(out _))
             {
                 return RedirectToAction("SignOut", "Session");
             }
@@ -68,7 +74,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (!IsAdminOrHr(out _))
+                if (!TryGetSessionUser(out _))
                 {
                     return PartialView("_DriveWeekendData", new DriveWeekendDataVM());
                 }
@@ -112,7 +118,8 @@ namespace Risebird.Web.Controllers
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
-            var metadataMap = _irfService.GetDriveIRFMetadata(irfIdStrings);
+            var metadataMap = _irfService.GetDriveIRFMetadata(irfIdStrings)
+                ?? new Dictionary<string, DriveIRFMetadataRecord>(StringComparer.OrdinalIgnoreCase);
 
             var allRows = interviewGroups
                 .Select(g => BuildDriveRow(g, metadataMap, sat))
@@ -232,7 +239,8 @@ namespace Risebird.Web.Controllers
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
-            var actionsTakenMap = _dashboardService.GetRowActions(DriveWeekendActionRefs.RefType, actionRefIds);
+            var actionsTakenMap = _dashboardService.GetRowActions(DriveWeekendActionRefs.RefType, actionRefIds)
+                ?? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             foreach (var row in actionRows)
             {
                 if (row.IrfIntId > 0 && spotlightActions.TryGetValue(row.IrfIntId, out var spotTaken)
@@ -257,7 +265,7 @@ namespace Risebird.Web.Controllers
                 row.WeekendStart = sat;
             }
 
-            return new DriveWeekendDataVM
+            var page = new DriveWeekendDataVM
             {
                 Rows = driveRows.OrderByDescending(r => r.ExpectedTotal).ToList(),
                 SuggestedThresholdRows = suggestedThresholdRows,
@@ -268,6 +276,123 @@ namespace Risebird.Web.Controllers
                 SelectedSpotlightIds = spotlightIds,
                 SpotlightOptions = spotlightOptions
             };
+
+            await AttachDemandEnhancementsAsync(page);
+            return page;
+        }
+
+        /// <summary>
+        /// D2 overlay (all-future counts) + D3/D4/D6 volume section.
+        /// Does not change how the attention/planner view selects IRFs.
+        /// </summary>
+        private async Task AttachDemandEnhancementsAsync(DriveWeekendDataVM page)
+        {
+            if (page == null)
+                return;
+
+            page.Rows ??= new List<DriveIRFVM>();
+            page.SuggestedThresholdRows ??= new List<DriveIRFVM>();
+            page.BelowThresholdRows ??= new List<DriveIRFVM>();
+            page.HighPrioritySpotlight ??= new List<IRFAttentionRowVM>();
+            page.HighVolumeRows ??= new List<IRFAttentionRowVM>();
+            page.MagList ??= new List<AssignmentVM>();
+
+            try
+            {
+                var volumeRows = (await _dashboardService.GetIRFAttentionVolumeRows() ?? Enumerable.Empty<IRFAttentionRowVM>()).ToList();
+                var volumeByPk = volumeRows
+                    .Where(x => x != null && x.IrfPk > 0)
+                    .GroupBy(x => x.IrfPk)
+                    .ToDictionary(g => g.Key, g => g.First());
+
+                ApplyAllFutureCounts(page.Rows, volumeByPk);
+                ApplyAllFutureCounts(page.SuggestedThresholdRows, volumeByPk);
+                ApplyAllFutureCounts(page.BelowThresholdRows, volumeByPk);
+
+                var spotlights = (await _dashboardService.GetActiveIRFAttentionSpotlights() ?? Enumerable.Empty<IRFAttentionSpotlightVM>()).ToList();
+                var spotlightIds = spotlights.Where(s => s != null && s.IrfId > 0).Select(x => x.IrfId).Distinct().ToList();
+
+                var missingMetaIds = spotlightIds.Where(id => !volumeByPk.ContainsKey(id)).ToList();
+                if (missingMetaIds.Count > 0)
+                {
+                    var meta = await _dashboardService.GetIRFAttentionMetaByIds(missingMetaIds) ?? Enumerable.Empty<IRFAttentionRowVM>();
+                    foreach (var m in meta)
+                    {
+                        if (m != null && m.IrfPk > 0 && !volumeByPk.ContainsKey(m.IrfPk))
+                            volumeByPk[m.IrfPk] = m;
+                    }
+                }
+
+                var spotlightRows = new List<IRFAttentionRowVM>();
+                foreach (var pin in spotlights.Where(s => s != null && s.IrfId > 0))
+                {
+                    if (!volumeByPk.TryGetValue(pin.IrfId, out var row))
+                    {
+                        row = new IRFAttentionRowVM { IrfPk = pin.IrfId, IrfCode = "#" + pin.IrfId };
+                    }
+                    else
+                    {
+                        row = CloneAttentionRow(row);
+                    }
+                    row.IsSpotlight = true;
+                    row.PinnedBy = pin.PinnedBy;
+                    row.PinnedAt = pin.PinnedAt;
+                    spotlightRows.Add(row);
+                }
+
+                var spotlightSet = spotlightIds.ToHashSet();
+                page.HighPrioritySpotlight = spotlightRows;
+                page.HighVolumeRows = volumeRows
+                    .Where(x => x != null && x.IrfPk > 0 && !spotlightSet.Contains(x.IrfPk))
+                    .OrderByDescending(x => x.Volume)
+                    .ThenBy(x => x.IrfCode, StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+                page.MagList = (_interviewerService.FetchAssessmentGroups() ?? Enumerable.Empty<AssignmentVM>())
+                    .Where(x => x != null && x.id > 0 && !string.IsNullOrWhiteSpace(x.AssessmentGroup))
+                    .GroupBy(x => x.id)
+                    .Select(g => g.First())
+                    .OrderBy(x => x.AssessmentGroup)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                page.HighPrioritySpotlight ??= new List<IRFAttentionRowVM>();
+                page.HighVolumeRows ??= new List<IRFAttentionRowVM>();
+                page.MagList ??= new List<AssignmentVM>();
+            }
+        }
+
+        private static IRFAttentionRowVM CloneAttentionRow(IRFAttentionRowVM row)
+        {
+            return new IRFAttentionRowVM
+            {
+                IrfPk = row.IrfPk,
+                IrfCode = row.IrfCode,
+                PrimarySkill = row.PrimarySkill,
+                MagId = row.MagId,
+                MagName = row.MagName,
+                Volume = row.Volume,
+                UnassignedCount = row.UnassignedCount
+            };
+        }
+
+        private static void ApplyAllFutureCounts(IEnumerable<DriveIRFVM> rows, Dictionary<int, IRFAttentionRowVM> volumeByPk)
+        {
+            if (rows == null || volumeByPk == null)
+                return;
+
+            foreach (var row in rows)
+            {
+                if (row == null)
+                    continue;
+                if (row.IrfIntId > 0 && volumeByPk.TryGetValue(row.IrfIntId, out var v) && v != null)
+                {
+                    row.AllFutureVolume = v.Volume;
+                    row.AllFutureUnassigned = v.UnassignedCount;
+                    row.HasAllFutureCounts = true;
+                }
+            }
         }
 
         private async Task EnrichSupplyCountsAsync(List<DriveIRFVM> rows)
@@ -358,8 +483,11 @@ namespace Risebird.Web.Controllers
 
         private void EnrichMissingMetadata(List<DriveIRFVM> rows)
         {
+            if (rows == null || rows.Count == 0)
+                return;
+
             var unresolvedIntIds = rows
-                .Where(m => m.IrfIntId > 0 && string.IsNullOrWhiteSpace(m.ClientName))
+                .Where(m => m != null && m.IrfIntId > 0 && string.IsNullOrWhiteSpace(m.ClientName))
                 .Select(m => m.IrfIntId.ToString())
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
@@ -369,10 +497,12 @@ namespace Risebird.Web.Controllers
                 return;
             }
 
-            var metadataByIntId = _irfService.GetDriveIRFMetadata(unresolvedIntIds)
+            var metadataByIntId = (_irfService.GetDriveIRFMetadata(unresolvedIntIds)
+                    ?? new Dictionary<string, DriveIRFMetadataRecord>(StringComparer.OrdinalIgnoreCase))
                 .Values
-                .Where(x => x.id > 0)
-                .ToDictionary(x => x.id, x => x);
+                .Where(x => x != null && x.id > 0)
+                .GroupBy(x => x.id)
+                .ToDictionary(g => g.Key, g => g.First());
 
             foreach (var row in rows)
             {
@@ -390,7 +520,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (!IsAdminOrHr(out _))
+                if (!TryGetSessionUser(out _))
                 {
                     return Content(string.Empty);
                 }
@@ -448,7 +578,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (!IsAdminOrHr(out _))
+                if (!TryGetSessionUser(out _))
                 {
                     return Json(new { success = false, message = "Unauthorized" });
                 }
@@ -572,16 +702,123 @@ namespace Risebird.Web.Controllers
             return today.AddDays(toSat);
         }
 
-        private bool IsAdminOrHr(out string profileName)
+        private bool TryGetSessionUser(out string email)
         {
-            profileName = null;
-            if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
-            {
-                return false;
-            }
+            email = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "");
+            var profile = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "");
+            return !string.IsNullOrWhiteSpace(email) && !string.IsNullOrWhiteSpace(profile);
+        }
 
-            profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
-            return profileName == "Admin" || profileName == "HR";
+        [HttpGet]
+        public async Task<JsonResult> GetIRFsByMAG(int magId)
+        {
+            try
+            {
+                if (!TryGetSessionUser(out _))
+                    return Json(new { success = false, data = Array.Empty<object>(), message = "Unauthorized." });
+                if (magId <= 0)
+                    return Json(new { success = true, data = Array.Empty<object>() });
+
+                var irfs = await _irfService.GetAssessmentGroupIRFList(magId) ?? Enumerable.Empty<AssessmentIRFListVM>();
+                var data = irfs
+                    .Where(x => x != null && x.id > 0 && !string.IsNullOrWhiteSpace(x.IRFId))
+                    .Select(x => new
+                    {
+                        id = x.id,
+                        irfId = x.IRFId,
+                        label = string.IsNullOrWhiteSpace(x.PrimarySkillInvite)
+                            ? x.IRFId
+                            : (x.IRFId + " — " + x.PrimarySkillInvite)
+                    })
+                    .ToList();
+                return Json(new { success = true, data });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, data = Array.Empty<object>(), message = "Failed to load IRFs." });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> PinHighPriority(int irfId)
+        {
+            try
+            {
+                if (!TryGetSessionUser(out var email))
+                    return Json(new { ok = false, message = "Unauthorized." });
+                if (irfId <= 0)
+                    return Json(new { ok = false, message = "Invalid IRF." });
+
+                var ok = await _dashboardService.PinIRFAttentionSpotlight(irfId, email);
+                return Json(new { ok, success = ok, message = ok ? "Pinned." : "Could not pin." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, message = "Could not pin." });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DriveVolumeSection()
+        {
+            try
+            {
+                if (!TryGetSessionUser(out _))
+                    return Content(string.Empty);
+
+                var page = new DriveWeekendDataVM();
+                await AttachDemandEnhancementsAsync(page);
+                return PartialView("_DemandVolumeSection", page);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return PartialView("_DemandVolumeSection", new DriveWeekendDataVM());
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UnpinHighPriority(int irfId)
+        {
+            try
+            {
+                if (!TryGetSessionUser(out var email))
+                    return Json(new { ok = false, success = false, message = "Unauthorized." });
+                if (irfId <= 0)
+                    return Json(new { ok = false, success = false, message = "Invalid IRF." });
+
+                var ok = await _dashboardService.UnpinIRFAttentionSpotlight(irfId, email);
+                return Json(new { ok, success = ok, message = ok ? "Unpinned." : "Could not unpin." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, success = false, message = "Could not unpin." });
+            }
+        }
+
+        /// <summary>D5 — standing cross-MAG entry link for a target MAG (does not expire).</summary>
+        [HttpPost]
+        public async Task<JsonResult> GenerateMAGApplicationLink(int targetMagId)
+        {
+            try
+            {
+                if (!TryGetSessionUser(out _))
+                    return Json(new { ok = false, message = "Unauthorized." });
+                if (targetMagId <= 0)
+                    return Json(new { ok = false, message = "Select a target MAG." });
+
+                var encryptedId = await _encryptionHelper.EncryptStringValue(targetMagId.ToString());
+                var url = "https://portal.risebird.io/Interviewer/MAGApply?id=" + System.Net.WebUtility.UrlEncode(encryptedId);
+                return Json(new { ok = true, url });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, message = "Could not generate link." });
+            }
         }
     }
 }

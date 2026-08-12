@@ -682,18 +682,31 @@ END";
             try
             {
                 // All-future scheduled volume (uncapped). confirmationStatus=1 matches platform "scheduled" convention.
+                // AssessmentGroupId is varchar and may be comma-separated — take the first MAG id.
                 var query = @"
 SELECT
     irf.id AS IrfPk,
     irf.IRFId AS IrfCode,
     irf.PrimarySkillInvite AS PrimarySkill,
-    irf.AssessmentGroupId AS MagId,
+    TRY_CAST(NULLIF(LTRIM(RTRIM(
+        CASE
+            WHEN CHARINDEX(',', ISNULL(irf.AssessmentGroupId, '')) > 0
+                THEN LEFT(irf.AssessmentGroupId, CHARINDEX(',', irf.AssessmentGroupId) - 1)
+            ELSE irf.AssessmentGroupId
+        END
+    )), '') AS INT) AS MagId,
     ag.AssessmentGroup AS MagName,
     COUNT(im.id) AS Volume,
     SUM(CASE WHEN im.interviewer IS NULL OR LTRIM(RTRIM(im.interviewer)) = '' THEN 1 ELSE 0 END) AS UnassignedCount
 FROM irf
 INNER JOIN InterviewMeetings im ON im.IRFId = irf.IRFId
-LEFT JOIN AssessmentGroup ag ON ag.id = irf.AssessmentGroupId
+LEFT JOIN AssessmentGroup ag ON ag.id = TRY_CAST(NULLIF(LTRIM(RTRIM(
+        CASE
+            WHEN CHARINDEX(',', ISNULL(irf.AssessmentGroupId, '')) > 0
+                THEN LEFT(irf.AssessmentGroupId, CHARINDEX(',', irf.AssessmentGroupId) - 1)
+            ELSE irf.AssessmentGroupId
+        END
+    )), '') AS INT)
 WHERE CAST(im.interviewDate AS date) >= CAST(GETDATE() AS date)
   AND im.confirmationStatus = 1
 GROUP BY irf.id, irf.IRFId, irf.PrimarySkillInvite, irf.AssessmentGroupId, ag.AssessmentGroup
@@ -759,12 +772,24 @@ ORDER BY COUNT(im.id) DESC";
                             irf.id AS IrfPk,
                             irf.IRFId AS IrfCode,
                             irf.PrimarySkillInvite AS PrimarySkill,
-                            irf.AssessmentGroupId AS MagId,
+                            TRY_CAST(NULLIF(LTRIM(RTRIM(
+                                CASE
+                                    WHEN CHARINDEX(',', ISNULL(irf.AssessmentGroupId, '')) > 0
+                                        THEN LEFT(irf.AssessmentGroupId, CHARINDEX(',', irf.AssessmentGroupId) - 1)
+                                    ELSE irf.AssessmentGroupId
+                                END
+                            )), '') AS INT) AS MagId,
                             ag.AssessmentGroup AS MagName,
                             0 AS Volume,
                             0 AS UnassignedCount
                           FROM irf
-                          LEFT JOIN AssessmentGroup ag ON ag.id = irf.AssessmentGroupId
+                          LEFT JOIN AssessmentGroup ag ON ag.id = TRY_CAST(NULLIF(LTRIM(RTRIM(
+                                CASE
+                                    WHEN CHARINDEX(',', ISNULL(irf.AssessmentGroupId, '')) > 0
+                                        THEN LEFT(irf.AssessmentGroupId, CHARINDEX(',', irf.AssessmentGroupId) - 1)
+                                    ELSE irf.AssessmentGroupId
+                                END
+                            )), '') AS INT)
                           WHERE irf.id IN @ids",
                         new { ids });
                     return result ?? Enumerable.Empty<IRFAttentionRowVM>();
@@ -832,7 +857,7 @@ ORDER BY COUNT(im.id) DESC";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await con.OpenAsync();
-                    await EnsureIRFAttentionSpotlightTableAsync(con);
+                    // Do not run CREATE TABLE/INDEX here — DDL can lock and make unpin appear to hang.
                     var affected = await con.ExecuteAsync(
                         @"UPDATE dbo.IRFAttentionSpotlight
                           SET Active = 0, PinnedBy = ISNULL(@PinnedBy, PinnedBy)

@@ -1,0 +1,88 @@
+@model Risebird.Entities.ViewModel.DriveWeekendDataVM
+@{
+    var spotlight = Model?.HighPrioritySpotlight ?? new List<Risebird.Entities.ViewModel.IRFAttentionRowVM>();
+    var volume = Model?.HighVolumeRows ?? new List<Risebird.Entities.ViewModel.IRFAttentionRowVM>();
+    var mags = Model?.MagList ?? new List<Risebird.Entities.ViewModel.AssignmentVM>();
+}
+
+<div id="driveVolumeWrap">
+<div class="drive-volume-section" id="driveVolumeSection">
+    <div class="drive-volume-head">
+        <div>
+            <div class="drive-section-title" style="margin-top:0;">High volume &amp; spotlight</div>
+            <p class="drive-volume-sub">
+                All-future scheduled interviews (today onward, no end date), highest first.
+                Mark an IRF high priority to pin it into the shared spotlight — even at low volume.
+            </p>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-primary" id="driveOpenPin">
+            <i class="fa fa-thumb-tack"></i> Mark high priority
+        </button>
+    </div>
+
+    <div class="drive-section-title drive-section-title-muted">
+        Spotlight <span class="drive-vol-count" id="driveSpotlightCount">@spotlight.Count</span>
+    </div>
+    <div id="driveSpotlightBlock">
+    @if (!spotlight.Any())
+    {
+        <div class="drive-empty drive-empty-compact" id="driveSpotlightEmpty">
+            <p>No high-priority IRFs. Use Mark high priority to pin one (self or other MAG).</p>
+        </div>
+    }
+    else
+    {
+        @await Html.PartialAsync("_DemandVolumeTable", spotlight)
+    }
+    </div>
+
+    <div class="drive-section-title">
+        High-volume IRFs <span class="drive-vol-count" id="driveVolumeCount">@volume.Count</span>
+    </div>
+    <div id="driveVolumeBlock">
+    @if (!volume.Any())
+    {
+        <div class="drive-empty drive-empty-compact" id="driveVolumeEmpty">
+            <p>No IRFs with future scheduled volume.</p>
+        </div>
+    }
+    else
+    {
+        @await Html.PartialAsync("_DemandVolumeTable", volume)
+    }
+    </div>
+</div>
+
+<div class="ia-modal-backdrop" id="drivePinModal">
+    <div class="ia-modal">
+        <div class="ia-modal__h">Mark IRF high priority</div>
+        <div class="ia-modal__b">
+            <p class="ia-hint">Search by MAG, then pick an IRF (self or other MAG). Search within the MAG list to filter.</p>
+            <div class="ia-field">
+                <label for="drivePinMag">MAG</label>
+                <select id="drivePinMag">
+                    <option value="">Select MAG</option>
+                    @foreach (var m in mags)
+                    {
+                        <option value="@m.id">@m.AssessmentGroup</option>
+                    }
+                </select>
+            </div>
+            <div class="ia-field">
+                <label for="drivePinIrfSearch">Search IRFs in MAG</label>
+                <input type="text" id="drivePinIrfSearch" placeholder="Filter by IRF or skill…" disabled />
+            </div>
+            <div class="ia-field">
+                <label for="drivePinIrf">IRF</label>
+                <select id="drivePinIrf" disabled>
+                    <option value="">Select IRF</option>
+                </select>
+            </div>
+        </div>
+        <div class="ia-modal__f">
+            <button type="button" class="ia-btn" id="drivePinCancel">Cancel</button>
+            <button type="button" class="ia-btn ia-btn-primary" id="drivePinConfirm">Pin to spotlight</button>
+        </div>
+    </div>
+</div>
+</div>

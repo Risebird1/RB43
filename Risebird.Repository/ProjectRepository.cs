@@ -121,11 +121,11 @@ namespace Risebird.Repository
         {
             try
             {
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@IsDeleted", 0);
+                //var dynamicParameters = new DynamicParameters();
+                //dynamicParameters.Add("@IsDeleted", 0);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<IRF>("usp_GetActiveIRFList", dynamicParameters,
+                    var results = con.Query<IRF>("usp_GetActiveIRFList", null,
                         commandType: CommandType.StoredProcedure);
                     return results;
                 }
