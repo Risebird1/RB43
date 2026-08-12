@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using RestSharp;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -18,44 +19,55 @@ namespace Risebird.CommonHelper
 
         private readonly string _apiKey;
         private readonly string _templateId;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
-        public SynthesiaTextToVideoService(IConfiguration config)
+
+        public SynthesiaTextToVideoService(IConfiguration config, IApplicationErrorLogger applicationErrorLogger)
         {
             //_http = new HttpClient();
             _config = config;
             _apiKey = _config["Synthesia:ApiKey"];
             _templateId = _config["Synthesia:TemplateId"];
+            _applicationErrorLogger = applicationErrorLogger;
             //_http.BaseAddress = new Uri("https://api.synthesia.io/v2/");
             //_http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
         }
 
         public async Task<string> CreateVideoAsync(string scriptText, string templateIdParam)
         {
-            
-            var options = new RestClientOptions("https://api.synthesia.io/v2/videos/fromTemplate");
-            var client = new RestClient(options);
-            var request = new RestRequest("");
-            request.AddHeader("accept", "application/json");
-            request.AddHeader("Authorization", _apiKey);
-            //request.AddJsonBody("{\"test\":false,\"templateData\":{\"scriptDynamic\":\"Hello, How are you doing?\"},\"visibility\":\"private\",\"templateId\":\"8fd3aaab-d7db-46e3-bf43-9969eb4a8e25\"}", false);
 
-            var body = new
+            try
             {
-                test = false,
-                visibility = "private",
-                templateId = templateIdParam, //_templateId,//"8fd3aaab-d7db-46e3-bf43-9969eb4a8e25",
-                templateData = new
+                var options = new RestClientOptions("https://api.synthesia.io/v2/videos/fromTemplate");
+                var client = new RestClient(options);
+                var request = new RestRequest("");
+                request.AddHeader("accept", "application/json");
+                request.AddHeader("Authorization", _apiKey);
+                //request.AddJsonBody("{\"test\":false,\"templateData\":{\"scriptDynamic\":\"Hello, How are you doing?\"},\"visibility\":\"private\",\"templateId\":\"8fd3aaab-d7db-46e3-bf43-9969eb4a8e25\"}", false);
+
+                var body = new
                 {
-                    scriptDynamic = CleanMessage(scriptText)
-                }
-            };
+                    test = false,
+                    visibility = "private",
+                    templateId = templateIdParam, //_templateId,//"8fd3aaab-d7db-46e3-bf43-9969eb4a8e25",
+                    templateData = new
+                    {
+                        scriptDynamic = CleanMessage(scriptText)
+                    }
+                };
 
-            request.AddJsonBody(body);
+                request.AddJsonBody(body);
 
-            var response = await client.PostAsync(request);
-            using var doc = JsonDocument.Parse(response.Content);
-            var id = doc.RootElement.GetProperty("id").GetString();
-            return id;
+                var response = await client.PostAsync(request);
+                using var doc = JsonDocument.Parse(response.Content);
+                var id = doc.RootElement.GetProperty("id").GetString();
+                return id;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
 
         }
 

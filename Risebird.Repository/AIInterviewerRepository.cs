@@ -845,6 +845,10 @@ namespace Risebird.Repository
                     parameters.Add("@TimeCompleted", obj.TimeCompleted);
                     parameters.Add("@TimeTakenInSeconds", obj.TimeTakenInSeconds);
                     parameters.Add("@IsTimeExpired", obj.IsTimeExpired);
+                    parameters.Add("@StdInput", obj.StdInput);
+                    parameters.Add("@LastRunOutput", obj.LastRunOutput);
+                    parameters.Add("@LastRunStatus", obj.LastRunStatus);
+                    parameters.Add("@RunCount", obj.RunCount);
                     parameters.Add("@CreatedBy", obj.CreatedBy);
 
                     await SqlMapper.QueryAsync(con, "usp_SaveCodingAssessment", parameters,

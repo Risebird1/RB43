@@ -15,6 +15,10 @@ namespace Risebird.Entities.ViewModel
         public DateTime TimeCompleted { get; set; }
         public decimal TimeTakenInSeconds { get; set; }
         public bool IsTimeExpired { get; set; }
+        public string StdInput { get; set; }
+        public string LastRunOutput { get; set; }
+        public string LastRunStatus { get; set; }
+        public int RunCount { get; set; }
         public DateTime CreatedAt { get; set; }
         public string CreatedBy { get; set; }
     }

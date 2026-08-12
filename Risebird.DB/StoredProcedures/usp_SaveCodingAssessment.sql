@@ -20,6 +20,10 @@ CREATE PROCEDURE usp_SaveCodingAssessment
 	@TimeCompleted DATETIME = NULL,
 	@TimeTakenInSeconds DECIMAL(10,2) = NULL,
 	@IsTimeExpired BIT = 0,
+	@StdInput NVARCHAR(MAX) = NULL,
+	@LastRunOutput NVARCHAR(MAX) = NULL,
+	@LastRunStatus VARCHAR(100) = NULL,
+	@RunCount INT = 0,
 	@CreatedBy VARCHAR(150) = NULL
 AS
 BEGIN
@@ -44,6 +48,10 @@ BEGIN
 			TimeCompleted = @TimeCompleted,
 			TimeTakenInSeconds = @TimeTakenInSeconds,
 			IsTimeExpired = @IsTimeExpired,
+			StdInput = @StdInput,
+			LastRunOutput = @LastRunOutput,
+			LastRunStatus = @LastRunStatus,
+			RunCount = @RunCount,
 			CreatedBy = @CreatedBy
 		WHERE id = @ExistingId;
 
@@ -62,6 +70,10 @@ BEGIN
 			TimeCompleted,
 			TimeTakenInSeconds,
 			IsTimeExpired,
+			StdInput,
+			LastRunOutput,
+			LastRunStatus,
+			RunCount,
 			CreatedAt,
 			CreatedBy
 		)
@@ -76,6 +88,10 @@ BEGIN
 			@TimeCompleted,
 			@TimeTakenInSeconds,
 			@IsTimeExpired,
+			@StdInput,
+			@LastRunOutput,
+			@LastRunStatus,
+			@RunCount,
 			GETDATE(),
 			@CreatedBy
 		);

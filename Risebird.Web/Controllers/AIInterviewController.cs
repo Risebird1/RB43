@@ -69,6 +69,7 @@ namespace Risebird.Web.Controllers
         private readonly ITempDataProvider _tempDataProvider;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IConverter _converter;
+        private readonly ICodeExecutionService _codeExecutionService;
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api,
@@ -79,7 +80,8 @@ namespace Risebird.Web.Controllers
             IIRFRepository irfRepository, IOpenAIInterviewerAssistantHelper openAIAssistantHelper,
             IProctoringTokenService proctoringTokenService, IProctoringSessionEventRepository proctoringSessionEventRepository,
             ICompositeViewEngine viewEngine, ITempDataProvider tempDataProvider,
-            IHttpContextAccessor contextAccessor, IConverter converter)
+            IHttpContextAccessor contextAccessor, IConverter converter,
+            ICodeExecutionService codeExecutionService)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -102,6 +104,7 @@ namespace Risebird.Web.Controllers
             _tempDataProvider = tempDataProvider;
             _contextAccessor = contextAccessor;
             _converter = converter;
+            _codeExecutionService = codeExecutionService;
         }
         /// <summary>
         /// access an interview (and start it) with the session id (sid)
@@ -1332,6 +1335,10 @@ namespace Risebird.Web.Controllers
                                     TimeCompleted = TryParseInterviewDateTime(model.CodingEndTime) ?? DateTime.Now,
                                     TimeTakenInSeconds = model.CodingTimeTaken,
                                     IsTimeExpired = model.CodingIsTimeExpired,
+                                    StdInput = model.CodingStdInput,
+                                    LastRunOutput = model.CodingLastRunOutput,
+                                    LastRunStatus = model.CodingLastRunStatus,
+                                    RunCount = model.CodingRunCount,
                                     CreatedBy = model.candidateName
                                 };
                                 await _aiinterviewerService.SaveCodingAssessment(codingAssessment);
@@ -1372,6 +1379,10 @@ namespace Risebird.Web.Controllers
                             model.CodingEndTime = null;
                             model.CodingTimeTaken = 0;
                             model.CodingIsTimeExpired = false;
+                            model.CodingStdInput = null;
+                            model.CodingLastRunOutput = null;
+                            model.CodingLastRunStatus = null;
+                            model.CodingRunCount = 0;
 
                             if (!string.IsNullOrEmpty(model.CurrentQuestion))//&& string.IsNullOrEmpty(model.AIInterviewerAudioLink)
                             {
@@ -2835,6 +2846,55 @@ namespace Risebird.Web.Controllers
             {
                 return BadRequest();
                 throw;
+            }
+        }
+
+        /// <summary>
+        /// Compiles and runs the code a candidate has written for a coding question.
+        /// Read-only with respect to the interview: running code never advances the interview
+        /// or records an answer, it only returns console output back to the IDE.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> RunCode([FromBody] CodeRunRequestVM model)
+        {
+            try
+            {
+                if (model == null || string.IsNullOrWhiteSpace(model.Code))
+                {
+                    return Json(new { success = false, output = "Write some code before running it." });
+                }
+
+                if (!_codeExecutionService.IsEnabled)
+                {
+                    return Json(new { success = false, output = "Running code is not available in this environment. You can still write and submit your answer." });
+                }
+
+                // Only an in-flight interview session may execute code
+                var meeting = await _aiinterviewerService.GetAIInterviewSpecificDetails(model.SessionId);
+                if (meeting == null)
+                {
+                    return Json(new { success = false, output = "Your interview session could not be verified. Please reload the page." });
+                }
+
+                var result = await _codeExecutionService.ExecuteAsync(new CodeExecutionRequest
+                {
+                    LanguageId = model.Language,
+                    SourceCode = model.Code,
+                    Stdin = model.Stdin
+                });
+
+                return Json(new
+                {
+                    success = result.Success,
+                    status = result.Status,
+                    output = result.CombinedOutput,
+                    message = result.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, output = "The code runner is temporarily unavailable. Your code is safe — you can still submit it." });
             }
         }
 
