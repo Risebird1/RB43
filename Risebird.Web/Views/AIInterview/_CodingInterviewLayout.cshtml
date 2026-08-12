@@ -24,14 +24,14 @@
                      onselectstart="return false">@problemText</div>
 
                 <div id="codingInstructions" class="rb-ide-instructions">
-                    <strong>Before you begin</strong>
+                    <strong>Before you begin coding</strong>
                     <ul>
-                        <li>You get <strong id="codingLimitLabel"></strong> once you press Start.</li>
+                        <li>Recording and the timer have <strong>already started</strong>. You have <strong id="codingLimitLabel"></strong>.</li>
+                        <li>Read the problem statement above carefully.</li>
+                        <li>Press <strong>Start</strong> when you are ready to open the code editor.</li>
                         <li>Pick your language, write your solution, and press <strong>Run</strong> to compile and execute it.</li>
                         <li>Use the <strong>Input (stdin)</strong> box for anything your program reads from standard input.</li>
-                        <li>Copy and paste are disabled.</li>
-                        <li>Video recording runs while you code.</li>
-                        <li>Your answer is submitted automatically when the time runs out.</li>
+                        <li>Copy and paste are disabled. Your answer is submitted automatically when time runs out.</li>
                     </ul>
                     <button type="button" class="rb-ide-btn rb-ide-btn--start" id="codingStartBtn">
                         <i class="fa fa-play"></i> Start
@@ -102,7 +102,7 @@
             <button id="footerVideoToggle" class="rb-footer-btn" data-tooltip="Toggle Video">
                 <i id="footerVideoIcon" class="fa fa-video-camera"></i>
             </button>
-            <button id="recordBtn" class="rb-footer-btn" data-tooltip="Start Recording Your Answer" style="background:#ee4343de;color:#fff;">
+            <button id="recordBtn" class="rb-footer-btn" data-tooltip="Start Recording Your Answer" style="display:none;background:#ee4343de;color:#fff;" aria-hidden="true">
                 <i class="fa fa-circle"></i>
             </button>
             <button class="rb-footer-btn" data-tooltip="Upload File"><i class="fa fa-upload"></i></button>

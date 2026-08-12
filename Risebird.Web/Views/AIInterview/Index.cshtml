@@ -1080,7 +1080,7 @@
         }
 
     .rb-video-feed .videoContainer video {
-        border-radius: 30px !important;
+       
         top: 0px !important;
     }
 
@@ -2036,7 +2036,7 @@
 </style>
 @if (useCodingSplitLayout)
 {
-    <link rel="stylesheet" href="~/css/ai-interview-coding-split.css?v=1" />
+    <link rel="stylesheet" href="~/css/ai-interview-coding-split.css?v=4" />
 }
 @if (ViewBag.AiInterviewDarkTheme == true)
 {
@@ -2048,7 +2048,7 @@
         <div class="rb-logo-title">
             <span class="rb-title">AI Interview</span>
         </div>
-        <div class="rb-header-controls @(Model.IsAdaptive == true ? "rb-header-controls--audio" : "")">
+        <div class="rb-header-controls @(Model.IsAdaptive == true ? "rb-header-controls--audio" : "")" style="@(useCodingSplitLayout ? "display:none;" : "")">
             <span class="rb-timer">
                 <i class="fa fa-clock-o"></i> Interview Time Left <b><span id="timer">--:--</span></b>
                 <div class="rb-timer-bar">
@@ -2726,6 +2726,26 @@
     const overlay = document.getElementById("waitOverlay");
     const recordingOverlay = document.getElementById("recordingOverlay");
     const showChatBox = @Json.Serialize(Model.showChatBox);
+    const isCodingQuestionPage = @Json.Serialize(Model.IsCodingQuestion);
+    let codingRecordingToastEl = null;
+
+    function ensureCodingRecordingToast() {
+        if (codingRecordingToastEl) return codingRecordingToastEl;
+        codingRecordingToastEl = document.getElementById('codingRecordingToast');
+        if (!codingRecordingToastEl) {
+            codingRecordingToastEl = document.createElement('div');
+            codingRecordingToastEl.id = 'codingRecordingToast';
+            codingRecordingToastEl.className = 'rb-coding-rec-toast';
+            codingRecordingToastEl.setAttribute('role', 'status');
+            codingRecordingToastEl.setAttribute('aria-live', 'polite');
+            codingRecordingToastEl.innerHTML =
+                '<span class="rb-coding-rec-dot" aria-hidden="true"></span>' +
+                '<div><strong>Recording in progress</strong>' +
+                '<div class="rb-coding-rec-sub">Audio and video are being recorded for this coding session.</div></div>';
+            document.body.appendChild(codingRecordingToastEl);
+        }
+        return codingRecordingToastEl;
+    }
 
     function syncMessageFromEditor() {
         if (typeof codeEditor !== 'undefined' && codeEditor) {
@@ -2899,6 +2919,12 @@
 
     function showRecordingOverlay() {
         if (isAudioPhoneMode) return; // phone UI provides its own visual feedback
+        // Coding questions: compact toast instead of the full-screen recording banner
+        if (isCodingQuestionPage) {
+            const toast = ensureCodingRecordingToast();
+            toast.classList.add('is-visible');
+            return;
+        }
         if (recordingOverlay) {
             recordingOverlay.style.display = "flex";
             const recordingMessage = document.getElementById("recordingMessage");
@@ -2912,6 +2938,13 @@
         }
     }
     function hideRecordingOverlay() {
+        if (codingRecordingToastEl) {
+            codingRecordingToastEl.classList.remove('is-visible');
+        }
+        const toast = document.getElementById('codingRecordingToast');
+        if (toast) {
+            toast.classList.remove('is-visible');
+        }
         if (recordingOverlay) recordingOverlay.style.display = "none";
     }
 
@@ -5397,6 +5430,8 @@
         let codingEndTime = null;
         let codingInProgress = false;
         let codingSubmitted = false;
+        let codingTimerAndRecordingStarted = false;
+        let codingEditorOpened = false;
         let codingEditor = null;
         let countdownInterval = null;
         let codingRunCount = 0;
@@ -5662,11 +5697,38 @@
             }, 1000);
         }
 
-        function beginCodingSession() {
-            if (codingInProgress) return;
-
-            codingInProgress = true;
+        // Page load: start the coding countdown + audio/video recording only.
+        // The editor stays closed until the candidate presses Start.
+        function startCodingRecordingAndTimer() {
+            if (codingTimerAndRecordingStarted) return;
+            codingTimerAndRecordingStarted = true;
             codingStartTime = new Date();
+
+            const timerDisplay = document.getElementById('codingTimerDisplay');
+            if (timerDisplay) {
+                timerDisplay.style.display = 'block';
+            }
+
+            startCountdown();
+
+            if (typeof beginAnswerRecording === 'function') {
+                beginAnswerRecording().catch(function (err) {
+                    console.error('Could not start recording for the coding question', err);
+                });
+            } else if (typeof startRecording === 'function') {
+                startRecording();
+            }
+        }
+
+        // Start button: open the code editor (recording + timer already running from page load).
+        function beginCodingSession() {
+            if (codingEditorOpened || codingSubmitted) return;
+            codingEditorOpened = true;
+            codingInProgress = true;
+
+            if (!codingTimerAndRecordingStarted) {
+                startCodingRecordingAndTimer();
+            }
 
             document.getElementById('codingInstructions').style.display = 'none';
             document.getElementById('codingWorkspace').style.display = 'flex';
@@ -5674,7 +5736,6 @@
             if (codingPlaceholder) {
                 codingPlaceholder.style.display = 'none';
             }
-            document.getElementById('codingTimerDisplay').style.display = 'block';
             document.getElementById('codingSubmitBtn').style.display = 'inline-block';
 
             if (executionEnabled) {
@@ -5686,16 +5747,6 @@
 
             buildCodingEditor();
             applyLanguage(selectedLanguage(), true);
-            startCountdown();
-
-            // Record audio + video for the whole coding session, exactly like a spoken answer
-            if (typeof beginAnswerRecording === 'function') {
-                beginAnswerRecording().catch(function (err) {
-                    console.error('Could not start recording for the coding question', err);
-                });
-            } else if (typeof startRecording === 'function') {
-                startRecording();
-            }
 
             if (codingEditor) {
                 codingEditor.focus();
@@ -5814,7 +5865,10 @@
                 });
             }
 
-            document.getElementById('codingStartBtn').addEventListener('click', beginCodingSession);
+            const codingStartBtn = document.getElementById('codingStartBtn');
+            if (codingStartBtn) {
+                codingStartBtn.addEventListener('click', beginCodingSession);
+            }
             document.getElementById('codingRunBtn').addEventListener('click', runCode);
             document.getElementById('codingSubmitBtn').addEventListener('click', confirmAndSubmit);
 
@@ -5863,6 +5917,9 @@
         setTimeout(() => {
             addCodingHiddenFormFields();
             openCodingIde();
+            // Coding questions: timer + recording begin on page load.
+            // Editor opens only when the candidate clicks Start.
+            startCodingRecordingAndTimer();
         }, 1000);
 
         // Problem statement / Transcript tabs (coding split layout)
