@@ -153,13 +153,17 @@
                     html += '<div class="dm-v4-question-col">';
                     html += '<div class="dm-v4-question-label">Question Q' + (qi + 1) + '</div>';
                     html += '<div class="dm-v4-question-text">' + (hasComment ? escapeHtml(comment) : '<span class="dm-v4-question-text--placeholder">Add question…</span>') + '</div>';
-                    if (isCoding) {
-                        html += '<div class="dm-v4-question-meta"><span class="dm-v4-badge dm-v4-badge--neutral dm-v4-badge--xs">Coding';
-                        if (codingTimeLimit) {
-                            html += ' · ' + escapeHtml(String(codingTimeLimit)) + ' min';
-                        }
-                        html += '</span></div>';
-                    }
+
+                    // Coding mode is editable in place so questions added earlier, or generated from
+                    // the rubric, can be turned into coding questions without being retyped.
+                    html += '<div class="dm-v4-question-meta dm-v4-question-coding">';
+                    html += '<label class="dm-v4-question-flag"><input type="checkbox" class="dm-v4-coding-cb" data-id="' + qid + '"' + (isCoding ? ' checked' : '') + (qid ? '' : ' disabled') + ' /> Coding question</label>';
+                    html += '<input type="number" min="1" max="180" step="1" class="dm-v4-coding-mins" data-id="' + qid + '"';
+                    html += ' value="' + (codingTimeLimit ? escapeHtml(String(codingTimeLimit)) : '15') + '"';
+                    html += ' title="Time limit in minutes"' + (isCoding ? '' : ' disabled') + ' />';
+                    html += '<span class="dm-v4-coding-mins-label"' + (isCoding ? '' : ' style="opacity:.5"') + '>min</span>';
+                    html += '</div>';
+
                     html += '</div><div class="dm-v4-question-col">';
                     html += '<div class="dm-v4-question-label">Expected answer</div>';
                     html += '<div class="dm-v4-question-text' + (expected ? '' : ' dm-v4-question-text--muted') + '">';
@@ -290,6 +294,33 @@
         });
     }
 
+    function saveCodingMode(id, isCoding, minutes, $cb) {
+        var qid = parseInt(id, 10);
+        if (!qid) return;
+
+        var payload = getQuestionsRequestData();
+        payload.id = qid;
+        payload.isCodingQuestion = isCoding;
+        if (isCoding) {
+            payload.codingTimeLimitInMinutes = parseInt(minutes, 10) || 15;
+        }
+
+        $.post('/IRF/SetQuestionCodingMode', payload).done(function (res) {
+            if (res && res.success) {
+                showQuestionToast(isCoding
+                    ? 'Saved. Candidates will get the code editor for this question.'
+                    : 'Saved. This is a normal question again.', 'success');
+            } else {
+                // Put the checkbox back so the panel never claims a state the server rejected
+                $cb.prop('checked', !isCoding);
+                showQuestionToast((res && res.message) ? res.message : 'Could not update the question.', 'error');
+            }
+        }).fail(function (xhr) {
+            $cb.prop('checked', !isCoding);
+            showQuestionToast('Could not reach the server (' + (xhr.status || 'unknown') + ').', 'error');
+        });
+    }
+
     function initQuestionsV4() {
         if (!getPanel().length) return;
 
@@ -352,6 +383,29 @@
             if ($cb.prop('checked') && typeof FlagQuestionForSentimentAnalysis === 'function') {
                 FlagQuestionForSentimentAnalysis($cb.data('id'));
             }
+        });
+
+        $(document).off('change.dmV4Coding', '.dm-v4-coding-cb').on('change.dmV4Coding', '.dm-v4-coding-cb', function () {
+            var $cb = $(this);
+            var $row = $cb.closest('.dm-v4-question-row');
+            var $mins = $row.find('.dm-v4-coding-mins');
+            var isCoding = $cb.prop('checked');
+
+            $mins.prop('disabled', !isCoding);
+            $row.find('.dm-v4-coding-mins-label').css('opacity', isCoding ? '' : '.5');
+            if (isCoding && !$mins.val()) {
+                $mins.val(15);
+            }
+
+            saveCodingMode($cb.data('id'), isCoding, $mins.val(), $cb);
+        });
+
+        $(document).off('change.dmV4CodingMins', '.dm-v4-coding-mins').on('change.dmV4CodingMins', '.dm-v4-coding-mins', function () {
+            var $mins = $(this);
+            var $row = $mins.closest('.dm-v4-question-row');
+            var $cb = $row.find('.dm-v4-coding-cb');
+            if (!$cb.prop('checked')) return;
+            saveCodingMode($mins.data('id'), true, $mins.val(), $cb);
         });
 
         $('#dmV4QuestionsCollapse').off('click.dmV4QReload').on('click.dmV4QReload', '.dm-v4-collapse__head', function () {

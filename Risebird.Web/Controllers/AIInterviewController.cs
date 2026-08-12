@@ -245,6 +245,7 @@ namespace Risebird.Web.Controllers
                                             model.SynthesizedVideoUrl = latestEntry.AIQuestionVideoLink;
                                             model.CurrentQuestion = latestQuestion;
                                             model.CurrentQuestionId = latestEntry.DeliveryHeadQuestionId;
+                                            await ApplyCodingQuestionAttributesAsync(model, latestEntry.DeliveryHeadQuestionId);
                                         }
                                     }
                                     //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 10)
@@ -288,6 +289,7 @@ namespace Risebird.Web.Controllers
                                                 model.SynthesizedVideoUrl = lastAssistantQuestion?.AIQuestionVideoLink;
                                                 model.CurrentQuestion = CleanMessage(lastAssistantQuestion?.Message);
                                                 model.CurrentQuestionId = lastAssistantQuestionId.Value;
+                                                await ApplyCodingQuestionAttributesAsync(model, lastAssistantQuestionId.Value);
 
                                                 // Optional flag for the view to show a warning if desired.
                                                 ViewData["VideoUploadError"] = true;
@@ -941,12 +943,29 @@ namespace Risebird.Web.Controllers
                     string tranScribedResponse = string.Empty;
                     string codeResponse = string.Empty;
 
-                    // For coding questions the submitted code itself is the answer, so keep it as the transcript entry
+                    // A coding answer is the written code plus anything the candidate said while writing it.
+                    // Both are merged into one transcript entry so evaluation and the report see a single answer.
                     if (model.IsCodingQuestion)
                     {
-                        userMessage = !string.IsNullOrWhiteSpace(model.CodingSubmittedCode)
-                            ? model.CodingSubmittedCode
-                            : "Typed Out";
+                        if (model.AudioFile != null && model.AudioFile.Length > 500)
+                        {
+                            try
+                            {
+                                using var stream = model.AudioFile.OpenReadStream();
+                                tranScribedResponse = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName, model.isMultiLingual);
+                            }
+                            catch (Exception sttEx)
+                            {
+                                // A transcription failure must never cost the candidate their code
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, sttEx);
+                            }
+                        }
+
+                        codeResponse = string.IsNullOrWhiteSpace(model.CodingSubmittedCode)
+                            ? "(no code was submitted)"
+                            : model.CodingSubmittedCode;
+
+                        userMessage = BuildCodingAnswerTranscript(tranScribedResponse, model.CodingLanguage, codeResponse);
                     }
                     // For typing speed or listening comprehension assessments, skip audio transcription
                     else if (model.IsTypingSpeedQuestion || model.IsListeningComprehensionQuestion)
@@ -1798,6 +1817,52 @@ namespace Risebird.Web.Controllers
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Restores the coding attributes of a question that was rebuilt from the transcript.
+        /// The transcript only stores the question text, so on a page reload the model would
+        /// otherwise fall back to IsCodingQuestion = false and the IDE would never open.
+        /// </summary>
+        private async Task ApplyCodingQuestionAttributesAsync(ChatMessageViewModel model, int questionId)
+        {
+            if (model == null || questionId <= 0) return;
+
+            try
+            {
+                var questionDetails = await _iRFService.GetDeliveryHeadSampleQuestionById(questionId);
+                if (questionDetails == null) return;
+
+                model.IsCodingQuestion = questionDetails.IsCodingQuestion;
+                model.CodingTimeLimitInMinutes = questionDetails.CodingTimeLimitInMinutes;
+            }
+            catch (Exception ex)
+            {
+                // A lookup failure must not break the interview; the question still renders normally
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        /// <summary>
+        /// Merges the spoken explanation and the submitted code into a single transcript entry,
+        /// using the same "Verbal Explanation / Written Code" layout as chat-box coding answers so
+        /// the candidate report renders both the same way.
+        /// </summary>
+        private static string BuildCodingAnswerTranscript(string spokenExplanation, string language, string code)
+        {
+            var builder = new StringBuilder();
+
+            builder.AppendLine(string.IsNullOrWhiteSpace(spokenExplanation)
+                ? "Verbal Explanation : (no spoken explanation was recorded)"
+                : $"Verbal Explanation : {spokenExplanation.Trim()}");
+
+            builder.AppendLine();
+            builder.AppendLine(string.IsNullOrWhiteSpace(language)
+                ? "Written Code :"
+                : $"Written Code ({language}) :");
+            builder.AppendLine((code ?? string.Empty).Trim());
+
+            return builder.ToString().TrimEnd();
         }
 
         private bool IsTranscriptionValid(string text, bool isMultilingual)

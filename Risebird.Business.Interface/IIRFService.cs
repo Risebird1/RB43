@@ -160,6 +160,11 @@ namespace Risebird.Business.Interface
         Task<bool> AddIRFSampleQuestions(TechSkillComments skillComments);
         Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy);
         Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer, bool isCodingQuestion = false, int? codingTimeLimitInMinutes = null);
+
+        /// <summary>
+        /// Turns coding mode on or off for an existing sample question without touching its text.
+        /// </summary>
+        Task<bool> SetSampleQuestionCodingMode(int id, bool isCodingQuestion, int? codingTimeLimitInMinutes);
         Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id);
         Task<bool> DeleteSkillChannelSampleQuestions(int id);
         Task<bool> UpdateSkillChannelEmbeddableUrl(string irfId, string embedUrl);

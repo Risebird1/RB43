@@ -5126,6 +5126,30 @@ button.dm-v4-money-pill {
     margin: 0;
 }
 
+.dm-v4-question-coding {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.dm-v4-coding-mins {
+    width: 58px;
+    padding: 2px 6px;
+    font-size: 11px;
+    border: 1px solid var(--dm-border, #d8dee6);
+    border-radius: 4px;
+}
+
+    .dm-v4-coding-mins:disabled {
+        opacity: .5;
+    }
+
+.dm-v4-coding-mins-label {
+    font-size: 11px;
+    color: var(--dm-text-mid);
+}
+
 .dm-v4-questions-more-hint,
 .dm-v4-questions-empty {
     padding: 14px;

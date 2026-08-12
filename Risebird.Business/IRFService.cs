@@ -3980,6 +3980,19 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<bool> SetSampleQuestionCodingMode(int id, bool isCodingQuestion, int? codingTimeLimitInMinutes)
+        {
+            try
+            {
+                return await _irfRepository.SetSampleQuestionCodingMode(id, isCodingQuestion, codingTimeLimitInMinutes);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         public async Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id)
         {
             try
