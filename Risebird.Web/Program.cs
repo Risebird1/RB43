@@ -134,6 +134,7 @@ builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IWalletService, WalletService>();
 builder.Services.AddScoped<IMeetingService, MeetingService>();
 builder.Services.AddHttpClient<ICashfreePayoutService, CashfreePayoutService>();
+builder.Services.AddHttpClient<ICodeExecutionService, CodeExecutionService>();
 builder.Services.AddScoped<IQcInterviewAIMergeJobService, QcInterviewAIMergeJobService>();
 builder.Services.AddScoped<ITransInterviewerAuditRepository, TransInterviewerAuditRepository>();
 builder.Services.AddScoped<IDmIvAutoQcRemovalService, DmIvAutoQcRemovalService>();

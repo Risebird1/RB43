@@ -1,6 +1,7 @@
 @using Risebird.Entities.ViewModel
 @using System.Text.Json
 @model ChatMessageViewModel
+@inject Risebird.Business.Interface.ICodeExecutionService CodeExecution
 @{
     ViewData["Title"] = "AI Interview";
     Layout = "~/Views/Shared/_PublicLayout2.cshtml";
@@ -3439,6 +3440,361 @@
         </div>
     </div>
 </div>
+
+@if (Model.IsCodingQuestion)
+{
+    <div class="rb-ide-overlay" id="codingIdeOverlay">
+        <div class="rb-ide">
+            <div class="rb-ide-header">
+                <div class="rb-ide-title">
+                    <i class="fa fa-code"></i> Coding Question
+                </div>
+                <div class="rb-ide-header-right">
+                    <div class="rb-ide-timer" id="codingTimerDisplay" style="display:none;">
+                        <i class="fa fa-clock-o"></i> <span id="codingTimerValue">0:00</span>
+                    </div>
+                    <button type="button" class="rb-ide-btn rb-ide-btn--run" id="codingRunBtn" style="display:none;">
+                        <i class="fa fa-play"></i> Run
+                    </button>
+                    <button type="button" class="rb-ide-btn rb-ide-btn--submit" id="codingSubmitBtn" style="display:none;">
+                        <i class="fa fa-check"></i> Submit Answer
+                    </button>
+                </div>
+            </div>
+
+            <div class="rb-ide-body">
+                <div class="rb-ide-left">
+                    <div class="rb-ide-panel-label">Problem</div>
+                    <div class="rb-ide-question" id="codingQuestionText"></div>
+
+                    <div id="codingInstructions" class="rb-ide-instructions">
+                        <strong>Before you begin</strong>
+                        <ul>
+                            <li>You get <strong id="codingLimitLabel"></strong> once you press Start.</li>
+                            <li>Pick your language, write your solution, and press <strong>Run</strong> to compile and execute it.</li>
+                            <li>Use the <strong>Input (stdin)</strong> box for anything your program reads from standard input.</li>
+                            <li>Copy and paste are disabled.</li>
+                            <li>Video recording runs while you code.</li>
+                            <li>Your answer is submitted automatically when the time runs out.</li>
+                        </ul>
+                        <button type="button" class="rb-ide-btn rb-ide-btn--start" id="codingStartBtn">
+                            <i class="fa fa-play"></i> Start
+                        </button>
+                    </div>
+                </div>
+
+                <div class="rb-ide-right" id="codingWorkspace" style="display:none;">
+                    <div class="rb-ide-toolbar">
+                        <label for="codingLanguage">Language</label>
+                        <select id="codingLanguage" class="rb-ide-select"></select>
+                        <span class="rb-ide-runner-note" id="codingRunnerNote"></span>
+                    </div>
+
+                    <div class="rb-ide-editor-host">
+                        <div id="codingEditorContainer"></div>
+                    </div>
+
+                    <div class="rb-ide-io">
+                        <div class="rb-ide-io-col">
+                            <div class="rb-ide-panel-label">Input (stdin)</div>
+                            <textarea id="codingStdin" class="rb-ide-stdin" placeholder="Optional input your program reads from stdin"></textarea>
+                        </div>
+                        <div class="rb-ide-io-col rb-ide-io-col--wide">
+                            <div class="rb-ide-panel-label">
+                                Output <span class="rb-ide-status" id="codingRunStatus"></span>
+                            </div>
+                            <pre id="codingOutput" class="rb-ide-output">Press Run to compile and execute your code.</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .rb-ide-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 3000;
+            background: rgba(17, 24, 39, 0.75);
+            display: none;
+            padding: 18px;
+        }
+
+            .rb-ide-overlay.is-open {
+                display: block;
+            }
+
+        /* Confirmation dialogs must sit above the IDE, which covers the whole viewport */
+        .swal2-container {
+            z-index: 3100 !important;
+        }
+
+        .rb-ide {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 18px 50px rgba(0,0,0,.35);
+        }
+
+        .rb-ide-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 18px;
+            background: #1f2937;
+            color: #fff;
+            flex: 0 0 auto;
+        }
+
+        .rb-ide-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .rb-ide-header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .rb-ide-timer {
+            font-size: 16px;
+            font-weight: 700;
+            color: #4eda92;
+            background: rgba(78,218,146,.12);
+            padding: 6px 12px;
+            border-radius: 6px;
+            min-width: 92px;
+            text-align: center;
+        }
+
+            .rb-ide-timer.is-critical {
+                color: #fca5a5;
+                background: rgba(220,38,38,.18);
+            }
+
+        .rb-ide-btn {
+            border: 0;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+        }
+
+            .rb-ide-btn:disabled {
+                opacity: .55;
+                cursor: not-allowed;
+            }
+
+        .rb-ide-btn--run {
+            background: #2563eb;
+        }
+
+        .rb-ide-btn--submit {
+            background: #16a34a;
+        }
+
+        .rb-ide-btn--start {
+            background: #4eda92;
+            color: #08301c;
+            margin-top: 14px;
+        }
+
+        .rb-ide-body {
+            display: flex;
+            flex: 1 1 auto;
+            min-height: 0;
+        }
+
+        .rb-ide-left {
+            width: 32%;
+            min-width: 260px;
+            border-right: 1px solid #e5e7eb;
+            padding: 16px;
+            overflow-y: auto;
+            background: #f9fafb;
+        }
+
+        .rb-ide-right {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            min-height: 0;
+        }
+
+        .rb-ide-panel-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            color: #6b7280;
+            margin-bottom: 6px;
+        }
+
+        .rb-ide-question {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #111827;
+            white-space: pre-wrap;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-left: 4px solid #4eda92;
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        .rb-ide-instructions {
+            margin-top: 16px;
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            border-radius: 8px;
+            padding: 14px;
+            font-size: 13px;
+            color: #555;
+        }
+
+            .rb-ide-instructions ul {
+                margin: 10px 0 0 18px;
+                padding: 0;
+            }
+
+            .rb-ide-instructions li {
+                margin-bottom: 6px;
+            }
+
+        .rb-ide-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            flex: 0 0 auto;
+        }
+
+            .rb-ide-toolbar label {
+                font-size: 12px;
+                font-weight: 600;
+                color: #6b7280;
+                margin: 0;
+            }
+
+        .rb-ide-select {
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 13px;
+            background: #fff;
+        }
+
+        .rb-ide-runner-note {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .rb-ide-editor-host {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+            .rb-ide-editor-host > div {
+                height: 100%;
+            }
+
+            .rb-ide-editor-host .CodeMirror {
+                height: 100%;
+                font-family: Consolas, Monaco, 'Courier New', monospace;
+                font-size: 13.5px;
+            }
+
+        .rb-ide-io {
+            display: flex;
+            gap: 12px;
+            padding: 12px 16px;
+            border-top: 1px solid #e5e7eb;
+            background: #f9fafb;
+            flex: 0 0 34%;
+            min-height: 150px;
+        }
+
+        .rb-ide-io-col {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 0;
+            min-width: 0;
+        }
+
+        .rb-ide-io-col--wide {
+            flex: 2 1 0;
+        }
+
+        .rb-ide-stdin {
+            flex: 1 1 auto;
+            resize: none;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 8px;
+            font-family: Consolas, Monaco, 'Courier New', monospace;
+            font-size: 12.5px;
+        }
+
+        .rb-ide-output {
+            flex: 1 1 auto;
+            margin: 0;
+            overflow: auto;
+            background: #0f172a;
+            color: #e2e8f0;
+            border-radius: 6px;
+            padding: 10px;
+            font-family: Consolas, Monaco, 'Courier New', monospace;
+            font-size: 12.5px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .rb-ide-status {
+            font-weight: 700;
+            text-transform: none;
+            letter-spacing: 0;
+            margin-left: 6px;
+        }
+
+            .rb-ide-status.is-ok {
+                color: #16a34a;
+            }
+
+            .rb-ide-status.is-bad {
+                color: #dc2626;
+            }
+
+        @@media (max-width: 900px) {
+            .rb-ide-body {
+                flex-direction: column;
+            }
+
+            .rb-ide-left {
+                width: 100%;
+                min-width: 0;
+                max-height: 32%;
+                border-right: 0;
+                border-bottom: 1px solid #e5e7eb;
+            }
+
+            .rb-ide-io {
+                flex-direction: column;
+                flex-basis: auto;
+            }
+        }
+    </style>
+}
 <style>
     .custom-modal {
         position: fixed;
@@ -3693,6 +4049,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- Additional modes used by the coding-question IDE language dropdown -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/go/go.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/ruby/ruby.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/php/php.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/rust/rust.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/swift/swift.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -5047,6 +5409,17 @@
         const configuredTimeLimit = @Json.Serialize(Model.CodingTimeLimitInMinutes);
         const timeLimitMinutes = (configuredTimeLimit && configuredTimeLimit > 0) ? configuredTimeLimit : DEFAULT_TIME_LIMIT_MINUTES;
         const questionText = @Json.Serialize(Model.CurrentQuestion);
+        const sessionId = @Json.Serialize(Model.SessionId);
+        const questionId = @Json.Serialize(Model.CurrentQuestionId);
+        const executionEnabled = @Json.Serialize(CodeExecution.IsEnabled);
+        const codingLanguages = @Json.Serialize(
+            CodeLanguageCatalog.Languages.Select(l => new
+            {
+                id = l.Id,
+                label = l.Label,
+                mode = l.CodeMirrorMode,
+                template = l.Template
+            }));
 
         let codingStartTime = null;
         let codingEndTime = null;
@@ -5054,6 +5427,10 @@
         let codingSubmitted = false;
         let codingEditor = null;
         let countdownInterval = null;
+        let codingRunCount = 0;
+        let lastRunOutput = '';
+        let lastRunStatus = '';
+        let runInFlight = false;
 
         function formatClock(totalSeconds) {
             const minutes = Math.floor(totalSeconds / 60);
@@ -5069,13 +5446,60 @@
             return fallback ? fallback.value : '';
         }
 
+        function setCode(value) {
+            if (codingEditor) {
+                codingEditor.setValue(value || '');
+                codingEditor.refresh();
+                return;
+            }
+            const fallback = document.getElementById('codingFallbackArea');
+            if (fallback) {
+                fallback.value = value || '';
+            }
+        }
+
+        function languageById(id) {
+            return codingLanguages.find(l => l.id === id) || null;
+        }
+
+        function populateLanguageDropdown() {
+            const select = document.getElementById('codingLanguage');
+            if (!select) return;
+
+            select.innerHTML = '';
+            codingLanguages.forEach(lang => {
+                const option = document.createElement('option');
+                option.value = lang.id;
+                option.textContent = lang.label;
+                select.appendChild(option);
+            });
+        }
+
+        // Swapping language reloads the starter template, but only while the candidate
+        // has not written anything beyond a previous template.
+        function applyLanguage(languageId, forceTemplate) {
+            const lang = languageById(languageId);
+            if (!lang) return;
+
+            if (codingEditor) {
+                codingEditor.setOption('mode', lang.mode || 'text');
+            }
+
+            const existing = currentCode().trim();
+            const isUntouched = existing.length === 0 || codingLanguages.some(l => (l.template || '').trim() === existing);
+
+            if (forceTemplate || isUntouched) {
+                setCode(lang.template || '');
+            }
+        }
+
         function buildCodingEditor() {
             const container = document.getElementById('codingEditorContainer');
             if (!container) return;
 
             if (typeof CodeMirror === 'undefined') {
                 // Fall back to a plain textarea so the candidate is never blocked
-                container.innerHTML = '<textarea id="codingFallbackArea" style="width:100%; height:300px; font-family:Consolas,Monaco,monospace; font-size:13px; padding:10px; border:2px solid #ddd; border-radius:6px;"></textarea>';
+                container.innerHTML = '<textarea id="codingFallbackArea" style="width:100%; height:100%; min-height:280px; font-family:Consolas,Monaco,monospace; font-size:13px; padding:10px; border:0; outline:none; resize:none;"></textarea>';
                 return;
             }
 
@@ -5111,7 +5535,7 @@
                 }
             });
 
-            codingEditor.setSize('100%', 320);
+            codingEditor.setSize('100%', '100%');
 
             codingEditor.on('contextmenu', function (cm, event) {
                 event.preventDefault();
@@ -5124,35 +5548,78 @@
                 });
             });
 
-            const langSelector = document.getElementById('codingLanguage');
-            if (langSelector) {
-                langSelector.addEventListener('change', function () {
-                    codingEditor.setOption('mode', codeMirrorModeFor(this.value));
-                });
-            }
-
             setTimeout(function () { codingEditor.refresh(); }, 50);
-        }
-
-        function codeMirrorModeFor(language) {
-            switch (language) {
-                case 'javascript': return 'javascript';
-                case 'json': return { name: 'javascript', json: true };
-                case 'python': return 'python';
-                case 'java': return 'text/x-java';
-                case 'csharp': return 'text/x-csharp';
-                case 'cpp': return 'text/x-c++src';
-                case 'htmlmixed': return 'htmlmixed';
-                case 'css': return 'css';
-                case 'sql': return 'sql';
-                case 'xml': return 'xml';
-                default: return 'text';
-            }
         }
 
         function selectedLanguage() {
             const langSelector = document.getElementById('codingLanguage');
-            return langSelector ? langSelector.value : 'text';
+            return langSelector ? langSelector.value : '';
+        }
+
+        function setRunStatus(text, isOk) {
+            const statusHost = document.getElementById('codingRunStatus');
+            if (!statusHost) return;
+            statusHost.textContent = text || '';
+            statusHost.className = 'rb-ide-status' + (text ? (isOk ? ' is-ok' : ' is-bad') : '');
+        }
+
+        function writeOutput(text) {
+            const outputHost = document.getElementById('codingOutput');
+            if (outputHost) {
+                outputHost.textContent = text;
+            }
+        }
+
+        async function runCode() {
+            if (runInFlight || codingSubmitted) return;
+
+            const code = currentCode();
+            if (!code || code.trim().length === 0) {
+                writeOutput('Write some code before running it.');
+                setRunStatus('Nothing to run', false);
+                return;
+            }
+
+            const runBtn = document.getElementById('codingRunBtn');
+            runInFlight = true;
+            if (runBtn) runBtn.disabled = true;
+            setRunStatus('Running...', true);
+            writeOutput('Compiling and running your code...');
+
+            try {
+                const response = await fetch('/AIInterview/RunCode', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: sessionId,
+                        questionId: questionId,
+                        language: selectedLanguage(),
+                        code: code,
+                        stdin: (document.getElementById('codingStdin') || {}).value || ''
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status);
+                }
+
+                const result = await response.json();
+                codingRunCount += 1;
+                lastRunOutput = result.output || '';
+                lastRunStatus = result.status || (result.success ? 'Success' : 'Error');
+
+                writeOutput(lastRunOutput || '(no output)');
+                setRunStatus(lastRunStatus, !!result.success);
+            } catch (err) {
+                console.error('Code execution failed', err);
+                lastRunStatus = 'Runner unavailable';
+                lastRunOutput = 'Could not reach the code runner. Your code is safe — you can still submit it.';
+                writeOutput(lastRunOutput);
+                setRunStatus(lastRunStatus, false);
+            } finally {
+                runInFlight = false;
+                if (runBtn) runBtn.disabled = false;
+            }
         }
 
         function captureCodingFields(isTimeExpired) {
@@ -5166,6 +5633,10 @@
             document.getElementById('CodingTimeTaken').value = timeTaken.toFixed(2);
             document.getElementById('CodingIsTimeExpired').value = isTimeExpired ? 'true' : 'false';
             document.getElementById('CodingTimeLimitInMinutes').value = timeLimitMinutes;
+            document.getElementById('CodingStdInput').value = (document.getElementById('codingStdin') || {}).value || '';
+            document.getElementById('CodingLastRunOutput').value = lastRunOutput;
+            document.getElementById('CodingLastRunStatus').value = lastRunStatus;
+            document.getElementById('CodingRunCount').value = codingRunCount;
 
             return timeTaken;
         }
@@ -5189,6 +5660,7 @@
                 stopRecording();
             }
             captureCodingFields(true);
+            closeCodingIde();
 
             Swal.fire({
                 title: "Time's up!",
@@ -5214,148 +5686,138 @@
                 remaining -= 1;
                 if (timerValue) {
                     timerValue.textContent = formatClock(Math.max(remaining, 0));
-                    if (remaining <= 60) {
-                        timerValue.style.color = '#dc3545';
+                }
+                if (remaining <= 60) {
+                    const timerHost = document.getElementById('codingTimerDisplay');
+                    if (timerHost) {
+                        timerHost.classList.add('is-critical');
                     }
                 }
                 if (remaining <= 0) {
                     clearInterval(countdownInterval);
-                    // Firing a new modal replaces the open one, so the editor modal is dismissed here
                     handleTimeExpired();
                 }
             }, 1000);
         }
 
-        function showCodingQuestionModal() {
+        function beginCodingSession() {
+            if (codingInProgress) return;
+
+            codingInProgress = true;
+            codingStartTime = new Date();
+
+            document.getElementById('codingInstructions').style.display = 'none';
+            document.getElementById('codingWorkspace').style.display = 'flex';
+            document.getElementById('codingTimerDisplay').style.display = 'block';
+            document.getElementById('codingSubmitBtn').style.display = 'inline-block';
+
+            if (executionEnabled) {
+                document.getElementById('codingRunBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('codingRunnerNote').textContent = 'Running code is unavailable in this environment — write your solution and submit it.';
+                writeOutput('Running code is unavailable in this environment. Write your solution and submit it.');
+            }
+
+            buildCodingEditor();
+            applyLanguage(selectedLanguage(), true);
+            startCountdown();
+
+            if (typeof startRecording === 'function') {
+                startRecording();
+            }
+
+            if (codingEditor) {
+                codingEditor.focus();
+            }
+        }
+
+        function confirmAndSubmit() {
+            if (codingSubmitted) return;
+
+            const code = currentCode();
+            if (!code || code.trim().length === 0) {
+                Swal.fire({
+                    title: 'Nothing to submit',
+                    text: 'Please write your code before submitting.',
+                    icon: 'warning',
+                    confirmButtonColor: '#4eda92'
+                });
+                return;
+            }
+
             Swal.fire({
-                title: 'Coding Question',
-                html: `
-                    <div style="text-align: left; margin-bottom: 20px;">
-                        <div id="codingQuestionText" style="background:#f8f9fa; padding:15px; border-radius:8px; margin-bottom:15px; border-left:4px solid #4eda92; font-size:14px; color:#333; white-space:pre-wrap;"></div>
-                        <div id="codingInstructions" style="background:#fff8e1; padding:15px; border-radius:8px; margin-bottom:15px; border-left:4px solid #ffc107;">
-                            <strong>Instructions:</strong>
-                            <ul style="margin: 10px 0 0 20px; font-size: 13px; color: #555;">
-                                <li>You have <strong>${timeLimitMinutes} minute${timeLimitMinutes > 1 ? 's' : ''}</strong> to write your solution</li>
-                                <li>Click "Start" to open the code editor and begin the timer</li>
-                                <li>Select the language you are writing in</li>
-                                <li>Copy and paste are disabled</li>
-                                <li>Video recording will run while you code</li>
-                                <li>Your code is submitted automatically when the time runs out</li>
-                            </ul>
-                        </div>
-                        <div id="codingTimerDisplay" style="display:none; text-align:center; margin-bottom:10px; font-size:18px; font-weight:bold; color:#4eda92;">
-                            Time remaining: <span id="codingTimerValue">0:00</span>
-                        </div>
-                        <div id="codingEditorWrapper" style="display:none;">
-                            <div id="codingEditorContainer" style="border:2px solid #ddd; border-radius:6px; overflow:hidden;"></div>
-                            <div style="display:flex; align-items:center; gap:10px; margin-top:10px;">
-                                <label style="font-size:13px; color:#555; margin:0;">Language:</label>
-                                <select id="codingLanguage" class="code-lang-selector" title="Select Programming Language">
-                                    <option value="text">Plain Text</option>
-                                    <option value="javascript">JavaScript</option>
-                                    <option value="python">Python</option>
-                                    <option value="java">Java</option>
-                                    <option value="csharp">C#</option>
-                                    <option value="cpp">C++</option>
-                                    <option value="htmlmixed">HTML</option>
-                                    <option value="css">CSS</option>
-                                    <option value="sql">SQL</option>
-                                    <option value="xml">XML</option>
-                                    <option value="json">JSON</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                `,
-                showCancelButton: false,
-                showConfirmButton: true,
-                confirmButtonText: '<i class="fa fa-play"></i> Start',
+                title: 'Submit Answer?',
+                text: 'Are you sure you want to submit your coding answer? You cannot return to this question.',
+                icon: 'question',
+                showCancelButton: true,
                 confirmButtonColor: '#4eda92',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                width: '800px',
-                didOpen: () => {
-                    const questionHost = document.getElementById('codingQuestionText');
-                    if (questionHost) {
-                        questionHost.textContent = questionText || '';
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Submit Answer',
+                cancelButtonText: 'Keep Coding'
+            }).then((result) => {
+                if (!(result.isConfirmed || result.value === true)) {
+                    return;
+                }
+
+                codingSubmitted = true;
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                }
+                if (typeof stopRecording === 'function') {
+                    stopRecording();
+                }
+
+                captureCodingFields(false);
+                closeCodingIde();
+                submitCodingAnswer();
+            });
+        }
+
+        function closeCodingIde() {
+            const overlay = document.getElementById('codingIdeOverlay');
+            if (overlay) {
+                overlay.classList.remove('is-open');
+            }
+        }
+
+        function openCodingIde() {
+            const overlay = document.getElementById('codingIdeOverlay');
+            if (!overlay) return;
+
+            const questionHost = document.getElementById('codingQuestionText');
+            if (questionHost) {
+                questionHost.textContent = questionText || '';
+            }
+
+            const limitLabel = document.getElementById('codingLimitLabel');
+            if (limitLabel) {
+                limitLabel.textContent = timeLimitMinutes + ' minute' + (timeLimitMinutes > 1 ? 's' : '');
+            }
+
+            populateLanguageDropdown();
+
+            const langSelector = document.getElementById('codingLanguage');
+            if (langSelector) {
+                langSelector.addEventListener('change', function () {
+                    applyLanguage(this.value, false);
+                });
+            }
+
+            document.getElementById('codingStartBtn').addEventListener('click', beginCodingSession);
+            document.getElementById('codingRunBtn').addEventListener('click', runCode);
+            document.getElementById('codingSubmitBtn').addEventListener('click', confirmAndSubmit);
+
+            // Ctrl/Cmd+Enter runs the code, matching common editor muscle memory
+            overlay.addEventListener('keydown', function (event) {
+                if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+                    event.preventDefault();
+                    if (codingInProgress && executionEnabled) {
+                        runCode();
                     }
-                },
-                preConfirm: () => {
-                    const confirmBtn = Swal.getConfirmButton();
-
-                    if (!codingInProgress) {
-                        codingInProgress = true;
-                        codingStartTime = new Date();
-
-                        document.getElementById('codingInstructions').style.display = 'none';
-                        document.getElementById('codingEditorWrapper').style.display = 'block';
-                        document.getElementById('codingTimerDisplay').style.display = 'block';
-
-                        buildCodingEditor();
-                        startCountdown();
-
-                        confirmBtn.innerHTML = '<i class="fa fa-check"></i> Submit';
-                        confirmBtn.style.backgroundColor = '#28a745';
-
-                        if (typeof startRecording === 'function') {
-                            startRecording();
-                        }
-
-                        return false; // keep the modal open
-                    }
-
-                    const code = currentCode();
-                    if (!code || code.trim().length === 0) {
-                        Swal.showValidationMessage('Please write your code before submitting!');
-                        return false;
-                    }
-
-                    codingSubmitted = true;
-                    if (countdownInterval) {
-                        clearInterval(countdownInterval);
-                    }
-                    if (typeof stopRecording === 'function') {
-                        stopRecording();
-                    }
-
-                    const timeTaken = captureCodingFields(false);
-
-                    Swal.fire({
-                        title: 'Answer Recorded',
-                        html: `
-                            <div style="text-align: left;">
-                                <p style="margin-bottom: 15px; color: #666;">Your solution has been captured.</p>
-                                <p style="font-size: 14px; color: #666;"><strong>Time taken:</strong> ${formatClock(Math.round(timeTaken))}</p>
-                            </div>
-                        `,
-                        icon: 'success',
-                        confirmButtonText: 'Continue',
-                        confirmButtonColor: '#4eda92',
-                        allowOutsideClick: false
-                    }).then(() => {
-                        Swal.fire({
-                            title: 'Submit Answer?',
-                            text: 'Are you sure you want to submit your coding answer?',
-                            icon: 'question',
-                            showCancelButton: true,
-                            confirmButtonColor: '#4eda92',
-                            cancelButtonColor: '#d33',
-                            confirmButtonText: 'Submit Answer',
-                            cancelButtonText: 'Cancel',
-                            reverseButtons: false,
-                            focusConfirm: true
-                        }).then((result) => {
-                            if (result.isConfirmed || result.value === true) {
-                                submitCodingAnswer();
-                            } else {
-                                console.log("Coding answer submission cancelled");
-                            }
-                        });
-                    });
-
-                    return true;
                 }
             });
+
+            overlay.classList.add('is-open');
         }
 
         function addCodingHiddenFormFields() {
@@ -5370,7 +5832,11 @@
                 { name: 'CodingStartTime', value: '' },
                 { name: 'CodingEndTime', value: '' },
                 { name: 'CodingTimeTaken', value: '' },
-                { name: 'CodingIsTimeExpired', value: 'false' }
+                { name: 'CodingIsTimeExpired', value: 'false' },
+                { name: 'CodingStdInput', value: '' },
+                { name: 'CodingLastRunOutput', value: '' },
+                { name: 'CodingLastRunStatus', value: '' },
+                { name: 'CodingRunCount', value: '0' }
             ];
 
             hiddenFields.forEach(field => {
@@ -5385,7 +5851,7 @@
 
         setTimeout(() => {
             addCodingHiddenFormFields();
-            showCodingQuestionModal();
+            openCodingIde();
         }, 1000);
 
     })();

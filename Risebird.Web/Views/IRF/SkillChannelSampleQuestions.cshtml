@@ -36,7 +36,7 @@
                                                         <td class="b-right">
                                                             <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                                 <div class="talktext">
-                                                                    <textarea htmlattributes="{ class = form-control text-box single-line }" id="SkillCollection_0__ExpectedAnswer" style="width:100%" name="SkillCollection[0].ExpectedAnswer" class="valid" aria-invalid="false" @* onblur="checkQuestionLength(this.id)" *@></textarea>
+                                                                    <textarea htmlattributes="{ class = form-control text-box single-line }" id="SkillCollection_0__ExpectedAnswer" style="width:100%" name="SkillCollection[0].ExpectedAnswer" class="valid" aria-invalid="false" onblur="checkQuestionLength(this.id)"></textarea>
                                                                 </div>
                                                                 <label id="expectedAnswerError_0" class="text-danger"></label>
                                                             </div>
@@ -271,22 +271,35 @@
         return true;
     }
 
+    var MAX_QUESTION_LENGTH = 5000;
+
     function checkQuestionLength(elementId) {
         var index = elementId.match(/\d+/);
-        var val = document.getElementById(elementId).value;
-        var errorElementId = "questionError_" + index;
+        var isExpectedAnswer = /ExpectedAnswer$/.test(elementId);
+        var element = document.getElementById(elementId);
+        if (!element) return;
 
-        if (val != null && val.length > 300) {
-            document.getElementById(errorElementId).innerHTML = "The Question should not exceed 300 characters.";
-            //alert("The Question should not exceed 300 characters.");
-            document.getElementById("btnUpload").disabled = true;
-            document.getElementById(elementId).focus();
-            return;
+        var val = element.value;
+        var errorElement = document.getElementById((isExpectedAnswer ? "expectedAnswerError_" : "questionError_") + index);
+        var fieldLabel = isExpectedAnswer ? "Expected Answer" : "Question";
+
+        if (errorElement) {
+            errorElement.innerHTML = (val != null && val.length > MAX_QUESTION_LENGTH)
+                ? "The " + fieldLabel + " should not exceed " + MAX_QUESTION_LENGTH + " characters."
+                : "";
         }
-        else {
-            document.getElementById(errorElementId).innerHTML = "";
-            document.getElementById("btnUpload").disabled = false;
-            return;
+
+        // Re-check every row so one valid field can't re-enable submit while another is still too long
+        var stillTooLong = false;
+        $('#QuestionsNewTable').find('textarea').each(function () {
+            if (this.value && this.value.length > MAX_QUESTION_LENGTH) {
+                stillTooLong = true;
+            }
+        });
+        document.getElementById("btnUpload").disabled = stillTooLong;
+
+        if (val != null && val.length > MAX_QUESTION_LENGTH) {
+            element.focus();
         }
     }
 </script>
