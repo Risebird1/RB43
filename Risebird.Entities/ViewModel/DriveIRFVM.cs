@@ -24,5 +24,13 @@ namespace Risebird.Entities.ViewModel
         /// <summary>'This' | 'Next' — used when dual-writing ActionsTaken to WeekendDriveSpotlight.</summary>
         public string WeekendBucket { get; set; }
         public int ExpectedTotal => ExpectedMorning + ExpectedEvening;
+
+        /// <summary>All-future scheduled count (interviewDate ≥ today). Overlay for D2; does not change row selection.</summary>
+        public int AllFutureVolume { get; set; }
+        /// <summary>All-future unassigned count (interviewDate ≥ today, no interviewer).</summary>
+        public int AllFutureUnassigned { get; set; }
+        public bool HasAllFutureCounts { get; set; }
+        public int DisplayVolume => HasAllFutureCounts ? AllFutureVolume : ExpectedTotal;
+        public int DisplayUnassigned => HasAllFutureCounts ? AllFutureUnassigned : (UnassignedMorning + UnassignedEvening);
     }
 }
