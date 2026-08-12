@@ -54,6 +54,7 @@ namespace Risebird.Web.Controllers
     public class IRFController : Controller
     {
         private const int MaxSampleQuestionLength = 5000;
+        private const int DefaultCodingTimeLimitInMinutes = 15;
 
         private readonly IIRFRepository _irfRepository;
         private readonly IUserService _userService;
@@ -9750,6 +9751,56 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false, message = "An error occurred: " + ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Turns coding mode on or off for a question that already exists, so questions added before
+        /// the feature shipped (or generated from the rubric) can be converted without retyping them.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> SetQuestionCodingMode(int irfId, int id, bool isCodingQuestion, int? codingTimeLimitInMinutes = null, string Type = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                {
+                    return Json(new { success = false, message = "Forbidden" });
+                }
+                if (id <= 0)
+                {
+                    return Json(new { success = false, message = "Question not found." });
+                }
+
+                if (!isCodingQuestion)
+                {
+                    codingTimeLimitInMinutes = null;
+                }
+                else
+                {
+                    if (!codingTimeLimitInMinutes.HasValue)
+                    {
+                        codingTimeLimitInMinutes = DefaultCodingTimeLimitInMinutes;
+                    }
+                    if (codingTimeLimitInMinutes.Value < 1 || codingTimeLimitInMinutes.Value > 180)
+                    {
+                        return Json(new { success = false, message = "Time limit must be between 1 and 180 minutes." });
+                    }
+                }
+
+                var saved = await _irfService.SetSampleQuestionCodingMode(id, isCodingQuestion, codingTimeLimitInMinutes);
+                return saved
+                    ? Json(new { success = true, isCodingQuestion, codingTimeLimitInMinutes })
+                    : Json(new { success = false, message = "Could not update the question." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not update the question." });
             }
         }
 

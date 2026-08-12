@@ -8851,6 +8851,28 @@ WHERE irf.IsDeleted = 0
             return false;
         }
 
+        public async Task<bool> SetSampleQuestionCodingMode(int id, bool isCodingQuestion, int? codingTimeLimitInMinutes)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@isCodingQuestion", isCodingQuestion);
+                dynamicParameters.Add("@codingTimeLimitInMinutes", codingTimeLimitInMinutes);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.ExecuteAsync(con, "usp_SetSampleQuestionCodingMode", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
         public async Task<bool> UpdateSkillChannelEmbeddableUrl(string irfId, string embedUrl)//embed url by Affinda
         {
             try

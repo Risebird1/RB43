@@ -2731,13 +2731,18 @@
         if (overlay) overlay.style.display = "flex";
     }
 
+    function isCodingAnswer() {
+        const codingField = document.querySelector('input[name="IsCodingQuestion"]');
+        return Boolean(codingField && String(codingField.value).toLowerCase() === 'true');
+    }
+
+    // Coding answers are recorded on video like any spoken answer; only typing and
+    // listening assessments submit without one.
     function answerSubmitNeedsVideo() {
         const typingField = document.querySelector('input[name="IsTypingSpeedQuestion"]');
         const listeningField = document.querySelector('input[name="IsListeningComprehensionQuestion"]');
-        const codingField = document.querySelector('input[name="IsCodingQuestion"]');
         if (typingField && String(typingField.value).toLowerCase() === 'true') return false;
         if (listeningField && String(listeningField.value).toLowerCase() === 'true') return false;
-        if (codingField && String(codingField.value).toLowerCase() === 'true') return false;
         return true;
     }
 
@@ -2829,7 +2834,8 @@
 
     function tryFinalizeAnswerSubmit() {
         if (answerSubmitInFlight || !form) return false;
-        if (!answerRecordingHasUsableAudio()) return false;
+        // A candidate may solve a coding question without narrating it, so audio is optional there
+        if (!answerRecordingHasUsableAudio() && !isCodingAnswer()) return false;
         const needsVideo = answerSubmitNeedsVideo();
         if (needsVideo && !answerRecordingHasUsableVideo()) return false;
         answerSubmitInFlight = true;
@@ -2895,9 +2901,10 @@
         if (recordingOverlay) recordingOverlay.style.display = "none";
     }
 
-    if (recordBtn) {
-        recordBtn.addEventListener("click", async () => {
-            if (!mediaRecorderAudio || mediaRecorderAudio.state === "inactive") {
+    // Starts the audio + video answer recorders. Extracted from the record button so the
+    // coding IDE can start the same recording pipeline without simulating a click.
+    async function beginAnswerRecording() {
+            {
                 clearAnswerSubmitFallbacks();
                 answerSubmitInFlight = false;
                 audioChunks = [];
@@ -2935,6 +2942,18 @@
                     const audioBlob = new Blob(audioChunks, { type: resolvedMime });
                     if (audioBlob.size < 1000) {
                         audioChunks = [];
+
+                        // A coding answer stands on its own, so silence must not block submission.
+                        // The written code is still sent; only the spoken explanation is missing.
+                        if (isCodingAnswer()) {
+                            if (overlay) overlay.style.display = "flex";
+                            stopRecording();
+                            if (!tryFinalizeAnswerSubmit()) {
+                                scheduleAnswerSubmitFallback();
+                            }
+                            return;
+                        }
+
                         if (overlay) overlay.style.display = "none";
                         Swal.fire({
                             title: 'Recording too short',
@@ -2960,7 +2979,7 @@
 
                     if (isAudioPhoneMode) {
                         setPhoneUiRecording(false);
-                    } else {
+                    } else if (recordBtn) {
                         recordBtn.textContent = "⭕";
                         recordBtn.setAttribute('data-tooltip', 'Record Audio');
                     }
@@ -3007,10 +3026,17 @@
 
                 if (isAudioPhoneMode) {
                     setPhoneUiRecording(true);
-                } else {
+                } else if (recordBtn) {
                     recordBtn.textContent = "☐";
                     recordBtn.setAttribute('data-tooltip', 'Click to record your answer. Click again to Stop Recording');
                 }
+            }
+    }
+
+    if (recordBtn) {
+        recordBtn.addEventListener("click", async () => {
+            if (!mediaRecorderAudio || mediaRecorderAudio.state === "inactive") {
+                await beginAnswerRecording();
             }
             else if (mediaRecorderAudio.state === "recording") {
                 // Show confirmation dialog - recording continues until user decides
@@ -5641,13 +5667,6 @@
             return timeTaken;
         }
 
-        function submitCodingAnswer() {
-            const form = document.getElementById('chatForm');
-            if (form) {
-                form.submit();
-            }
-        }
-
         // When the clock runs out the answer is submitted as-is, without a confirmation prompt
         function handleTimeExpired() {
             if (codingSubmitted) return;
@@ -5655,9 +5674,6 @@
 
             if (countdownInterval) {
                 clearInterval(countdownInterval);
-            }
-            if (typeof stopRecording === 'function') {
-                stopRecording();
             }
             captureCodingFields(true);
             closeCodingIde();
@@ -5722,12 +5738,60 @@
             applyLanguage(selectedLanguage(), true);
             startCountdown();
 
-            if (typeof startRecording === 'function') {
+            // Record audio + video for the whole coding session, exactly like a spoken answer
+            if (typeof beginAnswerRecording === 'function') {
+                beginAnswerRecording().catch(function (err) {
+                    console.error('Could not start recording for the coding question', err);
+                });
+            } else if (typeof startRecording === 'function') {
                 startRecording();
             }
 
             if (codingEditor) {
                 codingEditor.focus();
+            }
+        }
+
+        // The shared pipeline waits for the media files before posting. If a device or permission
+        // problem means they never arrive, post anyway rather than stranding the candidate with
+        // a full coding answer they cannot submit.
+        function forceSubmitIfRecordingNeverArrives() {
+            setTimeout(function () {
+                if (typeof answerSubmitInFlight !== 'undefined' && answerSubmitInFlight) return;
+                const form = document.getElementById('chatForm');
+                if (!form) return;
+                if (typeof answerSubmitInFlight !== 'undefined') {
+                    answerSubmitInFlight = true;
+                }
+                form.submit();
+            }, 10000);
+        }
+
+        // Hands off to the shared recording pipeline: stopping the audio recorder cascades into
+        // stopping the video recorder, attaching both files, and posting the form once they are ready.
+        function submitCodingAnswer() {
+            if (typeof stopAudioRecordingForSubmit === 'function'
+                && typeof mediaRecorderAudio !== 'undefined'
+                && mediaRecorderAudio
+                && mediaRecorderAudio.state === 'recording') {
+                stopAudioRecordingForSubmit();
+                if (typeof scheduleAnswerSubmitFallback === 'function') {
+                    scheduleAnswerSubmitFallback();
+                }
+                forceSubmitIfRecordingNeverArrives();
+                return;
+            }
+
+            // Recording never started (permissions, unsupported device) — submit the code anyway
+            if (typeof stopRecording === 'function') {
+                stopRecording();
+            }
+            if (typeof tryFinalizeAnswerSubmit === 'function' && tryFinalizeAnswerSubmit()) {
+                return;
+            }
+            const form = document.getElementById('chatForm');
+            if (form) {
+                form.submit();
             }
         }
 
@@ -5762,9 +5826,6 @@
                 codingSubmitted = true;
                 if (countdownInterval) {
                     clearInterval(countdownInterval);
-                }
-                if (typeof stopRecording === 'function') {
-                    stopRecording();
                 }
 
                 captureCodingFields(false);
