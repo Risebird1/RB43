@@ -56,6 +56,10 @@ namespace Risebird.Entities.ViewModel
         public string CodingEndTime { get; set; }
         public decimal CodingTimeTaken { get; set; }
         public bool CodingIsTimeExpired { get; set; }
+        public string CodingStdInput { get; set; }
+        public string CodingLastRunOutput { get; set; }
+        public string CodingLastRunStatus { get; set; }
+        public int CodingRunCount { get; set; }
     }
 
     public class ChatLine

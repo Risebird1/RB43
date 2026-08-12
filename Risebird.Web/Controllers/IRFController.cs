@@ -53,6 +53,8 @@ namespace Risebird.Web.Controllers
 
     public class IRFController : Controller
     {
+        private const int MaxSampleQuestionLength = 5000;
+
         private readonly IIRFRepository _irfRepository;
         private readonly IUserService _userService;
         private readonly IIRFService _irfService;
@@ -9573,6 +9575,13 @@ namespace Risebird.Web.Controllers
 
                     foreach (var question in model.SkillCollection ?? new List<SkillComment>())
                     {
+                        if ((question.Comment?.Length ?? 0) > MaxSampleQuestionLength
+                            || (question.ExpectedAnswer?.Length ?? 0) > MaxSampleQuestionLength)
+                        {
+                            TempData["SuccessErrorMessageQuestions"] = $"Questions and expected answers must not exceed {MaxSampleQuestionLength} characters.";
+                            return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
+                        }
+
                         if (!question.IsCodingQuestion)
                         {
                             question.CodingTimeLimitInMinutes = null;
@@ -9759,9 +9768,13 @@ namespace Risebird.Web.Controllers
                 {
                     return Json(new { success = false, message = "Skill and question are required." });
                 }
-                if (comment.Length > 300)
+                if (comment.Length > MaxSampleQuestionLength)
                 {
-                    return Json(new { success = false, message = "Question must not exceed 300 characters." });
+                    return Json(new { success = false, message = $"Question must not exceed {MaxSampleQuestionLength} characters." });
+                }
+                if (!string.IsNullOrEmpty(expectedAnswer) && expectedAnswer.Length > MaxSampleQuestionLength)
+                {
+                    return Json(new { success = false, message = $"Expected answer must not exceed {MaxSampleQuestionLength} characters." });
                 }
                 if (isCodingQuestion
                     && (!codingTimeLimitInMinutes.HasValue || codingTimeLimitInMinutes.Value < 1 || codingTimeLimitInMinutes.Value > 180))
