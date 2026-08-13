@@ -1330,7 +1330,7 @@ namespace Risebird.CommonHelper
                     var inactiveRecipients = await _sendGridRepository.GetInactiveRecipientEmailsAsync(allRecipients);
                     if (inactiveRecipients != null && inactiveRecipients.Count > 0)
                     {
-                        bool IsInactive(EmailAddress e) =>
+                        bool IsInactive(SendGrid.Helpers.Mail.EmailAddress e) =>
                             e != null && !string.IsNullOrWhiteSpace(e.Email) && inactiveRecipients.Contains(e.Email.Trim());
 
                         foreach (var p in msg.Personalizations)
