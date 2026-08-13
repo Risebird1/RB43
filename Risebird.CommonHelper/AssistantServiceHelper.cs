@@ -21,6 +21,7 @@ namespace Risebird.CommonHelper
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IOpenAIApiLogger _openAIApiLogger;
+        private readonly IOpenAIResponsesHelper _openAIResponsesHelper;
         private readonly string apiKey;
         private readonly string baseUrl;
         private readonly string candidateScreenerAssistantId;
@@ -43,11 +44,16 @@ namespace Risebird.CommonHelper
         private readonly string LinkedInVerificationAssistantId;
 
         //private readonly List<string> candidateResumesVectorStoreId;
-        public AssistantServiceHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, IOpenAIApiLogger openAIApiLogger)
+        public AssistantServiceHelper(
+            IApplicationErrorLogger applicationErrorLogger,
+            IConfiguration configuration,
+            IOpenAIApiLogger openAIApiLogger,
+            IOpenAIResponsesHelper openAIResponsesHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _openAIApiLogger = openAIApiLogger;
+            _openAIResponsesHelper = openAIResponsesHelper;
             apiKey = _configuration["OpenAI:ApiKey"];
             baseUrl = _configuration["OpenAI:BaseUrl"];
             candidateScreenerAssistantId = _configuration["OpenAI:CandidateScreenerAssistantId"];
@@ -1521,6 +1527,16 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                var useResponsesApi = _configuration.GetValue("OpenAI:ReportQCUseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    var input = $"Generate an output as per the instructions fed to the assistant. The Report data you need to generate an analysis against is {reportStringData}.";
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        input,
+                        operationType: "ReportQC",
+                        promptId: _configuration["OpenAI:ReportQCPromptId"]);
+                }
+
                 string threadId = string.Empty;
                 threadId = await CreateThreadAsync(reportStringData: reportStringData);
                 string runId;
