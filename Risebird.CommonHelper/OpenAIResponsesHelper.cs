@@ -36,8 +36,16 @@ namespace Risebird.CommonHelper
             _responsesModel = _configuration["OpenAI:ResponsesModel"];
         }
 
-        public async Task<RunResult> CreateJsonResponseAsync(
+        public Task<RunResult> CreateJsonResponseAsync(
             string input,
+            string operationType,
+            string promptId)
+        {
+            return CreateJsonResponseAsync((object)input, operationType, promptId);
+        }
+
+        public async Task<RunResult> CreateJsonResponseAsync(
+            object input,
             string operationType,
             string promptId)
         {
@@ -59,6 +67,12 @@ namespace Risebird.CommonHelper
                         $"OpenAI prompt ID is required for operation {operationType}.");
                 }
 
+                if (input == null || (input is string s && string.IsNullOrWhiteSpace(s)))
+                {
+                    throw new InvalidOperationException(
+                        $"OpenAI Responses input is required for operation {operationType}.");
+                }
+
                 var requestBody = new
                 {
                     prompt = new { id = promptId },
@@ -68,6 +82,7 @@ namespace Risebird.CommonHelper
                 };
 
                 using var client = new HttpClient();
+                client.Timeout = TimeSpan.FromMinutes(4);
                 var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/responses")
                 {
                     Headers = { { "Authorization", $"Bearer {_apiKey}" } }

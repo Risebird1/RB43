@@ -46,7 +46,10 @@ namespace Risebird.Web.Services.Proctoring
                     foreach (var item in segment.Results)
                     {
                         var blob = item as CloudBlockBlob;
-                        if (blob == null || blob.Properties?.Length == null || blob.Properties.Length == 0)
+                        if (blob == null)
+                            continue;
+                        // Length is often unset when listing with BlobListingDetails.None; only skip known-empty blobs.
+                        if (blob.Properties?.Length != null && blob.Properties.Length == 0)
                             continue;
                         list.Add(new ProctoringCapturedBlobViewModel
                         {
