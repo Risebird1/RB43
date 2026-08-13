@@ -100,7 +100,11 @@ namespace Risebird.Repository
             var cleanedRole = NormalizeForDb(role);
             if (cleanedRole is null) return;
 
-            var cleanedMessage = NormalizeForDb(CleanMessage(message));
+            // Markdown scrubbing belongs to generated assistant text only. Running it over a
+            // candidate answer corrupts submitted code, stripping '#' comments and directives
+            // and turning Python's '**' operator into whitespace.
+            var isCandidateMessage = cleanedRole.Equals("user", StringComparison.OrdinalIgnoreCase);
+            var cleanedMessage = NormalizeForDb(isCandidateMessage ? message : CleanMessage(message));
             if (cleanedMessage is null) return;
 
             try
@@ -134,7 +138,9 @@ namespace Risebird.Repository
                     // This avoids inserting whitespace-only values ("   ") which are not caught by SQL checks like != ''.
                     var normalizedSessionId = NormalizeForDb(SessionId);
                     var normalizedVideoLink = NormalizeForDb(VideoLink);
-                    var normalizedCandidateResponse = NormalizeForDb(CleanMessage(candidateResponse));
+                    // The candidate response can be code, so it is stored verbatim; only the
+                    // generated question text is scrubbed of markdown.
+                    var normalizedCandidateResponse = NormalizeForDb(candidateResponse);
                     var normalizedQuestion = NormalizeForDb(CleanMessage(question));
                     var normalizedBotSynthVideoLink = NormalizeForDb(botSynthesizedVideoLink);
                     var normalizedBotAudioLink = NormalizeForDb(BotAudioLink);
