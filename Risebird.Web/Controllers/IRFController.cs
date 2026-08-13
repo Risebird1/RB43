@@ -9596,6 +9596,18 @@ namespace Risebird.Web.Controllers
                             TempData["SuccessErrorMessageQuestions"] = "A coding question needs a time limit between 1 and 180 minutes.";
                             return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
                         }
+
+                        if (string.IsNullOrWhiteSpace(question.QuestionGist))
+                        {
+                            TempData["SuccessErrorMessageQuestions"] = "A coding question needs a gist. The avatar narrates the gist because code cannot be read aloud.";
+                            return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
+                        }
+
+                        if (question.QuestionGist.Length > MaxSampleQuestionLength)
+                        {
+                            TempData["SuccessErrorMessageQuestions"] = $"The question gist must not exceed {MaxSampleQuestionLength} characters.";
+                            return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
+                        }
                     }
 
                     if (await _irfService.AddIRFSampleQuestions(model))
@@ -9759,7 +9771,7 @@ namespace Risebird.Web.Controllers
         /// the feature shipped (or generated from the rubric) can be converted without retyping them.
         /// </summary>
         [HttpPost]
-        public async Task<JsonResult> SetQuestionCodingMode(int irfId, int id, bool isCodingQuestion, int? codingTimeLimitInMinutes = null, string Type = null)
+        public async Task<JsonResult> SetQuestionCodingMode(int irfId, int id, bool isCodingQuestion, int? codingTimeLimitInMinutes = null, string questionGist = null, string Type = null)
         {
             try
             {
@@ -9790,9 +9802,24 @@ namespace Risebird.Web.Controllers
                     {
                         return Json(new { success = false, message = "Time limit must be between 1 and 180 minutes." });
                     }
+
+                    // The avatar narrates the gist for coding questions, so one has to exist before
+                    // the question can be marked as coding. An existing gist satisfies this.
+                    if (string.IsNullOrWhiteSpace(questionGist))
+                    {
+                        var existing = await _irfService.GetDeliveryHeadSampleQuestionById(id);
+                        if (existing == null || string.IsNullOrWhiteSpace(existing.QuestionGist))
+                        {
+                            return Json(new { success = false, message = "Write a question gist in plain language before marking this as a coding question. It is what the AI avatar reads out." });
+                        }
+                    }
+                    else if (questionGist.Length > MaxSampleQuestionLength)
+                    {
+                        return Json(new { success = false, message = $"The question gist must not exceed {MaxSampleQuestionLength} characters." });
+                    }
                 }
 
-                var saved = await _irfService.SetSampleQuestionCodingMode(id, isCodingQuestion, codingTimeLimitInMinutes);
+                var saved = await _irfService.SetSampleQuestionCodingMode(id, isCodingQuestion, codingTimeLimitInMinutes, questionGist?.Trim());
                 return saved
                     ? Json(new { success = true, isCodingQuestion, codingTimeLimitInMinutes })
                     : Json(new { success = false, message = "Could not update the question." });
@@ -9805,7 +9832,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> SaveDeliveryHeadSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, int? id = null, bool isCodingQuestion = false, int? codingTimeLimitInMinutes = null)
+        public async Task<JsonResult> SaveDeliveryHeadSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, int? id = null, bool isCodingQuestion = false, int? codingTimeLimitInMinutes = null, string questionGist = null)
         {
             try
             {
@@ -9832,6 +9859,14 @@ namespace Risebird.Web.Controllers
                 {
                     return Json(new { success = false, message = "A coding question needs a time limit between 1 and 180 minutes." });
                 }
+                if (isCodingQuestion && string.IsNullOrWhiteSpace(questionGist))
+                {
+                    return Json(new { success = false, message = "A coding question needs a gist. The avatar narrates the gist because code cannot be read aloud." });
+                }
+                if (!string.IsNullOrEmpty(questionGist) && questionGist.Length > MaxSampleQuestionLength)
+                {
+                    return Json(new { success = false, message = $"The question gist must not exceed {MaxSampleQuestionLength} characters." });
+                }
                 if (!isCodingQuestion)
                 {
                     codingTimeLimitInMinutes = null;
@@ -9839,7 +9874,7 @@ namespace Risebird.Web.Controllers
                 var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
                 if (id.HasValue && id.Value > 0)
                 {
-                    var ok = await _irfService.UpdateSkillChannelSampleQuestion(id.Value, comment.Trim(), expectedAnswer?.Trim(), isCodingQuestion, codingTimeLimitInMinutes);
+                    var ok = await _irfService.UpdateSkillChannelSampleQuestion(id.Value, comment.Trim(), expectedAnswer?.Trim(), isCodingQuestion, codingTimeLimitInMinutes, questionGist?.Trim());
                     return Json(new { success = ok, id = id.Value });
                 }
                 var model = new TechSkillComments
@@ -9855,7 +9890,8 @@ namespace Risebird.Web.Controllers
                             ExpectedAnswer = expectedAnswer?.Trim(),
                             CreatedBy = emailid,
                             IsCodingQuestion = isCodingQuestion,
-                            CodingTimeLimitInMinutes = codingTimeLimitInMinutes
+                            CodingTimeLimitInMinutes = codingTimeLimitInMinutes,
+                            QuestionGist = questionGist?.Trim()
                         }
                     }
                 };

@@ -41,6 +41,39 @@ namespace Risebird.Functions
         {
             try
             {
+                // ── Hard suppression: an inactive user (UserList.IsActive = 0) must NEVER be emailed ──
+                if (msg.Personalizations != null && msg.Personalizations.Count > 0)
+                {
+                    var allRecipients = new List<string>();
+                    foreach (var p in msg.Personalizations)
+                    {
+                        if (p.Tos != null) allRecipients.AddRange(p.Tos.Select(x => x.Email));
+                        if (p.Ccs != null) allRecipients.AddRange(p.Ccs.Select(x => x.Email));
+                        if (p.Bccs != null) allRecipients.AddRange(p.Bccs.Select(x => x.Email));
+                    }
+
+                    var inactiveRecipients = await GetInactiveRecipientEmailsAsync(allRecipients);
+                    if (inactiveRecipients.Count > 0)
+                    {
+                        bool IsInactive(SendGrid.Helpers.Mail.EmailAddress e) =>
+                            e != null && !string.IsNullOrWhiteSpace(e.Email) && inactiveRecipients.Contains(e.Email.Trim());
+
+                        foreach (var p in msg.Personalizations)
+                        {
+                            if (p.Tos != null) p.Tos = p.Tos.Where(x => !IsInactive(x)).ToList();
+                            if (p.Ccs != null) p.Ccs = p.Ccs.Where(x => !IsInactive(x)).ToList();
+                            if (p.Bccs != null) p.Bccs = p.Bccs.Where(x => !IsInactive(x)).ToList();
+                        }
+
+                        msg.Personalizations = msg.Personalizations
+                            .Where(p => p.Tos != null && p.Tos.Count > 0)
+                            .ToList();
+
+                        if (msg.Personalizations.Count == 0)
+                            return "Mail not sent: recipient is inactive.";
+                    }
+                }
+
                 var client = new SendGridClient(_sendGridClientKey);
 
                 var response = await client.SendEmailAsync(msg);
@@ -118,6 +151,41 @@ namespace Risebird.Functions
                 return "Failed to send mail!";
             }
         }
+        private async Task<HashSet<string>> GetInactiveRecipientEmailsAsync(IEnumerable<string> emails)
+        {
+            var inactive = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            try
+            {
+                var distinctEmails = (emails ?? Enumerable.Empty<string>())
+                    .Where(e => !string.IsNullOrWhiteSpace(e))
+                    .Select(e => e.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                if (distinctEmails.Count == 0)
+                    return inactive;
+
+                var connectionString = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var rows = await SqlMapper.QueryAsync<string>(con,
+                        "SELECT DISTINCT LTRIM(RTRIM(EmailId)) FROM UserList WHERE ISNULL(IsActive, 1) = 0 AND LTRIM(RTRIM(EmailId)) IN @Emails",
+                        new { Emails = distinctEmails });
+
+                    foreach (var row in rows)
+                    {
+                        if (!string.IsNullOrWhiteSpace(row))
+                            inactive.Add(row.Trim());
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // Fail open only for the lookup itself; never throw from the suppression guard.
+            }
+            return inactive;
+        }
+
         public async Task<bool> SaveSentMailDetails(SentMailDetails model)
         {
             try

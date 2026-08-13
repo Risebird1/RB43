@@ -1313,6 +1313,50 @@ namespace Risebird.CommonHelper
                     await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 }
 
+                // ── Hard suppression: an inactive user (UserList.IsActive = 0) must NEVER be emailed ──
+                // This is the single choke-point every outgoing mail passes through, so enforcing the
+                // rule here guarantees inactive interviewers/panels are never contacted, no matter which
+                // feature, job, or manual click triggered the send.
+                if (msg.Personalizations != null && msg.Personalizations.Count > 0)
+                {
+                    var allRecipients = new List<string>();
+                    foreach (var p in msg.Personalizations)
+                    {
+                        if (p.Tos != null) allRecipients.AddRange(p.Tos.Select(x => x.Email));
+                        if (p.Ccs != null) allRecipients.AddRange(p.Ccs.Select(x => x.Email));
+                        if (p.Bccs != null) allRecipients.AddRange(p.Bccs.Select(x => x.Email));
+                    }
+
+                    var inactiveRecipients = await _sendGridRepository.GetInactiveRecipientEmailsAsync(allRecipients);
+                    if (inactiveRecipients != null && inactiveRecipients.Count > 0)
+                    {
+                        bool IsInactive(SendGrid.Helpers.Mail.EmailAddress e) =>
+                            e != null && !string.IsNullOrWhiteSpace(e.Email) && inactiveRecipients.Contains(e.Email.Trim());
+
+                        foreach (var p in msg.Personalizations)
+                        {
+                            if (p.Tos != null) p.Tos = p.Tos.Where(x => !IsInactive(x)).ToList();
+                            if (p.Ccs != null) p.Ccs = p.Ccs.Where(x => !IsInactive(x)).ToList();
+                            if (p.Bccs != null) p.Bccs = p.Bccs.Where(x => !IsInactive(x)).ToList();
+                        }
+
+                        // A personalization is only meaningful if it still has a primary (To) recipient.
+                        // Per-recipient emails whose sole "To" was the inactive interviewer are dropped
+                        // entirely; broadcast emails (To = Risebird mailbox, recipients in Bcc) survive
+                        // with the inactive addresses stripped out.
+                        msg.Personalizations = msg.Personalizations
+                            .Where(p => p.Tos != null && p.Tos.Count > 0)
+                            .ToList();
+
+                        if (msg.Personalizations.Count == 0)
+                        {
+                            await _errorLogger.LogMessage(LogLevelInfo.Warning,
+                                $"Email suppressed: all recipients are inactive (UserList.IsActive = 0). Subject: '{msg.Subject}'.");
+                            return "Mail not sent: recipient is inactive.";
+                        }
+                    }
+                }
+
                 // Add unsubscribe group to enable recipients to manage their email preferences
                 if (_unsubscribeGroupId > 0)
                 {

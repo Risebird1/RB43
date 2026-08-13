@@ -10,8 +10,8 @@
     var weekendEnd = page.WeekendEnd;
     var stats = page.Stats;
     var threshold = stats?.Threshold ?? 5;
-    var totalExpected = rows.Sum(x => x.ExpectedTotal);
-    var totalUnassigned = rows.Sum(x => x.UnassignedMorning + x.UnassignedEvening);
+    var totalExpected = rows.Sum(x => x.DisplayVolume);
+    var totalUnassigned = rows.Sum(x => x.DisplayUnassigned);
     var bucket = string.IsNullOrWhiteSpace(page.WeekendBucket) ? "This" : page.WeekendBucket;
     var selectedSpotlight = new HashSet<int>(page.SelectedSpotlightIds ?? new List<int>());
     var spotlightOptions = page.SpotlightOptions ?? new List<Risebird.Entities.ViewModel.DriveSpotlightOptionVM>();
@@ -30,8 +30,8 @@
             @weekendStart.ToString("ddd, dd MMM") – @weekendEnd.ToString("ddd, dd MMM yyyy")
         </span>
         <span class="drive-stat"><strong>@rows.Count</strong> drive IRF@(rows.Count == 1 ? "" : "s")</span>
-        <span class="drive-stat"><strong>@totalExpected</strong> interviews expected</span>
-        <span class="drive-stat drive-stat-warn"><strong>@totalUnassigned</strong> unassigned</span>
+        <span class="drive-stat"><strong>@totalExpected</strong> interviews expected <span class="drive-horizon-hint">(all future)</span></span>
+        <span class="drive-stat drive-stat-warn"><strong>@totalUnassigned</strong> unassigned <span class="drive-horizon-hint">(all future)</span></span>
     </div>
 }
 
@@ -121,7 +121,7 @@ else
                 <tbody>
                 @foreach (var i in belowRows)
                 {
-                    var unassignedTotal = i.UnassignedMorning + i.UnassignedEvening;
+                    var unassignedTotal = i.DisplayUnassigned;
                     var unassignedClass = unassignedTotal > 0 ? "drive-unassigned-warn" : "drive-unassigned-ok";
                     <tr>
                         <td>
@@ -136,11 +136,11 @@ else
                             }
                         </td>
                         <td>
-                            <span class="drive-badge drive-badge-m" title="Morning">M @i.ExpectedMorning</span>
-                            <span class="drive-badge drive-badge-e" title="Evening">E @i.ExpectedEvening</span>
-                            <span class="drive-badge drive-badge-total">@i.ExpectedTotal</span>
+                            <span class="drive-badge drive-badge-m" title="Weekend morning">M @i.ExpectedMorning</span>
+                            <span class="drive-badge drive-badge-e" title="Weekend evening">E @i.ExpectedEvening</span>
+                            <span class="drive-badge drive-badge-total" title="All-future scheduled (today onward)">@i.DisplayVolume</span>
                         </td>
-                        <td><span class="@unassignedClass">M @i.UnassignedMorning / E @i.UnassignedEvening</span></td>
+                        <td><span class="@unassignedClass" title="All-future unassigned (today onward)">@unassignedTotal</span></td>
                         <td>
                             @if (i.IrfIntId > 0)
                             {
@@ -157,3 +157,5 @@ else
         </div>
     </div>
 }
+
+@await Html.PartialAsync("_DemandVolumeSection", page)

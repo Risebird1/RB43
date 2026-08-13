@@ -42,4 +42,10 @@
             onclick="sendOpenInterviewNotification(@Model.IrfIntId, @actionRefJson)">
         <i class="fas fa-bell"></i>
     </button>
+    <button type="button" class="drive-action-btn js-cross-mag-link"
+            title="@(magDisabled ? "No MAG mapped on this IRF" : "Cross-MAG entry link — interviewers from other MAGs can enter this MAG (does not expire)")"
+            data-mag="@Model.MAGId"
+            @(magDisabled ? "disabled" : "")>
+        <i class="fas fa-link"></i>
+    </button>
 </div>

@@ -5,8 +5,10 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
@@ -64,6 +66,45 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
+        }
+
+        public async Task<HashSet<string>> GetInactiveRecipientEmailsAsync(IEnumerable<string> emails)
+        {
+            var inactive = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            try
+            {
+                var distinctEmails = (emails ?? Enumerable.Empty<string>())
+                    .Where(e => !string.IsNullOrWhiteSpace(e))
+                    .Select(e => e.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+
+                if (distinctEmails.Count == 0)
+                    return inactive;
+
+                // Read against the primary DB only (never the staging swap in SaveSentMailDetails).
+                using (SqlConnection con = new SqlConnection(_configuration["ConnectionString:DBConnectionString"]))
+                {
+                    var rows = await SqlMapper.QueryAsync<string>(con,
+                        "SELECT DISTINCT LTRIM(RTRIM(EmailId)) FROM UserList WHERE ISNULL(IsActive, 1) = 0 AND LTRIM(RTRIM(EmailId)) IN @Emails",
+                        new { Emails = distinctEmails });
+
+                    foreach (var row in rows)
+                    {
+                        if (!string.IsNullOrWhiteSpace(row))
+                            inactive.Add(row.Trim());
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return inactive;
         }
 
         public async Task<bool> SaveSentMailDetails(SentMailDetails model, bool isStaging = false)

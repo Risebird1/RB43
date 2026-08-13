@@ -18,6 +18,12 @@ namespace Risebird.Entities.ViewModel
         public List<int> SelectedSpotlightIds { get; set; } = new List<int>();
         /// <summary>Options for the spotlight multiselect (weekend IRFs + manual skill channels).</summary>
         public List<DriveSpotlightOptionVM> SpotlightOptions { get; set; } = new List<DriveSpotlightOptionVM>();
+
+        /// <summary>D4/D6 — shared high-priority pins at the top of the volume section.</summary>
+        public List<IRFAttentionRowVM> HighPrioritySpotlight { get; set; } = new List<IRFAttentionRowVM>();
+        /// <summary>D3 — IRFs sorted by all-future scheduled volume (excludes active pins).</summary>
+        public List<IRFAttentionRowVM> HighVolumeRows { get; set; } = new List<IRFAttentionRowVM>();
+        public List<AssignmentVM> MagList { get; set; } = new List<AssignmentVM>();
     }
 
     public class DriveSpotlightOptionVM
