@@ -1527,10 +1527,10 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var useResponsesApi = _configuration.GetValue("OpenAI:ReportQCUseResponsesApi", true);
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
                 if (useResponsesApi)
                 {
-                    var input = $"Generate an output as per the instructions fed to the assistant. The Report data you need to generate an analysis against is {reportStringData}.";
+                    var input = $"Generate an output in JSON format as per the instructions fed to the assistant. The Report data you need to generate an analysis against is {reportStringData}.";
                     return await _openAIResponsesHelper.CreateJsonResponseAsync(
                         input,
                         operationType: "ReportQC",
