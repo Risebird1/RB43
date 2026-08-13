@@ -180,6 +180,7 @@ namespace Risebird.AzureFunctions
             services.AddScoped<IAzureStorageService, AzureStorageService>();
             services.AddScoped<IExcelHelper, ExcelHelper>();
             services.AddScoped<IAssistantServiceHelper, AssistantServiceHelper>();
+            services.AddScoped<IOpenAIResponsesHelper, OpenAIResponsesHelper>();
             services.AddScoped<ITeamsMeetingHelper, TeamsMeetingHelper>();
             services.AddScoped<IZohoMeetingHelper, ZohoMeetingHelper>();
             services.AddScoped<IOpenAIApiLogRepository, OpenAIApiLogRepository>();
