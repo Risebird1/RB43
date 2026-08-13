@@ -10,6 +10,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Data.RbAPIDataModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
@@ -30,13 +31,15 @@ namespace Risebird.Services.Controllers
     {
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IOpenAIInterviewerAssistantHelper _ai;
+        private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IAIInterviewerRepository _aiInterviewerRepository;
         private readonly IAIInterviewerService _aIInterviewerService;
         private readonly IConfiguration _config;
         private string _assistantId;
 
         public OpenAIApiController(IApplicationErrorLogger applicationErrorLogger, IOpenAIInterviewerAssistantHelper ai,
-            IAIInterviewerRepository aiInterviewerRepository, IConfiguration config, IAIInterviewerService aIInterviewerService)
+            IAIInterviewerRepository aiInterviewerRepository, IConfiguration config, IAIInterviewerService aIInterviewerService,
+            IAssistantServiceHelper assistantServiceHelper)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _aiInterviewerRepository = aiInterviewerRepository;
@@ -44,6 +47,7 @@ namespace Risebird.Services.Controllers
             _config = config;
             //_assistantId = _config["OpenAI:AIInterviewerAssistantId"];
             _aIInterviewerService = aIInterviewerService;
+            _assistantServiceHelper = assistantServiceHelper;
         }
 
         [HttpPost("start")]
@@ -164,27 +168,42 @@ namespace Risebird.Services.Controllers
                 }
                 else if ((!string.IsNullOrEmpty(meetingDetails.QuestionAnswerSetInJson)))
                 {
-                    var threadId = await _ai.CreateThreadAsync();
-                    //the prompt will be different here. Fetch techrubrics and the table of questions, answers and expected answers. Serialize them, add them to a 
-                    input.Message = $"Generate an output in json based on the inputs. The techrubrics in json are as follows:{meetingDetails.TechSkillsInJson}. The mapped_rubric_parameters, question, candidate's answer and ideal answer set object in json are as follows: {meetingDetails.QuestionAnswerSetInJson}";
-                    await _ai.AddMessageAsync(threadId, "user", input.Message);
+                    string threadId = null;
+                    List<string> replies = null;
+                    var evaluationPromptId = ResolveAiInterviewPromptId(meetingDetails.OpenAIAssistantId);
+                    var useResponsesApi = _config.GetValue("OpenAI:UseResponsesApi", true)
+                        && !string.IsNullOrWhiteSpace(evaluationPromptId);
 
-                    var runId = await _ai.CreateRunAsync(threadId, meetingDetails.OpenAIAssistantId);//meetingDetails.AssistantId
-                    await _ai.WaitForRunAsync(threadId, runId);
-
-                    var replies = await _ai.GetMessagesAsync(threadId); // all these replies here are in response to the prompt above. Therefore all consitute the report that we asked for in the prompt. Send them all back.
-
-                    int counter = 0;
-                    if (replies != null && replies.Count() == 0)
+                    if (useResponsesApi)
                     {
-                        do
-                        {
-                            await Task.Delay(4000);
-                            replies = await _ai.GetMessagesAsync(threadId);
-                            counter++;
-                        }
-                        while (counter < 2 && replies != null && replies.Count() == 0);
+                        var runResult = await _assistantServiceHelper.GenerateAIInterviewEvaluation(
+                            meetingDetails.TechSkillsInJson,
+                            meetingDetails.QuestionAnswerSetInJson,
+                            meetingDetails.OpenAIAssistantId);
+                        replies = ExtractRunResultReplies(runResult);
+                    }
+                    else
+                    {
+                        threadId = await _ai.CreateThreadAsync();
+                        input.Message = $"Generate an output in json based on the inputs. The techrubrics in json are as follows:{meetingDetails.TechSkillsInJson}. The mapped_rubric_parameters, question, candidate's answer and ideal answer set object in json are as follows: {meetingDetails.QuestionAnswerSetInJson}";
+                        await _ai.AddMessageAsync(threadId, "user", input.Message);
 
+                        var runId = await _ai.CreateRunAsync(threadId, meetingDetails.OpenAIAssistantId);
+                        await _ai.WaitForRunAsync(threadId, runId);
+
+                        replies = await _ai.GetMessagesAsync(threadId);
+
+                        int counter = 0;
+                        if (replies != null && replies.Count() == 0)
+                        {
+                            do
+                            {
+                                await Task.Delay(4000);
+                                replies = await _ai.GetMessagesAsync(threadId);
+                                counter++;
+                            }
+                            while (counter < 2 && replies != null && replies.Count() == 0);
+                        }
                     }
                     if (replies != null)//&& replies.Count() > 0
                     {
@@ -312,6 +331,24 @@ namespace Risebird.Services.Controllers
             }
 
         }
+
+        private string ResolveAiInterviewPromptId(string assistantId)
+        {
+            if (string.IsNullOrWhiteSpace(assistantId))
+                return null;
+
+            return _config[$"OpenAI:AIInterviewPromptMap:{assistantId}"];
+        }
+
+        private static List<string> ExtractRunResultReplies(RunResult result)
+        {
+            var text = result?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value;
+            if (string.IsNullOrWhiteSpace(text))
+                return null;
+
+            return new List<string> { text };
+        }
+
         private AIInterviewEvaluation TryParseEvaluation(string raw)
         {
             if (string.IsNullOrWhiteSpace(raw)) return null;

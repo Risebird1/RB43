@@ -27,6 +27,13 @@ namespace Risebird.CommonHelper.Interface
         Task<RunResult> GeneratePaymentTicketReview(string composedMessage);
 
         /// <summary>
+        /// Preset AI-interview evaluation via Responses API when this assistant ID is in
+        /// OpenAI:AIInterviewPromptMap. Returns null when the assistant is not migrated
+        /// or UseResponsesApi is false, so the caller can use the Assistants API.
+        /// </summary>
+        Task<RunResult> GenerateAIInterviewEvaluation(string techSkillsJson, string questionAnswerSetJson, string assistantId);
+
+        /// <summary>
         /// Calls the LinkedIn-verification assistant with a composed prospect context (name, email,
         /// phone, current role, and any candidate-supplied LinkedIn URL) and returns the raw RunResult
         /// carrying a JSON verdict (linkedin_match / confidence / linkedin_url / reason).
