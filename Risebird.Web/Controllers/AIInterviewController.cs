@@ -65,6 +65,7 @@ namespace Risebird.Web.Controllers
         private readonly IOpenAIInterviewerAssistantHelper _openAIAssistantHelper;
         private readonly IProctoringTokenService _proctoringTokenService;
         private readonly IProctoringSessionEventRepository _proctoringSessionEventRepository;
+        private readonly IProctoringScreenshotAnalysisService _proctoringScreenshotAnalysisService;
         private readonly ICompositeViewEngine _viewEngine;
         private readonly ITempDataProvider _tempDataProvider;
         private readonly IHttpContextAccessor _contextAccessor;
@@ -79,6 +80,7 @@ namespace Risebird.Web.Controllers
             IIRFService iRFService, IAWSRekognitionService aWSRekognitionService, ICandidateService candidateService,
             IIRFRepository irfRepository, IOpenAIInterviewerAssistantHelper openAIAssistantHelper,
             IProctoringTokenService proctoringTokenService, IProctoringSessionEventRepository proctoringSessionEventRepository,
+            IProctoringScreenshotAnalysisService proctoringScreenshotAnalysisService,
             ICompositeViewEngine viewEngine, ITempDataProvider tempDataProvider,
             IHttpContextAccessor contextAccessor, IConverter converter,
             ICodeExecutionService codeExecutionService)
@@ -100,6 +102,7 @@ namespace Risebird.Web.Controllers
             _openAIAssistantHelper = openAIAssistantHelper;
             _proctoringTokenService = proctoringTokenService;
             _proctoringSessionEventRepository = proctoringSessionEventRepository;
+            _proctoringScreenshotAnalysisService = proctoringScreenshotAnalysisService;
             _viewEngine = viewEngine;
             _tempDataProvider = tempDataProvider;
             _contextAccessor = contextAccessor;
@@ -2471,6 +2474,30 @@ namespace Risebird.Web.Controllers
             }
 
             return View(model);
+        }
+
+        /// <summary>
+        /// Sends a sample of the interview's proctoring screenshots to the configured OpenAI prompt and
+        /// returns its JSON analysis (candidate eye gaze, suspicious apps).
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> AnalyzeProctoringScreenshots(Guid seId)
+        {
+            var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(seId);
+            if (meetingDetails == null)
+                return NotFound();
+
+            var result = await _proctoringScreenshotAnalysisService.AnalyzeAsync(
+                meetingDetails.InterviewId,
+                meetingDetails.candidateEmail,
+                HttpContext.RequestAborted);
+
+            if (!result.Ok)
+                return StatusCode(500, new { ok = false, error = result.Error });
+
+            // AnalysisJson is already validated JSON, so compose the payload directly to return it un-escaped.
+            var payload = "{\"ok\":true,\"screenshotsAnalyzed\":" + result.ScreenshotsAnalyzed + ",\"analysis\":" + result.AnalysisJson + "}";
+            return Content(payload, "application/json");
         }
 
         private async Task<string> RenderToStringAsync(string viewName, object model, ViewDataDictionary viewData = null)

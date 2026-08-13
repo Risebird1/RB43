@@ -3318,6 +3318,38 @@
                 </div>
                 <div class="rb-ai-analysis-divider__line rb-ai-analysis-divider__line--right" style="flex:1; height:2px; background: linear-gradient(90deg, #56e0cb 0%, #4eda92 60%, transparent 100%); border-radius:2px; opacity:0.5;"></div>
             </div>
+
+            @{
+                var ssaProctoringCount = ViewBag.ProctoringEventCount as int? ?? 0;
+            }
+            @if (ssaProctoringCount > 0)
+            {
+                <div class="rb-ssa-section-wrap">
+                    <div class="rb-ssa-toolbar">
+                        <div class="rb-ssa-toolbar-copy">
+                            <div class="rb-ssa-toolbar-title"><i class="fa fa-eye"></i> AI Screenshot Analysis</div>
+                            <div class="rb-ssa-toolbar-sub">Review candidate eye gaze and suspicious apps from proctoring screenshots.</div>
+                        </div>
+                        <button class="rb-action-btn rb-secondary-btn" type="button" id="rbScreenshotAnalysisBtn" onclick="runProctoringScreenshotAnalysis()">
+                            <i class="fa fa-eye"></i> Run analysis
+                        </button>
+                    </div>
+                    <div class="rb-report-section rb-ssa-panel" id="rbScreenshotAnalysisPanel" style="display:none;">
+                        <div class="rb-ssa-head">
+                            <div class="rb-ssa-head-left">
+                                <div class="rb-ssa-icon"><i class="fa fa-shield"></i></div>
+                                <div>
+                                    <h2 class="rb-ssa-title">AI Screenshot Analysis Summary</h2>
+                                    <div id="rbScreenshotAnalysisStatus" class="rb-ssa-status">Ready</div>
+                                </div>
+                            </div>
+                            <div id="rbScreenshotAnalysisVerdict" class="rb-ssa-verdict" style="display:none;"></div>
+                        </div>
+                        <div id="rbScreenshotAnalysisSummary" class="rb-ssa-summary"></div>
+                    </div>
+                </div>
+            }
+
         
 
 
@@ -4414,6 +4446,552 @@
         });
     });
 </script>
+<script>
+    function runProctoringScreenshotAnalysis() {
+        var btn = document.getElementById('rbScreenshotAnalysisBtn');
+        var panel = document.getElementById('rbScreenshotAnalysisPanel');
+        var statusEl = document.getElementById('rbScreenshotAnalysisStatus');
+        var summaryEl = document.getElementById('rbScreenshotAnalysisSummary');
+        var verdictEl = document.getElementById('rbScreenshotAnalysisVerdict');
+        var originalHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Analyzing...';
+        panel.style.display = 'block';
+        statusEl.className = 'rb-ssa-status';
+        statusEl.textContent = 'Reviewing screenshots for eye gaze and integrity risks...';
+        summaryEl.innerHTML = '<div class="rb-ssa-loading"><span class="rb-ssa-dot"></span><span class="rb-ssa-dot"></span><span class="rb-ssa-dot"></span></div>';
+        if (verdictEl) {
+            verdictEl.style.display = 'none';
+            verdictEl.innerHTML = '';
+            verdictEl.className = 'rb-ssa-verdict';
+        }
+        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        fetch('@Url.Action("AnalyzeProctoringScreenshots", "AIInterview")?seId=@Model.SessionId', { method: 'POST' })
+            .then(function (r) { return r.json().then(function (data) { return { httpOk: r.ok, data: data }; }); })
+            .then(function (res) {
+                if (!res.httpOk || !res.data || res.data.ok !== true) {
+                    statusEl.className = 'rb-ssa-status rb-ssa-status-error';
+                    statusEl.textContent = 'Analysis failed: ' + ((res.data && res.data.error) || 'Unexpected server error.');
+                    summaryEl.innerHTML = '';
+                    return;
+                }
+                statusEl.className = 'rb-ssa-status rb-ssa-status-ok';
+                statusEl.textContent = 'Based on ' + res.data.screenshotsAnalyzed + ' screenshot' + (res.data.screenshotsAnalyzed === 1 ? '' : 's');
+                summaryEl.innerHTML = renderProctoringAnalysisSummary(res.data.analysis, verdictEl);
+            })
+            .catch(function (err) {
+                statusEl.className = 'rb-ssa-status rb-ssa-status-error';
+                statusEl.textContent = 'Analysis failed: ' + err;
+                summaryEl.innerHTML = '';
+            })
+            .finally(function () {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            });
+    }
+
+    function proctoringHumanizeLabel(key) {
+        return String(key || '')
+            .replace(/[_-]+/g, ' ')
+            .replace(/([a-z])([A-Z])/g, '$1 $2')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+    }
+
+    function proctoringFormatValue(value) {
+        if (value === null || value === undefined) return '—';
+        if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+        if (typeof value === 'number') return String(value);
+        if (typeof value === 'string') {
+            var t = value.trim();
+            return t.length ? t : '—';
+        }
+        if (Array.isArray(value)) {
+            if (!value.length) return 'None detected';
+            return value.map(function (item) {
+                if (item == null) return '';
+                if (typeof item === 'object') {
+                    return Object.keys(item).map(function (k) {
+                        var v = item[k];
+                        if (v == null || typeof v === 'object') return null;
+                        return proctoringHumanizeLabel(k) + ': ' + String(v);
+                    }).filter(Boolean).join(' · ');
+                }
+                return String(item);
+            }).filter(function (s) { return s && String(s).trim(); }).join('; ');
+        }
+        if (typeof value === 'object') {
+            var keys = Object.keys(value);
+            if (!keys.length) return '—';
+            return keys.map(function (k) {
+                var v = value[k];
+                if (v != null && typeof v === 'object') return null;
+                return proctoringHumanizeLabel(k) + ': ' + proctoringFormatValue(v);
+            }).filter(Boolean).join(' · ') || '—';
+        }
+        return String(value);
+    }
+
+    function proctoringPick(analysis, keys) {
+        if (!analysis || typeof analysis !== 'object') return undefined;
+        for (var i = 0; i < keys.length; i++) {
+            if (Object.prototype.hasOwnProperty.call(analysis, keys[i]) && analysis[keys[i]] != null && analysis[keys[i]] !== '') {
+                return analysis[keys[i]];
+            }
+            var lower = keys[i].toLowerCase();
+            var found = Object.keys(analysis).find(function (k) { return k.toLowerCase() === lower; });
+            if (found != null && analysis[found] != null && analysis[found] !== '') return analysis[found];
+        }
+        return undefined;
+    }
+
+    function proctoringNormalizeRisk(analysis) {
+        var verdictRaw = String(proctoringPick(analysis, ['verdict', 'overallVerdict', 'decision', 'integrityVerdict']) || '').toLowerCase();
+        var riskRaw = String(proctoringPick(analysis, ['riskLevel', 'risk', 'risk_level', 'severity']) || '').toLowerCase();
+        var apps = proctoringPick(analysis, ['suspiciousApps', 'suspicious_apps', 'apps', 'flaggedApps']);
+        var gazeStatus = String(proctoringPick(analysis, ['eyeGazeStatus', 'gazeStatus', 'eye_gaze_status']) || '').toLowerCase();
+        var appsStatus = String(proctoringPick(analysis, ['suspiciousAppsStatus', 'appsStatus']) || '').toLowerCase();
+        var textBlob = JSON.stringify(analysis || {}).toLowerCase();
+
+        var hasApps = (Array.isArray(apps) && apps.length > 0)
+            || /detected|found|yes|true/.test(appsStatus)
+            || /whatsapp|chatgpt|telegram|discord|cheat|external app/.test(textBlob);
+        var gazeBad = /suspicious|off.?screen|looking away|averted|abnormal/.test(gazeStatus)
+            || /off.?screen|looking away|averted gaze|suspicious gaze/.test(textBlob);
+
+        var level = 'low';
+        if (/high|critical|severe|fail|high_risk/.test(verdictRaw) || /high|critical|severe/.test(riskRaw) || (hasApps && gazeBad)) level = 'high';
+        else if (/medium|moderate|review|caution|review_needed|warn/.test(verdictRaw) || /medium|moderate/.test(riskRaw) || hasApps || gazeBad) level = 'medium';
+
+        var label = level === 'high' ? 'HIGH RISK' : (level === 'medium' ? 'REVIEW NEEDED' : 'CLEAR');
+        var tone = level === 'high' ? 'danger' : (level === 'medium' ? 'warn' : 'ok');
+        var blurb = level === 'high'
+            ? 'Integrity concerns are strong enough to escalate.'
+            : (level === 'medium'
+                ? 'Potential concerns found — manual review recommended.'
+                : 'No material integrity issues detected.');
+        return { level: level, label: label, tone: tone, blurb: blurb, hasApps: hasApps, gazeBad: gazeBad };
+    }
+
+    function proctoringDecisionBadge(text) {
+        var t = String(text || '').toLowerCase();
+        if (!t || t === '—' || t === 'none detected' || t === 'normal' || t === 'clear' || t === 'none' || t === 'low' || t === 'no') {
+            return { cls: 'ok', label: 'Clear' };
+        }
+        if (/high|critical|detected|suspicious|fail|violation|cheat|off.?screen/.test(t)) {
+            return { cls: 'danger', label: 'Flagged' };
+        }
+        if (/medium|review|caution|warn|possible|partial/.test(t)) {
+            return { cls: 'warn', label: 'Review' };
+        }
+        return { cls: 'info', label: 'Noted' };
+    }
+
+    function proctoringBuildDecisiveRows(analysis) {
+        var risk = proctoringNormalizeRisk(analysis);
+        var gaze = proctoringPick(analysis, ['eyeGaze', 'eye_gaze', 'gaze', 'gazeAnalysis', 'attention']);
+        var gazeStatus = proctoringPick(analysis, ['eyeGazeStatus', 'gazeStatus']);
+        var apps = proctoringPick(analysis, ['suspiciousApps', 'suspicious_apps', 'apps', 'flaggedApps']);
+        var appsStatus = proctoringPick(analysis, ['suspiciousAppsStatus', 'appsStatus']);
+        var findings = proctoringPick(analysis, ['keyFindings', 'findings', 'observations']);
+        var recommendation = proctoringPick(analysis, ['recommendation', 'nextAction', 'action', 'recommendedAction']);
+        var summary = proctoringPick(analysis, ['summary', 'overview', 'conclusion']);
+
+        var rows = [];
+        rows.push({
+            icon: 'fa-eye',
+            category: 'Eye Gaze',
+            decision: gazeStatus ? proctoringFormatValue(gazeStatus) : (risk.gazeBad ? 'SUSPICIOUS' : 'NORMAL'),
+            detail: proctoringFormatValue(gaze),
+            tone: risk.gazeBad ? 'danger' : 'ok'
+        });
+        rows.push({
+            icon: 'fa-desktop',
+            category: 'Suspicious Apps',
+            decision: appsStatus ? proctoringFormatValue(appsStatus) : (risk.hasApps ? 'DETECTED' : 'NONE'),
+            detail: proctoringFormatValue(apps),
+            tone: risk.hasApps ? 'danger' : 'ok'
+        });
+        rows.push({
+            icon: 'fa-exclamation-triangle',
+            category: 'Risk Level',
+            decision: risk.label,
+            detail: proctoringFormatValue(proctoringPick(analysis, ['riskLevel', 'risk', 'severity']) || risk.blurb),
+            tone: risk.tone === 'danger' ? 'danger' : (risk.tone === 'warn' ? 'warn' : 'ok')
+        });
+        if (findings != null) {
+            rows.push({
+                icon: 'fa-list-ul',
+                category: 'Key Findings',
+                decision: Array.isArray(findings) && findings.length ? findings.length + ' point' + (findings.length === 1 ? '' : 's') : 'None',
+                detail: proctoringFormatValue(findings),
+                tone: 'info'
+            });
+        }
+        if (recommendation != null) {
+            rows.push({
+                icon: 'fa-gavel',
+                category: 'Recommendation',
+                decision: 'Action',
+                detail: proctoringFormatValue(recommendation),
+                tone: risk.tone === 'ok' ? 'ok' : 'warn'
+            });
+        } else if (summary != null) {
+            rows.push({
+                icon: 'fa-file-text-o',
+                category: 'Summary',
+                decision: 'Assessment',
+                detail: proctoringFormatValue(summary),
+                tone: 'info'
+            });
+        }
+
+        // Include leftover fields not already covered, compactly
+        if (analysis && typeof analysis === 'object' && !Array.isArray(analysis)) {
+            var used = {
+                verdict: 1, overallverdict: 1, decision: 1, integrityverdict: 1,
+                risklevel: 1, risk: 1, risk_level: 1, severity: 1,
+                eyegaze: 1, eye_gaze: 1, gaze: 1, gazeanalysis: 1, attention: 1,
+                eyegazestatus: 1, gazestatus: 1, eye_gaze_status: 1,
+                suspiciousapps: 1, suspicious_apps: 1, apps: 1, flaggedapps: 1,
+                suspiciousappsstatus: 1, appsstatus: 1,
+                keyfindings: 1, findings: 1, observations: 1,
+                recommendation: 1, nextaction: 1, action: 1, recommendedaction: 1,
+                summary: 1, overview: 1, conclusion: 1, raw: 1
+            };
+            Object.keys(analysis).forEach(function (key) {
+                if (used[key.toLowerCase()]) return;
+                var val = analysis[key];
+                if (val == null || val === '') return;
+                rows.push({
+                    icon: 'fa-info-circle',
+                    category: proctoringHumanizeLabel(key),
+                    decision: 'Noted',
+                    detail: proctoringFormatValue(val),
+                    tone: 'info'
+                });
+            });
+        }
+
+        return { risk: risk, rows: rows };
+    }
+
+    function renderProctoringAnalysisSummary(analysis, verdictEl) {
+        var built = proctoringBuildDecisiveRows(analysis);
+        var risk = built.risk;
+        var rows = built.rows;
+
+        if (verdictEl) {
+            verdictEl.style.display = 'inline-flex';
+            verdictEl.className = 'rb-ssa-verdict rb-ssa-verdict-' + risk.tone;
+            verdictEl.innerHTML = '<i class="fa ' +
+                (risk.tone === 'ok' ? 'fa-check-circle' : (risk.tone === 'warn' ? 'fa-exclamation-circle' : 'fa-times-circle')) +
+                '"></i><span>' + escapeProctoringHtml(risk.label) + '</span>';
+        }
+
+        if (!rows.length) {
+            return '<div class="rb-ssa-empty">No analysis details available.</div>';
+        }
+
+        var html = '' +
+            '<div class="rb-ssa-banner rb-ssa-banner-' + risk.tone + '">' +
+                '<div class="rb-ssa-banner-main">' +
+                    '<div class="rb-ssa-banner-label">Integrity Verdict</div>' +
+                    '<div class="rb-ssa-banner-title">' + escapeProctoringHtml(risk.label) + '</div>' +
+                    '<div class="rb-ssa-banner-text">' + escapeProctoringHtml(risk.blurb) + '</div>' +
+                '</div>' +
+                '<div class="rb-ssa-metrics">' +
+                    '<div class="rb-ssa-metric"><span>Gaze</span><strong class="' + (risk.gazeBad ? 'is-bad' : 'is-good') + '">' + (risk.gazeBad ? 'Suspicious' : 'Normal') + '</strong></div>' +
+                    '<div class="rb-ssa-metric"><span>Apps</span><strong class="' + (risk.hasApps ? 'is-bad' : 'is-good') + '">' + (risk.hasApps ? 'Detected' : 'None') + '</strong></div>' +
+                    '<div class="rb-ssa-metric"><span>Risk</span><strong class="is-' + risk.tone + '">' + escapeProctoringHtml(risk.level.toUpperCase()) + '</strong></div>' +
+                '</div>' +
+            '</div>' +
+            '<div class="rb-ssa-table-wrap">' +
+            '<table class="rb-ssa-table">' +
+            '<thead><tr><th>Category</th><th>Decision</th><th>Finding</th></tr></thead><tbody>';
+
+        rows.forEach(function (row) {
+            var badge = proctoringDecisionBadge(row.decision);
+            html += '<tr>' +
+                '<td class="rb-ssa-cat"><i class="fa ' + row.icon + '"></i>' + escapeProctoringHtml(row.category) + '</td>' +
+                '<td class="rb-ssa-decision"><span class="rb-ssa-badge rb-ssa-badge-' + badge.cls + '">' + escapeProctoringHtml(String(row.decision)) + '</span></td>' +
+                '<td class="rb-ssa-finding">' + escapeProctoringHtml(row.detail) + '</td>' +
+                '</tr>';
+        });
+
+        html += '</tbody></table></div>';
+        return html;
+    }
+
+    function escapeProctoringHtml(text) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(text == null ? '' : String(text)));
+        return div.innerHTML;
+    }
+</script>
+<style>
+    .rb-ssa-section-wrap {
+        margin: 14px 0 18px;
+    }
+    .rb-ssa-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        margin-bottom: 10px;
+        border: 1px solid #d7e3f0;
+        border-radius: 12px;
+        background: linear-gradient(180deg, #f7fbff 0%, #ffffff 100%);
+    }
+    .rb-ssa-toolbar-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #17324d;
+        margin-bottom: 2px;
+    }
+    .rb-ssa-toolbar-title i {
+        color: #42a5f5;
+        margin-right: 6px;
+    }
+    .rb-ssa-toolbar-sub {
+        font-size: 12px;
+        color: #6b7d90;
+    }
+    .rb-ssa-panel {
+        border: 1px solid #d7e3f0 !important;
+        border-radius: 14px !important;
+        background: linear-gradient(180deg, #f7fbff 0%, #ffffff 42%) !important;
+        padding: 14px 16px 16px !important;
+        box-shadow: 0 8px 24px rgba(32, 64, 101, 0.06);
+    }
+    .rb-ssa-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+    .rb-ssa-head-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+    }
+    .rb-ssa-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #e8f2ff;
+        color: #1f6fbf;
+        border: 1px solid #cfe2fb;
+        flex-shrink: 0;
+    }
+    .rb-ssa-title {
+        margin: 0 !important;
+        font-size: 16px !important;
+        font-weight: 700 !important;
+        color: #17324d !important;
+        line-height: 1.2 !important;
+    }
+    .rb-ssa-status {
+        margin: 2px 0 0;
+        font-size: 12px;
+        color: #6b7d90;
+    }
+    .rb-ssa-status-ok { color: #1f7a46; }
+    .rb-ssa-status-error { color: #b42318; }
+    .rb-ssa-verdict {
+        display: none;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: .04em;
+        white-space: nowrap;
+    }
+    .rb-ssa-verdict-ok { background: #e8f8ef; color: #146c3a; border: 1px solid #b7e4c7; }
+    .rb-ssa-verdict-warn { background: #fff6e5; color: #9a5b00; border: 1px solid #f0d29a; }
+    .rb-ssa-verdict-danger { background: #fdecec; color: #9b1c1c; border: 1px solid #f0b6b6; }
+    .rb-ssa-loading {
+        display: flex;
+        gap: 6px;
+        padding: 18px 8px;
+        justify-content: center;
+    }
+    .rb-ssa-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #42a5f5;
+        opacity: .35;
+        animation: rbSsaPulse 1s infinite ease-in-out;
+    }
+    .rb-ssa-dot:nth-child(2) { animation-delay: .15s; }
+    .rb-ssa-dot:nth-child(3) { animation-delay: .3s; }
+    @@keyframes rbSsaPulse {
+        0%, 100% { transform: translateY(0); opacity: .35; }
+        50% { transform: translateY(-3px); opacity: 1; }
+    }
+    .rb-ssa-banner {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        border: 1px solid transparent;
+    }
+    .rb-ssa-banner-ok { background: linear-gradient(135deg, #f0fbf4, #e7f7ee); border-color: #c6e8d3; }
+    .rb-ssa-banner-warn { background: linear-gradient(135deg, #fff9ef, #fff3dd); border-color: #f0d7a4; }
+    .rb-ssa-banner-danger { background: linear-gradient(135deg, #fff1f1, #ffe4e4); border-color: #f0c0c0; }
+    .rb-ssa-banner-label {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: #6b7d90;
+        margin-bottom: 2px;
+    }
+    .rb-ssa-banner-title {
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: .02em;
+        color: #17324d;
+        line-height: 1.15;
+        margin-bottom: 3px;
+    }
+    .rb-ssa-banner-text {
+        font-size: 12.5px;
+        color: #4d647c;
+        max-width: 420px;
+    }
+    .rb-ssa-metrics {
+        display: flex;
+        gap: 8px;
+        align-items: stretch;
+        flex-shrink: 0;
+    }
+    .rb-ssa-metric {
+        min-width: 84px;
+        background: rgba(255,255,255,.72);
+        border: 1px solid rgba(32,64,101,.08);
+        border-radius: 10px;
+        padding: 8px 10px;
+        text-align: center;
+    }
+    .rb-ssa-metric span {
+        display: block;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .05em;
+        text-transform: uppercase;
+        color: #7a8ea3;
+        margin-bottom: 3px;
+    }
+    .rb-ssa-metric strong {
+        display: block;
+        font-size: 12.5px;
+        font-weight: 800;
+        color: #17324d;
+    }
+    .rb-ssa-metric .is-good { color: #146c3a; }
+    .rb-ssa-metric .is-bad { color: #9b1c1c; }
+    .rb-ssa-metric .is-ok { color: #146c3a; }
+    .rb-ssa-metric .is-warn { color: #9a5b00; }
+    .rb-ssa-metric .is-danger { color: #9b1c1c; }
+    .rb-ssa-empty {
+        padding: 12px;
+        color: #667788;
+        font-size: 13px;
+        background: #f7fafc;
+        border: 1px dashed #d7e3f0;
+        border-radius: 10px;
+        text-align: center;
+    }
+    .rb-ssa-table-wrap {
+        overflow: auto;
+        border: 1px solid #dbe5ef;
+        border-radius: 12px;
+        background: #fff;
+    }
+    .rb-ssa-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12.5px;
+        line-height: 1.35;
+    }
+    .rb-ssa-table thead th {
+        text-align: left;
+        padding: 8px 12px;
+        background: #f4f8fd;
+        color: #204065;
+        font-weight: 700;
+        border-bottom: 1px solid #dbe5ef;
+        white-space: nowrap;
+        font-size: 11px;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+    }
+    .rb-ssa-table tbody td {
+        padding: 9px 12px;
+        vertical-align: top;
+        border-bottom: 1px solid #eef2f6;
+        color: #334155;
+    }
+    .rb-ssa-table tbody tr:last-child td { border-bottom: none; }
+    .rb-ssa-table tbody tr:hover td { background: #fafcff; }
+    .rb-ssa-cat {
+        width: 22%;
+        font-weight: 700;
+        color: #1f3550;
+        white-space: nowrap;
+    }
+    .rb-ssa-cat i {
+        margin-right: 7px;
+        color: #42a5f5;
+        width: 14px;
+        text-align: center;
+    }
+    .rb-ssa-decision { width: 18%; }
+    .rb-ssa-badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 10.5px;
+        font-weight: 500;
+        letter-spacing: .02em;
+        border: 1px solid transparent;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .rb-ssa-badge-ok { background: #e8f8ef; color: #146c3a; border-color: #b7e4c7; }
+    .rb-ssa-badge-warn { background: #fff6e5; color: #9a5b00; border-color: #f0d29a; }
+    .rb-ssa-badge-danger { background: #fdecec; color: #9b1c1c; border-color: #f0b6b6; }
+    .rb-ssa-badge-info { background: #eef5ff; color: #1f5c93; border-color: #cfe2fb; }
+    .rb-ssa-finding {
+        white-space: pre-wrap;
+        word-break: break-word;
+        color: #3f5368;
+    }
+    @@media (max-width: 768px) {
+        .rb-ssa-toolbar { flex-direction: column; align-items: stretch; }
+        .rb-ssa-head { align-items: flex-start; flex-direction: column; }
+        .rb-ssa-banner { flex-direction: column; }
+        .rb-ssa-metrics { width: 100%; }
+        .rb-ssa-metric { flex: 1; min-width: 0; }
+        .rb-ssa-cat { white-space: normal; }
+        .rb-ssa-decision { width: auto; }
+    }
+</style>
 <script>
     let interviewIdVariable;
     let sessionIdVariable;
