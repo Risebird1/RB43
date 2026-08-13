@@ -55,7 +55,7 @@ namespace Risebird.Functions
                     var inactiveRecipients = await GetInactiveRecipientEmailsAsync(allRecipients);
                     if (inactiveRecipients.Count > 0)
                     {
-                        bool IsInactive(EmailAddress e) =>
+                        bool IsInactive(SendGrid.Helpers.Mail.EmailAddress e) =>
                             e != null && !string.IsNullOrWhiteSpace(e.Email) && inactiveRecipients.Contains(e.Email.Trim());
 
                         foreach (var p in msg.Personalizations)
