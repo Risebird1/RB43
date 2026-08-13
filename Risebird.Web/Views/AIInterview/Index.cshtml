@@ -2855,6 +2855,66 @@
         return null;
     }
 
+    // Speech-to-text models hallucinate confident, repetitive sentences when handed silence,
+    // so a recording with no speech in it must never be sent for transcription. Peak amplitude
+    // is sampled while recording; normal speech peaks well above this, room noise well below.
+    const SPEECH_PEAK_THRESHOLD = 0.02;
+    let answerAudioPeak = 0;
+    let answerAudioSampleCount = 0;
+    let answerAudioMonitor = null;
+
+    function startSilenceMonitor(stream) {
+        stopSilenceMonitor();
+        answerAudioPeak = 0;
+        answerAudioSampleCount = 0;
+
+        try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx || !stream) return;
+
+            const ctx = new AudioCtx();
+            if (ctx.state === 'suspended' && typeof ctx.resume === 'function') {
+                ctx.resume().catch(function () { /* handled by the sample guard below */ });
+            }
+
+            const analyser = ctx.createAnalyser();
+            analyser.fftSize = 2048;
+            ctx.createMediaStreamSource(stream).connect(analyser);
+
+            const buffer = new Float32Array(analyser.fftSize);
+            const timer = window.setInterval(function () {
+                // A suspended context only ever yields zeros, which would look like silence
+                if (ctx.state !== 'running') return;
+                analyser.getFloatTimeDomainData(buffer);
+                let peak = 0;
+                for (let i = 0; i < buffer.length; i++) {
+                    const level = Math.abs(buffer[i]);
+                    if (level > peak) peak = level;
+                }
+                if (peak > answerAudioPeak) answerAudioPeak = peak;
+                answerAudioSampleCount++;
+            }, 200);
+
+            answerAudioMonitor = { ctx: ctx, timer: timer };
+        } catch (e) {
+            // Monitoring is best effort and must never stop a recording from starting
+            console.warn('Could not monitor audio levels', e);
+        }
+    }
+
+    function stopSilenceMonitor() {
+        if (!answerAudioMonitor) return;
+        window.clearInterval(answerAudioMonitor.timer);
+        try { answerAudioMonitor.ctx.close(); } catch (e) { /* already closed */ }
+        answerAudioMonitor = null;
+    }
+
+    // Only claims silence when the monitor actually ran. If it never sampled anything the
+    // recording is sent for transcription as before, so a monitoring failure loses nothing.
+    function answerRecordingWasSilent() {
+        return answerAudioSampleCount > 0 && answerAudioPeak < SPEECH_PEAK_THRESHOLD;
+    }
+
     function clearAnswerSubmitFallbacks() {
         answerSubmitFallbackTimers.forEach(function (id) { window.clearTimeout(id); });
         answerSubmitFallbackTimers = [];
@@ -2968,6 +3028,8 @@
                     mediaRecorderAudio = new MediaRecorder(stream);
                 }
 
+                startSilenceMonitor(stream);
+
                 mediaRecorderAudio.ondataavailable = e => {
                     if (e.data && e.data.size > 0) {
                         audioChunks.push(e.data);
@@ -2977,6 +3039,7 @@
                 mediaRecorderAudio.onstop = async () => {
                     timerStopped = true;
                     clearInterval(countdownInterval);
+                    stopSilenceMonitor();
 
                     const audioMime = (mediaRecorderAudio && mediaRecorderAudio.mimeType) || pickAudioRecorderMimeType() || 'audio/webm';
                     const resolvedMime = audioMime.indexOf('audio/') === 0
@@ -2987,19 +3050,25 @@
                         : resolvedMime.indexOf('mp4') >= 0 ? 'm4a'
                         : 'webm';
                     const audioBlob = new Blob(audioChunks, { type: resolvedMime });
+
+                    // A candidate solving a coding question in silence is normal. Sending that
+                    // silence for transcription produces hallucinated text, so the audio is
+                    // dropped and only the written code is submitted.
+                    if (isCodingAnswer() && (audioBlob.size < 1000 || answerRecordingWasSilent())) {
+                        audioChunks = [];
+                        if (audioInput) {
+                            audioInput.value = '';
+                        }
+                        if (overlay) overlay.style.display = "flex";
+                        stopRecording();
+                        if (!tryFinalizeAnswerSubmit()) {
+                            scheduleAnswerSubmitFallback();
+                        }
+                        return;
+                    }
+
                     if (audioBlob.size < 1000) {
                         audioChunks = [];
-
-                        // A coding answer stands on its own, so silence must not block submission.
-                        // The written code is still sent; only the spoken explanation is missing.
-                        if (isCodingAnswer()) {
-                            if (overlay) overlay.style.display = "flex";
-                            stopRecording();
-                            if (!tryFinalizeAnswerSubmit()) {
-                                scheduleAnswerSubmitFallback();
-                            }
-                            return;
-                        }
 
                         if (overlay) overlay.style.display = "none";
                         Swal.fire({
@@ -3642,6 +3711,13 @@
             text-transform: uppercase;
             color: #6b7280;
             margin-bottom: 6px;
+        }
+
+        .rb-ide-panel-note {
+            font-weight: 500;
+            letter-spacing: 0;
+            text-transform: none;
+            color: #b45309;
         }
 
         .rb-ide-question {
@@ -5544,6 +5620,15 @@
 
             codingEditor.setSize('100%', '100%');
 
+            // Mirror every keystroke into the posted field. Capturing only at submit time means
+            // a single failure there loses the whole answer, so the form always holds the latest code.
+            codingEditor.on('change', function () {
+                const codeField = document.getElementById('CodingSubmittedCode');
+                if (codeField) {
+                    codeField.value = codingEditor.getValue();
+                }
+            });
+
             codingEditor.on('contextmenu', function (cm, event) {
                 event.preventDefault();
                 return false;
@@ -5627,6 +5712,14 @@
                 runInFlight = false;
                 if (runBtn) runBtn.disabled = false;
             }
+        }
+
+        // True while the editor still holds nothing but a starter template, whichever
+        // language it belongs to. Submitting that is the same as submitting nothing.
+        function isUntouchedTemplate(code) {
+            const trimmed = (code || '').trim();
+            if (trimmed.length === 0) return true;
+            return codingLanguages.some(l => (l.template || '').trim() === trimmed);
         }
 
         function captureCodingFields(isTimeExpired) {
@@ -5800,13 +5893,16 @@
             if (codingSubmitted) return;
 
             const code = currentCode();
-            if (!code || code.trim().length === 0) {
+            if (isUntouchedTemplate(code)) {
                 Swal.fire({
                     title: 'Nothing to submit',
-                    text: 'Please write your code before submitting.',
+                    text: 'The editor still contains only the starter template. Write your solution in the code editor — the Input (stdin) box below is only for test input your program reads.',
                     icon: 'warning',
                     confirmButtonColor: '#4eda92'
                 });
+                if (codingEditor) {
+                    codingEditor.focus();
+                }
                 return;
             }
 
