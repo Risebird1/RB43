@@ -9,14 +9,18 @@
     min-height: calc(100vh - 40px);
     color: #e8eaed;
 }
-.rb-aiinterview-container--coding .rb-header { margin-bottom: 12px; }
-.rb-aiinterview-container--coding .rb-title,
-.rb-aiinterview-container--coding .rb-timer { color: #e5e7eb; }
+.rb-aiinterview-container--coding .rb-header {
+    display: none !important;
+}
+.rb-main--coding .rb-footer,
+.rb-main--coding .rb-footer-btn {
+    display: none !important;
+}
 .rb-main--coding {
     display: flex;
     gap: 0;
     align-items: stretch;
-    min-height: calc(100vh - 110px);
+    min-height: calc(100vh - 90px);
     background: #16181d;
     border: 1px solid #2a2e36;
     border-radius: 12px;
@@ -157,18 +161,6 @@
     padding: 12px;
     text-align: center;
 }
-.rb-main--coding .rb-footer {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    padding: 10px 12px 12px;
-    background: #12141a;
-    border-top: 1px solid #2a2e36;
-}
-.rb-main--coding .rb-footer-btn {
-    background: #2a2e36;
-    color: #e5e7eb;
-}
 .rb-coding-right {
     flex: 1 1 auto;
     min-width: 0;
@@ -235,8 +227,19 @@
     background-color: #151a24;
     color: #e5e7eb;
 }
-.rb-main--coding .rb-ide-editor-host { background: #0f1115; }
+.rb-main--coding .rb-ide-editor-host {
+    background: #0f1115;
+    /* Modest height bump for coding questions only */
+    min-height: 360px;
+}
+.rb-main--coding .rb-ide-editor-host .CodeMirror.cm-s-default.CodeMirror-wrap,
+.rb-main--coding .rb-ide-editor-host .CodeMirror {
+    min-height: 340px;
+    background: #e8f2ff;
+}
 .rb-main--coding .rb-ide-io {
+    flex: 0 0 30%;
+    min-height: 140px;
     border-top-color: #2a2e36;
     background: #12151c;
 }

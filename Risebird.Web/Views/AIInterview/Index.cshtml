@@ -2036,7 +2036,7 @@
 </style>
 @if (useCodingSplitLayout)
 {
-    <link rel="stylesheet" href="~/css/ai-interview-coding-split.css?v=4" />
+    <link rel="stylesheet" href="~/css/ai-interview-coding-split.css?v=7" />
 }
 @if (ViewBag.AiInterviewDarkTheme == true)
 {
@@ -2044,11 +2044,11 @@
 }
 <div class="rb-aiinterview-container @(useCodingSplitLayout ? "rb-aiinterview-container--coding" : "")">
     <!-- Header -->
-    <div class="rb-header">
+    <div class="rb-header" style="@(useCodingSplitLayout ? "display:none;" : "")">
         <div class="rb-logo-title">
             <span class="rb-title">AI Interview</span>
         </div>
-        <div class="rb-header-controls @(Model.IsAdaptive == true ? "rb-header-controls--audio" : "")" style="@(useCodingSplitLayout ? "display:none;" : "")">
+        <div class="rb-header-controls @(Model.IsAdaptive == true ? "rb-header-controls--audio" : "")">
             <span class="rb-timer">
                 <i class="fa fa-clock-o"></i> Interview Time Left <b><span id="timer">--:--</span></b>
                 <div class="rb-timer-bar">
@@ -2741,7 +2741,7 @@
             codingRecordingToastEl.innerHTML =
                 '<span class="rb-coding-rec-dot" aria-hidden="true"></span>' +
                 '<div><strong>Recording in progress</strong>' +
-                '<div class="rb-coding-rec-sub">Audio and video are being recorded for this coding session.</div></div>';
+                '<div class="rb-coding-rec-sub">Audio and video are being recorded for this session.</div></div>';
             document.body.appendChild(codingRecordingToastEl);
         }
         return codingRecordingToastEl;
