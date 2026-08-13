@@ -48,21 +48,10 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            try
-            {
-                if (!TryGetSessionUser(out _))
-                    return RedirectToAction("SignOut", "Session");
-
-                var page = await BuildPageAsync();
-                return View(page);
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return View(new IRFAttentionPageVM());
-            }
+            // Spec: enhancements live on the existing Interview Demand / Weekend Drive page — no separate page.
+            return RedirectToAction("Index", "InterviewDemand");
         }
 
         private async Task<IRFAttentionPageVM> BuildPageAsync()

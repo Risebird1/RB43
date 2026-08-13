@@ -1,0 +1,72 @@
+@model IEnumerable<Risebird.Entities.ViewModel.IRFAttentionRowVM>
+@{
+    var rows = Model?.ToList() ?? new List<Risebird.Entities.ViewModel.IRFAttentionRowVM>();
+    var isSpot = rows.Any(r => r.IsSpotlight);
+}
+
+<div class="drive-table-wrap">
+    <table class="table drive-table drive-table-volume @(isSpot ? "js-spotlight-table" : "js-volume-table")">
+        <thead>
+            <tr>
+                <th>IRF / Skill</th>
+                <th>MAG</th>
+                <th title="All-future scheduled interviews">Volume</th>
+                <th title="All-future unassigned">Unassigned</th>
+                <th>Outreach</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var r in rows)
+        {
+            <tr data-irf="@r.IrfPk" data-mag="@r.MagId.GetValueOrDefault()">
+                <td>
+                    <div class="drive-irf-id">@(string.IsNullOrWhiteSpace(r.IrfCode) ? ("#" + r.IrfPk) : r.IrfCode)</div>
+                    @if (!string.IsNullOrWhiteSpace(r.PrimarySkill))
+                    {
+                        <div class="drive-irf-skill" title="@r.PrimarySkill">@r.PrimarySkill</div>
+                    }
+                    @if (r.IsSpotlight)
+                    {
+                        <div class="drive-pin-meta">
+                            @(string.IsNullOrWhiteSpace(r.PinnedBy) ? "Pinned" : r.PinnedBy)
+                            @if (r.PinnedAt.HasValue)
+                            {
+                                <text> · @r.PinnedAt.Value.ToString("dd MMM HH:mm")</text>
+                            }
+                        </div>
+                    }
+                </td>
+                <td>@(string.IsNullOrWhiteSpace(r.MagName) ? "—" : r.MagName)</td>
+                <td><span class="drive-badge drive-badge-total" title="All-future scheduled">@r.Volume</span></td>
+                <td>
+                    <span class="@(r.UnassignedCount > 0 ? "drive-unassigned-warn" : "drive-unassigned-ok")">@r.UnassignedCount</span>
+                </td>
+                <td>
+                    <div class="drive-actions-toolbar" role="group" aria-label="Outreach for @(r.IrfCode)">
+                        @if (r.MagId.GetValueOrDefault() > 0)
+                        {
+                            <button type="button" class="drive-action-btn js-cross-mag-link"
+                                    title="Cross-MAG entry link — interviewers from other MAGs can enter this MAG (does not expire)"
+                                    data-mag="@r.MagId">
+                                <i class="fas fa-link"></i>
+                            </button>
+                        }
+                        @if (r.IsSpotlight)
+                        {
+                            <button type="button" class="drive-action-btn js-unpin-priority" title="Unpin (soft)" data-irf="@r.IrfPk" data-irf-id="@r.IrfPk">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button" class="drive-action-btn js-pin-priority" title="Mark high priority" data-irf="@r.IrfPk" data-irf-id="@r.IrfPk">
+                                <i class="fas fa-thumb-tack"></i>
+                            </button>
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

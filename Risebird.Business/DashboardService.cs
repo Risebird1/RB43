@@ -330,7 +330,8 @@ namespace Risebird.Business
         {
             try
             {
-                return await _dashboardRespository.GetIRFAttentionVolumeRows();
+                return await _dashboardRespository.GetIRFAttentionVolumeRows()
+                    ?? Enumerable.Empty<IRFAttentionRowVM>();
             }
             catch (Exception ex)
             {
@@ -343,7 +344,8 @@ namespace Risebird.Business
         {
             try
             {
-                return await _dashboardRespository.GetActiveIRFAttentionSpotlights();
+                return await _dashboardRespository.GetActiveIRFAttentionSpotlights()
+                    ?? Enumerable.Empty<IRFAttentionSpotlightVM>();
             }
             catch (Exception ex)
             {
@@ -356,7 +358,8 @@ namespace Risebird.Business
         {
             try
             {
-                return await _dashboardRespository.GetIRFAttentionMetaByIds(irfIds);
+                return await _dashboardRespository.GetIRFAttentionMetaByIds(irfIds)
+                    ?? Enumerable.Empty<IRFAttentionRowVM>();
             }
             catch (Exception ex)
             {

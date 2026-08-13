@@ -22,7 +22,7 @@
 
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
 
-<link rel="stylesheet" href="~/css/drive-weekend.css?v=20260803e" />
+<link rel="stylesheet" href="~/css/drive-weekend.css?v=20260811d" />
 
 
 
@@ -76,6 +76,8 @@
 
                     <span><i class="fas fa-bell"></i> Open slots</span>
 
+                    <span><i class="fas fa-link"></i> Cross-MAG entry</span>
+
                     <span class="ms-auto"><i class="fas fa-check-double"></i> Actions taken auto-save</span>
 
                 </div>
@@ -104,7 +106,7 @@
 
 </div>
 
-
+<div id="driveToastHost" class="drive-toast-host" aria-live="polite" aria-atomic="true"></div>
 
 @await Html.PartialAsync("~/Views/Common/_AssessmentGroupsListPartial.cshtml")
 
@@ -128,7 +130,7 @@
 
     </script>
 
-    <script src="~/js/drive-weekend-demand.js?v=20260803f"></script>
+    <script src="~/js/drive-weekend-demand.js?v=20260811d"></script>
 
     <script type="text/javascript">
 

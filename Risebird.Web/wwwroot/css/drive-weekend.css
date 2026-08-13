@@ -434,6 +434,220 @@
     color: #64748b;
 }
 
+.drive-horizon-hint {
+    font-size: 11px;
+    font-weight: 400;
+    color: #64748b;
+}
+
+.drive-volume-section {
+    margin-top: 22px;
+    padding-top: 14px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.drive-volume-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.drive-volume-sub {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: #64748b;
+    max-width: 640px;
+}
+
+.drive-vol-count {
+    font-weight: 500;
+    color: #94a3b8;
+}
+
+.drive-empty-compact {
+    padding: 12px 8px;
+}
+
+.drive-pin-meta {
+    margin-top: 4px;
+    font-size: 11px;
+    color: #64748b;
+}
+
+.ia-modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1050;
+    background: rgba(15, 23, 42, 0.45);
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.ia-modal-backdrop.is-open {
+    display: flex;
+}
+
+.ia-modal {
+    width: 100%;
+    max-width: 440px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.2);
+    overflow: hidden;
+}
+
+.ia-modal__h {
+    padding: 14px 16px;
+    font-size: 15px;
+    font-weight: 600;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.ia-modal__b {
+    padding: 14px 16px 8px;
+}
+
+.ia-modal__f {
+    padding: 10px 16px 14px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.ia-hint {
+    margin: 0 0 12px;
+    font-size: 12px;
+    color: #64748b;
+}
+
+.ia-field {
+    margin-bottom: 10px;
+}
+
+.ia-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #334155;
+}
+
+.ia-field select,
+.ia-field input {
+    width: 100%;
+    height: 34px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 13px;
+}
+
+.ia-btn {
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.ia-btn-primary {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #fff;
+}
+
+.drive-toast-host {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 12000;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 8px;
+    pointer-events: none;
+    max-width: min(360px, calc(100vw - 32px));
+}
+
+.drive-toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.14);
+    transform: translateY(12px);
+    opacity: 0;
+    animation: driveToastIn .22s ease forwards;
+}
+
+.drive-toast.is-out {
+    animation: driveToastOut .18s ease forwards;
+}
+
+.drive-toast__icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 12px;
+}
+
+.drive-toast__body {
+    min-width: 0;
+    flex: 1;
+}
+
+.drive-toast__title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.3;
+}
+
+.drive-toast__msg {
+    margin-top: 2px;
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.35;
+}
+
+.drive-toast__close {
+    border: 0;
+    background: transparent;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0 2px;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.drive-toast.is-success { border-left: 4px solid #059669; }
+.drive-toast.is-success .drive-toast__icon { background: #ecfdf5; color: #059669; }
+.drive-toast.is-error { border-left: 4px solid #dc2626; }
+.drive-toast.is-error .drive-toast__icon { background: #fef2f2; color: #dc2626; }
+.drive-toast.is-info { border-left: 4px solid #2563eb; }
+.drive-toast.is-info .drive-toast__icon { background: #eff6ff; color: #2563eb; }
+.drive-toast.is-wait { border-left: 4px solid #d97706; }
+.drive-toast.is-wait .drive-toast__icon { background: #fffbeb; color: #d97706; }
+
+@keyframes driveToastIn {
+    to { transform: translateY(0); opacity: 1; }
+}
+@keyframes driveToastOut {
+    to { transform: translateY(8px); opacity: 0; }
+}
+
 @media (max-width: 768px) {
     .drive-page-header {
         flex-direction: column;
@@ -442,5 +656,9 @@
     .drive-toolbar {
         width: 100%;
         justify-content: space-between;
+    }
+
+    .drive-volume-head {
+        flex-direction: column;
     }
 }
