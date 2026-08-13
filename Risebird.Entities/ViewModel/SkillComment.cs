@@ -22,5 +22,12 @@ namespace Risebird.Entities.ViewModel
         public bool IsGeneratedByAi { get; set; }
         public bool IsCodingQuestion { get; set; }
         public int? CodingTimeLimitInMinutes { get; set; }
+
+        /// <summary>
+        /// Plain-language summary of a coding question, narrated by the Synthesia avatar in
+        /// place of the question text. Code read aloud verbatim is unintelligible.
+        /// Mandatory for coding questions, unused for every other type.
+        /// </summary>
+        public string QuestionGist { get; set; }
     }
 }

@@ -151,6 +151,18 @@ BEGIN
     Add CodingTimeLimitInMinutes int NULL
 END
 
+-- Plain-language summary of a coding question. Code cannot be read aloud, so this is
+-- what gets narrated by the Synthesia avatar instead of the Comment for coding questions.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'QuestionGist')
+      AND Object_ID = Object_ID(N'SkillChannelSampleQuestions'))
+BEGIN
+    ALTER TABLE SkillChannelSampleQuestions
+    Add QuestionGist nvarchar(max) NULL
+END
+
 End
 GO
 

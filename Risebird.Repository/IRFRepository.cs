@@ -8732,11 +8732,13 @@ WHERE irf.IsDeleted = 0
                     techSkillCommentsDt.Columns.Add("ExpectedAnswer", typeof(string));
                     techSkillCommentsDt.Columns.Add("IsCodingQuestion", typeof(bool));
                     techSkillCommentsDt.Columns.Add("CodingTimeLimitInMinutes", typeof(int));
+                    techSkillCommentsDt.Columns.Add("QuestionGist", typeof(string));
                     foreach (var item in obj.SkillCollection?.Where(x => !string.IsNullOrEmpty(x.SkillName)))
                     {
                         techSkillCommentsDt.Rows.Add(obj.IRFId, 0, item.Comment, item.CreatedBy, item.SkillName, item.ExpectedAnswer,
                             item.IsCodingQuestion,
-                            item.CodingTimeLimitInMinutes.HasValue ? (object)item.CodingTimeLimitInMinutes.Value : DBNull.Value);
+                            item.CodingTimeLimitInMinutes.HasValue ? (object)item.CodingTimeLimitInMinutes.Value : DBNull.Value,
+                            string.IsNullOrWhiteSpace(item.QuestionGist) ? (object)DBNull.Value : item.QuestionGist);
                     }
                     SqlCommand cmdAddSkillComments = new SqlCommand("usp_AddIRFSampleQuestions", con);
                     cmdAddSkillComments.CommandType = CommandType.StoredProcedure;
@@ -8827,7 +8829,7 @@ WHERE irf.IsDeleted = 0
             return false;
         }
 
-        public async Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer, bool isCodingQuestion = false, int? codingTimeLimitInMinutes = null)
+        public async Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer, bool isCodingQuestion = false, int? codingTimeLimitInMinutes = null, string questionGist = null)
         {
             try
             {
@@ -8837,6 +8839,7 @@ WHERE irf.IsDeleted = 0
                 dynamicParameters.Add("@expectedAnswer", expectedAnswer);
                 dynamicParameters.Add("@isCodingQuestion", isCodingQuestion);
                 dynamicParameters.Add("@codingTimeLimitInMinutes", codingTimeLimitInMinutes);
+                dynamicParameters.Add("@questionGist", questionGist);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.ExecuteAsync(con, "usp_UpdateSkillChannelSampleQuestion", dynamicParameters,
@@ -8851,7 +8854,7 @@ WHERE irf.IsDeleted = 0
             return false;
         }
 
-        public async Task<bool> SetSampleQuestionCodingMode(int id, bool isCodingQuestion, int? codingTimeLimitInMinutes)
+        public async Task<bool> SetSampleQuestionCodingMode(int id, bool isCodingQuestion, int? codingTimeLimitInMinutes, string questionGist = null)
         {
             try
             {
@@ -8859,6 +8862,7 @@ WHERE irf.IsDeleted = 0
                 dynamicParameters.Add("@id", id);
                 dynamicParameters.Add("@isCodingQuestion", isCodingQuestion);
                 dynamicParameters.Add("@codingTimeLimitInMinutes", codingTimeLimitInMinutes);
+                dynamicParameters.Add("@questionGist", questionGist);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.ExecuteAsync(con, "usp_SetSampleQuestionCodingMode", dynamicParameters,

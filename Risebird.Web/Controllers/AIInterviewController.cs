@@ -3011,6 +3011,17 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "Question text is required before generating a video." });
                 }
 
+                // Source code narrated verbatim is unintelligible, so a coding question is
+                // voiced from its plain-language gist instead of the question text.
+                var narrationText = questionDetails.IsCodingQuestion
+                    ? questionDetails.QuestionGist
+                    : questionDetails.Comment;
+
+                if (string.IsNullOrWhiteSpace(narrationText))
+                {
+                    return Json(new { success = false, message = "Add a question gist in plain language before generating a video. The avatar reads the gist for coding questions, not the code." });
+                }
+
                 var irfVm = await _iRFService.GetEditIRF(questionDetails.IRFId, 0, false);
                 if (irfVm == null || !DmSynthesiaVideoViewMode.UsesSynthesiaVideos(irfVm.IsAIInterview, irfVm.AIInterviewType))
                 {
@@ -3020,7 +3031,7 @@ namespace Risebird.Web.Controllers
                 string videoId;
                 try
                 {
-                    videoId = await _synthesiaTextToVideoService.CreateVideoAsync(questionDetails.Comment, SynthesiaAIAvatarTemplates.Reema);
+                    videoId = await _synthesiaTextToVideoService.CreateVideoAsync(narrationText, SynthesiaAIAvatarTemplates.Reema);
                 }
                 catch (Exception ex)
                 {
@@ -3084,9 +3095,9 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "Video was created but could not be linked to this question." });
                 }
 
-                var preview = questionDetails.Comment.Length > 25
-                    ? questionDetails.Comment.Substring(0, 25) + "…"
-                    : questionDetails.Comment;
+                var preview = narrationText.Length > 25
+                    ? narrationText.Substring(0, 25) + "…"
+                    : narrationText;
                 return Json(new
                 {
                     success = true,
