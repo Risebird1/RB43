@@ -116,6 +116,7 @@ builder.Services.AddControllers(options =>
 builder.Services.AddDataProtection();
 builder.Services.AddSingleton<IProctoringTokenService, ProctoringTokenService>();
 builder.Services.AddScoped<IProctoringSessionEligibilityService, ProctoringSessionEligibilityService>();
+builder.Services.AddScoped<IProctoringScreenshotAnalysisService, ProctoringScreenshotAnalysisService>();
 builder.Services.AddScoped<IRisebirdSessionBootstrapService, RisebirdSessionBootstrapService>();
 
 
