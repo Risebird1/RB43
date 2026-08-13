@@ -1250,6 +1250,15 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    var input = $"Generate an output in JSON format as per the instructions fed to the assistant. The transcript data you need to generate an analysis against is {transcriptData}.";
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        input,
+                        operationType: "TranscriptAnalysis",
+                        promptId: _configuration["OpenAI:TranscriptAnalysisPromptId"]);
+                }
 
                 string threadId = string.Empty;
                 threadId = await CreateThreadAsync(transcriptData: transcriptData);
@@ -1319,7 +1328,20 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                if (string.IsNullOrEmpty(userMessageContent) || string.IsNullOrEmpty(assistantId))
+                if (string.IsNullOrEmpty(userMessageContent))
+                    return null;
+
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    var input = $"Generate an output in JSON format as per the instructions fed to the assistant. {userMessageContent}";
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        input,
+                        operationType: "QcInterviewAIMerge",
+                        promptId: _configuration["OpenAI:QcInterviewAIMergePromptId"]);
+                }
+
+                if (string.IsNullOrEmpty(assistantId))
                     return null;
 
                 string threadId = await CreateThreadAsync(plainAssistantMessage: userMessageContent);
@@ -1363,6 +1385,16 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    var input = $"Generate an output in JSON format as per the instructions fed to the assistant. {transcriptSummary}";
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        input,
+                        operationType: "ContradictionReport",
+                        promptId: _configuration["OpenAI:ContradictionReportAIPromptId"]);
+                }
+
                 string threadId = await CreateThreadAsync(contradictiontranscriptSummary: transcriptSummary);
                 if (string.IsNullOrEmpty(threadId))
                     return null;
@@ -1664,6 +1696,16 @@ namespace Risebird.CommonHelper
             {
                 if (string.IsNullOrWhiteSpace(composedMessage))
                     return null;
+
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    var input = $"Generate an output in JSON format as per the instructions fed to the assistant. {composedMessage}";
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        input,
+                        operationType: "PaymentTicketReview",
+                        promptId: _configuration["OpenAI:PaymentTicketReviewPromptId"]);
+                }
 
                 string threadId = await CreateThreadAsync(plainAssistantMessage: composedMessage);
 
