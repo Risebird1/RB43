@@ -5150,6 +5150,32 @@ button.dm-v4-money-pill {
     color: var(--dm-text-mid);
 }
 
+.dm-v4-question-gist {
+    margin-top: 6px;
+}
+
+.dm-v4-question-gist-hint {
+    font-weight: 400;
+    text-transform: none;
+    color: var(--dm-text-dim);
+}
+
+.dm-v4-coding-gist {
+    width: 100%;
+    padding: 6px 8px;
+    font-size: 12px;
+    line-height: 1.4;
+    border: 1px solid var(--dm-border, #d8dee6);
+    border-radius: 4px;
+    resize: vertical;
+}
+
+.dm-v4-question-gist-warning {
+    margin-top: 4px;
+    font-size: 11px;
+    color: #c0392b;
+}
+
 .dm-v4-questions-more-hint,
 .dm-v4-questions-empty {
     padding: 14px;

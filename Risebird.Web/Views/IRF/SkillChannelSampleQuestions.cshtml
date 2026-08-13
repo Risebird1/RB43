@@ -51,7 +51,16 @@
                                                                        id="SkillCollection_0__CodingTimeLimitInMinutes" name="SkillCollection[0].CodingTimeLimitInMinutes"
                                                                        class="form-control" style="width:100%;" disabled />
                                                             </div>
+                                                            <div style="margin-top:6px;display:none;" class="coding-gist-wrap">
+                                                                <textarea id="SkillCollection_0__QuestionGist" name="SkillCollection[0].QuestionGist"
+                                                                          class="form-control coding-gist" style="width:100%;" rows="3"
+                                                                          placeholder="Question gist in plain language"
+                                                                          title="The AI avatar reads this out instead of the code, which cannot be narrated"
+                                                                          onblur="checkQuestionLength(this.id)"></textarea>
+                                                                <small class="text-muted">Spoken by the AI avatar in place of the code.</small>
+                                                            </div>
                                                             <label id="codingError_0" class="text-danger coding-error"></label>
+                                                            <label id="gistError_0" class="text-danger gist-error"></label>
                                                         </td>
                                                         <td class="text-center action-area">
                                                             <div class="sample-btn">
@@ -122,6 +131,7 @@
         $tr.find("textarea[type=text]").val("");
         $tr.find("input[type=checkbox]").prop("checked", false);
         $tr.find("input[type=number]").val("").prop("disabled", true);
+        $tr.find(".coding-gist-wrap").hide();
         //$tr.find("textarea[type=text]").removeProp("readonly");
         $tr.find("input[type=hidden]").val('@Model.CreatedBy');
         var rowCount = $('#QuestionsNewTable tr').length;
@@ -155,6 +165,7 @@
         $ttlast.find("label").eq(0).attr("id", errorLabelIdValue1);
         $ttlast.find("label").eq(1).attr("id", errorLabelIdValue2);
         $ttlast.find("label.coding-error").attr("id", "codingError_" + finalIndex);
+        $ttlast.find("label.gist-error").attr("id", "gistError_" + finalIndex);
         
         //$ttlast.find("label").removeAttr("name");
         // Find the affected form
@@ -213,7 +224,7 @@
                     elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
                     elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
 
-                    ["IsCodingQuestion", "CodingTimeLimitInMinutes"].forEach(function (suffix) {
+                    ["IsCodingQuestion", "CodingTimeLimitInMinutes", "QuestionGist"].forEach(function (suffix) {
                         var codingElem = document.getElementById(collectionName + "_" + i + "__" + suffix);
                         if (codingElem) {
                             codingElem.id = collectionName + "_" + (i - 1) + "__" + suffix;
@@ -227,18 +238,24 @@
 </script>
 
 <script>
-    // The time limit only applies to coding questions, so it stays disabled (and unposted) otherwise
+    // The time limit and the gist only apply to coding questions, so they stay hidden
+    // and the time limit stays disabled (and unposted) otherwise
     function toggleCodingTimeLimit(checkbox) {
-        var timeLimitInput = $(checkbox).closest('tr').find('input[type=number]');
+        var $row = $(checkbox).closest('tr');
+        var timeLimitInput = $row.find('input[type=number]');
+        var $gistWrap = $row.find('.coding-gist-wrap');
         if (checkbox.checked) {
             timeLimitInput.prop('disabled', false);
             if (!timeLimitInput.val()) {
                 timeLimitInput.val(15);
             }
+            $gistWrap.show();
         }
         else {
             timeLimitInput.prop('disabled', true).val('');
-            $(checkbox).closest('tr').find('label.coding-error').html('');
+            $gistWrap.hide();
+            $row.find('label.coding-error').html('');
+            $row.find('label.gist-error').html('');
         }
     }
 
@@ -254,14 +271,26 @@
 
             var codingCheckbox = document.getElementById('SkillCollection_' + j + '__IsCodingQuestion');
             var codingErrorLabel = document.getElementById('codingError_' + j);
+            var gistErrorLabel = document.getElementById('gistError_' + j);
             if (codingErrorLabel) {
                 codingErrorLabel.innerHTML = "";
+            }
+            if (gistErrorLabel) {
+                gistErrorLabel.innerHTML = "";
             }
             if (codingCheckbox && codingCheckbox.checked) {
                 var timeLimit = parseInt($('#SkillCollection_' + j + '__CodingTimeLimitInMinutes').val(), 10);
                 if (isNaN(timeLimit) || timeLimit < 1 || timeLimit > 180) {
                     if (codingErrorLabel) {
                         codingErrorLabel.innerHTML = "Enter a time limit between 1 and 180 minutes.";
+                    }
+                    return false;
+                }
+
+                var gist = $('#SkillCollection_' + j + '__QuestionGist').val();
+                if (!gist || gist.trim() === '') {
+                    if (gistErrorLabel) {
+                        gistErrorLabel.innerHTML = "A coding question needs a gist. The AI avatar reads it out instead of the code.";
                     }
                     return false;
                 }
@@ -276,12 +305,14 @@
     function checkQuestionLength(elementId) {
         var index = elementId.match(/\d+/);
         var isExpectedAnswer = /ExpectedAnswer$/.test(elementId);
+        var isGist = /QuestionGist$/.test(elementId);
         var element = document.getElementById(elementId);
         if (!element) return;
 
         var val = element.value;
-        var errorElement = document.getElementById((isExpectedAnswer ? "expectedAnswerError_" : "questionError_") + index);
-        var fieldLabel = isExpectedAnswer ? "Expected Answer" : "Question";
+        var errorPrefix = isGist ? "gistError_" : (isExpectedAnswer ? "expectedAnswerError_" : "questionError_");
+        var errorElement = document.getElementById(errorPrefix + index);
+        var fieldLabel = isGist ? "Question Gist" : (isExpectedAnswer ? "Expected Answer" : "Question");
 
         if (errorElement) {
             errorElement.innerHTML = (val != null && val.length > MAX_QUESTION_LENGTH)

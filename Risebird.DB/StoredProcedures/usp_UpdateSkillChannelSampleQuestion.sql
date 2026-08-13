@@ -14,7 +14,8 @@ CREATE PROCEDURE [dbo].[usp_UpdateSkillChannelSampleQuestion]
     @comment nvarchar(max),
     @expectedAnswer nvarchar(max) = NULL,
     @isCodingQuestion bit = 0,
-    @codingTimeLimitInMinutes int = NULL
+    @codingTimeLimitInMinutes int = NULL,
+    @questionGist nvarchar(max) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -23,7 +24,10 @@ BEGIN
     SET Comment = @comment,
         ExpectedAnswer = @expectedAnswer,
         IsCodingQuestion = ISNULL(@isCodingQuestion, 0),
-        CodingTimeLimitInMinutes = CASE WHEN ISNULL(@isCodingQuestion, 0) = 1 THEN @codingTimeLimitInMinutes ELSE NULL END
+        CodingTimeLimitInMinutes = CASE WHEN ISNULL(@isCodingQuestion, 0) = 1 THEN @codingTimeLimitInMinutes ELSE NULL END,
+        -- Keep any previously written gist when none is supplied, so an edit that does not
+        -- touch the gist does not silently discard it.
+        QuestionGist = ISNULL(@questionGist, QuestionGist)
     WHERE id = @id;
 END
 GO

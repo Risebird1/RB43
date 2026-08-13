@@ -3967,11 +3967,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer, bool isCodingQuestion = false, int? codingTimeLimitInMinutes = null)
+        public async Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer, bool isCodingQuestion = false, int? codingTimeLimitInMinutes = null, string questionGist = null)
         {
             try
             {
-                return await _irfRepository.UpdateSkillChannelSampleQuestion(id, comment, expectedAnswer, isCodingQuestion, codingTimeLimitInMinutes);
+                return await _irfRepository.UpdateSkillChannelSampleQuestion(id, comment, expectedAnswer, isCodingQuestion, codingTimeLimitInMinutes, questionGist);
             }
             catch (Exception e)
             {
@@ -3980,11 +3980,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> SetSampleQuestionCodingMode(int id, bool isCodingQuestion, int? codingTimeLimitInMinutes)
+        public async Task<bool> SetSampleQuestionCodingMode(int id, bool isCodingQuestion, int? codingTimeLimitInMinutes, string questionGist = null)
         {
             try
             {
-                return await _irfRepository.SetSampleQuestionCodingMode(id, isCodingQuestion, codingTimeLimitInMinutes);
+                return await _irfRepository.SetSampleQuestionCodingMode(id, isCodingQuestion, codingTimeLimitInMinutes, questionGist);
             }
             catch (Exception e)
             {

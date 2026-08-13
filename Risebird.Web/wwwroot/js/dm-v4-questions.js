@@ -148,6 +148,7 @@
                     var hasVideo = !!$.trim(video);
                     var isCoding = q.isCodingQuestion || q.IsCodingQuestion;
                     var codingTimeLimit = q.codingTimeLimitInMinutes || q.CodingTimeLimitInMinutes;
+                    var gist = q.questionGist || q.QuestionGist || '';
 
                     html += '<div class="dm-v4-question-row" data-question-id="' + qid + '">';
                     html += '<div class="dm-v4-question-col">';
@@ -164,6 +165,14 @@
                     html += '<span class="dm-v4-coding-mins-label"' + (isCoding ? '' : ' style="opacity:.5"') + '>min</span>';
                     html += '</div>';
 
+                    // Code cannot be narrated, so the avatar voices this plain-language gist instead
+                    html += '<div class="dm-v4-question-gist"' + (isCoding ? '' : ' hidden') + '>';
+                    html += '<div class="dm-v4-question-label">Question gist <span class="dm-v4-question-gist-hint">spoken by the AI avatar instead of the code</span></div>';
+                    html += '<textarea class="dm-v4-coding-gist" rows="2" data-id="' + qid + '"';
+                    html += ' placeholder="Describe the coding task in plain language…">' + escapeHtml(gist) + '</textarea>';
+                    html += '<div class="dm-v4-question-gist-warning" hidden>Write the gist to finish enabling coding mode.</div>';
+                    html += '</div>';
+
                     html += '</div><div class="dm-v4-question-col">';
                     html += '<div class="dm-v4-question-label">Expected answer</div>';
                     html += '<div class="dm-v4-question-text' + (expected ? '' : ' dm-v4-question-text--muted') + '">';
@@ -176,11 +185,15 @@
                             html += '<a href="' + escapeHtml(video) + '" target="_blank" rel="noopener" class="dm-v4-question-link dm-v4-question-video-link">AI video ↗</a>';
                         }
                         var btnLabel = aiVideoButtonLabel(hasVideo);
-                        var btnDisabled = !qid || !hasComment;
+                        // A coding question is narrated from its gist, so that is what must exist
+                        var needsGist = isCoding && !$.trim(gist);
+                        var btnDisabled = !qid || !hasComment || needsGist;
                         html += '<button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--xs dm-v4-regen-ai-video-btn"';
                         html += ' data-id="' + qid + '" data-has-video="' + (hasVideo ? '1' : '0') + '"';
                         if (btnDisabled) {
-                            html += ' disabled title="Add question text before generating video"';
+                            html += needsGist
+                                ? ' disabled title="Write the question gist before generating video"'
+                                : ' disabled title="Add question text before generating video"';
                         }
                         html += '>' + btnLabel + '</button>';
 
@@ -294,7 +307,7 @@
         });
     }
 
-    function saveCodingMode(id, isCoding, minutes, $cb) {
+    function saveCodingMode(id, isCoding, minutes, $cb, gist) {
         var qid = parseInt(id, 10);
         if (!qid) return;
 
@@ -303,6 +316,9 @@
         payload.isCodingQuestion = isCoding;
         if (isCoding) {
             payload.codingTimeLimitInMinutes = parseInt(minutes, 10) || 15;
+        }
+        if ($.trim(gist || '')) {
+            payload.questionGist = $.trim(gist);
         }
 
         $.post('/IRF/SetQuestionCodingMode', payload).done(function (res) {
@@ -389,6 +405,8 @@
             var $cb = $(this);
             var $row = $cb.closest('.dm-v4-question-row');
             var $mins = $row.find('.dm-v4-coding-mins');
+            var $gistWrap = $row.find('.dm-v4-question-gist');
+            var $gist = $row.find('.dm-v4-coding-gist');
             var isCoding = $cb.prop('checked');
 
             $mins.prop('disabled', !isCoding);
@@ -396,8 +414,18 @@
             if (isCoding && !$mins.val()) {
                 $mins.val(15);
             }
+            $gistWrap.prop('hidden', !isCoding);
 
-            saveCodingMode($cb.data('id'), isCoding, $mins.val(), $cb);
+            // A coding question has no narratable text without a gist, so hold the save
+            // until one is written rather than letting the server reject the toggle.
+            if (isCoding && !$.trim($gist.val())) {
+                $row.find('.dm-v4-question-gist-warning').prop('hidden', false);
+                $gist.focus();
+                return;
+            }
+
+            $row.find('.dm-v4-question-gist-warning').prop('hidden', true);
+            saveCodingMode($cb.data('id'), isCoding, $mins.val(), $cb, $gist.val());
         });
 
         $(document).off('change.dmV4CodingMins', '.dm-v4-coding-mins').on('change.dmV4CodingMins', '.dm-v4-coding-mins', function () {
@@ -405,7 +433,17 @@
             var $row = $mins.closest('.dm-v4-question-row');
             var $cb = $row.find('.dm-v4-coding-cb');
             if (!$cb.prop('checked')) return;
-            saveCodingMode($mins.data('id'), true, $mins.val(), $cb);
+            saveCodingMode($mins.data('id'), true, $mins.val(), $cb, $row.find('.dm-v4-coding-gist').val());
+        });
+
+        $(document).off('change.dmV4CodingGist', '.dm-v4-coding-gist').on('change.dmV4CodingGist', '.dm-v4-coding-gist', function () {
+            var $gist = $(this);
+            var $row = $gist.closest('.dm-v4-question-row');
+            var $cb = $row.find('.dm-v4-coding-cb');
+            if (!$.trim($gist.val())) return;
+
+            $row.find('.dm-v4-question-gist-warning').prop('hidden', true);
+            saveCodingMode($gist.data('id'), $cb.prop('checked'), $row.find('.dm-v4-coding-mins').val(), $cb, $gist.val());
         });
 
         $('#dmV4QuestionsCollapse').off('click.dmV4QReload').on('click.dmV4QReload', '.dm-v4-collapse__head', function () {
