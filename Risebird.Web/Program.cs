@@ -244,6 +244,7 @@ builder.Services.AddScoped<IExcelHelper, ExcelHelper>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<IAssistantServiceHelper, AssistantServiceHelper>();
+builder.Services.AddScoped<IOpenAIResponsesHelper, OpenAIResponsesHelper>();
 builder.Services.AddScoped<ITeamsMeetingHelper, TeamsMeetingHelper>();
 builder.Services.AddScoped<IPdfReaderHelper, PdfReaderHelper>();
 builder.Services.AddScoped<IInterviewApiService, InterviewApiService>();

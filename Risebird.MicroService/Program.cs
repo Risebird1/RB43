@@ -164,6 +164,7 @@ namespace Risebird.MicroService
                     services.AddScoped<IAzureStorageService, AzureStorageService>();
                     services.AddScoped<IExcelHelper, ExcelHelper>();
                     services.AddScoped<IAssistantServiceHelper, AssistantServiceHelper>();
+                    services.AddScoped<IOpenAIResponsesHelper, OpenAIResponsesHelper>();
                     services.AddScoped<ITeamsMeetingHelper, TeamsMeetingHelper>();
                     services.AddScoped<IInterviewApiService, InterviewApiService>();
                     services.AddScoped<IOpenAIInterviewerAssistantHelper, OpenAIInterviewerAssistantHelper>();

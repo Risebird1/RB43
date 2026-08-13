@@ -962,6 +962,13 @@ namespace Risebird.Web.Controllers
                                 // A transcription failure must never cost the candidate their code
                                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, sttEx);
                             }
+
+                            if (LooksLikeSilenceHallucination(tranScribedResponse))
+                            {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                                    new Exception($"Discarded a hallucinated transcript for silent coding answer in session {model.SessionId}."));
+                                tranScribedResponse = string.Empty;
+                            }
                         }
 
                         codeResponse = string.IsNullOrWhiteSpace(model.CodingSubmittedCode)
@@ -1844,6 +1851,29 @@ namespace Risebird.Web.Controllers
                 // A lookup failure must not break the interview; the question still renders normally
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
+        }
+
+        /// <summary>
+        /// Speech-to-text models answer silence with a confident, highly repetitive sentence,
+        /// often in an unrelated language. Detects that signature so it can be discarded instead
+        /// of being filed as the candidate's spoken answer.
+        /// </summary>
+        private static bool LooksLikeSilenceHallucination(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return false;
+
+            var sentences = text
+                .Split(new[] { '.', '。', '!', '！', '?', '？', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => s.Trim())
+                .Where(s => s.Length > 0)
+                .ToList();
+
+            if (sentences.Count < 5) return false;
+
+            var distinctCount = sentences.Distinct(StringComparer.OrdinalIgnoreCase).Count();
+
+            // Genuine speech varies; a loop of the same sentence is the hallucination signature
+            return distinctCount * 5 <= sentences.Count;
         }
 
         /// <summary>
@@ -2961,8 +2991,10 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, output = "Running code is not available in this environment. You can still write and submit your answer." });
                 }
 
-                // Only an in-flight interview session may execute code
-                var meeting = await _aiinterviewerService.GetAIInterviewSpecificDetails(model.SessionId);
+                // Only an in-flight interview session may execute code. This is the same lookup the
+                // interview page itself is built from; GetAIInterviewSpecificDetails is not usable
+                // here because it inner joins InterviewSessions, a row Preset interviews never create.
+                var meeting = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(model.SessionId);
                 if (meeting == null)
                 {
                     return Json(new { success = false, output = "Your interview session could not be verified. Please reload the page." });
