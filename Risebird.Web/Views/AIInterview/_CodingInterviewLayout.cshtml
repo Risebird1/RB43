@@ -1,0 +1,189 @@
+@using Risebird.Entities.ViewModel
+@model ChatMessageViewModel
+@{
+    var problemText = !string.IsNullOrWhiteSpace(Model.CurrentQuestion)
+        ? Model.CurrentQuestion
+        : "Your coding problem will appear here.";
+}
+
+<div class="rb-main rb-main--coding">
+    <aside class="rb-coding-left">
+        <div class="rb-coding-tabs" role="tablist">
+            <button type="button" class="rb-coding-tab is-active" data-coding-tab="problem" role="tab" aria-selected="true">Problem statement</button>
+            <button type="button" class="rb-coding-tab" data-coding-tab="transcript" role="tab" aria-selected="false">Transcript</button>
+        </div>
+
+        <div class="rb-coding-tab-panels">
+            <div class="rb-coding-panel is-active" data-coding-panel="problem" role="tabpanel">
+                <div class="rb-coding-panel-title">Problem statement</div>
+                <div class="rb-ide-question message-content-discourageCopyPaste" id="codingQuestionText"
+                     oncopy="return false"
+                     oncut="return false"
+                     onpaste="return false"
+                     oncontextmenu="return false"
+                     onselectstart="return false">@problemText</div>
+
+                <div id="codingInstructions" class="rb-ide-instructions">
+                    <strong>Before you begin coding</strong>
+                    <ul>
+                        <li>Recording and the timer have <strong>already started</strong>. You have <strong id="codingLimitLabel"></strong>.</li>
+                        <li>Read the problem statement above carefully.</li>
+                        <li>Press <strong>Start</strong> when you are ready to open the code editor.</li>
+                        <li>Pick your language, write your solution, and press <strong>Run</strong> to compile and execute it.</li>
+                        <li>Use the <strong>Input (stdin)</strong> box for anything your program reads from standard input.</li>
+                        <li>Copy and paste are disabled. Your answer is submitted automatically when time runs out.</li>
+                    </ul>
+                    <button type="button" class="rb-ide-btn rb-ide-btn--start" id="codingStartBtn">
+                        <i class="fa fa-play"></i> Start
+                    </button>
+                </div>
+            </div>
+
+            <div class="rb-coding-panel" data-coding-panel="transcript" role="tabpanel">
+                <div class="chat-log-container">
+                    <div class="chat-log border rounded mt-3" id="chatLog">
+                        @foreach (var line in Model.ChatLog ?? new List<ChatLine>())
+                        {
+                            <div class="chat-message mb-3">
+                                <div class="message-header">
+                                    <strong class="message-role">@line.Role:</strong>
+                                    <span class="message-time">@DateTime.Now.ToString("HH:mm")</span>
+                                </div>
+                                <div class="message-content">
+                                    <p class="message-content-discourageCopyPaste"
+                                       oncopy="return false"
+                                       oncut="return false"
+                                       onpaste="return false"
+                                       oncontextmenu="return false"
+                                       onselectstart="return false">@line.Message</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <button class="scroll-to-bottom" id="scrollToBottom" title="Scroll to Bottom">
+                        <i class="fa fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="rb-coding-videos">
+            <div class="rb-coding-video">
+                <span class="rb-coding-video-label">AI Interviewer</span>
+                @if (!string.IsNullOrWhiteSpace(Model.SynthesizedVideoUrl))
+                {
+                    <video id="codingAiVideo" controls autoplay playsinline>
+                        <source src="@Model.SynthesizedVideoUrl" type="video/mp4" />
+                    </video>
+                }
+                else
+                {
+                    <div class="rb-coding-video-empty">AI video will appear here</div>
+                }
+            </div>
+            <div class="rb-coding-video">
+                <span class="rb-coding-video-label">@(string.IsNullOrWhiteSpace(Model.candidateName) ? "You" : Model.candidateName)</span>
+                <div class="rb-video-section" style="height:100%;">
+                    <div class="rb-video-feed" style="min-height:0;height:100%;background:transparent;box-shadow:none;border-radius:0;">
+                        <div class="videoContainer" style="height:100%;">
+                            <video id="video" autoplay muted playsinline style="width:100%;height:100%;object-fit:cover;border-radius:0;background:#000;"></video>
+                        </div>
+                        <div class="videoButtons" style="display:none;">
+                            <button style="visibility:hidden" id="btnRecordToggle" type="button" data-tooltip="Toggle Video Recording" class="rb-record-btn">
+                                <span id="btnRecord"><i class="fa fa-circle"></i> Rec</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rb-footer" style="display:none;" aria-hidden="true">
+            <button id="footerVideoToggle" class="rb-footer-btn" data-tooltip="Toggle Video" style="display:none;" aria-hidden="true">
+                <i id="footerVideoIcon" class="fa fa-video-camera"></i>
+            </button>
+            <button id="recordBtn" class="rb-footer-btn" data-tooltip="Start Recording Your Answer" style="display:none;background:#ee4343de;color:#fff;" aria-hidden="true">
+                <i class="fa fa-circle"></i>
+            </button>
+            <button type="button" class="rb-footer-btn" data-tooltip="Upload File" style="display:none;" aria-hidden="true"><i class="fa fa-upload"></i></button>
+        </div>
+    </aside>
+
+    <section class="rb-coding-right">
+        <div class="rb-ide" id="codingIdeOverlay">
+            <div class="rb-ide-header">
+                <div class="rb-ide-title">
+                    <i class="fa fa-code"></i> Coding Question
+                </div>
+                <div class="rb-ide-header-right">
+                    <div class="rb-ide-timer" id="codingTimerDisplay" style="display:none;">
+                        <i class="fa fa-clock-o"></i> <span id="codingTimerValue">0:00</span>
+                    </div>
+                    <button type="button" class="rb-ide-btn rb-ide-btn--run" id="codingRunBtn" style="display:none;">
+                        <i class="fa fa-play"></i> Run
+                    </button>
+                    <button type="button" class="rb-ide-btn rb-ide-btn--submit" id="codingSubmitBtn" style="display:none;">
+                        <i class="fa fa-check"></i> Submit Answer
+                    </button>
+                </div>
+            </div>
+
+            <div class="rb-ide-body rb-ide-body--coding-split">
+                <div class="rb-ide-right" id="codingWorkspace" style="display:none; width:100%;">
+                    <div class="rb-ide-toolbar">
+                        <label for="codingLanguage">Language</label>
+                        <select id="codingLanguage" class="rb-ide-select"></select>
+                        <span class="rb-ide-runner-note" id="codingRunnerNote"></span>
+                    </div>
+
+                    <div class="rb-ide-editor-host">
+                        <div id="codingEditorContainer"></div>
+                    </div>
+
+                    <div class="rb-ide-io">
+                        <div class="rb-ide-io-col">
+                            <div class="rb-ide-panel-label">Input (stdin)</div>
+                            <textarea id="codingStdin" class="rb-ide-stdin" placeholder="Optional input your program reads from stdin"></textarea>
+                        </div>
+                        <div class="rb-ide-io-col rb-ide-io-col--wide">
+                            <div class="rb-ide-panel-label">
+                                Output <span class="rb-ide-status" id="codingRunStatus"></span>
+                            </div>
+                            <pre id="codingOutput" class="rb-ide-output">Press Run to compile and execute your code.</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rb-coding-editor-placeholder" id="codingEditorPlaceholder">
+                    Press <strong>Start</strong> on the left to enable the editor.
+                </div>
+            </div>
+        </div>
+
+        <form asp-action="Index" method="post" class="rb-chatbox-form" enctype="multipart/form-data" autocomplete="off" id="chatForm" style="display:none;">
+            <input type="hidden" asp-for="SessionId" />
+            <input type="hidden" asp-for="candidateName" />
+            <input type="hidden" asp-for="InterviewId" />
+            <input type="hidden" asp-for="IRFId" />
+            <input type="hidden" asp-for="IsAdaptive" />
+            <input type="hidden" asp-for="CurrentQuestion" value="@Model.CurrentQuestion" />
+            <input type="hidden" asp-for="CurrentQuestionId" value="@Model.CurrentQuestionId" />
+            <input type="hidden" asp-for="AIInterviewerAudioLink" value="@Model.AIInterviewerAudioLink" />
+            <input type="hidden" asp-for="AssistantId" />
+            <input type="hidden" asp-for="AIInterviewType" value="@Model.AIInterviewType" />
+            <input type="hidden" asp-for="SynthesizedVideoUrl" value="@Model.SynthesizedVideoUrl" />
+            <input type="hidden" asp-for="showChatBox" value="@Model.showChatBox" />
+            <input type="hidden" asp-for="isMultiLingual" value="@Model.isMultiLingual" />
+            <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
+            <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
+            <textarea asp-for="Message" value="@Model.Message" id="messageTextarea" style="display: none;"></textarea>
+            <input type="hidden" name="TimeLeftInSeconds" id="timeLeftField" value="@Model.TimeLeftInSeconds" />
+        </form>
+
+        <div class="rb-interview-actions">
+            <a id="exitInterviewBtn" href="#" class="rb-action-btn rb-back-btn">
+                Exit Interview <i class="fa fa-sign-out"></i>
+            </a>
+        </div>
+    </section>
+</div>
