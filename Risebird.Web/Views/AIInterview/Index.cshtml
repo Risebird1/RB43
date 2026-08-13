@@ -7,6 +7,8 @@
     Layout = "~/Views/Shared/_PublicLayout2.cshtml";
     // Dark theme only for adaptive (audio) interviews — video keeps the original light UI.
     ViewBag.AiInterviewDarkTheme = Model.IsAdaptive == true;
+    // HackerEarth-style split layout ONLY for coding questions (video/audio stay on old UI).
+    var useCodingSplitLayout = Model.IsCodingQuestion == true;
 }
 @await Html.PartialAsync("_RisebirdProctoringAiInterview")
 <!-- CodeMirror CSS -->
@@ -1078,7 +1080,7 @@
         }
 
     .rb-video-feed .videoContainer video {
-        border-radius: 30px !important;
+       
         top: 0px !important;
     }
 
@@ -2030,14 +2032,19 @@
             padding-top: 4px;
         }
     }
+
 </style>
+@if (useCodingSplitLayout)
+{
+    <link rel="stylesheet" href="~/css/ai-interview-coding-split.css?v=7" />
+}
 @if (ViewBag.AiInterviewDarkTheme == true)
 {
     <link rel="stylesheet" href="~/css/ai-interview-dark-theme.css?v=24" />
 }
-<div class="rb-aiinterview-container">
+<div class="rb-aiinterview-container @(useCodingSplitLayout ? "rb-aiinterview-container--coding" : "")">
     <!-- Header -->
-    <div class="rb-header">
+    <div class="rb-header" style="@(useCodingSplitLayout ? "display:none;" : "")">
         <div class="rb-logo-title">
             <span class="rb-title">AI Interview</span>
         </div>
@@ -2056,6 +2063,12 @@
         </div>
     </div>
 
+    @if (useCodingSplitLayout)
+    {
+        @await Html.PartialAsync("_CodingInterviewLayout", Model)
+    }
+    else
+    {
     <!-- Main Content -->
     <div class="rb-main">
         <!-- Left: Video (hidden in audio-only mode, kept in DOM for stream access) -->
@@ -2428,6 +2441,7 @@
             </div>
         </div>
     </div>
+    } @* end non-coding (video/audio) layout *@
     <div id="waitOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background-color: rgba(0, 0, 0, 0.6); z-index: 2000; color: white; font-size: 1.5rem;
     align-items: center; justify-content: center;">
@@ -2712,6 +2726,26 @@
     const overlay = document.getElementById("waitOverlay");
     const recordingOverlay = document.getElementById("recordingOverlay");
     const showChatBox = @Json.Serialize(Model.showChatBox);
+    const isCodingQuestionPage = @Json.Serialize(Model.IsCodingQuestion);
+    let codingRecordingToastEl = null;
+
+    function ensureCodingRecordingToast() {
+        if (codingRecordingToastEl) return codingRecordingToastEl;
+        codingRecordingToastEl = document.getElementById('codingRecordingToast');
+        if (!codingRecordingToastEl) {
+            codingRecordingToastEl = document.createElement('div');
+            codingRecordingToastEl.id = 'codingRecordingToast';
+            codingRecordingToastEl.className = 'rb-coding-rec-toast';
+            codingRecordingToastEl.setAttribute('role', 'status');
+            codingRecordingToastEl.setAttribute('aria-live', 'polite');
+            codingRecordingToastEl.innerHTML =
+                '<span class="rb-coding-rec-dot" aria-hidden="true"></span>' +
+                '<div><strong>Recording in progress</strong>' +
+                '<div class="rb-coding-rec-sub">Audio and video are being recorded for this session.</div></div>';
+            document.body.appendChild(codingRecordingToastEl);
+        }
+        return codingRecordingToastEl;
+    }
 
     function syncMessageFromEditor() {
         if (typeof codeEditor !== 'undefined' && codeEditor) {
@@ -2885,6 +2919,12 @@
 
     function showRecordingOverlay() {
         if (isAudioPhoneMode) return; // phone UI provides its own visual feedback
+        // Coding questions: compact toast instead of the full-screen recording banner
+        if (isCodingQuestionPage) {
+            const toast = ensureCodingRecordingToast();
+            toast.classList.add('is-visible');
+            return;
+        }
         if (recordingOverlay) {
             recordingOverlay.style.display = "flex";
             const recordingMessage = document.getElementById("recordingMessage");
@@ -2898,6 +2938,13 @@
         }
     }
     function hideRecordingOverlay() {
+        if (codingRecordingToastEl) {
+            codingRecordingToastEl.classList.remove('is-visible');
+        }
+        const toast = document.getElementById('codingRecordingToast');
+        if (toast) {
+            toast.classList.remove('is-visible');
+        }
         if (recordingOverlay) recordingOverlay.style.display = "none";
     }
 
@@ -3469,74 +3516,6 @@
 
 @if (Model.IsCodingQuestion)
 {
-    <div class="rb-ide-overlay" id="codingIdeOverlay">
-        <div class="rb-ide">
-            <div class="rb-ide-header">
-                <div class="rb-ide-title">
-                    <i class="fa fa-code"></i> Coding Question
-                </div>
-                <div class="rb-ide-header-right">
-                    <div class="rb-ide-timer" id="codingTimerDisplay" style="display:none;">
-                        <i class="fa fa-clock-o"></i> <span id="codingTimerValue">0:00</span>
-                    </div>
-                    <button type="button" class="rb-ide-btn rb-ide-btn--run" id="codingRunBtn" style="display:none;">
-                        <i class="fa fa-play"></i> Run
-                    </button>
-                    <button type="button" class="rb-ide-btn rb-ide-btn--submit" id="codingSubmitBtn" style="display:none;">
-                        <i class="fa fa-check"></i> Submit Answer
-                    </button>
-                </div>
-            </div>
-
-            <div class="rb-ide-body">
-                <div class="rb-ide-left">
-                    <div class="rb-ide-panel-label">Problem</div>
-                    <div class="rb-ide-question" id="codingQuestionText"></div>
-
-                    <div id="codingInstructions" class="rb-ide-instructions">
-                        <strong>Before you begin</strong>
-                        <ul>
-                            <li>You get <strong id="codingLimitLabel"></strong> once you press Start.</li>
-                            <li>Pick your language, write your solution, and press <strong>Run</strong> to compile and execute it.</li>
-                            <li>Use the <strong>Input (stdin)</strong> box for anything your program reads from standard input.</li>
-                            <li>Copy and paste are disabled.</li>
-                            <li>Video recording runs while you code.</li>
-                            <li>Your answer is submitted automatically when the time runs out.</li>
-                        </ul>
-                        <button type="button" class="rb-ide-btn rb-ide-btn--start" id="codingStartBtn">
-                            <i class="fa fa-play"></i> Start
-                        </button>
-                    </div>
-                </div>
-
-                <div class="rb-ide-right" id="codingWorkspace" style="display:none;">
-                    <div class="rb-ide-toolbar">
-                        <label for="codingLanguage">Language</label>
-                        <select id="codingLanguage" class="rb-ide-select"></select>
-                        <span class="rb-ide-runner-note" id="codingRunnerNote"></span>
-                    </div>
-
-                    <div class="rb-ide-editor-host">
-                        <div id="codingEditorContainer"></div>
-                    </div>
-
-                    <div class="rb-ide-io">
-                        <div class="rb-ide-io-col">
-                            <div class="rb-ide-panel-label">Input (stdin)</div>
-                            <textarea id="codingStdin" class="rb-ide-stdin" placeholder="Optional input your program reads from stdin"></textarea>
-                        </div>
-                        <div class="rb-ide-io-col rb-ide-io-col--wide">
-                            <div class="rb-ide-panel-label">
-                                Output <span class="rb-ide-status" id="codingRunStatus"></span>
-                            </div>
-                            <pre id="codingOutput" class="rb-ide-output">Press Run to compile and execute your code.</pre>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <style>
         .rb-ide-overlay {
             position: fixed;
@@ -5451,6 +5430,8 @@
         let codingEndTime = null;
         let codingInProgress = false;
         let codingSubmitted = false;
+        let codingTimerAndRecordingStarted = false;
+        let codingEditorOpened = false;
         let codingEditor = null;
         let countdownInterval = null;
         let codingRunCount = 0;
@@ -5716,15 +5697,45 @@
             }, 1000);
         }
 
-        function beginCodingSession() {
-            if (codingInProgress) return;
-
-            codingInProgress = true;
+        // Page load: start the coding countdown + audio/video recording only.
+        // The editor stays closed until the candidate presses Start.
+        function startCodingRecordingAndTimer() {
+            if (codingTimerAndRecordingStarted) return;
+            codingTimerAndRecordingStarted = true;
             codingStartTime = new Date();
+
+            const timerDisplay = document.getElementById('codingTimerDisplay');
+            if (timerDisplay) {
+                timerDisplay.style.display = 'block';
+            }
+
+            startCountdown();
+
+            if (typeof beginAnswerRecording === 'function') {
+                beginAnswerRecording().catch(function (err) {
+                    console.error('Could not start recording for the coding question', err);
+                });
+            } else if (typeof startRecording === 'function') {
+                startRecording();
+            }
+        }
+
+        // Start button: open the code editor (recording + timer already running from page load).
+        function beginCodingSession() {
+            if (codingEditorOpened || codingSubmitted) return;
+            codingEditorOpened = true;
+            codingInProgress = true;
+
+            if (!codingTimerAndRecordingStarted) {
+                startCodingRecordingAndTimer();
+            }
 
             document.getElementById('codingInstructions').style.display = 'none';
             document.getElementById('codingWorkspace').style.display = 'flex';
-            document.getElementById('codingTimerDisplay').style.display = 'block';
+            const codingPlaceholder = document.getElementById('codingEditorPlaceholder');
+            if (codingPlaceholder) {
+                codingPlaceholder.style.display = 'none';
+            }
             document.getElementById('codingSubmitBtn').style.display = 'inline-block';
 
             if (executionEnabled) {
@@ -5736,16 +5747,6 @@
 
             buildCodingEditor();
             applyLanguage(selectedLanguage(), true);
-            startCountdown();
-
-            // Record audio + video for the whole coding session, exactly like a spoken answer
-            if (typeof beginAnswerRecording === 'function') {
-                beginAnswerRecording().catch(function (err) {
-                    console.error('Could not start recording for the coding question', err);
-                });
-            } else if (typeof startRecording === 'function') {
-                startRecording();
-            }
 
             if (codingEditor) {
                 codingEditor.focus();
@@ -5864,7 +5865,10 @@
                 });
             }
 
-            document.getElementById('codingStartBtn').addEventListener('click', beginCodingSession);
+            const codingStartBtn = document.getElementById('codingStartBtn');
+            if (codingStartBtn) {
+                codingStartBtn.addEventListener('click', beginCodingSession);
+            }
             document.getElementById('codingRunBtn').addEventListener('click', runCode);
             document.getElementById('codingSubmitBtn').addEventListener('click', confirmAndSubmit);
 
@@ -5913,7 +5917,25 @@
         setTimeout(() => {
             addCodingHiddenFormFields();
             openCodingIde();
+            // Coding questions: timer + recording begin on page load.
+            // Editor opens only when the candidate clicks Start.
+            startCodingRecordingAndTimer();
         }, 1000);
+
+        // Problem statement / Transcript tabs (coding split layout)
+        document.querySelectorAll('.rb-coding-tab').forEach(function (tab) {
+            tab.addEventListener('click', function () {
+                var name = tab.getAttribute('data-coding-tab');
+                document.querySelectorAll('.rb-coding-tab').forEach(function (t) {
+                    var on = t.getAttribute('data-coding-tab') === name;
+                    t.classList.toggle('is-active', on);
+                    t.setAttribute('aria-selected', on ? 'true' : 'false');
+                });
+                document.querySelectorAll('.rb-coding-panel').forEach(function (panel) {
+                    panel.classList.toggle('is-active', panel.getAttribute('data-coding-panel') === name);
+                });
+            });
+        });
 
     })();
 </script>

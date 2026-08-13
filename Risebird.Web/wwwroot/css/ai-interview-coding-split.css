@@ -1,0 +1,335 @@
+/* coding-split-styles.css - inlined into Index via snippet; this file is a source for the agent */
+.rb-aiinterview-container.rb-aiinterview-container--coding {
+    max-width: none;
+    margin: 0;
+    padding: 12px 16px 16px;
+    border-radius: 0;
+    background: #0f1115;
+    box-shadow: none;
+    min-height: calc(100vh - 40px);
+    color: #e8eaed;
+}
+.rb-aiinterview-container--coding .rb-header {
+    display: none !important;
+}
+.rb-main--coding .rb-footer,
+.rb-main--coding .rb-footer-btn {
+    display: none !important;
+}
+.rb-main--coding {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    min-height: calc(100vh - 90px);
+    background: #16181d;
+    border: 1px solid #2a2e36;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.rb-coding-left {
+    width: 38%;
+    min-width: 300px;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    background: #1a1d24;
+    border-right: 1px solid #2a2e36;
+    min-height: 0;
+}
+.rb-coding-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 10px 12px 0;
+    border-bottom: 1px solid #2a2e36;
+    flex: 0 0 auto;
+}
+.rb-coding-tab {
+    background: transparent;
+    border: none;
+    color: #9ca3af;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 14px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+}
+.rb-coding-tab:hover { color: #e5e7eb; }
+.rb-coding-tab.is-active {
+    color: #fff;
+    border-bottom-color: #4eda92;
+}
+.rb-coding-tab-panels {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+}
+.rb-coding-panel {
+    display: none;
+    height: 100%;
+    overflow-y: auto;
+    padding: 16px;
+    color: #d1d5db;
+    font-size: 14px;
+    line-height: 1.55;
+}
+.rb-coding-panel.is-active { display: block; }
+.rb-coding-panel-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: #9ca3af;
+    margin-bottom: 10px;
+}
+.rb-main--coding .rb-ide-question {
+    background: #22262e;
+    border: 1px solid #2f3540;
+    border-left: 4px solid #4eda92;
+    color: #e5e7eb;
+    white-space: pre-wrap;
+}
+.rb-main--coding .rb-ide-instructions {
+    background: #2a2416;
+    border-left-color: #f59e0b;
+    color: #e5e7eb;
+}
+.rb-main--coding .chat-log-container {
+    height: 100%;
+    margin: 0;
+    background: none;
+}
+.rb-main--coding .chat-log {
+    height: 100%;
+    max-height: none;
+    overflow-y: auto;
+    border: none !important;
+    background: transparent;
+    margin: 0 !important;
+    padding: 0;
+}
+.rb-main--coding .chat-message {
+    background: #22262e;
+    border: 1px solid #2f3540;
+    border-radius: 10px;
+    padding: 12px;
+}
+.rb-main--coding .message-role,
+.rb-main--coding .message-content-discourageCopyPaste { color: #e5e7eb; }
+.rb-coding-videos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 10px 12px;
+    flex: 0 0 auto;
+    background: #12141a;
+    border-top: 1px solid #2a2e36;
+}
+.rb-coding-video {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #000;
+    aspect-ratio: 16 / 10;
+    border: 1px solid #2f3540;
+}
+.rb-coding-video video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    background: #000;
+}
+.rb-coding-video-label {
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    background: rgba(0, 0, 0, 0.65);
+    color: #fff;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    z-index: 2;
+}
+.rb-coding-video-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #9ca3af;
+    font-size: 12px;
+    padding: 12px;
+    text-align: center;
+}
+.rb-coding-right {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    background: #0f1115;
+    min-height: 0;
+}
+.rb-main--coding #codingIdeOverlay.rb-ide {
+    flex: 1 1 auto;
+    min-height: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: #0f1115;
+    color: #e5e7eb;
+}
+.rb-main--coding .rb-ide-body--coding-split {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+.rb-main--coding #codingWorkspace {
+    flex: 1 1 auto;
+    min-height: 0;
+    flex-direction: column;
+}
+.rb-main--coding .rb-ide-toolbar {
+    border-bottom-color: #2a2e36;
+    color: #e5e7eb;
+}
+.rb-main--coding .rb-ide-select,
+.rb-main--coding #codingLanguage.rb-ide-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #151a24;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239ca3af' d='M1.4.6L6 5.2 10.6.6 12 2 6 8 0 2z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px 8px;
+    color: #e5e7eb;
+    border: 1px solid #3a4150;
+    border-radius: 8px;
+    padding: 8px 36px 8px 12px;
+    min-width: 168px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.3;
+    cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+.rb-main--coding #codingLanguage.rb-ide-select:hover {
+    border-color: #4eda92;
+    background-color: #1a2230;
+}
+.rb-main--coding #codingLanguage.rb-ide-select:focus {
+    outline: none;
+    border-color: #4eda92;
+    box-shadow: 0 0 0 3px rgba(78, 218, 146, 0.22);
+}
+.rb-main--coding #codingLanguage.rb-ide-select option {
+    background-color: #151a24;
+    color: #e5e7eb;
+}
+.rb-main--coding .rb-ide-editor-host {
+    background: #0f1115;
+    /* Modest height bump for coding questions only */
+    min-height: 360px;
+}
+.rb-main--coding .rb-ide-editor-host .CodeMirror.cm-s-default.CodeMirror-wrap,
+.rb-main--coding .rb-ide-editor-host .CodeMirror {
+    min-height: 340px;
+    background: #e8f2ff;
+}
+.rb-main--coding .rb-ide-io {
+    flex: 0 0 30%;
+    min-height: 140px;
+    border-top-color: #2a2e36;
+    background: #12151c;
+}
+.rb-main--coding .rb-ide-stdin,
+.rb-main--coding .rb-ide-output {
+    background: #0f1115;
+    color: #e5e7eb;
+    border-color: #2f3540;
+}
+.rb-coding-editor-placeholder {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    padding: 24px;
+    text-align: center;
+}
+.rb-main--coding .rb-interview-actions {
+    padding: 10px 14px 12px;
+    margin: 0;
+    border-top: 1px solid #2a2e36;
+    background: #16181d;
+    justify-content: flex-end;
+}
+.rb-main--coding .rb-back-btn {
+    background: #2a2e36;
+    color: #e5e7eb;
+    border-color: #3a4150;
+}
+@media only screen and (max-width: 992px) {
+    .rb-main--coding {
+        flex-direction: column;
+        min-height: auto;
+    }
+    .rb-coding-left {
+        width: 100%;
+        max-width: none;
+        min-height: 420px;
+    }
+    .rb-coding-right { min-height: 420px; }
+}
+
+/* Persistent recording toast — coding questions only */
+.rb-coding-rec-toast {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 3200;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    min-width: 260px;
+    max-width: 360px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: #111827;
+    color: #f9fafb;
+    border: 1px solid rgba(239, 68, 68, 0.45);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+.rb-coding-rec-toast.is-visible {
+    display: flex;
+    animation: rbCodingToastIn 0.25s ease;
+}
+.rb-coding-rec-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ef4444;
+    flex-shrink: 0;
+    animation: rbCodingRecBlink 1s infinite;
+}
+.rb-coding-rec-toast strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 650;
+    margin-bottom: 2px;
+}
+.rb-coding-rec-sub {
+    font-size: 12px;
+    color: #d1d5db;
+    line-height: 1.35;
+}
+@keyframes rbCodingToastIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes rbCodingRecBlink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.35; }
+}
