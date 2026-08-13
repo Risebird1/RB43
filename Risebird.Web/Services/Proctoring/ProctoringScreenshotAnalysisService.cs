@@ -2,9 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,23 +17,24 @@ namespace Risebird.Web.Services.Proctoring
     public sealed class ProctoringScreenshotAnalysisService : IProctoringScreenshotAnalysisService
     {
         private const string DefaultPromptId = "pmpt_6a0442519dc88196bf2ccbe66edceb9e094878bc268fa261";
+        private const string OperationType = "ProctoringScreenshotAnalysis";
 
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IProctoringSessionEventRepository _proctoringSessionEvents;
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IOpenAIResponsesHelper _openAIResponsesHelper;
         private readonly IConfiguration _configuration;
         private readonly ILogger<ProctoringScreenshotAnalysisService> _logger;
 
         public ProctoringScreenshotAnalysisService(
             IAzureStorageHelper azureStorageHelper,
             IProctoringSessionEventRepository proctoringSessionEvents,
-            IHttpClientFactory httpClientFactory,
+            IOpenAIResponsesHelper openAIResponsesHelper,
             IConfiguration configuration,
             ILogger<ProctoringScreenshotAnalysisService> logger)
         {
             _azureStorageHelper = azureStorageHelper;
             _proctoringSessionEvents = proctoringSessionEvents;
-            _httpClientFactory = httpClientFactory;
+            _openAIResponsesHelper = openAIResponsesHelper;
             _configuration = configuration;
             _logger = logger;
         }
@@ -48,9 +46,6 @@ namespace Risebird.Web.Services.Proctoring
             string.IsNullOrWhiteSpace(_configuration["OpenAI:ProctoringScreenshotAnalysisPromptId"])
                 ? DefaultPromptId
                 : _configuration["OpenAI:ProctoringScreenshotAnalysisPromptId"].Trim();
-
-        private string OpenAIBaseUrl =>
-            (_configuration["OpenAI:BaseUrl"] ?? "https://api.openai.com/v1").TrimEnd('/');
 
         private int ScreenshotSampleCount
         {
@@ -81,10 +76,15 @@ namespace Risebird.Web.Services.Proctoring
                 return result;
             }
 
-            var apiKey = _configuration["OpenAI:ApiKey"];
-            if (string.IsNullOrWhiteSpace(apiKey))
+            if (string.IsNullOrWhiteSpace(_configuration["OpenAI:ApiKey"]))
             {
                 result.Error = "OpenAI API key is not configured.";
+                return result;
+            }
+
+            if (string.IsNullOrWhiteSpace(PromptId))
+            {
+                result.Error = "OpenAI:ProctoringScreenshotAnalysisPromptId is not configured.";
                 return result;
             }
 
@@ -141,7 +141,7 @@ namespace Risebird.Web.Services.Proctoring
             string analysisJson;
             try
             {
-                analysisJson = await CallOpenAIPromptAsync(interviewId, images, apiKey, cancellationToken).ConfigureAwait(false);
+                analysisJson = await CallOpenAIPromptAsync(interviewId, images, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -180,13 +180,13 @@ namespace Risebird.Web.Services.Proctoring
                     continue;
                 foreach (var item in segment.Results)
                 {
-                if (item is CloudBlockBlob blob && IsImageBlob(blob.Name))
-                {
-                    // Length can be unset on list; skip only known-empty blobs.
-                    if (blob.Properties?.Length != null && blob.Properties.Length <= 0)
-                        continue;
-                    list.Add(blob);
-                }
+                    if (item is CloudBlockBlob blob && IsImageBlob(blob.Name))
+                    {
+                        // Length can be unset on list; skip only known-empty blobs.
+                        if (blob.Properties?.Length != null && blob.Properties.Length <= 0)
+                            continue;
+                        list.Add(blob);
+                    }
                 }
             } while (continuation != null);
 
@@ -230,9 +230,10 @@ namespace Risebird.Web.Services.Proctoring
         private async Task<string> CallOpenAIPromptAsync(
             int interviewId,
             List<(string path, string dataUrl)> images,
-            string apiKey,
             CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var content = new List<object>
             {
                 new
@@ -254,81 +255,28 @@ namespace Risebird.Web.Services.Proctoring
                 detail = "auto",
             }));
 
-            var requestBody = new
+            // Structured multimodal input for Responses API; prompt id from OpenAI:ProctoringScreenshotAnalysisPromptId.
+            var input = new object[]
             {
-                prompt = new { id = PromptId },
-                input = new object[]
-                {
-                    new { role = "user", content },
-                },
+                new { role = "user", content },
             };
 
-            var http = _httpClientFactory.CreateClient();
-            http.Timeout = TimeSpan.FromMinutes(4);
-            using var request = new HttpRequestMessage(HttpMethod.Post, $"{OpenAIBaseUrl}/responses")
-            {
-                Content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json"),
-            };
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+            var runResult = await _openAIResponsesHelper.CreateJsonResponseAsync(
+                input,
+                OperationType,
+                PromptId).ConfigureAwait(false);
 
-            using var response = await http.SendAsync(request, cancellationToken).ConfigureAwait(false);
-            var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            if (!response.IsSuccessStatusCode)
-            {
-                var apiError = TryExtractOpenAIError(body);
-                throw new InvalidOperationException(
-                    $"OpenAI responses API returned {(int)response.StatusCode}{(string.IsNullOrEmpty(apiError) ? "" : ": " + apiError)}");
-            }
+            var outputText = runResult?.Data?
+                .FirstOrDefault()?
+                .Content?
+                .FirstOrDefault()?
+                .Text?
+                .Value;
 
-            var outputText = ExtractOutputText(body);
+            if (string.IsNullOrWhiteSpace(outputText))
+                throw new InvalidOperationException("OpenAI Responses API returned no analysis text.");
+
             return NormalizeToJson(outputText);
-        }
-
-        private static string TryExtractOpenAIError(string body)
-        {
-            try
-            {
-                using var doc = JsonDocument.Parse(body);
-                if (doc.RootElement.TryGetProperty("error", out var error) &&
-                    error.ValueKind == JsonValueKind.Object &&
-                    error.TryGetProperty("message", out var message))
-                    return message.GetString();
-            }
-            catch
-            {
-                // non-JSON error body; fall through
-            }
-            return null;
-        }
-
-        private static string ExtractOutputText(string responseBody)
-        {
-            using var doc = JsonDocument.Parse(responseBody);
-            var root = doc.RootElement;
-            if (root.TryGetProperty("error", out var error) && error.ValueKind == JsonValueKind.Object)
-            {
-                var message = error.TryGetProperty("message", out var msg) ? msg.GetString() : "Unknown OpenAI error.";
-                throw new InvalidOperationException(message);
-            }
-
-            var sb = new StringBuilder();
-            if (root.TryGetProperty("output", out var output) && output.ValueKind == JsonValueKind.Array)
-            {
-                foreach (var item in output.EnumerateArray())
-                {
-                    if (!item.TryGetProperty("type", out var type) || type.GetString() != "message")
-                        continue;
-                    if (!item.TryGetProperty("content", out var contents) || contents.ValueKind != JsonValueKind.Array)
-                        continue;
-                    foreach (var part in contents.EnumerateArray())
-                    {
-                        if (part.TryGetProperty("type", out var partType) && partType.GetString() == "output_text" &&
-                            part.TryGetProperty("text", out var text))
-                            sb.Append(text.GetString());
-                    }
-                }
-            }
-            return sb.ToString();
         }
 
         /// <summary>Returns valid JSON text: strips markdown fences, wraps non-JSON model output as {"raw": ...}.</summary>
