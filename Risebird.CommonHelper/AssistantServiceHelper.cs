@@ -1751,19 +1751,19 @@ namespace Risebird.CommonHelper
         }
 
         /// <summary>
-        /// Preset AI-interview evaluation. When OpenAI:UseResponsesApi is true and the IRF assistant ID
-        /// has a prompt in OpenAI:AIInterviewPromptMap (e.g. asst_ZOS2owtfEIsperf8VuHNc4yc), this uses
-        /// the Responses API. Otherwise returns null so the caller can use the Assistants API.
+        /// Preset AI-interview evaluation. When OpenAI:UseResponsesApi is true, this uses
+        /// OpenAI:AIInterviewPromptMap (pmpt_…) on the Responses API. Otherwise returns null
+        /// so the caller can use the Assistants API.
         /// </summary>
         public async Task<RunResult> GenerateAIInterviewEvaluation(string techSkillsJson, string questionAnswerSetJson, string assistantId)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(questionAnswerSetJson) || string.IsNullOrWhiteSpace(assistantId))
+                if (string.IsNullOrWhiteSpace(questionAnswerSetJson))
                     return null;
 
                 var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
-                var promptId = _configuration[$"OpenAI:AIInterviewPromptMap:{assistantId}"];
+                var promptId = _configuration["OpenAI:AIInterviewPromptMap"];
                 if (!useResponsesApi || string.IsNullOrWhiteSpace(promptId))
                     return null;
 

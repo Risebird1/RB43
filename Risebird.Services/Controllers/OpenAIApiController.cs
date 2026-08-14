@@ -170,7 +170,7 @@ namespace Risebird.Services.Controllers
                 {
                     string threadId = null;
                     List<string> replies = null;
-                    var evaluationPromptId = ResolveAiInterviewPromptId(meetingDetails.OpenAIAssistantId);
+                    var evaluationPromptId = _config["OpenAI:AIInterviewPromptMap"];
                     var useResponsesApi = _config.GetValue("OpenAI:UseResponsesApi", true)
                         && !string.IsNullOrWhiteSpace(evaluationPromptId);
 
@@ -330,14 +330,6 @@ namespace Risebird.Services.Controllers
                 return Ok(new { input.SessionId, threadId, replies, isReportSavedToDb });
             }
 
-        }
-
-        private string ResolveAiInterviewPromptId(string assistantId)
-        {
-            if (string.IsNullOrWhiteSpace(assistantId))
-                return null;
-
-            return _config[$"OpenAI:AIInterviewPromptMap:{assistantId}"];
         }
 
         private static List<string> ExtractRunResultReplies(RunResult result)
