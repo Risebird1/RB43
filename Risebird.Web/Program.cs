@@ -254,6 +254,8 @@ builder.Services.AddScoped<IAIInterviewerRepository, AIInterviewerRepository>();
 builder.Services.AddScoped<IOpenAIInterviewerAssistantHelper, OpenAIInterviewerAssistantHelper>();
 builder.Services.AddScoped<IOpenAISpeechToTextService, OpenAISpeechToTextService>();
 builder.Services.AddScoped<IAIInterviewerService, AIInterviewerService>();
+builder.Services.AddScoped<IAICodeInterviewRepository, AICodeInterviewRepository>();
+builder.Services.AddScoped<IAICodeInterviewService, AICodeInterviewService>();
 builder.Services.AddScoped<ISynthesiaTextToVideoService, SynthesiaTextToVideoService>();
 builder.Services.AddScoped<IZohoMeetingHelper, ZohoMeetingHelper>();
 builder.Services.AddScoped<IAWSRekognitionService, AWSRekognitionService>();

@@ -76,6 +76,7 @@ namespace Risebird.Web.Controllers
         private readonly IActivityTrackerService _activityTrackerService;
         private readonly IReportQCOptimizationHelper _reportQCOptimizationHelper;
         private readonly IDmIvChannelDeactivationService _dmIvChannelDeactivationService;
+        private readonly IAICodeInterviewService _aiCodeInterviewService;
         private readonly IWebHostEnvironment _env;
         //private static List<MeetingVM> _modelDetails;
         //private static List<Meeting> _modelDetail;
@@ -94,7 +95,8 @@ namespace Risebird.Web.Controllers
             IIRFService irfService, ICompositeViewEngine viewEngine, ITempDataProvider tempDataProvider,
             IServiceProvider serviceProvider, IHttpContextAccessor contextAccessor,
             IConverter converter, IAssistantServiceHelper assistantServiceHelper, IEncryptionHelper encryptionHelper, IActivityTrackerService activityTrackerService,
-            IReportQCOptimizationHelper reportQCOptimizationHelper, IDmIvChannelDeactivationService dmIvChannelDeactivationService, IWebHostEnvironment env)//IConverter converter,
+            IReportQCOptimizationHelper reportQCOptimizationHelper, IDmIvChannelDeactivationService dmIvChannelDeactivationService,
+            IAICodeInterviewService aiCodeInterviewService, IWebHostEnvironment env)//IConverter converter,
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -127,6 +129,7 @@ namespace Risebird.Web.Controllers
             _activityTrackerService = activityTrackerService;
             _reportQCOptimizationHelper = reportQCOptimizationHelper;
             _dmIvChannelDeactivationService = dmIvChannelDeactivationService;
+            _aiCodeInterviewService = aiCodeInterviewService;
             _env = env;
         }
 
@@ -9194,6 +9197,9 @@ namespace Risebird.Web.Controllers
                             ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
                             TempData.Remove("SuccessErrorMessage");
                         }
+                        // Completed AI code interviews queue for expert review alongside the
+                        // interviewer led items on this screen.
+                        ViewBag.AICodeInterviewQCItems = await _aiCodeInterviewService.GetOpenQCItems(emailid);
                         return View(meetings);
                     }
                     else
@@ -9264,7 +9270,8 @@ namespace Risebird.Web.Controllers
                             ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
                             TempData.Remove("SuccessErrorMessageInterview");
                         }
-                        if (type == "Completed")
+                        var isCompletedTab = type == "Completed";
+                        if (isCompletedTab)
                         {
                             ViewBag.Type = "Completed";
                             meetings = meetings.Where(x => x.IsQC == true).ToList();
@@ -9274,6 +9281,8 @@ namespace Risebird.Web.Controllers
                             ViewBag.Type = "Pending";
                             meetings = meetings.Where(x => x.IsQC == false).ToList();
                         }
+                        ViewBag.AICodeInterviewQCItems =
+                            await _aiCodeInterviewService.GetMyQCItems(emailid, isCompletedTab);
                         return View(meetings);
                     }
                     else

@@ -93,6 +93,63 @@
                     </div>
                 </div>
             </div>
+            @{
+                var aiCodeItems = ViewBag.AICodeInterviewQCItems as List<Risebird.Entities.ViewModel.AICodeInterviewQCItemVM>
+                    ?? new List<Risebird.Entities.ViewModel.AICodeInterviewQCItemVM>();
+            }
+            @if (aiCodeItems.Count > 0)
+            {
+                <div class="col-md-12">
+                    <div class="mdc-card card bl-bg">
+                        <div class="mdc-card-wrapper__text-section">
+                            <div class="card-header bg-w clearfix">
+                                <div class="pull-left">
+                                    <h4 class="card-title">Open AI Code Interview Reviews</h4>
+                                </div>
+                            </div>
+                            <div class="toolbar">
+                                <div class="scrollbar int-table" id="style-3">
+                                    <div class="second">
+                                        <table id="aiCodeQCTable" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Skill Channel</th>
+                                                    <th>Interview Date</th>
+                                                    <th>Candidate</th>
+                                                    <th>Questions</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in aiCodeItems)
+                                                {
+                                                    <tr>
+                                                        <td>@item.IRFId</td>
+                                                        <td>@item.interviewDate</td>
+                                                        <td>
+                                                            @item.candidateName
+                                                            <div style="font-size:11px;color:#7b8794;">@item.JDTiltle</div>
+                                                        </td>
+                                                        <td>@item.TotalQuestions</td>
+                                                        <td class="text-center">
+                                                            <button type="button" class="clickhere_btn"
+                                                                    style="padding:3px 10px;"
+                                                                    onclick="AssignAICodeInterviewToMe('@item.SessionId')"
+                                                                    title="Assign yourself and open the expert copy of the AI report">
+                                                                <font style="font-family: Roboto, sans-serif; font-size:12px;">Assign to me</font>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -155,6 +212,27 @@
         });
     }
 
+    // Picking up an AI code interview opens the expert copy of the AI report straight away.
+    function AssignAICodeInterviewToMe(sessionId) {
+        $.ajax({
+            url: '/AICodeInterviewQC/AssignAICodeInterviewExpert',
+            data: { 'sid': sessionId },
+            type: 'Post',
+            success: function (data) {
+                if (data && data.success && data.redirectUrl) {
+                    window.location.href = data.redirectUrl;
+                    return;
+                }
+                swal.fire({ text: (data && data.message) ? data.message : 'Sorry! Could not assign.' }).then(function () {
+                    location.reload(true);
+                });
+            },
+            error: function () {
+                swal.fire({ text: 'Sorry! Could not assign.' });
+            }
+        });
+    }
+
 
 </script>
 
@@ -178,6 +256,22 @@
             }
 
         });
+
+        if ($('#aiCodeQCTable').length) {
+            $('#aiCodeQCTable').DataTable({
+                "pagingType": "full_numbers",
+                "lengthMenu": [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, "All"]
+                ],
+                order: [],
+                responsive: true,
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search records",
+                }
+            });
+        }
     }
 
        function openSkillpopup(id) {
