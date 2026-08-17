@@ -13327,6 +13327,13 @@ namespace Risebird.Web.Controllers
 
         private async Task<string> FetchAssistantTextResponseAsync(string assistantId, string apiKey, string rubricInput)
         {
+            var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+            if (useResponsesApi)
+            {
+                var result = await _assistantServiceHelper.GenerateRubricQuestions(rubricInput);
+                return result?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value;
+            }
+
             using (var http = new HttpClient())
             {
                 http.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");

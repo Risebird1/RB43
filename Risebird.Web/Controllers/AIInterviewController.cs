@@ -63,6 +63,7 @@ namespace Risebird.Web.Controllers
         private readonly ICandidateService _candidateService;
         private readonly IIRFRepository _irfRepository;
         private readonly IOpenAIInterviewerAssistantHelper _openAIAssistantHelper;
+        private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IProctoringTokenService _proctoringTokenService;
         private readonly IProctoringSessionEventRepository _proctoringSessionEventRepository;
         private readonly IProctoringScreenshotAnalysisService _proctoringScreenshotAnalysisService;
@@ -79,6 +80,7 @@ namespace Risebird.Web.Controllers
             ISynthesiaTextToVideoService synthesiaTextToVideoService, IPdfReaderHelper pdfReaderHelper,
             IIRFService iRFService, IAWSRekognitionService aWSRekognitionService, ICandidateService candidateService,
             IIRFRepository irfRepository, IOpenAIInterviewerAssistantHelper openAIAssistantHelper,
+            IAssistantServiceHelper assistantServiceHelper,
             IProctoringTokenService proctoringTokenService, IProctoringSessionEventRepository proctoringSessionEventRepository,
             IProctoringScreenshotAnalysisService proctoringScreenshotAnalysisService,
             ICompositeViewEngine viewEngine, ITempDataProvider tempDataProvider,
@@ -100,6 +102,7 @@ namespace Risebird.Web.Controllers
             _candidateService = candidateService;
             _irfRepository = irfRepository;
             _openAIAssistantHelper = openAIAssistantHelper;
+            _assistantServiceHelper = assistantServiceHelper;
             _proctoringTokenService = proctoringTokenService;
             _proctoringSessionEventRepository = proctoringSessionEventRepository;
             _proctoringScreenshotAnalysisService = proctoringScreenshotAnalysisService;
@@ -1234,20 +1237,38 @@ namespace Risebird.Web.Controllers
                                 // Send only the inputs to the assistant
                                 string assistantMessage = inputsJson;
 
-                                // Create OpenAI thread and run
-                                string threadId = await _openAIAssistantHelper.CreateThreadAsync();
-                                await _openAIAssistantHelper.AddMessageAsync(threadId, "user", assistantMessage);
-                                string runId = await _openAIAssistantHelper.CreateRunAsync(threadId, OpenAIInterviewerAssistants.TypingAssessmentAssistant);
-
-                                // Wait for completion
-                                string runStatus = await _openAIAssistantHelper.WaitForRunAsync(threadId, runId);
-
-                                if (runStatus == "completed")
+                                string threadId = null;
+                                string runId = null;
+                                string openAIResponse = null;
+                                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                                if (useResponsesApi)
                                 {
-                                    // Get response
-                                    var messages = await _openAIAssistantHelper.GetMessagesAsync(threadId);
-                                    string openAIResponse = messages.FirstOrDefault() ?? "{}";
+                                    var runResult = await _assistantServiceHelper.GenerateTypingAssessment(assistantMessage);
+                                    openAIResponse = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value;
+                                }
+                                else
+                                {
+                                    // Create OpenAI thread and run
+                                    threadId = await _openAIAssistantHelper.CreateThreadAsync();
+                                    await _openAIAssistantHelper.AddMessageAsync(threadId, "user", assistantMessage);
+                                    runId = await _openAIAssistantHelper.CreateRunAsync(threadId, OpenAIInterviewerAssistants.TypingAssessmentAssistant);
 
+                                    // Wait for completion
+                                    string runStatus = await _openAIAssistantHelper.WaitForRunAsync(threadId, runId);
+                                    if (runStatus == "completed")
+                                    {
+                                        var messages = await _openAIAssistantHelper.GetMessagesAsync(threadId);
+                                        openAIResponse = messages.FirstOrDefault() ?? "{}";
+                                    }
+                                    else
+                                    {
+                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                                            new Exception($"OpenAI typing assessment run status: {runStatus}. ThreadId: {threadId}, RunId: {runId}"));
+                                    }
+                                }
+
+                                if (!string.IsNullOrWhiteSpace(openAIResponse))
+                                {
                                     await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug,
                                         new Exception($"OpenAI typing assessment response received. Length: {openAIResponse.Length}"));
 
@@ -1308,10 +1329,15 @@ namespace Risebird.Web.Controllers
                                     await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug,
                                         new Exception($"Typing assessment saved successfully. Passed: {isPassed}, Accuracy: {wordAccuracy}%"));
                                 }
+                                else if (!useResponsesApi)
+                                {
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                                        new Exception($"OpenAI typing assessment returned no response. ThreadId: {threadId}, RunId: {runId}"));
+                                }
                                 else
                                 {
                                     await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
-                                        new Exception($"OpenAI typing assessment run status: {runStatus}. ThreadId: {threadId}, RunId: {runId}"));
+                                        new Exception("OpenAI typing assessment returned no response via Responses API."));
                                 }
                             }
                             catch (Exception ex)

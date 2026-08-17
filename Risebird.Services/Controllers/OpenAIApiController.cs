@@ -56,6 +56,27 @@ namespace Risebird.Services.Controllers
             try
             {
                 _assistantId = input.AssistantId;
+                if (UseAIInterviewerResponsesApi())
+                {
+                    var (runResult, responseId) = await _assistantServiceHelper.GenerateAIInterviewerMessage(input.Message);
+                    if (runResult == null || string.IsNullOrWhiteSpace(responseId))
+                        return StatusCode(500, "AI interviewer returned an empty response.");
+
+                    await _aiInterviewerRepository.CreateSession(new InterviewSession
+                    {
+                        SessionId = input.SessionId,
+                        ThreadId = responseId,
+                        AssistantId = _assistantId,
+                        CandidateEmail = ""
+                    });
+
+                    var responseReplies = ExtractRunResultReplies(runResult);
+                    if (responseReplies != null && responseReplies.Count > 0)
+                        await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", responseReplies.FirstOrDefault());
+
+                    return Ok(new { input.SessionId, threadId = responseId, replies = responseReplies });
+                }
+
                 //var sessionId = Guid.NewGuid();
                 var threadId = await _ai.CreateThreadAsync();
 
@@ -96,6 +117,30 @@ namespace Risebird.Services.Controllers
         [HttpPost("ask")]
         public async Task<IActionResult> Ask([FromBody] InterviewMessageVM input)
         {
+            if (UseAIInterviewerResponsesApi())
+            {
+                var previousResponseId = await _aiInterviewerRepository.GetThreadId(input.SessionId);
+                await _aiInterviewerRepository.LogTranscript(input.SessionId, "user", input.Message);
+
+                var (runResult, responseId) = await _assistantServiceHelper.GenerateAIInterviewerMessage(input.Message, previousResponseId);
+                if (runResult == null || string.IsNullOrWhiteSpace(responseId))
+                    return StatusCode(500, "AI interviewer returned an empty response.");
+
+                await _aiInterviewerRepository.CreateSession(new InterviewSession
+                {
+                    SessionId = input.SessionId,
+                    ThreadId = responseId,
+                    AssistantId = input.AssistantId,
+                    CandidateEmail = ""
+                });
+
+                var responseReplies = ExtractRunResultReplies(runResult);
+                if (responseReplies != null && responseReplies.Count > 0)
+                    await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", responseReplies.FirstOrDefault());
+
+                return Ok(new { replies = responseReplies });
+            }
+
             var threadId = await _aiInterviewerRepository.GetThreadId(input.SessionId);
             await _ai.AddMessageAsync(threadId, "user", input.Message);
             await _aiInterviewerRepository.LogTranscript(input.SessionId, "user", input.Message);
@@ -126,6 +171,28 @@ namespace Risebird.Services.Controllers
         [HttpPost("asksystem")]
         public async Task<IActionResult> AskSystem([FromBody] InterviewMessageVM input)
         {
+            if (UseAIInterviewerResponsesApi())
+            {
+                var previousResponseId = await _aiInterviewerRepository.GetThreadId(input.SessionId);
+                var (runResult, responseId) = await _assistantServiceHelper.GenerateAIInterviewerMessage(input.Message, previousResponseId);
+                if (runResult == null || string.IsNullOrWhiteSpace(responseId))
+                    return StatusCode(500, "AI interviewer returned an empty response.");
+
+                await _aiInterviewerRepository.CreateSession(new InterviewSession
+                {
+                    SessionId = input.SessionId,
+                    ThreadId = responseId,
+                    AssistantId = input.AssistantId,
+                    CandidateEmail = ""
+                });
+
+                var responseReplies = ExtractRunResultReplies(runResult);
+                if (responseReplies != null && responseReplies.Count > 0)
+                    await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", responseReplies.FirstOrDefault());
+
+                return Ok(new { replies = responseReplies });
+            }
+
             var threadId = await _aiInterviewerRepository.GetThreadId(input.SessionId);
             await _ai.AddMessageAsync(threadId, "user", input.Message);
             // Intentionally NOT logging the system prompt to TransCriptsConv.
@@ -146,6 +213,12 @@ namespace Risebird.Services.Controllers
         [HttpGet("transcript/{sessionId}")]
         public async Task<IActionResult> Transcript(Guid sessionId)
         {
+            if (UseAIInterviewerResponsesApi())
+            {
+                var dbMessages = await _aIInterviewerService.GetAIInterviewTranscriptBySessionId(sessionId);
+                return Ok(dbMessages);
+            }
+
             var threadId = await _aiInterviewerRepository.GetThreadId(sessionId);
             var messages = await _ai.GetFullConversation(sessionId, threadId);
             return Ok(messages);
@@ -262,12 +335,33 @@ namespace Risebird.Services.Controllers
                 var aiInterviewDetails = await _aIInterviewerService.GetAIInterviewSpecificDetails(input.SessionId);
 
                 var threadId = aiInterviewDetails?.ThreadId;
-                await _ai.AddMessageAsync(threadId, "user", input.Message);
+                List<string> replies;
+                if (UseAIInterviewerResponsesApi())
+                {
+                    var (runResult, responseId) = await _assistantServiceHelper.GenerateAIInterviewerMessage(input.Message, threadId);
+                    if (runResult == null || string.IsNullOrWhiteSpace(responseId))
+                        return Ok(new { input.SessionId, threadId, replies = (List<string>)null, isReportSavedToDb = false });
 
-                var runId = await _ai.CreateRunAsync(threadId, aiInterviewDetails?.AssistantId);
-                await _ai.WaitForRunAsync(threadId, runId);
+                    await _aiInterviewerRepository.CreateSession(new InterviewSession
+                    {
+                        SessionId = input.SessionId,
+                        ThreadId = responseId,
+                        AssistantId = aiInterviewDetails?.AssistantId,
+                        CandidateEmail = ""
+                    });
 
-                var replies = await _ai.GetMessagesAsync(threadId); // all these replies here are in response to the prompt above. Therefore all consitute the report that we asked for in the prompt. Send them all back.
+                    threadId = responseId;
+                    replies = ExtractRunResultReplies(runResult);
+                }
+                else
+                {
+                    await _ai.AddMessageAsync(threadId, "user", input.Message);
+
+                    var runId = await _ai.CreateRunAsync(threadId, aiInterviewDetails?.AssistantId);
+                    await _ai.WaitForRunAsync(threadId, runId);
+
+                    replies = await _ai.GetMessagesAsync(threadId); // all these replies here are in response to the prompt above. Therefore all consitute the report that we asked for in the prompt. Send them all back.
+                }
 
                 //save the report in the database.
                 if (replies != null)
@@ -330,6 +424,12 @@ namespace Risebird.Services.Controllers
                 return Ok(new { input.SessionId, threadId, replies, isReportSavedToDb });
             }
 
+        }
+
+        private bool UseAIInterviewerResponsesApi()
+        {
+            return _config.GetValue("OpenAI:UseResponsesApi", true)
+                && !string.IsNullOrWhiteSpace(_config["OpenAI:AIInterviewerPromptId"]);
         }
 
         private static List<string> ExtractRunResultReplies(RunResult result)
