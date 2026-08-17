@@ -1,0 +1,23 @@
+@{
+    ViewData["Title"] = "Expert Review of AI Report";
+}
+<script>
+    var Header = "<div>Expert Review of AI Report</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<div class="main-panel" id="main-panel">
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12">
+                <div class="mdc-card card bl-bg">
+                    <div class="mdc-card-wrapper__text-section" style="padding:20px;">
+                        <p style="font-size:14px;color:#33475b;">
+                            @(ViewBag.Message ?? "This interview is not available for expert review.")
+                        </p>
+                        <a href="@Url.Action("QCOpenInterviews", "Interview")">Back to Open QC Interviews</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
