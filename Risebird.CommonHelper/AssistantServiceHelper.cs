@@ -22,6 +22,7 @@ namespace Risebird.CommonHelper
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IOpenAIApiLogger _openAIApiLogger;
         private readonly IOpenAIResponsesHelper _openAIResponsesHelper;
+        private readonly IPdfReaderHelper _pdfReaderHelper;
         private readonly string apiKey;
         private readonly string baseUrl;
         private readonly string candidateScreenerAssistantId;
@@ -48,12 +49,14 @@ namespace Risebird.CommonHelper
             IApplicationErrorLogger applicationErrorLogger,
             IConfiguration configuration,
             IOpenAIApiLogger openAIApiLogger,
-            IOpenAIResponsesHelper openAIResponsesHelper)
+            IOpenAIResponsesHelper openAIResponsesHelper,
+            IPdfReaderHelper pdfReaderHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _openAIApiLogger = openAIApiLogger;
             _openAIResponsesHelper = openAIResponsesHelper;
+            _pdfReaderHelper = pdfReaderHelper;
             apiKey = _configuration["OpenAI:ApiKey"];
             baseUrl = _configuration["OpenAI:BaseUrl"];
             candidateScreenerAssistantId = _configuration["OpenAI:CandidateScreenerAssistantId"];
@@ -80,6 +83,31 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                if (requestModel.Type == ProfileNames.Candidate || requestModel.Type == ProfileNames.Interviewer)
+                {
+                    var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                    if (useResponsesApi)
+                    {
+                        if (string.IsNullOrEmpty(requestModel.ResumeLink))
+                        {
+                            return null;
+                        }
+
+                        var resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(requestModel.ResumeLink);
+                        if (string.IsNullOrEmpty(resumeStringContent))
+                        {
+                            return null;
+                        }
+
+                        if (requestModel.Type == ProfileNames.Candidate)
+                        {
+                            return await GenerateCandidateScreening(resumeStringContent, requestModel.JDTitle);
+                        }
+
+                        return await GenerateInterviewerScreening(resumeStringContent, requestModel.JDTitle);
+                    }
+                }
+
                 string fileId;
                 if (requestModel.Type == ProfileNames.QualityController)
                 {
@@ -264,6 +292,16 @@ namespace Risebird.CommonHelper
                     {
                         assistantId = resumeParserAssistantId;
                         operationType = "ResumeParsing";
+                    }
+                    else if (profileType == ProfileNames.ResumeParserPublicUrlAIAssistant)
+                    {
+                        assistantId = _configuration["OpenAI:ResumeParserPublicUrlAssistantId"];
+                        operationType = "ResumeParsingPublicUrl";
+                    }
+                    else if (profileType == ProfileNames.ResumeProfileSummaryAIAssistant)
+                    {
+                        assistantId = _configuration["OpenAI:ResumeProfileSummaryAssistantId"];
+                        operationType = "ResumeProfileSummary";
                     }
                     else if (profileType == ProfileNames.TranscriptAnalysisAIAssistant)
                     {
@@ -1133,6 +1171,15 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    var input = $"Generate an output as per the instructions fed to the assistant. The job title you need to generate a tech rubric against is {jobTitle}.";
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        input,
+                        operationType: "RubricGeneration",
+                        promptId: _configuration["OpenAI:RubricGeneratorPromptId"]);
+                }
 
                 string threadId = string.Empty;
                 threadId = await CreateThreadAsync(jobTitleForRubrics: jobTitle);
@@ -1209,6 +1256,15 @@ namespace Risebird.CommonHelper
                 if (string.IsNullOrWhiteSpace(revisionPrompt))
                     return null;
 
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        revisionPrompt,
+                        operationType: "RubricRevision",
+                        promptId: _configuration["OpenAI:RubricGeneratorPromptId"]);
+                }
+
                 string threadId = await CreateThreadAsync(plainAssistantMessage: revisionPrompt);
                 if (string.IsNullOrEmpty(threadId))
                     return null;
@@ -1238,6 +1294,31 @@ namespace Risebird.CommonHelper
                     await RetrieveRunStepsForTokenUsage(runId, threadId);
 
                 return await ListRunMessages(threadId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<RunResult> GenerateRubricQuestions(string rubricInput)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(rubricInput))
+                    return null;
+
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        rubricInput,
+                        operationType: "RubricQuestionGeneration",
+                        promptId: _configuration["OpenAI:RubricQuestionPromptId"]);
+                }
+
+                return null;
             }
             catch (Exception ex)
             {
@@ -1432,10 +1513,40 @@ namespace Risebird.CommonHelper
                 return null;
             }
         }
-        public async Task<RunResult> ParseResume(string resumeData)
+        public async Task<RunResult> ParseResume(string resumeData, bool usePublicUrlParser = false, bool useProfileSummary = false)
         {
             try
             {
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    string input;
+                    string operationType;
+                    string promptConfigKey;
+                    if (useProfileSummary)
+                    {
+                        input = $"Evaluate the resume and generate a response in JSON format as per the instructions fed to you. The resume data you need to generate a profile summary against is {resumeData}.";
+                        operationType = "ResumeProfileSummary";
+                        promptConfigKey = "OpenAI:ResumeProfileSummaryPromptId";
+                    }
+                    else if (usePublicUrlParser)
+                    {
+                        input = $"Evaluate the resume and generate a response in JSON format as per the instructions fed to you. The resume public URL you need to parse is {resumeData}.";
+                        operationType = "ResumeParsingPublicUrl";
+                        promptConfigKey = "OpenAI:ResumeParserPublicUrlPromptId";
+                    }
+                    else
+                    {
+                        input = $"Evaluate the resume and generate a response in JSON format as per the instructions fed to you. The resume data you need to parse is {resumeData}.";
+                        operationType = "ResumeParsing";
+                        promptConfigKey = "OpenAI:ResumeParserPromptId";
+                    }
+
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        input,
+                        operationType: operationType,
+                        promptId: _configuration[promptConfigKey]);
+                }
 
                 string threadId = string.Empty;
                 threadId = await CreateThreadAsync(resumeStringDataForParsing: resumeData);
@@ -1444,7 +1555,17 @@ namespace Risebird.CommonHelper
                 //now create a run
                 if (!string.IsNullOrEmpty(threadId))
                 {
-                    runId = await CreateRun(threadId, ProfileNames.ResumeParserAIAssistant);
+                    string profileType = ProfileNames.ResumeParserAIAssistant;
+                    if (useProfileSummary)
+                    {
+                        profileType = ProfileNames.ResumeProfileSummaryAIAssistant;
+                    }
+                    else if (usePublicUrlParser)
+                    {
+                        profileType = ProfileNames.ResumeParserPublicUrlAIAssistant;
+                    }
+
+                    runId = await CreateRun(threadId, profileType);
                 }
                 else
                 {
@@ -1494,10 +1615,70 @@ namespace Risebird.CommonHelper
             }
         }
 
+        public async Task<RunResult> GenerateCandidateScreening(string resumeStringData, string jobTitle, bool useResumeParserCopyPrompt = false)
+        {
+            try
+            {
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    var input = useResumeParserCopyPrompt
+                        ? $"Generate an output in JSON format as per the instructions fed to the assistant. The job title is {jobTitle} and the resume string is {resumeStringData}."
+                        : $"Evaluate the resume and generate a response in JSON format as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the candidate and generate the fitment score against is {jobTitle}. The resume data you need to generate an analysis against is {resumeStringData}.";
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        input,
+                        operationType: useResumeParserCopyPrompt ? "CandidateScreeningV2" : "CandidateScreening",
+                        promptId: _configuration[useResumeParserCopyPrompt
+                            ? "OpenAI:ResumeParserCopyPromptId"
+                            : "OpenAI:CandidateScreenerPromptId"]);
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<RunResult> GenerateInterviewerScreening(string resumeStringData, string jobTitle)
+        {
+            try
+            {
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    var input = $"Evaluate the resume and generate a response in JSON format as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the interviewer and generate the fitment score against is {jobTitle}. The resume data you need to generate an analysis against is {resumeStringData}.";
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        input,
+                        operationType: "InterviewerScreening",
+                        promptId: _configuration["OpenAI:InterviewerScreenerPromptId"]);
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public async Task<RunResult> GenerateResumeAnalysis(string resumeStringData, string jobTitle)
         {
             try
             {
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    var input = $"Generate an output in JSON format as per the instructions fed to the assistant. The job title you need to screen the interviewer and generate the fitment score against is {jobTitle}. The Resume data you need to generate an analysis against is {resumeStringData}.";
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        input,
+                        operationType: "ResumeAnalysis",
+                        promptId: _configuration["OpenAI:StringResumeAnalysisPromptId"]);
+                }
+
                 string threadId = string.Empty;
                 threadId = await CreateThreadAsync(resumeStringData: resumeStringData, jdTitle: jobTitle);
                 string runId;
@@ -1628,6 +1809,15 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    var input = $"Generate the Summary for {transcriptdata}";
+                    return await _openAIResponsesHelper.CreateTextResponseAsync(
+                        input,
+                        operationType: "TranscriptToNotes",
+                        promptId: _configuration["OpenAI:TranscriptToNotesPromptId"]);
+                }
 
                 string threadId = string.Empty;
                 threadId = await CreateThreadAsync(transcripttonotes: transcriptdata);
@@ -1781,6 +1971,85 @@ namespace Risebird.CommonHelper
         }
 
         /// <summary>
+        /// Adaptive AI-interviewer conversational turn. When OpenAI:UseResponsesApi is true, uses
+        /// OpenAI:AIInterviewerPromptId on the Responses API with optional previous_response_id chaining.
+        /// </summary>
+        public async Task<(RunResult Result, string ResponseId)> GenerateAIInterviewerMessage(string message, string previousResponseId = null)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(message))
+                    return (null, null);
+
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var promptId = _configuration["OpenAI:AIInterviewerPromptId"];
+                if (!useResponsesApi || string.IsNullOrWhiteSpace(promptId))
+                    return (null, null);
+
+                return await _openAIResponsesHelper.CreateJsonResponseWithIdAsync(
+                    message,
+                    operationType: "AIInterviewer",
+                    promptId: promptId,
+                    previousResponseId: previousResponseId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return (null, null);
+            }
+        }
+
+        public async Task<RunResult> GenerateTypingAssessment(string inputsJson)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(inputsJson))
+                    return null;
+
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        inputsJson,
+                        operationType: "TypingAssessment",
+                        promptId: _configuration["OpenAI:TypingAssessmentPromptId"]);
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<RunResult> GenerateIntervieweeResponseExtraction(string transcriptData)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(transcriptData))
+                    return null;
+
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        transcriptData,
+                        operationType: "IntervieweeResponseExtraction",
+                        promptId: _configuration["OpenAI:IntervieweeResponseExtractionPromptId"]);
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Calls the LinkedIn-verification assistant (OpenAI:LinkedInVerificationAssistantId) with a
         /// composed message describing the prospect (name, email, phone, current role, and any candidate-
         /// supplied LinkedIn URL) and returns the raw RunResult. The assistant judges whether the URL is a
@@ -1793,6 +2062,15 @@ namespace Risebird.CommonHelper
             {
                 if (string.IsNullOrWhiteSpace(composedMessage))
                     return null;
+
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        composedMessage,
+                        operationType: "LinkedInVerification",
+                        promptId: _configuration["OpenAI:LinkedInVerificationPromptId"]);
+                }
 
                 string threadId = await CreateThreadAsync(plainAssistantMessage: composedMessage);
                 if (string.IsNullOrEmpty(threadId))
