@@ -293,6 +293,16 @@ namespace Risebird.CommonHelper
                         assistantId = resumeParserAssistantId;
                         operationType = "ResumeParsing";
                     }
+                    else if (profileType == ProfileNames.ResumeParserPublicUrlAIAssistant)
+                    {
+                        assistantId = _configuration["OpenAI:ResumeParserPublicUrlAssistantId"];
+                        operationType = "ResumeParsingPublicUrl";
+                    }
+                    else if (profileType == ProfileNames.ResumeProfileSummaryAIAssistant)
+                    {
+                        assistantId = _configuration["OpenAI:ResumeProfileSummaryAssistantId"];
+                        operationType = "ResumeProfileSummary";
+                    }
                     else if (profileType == ProfileNames.TranscriptAnalysisAIAssistant)
                     {
                         assistantId = aiTranscriptAnalysisAssistantId;
@@ -1460,18 +1470,39 @@ namespace Risebird.CommonHelper
                 return null;
             }
         }
-        public async Task<RunResult> ParseResume(string resumeData)
+        public async Task<RunResult> ParseResume(string resumeData, bool usePublicUrlParser = false, bool useProfileSummary = false)
         {
             try
             {
                 var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
                 if (useResponsesApi)
                 {
-                    var input = $"Evaluate the resume and generate a response in JSON format as per the instructions fed to you. The resume data you need to parse is {resumeData}.";
+                    string input;
+                    string operationType;
+                    string promptConfigKey;
+                    if (useProfileSummary)
+                    {
+                        input = $"Evaluate the resume and generate a response in JSON format as per the instructions fed to you. The resume data you need to generate a profile summary against is {resumeData}.";
+                        operationType = "ResumeProfileSummary";
+                        promptConfigKey = "OpenAI:ResumeProfileSummaryPromptId";
+                    }
+                    else if (usePublicUrlParser)
+                    {
+                        input = $"Evaluate the resume and generate a response in JSON format as per the instructions fed to you. The resume public URL you need to parse is {resumeData}.";
+                        operationType = "ResumeParsingPublicUrl";
+                        promptConfigKey = "OpenAI:ResumeParserPublicUrlPromptId";
+                    }
+                    else
+                    {
+                        input = $"Evaluate the resume and generate a response in JSON format as per the instructions fed to you. The resume data you need to parse is {resumeData}.";
+                        operationType = "ResumeParsing";
+                        promptConfigKey = "OpenAI:ResumeParserPromptId";
+                    }
+
                     return await _openAIResponsesHelper.CreateJsonResponseAsync(
                         input,
-                        operationType: "ResumeParsing",
-                        promptId: _configuration["OpenAI:ResumeParserPromptId"]);
+                        operationType: operationType,
+                        promptId: _configuration[promptConfigKey]);
                 }
 
                 string threadId = string.Empty;
@@ -1481,7 +1512,17 @@ namespace Risebird.CommonHelper
                 //now create a run
                 if (!string.IsNullOrEmpty(threadId))
                 {
-                    runId = await CreateRun(threadId, ProfileNames.ResumeParserAIAssistant);
+                    string profileType = ProfileNames.ResumeParserAIAssistant;
+                    if (useProfileSummary)
+                    {
+                        profileType = ProfileNames.ResumeProfileSummaryAIAssistant;
+                    }
+                    else if (usePublicUrlParser)
+                    {
+                        profileType = ProfileNames.ResumeParserPublicUrlAIAssistant;
+                    }
+
+                    runId = await CreateRun(threadId, profileType);
                 }
                 else
                 {
@@ -1531,18 +1572,22 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public async Task<RunResult> GenerateCandidateScreening(string resumeStringData, string jobTitle)
+        public async Task<RunResult> GenerateCandidateScreening(string resumeStringData, string jobTitle, bool useResumeParserCopyPrompt = false)
         {
             try
             {
                 var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
                 if (useResponsesApi)
                 {
-                    var input = $"Evaluate the resume and generate a response in JSON format as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the candidate and generate the fitment score against is {jobTitle}. The resume data you need to generate an analysis against is {resumeStringData}.";
+                    var input = useResumeParserCopyPrompt
+                        ? $"Generate an output in JSON format as per the instructions fed to the assistant. The job title is {jobTitle} and the resume string is {resumeStringData}."
+                        : $"Evaluate the resume and generate a response in JSON format as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the candidate and generate the fitment score against is {jobTitle}. The resume data you need to generate an analysis against is {resumeStringData}.";
                     return await _openAIResponsesHelper.CreateJsonResponseAsync(
                         input,
-                        operationType: "CandidateScreening",
-                        promptId: _configuration["OpenAI:CandidateScreenerPromptId"]);
+                        operationType: useResumeParserCopyPrompt ? "CandidateScreeningV2" : "CandidateScreening",
+                        promptId: _configuration[useResumeParserCopyPrompt
+                            ? "OpenAI:ResumeParserCopyPromptId"
+                            : "OpenAI:CandidateScreenerPromptId"]);
                 }
 
                 return null;

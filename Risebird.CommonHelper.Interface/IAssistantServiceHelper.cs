@@ -14,11 +14,11 @@ namespace Risebird.CommonHelper.Interface
         Task<RunResult> GenerateTechRubricRevision(string revisionPrompt);
         Task<RunResult> GenerateTranscriptAnalysis(string transcriptData);
         Task<RunResult> GenerateQcAnalysisInterviewAIMerge(string userMessageContent, string assistantId, bool useJsonResponseFormat = true);
-        Task<RunResult> GenerateCandidateScreening(string resumeStringData, string jobTitle);
+        Task<RunResult> GenerateCandidateScreening(string resumeStringData, string jobTitle, bool useResumeParserCopyPrompt = false);
         Task<RunResult> GenerateInterviewerScreening(string resumeStringData, string jobTitle);
         Task<RunResult> GenerateResumeAnalysis(string resumeStringData, string jobTitle);
         Task<RunResult> GenerateReportQCAnalysis(string reportStringData);
-        Task<RunResult> ParseResume(string resumeData);
+        Task<RunResult> ParseResume(string resumeData, bool usePublicUrlParser = false, bool useProfileSummary = false);
         Task<RunResult> TranscriptToNotes(string transcriptdata);
         Task<RunResult> GeneratecontradictionReport(string transcriptSummary);
 
