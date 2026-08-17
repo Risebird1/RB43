@@ -1,0 +1,52 @@
+Developer Hand-off — F7: Expert Copy of the AI Interview Report via Tech QC
+Give this prompt to the developer (or coding agent) implementing F7 in RB35. Base assets: RB34, branch claude/preset-video-ai-randomization.
+
+Context
+RB34 ships the storage and comparison engine for this feature:
+
+AICodeInterviewReport + AICodeInterviewReportQuestionRating — one report shape; ReportSource = 0 is the AI report, 1 the expert copy.
+AICodeInterviewExpertAssignment — SME assignment with WasDiscrepancyFound / MaxSeverity stamped on submission.
+AICodeInterviewService.SubmitExpertAudit → ComputeDiscrepancies — field by field diff into AICodeInterviewReportDiscrepancy (rating delta 1 = Minor, 2 = Major, 3+ = Critical, one-sided = Major; verdict mismatch = Major), endpoints for assign / list / submit / fetch audit report.
+RB35 has the Tech QC feature already built (QC form flow, Trans_QCFormReport, QC roles) including the My Open QC screen. That existing machinery is the delivery vehicle — do not build a parallel QC system.
+
+Required behavior
+IRF selection stores under Tech QC. When an IRF is selected for AI Code Interview, its AI interviews participate in the Tech QC feature — completed AI interview reports become QC-able items stored/tracked the same way tech QC items are today.
+Assignment from My Open QC. Completed AI interviews for such IRFs appear in My Open QC. When the expert assigns one to themselves from My Open QC, they get the expert version of the AI interview report.
+Expert version = editable copy, pre-filled with the AI's values. The expert can edit anything:
+question rating (per question)
+score rubric rating (per dimension)
+tech skill score
+verdict
+comment
+text in the recorded video section (the transcript shown beside each recorded answer)
+Edits are clearly shown as changes. Every edited field is visibly marked (AI value vs expert value — tracked-changes presentation), both while editing and in the stored result.
+Implementation instructions
+Wiring into Tech QC / My Open QC
+Add an item type (e.g. AICodeInterview) to the My Open QC listing query so completed sessions (AICodeInterviewSession.Status = 1 with an AI report present, ReportSource = 0) for flagged IRFs appear alongside existing QC items.
+"Assign to me" on such an item calls the existing RB34 endpoint AssignAICodeInterviewExpert(sessionId, smeEmail) (role-gated: Admin / SeniorHR / SupportAdmin / QualityController) and routes to the expert report page. Keep the existing QC reward/penalty hooks out of scope unless product says otherwise.
+The expert report page
+Load AICodeInterviewAuditReport(sessionId) — it returns the AI report and (if any) the expert copy plus question ratings.
+Render the AI report pre-filled into an editable form with the exact same structure. On first open, the expert copy is a clone of the AI values; the expert then changes only what they disagree with.
+Change visibility (tracked changes): for every field, keep the AI value as the baseline; when the expert's value differs, render the AI value struck-through/dimmed with the expert value highlighted beside it. Compute this client-side while editing (baseline is in the loaded AI report) — the server recomputes authoritatively on submit via ComputeDiscrepancies, so the stored AICodeInterviewReportDiscrepancy rows (AIValue, ExpertValue, IsDiscrepancy, Severity) are the durable record of "what the expert changed". The read view of a submitted audit renders changes from those rows, not from client state.
+Submit posts AICodeInterviewReportVM (ReportSource forced to 1 server-side) to SubmitAICodeInterviewExpertAudit. Resubmission replaces the previous expert copy and recomputes discrepancies (already handled).
+Field mapping + two small schema/engine extensions
+Editable field	Storage	Diff engine
+Question rating	AICodeInterviewReportQuestionRating.Rating	already compared (QuestionRating)
+Score rubric rating	RubricRatingsJson (per question + report level)	already compared per dimension
+Tech skill score	model as dimensions of the report-level RubricRatingsJson keyed by skill name (e.g. {"Java":4,"SQL":3}) — no new column	already compared per dimension (OverallRubricRating); label these rows "Tech skill score" in the UI by dimension name
+Verdict	AICodeInterviewReport.OverallVerdict	already compared (Major on mismatch)
+Comment	OverallComment (+ per-question Comment)	overall comment recorded side by side; extend: also emit side-by-side rows for per-question comments (FieldType QuestionComment, severity 0)
+Recorded-video section text	add TranscriptText varchar(max) NULL to AICodeInterviewReportQuestionRating (AI copy holds the speech-to-text transcript; expert copy holds their corrected text)	extend ComputeDiscrepancies: FieldType TranscriptText, compare trimmed text; on mismatch IsDiscrepancy = 1, Severity = Minor (text corrections are informational unless product says otherwise)
+Both extensions are additive: one nullable column + two small blocks in ComputeDiscrepancies following the existing RatingDiscrepancy / side-by-side patterns.
+
+Outcome surfacing
+After submit, the assignment row carries WasDiscrepancyFound + MaxSeverity — surface both as columns/badges in the My Open QC (or QC history) listing so severe disagreements are triaged at a glance.
+The stored discrepancy rows are the audit trail; the admin view is a read of AICodeInterviewAuditReport rendering AI vs expert values with the change highlighting described above.
+Acceptance criteria
+ Completed AI interviews for AI-flagged IRFs appear in My Open QC; other IRFs' interviews do not.
+ Assigning from My Open QC creates the assignment and opens the expert report pre-filled with AI values.
+ All six field groups are editable; unchanged fields produce no discrepancy rows with IsDiscrepancy = 1.
+ Every changed field is visibly marked while editing and in the stored, re-opened audit (rendered from discrepancy rows).
+ Transcript text edits persist and produce TranscriptText discrepancy rows (Minor).
+ Assignment is stamped WasDiscrepancyFound + MaxSeverity; both show in the QC listing.
+ Resubmission replaces the expert copy and recomputes discrepancies without duplicating rows.

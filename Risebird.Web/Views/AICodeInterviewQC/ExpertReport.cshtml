@@ -1,0 +1,440 @@
+@using System.Globalization
+@using Risebird.Entities.ViewModel
+@model Risebird.Entities.ViewModel.AICodeInterviewAuditReportVM
+@{
+    ViewData["Title"] = "Expert Review of AI Report";
+
+    var aiReport = Model.AIReport;
+    var expertReport = Model.ExpertReport;
+
+    // On first open the expert copy is a clone of the AI values, so the form falls back to the AI
+    // report for every field. The AI report always supplies the baseline the diff is measured from.
+    var current = expertReport ?? aiReport;
+    var readOnly = !Model.CanEdit;
+
+    var aiRows = (aiReport.QuestionRatings ?? new List<AICodeInterviewReportQuestionRatingVM>())
+        .OrderBy(r => r.DisplayOrder).ToList();
+    var currentRows = (current.QuestionRatings ?? new List<AICodeInterviewReportQuestionRatingVM>())
+        .OrderBy(r => r.DisplayOrder).ToList();
+
+    var aiRubric = aiReport.RubricRatings ?? new List<AICodeInterviewRubricRatingVM>();
+    var currentRubric = current.RubricRatings ?? new List<AICodeInterviewRubricRatingVM>();
+
+    // Dimensions come from the AI baseline so the expert edits the same set the AI scored.
+    var rubricDimensions = aiRubric
+        .Where(r => !string.IsNullOrWhiteSpace(r.Dimension))
+        .ToList();
+
+    var changedRows = (Model.Discrepancies ?? new List<AICodeInterviewReportDiscrepancyVM>())
+        .Where(d => d.IsDiscrepancy).ToList();
+
+    Func<decimal?, string> num = value => value?.ToString("0.##", CultureInfo.InvariantCulture) ?? string.Empty;
+
+    Func<int, AICodeInterviewReportQuestionRatingVM> aiRowAt = order =>
+        aiRows.FirstOrDefault(r => r.DisplayOrder == order);
+
+    // Returns the entry rather than the rating so a dimension the expert deliberately cleared is
+    // not confused with one they never touched, which would resurrect the AI value on reopen.
+    Func<List<AICodeInterviewRubricRatingVM>, string, AICodeInterviewRubricRatingVM> rubricEntry = (list, dimension) =>
+        list.FirstOrDefault(r => string.Equals(r.Dimension, dimension, StringComparison.OrdinalIgnoreCase));
+
+    Func<int, string> severityLabel = severity =>
+        severity == 3 ? "Critical" : severity == 2 ? "Major" : severity == 1 ? "Minor" : "Informational";
+
+    Func<int, string> severityClass = severity =>
+        severity == 3 ? "rb-sev-critical" : severity == 2 ? "rb-sev-major" : severity == 1 ? "rb-sev-minor" : "rb-sev-none";
+}
+
+<style>
+    .rb-xr-wrap { padding: 0 10px; }
+    .rb-xr-card { background: #fff; border: 1px solid #e6e8ec; border-radius: 6px; margin-bottom: 14px; }
+    .rb-xr-card-head { padding: 10px 14px; border-bottom: 1px solid #eef0f3; font-weight: 600; font-size: 14px; color: #33475b; }
+    .rb-xr-card-body { padding: 14px; }
+    .rb-xr-meta span { display: inline-block; margin-right: 22px; font-size: 13px; color: #52606d; }
+    .rb-xr-meta strong { color: #1f2933; }
+    .rb-xr-field { margin-bottom: 14px; }
+    .rb-xr-label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: #7b8794; margin-bottom: 5px; }
+    .rb-xr-input { width: 100%; border: 1px solid #cbd2d9; border-radius: 4px; padding: 7px 9px; font-size: 13px; }
+    .rb-xr-input:focus { outline: none; border-color: #2f80ed; }
+    .rb-xr-input[readonly], .rb-xr-input[disabled] { background: #f5f7fa; color: #52606d; }
+    .rb-xr-num { width: 110px; }
+    textarea.rb-xr-input { min-height: 74px; resize: vertical; }
+    textarea.rb-xr-transcript { min-height: 130px; font-family: Consolas, Monaco, monospace; font-size: 12px; white-space: pre-wrap; }
+
+    /* Tracked changes: the AI value stays visible, struck through and dimmed, beside the edit. */
+    .rb-xr-baseline { display: none; margin-top: 5px; font-size: 12px; color: #9aa5b1; }
+    .rb-xr-baseline .rb-xr-old { text-decoration: line-through; color: #9aa5b1; }
+    .rb-xr-changed .rb-xr-baseline { display: block; }
+    .rb-xr-changed .rb-xr-input { border-color: #f2994a; background: #fffaf4; box-shadow: inset 3px 0 0 #f2994a; }
+    .rb-xr-changed > .rb-xr-label:after { content: " edited"; color: #f2994a; font-weight: 700; }
+
+    .rb-xr-q { border: 1px solid #e6e8ec; border-radius: 6px; margin-bottom: 14px; }
+    .rb-xr-q-head { padding: 9px 13px; background: #f9fafb; border-bottom: 1px solid #eef0f3; font-size: 13px; font-weight: 600; color: #33475b; }
+    .rb-xr-q-body { padding: 13px; }
+    .rb-xr-media { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .rb-xr-media figure { margin: 0; }
+    .rb-xr-media video { width: 260px; max-width: 100%; border-radius: 4px; background: #000; }
+    .rb-xr-media figcaption { font-size: 11px; color: #7b8794; margin-top: 3px; }
+    .rb-xr-grid { display: flex; gap: 14px; flex-wrap: wrap; }
+    .rb-xr-grid > div { flex: 1 1 220px; }
+
+    .rb-xr-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .rb-xr-table th, .rb-xr-table td { border: 1px solid #e6e8ec; padding: 7px 9px; text-align: left; vertical-align: top; }
+    .rb-xr-table th { background: #f9fafb; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #7b8794; }
+    .rb-xr-kind { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; background: #eef2f7; color: #52606d; }
+    .rb-xr-kind.rb-xr-kind-skill { background: #e6f0ff; color: #2f6fdb; }
+
+    .rb-xr-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 10px; }
+    .rb-sev-none { background: #eef2f7; color: #52606d; }
+    .rb-sev-minor { background: #fff4e5; color: #b26a00; }
+    .rb-sev-major { background: #ffe9e5; color: #c0392b; }
+    .rb-sev-critical { background: #c0392b; color: #fff; }
+    .rb-xr-clean { background: #e8f7ef; color: #1e7d44; }
+
+    .rb-xr-actions { padding: 12px 0 26px; }
+    .rb-xr-submit { background: #2f80ed; color: #fff; border: none; border-radius: 4px; padding: 9px 22px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .rb-xr-submit:hover { background: #2569c4; }
+    .rb-xr-note { font-size: 12px; color: #7b8794; margin-top: 8px; }
+    .rb-xr-alert { padding: 10px 13px; border-radius: 4px; background: #eef2f7; color: #33475b; font-size: 13px; margin-bottom: 14px; }
+</style>
+
+<script>
+    var Header = "<div>Expert Review of AI Report</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<div class="main-panel" id="main-panel">
+    <div class="content client">
+        <div class="row bl-bg">
+            <div class="col-md-12 rb-xr-wrap">
+
+                @if (ViewBag.Message != null || TempData["SuccessErrorMessage"] != null)
+                {
+                    <div class="rb-xr-alert">@(ViewBag.Message ?? TempData["SuccessErrorMessage"])</div>
+                }
+
+                <div class="rb-xr-card">
+                    <div class="rb-xr-card-head">Interview</div>
+                    <div class="rb-xr-card-body rb-xr-meta">
+                        <span>Candidate <strong>@Model.CandidateName</strong></span>
+                        <span>Skill Channel <strong>@Model.IRFId</strong></span>
+                        <span>Role <strong>@Model.JDTitle</strong></span>
+                        <span>Interview Date <strong>@Model.InterviewDate.ToString("dd MMM yyyy")</strong></span>
+                        <span>
+                            AI Report
+                            <a href="@Url.Action("Report", "AIInterview", new { seId = Model.SessionId })" target="_blank">open original</a>
+                        </span>
+                    </div>
+                </div>
+
+                @if (Model.IsSubmitted)
+                {
+                    <div class="rb-xr-card">
+                        <div class="rb-xr-card-head">
+                            Submitted Review
+                            @if (Model.Assignment?.WasDiscrepancyFound == true)
+                            {
+                                <span class="rb-xr-badge @severityClass(Model.Assignment.MaxSeverity ?? 0)">
+                                    Discrepancy found &mdash; @severityLabel(Model.Assignment.MaxSeverity ?? 0)
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="rb-xr-badge rb-xr-clean">Agreed with AI</span>
+                            }
+                        </div>
+                        <div class="rb-xr-card-body">
+                            <span style="font-size:12px;color:#7b8794;">
+                                Submitted @Model.Assignment?.SubmittedAt?.ToString("dd MMM yyyy HH:mm") by @Model.Assignment?.ExpertEmail
+                            </span>
+
+                            @if (changedRows.Count == 0)
+                            {
+                                <p style="font-size:13px;margin-top:10px;">The expert accepted every AI value without change.</p>
+                            }
+                            else
+                            {
+                                <table class="rb-xr-table" style="margin-top:10px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Field</th>
+                                            <th>Question</th>
+                                            <th>AI value</th>
+                                            <th>Expert value</th>
+                                            <th>Severity</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var row in changedRows)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @row.FieldType
+                                                    @if (!string.IsNullOrWhiteSpace(row.FieldKey))
+                                                    {
+                                                        <div style="font-size:11px;color:#7b8794;">@row.FieldKey</div>
+                                                    }
+                                                </td>
+                                                <td>@(row.DisplayOrder.HasValue ? "Q" + (row.DisplayOrder.Value + 1) : "—")</td>
+                                                <td><span class="rb-xr-old" style="text-decoration:line-through;color:#9aa5b1;">@row.AIValue</span></td>
+                                                <td>@row.ExpertValue</td>
+                                                <td><span class="rb-xr-badge @severityClass(row.Severity)">@severityLabel(row.Severity)</span></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <form method="post" action="@Url.Action("SubmitAICodeInterviewExpertAudit", "AICodeInterviewQC")" id="expertAuditForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="SessionId" value="@Model.SessionId" />
+
+                    <div class="rb-xr-card">
+                        <div class="rb-xr-card-head">Overall Assessment</div>
+                        <div class="rb-xr-card-body">
+                            <div class="rb-xr-field" data-rb-track>
+                                <label class="rb-xr-label">Final Verdict</label>
+                                <input type="text" class="rb-xr-input" name="OverallVerdict"
+                                       value="@current.OverallVerdict"
+                                       data-ai-value="@aiReport.OverallVerdict" @(readOnly ? "readonly" : "") />
+                                <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@aiReport.OverallVerdict</span></div>
+                            </div>
+
+                            <div class="rb-xr-field" data-rb-track>
+                                <label class="rb-xr-label">Overall Comment</label>
+                                <textarea class="rb-xr-input" name="OverallComment"
+                                          data-ai-value="@aiReport.OverallComment" @(readOnly ? "readonly" : "")>@current.OverallComment</textarea>
+                                <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@aiReport.OverallComment</span></div>
+                            </div>
+
+                            <div class="rb-xr-grid">
+                                <div class="rb-xr-field" data-rb-track>
+                                    <label class="rb-xr-label">Communication Score</label>
+                                    <input type="number" step="0.01" min="0" class="rb-xr-input rb-xr-num"
+                                           name="OverallCommunicationRating"
+                                           value="@num(current.OverallCommunicationRating)"
+                                           data-ai-value="@num(aiReport.OverallCommunicationRating)" @(readOnly ? "readonly" : "") />
+                                    <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@num(aiReport.OverallCommunicationRating)</span></div>
+                                </div>
+                                <div class="rb-xr-field" data-rb-track>
+                                    <label class="rb-xr-label">Communication Comment</label>
+                                    <textarea class="rb-xr-input" name="OverallCommunicationComment"
+                                              data-ai-value="@aiReport.OverallCommunicationComment" @(readOnly ? "readonly" : "")>@current.OverallCommunicationComment</textarea>
+                                    <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@aiReport.OverallCommunicationComment</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (rubricDimensions.Count > 0)
+                    {
+                        <div class="rb-xr-card">
+                            <div class="rb-xr-card-head">Score Rubric &amp; Tech Skill Scores</div>
+                            <div class="rb-xr-card-body">
+                                <table class="rb-xr-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:32%;">Dimension</th>
+                                            <th style="width:14%;">Type</th>
+                                            <th style="width:16%;">Expected</th>
+                                            <th style="width:16%;">Observed</th>
+                                            <th style="width:22%;">Rating</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (var i = 0; i < rubricDimensions.Count; i++)
+                                        {
+                                            var dimension = rubricDimensions[i];
+                                            var aiValue = dimension.Rating;
+                                            var currentEntry = rubricEntry(currentRubric, dimension.Dimension);
+                                            var currentValue = currentEntry != null ? currentEntry.Rating : aiValue;
+                                            <tr>
+                                                <td>
+                                                    @dimension.Dimension
+                                                    <input type="hidden" name="RubricRatings[@i].Dimension" value="@dimension.Dimension" />
+                                                    <input type="hidden" name="RubricRatings[@i].IsTechSkill" value="@dimension.IsTechSkill.ToString().ToLowerInvariant()" />
+                                                    <input type="hidden" name="RubricRatings[@i].ExpectedLevel" value="@dimension.ExpectedLevel" />
+                                                    <input type="hidden" name="RubricRatings[@i].ObservedLevel" value="@dimension.ObservedLevel" />
+                                                </td>
+                                                <td>
+                                                    @if (dimension.IsTechSkill)
+                                                    {
+                                                        <span class="rb-xr-kind rb-xr-kind-skill">Tech skill score</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="rb-xr-kind">Score rubric</span>
+                                                    }
+                                                </td>
+                                                <td>@dimension.ExpectedLevel</td>
+                                                <td>@dimension.ObservedLevel</td>
+                                                <td>
+                                                    <div class="rb-xr-field" style="margin:0;" data-rb-track>
+                                                        <input type="number" step="0.01" min="0" class="rb-xr-input rb-xr-num"
+                                                               name="RubricRatings[@i].Rating"
+                                                               value="@num(currentValue)"
+                                                               data-ai-value="@num(aiValue)" @(readOnly ? "readonly" : "") />
+                                                        <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@num(aiValue)</span></div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="rb-xr-card">
+                        <div class="rb-xr-card-head">Questions, Ratings &amp; Recorded Answers</div>
+                        <div class="rb-xr-card-body">
+                            @for (var i = 0; i < currentRows.Count; i++)
+                            {
+                                var row = currentRows[i];
+                                var baseline = aiRowAt(row.DisplayOrder) ?? row;
+                                <div class="rb-xr-q">
+                                    <div class="rb-xr-q-head">Q@(row.DisplayOrder + 1). @row.QuestionText</div>
+                                    <div class="rb-xr-q-body">
+                                        <input type="hidden" name="QuestionRatings[@i].DisplayOrder" value="@row.DisplayOrder" />
+
+                                        @if (!string.IsNullOrWhiteSpace(row.QuestionVideoLink) || !string.IsNullOrWhiteSpace(row.VideoLink))
+                                        {
+                                            <div class="rb-xr-media">
+                                                @if (!string.IsNullOrWhiteSpace(row.QuestionVideoLink))
+                                                {
+                                                    <figure>
+                                                        <video controls preload="none" src="@row.QuestionVideoLink"></video>
+                                                        <figcaption>Question</figcaption>
+                                                    </figure>
+                                                }
+                                                @if (!string.IsNullOrWhiteSpace(row.VideoLink))
+                                                {
+                                                    <figure>
+                                                        <video controls preload="none" src="@row.VideoLink"></video>
+                                                        <figcaption>Candidate answer</figcaption>
+                                                    </figure>
+                                                }
+                                            </div>
+                                        }
+
+                                        <div class="rb-xr-grid">
+                                            <div class="rb-xr-field" data-rb-track>
+                                                <label class="rb-xr-label">Question Rating</label>
+                                                <input type="number" step="0.01" min="0" class="rb-xr-input rb-xr-num"
+                                                       name="QuestionRatings[@i].Rating"
+                                                       value="@num(row.Rating)"
+                                                       data-ai-value="@num(baseline.Rating)" @(readOnly ? "readonly" : "") />
+                                                <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@num(baseline.Rating)</span></div>
+                                            </div>
+                                            <div class="rb-xr-field" data-rb-track>
+                                                <label class="rb-xr-label">Verdict</label>
+                                                <input type="text" class="rb-xr-input"
+                                                       name="QuestionRatings[@i].Verdict"
+                                                       value="@row.Verdict"
+                                                       data-ai-value="@baseline.Verdict" @(readOnly ? "readonly" : "") />
+                                                <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@baseline.Verdict</span></div>
+                                            </div>
+                                            <div class="rb-xr-field" data-rb-track>
+                                                <label class="rb-xr-label">Communication Score</label>
+                                                <input type="number" step="0.01" min="0" class="rb-xr-input rb-xr-num"
+                                                       name="QuestionRatings[@i].CommunicationRating"
+                                                       value="@num(row.CommunicationRating)"
+                                                       data-ai-value="@num(baseline.CommunicationRating)" @(readOnly ? "readonly" : "") />
+                                                <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@num(baseline.CommunicationRating)</span></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="rb-xr-field" data-rb-track>
+                                            <label class="rb-xr-label">Comment</label>
+                                            <textarea class="rb-xr-input" name="QuestionRatings[@i].Comment"
+                                                      data-ai-value="@baseline.Comment" @(readOnly ? "readonly" : "")>@row.Comment</textarea>
+                                            <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@baseline.Comment</span></div>
+                                        </div>
+
+                                        <div class="rb-xr-field" data-rb-track>
+                                            <label class="rb-xr-label">Communication Comment</label>
+                                            <textarea class="rb-xr-input" name="QuestionRatings[@i].CommunicationComment"
+                                                      data-ai-value="@baseline.CommunicationComment" @(readOnly ? "readonly" : "")>@row.CommunicationComment</textarea>
+                                            <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@baseline.CommunicationComment</span></div>
+                                        </div>
+
+                                        <div class="rb-xr-field" data-rb-track>
+                                            <label class="rb-xr-label">Recorded Answer Transcript</label>
+                                            <textarea class="rb-xr-input rb-xr-transcript" name="QuestionRatings[@i].TranscriptText"
+                                                      data-ai-value="@baseline.TranscriptText" @(readOnly ? "readonly" : "")>@row.TranscriptText</textarea>
+                                            <div class="rb-xr-baseline">Speech to text: <span class="rb-xr-old">@baseline.TranscriptText</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    @if (!readOnly)
+                    {
+                        <div class="rb-xr-actions">
+                            <button type="submit" class="rb-xr-submit">Submit Expert Review</button>
+                            <div class="rb-xr-note">
+                                Edited fields are highlighted above. On submit, every change is recorded against the
+                                AI report and the severity of each disagreement is stored with this review.
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="rb-xr-actions">
+                            <div class="rb-xr-note">You are viewing this review in read only mode.</div>
+                        </div>
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        // Tracked changes while editing. The baseline is the AI value carried on each control, so
+        // this is only a presentation aid: the server recomputes the diff authoritatively on submit.
+        function normalize(value) {
+            return (value === null || value === undefined) ? '' : String(value).trim();
+        }
+
+        function isNumeric(el) {
+            return el.getAttribute('type') === 'number';
+        }
+
+        function hasChanged(el) {
+            var baseline = normalize(el.getAttribute('data-ai-value'));
+            var actual = normalize(el.value);
+
+            if (isNumeric(el)) {
+                var a = parseFloat(baseline);
+                var b = parseFloat(actual);
+                var aEmpty = baseline === '' || isNaN(a);
+                var bEmpty = actual === '' || isNaN(b);
+                if (aEmpty && bEmpty) return false;
+                if (aEmpty !== bEmpty) return true;
+                return Math.abs(a - b) > 0.0001;
+            }
+
+            return baseline !== actual;
+        }
+
+        function refresh(el) {
+            var field = el.closest('[data-rb-track]');
+            if (!field) return;
+            field.classList.toggle('rb-xr-changed', hasChanged(el));
+        }
+
+        var controls = document.querySelectorAll('[data-rb-track] [data-ai-value]');
+        Array.prototype.forEach.call(controls, function (el) {
+            refresh(el);
+            el.addEventListener('input', function () { refresh(el); });
+            el.addEventListener('change', function () { refresh(el); });
+        });
+    })();
+</script>
