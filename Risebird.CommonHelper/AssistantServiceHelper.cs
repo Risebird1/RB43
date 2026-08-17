@@ -22,6 +22,7 @@ namespace Risebird.CommonHelper
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IOpenAIApiLogger _openAIApiLogger;
         private readonly IOpenAIResponsesHelper _openAIResponsesHelper;
+        private readonly IPdfReaderHelper _pdfReaderHelper;
         private readonly string apiKey;
         private readonly string baseUrl;
         private readonly string candidateScreenerAssistantId;
@@ -48,12 +49,14 @@ namespace Risebird.CommonHelper
             IApplicationErrorLogger applicationErrorLogger,
             IConfiguration configuration,
             IOpenAIApiLogger openAIApiLogger,
-            IOpenAIResponsesHelper openAIResponsesHelper)
+            IOpenAIResponsesHelper openAIResponsesHelper,
+            IPdfReaderHelper pdfReaderHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _openAIApiLogger = openAIApiLogger;
             _openAIResponsesHelper = openAIResponsesHelper;
+            _pdfReaderHelper = pdfReaderHelper;
             apiKey = _configuration["OpenAI:ApiKey"];
             baseUrl = _configuration["OpenAI:BaseUrl"];
             candidateScreenerAssistantId = _configuration["OpenAI:CandidateScreenerAssistantId"];
@@ -80,6 +83,31 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                if (requestModel.Type == ProfileNames.Candidate || requestModel.Type == ProfileNames.Interviewer)
+                {
+                    var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                    if (useResponsesApi)
+                    {
+                        if (string.IsNullOrEmpty(requestModel.ResumeLink))
+                        {
+                            return null;
+                        }
+
+                        var resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(requestModel.ResumeLink);
+                        if (string.IsNullOrEmpty(resumeStringContent))
+                        {
+                            return null;
+                        }
+
+                        if (requestModel.Type == ProfileNames.Candidate)
+                        {
+                            return await GenerateCandidateScreening(resumeStringContent, requestModel.JDTitle);
+                        }
+
+                        return await GenerateInterviewerScreening(resumeStringContent, requestModel.JDTitle);
+                    }
+                }
+
                 string fileId;
                 if (requestModel.Type == ProfileNames.QualityController)
                 {
@@ -1494,10 +1522,66 @@ namespace Risebird.CommonHelper
             }
         }
 
+        public async Task<RunResult> GenerateCandidateScreening(string resumeStringData, string jobTitle)
+        {
+            try
+            {
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    var input = $"Evaluate the resume and generate a response in JSON format as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the candidate and generate the fitment score against is {jobTitle}. The resume data you need to generate an analysis against is {resumeStringData}.";
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        input,
+                        operationType: "CandidateScreening",
+                        promptId: _configuration["OpenAI:CandidateScreenerPromptId"]);
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<RunResult> GenerateInterviewerScreening(string resumeStringData, string jobTitle)
+        {
+            try
+            {
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    var input = $"Evaluate the resume and generate a response in JSON format as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the interviewer and generate the fitment score against is {jobTitle}. The resume data you need to generate an analysis against is {resumeStringData}.";
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        input,
+                        operationType: "InterviewerScreening",
+                        promptId: _configuration["OpenAI:InterviewerScreenerPromptId"]);
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public async Task<RunResult> GenerateResumeAnalysis(string resumeStringData, string jobTitle)
         {
             try
             {
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    var input = $"Generate an output in JSON format as per the instructions fed to the assistant. The job title you need to screen the interviewer and generate the fitment score against is {jobTitle}. The Resume data you need to generate an analysis against is {resumeStringData}.";
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        input,
+                        operationType: "ResumeAnalysis",
+                        promptId: _configuration["OpenAI:StringResumeAnalysisPromptId"]);
+                }
+
                 string threadId = string.Empty;
                 threadId = await CreateThreadAsync(resumeStringData: resumeStringData, jdTitle: jobTitle);
                 string runId;
