@@ -1751,6 +1751,36 @@ namespace Risebird.CommonHelper
         }
 
         /// <summary>
+        /// Preset AI-interview evaluation. When OpenAI:UseResponsesApi is true, this uses
+        /// OpenAI:AIInterviewPromptMap (pmpt_…) on the Responses API. Otherwise returns null
+        /// so the caller can use the Assistants API.
+        /// </summary>
+        public async Task<RunResult> GenerateAIInterviewEvaluation(string techSkillsJson, string questionAnswerSetJson, string assistantId)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(questionAnswerSetJson))
+                    return null;
+
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var promptId = _configuration["OpenAI:AIInterviewPromptMap"];
+                if (!useResponsesApi || string.IsNullOrWhiteSpace(promptId))
+                    return null;
+
+                var input = $"Generate an output in JSON format as per the instructions fed to the assistant. The techrubrics in json are as follows:{techSkillsJson}. The mapped_rubric_parameters, question, candidate's answer and ideal answer set object in json are as follows: {questionAnswerSetJson}";
+                return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                    input,
+                    operationType: "AIInterviewEvaluation",
+                    promptId: promptId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Calls the LinkedIn-verification assistant (OpenAI:LinkedInVerificationAssistantId) with a
         /// composed message describing the prospect (name, email, phone, current role, and any candidate-
         /// supplied LinkedIn URL) and returns the raw RunResult. The assistant judges whether the URL is a
