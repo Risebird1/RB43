@@ -8,6 +8,7 @@ using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Table;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.ViewModel;
 using Syncfusion.DocIO;
 using Syncfusion.DocIO.DLS;
 using Syncfusion.DocIORenderer;
@@ -17,7 +18,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 
 namespace Risebird.CommonHelper
@@ -1370,6 +1373,233 @@ namespace Risebird.CommonHelper
             {
                 return entities;
             }
+            return entities;
+        }
+
+        /// <summary>
+        /// Fetches Risebirdlogs rows for a UTC date window.
+        /// PartitionKey is reverse-ticks (DateTime.MaxValue.Ticks - UtcNow.Ticks), so date filters
+        /// must use PartitionKey range — Timestamp filters force a full table scan and hang on large tables.
+        /// </summary>
+        public async Task<IList<T>> GetLogEntitiesByDateRangeAsync<T>(
+            string tableName,
+            DateTime startUtc,
+            DateTime endUtcExclusive,
+            int? logLevel = null,
+            IList<string> selectColumns = null,
+            int? maxResults = null)
+            where T : TableEntity, new()
+        {
+            var entities = new List<T>();
+            try
+            {
+                var table = GetTable(tableName);
+                var start = DateTime.SpecifyKind(startUtc, DateTimeKind.Utc);
+                var end = DateTime.SpecifyKind(endUtcExclusive, DateTimeKind.Utc);
+                if (end <= start)
+                    return entities;
+
+                // Newer logs have smaller reverse-tick PartitionKeys.
+                // start <= T < end  ⇒  (MaxTicks-end) < PK <= (MaxTicks-start)
+                var pkLowerExclusive = ToReverseTickPartitionKey(end);
+                var pkUpperInclusive = ToReverseTickPartitionKey(start);
+
+                var fromFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.GreaterThan, pkLowerExclusive);
+                var toFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.LessThanOrEqual, pkUpperInclusive);
+                var filter = TableQuery.CombineFilters(fromFilter, TableOperators.And, toFilter);
+
+                if (logLevel.HasValue)
+                {
+                    var levelFilter = TableQuery.GenerateFilterConditionForInt("LogeLevel", QueryComparisons.Equal, logLevel.Value);
+                    filter = TableQuery.CombineFilters(filter, TableOperators.And, levelFilter);
+                }
+
+                var query = new TableQuery<T>().Where(filter);
+                if (selectColumns != null && selectColumns.Count > 0)
+                    query = query.Select(selectColumns);
+
+                TableContinuationToken token = null;
+                do
+                {
+                    var queryResult = await table.ExecuteQuerySegmentedAsync(query, token).ConfigureAwait(false);
+                    entities.AddRange(queryResult.Results);
+                    token = queryResult.ContinuationToken;
+
+                    if (maxResults.HasValue && entities.Count >= maxResults.Value)
+                    {
+                        if (entities.Count > maxResults.Value)
+                            entities.RemoveRange(maxResults.Value, entities.Count - maxResults.Value);
+                        break;
+                    }
+                } while (token != null);
+            }
+            catch (StorageException)
+            {
+                return entities;
+            }
+
+            return entities;
+        }
+
+        /// <summary>
+        /// Paged Risebirdlogs query by reverse-tick PartitionKey range. Pass continuationToken from a prior page for Next.
+        /// </summary>
+        public async Task<AzureTablePageResult<T>> GetLogEntitiesByDateRangePagedAsync<T>(
+            string tableName,
+            DateTime startUtc,
+            DateTime endUtcExclusive,
+            int pageSize,
+            string continuationToken = null,
+            int? logLevel = null,
+            IList<string> selectColumns = null)
+            where T : TableEntity, new()
+        {
+            var result = new AzureTablePageResult<T>();
+            if (pageSize <= 0)
+                pageSize = 100;
+
+            try
+            {
+                var table = GetTable(tableName);
+                var start = DateTime.SpecifyKind(startUtc, DateTimeKind.Utc);
+                var end = DateTime.SpecifyKind(endUtcExclusive, DateTimeKind.Utc);
+                if (end <= start)
+                    return result;
+
+                var pkLowerExclusive = ToReverseTickPartitionKey(end);
+                var pkUpperInclusive = ToReverseTickPartitionKey(start);
+
+                var fromFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.GreaterThan, pkLowerExclusive);
+                var toFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.LessThanOrEqual, pkUpperInclusive);
+                var filter = TableQuery.CombineFilters(fromFilter, TableOperators.And, toFilter);
+
+                if (logLevel.HasValue)
+                {
+                    var levelFilter = TableQuery.GenerateFilterConditionForInt("LogeLevel", QueryComparisons.Equal, logLevel.Value);
+                    filter = TableQuery.CombineFilters(filter, TableOperators.And, levelFilter);
+                }
+
+                var token = DeserializeContinuationToken(continuationToken);
+                var items = new List<T>();
+
+                do
+                {
+                    var remaining = pageSize - items.Count;
+                    var pageQuery = new TableQuery<T>().Where(filter).Take(remaining);
+                    if (selectColumns != null && selectColumns.Count > 0)
+                        pageQuery = pageQuery.Select(selectColumns);
+
+                    var queryResult = await table.ExecuteQuerySegmentedAsync(pageQuery, token).ConfigureAwait(false);
+                    items.AddRange(queryResult.Results);
+                    token = queryResult.ContinuationToken;
+                } while (token != null && items.Count < pageSize);
+
+                result.Items = items;
+                result.ContinuationToken = SerializeContinuationToken(token);
+            }
+            catch (StorageException)
+            {
+                return result;
+            }
+
+            return result;
+        }
+
+        private static string SerializeContinuationToken(TableContinuationToken token)
+        {
+            if (token == null)
+                return null;
+
+            var payload = JsonConvert.SerializeObject(new
+            {
+                token.NextPartitionKey,
+                token.NextRowKey,
+                token.NextTableName,
+                TargetLocation = token.TargetLocation?.ToString()
+            });
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(payload));
+        }
+
+        private static TableContinuationToken DeserializeContinuationToken(string encoded)
+        {
+            if (string.IsNullOrWhiteSpace(encoded))
+                return null;
+
+            try
+            {
+                var json = Encoding.UTF8.GetString(Convert.FromBase64String(encoded));
+                var dto = JsonConvert.DeserializeObject<ContinuationTokenDto>(json);
+                if (dto == null || (string.IsNullOrEmpty(dto.NextPartitionKey) && string.IsNullOrEmpty(dto.NextRowKey)))
+                    return null;
+
+                var token = new TableContinuationToken
+                {
+                    NextPartitionKey = dto.NextPartitionKey,
+                    NextRowKey = dto.NextRowKey,
+                    NextTableName = dto.NextTableName
+                };
+
+                if (!string.IsNullOrEmpty(dto.TargetLocation)
+                    && Enum.TryParse<StorageLocation>(dto.TargetLocation, out var location))
+                {
+                    token.TargetLocation = location;
+                }
+
+                return token;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private sealed class ContinuationTokenDto
+        {
+            public string NextPartitionKey { get; set; }
+            public string NextRowKey { get; set; }
+            public string NextTableName { get; set; }
+            public string TargetLocation { get; set; }
+        }
+
+        /// <summary>
+        /// Same encoding ApplicationErrorLogger uses for Risebirdlogs PartitionKey.
+        /// </summary>
+        private static string ToReverseTickPartitionKey(DateTime utc)
+        {
+            var ticks = DateTime.SpecifyKind(utc, DateTimeKind.Utc).Ticks;
+            return (DateTime.MaxValue.Ticks - ticks).ToString("d19");
+        }
+
+        /// <summary>
+        /// Fetches entities whose PartitionKey is within an inclusive string range (e.g. yyyy-MM-dd dates).
+        /// </summary>
+        public async Task<IList<T>> GetEntitiesByPartitionKeyRangeAsync<T>(
+            string tableName,
+            string partitionKeyFromInclusive,
+            string partitionKeyToInclusive)
+            where T : TableEntity, new()
+        {
+            var entities = new List<T>();
+            try
+            {
+                var table = GetTable(tableName);
+                var fromFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.GreaterThanOrEqual, partitionKeyFromInclusive);
+                var toFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.LessThanOrEqual, partitionKeyToInclusive);
+                var filter = TableQuery.CombineFilters(fromFilter, TableOperators.And, toFilter);
+
+                TableContinuationToken token = null;
+                do
+                {
+                    var queryResult = await table.ExecuteQuerySegmentedAsync(new TableQuery<T>().Where(filter), token).ConfigureAwait(false);
+                    entities.AddRange(queryResult.Results);
+                    token = queryResult.ContinuationToken;
+                } while (token != null);
+            }
+            catch (StorageException)
+            {
+                return entities;
+            }
+
             return entities;
         }
 

@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Table;
+using Risebird.Entities.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -46,5 +48,8 @@ namespace Risebird.CommonHelper.Interface
         Task<string> DownloadAndConvertFromDocToPdfAsync(string url);
         Task<string> InsertBlobAIInterviewerAudio(string filename, string containerName, MemoryStream blobFile = null, string contentType = null);
         Task<string> InsertBlobWithCustomStorage(string filename, string containerName, string storageAccountName, string storageAccountKey, MemoryStream blobFile = null, Stream blobFileStream = null, string contentType = null);
+        Task<IList<T>> GetLogEntitiesByDateRangeAsync<T>(string tableName, DateTime startUtc, DateTime endUtcExclusive, int? logLevel = null, IList<string> selectColumns = null, int? maxResults = null) where T : TableEntity, new();
+        Task<AzureTablePageResult<T>> GetLogEntitiesByDateRangePagedAsync<T>(string tableName, DateTime startUtc, DateTime endUtcExclusive, int pageSize, string continuationToken = null, int? logLevel = null, IList<string> selectColumns = null) where T : TableEntity, new();
+        Task<IList<T>> GetEntitiesByPartitionKeyRangeAsync<T>(string tableName, string partitionKeyFromInclusive, string partitionKeyToInclusive) where T : TableEntity, new();
     }
 }

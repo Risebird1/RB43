@@ -79,6 +79,7 @@ namespace Risebird.AzureFunctions
             services.AddScoped<IPdfReaderHelper, PdfReaderHelper>();
             services.AddScoped<IPlivoInterviewService, PlivoInterviewService>();
             services.AddScoped<IAzureStorageHelper, AzureStorageHelper>();
+            services.AddScoped<IApplicationLogDailyCountService, ApplicationLogDailyCountService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<ISkillService, SkillService>();
