@@ -1464,6 +1464,15 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    var input = $"Evaluate the resume and generate a response in JSON format as per the instructions fed to you. The resume data you need to parse is {resumeData}.";
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        input,
+                        operationType: "ResumeParsing",
+                        promptId: _configuration["OpenAI:ResumeParserPromptId"]);
+                }
 
                 string threadId = string.Empty;
                 threadId = await CreateThreadAsync(resumeStringDataForParsing: resumeData);
