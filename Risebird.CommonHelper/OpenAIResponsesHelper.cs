@@ -49,6 +49,142 @@ namespace Risebird.CommonHelper
             string operationType,
             string promptId)
         {
+            var (result, _) = await CreateJsonResponseWithIdAsync(input, operationType, promptId);
+            return result;
+        }
+
+        public Task<(RunResult Result, string ResponseId)> CreateJsonResponseWithIdAsync(
+            string input,
+            string operationType,
+            string promptId,
+            string previousResponseId = null)
+        {
+            return CreateJsonResponseWithIdAsync((object)input, operationType, promptId, previousResponseId);
+        }
+
+        public async Task<(RunResult Result, string ResponseId)> CreateJsonResponseWithIdAsync(
+            object input,
+            string operationType,
+            string promptId,
+            string previousResponseId = null)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(_apiKey))
+                {
+                    throw new InvalidOperationException("OpenAI:ApiKey is not configured.");
+                }
+
+                if (string.IsNullOrWhiteSpace(_responsesModel))
+                {
+                    throw new InvalidOperationException("OpenAI:ResponsesModel is not configured.");
+                }
+
+                if (string.IsNullOrWhiteSpace(promptId))
+                {
+                    throw new InvalidOperationException(
+                        $"OpenAI prompt ID is required for operation {operationType}.");
+                }
+
+                if (input == null || (input is string s && string.IsNullOrWhiteSpace(s)))
+                {
+                    throw new InvalidOperationException(
+                        $"OpenAI Responses input is required for operation {operationType}.");
+                }
+
+                object requestBody = string.IsNullOrWhiteSpace(previousResponseId)
+                    ? new
+                    {
+                        prompt = new { id = promptId },
+                        model = _responsesModel,
+                        input,
+                        text = new { format = new { type = "json_object" } }
+                    }
+                    : new
+                    {
+                        prompt = new { id = promptId },
+                        model = _responsesModel,
+                        input,
+                        previous_response_id = previousResponseId,
+                        text = new { format = new { type = "json_object" } }
+                    };
+
+                using var client = new HttpClient();
+                client.Timeout = TimeSpan.FromMinutes(4);
+                var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/responses")
+                {
+                    Headers = { { "Authorization", $"Bearer {_apiKey}" } }
+                };
+
+                var jsonContent = JsonConvert.SerializeObject(requestBody);
+                request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+                var response = await client.SendAsync(request);
+                sw.Stop();
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var modelName = ExtractModelFromResponse(responseContent) ?? _responsesModel;
+                var responseId = ExtractResponseId(responseContent);
+
+                await _openAIApiLogger.LogApiCallAsync(
+                    apiEndpoint: $"{_baseUrl}/responses",
+                    apiMethod: "POST",
+                    requestPayload: jsonContent,
+                    responsePayload: responseContent,
+                    responseTimeMs: (int)sw.ElapsedMilliseconds,
+                    statusCode: (int)response.StatusCode,
+                    isSuccess: response.IsSuccessStatusCode,
+                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                    model: modelName,
+                    assistantId: null,
+                    threadId: previousResponseId,
+                    runId: responseId,
+                    fileId: null,
+                    context: new OpenAIApiLogContext
+                    {
+                        OperationType = operationType
+                    });
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Exception,
+                        new Exception($"OpenAI Responses API failed ({(int)response.StatusCode}): {responseContent}"));
+                    return (null, null);
+                }
+
+                var outputText = ExtractOutputText(responseContent);
+                if (string.IsNullOrWhiteSpace(outputText))
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Exception,
+                        new Exception($"OpenAI Responses API returned no output text for operation {operationType}."));
+                    return (null, responseId);
+                }
+
+                return (ToRunResult(outputText), responseId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return (null, null);
+            }
+        }
+
+        public Task<RunResult> CreateTextResponseAsync(
+            string input,
+            string operationType,
+            string promptId)
+        {
+            return CreateTextResponseAsync((object)input, operationType, promptId);
+        }
+
+        public async Task<RunResult> CreateTextResponseAsync(
+            object input,
+            string operationType,
+            string promptId)
+        {
             try
             {
                 if (string.IsNullOrWhiteSpace(_apiKey))
@@ -77,8 +213,7 @@ namespace Risebird.CommonHelper
                 {
                     prompt = new { id = promptId },
                     model = _responsesModel,
-                    input,
-                    text = new { format = new { type = "json_object" } }
+                    input
                 };
 
                 using var client = new HttpClient();
@@ -97,6 +232,7 @@ namespace Risebird.CommonHelper
 
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var modelName = ExtractModelFromResponse(responseContent) ?? _responsesModel;
+                var responseId = ExtractResponseId(responseContent);
 
                 await _openAIApiLogger.LogApiCallAsync(
                     apiEndpoint: $"{_baseUrl}/responses",
@@ -110,7 +246,7 @@ namespace Risebird.CommonHelper
                     model: modelName,
                     assistantId: null,
                     threadId: null,
-                    runId: ExtractResponseId(responseContent),
+                    runId: responseId,
                     fileId: null,
                     context: new OpenAIApiLogContext
                     {

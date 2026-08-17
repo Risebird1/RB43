@@ -1868,20 +1868,28 @@ NEVER:
                                     if (!string.IsNullOrEmpty(transcriptString))
                                     {
                                         var transcriptSummary = new TranscriptSummaryVM();
-                                        var threadId = await _ai.CreateThreadAsync();
-                                        await _ai.AddMessageAsync(threadId, "user", transcriptString);
+                                        string replyText = null;
+                                        var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                                        if (useResponsesApi)
+                                        {
+                                            var runResult = await _assistantServiceHelper.GenerateIntervieweeResponseExtraction(transcriptString);
+                                            replyText = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value;
+                                        }
+                                        else
+                                        {
+                                            var threadId = await _ai.CreateThreadAsync();
+                                            await _ai.AddMessageAsync(threadId, "user", transcriptString);
 
-                                        //await _ai.AddMessageAsync(threadId, "user", resume.ResumeLink);
+                                            var runId = await _ai.CreateRunAsync(threadId, "asst_ebkDMtxPbZS8o6d6NabRGlrC"); //assistant id of the assistant named : AI Interviewee response extraction and analysis 
+                                            await _ai.WaitForRunAsync(threadId, runId);
 
-                                        var runId = await _ai.CreateRunAsync(threadId, "asst_ebkDMtxPbZS8o6d6NabRGlrC"); //assistant id of the assistant named : AI Interviewee response extraction and analysis 
-                                        await _ai.WaitForRunAsync(threadId, runId);
-
-
-                                        var replies = await _ai.GetMessagesAsync(threadId);
+                                            var replies = await _ai.GetMessagesAsync(threadId);
+                                            replyText = replies?.FirstOrDefault();
+                                        }
 
                                         try
                                         {
-                                            transcriptSummary = TryParseTranscriptSummaryVM(replies?.FirstOrDefault());
+                                            transcriptSummary = TryParseTranscriptSummaryVM(replyText);
                                             if (transcriptSummary != null)
                                             {
                                                 transcriptSummaryCleanedJson = JsonConvert.SerializeObject(transcriptSummary);
