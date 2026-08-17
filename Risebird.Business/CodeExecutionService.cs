@@ -17,10 +17,11 @@ namespace Risebird.Business
     /// Compiles and runs candidate code for coding interview questions in an external sandbox.
     ///
     /// Two backends are supported and selected via CodeExecution:Provider —
-    ///   "Piston"  : https://github.com/engineer-man/piston  (public instance needs no key; self-host for private code)
+    ///   "Piston"  : https://github.com/engineer-man/piston  (self-host: docker run -p 2000:2000 --privileged ghcr.io/engineer-man/piston)
     ///   "Judge0"  : https://judge0.com                      (self-hosted, or RapidAPI with a key)
     ///
-    /// Candidate source is sent to whatever BaseUrl is configured, so point this at a
+    /// CodeExecution:BaseUrl must be set for either provider; there is no working public
+    /// default. Candidate source is sent to whatever BaseUrl points at, so use a
     /// self-hosted instance if interview code must not leave your infrastructure.
     /// </summary>
     public class CodeExecutionService : ICodeExecutionService
@@ -45,7 +46,10 @@ namespace Risebird.Business
 
         private string Provider => (_configuration[$"{SettingsSection}:Provider"] ?? "Piston").Trim();
 
-        private string BaseUrl => (_configuration[$"{SettingsSection}:BaseUrl"] ?? "https://emkc.org/api/v2/piston").TrimEnd('/');
+        // No default endpoint on purpose. The public Piston instance went whitelist-only in
+        // Feb 2026, so falling back to it would fail every run; an unconfigured environment
+        // should report the runner as unavailable instead.
+        private string BaseUrl => (_configuration[$"{SettingsSection}:BaseUrl"] ?? string.Empty).Trim().TrimEnd('/');
 
         private string ApiKey => _configuration[$"{SettingsSection}:ApiKey"];
 
@@ -68,7 +72,21 @@ namespace Risebird.Business
                 {
                     return false;
                 }
-                return !string.IsNullOrWhiteSpace(BaseUrl);
+                if (string.IsNullOrWhiteSpace(BaseUrl))
+                {
+                    return false;
+                }
+
+                // A RapidApiHost means we are going through RapidAPI, which always needs a key.
+                // Without one the runner would only ever return 401, so report it as unavailable
+                // and let the IDE hide the Run button instead of showing candidates an error.
+                var rapidApiHost = _configuration[$"{SettingsSection}:RapidApiHost"];
+                if (!string.IsNullOrWhiteSpace(rapidApiHost) && string.IsNullOrWhiteSpace(ApiKey))
+                {
+                    return false;
+                }
+
+                return true;
             }
         }
 
@@ -121,10 +139,12 @@ namespace Risebird.Business
 
         private async Task<CodeExecutionResult> ExecuteOnPistonAsync(CodeLanguageOption language, CodeExecutionRequest request, CancellationToken token)
         {
+            // "*" lets Piston pick whichever runtime version the instance actually has installed.
+            // Pinning exact versions breaks silently every time the instance upgrades a runtime.
             var payload = new
             {
                 language = language.PistonLanguage,
-                version = string.IsNullOrWhiteSpace(language.PistonVersion) ? "*" : language.PistonVersion,
+                version = "*",
                 files = new[]
                 {
                     new { name = language.FileName, content = request.SourceCode }
@@ -148,12 +168,22 @@ namespace Risebird.Business
             if (!response.IsSuccessStatusCode)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
-                    new Exception($"Piston execute failed [{(int)response.StatusCode}]: {body}"));
+                    new Exception($"Piston execute failed [{(int)response.StatusCode}] against {BaseUrl}: {body}"));
 
-                // 429 is common on the shared public instance
-                return (int)response.StatusCode == 429
-                    ? Fail("The code runner is busy right now. Wait a few seconds and run again.")
-                    : Fail("The code runner returned an error. Your code is safe — you can still submit it.");
+                switch ((int)response.StatusCode)
+                {
+                    // The public emkc.org instance became whitelist-only in Feb 2026 and now
+                    // rejects every unauthenticated request, so this means "not configured yet".
+                    case 401:
+                    case 403:
+                        return Fail("The code runner is not configured for this environment. Your code is safe — write your solution and submit it.");
+                    case 429:
+                        return Fail("The code runner is busy right now. Wait a few seconds and run again.");
+                    case 400:
+                        return Fail($"The code runner rejected this request ({ExtractPistonMessage(body)}). Your code is safe — you can still submit it.");
+                    default:
+                        return Fail("The code runner returned an error. Your code is safe — you can still submit it.");
+                }
             }
 
             var json = JObject.Parse(body);
@@ -193,45 +223,132 @@ namespace Risebird.Business
         //  Judge0                                                             //
         // ------------------------------------------------------------------ //
 
+        // Judge0 status ids: 1 = In Queue, 2 = Processing, 3 = Accepted, anything higher is a
+        // compile or runtime failure. https://ce.judge0.com/#statuses-and-languages
+        private const int Judge0StatusAccepted = 3;
+
+        // Metered plans count every poll, so the first wait is long enough that most short
+        // programs are already judged by the time we ask, keeping a typical run at two requests.
+        private const int Judge0FirstPollDelayMilliseconds = 900;
+        private const int Judge0PollIntervalMilliseconds = 400;
+
+        /// <summary>
+        /// Creates an async submission and polls it to completion. The official Judge0 (which is
+        /// what RapidAPI hosts) has the synchronous wait=true feature disabled and answers such
+        /// requests with "wait not allowed", so the token flow is the only one that works there.
+        /// Everything is base64 encoded, which is what keeps a program emitting non-printable
+        /// bytes from breaking the response serialization.
+        /// </summary>
         private async Task<CodeExecutionResult> ExecuteOnJudge0Async(CodeLanguageOption language, CodeExecutionRequest request, CancellationToken token)
         {
             var payload = new
             {
                 language_id = language.Judge0Id,
-                source_code = request.SourceCode,
-                stdin = request.Stdin ?? string.Empty
+                source_code = ToBase64(request.SourceCode),
+                stdin = ToBase64(request.Stdin ?? string.Empty)
             };
 
-            using var message = new HttpRequestMessage(HttpMethod.Post, $"{BaseUrl}/submissions?base64_encoded=false&wait=true")
+            using var createMessage = new HttpRequestMessage(HttpMethod.Post, $"{BaseUrl}/submissions?base64_encoded=true&wait=false")
             {
                 Content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json")
             };
 
-            AddJudge0AuthHeaders(message);
+            AddJudge0AuthHeaders(createMessage);
 
-            var response = await _httpClient.SendAsync(message, token);
-            var body = await response.Content.ReadAsStringAsync(token);
+            var createResponse = await _httpClient.SendAsync(createMessage, token);
+            var createBody = await createResponse.Content.ReadAsStringAsync(token);
 
-            if (!response.IsSuccessStatusCode)
+            if (!createResponse.IsSuccessStatusCode)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
-                    new Exception($"Judge0 execute failed [{(int)response.StatusCode}]: {body}"));
-                return Fail("The code runner returned an error. Your code is safe — you can still submit it.");
+                return await Judge0FailureAsync(createResponse, createBody, "create");
             }
 
-            var json = JObject.Parse(body);
-            var statusId = json["status"]?["id"]?.Value<int?>() ?? 0;
-            var statusText = json["status"]?["description"]?.ToString() ?? "Unknown";
-
-            return new CodeExecutionResult
+            var submissionToken = JObject.Parse(createBody)["token"]?.ToString();
+            if (string.IsNullOrWhiteSpace(submissionToken))
             {
-                Success = statusId == 3, // 3 == Accepted in Judge0
-                Status = statusText,
-                Stdout = json["stdout"]?.ToString(),
-                Stderr = json["stderr"]?.ToString(),
-                CompileOutput = json["compile_output"]?.ToString(),
-                ExitCode = json["exit_code"]?.Value<int?>()
-            };
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                    new Exception($"Judge0 returned no submission token: {createBody}"));
+                return Fail("The code runner did not accept your submission. Your code is safe — you can still submit it.");
+            }
+
+            // Poll until the judge finishes or the overall request timeout cancels us
+            var pollDelay = Judge0FirstPollDelayMilliseconds;
+            while (true)
+            {
+                await Task.Delay(pollDelay, token);
+                pollDelay = Judge0PollIntervalMilliseconds;
+
+                using var pollMessage = new HttpRequestMessage(HttpMethod.Get, $"{BaseUrl}/submissions/{submissionToken}?base64_encoded=true");
+                AddJudge0AuthHeaders(pollMessage);
+
+                var pollResponse = await _httpClient.SendAsync(pollMessage, token);
+                var pollBody = await pollResponse.Content.ReadAsStringAsync(token);
+
+                if (!pollResponse.IsSuccessStatusCode)
+                {
+                    return await Judge0FailureAsync(pollResponse, pollBody, "poll");
+                }
+
+                var json = JObject.Parse(pollBody);
+                var statusId = json["status"]?["id"]?.Value<int?>() ?? 0;
+
+                if (statusId <= 2)
+                {
+                    continue;
+                }
+
+                var statusText = json["status"]?["description"]?.ToString() ?? "Unknown";
+                var judgeMessage = DecodeBase64OrRaw(json["message"]?.ToString());
+
+                return new CodeExecutionResult
+                {
+                    Success = statusId == Judge0StatusAccepted,
+                    Status = statusText,
+                    Stdout = DecodeBase64OrRaw(json["stdout"]?.ToString()),
+                    Stderr = DecodeBase64OrRaw(json["stderr"]?.ToString()),
+                    CompileOutput = DecodeBase64OrRaw(json["compile_output"]?.ToString()),
+                    ExitCode = json["exit_code"]?.Value<int?>(),
+                    Message = statusId == Judge0StatusAccepted ? null : (judgeMessage ?? statusText)
+                };
+            }
+        }
+
+        private async Task<CodeExecutionResult> Judge0FailureAsync(HttpResponseMessage response, string body, string stage)
+        {
+            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                new Exception($"Judge0 {stage} failed [{(int)response.StatusCode}] against {BaseUrl}: {body}"));
+
+            switch ((int)response.StatusCode)
+            {
+                case 401:
+                case 403:
+                    return Fail("The code runner rejected our credentials. Your code is safe — write your solution and submit it.");
+                case 429:
+                    return Fail("The code runner has hit its request limit. Wait a moment and run again, or submit your code as it is.");
+                default:
+                    return Fail("The code runner returned an error. Your code is safe — you can still submit it.");
+            }
+        }
+
+        private static string ToBase64(string value) =>
+            Convert.ToBase64String(Encoding.UTF8.GetBytes(value ?? string.Empty));
+
+        /// <summary>
+        /// Judge0 base64 encodes the output streams. Not every field is encoded on every host,
+        /// so anything that is not valid base64 is passed through untouched.
+        /// </summary>
+        private static string DecodeBase64OrRaw(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return null;
+
+            try
+            {
+                return Encoding.UTF8.GetString(Convert.FromBase64String(value.Trim()));
+            }
+            catch (FormatException)
+            {
+                return value;
+            }
         }
 
         private void AddJudge0AuthHeaders(HttpRequestMessage message)
@@ -257,6 +374,24 @@ namespace Risebird.Business
         //  Helpers                                                            //
         // ------------------------------------------------------------------ //
 
+        /// <summary>Pulls the "message" field out of a Piston error body, falling back to the raw body.</summary>
+        private static string ExtractPistonMessage(string body)
+        {
+            if (string.IsNullOrWhiteSpace(body)) return "no detail returned";
+
+            try
+            {
+                var message = JObject.Parse(body)["message"]?.ToString();
+                if (!string.IsNullOrWhiteSpace(message)) return message;
+            }
+            catch (JsonException)
+            {
+                // Not JSON; the raw body is the best detail available
+            }
+
+            return body.Length > 300 ? body.Substring(0, 300) : body;
+        }
+
         private static string BuildCombinedOutput(CodeExecutionResult result)
         {
             var builder = new StringBuilder();
@@ -275,7 +410,14 @@ namespace Risebird.Business
             }
 
             var combined = builder.ToString().TrimEnd();
-            return combined.Length == 0 ? "(no output)" : combined;
+            if (combined.Length > 0)
+            {
+                return combined;
+            }
+
+            // A refused or failed run carries its explanation in Message and produces no streams.
+            // Without this the candidate would only ever see "(no output)" and no reason why.
+            return string.IsNullOrWhiteSpace(result.Message) ? "(no output)" : result.Message;
         }
 
         private string Truncate(string value)
