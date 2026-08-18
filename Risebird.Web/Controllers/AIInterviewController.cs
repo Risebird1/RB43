@@ -1240,7 +1240,7 @@ namespace Risebird.Web.Controllers
                                 string threadId = null;
                                 string runId = null;
                                 string openAIResponse = null;
-                                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", false);
                                 if (useResponsesApi)
                                 {
                                     var runResult = await _assistantServiceHelper.GenerateTypingAssessment(assistantMessage);

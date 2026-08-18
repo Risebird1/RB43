@@ -244,7 +244,7 @@ namespace Risebird.Services.Controllers
                     string threadId = null;
                     List<string> replies = null;
                     var evaluationPromptId = _config["OpenAI:AIInterviewPromptMap"];
-                    var useResponsesApi = _config.GetValue("OpenAI:UseResponsesApi", true)
+                    var useResponsesApi = _config.GetValue("OpenAI:UseResponsesApi", false)
                         && !string.IsNullOrWhiteSpace(evaluationPromptId);
 
                     if (useResponsesApi)
@@ -428,7 +428,7 @@ namespace Risebird.Services.Controllers
 
         private bool UseAIInterviewerResponsesApi()
         {
-            return _config.GetValue("OpenAI:UseResponsesApi", true)
+            return _config.GetValue("OpenAI:UseResponsesApi", false)
                 && !string.IsNullOrWhiteSpace(_config["OpenAI:AIInterviewerPromptId"]);
         }
 
