@@ -82,6 +82,12 @@ namespace Risebird.Entities.ViewModel
 
         /// <summary>Question video URL, populated for display only. Never persisted on this row.</summary>
         public string QuestionVideoLink { get; set; }
+
+        /// <summary>
+        /// Backend max for this question from the HM / Delivery Manager score rubric
+        /// (the mapped skill's weightage). Display only; never persisted on this row.
+        /// </summary>
+        public decimal? MaxScore { get; set; }
     }
 
     /// <summary>
@@ -95,5 +101,11 @@ namespace Risebird.Entities.ViewModel
         public string ExpectedLevel { get; set; }
         public string ObservedLevel { get; set; }
         public bool IsTechSkill { get; set; }
+
+        /// <summary>
+        /// Per-item max from the HM / Delivery Manager Instructions score rubric (skill weightage).
+        /// Display only on the rubric review card; missing values render as an em dash.
+        /// </summary>
+        public decimal? MaxScore { get; set; }
     }
 }

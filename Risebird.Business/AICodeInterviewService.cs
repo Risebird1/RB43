@@ -69,6 +69,33 @@ namespace Risebird.Business
 
             HydrateRubricRatings(audit?.AIReport);
             HydrateRubricRatings(audit?.ExpertReport);
+
+            try
+            {
+                var meeting = await _aiInterviewerService.GetAIInterviewDetailsBySessionId(sessionId);
+                var channelSkills = ParseChannelRubric(meeting?.TechSkillsInJson);
+                var questionSkills = ParseQuestionMappedSkills(meeting?.QuestionAnswerSetInJson);
+                ApplyChannelRubric(audit?.AIReport, channelSkills);
+                ApplyChannelRubric(audit?.ExpertReport, channelSkills);
+                ApplyQuestionMaxes(audit?.AIReport, channelSkills, questionSkills);
+                ApplyQuestionMaxes(audit?.ExpertReport, channelSkills, questionSkills);
+            }
+            catch (Exception)
+            {
+                // Channel rubric overlay is display/accumulation; a miss must not hide the audit.
+            }
+
+            try
+            {
+                var evaluation = await _aiInterviewerService.GetParsedAIInterviewEvaluationBySessionId(sessionId);
+                if (audit != null)
+                    audit.LlmDetection = evaluation?.LlmDetection;
+            }
+            catch (Exception)
+            {
+                // LLM detection is informational; a parse miss must not block the audit page.
+            }
+
             return audit;
         }
 
@@ -110,7 +137,9 @@ namespace Risebird.Business
                 expertReport.ReportSource = (int)AICodeInterviewReportSourceEnum.Expert;
                 expertReport.SessionId = audit.AIReport.SessionId;
                 expertReport.InterviewId = audit.InterviewId;
+                expertReport.OverallVerdict = AIInterviewVerdict.Normalize(expertReport.OverallVerdict);
                 AlignExpertRowsToBaseline(audit.AIReport, expertReport);
+                AlignExpertRubricToBaseline(audit.AIReport, expertReport);
 
                 expertReport.RubricRatingsJson = SerializeRubricRatings(expertReport.RubricRatings);
                 foreach (var row in expertReport.QuestionRatings ?? new List<AICodeInterviewReportQuestionRatingVM>())
@@ -161,7 +190,9 @@ namespace Risebird.Business
             var sessionId = aiReport.SessionId;
 
             AddTextRow(rows, sessionId, AICodeInterviewDiscrepancyFieldTypeEnum.OverallVerdict,
-                null, null, null, aiReport.OverallVerdict, expertReport.OverallVerdict,
+                null, null, null,
+                AIInterviewVerdict.Normalize(aiReport.OverallVerdict),
+                AIInterviewVerdict.Normalize(expertReport.OverallVerdict),
                 AICodeInterviewDiscrepancySeverityEnum.Major);
 
             // Comments are recorded side by side whether or not they changed: a reworded summary is
@@ -348,18 +379,19 @@ namespace Risebird.Business
             if (evaluation == null && (videos == null || videos.Count == 0)) return null;
 
             var meeting = await _aiInterviewerService.GetAIInterviewDetailsBySessionId(sessionId);
-            var techSkillNames = ExtractTechSkillNames(meeting?.TechSkillsInJson);
+            var channelSkills = ParseChannelRubric(meeting?.TechSkillsInJson);
+            var questionSkills = ParseQuestionMappedSkills(meeting?.QuestionAnswerSetInJson);
 
             var report = new AICodeInterviewReportVM
             {
                 SessionId = sessionId.ToString(),
                 InterviewId = audit?.InterviewId ?? 0,
                 ReportSource = (int)AICodeInterviewReportSourceEnum.AI,
-                OverallVerdict = evaluation?.FinalVerdict,
+                OverallVerdict = AIInterviewVerdict.Normalize(evaluation?.FinalVerdict),
                 OverallComment = evaluation?.FinalComment,
                 OverallCommunicationRating = ToRating(evaluation?.OverallCommunicationScore),
                 OverallCommunicationComment = evaluation?.OverallCommunicationScoreReasoning,
-                RubricRatings = BuildReportRubricRatings(evaluation, techSkillNames),
+                RubricRatings = BuildReportRubricRatings(evaluation, channelSkills),
                 QuestionRatings = new List<AICodeInterviewReportQuestionRatingVM>()
             };
             report.RubricRatingsJson = SerializeRubricRatings(report.RubricRatings);
@@ -388,19 +420,44 @@ namespace Risebird.Business
                 });
             }
 
+            ApplyQuestionMaxes(report, channelSkills, questionSkills);
+
             return report;
         }
 
         /// <summary>
-        /// Report level dimensions: the assistant's rubric summary, plus the overall technical score
-        /// as a dimension of its own. Dimensions whose name matches one of the channel's tech skills
-        /// are tagged so the UI can label them "Tech skill score".
+        /// Report-level dimensions: the HM / Delivery Manager score rubric is the spine (name +
+        /// weightage as max). AI <see cref="RubricScoreSummary"/> supplies actuals/observations.
+        /// When the channel has no skills, fall back to the assistant's rubric summary.
         /// </summary>
         private static List<AICodeInterviewRubricRatingVM> BuildReportRubricRatings(
-            AIInterviewEvaluation evaluation, HashSet<string> techSkillNames)
+            AIInterviewEvaluation evaluation, List<ChannelRubricSkill> channelSkills)
         {
-            var ratings = new List<AICodeInterviewRubricRatingVM>();
+            var aiByName = (evaluation?.RubricScoreSummary ?? new List<RubricScoreSummary>())
+                .Where(r => !string.IsNullOrWhiteSpace(r.RubricItem))
+                .GroupBy(r => r.RubricItem.Trim(), StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
 
+            if (channelSkills != null && channelSkills.Count > 0)
+            {
+                var fromChannel = new List<AICodeInterviewRubricRatingVM>();
+                foreach (var skill in channelSkills)
+                {
+                    aiByName.TryGetValue(skill.SkillName, out var ai);
+                    fromChannel.Add(new AICodeInterviewRubricRatingVM
+                    {
+                        Dimension = skill.SkillName,
+                        Rating = ToRating(ai?.Score),
+                        ExpectedLevel = FirstNonEmpty(ai?.ExpectedLevel, skill.ExpectedLevel),
+                        ObservedLevel = ai?.ObservedLevel,
+                        IsTechSkill = true,
+                        MaxScore = skill.MaxScore
+                    });
+                }
+                return fromChannel;
+            }
+
+            var ratings = new List<AICodeInterviewRubricRatingVM>();
             foreach (var rubric in evaluation?.RubricScoreSummary ?? new List<RubricScoreSummary>())
             {
                 if (string.IsNullOrWhiteSpace(rubric.RubricItem)) continue;
@@ -411,7 +468,10 @@ namespace Risebird.Business
                     Rating = ToRating(rubric.Score),
                     ExpectedLevel = rubric.ExpectedLevel,
                     ObservedLevel = rubric.ObservedLevel,
-                    IsTechSkill = techSkillNames.Contains(rubric.RubricItem.Trim())
+                    IsTechSkill = false,
+                    MaxScore = rubric.MaxScore.HasValue && rubric.MaxScore.Value > 0
+                        ? ToRating(rubric.MaxScore.Value)
+                        : TryParseMaxScore(rubric.ExpectedLevel)
                 });
             }
 
@@ -428,26 +488,190 @@ namespace Risebird.Business
             return ratings;
         }
 
-        private static HashSet<string> ExtractTechSkillNames(string techSkillsInJson)
+        private static void ApplyChannelRubric(AICodeInterviewReportVM report, List<ChannelRubricSkill> channelSkills)
         {
-            var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            if (string.IsNullOrWhiteSpace(techSkillsInJson)) return names;
+            if (report == null || channelSkills == null || channelSkills.Count == 0) return;
+
+            var existing = report.RubricRatings ?? new List<AICodeInterviewRubricRatingVM>();
+            var aligned = new List<AICodeInterviewRubricRatingVM>();
+
+            foreach (var skill in channelSkills)
+            {
+                var match = existing.FirstOrDefault(r =>
+                    string.Equals(r.Dimension, skill.SkillName, StringComparison.OrdinalIgnoreCase));
+                aligned.Add(new AICodeInterviewRubricRatingVM
+                {
+                    Dimension = skill.SkillName,
+                    Rating = match?.Rating,
+                    ExpectedLevel = FirstNonEmpty(match?.ExpectedLevel, skill.ExpectedLevel),
+                    ObservedLevel = match?.ObservedLevel,
+                    IsTechSkill = true,
+                    MaxScore = skill.MaxScore
+                });
+            }
+
+            report.RubricRatings = aligned;
+        }
+
+        private static void ApplyQuestionMaxes(AICodeInterviewReportVM report,
+            List<ChannelRubricSkill> channelSkills, List<QuestionMappedSkill> questionSkills)
+        {
+            if (report?.QuestionRatings == null) return;
+
+            var skills = channelSkills ?? new List<ChannelRubricSkill>();
+            var mapped = questionSkills ?? new List<QuestionMappedSkill>();
+
+            foreach (var row in report.QuestionRatings)
+            {
+                var skillName = mapped
+                    .FirstOrDefault(m => m.DisplayOrder == row.DisplayOrder)?.SkillName;
+                if (string.IsNullOrWhiteSpace(skillName) && !string.IsNullOrWhiteSpace(row.QuestionText))
+                {
+                    skillName = mapped.FirstOrDefault(m =>
+                        string.Equals(m.QuestionText, row.QuestionText, StringComparison.OrdinalIgnoreCase))
+                        ?.SkillName;
+                }
+
+                ChannelRubricSkill skill = null;
+                if (!string.IsNullOrWhiteSpace(skillName))
+                {
+                    skill = skills.FirstOrDefault(s =>
+                        string.Equals(s.SkillName, skillName, StringComparison.OrdinalIgnoreCase));
+                }
+
+                row.MaxScore = skill?.MaxScore;
+            }
+        }
+
+        private static void AlignExpertRubricToBaseline(AICodeInterviewReportVM aiReport, AICodeInterviewReportVM expertReport)
+        {
+            var baseline = aiReport.RubricRatings ?? new List<AICodeInterviewRubricRatingVM>();
+            var posted = expertReport.RubricRatings ?? new List<AICodeInterviewRubricRatingVM>();
+            if (posted.Count == 0) return;
+
+            var aligned = new List<AICodeInterviewRubricRatingVM>();
+
+            foreach (var baseRow in baseline)
+            {
+                var postedRow = posted.FirstOrDefault(r =>
+                    string.Equals(r.Dimension, baseRow.Dimension, StringComparison.OrdinalIgnoreCase));
+                if (postedRow == null)
+                {
+                    aligned.Add(new AICodeInterviewRubricRatingVM
+                    {
+                        Dimension = baseRow.Dimension,
+                        Rating = baseRow.Rating,
+                        ExpectedLevel = baseRow.ExpectedLevel,
+                        ObservedLevel = baseRow.ObservedLevel,
+                        IsTechSkill = baseRow.IsTechSkill,
+                        MaxScore = baseRow.MaxScore
+                    });
+                    continue;
+                }
+
+                postedRow.Dimension = baseRow.Dimension;
+                postedRow.IsTechSkill = baseRow.IsTechSkill;
+                postedRow.MaxScore = baseRow.MaxScore;
+                postedRow.ExpectedLevel = baseRow.ExpectedLevel;
+                aligned.Add(postedRow);
+            }
+
+            expertReport.RubricRatings = aligned;
+        }
+
+        private sealed class ChannelRubricSkill
+        {
+            public string SkillName { get; set; }
+            public decimal? MaxScore { get; set; }
+            public string ExpectedLevel { get; set; }
+        }
+
+        private sealed class QuestionMappedSkill
+        {
+            public int DisplayOrder { get; set; }
+            public string SkillName { get; set; }
+            public string QuestionText { get; set; }
+        }
+
+        private static List<ChannelRubricSkill> ParseChannelRubric(string techSkillsInJson)
+        {
+            var list = new List<ChannelRubricSkill>();
+            if (string.IsNullOrWhiteSpace(techSkillsInJson)) return list;
 
             try
             {
                 var parsed = JsonConvert.DeserializeObject<JArray>(techSkillsInJson);
                 foreach (var item in parsed ?? new JArray())
                 {
-                    var name = item?["SkillName"]?.ToString();
-                    if (!string.IsNullOrWhiteSpace(name)) names.Add(name.Trim());
+                    var name = (item?["SkillName"] ?? item?["skillName"] ?? item?["Skill"])?.ToString();
+                    if (string.IsNullOrWhiteSpace(name)) continue;
+
+                    decimal? max = null;
+                    var weightToken = item?["Weightage"] ?? item?["weightage"] ?? item?["Weight"];
+                    if (weightToken != null
+                        && decimal.TryParse(weightToken.ToString(), NumberStyles.Number, CultureInfo.InvariantCulture, out var weight)
+                        && weight > 0)
+                    {
+                        max = Math.Round(weight, 2);
+                    }
+
+                    var expected = (item?["LevelName"] ?? item?["levelName"])?.ToString();
+                    if (string.IsNullOrWhiteSpace(expected) && item?["LevelId"] != null)
+                        expected = item["LevelId"].ToString();
+
+                    list.Add(new ChannelRubricSkill
+                    {
+                        SkillName = name.Trim(),
+                        MaxScore = max,
+                        ExpectedLevel = string.IsNullOrWhiteSpace(expected) ? null : expected.Trim()
+                    });
                 }
             }
             catch (JsonException)
             {
-                // Tech skill names only drive a UI label, so malformed JSON is not worth failing over.
+                return list;
             }
 
-            return names;
+            return list;
+        }
+
+        private static List<QuestionMappedSkill> ParseQuestionMappedSkills(string questionAnswerSetInJson)
+        {
+            var list = new List<QuestionMappedSkill>();
+            if (string.IsNullOrWhiteSpace(questionAnswerSetInJson)) return list;
+
+            try
+            {
+                var parsed = JsonConvert.DeserializeObject<JArray>(questionAnswerSetInJson);
+                var index = 0;
+                foreach (var item in parsed ?? new JArray())
+                {
+                    var skill = (item?["mapped_rubric_parameters"] ?? item?["SkillName"] ?? item?["skillName"])?.ToString();
+                    var question = (item?["question"] ?? item?["Question"])?.ToString();
+                    list.Add(new QuestionMappedSkill
+                    {
+                        DisplayOrder = index,
+                        SkillName = string.IsNullOrWhiteSpace(skill) ? null : skill.Trim(),
+                        QuestionText = string.IsNullOrWhiteSpace(question) ? null : question.Trim()
+                    });
+                    index += 1;
+                }
+            }
+            catch (JsonException)
+            {
+                return list;
+            }
+
+            return list;
+        }
+
+        private static string FirstNonEmpty(params string[] values)
+        {
+            foreach (var value in values)
+            {
+                if (!string.IsNullOrWhiteSpace(value)) return value.Trim();
+            }
+            return null;
         }
 
         #endregion
@@ -523,6 +747,17 @@ namespace Risebird.Business
 
         private static decimal? ToRating(float value)
             => Math.Round((decimal)value, 2);
+
+        private static decimal? TryParseMaxScore(string expectedLevel)
+        {
+            if (string.IsNullOrWhiteSpace(expectedLevel)) return null;
+            if (decimal.TryParse(expectedLevel.Trim(), NumberStyles.Number, CultureInfo.InvariantCulture, out var max)
+                && max > 0)
+            {
+                return Math.Round(max, 2);
+            }
+            return null;
+        }
 
         #endregion
     }

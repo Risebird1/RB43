@@ -5,6 +5,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
@@ -1957,7 +1958,7 @@ namespace Risebird.CommonHelper
                 if (!useResponsesApi || string.IsNullOrWhiteSpace(promptId))
                     return null;
 
-                var input = $"Generate an output in JSON format as per the instructions fed to the assistant. The techrubrics in json are as follows:{techSkillsJson}. The mapped_rubric_parameters, question, candidate's answer and ideal answer set object in json are as follows: {questionAnswerSetJson}";
+                var input = $"Generate an output in JSON format as per the instructions fed to the assistant. {AIInterviewVerdict.OutputSchemaInstruction} The techrubrics in json are as follows:{techSkillsJson}. The mapped_rubric_parameters, question, candidate's answer and ideal answer set object in json are as follows: {questionAnswerSetJson}";
                 return await _openAIResponsesHelper.CreateJsonResponseAsync(
                     input,
                     operationType: "AIInterviewEvaluation",

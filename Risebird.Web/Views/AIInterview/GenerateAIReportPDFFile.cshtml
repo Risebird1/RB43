@@ -1,3 +1,4 @@
+@using Risebird.Entities.ViewModel
 @model Risebird.Entities.ViewModel.AIInterviewReportWrapperClass
 @{
     ViewData["Title"] = "AI Interview Report";
@@ -695,14 +696,21 @@
                     {
                         <div class="vbox-row">
                             <div class="vbox-key"><i class="fa fa-gavel" style="margin-right:5px;"></i>Final Verdict</div>
-                            <div class="vbox-val">@Model.AIInterviewEvaluation.FinalVerdict</div>
+                            <div class="vbox-val">@AIInterviewVerdict.Normalize(Model.AIInterviewEvaluation.FinalVerdict)</div>
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalComment))
+                    @if (Model.AIInterviewEvaluation.LlmDetection != null)
                     {
                         <div class="vbox-row">
-                            <div class="vbox-key"><i class="fa fa-comment" style="margin-right:5px;"></i>Final Comment</div>
-                            <div class="vbox-val">@Model.AIInterviewEvaluation.FinalComment</div>
+                            <div class="vbox-key"><i class="fa fa-eye" style="margin-right:5px;"></i>LLM Detection</div>
+                            <div class="vbox-val">
+                                Informational only.
+                                Suspected: @(Model.AIInterviewEvaluation.LlmDetection.LlmResponseSuspected ? "Yes" : "No")
+                                @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.LlmDetection.EvidenceComment))
+                                {
+                                    <span> — @Model.AIInterviewEvaluation.LlmDetection.EvidenceComment</span>
+                                }
+                            </div>
                         </div>
                     }
                 </div>

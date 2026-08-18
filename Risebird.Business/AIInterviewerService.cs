@@ -189,31 +189,7 @@ namespace Risebird.Business
         }
 
         private AIInterviewEvaluation TryParseEvaluation(string raw)
-        {
-            if (string.IsNullOrWhiteSpace(raw)) return null;
-
-            var cleaned = raw.Trim();
-            if (cleaned.StartsWith("```json")) cleaned = cleaned.Substring(6).TrimStart();
-            if (cleaned.EndsWith("```")) cleaned = cleaned.Substring(0, cleaned.Length - 3).TrimEnd();
-            cleaned = cleaned.TrimStart('n');
-
-            try
-            {
-                var strict = JsonConvert.DeserializeObject<AIInterviewEvaluation>(cleaned);
-                if (strict != null &&
-                    (strict.QuestionRatings != null || strict.RubricScoreSummary != null || strict.LlmDetection != null ||
-                     !string.IsNullOrEmpty(strict.FinalVerdict) || !string.IsNullOrEmpty(strict.FinalComment) ||
-                     strict.OverallTechnicalScore != 0 || strict.OverallCommunicationScore != 0))
-                {
-                    return strict;
-                }
-            }
-            catch
-            {
-                // Not structured JSON (e.g. adaptive interviews return ready-to-render HTML) -> no evaluation.
-            }
-            return null;
-        }
+            => AIInterviewEvaluation.TryParse(raw);
 
         public async Task LogTranscript(Guid sessionId, string role, string message, int? deliveryHeadQuestionId = null)
         {

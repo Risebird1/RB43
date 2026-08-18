@@ -3386,11 +3386,10 @@
                                 }
                                 string GetFvBadgeClass(string verdict)
                                 {
-                                    if (string.IsNullOrWhiteSpace(verdict)) return null;
-                                    var v = verdict.Trim().ToLowerInvariant();
-                                    if (v.Contains("reject")) return "ai-final-verdict-reject";
-                                    if (v == "selected" || v.Contains("strongly selected") || v.Contains("marginally selected") || v.Contains("marginal selected")) return "ai-final-verdict-select";
-                                    if (v == "average") return "ai-final-verdict-average";
+                                    if (AIInterviewVerdict.IsRejectFamily(verdict)) return "ai-final-verdict-reject";
+                                    if (AIInterviewVerdict.IsSelectFamily(verdict)) return "ai-final-verdict-select";
+                                    if (!string.IsNullOrWhiteSpace(verdict) && verdict.Trim().Equals("average", StringComparison.OrdinalIgnoreCase))
+                                        return "ai-final-verdict-average";
                                     return null;
                                 }
                             }
@@ -3416,7 +3415,7 @@
                                 }
                                 @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict))
                                 {
-                                    var fv = Model.AIInterviewEvaluation.FinalVerdict.Trim();
+                                    var fv = AIInterviewVerdict.Normalize(Model.AIInterviewEvaluation.FinalVerdict.Trim());
                                     var fvClass = GetFvBadgeClass(fv);
                                     <div class="rb-ai-metric">
                                         <div class="rb-ai-metric__main">
@@ -3550,7 +3549,7 @@
                                     {
                                         @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict))
                                         {
-                                            var fvPanel = Model.AIInterviewEvaluation.FinalVerdict.Trim();
+                                            var fvPanel = AIInterviewVerdict.Normalize(Model.AIInterviewEvaluation.FinalVerdict.Trim());
                                             var fvPanelClass = GetFvBadgeClass(fvPanel);
                                             <div class="rb-ai-comment-label">Final Verdict</div>
                                             <div style="margin-bottom:8px;">
@@ -3592,12 +3591,27 @@
                                         @if (Model.AIInterviewEvaluation.LlmDetection.SuspiciousInstances != null && Model.AIInterviewEvaluation.LlmDetection.SuspiciousInstances.Any())
                                         {
                                             <div class="rb-ai-comment-label" style="margin-top:8px;">Suspicious Instances</div>
-                                            <ul style="margin:0;padding-left:18px;font-size:12.5px;line-height:1.5;color:#475569;">
-                                                @foreach (var item in Model.AIInterviewEvaluation.LlmDetection.SuspiciousInstances)
-                                                {
-                                                    <li>@item</li>
-                                                }
-                                            </ul>
+                                            <p style="margin:0 0 6px;font-size:11px;color:#64748b;">Informational only — not a skill or communication score.</p>
+                                            <table style="width:100%;border-collapse:collapse;font-size:12.5px;line-height:1.5;color:#475569;">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="text-align:left;padding:4px 8px 4px 0;border-bottom:1px solid #e2e8f0;">Question</th>
+                                                        <th style="text-align:left;padding:4px 0;border-bottom:1px solid #e2e8f0;">Evidence</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.AIInterviewEvaluation.LlmDetection.SuspiciousInstances)
+                                                    {
+                                                        var splitAt = item == null ? -1 : item.IndexOf(": ", StringComparison.Ordinal);
+                                                        var questionPart = splitAt > 0 ? item.Substring(0, splitAt) : "—";
+                                                        var evidencePart = splitAt > 0 ? item.Substring(splitAt + 2) : item;
+                                                        <tr>
+                                                            <td style="vertical-align:top;padding:6px 8px 6px 0;">@questionPart</td>
+                                                            <td style="vertical-align:top;padding:6px 0;">@evidencePart</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
                                         }
                                     }
                                 </div>
@@ -5535,7 +5549,7 @@
                 }
                 // Verdicts are short status phrases — drop accidental trailing prose
                 if (fields.verdict && fields.verdict.length > 80) {
-                    var short = fields.verdict.match(/^(Not\s+Recommended|Recommended|Selected|Rejected|Strong\s+Hire|No\s+Hire|Hire|Pass|Fail|Borderline|Average|Good|Excellent)(?:\b|[.!]|$)/i);
+                    var short = fields.verdict.match(/^(Not\s+Recommended|Recommended|Strongly\s+Selected|Marginally\s+Selected|Marginally\s+Rejected|Strongly\s+Rejected|Selected|Rejected|Strong\s+Hire|No\s+Hire|Hire|Pass|Fail|Borderline|Average|Good|Excellent)(?:\b|[.!]|$)/i);
                     if (short) {
                         if (!fields.finalComment) {
                             var rest = fields.verdict.substring(short[0].length).replace(/^[\s contr-]+/, '').trim();
