@@ -9391,14 +9391,14 @@ NEVER:
                         var model = JsonConvert.DeserializeObject<TranscriptAnalysisSchema>(aiAnalysis.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value);
                         if (model != null)
                         {
-                            await _meetingService.SaveAITranscriptAnalysis(item.InterviewId, model);
+                            await _meetingService.SaveAITranscriptAnalysis(interviewid, model);
                         }
                         try
                         {
                             var jsonToProcess = aiAnalysis.Data?.First()?.Content?.FirstOrDefault()?.Text?.Value.Replace("```json", "").Replace("```", "");
                             var modelset = JsonConvert.DeserializeObject<TranscriptAnalysisSchema>(jsonToProcess);
                             //TransScript Analysis save to db
-                            bool serviceResult = await _meetingService.SaveQcInterviewAIevaluation(item.InterviewId, modelset, jsonToProcess, true);
+                            bool serviceResult = await _meetingService.SaveQcInterviewAIevaluation(interviewid, modelset, jsonToProcess, true);
                             if (serviceResult)
                             {
                                 return Json("Successfully generated the AI evaluation");
