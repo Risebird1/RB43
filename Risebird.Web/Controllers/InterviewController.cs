@@ -10523,6 +10523,62 @@ namespace Risebird.Web.Controllers
             return false;
         }
         [HttpGet]
+        public async Task<JsonResult> GenerateTranscriptSummary(int interviewId)
+        {
+            try
+            {
+                var item = await _meetingService.GetPendingQcInterviewAIMergeById(interviewId);
+                if (item == null)
+                {
+                    item = new QcInterviewAIMergePendingRow();
+                }
+
+                if (string.IsNullOrEmpty(item.AudioTranscriptFileLink))
+                {
+                    return Json("Missing transcript link");
+                }
+
+                string transcriptString;
+                using (var client = new HttpClient())
+                {
+                    transcriptString = await client.GetStringAsync(item.AudioTranscriptFileLink);
+                }
+
+                if (string.IsNullOrEmpty(transcriptString))
+                {
+                    return Json("Transcript is empty or could not be downloaded");
+                }
+
+                var runResult = await _assistantServiceHelper.GenerateIntervieweeResponseExtraction(transcriptString);
+                var transcriptSummaryJson = OpenAIResponsesHelper.CleanJsonResponseText(
+                    runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value);
+
+                if (string.IsNullOrWhiteSpace(transcriptSummaryJson))
+                {
+                    return Json("AI returned an empty transcript summary");
+                }
+
+                if (!OpenAIResponsesHelper.TryValidateJsonObject(transcriptSummaryJson, out _))
+                {
+                    return Json("AI returned an incomplete or invalid transcript summary JSON. Please retry.");
+                }
+
+                var saved = await _meetingService.UpdateTranscriptSummary(interviewId, transcriptSummaryJson);
+                if (saved)
+                {
+                    return Json("Transcript summary generated successfully.");
+                }
+
+                return Json("Failed to save transcript summary.");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Transcript summary generation failed.");
+            }
+        }
+
+        [HttpGet]
         public async Task<JsonResult> FetchMoreDetailsInterview(int interviewId)
         {
             var model = await _meetingService.FetchMoreDetailsInterview(interviewId) ?? Enumerable.Empty<MeetingVM>();

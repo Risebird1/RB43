@@ -2028,16 +2028,19 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(transcriptData))
-                    return null;
-
                 var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
                 if (useResponsesApi)
                 {
+                    var input = $"Generate an output in JSON format as per the instructions fed to the assistant. {transcriptData}";
+                    var maxOutputTokens = _configuration.GetValue<int?>("OpenAI:IntervieweeResponseExtractionMaxOutputTokens");
+                    if (!maxOutputTokens.HasValue || maxOutputTokens.Value <= 0)
+                        maxOutputTokens = 16384;
+
                     return await _openAIResponsesHelper.CreateJsonResponseAsync(
-                        transcriptData,
+                        input,
                         operationType: "IntervieweeResponseExtraction",
-                        promptId: _configuration["OpenAI:IntervieweeResponseExtractionPromptId"]);
+                        promptId: _configuration["OpenAI:IntervieweeResponseExtractionPromptId"],
+                        maxOutputTokens: maxOutputTokens);
                 }
 
                 return null;

@@ -21,7 +21,8 @@ namespace Risebird.CommonHelper.Interface
         Task<RunResult> CreateJsonResponseAsync(
             object input,
             string operationType,
-            string promptId);
+            string promptId,
+            int? maxOutputTokens = null);
 
         /// <summary>
         /// Same as CreateJsonResponseAsync but returns the OpenAI response id for multi-turn chaining.
@@ -30,7 +31,8 @@ namespace Risebird.CommonHelper.Interface
             string input,
             string operationType,
             string promptId,
-            string previousResponseId = null);
+            string previousResponseId = null,
+            int? maxOutputTokens = null);
 
         /// <summary>
         /// Calls the Responses API without JSON output formatting (free-form text).
