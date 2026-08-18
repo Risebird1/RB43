@@ -241,6 +241,22 @@ namespace Risebird.Business.Interface
         Task<int> FetchIRFInterviewerBillingCycle(int irfId);
         Task<IEnumerable<Users>> GetClientUsersByIRFandAdmin(int irfId);
         Task<CallibrationCallVM> GetCalibrationMeetingDetailsById(int id);
-        Task<bool> SaveCalibrationMeetingNotesById(int id,string Notes);
+        Task<bool> SaveCalibrationMeetingNotesById(int id, string Notes);
+
+        Task<bool> SaveSMEQuestionReview(SkillComment question, string changedBy, IEnumerable<QuestionReviewLogRow> logs);
+        Task<bool> ConfirmSMEQuestion(int id, string vettedBy);
+        Task<bool> RejectSMEQuestion(int id, string vettedBy, string reason);
+        Task<bool> StampAIDraftIfEmpty(int id);
+        Task<bool> StampQuestionAsDraft(int id);
+        Task<bool> ApplyGeneratedQuestionReviewFields(SkillComment question);
+        Task<bool> MarkAIVideoStatus(int id, byte status);
+        Task<IEnumerable<AICodeInterviewQuestionSetVm>> GetAICodeInterviewQuestionSets(int irfId);
+        Task<int> SaveAICodeInterviewQuestionSet(AICodeInterviewQuestionSetVm set, string actor);
+        Task<bool> SetAICodeInterviewQuestionSetStatus(int setId, byte reviewStatus, string actor);
+        Task<bool> SoftDeleteAICodeInterviewQuestionSet(int setId);
+        Task<bool> IsClientExpertSignOffRequiredAndMissing(int irfId);
+        Task<ExpertInLoopClientConfirmationVm> GetExpertInLoopConfirmation(int irfId, int? seId, byte scope);
+        Task<bool> SaveExpertInLoopClientConfirmation(int irfId, int? seId, byte scope, byte status, string clientUserId, string comment, int? interviewerProfileId);
+        Task<bool> GetRequireClientExpertSignOff(int irfId);
     }
 }

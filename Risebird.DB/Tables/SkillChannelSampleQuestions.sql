@@ -183,6 +183,16 @@ BEGIN
     Add IsAIGenerated bit NULL
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'MaxScore')
+      AND Object_ID = Object_ID(N'SkillChannelSampleQuestions'))
+BEGIN
+    ALTER TABLE SkillChannelSampleQuestions
+    Add MaxScore int NOT NULL CONSTRAINT DF_SCSQ_MaxScore_tbl DEFAULT (0)
+END
+
 End
 GO
 

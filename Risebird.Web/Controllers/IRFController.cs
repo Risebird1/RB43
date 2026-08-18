@@ -9250,15 +9250,38 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> GetClientShareInterviewerInsights(int irfId, int userId, string Type = null)
         {
-            var isClientShare = IsClientShareRequest(irfId, Type);
+            var isClientShare = IsClientShareRequest(irfId, Type)
+                || DeliveryHeadInstructionViewMode.IsClientShareForIrf(HttpContext, irfId)
+                || DeliveryHeadInstructionViewMode.IsClientShareType(Type);
             var isSmeView = DeliveryHeadInstructionViewMode.IsSmeViewForIrf(HttpContext, irfId);
 
-            if (isClientShare || isSmeView)
-            {
+            if (isSmeView)
                 return StatusCode(403);
-            }
 
-            return Unauthorized();
+            if (!isClientShare)
+                return Unauthorized();
+
+            try
+            {
+                var model = await _irfService.GetEditIRF(irfId, 0, false);
+                var iv = model?.InterviewerCollection?
+                    .FirstOrDefault(x => x.UserId == userId && x.IsActive);
+                if (iv == null || string.IsNullOrWhiteSpace(iv.EmailId))
+                    return PartialView("~/Views/Interviewer/InterviewerInsights.cshtml", new InterviewerInsightsVM());
+
+                var result = await _interviewerService.GetInterviewerInsights(iv.EmailId, model.IRFId)
+                    ?? new InterviewerInsightsVM();
+                DeliveryHeadInstructionViewMode.StripInterviewerInsightsForClientView(result);
+                result.IRFId = model.IRFId;
+                ViewBag.type = "Client";
+                ViewBag.RegularAccess = "";
+                return PartialView("~/Views/Interviewer/InterviewerInsights.cshtml", result);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return PartialView("~/Views/Interviewer/InterviewerInsights.cshtml", new InterviewerInsightsVM());
+            }
         }
 
         [HttpGet]
@@ -9919,6 +9942,19 @@ namespace Risebird.Web.Controllers
 
                 var rubricPrompt = DmIvQuestionRubricHelper.BuildRubricPromptSection(irfVm.SkillCollection);
                 var rubricInput = $"Role: {irfVm.IRFId}\nInterview Type: Technical\n\n{rubricPrompt}";
+                rubricInput += @"
+
+Also return a complete SME-review draft for each question:
+- question_gist: spoken avatar script in plain language. NEVER include code syntax.
+- max_score: integer (use 20 unless the rubric weight implies otherwise)
+- time_limit_minutes: integer
+- is_coding_question: boolean
+- question_slot: short stable id (e.g. PYTHON-ALG-1) so variants of the same prompt share a slot
+- variant: A or B
+- expected_output, explanation, safe_implementation, semantic_matching_criteria, misconception_red_flags
+  (five separate strings; the expected_candidate_answer.strong_answer may still be included)
+Also return proposed_sets: an array of { ""name"": ""Set A"", ""slots"": [""PYTHON-ALG-1"", ...] }
+with one question slot per rubric skill and no duplicate slots in a set.";
 
                 if (useVoiceTranscript)
                 {
@@ -10092,6 +10128,10 @@ namespace Risebird.Web.Controllers
                 var created = questions?.OrderByDescending(q => q.id)
                     .FirstOrDefault(q => string.Equals(q.SkillName, skillName, StringComparison.OrdinalIgnoreCase)
                         && string.Equals(q.Comment, comment.Trim(), StringComparison.Ordinal));
+                if (created != null && created.id > 0)
+                {
+                    try { await _irfService.StampQuestionAsDraft(created.id); } catch { }
+                }
                 return Json(new { success = true, id = created?.id ?? 0 });
             }
             catch (Exception ex)
@@ -10099,6 +10139,429 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false, message = "Save failed." });
             }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetSMEQuestionReviewBundle(int irfId, string Type = null)
+        {
+            try
+            {
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                    return Json(new { success = false, message = "Forbidden" });
+
+                var questions = await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(irfId, emailId: null)
+                    ?? new List<SkillComment>();
+                IEnumerable<AICodeInterviewQuestionSetVm> sets = new List<AICodeInterviewQuestionSetVm>();
+                try { sets = await _irfService.GetAICodeInterviewQuestionSets(irfId); }
+                catch { }
+
+                var isClient = IsClientShareRequest(irfId, Type);
+                ExpertInLoopClientConfirmationVm expert = null;
+                try { expert = await BuildExpertInLoopVm(irfId, null, 0, questions, sets); }
+                catch { }
+
+                if (isClient)
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        isClientShare = true,
+                        questions = new List<SkillComment>(),
+                        sets = (sets ?? Enumerable.Empty<AICodeInterviewQuestionSetVm>()).Select(s => new { s.Id, s.Name, s.ReviewStatus }),
+                        expert
+                    });
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    isClientShare = isClient,
+                    questions,
+                    sets,
+                    expert
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not load review queue." });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> SaveSMEQuestionReview([FromBody] SMEQuestionSaveRequest req)
+        {
+            try
+            {
+                if (req == null || req.IrfId <= 0 || req.Id <= 0)
+                    return Json(new { success = false, message = "Invalid request." });
+                if (!await AuthorizeDhiMutatingAccessAsync(req.IrfId))
+                    return Json(new { success = false, message = "Forbidden" });
+
+                var existing = await _irfService.GetDeliveryHeadSampleQuestionById(req.Id);
+                if (existing == null)
+                    return Json(new { success = false, message = "Question not found." });
+                if (existing.IRFId <= 0) existing.IRFId = req.IrfId;
+                if (existing.IRFId != req.IrfId)
+                    return Json(new { success = false, message = "Question not found." });
+
+                SmeQuestionReviewHelper.ApplySave(existing, req);
+                var actor = SmeQuestionReviewHelper.NormalizeEmail(HttpContext.Session.GetString("email"));
+                var logs = SmeQuestionReviewHelper.BuildReviewLogs(existing, actor);
+                var saved = await _irfService.SaveSMEQuestionReview(existing, actor, logs);
+                return Json(new
+                {
+                    success = saved,
+                    staleVideo = existing.AIVideoStatus == 3,
+                    blockers = SmeQuestionReviewHelper.ConfirmBlockers(existing),
+                    gistHasCode = SmeQuestionReviewHelper.GistContainsCodeSyntax(existing.QuestionGist),
+                    spokenSeconds = SmeQuestionReviewHelper.SpokenSeconds(existing.QuestionGist)
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Save failed." });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ConfirmSMEQuestion([FromBody] SMEQuestionConfirmRequest req)
+        {
+            try
+            {
+                if (req == null || req.IrfId <= 0 || req.Id <= 0)
+                    return Json(new { success = false, message = "Invalid request." });
+                if (!await AuthorizeDhiMutatingAccessAsync(req.IrfId))
+                    return Json(new { success = false, message = "Forbidden" });
+
+                var existing = await _irfService.GetDeliveryHeadSampleQuestionById(req.Id);
+                if (existing == null)
+                    return Json(new { success = false, message = "Question not found." });
+                if (existing.IRFId <= 0) existing.IRFId = req.IrfId;
+                if (existing.IRFId != req.IrfId)
+                    return Json(new { success = false, message = "Question not found." });
+
+                if (req.Question != null)
+                {
+                    req.Question.IrfId = req.IrfId;
+                    req.Question.Id = req.Id;
+                    SmeQuestionReviewHelper.ApplySave(existing, req.Question);
+                }
+
+                var irf = await _irfService.GetEditIRF(req.IrfId, 0, false);
+                var requireVideo = irf != null && DmSynthesiaVideoViewMode.UsesSynthesiaVideos(irf.IsAIInterview, irf.AIInterviewType);
+                var blockers = SmeQuestionReviewHelper.ConfirmBlockers(existing, requireVideo);
+                if (blockers.Count > 0)
+                    return Json(new { success = false, blockers });
+
+                var actor = SmeQuestionReviewHelper.NormalizeEmail(HttpContext.Session.GetString("email"));
+                var logs = SmeQuestionReviewHelper.BuildReviewLogs(existing, actor);
+                await _irfService.SaveSMEQuestionReview(existing, actor, logs);
+                var ok = await _irfService.ConfirmSMEQuestion(existing.id, actor);
+                return Json(new { success = ok });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Confirm failed." });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ConfirmSMEQuestionsForSkill([FromBody] SMEQuestionSaveRequest req)
+        {
+            try
+            {
+                if (req == null || req.IrfId <= 0 || string.IsNullOrWhiteSpace(req.SkillName))
+                    return Json(new { success = false, message = "Invalid request." });
+                if (!await AuthorizeDhiMutatingAccessAsync(req.IrfId))
+                    return Json(new { success = false, message = "Forbidden" });
+
+                var questions = (await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(req.IrfId, null))?.ToList()
+                    ?? new List<SkillComment>();
+                var irf = await _irfService.GetEditIRF(req.IrfId, 0, false);
+                var requireVideo = irf != null && DmSynthesiaVideoViewMode.UsesSynthesiaVideos(irf.IsAIInterview, irf.AIInterviewType);
+                var actor = SmeQuestionReviewHelper.NormalizeEmail(HttpContext.Session.GetString("email"));
+                var confirmed = 0;
+                var skipped = 0;
+                foreach (var q in questions.Where(x => string.Equals(x.SkillName, req.SkillName, StringComparison.OrdinalIgnoreCase)))
+                {
+                    if (q.VettingStatus == 2) continue;
+                    var blockers = SmeQuestionReviewHelper.ConfirmBlockers(q, requireVideo);
+                    if (blockers.Count > 0) { skipped++; continue; }
+                    if (await _irfService.ConfirmSMEQuestion(q.id, actor)) confirmed++;
+                }
+                return Json(new { success = true, confirmed, skipped });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Confirm all failed." });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> RejectSMEQuestion([FromBody] SMEQuestionRejectRequest req)
+        {
+            try
+            {
+                if (req == null || req.IrfId <= 0 || req.Id <= 0 || string.IsNullOrWhiteSpace(req.Reason))
+                    return Json(new { success = false, message = "A rejection reason is required." });
+                if (!await AuthorizeDhiMutatingAccessAsync(req.IrfId))
+                    return Json(new { success = false, message = "Forbidden" });
+
+                var existing = await _irfService.GetDeliveryHeadSampleQuestionById(req.Id);
+                if (existing == null)
+                    return Json(new { success = false, message = "Question not found." });
+                if (existing.IRFId <= 0) existing.IRFId = req.IrfId;
+                if (existing.IRFId != req.IrfId)
+                    return Json(new { success = false, message = "Question not found." });
+
+                var actor = SmeQuestionReviewHelper.NormalizeEmail(HttpContext.Session.GetString("email"));
+                var ok = await _irfService.RejectSMEQuestion(req.Id, actor, req.Reason.Trim());
+                return Json(new { success = ok });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Reject failed." });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetAICodeInterviewQuestionSets(int irfId, string Type = null)
+        {
+            if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                return Json(new { success = false, sets = Array.Empty<object>() });
+            var sets = await _irfService.GetAICodeInterviewQuestionSets(irfId);
+            return Json(new { success = true, sets });
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> SaveAICodeInterviewQuestionSet([FromBody] SMEQuestionSetSaveRequest req)
+        {
+            try
+            {
+                if (req == null || req.IrfId <= 0 || string.IsNullOrWhiteSpace(req.Name))
+                    return Json(new { success = false, message = "Set name is required." });
+                if (!await AuthorizeDhiMutatingAccessAsync(req.IrfId))
+                    return Json(new { success = false, message = "Forbidden" });
+
+                var questions = (await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(req.IrfId, null))?.ToList()
+                    ?? new List<SkillComment>();
+                var ids = req.QuestionIds ?? Array.Empty<int>();
+                foreach (var qid in ids)
+                {
+                    var q = questions.FirstOrDefault(x => x.id == qid);
+                    if (q == null || q.VettingStatus != 1)
+                        return Json(new { success = false, message = "Sets may only contain confirmed questions." });
+                }
+
+                var slots = ids.Select(id => questions.First(x => x.id == id).QuestionSlot)
+                    .Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
+                if (slots.Count != slots.Distinct(StringComparer.OrdinalIgnoreCase).Count())
+                    return Json(new { success = false, message = "A set cannot contain two variants of the same slot." });
+
+                var actor = SmeQuestionReviewHelper.NormalizeEmail(HttpContext.Session.GetString("email"));
+                var id = await _irfService.SaveAICodeInterviewQuestionSet(new AICodeInterviewQuestionSetVm
+                {
+                    Id = req.Id ?? 0,
+                    IRFId = req.IrfId,
+                    Name = req.Name.Trim(),
+                    QuestionIds = ids
+                }, actor);
+                return Json(new { success = id > 0, id });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not save set." });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ApproveAICodeInterviewQuestionSet([FromBody] SMEQuestionSetActionRequest req)
+        {
+            return await ChangeQuestionSetStatus(req, 1);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> RejectAICodeInterviewQuestionSet([FromBody] SMEQuestionSetActionRequest req)
+        {
+            return await ChangeQuestionSetStatus(req, 2);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> DeleteAICodeInterviewQuestionSet([FromBody] SMEQuestionSetActionRequest req)
+        {
+            try
+            {
+                if (req == null || !await AuthorizeDhiMutatingAccessAsync(req.IrfId))
+                    return Json(new { success = false, message = "Forbidden" });
+                var ok = await _irfService.SoftDeleteAICodeInterviewQuestionSet(req.Id);
+                return Json(new { success = ok });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> SwapAICodeInterviewQuestionSetItem([FromBody] SMEQuestionSetSwapRequest req)
+        {
+            try
+            {
+                if (req == null || !await AuthorizeDhiMutatingAccessAsync(req.IrfId))
+                    return Json(new { success = false, message = "Forbidden" });
+
+                var sets = (await _irfService.GetAICodeInterviewQuestionSets(req.IrfId))?.ToList() ?? new List<AICodeInterviewQuestionSetVm>();
+                var set = sets.FirstOrDefault(s => s.Id == req.SetId);
+                if (set == null) return Json(new { success = false, message = "Set not found." });
+
+                var questions = (await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(req.IrfId, null))?.ToList()
+                    ?? new List<SkillComment>();
+                var add = questions.FirstOrDefault(q => q.id == req.AddQuestionId);
+                var remove = questions.FirstOrDefault(q => q.id == req.RemoveQuestionId);
+                if (add == null || add.VettingStatus != 1)
+                    return Json(new { success = false, message = "Replacement must be a confirmed question." });
+                if (remove != null && !SmeQuestionReviewHelper.TextEquals(add.QuestionSlot, remove.QuestionSlot)
+                    && !string.IsNullOrWhiteSpace(remove.QuestionSlot) && !string.IsNullOrWhiteSpace(add.QuestionSlot))
+                    return Json(new { success = false, message = "Swap must stay in the same slot." });
+
+                var ids = (set.QuestionIds ?? Array.Empty<int>()).ToList();
+                var idx = ids.IndexOf(req.RemoveQuestionId);
+                if (idx < 0) return Json(new { success = false, message = "Question is not in this set." });
+                ids[idx] = req.AddQuestionId;
+
+                var actor = SmeQuestionReviewHelper.NormalizeEmail(HttpContext.Session.GetString("email"));
+                var id = await _irfService.SaveAICodeInterviewQuestionSet(new AICodeInterviewQuestionSetVm
+                {
+                    Id = set.Id,
+                    IRFId = req.IrfId,
+                    Name = set.Name,
+                    QuestionIds = ids.ToArray()
+                }, actor);
+                return Json(new { success = id > 0 });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> SaveExpertInLoopClientConfirmation([FromBody] ExpertInLoopConfirmRequest req)
+        {
+            try
+            {
+                if (req == null || req.IrfId <= 0)
+                    return Json(new { success = false, message = "Invalid request." });
+                if (!IsClientShareRequest(req.IrfId) && !DeliveryHeadInstructionViewMode.IsClientRoleProfile(HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "")))
+                    return Json(new { success = false, message = "Only the client can confirm the expert." });
+                if (!await AuthorizeClientShareAccessAsync(req.IrfId, DeliveryHeadInstructionViewMode.ClientShareTypeParam)
+                    && !await AuthorizeDhiMutatingAccessAsync(req.IrfId))
+                    return Json(new { success = false, message = "Forbidden" });
+                if (req.Status == 2 && string.IsNullOrWhiteSpace(req.ClientComment))
+                    return Json(new { success = false, message = "A comment is required." });
+
+                var clientUser = SmeQuestionReviewHelper.NormalizeEmail(HttpContext.Session.GetString("email"));
+                int? profileId = null;
+                try
+                {
+                    var irf = await _irfService.GetEditIRF(req.IrfId, 0, false);
+                    profileId = irf?.SkillChannelSMEs?.FirstOrDefault(s => s.IsSelectedForIRF)?.InterviewerProfileId;
+                }
+                catch { }
+
+                var ok = await _irfService.SaveExpertInLoopClientConfirmation(req.IrfId, req.SEId, req.Scope, req.Status, clientUser, req.ClientComment, profileId);
+                return Json(new { success = ok });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not save confirmation." });
+            }
+        }
+
+        private async Task<JsonResult> ChangeQuestionSetStatus(SMEQuestionSetActionRequest req, byte status)
+        {
+            if (req == null || !await AuthorizeDhiMutatingAccessAsync(req.IrfId))
+                return Json(new { success = false, message = "Forbidden" });
+
+            if (status == 1)
+            {
+                var sets = (await _irfService.GetAICodeInterviewQuestionSets(req.IrfId))?.ToList() ?? new List<AICodeInterviewQuestionSetVm>();
+                var set = sets.FirstOrDefault(s => s.Id == req.Id);
+                var questions = (await _clonableSkillChannelTemplateService.GetDeliveryHeadSampleQuestions(req.IrfId, null))?.ToList()
+                    ?? new List<SkillComment>();
+                var ids = set?.QuestionIds ?? Array.Empty<int>();
+                foreach (var qid in ids)
+                {
+                    var q = questions.FirstOrDefault(x => x.id == qid);
+                    if (q == null || q.VettingStatus != 1)
+                        return Json(new { success = false, message = "Every question in the set must be confirmed." });
+                }
+                var slots = ids.Select(id => questions.First(x => x.id == id).QuestionSlot)
+                    .Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
+                if (slots.Count != slots.Distinct(StringComparer.OrdinalIgnoreCase).Count())
+                    return Json(new { success = false, message = "A set cannot contain two variants of the same slot." });
+            }
+
+            var actor = SmeQuestionReviewHelper.NormalizeEmail(HttpContext.Session.GetString("email"));
+            var ok = await _irfService.SetAICodeInterviewQuestionSetStatus(req.Id, status, actor);
+            return Json(new { success = ok });
+        }
+
+        private async Task<ExpertInLoopClientConfirmationVm> BuildExpertInLoopVm(
+            int irfId, int? seId, byte scope, IList<SkillComment> questions, IEnumerable<AICodeInterviewQuestionSetVm> sets)
+        {
+            var vm = await _irfService.GetExpertInLoopConfirmation(irfId, seId, scope) ?? new ExpertInLoopClientConfirmationVm
+            {
+                IRFId = irfId,
+                Scope = scope,
+                Status = 0
+            };
+
+            questions = questions ?? new List<SkillComment>();
+            vm.ConfirmedCount = questions.Count(q => q.VettingStatus == 1);
+            vm.RejectedCount = questions.Count(q => q.VettingStatus == 2);
+            vm.CorrectedCount = questions.Count(q => !string.IsNullOrWhiteSpace(q.AIDraftPayload) && SmeQuestionReviewHelper.BuildReviewLogs(q, null).Count > 0);
+            vm.ApprovedSetNames = string.Join(", ", (sets ?? Enumerable.Empty<AICodeInterviewQuestionSetVm>()).Where(s => s.ReviewStatus == 1).Select(s => s.Name));
+            var signed = questions.Where(q => q.VettedOn.HasValue).Select(q => q.VettedOn.Value).ToList();
+            if (signed.Count > 0)
+            {
+                var when = signed.Max();
+                vm.SignedOffOn = when.ToString("dd MMM yyyy");
+                vm.ReviewedOn = vm.SignedOffOn;
+            }
+
+            try
+            {
+                var irf = await _irfService.GetEditIRF(irfId, 0, false);
+                var sme = irf?.SkillChannelSMEs?.FirstOrDefault(s => s.IsSelectedForIRF)
+                    ?? irf?.SkillChannelSMEs?.FirstOrDefault();
+                var iv = irf?.InterviewerCollection?.FirstOrDefault(i => sme != null && i.InterviewerId == sme.InterviewerProfileId)
+                    ?? irf?.InterviewerCollection?.FirstOrDefault(i => sme != null && i.UserId == sme.UserId);
+                vm.ExpertCodedName = iv?.NickName;
+                vm.ExpertUserId = iv?.UserId > 0 ? iv.UserId : (int?)null;
+                vm.ExpertEmail = iv?.EmailId;
+                vm.SkillChannel = irf?.JDTiltle;
+                vm.InterviewsConducted = iv?.TotalInterview ?? 0;
+                var logs = questions.Where(q => !string.IsNullOrWhiteSpace(q.AIDraftPayload))
+                    .SelectMany(q => SmeQuestionReviewHelper.BuildReviewLogs(q, null) ?? new List<QuestionReviewLogRow>())
+                    .ToList();
+                vm.FieldsCorrected = logs.Count;
+                if (logs.Any(l => l.Severity >= 3)) vm.MaxSeverityLabel = "Critical";
+                else if (logs.Any(l => l.Severity == 2)) vm.MaxSeverityLabel = "Major";
+                else if (logs.Count > 0) vm.MaxSeverityLabel = "Minor";
+            }
+            catch { }
+
+            return vm;
         }
 
         [HttpPost]
@@ -13640,6 +14103,9 @@ namespace Risebird.Web.Controllers
             result.Parsed = true;
             result.TotalCount = bank.Count;
 
+            var saved = new List<(int Id, string Skill, string Slot, string Title)>();
+            var slotCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
             foreach (var q in bank)
             {
                 var skill = q["skill_or_competency"]?.ToString()?.Trim();
@@ -13655,18 +14121,130 @@ namespace Risebird.Web.Controllers
                 var question = (q["interviewer_question"] ?? q["question"] ?? q["question_text"])?.ToString() ?? "";
                 if (string.IsNullOrWhiteSpace(question)) continue;
 
-                var strongAnswer = q["expected_candidate_answer"]?["strong_answer"]?.ToString()
+                var ea = q["expected_candidate_answer"] as Newtonsoft.Json.Linq.JObject;
+                var strongAnswer = ea?["strong_answer"]?.ToString()
                     ?? q["expected_answer"]?.ToString()
                     ?? q["strong_answer"]?.ToString()
                     ?? q["answer"]?.ToString() ?? "";
-                var payload = q.ToString(Newtonsoft.Json.Formatting.None);
+                var expectedOutput = (q["expected_output"] ?? ea?["expected_output"])?.ToString() ?? strongAnswer;
+                var explanation = (q["explanation"] ?? ea?["explanation"])?.ToString();
+                var safeImpl = (q["safe_implementation"] ?? ea?["safe_implementation"])?.ToString();
+                var semantic = (q["semantic_matching_criteria"] ?? ea?["semantic_matching_criteria"])?.ToString();
+                var redFlags = (q["misconception_red_flags"] ?? ea?["misconception_red_flags"])?.ToString();
+                var gist = (q["question_gist"] ?? q["gist"])?.ToString();
+                int.TryParse((q["max_score"] ?? q["maxScore"])?.ToString(), out var maxScore);
+                int.TryParse((q["time_limit_minutes"] ?? q["time_mins"])?.ToString(), out var timeMins);
+                var codingToken = q["is_coding_question"] ?? q["coding"];
+                var isCoding = codingToken != null && codingToken.Type != Newtonsoft.Json.Linq.JTokenType.Null
+                    && (codingToken.Type == Newtonsoft.Json.Linq.JTokenType.Boolean
+                        ? (bool)codingToken
+                        : string.Equals(codingToken.ToString(), "true", StringComparison.OrdinalIgnoreCase) || codingToken.ToString() == "1");
+                var slot = (q["question_slot"] ?? q["slot"])?.ToString()?.Trim();
+                if (string.IsNullOrWhiteSpace(slot))
+                    slot = matchedSkill;
+                var variant = (q["variant"] ?? q["question_variant"])?.ToString()?.Trim();
+                if (string.IsNullOrWhiteSpace(variant))
+                {
+                    slotCounts.TryGetValue(slot, out var n);
+                    slotCounts[slot] = n + 1;
+                    variant = n == 0 ? "A" : "B";
+                }
+                if (maxScore <= 0) maxScore = 20;
+                if (timeMins <= 0) timeMins = 10;
 
-                var newId = await _irfService.AddAIGeneratedSampleQuestion(irfId, matchedSkill, question, strongAnswer, payload, emailid);
+                var draft = new SkillComment
+                {
+                    ExpectedOutput = expectedOutput,
+                    AnswerExplanation = explanation,
+                    SafeImplementation = safeImpl,
+                    SemanticMatchCriteria = semantic,
+                    MisconceptionRedFlags = redFlags,
+                    QuestionGist = gist,
+                    MaxScore = maxScore,
+                    CodingTimeLimitInMinutes = timeMins,
+                    IsCodingQuestion = isCoding,
+                    QuestionSlot = slot,
+                    QuestionVariant = variant,
+                    SkillName = matchedSkill
+                };
+                draft.ExpectedAnswer = SmeQuestionReviewHelper.ConcatExpectedAnswer(draft) ?? strongAnswer;
+
+                var payload = q.ToString(Newtonsoft.Json.Formatting.None);
+                var newId = await _irfService.AddAIGeneratedSampleQuestion(irfId, matchedSkill, question, draft.ExpectedAnswer, payload, emailid);
                 if (newId > 0)
-                    result.Saved.Add(new { id = newId, skillName = matchedSkill, comment = question, expectedAnswer = strongAnswer, isGeneratedByAi = true });
+                {
+                    draft.id = newId;
+                    try { await _irfService.ApplyGeneratedQuestionReviewFields(draft); } catch { }
+                    try { await _irfService.StampAIDraftIfEmpty(newId); } catch { }
+                    saved.Add((newId, matchedSkill, slot, question));
+                    result.Saved.Add(new { id = newId, skillName = matchedSkill, comment = question, expectedAnswer = draft.ExpectedAnswer, isGeneratedByAi = true });
+                }
             }
 
+            try { await ProposeQuestionSetsFromGeneratedAsync(irfId, jsonObj, saved, emailid); } catch { }
+
             return result;
+        }
+
+        private async Task ProposeQuestionSetsFromGeneratedAsync(
+            int irfId, Newtonsoft.Json.Linq.JObject jsonObj, List<(int Id, string Skill, string Slot, string Title)> saved, string actor)
+        {
+            if (saved == null || saved.Count == 0) return;
+
+            var proposed = jsonObj["proposed_sets"] as Newtonsoft.Json.Linq.JArray
+                ?? jsonObj["question_sets"] as Newtonsoft.Json.Linq.JArray;
+            var created = 0;
+            if (proposed != null)
+            {
+                foreach (var s in proposed)
+                {
+                    var name = (s["name"] ?? s["Name"])?.ToString();
+                    if (string.IsNullOrWhiteSpace(name)) continue;
+                    var slots = (s["slots"] as Newtonsoft.Json.Linq.JArray)?.Select(t => t.ToString()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList()
+                        ?? new List<string>();
+                    var ids = new List<int>();
+                    foreach (var slot in slots)
+                    {
+                        var match = saved.FirstOrDefault(x => string.Equals(x.Slot, slot, StringComparison.OrdinalIgnoreCase));
+                        if (match.Id > 0 && !ids.Contains(match.Id)) ids.Add(match.Id);
+                    }
+                    if (ids.Count == 0) continue;
+                    await _irfService.SaveAICodeInterviewQuestionSet(new AICodeInterviewQuestionSetVm
+                    {
+                        IRFId = irfId,
+                        Name = name.Trim(),
+                        IsAIProposed = true,
+                        QuestionIds = ids.ToArray()
+                    }, actor);
+                    created++;
+                }
+            }
+
+            if (created > 0) return;
+
+            var bySkill = saved.GroupBy(x => x.Skill, StringComparer.OrdinalIgnoreCase).ToList();
+            var setA = bySkill.Select(g => g.First().Id).Take(5).ToArray();
+            if (setA.Length > 0)
+            {
+                await _irfService.SaveAICodeInterviewQuestionSet(new AICodeInterviewQuestionSetVm
+                {
+                    IRFId = irfId,
+                    Name = "Set A",
+                    IsAIProposed = true,
+                    QuestionIds = setA
+                }, actor);
+            }
+            var setB = bySkill.Select(g => g.Skip(1).FirstOrDefault()).Where(x => x.Id > 0).Select(x => x.Id).Take(5).ToArray();
+            if (setB.Length > 0)
+            {
+                await _irfService.SaveAICodeInterviewQuestionSet(new AICodeInterviewQuestionSetVm
+                {
+                    IRFId = irfId,
+                    Name = "Set B",
+                    IsAIProposed = true,
+                    QuestionIds = setB
+                }, actor);
+            }
         }
     }
 }

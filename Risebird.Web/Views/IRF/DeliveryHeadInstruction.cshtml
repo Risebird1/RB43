@@ -4,6 +4,7 @@
 @using Risebird.Entities.ViewModel
 @using Risebird.Entities.Data
 @using Risebird.Entities.Enum
+@using System
 @using System.Collections.Generic
 @using System.Linq
 @using Microsoft.Extensions.Configuration
@@ -179,7 +180,7 @@
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024'>
 <link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css?v=2024" />
-<link href="~/Newassets/css/dm-approval-v4.css?v=20250625inactive2" rel="stylesheet" />
+<link href="~/Newassets/css/dm-approval-v4.css?v=20250818smereview7" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <style>
@@ -1096,27 +1097,42 @@
                                             var rubricSkillNames = Model.SkillCollection?.Where(s => !string.IsNullOrWhiteSpace(s.SkillName)).Select(s => s.SkillName).Distinct(StringComparer.OrdinalIgnoreCase).ToList() ?? new List<string>();
                                             int totalRubricSkills = rubricSkillNames.Count > 0 ? rubricSkillNames.Count : Math.Max(1, sampleQsList.Select(q => q.SkillName).Distinct(StringComparer.OrdinalIgnoreCase).Count());
                                             int skillsWithQuestions = rubricSkillNames.Count(sn => sampleQsList.Any(q => string.Equals(q.SkillName, sn, StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(q.Comment)));
+                                            var rubricLevelMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                                            if (Model.SkillCollection != null)
+                                            {
+                                                foreach (var sk in Model.SkillCollection.Where(s => !string.IsNullOrWhiteSpace(s.SkillName)))
+                                                {
+                                                    if (rubricLevelMap.ContainsKey(sk.SkillName)) continue;
+                                                    var level = sk.LevelName;
+                                                    if (string.IsNullOrWhiteSpace(level) && Enum.IsDefined(typeof(LevelTechEnum), sk.LevelId))
+                                                        level = ((LevelTechEnum)sk.LevelId).GetDescription();
+                                                    rubricLevelMap[sk.SkillName] = level ?? "";
+                                                }
+                                            }
                                             var qsBySkill = sampleQsList.Where(q => !string.IsNullOrWhiteSpace(q.SkillName)).GroupBy(q => q.SkillName, StringComparer.OrdinalIgnoreCase).ToList();
                                             int qsGlobalIndex = 0;
                                             var aiQGenEnabled = Configuration.GetValue<bool>("FeatureFlags:EnableAIQuestionGeneration");
+                                            var isAiInterviewChannel = Model.IsAIInterview;
+                                            var isAiPresetChannel = Model.IsAIInterview && Model.AIInterviewType == (int)AIInterviewTypeEnum.Preset;
                                         }
-                                        <div class="dm-v4-collapse" id="dmV4QuestionsCollapse">
-                                            <button type="button" class="dm-v4-collapse__head" id="dmV4QuestionsToggle" aria-expanded="false" aria-controls="dmV4QuestionsPanel">
+                                        <div class="dm-v4-collapse@(isAiInterviewChannel ? " is-open sme-rq-page--review" : "")" id="dmV4QuestionsCollapse">
+                                            <button type="button" class="dm-v4-collapse__head" id="dmV4QuestionsToggle" aria-expanded="@(isAiInterviewChannel ? "true" : "false")" aria-controls="dmV4QuestionsPanel">
                                                 <span class="dm-v4-collapse__head-left">
                                                     <i class="fa fa-file-text-o dm-v4-collapse__icon" aria-hidden="true"></i>
                                                     <span>
-                                                        <span class="dm-v4-collapse__title">Sample questions <span class="dm-v4-collapse__count" id="dmV4QuestionsCount">@skillsWithQuestions of @totalRubricSkills skills covered</span></span>
-                                                        <span class="dm-v4-collapse__sub">AI generates questions mapped to your rubric. Manual entry available as fallback.</span>
+                                                        <span class="dm-v4-collapse__title">@(isAiInterviewChannel ? "Review queue" : "Sample questions") <span class="dm-v4-collapse__count" id="dmV4QuestionsCount">@skillsWithQuestions of @totalRubricSkills skills covered</span></span>
+                                                        <span class="dm-v4-collapse__sub">@(isAiInterviewChannel ? "Confirm, reject or edit AI-drafted questions before they are served to candidates." : "AI generates questions mapped to your rubric. Manual entry available as fallback.")</span>
                                                     </span>
                                                 </span>
                                                 <i class="fa fa-chevron-down dm-v4-collapse__chev" aria-hidden="true"></i>
                                             </button>
-                                            <div class="dm-v4-collapse__body" id="dmV4QuestionsPanel" hidden
+                                            <div class="dm-v4-collapse__body" id="dmV4QuestionsPanel" @(isAiInterviewChannel ? null : "hidden")
                                                  data-irf-id="@Model.id"
-                                                 data-is-ai-interview="@(Model.IsAIInterview ? "1" : "0")"
+                                                 data-is-ai-interview="@(isAiInterviewChannel ? "1" : "0")"
                                                  data-ai-interview-type="@(((AIInterviewTypeEnum?)Model.AIInterviewType)?.ToString() ?? "")"
-                                                 data-is-ai-preset="@(Model.IsAIInterview && Model.AIInterviewType == (int)AIInterviewTypeEnum.Preset ? "1" : "0")"
-                                                 data-rubric-skills="@string.Join("|||", rubricSkillNames)">
+                                                 data-is-ai-preset="@(isAiPresetChannel ? "1" : "0")"
+                                                 data-rubric-skills="@string.Join("|||", rubricSkillNames)"
+                                                 data-rubric-levels="@JsonConvert.SerializeObject(rubricLevelMap)">
                                                 <div class="dm-v4-questions-ai-banner">
                                                     <div class="dm-v4-questions-ai-banner__left">
                                     @*                     <span class="dm-v4-questions-ai-icon"><i class="fa fa-magic"></i></span> *@
@@ -1128,6 +1144,7 @@
                                                     <button type="button" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" id="dmV4GenerateQuestionsBtn" @(aiQGenEnabled ? "" : "disabled") title="@(aiQGenEnabled ? "Generate questions from rubric using AI" : "AI question generation is not enabled yet")"><i class="fa fa-magic"></i> Generate with AI</button>
                                               </div>
                                                 <div id="dmV4QuestionsSkills" class="dm-v4-questions-skills"></div>
+                                                <div id="smeExpertLoop"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -3755,7 +3772,8 @@ else
 <script src="~/js/dm-v4-layout.js?v=20250630badqc4"></script>
 <script src="~/js/dm-v4-voice.js?v=20250609istmeta1"></script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
-<script src="~/js/dm-v4-questions.js?v=20250609synthesia3coding_gist"></script>
+<script src="~/js/dm-v4-sme-review.js?v=20250818smereview7"></script>
+<script src="~/js/dm-v4-questions.js?v=20250818smereview7"></script>
 
 <div id="dmV4ResumeSummaryOverlay" class="dm-v4-drawer-overlay" aria-hidden="true"></div>
 <aside id="dmV4ResumeSummaryDrawer" class="dm-v4-drawer dm-v4-drawer--verdict" aria-hidden="true" role="dialog" aria-labelledby="dmV4ResumeSummaryTitle" style="max-width:520px;">

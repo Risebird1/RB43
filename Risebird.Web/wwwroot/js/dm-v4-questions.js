@@ -242,9 +242,15 @@
     }
 
     function loadQuestions() {
+        if (window.dmV4SmeReviewEnabled && window.dmV4SmeReviewEnabled() && window.dmV4LoadSmeReview) {
+            return window.dmV4LoadSmeReview();
+        }
         return $.post('/IRF/GetDeliveryHeadSampleQuestionsJson', getQuestionsRequestData()).then(function (res) {
             if (res && res.success) {
                 renderQuestions(res.questions || []);
+            }
+            if (window.dmV4ClientShareView === true && usesSynthesia() && window.dmV4LoadExpertLoop) {
+                window.dmV4LoadExpertLoop();
             }
         });
     }
@@ -348,9 +354,18 @@
         });
     }
 
+    function openQuestionsIfReview() {
+        if (!(window.dmV4SmeReviewEnabled && window.dmV4SmeReviewEnabled())) return;
+        var $c = $('#dmV4QuestionsCollapse');
+        $c.addClass('is-open sme-rq-page--review');
+        $('#dmV4QuestionsToggle').attr('aria-expanded', 'true');
+        getPanel().prop('hidden', false).show();
+    }
+
     function initQuestionsV4() {
         if (!getPanel().length) return;
 
+        openQuestionsIfReview();
         loadQuestions();
 
         $(document).off('click.dmV4GenQ', '#dmV4GenerateQuestionsBtn').on('click.dmV4GenQ', '#dmV4GenerateQuestionsBtn', function () {
