@@ -1167,152 +1167,52 @@ namespace Risebird.CommonHelper
         }
 
 
-        //public async Task<RunResult> GenerateTechRubric(string jobTitle)
-        //{
-        //    try
-        //    {
-        //        var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
-        //        if (useResponsesApi)
-        //        {
-        //            var input = $"Generate an output as per the instructions fed to the assistant. The job title you need to generate a tech rubric against is {jobTitle}.";
-        //            return await _openAIResponsesHelper.CreateJsonResponseAsync(
-        //                input,
-        //                operationType: "RubricGeneration",
-        //                promptId: _configuration["OpenAI:RubricGeneratorPromptId"]);
-        //        }
-
-        //        string threadId = string.Empty;
-        //        threadId = await CreateThreadAsync(jobTitleForRubrics: jobTitle);
-        //        //if (!string.IsNullOrEmpty(fileId))
-        //        //{
-        //        //    await Task.Delay(15000);//60000
-
-        //        //}
-        //        //else
-        //        //{
-        //        //    return null;
-        //        //}
-        //        string runId;
-        //        //now create a run
-        //        if (!string.IsNullOrEmpty(threadId))
-        //        {
-        //            runId = await CreateRun(threadId);
-        //        }
-        //        else
-        //        {
-        //            return null;
-        //        }
-
-        //        if (!string.IsNullOrEmpty(runId))
-        //        {
-        //            string runStatus = string.Empty;
-        //            int pollInterval = 10000;
-        //            int maxPollInterval = 30000;
-        //            int maxAttempts = 12;
-        //            int attempts = 0;
-
-        //            while (runStatus != "completed")
-        //            {
-        //                await Task.Delay(pollInterval);
-        //                runStatus = await RetrieveRun(runId, threadId);
-        //                attempts++;
-        //                if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
-        //                    || runStatus == null || attempts >= maxAttempts)
-        //                    break;
-        //                pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
-        //            }
-
-        //            // After run completes, retrieve run steps to capture token usage
-        //            if (runStatus == "completed")
-        //            {
-        //                await RetrieveRunStepsForTokenUsage(runId, threadId);
-        //            }
-
-        //            var messages = await ListRunMessages(threadId);
-        //            //if (messages != null && messages.Data.First().Content.FirstOrDefault().Text.Value != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
-        //            //{
-        //            //    return await RecreateThread(requestModel, fileId);
-        //            //}
-        //            return messages;
-        //        }
-        //        else
-        //        {
-        //            return null;
-        //        }
-
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        return null;
-        //    }
-        //}
         public async Task<RunResult> GenerateTechRubric(string jobTitle)
         {
             try
             {
-
-                string threadId = string.Empty;
-                threadId = await CreateThreadAsync(jobTitleForRubrics: jobTitle);
-                //if (!string.IsNullOrEmpty(fileId))
-                //{
-                //    await Task.Delay(15000);//60000
-
-                //}
-                //else
-                //{
-                //    return null;
-                //}
-                string runId;
-                //now create a run
-                if (!string.IsNullOrEmpty(threadId))
-                {
-                    runId = await CreateRun(threadId);
-                }
-                else
-                {
+                if (string.IsNullOrWhiteSpace(jobTitle))
                     return null;
+
+                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                if (useResponsesApi)
+                {
+                    var input = $"Generate an output in json as per the instructions fed to the assistant. The job title you need to generate a tech rubric against is {jobTitle}.";
+                    return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                        input,
+                        operationType: "RubricGeneration",
+                        promptId: _configuration["OpenAI:RubricGeneratorPromptId"]);
                 }
 
-                if (!string.IsNullOrEmpty(runId))
-                {
-                    string runStatus = string.Empty;
-                    int pollInterval = 10000;
-                    int maxPollInterval = 30000;
-                    int maxAttempts = 12;
-                    int attempts = 0;
-
-                    while (runStatus != "completed")
-                    {
-                        await Task.Delay(pollInterval);
-                        runStatus = await RetrieveRun(runId, threadId);
-                        attempts++;
-                        if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
-                            || runStatus == null || attempts >= maxAttempts)
-                            break;
-                        pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
-                    }
-
-                    // After run completes, retrieve run steps to capture token usage
-                    if (runStatus == "completed")
-                    {
-                        await RetrieveRunStepsForTokenUsage(runId, threadId);
-                    }
-
-                    var messages = await ListRunMessages(threadId);
-                    //if (messages != null && messages.Data.First().Content.FirstOrDefault().Text.Value != null && (messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("persistent issue") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("error") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("issue with extracting") || messages.Data.First().Content.FirstOrDefault().Text.Value.ToLower().Contains("it seems")) && !string.IsNullOrEmpty(fileId))
-                    //{
-                    //    return await RecreateThread(requestModel, fileId);
-                    //}
-                    return messages;
-                }
-                else
-                {
+                string threadId = await CreateThreadAsync(jobTitleForRubrics: jobTitle);
+                if (string.IsNullOrEmpty(threadId))
                     return null;
+
+                string runId = await CreateRun(threadId);
+                if (string.IsNullOrEmpty(runId))
+                    return null;
+
+                string runStatus = string.Empty;
+                int pollInterval = 10000;
+                int maxPollInterval = 30000;
+                int maxAttempts = 12;
+                int attempts = 0;
+
+                while (runStatus != "completed")
+                {
+                    await Task.Delay(pollInterval);
+                    runStatus = await RetrieveRun(runId, threadId);
+                    attempts++;
+                    if (runStatus == "failed" || runStatus == "cancelled" || runStatus == "expired"
+                        || runStatus == null || attempts >= maxAttempts)
+                        break;
+                    pollInterval = Math.Min(pollInterval + 5000, maxPollInterval);
                 }
 
+                if (runStatus == "completed")
+                    await RetrieveRunStepsForTokenUsage(runId, threadId);
 
+                return await ListRunMessages(threadId);
             }
             catch (Exception ex)
             {
@@ -1384,8 +1284,9 @@ namespace Risebird.CommonHelper
                 var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
                 if (useResponsesApi)
                 {
+                    var input = $"Generate an output in JSON format as per the instructions fed to the assistant. {rubricInput}";
                     return await _openAIResponsesHelper.CreateJsonResponseAsync(
-                        rubricInput,
+                        input,
                         operationType: "RubricQuestionGeneration",
                         promptId: _configuration["OpenAI:RubricQuestionPromptId"]);
                 }
@@ -2058,8 +1959,9 @@ namespace Risebird.CommonHelper
                 if (!useResponsesApi || string.IsNullOrWhiteSpace(promptId))
                     return (null, null);
 
+                var input = $"Generate an output in JSON format as per the instructions fed to the assistant. {message}";
                 return await _openAIResponsesHelper.CreateJsonResponseWithIdAsync(
-                    message,
+                    input,
                     operationType: "AIInterviewer",
                     promptId: promptId,
                     previousResponseId: previousResponseId);
@@ -2081,8 +1983,9 @@ namespace Risebird.CommonHelper
                 var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
                 if (useResponsesApi)
                 {
+                    var input = $"Generate an output in JSON format as per the instructions fed to the assistant. The typing assessment inputs are: {inputsJson}";
                     return await _openAIResponsesHelper.CreateJsonResponseAsync(
-                        inputsJson,
+                        input,
                         operationType: "TypingAssessment",
                         promptId: _configuration["OpenAI:TypingAssessmentPromptId"]);
                 }
@@ -2106,8 +2009,9 @@ namespace Risebird.CommonHelper
                 var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
                 if (useResponsesApi)
                 {
+                    var input = $"Generate an output in JSON format as per the instructions fed to the assistant. The transcript data is: {transcriptData}";
                     return await _openAIResponsesHelper.CreateJsonResponseAsync(
-                        transcriptData,
+                        input,
                         operationType: "IntervieweeResponseExtraction",
                         promptId: _configuration["OpenAI:IntervieweeResponseExtractionPromptId"]);
                 }
