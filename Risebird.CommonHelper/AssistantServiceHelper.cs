@@ -79,13 +79,22 @@ namespace Risebird.CommonHelper
             LinkedInVerificationAssistantId = _configuration["OpenAI:LinkedInVerificationAssistantId"];
         }
 
+        private bool UseGlobalResponsesApi() =>
+            _configuration.GetValue("OpenAI:UseResponsesApi", false);
+
+        /// <summary>
+        /// QC pipeline prompts (Report QC, Transcript Analysis, Contradiction, Merge, Payment Ticket, Transcript Summary).
+        /// </summary>
+        private bool UseQcResponsesApi() =>
+            _configuration.GetValue("OpenAI:QcUseResponsesApi", true);
+
         public async Task<RunResult> ScreenAsync(ScreeningRequest requestModel)
         {
             try
             {
                 if (requestModel.Type == ProfileNames.Candidate || requestModel.Type == ProfileNames.Interviewer)
                 {
-                    var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                    var useResponsesApi = UseGlobalResponsesApi();
                     if (useResponsesApi)
                     {
                         if (string.IsNullOrEmpty(requestModel.ResumeLink))
@@ -1171,7 +1180,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var useResponsesApi = UseGlobalResponsesApi();
                 if (useResponsesApi)
                 {
                     var input = $"Generate an output as per the instructions fed to the assistant. The job title you need to generate a tech rubric against is {jobTitle}.";
@@ -1256,7 +1265,7 @@ namespace Risebird.CommonHelper
                 if (string.IsNullOrWhiteSpace(revisionPrompt))
                     return null;
 
-                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var useResponsesApi = UseGlobalResponsesApi();
                 if (useResponsesApi)
                 {
                     return await _openAIResponsesHelper.CreateJsonResponseAsync(
@@ -1309,7 +1318,7 @@ namespace Risebird.CommonHelper
                 if (string.IsNullOrWhiteSpace(rubricInput))
                     return null;
 
-                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var useResponsesApi = UseGlobalResponsesApi();
                 if (useResponsesApi)
                 {
                     return await _openAIResponsesHelper.CreateJsonResponseAsync(
@@ -1331,7 +1340,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var useResponsesApi = UseQcResponsesApi();
                 if (useResponsesApi)
                 {
                     var input = $"Generate an output in JSON format as per the instructions fed to the assistant. The transcript data you need to generate an analysis against is {transcriptData}.";
@@ -1412,7 +1421,7 @@ namespace Risebird.CommonHelper
                 if (string.IsNullOrEmpty(userMessageContent))
                     return null;
 
-                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var useResponsesApi = UseQcResponsesApi();
                 if (useResponsesApi)
                 {
                     var input = $"Generate an output in JSON format as per the instructions fed to the assistant. {userMessageContent}";
@@ -1466,7 +1475,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var useResponsesApi = UseQcResponsesApi();
                 if (useResponsesApi)
                 {
                     var input = $"Generate an output in JSON format as per the instructions fed to the assistant. {transcriptSummary}";
@@ -1517,7 +1526,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var useResponsesApi = UseGlobalResponsesApi();
                 if (useResponsesApi)
                 {
                     string input;
@@ -1619,7 +1628,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var useResponsesApi = UseGlobalResponsesApi();
                 if (useResponsesApi)
                 {
                     var input = useResumeParserCopyPrompt
@@ -1646,7 +1655,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var useResponsesApi = UseGlobalResponsesApi();
                 if (useResponsesApi)
                 {
                     var input = $"Evaluate the resume and generate a response in JSON format as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the interviewer and generate the fitment score against is {jobTitle}. The resume data you need to generate an analysis against is {resumeStringData}.";
@@ -1669,7 +1678,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var useResponsesApi = UseGlobalResponsesApi();
                 if (useResponsesApi)
                 {
                     var input = $"Generate an output in JSON format as per the instructions fed to the assistant. The job title you need to screen the interviewer and generate the fitment score against is {jobTitle}. The Resume data you need to generate an analysis against is {resumeStringData}.";
@@ -1740,7 +1749,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var useResponsesApi = UseQcResponsesApi();
                 if (useResponsesApi)
                 {
                     var input = $"Generate an output in JSON format as per the instructions fed to the assistant. The Report data you need to generate an analysis against is {reportStringData}.";
@@ -1809,7 +1818,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var useResponsesApi = UseGlobalResponsesApi();
                 if (useResponsesApi)
                 {
                     var input = $"Generate the Summary for {transcriptdata}";
@@ -1887,7 +1896,7 @@ namespace Risebird.CommonHelper
                 if (string.IsNullOrWhiteSpace(composedMessage))
                     return null;
 
-                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var useResponsesApi = UseQcResponsesApi();
                 if (useResponsesApi)
                 {
                     var input = $"Generate an output in JSON format as per the instructions fed to the assistant. {composedMessage}";
@@ -1952,7 +1961,7 @@ namespace Risebird.CommonHelper
                 if (string.IsNullOrWhiteSpace(questionAnswerSetJson))
                     return null;
 
-                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var useResponsesApi = UseGlobalResponsesApi();
                 var promptId = _configuration["OpenAI:AIInterviewPromptMap"];
                 if (!useResponsesApi || string.IsNullOrWhiteSpace(promptId))
                     return null;
@@ -1981,7 +1990,7 @@ namespace Risebird.CommonHelper
                 if (string.IsNullOrWhiteSpace(message))
                     return (null, null);
 
-                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var useResponsesApi = UseGlobalResponsesApi();
                 var promptId = _configuration["OpenAI:AIInterviewerPromptId"];
                 if (!useResponsesApi || string.IsNullOrWhiteSpace(promptId))
                     return (null, null);
@@ -2006,7 +2015,7 @@ namespace Risebird.CommonHelper
                 if (string.IsNullOrWhiteSpace(inputsJson))
                     return null;
 
-                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var useResponsesApi = UseGlobalResponsesApi();
                 if (useResponsesApi)
                 {
                     return await _openAIResponsesHelper.CreateJsonResponseAsync(
@@ -2028,7 +2037,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var useResponsesApi = UseQcResponsesApi();
                 if (useResponsesApi)
                 {
                     var input = $"Generate an output in JSON format as per the instructions fed to the assistant. {transcriptData}";
@@ -2066,7 +2075,7 @@ namespace Risebird.CommonHelper
                 if (string.IsNullOrWhiteSpace(composedMessage))
                     return null;
 
-                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var useResponsesApi = UseGlobalResponsesApi();
                 if (useResponsesApi)
                 {
                     return await _openAIResponsesHelper.CreateJsonResponseAsync(
