@@ -23,6 +23,7 @@ BEGIN
   ic.VideoDuration as ActualDuration,    
   pt.DurationSelectedMin as RequiredDuration ,  
   ic.AudioTranscriptFileLink,
+  ic.MeetingStatus,
   cfd.Rating as CandidateRating,
   CAST(CASE WHEN EXISTS(SELECT 1 FROM RedoInterviews ri WHERE ri.interviewid = im.id) THEN 1 ELSE 0 END AS BIT) as CandidateRedoRequest,
   cfd.InterviewerVideo as InterviewerVideoOff

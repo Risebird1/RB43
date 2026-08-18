@@ -13978,7 +13978,7 @@ with one question slot per rubric skill and no duplicate slots in a set.";
 
         private async Task<string> FetchAssistantTextResponseAsync(string assistantId, string apiKey, string rubricInput)
         {
-            var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+            var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", false);
             if (useResponsesApi)
             {
                 var result = await _assistantServiceHelper.GenerateRubricQuestions(rubricInput);

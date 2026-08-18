@@ -10482,9 +10482,19 @@ namespace Risebird.Web.Controllers
                 {
                     modelset = new QcInterviewAIMergePendingRow();
                 }
+
+                if (!string.IsNullOrWhiteSpace(modelset.TranscriptSummary))
+                {
+                    model.TranscriptSummary = modelset.TranscriptSummary;
+                    model.TranscriptSummaryObject = JsonConvert.DeserializeObject<TranscriptSummaryVM>(modelset.TranscriptSummary);
+                }
+
                 string contradictionJson = null;
-                var transcriptSummary = model.TranscriptSummary;
-                if (!string.IsNullOrWhiteSpace(transcriptSummary) && string.IsNullOrWhiteSpace(modelset.ContradictionJson) && (model.MeetingStatus == 4 || model.MeetingStatus == 6 || model.MeetingStatus == 7 || model.MeetingStatus == 8))
+                var transcriptSummary = !string.IsNullOrWhiteSpace(modelset.TranscriptSummary)
+                    ? modelset.TranscriptSummary
+                    : model.TranscriptSummary;
+                var meetingStatus = modelset.MeetingStatus > 0 ? modelset.MeetingStatus : (model.MeetingStatus ?? 0);
+                if (!string.IsNullOrWhiteSpace(transcriptSummary) && string.IsNullOrWhiteSpace(modelset.ContradictionJson) && (meetingStatus == 4 || meetingStatus == 6 || meetingStatus == 7 || meetingStatus == 8))
                 {
                     // Render the partial view to a string
                     var htmlContent = await RenderToStringAsync("AIClientReport", model);
@@ -10514,6 +10524,62 @@ namespace Risebird.Web.Controllers
             }
             return false;
         }
+        [HttpGet]
+        public async Task<JsonResult> GenerateTranscriptSummary(int interviewId)
+        {
+            try
+            {
+                var item = await _meetingService.GetPendingQcInterviewAIMergeById(interviewId);
+                if (item == null)
+                {
+                    item = new QcInterviewAIMergePendingRow();
+                }
+
+                if (string.IsNullOrEmpty(item.AudioTranscriptFileLink))
+                {
+                    return Json("Missing transcript link");
+                }
+
+                string transcriptString;
+                using (var client = new HttpClient())
+                {
+                    transcriptString = await client.GetStringAsync(item.AudioTranscriptFileLink);
+                }
+
+                if (string.IsNullOrEmpty(transcriptString))
+                {
+                    return Json("Transcript is empty or could not be downloaded");
+                }
+
+                var runResult = await _assistantServiceHelper.GenerateIntervieweeResponseExtraction(transcriptString);
+                var transcriptSummaryJson = OpenAIResponsesHelper.CleanJsonResponseText(
+                    runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value);
+
+                if (string.IsNullOrWhiteSpace(transcriptSummaryJson))
+                {
+                    return Json("AI returned an empty transcript summary");
+                }
+
+                if (!OpenAIResponsesHelper.TryValidateJsonObject(transcriptSummaryJson, out _))
+                {
+                    return Json("AI returned an incomplete or invalid transcript summary JSON. Please retry.");
+                }
+
+                var saved = await _meetingService.UpdateTranscriptSummary(interviewId, transcriptSummaryJson);
+                if (saved)
+                {
+                    return Json("Transcript summary generated successfully.");
+                }
+
+                return Json("Failed to save transcript summary.");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json("Transcript summary generation failed.");
+            }
+        }
+
         [HttpGet]
         public async Task<JsonResult> FetchMoreDetailsInterview(int interviewId)
         {

@@ -5132,6 +5132,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<bool> UpdateTranscriptSummary(int interviewId, string transcriptSummary = null)
+        {
+            try
+            {
+                return await _meetingRespository.UpdateTranscriptSummary(interviewId, transcriptSummary);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
         public async Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId)
         {
             return await _meetingRespository.GetCandidateInterviewDetails(uniqueId, irfId, interviewId, candidateId);

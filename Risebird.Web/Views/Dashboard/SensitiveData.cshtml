@@ -78,6 +78,10 @@
             border-top: 4px solid #0284c7;
         }
 
+        #aiEvaluationLoaderOverlay.ai-eval-mode--transcriptsummary .ai-eval-loader-dialog {
+            border-top: 4px solid #059669;
+        }
+
     .ai-eval-loader-section {
         display: none;
     }
@@ -95,6 +99,10 @@
     }
 
     #aiEvaluationLoaderOverlay.ai-eval-mode--qc .ai-eval-loader-section--qc {
+        display: block;
+    }
+
+    #aiEvaluationLoaderOverlay.ai-eval-mode--transcriptsummary .ai-eval-loader-section--transcriptsummary {
         display: block;
     }
 
@@ -726,6 +734,15 @@
                                         </div>
                                         <h4 class="ai-eval-loader-heading" id="aiEvalHeadingQc">QC AI evaluation</h4>
                                         <p class="ai-eval-loader-text">Merging report and transcript AI results for this interview’s quality review. This may take up to a minute.</p>
+                                    </section>
+                                    <section class="ai-eval-loader-section ai-eval-loader-section--transcriptsummary" aria-labelledby="aiEvalHeadingTranscriptSummary">
+                                        <div class="ai-eval-anim-transcript">
+                                            <span class="ai-eval-dot"></span>
+                                            <span class="ai-eval-dot"></span>
+                                            <span class="ai-eval-dot"></span>
+                                        </div>
+                                        <h4 class="ai-eval-loader-heading" id="aiEvalHeadingTranscriptSummary">AI Transcript Summary</h4>
+                                        <p class="ai-eval-loader-text">Extracting interviewee responses and building the transcript summary. Please keep this window open.</p>
                                     </section>
                                 </div>
                             </div>
@@ -1542,6 +1559,16 @@
                                                                                 </button>
                                                                             </span>
                                                                         }
+                                                                        @if (!string.IsNullOrEmpty(item.AudioTranscriptFileLink) && string.IsNullOrEmpty(item.TranscriptSummary))
+                                                                        {
+                                                                            <span>
+                                                                                <button class="mdc-fab app-fab--absolute " aria-label="AI Transcript Summary">
+                                                                                    <span onclick="javascript:TranscriptSummaryAIEvaluation('@item.imid');" title="AI Transcript Summary" class="mdc-fab__icon touch material-icons">
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-journal-text" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z" /><path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z" /><path d="M1 5v-.5a.5.5 0 0 1 1 0V5h1v1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h1v1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h1v1H1z" /></svg>
+                                                                                    </span>
+                                                                                </button>
+                                                                            </span>
+                                                                        }
                                                                         @if (!item.ContradictionAi)
                                                                         {
                                                                             <span>
@@ -1974,12 +2001,13 @@
         report: 'Report AI evaluation in progress.',
         transcript: 'Transcript AI evaluation in progress.',
         contradiction: 'Contradiction AI evaluation in progress.',
-        qc: 'QC AI evaluation in progress. Merging report and transcript AI results.'
+        qc: 'QC AI evaluation in progress. Merging report and transcript AI results.',
+        transcriptsummary: 'AI transcript summary generation in progress.'
     };
     function showAiEvaluationLoader(mode) {
         var overlay = document.getElementById('aiEvaluationLoaderOverlay');
         if (!overlay) return;
-        overlay.classList.remove('ai-eval-mode--report', 'ai-eval-mode--transcript', 'ai-eval-mode--contradiction', 'ai-eval-mode--qc');
+        overlay.classList.remove('ai-eval-mode--report', 'ai-eval-mode--transcript', 'ai-eval-mode--contradiction', 'ai-eval-mode--qc', 'ai-eval-mode--transcriptsummary');
         overlay.classList.add('ai-eval-mode--' + mode);
         overlay.classList.add('is-visible');
         overlay.setAttribute('aria-hidden', 'false');
@@ -2025,6 +2053,23 @@
             },
             error: function () {
                 alert('Transcript AI evaluation could not be completed. Please try again.');
+            },
+            complete: function () {
+                hideAiEvaluationLoader();
+            }
+        });
+    }
+    function TranscriptSummaryAIEvaluation(interviewid) {
+        showAiEvaluationLoader('transcriptsummary');
+        $.ajax({
+            url: '/Interview/GenerateTranscriptSummary',
+            data: { 'interviewId': interviewid },
+            success: function (data) {
+                alert(data);
+                location.reload();
+            },
+            error: function () {
+                alert('AI Transcript Summary could not be completed. Please try again.');
             },
             complete: function () {
                 hideAiEvaluationLoader();

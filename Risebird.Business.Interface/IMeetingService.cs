@@ -282,6 +282,7 @@ namespace Risebird.Business.Interface
         Task<bool> SaveQcInterviewAIMergedDetails(int qcEvaluationId, string mergedJson, int? totalPenalty = null, string interviewerSuspicious = null, bool? redoInterview = null);
         Task<bool> SaveAiContradictionDetails(int qcEvaluationId, string contradictionJson = null);
         Task<QcInterviewAIMergePendingRow> CheckForAiContradiction(int qcEvaluationId);
+        Task<bool> UpdateTranscriptSummary(int interviewId, string transcriptSummary = null);
         Task<QcInterviewAIevaluation> GetQcInterviewAIevaluationByInterviewId(int interviewId);
         Task<string> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, string cancellationreason);
         Task<UnassignedInterviewVM> GetCandidateInterviewDetails(string uniqueId, int irfId, int interviewId, int candidateId);

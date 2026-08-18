@@ -5288,25 +5288,34 @@ namespace Risebird.Web.Controllers
             ViewBag.Id = id;
             var candidateEmailid = await _aadhaarService.FetchCandidateEmailidByUniqueId(id);
             model.CandidateDetails.IRFId = IRFId;
-            return RedirectToAction("VerifiedInterviewDetails", new { emailid = candidateEmailid.EmailId, id = id, IRFid = IRFId });
+            return RedirectToAction("VerifiedInterviewDetails", new { emailid = candidateEmailid?.EmailId, id = id, IRFid = IRFId });
             //return View(model);
         }
         public async Task<IActionResult> VerifiedInterviewDetails(string emailid, string id, int IRFid)
         {
-            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
+            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid ?? string.Empty));
             ViewBag.id = id;
-            var CandidateDetails = await _candidateService.GetIRFDetailsForCandidate(emailid, IRFid);
-            if (CandidateDetails != null)
+            var CandidateDetails = await _candidateService.GetIRFDetailsForCandidate(emailid, IRFid)
+                                   ?? new CandidateIRFDetailsVM();
+            CandidateDetails.CandidateDetails ??= new Candidate();
+            CandidateDetails.Meetings ??= new List<MeetingVM>();
+
+            if (CandidateDetails.Meetings.Count > 0)
             {
                 CandidateDetails.Meetings = CandidateDetails.Meetings.Select(x =>
                 {
-                    x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
+                    if (!string.IsNullOrWhiteSpace(x.confirmationStatus))
+                    {
+                        x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
+                    }
                     x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
                     x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
                     return x;
                 }).ToList();
                 CandidateDetails.CandidateDetails.IRFId = IRFid;
                 var details = CandidateDetails.Meetings.OrderByDescending(x => x.interviewDate).FirstOrDefault();
+                if (details != null)
+                {
                 //if (details.confirmationStatus == "Cancelled" || details.MeetingStatus == 1 || details.MeetingStatus == 3 || details.MeetingStatus == 5 || details.MeetingStatus == 9)
                 //{
                 //    CandidateDetails.IsReschedule = true;
@@ -5336,7 +5345,7 @@ namespace Risebird.Web.Controllers
                 {
                     timeZoneValue = details.TimeZonesValue.Split(")").ElementAtOrDefault(1);
                     details.interviewDateTimeZone = details.interviewDate.AddMinutes(-(330 + details.TimeZoneoffset));
-                    if (timeZoneValue.Contains("("))
+                    if (!string.IsNullOrWhiteSpace(timeZoneValue) && timeZoneValue.Contains("("))
                     {
                         if (!timeZoneValue.Contains(")"))
                         {
@@ -5350,11 +5359,17 @@ namespace Risebird.Web.Controllers
                     details.interviewDateTimeZone = details.interviewDate;
                 }
                 //End: Candidate Scheduled Time in same TimeZone 
+                }
+            }
+            else
+            {
+                CandidateDetails.CandidateDetails.IRFId = IRFid;
             }
             int interviewid = 0;
             foreach (var item in CandidateDetails.Meetings)
             {
-                if (item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
+                if (!string.IsNullOrWhiteSpace(item.confirmationStatus)
+                    && item.confirmationStatus.Trim() != ReceiveMeetingStatus.Cancelled.GetDescription())
                 {
                     if (item.interviewDate < DateTime.Now && item.MeetingStatusStatusDesc == Risebird.Entities.Enum.MeetingStatus.Scheduled.GetDescription())
                     {
