@@ -5025,6 +5025,43 @@ button.dm-v4-money-pill {
     font-weight: 600;
 }
 
+.dm-v4-badge--ai {
+    background: #ede9fe;
+    color: #6d28d9;
+    border: 1px solid #ddd6fe;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 1px 7px;
+    border-radius: 999px;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+.dm-v4-ideal-answer {
+    margin-top: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 6px 10px;
+}
+
+.dm-v4-ideal-answer summary {
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+}
+
+.dm-v4-ideal-answer__body {
+    margin-top: 6px;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: #334155;
+    white-space: pre-wrap;
+}
+
 .dm-v4-questions-skill-body {
     padding: 10px 14px;
     display: grid;

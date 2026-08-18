@@ -29,5 +29,16 @@ namespace Risebird.Entities.ViewModel
         /// Mandatory for coding questions, unused for every other type.
         /// </summary>
         public string QuestionGist { get; set; }
+
+        /// <summary>
+        /// AI-written model answer for HM-saved bank suggestions. Distinct from ExpectedAnswer
+        /// used by preset AI interviews.
+        /// </summary>
+        public string IdealAnswer { get; set; }
+
+        /// <summary>
+        /// True when the row was saved from the HM AI question picker (not Generate with AI).
+        /// </summary>
+        public bool IsAIGenerated { get; set; }
     }
 }

@@ -9546,6 +9546,69 @@ namespace Risebird.Web.Controllers
                 model.IRFId = id;
                 model.Profile = profileName;
                 model.CreatedBy = emailid;
+
+                try
+                {
+                    var irf = await _irfRepository.GetIRFForCall(id);
+                    var jdTitle = _irfRepository.GetIRFJDTitleBasedOnId(id);
+                    if (string.IsNullOrWhiteSpace(jdTitle))
+                        jdTitle = irf?.JDTiltle;
+                    if (string.IsNullOrWhiteSpace(jdTitle))
+                        jdTitle = irf?.IRFId;
+                    if (string.IsNullOrWhiteSpace(jdTitle))
+                        jdTitle = "Skill Channel";
+
+                    var channelName = !string.IsNullOrWhiteSpace(irf?.IRFId) ? irf.IRFId : ("SC-" + id);
+                    var metaParts = new List<string>();
+                    if (!string.IsNullOrWhiteSpace(irf?.ClientCompName)) metaParts.Add(irf.ClientCompName.Trim());
+                    else if (!string.IsNullOrWhiteSpace(irf?.ClientName)) metaParts.Add(irf.ClientName.Trim());
+                    if (!string.IsNullOrWhiteSpace(irf?.JobCountry)) metaParts.Add(irf.JobCountry.Trim());
+
+                    var rubric = (await _irfRepository.GetSkillsbyIRFid(id))?.ToList() ?? new List<TransSkill>();
+                    rubric = rubric
+                        .Where(s => s != null && !string.IsNullOrWhiteSpace(s.SkillName))
+                        .ToList();
+                    if (rubric.Count == 0 && skills != null)
+                    {
+                        rubric = skills
+                            .Where(n => !string.IsNullOrWhiteSpace(n))
+                            .Select(n => new TransSkill { SkillName = n.Trim(), Weightage = 0 })
+                            .ToList();
+                    }
+
+                    var existing = (await _irfService.GetSkillSampleQuestions(id))?.ToList() ?? new List<SkillComment>();
+                    var bankCount = 0;
+                    try
+                    {
+                        var bank = await _irfService.GetQuestionBankForJD(id);
+                        bankCount = bank?.Count() ?? 0;
+                    }
+                    catch (Exception bankEx)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, bankEx);
+                    }
+
+                    ViewData["JdTitle"] = jdTitle;
+                    ViewData["ChannelName"] = channelName;
+                    ViewData["ClientMeta"] = string.Join(" · ", metaParts);
+                    ViewData["RubricSkills"] = rubric;
+                    ViewData["ExistingQuestions"] = existing;
+                    ViewData["BankCount"] = bankCount;
+                }
+                catch (Exception ex)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    ViewData["JdTitle"] = "Skill Channel";
+                    ViewData["ChannelName"] = "SC-" + id;
+                    ViewData["ClientMeta"] = "";
+                    ViewData["RubricSkills"] = (skills ?? Enumerable.Empty<string>())
+                        .Where(n => !string.IsNullOrWhiteSpace(n))
+                        .Select(n => new TransSkill { SkillName = n.Trim(), Weightage = 0 })
+                        .ToList();
+                    ViewData["ExistingQuestions"] = new List<SkillComment>();
+                    ViewData["BankCount"] = 0;
+                }
+
                 return PartialView(model);
             }
             else
@@ -9648,6 +9711,131 @@ namespace Risebird.Web.Controllers
         {
             var result = await _irfService.DeleteSkillChannelSampleQuestions(questionid);
             return Json(new { success = result });
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetAIQuestionSuggestions(int irfid, int topCount = 10)
+        {
+            try
+            {
+                var emailId = GetSessionEmail();
+                if (string.IsNullOrEmpty(emailId))
+                    return Json(new { success = false, message = "Your session has expired. Please sign in again." });
+
+                if (topCount <= 0)
+                    topCount = 10;
+
+                var bank = (await _irfService.GetQuestionBankForJD(irfid))?.ToList() ?? new List<AISuggestedQuestion>();
+                if (bank.Count == 0)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "No questions found in the question database for this channel's rubric skills."
+                    });
+                }
+
+                var jdContext = await BuildJDContextForAI(irfid);
+                var suggestions = await _assistantServiceHelper.GenerateAIQuestionSuggestions(jdContext, bank, topCount);
+                if (suggestions == null)
+                    return Json(new { success = false, message = "Unable to generate AI suggestions. Please try again." });
+
+                return Json(new { success = true, questions = suggestions });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Unable to generate AI suggestions. Please try again." });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GenerateAIIdealAnswers([FromBody] AIQuestionAnswerRequest request)
+        {
+            try
+            {
+                var emailId = GetSessionEmail();
+                if (string.IsNullOrEmpty(emailId))
+                    return Json(new { success = false, message = "Your session has expired. Please sign in again." });
+
+                if (request == null || request.IrfId <= 0 || request.Questions == null || request.Questions.Count == 0)
+                    return Json(new { success = false, message = "No questions were provided." });
+
+                var jdContext = await BuildJDContextForAI(request.IrfId);
+                var answers = await _assistantServiceHelper.GenerateAIIdealAnswers(jdContext, request.Questions);
+                if (answers == null)
+                    return Json(new { success = false, message = "Unable to generate ideal answers. Please try again." });
+
+                return Json(new { success = true, answers });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Unable to generate ideal answers. Please try again." });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> SaveAIQuestions([FromBody] AIQuestionAnswerRequest request)
+        {
+            try
+            {
+                var emailId = GetSessionEmail();
+                if (string.IsNullOrEmpty(emailId))
+                    return Json(new { success = false, message = "Your session has expired. Please sign in again." });
+
+                if (request == null || request.IrfId <= 0 || request.Questions == null || request.Questions.Count == 0)
+                    return Json(new { success = false, message = "Select at least one question to save." });
+
+                var saved = await _irfService.AddAIQuestionsWithAnswers(request.IrfId, request.Questions, emailId);
+                if (!saved)
+                    return Json(new { success = false, message = "AI question(s) could not be saved." });
+
+                return Json(new { success = true, message = "AI question(s) saved successfully!" });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "AI question(s) could not be saved." });
+            }
+        }
+
+        private string GetSessionEmail()
+        {
+            var emailId = HttpContext.Session.GetString("email")?.Trim();
+            if (string.IsNullOrEmpty(emailId))
+                return null;
+            return emailId.Replace("\"", "");
+        }
+
+        private async Task<string> BuildJDContextForAI(int irfId)
+        {
+            var jdTitle = _irfRepository.GetIRFJDTitleBasedOnId(irfId);
+            if (string.IsNullOrWhiteSpace(jdTitle))
+            {
+                var irf = await _irfRepository.GetIRFForCall(irfId);
+                jdTitle = !string.IsNullOrWhiteSpace(irf?.JDTiltle)
+                    ? irf.JDTiltle
+                    : (irf?.IRFId ?? "Skill Channel");
+            }
+
+            var sb = new StringBuilder();
+            sb.AppendLine("Job Title: " + jdTitle);
+            sb.AppendLine("Score Rubric:");
+
+            var skills = await _irfRepository.GetSkillsbyIRFid(irfId);
+            if (skills != null)
+            {
+                foreach (var skill in skills.Where(s => s != null && !string.IsNullOrWhiteSpace(s.SkillName)))
+                {
+                    sb.AppendLine(
+                        "- Skill: " + skill.SkillName.Trim() +
+                        " | Concepts: " + (skill.Concepts ?? string.Empty) +
+                        " | Nature of questions: " + (skill.Natureofquestion ?? string.Empty));
+                }
+            }
+
+            return sb.ToString();
         }
 
         [HttpPost]

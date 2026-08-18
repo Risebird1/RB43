@@ -1014,10 +1014,25 @@
                                                                         {
                                                                             <tr>
 
-                                                                                <td>@sampleQuestion.SkillName</td>
+                                                                                <td>
+                                                                                    @sampleQuestion.SkillName
+                                                                                    @if (sampleQuestion.IsAIGenerated)
+                                                                                    {
+                                                                                        <span class="dm-v4-badge dm-v4-badge--ai">AI</span>
+                                                                                    }
+                                                                                </td>
                                                                                 @if (!string.IsNullOrEmpty(sampleQuestion.Comment))
                                                                                 {
-                                                                                    <td>@sampleQuestion.Comment</td>
+                                                                                    <td>
+                                                                                        @sampleQuestion.Comment
+                                                                                        @if (!string.IsNullOrEmpty(sampleQuestion.IdealAnswer))
+                                                                                        {
+                                                                                            <details class="dm-v4-ideal-answer">
+                                                                                                <summary>Ideal Answer (AI)</summary>
+                                                                                                <div class="dm-v4-ideal-answer__body">@sampleQuestion.IdealAnswer</div>
+                                                                                            </details>
+                                                                                        }
+                                                                                    </td>
 
                                                                                 }
                                                                                 else
@@ -3281,7 +3296,11 @@
             html += '  <tbody>';
             for (i = 0; i < data.length; i++) {
                 html += '   <tr>';
-                html += '  <td>' + data[i].skillName + '</td>';
+                html += '  <td>' + data[i].skillName;
+                if (data[i].isAIGenerated) {
+                    html += ' <span class="dm-v4-badge dm-v4-badge--ai">AI</span>';
+                }
+                html += '</td>';
 
                 html += '<td>';
                 html += ' <div>';
@@ -3300,6 +3319,9 @@
                     html += '<div></div>';
                 }
                 html += ' <a onclick="moreless(' + data[i].id + ')" class="moreless-button" value="Readmore" id="read_' + data[i].id + '" href="#">Read more</a>';
+                if (data[i].idealAnswer) {
+                    html += '<details class="dm-v4-ideal-answer"><summary>Ideal Answer (AI)</summary><div class="dm-v4-ideal-answer__body">' + $('<div/>').text(data[i].idealAnswer).html() + '</div></details>';
+                }
                 html += '</div>';
                 html += ' </td>';
                 html += '  <td style="text-align:center"><div><span  onclick="DeleteSampleQuestion(' + data[i].id + ')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span></div></td>';
@@ -3463,6 +3485,7 @@ else
     function closePopupDetailsModal() {
         var modal = document.getElementById("PopupDetailsModal");
         modal.style.display = "none";
+        $("#PopupDetailsModal").removeClass("aiqs-popup-open");
     }
 
     function closeResumewModel() {
@@ -3479,6 +3502,7 @@ else
             url: '/IRF/SkillChannelSampleQuestions',
             data: { id: irfid },
             success: function (data) {
+                $("#PopupDetailsModal").addClass("aiqs-popup-open");
                 openPopupDetailsModal();
                 $('#divpopupModel').html('');
                 $('#divpopupModel').html(data);

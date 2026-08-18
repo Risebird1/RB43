@@ -152,8 +152,19 @@
 
                     html += '<div class="dm-v4-question-row" data-question-id="' + qid + '">';
                     html += '<div class="dm-v4-question-col">';
-                    html += '<div class="dm-v4-question-label">Question Q' + (qi + 1) + '</div>';
+                    var isAIGenerated = q.isAIGenerated || q.IsAIGenerated;
+                    var idealAnswer = q.idealAnswer || q.IdealAnswer || '';
+
+                    html += '<div class="dm-v4-question-label">Question Q' + (qi + 1);
+                    if (isAIGenerated) {
+                        html += ' <span class="dm-v4-badge dm-v4-badge--ai">AI</span>';
+                    }
+                    html += '</div>';
                     html += '<div class="dm-v4-question-text">' + (hasComment ? escapeHtml(comment) : '<span class="dm-v4-question-text--placeholder">Add question…</span>') + '</div>';
+                    if ($.trim(idealAnswer)) {
+                        html += '<details class="dm-v4-ideal-answer"><summary>Ideal Answer (AI)</summary>';
+                        html += '<div class="dm-v4-ideal-answer__body">' + escapeHtml(idealAnswer) + '</div></details>';
+                    }
 
                     // Coding mode is editable in place so questions added earlier, or generated from
                     // the rubric, can be turned into coding questions without being retyped.

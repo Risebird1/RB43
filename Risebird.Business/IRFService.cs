@@ -4,6 +4,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -4012,6 +4013,32 @@ namespace Risebird.Business
             {
                 var result = await _irfRepository.DeleteSkillChannelSampleQuestions(id);
                 return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<AISuggestedQuestion>> GetQuestionBankForJD(int irfId)
+        {
+            try
+            {
+                return await _irfRepository.GetQuestionBankForJD(irfId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> AddAIQuestionsWithAnswers(int irfId, IEnumerable<AISuggestedQuestion> questions, string createdBy)
+        {
+            try
+            {
+                return await _irfRepository.AddAIQuestionsWithAnswers(irfId, questions, createdBy);
             }
             catch (Exception e)
             {
