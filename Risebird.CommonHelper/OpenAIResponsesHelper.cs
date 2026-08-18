@@ -47,9 +47,10 @@ namespace Risebird.CommonHelper
         public async Task<RunResult> CreateJsonResponseAsync(
             object input,
             string operationType,
-            string promptId)
+            string promptId,
+            int? maxOutputTokens = null)
         {
-            var (result, _) = await CreateJsonResponseWithIdAsync(input, operationType, promptId);
+            var (result, _) = await CreateJsonResponseWithIdAsync(input, operationType, promptId, null, maxOutputTokens);
             return result;
         }
 
@@ -57,16 +58,18 @@ namespace Risebird.CommonHelper
             string input,
             string operationType,
             string promptId,
-            string previousResponseId = null)
+            string previousResponseId = null,
+            int? maxOutputTokens = null)
         {
-            return CreateJsonResponseWithIdAsync((object)input, operationType, promptId, previousResponseId);
+            return CreateJsonResponseWithIdAsync((object)input, operationType, promptId, previousResponseId, maxOutputTokens);
         }
 
         public async Task<(RunResult Result, string ResponseId)> CreateJsonResponseWithIdAsync(
             object input,
             string operationType,
             string promptId,
-            string previousResponseId = null)
+            string previousResponseId = null,
+            int? maxOutputTokens = null)
         {
             try
             {
@@ -92,22 +95,7 @@ namespace Risebird.CommonHelper
                         $"OpenAI Responses input is required for operation {operationType}.");
                 }
 
-                object requestBody = string.IsNullOrWhiteSpace(previousResponseId)
-                    ? new
-                    {
-                        prompt = new { id = promptId },
-                        model = _responsesModel,
-                        input,
-                        text = new { format = new { type = "json_object" } }
-                    }
-                    : new
-                    {
-                        prompt = new { id = promptId },
-                        model = _responsesModel,
-                        input,
-                        previous_response_id = previousResponseId,
-                        text = new { format = new { type = "json_object" } }
-                    };
+                object requestBody = BuildJsonResponseRequestBody(promptId, input, previousResponseId, maxOutputTokens);
 
                 using var client = new HttpClient();
                 client.Timeout = TimeSpan.FromMinutes(4);
@@ -160,6 +148,14 @@ namespace Risebird.CommonHelper
                     await _applicationErrorLogger.LogMessage(
                         LogLevelInfo.Exception,
                         new Exception($"OpenAI Responses API returned no output text for operation {operationType}."));
+                    return (null, responseId);
+                }
+
+                if (IsIncompleteResponse(responseContent, out var incompleteReason))
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Exception,
+                        new Exception($"OpenAI Responses API returned incomplete output for operation {operationType}. Reason: {incompleteReason}"));
                     return (null, responseId);
                 }
 
@@ -279,6 +275,72 @@ namespace Risebird.CommonHelper
             }
         }
 
+        private object BuildJsonResponseRequestBody(string promptId, object input, string previousResponseId, int? maxOutputTokens)
+        {
+            if (string.IsNullOrWhiteSpace(previousResponseId))
+            {
+                if (maxOutputTokens.HasValue)
+                {
+                    return new
+                    {
+                        prompt = new { id = promptId },
+                        model = _responsesModel,
+                        input,
+                        max_output_tokens = maxOutputTokens.Value,
+                        text = new { format = new { type = "json_object" } }
+                    };
+                }
+
+                return new
+                {
+                    prompt = new { id = promptId },
+                    model = _responsesModel,
+                    input,
+                    text = new { format = new { type = "json_object" } }
+                };
+            }
+
+            if (maxOutputTokens.HasValue)
+            {
+                return new
+                {
+                    prompt = new { id = promptId },
+                    model = _responsesModel,
+                    input,
+                    previous_response_id = previousResponseId,
+                    max_output_tokens = maxOutputTokens.Value,
+                    text = new { format = new { type = "json_object" } }
+                };
+            }
+
+            return new
+            {
+                prompt = new { id = promptId },
+                model = _responsesModel,
+                input,
+                previous_response_id = previousResponseId,
+                text = new { format = new { type = "json_object" } }
+            };
+        }
+
+        private static bool IsIncompleteResponse(string responseContent, out string reason)
+        {
+            reason = null;
+            try
+            {
+                var json = JObject.Parse(responseContent);
+                if (!string.Equals(json["status"]?.ToString(), "incomplete", StringComparison.OrdinalIgnoreCase))
+                    return false;
+
+                reason = json["incomplete_details"]?["reason"]?.ToString() ?? "unknown";
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private static string ExtractOutputText(string responseContent)
         {
             var json = JObject.Parse(responseContent);
@@ -288,12 +350,70 @@ namespace Risebird.CommonHelper
                 return outputText;
             }
 
-            var message = json["output"]?
-                .FirstOrDefault(item => item?["type"]?.ToString() == "message");
+            var output = json["output"] as JArray;
+            if (output == null || output.Count == 0)
+                return null;
 
-            return message?["content"]?
-                .FirstOrDefault(item => item?["type"]?.ToString() == "output_text")?["text"]?
-                .ToString();
+            var builder = new StringBuilder();
+            foreach (var item in output)
+            {
+                if (!string.Equals(item?["type"]?.ToString(), "message", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                var contentItems = item["content"] as JArray;
+                if (contentItems == null)
+                    continue;
+
+                foreach (var content in contentItems)
+                {
+                    if (!string.Equals(content?["type"]?.ToString(), "output_text", StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    var text = content["text"]?.ToString();
+                    if (!string.IsNullOrEmpty(text))
+                        builder.Append(text);
+                }
+            }
+
+            return builder.Length > 0 ? builder.ToString() : null;
+        }
+
+        public static string CleanJsonResponseText(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw))
+                return raw;
+
+            var cleaned = raw.Trim();
+            if (cleaned.StartsWith("```json", StringComparison.OrdinalIgnoreCase))
+                cleaned = cleaned.Substring(7).TrimStart();
+            else if (cleaned.StartsWith("```"))
+                cleaned = cleaned.Substring(3).TrimStart();
+
+            if (cleaned.EndsWith("```"))
+                cleaned = cleaned.Substring(0, cleaned.Length - 3).TrimEnd();
+
+            return cleaned.Trim();
+        }
+
+        public static bool TryValidateJsonObject(string json, out string error)
+        {
+            error = null;
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                error = "Response is empty.";
+                return false;
+            }
+
+            try
+            {
+                JsonConvert.DeserializeObject<JObject>(json);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                error = ex.Message;
+                return false;
+            }
         }
 
         private static string ExtractModelFromResponse(string responseContent)
