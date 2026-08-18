@@ -1,4 +1,5 @@
 @using System.Globalization
+@using System.Linq
 @using Risebird.Entities.ViewModel
 @model Risebird.Entities.ViewModel.AICodeInterviewAuditReportVM
 @{
@@ -7,8 +8,6 @@
     var aiReport = Model.AIReport;
     var expertReport = Model.ExpertReport;
 
-    // On first open the expert copy is a clone of the AI values, so the form falls back to the AI
-    // report for every field. The AI report always supplies the baseline the diff is measured from.
     var current = expertReport ?? aiReport;
     var readOnly = !Model.CanEdit;
 
@@ -20,10 +19,10 @@
     var aiRubric = aiReport.RubricRatings ?? new List<AICodeInterviewRubricRatingVM>();
     var currentRubric = current.RubricRatings ?? new List<AICodeInterviewRubricRatingVM>();
 
-    // Dimensions come from the AI baseline so the expert edits the same set the AI scored.
     var rubricDimensions = aiRubric
         .Where(r => !string.IsNullOrWhiteSpace(r.Dimension))
         .ToList();
+    var hasRubric = rubricDimensions.Count > 0;
 
     var changedRows = (Model.Discrepancies ?? new List<AICodeInterviewReportDiscrepancyVM>())
         .Where(d => d.IsDiscrepancy).ToList();
@@ -33,385 +32,1315 @@
     Func<int, AICodeInterviewReportQuestionRatingVM> aiRowAt = order =>
         aiRows.FirstOrDefault(r => r.DisplayOrder == order);
 
-    // Returns the entry rather than the rating so a dimension the expert deliberately cleared is
-    // not confused with one they never touched, which would resurrect the AI value on reopen.
     Func<List<AICodeInterviewRubricRatingVM>, string, AICodeInterviewRubricRatingVM> rubricEntry = (list, dimension) =>
         list.FirstOrDefault(r => string.Equals(r.Dimension, dimension, StringComparison.OrdinalIgnoreCase));
 
     Func<int, string> severityLabel = severity =>
         severity == 3 ? "Critical" : severity == 2 ? "Major" : severity == 1 ? "Minor" : "Informational";
 
-    Func<int, string> severityClass = severity =>
-        severity == 3 ? "rb-sev-critical" : severity == 2 ? "rb-sev-major" : severity == 1 ? "rb-sev-minor" : "rb-sev-none";
+    Func<AICodeInterviewReportQuestionRatingVM, decimal?> questionMax = row =>
+    {
+        if (row == null) return null;
+        var prop = row.GetType().GetProperty("MaxScore");
+        if (prop == null) return null;
+        var raw = prop.GetValue(row);
+        return raw == null ? (decimal?)null : Convert.ToDecimal(raw, CultureInfo.InvariantCulture);
+    };
+
+    var questionCount = currentRows.Count;
+    var overallTech = rubricDimensions.FirstOrDefault(r =>
+        string.Equals(r.Dimension, "Overall Technical Score", StringComparison.OrdinalIgnoreCase));
+    var skillRubricItems = rubricDimensions
+        .Where(r => r.IsTechSkill && !string.Equals(r.Dimension, "Overall Technical Score", StringComparison.OrdinalIgnoreCase))
+        .ToList();
+    decimal skillSum = 0;
+    decimal skillMaxSum = 0;
+    var anyMax = false;
+    foreach (var item in skillRubricItems)
+    {
+        var entry = rubricEntry(currentRubric, item.Dimension) ?? item;
+        skillSum += entry.Rating ?? 0;
+        if (item.MaxScore.HasValue)
+        {
+            anyMax = true;
+            skillMaxSum += item.MaxScore.Value;
+        }
+    }
+    if (skillRubricItems.Count == 0 && overallTech != null)
+    {
+        var entry = rubricEntry(currentRubric, overallTech.Dimension) ?? overallTech;
+        skillSum = entry.Rating ?? 0;
+    }
+
+    var mappedOverallVerdict = AIInterviewVerdict.Normalize(current.OverallVerdict);
+    var mappedAiVerdict = AIInterviewVerdict.Normalize(aiReport.OverallVerdict);
+    var llm = Model.LlmDetection;
+    var rejectFamily = AIInterviewVerdict.IsRejectFamily(mappedOverallVerdict);
+    var selectFamily = AIInterviewVerdict.IsSelectFamily(mappedOverallVerdict);
+    var verdictIsCanonical = false;
+    foreach (var option in AIInterviewVerdict.Options)
+    {
+        if (string.Equals(option, mappedOverallVerdict, StringComparison.OrdinalIgnoreCase))
+        {
+            verdictIsCanonical = true;
+            break;
+        }
+    }
+    var roAttr = readOnly ? "readonly" : null;
+    var titleLine = (string.IsNullOrWhiteSpace(Model.JDTitle) ? "AI Interview" : Model.JDTitle)
+        + " · "
+        + (string.IsNullOrWhiteSpace(Model.CandidateName) ? "Candidate" : Model.CandidateName);
 }
 
 <style>
-    .rb-xr-wrap { padding: 0 10px; }
-    .rb-xr-card { background: #fff; border: 1px solid #e6e8ec; border-radius: 6px; margin-bottom: 14px; }
-    .rb-xr-card-head { padding: 10px 14px; border-bottom: 1px solid #eef0f3; font-weight: 600; font-size: 14px; color: #33475b; }
-    .rb-xr-card-body { padding: 14px; }
-    .rb-xr-meta span { display: inline-block; margin-right: 22px; font-size: 13px; color: #52606d; }
-    .rb-xr-meta strong { color: #1f2933; }
-    .rb-xr-field { margin-bottom: 14px; }
-    .rb-xr-label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: #7b8794; margin-bottom: 5px; }
-    .rb-xr-input { width: 100%; border: 1px solid #cbd2d9; border-radius: 4px; padding: 7px 9px; font-size: 13px; }
-    .rb-xr-input:focus { outline: none; border-color: #2f80ed; }
-    .rb-xr-input[readonly], .rb-xr-input[disabled] { background: #f5f7fa; color: #52606d; }
-    .rb-xr-num { width: 110px; }
-    textarea.rb-xr-input { min-height: 74px; resize: vertical; }
-    textarea.rb-xr-transcript { min-height: 130px; font-family: Consolas, Monaco, monospace; font-size: 12px; white-space: pre-wrap; }
+    html:has(#rbErRoot) {
+        height: auto !important;
+        min-height: 100%;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+    }
+    html:has(#rbErRoot) body {
+        position: relative !important;
+        height: auto !important;
+        min-height: 100%;
+        overflow: visible !important;
+        max-height: none !important;
+    }
+    .rb-er {
+        --bg: #F5F5F5; --panel: #FFFFFF; --panel2: #FAFAFA; --border: #E3E3E3;
+        --accent: #2CA8FF; --accent-soft: rgba(44,168,255,0.12);
+        --ok: #18ce0f; --warn: #FFB236; --danger: #FF3636;
+        --text: #2c2c2c; --dim: #9A9A9A;
+        color: #2c2c2c !important;
+        font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+        font-size: 13px;
+        background: #F5F5F5;
+        margin: 0;
+        min-height: calc(100vh - 78px);
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        transform: none !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        display: block !important;
+        position: relative !important;
+        z-index: 1;
+    }
+    .rb-er.is-client {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+    .rb-er * { box-sizing: border-box; }
+    .rb-er button { font-family: inherit; cursor: pointer; }
+    .content.client .bl-bg { background: #F5F5F5 !important; }
+    html.perfect-scrollbar-on #main-panel.main-panel,
+    #main-panel.ps,
+    #main-panel {
+        overflow: visible !important;
+        height: auto !important;
+        max-height: none !important;
+        min-height: calc(100vh - 70px);
+    }
+    #main-panel > .content.client { overflow: visible !important; display: block !important; visibility: visible !important; opacity: 1 !important; height: auto !important; max-height: none !important; margin: 0 !important; padding: 0 !important; }
+    #main-panel .row.bl-bg, #main-panel .col-md-12 { height: auto !important; max-height: none !important; margin: 0; overflow: visible !important; }
 
-    /* Tracked changes: the AI value stays visible, struck through and dimmed, beside the edit. */
-    .rb-xr-baseline { display: none; margin-top: 5px; font-size: 12px; color: #9aa5b1; }
-    .rb-xr-baseline .rb-xr-old { text-decoration: line-through; color: #9aa5b1; }
-    .rb-xr-changed .rb-xr-baseline { display: block; }
-    .rb-xr-changed .rb-xr-input { border-color: #f2994a; background: #fffaf4; box-shadow: inset 3px 0 0 #f2994a; }
-    .rb-xr-changed > .rb-xr-label:after { content: " edited"; color: #f2994a; font-weight: 700; }
+    .rb-er .er-topbar {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 12px;
+        padding: 8px 16px;
+        background: #FFFFFF !important;
+        border-bottom: 1px solid #E3E3E3;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        flex-shrink: 0;
+        flex-wrap: nowrap !important;
+        height: auto !important;
+        transform: none !important;
+        z-index: 50;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    .rb-er .spacer { flex: 1; min-width: 8px; }
+    .rb-er .hint { color: var(--dim); font-size: 12px; }
 
-    .rb-xr-q { border: 1px solid #e6e8ec; border-radius: 6px; margin-bottom: 14px; }
-    .rb-xr-q-head { padding: 9px 13px; background: #f9fafb; border-bottom: 1px solid #eef0f3; font-size: 13px; font-weight: 600; color: #33475b; }
-    .rb-xr-q-body { padding: 13px; }
-    .rb-xr-media { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
-    .rb-xr-media figure { margin: 0; }
-    .rb-xr-media video { width: 260px; max-width: 100%; border-radius: 4px; background: #000; }
-    .rb-xr-media figcaption { font-size: 11px; color: #7b8794; margin-top: 3px; }
-    .rb-xr-grid { display: flex; gap: 14px; flex-wrap: wrap; }
-    .rb-xr-grid > div { flex: 1 1 220px; }
+    .rb-er .er-progress {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center;
+        gap: 8px;
+        flex: 1 1 auto;
+        min-width: 0;
+        flex-wrap: nowrap !important;
+    }
+    .rb-er .er-prog {
+        border: 1px solid #E3E3E3 !important;
+        background: #FFFFFF !important;
+        color: #9A9A9A !important;
+        border-radius: 10px;
+        padding: 6px 10px;
+        display: inline-flex !important;
+        flex-direction: row !important;
+        align-items: center;
+        gap: 8px;
+        font-size: 11.5px;
+        font-weight: 600;
+        position: static !important;
+        transform: none !important;
+        height: auto !important;
+        width: auto !important;
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+    .rb-er .er-prog.is-now { border-color: #2CA8FF !important; color: #2CA8FF !important; background: rgba(44,168,255,0.08) !important; }
+    .rb-er .er-prog.is-done { border-color: #18ce0f !important; color: #18ce0f !important; }
+    .rb-er .er-dots { display: inline-flex; gap: 5px; align-items: center; }
+    .rb-er .er-dot {
+        width: 10px; height: 10px; padding: 0; border-radius: 50%;
+        border: 1px solid #2CA8FF !important;
+        background: transparent !important;
+        display: inline-block !important;
+        position: static !important;
+        transform: none !important;
+        min-width: 10px;
+    }
+    .rb-er .er-dot.is-now { background: #2CA8FF !important; box-shadow: 0 0 0 3px rgba(44,168,255,0.22); }
+    .rb-er .er-dot.is-done { background: #18ce0f !important; border-color: #18ce0f !important; box-shadow: none; }
+    .rb-er .er-qcount { font-weight: 600; color: inherit; white-space: nowrap; }
 
-    .rb-xr-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .rb-xr-table th, .rb-xr-table td { border: 1px solid #e6e8ec; padding: 7px 9px; text-align: left; vertical-align: top; }
-    .rb-xr-table th { background: #f9fafb; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #7b8794; }
-    .rb-xr-kind { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; background: #eef2f7; color: #52606d; }
-    .rb-xr-kind.rb-xr-kind-skill { background: #e6f0ff; color: #2f6fdb; }
+    .rb-er .er-btn { border: 1px solid var(--border); background: var(--panel2); color: var(--text); border-radius: 8px; padding: 7px 16px; font-size: 12.5px; font-weight: 600; margin: 0; }
+    .rb-er .er-btn:hover { border-color: var(--accent); }
+    .rb-er .er-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .rb-er .er-btn.good { background: var(--ok); border-color: var(--ok); color: #fff; }
+    .rb-er .er-btn.warn { background: var(--warn); border-color: var(--warn); color: #2c2c2c; }
+    .rb-er .er-btn:disabled { opacity: 0.45; cursor: default; }
 
-    .rb-xr-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 10px; }
-    .rb-sev-none { background: #eef2f7; color: #52606d; }
-    .rb-sev-minor { background: #fff4e5; color: #b26a00; }
-    .rb-sev-major { background: #ffe9e5; color: #c0392b; }
-    .rb-sev-critical { background: #c0392b; color: #fff; }
-    .rb-xr-clean { background: #e8f7ef; color: #1e7d44; }
+    .rb-er .viewtabs { display: inline-flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; }
+    .rb-er .viewtabs button { border: 0; background: var(--panel2); color: var(--dim); padding: 7px 16px; font-size: 12px; font-weight: 600; }
+    .rb-er .viewtabs button.is-on { background: var(--accent); color: #fff; }
 
-    .rb-xr-actions { padding: 12px 0 26px; }
-    .rb-xr-submit { background: #2f80ed; color: #fff; border: none; border-radius: 4px; padding: 9px 22px; font-size: 14px; font-weight: 600; cursor: pointer; }
-    .rb-xr-submit:hover { background: #2569c4; }
-    .rb-xr-note { font-size: 12px; color: #7b8794; margin-top: 8px; }
-    .rb-xr-alert { padding: 10px 13px; border-radius: 4px; background: #eef2f7; color: #33475b; font-size: 13px; margin-bottom: 14px; }
+    .rb-er .screenv { display: block !important; }
+    .rb-er .screenv.is-hidden { display: none !important; }
+    #expertAuditForm { display: block; }
+
+    .rb-er .nudge { display: none; align-items: center; gap: 10px; margin: 8px 16px 0; background: rgba(217,165,63,0.12); border: 1px solid var(--warn); border-radius: 10px; padding: 8px 12px; font-size: 12.5px; flex-shrink: 0; }
+    .rb-er .nudge.is-on { display: flex; }
+
+    .rb-er .er-alert { padding: 8px 12px; border-radius: 8px; background: var(--panel2); color: var(--text); font-size: 13px; margin: 8px 16px 0; border: 1px solid var(--border); flex-shrink: 0; }
+
+    .rb-er .er-flip-shell {
+        display: block;
+        padding: 8px 16px 20px;
+        width: 100%;
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+    .rb-er .er-live-card {
+        display: block;
+        background: #FFFFFF !important;
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06);
+        padding: 0;
+        overflow: hidden;
+    }
+    .rb-er .er-live-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 0;
+        padding: 10px 14px;
+        border-bottom: 1px solid #eef2f6;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    }
+    .rb-er .er-live-meta h1 { font-size: 14px; font-weight: 700; margin: 0 0 3px; color: #334155; line-height: 1.3; }
+    .rb-er .er-live-meta .sub {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        color: var(--dim);
+        font-size: 11.5px;
+    }
+    .rb-er .er-chip {
+        display: inline-block;
+        font-family: Consolas, "Courier New", monospace;
+        font-size: 11px;
+        font-weight: 600;
+        color: #2CA8FF;
+        background: #eef6fc;
+        border: 1px solid rgba(44,168,255,0.22);
+        border-radius: 10px;
+        padding: 1px 8px;
+        line-height: 1.6;
+    }
+    .rb-er .er-live-meta a { color: #2CA8FF; font-weight: 600; text-decoration: none; }
+    .rb-er .er-live-meta a:hover { text-decoration: underline; }
+
+    .rb-er .er-live-card > .er-stage > .er-card {
+        border: 0;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 12px 14px 10px;
+        background: #fff !important;
+    }
+
+    .rb-er .er-stage { display: none !important; }
+    .rb-er .er-stage.is-on { display: block !important; }
+
+    .rb-er .er-card {
+        background: #FFFFFF !important;
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin-top: 0;
+        color: #2c2c2c !important;
+        display: block !important;
+        overflow: visible;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06);
+    }
+    .rb-er .er-card.er-qcard {
+        display: block !important;
+        overflow: visible;
+    }
+    .rb-er .er-card h2 { font-size: 12.5px; font-weight: 700; margin: 0 0 12px; text-transform: uppercase; letter-spacing: 0.6px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: #334155 !important; }
+
+    .rb-er .qhead {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.4;
+        margin: 0 0 10px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #eef2f6;
+        color: #334155;
+    }
+    .rb-er .qhead .qn {
+        display: inline-flex;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--accent);
+        color: #fff;
+        font-size: 11px;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0;
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+
+    .rb-er .er-media {
+        display: grid !important;
+        grid-template-columns: 176px 176px minmax(0, 1fr);
+        align-items: stretch;
+        gap: 10px;
+        width: 100%;
+        margin-bottom: 0;
+        overflow: visible;
+        position: relative;
+        z-index: 1;
+    }
+    @@media (max-width: 860px) { .rb-er .er-media { grid-template-columns: 1fr 1fr; } .rb-er .er-media .tr { grid-column: 1 / -1; } }
+    .rb-er .player {
+        position: relative;
+        min-height: 120px;
+        height: 120px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+        background: #000;
+    }
+    .rb-er .player.q { background: linear-gradient(160deg, #6d5bd0 0%, #8b6fe8 55%, #b58ff0 100%); }
+    .rb-er .player.a { background: linear-gradient(160deg, #22304a 0%, #2b3c5c 60%, #1c2740 100%); }
+    .rb-er .player video {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        display: block;
+        background: #000;
+    }
+    .rb-er .player .who { position: absolute; left: 8px; bottom: 7px; font-size: 10px; background: rgba(44,44,44,0.72); color: #fff; border-radius: 5px; padding: 2px 7px; z-index: 2; }
+    .rb-er .player .dur { position: absolute; right: 8px; bottom: 7px; font-size: 10px; background: rgba(44,44,44,0.72); color: #fff; border-radius: 5px; padding: 2px 7px; z-index: 2; }
+    .rb-er .playbtn { position: absolute; inset: 0; margin: auto; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(16,19,26,0.55); color: #fff; font-size: 13px; }
+    .rb-er .player.playing .playbtn { background: rgba(44,168,255,0.90); }
+    .rb-er .fl { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+    .rb-er .er-media .tr { display: flex; flex-direction: column; min-height: 120px; }
+    .rb-er .er-tr-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+    .rb-er .er-tr-head .fl { margin: 0; }
+    .rb-er .er-tr-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .rb-er .er-btn.er-btn-sm { padding: 4px 10px; font-size: 11px; }
+    .rb-er textarea.aud { width: 100%; background: var(--panel2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 12px; padding: 8px 10px; line-height: 1.6; min-height: 104px; max-height: 160px; overflow-y: auto; resize: vertical; font-family: inherit; }
+    .rb-er .er-media .tr textarea.aud { flex: 1; min-height: 104px; max-height: 160px; resize: vertical; }
+    .rb-er textarea.aud:focus { outline: 1px solid var(--accent); }
+    .rb-er textarea.aud.changed { border-color: var(--warn); }
+    .rb-er textarea.aud[readonly] { opacity: .85; }
+    .rb-er textarea.aud.is-editing { opacity: 1; outline: 1px solid var(--accent); color: #2c2c2c; background: #fff; }
+
+    .rb-er .er-media .fl { color: #9A9A9A; }
+    .rb-er .er-media .player { border-color: #e9ecef; }
+    .rb-er .er-media textarea.aud { color: #2c2c2c; background: #FAFAFA; }
+
+    .rb-er .er-quiet {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin: 6px 0 8px;
+        color: #9A9A9A;
+        font-size: 11px;
+        opacity: 0.9;
+    }
+    .rb-er .er-quiet .wordrate { font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; color: #9A9A9A; }
+    .rb-er .er-quiet .wordrate small { font-weight: 400; margin-left: 4px; }
+
+    .rb-er .er-judge {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        width: 100%;
+        margin: 0;
+        align-items: stretch;
+        position: relative;
+        z-index: 3;
+    }
+    @@media (max-width: 1000px) { .rb-er .er-judge { grid-template-columns: 1fr; } }
+
+    .rb-er .er-panel {
+        border-radius: 10px;
+        padding: 10px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 0;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border: 1px solid #e9ecef;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06);
+    }
+    .rb-er .er-panel-kicker {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin: 0;
+        color: #6c757d;
+    }
+    .rb-er .er-panel-metrics {
+        display: grid;
+        gap: 8px;
+        align-items: start;
+    }
+    .rb-er .er-panel-skill {
+        background: linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%);
+        border: 1px solid #2CA8FF;
+        box-shadow: 0 1px 5px rgba(44, 168, 255, 0.12);
+    }
+    .rb-er .er-panel-skill .er-panel-kicker { color: #2CA8FF; font-size: 11px; }
+    .rb-er .er-panel-skill .er-panel-metrics { grid-template-columns: 1fr 1fr; }
+    .rb-er .er-panel-skill .fl,
+    .rb-er .er-panel-comm .fl { color: #6c757d; font-size: 10px; font-weight: 600; letter-spacing: 0.4px; }
+    .rb-er .er-panel-skill input.er-in,
+    .rb-er .er-panel-skill input.num,
+    .rb-er .er-panel-comm input.num {
+        background: #fff;
+        border: 1px solid #E3E3E3;
+        color: #2c2c2c;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 5px 8px;
+        height: 32px;
+    }
+    .rb-er .er-panel-skill input.num,
+    .rb-er .er-panel-comm input.num { width: 72px; }
+    .rb-er .er-panel-skill textarea.obs,
+    .rb-er .er-panel-comm textarea.obs {
+        min-height: 64px;
+        font-size: 12.5px;
+        color: #2c2c2c;
+        background: #fff;
+        border: 1px solid #E3E3E3;
+        line-height: 1.45;
+    }
+
+    .rb-er .er-panel-comm .er-panel-kicker { color: #6c757d; }
+
+    .rb-er .cell .fl { margin-bottom: 5px; }
+    .rb-er select, .rb-er input.num, .rb-er input[type="text"].er-in, .rb-er textarea.obs {
+        background: #fff; color: var(--text); border: 1px solid var(--border); border-radius: 7px; padding: 5px 8px; font-size: 12px; font-family: inherit; width: 100%;
+    }
+    .rb-er input.num { width: 52px; font-variant-numeric: tabular-nums; }
+    .rb-er .maxlbl { color: var(--dim); font-size: 12px; }
+    .rb-er .obs, .rb-er textarea.obs { font-size: 12px; color: var(--text); line-height: 1.45; min-height: 64px; max-height: none; resize: vertical; }
+    .rb-er .diff { display: none; margin-top: 4px; font-size: 10.5px; border-radius: 5px; padding: 1px 7px; font-weight: 700; }
+    .rb-er .diff.is-on { display: inline-block; }
+    .rb-er .diff.s1 { background: rgba(255,178,54,0.18); color: #b78100; }
+    .rb-er .diff.s2 { background: rgba(249,99,50,0.12); color: #f96332; }
+    .rb-er .diff s { opacity: 0.8; font-weight: 600; }
+
+    .rb-er .er-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-shrink: 0;
+        padding: 8px 14px;
+        margin: 0;
+        border-top: 1px solid #eef2f6;
+        background: #fafbfc;
+    }
+    .rb-er .er-nav-label { color: var(--dim); font-size: 12px; font-weight: 600; }
+
+    .rb-er .er-stage[data-er-type="rubric"] .er-card {
+        padding: 12px 14px 10px;
+    }
+    .rb-er .er-rubric-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #eef2f6;
+        flex-wrap: wrap;
+    }
+    .rb-er .er-rubric-head h2 {
+        margin: 0 0 2px;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: #334155 !important;
+    }
+    .rb-er .er-rubric-head .sub {
+        color: #9A9A9A;
+        font-size: 11.5px;
+        font-weight: 500;
+        letter-spacing: 0;
+        text-transform: none;
+        max-width: 62ch;
+        line-height: 1.4;
+    }
+    .rb-er .er-rubric-sum {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        min-width: 110px;
+        padding: 6px 10px;
+        border-radius: 8px;
+        background: #f0f8ff;
+        border: 1px solid rgba(44,168,255,0.28);
+    }
+    .rb-er .er-rubric-sum .fl { margin: 0 0 2px; color: #2CA8FF; }
+    .rb-er .er-rubric-sum-val {
+        font-size: 16px;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        color: #2c2c2c;
+        line-height: 1.2;
+    }
+    .rb-er .er-stage[data-er-type="rubric"] table.grid {
+        font-size: 12px;
+        table-layout: fixed;
+        border: 1px solid #e8edf2;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #fff;
+    }
+    .rb-er .er-stage[data-er-type="rubric"] table.grid th {
+        background: #f1f5f9;
+        color: #475569;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        text-transform: none;
+        padding: 7px 10px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .rb-er .er-stage[data-er-type="rubric"] table.grid td {
+        padding: 7px 10px;
+        border-bottom: 1px solid #eef2f6;
+        vertical-align: top;
+        color: #2c2c2c;
+    }
+    .rb-er .er-stage[data-er-type="rubric"] table.grid tbody tr:nth-child(even) td { background: #fafbfc; }
+    .rb-er .er-stage[data-er-type="rubric"] table.grid tbody tr:hover td { background: #f8fbff; }
+    .rb-er .er-stage[data-er-type="rubric"] .col-item { width: 30%; }
+    .rb-er .er-stage[data-er-type="rubric"] .col-max { width: 10%; text-align: right; }
+    .rb-er .er-stage[data-er-type="rubric"] .col-actual { width: 16%; }
+    .rb-er .er-stage[data-er-type="rubric"] .col-obs { width: 44%; }
+    .rb-er .er-rubric-name { display: block; font-weight: 600; color: #1e293b; line-height: 1.35; }
+    .rb-er .er-rubric-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
+    .rb-er .er-rubric-chip {
+        display: inline-block;
+        border-radius: 10px;
+        padding: 1px 7px;
+        font-size: 10px;
+        font-weight: 600;
+        background: #eef6fc;
+        color: #2CA8FF;
+        letter-spacing: 0.02em;
+    }
+    .rb-er .er-rubric-chip.is-tech { background: rgba(44,168,255,0.12); }
+    .rb-er .er-stage[data-er-type="rubric"] .col-max,
+    .rb-er .er-stage[data-er-type="rubric"] th.col-max { font-variant-numeric: tabular-nums; font-weight: 600; color: #475569; }
+    .rb-er .er-rubric-actual {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: nowrap;
+    }
+    .rb-er .er-stage[data-er-type="rubric"] input.num {
+        width: 68px;
+        height: 30px;
+        padding: 3px 6px;
+        font-size: 12.5px;
+        font-weight: 600;
+        background: #fff;
+        border: 1px solid #E3E3E3;
+        color: #2c2c2c;
+    }
+    .rb-er .er-stage[data-er-type="rubric"] .hint { font-size: 11px; white-space: nowrap; }
+    .rb-er .er-stage[data-er-type="rubric"] textarea.obs {
+        min-height: 38px;
+        height: 38px;
+        max-height: 90px;
+        font-size: 12px;
+        line-height: 1.4;
+        padding: 6px 8px;
+        background: #fff;
+        color: #2c2c2c;
+        border: 1px solid #E3E3E3;
+        resize: vertical;
+    }
+    .rb-er .er-stage[data-er-type="rubric"] tr.totals td {
+        background: #f0f8ff !important;
+        border-top: 1px solid #d7ebf8;
+        border-bottom: none;
+        font-weight: 700;
+        color: #1e293b;
+        padding: 8px 10px;
+        font-size: 12.5px;
+    }
+    .rb-er .er-stage[data-er-type="rubric"] tr.totals td[data-skill-sum-total-actual] {
+        color: #2CA8FF;
+        font-variant-numeric: tabular-nums;
+    }
+    .rb-er .er-scroll { overflow: visible; min-height: 0; }
+    .rb-er table.grid { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+    .rb-er table.grid th { text-align: left; color: var(--dim); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.8px; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+    .rb-er table.grid td { padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; color: var(--text); }
+    .rb-er table.grid tr:last-child td { border-bottom: none; }
+    .rb-er .tscroll { overflow-x: auto; }
+    .rb-er .bignum { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; color: #1e293b; line-height: 1.2; }
+    .rb-er .overall {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        align-items: stretch;
+    }
+    .rb-er .ov-tile {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        padding: 10px 12px;
+        min-width: 0;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .rb-er .ov-tile.ov-skill {
+        background: linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%);
+        border-color: rgba(44,168,255,0.45);
+    }
+    .rb-er .ov-tile .fl { margin-bottom: 4px; color: #6c757d; }
+    .rb-er .ov-tile .hint { margin-top: 4px; line-height: 1.35; }
+    .rb-er .ov-comm-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .rb-er .ov-comm-row .hint { margin: 0; }
+    .rb-er .ov-tile input.num {
+        width: 72px;
+        height: 30px;
+        margin: 0;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    .rb-er .ov-tile select,
+    .rb-er .ov-tile input.er-in {
+        height: 32px;
+        font-size: 12.5px;
+        font-weight: 600;
+        padding: 4px 8px;
+        margin-top: 2px;
+        background: #fff;
+        color: #2c2c2c;
+    }
+    .rb-er .ov-comments {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+    .rb-er .ov-box {
+        background: #fff;
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        padding: 8px 10px 10px;
+        min-width: 0;
+    }
+    .rb-er .ov-box .fl { margin-bottom: 6px; }
+    .rb-er .ov-readonly {
+        min-height: 56px;
+        max-height: 88px;
+        overflow: auto;
+        background: #fafbfc;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-size: 12px;
+        line-height: 1.45;
+        color: #475569;
+    }
+    .rb-er .ov-box textarea.aud {
+        min-height: 56px;
+        max-height: 96px;
+        padding: 8px 10px;
+        font-size: 12px;
+        background: #fff;
+        color: #2c2c2c;
+    }
+    .rb-er .er-final-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #eef2f6;
+    }
+    .rb-er .er-final-head h2 {
+        margin: 0;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: #334155 !important;
+    }
+    .rb-er .er-final-head .sub {
+        color: #9A9A9A;
+        font-size: 11.5px;
+        font-weight: 500;
+        letter-spacing: 0;
+        text-transform: none;
+    }
+    .rb-er .llm {
+        margin-top: 18px;
+        padding: 14px 16px;
+        border-radius: 10px;
+        background: #f8f5fb;
+        border: 1px dashed #c4b5d9;
+        color: #5b4b73;
+        pointer-events: none;
+    }
+    .rb-er .llm-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; color: #7c6a99; }
+    .rb-er .llm-sub { font-size: 11.5px; color: #9A9A9A; margin-bottom: 10px; }
+    .rb-er .llm table.grid th, .rb-er .llm table.grid td { color: #5b4b73; border-bottom-color: #e6def0; }
+    .rb-er .llm table.grid { pointer-events: auto; }
+    .rb-er .totals td { font-weight: 700; background: var(--panel2); }
+    .rb-er .er-page { max-width: 1240px; margin: 0 auto; padding: 22px 20px 70px; transform: none !important; position: relative !important; top: auto !important; left: auto !important; width: 100% !important; background: transparent !important; color: inherit !important; }
+    .rb-er .er-page-head { display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+    .rb-er .er-page-head h1 { font-size: 19px; font-weight: 700; margin: 0; color: var(--text); }
+    .rb-er .er-page-head .sub { color: var(--dim); font-size: 12.5px; margin-top: 4px; max-width: 72ch; }
+    .rb-er .er-page .er-card { display: block !important; flex: none; margin-top: 16px; overflow: visible; }
+
+    .rb-er .er-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #fff; border: 1px solid var(--accent); border-radius: 10px; padding: 10px 20px; font-size: 13px; z-index: 99; display: none; color: #2c2c2c; box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+    .rb-er .er-toast.is-on { display: block; }
+    .rb-er .clienttabs { display: inline-flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; margin-bottom: 4px; }
+    .rb-er .clienttabs button { border: 0; background: var(--panel2); color: var(--dim); padding: 8px 18px; font-size: 12.5px; font-weight: 600; }
+    .rb-er .clienttabs button.is-on { background: var(--accent); color: #fff; }
+    .rb-er .clipane { display: none; }
+    .rb-er .clipane.is-on { display: block; }
+    .rb-er .pill { display: inline-block; border-radius: 20px; padding: 2px 11px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .rb-er .pill.blue { background: var(--accent-soft); color: var(--accent); }
+    .rb-er .pill.green { background: rgba(24,206,15,0.12); color: #148c0d; }
+    .rb-er .pill.amber { background: rgba(255,178,54,0.18); color: #b78100; }
+    .rb-er .pill.red { background: rgba(255,54,54,0.12); color: #d32f2f; }
+    .rb-er .pill.grey { background: var(--panel2); color: var(--dim); }
+
+    @@media (max-width: 1100px) {
+        .rb-er .er-media { grid-template-columns: 1fr 1fr; }
+        .rb-er .overall { grid-template-columns: 1fr 1fr; }
+        .rb-er .ov-comments { grid-column: 1 / -1; grid-template-columns: 1fr; }
+    }
 </style>
 
 <script>
     var Header = "<div>Expert Review of AI Report</div>";
-    $('#txtpageHeader').empty().html(Header);
+    if (typeof $ !== "undefined") {
+        $("#txtpageHeader").empty().html(Header);
+    }
 </script>
 
 <div class="main-panel" id="main-panel">
     <div class="content client">
         <div class="row bl-bg">
-            <div class="col-md-12 rb-xr-wrap">
-
-                @if (ViewBag.Message != null || TempData["SuccessErrorMessage"] != null)
-                {
-                    <div class="rb-xr-alert">@(ViewBag.Message ?? TempData["SuccessErrorMessage"])</div>
-                }
-
-                <div class="rb-xr-card">
-                    <div class="rb-xr-card-head">Interview</div>
-                    <div class="rb-xr-card-body rb-xr-meta">
-                        <span>Candidate <strong>@Model.CandidateName</strong></span>
-                        <span>Skill Channel <strong>@Model.IRFId</strong></span>
-                        <span>Role <strong>@Model.JDTitle</strong></span>
-                        <span>Interview Date <strong>@Model.InterviewDate.ToString("dd MMM yyyy")</strong></span>
-                        <span>
-                            AI Report
-                            <a href="@Url.Action("Report", "AIInterview", new { seId = Model.SessionId })" target="_blank">open original</a>
-                        </span>
-                    </div>
-                </div>
-
-                @if (Model.IsSubmitted)
-                {
-                    <div class="rb-xr-card">
-                        <div class="rb-xr-card-head">
-                            Submitted Review
-                            @if (Model.Assignment?.WasDiscrepancyFound == true)
-                            {
-                                <span class="rb-xr-badge @severityClass(Model.Assignment.MaxSeverity ?? 0)">
-                                    Discrepancy found &mdash; @severityLabel(Model.Assignment.MaxSeverity ?? 0)
-                                </span>
-                            }
-                            else
-                            {
-                                <span class="rb-xr-badge rb-xr-clean">Agreed with AI</span>
-                            }
-                        </div>
-                        <div class="rb-xr-card-body">
-                            <span style="font-size:12px;color:#7b8794;">
-                                Submitted @Model.Assignment?.SubmittedAt?.ToString("dd MMM yyyy HH:mm") by @Model.Assignment?.ExpertEmail
-                            </span>
-
-                            @if (changedRows.Count == 0)
-                            {
-                                <p style="font-size:13px;margin-top:10px;">The expert accepted every AI value without change.</p>
-                            }
-                            else
-                            {
-                                <table class="rb-xr-table" style="margin-top:10px;">
-                                    <thead>
-                                        <tr>
-                                            <th>Field</th>
-                                            <th>Question</th>
-                                            <th>AI value</th>
-                                            <th>Expert value</th>
-                                            <th>Severity</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var row in changedRows)
+            <div class="col-md-12" style="padding:0;">
+                <div class="rb-er" id="rbErRoot">
+                    <div class="er-topbar">
+                        <div class="er-progress" id="erProgress">
+                            <button type="button" class="er-prog is-now" id="progQuestions" data-jump="q">
+                                1 · Questions
+                                @if (questionCount > 0)
+                                {
+                                    <span class="er-dots">
+                                        @for (var d = 0; d < questionCount; d++)
                                         {
-                                            <tr>
-                                                <td>
-                                                    @row.FieldType
-                                                    @if (!string.IsNullOrWhiteSpace(row.FieldKey))
-                                                    {
-                                                        <div style="font-size:11px;color:#7b8794;">@row.FieldKey</div>
-                                                    }
-                                                </td>
-                                                <td>@(row.DisplayOrder.HasValue ? "Q" + (row.DisplayOrder.Value + 1) : "—")</td>
-                                                <td><span class="rb-xr-old" style="text-decoration:line-through;color:#9aa5b1;">@row.AIValue</span></td>
-                                                <td>@row.ExpertValue</td>
-                                                <td><span class="rb-xr-badge @severityClass(row.Severity)">@severityLabel(row.Severity)</span></td>
-                                            </tr>
+                                            <span class="er-dot@(d == 0 ? " is-now" : "")" data-jump-q="@d" title="Question @(d + 1)"></span>
                                         }
-                                    </tbody>
-                                </table>
+                                    </span>
+                                    <span class="er-qcount" id="qReviewedLabel">0/@questionCount reviewed</span>
+                                }
+                            </button>
+                            @if (hasRubric)
+                            {
+                                <button type="button" class="er-prog" id="progRubric" data-jump="rubric">2 · Rubric review</button>
+                                <button type="button" class="er-prog" id="progFinal" data-jump="final">3 · Final review</button>
+                            }
+                            else
+                            {
+                                <button type="button" class="er-prog" id="progFinal" data-jump="final">2 · Final review</button>
                             }
                         </div>
-                    </div>
-                }
-
-                <form method="post" action="@Url.Action("SubmitAICodeInterviewExpertAudit", "AICodeInterviewQC")" id="expertAuditForm">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="SessionId" value="@Model.SessionId" />
-
-                    <div class="rb-xr-card">
-                        <div class="rb-xr-card-head">Overall Assessment</div>
-                        <div class="rb-xr-card-body">
-                            <div class="rb-xr-field" data-rb-track>
-                                <label class="rb-xr-label">Final Verdict</label>
-                                <input type="text" class="rb-xr-input" name="OverallVerdict"
-                                       value="@current.OverallVerdict"
-                                       data-ai-value="@aiReport.OverallVerdict" @(readOnly ? "readonly" : "") />
-                                <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@aiReport.OverallVerdict</span></div>
-                            </div>
-
-                            <div class="rb-xr-field" data-rb-track>
-                                <label class="rb-xr-label">Overall Comment</label>
-                                <textarea class="rb-xr-input" name="OverallComment"
-                                          data-ai-value="@aiReport.OverallComment" @(readOnly ? "readonly" : "")>@current.OverallComment</textarea>
-                                <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@aiReport.OverallComment</span></div>
-                            </div>
-
-                            <div class="rb-xr-grid">
-                                <div class="rb-xr-field" data-rb-track>
-                                    <label class="rb-xr-label">Communication Score</label>
-                                    <input type="number" step="0.01" min="0" class="rb-xr-input rb-xr-num"
-                                           name="OverallCommunicationRating"
-                                           value="@num(current.OverallCommunicationRating)"
-                                           data-ai-value="@num(aiReport.OverallCommunicationRating)" @(readOnly ? "readonly" : "") />
-                                    <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@num(aiReport.OverallCommunicationRating)</span></div>
-                                </div>
-                                <div class="rb-xr-field" data-rb-track>
-                                    <label class="rb-xr-label">Communication Comment</label>
-                                    <textarea class="rb-xr-input" name="OverallCommunicationComment"
-                                              data-ai-value="@aiReport.OverallCommunicationComment" @(readOnly ? "readonly" : "")>@current.OverallCommunicationComment</textarea>
-                                    <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@aiReport.OverallCommunicationComment</span></div>
-                                </div>
-                            </div>
+                        <span class="hint" id="changecount"></span>
+                        @if (!readOnly)
+                        {
+                            <button type="button" class="er-btn" id="regenBtn">↻ Regenerate</button>
+                        }
+                        <div class="viewtabs">
+                            <button type="button" class="is-on" id="tabReviewer">Reviewer view</button>
+                            <button type="button" id="tabClient">Client view</button>
                         </div>
                     </div>
 
-                    @if (rubricDimensions.Count > 0)
-                    {
-                        <div class="rb-xr-card">
-                            <div class="rb-xr-card-head">Score Rubric &amp; Tech Skill Scores</div>
-                            <div class="rb-xr-card-body">
-                                <table class="rb-xr-table">
-                                    <thead>
-                                        <tr>
-                                            <th style="width:32%;">Dimension</th>
-                                            <th style="width:14%;">Type</th>
-                                            <th style="width:16%;">Expected</th>
-                                            <th style="width:16%;">Observed</th>
-                                            <th style="width:22%;">Rating</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @for (var i = 0; i < rubricDimensions.Count; i++)
-                                        {
-                                            var dimension = rubricDimensions[i];
-                                            var aiValue = dimension.Rating;
-                                            var currentEntry = rubricEntry(currentRubric, dimension.Dimension);
-                                            var currentValue = currentEntry != null ? currentEntry.Rating : aiValue;
-                                            <tr>
-                                                <td>
-                                                    @dimension.Dimension
-                                                    <input type="hidden" name="RubricRatings[@i].Dimension" value="@dimension.Dimension" />
-                                                    <input type="hidden" name="RubricRatings[@i].IsTechSkill" value="@dimension.IsTechSkill.ToString().ToLowerInvariant()" />
-                                                    <input type="hidden" name="RubricRatings[@i].ExpectedLevel" value="@dimension.ExpectedLevel" />
-                                                    <input type="hidden" name="RubricRatings[@i].ObservedLevel" value="@dimension.ObservedLevel" />
-                                                </td>
-                                                <td>
-                                                    @if (dimension.IsTechSkill)
+                    <div class="screenv" id="v-reviewer">
+                        <form method="post" action="@Url.Action("SubmitAICodeInterviewExpertAudit", "AICodeInterviewQC")" id="expertAuditForm">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="SessionId" value="@Model.SessionId" />
+
+                            @if (ViewBag.Message != null || TempData["SuccessErrorMessage"] != null)
+                            {
+                                <div class="er-alert">@(ViewBag.Message ?? TempData["SuccessErrorMessage"])</div>
+                            }
+
+                            <div class="nudge" id="nudge">
+                                <span>⚠️</span>
+                                <span><b>Transcripts changed</b> — regenerate the report before reviewing so the AI scores the corrected answers.</span>
+                                <span class="spacer"></span>
+                                @if (!readOnly)
+                                {
+                                    <button type="button" class="er-btn warn" id="regenNowBtn">Regenerate now</button>
+                                }
+                            </div>
+
+                            <div class="er-flip-shell">
+                                <div class="er-live-card">
+                                    <div class="er-live-meta">
+                                        <div>
+                                            <h1>@titleLine</h1>
+                                            <div class="sub">
+                                                @if (!string.IsNullOrWhiteSpace(Model.IRFId))
+                                                {
+                                                    <span class="er-chip" title="Skill channel">@Model.IRFId</span>
+                                                }
+                                                <a href="@Url.Action("Report", "AIInterview", new { seId = Model.SessionId })" target="_blank" rel="noopener noreferrer">Original report</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @for (var i = 0; i < currentRows.Count; i++)
+                                    {
+                                        var row = currentRows[i];
+                                        var baseline = aiRowAt(row.DisplayOrder) ?? row;
+                                        <div class="er-stage@(i == 0 ? " is-on" : "")" data-er-type="q" data-er-index="@i">
+                                            <div class="er-card er-qcard">
+                                                <input type="hidden" name="QuestionRatings[@i].DisplayOrder" value="@row.DisplayOrder" />
+                                                <input type="hidden" name="QuestionRatings[@i].QuestionId" value="@row.QuestionId" />
+                                                <input type="hidden" name="QuestionRatings[@i].BotInterviewQuestionVideoId" value="@row.BotInterviewQuestionVideoId" />
+                                                <input type="hidden" name="QuestionRatings[@i].QuestionText" value="@row.QuestionText" />
+
+                                                <div class="qhead"><span class="qn">@(i + 1)</span>@row.QuestionText</div>
+                                                <div class="er-media">
+                                                    <div class="player q">
+                                                        @if (!string.IsNullOrWhiteSpace(row.QuestionVideoLink))
+                                                        {
+                                                            <video controls preload="none" src="@row.QuestionVideoLink"></video>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button type="button" class="playbtn">▶</button>
+                                                        }
+                                                        <span class="who">AI question</span>
+                                                    </div>
+                                                    <div class="player a">
+                                                        @if (!string.IsNullOrWhiteSpace(row.VideoLink))
+                                                        {
+                                                            <video controls preload="none" src="@row.VideoLink"></video>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button type="button" class="playbtn">▶</button>
+                                                        }
+                                                        <span class="who">Candidate answer</span>
+                                                    </div>
+                                                    <div class="tr">
+                                                        <div class="er-tr-head">
+                                                            <div class="fl">Speech-to-text</div>
+                                                            @if (!readOnly)
+                                                            {
+                                                                <div class="er-tr-actions">
+                                                                    <button type="button" class="er-btn er-btn-sm" data-tr-edit>Edit</button>
+                                                                    <button type="button" class="er-btn er-btn-sm primary" data-tr-save style="display:none">Save</button>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                        <textarea class="aud" name="QuestionRatings[@i].TranscriptText"
+                                                                  data-ai-value="@baseline.TranscriptText"
+                                                                  data-committed="@row.TranscriptText"
+                                                                  data-track="transcript"
+                                                                  readonly="readonly">@row.TranscriptText</textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="er-quiet">
+                                                    <span>Word rate</span>
+                                                    <div class="wordrate">—<small>no speech</small></div>
+                                                </div>
+                                                <div class="er-judge">
+                                                    <div class="er-panel er-panel-skill">
+                                                        <div class="er-panel-kicker">Skill</div>
+                                                        <div class="er-panel-metrics">
+                                                            <div class="cell">
+                                                                <div class="fl">Skill rating <span class="hint">(AI: @(string.IsNullOrWhiteSpace(baseline.Verdict) ? "—" : baseline.Verdict))</span></div>
+                                                                <input type="text" class="er-in" name="QuestionRatings[@i].Verdict"
+                                                                       value="@row.Verdict" data-ai-value="@baseline.Verdict" data-track="text" readonly="@roAttr" />
+                                                                <span class="diff s2" data-diff-for="QuestionRatings[@i].Verdict"><s>@baseline.Verdict</s></span>
+                                                            </div>
+                                                            <div class="cell">
+                                                                <div class="fl">Skill score <span class="hint">(AI: @(string.IsNullOrWhiteSpace(num(baseline.Rating)) ? "—" : num(baseline.Rating)))</span></div>
+                                                                <input class="num" type="number" step="0.01" min="0" name="QuestionRatings[@i].Rating"
+                                                                       value="@num(row.Rating)" data-ai-value="@num(baseline.Rating)" data-track="num" data-q-score="1" readonly="@roAttr" />
+                                                                <span class="maxlbl">@((questionMax(row) ?? questionMax(baseline)).HasValue ? "/ " + num(questionMax(row) ?? questionMax(baseline)) : "")</span>
+                                                                <span class="diff s1" data-diff-for="QuestionRatings[@i].Rating"><s>@num(baseline.Rating)</s></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="cell">
+                                                            <div class="fl">Skill observation</div>
+                                                            <textarea class="obs" name="QuestionRatings[@i].Comment"
+                                                                      data-ai-value="@baseline.Comment" data-track="text" readonly="@roAttr">@row.Comment</textarea>
+                                                            <span class="diff s1" data-diff-for="QuestionRatings[@i].Comment"><s>@baseline.Comment</s></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="er-panel er-panel-comm">
+                                                        <div class="er-panel-kicker">Communication</div>
+                                                        <div class="cell">
+                                                            <div class="fl">Communication score <span class="hint">(AI: @(string.IsNullOrWhiteSpace(num(baseline.CommunicationRating)) ? "—" : num(baseline.CommunicationRating)))</span></div>
+                                                            <input class="num" type="number" step="0.01" min="0" name="QuestionRatings[@i].CommunicationRating"
+                                                                   value="@num(row.CommunicationRating)" data-ai-value="@num(baseline.CommunicationRating)" data-track="num" readonly="@roAttr" />
+                                                            <span class="diff s1" data-diff-for="QuestionRatings[@i].CommunicationRating"><s>@num(baseline.CommunicationRating)</s></span>
+                                                        </div>
+                                                        <div class="cell">
+                                                            <div class="fl">Communication observation</div>
+                                                            <textarea class="obs" name="QuestionRatings[@i].CommunicationComment"
+                                                                      data-ai-value="@baseline.CommunicationComment" data-track="text" readonly="@roAttr">@row.CommunicationComment</textarea>
+                                                            <span class="diff s1" data-diff-for="QuestionRatings[@i].CommunicationComment"><s>@baseline.CommunicationComment</s></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    @if (hasRubric)
+                                    {
+                                        <div class="er-stage@(questionCount == 0 ? " is-on" : "")" data-er-type="rubric">
+                                            <div class="er-card">
+                                                <div class="er-rubric-head">
+                                                    <div>
+                                                        <h2>Score Rubric</h2>
+                                                        <div class="sub">HM / Delivery Manager Instructions skills. Overall skill score = sum of skill-score actuals.</div>
+                                                    </div>
+                                                    <div class="er-rubric-sum">
+                                                        <div class="fl">Overall skill</div>
+                                                        <div class="er-rubric-sum-val" data-skill-sum-display="1" data-skill-max="@(anyMax ? num(skillMaxSum) : "")">@skillSum.ToString("0.##", CultureInfo.InvariantCulture)@(anyMax ? " / " + skillMaxSum.ToString("0.##", CultureInfo.InvariantCulture) : "")</div>
+                                                    </div>
+                                                </div>
+                                                <div class="er-scroll">
+                                                <div class="tscroll">
+                                                    <table class="grid">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="col-item">Rubric item</th>
+                                                                <th class="col-max">Max</th>
+                                                                <th class="col-actual">Actual</th>
+                                                                <th class="col-obs">Observation</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @for (var i = 0; i < rubricDimensions.Count; i++)
+                                                            {
+                                                                var dimension = rubricDimensions[i];
+                                                                var aiValue = dimension.Rating;
+                                                                var currentEntry = rubricEntry(currentRubric, dimension.Dimension);
+                                                                var currentValue = currentEntry != null ? currentEntry.Rating : aiValue;
+                                                                var observation = currentEntry?.ObservedLevel ?? dimension.ObservedLevel;
+                                                                var isOverallTech = string.Equals(dimension.Dimension, "Overall Technical Score", StringComparison.OrdinalIgnoreCase);
+                                                                var includeInSkillSum = skillRubricItems.Count > 0
+                                                                    ? (dimension.IsTechSkill && !isOverallTech)
+                                                                    : isOverallTech;
+                                                                <tr>
+                                                                    <td class="col-item">
+                                                                        <span class="er-rubric-name">@dimension.Dimension</span>
+                                                                        <div class="er-rubric-meta">
+                                                                            @if (dimension.IsTechSkill)
+                                                                            {
+                                                                                <span class="er-rubric-chip is-tech">Skill</span>
+                                                                            }
+                                                                            @if (!string.IsNullOrWhiteSpace(dimension.ExpectedLevel))
+                                                                            {
+                                                                                <span class="er-rubric-chip">Expected @dimension.ExpectedLevel</span>
+                                                                            }
+                                                                        </div>
+                                                                        <input type="hidden" name="RubricRatings[@i].Dimension" value="@dimension.Dimension" />
+                                                                        <input type="hidden" name="RubricRatings[@i].IsTechSkill" value="@dimension.IsTechSkill.ToString().ToLowerInvariant()" />
+                                                                        <input type="hidden" name="RubricRatings[@i].ExpectedLevel" value="@dimension.ExpectedLevel" />
+                                                                        @if (dimension.MaxScore.HasValue)
+                                                                        {
+                                                                            <input type="hidden" name="RubricRatings[@i].MaxScore" value="@num(dimension.MaxScore)" />
+                                                                        }
+                                                                    </td>
+                                                                    <td class="col-max">@(dimension.MaxScore.HasValue ? num(dimension.MaxScore) : "—")</td>
+                                                                    <td class="col-actual">
+                                                                        <div class="er-rubric-actual">
+                                                                            <input class="num" type="number" step="0.01" min="0" name="RubricRatings[@i].Rating"
+                                                                                   value="@num(currentValue)" data-ai-value="@num(aiValue)" data-track="num"
+                                                                                   data-skill-sum="@(includeInSkillSum ? "1" : null)" readonly="@roAttr" />
+                                                                            <span class="hint">/ @(dimension.MaxScore.HasValue ? num(dimension.MaxScore) : "—")</span>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="col-obs">
+                                                                        <textarea class="obs" name="RubricRatings[@i].ObservedLevel"
+                                                                                  data-ai-value="@dimension.ObservedLevel" data-track="text" readonly="@roAttr">@observation</textarea>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                            <tr class="totals">
+                                                                <td class="col-item">Total (skill-score rubric)</td>
+                                                                <td class="col-max">@(anyMax ? num(skillMaxSum) : "—")</td>
+                                                                <td class="col-actual" data-skill-sum-total-actual="1">@skillSum.ToString("0.##", CultureInfo.InvariantCulture)</td>
+                                                                <td class="col-obs"></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    <div class="er-stage@(questionCount == 0 && !hasRubric ? " is-on" : "")" data-er-type="final">
+                                        <div class="er-card">
+                                            <div class="er-final-head">
+                                                <h2>Final review</h2>
+                                                <div class="sub">Skill total from the rubric · communication /100 · verdict · comments</div>
+                                            </div>
+                                            <div class="er-scroll">
+                                            <div class="overall">
+                                                <div class="ov-tile ov-skill">
+                                                    <div class="fl">Overall skill</div>
+                                                    <div class="bignum" id="skillTotal" data-skill-sum-display="1" data-skill-max="@(anyMax ? num(skillMaxSum) : "")">@skillSum.ToString("0.##", CultureInfo.InvariantCulture)@(anyMax ? " / " + skillMaxSum.ToString("0.##", CultureInfo.InvariantCulture) : "")</div>
+                                                    <div class="hint" id="skillMax">Sum of skill-score rubric scores</div>
+                                                </div>
+                                                <div class="ov-tile">
+                                                    <div class="fl">Communication</div>
+                                                    <div class="ov-comm-row">
+                                                        <div class="bignum" id="commTotal">@(string.IsNullOrWhiteSpace(num(current.OverallCommunicationRating)) ? "—" : num(current.OverallCommunicationRating))</div>
+                                                        <span class="hint">/ 100</span>
+                                                        <input class="num" type="number" step="0.01" min="0" max="100" name="OverallCommunicationRating"
+                                                               value="@num(current.OverallCommunicationRating)"
+                                                               data-ai-value="@num(aiReport.OverallCommunicationRating)" data-track="num" data-comm-overall="1" readonly="@roAttr" />
+                                                    </div>
+                                                    <input type="hidden" name="OverallCommunicationComment" value="@current.OverallCommunicationComment" />
+                                                </div>
+                                                <div class="ov-tile">
+                                                    <div class="fl">Final verdict <span class="hint">AI: @(string.IsNullOrWhiteSpace(mappedAiVerdict) ? "—" : mappedAiVerdict)</span></div>
+                                                    @if (readOnly)
                                                     {
-                                                        <span class="rb-xr-kind rb-xr-kind-skill">Tech skill score</span>
+                                                        <input type="text" class="er-in" name="OverallVerdict" value="@mappedOverallVerdict" data-ai-value="@mappedAiVerdict" data-track="text" readonly="readonly" />
                                                     }
                                                     else
                                                     {
-                                                        <span class="rb-xr-kind">Score rubric</span>
+                                                        <select name="OverallVerdict" data-ai-value="@mappedAiVerdict" data-track="text" id="verdictSel">
+                                                            @if (string.IsNullOrWhiteSpace(mappedOverallVerdict))
+                                                            {
+                                                                <option value="">Select verdict</option>
+                                                            }
+                                                            else if (!verdictIsCanonical)
+                                                            {
+                                                                <option value="@mappedOverallVerdict" selected="selected">@mappedOverallVerdict</option>
+                                                            }
+                                                            @foreach (var option in AIInterviewVerdict.Options)
+                                                            {
+                                                                <option value="@option" selected="@(string.Equals(option, mappedOverallVerdict, StringComparison.OrdinalIgnoreCase))">@option</option>
+                                                            }
+                                                        </select>
                                                     }
-                                                </td>
-                                                <td>@dimension.ExpectedLevel</td>
-                                                <td>@dimension.ObservedLevel</td>
-                                                <td>
-                                                    <div class="rb-xr-field" style="margin:0;" data-rb-track>
-                                                        <input type="number" step="0.01" min="0" class="rb-xr-input rb-xr-num"
-                                                               name="RubricRatings[@i].Rating"
-                                                               value="@num(currentValue)"
-                                                               data-ai-value="@num(aiValue)" @(readOnly ? "readonly" : "") />
-                                                        <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@num(aiValue)</span></div>
+                                                    <div id="verdictDiff" class="diff s2" data-diff-for="OverallVerdict"><s>@mappedAiVerdict</s></div>
+                                                </div>
+                                                <div class="ov-comments">
+                                                    <div class="ov-box">
+                                                        <div class="fl">AI overall comment</div>
+                                                        <div class="ov-readonly">@(string.IsNullOrWhiteSpace(aiReport.OverallComment) ? "—" : aiReport.OverallComment)</div>
                                                     </div>
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    }
-
-                    <div class="rb-xr-card">
-                        <div class="rb-xr-card-head">Questions, Ratings &amp; Recorded Answers</div>
-                        <div class="rb-xr-card-body">
-                            @for (var i = 0; i < currentRows.Count; i++)
-                            {
-                                var row = currentRows[i];
-                                var baseline = aiRowAt(row.DisplayOrder) ?? row;
-                                <div class="rb-xr-q">
-                                    <div class="rb-xr-q-head">Q@(row.DisplayOrder + 1). @row.QuestionText</div>
-                                    <div class="rb-xr-q-body">
-                                        <input type="hidden" name="QuestionRatings[@i].DisplayOrder" value="@row.DisplayOrder" />
-
-                                        @if (!string.IsNullOrWhiteSpace(row.QuestionVideoLink) || !string.IsNullOrWhiteSpace(row.VideoLink))
-                                        {
-                                            <div class="rb-xr-media">
-                                                @if (!string.IsNullOrWhiteSpace(row.QuestionVideoLink))
+                                                    <div class="ov-box">
+                                                        <div class="fl">Interviewer / final comments</div>
+                                                        <textarea class="aud" name="OverallComment" data-ai-value="@aiReport.OverallComment" data-track="text" readonly="@roAttr">@current.OverallComment</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="llm">
+                                                <div class="llm-title">LLM detection</div>
+                                                <div class="llm-sub">Informational only — not a skill or communication score. Read-only.</div>
+                                                @if (llm != null)
                                                 {
-                                                    <figure>
-                                                        <video controls preload="none" src="@row.QuestionVideoLink"></video>
-                                                        <figcaption>Question</figcaption>
-                                                    </figure>
+                                                    <div>Suspected: <span class="pill @(llm.LlmResponseSuspected ? "red" : "green")">@(llm.LlmResponseSuspected ? "Yes" : "No")</span></div>
+                                                    @if (!string.IsNullOrWhiteSpace(llm.EvidenceComment))
+                                                    {
+                                                        <div class="fl" style="margin-top:10px;">Evidence summary</div>
+                                                        <div>@llm.EvidenceComment</div>
+                                                    }
+                                                    @if (llm.SuspiciousInstances != null && llm.SuspiciousInstances.Count > 0)
+                                                    {
+                                                        <div class="fl" style="margin-top:12px;">Per-question suspicious instances</div>
+                                                        <table class="grid">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Question</th>
+                                                                    <th>Evidence</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach (var instance in llm.SuspiciousInstances)
+                                                                {
+                                                                    var splitAt = instance == null ? -1 : instance.IndexOf(": ", StringComparison.Ordinal);
+                                                                    var questionPart = splitAt > 0 ? instance.Substring(0, splitAt) : "—";
+                                                                    var evidencePart = splitAt > 0 ? instance.Substring(splitAt + 2) : instance;
+                                                                    <tr>
+                                                                        <td>@questionPart</td>
+                                                                        <td>@evidencePart</td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    }
                                                 }
-                                                @if (!string.IsNullOrWhiteSpace(row.VideoLink))
+                                                else
                                                 {
-                                                    <figure>
-                                                        <video controls preload="none" src="@row.VideoLink"></video>
-                                                        <figcaption>Candidate answer</figcaption>
-                                                    </figure>
+                                                    <div>No LLM detection data for this interview.</div>
                                                 }
                                             </div>
-                                        }
-
-                                        <div class="rb-xr-grid">
-                                            <div class="rb-xr-field" data-rb-track>
-                                                <label class="rb-xr-label">Question Rating</label>
-                                                <input type="number" step="0.01" min="0" class="rb-xr-input rb-xr-num"
-                                                       name="QuestionRatings[@i].Rating"
-                                                       value="@num(row.Rating)"
-                                                       data-ai-value="@num(baseline.Rating)" @(readOnly ? "readonly" : "") />
-                                                <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@num(baseline.Rating)</span></div>
-                                            </div>
-                                            <div class="rb-xr-field" data-rb-track>
-                                                <label class="rb-xr-label">Verdict</label>
-                                                <input type="text" class="rb-xr-input"
-                                                       name="QuestionRatings[@i].Verdict"
-                                                       value="@row.Verdict"
-                                                       data-ai-value="@baseline.Verdict" @(readOnly ? "readonly" : "") />
-                                                <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@baseline.Verdict</span></div>
-                                            </div>
-                                            <div class="rb-xr-field" data-rb-track>
-                                                <label class="rb-xr-label">Communication Score</label>
-                                                <input type="number" step="0.01" min="0" class="rb-xr-input rb-xr-num"
-                                                       name="QuestionRatings[@i].CommunicationRating"
-                                                       value="@num(row.CommunicationRating)"
-                                                       data-ai-value="@num(baseline.CommunicationRating)" @(readOnly ? "readonly" : "") />
-                                                <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@num(baseline.CommunicationRating)</span></div>
+                                            <div style="margin-top:14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                                                @if (!readOnly)
+                                                {
+                                                    <button type="submit" class="er-btn good">Submit expert audit</button>
+                                                    <span class="hint">On submit: discrepancy report stored, assignment stamped, final published report generated for the client view.</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="hint">You are viewing this review in read only mode.</span>
+                                                }
                                             </div>
                                         </div>
-
-                                        <div class="rb-xr-field" data-rb-track>
-                                            <label class="rb-xr-label">Comment</label>
-                                            <textarea class="rb-xr-input" name="QuestionRatings[@i].Comment"
-                                                      data-ai-value="@baseline.Comment" @(readOnly ? "readonly" : "")>@row.Comment</textarea>
-                                            <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@baseline.Comment</span></div>
-                                        </div>
-
-                                        <div class="rb-xr-field" data-rb-track>
-                                            <label class="rb-xr-label">Communication Comment</label>
-                                            <textarea class="rb-xr-input" name="QuestionRatings[@i].CommunicationComment"
-                                                      data-ai-value="@baseline.CommunicationComment" @(readOnly ? "readonly" : "")>@row.CommunicationComment</textarea>
-                                            <div class="rb-xr-baseline">AI: <span class="rb-xr-old">@baseline.CommunicationComment</span></div>
-                                        </div>
-
-                                        <div class="rb-xr-field" data-rb-track>
-                                            <label class="rb-xr-label">Recorded Answer Transcript</label>
-                                            <textarea class="rb-xr-input rb-xr-transcript" name="QuestionRatings[@i].TranscriptText"
-                                                      data-ai-value="@baseline.TranscriptText" @(readOnly ? "readonly" : "")>@row.TranscriptText</textarea>
-                                            <div class="rb-xr-baseline">Speech to text: <span class="rb-xr-old">@baseline.TranscriptText</span></div>
                                         </div>
                                     </div>
+
+                                    <div class="er-nav">
+                                        <button type="button" class="er-btn" id="erBackBtn">Back</button>
+                                        <span class="er-nav-label" id="erNavLabel"></span>
+                                        <button type="button" class="er-btn primary" id="erFlipBtn">Mark reviewed &amp; flip</button>
+                                    </div>
                                 </div>
-                            }
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="screenv is-hidden" id="v-client">
+                        <div class="er-page">
+                            <div class="er-page-head">
+                                <div>
+                                    <h1>@titleLine</h1>
+                                    <div class="sub">Client view — the final published report reflects the expert's changes. The AI original and the SME-edited copy stay available as tabs.</div>
+                                </div>
+                            </div>
+                            <div class="er-card">
+                                <div class="clienttabs">
+                                    <button type="button" class="is-on" data-cli="final">Final decision</button>
+                                    <button type="button" data-cli="ai">AI report</button>
+                                    <button type="button" data-cli="sme">SME-edited report</button>
+                                </div>
+                                <div class="clipane is-on" id="cli-final">
+                                    <div style="display:flex; gap:26px; flex-wrap:wrap; align-items:center; margin:14px 0">
+                                        <div>
+                                            <div class="fl">Verdict</div>
+                                            <span class="pill @(rejectFamily ? "red" : selectFamily ? "green" : "grey")" style="font-size:13px; padding:6px 16px">@(string.IsNullOrWhiteSpace(mappedOverallVerdict) ? "—" : mappedOverallVerdict.ToUpperInvariant())</span>
+                                        </div>
+                                        <div>
+                                            <div class="fl">Skill score</div>
+                                            <div class="bignum">@skillSum.ToString("0.##", CultureInfo.InvariantCulture) <span class="hint" style="font-size:13px">@(anyMax ? "/ " + skillMaxSum.ToString("0.##", CultureInfo.InvariantCulture) : "")</span></div>
+                                        </div>
+                                        <div>
+                                            <div class="fl">Communication</div>
+                                            <div class="bignum">@(string.IsNullOrWhiteSpace(num(current.OverallCommunicationRating)) ? "—" : num(current.OverallCommunicationRating)) <span class="hint" style="font-size:13px">/ 100</span></div>
+                                        </div>
+                                        <div>
+                                            <div class="fl">Expert review</div>
+                                            @if (Model.IsSubmitted)
+                                            {
+                                                <span class="pill amber">Reviewed · @changedRows.Count change@(changedRows.Count == 1 ? "" : "s") · Max severity @(severityLabel(Model.Assignment?.MaxSeverity ?? 0))</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="pill grey">Not submitted</span>
+                                            }
+                                        </div>
+                                        <div>
+                                            <div class="fl">Integrity</div>
+                                            @if (llm != null && llm.LlmResponseSuspected)
+                                            {
+                                                <span class="pill red">LLM suspected</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="pill green">No LLM suspicion</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="hint" style="line-height:1.7">
+                                        Final comment (expert-approved): @(string.IsNullOrWhiteSpace(current.OverallComment) ? "—" : current.OverallComment)
+                                    </div>
+                                </div>
+                                <div class="clipane" id="cli-ai">
+                                    <p class="hint" style="margin-top:14px; line-height:1.8">
+                                        The unmodified AI report.
+                                        Verdict: <b>@(string.IsNullOrWhiteSpace(mappedAiVerdict) ? "—" : mappedAiVerdict)</b>.
+                                        <a href="@Url.Action("Report", "AIInterview", new { seId = Model.SessionId })" target="_blank" style="color:#2CA8FF;">Open original report</a>
+                                    </p>
+                                </div>
+                                <div class="clipane" id="cli-sme">
+                                    @if (changedRows.Count == 0)
+                                    {
+                                        <p class="hint" style="margin-top:14px; line-height:1.8">No tracked discrepancies yet. Submit the expert audit to store the SME-edited copy.</p>
+                                    }
+                                    else
+                                    {
+                                        <div class="tscroll" style="margin-top:14px;">
+                                            <table class="grid">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Field</th>
+                                                        <th>Question</th>
+                                                        <th>AI value</th>
+                                                        <th>Expert value</th>
+                                                        <th>Severity</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var drow in changedRows)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @drow.FieldType
+                                                                @if (!string.IsNullOrWhiteSpace(drow.FieldKey))
+                                                                {
+                                                                    <div class="hint">@drow.FieldKey</div>
+                                                                }
+                                                            </td>
+                                                            <td>@(drow.DisplayOrder.HasValue ? "Q" + (drow.DisplayOrder.Value + 1) : "—")</td>
+                                                            <td><s style="opacity:.75">@drow.AIValue</s></td>
+                                                            <td>@drow.ExpertValue</td>
+                                                            <td><span class="pill @(drow.Severity >= 3 ? "red" : drow.Severity == 2 ? "amber" : "grey")">@severityLabel(drow.Severity)</span></td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    @if (!readOnly)
-                    {
-                        <div class="rb-xr-actions">
-                            <button type="submit" class="rb-xr-submit">Submit Expert Review</button>
-                            <div class="rb-xr-note">
-                                Edited fields are highlighted above. On submit, every change is recorded against the
-                                AI report and the severity of each disagreement is stored with this review.
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="rb-xr-actions">
-                            <div class="rb-xr-note">You are viewing this review in read only mode.</div>
-                        </div>
-                    }
-                </form>
+                    <div class="er-toast" id="toast"></div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    window.rbErUnlockPage = function () {
+        var panel = document.getElementById('main-panel');
+        if (panel) {
+            panel.classList.remove('ps', 'ps--active-x', 'ps--active-y', 'ps--scrolling-x', 'ps--scrolling-y');
+            var kids = panel.children;
+            for (var i = kids.length - 1; i >= 0; i--) {
+                var cls = kids[i].className || '';
+                if (String(cls).indexOf('ps__rail') !== -1 && kids[i].parentNode) {
+                    kids[i].parentNode.removeChild(kids[i]);
+                }
+            }
+            panel.style.height = 'auto';
+            panel.style.maxHeight = 'none';
+            panel.style.overflow = 'visible';
+        }
+        document.documentElement.style.overflowY = 'auto';
+        document.documentElement.style.height = 'auto';
+        if (document.body) {
+            document.body.style.position = 'relative';
+            document.body.style.height = 'auto';
+            document.body.style.overflow = 'visible';
+            document.body.style.maxHeight = 'none';
+        }
+    };
+    window.rbErUnlockPage();
+
     (function () {
-        // Tracked changes while editing. The baseline is the AI value carried on each control, so
-        // this is only a presentation aid: the server recomputes the diff authoritatively on submit.
+        var qCount = @questionCount;
+        var hasRubric = @(hasRubric ? "true" : "false");
+        var stageType = qCount > 0 ? 'q' : (hasRubric ? 'rubric' : 'final');
+        var stageIndex = 0;
+        var reviewedQ = {};
+        var reviewedRubric = false;
+        var reviewedFinal = false;
+
         function normalize(value) {
             return (value === null || value === undefined) ? '' : String(value).trim();
         }
-
-        function isNumeric(el) {
-            return el.getAttribute('type') === 'number';
+        function transcriptCommitted(el) {
+            var committed = el.getAttribute('data-committed');
+            return committed === null ? el.value : committed;
         }
-
         function hasChanged(el) {
             var baseline = normalize(el.getAttribute('data-ai-value'));
+            if (el.getAttribute('data-track') === 'transcript') {
+                return normalize(transcriptCommitted(el)) !== baseline;
+            }
             var actual = normalize(el.value);
-
-            if (isNumeric(el)) {
+            if (el.getAttribute('data-track') === 'num' || el.getAttribute('type') === 'number') {
                 var a = parseFloat(baseline);
                 var b = parseFloat(actual);
                 var aEmpty = baseline === '' || isNaN(a);
@@ -420,21 +1349,301 @@
                 if (aEmpty !== bEmpty) return true;
                 return Math.abs(a - b) > 0.0001;
             }
-
             return baseline !== actual;
         }
+        function setTranscriptMode(wrap, editing) {
+            if (!wrap) return;
+            var ta = wrap.querySelector('textarea.aud');
+            var edit = wrap.querySelector('[data-tr-edit]');
+            var save = wrap.querySelector('[data-tr-save]');
+            if (!ta) return;
+            if (editing) {
+                ta.removeAttribute('readonly');
+                ta.classList.add('is-editing');
+                ta.focus();
+                if (edit) edit.style.display = 'none';
+                if (save) save.style.display = '';
+            } else {
+                ta.setAttribute('readonly', 'readonly');
+                ta.classList.remove('is-editing');
+                if (edit) edit.style.display = '';
+                if (save) save.style.display = 'none';
+            }
+        }
+        function abandonUnsavedTranscripts() {
+            Array.prototype.forEach.call(document.querySelectorAll('textarea.aud[data-track="transcript"]'), function (ta) {
+                var committed = ta.getAttribute('data-committed');
+                if (committed !== null) ta.value = committed;
+                setTranscriptMode(ta.closest('.tr'), false);
+            });
+        }
+        function refreshDiffs() {
+            var controls = document.querySelectorAll('#expertAuditForm [data-ai-value]');
+            var changes = 0;
+            var transcriptChanged = false;
+            Array.prototype.forEach.call(controls, function (el) {
+                var changed = hasChanged(el);
+                if (changed) changes += 1;
+                el.classList.toggle('changed', changed && el.classList.contains('aud'));
+                var name = el.getAttribute('name');
+                var diff = name ? document.querySelector('[data-diff-for="' + name + '"]') : null;
+                if (diff) diff.classList.toggle('is-on', changed);
+                if (el.getAttribute('data-track') === 'transcript' && changed) transcriptChanged = true;
+            });
+            var countEl = document.getElementById('changecount');
+            if (countEl) countEl.textContent = changes ? (changes + ' tracked change' + (changes > 1 ? 's' : '')) : 'no changes vs AI';
+            var nudge = document.getElementById('nudge');
+            if (nudge) nudge.classList.toggle('is-on', transcriptChanged);
+        }
+        function formatScore(n) {
+            if (!isFinite(n)) return '0';
+            return String(Math.round(n * 100) / 100);
+        }
+        function refreshSkillSum() {
+            var inputs = document.querySelectorAll('[data-skill-sum="1"]');
+            if (!inputs.length) return;
+            var sum = 0;
+            Array.prototype.forEach.call(inputs, function (el) {
+                var v = parseFloat(el.value);
+                if (!isNaN(v)) sum += v;
+            });
+            var formatted = formatScore(sum);
+            var heroes = document.querySelectorAll('[data-skill-sum-display]');
+            Array.prototype.forEach.call(heroes, function (el) {
+                var max = el.getAttribute('data-skill-max');
+                el.textContent = max ? (formatted + ' / ' + max) : formatted;
+            });
+            var totalActual = document.querySelector('[data-skill-sum-total-actual]');
+            if (totalActual) totalActual.textContent = formatted;
+        }
+        function refreshComm() {
+            var el = document.querySelector('[data-comm-overall]');
+            var out = document.getElementById('commTotal');
+            if (el && out) out.textContent = el.value === '' ? '—' : el.value;
+        }
+        function toastMsg(t) {
+            var e = document.getElementById('toast');
+            if (!e) return;
+            e.textContent = t;
+            e.classList.add('is-on');
+            setTimeout(function () { e.classList.remove('is-on'); }, 2600);
+        }
+        function pauseVideos() {
+            Array.prototype.forEach.call(document.querySelectorAll('#v-reviewer video'), function (v) {
+                try { v.pause(); } catch (e) { }
+            });
+        }
+        function reviewedCount() {
+            var n = 0;
+            for (var i = 0; i < qCount; i++) if (reviewedQ[i]) n += 1;
+            return n;
+        }
+        function updateProgress() {
+            var qLabel = document.getElementById('qReviewedLabel');
+            if (qLabel) qLabel.textContent = reviewedCount() + '/' + qCount + ' reviewed';
 
-        function refresh(el) {
-            var field = el.closest('[data-rb-track]');
-            if (!field) return;
-            field.classList.toggle('rb-xr-changed', hasChanged(el));
+            var dots = document.querySelectorAll('.er-dot[data-jump-q]');
+            Array.prototype.forEach.call(dots, function (dot) {
+                var idx = parseInt(dot.getAttribute('data-jump-q'), 10);
+                dot.classList.toggle('is-done', !!reviewedQ[idx]);
+                dot.classList.toggle('is-now', stageType === 'q' && stageIndex === idx);
+            });
+
+            var pQ = document.getElementById('progQuestions');
+            var pR = document.getElementById('progRubric');
+            var pF = document.getElementById('progFinal');
+            if (pQ) {
+                pQ.classList.toggle('is-now', stageType === 'q');
+                pQ.classList.toggle('is-done', qCount > 0 && reviewedCount() === qCount && stageType !== 'q');
+            }
+            if (pR) {
+                pR.classList.toggle('is-now', stageType === 'rubric');
+                pR.classList.toggle('is-done', reviewedRubric && stageType !== 'rubric');
+            }
+            if (pF) {
+                pF.classList.toggle('is-now', stageType === 'final');
+                pF.classList.toggle('is-done', reviewedFinal && stageType !== 'final');
+            }
+        }
+        function updateNav() {
+            var back = document.getElementById('erBackBtn');
+            var flip = document.getElementById('erFlipBtn');
+            var label = document.getElementById('erNavLabel');
+            var canBack = !(stageType === 'q' && stageIndex === 0) && !(stageType === 'q' && qCount === 0) && !(stageType !== 'q' && qCount === 0 && !hasRubric && stageType === 'final' && !hasRubric);
+            if (stageType === 'q') canBack = stageIndex > 0;
+            if (stageType === 'rubric') canBack = qCount > 0;
+            if (stageType === 'final') canBack = qCount > 0 || hasRubric;
+            if (back) back.disabled = !canBack;
+
+            if (flip) {
+                if (stageType === 'final') {
+                    flip.style.display = 'none';
+                } else {
+                    flip.style.display = '';
+                    flip.textContent = 'Mark reviewed & flip';
+                }
+            }
+            if (label) {
+                if (stageType === 'q') label.textContent = 'Question ' + (stageIndex + 1) + ' of ' + qCount;
+                else if (stageType === 'rubric') label.textContent = 'Rubric review';
+                else label.textContent = 'Final review';
+            }
+        }
+        function showStage(type, index) {
+            abandonUnsavedTranscripts();
+            pauseVideos();
+            stageType = type;
+            stageIndex = type === 'q' ? (index || 0) : 0;
+            var stages = document.querySelectorAll('.er-stage');
+            Array.prototype.forEach.call(stages, function (el) {
+                var t = el.getAttribute('data-er-type');
+                var i = parseInt(el.getAttribute('data-er-index') || '0', 10);
+                var on = t === type && (t !== 'q' || i === stageIndex);
+                el.classList.toggle('is-on', on);
+            });
+            updateProgress();
+            updateNav();
+        }
+        function markAndFlip() {
+            if (stageType === 'q') {
+                reviewedQ[stageIndex] = true;
+                if (stageIndex < qCount - 1) showStage('q', stageIndex + 1);
+                else if (hasRubric) showStage('rubric', 0);
+                else showStage('final', 0);
+                return;
+            }
+            if (stageType === 'rubric') {
+                reviewedRubric = true;
+                showStage('final', 0);
+                return;
+            }
+            reviewedFinal = true;
+            updateProgress();
+        }
+        function goBack() {
+            if (stageType === 'q' && stageIndex > 0) {
+                showStage('q', stageIndex - 1);
+                return;
+            }
+            if (stageType === 'rubric') {
+                if (qCount > 0) showStage('q', qCount - 1);
+                return;
+            }
+            if (stageType === 'final') {
+                if (hasRubric) showStage('rubric', 0);
+                else if (qCount > 0) showStage('q', qCount - 1);
+            }
         }
 
-        var controls = document.querySelectorAll('[data-rb-track] [data-ai-value]');
-        Array.prototype.forEach.call(controls, function (el) {
-            refresh(el);
-            el.addEventListener('input', function () { refresh(el); });
-            el.addEventListener('change', function () { refresh(el); });
+        var form = document.getElementById('expertAuditForm');
+        if (form) {
+            form.addEventListener('input', function () { refreshDiffs(); refreshSkillSum(); refreshComm(); });
+            form.addEventListener('change', function () { refreshDiffs(); refreshSkillSum(); refreshComm(); });
+        }
+        function regen() {
+            abandonUnsavedTranscripts();
+            var b = document.getElementById('regenBtn');
+            var now = document.getElementById('regenNowBtn');
+            if (b) { b.disabled = true; b.textContent = 'Regenerating…'; }
+            if (now) now.disabled = true;
+            Array.prototype.forEach.call(document.querySelectorAll('textarea.aud[data-track="transcript"]'), function (ta) {
+                var committed = transcriptCommitted(ta);
+                ta.value = committed;
+                ta.setAttribute('data-committed', committed);
+                ta.setAttribute('data-ai-value', committed);
+                ta.classList.remove('changed');
+            });
+            setTimeout(function () {
+                refreshDiffs();
+                if (b) { b.disabled = false; b.textContent = '↻ Regenerate'; }
+                if (now) now.disabled = false;
+                toastMsg('Corrected transcripts are now the baseline. Re-check skill scores against the corrected answers.');
+            }, 400);
+        }
+        var regenBtn = document.getElementById('regenBtn');
+        var regenNow = document.getElementById('regenNowBtn');
+        if (regenBtn) regenBtn.addEventListener('click', regen);
+        if (regenNow) regenNow.addEventListener('click', regen);
+
+        Array.prototype.forEach.call(document.querySelectorAll('[data-tr-edit]'), function (btn) {
+            btn.addEventListener('click', function () {
+                setTranscriptMode(btn.closest('.tr'), true);
+            });
         });
+        Array.prototype.forEach.call(document.querySelectorAll('[data-tr-save]'), function (btn) {
+            btn.addEventListener('click', function () {
+                var wrap = btn.closest('.tr');
+                var ta = wrap ? wrap.querySelector('textarea.aud') : null;
+                if (ta) ta.setAttribute('data-committed', ta.value);
+                setTranscriptMode(wrap, false);
+                refreshDiffs();
+            });
+        });
+
+        var backBtn = document.getElementById('erBackBtn');
+        var flipBtn = document.getElementById('erFlipBtn');
+        if (backBtn) backBtn.addEventListener('click', goBack);
+        if (flipBtn) flipBtn.addEventListener('click', markAndFlip);
+
+        var progQ = document.getElementById('progQuestions');
+        var progR = document.getElementById('progRubric');
+        var progF = document.getElementById('progFinal');
+        if (progQ) progQ.addEventListener('click', function (e) {
+            var dot = e.target.closest ? e.target.closest('[data-jump-q]') : null;
+            if (dot) {
+                showStage('q', parseInt(dot.getAttribute('data-jump-q'), 10));
+                e.stopPropagation();
+                return;
+            }
+            if (qCount > 0) showStage('q', stageType === 'q' ? stageIndex : 0);
+        });
+        if (progR) progR.addEventListener('click', function () { showStage('rubric', 0); });
+        if (progF) progF.addEventListener('click', function () { showStage('final', 0); });
+        Array.prototype.forEach.call(document.querySelectorAll('[data-jump-q]'), function (dot) {
+            dot.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                showStage('q', parseInt(dot.getAttribute('data-jump-q'), 10));
+            });
+        });
+
+        var root = document.getElementById('rbErRoot');
+        document.getElementById('tabReviewer').addEventListener('click', function () {
+            document.getElementById('tabReviewer').classList.add('is-on');
+            document.getElementById('tabClient').classList.remove('is-on');
+            document.getElementById('v-reviewer').classList.remove('is-hidden');
+            document.getElementById('v-client').classList.add('is-hidden');
+            if (root) root.classList.remove('is-client');
+        });
+        document.getElementById('tabClient').addEventListener('click', function () {
+            document.getElementById('tabClient').classList.add('is-on');
+            document.getElementById('tabReviewer').classList.remove('is-on');
+            document.getElementById('v-client').classList.remove('is-hidden');
+            document.getElementById('v-reviewer').classList.add('is-hidden');
+            if (root) root.classList.add('is-client');
+        });
+        Array.prototype.forEach.call(document.querySelectorAll('.clienttabs button'), function (btn) {
+            btn.addEventListener('click', function () {
+                Array.prototype.forEach.call(document.querySelectorAll('.clienttabs button'), function (b) { b.classList.remove('is-on'); });
+                btn.classList.add('is-on');
+                Array.prototype.forEach.call(document.querySelectorAll('.clipane'), function (p) { p.classList.remove('is-on'); });
+                var pane = document.getElementById('cli-' + btn.getAttribute('data-cli'));
+                if (pane) pane.classList.add('is-on');
+            });
+        });
+
+        refreshDiffs();
+        refreshSkillSum();
+        refreshComm();
+        showStage(stageType, 0);
     })();
 </script>
+
+@section Scripts {
+    <script>
+        if (typeof window.rbErUnlockPage === 'function') {
+            window.rbErUnlockPage();
+            setTimeout(window.rbErUnlockPage, 0);
+        }
+    </script>
+}

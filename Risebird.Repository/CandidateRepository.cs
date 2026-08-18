@@ -851,7 +851,7 @@ namespace Risebird.Repository
                     adapter.SelectCommand.Parameters.AddWithValue("@irfId", irfId);
                     adapter.Fill(dataset);
                     DataTable dt = new DataTable();
-                    if (dataset.Tables.Count > 0)
+                    if (dataset.Tables.Count > 0 && dataset.Tables[0].Rows.Count > 0)
                     {
                         dt = dataset.Tables[0];
                         _resultVM.CandidateDetails.Name = dt.Rows[0]["Name"] != null ? dt.Rows[0]["Name"].ToString() : null;

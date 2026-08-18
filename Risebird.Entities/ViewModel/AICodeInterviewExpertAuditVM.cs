@@ -78,6 +78,11 @@ namespace Risebird.Entities.ViewModel
 
         /// <summary>True when the viewer may edit and submit this audit.</summary>
         public bool CanEdit { get; set; }
+
+        /// <summary>
+        /// Informational LLM-detection block from the AI evaluation. Display only; not posted back.
+        /// </summary>
+        public LlmDetection LlmDetection { get; set; }
     }
 
     /// <summary>
