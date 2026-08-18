@@ -1748,15 +1748,15 @@ namespace Risebird.Web.Controllers
             "Based on the full interview conversation in this thread, generate a complete evaluation report as clean HTML only " +
             "(no markdown code fences, no preamble). Include these sections with these exact labels where applicable: " +
             "Overall Technical Score; Overall Communication Score; Final Verdict; Final Comment; Communication Score Reasoning; " +
-            "LLM Detection / LLM Response Suspected and Evidence Comment; " +
+            "LLM Detection / LLM Response Suspected, Evidence Comment, and per-question Suspicious Instances; " +
             "a Score Rubric table (columns: Rubric Item, Expected, Observed, Score); " +
             "Competency Ratings or Questions Discussed & Competency Rating; " +
             "and question-by-question analysis with Strengths, Weaknesses, and Evidence from transcript where useful. " +
             "Use simple semantic HTML (h2/h3, p, table, ul/li) suitable for embedding in a report page. " +
             "After the HTML, append exactly one machine-readable line as an HTML comment and nothing after it, in this " +
-            "exact format: <!--RB_EVAL {\"final_verdict\":\"select|reject|borderline\",\"final_comment\":\"<one or two " +
-            "sentence overall verdict summary>\"} RB_EVAL--> . Use only one of select, reject, or borderline " +
-            "(lowercase) for final_verdict, and make sure the JSON is valid with any inner double quotes escaped.";
+            "exact format: <!--RB_EVAL {\"final_verdict\":\"Strongly Selected|Marginally Selected|Marginally Rejected|Strongly Rejected\",\"final_comment\":\"<one or two " +
+            "sentence overall verdict summary>\"} RB_EVAL--> . Use only one of those four final_verdict values " +
+            "(not Recommended, Not Recommended, select, reject, or borderline), and make sure the JSON is valid with any inner double quotes escaped.";
 
         private static bool MessageSignalsInterviewCompletion(string message)
         {
@@ -3223,140 +3223,7 @@ namespace Risebird.Web.Controllers
         }
 
         private AIInterviewEvaluation TryParseEvaluation(string raw)
-        {
-            if (string.IsNullOrWhiteSpace(raw)) return null;
-
-            var cleaned = raw.Trim();
-            if (cleaned.StartsWith("```json")) cleaned = cleaned.Substring(6).TrimStart();
-            if (cleaned.EndsWith("```")) cleaned = cleaned.Substring(0, cleaned.Length - 3).TrimEnd();
-            cleaned = cleaned.TrimStart('n');
-
-            try
-            {
-                var strict = JsonConvert.DeserializeObject<AIInterviewEvaluation>(cleaned);
-                if (strict != null &&
-                    (strict.QuestionRatings != null || strict.RubricScoreSummary != null || strict.LlmDetection != null ||
-                     !string.IsNullOrEmpty(strict.FinalVerdict) || !string.IsNullOrEmpty(strict.FinalComment) ||
-                     strict.OverallTechnicalScore != 0 || strict.OverallCommunicationScore != 0))
-                {
-                    var rootForFix = JsonConvert.DeserializeObject<JObject>(cleaned);
-
-                    if (strict.RubricScoreSummary != null && strict.RubricScoreSummary.Any(r => string.IsNullOrEmpty(r.RubricItem)))
-                    {
-                        var rArr = rootForFix?["rubric_score_summary"] as JArray;
-                        if (rArr != null)
-                        {
-                            strict.RubricScoreSummary = rArr.Select(r => new RubricScoreSummary
-                            {
-                                RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("parameter") ?? r.Value<string>("item") ?? r.Value<string>("name"),
-                                ExpectedLevel = r.Value<string>("expected_level") ?? r.Value<string>("expected") ?? r.Value<string>("evaluated_at"),
-                                ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed") ?? r.Value<string>("observed_at"),
-                                Score = r.Value<float?>("score") ?? 0
-                            }).ToList();
-                        }
-                    }
-
-                    if (strict.QuestionRatings == null && rootForFix != null)
-                    {
-                        var qArr = (JArray)(rootForFix["question_ratings"] ?? rootForFix["questions"] ?? rootForFix["questionRatings"] ?? rootForFix["question_evaluations"]);
-                        if (qArr != null)
-                        {
-                            strict.QuestionRatings = qArr.Select(q => new QuestionRating
-                            {
-                                Question = q.Value<string>("question") ?? q.Value<string>("text") ?? q.Value<string>("question_id"),
-                                Verdict = q.Value<string>("verdict") ?? q.Value<string>("evaluation_summary"),
-                                Score = q.Value<int?>("score") ?? 0,
-                                Comment = q.Value<string>("comment") ?? q.Value<string>("evaluation_summary"),
-                                CommunicationScore = q.Value<int?>("communication_score") ?? 0,
-                                CommunicationComment = q.Value<string>("communication_comment")
-                            }).ToList();
-                        }
-                    }
-
-                    if (strict.RubricScoreSummary == null && rootForFix != null)
-                    {
-                        var rArr = (JArray)(rootForFix["rubric_score_summary"] ?? rootForFix["category_scores"] ?? rootForFix["rubric_summary"] ?? rootForFix["rubric"]);
-                        if (rArr != null)
-                        {
-                            strict.RubricScoreSummary = rArr.Select(r => new RubricScoreSummary
-                            {
-                                RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("score_rubric_parameter") ?? r.Value<string>("parameter") ?? r.Value<string>("item") ?? r.Value<string>("name"),
-                                ExpectedLevel = r.Value<string>("expected_level") ?? r.Value<string>("expected") ?? r.Value<string>("evaluated_at"),
-                                ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed") ?? r.Value<string>("summary"),
-                                Score = r.Value<float?>("score") ?? r.Value<float?>("average_score") ?? 0
-                            }).ToList();
-                        }
-                    }
-
-                    if (string.IsNullOrEmpty(strict.FinalVerdict) && rootForFix != null)
-                    {
-                        strict.FinalVerdict = rootForFix.Value<string>("final_verdict") ?? rootForFix.Value<string>("verdict") ?? rootForFix.Value<string>("overall_recommendation");
-                    }
-                    if (string.IsNullOrEmpty(strict.FinalComment) && rootForFix != null)
-                    {
-                        strict.FinalComment = rootForFix.Value<string>("final_comment") ?? rootForFix.Value<string>("comment") ?? rootForFix.Value<string>("overall_summary");
-                    }
-
-                    return strict;
-                }
-            }
-            catch { }
-
-            try
-            {
-                var root = JsonConvert.DeserializeObject<JObject>(cleaned);
-                if (root == null) return null;
-
-                var eval = new AIInterviewEvaluation
-                {
-                    OverallTechnicalScore = root.Value<int?>("overall_technical_score") ?? root.Value<int?>("overall_score") ?? 0,
-                    FinalVerdict = root.Value<string>("final_verdict") ?? root.Value<string>("verdict") ?? root.Value<string>("overall_recommendation"),
-                    FinalComment = root.Value<string>("final_comment") ?? root.Value<string>("comment") ?? root.Value<string>("overall_summary"),
-                    OverallCommunicationScore = root.Value<int?>("overall_communication_score") ?? root.Value<int?>("communication_score") ?? 0,
-                    OverallCommunicationScoreReasoning = root.Value<string>("overall_communication_score reasoning") ?? root.Value<string>("overall_communication_score_reasoning")
-                };
-
-                var qNode = (JArray)(root["question_ratings"] ?? root["questions"] ?? root["questionRatings"] ?? root["question_evaluations"]);
-                if (qNode != null)
-                {
-                    eval.QuestionRatings = qNode.Select(q => new QuestionRating
-                    {
-                        Question = q.Value<string>("question") ?? q.Value<string>("text") ?? q.Value<string>("question_id"),
-                        Verdict = q.Value<string>("verdict") ?? q.Value<string>("evaluation_summary"),
-                        Score = q.Value<int?>("score") ?? 0,
-                        Comment = q.Value<string>("comment") ?? q.Value<string>("evaluation_summary"),
-                        CommunicationScore = q.Value<int?>("communication_score") ?? 0,
-                        CommunicationComment = q.Value<string>("communication_comment")
-                    }).ToList();
-                }
-
-                var rNode = (JArray)(root["rubric_score_summary"] ?? root["rubric_summary"] ?? root["rubric"] ?? root["category_scores"]);
-                if (rNode != null)
-                {
-                    eval.RubricScoreSummary = rNode.Select(r => new RubricScoreSummary
-                    {
-                        RubricItem = r.Value<string>("rubric_item") ?? r.Value<string>("score_rubric_parameter") ?? r.Value<string>("parameter") ?? r.Value<string>("item") ?? r.Value<string>("name"),
-                        ExpectedLevel = r.Value<string>("expected_level") ?? r.Value<string>("expected") ?? r.Value<string>("evaluated_at"),
-                        ObservedLevel = r.Value<string>("observed_level") ?? r.Value<string>("observed") ?? r.Value<string>("summary"),
-                        Score = r.Value<float?>("score") ?? r.Value<float?>("average_score") ?? 0
-                    }).ToList();
-                }
-
-                var lNode = (JObject)(root["llm_detection"] ?? root["llmDetection"]);
-                if (lNode != null)
-                {
-                    eval.LlmDetection = new LlmDetection
-                    {
-                        LlmResponseSuspected = lNode.Value<bool?>("llm_response_suspected") ?? lNode.Value<bool?>("suspected") ?? false,
-                        EvidenceComment = lNode.Value<string>("evidence_comment") ?? lNode.Value<string>("evidence"),
-                        SuspiciousInstances = lNode["suspicious_instances"] is JArray arr ? arr.Select(x => x.ToString()).ToList() : null
-                    };
-                }
-
-                return eval;
-            }
-            catch { return null; }
-        }
+            => AIInterviewEvaluation.TryParse(raw);
 
         [HttpPost]
         public async Task<IActionResult> SaveCandidateAnswerById(int questionId, string candidateAnswer)
