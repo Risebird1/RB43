@@ -10480,9 +10480,19 @@ namespace Risebird.Web.Controllers
                 {
                     modelset = new QcInterviewAIMergePendingRow();
                 }
+
+                if (!string.IsNullOrWhiteSpace(modelset.TranscriptSummary))
+                {
+                    model.TranscriptSummary = modelset.TranscriptSummary;
+                    model.TranscriptSummaryObject = JsonConvert.DeserializeObject<TranscriptSummaryVM>(modelset.TranscriptSummary);
+                }
+
                 string contradictionJson = null;
-                var transcriptSummary = model.TranscriptSummary;
-                if (!string.IsNullOrWhiteSpace(transcriptSummary) && string.IsNullOrWhiteSpace(modelset.ContradictionJson) && (model.MeetingStatus == 4 || model.MeetingStatus == 6 || model.MeetingStatus == 7 || model.MeetingStatus == 8))
+                var transcriptSummary = !string.IsNullOrWhiteSpace(modelset.TranscriptSummary)
+                    ? modelset.TranscriptSummary
+                    : model.TranscriptSummary;
+                var meetingStatus = modelset.MeetingStatus > 0 ? modelset.MeetingStatus : (model.MeetingStatus ?? 0);
+                if (!string.IsNullOrWhiteSpace(transcriptSummary) && string.IsNullOrWhiteSpace(modelset.ContradictionJson) && (meetingStatus == 4 || meetingStatus == 6 || meetingStatus == 7 || meetingStatus == 8))
                 {
                     // Render the partial view to a string
                     var htmlContent = await RenderToStringAsync("AIClientReport", model);
