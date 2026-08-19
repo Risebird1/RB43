@@ -31,7 +31,6 @@ namespace Risebird.AzureTimerFunctions
         private readonly string ContainerName;
         private readonly string TranscriptsContainer;
         private readonly IZohoMeetingHelper _zoho;
-        private readonly IOpenAIInterviewerAssistantHelper _ai;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
         //private readonly string SASConnectionString;
 
@@ -40,7 +39,7 @@ namespace Risebird.AzureTimerFunctions
             IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository,
             IZoomHelper zoomHelper, ISASUrlHelper sasUrlHelper,
             ITeamsMeetingHelper iteamsMeetingHelper, IGoogleEventHelper googleEventHelper,
-            IZohoMeetingHelper zoho, IOpenAIInterviewerAssistantHelper ai,
+            IZohoMeetingHelper zoho,
             IAssistantServiceHelper assistantServiceHelper)
         {
             _configuration = configuration;
@@ -56,7 +55,6 @@ namespace Risebird.AzureTimerFunctions
             _googleEventHelper = googleEventHelper;
             log = loggerFactory.CreateLogger<ZoomService>();
             _zoho = zoho;
-            _ai = ai;
             _assistantServiceHelper = assistantServiceHelper;
         }
         [Function("ZoomService")]

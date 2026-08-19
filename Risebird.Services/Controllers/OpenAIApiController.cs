@@ -246,7 +246,7 @@ namespace Risebird.Services.Controllers
                     var evaluationPromptId = !string.IsNullOrWhiteSpace(meetingDetails.OpenAIPromptId)
                         ? meetingDetails.OpenAIPromptId.Trim()
                         : _config["OpenAI:AIInterviewPromptMap"];
-                    var useResponsesApi = _config.GetValue("OpenAI:UseResponsesApi", false)
+                    var useResponsesApi = true//_config.GetValue("OpenAI:UseResponsesApi", false)
                         && !string.IsNullOrWhiteSpace(evaluationPromptId);
 
                     if (useResponsesApi)

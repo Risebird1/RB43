@@ -25,7 +25,6 @@ namespace Risebird.AzureTimerFunctions
         private readonly ISASUrlHelper _sasUrlHelper;
         private readonly IValidationHelper _validationHelper;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
-        private readonly IOpenAIInterviewerAssistantHelper _ai;
         private readonly IPdfReaderHelper _pdfReaderHelper;
         private readonly IResumeOptimizationHelper _resumeOptimizationHelper;
 
@@ -35,7 +34,7 @@ namespace Risebird.AzureTimerFunctions
             IMeetingRespository meetingRespository, ICandidateRepository candidateRepository,
             ISASUrlHelper sasUrlHelper, IIRFService irfService,
             IAffIndaResumeParserHelper affIndaResumeParserHelper, IValidationHelper validationHelper,
-            IAssistantServiceHelper assistantServiceHelper, IOpenAIInterviewerAssistantHelper ai, IPdfReaderHelper pdfReaderHelper,
+            IAssistantServiceHelper assistantServiceHelper, IPdfReaderHelper pdfReaderHelper,
             IResumeOptimizationHelper resumeOptimizationHelper)
         {
             _configuration = configuration;
@@ -49,7 +48,6 @@ namespace Risebird.AzureTimerFunctions
             _validationHelper = validationHelper;
             _assistantServiceHelper = assistantServiceHelper;
             log = loggerFactory.CreateLogger<MCQResumeParserJob>();
-            _ai = ai;
             _pdfReaderHelper = pdfReaderHelper;
             _resumeOptimizationHelper = resumeOptimizationHelper;
         }
@@ -107,21 +105,12 @@ namespace Risebird.AzureTimerFunctions
                             
                             log.LogInformation($"MCQResumeParserJob: Resume {resume.id} optimization: {estimatedTokensBefore} tokens -> {estimatedTokensAfter} tokens (saved {estimatedTokensBefore - estimatedTokensAfter})");
 
-                            var threadId = await _ai.CreateThreadAsync();
-                            //the prompt will be different here. Fetch techrubrics and the table of questions, answers and expected answers. Serialize them, add them to a 
-                            await _ai.AddMessageAsync(threadId, "user", resumeStringContent);
-                            //await _ai.AddMessageAsync(threadId, "user", resume.ResumeLink);
-
-                            var runId = await _ai.CreateRunAsync(threadId, "asst_T61hVvnYmOCmvyfKylFULdUk"); //assistant id of the assistant named (Resume Parser)asst_T61hVvnYmOCmvyfKylFULdUk
-                            //var runId = await _ai.CreateRunAsync(threadId, "asst_x4F8slGF4hnEI4EN7pBDGR2g"); //assistant id of the assistant named (Copy of Resume Parser - Using Resume Public URL) asst_x4F8slGF4hnEI4EN7pBDGR2g
-                            await _ai.WaitForRunAsync(threadId, runId);
-
-                            var replies = await _ai.GetMessagesAsync(threadId);
-
+                            var runResult = await _assistantServiceHelper.ParseResume(resumeStringContent);
+                            var replyText = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value;
 
                             try
                             {
-                                candidateParsedData = JsonConvert.DeserializeObject<CandidateResumeParsedDataOpenAI>(replies?.FirstOrDefault());
+                                candidateParsedData = JsonConvert.DeserializeObject<CandidateResumeParsedDataOpenAI>(replyText);
 
                             }
                             catch (Exception ex)

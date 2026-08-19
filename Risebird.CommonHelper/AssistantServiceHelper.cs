@@ -1501,7 +1501,13 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var useResponsesApi = UseGlobalResponsesApi();
+                var useResponsesApi = UseQcResponsesApi()
+                    || !string.IsNullOrWhiteSpace(_configuration[
+                        useProfileSummary
+                            ? "OpenAI:ResumeProfileSummaryPromptId"
+                            : usePublicUrlParser
+                                ? "OpenAI:ResumeParserPublicUrlPromptId"
+                                : "OpenAI:ResumeParserPromptId"]);
                 if (useResponsesApi)
                 {
                     string input;
@@ -1603,7 +1609,11 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var useResponsesApi = UseGlobalResponsesApi();
+                var promptConfigKey = useResumeParserCopyPrompt
+                    ? "OpenAI:ResumeParserCopyPromptId"
+                    : "OpenAI:CandidateScreenerPromptId";
+                var useResponsesApi = UseQcResponsesApi()
+                    || !string.IsNullOrWhiteSpace(_configuration[promptConfigKey]);
                 if (useResponsesApi)
                 {
                     var input = useResumeParserCopyPrompt
@@ -1612,9 +1622,7 @@ namespace Risebird.CommonHelper
                     return await _openAIResponsesHelper.CreateJsonResponseAsync(
                         input,
                         operationType: useResumeParserCopyPrompt ? "CandidateScreeningV2" : "CandidateScreening",
-                        promptId: _configuration[useResumeParserCopyPrompt
-                            ? "OpenAI:ResumeParserCopyPromptId"
-                            : "OpenAI:CandidateScreenerPromptId"]);
+                        promptId: _configuration[promptConfigKey]);
                 }
 
                 return null;
@@ -1630,7 +1638,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var useResponsesApi = UseGlobalResponsesApi();
+                var useResponsesApi = UseQcResponsesApi();
                 if (useResponsesApi)
                 {
                     var input = $"Evaluate the resume and generate a response in JSON format as per the instructions fed to you. Do not give me comparison with other Resumes. Stick to the current resume I am feeding you. The job title you need to screen the interviewer and generate the fitment score against is {jobTitle}. The resume data you need to generate an analysis against is {resumeStringData}.";
@@ -1653,7 +1661,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                var useResponsesApi = UseGlobalResponsesApi();
+                var useResponsesApi = UseQcResponsesApi();
                 if (useResponsesApi)
                 {
                     var input = $"Generate an output in JSON format as per the instructions fed to the assistant. The job title you need to screen the interviewer and generate the fitment score against is {jobTitle}. The Resume data you need to generate an analysis against is {resumeStringData}.";
