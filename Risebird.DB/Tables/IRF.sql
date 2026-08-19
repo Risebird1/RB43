@@ -69,6 +69,7 @@ CREATE TABLE [dbo].[IRF](
             [IsAIInterview] [bit] null,
             [AIInterviewType] [int] null,
             [OpenAIAssistantId]  [VARCHAR](60) null,
+            [OpenAIPromptId]  [VARCHAR](100) null,
             [InterviewerBillingCycle]  [int] null,
             [IsTechQC]  [bit] null,
             [showChatBox]  [bit] null,

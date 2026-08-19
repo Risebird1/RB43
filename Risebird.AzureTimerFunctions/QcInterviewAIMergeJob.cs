@@ -31,7 +31,6 @@ namespace Risebird.AzureTimerFunctions
         private readonly IMeetingService _meetingService;
         private readonly IDmIvAutoQcFlagService _autoQcFlagService;
         private readonly ITrialJudgmentService _trialJudgmentService;
-        private readonly IOpenAIInterviewerAssistantHelper _ai;
         private readonly ILogger _log;
         private readonly IHttpContextAccessor _contextAccessor;
 
@@ -43,7 +42,6 @@ namespace Risebird.AzureTimerFunctions
             IMeetingService meetingService,
             IDmIvAutoQcFlagService autoQcFlagService,
             ITrialJudgmentService trialJudgmentService,
-            IOpenAIInterviewerAssistantHelper ai,
             IHttpContextAccessor contextAccessor)
         {
             _applicationErrorLogger = applicationErrorLogger;
@@ -52,7 +50,6 @@ namespace Risebird.AzureTimerFunctions
             _meetingService = meetingService;
             _autoQcFlagService = autoQcFlagService;
             _trialJudgmentService = trialJudgmentService;
-            _ai = ai;
             _log = loggerFactory.CreateLogger<QcInterviewAIMergeJob>();
             _contextAccessor = contextAccessor;
         }

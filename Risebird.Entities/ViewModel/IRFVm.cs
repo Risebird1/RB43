@@ -284,6 +284,9 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("AssistantId")]
         public string OpenAIAssistantId { get; set; }
 
+        [DisplayName("Report Prompt Id")]
+        public string OpenAIPromptId { get; set; }
+
         [DisplayName("Plivo Phone Screener Assistant URL")]
         public string PlivoAssistantUrl { get; set; }
 
@@ -434,6 +437,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsAIInterview { get; set; }
         public int AIInterviewType { get; set; }
         public string OpenAIAssistantId { get; set; }
+        public string OpenAIPromptId { get; set; }
         public int InterviewerBillingCycle { get; set; }
         public bool isMultiLingual { get; set; }
 

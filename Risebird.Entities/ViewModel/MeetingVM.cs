@@ -410,7 +410,8 @@ namespace Risebird.Entities.ViewModel
         public int MatchScorePercentage { get; set; }
         public string CandidateAnswerVideoLink { get; set; } // in case of ai interview, fetches the link from the table BotInterviewQuestionVideos
         public int CandidateAnswerVideoIdAI { get; set; }
-        public string OpenAIAssistantId { get; set; }//assistant Id on skill channel global level
+        public string OpenAIAssistantId { get; set; }//assistant Id on skill channel global level (Assistants API legacy)
+        public string OpenAIPromptId { get; set; }//Responses API prompt Id (pmpt_…) for preset report generation
         public int AICandidateResponseVideoCount { get; set; }
         public int AITotalQuestionsCount { get; set; }
         public DateTime SkillChannelCreatedOn { get; set; }

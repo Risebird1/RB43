@@ -243,8 +243,10 @@ namespace Risebird.Services.Controllers
                 {
                     string threadId = null;
                     List<string> replies = null;
-                    var evaluationPromptId = _config["OpenAI:AIInterviewPromptMap"];
-                    var useResponsesApi = _config.GetValue("OpenAI:UseResponsesApi", false)
+                    var evaluationPromptId = !string.IsNullOrWhiteSpace(meetingDetails.OpenAIPromptId)
+                        ? meetingDetails.OpenAIPromptId.Trim()
+                        : _config["OpenAI:AIInterviewPromptMap"];
+                    var useResponsesApi = true//_config.GetValue("OpenAI:UseResponsesApi", false)
                         && !string.IsNullOrWhiteSpace(evaluationPromptId);
 
                     if (useResponsesApi)
@@ -252,7 +254,7 @@ namespace Risebird.Services.Controllers
                         var runResult = await _assistantServiceHelper.GenerateAIInterviewEvaluation(
                             meetingDetails.TechSkillsInJson,
                             meetingDetails.QuestionAnswerSetInJson,
-                            meetingDetails.OpenAIAssistantId);
+                            evaluationPromptId);
                         replies = ExtractRunResultReplies(runResult);
                     }
                     else

@@ -22,7 +22,7 @@ namespace Risebird.Business
         private readonly IIRFService _irfService;
         private readonly IValidationHelper _validationHelper;
         private readonly IPdfReaderHelper _pdfReaderHelper;
-        private readonly IOpenAIInterviewerAssistantHelper _ai;
+        private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IResumeOptimizationHelper _resumeOptimizationHelper;
 
         public ResumeParsingService(
@@ -33,7 +33,7 @@ namespace Risebird.Business
             IIRFService irfService,
             IValidationHelper validationHelper,
             IPdfReaderHelper pdfReaderHelper,
-            IOpenAIInterviewerAssistantHelper ai,
+            IAssistantServiceHelper assistantServiceHelper,
             IResumeOptimizationHelper resumeOptimizationHelper)
         {
             _logger = logger;
@@ -43,7 +43,7 @@ namespace Risebird.Business
             _irfService = irfService;
             _validationHelper = validationHelper;
             _pdfReaderHelper = pdfReaderHelper;
-            _ai = ai;
+            _assistantServiceHelper = assistantServiceHelper;
             _resumeOptimizationHelper = resumeOptimizationHelper;
         }
 
@@ -113,12 +113,9 @@ namespace Risebird.Business
                     // Try OpenAI parsing first
                     try
                     {
-                        var threadId = await _ai.CreateThreadAsync();
-                        await _ai.AddMessageAsync(threadId, "user", resumeStringContent);
-                        var runId = await _ai.CreateRunAsync(threadId, "asst_T61hVvnYmOCmvyfKylFULdUk");
-                        await _ai.WaitForRunAsync(threadId, runId);
-                        var replies = await _ai.GetMessagesAsync(threadId);
-                        candidateParsedData = JsonConvert.DeserializeObject<CandidateResumeParsedDataOpenAI>(replies?.FirstOrDefault());
+                        var runResult = await _assistantServiceHelper.ParseResume(resumeStringContent);
+                        var replyText = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value;
+                        candidateParsedData = JsonConvert.DeserializeObject<CandidateResumeParsedDataOpenAI>(replyText);
                     }
                     catch (Exception ex)
                     {

@@ -39,18 +39,20 @@ namespace Risebird.CommonHelper
         public Task<RunResult> CreateJsonResponseAsync(
             string input,
             string operationType,
-            string promptId)
+            string promptId,
+            bool useStoredPromptModel = false)
         {
-            return CreateJsonResponseAsync((object)input, operationType, promptId);
+            return CreateJsonResponseAsync((object)input, operationType, promptId, null, useStoredPromptModel);
         }
 
         public async Task<RunResult> CreateJsonResponseAsync(
             object input,
             string operationType,
             string promptId,
-            int? maxOutputTokens = null)
+            int? maxOutputTokens = null,
+            bool useStoredPromptModel = false)
         {
-            var (result, _) = await CreateJsonResponseWithIdAsync(input, operationType, promptId, null, maxOutputTokens);
+            var (result, _) = await CreateJsonResponseWithIdAsync(input, operationType, promptId, null, maxOutputTokens, useStoredPromptModel);
             return result;
         }
 
@@ -59,9 +61,10 @@ namespace Risebird.CommonHelper
             string operationType,
             string promptId,
             string previousResponseId = null,
-            int? maxOutputTokens = null)
+            int? maxOutputTokens = null,
+            bool useStoredPromptModel = false)
         {
-            return CreateJsonResponseWithIdAsync((object)input, operationType, promptId, previousResponseId, maxOutputTokens);
+            return CreateJsonResponseWithIdAsync((object)input, operationType, promptId, previousResponseId, maxOutputTokens, useStoredPromptModel);
         }
 
         public async Task<(RunResult Result, string ResponseId)> CreateJsonResponseWithIdAsync(
@@ -69,7 +72,8 @@ namespace Risebird.CommonHelper
             string operationType,
             string promptId,
             string previousResponseId = null,
-            int? maxOutputTokens = null)
+            int? maxOutputTokens = null,
+            bool useStoredPromptModel = false)
         {
             try
             {
@@ -78,7 +82,7 @@ namespace Risebird.CommonHelper
                     throw new InvalidOperationException("OpenAI:ApiKey is not configured.");
                 }
 
-                if (string.IsNullOrWhiteSpace(_responsesModel))
+                if (!useStoredPromptModel && string.IsNullOrWhiteSpace(_responsesModel))
                 {
                     throw new InvalidOperationException("OpenAI:ResponsesModel is not configured.");
                 }
@@ -95,7 +99,7 @@ namespace Risebird.CommonHelper
                         $"OpenAI Responses input is required for operation {operationType}.");
                 }
 
-                object requestBody = BuildJsonResponseRequestBody(promptId, input, previousResponseId, maxOutputTokens);
+                object requestBody = BuildJsonResponseRequestBody(promptId, input, previousResponseId, maxOutputTokens, useStoredPromptModel);
 
                 using var client = new HttpClient();
                 client.Timeout = TimeSpan.FromMinutes(4);
@@ -171,15 +175,17 @@ namespace Risebird.CommonHelper
         public Task<RunResult> CreateTextResponseAsync(
             string input,
             string operationType,
-            string promptId)
+            string promptId,
+            bool useStoredPromptModel = false)
         {
-            return CreateTextResponseAsync((object)input, operationType, promptId);
+            return CreateTextResponseAsync((object)input, operationType, promptId, useStoredPromptModel);
         }
 
         public async Task<RunResult> CreateTextResponseAsync(
             object input,
             string operationType,
-            string promptId)
+            string promptId,
+            bool useStoredPromptModel = false)
         {
             try
             {
@@ -188,7 +194,7 @@ namespace Risebird.CommonHelper
                     throw new InvalidOperationException("OpenAI:ApiKey is not configured.");
                 }
 
-                if (string.IsNullOrWhiteSpace(_responsesModel))
+                if (!useStoredPromptModel && string.IsNullOrWhiteSpace(_responsesModel))
                 {
                     throw new InvalidOperationException("OpenAI:ResponsesModel is not configured.");
                 }
@@ -205,12 +211,7 @@ namespace Risebird.CommonHelper
                         $"OpenAI Responses input is required for operation {operationType}.");
                 }
 
-                var requestBody = new
-                {
-                    prompt = new { id = promptId },
-                    model = _responsesModel,
-                    input
-                };
+                var requestBody = BuildBaseRequestBody(promptId, input, useStoredPromptModel);
 
                 using var client = new HttpClient();
                 client.Timeout = TimeSpan.FromMinutes(4);
@@ -275,52 +276,37 @@ namespace Risebird.CommonHelper
             }
         }
 
-        private object BuildJsonResponseRequestBody(string promptId, object input, string previousResponseId, int? maxOutputTokens)
+        private object BuildJsonResponseRequestBody(string promptId, object input, string previousResponseId, int? maxOutputTokens, bool useStoredPromptModel)
         {
-            if (string.IsNullOrWhiteSpace(previousResponseId))
-            {
-                if (maxOutputTokens.HasValue)
-                {
-                    return new
-                    {
-                        prompt = new { id = promptId },
-                        model = _responsesModel,
-                        input,
-                        max_output_tokens = maxOutputTokens.Value,
-                        text = new { format = new { type = "json_object" } }
-                    };
-                }
+            var body = BuildBaseRequestBody(promptId, input, useStoredPromptModel);
+            body["text"] = new { format = new { type = "json_object" } };
 
-                return new
-                {
-                    prompt = new { id = promptId },
-                    model = _responsesModel,
-                    input,
-                    text = new { format = new { type = "json_object" } }
-                };
-            }
+            if (!string.IsNullOrWhiteSpace(previousResponseId))
+                body["previous_response_id"] = previousResponseId;
 
             if (maxOutputTokens.HasValue)
-            {
-                return new
-                {
-                    prompt = new { id = promptId },
-                    model = _responsesModel,
-                    input,
-                    previous_response_id = previousResponseId,
-                    max_output_tokens = maxOutputTokens.Value,
-                    text = new { format = new { type = "json_object" } }
-                };
-            }
+                body["max_output_tokens"] = maxOutputTokens.Value;
 
-            return new
+            return body;
+        }
+
+        /// <summary>
+        /// Omitting <c>model</c> makes the request run on the model saved with the stored prompt, which is
+        /// required when that prompt carries model-specific settings such as reasoning; sending a
+        /// conflicting model is rejected with an unsupported_value error.
+        /// </summary>
+        private Dictionary<string, object> BuildBaseRequestBody(string promptId, object input, bool useStoredPromptModel)
+        {
+            var body = new Dictionary<string, object>
             {
-                prompt = new { id = promptId },
-                model = _responsesModel,
-                input,
-                previous_response_id = previousResponseId,
-                text = new { format = new { type = "json_object" } }
+                ["prompt"] = new { id = promptId },
+                ["input"] = input
             };
+
+            if (!useStoredPromptModel && !string.IsNullOrWhiteSpace(_responsesModel))
+                body["model"] = _responsesModel;
+
+            return body;
         }
 
         private static bool IsIncompleteResponse(string responseContent, out string reason)
