@@ -498,16 +498,6 @@ BEGIN
     ADD BillingOwner INT NULL
 END
 
-IF NOT EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name IN (N'QuestionSetId')
-      AND Object_ID = Object_ID(N'InterviewMeetings'))
-BEGIN
-    ALTER TABLE InterviewMeetings
-    ADD QuestionSetId INT NULL
-END
-
 END
 GO
 

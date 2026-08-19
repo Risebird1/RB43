@@ -396,14 +396,6 @@
                                                     <span>Interviewer Coded Name:</span>
                                                     <span style="color:red;text-decoration:underline;cursor:pointer;font-size: 18px;margin-left: 4px;">@interviewerCodedName</span>
                                                 </span>
-                                                @if (isClient == true)
-                                                {
-                                                    <div id="smeEilReport" class="sme-rq-repbox" style="margin:12px 0;padding:12px 14px;border:1px solid #e6e8ec;border-radius:10px;background:#fff;max-width:640px;"
-                                                         data-irf-id="@Model.IRFId" data-se-id="@Model.InterviewId">
-                                                        <div style="font-size:12px;color:#15803d;font-weight:600;">Expert in the loop:</div>
-                                                        <div id="smeEilReportBody" style="margin-top:6px;font-size:13px;color:#0f172a;">Loading…</div>
-                                                    </div>
-                                                }
 
 
                                                 <div class="report-int-codename" style="color:#9d4848;margin:0px 0px 10px 0px; top:0px;font-size:15px;">
@@ -1874,59 +1866,6 @@
         }
         $("#div_aicodesnippets").empty().html(html);
     }
-</script>
-<script>
-    (function ($) {
-        var $box = $('#smeEilReport');
-        if (!$box.length) return;
-        var irfId = parseInt($box.data('irf-id'), 10) || 0;
-        var seId = parseInt($box.data('se-id'), 10) || 0;
-        function render(e) {
-            if (!e) { $('#smeEilReportBody').text('No expert in the loop for this channel.'); return; }
-            var coded = e.expertCodedName || e.ExpertCodedName || 'Expert';
-            var st = e.status != null ? e.status : e.Status;
-            var pill = st === 1 ? 'Confirmed' : st === 2 ? 'Change requested' : 'Awaiting your confirmation';
-            var sev = e.maxSeverityLabel || e.MaxSeverityLabel || '';
-            var html = '<span class="sme-eil-codename" style="color:#b91c1c;text-decoration:underline;font-weight:600;cursor:pointer;" data-user-id="' + (e.expertUserId || e.ExpertUserId || '') + '" data-email="' + $('<div/>').text(e.expertEmail || e.ExpertEmail || '').html() + '">( ' + $('<div/>').text(coded).html() + ' )</span> ';
-            html += '<span style="color:#64748b;font-size:12px;">reviewed ' + $('<div/>').text(e.reviewedOn || e.ReviewedOn || '—').html() + '</span> ';
-            html += '<span style="color:#64748b;font-size:12px;">' + (e.correctedCount || e.CorrectedCount || e.fieldsCorrected || e.FieldsCorrected || 0) + ' fields corrected</span> ';
-            if (sev) html += '<span style="margin-left:6px;font-size:11px;background:' + (sev === 'Critical' ? '#fee2e2' : sev === 'Major' ? '#fef3c7' : '#f1f5f9') + ';border-radius:12px;padding:2px 8px;">' + $('<div/>').text(sev).html() + '</span> ';
-            html += '<span style="margin-left:6px;font-size:11px;background:#f1f5f9;border-radius:12px;padding:2px 8px;">' + pill + '</span>';
-            if (st !== 1) {
-                html += '<div style="margin-top:8px;"><button type="button" class="mdc-button mdc-button--raised" id="smeEilConfirmBtn" style="background:#15803d;color:#fff;">Confirm expert review</button></div>';
-            }
-            $('#smeEilReportBody').html(html);
-        }
-        $.post('/IRF/GetSMEQuestionReviewBundle', { irfId: irfId }).done(function (res) {
-            render(res && res.expert);
-        }).fail(function () { $('#smeEilReportBody').text('Unable to load expert status.'); });
-        $(document).on('click', '.sme-eil-codename', function () {
-            var userId = parseInt($(this).data('user-id'), 10) || 0;
-            var email = ($(this).data('email') || '').toString();
-            var coded = $.trim($(this).text());
-            if (userId) {
-                $.get('/IRF/GetClientShareInterviewerInsights', { irfId: irfId, userId: userId, Type: 'ublc' }, function (data) {
-                    if (typeof openInterviewerInsightsModel === 'function') openInterviewerInsightsModel();
-                    $('#divInsightsmodel').html(data);
-                    $('#txtheaderInsights').text(coded || 'Expert');
-                });
-            } else if (email && typeof InsightsDetails === 'function') {
-                InsightsDetails(email);
-            }
-        });
-        $(document).on('click', '#smeEilConfirmBtn', function () {
-            $.ajax({
-                url: '/IRF/SaveExpertInLoopClientConfirmation',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ irfId: irfId, seId: seId, scope: 1, status: 1 })
-            }).done(function (res) {
-                if (res && res.success) {
-                    $('#smeEilReportBody').html('<span style="color:#15803d;">Confirmed. Read-only from here.</span>');
-                }
-            });
-        });
-    })(jQuery);
 </script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
 
