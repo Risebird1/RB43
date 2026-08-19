@@ -359,6 +359,28 @@ namespace Risebird.Business
         {
             try
             {
+                var irfId = meeting?.irfIntId ?? 0;
+                if (irfId <= 0 && !string.IsNullOrWhiteSpace(meeting?.IRFId))
+                {
+                    try { irfId = _irfService.GetIRFIdByIRFName(meeting.IRFId); }
+                    catch { irfId = 0; }
+                    if (irfId > 0) meeting.irfIntId = irfId;
+                }
+                if (irfId > 0)
+                {
+                    try
+                    {
+                        if (await _irfService.IsClientExpertSignOffRequiredAndMissing(irfId))
+                        {
+                            meeting.Message = "Scheduling is blocked until the client confirms the expert who vetted this AI interview.";
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
+                                new Exception($"Scheduling blocked for IRF {irfId}: RequireClientExpertSignOff is set and the client has not confirmed the expert."));
+                            return false;
+                        }
+                    }
+                    catch { /* column/table missing — do not block legacy scheduling */ }
+                }
+
                 if (await _meetingRespository.AddMeeting(meeting))
                 {
                     //var interviwers = await _irfService.GetListOfInterviwerBasedOnIRFId(meeting.IRFId);

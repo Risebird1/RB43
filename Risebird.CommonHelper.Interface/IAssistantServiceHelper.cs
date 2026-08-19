@@ -1,5 +1,6 @@
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.OpenAIModels;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper.Interface
@@ -53,5 +54,15 @@ namespace Risebird.CommonHelper.Interface
         /// carrying a JSON verdict (linkedin_match / confidence / linkedin_url / reason).
         /// </summary>
         Task<RunResult> GenerateLinkedInVerification(string composedMessage);
+
+        /// <summary>
+        /// Selects the top N questions from an existing bank for a JD. Does not invent questions.
+        /// </summary>
+        Task<List<AISuggestedQuestion>> GenerateAIQuestionSuggestions(string jdContext, IList<AISuggestedQuestion> questionBank, int topCount);
+
+        /// <summary>
+        /// Generates an ideal answer for each supplied question in a single chat-completions call.
+        /// </summary>
+        Task<List<AISuggestedQuestion>> GenerateAIIdealAnswers(string jdContext, IList<AISuggestedQuestion> questions);
     }
 }

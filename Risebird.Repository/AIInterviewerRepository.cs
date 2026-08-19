@@ -426,6 +426,21 @@ namespace Risebird.Repository
                                 obj.question = !string.IsNullOrEmpty(dt.Rows[i]["question"].ToString()) ? dt.Rows[i]["question"].ToString() : null;
                                 obj.CandidateAnswer = !string.IsNullOrEmpty(dt.Rows[i]["CandidateAnswer"].ToString()) ? dt.Rows[i]["CandidateAnswer"].ToString() : null;
                                 obj.ExpectedAnswer = !string.IsNullOrEmpty(dt.Rows[i]["ExpectedAnswer"].ToString()) ? dt.Rows[i]["ExpectedAnswer"].ToString() : null;
+                                if (dt.Columns.Contains("ExpectedOutput"))
+                                    obj.ExpectedOutput = !string.IsNullOrEmpty(dt.Rows[i]["ExpectedOutput"].ToString()) ? dt.Rows[i]["ExpectedOutput"].ToString() : null;
+                                if (dt.Columns.Contains("AnswerExplanation"))
+                                    obj.AnswerExplanation = !string.IsNullOrEmpty(dt.Rows[i]["AnswerExplanation"].ToString()) ? dt.Rows[i]["AnswerExplanation"].ToString() : null;
+                                if (dt.Columns.Contains("SafeImplementation"))
+                                    obj.SafeImplementation = !string.IsNullOrEmpty(dt.Rows[i]["SafeImplementation"].ToString()) ? dt.Rows[i]["SafeImplementation"].ToString() : null;
+                                if (dt.Columns.Contains("SemanticMatchCriteria"))
+                                    obj.SemanticMatchCriteria = !string.IsNullOrEmpty(dt.Rows[i]["SemanticMatchCriteria"].ToString()) ? dt.Rows[i]["SemanticMatchCriteria"].ToString() : null;
+                                if (dt.Columns.Contains("MisconceptionRedFlags"))
+                                    obj.MisconceptionRedFlags = !string.IsNullOrEmpty(dt.Rows[i]["MisconceptionRedFlags"].ToString()) ? dt.Rows[i]["MisconceptionRedFlags"].ToString() : null;
+                                if (dt.Columns.Contains("MaxScore") && !string.IsNullOrEmpty(dt.Rows[i]["MaxScore"].ToString()))
+                                {
+                                    obj.MaxScore = Convert.ToInt32(dt.Rows[i]["MaxScore"]);
+                                    obj.max_score = obj.MaxScore;
+                                }
                                 obj.mapped_rubric_parameters = !string.IsNullOrEmpty(dt.Rows[i]["SkillName"].ToString()) ? dt.Rows[i]["SkillName"].ToString() : null;
 
                                 qaSet.Add(obj);

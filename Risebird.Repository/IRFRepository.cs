@@ -8836,6 +8836,84 @@ WHERE irf.IsDeleted = 0
             return false;
         }
 
+        public async Task<IEnumerable<Risebird.Entities.Data.OpenAIModels.AISuggestedQuestion>> GetQuestionBankForJD(int irfId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<Risebird.Entities.Data.OpenAIModels.AISuggestedQuestion>(con, "usp_GetQuestionBankForJD", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> AddAIQuestionsWithAnswers(int irfId, IEnumerable<Risebird.Entities.Data.OpenAIModels.AISuggestedQuestion> questions, string createdBy)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add("IRFId", typeof(int));
+                    dt.Columns.Add("Skill", typeof(int));
+                    dt.Columns.Add("Comment", typeof(string));
+                    dt.Columns.Add("CreatedBy", typeof(string));
+                    dt.Columns.Add("SkillName", typeof(string));
+                    dt.Columns.Add("IdealAnswer", typeof(string));
+
+                    foreach (var item in questions ?? Enumerable.Empty<Risebird.Entities.Data.OpenAIModels.AISuggestedQuestion>())
+                    {
+                        if (item == null || string.IsNullOrWhiteSpace(item.Question))
+                            continue;
+                        dt.Rows.Add(
+                            irfId,
+                            0,
+                            item.Question,
+                            createdBy,
+                            item.SkillName,
+                            string.IsNullOrWhiteSpace(item.IdealAnswer) ? (object)DBNull.Value : item.IdealAnswer);
+                    }
+
+                    if (dt.Rows.Count == 0)
+                        return false;
+
+                    SqlCommand cmd = new SqlCommand("usp_AddAIQuestionsWithAnswers", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    var tvp = new SqlParameter("@AIQuestionAnswersBulkData", SqlDbType.Structured)
+                    {
+                        TypeName = "dbo.AddAIQuestionAnswers_TableType",
+                        Value = dt
+                    };
+                    cmd.Parameters.Add(tvp);
+                    cmd.Parameters.Add(new SqlParameter("@IRFId", SqlDbType.Int) { Value = irfId });
+                    con.Open();
+                    await cmd.ExecuteNonQueryAsync();
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return false;
+        }
+
         public async Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer, bool isCodingQuestion = false, int? codingTimeLimitInMinutes = null, string questionGist = null)
         {
             try
@@ -11050,6 +11128,481 @@ WHERE id = @irfId";
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task<bool> SaveSMEQuestionReview(SkillComment question, string changedBy, IEnumerable<QuestionReviewLogRow> logs)
+        {
+            if (question == null || question.id <= 0) return false;
+            try
+            {
+                const string sql = @"
+UPDATE dbo.SkillChannelSampleQuestions
+SET Comment = @Comment,
+    QuestionGist = @QuestionGist,
+    ExpectedOutput = @ExpectedOutput,
+    AnswerExplanation = @AnswerExplanation,
+    SafeImplementation = @SafeImplementation,
+    SemanticMatchCriteria = @SemanticMatchCriteria,
+    MisconceptionRedFlags = @MisconceptionRedFlags,
+    ExpectedAnswer = @ExpectedAnswer,
+    MaxScore = @MaxScore,
+    CodingTimeLimitInMinutes = @TimeLimitMins,
+    IsCodingQuestion = @IsCodingQuestion,
+    IsFlaggedForSentimentAnalysis = @FlagForSentiment,
+    QuestionSlot = @QuestionSlot,
+    QuestionVariant = @QuestionVariant,
+    SkillName = COALESCE(NULLIF(@SkillName, ''), SkillName),
+    AIVideoStatus = @AIVideoStatus
+WHERE id = @Id AND IRFId = @IRFId;
+
+DELETE FROM dbo.AICodeInterviewQuestionReviewLog WHERE QuestionBankId = @Id;";
+
+                using (var con = new SqlConnection(connectionString))
+                {
+                    await con.OpenAsync();
+                    await con.ExecuteAsync(sql, new
+                    {
+                        Id = question.id,
+                        question.IRFId,
+                        question.Comment,
+                        question.QuestionGist,
+                        question.ExpectedOutput,
+                        question.AnswerExplanation,
+                        question.SafeImplementation,
+                        question.SemanticMatchCriteria,
+                        question.MisconceptionRedFlags,
+                        question.ExpectedAnswer,
+                        question.MaxScore,
+                        TimeLimitMins = question.CodingTimeLimitInMinutes,
+                        question.IsCodingQuestion,
+                        FlagForSentiment = question.IsFlaggedForSentimentAnalysis,
+                        question.QuestionSlot,
+                        question.QuestionVariant,
+                        question.SkillName,
+                        question.AIVideoStatus
+                    });
+
+                    var logRows = (logs ?? Enumerable.Empty<QuestionReviewLogRow>()).ToList();
+                    foreach (var row in logRows)
+                    {
+                        row.QuestionBankId = question.id;
+                        row.ChangedBy = changedBy;
+                    }
+                    if (logRows.Count > 0)
+                    {
+                        await con.ExecuteAsync(@"
+INSERT INTO dbo.AICodeInterviewQuestionReviewLog
+    (QuestionBankId, FieldName, AIValue, SMEValue, Severity, ChangedBy, ChangedOn)
+VALUES (@QuestionBankId, @FieldName, @AIValue, @SMEValue, @Severity, @ChangedBy, GETUTCDATE())",
+                            logRows);
+                    }
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> ConfirmSMEQuestion(int id, string vettedBy)
+        {
+            try
+            {
+                using (var con = new SqlConnection(connectionString))
+                {
+                    var n = await con.ExecuteAsync(@"
+UPDATE dbo.SkillChannelSampleQuestions
+SET VettingStatus = 1, VettedBy = @VettedBy, VettedOn = GETUTCDATE(), RejectionReason = NULL
+WHERE id = @Id", new { Id = id, VettedBy = vettedBy });
+                    return n > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> RejectSMEQuestion(int id, string vettedBy, string reason)
+        {
+            try
+            {
+                using (var con = new SqlConnection(connectionString))
+                {
+                    var n = await con.ExecuteAsync(@"
+UPDATE dbo.SkillChannelSampleQuestions
+SET VettingStatus = 2, VettedBy = @VettedBy, VettedOn = GETUTCDATE(), RejectionReason = @Reason
+WHERE id = @Id", new { Id = id, VettedBy = vettedBy, Reason = reason });
+                    return n > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> StampAIDraftIfEmpty(int id)
+        {
+            try
+            {
+                using (var con = new SqlConnection(connectionString))
+                {
+                    await con.ExecuteAsync(@"
+UPDATE dbo.SkillChannelSampleQuestions
+SET VettingStatus = ISNULL(VettingStatus, 0),
+    IsGeneratedByAi = 1
+WHERE id = @Id", new { Id = id });
+
+                    var q = await con.QueryFirstOrDefaultAsync<SkillComment>(
+                        "SELECT TOP 1 * FROM dbo.SkillChannelSampleQuestions WHERE id = @Id", new { Id = id });
+                    if (q != null && string.IsNullOrWhiteSpace(q.AIDraftPayload))
+                    {
+                        var payload = System.Text.Json.JsonSerializer.Serialize(new Dictionary<string, object>
+                        {
+                            ["title"] = q.Comment,
+                            ["gist"] = q.QuestionGist,
+                            ["out"] = q.ExpectedOutput ?? q.ExpectedAnswer,
+                            ["exp"] = q.AnswerExplanation,
+                            ["safe"] = q.SafeImplementation,
+                            ["sem"] = q.SemanticMatchCriteria,
+                            ["red"] = q.MisconceptionRedFlags,
+                            ["max"] = q.MaxScore,
+                            ["time"] = q.CodingTimeLimitInMinutes
+                        });
+                        await con.ExecuteAsync(@"
+UPDATE dbo.SkillChannelSampleQuestions SET AIDraftPayload = @Payload WHERE id = @Id AND (AIDraftPayload IS NULL OR LTRIM(RTRIM(AIDraftPayload)) = '')",
+                            new { Id = id, Payload = payload });
+                    }
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> StampQuestionAsDraft(int id)
+        {
+            try
+            {
+                using (var con = new SqlConnection(connectionString))
+                {
+                    await con.ExecuteAsync(@"
+UPDATE dbo.SkillChannelSampleQuestions
+SET VettingStatus = ISNULL(VettingStatus, 0)
+WHERE id = @Id", new { Id = id });
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> ApplyGeneratedQuestionReviewFields(SkillComment question)
+        {
+            if (question == null || question.id <= 0) return false;
+            try
+            {
+                using (var con = new SqlConnection(connectionString))
+                {
+                    await con.ExecuteAsync(@"
+UPDATE dbo.SkillChannelSampleQuestions
+SET ExpectedOutput = @ExpectedOutput,
+    AnswerExplanation = @AnswerExplanation,
+    SafeImplementation = @SafeImplementation,
+    SemanticMatchCriteria = @SemanticMatchCriteria,
+    MisconceptionRedFlags = @MisconceptionRedFlags,
+    ExpectedAnswer = COALESCE(NULLIF(@ExpectedAnswer, ''), ExpectedAnswer),
+    QuestionGist = @QuestionGist,
+    MaxScore = CASE WHEN @MaxScore > 0 THEN @MaxScore ELSE ISNULL(MaxScore, 0) END,
+    CodingTimeLimitInMinutes = COALESCE(@TimeLimitMins, CodingTimeLimitInMinutes),
+    IsCodingQuestion = CASE WHEN @IsCodingQuestion = 1 THEN 1 ELSE ISNULL(IsCodingQuestion, 0) END,
+    QuestionSlot = COALESCE(NULLIF(@QuestionSlot, ''), QuestionSlot),
+    QuestionVariant = COALESCE(NULLIF(@QuestionVariant, ''), QuestionVariant),
+    VettingStatus = ISNULL(VettingStatus, 0),
+    IsGeneratedByAi = 1
+WHERE id = @Id",
+                        new
+                        {
+                            Id = question.id,
+                            question.ExpectedOutput,
+                            question.AnswerExplanation,
+                            question.SafeImplementation,
+                            question.SemanticMatchCriteria,
+                            question.MisconceptionRedFlags,
+                            question.ExpectedAnswer,
+                            question.QuestionGist,
+                            question.MaxScore,
+                            TimeLimitMins = question.CodingTimeLimitInMinutes,
+                            IsCodingQuestion = question.IsCodingQuestion ? 1 : 0,
+                            question.QuestionSlot,
+                            question.QuestionVariant
+                        });
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> MarkAIVideoStatus(int id, byte status)
+        {
+            try
+            {
+                using (var con = new SqlConnection(connectionString))
+                {
+                    await con.ExecuteAsync(@"
+UPDATE dbo.SkillChannelSampleQuestions
+SET AIVideoStatus = @Status,
+    AIVideoGeneratedOn = CASE WHEN @Status = 2 THEN GETUTCDATE() ELSE AIVideoGeneratedOn END
+WHERE id = @Id", new { Id = id, Status = status });
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<AICodeInterviewQuestionSetVm>> GetAICodeInterviewQuestionSets(int irfId)
+        {
+            try
+            {
+                using (var con = new SqlConnection(connectionString))
+                {
+                    var sets = (await con.QueryAsync<AICodeInterviewQuestionSetVm>(@"
+SELECT Id, IRFId, Name, IsAIProposed, ReviewStatus, IsDeleted, ApprovedBy, ApprovedOn
+FROM dbo.AICodeInterviewQuestionSet
+WHERE IRFId = @IRFId AND IsDeleted = 0
+ORDER BY Id", new { IRFId = irfId })).ToList();
+
+                    var items = (await con.QueryAsync(@"
+SELECT QuestionSetId, QuestionBankId
+FROM dbo.AICodeInterviewQuestionSetItem
+WHERE QuestionSetId IN (SELECT Id FROM dbo.AICodeInterviewQuestionSet WHERE IRFId = @IRFId AND IsDeleted = 0)
+ORDER BY DisplayOrder, Id", new { IRFId = irfId })).ToList();
+
+                    foreach (var s in sets)
+                    {
+                        s.QuestionIds = items
+                            .Where(i => (int)i.QuestionSetId == s.Id)
+                            .Select(i => (int)i.QuestionBankId)
+                            .ToArray();
+                    }
+                    return sets;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<AICodeInterviewQuestionSetVm>();
+            }
+        }
+
+        public async Task<int> SaveAICodeInterviewQuestionSet(AICodeInterviewQuestionSetVm set, string actor)
+        {
+            if (set == null) return 0;
+            try
+            {
+                using (var con = new SqlConnection(connectionString))
+                {
+                    await con.OpenAsync();
+                    int id = set.Id;
+                    if (id <= 0)
+                    {
+                        id = await con.ExecuteScalarAsync<int>(@"
+INSERT INTO dbo.AICodeInterviewQuestionSet (IRFId, Name, IsAIProposed, ReviewStatus, CreatedBy)
+VALUES (@IRFId, @Name, @IsAIProposed, 0, @Actor);
+SELECT CAST(SCOPE_IDENTITY() AS int);",
+                            new { set.IRFId, set.Name, set.IsAIProposed, Actor = actor });
+                    }
+                    else
+                    {
+                        await con.ExecuteAsync(@"
+UPDATE dbo.AICodeInterviewQuestionSet SET Name = @Name WHERE Id = @Id AND IRFId = @IRFId",
+                            new { Id = id, set.IRFId, set.Name });
+                        await con.ExecuteAsync("DELETE FROM dbo.AICodeInterviewQuestionSetItem WHERE QuestionSetId = @Id", new { Id = id });
+                    }
+
+                    var ids = set.QuestionIds ?? Array.Empty<int>();
+                    for (var i = 0; i < ids.Length; i++)
+                    {
+                        await con.ExecuteAsync(@"
+INSERT INTO dbo.AICodeInterviewQuestionSetItem (QuestionSetId, QuestionBankId, DisplayOrder)
+VALUES (@SetId, @Qid, @Ord)", new { SetId = id, Qid = ids[i], Ord = i });
+                    }
+                    return id;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        public async Task<bool> SetAICodeInterviewQuestionSetStatus(int setId, byte reviewStatus, string actor)
+        {
+            try
+            {
+                using (var con = new SqlConnection(connectionString))
+                {
+                    var n = await con.ExecuteAsync(@"
+UPDATE dbo.AICodeInterviewQuestionSet
+SET ReviewStatus = @Status,
+    ApprovedBy = CASE WHEN @Status = 1 THEN @Actor ELSE ApprovedBy END,
+    ApprovedOn = CASE WHEN @Status = 1 THEN GETUTCDATE() ELSE ApprovedOn END
+WHERE Id = @Id AND IsDeleted = 0", new { Id = setId, Status = reviewStatus, Actor = actor });
+                    return n > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> SoftDeleteAICodeInterviewQuestionSet(int setId)
+        {
+            try
+            {
+                using (var con = new SqlConnection(connectionString))
+                {
+                    var n = await con.ExecuteAsync(@"
+UPDATE dbo.AICodeInterviewQuestionSet SET IsDeleted = 1 WHERE Id = @Id", new { Id = setId });
+                    return n > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> IsClientExpertSignOffRequiredAndMissing(int irfId)
+        {
+            try
+            {
+                using (var con = new SqlConnection(connectionString))
+                {
+                    var required = await con.ExecuteScalarAsync<bool?>(@"
+SELECT CAST(ISNULL(RequireClientExpertSignOff, 0) AS bit) FROM dbo.IRF WHERE id = @IRFId", new { IRFId = irfId });
+                    if (required != true) return false;
+                    var confirmed = await con.ExecuteScalarAsync<int>(@"
+SELECT COUNT(1) FROM dbo.ExpertInLoopClientConfirmation
+WHERE IRFId = @IRFId AND Scope = 0 AND Status = 1", new { IRFId = irfId });
+                    return confirmed == 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> GetRequireClientExpertSignOff(int irfId)
+        {
+            try
+            {
+                using (var con = new SqlConnection(connectionString))
+                {
+                    var v = await con.ExecuteScalarAsync<bool?>(@"
+SELECT CAST(ISNULL(RequireClientExpertSignOff, 0) AS bit) FROM dbo.IRF WHERE id = @IRFId", new { IRFId = irfId });
+                    return v == true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<ExpertInLoopClientConfirmationVm> GetExpertInLoopConfirmation(int irfId, int? seId, byte scope)
+        {
+            try
+            {
+                using (var con = new SqlConnection(connectionString))
+                {
+                    var row = await con.QueryFirstOrDefaultAsync<ExpertInLoopClientConfirmationVm>(@"
+SELECT TOP 1 Id, IRFId, SEId, InterviewerProfileId, Scope, Status, ClientUserId, ConfirmedOn, ClientComment
+FROM dbo.ExpertInLoopClientConfirmation
+WHERE IRFId = @IRFId AND Scope = @Scope
+  AND ((@SEId IS NULL AND SEId IS NULL) OR SEId = @SEId)
+ORDER BY Id DESC", new { IRFId = irfId, SEId = seId, Scope = scope });
+                    return row;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<bool> SaveExpertInLoopClientConfirmation(int irfId, int? seId, byte scope, byte status, string clientUserId, string comment, int? interviewerProfileId)
+        {
+            try
+            {
+                using (var con = new SqlConnection(connectionString))
+                {
+                    await con.ExecuteAsync(@"
+IF EXISTS (
+    SELECT 1 FROM dbo.ExpertInLoopClientConfirmation
+    WHERE IRFId = @IRFId AND Scope = @Scope
+      AND ((@SEId IS NULL AND SEId IS NULL) OR SEId = @SEId)
+)
+BEGIN
+    UPDATE dbo.ExpertInLoopClientConfirmation
+    SET Status = @Status,
+        ClientUserId = @ClientUserId,
+        ClientComment = @Comment,
+        InterviewerProfileId = COALESCE(@InterviewerProfileId, InterviewerProfileId),
+        ConfirmedOn = CASE WHEN @Status = 1 THEN GETUTCDATE() ELSE ConfirmedOn END
+    WHERE IRFId = @IRFId AND Scope = @Scope
+      AND ((@SEId IS NULL AND SEId IS NULL) OR SEId = @SEId)
+END
+ELSE
+BEGIN
+    INSERT INTO dbo.ExpertInLoopClientConfirmation
+        (IRFId, SEId, InterviewerProfileId, Scope, Status, ClientUserId, ConfirmedOn, ClientComment)
+    VALUES (@IRFId, @SEId, @InterviewerProfileId, @Scope, @Status, @ClientUserId,
+            CASE WHEN @Status = 1 THEN GETUTCDATE() ELSE NULL END, @Comment)
+END", new
+                    {
+                        IRFId = irfId,
+                        SEId = seId,
+                        Scope = scope,
+                        Status = status,
+                        ClientUserId = clientUserId,
+                        Comment = comment,
+                        InterviewerProfileId = interviewerProfileId
+                    });
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
         }
     }
 }
