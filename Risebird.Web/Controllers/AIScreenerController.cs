@@ -48,7 +48,6 @@ namespace Risebird.Web.Controllers
         private readonly IIRFRepository _irfRepository;
         private readonly IActivityTrackerService _activityTrackerService;
         private readonly IPdfReaderHelper _pdfReaderHelper;
-        private readonly IOpenAIInterviewerAssistantHelper _ai;
         private readonly ITranscriptOptimizationHelper _transcriptOptimizationHelper;
 
         public AIScreenerController(IAssistantServiceHelper assistantServiceHelper,
@@ -57,7 +56,6 @@ namespace Risebird.Web.Controllers
             IAzureStorageHelper azureStorageHelper, IInterviewerService interviewerService,
             IIRFRepository irfRepository, IMeetingService meetingService,
             IActivityTrackerService activityTrackerService, IPdfReaderHelper pdfReaderHelper,
-            IOpenAIInterviewerAssistantHelper ai,
             ITranscriptOptimizationHelper transcriptOptimizationHelper)
         {
             _assistantServiceHelper = assistantServiceHelper;
@@ -71,7 +69,6 @@ namespace Risebird.Web.Controllers
             _meetingService = meetingService;
             _activityTrackerService = activityTrackerService;
             _pdfReaderHelper = pdfReaderHelper;
-            _ai = ai;
             _transcriptOptimizationHelper = transcriptOptimizationHelper;
         }
 
@@ -207,9 +204,6 @@ namespace Risebird.Web.Controllers
                         {
                             //undo the following comments that parsed the resume using open ai and initiated the variable candidateParsedData when you iron out the bugs/erratics of open ai and are ready to switch back to it as the first choice resume parser.
 
-                            string jobLevel = ((JobLevels)details.JobLevel).GetDescription();
-                            string companyType = ((CompanyType)details.CompanyType).GetDescription();
-
                             string resumeLinkToParse = string.Empty;
                             if (!details.ResumeLink.Contains(".pdf"))
                             {
@@ -223,26 +217,16 @@ namespace Risebird.Web.Controllers
 
                             if (!string.IsNullOrEmpty(resumeStringContent))
                             {
-                                var threadId = await _ai.CreateThreadAsync();
-
-                                //var queryContent = $"Generate an output as per the instructions fed to the assistant. The job level is {jobLevel}, company type is {companyType} and the resume string is {resumeStringContent}";
-                                var queryContent = $"Generate an output as per the instructions fed to the assistant. The job title is {details.AssessmentGroup} and the resume string is {resumeStringContent}";
-
-
-                                await _ai.AddMessageAsync(threadId, "user", queryContent);
-
-                                //await _ai.AddMessageAsync(threadId, "user", resume.ResumeLink);
-
-                                var runId = await _ai.CreateRunAsync(threadId, "asst_xpUcZZCWpAYTn2aDpBBClXtf"); //assistant id of the assistant named (Copy of Resume Parser - Using Resume Public URL) asst_x4F8slGF4hnEI4EN7pBDGR2g 
-                                await _ai.WaitForRunAsync(threadId, runId);
-
-
-                                var replies = await _ai.GetMessagesAsync(threadId);
+                                var runResult = await _assistantServiceHelper.GenerateCandidateScreening(
+                                    resumeStringContent,
+                                    details.AssessmentGroup,
+                                    useResumeParserCopyPrompt: true);
+                                var replyText = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value;
 
                                 try
                                 {
-                                    //candidateResumeScreeningData = JsonConvert.DeserializeObject<CandidateResumeScreeningVM>(replies?.FirstOrDefault());
-                                    candidateResumeScreeningData = TryParseCandidateResumeScreeningEvaluation(replies?.FirstOrDefault());
+                                    //candidateResumeScreeningData = JsonConvert.DeserializeObject<CandidateResumeScreeningVM>(replyText);
+                                    candidateResumeScreeningData = TryParseCandidateResumeScreeningEvaluation(replyText);
 
                                 }
                                 catch (Exception ex)

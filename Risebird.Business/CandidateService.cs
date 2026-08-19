@@ -36,7 +36,7 @@ namespace Risebird.Business
         private readonly string twilioVoiceCallNumber;
         private readonly IEvaluatorRepository _evaluatorRespository;
         private readonly IMeetingRespository _meetingRespository;
-        private readonly IOpenAIInterviewerAssistantHelper _ai;
+        private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IPdfReaderHelper _pdfReaderHelper;
 
@@ -45,7 +45,7 @@ namespace Risebird.Business
             IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, 
             IIRFService irfService, IIRFRepository irfRepository, ITwilioHelper twilioHelper, 
             IEvaluatorRepository evaluatorRespository, IMeetingRespository meetingRespository, 
-            IOpenAIInterviewerAssistantHelper ai, IAzureStorageHelper azureStorageHelper, 
+            IAssistantServiceHelper assistantServiceHelper, IAzureStorageHelper azureStorageHelper, 
             IPdfReaderHelper pdfReaderHelper)
         {
             _candidateRepository = candidateRepository;
@@ -59,7 +59,7 @@ namespace Risebird.Business
             _twilioHelper = twilioHelper;
             _evaluatorRespository = evaluatorRespository;
             _meetingRespository = meetingRespository;
-            _ai = ai;
+            _assistantServiceHelper = assistantServiceHelper;
             _azureStorageHelper = azureStorageHelper;
             _pdfReaderHelper = pdfReaderHelper;
         }
@@ -718,24 +718,19 @@ namespace Risebird.Business
 
                         if (!string.IsNullOrEmpty(resumeStringContent))
                         {
-                            var threadId = await _ai.CreateThreadAsync();
-                            await _ai.AddMessageAsync(threadId, "user", resumeStringContent);
-
-                            //await _ai.AddMessageAsync(threadId, "user", resume.ResumeLink);
-
-                            var runId = await _ai.CreateRunAsync(threadId, "asst_pbeYFi03nKIjbl2W1Am0ROQh"); //assistant id of the assistant named : Resume to Profile Summary  
-                            await _ai.WaitForRunAsync(threadId, runId);
-
-
-                            var replies = await _ai.GetMessagesAsync(threadId);
+                            var runResult = await _assistantServiceHelper.ParseResume(
+                                resumeStringContent,
+                                usePublicUrlParser: false,
+                                useProfileSummary: true);
+                            var replyText = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value;
 
                             try
                             {
-                                candidateResumeSummary = TryParseResumeSummary(replies?.FirstOrDefault());
+                                candidateResumeSummary = TryParseResumeSummary(replyText);
                                 if(candidateResumeSummary != null)
                                 {
                                     //save the summary to the db
-                                    await _candidateRepository.SaveCandidateResumeSummaryAsJsonStringById(candidateId, replies?.FirstOrDefault());
+                                    await _candidateRepository.SaveCandidateResumeSummaryAsJsonStringById(candidateId, replyText);
                                 }
 
                             }
@@ -783,13 +778,13 @@ namespace Risebird.Business
                 var resumeStringContent = await _pdfReaderHelper.ReadPdfFromUrlAsync(resumeLinkToParse);
                 if (string.IsNullOrEmpty(resumeStringContent)) return null;
 
-                var threadId = await _ai.CreateThreadAsync();
-                await _ai.AddMessageAsync(threadId, "user", resumeStringContent);
-                var runId = await _ai.CreateRunAsync(threadId, "asst_pbeYFi03nKIjbl2W1Am0ROQh");
-                await _ai.WaitForRunAsync(threadId, runId);
-                var replies = await _ai.GetMessagesAsync(threadId);
+                var runResult = await _assistantServiceHelper.ParseResume(
+                    resumeStringContent,
+                    usePublicUrlParser: false,
+                    useProfileSummary: true);
+                var replyText = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value;
 
-                return TryParseResumeSummary(replies?.FirstOrDefault());
+                return TryParseResumeSummary(replyText);
             }
             catch (Exception e)
             {
