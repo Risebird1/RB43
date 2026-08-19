@@ -786,26 +786,6 @@ BEGIN
     ADD VoiceInstructionTranscriptUpdatedBy VARCHAR(100) NULL
 END
 
-IF NOT EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name IN (N'RequireClientExpertSignOff')
-      AND Object_ID = Object_ID(N'IRF'))
-BEGIN
-    ALTER TABLE IRF
-    ADD RequireClientExpertSignOff bit NOT NULL CONSTRAINT DF_IRF_RequireClientExpertSignOff DEFAULT (0)
-END
-
-IF NOT EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name IN (N'OpenAIPromptId')
-      AND Object_ID = Object_ID(N'IRF'))
-BEGIN
-    ALTER TABLE IRF
-    ADD OpenAIPromptId varchar(100) NULL
-END
-
 END
 
 
