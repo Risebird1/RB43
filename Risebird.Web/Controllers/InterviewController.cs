@@ -1155,9 +1155,7 @@ namespace Risebird.Web.Controllers
                                 }
                                 else
                                 {
-                                    TempData["SuccessErrorMessageInterview"] = string.IsNullOrWhiteSpace(meeting.Message)
-                                        ? "Failed to add Meeting!"
-                                        : meeting.Message;
+                                    TempData["SuccessErrorMessageInterview"] = "Failed to add Meeting!";
                                     return RedirectToAction("Index");
                                 }
                             }
