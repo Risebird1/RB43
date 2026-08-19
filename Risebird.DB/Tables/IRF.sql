@@ -69,6 +69,7 @@ CREATE TABLE [dbo].[IRF](
             [IsAIInterview] [bit] null,
             [AIInterviewType] [int] null,
             [OpenAIAssistantId]  [VARCHAR](60) null,
+            [OpenAIPromptId]  [VARCHAR](100) null,
             [InterviewerBillingCycle]  [int] null,
             [IsTechQC]  [bit] null,
             [showChatBox]  [bit] null,
@@ -783,6 +784,16 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     ADD VoiceInstructionTranscriptUpdatedBy VARCHAR(100) NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'OpenAIPromptId')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    ADD OpenAIPromptId varchar(100) NULL
 END
 
 END

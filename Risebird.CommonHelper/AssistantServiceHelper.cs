@@ -1184,7 +1184,8 @@ namespace Risebird.CommonHelper
                 if (string.IsNullOrWhiteSpace(jobTitle))
                     return null;
 
-                var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                //var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", true);
+                var useResponsesApi = UseQcResponsesApi();
                 if (useResponsesApi)
                 {
                     var input = $"Generate an output in json as per the instructions fed to the assistant. The job title you need to generate a tech rubric against is {jobTitle}.";
@@ -1924,27 +1925,33 @@ namespace Risebird.CommonHelper
         }
 
         /// <summary>
-        /// Preset AI-interview evaluation. When OpenAI:UseResponsesApi is true, this uses
-        /// OpenAI:AIInterviewPromptMap (pmpt_…) on the Responses API. Otherwise returns null
-        /// so the caller can use the Assistants API.
+        /// Preset AI-interview evaluation. When Responses API is enabled, uses
+        /// <paramref name="promptId"/> if provided; otherwise OpenAI:AIInterviewPromptMap.
+        /// Returns null so the caller can use the Assistants API when Responses is off or no prompt is available.
         /// </summary>
-        public async Task<RunResult> GenerateAIInterviewEvaluation(string techSkillsJson, string questionAnswerSetJson, string assistantId)
+        public async Task<RunResult> GenerateAIInterviewEvaluation(string techSkillsJson, string questionAnswerSetJson, string promptId = null)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(questionAnswerSetJson))
                     return null;
 
-                var useResponsesApi = UseGlobalResponsesApi();
-                var promptId = _configuration["OpenAI:AIInterviewPromptMap"];
-                if (!useResponsesApi || string.IsNullOrWhiteSpace(promptId))
+                //var useResponsesApi = UseGlobalResponsesApi();
+                var useResponsesApi = UseQcResponsesApi();
+                var resolvedPromptId = !string.IsNullOrWhiteSpace(promptId)
+                    ? promptId.Trim()
+                    : _configuration["OpenAI:AIInterviewPromptMap"];
+                if (!useResponsesApi || string.IsNullOrWhiteSpace(resolvedPromptId))
                     return null;
 
                 var input = $"Generate an output in JSON format as per the instructions fed to the assistant. {AIInterviewVerdict.OutputSchemaInstruction} The techrubrics in json are as follows:{techSkillsJson}. The mapped_rubric_parameters, question, candidate's answer and ideal answer set object in json are as follows: {questionAnswerSetJson}";
+                // Evaluation prompts are authored per skill channel and may enable reasoning, which only
+                // runs on the model saved with the prompt.
                 return await _openAIResponsesHelper.CreateJsonResponseAsync(
                     input,
                     operationType: "AIInterviewEvaluation",
-                    promptId: promptId);
+                    promptId: resolvedPromptId,
+                    useStoredPromptModel: true);
             }
             catch (Exception ex)
             {

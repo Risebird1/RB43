@@ -26,7 +26,7 @@ im.TimeLeftInSeconds, im.TimeZonesValue, im.TimeZoneoffset, irf.JDTiltle, irf.JD
 ISNULL(ad.matchPercentage, 0) as MatchScorePercentage,
 ISNULL(ad.id, 0) as AadharVerificationId, ic.MeetingStatus, ic.InterviewStatus,
 case when (im.candidateName is not null and im.candidateName != '')  then im.candidateName else ulc.FirstName end as candidateName,
-irf.id as irfIntId, irf.AIInterviewType, IRF.IsAIInterview,  irf.OpenAIAssistantId, irf.showChatBox, irf.isMultiLingual,
+irf.id as irfIntId, irf.AIInterviewType, IRF.IsAIInterview,  irf.OpenAIAssistantId, irf.OpenAIPromptId, irf.showChatBox, irf.isMultiLingual,
 case when irf.AIInterviewType = 1 then 1 else 0 end as IsAdaptive, @biqvId as CandidateAnswerVideoIdAI,
 ca.AIResumeScreeningVerdict, ca.AIResumeScreeningScore
 from InterviewMeetings im

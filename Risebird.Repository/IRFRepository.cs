@@ -881,6 +881,7 @@ WHERE si.SuspiciousStatus = 1",
                             _resultVM.IsAIInterview = !string.IsNullOrEmpty(dt.Rows[0]["IsAIInterview"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsAIInterview"]) : false;
                             _resultVM.AIInterviewType = !string.IsNullOrEmpty(dt.Rows[0]["AIInterviewType"].ToString()) ? Convert.ToInt32(dt.Rows[0]["AIInterviewType"]) : 0;
                             _resultVM.OpenAIAssistantId = !string.IsNullOrEmpty(dt.Rows[0]["OpenAIAssistantId"].ToString()) ? dt.Rows[0]["OpenAIAssistantId"].ToString() : null;
+                            _resultVM.OpenAIPromptId = dt.Columns.Contains("OpenAIPromptId") && !string.IsNullOrEmpty(dt.Rows[0]["OpenAIPromptId"].ToString()) ? dt.Rows[0]["OpenAIPromptId"].ToString() : null;
                             _resultVM.IsTechQC = !string.IsNullOrEmpty(dt.Rows[0]["IsTechQC"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsTechQC"]) : false; ;
                             _resultVM.showChatBox = !string.IsNullOrEmpty(dt.Rows[0]["showChatBox"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["showChatBox"]) : false;
                             _resultVM.generateTranscriptSummary = !string.IsNullOrEmpty(dt.Rows[0]["generateTranscriptSummary"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["generateTranscriptSummary"]) : false;
@@ -1836,6 +1837,9 @@ WHERE si.SuspiciousStatus = 1",
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@AIInterviewType", SqlDbType.Int));
                     cmdCreateIRF.Parameters["@AIInterviewType"].Value = irfDetails.AIInterviewType;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@OpenAIPromptId", SqlDbType.VarChar));
+                    cmdCreateIRF.Parameters["@OpenAIPromptId"].Value = (object)irfDetails.OpenAIPromptId ?? DBNull.Value;
 
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@showChatBox", SqlDbType.Bit));
@@ -2867,6 +2871,9 @@ WHERE si.SuspiciousStatus = 1",
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@OpenAIAssistantId", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@OpenAIAssistantId"].Value = irfDetails.OpenAIAssistantId;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@OpenAIPromptId", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@OpenAIPromptId"].Value = (object)irfDetails.OpenAIPromptId ?? DBNull.Value;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@showChatBox", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@showChatBox"].Value = irfDetails.showChatBox;
