@@ -765,7 +765,9 @@
         font-weight: 700;
         letter-spacing: 0.02em;
         line-height: 1.3;
-        white-space: nowrap;
+        white-space: normal;
+        word-break: break-word;
+        max-width: 100%;
     }
 
     .rb-ai-adaptive-report .rb-adaptive-rating-pill--excellent { background: #dcfce7; color: #15803d; }
@@ -776,11 +778,12 @@
     .rb-ai-adaptive-report .rb-adaptive-rating-pill--neutral { background: #f1f5f9; color: #475569; }
 
     .rb-ai-adaptive-report .rb-adaptive-table-wrap {
-        overflow: visible !important;
+        overflow-x: auto;
         max-height: none !important;
         margin: 0 0 14px;
         border-radius: 8px;
         width: 100%;
+        max-width: 100%;
     }
 
     .rb-ai-adaptive-report .rb-adaptive-table-wrap > table {
@@ -833,16 +836,18 @@
 
     .rb-ai-adaptive-report .rb-adaptive-two-col {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         gap: 12px;
         align-items: start;
+        width: 100%;
     }
 
     .rb-ai-adaptive-report .rb-adaptive-overview .rb-ai-two-col {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         gap: 12px;
         align-items: start;
+        width: 100%;
     }
 
     .rb-ai-adaptive-report .rb-adaptive-overview .rb-ai-panel {
@@ -852,7 +857,10 @@
         padding: 12px 14px;
         box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06);
         min-width: 0;
+        max-width: 100%;
         height: auto;
+        box-sizing: border-box;
+        overflow: visible;
     }
 
     .rb-ai-adaptive-report .rb-adaptive-overview .rb-ai-panel__head {
@@ -896,7 +904,10 @@
         padding: 12px 14px;
         box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06);
         min-width: 0;
+        max-width: 100%;
         height: auto;
+        box-sizing: border-box;
+        overflow: visible;
     }
 
     .rb-ai-adaptive-report .rb-adaptive-panel--comment .rb-adaptive-field__value {
@@ -1096,7 +1107,7 @@
     @@media (max-width: 991px) {
         .rb-ai-adaptive-report .rb-adaptive-two-col,
         .rb-ai-adaptive-report .rb-adaptive-overview .rb-ai-two-col {
-            grid-template-columns: 1fr;
+            grid-template-columns: minmax(0, 1fr);
         }
     }
 
@@ -1429,9 +1440,10 @@
 
     .rb-ai-two-col {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         gap: 12px;
         align-items: start;
+        width: 100%;
     }
 
     .rb-ai-panel {
@@ -1440,6 +1452,10 @@
         border-radius: 12px;
         padding: 12px 14px;
         box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06);
+        min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow: visible;
     }
 
     .rb-ai-panel--full {
@@ -1471,8 +1487,9 @@
     }
 
     .rb-ai-table-wrap {
-        overflow: visible;
+        overflow-x: auto;
         width: 100%;
+        max-width: 100%;
     }
 
     .rb-ai-rubric-table {
@@ -1580,7 +1597,7 @@
     }
 
     .rb-ai-rubric-table .rb-ai-r-level {
-        width: 105px;
+        width: 24%;
         font-size: 12px;
         color: #64748b;
     }
@@ -1640,8 +1657,10 @@
         font-size: 12.5px;
         color: #334155;
         line-height: 1.5;
-        white-space: pre-line;
+        white-space: normal;
         margin: 0;
+        overflow-wrap: anywhere;
+        word-break: break-word;
     }
 
     .rb-ai-comment-block + .rb-ai-comment-block {
@@ -1655,6 +1674,45 @@
         letter-spacing: 0.03em;
         color: #64748b;
         margin-bottom: 4px;
+    }
+
+    .rb-ai-evidence-table {
+        width: 100%;
+        max-width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+        font-size: 12.5px;
+        line-height: 1.5;
+        color: #475569;
+        margin: 0;
+    }
+
+    .rb-ai-evidence-table th,
+    .rb-ai-evidence-table td {
+        text-align: left;
+        vertical-align: top;
+        padding: 6px 8px 6px 0;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        white-space: normal;
+    }
+
+    .rb-ai-evidence-table th {
+        padding: 4px 8px 4px 0;
+        border-bottom: 1px solid #e2e8f0;
+        font-weight: 700;
+    }
+
+    .rb-ai-evidence-table th:first-child,
+    .rb-ai-evidence-table td:first-child {
+        width: 46%;
+        padding: 0px 8px;
+    }
+
+    .rb-ai-evidence-hint {
+        margin: 0 0 6px;
+        font-size: 11px;
+        color: #64748b;
     }
 
     .rb-ai-verify-grid {
@@ -1725,7 +1783,7 @@
         line-height: 1.45;
         word-wrap: break-word;
         word-break: break-word;
-        overflow-wrap: break-word;
+        overflow-wrap: anywhere;
         white-space: normal;
     }
 
@@ -1778,7 +1836,7 @@
 
     @@media (max-width: 991px) {
         .rb-ai-two-col {
-            grid-template-columns: 1fr;
+            grid-template-columns: minmax(0, 1fr);
         }
 
         .rb-ai-questions-table .rb-ai-q-rating,
@@ -3591,12 +3649,12 @@
                                         @if (Model.AIInterviewEvaluation.LlmDetection.SuspiciousInstances != null && Model.AIInterviewEvaluation.LlmDetection.SuspiciousInstances.Any())
                                         {
                                             <div class="rb-ai-comment-label" style="margin-top:8px;">Suspicious Instances</div>
-                                            <p style="margin:0 0 6px;font-size:11px;color:#64748b;">Informational only — not a skill or communication score.</p>
-                                            <table style="width:100%;border-collapse:collapse;font-size:12.5px;line-height:1.5;color:#475569;">
+                                            <p class="rb-ai-evidence-hint">Informational only — not a skill or communication score.</p>
+                                            <table class="rb-ai-evidence-table">
                                                 <thead>
                                                     <tr>
-                                                        <th style="text-align:left;padding:4px 8px 4px 0;border-bottom:1px solid #e2e8f0;">Question</th>
-                                                        <th style="text-align:left;padding:4px 0;border-bottom:1px solid #e2e8f0;">Evidence</th>
+                                                        <th>Question</th>
+                                                        <th>Evidence</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -3606,8 +3664,8 @@
                                                         var questionPart = splitAt > 0 ? item.Substring(0, splitAt) : "—";
                                                         var evidencePart = splitAt > 0 ? item.Substring(splitAt + 2) : item;
                                                         <tr>
-                                                            <td style="vertical-align:top;padding:6px 8px 6px 0;">@questionPart</td>
-                                                            <td style="vertical-align:top;padding:6px 0;">@evidencePart</td>
+                                                            <td>@questionPart</td>
+                                                            <td>@evidencePart</td>
                                                         </tr>
                                                     }
                                                 </tbody>
