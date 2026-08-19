@@ -2097,6 +2097,215 @@ namespace Risebird.CommonHelper
                 return null;
             }
         }
+
+        public async Task<List<AISuggestedQuestion>> GenerateAIQuestionSuggestions(string jdContext, IList<AISuggestedQuestion> questionBank, int topCount)
+        {
+            try
+            {
+                if (questionBank == null || questionBank.Count == 0)
+                    return new List<AISuggestedQuestion>();
+
+                if (topCount <= 0)
+                    topCount = 10;
+
+                var bank = questionBank
+                    .Where(q => q != null && !string.IsNullOrWhiteSpace(q.Question))
+                    .Take(300)
+                    .ToList();
+
+                if (bank.Count == 0)
+                    return new List<AISuggestedQuestion>();
+
+                var bankJson = JsonConvert.SerializeObject(bank.Select(q => new
+                {
+                    question = q.Question,
+                    skillName = q.SkillName
+                }));
+
+                var systemPrompt =
+                    "You are an expert technical interviewer. You MUST select interview questions ONLY from the provided question bank. " +
+                    "Copy question text and skillName verbatim. Do not invent, rewrite, or paraphrase questions. Return JSON only.";
+
+                var userPrompt =
+                    "Job and rubric context:\n" +
+                    (jdContext ?? string.Empty) +
+                    "\n\nQuestion bank (JSON array):\n" +
+                    bankJson +
+                    "\n\nSelect the top " + topCount +
+                    " questions that best assess this job. Prefer coverage across rubric skills. Return a JSON object:\n" +
+                    "{ \"questions\": [ { \"question\": \"verbatim from bank\", \"skillName\": \"verbatim from bank\" } ] }";
+
+                var json = await GetChatCompletion(systemPrompt, userPrompt);
+                var parsed = JsonConvert.DeserializeObject<AIQuestionSuggestionSchema>(ExtractJsonObject(json));
+                var picked = parsed?.Questions ?? new List<AISuggestedQuestion>();
+
+                var result = new List<AISuggestedQuestion>();
+                foreach (var item in picked)
+                {
+                    if (item == null || string.IsNullOrWhiteSpace(item.Question))
+                        continue;
+                    var match = bank.FirstOrDefault(b =>
+                        string.Equals((b.Question ?? string.Empty).Trim(), item.Question.Trim(), StringComparison.Ordinal));
+                    if (match == null)
+                        continue;
+                    result.Add(new AISuggestedQuestion
+                    {
+                        Question = match.Question,
+                        SkillName = match.SkillName,
+                        IdealAnswer = null
+                    });
+                    if (result.Count >= topCount)
+                        break;
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<List<AISuggestedQuestion>> GenerateAIIdealAnswers(string jdContext, IList<AISuggestedQuestion> questions)
+        {
+            try
+            {
+                if (questions == null || questions.Count == 0)
+                    return new List<AISuggestedQuestion>();
+
+                var source = questions
+                    .Where(q => q != null && !string.IsNullOrWhiteSpace(q.Question))
+                    .ToList();
+                if (source.Count == 0)
+                    return new List<AISuggestedQuestion>();
+
+                var questionsJson = JsonConvert.SerializeObject(source.Select(q => new
+                {
+                    question = q.Question,
+                    skillName = q.SkillName
+                }));
+
+                var systemPrompt =
+                    "You are an expert technical interviewer. Write a concise, high-quality ideal answer for each interview question. " +
+                    "Do not change the question text or skillName. Return JSON only.";
+
+                var userPrompt =
+                    "Job and rubric context:\n" +
+                    (jdContext ?? string.Empty) +
+                    "\n\nQuestions (JSON array):\n" +
+                    questionsJson +
+                    "\n\nReturn a JSON object:\n" +
+                    "{ \"answers\": [ { \"question\": \"verbatim\", \"skillName\": \"verbatim\", \"idealAnswer\": \"model answer the interviewer can score against\" } ] }";
+
+                var json = await GetChatCompletion(systemPrompt, userPrompt);
+                var parsed = JsonConvert.DeserializeObject<AIIdealAnswerSchema>(ExtractJsonObject(json));
+                var answers = parsed?.Answers ?? new List<AISuggestedQuestion>();
+
+                var result = new List<AISuggestedQuestion>();
+                for (int i = 0; i < source.Count; i++)
+                {
+                    var original = source[i];
+                    var match = answers.FirstOrDefault(a =>
+                        a != null &&
+                        string.Equals((a.Question ?? string.Empty).Trim(), (original.Question ?? string.Empty).Trim(), StringComparison.Ordinal));
+                    if (match == null && i < answers.Count)
+                        match = answers[i];
+
+                    result.Add(new AISuggestedQuestion
+                    {
+                        Question = original.Question,
+                        SkillName = original.SkillName,
+                        IdealAnswer = match?.IdealAnswer
+                    });
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        private async Task<string> GetChatCompletion(string systemPrompt, string userPrompt)
+        {
+            var model = _configuration["OpenAI:ChatCompletionModel"];
+            if (string.IsNullOrWhiteSpace(model))
+                model = "gpt-4o-mini";
+
+            using (var http = new HttpClient())
+            {
+                http.Timeout = TimeSpan.FromMinutes(5);
+                http.DefaultRequestHeaders.Clear();
+                http.DefaultRequestHeaders.Add("Authorization", "Bearer " + apiKey);
+
+                var payload = new
+                {
+                    model,
+                    temperature = 0.2,
+                    response_format = new { type = "json_object" },
+                    messages = new[]
+                    {
+                        new { role = "system", content = systemPrompt ?? string.Empty },
+                        new { role = "user", content = userPrompt ?? string.Empty }
+                    }
+                };
+
+                var url = (string.IsNullOrWhiteSpace(baseUrl) ? "https://api.openai.com/v1" : baseUrl.TrimEnd('/')) + "/chat/completions";
+                var resp = await http.PostAsync(url, new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json"));
+                var body = await resp.Content.ReadAsStringAsync();
+                if (!resp.IsSuccessStatusCode)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, new Exception("ChatCompletion failed: " + body));
+                    return null;
+                }
+
+                var parsed = JsonConvert.DeserializeObject<ChatCompletionResponse>(body);
+                return parsed?.choices?.FirstOrDefault()?.message?.content;
+            }
+        }
+
+        private static string ExtractJsonObject(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return "{}";
+
+            var trimmed = text.Trim();
+            if (trimmed.StartsWith("```"))
+            {
+                var firstNl = trimmed.IndexOf('\n');
+                if (firstNl >= 0)
+                    trimmed = trimmed.Substring(firstNl + 1);
+                var fence = trimmed.LastIndexOf("```", StringComparison.Ordinal);
+                if (fence >= 0)
+                    trimmed = trimmed.Substring(0, fence);
+                trimmed = trimmed.Trim();
+            }
+
+            var start = trimmed.IndexOf('{');
+            var end = trimmed.LastIndexOf('}');
+            if (start >= 0 && end > start)
+                return trimmed.Substring(start, end - start + 1);
+            return trimmed;
+        }
+
+        private class ChatCompletionResponse
+        {
+            public List<ChatCompletionChoice> choices { get; set; }
+        }
+
+        private class ChatCompletionChoice
+        {
+            public ChatCompletionMessage message { get; set; }
+        }
+
+        private class ChatCompletionMessage
+        {
+            public string role { get; set; }
+            public string content { get; set; }
+        }
     }
 
     public class VectorStore

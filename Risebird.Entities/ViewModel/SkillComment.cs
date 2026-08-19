@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -29,5 +30,39 @@ namespace Risebird.Entities.ViewModel
         /// Mandatory for coding questions, unused for every other type.
         /// </summary>
         public string QuestionGist { get; set; }
+
+        /// <summary>
+        /// AI-written model answer for HM-saved bank suggestions. Distinct from ExpectedAnswer
+        /// used by preset AI interviews.
+        /// </summary>
+        public string IdealAnswer { get; set; }
+
+        /// <summary>
+        /// True when the row was saved from the HM AI question picker (not Generate with AI).
+        /// </summary>
+        public bool IsAIGenerated { get; set; }
+
+        public int MaxScore { get; set; }
+        public string ExpectedOutput { get; set; }
+        public string AnswerExplanation { get; set; }
+        public string SafeImplementation { get; set; }
+        public string SemanticMatchCriteria { get; set; }
+        public string MisconceptionRedFlags { get; set; }
+
+        /// <summary>0 None · 1 Generating · 2 Ready · 3 Stale · 4 Failed</summary>
+        public byte AIVideoStatus { get; set; }
+        public DateTime? AIVideoGeneratedOn { get; set; }
+
+        /// <summary>Immutable AI original, stamped once at generation.</summary>
+        public string AIDraftPayload { get; set; }
+
+        /// <summary>NULL = legacy (served). 0 Draft · 1 Confirmed · 2 Rejected</summary>
+        public byte? VettingStatus { get; set; }
+        public string VettedBy { get; set; }
+        public DateTime? VettedOn { get; set; }
+        public string RejectionReason { get; set; }
+        public string QuestionSlot { get; set; }
+        public string QuestionVariant { get; set; }
+        public int? RubricItemId { get; set; }
     }
 }

@@ -45,8 +45,40 @@ select * from TransTechSkill where IRFId = @irfId
 if(@aiInterviewType = 2) -- 2 means preset  
 Begin  
 
-select bq.question, bq.CandidateAnswer, sq.ExpectedAnswer, sq.SkillName from BotInterviewQuestionVideos bq   
-join SkillChannelSampleQuestions sq on bq.DeliveryHeadQuestionId = sq.id  
+select bq.question, bq.CandidateAnswer,
+       CASE
+           WHEN NULLIF(LTRIM(RTRIM(CONCAT(
+                ISNULL(sq.ExpectedOutput, ''),
+                ISNULL(sq.AnswerExplanation, ''),
+                ISNULL(sq.SafeImplementation, ''),
+                ISNULL(sq.SemanticMatchCriteria, ''),
+                ISNULL(sq.MisconceptionRedFlags, '')
+           ))), '') IS NOT NULL
+           THEN CONCAT(
+                CASE WHEN NULLIF(LTRIM(RTRIM(sq.ExpectedOutput)), '') IS NOT NULL
+                     THEN N'Expected output:' + CHAR(13) + CHAR(10) + sq.ExpectedOutput + CHAR(13) + CHAR(10) + CHAR(13) + CHAR(10)
+                     ELSE N'' END,
+                CASE WHEN NULLIF(LTRIM(RTRIM(sq.AnswerExplanation)), '') IS NOT NULL
+                     THEN N'Explanation:' + CHAR(13) + CHAR(10) + sq.AnswerExplanation + CHAR(13) + CHAR(10) + CHAR(13) + CHAR(10)
+                     ELSE N'' END,
+                CASE WHEN NULLIF(LTRIM(RTRIM(sq.SafeImplementation)), '') IS NOT NULL
+                     THEN N'Safe implementation:' + CHAR(13) + CHAR(10) + sq.SafeImplementation + CHAR(13) + CHAR(10) + CHAR(13) + CHAR(10)
+                     ELSE N'' END,
+                CASE WHEN NULLIF(LTRIM(RTRIM(sq.SemanticMatchCriteria)), '') IS NOT NULL
+                     THEN N'Semantic matching criteria:' + CHAR(13) + CHAR(10) + sq.SemanticMatchCriteria + CHAR(13) + CHAR(10) + CHAR(13) + CHAR(10)
+                     ELSE N'' END,
+                CASE WHEN NULLIF(LTRIM(RTRIM(sq.MisconceptionRedFlags)), '') IS NOT NULL
+                     THEN N'Misconception red flags:' + CHAR(13) + CHAR(10) + sq.MisconceptionRedFlags
+                     ELSE N'' END
+           )
+           ELSE sq.ExpectedAnswer
+       END AS ExpectedAnswer,
+       sq.ExpectedOutput, sq.AnswerExplanation, sq.SafeImplementation,
+       sq.SemanticMatchCriteria, sq.MisconceptionRedFlags,
+       ISNULL(sq.MaxScore, 0) AS MaxScore,
+       sq.SkillName
+from BotInterviewQuestionVideos bq
+join SkillChannelSampleQuestions sq on bq.DeliveryHeadQuestionId = sq.id
 where irfid = @irfId  and SessionId = @SessionId
   
 End  
