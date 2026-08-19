@@ -21,9 +21,9 @@ BEGIN
     SET NOCOUNT ON;
 
     INSERT INTO SkillChannelSampleQuestions
-        (IRFId, Skill, SkillName, Comment, ExpectedAnswer, GeneratedPayload, IsGeneratedByAi, CreatedBy)
+        (IRFId, Skill, SkillName, Comment, ExpectedAnswer, GeneratedPayload, IsGeneratedByAi, CreatedBy, VettingStatus)
     VALUES
-        (@IRFId, 0, @SkillName, @Comment, @ExpectedAnswer, @GeneratedPayload, 1, @CreatedBy)
+        (@IRFId, 0, @SkillName, @Comment, @ExpectedAnswer, @GeneratedPayload, 1, @CreatedBy, 0)
 
     SELECT SCOPE_IDENTITY() AS NewId
 END
