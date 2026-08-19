@@ -330,6 +330,7 @@ namespace Risebird.Repository
                             _resultVM.InterviewStatus = !string.IsNullOrEmpty(dt.Rows[0]["InterviewStatus"].ToString()) ? Convert.ToInt32(dt.Rows[0]["InterviewStatus"]) : 0;
                             _resultVM.CandidateAnswerVideoIdAI = !string.IsNullOrEmpty(dt.Rows[0]["CandidateAnswerVideoIdAI"].ToString()) ? Convert.ToInt32(dt.Rows[0]["CandidateAnswerVideoIdAI"]) : 0;
                             _resultVM.OpenAIAssistantId = !string.IsNullOrEmpty(dt.Rows[0]["OpenAIAssistantId"].ToString()) ? dt.Rows[0]["OpenAIAssistantId"].ToString() : null;
+                            _resultVM.OpenAIPromptId = dt.Columns.Contains("OpenAIPromptId") && !string.IsNullOrEmpty(dt.Rows[0]["OpenAIPromptId"].ToString()) ? dt.Rows[0]["OpenAIPromptId"].ToString() : null;
                             _resultVM.showChatBox = !string.IsNullOrEmpty(dt.Rows[0]["showChatBox"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["showChatBox"]) : false;
                             _resultVM.isMultiLingual = !string.IsNullOrEmpty(dt.Rows[0]["isMultiLingual"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["isMultiLingual"]) : false;
                             _resultVM.AIResumeScreeningVerdict = !string.IsNullOrEmpty(dt.Rows[0]["AIResumeScreeningVerdict"].ToString()) ? dt.Rows[0]["AIResumeScreeningVerdict"].ToString() : null;

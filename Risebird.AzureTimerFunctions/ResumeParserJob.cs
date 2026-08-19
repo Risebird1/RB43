@@ -22,7 +22,7 @@ namespace Risebird.AzureTimerFunctions
         private readonly IIRFService _irfService;
         private readonly IValidationHelper _validationHelper;
         private readonly IPdfReaderHelper _pdfReaderHelper;
-        private readonly IOpenAIInterviewerAssistantHelper _ai;
+        private readonly IAssistantServiceHelper _assistantServiceHelper;
         private readonly IResumeOptimizationHelper _resumeOptimizationHelper;
 
 
@@ -33,7 +33,7 @@ namespace Risebird.AzureTimerFunctions
             IIRFService irfService,
             IAffIndaResumeParserHelper affIndaResumeParserHelper, IValidationHelper validationHelper,
             IPdfReaderHelper pdfReaderHelper,
-            IOpenAIInterviewerAssistantHelper ai,
+            IAssistantServiceHelper assistantServiceHelper,
             IResumeOptimizationHelper resumeOptimizationHelper)
         {
             _applicationErrorLogger = applicationErrorLogger;
@@ -45,7 +45,7 @@ namespace Risebird.AzureTimerFunctions
             _validationHelper = validationHelper;
             log = loggerFactory.CreateLogger<ResumeParserJob>();
             _pdfReaderHelper = pdfReaderHelper;
-            _ai = ai;
+            _assistantServiceHelper = assistantServiceHelper;
             _resumeOptimizationHelper = resumeOptimizationHelper;
         }
 
@@ -108,20 +108,12 @@ namespace Risebird.AzureTimerFunctions
                             
                             log.LogInformation($"ResumeParserJob: Resume {resume.id} optimization: {estimatedTokensBefore} tokens -> {estimatedTokensAfter} tokens (saved {estimatedTokensBefore - estimatedTokensAfter})");
 
-                            var threadId = await _ai.CreateThreadAsync();
-                            await _ai.AddMessageAsync(threadId, "user", resumeStringContent);
-
-                            //await _ai.AddMessageAsync(threadId, "user", resume.ResumeLink);
-
-                            var runId = await _ai.CreateRunAsync(threadId, "asst_T61hVvnYmOCmvyfKylFULdUk"); //assistant id of the assistant named (Copy of Resume Parser - Using Resume Public URL) asst_x4F8slGF4hnEI4EN7pBDGR2g 
-                            await _ai.WaitForRunAsync(threadId, runId);
-
-
-                            var replies = await _ai.GetMessagesAsync(threadId);
+                            var runResult = await _assistantServiceHelper.ParseResume(resumeStringContent);
+                            var replyText = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value;
 
                             try
                             {
-                                candidateParsedData = JsonConvert.DeserializeObject<CandidateResumeParsedDataOpenAI>(replies?.FirstOrDefault());
+                                candidateParsedData = JsonConvert.DeserializeObject<CandidateResumeParsedDataOpenAI>(replyText);
 
                             }
                             catch (Exception ex)

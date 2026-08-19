@@ -31,11 +31,12 @@ namespace Risebird.CommonHelper.Interface
         Task<RunResult> GeneratePaymentTicketReview(string composedMessage);
 
         /// <summary>
-        /// Preset AI-interview evaluation via Responses API using OpenAI:AIInterviewPromptMap.
-        /// Returns null when UseResponsesApi is false or the prompt ID is missing, so the caller
+        /// Preset AI-interview evaluation via Responses API.
+        /// Uses <paramref name="promptId"/> when provided; otherwise OpenAI:AIInterviewPromptMap.
+        /// Returns null when UseResponsesApi is false or no prompt ID is available, so the caller
         /// can use the Assistants API.
         /// </summary>
-        Task<RunResult> GenerateAIInterviewEvaluation(string techSkillsJson, string questionAnswerSetJson, string assistantId);
+        Task<RunResult> GenerateAIInterviewEvaluation(string techSkillsJson, string questionAnswerSetJson, string promptId = null);
 
         /// <summary>
         /// Adaptive AI-interviewer turn via Responses API using OpenAI:AIInterviewerPromptId.
