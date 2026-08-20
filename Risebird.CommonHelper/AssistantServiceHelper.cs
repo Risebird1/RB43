@@ -1953,12 +1953,19 @@ namespace Risebird.CommonHelper
                     return null;
 
                 var input = $"Generate an output in JSON format as per the instructions fed to the assistant. {AIInterviewVerdict.OutputSchemaInstruction} The techrubrics in json are as follows:{techSkillsJson}. The mapped_rubric_parameters, question, candidate's answer and ideal answer set object in json are as follows: {questionAnswerSetJson}";
+                // A per-skill verdict for every rubric parameter is long, and reasoning tokens are billed
+                // against the same cap, so the prompt's saved cap truncates the JSON mid-object.
+                var maxOutputTokens = _configuration.GetValue<int?>("OpenAI:AIInterviewEvaluationMaxOutputTokens");
+                if (!maxOutputTokens.HasValue || maxOutputTokens.Value <= 0)
+                    maxOutputTokens = 32768;
+
                 // Evaluation prompts are authored per skill channel and may enable reasoning, which only
                 // runs on the model saved with the prompt.
                 return await _openAIResponsesHelper.CreateJsonResponseAsync(
                     input,
                     operationType: "AIInterviewEvaluation",
                     promptId: resolvedPromptId,
+                    maxOutputTokens: maxOutputTokens,
                     useStoredPromptModel: true);
             }
             catch (Exception ex)
