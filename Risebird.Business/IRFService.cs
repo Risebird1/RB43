@@ -4,7 +4,6 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
-using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -4021,32 +4020,6 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<IEnumerable<AISuggestedQuestion>> GetQuestionBankForJD(int irfId)
-        {
-            try
-            {
-                return await _irfRepository.GetQuestionBankForJD(irfId);
-            }
-            catch (Exception e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
-            }
-        }
-
-        public async Task<bool> AddAIQuestionsWithAnswers(int irfId, IEnumerable<AISuggestedQuestion> questions, string createdBy)
-        {
-            try
-            {
-                return await _irfRepository.AddAIQuestionsWithAnswers(irfId, questions, createdBy);
-            }
-            catch (Exception e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-        }
-
         public async Task<bool> UpdateSkillChannelEmbeddableUrl(string irfId, string embedUrl)
         {
             try
@@ -5207,50 +5180,5 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
-
-        public Task<bool> SaveSMEQuestionReview(SkillComment question, string changedBy, IEnumerable<QuestionReviewLogRow> logs)
-            => _irfRepository.SaveSMEQuestionReview(question, changedBy, logs);
-
-        public Task<bool> ConfirmSMEQuestion(int id, string vettedBy)
-            => _irfRepository.ConfirmSMEQuestion(id, vettedBy);
-
-        public Task<bool> RejectSMEQuestion(int id, string vettedBy, string reason)
-            => _irfRepository.RejectSMEQuestion(id, vettedBy, reason);
-
-        public Task<bool> StampAIDraftIfEmpty(int id)
-            => _irfRepository.StampAIDraftIfEmpty(id);
-
-        public Task<bool> StampQuestionAsDraft(int id)
-            => _irfRepository.StampQuestionAsDraft(id);
-
-        public Task<bool> ApplyGeneratedQuestionReviewFields(SkillComment question)
-            => _irfRepository.ApplyGeneratedQuestionReviewFields(question);
-
-        public Task<bool> MarkAIVideoStatus(int id, byte status)
-            => _irfRepository.MarkAIVideoStatus(id, status);
-
-        public Task<IEnumerable<AICodeInterviewQuestionSetVm>> GetAICodeInterviewQuestionSets(int irfId)
-            => _irfRepository.GetAICodeInterviewQuestionSets(irfId);
-
-        public Task<int> SaveAICodeInterviewQuestionSet(AICodeInterviewQuestionSetVm set, string actor)
-            => _irfRepository.SaveAICodeInterviewQuestionSet(set, actor);
-
-        public Task<bool> SetAICodeInterviewQuestionSetStatus(int setId, byte reviewStatus, string actor)
-            => _irfRepository.SetAICodeInterviewQuestionSetStatus(setId, reviewStatus, actor);
-
-        public Task<bool> SoftDeleteAICodeInterviewQuestionSet(int setId)
-            => _irfRepository.SoftDeleteAICodeInterviewQuestionSet(setId);
-
-        public Task<bool> IsClientExpertSignOffRequiredAndMissing(int irfId)
-            => _irfRepository.IsClientExpertSignOffRequiredAndMissing(irfId);
-
-        public Task<ExpertInLoopClientConfirmationVm> GetExpertInLoopConfirmation(int irfId, int? seId, byte scope)
-            => _irfRepository.GetExpertInLoopConfirmation(irfId, seId, scope);
-
-        public Task<bool> SaveExpertInLoopClientConfirmation(int irfId, int? seId, byte scope, byte status, string clientUserId, string comment, int? interviewerProfileId)
-            => _irfRepository.SaveExpertInLoopClientConfirmation(irfId, seId, scope, status, clientUserId, comment, interviewerProfileId);
-
-        public Task<bool> GetRequireClientExpertSignOff(int irfId)
-            => _irfRepository.GetRequireClientExpertSignOff(irfId);
     }
 }
