@@ -162,6 +162,13 @@
     bool isSmeView = ViewBag.IsSmeView == true;
     bool isPanelCompactView = isSmeView;
     bool openSubmitEmailPopup = false;
+    bool isAiPresetChannel = Model != null && Model.IsAIInterview && Model.AIInterviewType == (int)AIInterviewTypeEnum.Preset;
+    // Confidentiality guard 1 of 3 (the Razor gate). Sets, scores and difficulty must never reach a
+    // candidate or a client: the client-share path renders with isClientShareView true, so the whole
+    // section is never emitted there. Guard 2 is the JavaScript flag below, which keeps those pages
+    // from requesting sets at all, and guard 3 is the endpoint, which returns nothing for a channel
+    // that is not preset regardless of caller. Keep all three.
+    bool showQuestionSets = !openSubmitEmailPopup && !isClientShareView && isAiPresetChannel;
 }
 <script>
     window.dmV4ClientShareView = @(isClientShareView ? "true" : "false");
@@ -1118,6 +1125,56 @@
                                     </div>
                                     
                                     @* End:Sample Questions: *@
+
+                                    @* 5b · AI interview question sets — preset AI interview channels only.
+                                       Nothing here renders for a non-preset channel, so those pages are
+                                       byte-for-byte what they were before this feature existed. *@
+                                    @if (showQuestionSets)
+                                    {
+                                        <div class="col-md-12 pull-left pad10 dm-v4-block" style="padding-bottom:0px;padding-left:0;padding-right:0;">
+                                            <div class="dm-v4-collapse" id="dmV4QuestionSetsCollapse">
+                                                <button type="button" class="dm-v4-collapse__head" id="dmV4QuestionSetsToggle" aria-expanded="false" aria-controls="dmV4QuestionSetsPanel">
+                                                    <span class="dm-v4-collapse__head-left">
+                                                        <i class="fa fa-clone dm-v4-collapse__icon" aria-hidden="true"></i>
+                                                        <span>
+                                                            <span class="dm-v4-collapse__title">AI interview question sets <span class="dm-v4-collapse__count" id="dmV4QuestionSetsCount"></span></span>
+                                                            <span class="dm-v4-collapse__sub">Balanced papers, one question per rubric parameter. Each interview is locked to one set, so no two candidates in a batch answer the same paper.</span>
+                                                        </span>
+                                                    </span>
+                                                    <i class="fa fa-chevron-down dm-v4-collapse__chev" aria-hidden="true"></i>
+                                                </button>
+                                                <div class="dm-v4-collapse__body" id="dmV4QuestionSetsPanel" hidden data-irf-id="@Model.id">
+                                                    <div class="dm-v4-questions-ai-banner">
+                                                        <div class="dm-v4-questions-ai-banner__left">
+                                                            <div>
+                                                                <div class="dm-v4-questions-ai-title">Deal questions into balanced sets</div>
+                                                                <div class="dm-v4-questions-ai-sub">The number of sets is capped by the rubric parameter with the fewest questions, because every set must cover every parameter without reusing a question.</div>
+                                                            </div>
+                                                        </div>
+                                                        <button type="button" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" id="dmV4CreateQuestionSetsBtn" title="Create balanced question sets for this channel"><i class="fa fa-clone"></i> Create sets</button>
+                                                    </div>
+
+                                                    @* The channel's explicit opt-in. Creating sets does not put them into use on its
+                                                       own, so that a channel is never switched on before it has papers to deal. *@
+                                                    <div class="dm-v4-questions-ai-banner">
+                                                        <div class="dm-v4-questions-ai-banner__left">
+                                                            <div>
+                                                                <div class="dm-v4-questions-ai-title">Use these sets for interviews on this channel</div>
+                                                                <div class="dm-v4-questions-ai-sub">Off means every candidate is asked the channel's questions in its standard order. On means each interview is locked to one set, so no two candidates in a batch answer the same paper. This also changes interview length to one question per rubric parameter. Interviews already locked to a set keep it if you switch this off.</div>
+                                                            </div>
+                                                        </div>
+                                                        <label for="dmV4UseQuestionSetsToggle" style="display:flex;align-items:center;gap:6px;margin:0;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;">
+                                                            <input type="checkbox" id="dmV4UseQuestionSetsToggle" style="margin:0;" @(Model.UseAIQuestionSets ? "checked" : "") />
+                                                            <span id="dmV4UseQuestionSetsLabel">@(Model.UseAIQuestionSets ? "On" : "Off")</span>
+                                                        </label>
+                                                    </div>
+                                                    <div id="dmV4UseQuestionSetsMessage" style="margin:8px 0;font-size:12px;color:#7b8794;"></div>
+                                                    <div id="dmV4QuestionSetsMessage" style="margin:8px 0;font-size:12px;color:#7b8794;"></div>
+                                                    <div id="dmV4QuestionSetsList"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
 
                                     @* 3 · Interviewers — full V4 wireframe grid *@
                                     <div class="col-md-12 pull-left pad10 dm-v4-block dm-v4-block--order-interviewers@(isClientShareView || isSmeView ? " dm-v4-block--order-interviewers-client" : "")" style="padding-bottom:0px;padding-left:0;padding-right:0;">
@@ -3213,13 +3270,166 @@
 {
 
     <script>
+        // Confidentiality guard 2 of 3 (the JavaScript gate). This comes from the same server-side
+        // flag as the Razor gate, so a page that must not see sets makes no set requests at all.
+        var aiQuestionSetsEnabled = @(showQuestionSets ? "true" : "false");
+
         $(document).ready(function () {
             @* GetquestionList(); *@
             GetInstruction();
             var irfId = $("#id").val();
             FetchCalibrationDetails(irfId);
             GetConsentForm();
+            if (aiQuestionSetsEnabled) {
+                InitAIQuestionSets();
+            }
         });
+
+        function InitAIQuestionSets() {
+            $("#dmV4QuestionSetsToggle").on("click", function () {
+                var panel = document.getElementById("dmV4QuestionSetsPanel");
+                if (!panel) return;
+                var expanded = $(this).attr("aria-expanded") === "true";
+                $(this).attr("aria-expanded", expanded ? "false" : "true");
+                panel.hidden = expanded;
+            });
+
+            $("#dmV4CreateQuestionSetsBtn").on("click", function () {
+                CreateAIQuestionSets();
+            });
+
+            $("#dmV4UseQuestionSetsToggle").on("change", function () {
+                SetAIQuestionSetsEnabled($(this).is(":checked"));
+            });
+
+            LoadAIQuestionSets();
+        }
+
+        // The channel's opt-in. A refusal from the server is authoritative, so the checkbox is put
+        // back to whatever state the server reports rather than the state that was clicked.
+        function SetAIQuestionSetsEnabled(enabled) {
+            if (!aiQuestionSetsEnabled) return;
+            var irfid = $("#dmV4QuestionSetsPanel").data("irf-id");
+            var $toggle = $("#dmV4UseQuestionSetsToggle");
+            $toggle.prop("disabled", true);
+            $("#dmV4UseQuestionSetsMessage").text("Saving...");
+
+            $.ajax({
+                type: "POST",
+                url: "/IRF/SetAIQuestionSetsEnabled",
+                data: { 'irfid': irfid, 'enabled': enabled },
+                success: function (data) {
+                    $toggle.prop("disabled", false);
+                    var nowEnabled = !!(data && data.success && data.enabled);
+                    $toggle.prop("checked", nowEnabled);
+                    $("#dmV4UseQuestionSetsLabel").text(nowEnabled ? "On" : "Off");
+                    $("#dmV4UseQuestionSetsMessage").text((data && data.message) ? data.message : "");
+                    if (!data || !data.success) {
+                        swal.fire({ text: (data && data.message) ? data.message : "This setting could not be changed." });
+                    }
+                },
+                error: function () {
+                    $toggle.prop("disabled", false);
+                    $toggle.prop("checked", !enabled);
+                    $("#dmV4UseQuestionSetsLabel").text(!enabled ? "On" : "Off");
+                    $("#dmV4UseQuestionSetsMessage").text("This setting could not be changed.");
+                }
+            });
+        }
+
+        function LoadAIQuestionSets() {
+            if (!aiQuestionSetsEnabled) return;
+            var irfid = $("#dmV4QuestionSetsPanel").data("irf-id");
+            $.ajax({
+                type: "POST",
+                url: "/IRF/GetAIQuestionSetsByIRF",
+                data: { 'irfid': irfid },
+                success: function (data) {
+                    if (!data || !data.success) {
+                        $("#dmV4QuestionSetsMessage").text((data && data.message) ? data.message : "Question sets could not be loaded.");
+                        return;
+                    }
+                    RenderAIQuestionSets(data.sets || []);
+                },
+                error: function () {
+                    $("#dmV4QuestionSetsMessage").text("Question sets could not be loaded.");
+                }
+            });
+        }
+
+        function RenderAIQuestionSets(sets) {
+            var $count = $("#dmV4QuestionSetsCount");
+            var $list = $("#dmV4QuestionSetsList");
+
+            if (!sets.length) {
+                $count.text("no sets yet");
+                $list.empty();
+                $("#dmV4QuestionSetsMessage").text("No sets have been created for this channel yet.");
+                return;
+            }
+
+            $count.text(sets.length + (sets.length === 1 ? " set" : " sets"));
+            $("#dmV4QuestionSetsMessage").text("");
+
+            var html = '';
+            for (var i = 0; i < sets.length; i++) {
+                var set = sets[i];
+                html += '<div style="border:1px solid #e4e7eb;border-radius:6px;margin-bottom:10px;">';
+                html += '<div style="padding:8px 12px;background:#f7f9fa;font-weight:600;font-size:13px;">';
+                html += 'Set ' + EscapeSetHtml(set.setName);
+                html += ' <span style="font-weight:400;color:#7b8794;">· ' + (set.questions ? set.questions.length : 0) + ' questions';
+                html += ' · ' + set.totalMinutes + ' min · ' + set.totalPoints + ' points';
+                html += ' · assigned to ' + set.assignedInterviews + ' interview(s)</span>';
+                html += '</div>';
+                html += '<table class="table table-bordered mbn" cellpadding="0" cellspacing="0" style="margin:0;">';
+                html += '<thead><tr><th width="30%" class="table_heading">Rubric parameter</th><th width="70%" class="table_heading">Question</th></tr></thead><tbody>';
+                // Questions arrive in ask order. Do not re-sort them here.
+                var questions = set.questions || [];
+                for (var j = 0; j < questions.length; j++) {
+                    html += '<tr><td>' + EscapeSetHtml(questions[j].skillName) + '</td><td>' + EscapeSetHtml(questions[j].questionText) + '</td></tr>';
+                }
+                html += '</tbody></table></div>';
+            }
+            $list.html(html);
+        }
+
+        function CreateAIQuestionSets() {
+            if (!aiQuestionSetsEnabled) return;
+            var irfid = $("#dmV4QuestionSetsPanel").data("irf-id");
+            var $btn = $("#dmV4CreateQuestionSetsBtn");
+            $btn.prop("disabled", true);
+            $("#dmV4QuestionSetsMessage").text("Creating balanced sets...");
+
+            $.ajax({
+                type: "POST",
+                url: "/IRF/CreateAIQuestionSets",
+                data: { 'irfid': irfid },
+                success: function (data) {
+                    $btn.prop("disabled", false);
+                    if (!data || !data.success) {
+                        swal.fire({ text: (data && data.message) ? data.message : "The question sets could not be created." });
+                        $("#dmV4QuestionSetsMessage").text((data && data.message) ? data.message : "");
+                        return;
+                    }
+                    $("#dmV4QuestionSetsMessage").text(data.message || "");
+                    LoadAIQuestionSets();
+
+                    // Creating papers does not put them into use. Say so, or a channel sits with sets
+                    // it never deals and nobody can tell that from a channel that failed to create any.
+                    if (!$("#dmV4UseQuestionSetsToggle").is(":checked")) {
+                        $("#dmV4UseQuestionSetsMessage").text("These sets are not in use yet. Switch this channel on to start dealing them.");
+                    }
+                },
+                error: function () {
+                    $btn.prop("disabled", false);
+                    swal.fire({ text: "The question sets could not be created." });
+                }
+            });
+        }
+
+        function EscapeSetHtml(value) {
+            return $("<div>").text(value == null ? "" : value).html();
+        }
         function GetInstruction() {
             var irfId = $("#id").val();
             $.ajax({

@@ -301,11 +301,8 @@
 
                                     </div>
 
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.AssistantId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.AssistantId, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.AssistantId, "", new { @class = "text-danger" })
-                                    </div>
+                                    @* Assistants API is retired; the stored value is round-tripped so the column keeps its legacy data. *@
+                                    @Html.HiddenFor(model => model.AssistantId)
 
                                     <div class="mdc-checkbox">
                                         @Html.CheckBoxFor(m => m.IsEmergency, new { @class = "mdc-checkbox__native-control" })

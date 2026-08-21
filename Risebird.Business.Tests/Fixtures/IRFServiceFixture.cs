@@ -28,6 +28,7 @@ namespace Risebird.Business.Tests.Fixtures
         public Mock<IInterviewSchedulerRepository> InterviewSchedulerRepository { get; } = new(MockBehavior.Loose);
         public Mock<IClonableSkillChannelTemplateRepository> ClonableTemplateRepository { get; } = new(MockBehavior.Loose);
         public Mock<IUserRepository> UserRepository { get; } = new(MockBehavior.Loose);
+        public Mock<IOpenAIResponsesHelper> OpenAIResponsesHelper { get; } = new(MockBehavior.Loose);
 
         public IRFService CreateSut()
         {
@@ -122,7 +123,8 @@ namespace Risebird.Business.Tests.Fixtures
                 ClonableTemplateRepository.Object,
                 UserRepository.Object,
                 ListingSearch.Object,
-                TemplateListingSearch.Object);
+                TemplateListingSearch.Object,
+                OpenAIResponsesHelper.Object);
         }
     }
 }
