@@ -1,0 +1,167 @@
+Context: AI interview question sets (RB35 portal)
+
+
+Read this whole brief before proposing any edit. Several rules below are enforced in two places at once, and changing one half without the other is a silent bug. When you have read it, confirm you understand the four invariants and the launch rule before you write code.
+
+What the feature does
+A skill channel (an "IRF") can be flagged as a preset AI interview channel via IRF.IsAIInterviewPreset = 1. Its interview questions are dealt into balanced sets — think exam papers. Each interview is locked to exactly one set for its whole life, so no two candidates in a batch answer the same paper. That anti-leak property is the entire point of the feature; every rule below exists to protect it.
+
+Set creation works like this: the app loads the channel's question pool and its score rubric, asks an OpenAI stored prompt to propose a grouping, then re-validates that proposal twice — once in C#, once inside a SQL transaction — before writing anything. The model's answer is a suggestion and nothing more.
+
+At session start, the AI interview launcher asks for the set bound to a given interview. If one is not yet bound, it is assigned lazily and then locked forever.
+
+Hard rules — do not break these
+The four balance invariants are enforced twice. Once in ValidateAIQuestionSets (in IRFController) and again inside the transaction in usp_SaveAIQuestionSets. If you change one you change both. Never delete either gate. The SQL gate exists because the procedure must be safe when called by something that is not this controller.
+Never persist a value the model supplied. Set names, question order and set totals are all decided server-side. Details below.
+The launch endpoint must fail cleanly when it cannot resolve a set. It must never fall back to returning all of a channel's questions. That would defeat the feature.
+Sets, scores and difficulty must never reach a candidate. Three guards enforce this. Keep all three.
+Non-preset channels must render exactly as they did before this feature existed. This is regression-sensitive.
+No Entity Framework. Dapper for reads, ADO.NET table-valued parameters for bulk writes, stored procedures for all data access.
+Never modify an existing SQL table type. SQL Server cannot alter one in place. Create a new versioned type instead.
+Do not touch the feedback-form question flow (TechSkillComments, usp_GetTechSkillQuestionsByUserId). Unrelated and regression-sensitive.
+appsettings.json contains live secrets. You may add keys. Never move, rotate or print the existing ones.
+The four balance invariants
+Rubric parameters are the distinct TransTechSkill.SkillName values for the IRF.
+
+Rule	Why
+I1	Every set holds exactly one question per rubric parameter. No repeats, no gaps.	Every candidate is scored on the same rubric whichever paper they draw.
+I2	No set holds two questions of the same parameter.	Falls out of I1; checked separately so the error can name the parameter.
+I3	Each question is used in exactly one set.	Two papers sharing a question is the leak this prevents.
+I4	Set count equals the smallest per-parameter question pool. Never more.	One thin parameter caps the channel; more sets would force a reuse.
+Two further checks sit alongside them: every question id must exist and belong to this IRFId, and the parameter recorded against a question must match the question's own SkillName.
+
+On any violation: return { success = false, message } and persist nothing. Never save partially.
+
+Never trust the model
+The stored prompt proposes a grouping. Everything else is decided server-side:
+
+Set names come from BuildSetName(index) — A..Z, then AA, AB. Not from the model.
+Question order within a set follows rubric parameter order. Not from the model.
+TotalMinutes / TotalPoints are summed from the question records. Not from the model.
+TVP rows carry the question's own SkillName read from the database, not the model's claim.
+The model's validation block and difficultyMix are parsed and then ignored.
+The model may also answer { "error": "..." }, which is surfaced to the user and persists nothing.
+
+Data model
+Object	Shape	Notes
+IRF.IsAIInterviewPreset	bit NULL	Gates the feature. NULL and 0 both mean "not preset".
+AIQuestionSets	id, IRFId, SetName, TotalMinutes, TotalPoints, PromptId, PromptVersion, CreatedBy, CreatedOn	PromptId/PromptVersion record which prompt produced this paper.
+AIQuestionSetItems	id, SetId, QuestionId, SkillName	Identity order is ask order. The save procedure inserts ORDER BY SortOrder so reading back ORDER BY id is correct. Do not add a sort column to the table and do not re-sort the launch payload.
+InterviewAIQuestionSet	id, InterviewId, SetId, AssignedOn	Unique index on InterviewId — this is what makes the launch idempotent.
+AIQuestionSetItems_TableType	SetName, QuestionId, SkillName, TotalMinutes, TotalPoints, SortOrder	SortOrder lives only in the TVP, never in the table.
+Questions live in SkillChannelSampleQuestions(id, IRFId, Skill, Comment, CreatedBy, SkillName).
+
+A join that will surprise you: InterviewMeetings.IRFId is a varchar(200) holding the IRF business code, not IRF.id. Resolve an interview to a channel with IRF.IRFId = im.IRFId. This matches the existing convention in this database. Do not "fix" it to an integer join.
+
+Session launch
+Idempotence comes from the unique index on InterviewAIQuestionSet.InterviewId plus an UPDLOCK, HOLDLOCK re-read inside usp_AssignAIQuestionSetToInterview. Keep both — they guard the race where two launches fire for the same interview.
+
+Repeat calls must return the same set, so reconnect and resume are safe. Every successful launch logs one Info line carrying InterviewId, IRFId, SetId, SetName and the prompt id and version the set was created with.
+
+Confidentiality — three guards, keep all three
+Razor gate. showQuestionSets in DeliveryHeadInstruction.cshtml is !openSubmitEmailPopup && ViewBag.IsAIInterviewPreset. The public Type=="ublc" controller branch returns before ViewBag.IsAIInterviewPreset is set, so it is null there and the whole section is never emitted.
+JavaScript gate. aiQuestionSetsEnabled comes from the same flag, so the public page makes no set requests at all.
+Endpoint gate. GetAIQuestionSetsByIRF returns an empty list for any channel that is not preset, regardless of caller.
+Non-preset channels keep the original question table: three columns at 20/70/10 widths, no extra section, no extra stylesheet. The Set column appears only when aiQuestionSetsEnabled is true, at which point the question column narrows to 60%.
+
+Endpoints
+All are [HttpPost] JsonResult, no antiforgery token, default System.Text.Json camelCase (IRFId serialises as irfId). Failures return { success: false, message } with a message safe to show a user.
+
+Route	Body	Session check
+/IRF/CreateAIQuestionSets	irfid	yes
+/IRF/GetAIQuestionSetsByIRF	irfid	yes
+/IRF/AssignAIQuestionSet	interviewId	none — open item
+/IRF/GetLaunchSetForInterview	interviewId	none — open item
+Launch response shape:
+
+{
+  "success": true,
+  "set": {
+    "interviewId": 9001, "setId": 3, "irfId": 42, "setName": "C",
+    "totalMinutes": 0, "totalPoints": 0,
+    "promptId": "pmpt_...", "promptVersion": null,
+    "assignedOn": "2026-08-20T09:41:02",
+    "questions": [
+      { "itemId": 17, "questionId": 508, "skillName": "System Design", "questionText": "..." }
+    ]
+  }
+}
+questions is already in ask order. Do not re-sort it.
+
+The stored prompt contract
+Posts to {BaseUrl}/responses with a bearer token and a stored-prompt reference. Variables are passed as strings, because that is what the Responses API accepts:
+
+{ "prompt": { "id": "...", "version": "...", "variables": {
+    "questions":  "[{\"id\":\"501\",\"skillArea\":\"System Design\",\"title\":\"...\",\"maxTimeMinutes\":null,\"maxScore\":null,\"difficulty\":null}]",
+    "parameters": "[\"System Design\",\"Concurrency\"]",
+    "setCount":   "4"
+} } }
+Expected answer, JSON only:
+
+{ "sets": [ { "setName": "A", "questionIds": ["501","518"],
+              "totalMinutes": 0, "totalPoints": 0,
+              "difficultyMix": ["medium","hard"] } ],
+  "validation": { "onePerParameterPerSet": true, "eachQuestionUsedOnce": true,
+                  "setCount": 4, "notes": "..." } }
+Response text is read from either output_text or output[].content[].text. A fenced code block around the JSON is stripped before parsing. Deserialisation is Newtonsoft.
+
+setCount is passed in and is not negotiable — the app has already computed the smallest per-parameter pool and will reject any other number. The prompt's real job is choosing which question goes in which set so the difficulty spread stays even across papers.
+
+Code conventions you must follow
+Layering, never skipped: Controller → Risebird.Business/*Service → Risebird.Repository/*Repository → stored procedure. Interfaces live in Risebird.Business.Interface and Risebird.Repository.Interface; update the interface in the same change as the implementation.
+
+Reads use Dapper:
+
+var dynamicParameters = new DynamicParameters();
+dynamicParameters.Add("@IRFId", irfId);
+using (SqlConnection con = new SqlConnection(connectionString))
+{
+    return await SqlMapper.QueryAsync<T>(con, "usp_Name", dynamicParameters,
+        commandType: CommandType.StoredProcedure);
+}
+Bulk writes use raw ADO.NET SqlCommand with a DataTable passed as SqlDbType.Structured.
+
+Every service and repository method wraps its body in try/catch and logs through IApplicationErrorLogger:
+
+catch (SqlException ex)
+{
+    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+}
+LogLevelInfo values: Info, Debug, Warning, Error, Exception. There is also LogMessage(LogLevelInfo, string). Repositories return null/false on failure rather than throwing.
+
+SQL scripts are idempotent and checked in under Risebird.DB/: tables use IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES ...); new columns use IF NOT EXISTS (SELECT * FROM sys.columns ...) + ALTER TABLE appended to the existing file; table types use IF NOT EXISTS (SELECT * FROM sys.types WHERE is_table_type = 1 ...); procedures use IF EXISTS (... sysobjects ...) DROP PROCEDURE then Create PROCEDURE, and writing procedures use begin try / begin tran ... commit tran / end try / begin catch / rollback / RAISERROR (@Message, @Severity, @State) / end catch.
+
+Session checks read HttpContext.Session.GetString("email") / ("profileName") and must strip quotes: .Trim().Replace("\"", "").
+
+Views are Razor plus jQuery $.ajax. No SPA framework.
+
+Configuration
+OpenAI:SetCreationPromptId — required, ships empty. While empty, CreateAIQuestionSets returns a clean error saying so.
+OpenAI:SetCreationPromptVersion — optional. Whatever is used is recorded on every set created.
+Both go in the existing OpenAI section beside ApiKey and BaseUrl. No new dependency-injection registration is needed; the three interfaces are already registered in Program.cs.
+
+Current state
+The code builds with 0 errors. Roughly 600 warnings are pre-existing and are not yours to fix.
+
+Two important caveats:
+
+No stored procedure has ever been executed. The SQL compiles as script text and follows the repo's conventions, but it is unrun against a real database.
+Razor views are not compiled at build time. RazorCompileOnBuild is false in Risebird.Web.csproj because an unrelated view has pre-existing compile errors. View mistakes surface at runtime. To check a view you edited, build with /p:RazorCompileOnBuild=true and confirm the only errors reported are that pre-existing file's.
+Schema drift — read before adding any column
+The production Delivery Manager page shows rubric-grouped question cards with a level badge, a coding-question checkbox and minutes, a max score, a "question gist spoken by the AI avatar", an expected answer and an AI video link. None of that exists in this codebase. SkillChannelSampleQuestions here has only the six columns listed above.
+
+usp_GetAIQuestionPoolForSets therefore detects optional columns at runtime:
+
+IF COL_LENGTH('dbo.SkillChannelSampleQuestions', 'MaxTimeMinutes') IS NOT NULL
+   SET @MaxTimeMinutes = 'q.MaxTimeMinutes'
+It returns NULL for whichever of MaxTimeMinutes, MaxScore and Difficulty are absent, so set totals compute as 0 until those columns land. Those three names are a guess at production's naming. If production differs, change the three COL_LENGTH checks in that one procedure and nothing else.
+
+What is still open
+1. The launcher endpoints are unauthenticated. /IRF/AssignAIQuestionSet and /IRF/GetLaunchSetForInterview return question text with no auth, because the session launcher calls in from outside the portal and carries no session. Anyone who can guess an integer interviewId can read that interview's paper. Fix with a shared-secret header: read the expected value from configuration, compare in fixed time, fail closed when the config is empty and log at Error so a misconfigured deploy is loud, and put the check in one private helper used by both actions. Leave the two session-checked endpoints alone.
+
+2. The SQL has never run. Before this is used with real candidates, apply the scripts in dependency order — tables, then the table type, then the procedures — and prove usp_SaveAIQuestionSets rejects each of: the same question id in two sets; a set missing a rubric parameter; a question id belonging to a different IRF; a set count that is not the smallest per-parameter pool. Run each in its own rolled-back transaction and confirm nothing was written.
+
+3. Assignment is lazy, not scheduled. A set binds on the first launch call. That is reconnect-safe but means a batch booked together only spreads across sets as interviews start. To spread at booking time, call AssignAIQuestionSetToInterview where InterviewMeetings rows are created, guarded by IsAIInterviewPresetChannel. A failure there must not fail the booking — log and carry on, since the lazy path remains the safety net. The method is already idempotent, so calling it in both places is correct.
+
+Before you claim a task is done
+Run dotnet build RisebirdPortal.sln and confirm 0 errors. State plainly what you changed, what you verified, and anything you could not verify.
