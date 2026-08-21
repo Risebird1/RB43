@@ -786,27 +786,29 @@ BEGIN
     ADD VoiceInstructionTranscriptUpdatedBy VARCHAR(100) NULL
 END
 
+END
+
+
+GO
+
+-- Explicit opt-in for AI interview question sets. NULL and 0 both mean the channel does not deal
+-- papers, so the pre-feature question picker applies and behaviour is unchanged.
+--
+-- Before this column existed, adoption was inferred from the mere presence of rows in
+-- AIQuestionSets, which made "deliberately not using sets" indistinguishable from "set creation
+-- never succeeded" -- and the second of those silently serves every candidate the same questions.
+-- Migrations\Backfill_UseAIQuestionSets_ForChannelsWithSets.sql must be run after this so channels
+-- that already deal papers stay switched on.
+--
+-- Deliberately outside the branch above so it lands on a freshly created table as well as an
+-- existing one.
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns
-    WHERE Name IN (N'RequireClientExpertSignOff')
+    WHERE Name = N'UseAIQuestionSets'
       AND Object_ID = Object_ID(N'IRF'))
 BEGIN
     ALTER TABLE IRF
-    ADD RequireClientExpertSignOff bit NOT NULL CONSTRAINT DF_IRF_RequireClientExpertSignOff DEFAULT (0)
+    Add UseAIQuestionSets bit NULL
 END
-
-IF NOT EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name IN (N'OpenAIPromptId')
-      AND Object_ID = Object_ID(N'IRF'))
-BEGIN
-    ALTER TABLE IRF
-    ADD OpenAIPromptId varchar(100) NULL
-END
-
-END
-
-
 GO

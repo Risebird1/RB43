@@ -4,7 +4,6 @@
 @using Risebird.Entities.ViewModel
 @using Risebird.Entities.Data
 @using Risebird.Entities.Enum
-@using System
 @using System.Collections.Generic
 @using System.Linq
 @using Microsoft.Extensions.Configuration
@@ -163,6 +162,13 @@
     bool isSmeView = ViewBag.IsSmeView == true;
     bool isPanelCompactView = isSmeView;
     bool openSubmitEmailPopup = false;
+    bool isAiPresetChannel = Model != null && Model.IsAIInterview && Model.AIInterviewType == (int)AIInterviewTypeEnum.Preset;
+    // Confidentiality guard 1 of 3 (the Razor gate). Sets, scores and difficulty must never reach a
+    // candidate or a client: the client-share path renders with isClientShareView true, so the whole
+    // section is never emitted there. Guard 2 is the JavaScript flag below, which keeps those pages
+    // from requesting sets at all, and guard 3 is the endpoint, which returns nothing for a channel
+    // that is not preset regardless of caller. Keep all three.
+    bool showQuestionSets = !openSubmitEmailPopup && !isClientShareView && isAiPresetChannel;
 }
 <script>
     window.dmV4ClientShareView = @(isClientShareView ? "true" : "false");
@@ -180,7 +186,7 @@
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024'>
 <link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css?v=2024" />
-<link href="~/Newassets/css/dm-approval-v4.css?v=20250818smereview7" rel="stylesheet" />
+<link href="~/Newassets/css/dm-approval-v4.css?v=20250625inactive2" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <style>
@@ -1015,25 +1021,10 @@
                                                                         {
                                                                             <tr>
 
-                                                                                <td>
-                                                                                    @sampleQuestion.SkillName
-                                                                                    @if (sampleQuestion.IsAIGenerated)
-                                                                                    {
-                                                                                        <span class="dm-v4-badge dm-v4-badge--ai">AI</span>
-                                                                                    }
-                                                                                </td>
+                                                                                <td>@sampleQuestion.SkillName</td>
                                                                                 @if (!string.IsNullOrEmpty(sampleQuestion.Comment))
                                                                                 {
-                                                                                    <td>
-                                                                                        @sampleQuestion.Comment
-                                                                                        @if (!string.IsNullOrEmpty(sampleQuestion.IdealAnswer))
-                                                                                        {
-                                                                                            <details class="dm-v4-ideal-answer">
-                                                                                                <summary>Ideal Answer (AI)</summary>
-                                                                                                <div class="dm-v4-ideal-answer__body">@sampleQuestion.IdealAnswer</div>
-                                                                                            </details>
-                                                                                        }
-                                                                                    </td>
+                                                                                    <td>@sampleQuestion.Comment</td>
 
                                                                                 }
                                                                                 else
@@ -1097,42 +1088,27 @@
                                             var rubricSkillNames = Model.SkillCollection?.Where(s => !string.IsNullOrWhiteSpace(s.SkillName)).Select(s => s.SkillName).Distinct(StringComparer.OrdinalIgnoreCase).ToList() ?? new List<string>();
                                             int totalRubricSkills = rubricSkillNames.Count > 0 ? rubricSkillNames.Count : Math.Max(1, sampleQsList.Select(q => q.SkillName).Distinct(StringComparer.OrdinalIgnoreCase).Count());
                                             int skillsWithQuestions = rubricSkillNames.Count(sn => sampleQsList.Any(q => string.Equals(q.SkillName, sn, StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(q.Comment)));
-                                            var rubricLevelMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                                            if (Model.SkillCollection != null)
-                                            {
-                                                foreach (var sk in Model.SkillCollection.Where(s => !string.IsNullOrWhiteSpace(s.SkillName)))
-                                                {
-                                                    if (rubricLevelMap.ContainsKey(sk.SkillName)) continue;
-                                                    var level = sk.LevelName;
-                                                    if (string.IsNullOrWhiteSpace(level) && Enum.IsDefined(typeof(LevelTechEnum), sk.LevelId))
-                                                        level = ((LevelTechEnum)sk.LevelId).GetDescription();
-                                                    rubricLevelMap[sk.SkillName] = level ?? "";
-                                                }
-                                            }
                                             var qsBySkill = sampleQsList.Where(q => !string.IsNullOrWhiteSpace(q.SkillName)).GroupBy(q => q.SkillName, StringComparer.OrdinalIgnoreCase).ToList();
                                             int qsGlobalIndex = 0;
                                             var aiQGenEnabled = Configuration.GetValue<bool>("FeatureFlags:EnableAIQuestionGeneration");
-                                            var isAiInterviewChannel = Model.IsAIInterview;
-                                            var isAiPresetChannel = Model.IsAIInterview && Model.AIInterviewType == (int)AIInterviewTypeEnum.Preset;
                                         }
-                                        <div class="dm-v4-collapse@(isAiInterviewChannel ? " is-open sme-rq-page--review" : "")" id="dmV4QuestionsCollapse">
-                                            <button type="button" class="dm-v4-collapse__head" id="dmV4QuestionsToggle" aria-expanded="@(isAiInterviewChannel ? "true" : "false")" aria-controls="dmV4QuestionsPanel">
+                                        <div class="dm-v4-collapse" id="dmV4QuestionsCollapse">
+                                            <button type="button" class="dm-v4-collapse__head" id="dmV4QuestionsToggle" aria-expanded="false" aria-controls="dmV4QuestionsPanel">
                                                 <span class="dm-v4-collapse__head-left">
                                                     <i class="fa fa-file-text-o dm-v4-collapse__icon" aria-hidden="true"></i>
                                                     <span>
-                                                        <span class="dm-v4-collapse__title">@(isAiInterviewChannel ? "Review queue" : "Sample questions") <span class="dm-v4-collapse__count" id="dmV4QuestionsCount">@skillsWithQuestions of @totalRubricSkills skills covered</span></span>
-                                                        <span class="dm-v4-collapse__sub">@(isAiInterviewChannel ? "Confirm, reject or edit AI-drafted questions before they are served to candidates." : "AI generates questions mapped to your rubric. Manual entry available as fallback.")</span>
+                                                        <span class="dm-v4-collapse__title">Sample questions <span class="dm-v4-collapse__count" id="dmV4QuestionsCount">@skillsWithQuestions of @totalRubricSkills skills covered</span></span>
+                                                        <span class="dm-v4-collapse__sub">AI generates questions mapped to your rubric. Manual entry available as fallback.</span>
                                                     </span>
                                                 </span>
                                                 <i class="fa fa-chevron-down dm-v4-collapse__chev" aria-hidden="true"></i>
                                             </button>
-                                            <div class="dm-v4-collapse__body" id="dmV4QuestionsPanel" @(isAiInterviewChannel ? null : "hidden")
+                                            <div class="dm-v4-collapse__body" id="dmV4QuestionsPanel" hidden
                                                  data-irf-id="@Model.id"
-                                                 data-is-ai-interview="@(isAiInterviewChannel ? "1" : "0")"
+                                                 data-is-ai-interview="@(Model.IsAIInterview ? "1" : "0")"
                                                  data-ai-interview-type="@(((AIInterviewTypeEnum?)Model.AIInterviewType)?.ToString() ?? "")"
-                                                 data-is-ai-preset="@(isAiPresetChannel ? "1" : "0")"
-                                                 data-rubric-skills="@string.Join("|||", rubricSkillNames)"
-                                                 data-rubric-levels="@JsonConvert.SerializeObject(rubricLevelMap)">
+                                                 data-is-ai-preset="@(Model.IsAIInterview && Model.AIInterviewType == (int)AIInterviewTypeEnum.Preset ? "1" : "0")"
+                                                 data-rubric-skills="@string.Join("|||", rubricSkillNames)">
                                                 <div class="dm-v4-questions-ai-banner">
                                                     <div class="dm-v4-questions-ai-banner__left">
                                     @*                     <span class="dm-v4-questions-ai-icon"><i class="fa fa-magic"></i></span> *@
@@ -1144,12 +1120,61 @@
                                                     <button type="button" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" id="dmV4GenerateQuestionsBtn" @(aiQGenEnabled ? "" : "disabled") title="@(aiQGenEnabled ? "Generate questions from rubric using AI" : "AI question generation is not enabled yet")"><i class="fa fa-magic"></i> Generate with AI</button>
                                               </div>
                                                 <div id="dmV4QuestionsSkills" class="dm-v4-questions-skills"></div>
-                                                <div id="smeExpertLoop"></div>
                                             </div>
                                         </div>
                                     </div>
                                     
                                     @* End:Sample Questions: *@
+
+                                    @* 5b · AI interview question sets — preset AI interview channels only.
+                                       Nothing here renders for a non-preset channel, so those pages are
+                                       byte-for-byte what they were before this feature existed. *@
+                                    @if (showQuestionSets)
+                                    {
+                                        <div class="col-md-12 pull-left pad10 dm-v4-block" style="padding-bottom:0px;padding-left:0;padding-right:0;">
+                                            <div class="dm-v4-collapse" id="dmV4QuestionSetsCollapse">
+                                                <button type="button" class="dm-v4-collapse__head" id="dmV4QuestionSetsToggle" aria-expanded="false" aria-controls="dmV4QuestionSetsPanel">
+                                                    <span class="dm-v4-collapse__head-left">
+                                                        <i class="fa fa-clone dm-v4-collapse__icon" aria-hidden="true"></i>
+                                                        <span>
+                                                            <span class="dm-v4-collapse__title">AI interview question sets <span class="dm-v4-collapse__count" id="dmV4QuestionSetsCount"></span></span>
+                                                            <span class="dm-v4-collapse__sub">Balanced papers, one question per rubric parameter. Each interview is locked to one set, so no two candidates in a batch answer the same paper.</span>
+                                                        </span>
+                                                    </span>
+                                                    <i class="fa fa-chevron-down dm-v4-collapse__chev" aria-hidden="true"></i>
+                                                </button>
+                                                <div class="dm-v4-collapse__body" id="dmV4QuestionSetsPanel" hidden data-irf-id="@Model.id">
+                                                    <div class="dm-v4-questions-ai-banner">
+                                                        <div class="dm-v4-questions-ai-banner__left">
+                                                            <div>
+                                                                <div class="dm-v4-questions-ai-title">Deal questions into balanced sets</div>
+                                                                <div class="dm-v4-questions-ai-sub">The number of sets is capped by the rubric parameter with the fewest questions, because every set must cover every parameter without reusing a question.</div>
+                                                            </div>
+                                                        </div>
+                                                        <button type="button" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" id="dmV4CreateQuestionSetsBtn" title="Create balanced question sets for this channel"><i class="fa fa-clone"></i> Create sets</button>
+                                                    </div>
+
+                                                    @* The channel's explicit opt-in. Creating sets does not put them into use on its
+                                                       own, so that a channel is never switched on before it has papers to deal. *@
+                                                    <div class="dm-v4-questions-ai-banner">
+                                                        <div class="dm-v4-questions-ai-banner__left">
+                                                            <div>
+                                                                <div class="dm-v4-questions-ai-title">Use these sets for interviews on this channel</div>
+                                                                <div class="dm-v4-questions-ai-sub">Off means every candidate is asked the channel's questions in its standard order. On means each interview is locked to one set, so no two candidates in a batch answer the same paper. This also changes interview length to one question per rubric parameter. Interviews already locked to a set keep it if you switch this off.</div>
+                                                            </div>
+                                                        </div>
+                                                        <label for="dmV4UseQuestionSetsToggle" style="display:flex;align-items:center;gap:6px;margin:0;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;">
+                                                            <input type="checkbox" id="dmV4UseQuestionSetsToggle" style="margin:0;" @(Model.UseAIQuestionSets ? "checked" : "") />
+                                                            <span id="dmV4UseQuestionSetsLabel">@(Model.UseAIQuestionSets ? "On" : "Off")</span>
+                                                        </label>
+                                                    </div>
+                                                    <div id="dmV4UseQuestionSetsMessage" style="margin:8px 0;font-size:12px;color:#7b8794;"></div>
+                                                    <div id="dmV4QuestionSetsMessage" style="margin:8px 0;font-size:12px;color:#7b8794;"></div>
+                                                    <div id="dmV4QuestionSetsList"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
 
                                     @* 3 · Interviewers — full V4 wireframe grid *@
                                     <div class="col-md-12 pull-left pad10 dm-v4-block dm-v4-block--order-interviewers@(isClientShareView || isSmeView ? " dm-v4-block--order-interviewers-client" : "")" style="padding-bottom:0px;padding-left:0;padding-right:0;">
@@ -3245,13 +3270,166 @@
 {
 
     <script>
+        // Confidentiality guard 2 of 3 (the JavaScript gate). This comes from the same server-side
+        // flag as the Razor gate, so a page that must not see sets makes no set requests at all.
+        var aiQuestionSetsEnabled = @(showQuestionSets ? "true" : "false");
+
         $(document).ready(function () {
             @* GetquestionList(); *@
             GetInstruction();
             var irfId = $("#id").val();
             FetchCalibrationDetails(irfId);
             GetConsentForm();
+            if (aiQuestionSetsEnabled) {
+                InitAIQuestionSets();
+            }
         });
+
+        function InitAIQuestionSets() {
+            $("#dmV4QuestionSetsToggle").on("click", function () {
+                var panel = document.getElementById("dmV4QuestionSetsPanel");
+                if (!panel) return;
+                var expanded = $(this).attr("aria-expanded") === "true";
+                $(this).attr("aria-expanded", expanded ? "false" : "true");
+                panel.hidden = expanded;
+            });
+
+            $("#dmV4CreateQuestionSetsBtn").on("click", function () {
+                CreateAIQuestionSets();
+            });
+
+            $("#dmV4UseQuestionSetsToggle").on("change", function () {
+                SetAIQuestionSetsEnabled($(this).is(":checked"));
+            });
+
+            LoadAIQuestionSets();
+        }
+
+        // The channel's opt-in. A refusal from the server is authoritative, so the checkbox is put
+        // back to whatever state the server reports rather than the state that was clicked.
+        function SetAIQuestionSetsEnabled(enabled) {
+            if (!aiQuestionSetsEnabled) return;
+            var irfid = $("#dmV4QuestionSetsPanel").data("irf-id");
+            var $toggle = $("#dmV4UseQuestionSetsToggle");
+            $toggle.prop("disabled", true);
+            $("#dmV4UseQuestionSetsMessage").text("Saving...");
+
+            $.ajax({
+                type: "POST",
+                url: "/IRF/SetAIQuestionSetsEnabled",
+                data: { 'irfid': irfid, 'enabled': enabled },
+                success: function (data) {
+                    $toggle.prop("disabled", false);
+                    var nowEnabled = !!(data && data.success && data.enabled);
+                    $toggle.prop("checked", nowEnabled);
+                    $("#dmV4UseQuestionSetsLabel").text(nowEnabled ? "On" : "Off");
+                    $("#dmV4UseQuestionSetsMessage").text((data && data.message) ? data.message : "");
+                    if (!data || !data.success) {
+                        swal.fire({ text: (data && data.message) ? data.message : "This setting could not be changed." });
+                    }
+                },
+                error: function () {
+                    $toggle.prop("disabled", false);
+                    $toggle.prop("checked", !enabled);
+                    $("#dmV4UseQuestionSetsLabel").text(!enabled ? "On" : "Off");
+                    $("#dmV4UseQuestionSetsMessage").text("This setting could not be changed.");
+                }
+            });
+        }
+
+        function LoadAIQuestionSets() {
+            if (!aiQuestionSetsEnabled) return;
+            var irfid = $("#dmV4QuestionSetsPanel").data("irf-id");
+            $.ajax({
+                type: "POST",
+                url: "/IRF/GetAIQuestionSetsByIRF",
+                data: { 'irfid': irfid },
+                success: function (data) {
+                    if (!data || !data.success) {
+                        $("#dmV4QuestionSetsMessage").text((data && data.message) ? data.message : "Question sets could not be loaded.");
+                        return;
+                    }
+                    RenderAIQuestionSets(data.sets || []);
+                },
+                error: function () {
+                    $("#dmV4QuestionSetsMessage").text("Question sets could not be loaded.");
+                }
+            });
+        }
+
+        function RenderAIQuestionSets(sets) {
+            var $count = $("#dmV4QuestionSetsCount");
+            var $list = $("#dmV4QuestionSetsList");
+
+            if (!sets.length) {
+                $count.text("no sets yet");
+                $list.empty();
+                $("#dmV4QuestionSetsMessage").text("No sets have been created for this channel yet.");
+                return;
+            }
+
+            $count.text(sets.length + (sets.length === 1 ? " set" : " sets"));
+            $("#dmV4QuestionSetsMessage").text("");
+
+            var html = '';
+            for (var i = 0; i < sets.length; i++) {
+                var set = sets[i];
+                html += '<div style="border:1px solid #e4e7eb;border-radius:6px;margin-bottom:10px;">';
+                html += '<div style="padding:8px 12px;background:#f7f9fa;font-weight:600;font-size:13px;">';
+                html += 'Set ' + EscapeSetHtml(set.setName);
+                html += ' <span style="font-weight:400;color:#7b8794;">· ' + (set.questions ? set.questions.length : 0) + ' questions';
+                html += ' · ' + set.totalMinutes + ' min · ' + set.totalPoints + ' points';
+                html += ' · assigned to ' + set.assignedInterviews + ' interview(s)</span>';
+                html += '</div>';
+                html += '<table class="table table-bordered mbn" cellpadding="0" cellspacing="0" style="margin:0;">';
+                html += '<thead><tr><th width="30%" class="table_heading">Rubric parameter</th><th width="70%" class="table_heading">Question</th></tr></thead><tbody>';
+                // Questions arrive in ask order. Do not re-sort them here.
+                var questions = set.questions || [];
+                for (var j = 0; j < questions.length; j++) {
+                    html += '<tr><td>' + EscapeSetHtml(questions[j].skillName) + '</td><td>' + EscapeSetHtml(questions[j].questionText) + '</td></tr>';
+                }
+                html += '</tbody></table></div>';
+            }
+            $list.html(html);
+        }
+
+        function CreateAIQuestionSets() {
+            if (!aiQuestionSetsEnabled) return;
+            var irfid = $("#dmV4QuestionSetsPanel").data("irf-id");
+            var $btn = $("#dmV4CreateQuestionSetsBtn");
+            $btn.prop("disabled", true);
+            $("#dmV4QuestionSetsMessage").text("Creating balanced sets...");
+
+            $.ajax({
+                type: "POST",
+                url: "/IRF/CreateAIQuestionSets",
+                data: { 'irfid': irfid },
+                success: function (data) {
+                    $btn.prop("disabled", false);
+                    if (!data || !data.success) {
+                        swal.fire({ text: (data && data.message) ? data.message : "The question sets could not be created." });
+                        $("#dmV4QuestionSetsMessage").text((data && data.message) ? data.message : "");
+                        return;
+                    }
+                    $("#dmV4QuestionSetsMessage").text(data.message || "");
+                    LoadAIQuestionSets();
+
+                    // Creating papers does not put them into use. Say so, or a channel sits with sets
+                    // it never deals and nobody can tell that from a channel that failed to create any.
+                    if (!$("#dmV4UseQuestionSetsToggle").is(":checked")) {
+                        $("#dmV4UseQuestionSetsMessage").text("These sets are not in use yet. Switch this channel on to start dealing them.");
+                    }
+                },
+                error: function () {
+                    $btn.prop("disabled", false);
+                    swal.fire({ text: "The question sets could not be created." });
+                }
+            });
+        }
+
+        function EscapeSetHtml(value) {
+            return $("<div>").text(value == null ? "" : value).html();
+        }
         function GetInstruction() {
             var irfId = $("#id").val();
             $.ajax({
@@ -3313,11 +3491,7 @@
             html += '  <tbody>';
             for (i = 0; i < data.length; i++) {
                 html += '   <tr>';
-                html += '  <td>' + data[i].skillName;
-                if (data[i].isAIGenerated) {
-                    html += ' <span class="dm-v4-badge dm-v4-badge--ai">AI</span>';
-                }
-                html += '</td>';
+                html += '  <td>' + data[i].skillName + '</td>';
 
                 html += '<td>';
                 html += ' <div>';
@@ -3336,9 +3510,6 @@
                     html += '<div></div>';
                 }
                 html += ' <a onclick="moreless(' + data[i].id + ')" class="moreless-button" value="Readmore" id="read_' + data[i].id + '" href="#">Read more</a>';
-                if (data[i].idealAnswer) {
-                    html += '<details class="dm-v4-ideal-answer"><summary>Ideal Answer (AI)</summary><div class="dm-v4-ideal-answer__body">' + $('<div/>').text(data[i].idealAnswer).html() + '</div></details>';
-                }
                 html += '</div>';
                 html += ' </td>';
                 html += '  <td style="text-align:center"><div><span  onclick="DeleteSampleQuestion(' + data[i].id + ')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span></div></td>';
@@ -3372,10 +3543,14 @@
                 allowOutsideClick: false
             }).then(function (result) {
                 if (result.dismiss !== 'cancel') {
+                    // A question dealt into a question set an interview is locked to cannot be
+                    // removed, so the server's answer decides what is reported here.
+                    var res = result.value || {};
+                    var removed = res.success !== false;
                     swal.fire({
-                        title: 'Removed!',
-                        type: 'success',
-                        html: '<p>Question has been removed.</p>',
+                        title: removed ? 'Removed!' : 'Not removed',
+                        type: removed ? 'success' : 'error',
+                        html: '<p>' + (res.message || 'Question has been removed.') + '</p>',
                         showCancelButton: false,
                         confirmButtonColor: '#3085d6',
                         confirmButtonText: 'Close!',
@@ -3502,7 +3677,6 @@ else
     function closePopupDetailsModal() {
         var modal = document.getElementById("PopupDetailsModal");
         modal.style.display = "none";
-        $("#PopupDetailsModal").removeClass("aiqs-popup-open");
     }
 
     function closeResumewModel() {
@@ -3519,7 +3693,6 @@ else
             url: '/IRF/SkillChannelSampleQuestions',
             data: { id: irfid },
             success: function (data) {
-                $("#PopupDetailsModal").addClass("aiqs-popup-open");
                 openPopupDetailsModal();
                 $('#divpopupModel').html('');
                 $('#divpopupModel').html(data);
@@ -3772,8 +3945,7 @@ else
 <script src="~/js/dm-v4-layout.js?v=20250630badqc4"></script>
 <script src="~/js/dm-v4-voice.js?v=20250609istmeta1"></script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
-<script src="~/js/dm-v4-sme-review.js?v=20250818smereview7"></script>
-<script src="~/js/dm-v4-questions.js?v=20250818smereview7"></script>
+<script src="~/js/dm-v4-questions.js?v=20250609synthesia3coding_gist"></script>
 
 <div id="dmV4ResumeSummaryOverlay" class="dm-v4-drawer-overlay" aria-hidden="true"></div>
 <aside id="dmV4ResumeSummaryDrawer" class="dm-v4-drawer dm-v4-drawer--verdict" aria-hidden="true" role="dialog" aria-labelledby="dmV4ResumeSummaryTitle" style="max-width:520px;">

@@ -152,19 +152,8 @@
 
                     html += '<div class="dm-v4-question-row" data-question-id="' + qid + '">';
                     html += '<div class="dm-v4-question-col">';
-                    var isAIGenerated = q.isAIGenerated || q.IsAIGenerated;
-                    var idealAnswer = q.idealAnswer || q.IdealAnswer || '';
-
-                    html += '<div class="dm-v4-question-label">Question Q' + (qi + 1);
-                    if (isAIGenerated) {
-                        html += ' <span class="dm-v4-badge dm-v4-badge--ai">AI</span>';
-                    }
-                    html += '</div>';
+                    html += '<div class="dm-v4-question-label">Question Q' + (qi + 1) + '</div>';
                     html += '<div class="dm-v4-question-text">' + (hasComment ? escapeHtml(comment) : '<span class="dm-v4-question-text--placeholder">Add question…</span>') + '</div>';
-                    if ($.trim(idealAnswer)) {
-                        html += '<details class="dm-v4-ideal-answer"><summary>Ideal Answer (AI)</summary>';
-                        html += '<div class="dm-v4-ideal-answer__body">' + escapeHtml(idealAnswer) + '</div></details>';
-                    }
 
                     // Coding mode is editable in place so questions added earlier, or generated from
                     // the rubric, can be turned into coding questions without being retyped.
@@ -242,23 +231,41 @@
     }
 
     function loadQuestions() {
-        if (window.dmV4SmeReviewEnabled && window.dmV4SmeReviewEnabled() && window.dmV4LoadSmeReview) {
-            return window.dmV4LoadSmeReview();
-        }
         return $.post('/IRF/GetDeliveryHeadSampleQuestionsJson', getQuestionsRequestData()).then(function (res) {
             if (res && res.success) {
                 renderQuestions(res.questions || []);
             }
-            if (window.dmV4ClientShareView === true && usesSynthesia() && window.dmV4LoadExpertLoop) {
-                window.dmV4LoadExpertLoop();
-            }
         });
+    }
+
+    // A question already dealt into a question set cannot always be removed, and removing one that
+    // was dealt but never used discards the channel's sets. Both outcomes have to reach the user,
+    // so the response is reported rather than reloading the list regardless.
+    function reportDeleteOutcome(res) {
+        loadQuestions();
+
+        var message = (res && res.message) ? res.message : null;
+        var refused = !(res && res.success);
+
+        if (!message && !refused) return;
+
+        if (typeof swal === 'undefined') {
+            if (message) alert(message);
+            return;
+        }
+
+        if (refused) {
+            swal.fire({ title: 'Not removed', html: message || 'The question could not be removed.', type: 'error' });
+        }
+        else if (res.setsDiscarded > 0) {
+            swal.fire({ title: 'Question sets discarded', html: message, type: 'warning' });
+        }
     }
 
     function deleteQuestion(id) {
         if (typeof swal === 'undefined') {
             if (confirm('Remove this question?')) {
-                $.post('/IRF/DeleteSkillChannelSampleQuestions', { questionid: id }, loadQuestions);
+                $.post('/IRF/DeleteSkillChannelSampleQuestions', { questionid: id }, reportDeleteOutcome);
             }
             return;
         }
@@ -271,9 +278,7 @@
             confirmButtonText: 'Yes, remove'
         }).then(function (result) {
             if (result && result.value) {
-                $.post('/IRF/DeleteSkillChannelSampleQuestions', { questionid: id }, function () {
-                    loadQuestions();
-                });
+                $.post('/IRF/DeleteSkillChannelSampleQuestions', { questionid: id }, reportDeleteOutcome);
             }
         });
     }
@@ -354,18 +359,9 @@
         });
     }
 
-    function openQuestionsIfReview() {
-        if (!(window.dmV4SmeReviewEnabled && window.dmV4SmeReviewEnabled())) return;
-        var $c = $('#dmV4QuestionsCollapse');
-        $c.addClass('is-open sme-rq-page--review');
-        $('#dmV4QuestionsToggle').attr('aria-expanded', 'true');
-        getPanel().prop('hidden', false).show();
-    }
-
     function initQuestionsV4() {
         if (!getPanel().length) return;
 
-        openQuestionsIfReview();
         loadQuestions();
 
         $(document).off('click.dmV4GenQ', '#dmV4GenerateQuestionsBtn').on('click.dmV4GenQ', '#dmV4GenerateQuestionsBtn', function () {

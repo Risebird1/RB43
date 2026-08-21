@@ -16,12 +16,16 @@ namespace Risebird.CommonHelper
 {
     public class OpenAIResponsesHelper : IOpenAIResponsesHelper
     {
+        private const int DefaultMaxOutputTokensCeiling = 32768;
+        private const int MaxTokenBudgetEscalations = 2;
+
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IOpenAIApiLogger _openAIApiLogger;
         private readonly string _apiKey;
         private readonly string _baseUrl;
         private readonly string _responsesModel;
+        private readonly int _maxOutputTokensCeiling;
 
         public OpenAIResponsesHelper(
             IConfiguration configuration,
@@ -34,6 +38,11 @@ namespace Risebird.CommonHelper
             _apiKey = _configuration["OpenAI:ApiKey"];
             _baseUrl = _configuration["OpenAI:BaseUrl"];
             _responsesModel = _configuration["OpenAI:ResponsesModel"];
+
+            var configuredCeiling = _configuration.GetValue<int?>("OpenAI:ResponsesMaxOutputTokensCeiling");
+            _maxOutputTokensCeiling = configuredCeiling.HasValue && configuredCeiling.Value > 0
+                ? configuredCeiling.Value
+                : DefaultMaxOutputTokensCeiling;
         }
 
         public Task<RunResult> CreateJsonResponseAsync(
@@ -56,6 +65,21 @@ namespace Risebird.CommonHelper
             return result;
         }
 
+        public async Task<RunResult> CreateJsonResponseAsync(
+            string input,
+            string operationType,
+            string promptId,
+            string promptVersion,
+            IDictionary<string, string> promptVariables,
+            int? maxOutputTokens = null,
+            bool useStoredPromptModel = false)
+        {
+            var (result, _) = await CreateJsonResponseWithIdAsync(
+                (object)input, operationType, promptId, null, maxOutputTokens, useStoredPromptModel,
+                promptVersion, promptVariables);
+            return result;
+        }
+
         public Task<(RunResult Result, string ResponseId)> CreateJsonResponseWithIdAsync(
             string input,
             string operationType,
@@ -73,7 +97,9 @@ namespace Risebird.CommonHelper
             string promptId,
             string previousResponseId = null,
             int? maxOutputTokens = null,
-            bool useStoredPromptModel = false)
+            bool useStoredPromptModel = false,
+            string promptVersion = null,
+            IDictionary<string, string> promptVariables = null)
         {
             try
             {
@@ -99,77 +125,167 @@ namespace Risebird.CommonHelper
                         $"OpenAI Responses input is required for operation {operationType}.");
                 }
 
-                object requestBody = BuildJsonResponseRequestBody(promptId, input, previousResponseId, maxOutputTokens, useStoredPromptModel);
+                var tokenBudget = maxOutputTokens.HasValue && maxOutputTokens.Value > 0
+                    ? Math.Min(maxOutputTokens.Value, _maxOutputTokensCeiling)
+                    : (int?)null;
+                var escalationsLeft = MaxTokenBudgetEscalations;
 
-                using var client = new HttpClient();
-                client.Timeout = TimeSpan.FromMinutes(4);
-                var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/responses")
+                while (true)
                 {
-                    Headers = { { "Authorization", $"Bearer {_apiKey}" } }
-                };
+                    var attempt = await SendJsonResponseAttemptAsync(
+                        promptId, input, operationType, previousResponseId, tokenBudget, useStoredPromptModel,
+                        promptVersion, promptVariables);
 
-                var jsonContent = JsonConvert.SerializeObject(requestBody);
-                request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                    if (attempt.Succeeded)
+                        return (ToRunResult(attempt.OutputText), attempt.ResponseId);
 
-                var sw = System.Diagnostics.Stopwatch.StartNew();
-                var response = await client.SendAsync(request);
-                sw.Stop();
+                    if (!attempt.TruncatedByTokenLimit || escalationsLeft-- <= 0)
+                        return (null, attempt.ResponseId);
 
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var modelName = ExtractModelFromResponse(responseContent) ?? _responsesModel;
-                var responseId = ExtractResponseId(responseContent);
-
-                await _openAIApiLogger.LogApiCallAsync(
-                    apiEndpoint: $"{_baseUrl}/responses",
-                    apiMethod: "POST",
-                    requestPayload: jsonContent,
-                    responsePayload: responseContent,
-                    responseTimeMs: (int)sw.ElapsedMilliseconds,
-                    statusCode: (int)response.StatusCode,
-                    isSuccess: response.IsSuccessStatusCode,
-                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
-                    model: modelName,
-                    assistantId: null,
-                    threadId: previousResponseId,
-                    runId: responseId,
-                    fileId: null,
-                    context: new OpenAIApiLogContext
+                    var nextBudget = NextTokenBudget(tokenBudget ?? attempt.TokensAllowedOrUsed);
+                    if (!nextBudget.HasValue)
                     {
-                        OperationType = operationType
-                    });
+                        await _applicationErrorLogger.LogMessage(
+                            LogLevelInfo.Exception,
+                            new Exception($"OpenAI Responses API truncated output for operation {operationType} at the maximum allowed budget of {_maxOutputTokensCeiling} tokens. Raise OpenAI:ResponsesMaxOutputTokensCeiling, shorten the requested output, or reduce the prompt's reasoning effort."));
+                        return (null, attempt.ResponseId);
+                    }
 
-                if (!response.IsSuccessStatusCode)
-                {
                     await _applicationErrorLogger.LogMessage(
-                        LogLevelInfo.Exception,
-                        new Exception($"OpenAI Responses API failed ({(int)response.StatusCode}): {responseContent}"));
-                    return (null, null);
+                        LogLevelInfo.Info,
+                        $"OpenAI Responses API truncated output for operation {operationType}; retrying with max_output_tokens {nextBudget.Value}.");
+                    tokenBudget = nextBudget;
                 }
-
-                var outputText = ExtractOutputText(responseContent);
-                if (string.IsNullOrWhiteSpace(outputText))
-                {
-                    await _applicationErrorLogger.LogMessage(
-                        LogLevelInfo.Exception,
-                        new Exception($"OpenAI Responses API returned no output text for operation {operationType}."));
-                    return (null, responseId);
-                }
-
-                if (IsIncompleteResponse(responseContent, out var incompleteReason))
-                {
-                    await _applicationErrorLogger.LogMessage(
-                        LogLevelInfo.Exception,
-                        new Exception($"OpenAI Responses API returned incomplete output for operation {operationType}. Reason: {incompleteReason}"));
-                    return (null, responseId);
-                }
-
-                return (ToRunResult(outputText), responseId);
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return (null, null);
             }
+        }
+
+        /// <summary>
+        /// Performs a single Responses API call. A response truncated by the output token cap is reported
+        /// back so the caller can retry with a larger budget; its partial text is never returned because
+        /// truncated JSON cannot be deserialized.
+        /// </summary>
+        private async Task<JsonResponseAttempt> SendJsonResponseAttemptAsync(
+            string promptId,
+            object input,
+            string operationType,
+            string previousResponseId,
+            int? maxOutputTokens,
+            bool useStoredPromptModel,
+            string promptVersion = null,
+            IDictionary<string, string> promptVariables = null)
+        {
+            object requestBody = BuildJsonResponseRequestBody(promptId, input, previousResponseId, maxOutputTokens,
+                useStoredPromptModel, promptVersion, promptVariables);
+
+            using var client = new HttpClient();
+            client.Timeout = TimeSpan.FromMinutes(4);
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/responses")
+            {
+                Headers = { { "Authorization", $"Bearer {_apiKey}" } }
+            };
+
+            var jsonContent = JsonConvert.SerializeObject(requestBody);
+            request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            var response = await client.SendAsync(request);
+            sw.Stop();
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var modelName = ExtractModelFromResponse(responseContent) ?? _responsesModel;
+            var responseId = ExtractResponseId(responseContent);
+
+            await _openAIApiLogger.LogApiCallAsync(
+                apiEndpoint: $"{_baseUrl}/responses",
+                apiMethod: "POST",
+                requestPayload: jsonContent,
+                responsePayload: responseContent,
+                responseTimeMs: (int)sw.ElapsedMilliseconds,
+                statusCode: (int)response.StatusCode,
+                isSuccess: response.IsSuccessStatusCode,
+                errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                model: modelName,
+                assistantId: null,
+                threadId: previousResponseId,
+                runId: responseId,
+                fileId: null,
+                context: new OpenAIApiLogContext
+                {
+                    OperationType = operationType
+                });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                await _applicationErrorLogger.LogMessage(
+                    LogLevelInfo.Exception,
+                    new Exception($"OpenAI Responses API failed ({(int)response.StatusCode}): {responseContent}"));
+                return JsonResponseAttempt.Failed(null);
+            }
+
+            if (IsIncompleteResponse(responseContent, out var incompleteReason))
+            {
+                var truncatedByTokenLimit = string.Equals(incompleteReason, "max_output_tokens", StringComparison.OrdinalIgnoreCase);
+                if (!truncatedByTokenLimit)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Exception,
+                        new Exception($"OpenAI Responses API returned incomplete output for operation {operationType}. Reason: {incompleteReason}"));
+                    return JsonResponseAttempt.Failed(responseId);
+                }
+
+                return new JsonResponseAttempt
+                {
+                    ResponseId = responseId,
+                    TruncatedByTokenLimit = true,
+                    TokensAllowedOrUsed = ExtractMaxOutputTokens(responseContent) ?? ExtractOutputTokenUsage(responseContent)
+                };
+            }
+
+            var outputText = ExtractOutputText(responseContent);
+            if (string.IsNullOrWhiteSpace(outputText))
+            {
+                await _applicationErrorLogger.LogMessage(
+                    LogLevelInfo.Exception,
+                    new Exception($"OpenAI Responses API returned no output text for operation {operationType}."));
+                return JsonResponseAttempt.Failed(responseId);
+            }
+
+            return new JsonResponseAttempt
+            {
+                Succeeded = true,
+                OutputText = outputText,
+                ResponseId = responseId
+            };
+        }
+
+        /// <summary>
+        /// Doubles the output budget up to the configured ceiling, returning null when no further headroom
+        /// exists so the caller stops retrying instead of repeating an identical request.
+        /// </summary>
+        private int? NextTokenBudget(int? currentBudget)
+        {
+            var candidate = currentBudget.HasValue && currentBudget.Value > 0
+                ? Math.Min(currentBudget.Value * 2, _maxOutputTokensCeiling)
+                : _maxOutputTokensCeiling;
+
+            return candidate > (currentBudget ?? 0) ? candidate : (int?)null;
+        }
+
+        private sealed class JsonResponseAttempt
+        {
+            public bool Succeeded { get; set; }
+            public string OutputText { get; set; }
+            public string ResponseId { get; set; }
+            public bool TruncatedByTokenLimit { get; set; }
+            public int? TokensAllowedOrUsed { get; set; }
+
+            public static JsonResponseAttempt Failed(string responseId) =>
+                new JsonResponseAttempt { ResponseId = responseId };
         }
 
         public Task<RunResult> CreateTextResponseAsync(
@@ -276,9 +392,11 @@ namespace Risebird.CommonHelper
             }
         }
 
-        private object BuildJsonResponseRequestBody(string promptId, object input, string previousResponseId, int? maxOutputTokens, bool useStoredPromptModel)
+        private object BuildJsonResponseRequestBody(string promptId, object input, string previousResponseId,
+            int? maxOutputTokens, bool useStoredPromptModel, string promptVersion = null,
+            IDictionary<string, string> promptVariables = null)
         {
-            var body = BuildBaseRequestBody(promptId, input, useStoredPromptModel);
+            var body = BuildBaseRequestBody(promptId, input, useStoredPromptModel, promptVersion, promptVariables);
             body["text"] = new { format = new { type = "json_object" } };
 
             if (!string.IsNullOrWhiteSpace(previousResponseId))
@@ -295,11 +413,21 @@ namespace Risebird.CommonHelper
         /// required when that prompt carries model-specific settings such as reasoning; sending a
         /// conflicting model is rejected with an unsupported_value error.
         /// </summary>
-        private Dictionary<string, object> BuildBaseRequestBody(string promptId, object input, bool useStoredPromptModel)
+        private Dictionary<string, object> BuildBaseRequestBody(string promptId, object input, bool useStoredPromptModel,
+            string promptVersion = null, IDictionary<string, string> promptVariables = null)
         {
+            var prompt = new Dictionary<string, object> { ["id"] = promptId };
+
+            if (!string.IsNullOrWhiteSpace(promptVersion))
+                prompt["version"] = promptVersion;
+
+            // Stored-prompt variable values are passed as strings, which is what the Responses API accepts.
+            if (promptVariables != null && promptVariables.Count > 0)
+                prompt["variables"] = promptVariables;
+
             var body = new Dictionary<string, object>
             {
-                ["prompt"] = new { id = promptId },
+                ["prompt"] = prompt,
                 ["input"] = input
             };
 
@@ -399,6 +527,30 @@ namespace Risebird.CommonHelper
             {
                 error = ex.Message;
                 return false;
+            }
+        }
+
+        private static int? ExtractMaxOutputTokens(string responseContent)
+        {
+            try
+            {
+                return JObject.Parse(responseContent)["max_output_tokens"]?.Value<int?>();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static int? ExtractOutputTokenUsage(string responseContent)
+        {
+            try
+            {
+                return JObject.Parse(responseContent)["usage"]?["output_tokens"]?.Value<int?>();
+            }
+            catch
+            {
+                return null;
             }
         }
 

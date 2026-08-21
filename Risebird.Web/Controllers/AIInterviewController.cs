@@ -112,6 +112,37 @@ namespace Risebird.Web.Controllers
             _converter = converter;
             _codeExecutionService = codeExecutionService;
         }
+
+        /// <summary>
+        /// Serves the next question of a preset interview.
+        ///
+        /// If the channel deals question sets, the interview is bound to exactly one set on first use
+        /// and every question from then on comes from that set alone. If a set cannot be resolved the
+        /// interview stops here: widening the query back to the whole channel pool would let two
+        /// candidates in a batch draw the same paper, which is the leak the sets exist to prevent.
+        ///
+        /// A channel with no sets keeps the pre-feature picker, so channels that have not adopted the
+        /// feature behave exactly as they did before.
+        /// </summary>
+        private async Task<TechSkillComments> GetNextPresetQuestionAsync(int interviewId, int irfId)
+        {
+            var resolution = await _iRFService.ResolveNextPresetQuestion(interviewId);
+
+            if (resolution == null || resolution.UsesQuestionSets)
+            {
+                if (resolution == null || !resolution.SetResolved)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Error,
+                        $"Could not resolve an AI question set for InterviewId {interviewId} on IRFId {irfId}. Refusing to serve questions from outside a set. {resolution?.Message}");
+                    return null;
+                }
+
+                return resolution.Question;
+            }
+
+            return await _aiinterviewerService.GetRandomQuestionForSession(interviewId, irfId);
+        }
         /// <summary>
         /// access an interview (and start it) with the session id (sid)
         /// </summary>
@@ -136,7 +167,7 @@ namespace Risebird.Web.Controllers
                         //not started yet
                         if (transcript == null || transcript.Count() == 0)
                         {
-                            var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(meetingDetails.InterviewId, meetingDetails.irfIntId);
+                            var sampleQuestion = await GetNextPresetQuestionAsync(meetingDetails.InterviewId, meetingDetails.irfIntId);
 
                             if (sampleQuestion != null)
                             {
@@ -314,7 +345,7 @@ namespace Risebird.Web.Controllers
                                             }
                                         }
 
-                                        var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(meetingDetails.InterviewId, meetingDetails.irfIntId);
+                                        var sampleQuestion = await GetNextPresetQuestionAsync(meetingDetails.InterviewId, meetingDetails.irfIntId);
 
                                         if (sampleQuestion != null)
                                         {
@@ -1407,7 +1438,7 @@ namespace Risebird.Web.Controllers
 
                         await _aiinterviewerService.LogTranscript(model.SessionId, "user", userMessage);
 
-                        var sampleQuestion = await _aiinterviewerService.GetRandomQuestionForSession(model.InterviewId, model.IRFId);
+                        var sampleQuestion = await GetNextPresetQuestionAsync(model.InterviewId, model.IRFId);
 
 
                         if (sampleQuestion != null)
@@ -3096,12 +3127,15 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "Question text is required before generating a video." });
                 }
 
-                // Spec D5: the avatar always reads the gist, never the problem statement / code.
-                var narrationText = questionDetails.QuestionGist;
+                // Source code narrated verbatim is unintelligible, so a coding question is
+                // voiced from its plain-language gist instead of the question text.
+                var narrationText = questionDetails.IsCodingQuestion
+                    ? questionDetails.QuestionGist
+                    : questionDetails.Comment;
 
                 if (string.IsNullOrWhiteSpace(narrationText))
                 {
-                    return Json(new { success = false, message = "Add a question gist in plain language before generating a video. The avatar reads the gist, not the question text." });
+                    return Json(new { success = false, message = "Add a question gist in plain language before generating a video. The avatar reads the gist for coding questions, not the code." });
                 }
 
                 var irfVm = await _iRFService.GetEditIRF(questionDetails.IRFId, 0, false);
@@ -3176,7 +3210,6 @@ namespace Risebird.Web.Controllers
                 {
                     return Json(new { success = false, message = "Video was created but could not be linked to this question." });
                 }
-                try { await _iRFService.MarkAIVideoStatus(id, 2); } catch { }
 
                 var preview = narrationText.Length > 25
                     ? narrationText.Substring(0, 25) + "…"
