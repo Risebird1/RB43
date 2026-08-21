@@ -24,7 +24,12 @@ CREATE PROCEDURE [dbo].[usp_AddInterviewerAccDetails]
     @VerifiedIFSCCode       nvarchar(200) = null,
     @VerifiedAccountName    varchar(200) = null,
     @NameAtBank             varchar(200) = null,
-    @CashfreeReferenceId    bigint = null
+    @CashfreeReferenceId    bigint = null,
+    @IsPanVerified              bit = 0,
+    @PanVerifiedOn              datetime = null,
+    @VerifiedPAN                nvarchar(20) = null,
+    @NameAtPan                  varchar(200) = null,
+    @PanVerificationReferenceId bigint = null
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -47,7 +52,12 @@ BEGIN
             [VerifiedIFSCCode]      = @VerifiedIFSCCode,
             [VerifiedAccountName]   = @VerifiedAccountName,
             [NameAtBank]            = @NameAtBank,
-            [CashfreeReferenceId]   = @CashfreeReferenceId
+            [CashfreeReferenceId]   = @CashfreeReferenceId,
+            [IsPanVerified]              = @IsPanVerified,
+            [PanVerifiedOn]              = @PanVerifiedOn,
+            [VerifiedPAN]                = @VerifiedPAN,
+            [NameAtPan]                  = @NameAtPan,
+            [PanVerificationReferenceId] = @PanVerificationReferenceId
         WHERE InterviewerProfileId = @InterviewerProfileId;
     END
     ELSE
@@ -66,7 +76,12 @@ BEGIN
             [VerifiedIFSCCode],
             [VerifiedAccountName],
             [NameAtBank],
-            [CashfreeReferenceId]
+            [CashfreeReferenceId],
+            [IsPanVerified],
+            [PanVerifiedOn],
+            [VerifiedPAN],
+            [NameAtPan],
+            [PanVerificationReferenceId]
         )
         VALUES
         (
@@ -82,7 +97,12 @@ BEGIN
             @VerifiedIFSCCode,
             @VerifiedAccountName,
             @NameAtBank,
-            @CashfreeReferenceId
+            @CashfreeReferenceId,
+            @IsPanVerified,
+            @PanVerifiedOn,
+            @VerifiedPAN,
+            @NameAtPan,
+            @PanVerificationReferenceId
         );
     END
 END
