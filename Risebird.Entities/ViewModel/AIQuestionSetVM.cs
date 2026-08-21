@@ -128,6 +128,21 @@ namespace Risebird.Entities.ViewModel
     }
 
     /// <summary>
+    /// Outcome of removing a sample question.
+    ///
+    /// A question that has been dealt into a set cannot simply disappear, because the runtime reads
+    /// set contents through a join on this question. Success is false when the question belongs to a
+    /// set an interview is already locked to. SetsDiscarded is non-zero when the question was dealt
+    /// but never used: the channel's now-unbalanced sets were dropped so they can be re-dealt.
+    /// </summary>
+    public class SampleQuestionDeleteResultVM
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public int SetsDiscarded { get; set; }
+    }
+
+    /// <summary>
     /// One question in a launch payload, already in ask order.
     /// </summary>
     public class AIQuestionSetLaunchQuestionVM

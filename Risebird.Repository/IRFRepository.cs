@@ -8817,7 +8817,7 @@ WHERE irf.IsDeleted = 0
             }
             return null;
         }
-        public async Task<bool> DeleteSkillChannelSampleQuestions(int id)
+        public async Task<SampleQuestionDeleteResultVM> DeleteSkillChannelSampleQuestions(int id)
         {
             try
             {
@@ -8825,16 +8825,25 @@ WHERE irf.IsDeleted = 0
                 dynamicParameters.Add("@questionid", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<SkillComment>(con, "usp_DeleteSkillSampleQuestions", dynamicParameters,
+                    var result = await SqlMapper.QueryFirstOrDefaultAsync<SampleQuestionDeleteResultVM>(
+                        con, "usp_DeleteSkillSampleQuestions", dynamicParameters,
                         commandType: CommandType.StoredProcedure);
-                    return true;
+                    return result ?? new SampleQuestionDeleteResultVM
+                    {
+                        Success = false,
+                        Message = "The question could not be removed."
+                    };
                 }
             }
             catch (SqlException ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-            return false;
+            return new SampleQuestionDeleteResultVM
+            {
+                Success = false,
+                Message = "The question could not be removed."
+            };
         }
 
         public async Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer, bool isCodingQuestion = false, int? codingTimeLimitInMinutes = null, string questionGist = null)

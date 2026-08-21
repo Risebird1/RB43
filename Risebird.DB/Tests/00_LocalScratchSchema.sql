@@ -26,11 +26,13 @@
 --       'Risebird.DB\Migrations\Backfill_UseAIQuestionSets_ForChannelsWithSets.sql',
 --       'Risebird.DB\StoredProcedures\usp_SaveAIQuestionSets.sql',
 --       'Risebird.DB\StoredProcedures\usp_AssignAIQuestionSetToInterview.sql',
---       'Risebird.DB\StoredProcedures\usp_SetAIQuestionSetsEnabled.sql')) {
+--       'Risebird.DB\StoredProcedures\usp_SetAIQuestionSetsEnabled.sql',
+--       'Risebird.DB\StoredProcedures\usp_DeleteSkillSampleQuestions.sql')) {
 --       sqlcmd -S $S -E -b -d RisebirdQSetTest -i $f
 --   }
 --   sqlcmd -S $S -E -b -d RisebirdQSetTest -i Risebird.DB\Tests\usp_SaveAIQuestionSets_RejectionTests.sql
 --   sqlcmd -S $S -E -b -d RisebirdQSetTest -i Risebird.DB\Tests\usp_AssignAIQuestionSetToInterview_FlagTests.sql
+--   sqlcmd -S $S -E -b -d RisebirdQSetTest -i Risebird.DB\Tests\usp_DeleteSkillSampleQuestions_SetGuardTests.sql
 --
 -- One caveat this cannot cover: on an empty instance IRF is built by the
 -- CREATE TABLE branch of Tables\IRF.sql, whereas a deployed database has

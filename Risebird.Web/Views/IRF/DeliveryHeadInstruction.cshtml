@@ -3543,10 +3543,14 @@
                 allowOutsideClick: false
             }).then(function (result) {
                 if (result.dismiss !== 'cancel') {
+                    // A question dealt into a question set an interview is locked to cannot be
+                    // removed, so the server's answer decides what is reported here.
+                    var res = result.value || {};
+                    var removed = res.success !== false;
                     swal.fire({
-                        title: 'Removed!',
-                        type: 'success',
-                        html: '<p>Question has been removed.</p>',
+                        title: removed ? 'Removed!' : 'Not removed',
+                        type: removed ? 'success' : 'error',
+                        html: '<p>' + (res.message || 'Question has been removed.') + '</p>',
                         showCancelButton: false,
                         confirmButtonColor: '#3085d6',
                         confirmButtonText: 'Close!',
