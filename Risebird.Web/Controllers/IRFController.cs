@@ -9647,7 +9647,12 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> DeleteSkillChannelSampleQuestions(int questionid)
         {
             var result = await _irfService.DeleteSkillChannelSampleQuestions(questionid);
-            return Json(new { success = result });
+            return Json(new
+            {
+                success = result?.Success ?? false,
+                message = result?.Message,
+                setsDiscarded = result?.SetsDiscarded ?? 0
+            });
         }
 
         [HttpPost]

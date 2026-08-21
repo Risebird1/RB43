@@ -167,7 +167,7 @@ namespace Risebird.Business.Interface
         /// </summary>
         Task<bool> SetSampleQuestionCodingMode(int id, bool isCodingQuestion, int? codingTimeLimitInMinutes, string questionGist = null);
         Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id);
-        Task<bool> DeleteSkillChannelSampleQuestions(int id);
+        Task<SampleQuestionDeleteResultVM> DeleteSkillChannelSampleQuestions(int id);
         Task<bool> UpdateSkillChannelEmbeddableUrl(string irfId, string embedUrl);
         Task<bool> ApproveDM(int id, string emailid);
         Task<bool> UpdateAffindaIndexFlag(string irfId, bool isIndexCreated);

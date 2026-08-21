@@ -234,7 +234,7 @@ namespace Risebird.Repository.Interface
         Task<bool> AddIRFSampleQuestions(TechSkillComments obj);
         Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy);
         Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id);
-        Task<bool> DeleteSkillChannelSampleQuestions(int id);
+        Task<SampleQuestionDeleteResultVM> DeleteSkillChannelSampleQuestions(int id);
         Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer, bool isCodingQuestion = false, int? codingTimeLimitInMinutes = null, string questionGist = null);
 
         /// <summary>

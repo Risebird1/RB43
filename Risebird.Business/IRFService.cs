@@ -4011,17 +4011,26 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> DeleteSkillChannelSampleQuestions(int id)
+        public async Task<SampleQuestionDeleteResultVM> DeleteSkillChannelSampleQuestions(int id)
         {
             try
             {
                 var result = await _irfRepository.DeleteSkillChannelSampleQuestions(id);
+                if (result != null && result.SetsDiscarded > 0)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                        $"Removing sample question {id} discarded {result.SetsDiscarded} AI interview question set(s) on its channel, because a set that has lost a question no longer covers the rubric. Sets must be created again.");
+                }
                 return result;
             }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return new SampleQuestionDeleteResultVM
+                {
+                    Success = false,
+                    Message = "The question could not be removed."
+                };
             }
         }
 
