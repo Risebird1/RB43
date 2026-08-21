@@ -1193,6 +1193,32 @@ namespace Risebird.Repository
             }
         }
 
+        private static void AddPanVerificationParameters(
+            DynamicParameters paramsAccount,
+            TransInterviewerAccDetails previous,
+            TransInterviewerAccDetails current)
+        {
+            var preserveVerification = previous?.IsPanVerified == true
+                && !PanVerificationHelper.CorePanChanged(previous, current);
+
+            if (preserveVerification)
+            {
+                paramsAccount.Add("@IsPanVerified", true);
+                paramsAccount.Add("@PanVerifiedOn", previous.PanVerifiedOn);
+                paramsAccount.Add("@VerifiedPAN", previous.VerifiedPAN);
+                paramsAccount.Add("@NameAtPan", previous.NameAtPan);
+                paramsAccount.Add("@PanVerificationReferenceId", previous.PanVerificationReferenceId);
+            }
+            else
+            {
+                paramsAccount.Add("@IsPanVerified", false);
+                paramsAccount.Add("@PanVerifiedOn", null);
+                paramsAccount.Add("@VerifiedPAN", null);
+                paramsAccount.Add("@NameAtPan", null);
+                paramsAccount.Add("@PanVerificationReferenceId", null);
+            }
+        }
+
         #region Interviewer My Profile Repository function
         public async Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile)
         {
@@ -1248,6 +1274,10 @@ namespace Risebird.Repository
                 paramsAccount.Add("@UPIId", interviewerProfile.InterviewerAccDetails.UPIId);
                 paramsAccount.Add("@PAN", interviewerProfile.InterviewerAccDetails.PAN);
                 AddBankVerificationParameters(
+                    paramsAccount,
+                    previousAccDetails,
+                    interviewerProfile.InterviewerAccDetails);
+                AddPanVerificationParameters(
                     paramsAccount,
                     previousAccDetails,
                     interviewerProfile.InterviewerAccDetails);
