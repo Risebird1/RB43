@@ -239,5 +239,13 @@ namespace Risebird.Business.Interface
         Task<IEnumerable<Users>> GetClientUsersByIRFandAdmin(int irfId);
         Task<CallibrationCallVM> GetCalibrationMeetingDetailsById(int id);
         Task<bool> SaveCalibrationMeetingNotesById(int id,string Notes);
+
+        // AI interview question sets (preset channels only).
+        Task<AIQuestionSetSaveResultVM> CreateAIQuestionSets(int irfId, string createdBy);
+        Task<IList<AIQuestionSetVM>> GetAIQuestionSetsByIRF(int irfId);
+        Task<AIQuestionSetAssignmentVM> AssignAIQuestionSetToInterview(int interviewId);
+        Task<AIQuestionSetToggleResultVM> SetAIQuestionSetsEnabled(int irfId, bool enabled, string updatedBy);
+        Task<AIQuestionSetLaunchVM> GetLaunchSetForInterview(int interviewId);
+        Task<AIPresetQuestionResolutionVM> ResolveNextPresetQuestion(int interviewId);
     }
 }

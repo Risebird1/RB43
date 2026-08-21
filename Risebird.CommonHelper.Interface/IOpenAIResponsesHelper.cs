@@ -1,4 +1,5 @@
 using Risebird.Entities.Data.OpenAIModels;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper.Interface
@@ -15,6 +16,20 @@ namespace Risebird.CommonHelper.Interface
             string input,
             string operationType,
             string promptId,
+            bool useStoredPromptModel = false);
+
+        /// <summary>
+        /// Same as <see cref="CreateJsonResponseAsync(string, string, string, bool)"/> but pins a
+        /// stored-prompt version and passes stored-prompt variables. The Responses API accepts
+        /// variable values as strings, so callers serialise structured values before passing them.
+        /// </summary>
+        Task<RunResult> CreateJsonResponseAsync(
+            string input,
+            string operationType,
+            string promptId,
+            string promptVersion,
+            IDictionary<string, string> promptVariables,
+            int? maxOutputTokens = null,
             bool useStoredPromptModel = false);
 
         /// <summary>

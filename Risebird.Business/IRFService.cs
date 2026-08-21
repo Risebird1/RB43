@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -36,6 +38,7 @@ namespace Risebird.Business
         //private readonly IClientRepository _clientRepository;
         private readonly IUserRepository _userRepository;
         private readonly ITemplateListingSearchRepository _templateListingSearchRepository;
+        private readonly IOpenAIResponsesHelper _openAIResponsesHelper;
 
 
         public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger,
@@ -45,8 +48,10 @@ namespace Risebird.Business
             IInterviewSchedulerRepository interviewSchedulerRepository,
             IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository, IUserRepository userRepository,
             IIrfListingSearchRepository irfListingSearchRepository,
-            ITemplateListingSearchRepository templateListingSearchRepository)
+            ITemplateListingSearchRepository templateListingSearchRepository,
+            IOpenAIResponsesHelper openAIResponsesHelper)
         {
+            _openAIResponsesHelper = openAIResponsesHelper;
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
@@ -5180,5 +5185,547 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
+
+        #region AI interview question sets
+
+        /// <summary>
+        /// Deals a preset channel's questions into balanced sets.
+        ///
+        /// The stored prompt only proposes which question goes in which group. Everything that gets
+        /// persisted is decided here: set names come from BuildSetName, question order follows rubric
+        /// parameter order, totals are summed from the question records, and each row carries the
+        /// question's own SkillName as read from the database. The proposal's validation block and
+        /// difficultyMix are parsed and then ignored.
+        ///
+        /// The grouping then passes the C# balance gate (ValidateAIQuestionSets) and, inside its
+        /// transaction, the SQL gate in usp_SaveAIQuestionSets. Nothing is written unless both pass.
+        /// </summary>
+        public async Task<AIQuestionSetSaveResultVM> CreateAIQuestionSets(int irfId, string createdBy)
+        {
+            try
+            {
+                var promptId = _configuration["OpenAI:SetCreationPromptId"];
+                if (string.IsNullOrWhiteSpace(promptId))
+                {
+                    return new AIQuestionSetSaveResultVM
+                    {
+                        Success = false,
+                        Message = "Question set creation is not configured yet: OpenAI:SetCreationPromptId is empty. Add the stored prompt id to configuration and try again."
+                    };
+                }
+                var promptVersion = _configuration["OpenAI:SetCreationPromptVersion"];
+
+                var pool = await _irfRepository.GetAIQuestionPoolForSets(irfId);
+                if (pool == null)
+                {
+                    return new AIQuestionSetSaveResultVM { Success = false, Message = "Could not read this channel's questions. Please try again." };
+                }
+
+                if (!pool.IsPreset)
+                {
+                    return new AIQuestionSetSaveResultVM { Success = false, Message = "This skill channel is not a preset AI interview channel, so question sets do not apply to it." };
+                }
+
+                var parameters = pool.RubricParameters
+                    .Where(x => !string.IsNullOrWhiteSpace(x.SkillName))
+                    .OrderBy(x => x.ParameterOrder)
+                    .ToList();
+
+                if (parameters.Count == 0)
+                {
+                    return new AIQuestionSetSaveResultVM { Success = false, Message = "This skill channel has no rubric parameters, so question sets cannot be created. Add skills to the rubric first." };
+                }
+
+                // I4: one thin parameter caps the channel. A parameter with no questions caps it at zero.
+                var perParameterCounts = parameters.ToDictionary(
+                    p => p.SkillName.Trim(),
+                    p => pool.Questions.Count(q => string.Equals((q.SkillName ?? string.Empty).Trim(), p.SkillName.Trim(), StringComparison.OrdinalIgnoreCase)),
+                    StringComparer.OrdinalIgnoreCase);
+
+                var setCount = perParameterCounts.Values.Min();
+                if (setCount <= 0)
+                {
+                    var emptyParameter = perParameterCounts.First(x => x.Value == 0).Key;
+                    return new AIQuestionSetSaveResultVM
+                    {
+                        Success = false,
+                        Message = $"Rubric parameter \"{emptyParameter}\" has no questions, so no set can cover the full rubric. Add a question for it and try again."
+                    };
+                }
+
+                var proposal = await RequestAIQuestionSetProposal(pool, parameters, setCount, promptId, promptVersion);
+                if (proposal == null)
+                {
+                    return new AIQuestionSetSaveResultVM { Success = false, Message = "The question set proposal could not be generated. Please try again." };
+                }
+
+                if (!string.IsNullOrWhiteSpace(proposal.Error))
+                {
+                    return new AIQuestionSetSaveResultVM { Success = false, Message = proposal.Error };
+                }
+
+                if (proposal.Sets == null || proposal.Sets.Count == 0)
+                {
+                    return new AIQuestionSetSaveResultVM { Success = false, Message = "The question set proposal came back empty. Nothing was saved." };
+                }
+
+                var rows = BuildQuestionSetRows(proposal, pool, parameters, out var buildMessage);
+                if (rows == null)
+                {
+                    return new AIQuestionSetSaveResultVM { Success = false, Message = buildMessage };
+                }
+
+                // Gate one of two. The other lives inside usp_SaveAIQuestionSets. Change both together.
+                var validationMessage = ValidateAIQuestionSets(rows, pool, parameters, setCount);
+                if (validationMessage != null)
+                {
+                    return new AIQuestionSetSaveResultVM { Success = false, Message = validationMessage };
+                }
+
+                var saveResult = await _irfRepository.SaveAIQuestionSets(irfId, rows, promptId, promptVersion, createdBy);
+                if (saveResult == null)
+                {
+                    return new AIQuestionSetSaveResultVM { Success = false, Message = "The question sets could not be saved. Please try again." };
+                }
+
+                if (saveResult.Success)
+                {
+                    saveResult.SetCount = rows.Select(x => x.SetName).Distinct().Count();
+                }
+
+                return saveResult;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new AIQuestionSetSaveResultVM { Success = false, Message = "Something went wrong while creating the question sets. Please try again." };
+            }
+        }
+
+        /// <summary>
+        /// The C# half of the double balance gate. usp_SaveAIQuestionSets enforces the same four
+        /// invariants inside its transaction, because that procedure must be safe when called by
+        /// something that is not this code. If you change one gate, change both. Never delete either.
+        ///
+        /// Returns null when the grouping is sound, or a message safe to show a user.
+        /// </summary>
+        private string ValidateAIQuestionSets(IList<AIQuestionSetItemTvpRow> rows, AIQuestionSetPoolVM pool,
+            IList<AIQuestionSetRubricParameterVM> parameters, int setCount)
+        {
+            if (rows == null || rows.Count == 0)
+                return "No question sets were produced, so nothing was saved.";
+
+            var parameterNames = new HashSet<string>(parameters.Select(x => x.SkillName.Trim()), StringComparer.OrdinalIgnoreCase);
+            var questionsById = pool.Questions.ToDictionary(x => x.id);
+            var setNames = rows.Select(x => x.SetName).Distinct(StringComparer.Ordinal).ToList();
+
+            // Side check: every question id must exist and belong to this channel. The pool is already
+            // channel-scoped, so an id missing from it fails both halves of that check at once.
+            var strayQuestion = rows.FirstOrDefault(r => !questionsById.ContainsKey(r.QuestionId));
+            if (strayQuestion != null)
+                return "One or more proposed questions do not belong to this skill channel. Nothing was saved.";
+
+            // Side check: the parameter recorded against a question must match the question's own SkillName.
+            foreach (var row in rows)
+            {
+                var ownSkill = (questionsById[row.QuestionId].SkillName ?? string.Empty).Trim();
+                if (!string.Equals(ownSkill, (row.SkillName ?? string.Empty).Trim(), StringComparison.OrdinalIgnoreCase))
+                    return "A question was filed under a rubric parameter that is not its own. Nothing was saved.";
+            }
+
+            var strayParameter = rows.FirstOrDefault(r => !parameterNames.Contains((r.SkillName ?? string.Empty).Trim()));
+            if (strayParameter != null)
+                return $"Rubric parameter \"{(strayParameter.SkillName ?? string.Empty).Trim()}\" is not part of this skill channel's rubric. Nothing was saved.";
+
+            // I3: each question is used in exactly one set. Two papers sharing a question is the leak
+            // this feature exists to prevent.
+            var reusedQuestion = rows.GroupBy(x => x.QuestionId).FirstOrDefault(g => g.Count() > 1);
+            if (reusedQuestion != null)
+                return "The same question was placed in more than one set. Each question may be used in exactly one set. Nothing was saved.";
+
+            // I2: no set holds two questions of the same parameter.
+            var duplicate = rows
+                .GroupBy(x => new { x.SetName, Skill = (x.SkillName ?? string.Empty).Trim().ToLowerInvariant() })
+                .FirstOrDefault(g => g.Count() > 1);
+            if (duplicate != null)
+            {
+                var skillName = rows.First(x => x.SetName == duplicate.Key.SetName
+                    && string.Equals((x.SkillName ?? string.Empty).Trim(), duplicate.Key.Skill, StringComparison.OrdinalIgnoreCase)).SkillName;
+                return $"Set {duplicate.Key.SetName} holds more than one question for rubric parameter \"{skillName}\". Nothing was saved.";
+            }
+
+            // I1: every set holds exactly one question per rubric parameter -- no gaps.
+            foreach (var setName in setNames)
+            {
+                var setSkills = new HashSet<string>(
+                    rows.Where(x => x.SetName == setName).Select(x => (x.SkillName ?? string.Empty).Trim()),
+                    StringComparer.OrdinalIgnoreCase);
+
+                var missing = parameterNames.FirstOrDefault(p => !setSkills.Contains(p));
+                if (missing != null)
+                    return $"Set {setName} has no question for rubric parameter \"{missing}\". Every set must cover every parameter. Nothing was saved.";
+            }
+
+            // I4: set count equals the smallest per-parameter pool. Never more.
+            if (setNames.Count != setCount)
+                return $"This channel supports exactly {setCount} set(s), but {setNames.Count} were produced. Nothing was saved.";
+
+            return null;
+        }
+
+        /// <summary>
+        /// Turns the model's grouping into rows that are entirely server-decided: our set name, our
+        /// order, the database's SkillName, and totals from the question records.
+        /// </summary>
+        private IList<AIQuestionSetItemTvpRow> BuildQuestionSetRows(AIQuestionSetProposal proposal,
+            AIQuestionSetPoolVM pool, IList<AIQuestionSetRubricParameterVM> parameters, out string message)
+        {
+            message = null;
+            var rows = new List<AIQuestionSetItemTvpRow>();
+            var questionsById = pool.Questions.ToDictionary(x => x.id);
+            var parameterOrder = parameters.ToDictionary(
+                x => x.SkillName.Trim(),
+                x => x.ParameterOrder,
+                StringComparer.OrdinalIgnoreCase);
+
+            for (var setIndex = 0; setIndex < proposal.Sets.Count; setIndex++)
+            {
+                // The model's setName is ignored: the name is ours, derived from the position.
+                var setName = BuildSetName(setIndex);
+                if (setName == null)
+                {
+                    message = "This channel produced more question sets than can be named. Nothing was saved.";
+                    return null;
+                }
+
+                var proposedIds = proposal.Sets[setIndex]?.QuestionIds;
+                if (proposedIds == null || proposedIds.Count == 0)
+                {
+                    message = $"Set {setName} came back with no questions. Nothing was saved.";
+                    return null;
+                }
+
+                var setRows = new List<AIQuestionSetItemTvpRow>();
+                foreach (var rawId in proposedIds)
+                {
+                    if (!int.TryParse((rawId ?? string.Empty).Trim(), out var questionId)
+                        || !questionsById.TryGetValue(questionId, out var question))
+                    {
+                        message = "The proposal referred to a question that does not belong to this skill channel. Nothing was saved.";
+                        return null;
+                    }
+
+                    setRows.Add(new AIQuestionSetItemTvpRow
+                    {
+                        SetName = setName,
+                        QuestionId = question.id,
+                        // The question's own SkillName from the database, not the model's claim about it.
+                        SkillName = (question.SkillName ?? string.Empty).Trim(),
+                        TotalMinutes = question.MaxTimeMinutes,
+                        TotalPoints = question.MaxScore,
+                        SortOrder = 0
+                    });
+                }
+
+                // Ask order within a set follows rubric parameter order, not the order the model listed.
+                var ordered = setRows
+                    .OrderBy(r => parameterOrder.TryGetValue(r.SkillName, out var order) ? order : int.MaxValue)
+                    .ThenBy(r => r.QuestionId)
+                    .ToList();
+
+                for (var i = 0; i < ordered.Count; i++)
+                {
+                    ordered[i].SortOrder = i + 1;
+                }
+
+                rows.AddRange(ordered);
+            }
+
+            return rows;
+        }
+
+        /// <summary>
+        /// Set names are positional and server-side: A..Z, then AA, AB. Never taken from the model.
+        /// Returns null past ZZ, which no realistic channel reaches.
+        /// </summary>
+        private static string BuildSetName(int index)
+        {
+            if (index < 0)
+                return null;
+
+            if (index < 26)
+                return ((char)('A' + index)).ToString();
+
+            var first = (index / 26) - 1;
+            var second = index % 26;
+            if (first > 25)
+                return null;
+
+            return string.Concat((char)('A' + first), (char)('A' + second));
+        }
+
+        /// <summary>
+        /// Asks the stored prompt to propose a grouping. setCount is passed in and is not negotiable:
+        /// the smallest per-parameter pool has already been computed and any other number is rejected.
+        /// The prompt's real job is choosing which question goes in which set so the difficulty spread
+        /// stays even across papers.
+        /// </summary>
+        private async Task<AIQuestionSetProposal> RequestAIQuestionSetProposal(AIQuestionSetPoolVM pool,
+            IList<AIQuestionSetRubricParameterVM> parameters, int setCount, string promptId, string promptVersion)
+        {
+            try
+            {
+                var questionsPayload = pool.Questions.Select(q => new
+                {
+                    id = q.id.ToString(),
+                    skillArea = q.SkillName,
+                    title = q.Title,
+                    maxTimeMinutes = q.MaxTimeMinutes,
+                    maxScore = q.MaxScore,
+                    difficulty = q.Difficulty
+                }).ToList();
+
+                // The Responses API takes stored-prompt variables as strings, so each one is
+                // serialised before it goes in.
+                var variables = new Dictionary<string, string>
+                {
+                    ["questions"] = JsonConvert.SerializeObject(questionsPayload),
+                    ["parameters"] = JsonConvert.SerializeObject(parameters.Select(x => x.SkillName).ToList()),
+                    ["setCount"] = setCount.ToString()
+                };
+
+                var runResult = await _openAIResponsesHelper.CreateJsonResponseAsync(
+                    "Group the supplied questions into balanced interview sets.",
+                    "AIQuestionSetCreation",
+                    promptId,
+                    promptVersion,
+                    variables);
+
+                var rawText = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value;
+                if (string.IsNullOrWhiteSpace(rawText))
+                    return null;
+
+                return JsonConvert.DeserializeObject<AIQuestionSetProposal>(StripJsonCodeFence(rawText));
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Models often wrap JSON in a fenced code block. Strip it before deserialising.
+        /// </summary>
+        private static string StripJsonCodeFence(string text)
+        {
+            var cleaned = (text ?? string.Empty).Trim();
+
+            if (cleaned.StartsWith("```json", StringComparison.OrdinalIgnoreCase))
+                cleaned = cleaned.Substring(7).TrimStart();
+            else if (cleaned.StartsWith("```"))
+                cleaned = cleaned.Substring(3).TrimStart();
+
+            if (cleaned.EndsWith("```"))
+                cleaned = cleaned.Substring(0, cleaned.Length - 3);
+
+            return cleaned.Trim();
+        }
+
+        public async Task<IList<AIQuestionSetVM>> GetAIQuestionSetsByIRF(int irfId)
+        {
+            try
+            {
+                return await _irfRepository.GetAIQuestionSetsByIRF(irfId) ?? new List<AIQuestionSetVM>();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new List<AIQuestionSetVM>();
+            }
+        }
+
+        public async Task<AIQuestionSetAssignmentVM> AssignAIQuestionSetToInterview(int interviewId)
+        {
+            try
+            {
+                return await _irfRepository.AssignAIQuestionSetToInterview(interviewId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Switches a channel's question sets on or off. The procedure refuses to switch a channel on
+        /// before its sets exist, so the safe order -- create the papers, then switch on -- is the only
+        /// order available. Switching off leaves interviews already bound to a paper on it.
+        ///
+        /// The flag decides whether candidates on this channel all answer the same questions, so who
+        /// changed it is worth a log line of its own.
+        /// </summary>
+        public async Task<AIQuestionSetToggleResultVM> SetAIQuestionSetsEnabled(int irfId, bool enabled, string updatedBy)
+        {
+            try
+            {
+                var result = await _irfRepository.SetAIQuestionSetsEnabled(irfId, enabled);
+
+                if (result != null && result.Success)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Info,
+                        $"AI question sets switched {(result.Enabled ? "on" : "off")} for IRFId={irfId} by {updatedBy}.");
+                }
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<AIQuestionSetLaunchVM> GetLaunchSetForInterview(int interviewId)
+        {
+            try
+            {
+                return await _irfRepository.GetLaunchSetForInterview(interviewId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Resolves the next question for a preset interview, binding a set on first use and then
+        /// keeping that set for the interview's whole life.
+        ///
+        /// A channel that has not switched question sets on (IRF.UseAIQuestionSets) reports
+        /// UsesQuestionSets = false and the caller keeps its previous behaviour, which is what stops
+        /// this feature from changing channels that have not adopted it. Once a channel is switched
+        /// on, an unresolvable binding reports SetResolved = false and the caller must stop: it must
+        /// never widen the query back to the whole channel pool.
+        ///
+        /// Adoption is an explicit flag rather than the mere presence of sets because those two
+        /// things fail differently. Presence cannot tell "this channel deliberately does not deal
+        /// papers" from "set creation never succeeded here", and the second silently serves every
+        /// candidate in a batch the same questions.
+        /// </summary>
+        public async Task<AIPresetQuestionResolutionVM> ResolveNextPresetQuestion(int interviewId)
+        {
+            try
+            {
+                var assignment = await _irfRepository.AssignAIQuestionSetToInterview(interviewId);
+
+                if (assignment == null)
+                {
+                    // The binding call itself failed, so whether this channel deals papers is unknown.
+                    // Fail closed and log loudly rather than risk serving the whole pool.
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Error,
+                        $"AI question set binding failed for InterviewId {interviewId}. Refusing to serve questions outside a set.");
+
+                    return new AIPresetQuestionResolutionVM
+                    {
+                        UsesQuestionSets = true,
+                        SetResolved = false,
+                        Message = "The question set for this interview could not be resolved."
+                    };
+                }
+
+                // An interview already bound to a paper keeps it whatever the channel flag now says, so
+                // this is settled before the flag is consulted. Switching a channel off must never move
+                // a candidate who is mid-interview onto a different question order.
+                if (!assignment.SetId.HasValue)
+                {
+                    // Switched on with nothing to deal from. The only honest outcomes are to refuse or
+                    // to serve the whole channel pool, and serving the pool would hand every candidate
+                    // in the batch the same questions -- the exact leak sets exist to prevent. So it
+                    // refuses, loudly, because this is a misconfiguration someone has to fix.
+                    if (assignment.SetsEnabled && !assignment.ChannelHasSets)
+                    {
+                        await _applicationErrorLogger.LogMessage(
+                            LogLevelInfo.Error,
+                            $"AI question sets are switched on for the channel of InterviewId {interviewId} but the channel has no sets. Refusing to serve questions outside a set. Create the sets, or switch the channel off to return it to the standard question order.");
+
+                        return new AIPresetQuestionResolutionVM
+                        {
+                            UsesQuestionSets = true,
+                            SetResolved = false,
+                            Message = assignment.Message
+                        };
+                    }
+
+                    if (!assignment.SetsEnabled)
+                    {
+                        // Papers exist but the channel is not switched on to use them. Legitimate --
+                        // sets are created first and switched on second -- but worth saying out loud,
+                        // because a channel left in this state is doing the work and getting none of
+                        // the benefit.
+                        if (assignment.ChannelHasSets)
+                        {
+                            await _applicationErrorLogger.LogMessage(
+                                LogLevelInfo.Warning,
+                                $"The channel of InterviewId {interviewId} has AI question sets but is not switched on to use them, so the standard question order applies. Switch the channel on if the sets are meant to be in use.");
+                        }
+
+                        return new AIPresetQuestionResolutionVM { UsesQuestionSets = false, Message = assignment.Message };
+                    }
+
+                    // Switched on, papers exist, and still nothing could be bound. Fail closed.
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Error,
+                        $"No AI question set could be bound to InterviewId {interviewId} although its channel has sets. Refusing to serve questions outside a set.");
+
+                    return new AIPresetQuestionResolutionVM
+                    {
+                        UsesQuestionSets = true,
+                        SetResolved = false,
+                        Message = assignment.Message
+                    };
+                }
+
+                var resolution = new AIPresetQuestionResolutionVM
+                {
+                    UsesQuestionSets = true,
+                    SetResolved = true,
+                    SetId = assignment.SetId,
+                    Question = await _irfRepository.GetNextAIQuestionForInterview(interviewId)
+                };
+
+                var launchSet = await _irfRepository.GetLaunchSetForInterview(interviewId);
+                if (launchSet != null)
+                {
+                    resolution.SetName = launchSet.SetName;
+                    resolution.PromptId = launchSet.PromptId;
+                    resolution.PromptVersion = launchSet.PromptVersion;
+
+                    // One Info line per successful launch, carrying what was served and the prompt the
+                    // paper was created with.
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Info,
+                        $"AI question set launch. InterviewId={launchSet.InterviewId}, IRFId={launchSet.IRFId}, SetId={launchSet.SetId}, SetName={launchSet.SetName}, PromptId={launchSet.PromptId}, PromptVersion={launchSet.PromptVersion}");
+                }
+
+                return resolution;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new AIPresetQuestionResolutionVM
+                {
+                    UsesQuestionSets = true,
+                    SetResolved = false,
+                    Message = "The question set for this interview could not be resolved."
+                };
+            }
+        }
+
+        #endregion
     }
 }

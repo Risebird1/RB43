@@ -65,6 +65,21 @@ namespace Risebird.CommonHelper
             return result;
         }
 
+        public async Task<RunResult> CreateJsonResponseAsync(
+            string input,
+            string operationType,
+            string promptId,
+            string promptVersion,
+            IDictionary<string, string> promptVariables,
+            int? maxOutputTokens = null,
+            bool useStoredPromptModel = false)
+        {
+            var (result, _) = await CreateJsonResponseWithIdAsync(
+                (object)input, operationType, promptId, null, maxOutputTokens, useStoredPromptModel,
+                promptVersion, promptVariables);
+            return result;
+        }
+
         public Task<(RunResult Result, string ResponseId)> CreateJsonResponseWithIdAsync(
             string input,
             string operationType,
@@ -82,7 +97,9 @@ namespace Risebird.CommonHelper
             string promptId,
             string previousResponseId = null,
             int? maxOutputTokens = null,
-            bool useStoredPromptModel = false)
+            bool useStoredPromptModel = false,
+            string promptVersion = null,
+            IDictionary<string, string> promptVariables = null)
         {
             try
             {
@@ -116,7 +133,8 @@ namespace Risebird.CommonHelper
                 while (true)
                 {
                     var attempt = await SendJsonResponseAttemptAsync(
-                        promptId, input, operationType, previousResponseId, tokenBudget, useStoredPromptModel);
+                        promptId, input, operationType, previousResponseId, tokenBudget, useStoredPromptModel,
+                        promptVersion, promptVariables);
 
                     if (attempt.Succeeded)
                         return (ToRunResult(attempt.OutputText), attempt.ResponseId);
@@ -157,9 +175,12 @@ namespace Risebird.CommonHelper
             string operationType,
             string previousResponseId,
             int? maxOutputTokens,
-            bool useStoredPromptModel)
+            bool useStoredPromptModel,
+            string promptVersion = null,
+            IDictionary<string, string> promptVariables = null)
         {
-            object requestBody = BuildJsonResponseRequestBody(promptId, input, previousResponseId, maxOutputTokens, useStoredPromptModel);
+            object requestBody = BuildJsonResponseRequestBody(promptId, input, previousResponseId, maxOutputTokens,
+                useStoredPromptModel, promptVersion, promptVariables);
 
             using var client = new HttpClient();
             client.Timeout = TimeSpan.FromMinutes(4);
@@ -371,9 +392,11 @@ namespace Risebird.CommonHelper
             }
         }
 
-        private object BuildJsonResponseRequestBody(string promptId, object input, string previousResponseId, int? maxOutputTokens, bool useStoredPromptModel)
+        private object BuildJsonResponseRequestBody(string promptId, object input, string previousResponseId,
+            int? maxOutputTokens, bool useStoredPromptModel, string promptVersion = null,
+            IDictionary<string, string> promptVariables = null)
         {
-            var body = BuildBaseRequestBody(promptId, input, useStoredPromptModel);
+            var body = BuildBaseRequestBody(promptId, input, useStoredPromptModel, promptVersion, promptVariables);
             body["text"] = new { format = new { type = "json_object" } };
 
             if (!string.IsNullOrWhiteSpace(previousResponseId))
@@ -390,11 +413,21 @@ namespace Risebird.CommonHelper
         /// required when that prompt carries model-specific settings such as reasoning; sending a
         /// conflicting model is rejected with an unsupported_value error.
         /// </summary>
-        private Dictionary<string, object> BuildBaseRequestBody(string promptId, object input, bool useStoredPromptModel)
+        private Dictionary<string, object> BuildBaseRequestBody(string promptId, object input, bool useStoredPromptModel,
+            string promptVersion = null, IDictionary<string, string> promptVariables = null)
         {
+            var prompt = new Dictionary<string, object> { ["id"] = promptId };
+
+            if (!string.IsNullOrWhiteSpace(promptVersion))
+                prompt["version"] = promptVersion;
+
+            // Stored-prompt variable values are passed as strings, which is what the Responses API accepts.
+            if (promptVariables != null && promptVariables.Count > 0)
+                prompt["variables"] = promptVariables;
+
             var body = new Dictionary<string, object>
             {
-                ["prompt"] = new { id = promptId },
+                ["prompt"] = prompt,
                 ["input"] = input
             };
 
