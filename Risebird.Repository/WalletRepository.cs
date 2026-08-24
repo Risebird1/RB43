@@ -105,7 +105,7 @@ namespace Risebird.Repository
             return false;
         }
 
-        public async Task<int> SaveClientPO(int clientId, int billingType, int billingModel, decimal poCreditAmount, int poMonth, int poYear, string createdBy, int? billingOwnerId = null, string poNumber = null, string poDocumentUrl = null, string remarks = null, int? poQuantity = null, DateTime? addedDate = null)
+        public async Task<int> SaveClientPO(int clientId, int billingType, int billingModel, decimal poCreditAmount, int poMonth, int poYear, string createdBy, int? billingOwnerId = null, string poNumber = null, string poDocumentUrl = null, string remarks = null, int? poQuantity = null, DateTime? addedDate = null, DateTime? expireDate = null)
         {
             try
             {
@@ -125,6 +125,7 @@ namespace Risebird.Repository
                     parameters.Add("@Remarks", remarks);
                     parameters.Add("@POQuantity", poQuantity);
                     parameters.Add("@AddedDate", addedDate);
+                    parameters.Add("@ExpireDate", expireDate);
                     var result = await SqlMapper.QueryAsync<int>(con, "usp_InsertClientPO", parameters, commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
@@ -202,7 +203,7 @@ namespace Risebird.Repository
             return false;
         }
 
-        public async Task<bool> UpdateClientPO(int poId, int clientId, string poNumber, decimal poCreditAmount, int poMonth, int poYear, int? poQuantity, DateTime? addedDate, string poDocumentUrl = null, bool updateDocument = false)
+        public async Task<bool> UpdateClientPO(int poId, int clientId, string poNumber, decimal poCreditAmount, int poMonth, int poYear, int? poQuantity, DateTime? addedDate, DateTime? expireDate, string poDocumentUrl = null, bool updateDocument = false)
         {
             try
             {
@@ -217,6 +218,7 @@ namespace Risebird.Repository
                     parameters.Add("@POYear", poYear);
                     parameters.Add("@POQuantity", poQuantity);
                     parameters.Add("@AddedDate", addedDate);
+                    parameters.Add("@ExpireDate", expireDate);
                     parameters.Add("@PODocumentUrl", poDocumentUrl);
                     parameters.Add("@UpdateDocument", updateDocument);
                     var result = await SqlMapper.QueryAsync<bool>(con, "usp_UpdateClientPO", parameters, commandType: CommandType.StoredProcedure);
