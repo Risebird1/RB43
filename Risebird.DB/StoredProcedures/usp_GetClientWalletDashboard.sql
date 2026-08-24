@@ -195,6 +195,7 @@ BEGIN
         cp.POYear,
         cp.POQuantity,
         cp.AddedDate,
+        cp.ExpireDate,
         cp.PODocumentUrl,
         cp.Status,
         cp.Remarks,

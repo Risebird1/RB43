@@ -885,6 +885,7 @@ WHERE si.SuspiciousStatus = 1",
                             _resultVM.IsTechQC = !string.IsNullOrEmpty(dt.Rows[0]["IsTechQC"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsTechQC"]) : false; ;
                             _resultVM.showChatBox = !string.IsNullOrEmpty(dt.Rows[0]["showChatBox"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["showChatBox"]) : false;
                             _resultVM.generateTranscriptSummary = !string.IsNullOrEmpty(dt.Rows[0]["generateTranscriptSummary"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["generateTranscriptSummary"]) : false;
+                            _resultVM.IsProctoring = !dt.Columns.Contains("IsProctoring") || string.IsNullOrEmpty(dt.Rows[0]["IsProctoring"].ToString()) || Convert.ToBoolean(dt.Rows[0]["IsProctoring"]);
                             _resultVM.DmIvLockNew = dt.Columns.Contains("DmIvLockNew") && !string.IsNullOrEmpty(dt.Rows[0]["DmIvLockNew"].ToString()) && Convert.ToBoolean(dt.Rows[0]["DmIvLockNew"]);
                             _resultVM.DmAssignmentPolicy = dt.Columns.Contains("DmAssignmentPolicy") && !string.IsNullOrEmpty(dt.Rows[0]["DmAssignmentPolicy"].ToString()) ? dt.Rows[0]["DmAssignmentPolicy"].ToString() : "free";
                             _resultVM.DmDefaultInterviewCap = dt.Columns.Contains("DmDefaultInterviewCap") && !string.IsNullOrEmpty(dt.Rows[0]["DmDefaultInterviewCap"].ToString()) ? Convert.ToInt32(dt.Rows[0]["DmDefaultInterviewCap"]) : 20;
@@ -1848,6 +1849,9 @@ WHERE si.SuspiciousStatus = 1",
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@generateTranscriptSummary", SqlDbType.Bit));
                     cmdCreateIRF.Parameters["@generateTranscriptSummary"].Value = irfDetails.generateTranscriptSummary;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@IsProctoring", SqlDbType.Bit));
+                    cmdCreateIRF.Parameters["@IsProctoring"].Value = DBNull.Value;
 
                     var meetingPlatForm = irfDetails.MeetingPlatform ?? "Zoho";
                     if (irfDetails.IsAIInterview)
@@ -2881,6 +2885,9 @@ WHERE si.SuspiciousStatus = 1",
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@generateTranscriptSummary", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@generateTranscriptSummary"].Value = irfDetails.generateTranscriptSummary;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsProctoring", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsProctoring"].Value = irfDetails.IsProctoring;
 
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;

@@ -136,6 +136,8 @@ namespace Risebird.Entities.ViewModel
         public int? POQuantity { get; set; }
         /// <summary>User-facing added date. Falls back to CreatedOn when null (legacy rows).</summary>
         public DateTime? AddedDate { get; set; }
+        /// <summary>Optional PO expiry date. May be null.</summary>
+        public DateTime? ExpireDate { get; set; }
         public string PODocumentUrl { get; set; }
         public int Status { get; set; }
         public string StatusDesc { get; set; }

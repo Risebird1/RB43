@@ -41,6 +41,8 @@ namespace Risebird.Web.Services.Proctoring
                 return false;
             if (IsTerminalMeetingStatus(details.MeetingStatus))
                 return false;
+            if (!details.IsProctoring)
+                return false;
 
             return true;
         }
@@ -67,6 +69,8 @@ namespace Risebird.Web.Services.Proctoring
                 return false;
             if (!string.IsNullOrEmpty(details.candidateEmail) &&
                 !string.Equals(details.candidateEmail.Trim(), payload.Email?.Trim(), StringComparison.OrdinalIgnoreCase))
+                return false;
+            if (!details.IsProctoring)
                 return false;
 
             return true;

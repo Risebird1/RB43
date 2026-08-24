@@ -260,6 +260,7 @@
                                         <th class="text-right">Cash Received</th>
                                         <th class="text-right">Pending Cash</th>
                                         <th>Added Date</th>
+                                        <th>Expire Date</th>
                                         <th>Document</th>
                                         <th class="text-center">Actions</th>
                                     </tr>
@@ -283,6 +284,7 @@
                                             <td class="text-right">@(po.CashCreditReceived > 0 ? "₹ " + po.CashCreditReceived.ToString("N0") : "—")</td>
                                             <td class="text-right">@(po.POCreditAmount > 0 ? "₹ " + po.PendingCashCredit.ToString("N0") : "—")</td>
                                             <td>@(addedDateVal?.ToString("dd MMM yyyy") ?? "—")</td>
+                                            <td>@(po.ExpireDate?.ToString("dd MMM yyyy") ?? "—")</td>
                                             <td>
                                                 @if (!string.IsNullOrEmpty(po.PODocumentUrl))
                                                 {
@@ -302,6 +304,7 @@
                                                    data-year="@po.POYear"
                                                    data-quantity="@(po.POQuantity?.ToString() ?? "")"
                                                    data-addeddate="@(addedDateVal?.ToString("yyyy-MM-dd") ?? "")"
+                                                   data-expiredate="@(po.ExpireDate?.ToString("yyyy-MM-dd") ?? "")"
                                                    data-cashreceived="@po.CashCreditReceived.ToString("0.##")">Edit</a>
                                                 @if (po.Status < 4)
                                                 {
@@ -585,6 +588,11 @@
                     <input type="date" id="txtPOAddedDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
                 </div>
                 <div class="form-group">
+                    <label>Expire Date</label>
+                    <input type="date" id="txtPOExpireDate" class="form-control" />
+                    <small class="text-muted">Optional. Leave blank if the PO has no expiry.</small>
+                </div>
+                <div class="form-group">
                     <label>PO Number / Reference</label>
                     <input type="text" id="txtPORef" class="form-control" placeholder="Enter PO number" />
                 </div>
@@ -629,6 +637,11 @@
                 <div class="form-group">
                     <label>Added Date</label>
                     <input type="date" id="txtEditPOAddedDate" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Expire Date</label>
+                    <input type="date" id="txtEditPOExpireDate" class="form-control" />
+                    <small class="text-muted">Optional. Clear the field to remove the expiry date.</small>
                 </div>
                 <div class="form-group">
                     <label>Replace PO Document (PDF)</label>
@@ -793,6 +806,7 @@
         $('#txtPOCreditFile').val('');
         $('#txtPOMonth').val('@($"{Model.SelectedYear:D4}-{Model.SelectedMonth:D2}")');
         $('#txtPOAddedDate').val('@DateTime.Now.ToString("yyyy-MM-dd")');
+        $('#txtPOExpireDate').val('');
         if (ownerId) $('#ddlPOOwner').val(ownerId);
         else if (_requiresOwner) $('#ddlPOOwner').val('');
         $('#poCreditModal').modal('show');
@@ -809,6 +823,7 @@
         $('#txtEditPOQuantity').val($el.data('quantity') || '');
         $('#txtEditPOMonth').val(year + '-' + String(month).padStart(2, '0'));
         $('#txtEditPOAddedDate').val($el.data('addeddate') || '');
+        $('#txtEditPOExpireDate').val($el.data('expiredate') || '');
         $('#txtEditPOFile').val('');
         if (cashReceived > 0) {
             $('#lblEditPOCashHint').text('Cash already received: ₹ ' + cashReceived.toLocaleString('en-IN') + '. Credit cannot be set below this.');
@@ -834,6 +849,7 @@
         fd.append('transactionRefNumber', $('#txtEditPORef').val());
         if (qtyVal !== '') fd.append('poQuantity', parseInt(qtyVal));
         if ($('#txtEditPOAddedDate').val()) fd.append('addedDate', $('#txtEditPOAddedDate').val());
+        fd.append('expireDate', $('#txtEditPOExpireDate').val() || '');
         var f = $('#txtEditPOFile')[0].files[0];
         if (f) fd.append('poFile', f);
         $.ajax({
@@ -906,6 +922,7 @@
         if (ownerId) fd.append('billingOwnerId', ownerId);
         if (qtyVal !== '') fd.append('poQuantity', parseInt(qtyVal));
         if ($('#txtPOAddedDate').val()) fd.append('addedDate', $('#txtPOAddedDate').val());
+        fd.append('expireDate', $('#txtPOExpireDate').val() || '');
         var f = $('#txtPOCreditFile')[0].files[0];
         if (f) fd.append('poFile', f);
         $.ajax({ url: '/Wallet/AddPOCreditPoints', type: 'POST', data: fd, processData: false, contentType: false,
