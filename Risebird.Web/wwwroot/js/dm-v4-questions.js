@@ -61,10 +61,15 @@
         $('#dmV4QuestionsCount').text(withQ + ' of ' + total + ' skills covered');
     }
 
-    function groupBySkill(questions) {
+    function groupBySkill(questions, rubricSkills) {
         var map = {};
+        var rubricLookup = {};
+        (rubricSkills || []).forEach(function (sn) {
+            rubricLookup[String(sn).toLowerCase()] = sn;
+        });
         questions.forEach(function (q) {
-            var sn = q.skillName || q.SkillName || 'General';
+            var raw = $.trim(q.skillName || q.SkillName || '') || 'General';
+            var sn = rubricLookup[raw.toLowerCase()] || raw;
             if (!map[sn]) map[sn] = [];
             map[sn].push(q);
         });
@@ -73,9 +78,50 @@
 
     function openQuestionPopup(skillName) {
         var irfId = getIrfId();
-        if (typeof OpenQuestionModal === 'function') {
-            OpenQuestionModal(irfId, skillName || null);
+        if (!irfId) {
+            showQuestionToast('Could not find this skill channel.', 'error');
+            return;
         }
+        if (typeof window.OpenQuestionModal === 'function') {
+            window.OpenQuestionModal(irfId, skillName || null);
+            return;
+        }
+        openQuestionsModal(irfId, skillName || null);
+    }
+
+    function openQuestionsModal(irfId, presetSkill) {
+        var $modal = $('#PopupDetailsModal');
+        if (!$modal.length) {
+            showQuestionToast('Question popup is missing on this page.', 'error');
+            return;
+        }
+        $('#changememberHeading').text('Questions');
+        $('#PopupDetailsModal #divpopupModel').html('<div style="padding:24px;text-align:center;">Loading questions…</div>');
+        $modal.css({ display: 'block', zIndex: 10070 });
+
+        $.ajax({
+            url: '/IRF/SkillChannelSampleQuestions',
+            data: { id: irfId },
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        }).done(function (data) {
+            $('#PopupDetailsModal #divpopupModel').html(data);
+            if (presetSkill) {
+                var $skillSelect = $('#PopupDetailsModal').find('select[id$="__SkillName"]').first();
+                if ($skillSelect.length) {
+                    $skillSelect.val(presetSkill);
+                    if (!$skillSelect.val()) {
+                        $skillSelect.find('option').filter(function () {
+                            return $(this).text().trim().toLowerCase() === String(presetSkill).trim().toLowerCase();
+                        }).first().prop('selected', true);
+                    }
+                }
+            }
+        }).fail(function (xhr) {
+            $('#PopupDetailsModal #divpopupModel').html(
+                '<p class="text-danger" style="padding:20px;">Could not load the question form (' +
+                (xhr.status || 'error') + ').</p>'
+            );
+        });
     }
 
     function showQuestionToast(message, type) {
@@ -107,10 +153,11 @@
         var synthesia = usesSynthesia();
         updateCountBadge(questions, rubricSkills);
 
-        var grouped = groupBySkill(questions);
-        var skillsToShow = rubricSkills.length
-            ? rubricSkills.slice()
-            : Object.keys(grouped).sort();
+        var grouped = groupBySkill(questions, rubricSkills);
+        var skillsToShow = rubricSkills.length ? rubricSkills.slice() : Object.keys(grouped).sort();
+        Object.keys(grouped).forEach(function (sn) {
+            if (skillsToShow.indexOf(sn) === -1) skillsToShow.push(sn);
+        });
 
         if (!skillsToShow.length && !questions.length) {
             $host.html('<p class="dm-v4-questions-empty">No sample questions yet. Use <strong>Generate with AI</strong> or <strong>Add question</strong> on a rubric skill.</p>');
@@ -142,7 +189,8 @@
                 qs.forEach(function (q, qi) {
                     var qid = q.id;
                     var comment = q.comment || q.Comment || '';
-                    var expected = q.expectedAnswer || q.ExpectedAnswer || '';
+                    var idealAnswer = q.idealAnswer || q.IdealAnswer || '';
+                    var expected = q.expectedAnswer || q.ExpectedAnswer || idealAnswer || '';
                     var video = q.aiQuestionVideoLink || q.AIQuestionVideoLink || '';
                     var hasComment = !!$.trim(comment);
                     var hasVideo = !!$.trim(video);
@@ -152,8 +200,15 @@
 
                     html += '<div class="dm-v4-question-row" data-question-id="' + qid + '">';
                     html += '<div class="dm-v4-question-col">';
-                    html += '<div class="dm-v4-question-label">Question Q' + (qi + 1) + '</div>';
+                    html += '<div class="dm-v4-question-label">Question Q' + (qi + 1);
+                    if (q.isAIGenerated || q.IsAIGenerated) {
+                        html += ' <span class="dm-v4-badge dm-v4-badge--ai">AI</span>';
+                    }
+                    html += '</div>';
                     html += '<div class="dm-v4-question-text">' + (hasComment ? escapeHtml(comment) : '<span class="dm-v4-question-text--placeholder">Add question…</span>') + '</div>';
+                    if ($.trim(idealAnswer)) {
+                        html += '<details class="dm-v4-ideal-answer"><summary>Ideal Answer (AI)</summary><div class="dm-v4-ideal-answer__body">' + escapeHtml(idealAnswer) + '</div></details>';
+                    }
 
                     // Coding mode is editable in place so questions added earlier, or generated from
                     // the rubric, can be turned into coding questions without being retyped.
@@ -341,6 +396,17 @@
         if (!getPanel().length) return;
 
         loadQuestions();
+        if ((window.location.hash || '') === '#sample-questions') {
+            var $collapse = $('#dmV4QuestionsCollapse');
+            var $panel = $('#dmV4QuestionsPanel');
+            $collapse.addClass('is-open');
+            $collapse.find('.dm-v4-collapse__head').attr('aria-expanded', 'true');
+            $panel.prop('hidden', false).show();
+            var el = document.getElementById('dmV4QuestionsCollapse');
+            if (el && el.scrollIntoView) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
 
         $(document).off('click.dmV4GenQ', '#dmV4GenerateQuestionsBtn').on('click.dmV4GenQ', '#dmV4GenerateQuestionsBtn', function () {
             var $btn = $(this);

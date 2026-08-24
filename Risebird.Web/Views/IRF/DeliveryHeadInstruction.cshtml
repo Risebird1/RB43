@@ -179,7 +179,7 @@
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024'>
 <link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css?v=2024" />
-<link href="~/Newassets/css/dm-approval-v4.css?v=20250625inactive2" rel="stylesheet" />
+<link href="~/Newassets/css/dm-approval-v4.css?v=20260821aiqs-popup2" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <style>
@@ -3281,7 +3281,11 @@
             html += '  <tbody>';
             for (i = 0; i < data.length; i++) {
                 html += '   <tr>';
-                html += '  <td>' + data[i].skillName + '</td>';
+                html += '  <td>' + data[i].skillName;
+                if (data[i].isAIGenerated) {
+                    html += ' <span class="dm-v4-badge dm-v4-badge--ai">AI</span>';
+                }
+                html += '</td>';
 
                 html += '<td>';
                 html += ' <div>';
@@ -3300,6 +3304,9 @@
                     html += '<div></div>';
                 }
                 html += ' <a onclick="moreless(' + data[i].id + ')" class="moreless-button" value="Readmore" id="read_' + data[i].id + '" href="#">Read more</a>';
+                if (data[i].idealAnswer) {
+                    html += '<details class="dm-v4-ideal-answer"><summary>Ideal Answer (AI)</summary><div class="dm-v4-ideal-answer__body">' + $('<div/>').text(data[i].idealAnswer).html() + '</div></details>';
+                }
                 html += '</div>';
                 html += ' </td>';
                 html += '  <td style="text-align:center"><div><span  onclick="DeleteSampleQuestion(' + data[i].id + ')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span></div></td>';
@@ -3475,15 +3482,21 @@ else
     }
     function OpenQuestionModal(irfid, presetSkill) {
         $("#changememberHeading").text('Questions');
+        var modal = document.getElementById('PopupDetailsModal');
+        if (modal) {
+            $('#PopupDetailsModal #divpopupModel').html('<div style="padding:24px;text-align:center;">Loading questions…</div>');
+            modal.style.display = 'block';
+            modal.style.zIndex = '10070';
+        }
         $.ajax({
             url: '/IRF/SkillChannelSampleQuestions',
             data: { id: irfid },
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
             success: function (data) {
                 openPopupDetailsModal();
-                $('#divpopupModel').html('');
-                $('#divpopupModel').html(data);
+                $('#PopupDetailsModal #divpopupModel').html(data);
                 if (presetSkill) {
-                    var $skillSelect = $('#divpopupModel').find('select[id$="__SkillName"]').first();
+                    var $skillSelect = $('#PopupDetailsModal').find('select[id$="__SkillName"]').first();
                     if ($skillSelect.length) {
                         $skillSelect.val(presetSkill);
                         if (!$skillSelect.val()) {
@@ -3493,6 +3506,13 @@ else
                         }
                     }
                 }
+            },
+            error: function (xhr) {
+                openPopupDetailsModal();
+                $('#PopupDetailsModal #divpopupModel').html(
+                    '<p class="text-danger" style="padding:20px;">Could not load the question form (' +
+                    (xhr && xhr.status ? xhr.status : 'error') + ').</p>'
+                );
             }
         });
     }
@@ -3731,7 +3751,7 @@ else
 <script src="~/js/dm-v4-layout.js?v=20250630badqc4"></script>
 <script src="~/js/dm-v4-voice.js?v=20250609istmeta1"></script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
-<script src="~/js/dm-v4-questions.js?v=20250609synthesia3coding_gist"></script>
+<script src="~/js/dm-v4-questions.js?v=20260821aiqs-hmshow"></script>
 
 <div id="dmV4ResumeSummaryOverlay" class="dm-v4-drawer-overlay" aria-hidden="true"></div>
 <aside id="dmV4ResumeSummaryDrawer" class="dm-v4-drawer dm-v4-drawer--verdict" aria-hidden="true" role="dialog" aria-labelledby="dmV4ResumeSummaryTitle" style="max-width:520px;">

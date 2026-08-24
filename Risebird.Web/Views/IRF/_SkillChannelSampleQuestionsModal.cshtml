@@ -1,0 +1,348 @@
+﻿@model Risebird.Entities.ViewModel.TechSkillComments
+@using System.Linq
+@using Microsoft.AspNetCore.Mvc.Rendering
+@inject IJsonHelper Json
+@{
+    Layout = null;
+    var skillOptions = ((SelectList)ViewBag.Skills)?.Select(x => new { text = x.Text, value = x.Value }).ToList();
+}
+
+<form action="/IRF/SkillChannelSampleQuestions" enctype="multipart/form-data" id="questionform" method="post" class="ng-pristine ng-valid">
+                            @Html.AntiForgeryToken()
+                            <div class="row">
+                                <div class="card-header">
+                                    <h4 class="card-title">Sample Questions (Add Your Questions Here)</h4>
+                                </div>
+                                <div style="width:100%; float:left;height:10px;"></div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="sample-qs">
+                                        <table class="table mbn" id="QuestionsNewTable">
+                                            <thead>
+                                                <tr>
+                                                    <th class="table_heading b-right">Skill Name</th>
+                                                    <th class="table_heading b-right">Questions</th>
+                                                    <th class="table_heading b-right">Expected Answer</th>
+                                                    <th class="table_heading b-right text-center">Coding Question</th>
+                                                    <th colspan="2" class="table_heading text-center">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                    <tr>
+                                                        <td class="b-right">
+                                                            @Html.DropDownList("SkillCollection[0].SkillName", (SelectList)ViewBag.Skills, new { @class = "select-css form-control" })
+                                                        </td>
+                                                        <td class="b-right">
+                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                <div class="talktext">
+                                                                    <textarea htmlattributes="{ class = form-control text-box single-line }" id="SkillCollection_0__Comment" style="width:100%" name="SkillCollection[0].Comment" class="valid" aria-invalid="false" onblur="checkQuestionLength(this.id)"></textarea>
+                                                                </div>
+                                                                <label id="questionError_0" class="text-danger"></label>
+                                                            </div>
+                                                        </td>
+                                                        <td class="b-right">
+                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                <div class="talktext">
+                                                                    <textarea htmlattributes="{ class = form-control text-box single-line }" id="SkillCollection_0__ExpectedAnswer" style="width:100%" name="SkillCollection[0].ExpectedAnswer" class="valid" aria-invalid="false" onblur="checkQuestionLength(this.id)"></textarea>
+                                                                </div>
+                                                                <label id="expectedAnswerError_0" class="text-danger"></label>
+                                                            </div>
+                                                        </td>
+                                                        <td class="b-right text-center">
+                                                            <label style="font-weight:normal;">
+                                                                <input type="checkbox" id="SkillCollection_0__IsCodingQuestion" name="SkillCollection[0].IsCodingQuestion" value="true" onchange="toggleCodingTimeLimit(this)" />
+                                                                Is Coding
+                                                            </label>
+                                                            <div style="margin-top:6px;">
+                                                                <input type="number" min="1" max="180" step="1" placeholder="Time limit (min)" title="Time limit in minutes for this coding question"
+                                                                       id="SkillCollection_0__CodingTimeLimitInMinutes" name="SkillCollection[0].CodingTimeLimitInMinutes"
+                                                                       class="form-control" style="width:100%;" disabled />
+                                                            </div>
+                                                            <div style="margin-top:6px;display:none;" class="coding-gist-wrap">
+                                                                <textarea id="SkillCollection_0__QuestionGist" name="SkillCollection[0].QuestionGist"
+                                                                          class="form-control coding-gist" style="width:100%;" rows="3"
+                                                                          placeholder="Question gist in plain language"
+                                                                          title="The AI avatar reads this out instead of the code, which cannot be narrated"
+                                                                          onblur="checkQuestionLength(this.id)"></textarea>
+                                                                <small class="text-muted">Spoken by the AI avatar in place of the code.</small>
+                                                            </div>
+                                                            <label id="codingError_0" class="text-danger coding-error"></label>
+                                                            <label id="gistError_0" class="text-danger gist-error"></label>
+                                                        </td>
+                                                        <td class="text-center action-area">
+                                                            <div class="sample-btn">
+                                                                <span style="float:right;" id="btnMinus_0" onclick="DeleteQuestionRow(this, 'SkillCollection','Skill','Comment', 'CreatedBy', 'ExpectedAnswer')" class="mdc-fab app-fab--absolute trash-btn"><i class="far fa  fa-trash"></i></span>
+                                                            </div>
+                                                        </td>
+                                                        @* @Html.Hidden("SkillCollection[0].CreatedBy") *@
+                                                        <td class="HiddenUserIdElement">
+                                                        </td>
+                                                    </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div><!--end of col-md-12-->
+
+                            </div>
+                            <div class="row"><div class="col-md-12 text-right" style="padding-right:30%"> <span id="error_0"></span></div></div>
+                            <div class="card-footer mt-10">
+                                <div class="row">
+                                    <div class="col-md-12 mc-button-area">
+                                        <div class="pull-left">
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add a Question" onclick="AddQuestionRow()" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Question</font></span>
+                                            </button>
+                                        </div>
+                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit" onclick="return errorMessage();">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.HiddenFor(m => m.IRFId)
+                            @Html.HiddenFor(m => m.CreatedBy)
+</form>
+
+<div class="aiqs-modal-link" style="margin:16px 12px 8px;padding:14px 16px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc;">
+    <div style="font-weight:600;margin-bottom:4px;">AI Suggested Questions (Based on JD)</div>
+    <div style="font-size:13px;color:#475569;margin-bottom:8px;">Pick the top 10 questions from the existing question database and generate ideal answers.</div>
+    <a href="@Url.Action("SkillChannelSampleQuestions", "IRF", new { id = Model.IRFId })" target="_blank" rel="noopener noreferrer">Open AI Suggested Questions</a>
+</div>
+
+<script>
+    $(document).ready(function () {
+        if ('@Model.SkillCollection.Count()' == '0') {
+            var x = document.createElement("INPUT");
+            x.setAttribute("type", "hidden");
+            x.setAttribute("id", 'SkillCollection_0__CreatedBy');
+            document.getElementsByClassName("HiddenUserIdElement")[0].appendChild(x);
+            $("#SkillCollection_0__CreatedBy").val('@Model.CreatedBy');
+            $("#SkillCollection_0__CreatedBy").prop('name', 'SkillCollection[0].CreatedBy');;
+            if (document.getElementById('btnMinus_0').style.display == 'none') {
+                document.getElementById('btnMinus_0').style.display = "block";
+            }
+        }
+    });
+
+    function AddQuestionRow() {
+        var $ttc = $("#QuestionsNewTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        //var $tr = $ttc.clone();
+        //var trIndexReplaced = $("#QuestionsNewTable tr").length - 1;
+        $tr.find("textarea,select,hidden,input[type=checkbox],input[type=number]").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("textarea[type=text]").val("");
+        $tr.find("input[type=checkbox]").prop("checked", false);
+        $tr.find("input[type=number]").val("").prop("disabled", true);
+        $tr.find(".coding-gist-wrap").hide();
+        //$tr.find("textarea[type=text]").removeProp("readonly");
+        $tr.find("input[type=hidden]").val('@Model.CreatedBy');
+        var rowCount = $('#QuestionsNewTable tr').length;
+        var finalIndex = rowCount-1;
+        $tr.find("input[type=hidden]").prop('id', 'SkillCollection_' + finalIndex + '__CreatedBy');
+        $tr.find("input[type=hidden]").prop('name', 'SkillCollection[' + finalIndex + '].CreatedBy');
+        $tr.find('span:last').prop('style', 'display:block');
+        $tr.find('span:last').prop('id', 'btnMinus_' + finalIndex);
+        
+        
+        $tr.prop('style', 'visibility : visible');
+        
+        // add cloned row as last row
+        $("#QuestionsNewTable").find("tbody tr:last").after($tr);
+        var $ttlast = $("#QuestionsNewTable").find("tbody tr:last");
+        $ttlast.find("textarea").val("");
+        $ttlast.find("textarea").removeAttr("readonly");
+        
+        // $ttlast.find("textarea").blur(function () {
+        //     checkQuestionLength('SkillCollection_' + finalIndex + '__Comment');
+        // });
+        $ttlast.find("textarea#SkillCollection_" + finalIndex + "__Comment").blur(function () {
+            checkQuestionLength('SkillCollection_' + finalIndex + '__Comment');
+        });
+        // var errorLabelIdValue = "questionError_" + finalIndex;
+        // $ttlast.find("label").attr("id", errorLabelIdValue);
+
+        var errorLabelIdValue1 = "questionError_" + finalIndex;
+        var errorLabelIdValue2 = "expectedAnswerError_" + finalIndex;
+
+        $ttlast.find("label").eq(0).attr("id", errorLabelIdValue1);
+        $ttlast.find("label").eq(1).attr("id", errorLabelIdValue2);
+        $ttlast.find("label.coding-error").attr("id", "codingError_" + finalIndex);
+        $ttlast.find("label.gist-error").attr("id", "gistError_" + finalIndex);
+        
+        //$ttlast.find("label").removeAttr("name");
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        var options = @Html.Raw(Json.Serialize(skillOptions));
+        $("#SkillCollection_" + finalIndex + "__SkillName" + " option").remove();
+       
+        $(options).each(function () {
+            var option = $("<option />");
+            //Set Text part.
+            option.html(this.text);
+            //Set Value part.
+            option.val(this.value);
+            //Add the Option element to DropDownList.
+            $("#SkillCollection_" + finalIndex + "__SkillName").append(option);
+        });
+    }
+
+
+    function DeleteQuestionRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
+        if ($(element).parents('tbody').find('tr').length === 1) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            //var currentvalue = $(this).attr('value');
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
+            }
+            else {
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    //name="ClientCollection[3].ClientUserId"
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+
+                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+
+                    var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
+                    elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                    elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
+
+                    ["IsCodingQuestion", "CodingTimeLimitInMinutes", "QuestionGist"].forEach(function (suffix) {
+                        var codingElem = document.getElementById(collectionName + "_" + i + "__" + suffix);
+                        if (codingElem) {
+                            codingElem.id = collectionName + "_" + (i - 1) + "__" + suffix;
+                            codingElem.name = collectionName + "[" + (i - 1) + "]." + suffix;
+                        }
+                    });
+                }
+            }
+        }
+    }
+</script>
+
+<script>
+    // The time limit and the gist only apply to coding questions, so they stay hidden
+    // and the time limit stays disabled (and unposted) otherwise
+    function toggleCodingTimeLimit(checkbox) {
+        var $row = $(checkbox).closest('tr');
+        var timeLimitInput = $row.find('input[type=number]');
+        var $gistWrap = $row.find('.coding-gist-wrap');
+        if (checkbox.checked) {
+            timeLimitInput.prop('disabled', false);
+            if (!timeLimitInput.val()) {
+                timeLimitInput.val(15);
+            }
+            $gistWrap.show();
+        }
+        else {
+            timeLimitInput.prop('disabled', true).val('');
+            $gistWrap.hide();
+            $row.find('label.coding-error').html('');
+            $row.find('label.gist-error').html('');
+        }
+    }
+
+    function errorMessage() {
+        var items = $('[id^=SkillCollection][id$="Comment"]');
+        for (j = 0; j < items.length; j++) {
+            if ($('#SkillCollection_' + j + '__Comment').val() == '') {
+                var error = document.getElementById("error_0");
+                error.textContent = "Question field should not be blank";
+                error.style.color = "red";
+                return false;
+            }
+
+            var codingCheckbox = document.getElementById('SkillCollection_' + j + '__IsCodingQuestion');
+            var codingErrorLabel = document.getElementById('codingError_' + j);
+            var gistErrorLabel = document.getElementById('gistError_' + j);
+            if (codingErrorLabel) {
+                codingErrorLabel.innerHTML = "";
+            }
+            if (gistErrorLabel) {
+                gistErrorLabel.innerHTML = "";
+            }
+            if (codingCheckbox && codingCheckbox.checked) {
+                var timeLimit = parseInt($('#SkillCollection_' + j + '__CodingTimeLimitInMinutes').val(), 10);
+                if (isNaN(timeLimit) || timeLimit < 1 || timeLimit > 180) {
+                    if (codingErrorLabel) {
+                        codingErrorLabel.innerHTML = "Enter a time limit between 1 and 180 minutes.";
+                    }
+                    return false;
+                }
+
+                var gist = $('#SkillCollection_' + j + '__QuestionGist').val();
+                if (!gist || gist.trim() === '') {
+                    if (gistErrorLabel) {
+                        gistErrorLabel.innerHTML = "A coding question needs a gist. The AI avatar reads it out instead of the code.";
+                    }
+                    return false;
+                }
+            }
+        }
+        document.getElementById("questionform").submit();
+        return true;
+    }
+
+    var MAX_QUESTION_LENGTH = 5000;
+
+    function checkQuestionLength(elementId) {
+        var index = elementId.match(/\d+/);
+        var isExpectedAnswer = /ExpectedAnswer$/.test(elementId);
+        var isGist = /QuestionGist$/.test(elementId);
+        var element = document.getElementById(elementId);
+        if (!element) return;
+
+        var val = element.value;
+        var errorPrefix = isGist ? "gistError_" : (isExpectedAnswer ? "expectedAnswerError_" : "questionError_");
+        var errorElement = document.getElementById(errorPrefix + index);
+        var fieldLabel = isGist ? "Question Gist" : (isExpectedAnswer ? "Expected Answer" : "Question");
+
+        if (errorElement) {
+            errorElement.innerHTML = (val != null && val.length > MAX_QUESTION_LENGTH)
+                ? "The " + fieldLabel + " should not exceed " + MAX_QUESTION_LENGTH + " characters."
+                : "";
+        }
+
+        // Re-check every row so one valid field can't re-enable submit while another is still too long
+        var stillTooLong = false;
+        $('#QuestionsNewTable').find('textarea').each(function () {
+            if (this.value && this.value.length > MAX_QUESTION_LENGTH) {
+                stillTooLong = true;
+            }
+        });
+        document.getElementById("btnUpload").disabled = stillTooLong;
+
+        if (val != null && val.length > MAX_QUESTION_LENGTH) {
+            element.focus();
+        }
+    }
+</script>
