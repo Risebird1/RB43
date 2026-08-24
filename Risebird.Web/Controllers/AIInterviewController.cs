@@ -159,6 +159,9 @@ namespace Risebird.Web.Controllers
                 //two scenarios possible, one where the interview hasnt started as yet. The second where the interview has already started.
                 if (meetingDetails != null)
                 {
+                    if (IsAadhaarVerificationBlocking(meetingDetails))
+                        return AadhaarRequiredExitView(sid, meetingDetails);
+
                     await ApplyAiProctoringViewBagAsync(meetingDetails, sid);
                     if (meetingDetails.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
                     {
@@ -893,6 +896,14 @@ namespace Risebird.Web.Controllers
         /// <summary>Chrome extension: session token + policy for AI interview page (meeting not in a terminal state).</summary>
         private async Task ApplyAiProctoringViewBagAsync(MeetingVM meetingDetails, Guid sid)
         {
+            if (meetingDetails == null || !meetingDetails.IsProctoring)
+            {
+                ViewBag.ProctoringToken = null;
+                ViewBag.ProctoringInterviewId = null;
+                ViewBag.ProctoringResumeCaptureAfterInterrupt = false;
+                return;
+            }
+
             // Always emit proctoring bootstrap on the live AI interview page when we have a session + interview row.
             // Do not gate on InterviewComments.MeetingStatus (often stale vs. a valid candidate session).
             ProctoringViewBagHelper.ApplyForMeeting(
@@ -904,6 +915,32 @@ namespace Risebird.Web.Controllers
                 issueProctoringBootstrapEvenIfMeetingStatusTerminal: true);
             ViewBag.ProctoringResumeCaptureAfterInterrupt =
                 await ShouldResumeProctoringCaptureAfterInterruptAsync(meetingDetails);
+        }
+
+        private static bool IsAadhaarVerificationBlocking(MeetingVM meetingDetails)
+        {
+            return meetingDetails != null
+                && meetingDetails.IsAadhaarVerificationRequired == true
+                && meetingDetails.AadharVerificationId <= 0;
+        }
+
+        private IActionResult AadhaarRequiredExitView(Guid sid, MeetingVM meetingDetails)
+        {
+            return View("ExitModalPartial", new AIInterviewExitModalViewModel
+            {
+                Title = "Identity verification required",
+                Message = "Please complete identity verification from your interview page before joining this AI interview.",
+                IconClass = "fa-exclamation-triangle",
+                IconColor = "#dc3545",
+                ButtonText = "Close",
+                ButtonClass = "btn-danger",
+                CandidateName = meetingDetails?.candidateName ?? "Candidate",
+                InterviewDate = meetingDetails?.interviewDate,
+                SessionId = sid.ToString(),
+                ExitTime = DateTime.Now,
+                IsFromIndex = true,
+                IsSuccess = false
+            });
         }
 
         /// <summary>
@@ -961,6 +998,9 @@ namespace Risebird.Web.Controllers
                         "Interview not found",
                         "This interview session could not be found. Please reopen the original interview link."));
                 }
+
+                if (IsAadhaarVerificationBlocking(meetingDetails))
+                    return AadhaarRequiredExitView(model.SessionId, meetingDetails);
 
                 HydrateModelFromMeeting(model, meetingDetails);
 
@@ -2191,7 +2231,15 @@ namespace Risebird.Web.Controllers
             ViewBag.ProfileName = profileName;
 
             var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(seId);
-            if (meetingDetails?.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
+            if (meetingDetails == null)
+            {
+                return View("ExitModalPartial", CreateAnswerSubmitErrorView(
+                    seId,
+                    "Interview not found",
+                    "This interview session could not be found. Please reopen the original interview link."));
+            }
+
+            if (meetingDetails.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
             {
                 InterviewReportResult aiReport = null;
                 if (redo)

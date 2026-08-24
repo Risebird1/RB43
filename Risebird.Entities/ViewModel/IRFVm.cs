@@ -277,6 +277,8 @@ namespace Risebird.Entities.ViewModel
         public bool CodeSnippetRequired { get; set; }
         public bool IsAIInterview { get; set; }
         public bool showChatBox { get; set; }
+        [Display(Name = "Proctoring Required")]
+        public bool IsProctoring { get; set; } = true;
         public bool generateTranscriptSummary { get; set; }
         public int AIInterviewType { get; set; }
         public IList<SkillComment> DeliveryHeadSampleQuestions { get; set; }
