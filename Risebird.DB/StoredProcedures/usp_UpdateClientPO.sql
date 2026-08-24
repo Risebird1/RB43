@@ -18,6 +18,7 @@ CREATE PROCEDURE usp_UpdateClientPO
     @POYear          INT,
     @POQuantity      INT = NULL,
     @AddedDate       DATETIME = NULL,
+    @ExpireDate      DATETIME = NULL,
     @PODocumentUrl   VARCHAR(500) = NULL,
     @UpdateDocument  BIT = 0
 AS
@@ -70,6 +71,7 @@ BEGIN
         POYear         = @POYear,
         POQuantity     = @POQuantity,
         AddedDate      = @AddedDate,
+        ExpireDate     = @ExpireDate,
         PODocumentUrl  = CASE WHEN @UpdateDocument = 1 THEN @PODocumentUrl ELSE @CurrentDocUrl END,
         Status         = @NewStatus,
         ModifiedOn     = @Now

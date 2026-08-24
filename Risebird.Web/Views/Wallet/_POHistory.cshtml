@@ -177,6 +177,7 @@
                     <th>Usage</th>
                     <th>Added By</th>
                     <th>Added On</th>
+                    <th>Expire Date</th>
                     <th>Document</th>
                 </tr>
             </thead>
@@ -246,6 +247,7 @@
                         </td>
                         <td style="white-space:nowrap;">@(po.CreatedBy ?? "—")</td>
                         <td style="white-space:nowrap;">@(po.EffectiveAddedDate?.ToString("dd MMM yyyy") ?? "—")</td>
+                        <td style="white-space:nowrap;">@(po.ExpireDate?.ToString("dd MMM yyyy") ?? "—")</td>
                         <td>
                             @if (!string.IsNullOrEmpty(po.PODocumentUrl))
                             {
