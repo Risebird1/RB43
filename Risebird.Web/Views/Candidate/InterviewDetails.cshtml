@@ -524,7 +524,7 @@ a.rb-link:hover {
                                                                 }
                                                             } *@
 
-                                                            @if (Model.CandidateDetails.IsAIInterview && item.AadharVerificationId == 0)
+                                                            @if (Model.CandidateDetails.IsAIInterview && Model.CandidateDetails.IsAadhaarVerificationRequired && item.AadharVerificationId == 0)
                                                             {
                                                                 <div style="width:100%;margin:0 0 18px 0;padding:14px 16px;border:1px solid #dbe5ef;border-radius:10px;background:#ffffff;">
                                                                     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
@@ -551,6 +551,9 @@ a.rb-link:hover {
                                                             <div>
 
                                                                @if(Model.CandidateDetails.IsAIInterview){
+                                                                    var aiJoinInWindow = item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now;
+                                                                    var aiJoinUrl = Url.Action("Index", "AIInterview", new { sid = item.SessionId });
+                                                                    var aadharOk = !Model.CandidateDetails.IsAadhaarVerificationRequired || item.AadharVerificationId > 0;
                                                                     @if (Model.CandidateDetails.IsProctoring)
                                                                     {
                                                                         <div id="risebirdProctoringExtPanel" style="margin-bottom:14px;width:100%;border:1px solid #dbe5ef;background:#f7fbff;border-radius:10px;overflow:hidden;">
@@ -599,12 +602,14 @@ a.rb-link:hover {
                                                                                         </div>
                                                                                         <p style="margin:6px 0 0 0;font-size:13px;color:#4d647c;line-height:1.5;">The join meeting button will auto-enable when installation setup is complete.</p>
                                                                                     </div>
-                                                                                    <a style="color:#fff" id="btn_ai_Interview" role="button"
+                                                                                    <a id="btn_ai_Interview" role="button"
                                                                                        class="btn btn-primary click_herebtn disabled"
-                                                                                       style="text-decoration:none;display:inline-block;margin-top:0px;padding:10px 20px;line-height:1.4;opacity:0.55;cursor:not-allowed;pointer-events:none;min-width:260px;text-align:center;"
-                                                                                       data-join-url="@Url.Action("Index", "AIInterview" , new { sid=item.SessionId })"
-                                                                                       data-aadhar-ok="@(item.AadharVerificationId > 0 ? "true" : "false")"
+                                                                                       style="color:#fff;text-decoration:none;display:inline-block;margin-top:0px;padding:10px 20px;line-height:1.4;opacity:0.55;cursor:not-allowed;pointer-events:none;min-width:260px;text-align:center;"
+                                                                                       data-join-url="@aiJoinUrl"
+                                                                                       data-aadhar-ok="@(aadharOk ? "true" : "false")"
                                                                                        data-interview-id="@item.InterviewId"
+                                                                                       data-in-interview-window="@(aiJoinInWindow ? "true" : "false")"
+                                                                                       data-aadhaar-required="@(Model.CandidateDetails.IsAadhaarVerificationRequired ? "true" : "false")"
                                                                                        href="#"
                                                                                        target="_blank"
                                                                                        rel="opener"
@@ -651,8 +656,6 @@ a.rb-link:hover {
                                                                     }
                                                                     else
                                                                     {
-                                                                        var aiJoinInWindow = item.interviewDate.AddMinutes(-10) <= DateTime.Now && item.interviewDate.AddMinutes(60) >= DateTime.Now;
-                                                                        var aiJoinUrl = Url.Action("Index", "AIInterview", new { sid = item.SessionId });
                                                                         <div style="clear:both;margin: 0px 0px 0px 0px;font-size: 15px;font-weight: 400;">Meeting joining info</div>
 
 
@@ -676,10 +679,11 @@ a.rb-link:hover {
                                                                                    target="_blank"
                                                                                    rel="opener"
                                                                                    data-join-url="@aiJoinUrl"
-                                                                                   data-aadhar-ok="@(item.AadharVerificationId > 0 ? "true" : "false")"
+                                                                                   data-aadhar-ok="@(aadharOk ? "true" : "false")"
                                                                                    data-interview-id="@item.InterviewId"
                                                                                    data-no-proctoring="1"
                                                                                    data-in-interview-window="true"
+                                                                                   data-aadhaar-required="@(Model.CandidateDetails.IsAadhaarVerificationRequired ? "true" : "false")"
                                                                                    aria-disabled="false"
                                                                                    onclick="if (event.stopPropagation) event.stopPropagation(); return window.risebirdAiInterviewJoinAnchorClick(event);"><span><img class="zoom-icon" src="~/img/ai-assistance.png" alt="" /> AI Interview Link</span></a>
                                                                             </div>
@@ -694,10 +698,11 @@ a.rb-link:hover {
                                                                                    target="_blank"
                                                                                    rel="opener"
                                                                                    data-join-url="@aiJoinUrl"
-                                                                                   data-aadhar-ok="@(item.AadharVerificationId > 0 ? "true" : "false")"
+                                                                                   data-aadhar-ok="@(aadharOk ? "true" : "false")"
                                                                                    data-interview-id="@item.InterviewId"
                                                                                    data-no-proctoring="1"
                                                                                    data-in-interview-window="false"
+                                                                                   data-aadhaar-required="@(Model.CandidateDetails.IsAadhaarVerificationRequired ? "true" : "false")"
                                                                                    aria-disabled="true"
                                                                                    onclick="return false;"><span style="cursor: not-allowed;color:#fff!important"><img class="zoom-icon" src="~/img/ai-assistance.png" alt="" /> AI Interview Link</span></a>
                                                                             </div>
@@ -2225,12 +2230,16 @@ a.rb-link:hover {
         var extOk = !needExt || extInstalled || userAttested;
         var noProctoring = btn.getAttribute('data-no-proctoring') === '1';
         var inInterviewWindow = btn.getAttribute('data-in-interview-window') === 'true';
-        var canJoin = noProctoring
-            ? (verified && inInterviewWindow)
-            : (verified && extOk);
+        var canJoin = verified && inInterviewWindow && (noProctoring || extOk);
+        var aadhaarRequired = btn.getAttribute('data-aadhaar-required') === 'true';
 
         if (recheckBtn) {
-            recheckBtn.style.display = (extInstalled || window.risebirdInstallFlowStarted === true) ? 'inline-block' : 'none';
+            // Aadhaar off: show only after the Chrome Web Store icon is clicked (previous install flow).
+            // Aadhaar on: keep existing verified flow (store click or extension already detected).
+            var showRecheck = aadhaarRequired
+                ? (extInstalled || window.risebirdInstallFlowStarted === true)
+                : (window.risebirdInstallFlowStarted === true);
+            recheckBtn.style.display = showRecheck ? 'inline-block' : 'none';
         }
 
         if (statusEl) {
@@ -2330,6 +2339,8 @@ a.rb-link:hover {
         }
             var installUrl = 'https://chromewebstore.google.com/detail/risebird-proctoring-assis/nhjdihkojakanjldmdlddfppoamjkonh?authuser=0&hl=en';
             window.open(installUrl, '_blank', 'noopener,noreferrer');
+        window.risebirdInstallFlowStarted = true;
+        window.risebirdApplyAiJoinButtonState();
         return false;
     };
 
@@ -2420,7 +2431,10 @@ a.rb-link:hover {
         var btn = window.risebirdGetAiJoinButton();
         if (!btn) return;
         window.risebirdAadharJoinOk = btn.getAttribute('data-aadhar-ok') === 'true';
-        if (window.risebirdAadharJoinOk === true && risebirdShouldEnforceExtensionInstall()) {
+        var aadhaarRequiredOnInit = btn.getAttribute('data-aadhaar-required') === 'true';
+        // Only auto-start the recheck row for Aadhaar-on channels that already verified.
+        // Aadhaar-off must wait for the Chrome Web Store icon click, same as the previous install flow.
+        if (aadhaarRequiredOnInit && window.risebirdAadharJoinOk === true && risebirdShouldEnforceExtensionInstall()) {
             window.risebirdInstallFlowStarted = true;
         }
         window.risebirdApplyAiJoinButtonState();

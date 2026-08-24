@@ -2565,7 +2565,7 @@
                     ? "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"></rect><line x1=\"3\" y1=\"9\" x2=\"21\" y2=\"9\"></line></svg>"
                     : "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z\"></path><circle cx=\"15\" cy=\"12\" r=\"1.5\" fill=\"currentColor\"></circle></svg>");
                     <div class="incident sev-@sev" data-sev="@sev" data-id="@ev.Id">
-                        <div class="time">@ev.CreatedAtUtc.ToString("HH:mm:ss")</div>
+                        <div class="time">@IndiaTimeHelper.FormatIstForDisplay(ev.CreatedAtUtc, "HH:mm:ss")</div>
                         <div class="icon">@Html.Raw(iconSvg)</div>
                         <div class="title">@reason</div>
                         <div class="dur">—</div>
@@ -2576,6 +2576,8 @@
                     </div>
                     <div class="incident-detail">
                         <dl class="ev-grid">
+                            <dt>Time (IST)</dt>
+                            <dd>@IndiaTimeHelper.FormatIstForDisplay(ev.CreatedAtUtc)</dd>
                             <dt>Type</dt>
                             <dd>@kind</dd>
                             <dt>Host</dt>
@@ -2619,7 +2621,7 @@
                         @foreach (var shot in screenshotRows)
                         {
                             <a class="media-card" href="@shot.BlobUrl" target="_blank" rel="noopener">
-                                <img class="media-thumb" src="@shot.BlobUrl" alt="Screenshot at @shot.Event.CreatedAtUtc.ToString("HH:mm:ss")" loading="lazy" />
+                                <img class="media-thumb" src="@shot.BlobUrl" alt="Screenshot at @IndiaTimeHelper.FormatIstForDisplay(shot.Event.CreatedAtUtc, "HH:mm:ss")" loading="lazy" />
                                 <div class="media-meta">
                                     <div class="tt">Screenshot</div>
                                     <div class="st">@IndiaTimeHelper.FormatIstForDisplay(shot.Event.CreatedAtUtc)</div>

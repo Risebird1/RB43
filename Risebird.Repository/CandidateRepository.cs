@@ -875,7 +875,8 @@ namespace Risebird.Repository
                         _resultVM.CandidateDetails.CandidateVideo = !string.IsNullOrEmpty(dt.Rows[0]["CandidateVideo"].ToString()) ? dt.Rows[0]["CandidateVideo"].ToString() : null;
                         _resultVM.CandidateDetails.ConsentForm = !string.IsNullOrEmpty(dt.Rows[0]["ConsentForm"].ToString()) ? dt.Rows[0]["ConsentForm"].ToString() : null;
                         _resultVM.CandidateDetails.IsAIInterview = !string.IsNullOrEmpty(dt.Rows[0]["IsAIInterview"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsAIInterview"]) : false;
-                        _resultVM.CandidateDetails.IsProctoring = !string.IsNullOrEmpty(dt.Rows[0]["IsProctoring"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsProctoring"]) : false;
+                        _resultVM.CandidateDetails.IsProctoring = !dt.Columns.Contains("IsProctoring") || string.IsNullOrEmpty(dt.Rows[0]["IsProctoring"].ToString()) || Convert.ToBoolean(dt.Rows[0]["IsProctoring"]);
+                        _resultVM.CandidateDetails.IsAadhaarVerificationRequired = dt.Columns.Contains("IsAadhaarVerificationRequired") && !string.IsNullOrEmpty(dt.Rows[0]["IsAadhaarVerificationRequired"].ToString()) && Convert.ToBoolean(dt.Rows[0]["IsAadhaarVerificationRequired"]);
                         //_resultVM.CandidateDetails = !string.IsNullOrEmpty(dt.Rows[0][0].ToString()) ? Convert.ToInt32(dt.Rows[0][0]) : 0;
                     }
                     if (dataset.Tables.Count > 1)

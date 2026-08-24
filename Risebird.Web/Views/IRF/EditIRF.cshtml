@@ -388,7 +388,10 @@
                                                         @Html.CheckBoxFor(model => model.showChatBox, new { @id = "showChatBox" })
                                                         <label for="showChatBox" class="form-label">Show ChatBox</label>
                                                     </div>
-                                                    
+                                                    <div class="mb-0">
+                                                        @Html.CheckBoxFor(model => model.IsProctoring, new { @id = "IsProctoring" })
+                                                        <label for="IsProctoring" class="form-label">Proctoring Required</label>
+                                                    </div>
                                                 </div>
 
                                                  <div class="col-md-4 col-sm-4 pull-left">
