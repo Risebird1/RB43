@@ -17,6 +17,9 @@ namespace Risebird.Entities.ViewModel
     /// One question available to be dealt into a set.
     /// MaxTimeMinutes, MaxScore and Difficulty are optional in this schema and come back null when
     /// the underlying columns are absent, in which case set totals compute as 0.
+    ///
+    /// IsCodingQuestion feeds set creation so coding questions are spread across papers rather than
+    /// piling into one. It is false when the column is absent.
     /// </summary>
     public class AIQuestionPoolItemVM
     {
@@ -26,6 +29,7 @@ namespace Risebird.Entities.ViewModel
         public int? MaxTimeMinutes { get; set; }
         public int? MaxScore { get; set; }
         public string Difficulty { get; set; }
+        public bool IsCodingQuestion { get; set; }
     }
 
     /// <summary>

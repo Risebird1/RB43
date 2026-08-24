@@ -5300,6 +5300,7 @@ namespace Risebird.Business
                 if (saveResult.Success)
                 {
                     saveResult.SetCount = rows.Select(x => x.SetName).Distinct().Count();
+                    await LogCodingQuestionSpread(irfId, rows, pool);
                 }
 
                 return saveResult;
@@ -5308,6 +5309,43 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return new AIQuestionSetSaveResultVM { Success = false, Message = "Something went wrong while creating the question sets. Please try again." };
+            }
+        }
+
+        /// <summary>
+        /// A coding question makes a paper materially harder: the candidate opens an IDE against a
+        /// clock instead of answering aloud. Spreading them evenly therefore matters for comparing
+        /// candidates, but it cannot always be achieved -- one coding question cannot be spread over
+        /// three sets -- so this reports and never refuses. A gap of one is unavoidable whenever the
+        /// coding questions do not divide evenly by the number of sets; anything wider is worth a look
+        /// at the proposal or at the pool behind it.
+        /// </summary>
+        private async Task LogCodingQuestionSpread(int irfId, IList<AIQuestionSetItemTvpRow> rows,
+            AIQuestionSetPoolVM pool)
+        {
+            try
+            {
+                var codingIds = new HashSet<int>(pool.Questions.Where(q => q.IsCodingQuestion).Select(q => q.id));
+                if (codingIds.Count == 0)
+                    return;
+
+                var perSet = rows
+                    .GroupBy(r => r.SetName, StringComparer.Ordinal)
+                    .OrderBy(g => g.Key, StringComparer.Ordinal)
+                    .Select(g => g.Count(r => codingIds.Contains(r.QuestionId)))
+                    .ToList();
+
+                if (perSet.Count == 0 || perSet.Max() - perSet.Min() <= 1)
+                    return;
+
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                    $"Skill channel {irfId}: question sets were created with an uneven spread of coding questions "
+                    + $"({string.Join(", ", perSet)} per set, from {codingIds.Count} coding question(s) in the pool). "
+                    + "Candidates on different papers will sit materially different interviews.");
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
             }
         }
 
@@ -5491,7 +5529,8 @@ namespace Risebird.Business
                     title = q.Title,
                     maxTimeMinutes = q.MaxTimeMinutes,
                     maxScore = q.MaxScore,
-                    difficulty = q.Difficulty
+                    difficulty = q.Difficulty,
+                    isCodingQuestion = q.IsCodingQuestion
                 }).ToList();
 
                 // The Responses API takes stored-prompt variables as strings, so each one is
