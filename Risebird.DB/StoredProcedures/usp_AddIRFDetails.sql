@@ -70,6 +70,7 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @MeetingPlatform varchar(25),
 @showChatBox bit = null,  
 @generateTranscriptSummary bit = null, 
+@IsProctoring bit = null,
 @idIrf int output              
               
 AS              
@@ -122,7 +123,8 @@ Begin
 	   ,[AIInterviewType]
 	   ,[OpenAIPromptId]
 	   ,[MeetingPlatform]
-	   ,[IsTechQC])  
+	   ,[IsTechQC]
+	   ,[IsProctoring])  
        --,[InterviewDuration]  
        --,[IsFixedInterviewduration]  
        --,[FixedAmount])              
@@ -169,7 +171,8 @@ Begin
 	   @AIInterviewType,
 	   @OpenAIPromptId,
 	   @MeetingPlatform,
-	   @IsTechQC)  
+	   @IsTechQC,
+	   @IsProctoring)  
        --@InterviewDuration,  
        --@IsFixedInterviewduration,  
        --@FixedAmount)        
