@@ -168,14 +168,15 @@ thinnest parameter caps the channel.
    The question's skill **must** be one of the two rubric parameters. A question filed under
    anything else can never be dealt into a set.
 
-3. Mark **CON-3 only** as a coding question:
-   - Edit CON-3, tick the coding-question option.
+3. Mark **exactly two** questions as coding questions — **SD-3 and CON-3**, one under each rubric
+   parameter. Two, not one, so the spreading rule in TC-07 has something to spread. For each:
+   - Edit the question and tick the coding-question option.
    - Supply a **question gist** — this is mandatory. Marking a question as coding without a gist is
      refused, because the avatar narrates the gist instead of reading the code problem aloud.
    - Set a **time limit** (must be between 1 and 180 minutes; use 5 for testing).
 
-**Expected fixture:** 2 rubric parameters × 3 questions = **3 sets of 2 questions each**, with the
-coding question landing in exactly one of the three sets.
+**Expected fixture:** 2 rubric parameters × 3 questions = **3 sets of 2 questions each**, and 2
+coding questions to be spread across those 3 sets.
 
 ---
 
@@ -225,7 +226,16 @@ being reachable at all.
 | No reuse | All six questions appear, each in exactly one set — no question in two sets |
 | Ask order | Within each set, **System Design** is listed first, because it is first in the rubric — *not* alphabetical order |
 
-3. Confirm exactly one of the three sets contains the coding question **CON-3**. Note which set.
+3. **Coding questions are spread, not piled up.** With 2 coding questions and 3 sets, the correct
+   result is **two sets holding one coding question each, and one set holding none**. Note which
+   sets they are — TC-17 needs one of them.
+
+   A set holding **both** coding questions while another holds none is a defect: those two
+   candidates would sit materially different interviews, one writing code twice against a clock and
+   the other not at all. Report it as **high** severity and ask the developer to check the
+   application log, which records an uneven spread as a **Warning** naming the per-set counts.
+
+   A gap of one is unavoidable and correct here: 2 does not divide by 3.
 
 4. Each set shows **"assigned to 0 interview(s)"**.
 
@@ -366,7 +376,8 @@ the questions. This interview is now closed."**
 
 ### TC-17 — A coding question served from a set behaves normally
 
-1. Launch the interview for the candidate bound to the set containing **CON-3**.
+1. Launch the interview for a candidate bound to one of the sets that holds a coding question
+   (from TC-07 step 3).
 2. Reach the coding question.
 
 **Expected:**
@@ -669,6 +680,15 @@ JOIN AIQuestionSetItems i ON i.SetId = s.id
 WHERE s.IRFId = @ChannelId
 GROUP BY i.QuestionId
 HAVING COUNT(*) > 1;
+
+-- Coding questions per set. The highest and lowest counts must differ by at most 1 (TC-07).
+SELECT s.SetName, SUM(CASE WHEN ISNULL(q.IsCodingQuestion, 0) = 1 THEN 1 ELSE 0 END) AS CodingQuestions
+FROM AIQuestionSets s
+JOIN AIQuestionSetItems i ON i.SetId = s.id
+JOIN SkillChannelSampleQuestions q ON q.id = i.QuestionId
+WHERE s.IRFId = @ChannelId
+GROUP BY s.SetName
+ORDER BY s.SetName;
 ```
 
 ### A.4 — Which interview is on which paper?

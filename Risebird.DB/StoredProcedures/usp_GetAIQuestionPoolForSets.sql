@@ -16,6 +16,12 @@ GO
 -- detected at runtime and returned as NULL when absent (set totals then compute as 0). If a
 -- deployment names them differently, change the COL_LENGTH checks in THIS PROCEDURE and nothing
 -- else -- the C# and the save-time gate never read those columns.
+--
+-- IsCodingQuestion is guarded the same way, and for the same reason: the CREATE TABLE branch of
+-- Tables\SkillChannelSampleQuestions.sql does not include it, so an empty instance has no such
+-- column. It is reported so that set creation can spread coding questions across papers. A
+-- candidate who draws the paper holding every coding question sits a materially harder interview
+-- than one who draws none, which undercuts the comparability the sets exist to provide.
 Create PROCEDURE [dbo].[usp_GetAIQuestionPoolForSets]
 	@IRFId int
 AS
@@ -40,7 +46,8 @@ BEGIN
         SELECT CAST(NULL AS nvarchar(500)) AS SkillName, CAST(NULL AS int) AS ParameterOrder WHERE 1 = 0;
         SELECT CAST(NULL AS int) AS id, CAST(NULL AS nvarchar(500)) AS SkillName,
                CAST(NULL AS nvarchar(max)) AS Title, CAST(NULL AS int) AS MaxTimeMinutes,
-               CAST(NULL AS int) AS MaxScore, CAST(NULL AS nvarchar(100)) AS Difficulty WHERE 1 = 0;
+               CAST(NULL AS int) AS MaxScore, CAST(NULL AS nvarchar(100)) AS Difficulty,
+               CAST(0 AS bit) AS IsCodingQuestion WHERE 1 = 0;
         RETURN;
     END
 
@@ -70,13 +77,19 @@ BEGIN
     IF COL_LENGTH('dbo.SkillChannelSampleQuestions', 'Difficulty') IS NOT NULL
         SET @Difficulty = 'CAST(q.Difficulty AS nvarchar(100))';
 
+    DECLARE @IsCoding nvarchar(200) = 'CAST(0 AS bit)';
+
+    IF COL_LENGTH('dbo.SkillChannelSampleQuestions', 'IsCodingQuestion') IS NOT NULL
+        SET @IsCoding = 'CAST(ISNULL(q.IsCodingQuestion, 0) AS bit)';
+
     DECLARE @Sql nvarchar(max) = N'
     SELECT q.id,
            LTRIM(RTRIM(q.SkillName)) AS SkillName,
            q.Comment AS Title,
            ' + @MaxTimeMinutes + N' AS MaxTimeMinutes,
            ' + @MaxScore + N' AS MaxScore,
-           ' + @Difficulty + N' AS Difficulty
+           ' + @Difficulty + N' AS Difficulty,
+           ' + @IsCoding + N' AS IsCodingQuestion
     FROM SkillChannelSampleQuestions q
     WHERE q.IRFId = @IRFId
       AND q.SkillName IS NOT NULL
