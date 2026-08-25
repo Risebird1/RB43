@@ -303,7 +303,7 @@ namespace Risebird.Repository
                     if (dataset.Tables.Count > 0)
                     {
                         dt = dataset.Tables[0];
-                        if (dt.Rows != null)
+                        if (dt.Rows != null && dt.Rows.Count > 0)
                         {
 
                             _resultVM.InterviewId = !string.IsNullOrEmpty(dt.Rows[0]["InterviewId"].ToString()) ? Convert.ToInt32(dt.Rows[0]["InterviewId"]) : 0;
@@ -333,6 +333,8 @@ namespace Risebird.Repository
                             _resultVM.OpenAIPromptId = dt.Columns.Contains("OpenAIPromptId") && !string.IsNullOrEmpty(dt.Rows[0]["OpenAIPromptId"].ToString()) ? dt.Rows[0]["OpenAIPromptId"].ToString() : null;
                             _resultVM.showChatBox = !string.IsNullOrEmpty(dt.Rows[0]["showChatBox"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["showChatBox"]) : false;
                             _resultVM.isMultiLingual = !string.IsNullOrEmpty(dt.Rows[0]["isMultiLingual"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["isMultiLingual"]) : false;
+                            _resultVM.IsProctoring = !dt.Columns.Contains("IsProctoring") || string.IsNullOrEmpty(dt.Rows[0]["IsProctoring"].ToString()) || Convert.ToBoolean(dt.Rows[0]["IsProctoring"]);
+                            _resultVM.IsAadhaarVerificationRequired = dt.Columns.Contains("IsAadhaarVerificationRequired") && !string.IsNullOrEmpty(dt.Rows[0]["IsAadhaarVerificationRequired"].ToString()) && Convert.ToBoolean(dt.Rows[0]["IsAadhaarVerificationRequired"]);
                             _resultVM.AIResumeScreeningVerdict = !string.IsNullOrEmpty(dt.Rows[0]["AIResumeScreeningVerdict"].ToString()) ? dt.Rows[0]["AIResumeScreeningVerdict"].ToString() : null;
                             _resultVM.AIResumeScreeningScore = !string.IsNullOrEmpty(dt.Rows[0]["AIResumeScreeningScore"].ToString()) ? Convert.ToInt32(dt.Rows[0]["AIResumeScreeningScore"]) : 0;
 

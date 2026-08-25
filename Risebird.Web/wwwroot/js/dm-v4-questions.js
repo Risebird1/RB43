@@ -297,10 +297,34 @@
         });
     }
 
+    // A question already dealt into a question set cannot always be removed, and removing one that
+    // was dealt but never used discards the channel's sets. Both outcomes have to reach the user,
+    // so the response is reported rather than reloading the list regardless.
+    function reportDeleteOutcome(res) {
+        loadQuestions();
+
+        var message = (res && res.message) ? res.message : null;
+        var refused = !(res && res.success);
+
+        if (!message && !refused) return;
+
+        if (typeof swal === 'undefined') {
+            if (message) alert(message);
+            return;
+        }
+
+        if (refused) {
+            swal.fire({ title: 'Not removed', html: message || 'The question could not be removed.', type: 'error' });
+        }
+        else if (res.setsDiscarded > 0) {
+            swal.fire({ title: 'Question sets discarded', html: message, type: 'warning' });
+        }
+    }
+
     function deleteQuestion(id) {
         if (typeof swal === 'undefined') {
             if (confirm('Remove this question?')) {
-                $.post('/IRF/DeleteSkillChannelSampleQuestions', { questionid: id }, loadQuestions);
+                $.post('/IRF/DeleteSkillChannelSampleQuestions', { questionid: id }, reportDeleteOutcome);
             }
             return;
         }
@@ -313,9 +337,7 @@
             confirmButtonText: 'Yes, remove'
         }).then(function (result) {
             if (result && result.value) {
-                $.post('/IRF/DeleteSkillChannelSampleQuestions', { questionid: id }, function () {
-                    loadQuestions();
-                });
+                $.post('/IRF/DeleteSkillChannelSampleQuestions', { questionid: id }, reportDeleteOutcome);
             }
         });
     }

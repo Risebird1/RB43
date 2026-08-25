@@ -236,8 +236,6 @@ namespace Risebird.Repository.Interface
         Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy, string questionGist = null);
         Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id);
         Task<bool> DeleteSkillChannelSampleQuestions(int id);
-        Task<IEnumerable<AISuggestedQuestion>> GetQuestionBankForJD(int irfId);
-        Task<int> AddAIQuestionsWithAnswers(int irfId, IEnumerable<AISuggestedQuestion> questions, string createdBy);
         Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer, bool isCodingQuestion = false, int? codingTimeLimitInMinutes = null, string questionGist = null);
 
         /// <summary>
@@ -323,5 +321,14 @@ namespace Risebird.Repository.Interface
         Task<CallibrationCallVM> GetCalibrationMeetingDetailsById(int id);
         Task<bool> SaveCalibrationMeetingNotesById(int id, string Notes);
         Task<int?> GetLatestActiveIRFIdForAssessmentGroupAsync(int assessmentGroupId);
+
+        // AI interview question sets (preset channels only).
+        Task<AIQuestionSetPoolVM> GetAIQuestionPoolForSets(int irfId);
+        Task<AIQuestionSetSaveResultVM> SaveAIQuestionSets(int irfId, IList<AIQuestionSetItemTvpRow> items, string promptId, string promptVersion, string createdBy);
+        Task<IList<AIQuestionSetVM>> GetAIQuestionSetsByIRF(int irfId);
+        Task<AIQuestionSetAssignmentVM> AssignAIQuestionSetToInterview(int interviewId);
+        Task<AIQuestionSetToggleResultVM> SetAIQuestionSetsEnabled(int irfId, bool enabled);
+        Task<AIQuestionSetLaunchVM> GetLaunchSetForInterview(int interviewId);
+        Task<TechSkillComments> GetNextAIQuestionForInterview(int interviewId);
     }
 }

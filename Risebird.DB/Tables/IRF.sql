@@ -790,3 +790,25 @@ END
 
 
 GO
+
+-- Explicit opt-in for AI interview question sets. NULL and 0 both mean the channel does not deal
+-- papers, so the pre-feature question picker applies and behaviour is unchanged.
+--
+-- Before this column existed, adoption was inferred from the mere presence of rows in
+-- AIQuestionSets, which made "deliberately not using sets" indistinguishable from "set creation
+-- never succeeded" -- and the second of those silently serves every candidate the same questions.
+-- Migrations\Backfill_UseAIQuestionSets_ForChannelsWithSets.sql must be run after this so channels
+-- that already deal papers stay switched on.
+--
+-- Deliberately outside the branch above so it lands on a freshly created table as well as an
+-- existing one.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'UseAIQuestionSets'
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add UseAIQuestionSets bit NULL
+END
+GO

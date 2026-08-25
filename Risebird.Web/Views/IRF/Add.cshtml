@@ -1358,6 +1358,41 @@
                                                                 <i style="position:relative;right:65px;font-size:14px;" title="Tech QC For First Interview of Every interviewer" class="fa fa-info-circle"></i>
                                                             </div>
                                                         </div>
+                                                        <div class="col-md-4 col-sm-4 pull-left">
+                                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                                <div class="mdc-checkbox">
+                                                                    @Html.CheckBoxFor(m => m.IsAIInterview, new { @class = "mdc-checkbox__native-control", @id = "IsAIInterview", @onclick = "toggleInterviewType()" })
+                                                                    <div class="mdc-checkbox__background">
+                                                                        <svg class="mdc-checkbox__checkmark"
+                                                                             viewBox="0 0 24 24">
+                                                                            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                        </svg>
+                                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                                    </div>
+                                                                    <div class="mdc-checkbox__ripple"></div>
+                                                                </div>
+                                                                <label for="IsAIInterview" class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox" style="font-size: 13px; ">Is AI Interview</label>
+                                                                <i style="margin-right:-4vw" title="Interviews on this skill channel are conducted by the AI interviewer instead of a human panel." class="fa fa-info-circle"></i>
+                                                            </div>
+                                                            <div class="mb-0" id="InterviewTypeContainer" style="display:none;">
+                                                                <label for="AIInterviewType" class="form-label">AI Interview Type:</label>
+                                                                @Html.DropDownList("AIInterviewType", Html.GetEnumSelectList<AIInterviewTypeEnum>(), "Select", new { @class = "select-css form-control", @id = "AIInterviewType", @onchange = "toggleQuestionSetsVisibility()" })
+                                                                <label id="error_AIInterviewType" class="text-danger"></label>
+
+                                                                @* AI interview question sets. Read-only, unchecked and unbound to the model
+                                                                   on purpose: usp_AddIRFDetails does not write UseAIQuestionSets, so a channel
+                                                                   is always created switched off. Reflecting a template's value here would
+                                                                   promise a state the create path cannot deliver. *@
+                                                                <div class="form-group" id="UseAIQuestionSetsContainer" style="display:none;">
+                                                                    <div class="mandate">
+                                                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Question sets</label>
+                                                                    </div>
+                                                                    <input type="checkbox" id="UseAIQuestionSetsDisplay" disabled />
+                                                                    <label for="UseAIQuestionSetsDisplay" class="form-label">Not in use. Every candidate is asked this channel's questions in its standard order.</label>
+                                                                    <small class="text-muted">Read-only. A new channel has no questions yet, so its sets are created and switched on afterwards, from the Delivery Manager page for this channel.</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1517,6 +1552,57 @@
         }
     });
 
+</script>
+<script>
+    // Emitted from the enum rather than hard-coded, so renumbering AIInterviewTypeEnum
+    // cannot silently leave this comparing against the wrong interview type.
+    var presetAIInterviewType = '@((int)AIInterviewTypeEnum.Preset)';
+
+    function toggleInterviewType() {
+        var isChecked = document.getElementById("IsAIInterview").checked;
+        document.getElementById("InterviewTypeContainer").style.display = isChecked ? "block" : "none";
+        toggleQuestionSetsVisibility();
+    }
+
+    // Question sets exist only for preset AI interviews. For anything else the state is
+    // hidden rather than shown as "not in use", which would read as a setting someone
+    // could turn on.
+    function toggleQuestionSetsVisibility() {
+        var container = document.getElementById("UseAIQuestionSetsContainer");
+        if (!container) return;
+
+        var isAIInterview = document.getElementById("IsAIInterview").checked;
+        var typeElement = document.getElementById("AIInterviewType");
+        var isPreset = typeElement && String(typeElement.value) === presetAIInterviewType;
+
+        container.style.display = (isAIInterview && isPreset) ? "block" : "none";
+    }
+
+    // Restores the block when the form comes back with validation errors and the box
+    // was already ticked.
+    $(document).ready(function () {
+        toggleInterviewType();
+    });
+
+    // AIInterviewTypeEnum has no zero member, so an unpicked dropdown saves
+    // AIInterviewType = 0: an AI interview channel that is neither Adaptive nor Preset
+    // and that no runtime path knows how to serve.
+    function CheckAIInterviewType() {
+        var errorLabel = document.getElementById("error_AIInterviewType");
+        var checkbox = document.getElementById("IsAIInterview");
+        if (!checkbox || !errorLabel) return true;
+
+        var typeElement = document.getElementById("AIInterviewType");
+        var hasType = typeElement && typeElement.value !== "" && typeElement.value !== "0";
+
+        if (checkbox.checked && !hasType) {
+            errorLabel.innerHTML = "Please select an AI interview type.";
+            return false;
+        }
+
+        errorLabel.innerHTML = "";
+        return true;
+    }
 </script>
 <script type="text/javascript">
 
@@ -1689,7 +1775,10 @@
 
         function CheckConditions() {
             AssignPlansForClient();
-            return CheckTotalWeightage() && checkUniqueness();
+            // Evaluated before the chain below so its error label is always populated,
+            // rather than being skipped when an earlier check short-circuits.
+            var aiTypeOk = CheckAIInterviewType();
+            return CheckTotalWeightage() && checkUniqueness() && aiTypeOk;
         }
 
 

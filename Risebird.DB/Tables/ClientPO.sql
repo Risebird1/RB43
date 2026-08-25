@@ -72,3 +72,13 @@ BEGIN
     ALTER TABLE [dbo].[ClientPO] ADD [AddedDate] [datetime] NULL
 END
 GO
+
+-- Optional PO expiry date (editable; may be null)
+IF NOT EXISTS (
+    SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_NAME = N'ClientPO' AND COLUMN_NAME = N'ExpireDate'
+)
+BEGIN
+    ALTER TABLE [dbo].[ClientPO] ADD [ExpireDate] [datetime] NULL
+END
+GO

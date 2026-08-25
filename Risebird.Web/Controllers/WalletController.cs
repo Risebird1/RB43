@@ -640,7 +640,7 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> AddPOCreditPoints(int clientId, int creditAmount, int month, int year,
             DateTime? transactionDate = null, string transactionRefNumber = null, int? billingOwnerId = null, IFormFile poFile = null,
-            int? poQuantity = null, DateTime? addedDate = null)
+            int? poQuantity = null, DateTime? addedDate = null, DateTime? expireDate = null)
         {
             if (!IsFinanceOrAdmin()) return Json(new { success = false, message = "Unauthorized." });
 
@@ -671,7 +671,7 @@ namespace Risebird.Web.Controllers
                 clientId, billingType, client.BillingModel, creditAmount, month, year, emailid,
                 billingType == 1 ? billingOwnerId : null,
                 transactionRefNumber, invoicePDF, "PO credit registered — cash credit to be added later in wallet",
-                poQuantity, addedDate);
+                poQuantity, addedDate, expireDate);
 
             return Json(new
             {
@@ -685,7 +685,7 @@ namespace Risebird.Web.Controllers
         [Authorize]
         [HttpPost]
         public async Task<JsonResult> UpdateClientPO(int poId, int clientId, int creditAmount, int month, int year,
-            string transactionRefNumber = null, int? poQuantity = null, DateTime? addedDate = null, IFormFile poFile = null)
+            string transactionRefNumber = null, int? poQuantity = null, DateTime? addedDate = null, DateTime? expireDate = null, IFormFile poFile = null)
         {
             if (!IsFinanceOrAdmin()) return Json(new { success = false, message = "Unauthorized." });
             if (poId <= 0) return Json(new { success = false, message = "Invalid PO." });
@@ -717,7 +717,7 @@ namespace Risebird.Web.Controllers
 
             var result = await _walletService.UpdateClientPO(
                 poId, clientId, transactionRefNumber, creditAmount, month, year,
-                poQuantity, addedDate, invoicePDF, updateDocument);
+                poQuantity, addedDate, expireDate, invoicePDF, updateDocument);
 
             return Json(new
             {
@@ -729,7 +729,7 @@ namespace Risebird.Web.Controllers
         [Authorize]
         [HttpPost]
         public async Task<JsonResult> UploadPODocument(int clientId, int month, int year, string transactionRefNumber = null,
-            int? billingOwnerId = null, IFormFile poFile = null)
+            int? billingOwnerId = null, DateTime? expireDate = null, IFormFile poFile = null)
         {
             if (!IsFinanceOrAdmin()) return Json(new { success = false, message = "Unauthorized." });
 
@@ -760,7 +760,8 @@ namespace Risebird.Web.Controllers
             var poId = await _walletService.SaveClientPO(
                 clientId, billingType, client.BillingModel, 0, month, year, emailid,
                 billingType == 1 ? billingOwnerId : null,
-                transactionRefNumber, invoicePDF, "PO document uploaded without credit amount");
+                transactionRefNumber, invoicePDF, "PO document uploaded without credit amount",
+                null, null, expireDate);
 
             return Json(new
             {

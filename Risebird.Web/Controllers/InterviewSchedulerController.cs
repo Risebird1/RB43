@@ -10,6 +10,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using Risebird.Web.Extensions;
@@ -35,13 +36,18 @@ namespace Risebird.Web.Controllers
         private readonly string candidateDashboard;
         private readonly ITeamsMeetingHelper _iteamsMeetingHelper;
         private readonly IZohoMeetingHelper _zoho;
+        private readonly IIRFService _irfService;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public InterviewSchedulerController(IInterviewSchedulerService interviewSchedulerservice,
             IAzureStorageHelper azureStorageHelper, ISASUrlHelper sasUrlHelper,
             IConfiguration configuration, IRisebirdMeetingsRepository risebirdMeetings,
             INotificationHelper notificationHelper, IRBMeetHelper rBMeetHelper,
-            ICandidateService candidateService, IZoomHelper zoomHelper, ITeamsMeetingHelper iteamsMeetingHelper, IZohoMeetingHelper zoho)
+            ICandidateService candidateService, IZoomHelper zoomHelper, ITeamsMeetingHelper iteamsMeetingHelper, IZohoMeetingHelper zoho,
+            IIRFService irfService, IApplicationErrorLogger applicationErrorLogger)
         {
+            _irfService = irfService;
+            _applicationErrorLogger = applicationErrorLogger;
             _interviewSchedulerservice = interviewSchedulerservice;
             _azureStorageHelper = azureStorageHelper;
             _sasUrlHelper = sasUrlHelper;
@@ -58,6 +64,38 @@ namespace Risebird.Web.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        /// <summary>
+        /// Binds a freshly booked interview to a question set, so that a batch booked together
+        /// spreads across papers at booking time instead of only as candidates start.
+        ///
+        /// Deliberately non-fatal: binding also happens lazily on first launch, and that lazy path
+        /// stays the safety net, so a failure here must never fail the booking. The binding
+        /// procedure is idempotent and guards non-preset channels itself, which is what makes it
+        /// correct to call from both places.
+        /// </summary>
+        private async Task TryAssignAIQuestionSetAsync(int interviewId)
+        {
+            if (interviewId <= 0)
+                return;
+
+            try
+            {
+                // A set comes back only when the channel is switched on for sets and has them, so
+                // there is nothing to say for any other kind of channel.
+                var assignment = await _irfService.AssignAIQuestionSetToInterview(interviewId);
+                if (assignment?.SetId == null)
+                    return;
+
+                await _applicationErrorLogger.LogMessage(
+                    LogLevelInfo.Info,
+                    $"AI question set bound at booking time. InterviewId={interviewId}, SetId={assignment.SetId}");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
         }
 
         #region Scheduling Confirmation Page
@@ -589,6 +627,8 @@ namespace Risebird.Web.Controllers
 
                     if (result)
                     {
+                        await TryAssignAIQuestionSetAsync(interviewId);
+
                         _ = await _interviewSchedulerservice.UpdateSchedulingLinkDetails(model.Uniqueid);
                         await _interviewSchedulerservice.CheckFutureCancelInterview(model.InterviewChannelId, indianTime, model.Email);
                         string timezonevalue = string.Empty;
@@ -1414,6 +1454,8 @@ namespace Risebird.Web.Controllers
 
                     if (result)
                     {
+                        await TryAssignAIQuestionSetAsync(interviewId);
+
                         //Start: Cancel the previous meetings
                         var candidateuniqueid = await _interviewSchedulerservice.UpdateReSchedulingInterview(model.interviewid, indianTime, loginEmailid);
                         if (string.IsNullOrWhiteSpace(candidateuniqueid.Message))
@@ -1815,6 +1857,8 @@ namespace Risebird.Web.Controllers
 
                     if (result)
                     {
+                        await TryAssignAIQuestionSetAsync(interviewId);
+
                         _ = await _interviewSchedulerservice.UpdateSchedulingLinkDetails(model.Uniqueid);
                         await _interviewSchedulerservice.CheckFutureCancelInterview(model.InterviewChannelId, indianTime, model.Email);
                         string timezonevalue = string.Empty;

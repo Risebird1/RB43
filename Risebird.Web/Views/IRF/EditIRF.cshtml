@@ -45,7 +45,7 @@
                 <div class="mdc-card card bl-bg">
 
                     <div class="mdc-card-wrapper__text-section">
-                        <form action="/IRF/EditIRF" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid" id="irfForm" onsubmit="return CheckTotalWeightage()">
+                        <form action="/IRF/EditIRF" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid" id="irfForm" onsubmit="return CheckEditIRFConditions()">
 
 
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -316,17 +316,29 @@
                                                     </div>
                                                     <div class="mb-0" id="InterviewTypeContainer" style="display:none;">
                                                         <label for="InterviewType" class="form-label">AI Interview Type:</label>
-                                                        @Html.DropDownList("AIInterviewType", Html.GetEnumSelectList<AIInterviewTypeEnum>(), "Select", new { @class = "select-css form-control", @id = "AIInterviewType" })
+                                                        @Html.DropDownList("AIInterviewType", Html.GetEnumSelectList<AIInterviewTypeEnum>(), "Select", new { @class = "select-css form-control", @id = "AIInterviewType", @onchange = "toggleQuestionSetsVisibility()" })
                                                         <label id="error_AIInterviewType" class="text-danger"></label>
 
-                                                        <div class="form-group">
+                                                        @* AI interview question sets. Read-only on purpose, and carries no name
+                                                           attribute so it is never posted back: switching a channel on requires its
+                                                           sets to already exist, and switching it off must not move an interview
+                                                           that is already locked to a paper. Both rules live on the Delivery Manager
+                                                           page, which is therefore the only place this can be changed. *@
+                                                        <div class="form-group" id="UseAIQuestionSetsContainer" style="display:none;">
                                                             <div class="mandate">
-                                                                @Html.LabelFor(model => model.OpenAIAssistantId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Question sets</label>
                                                             </div>
-                                                            @Html.EditorFor(model => model.OpenAIAssistantId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                                            @Html.ValidationMessageFor(model => model.OpenAIAssistantId, "", new { @id = "error_OpenAIAssistantId", @class = "text-danger" })
-
+                                                            <input type="checkbox" id="UseAIQuestionSetsDisplay" disabled @(Model.UseAIQuestionSets ? "checked" : "") />
+                                                            <label for="UseAIQuestionSetsDisplay" class="form-label">
+                                                                @(Model.UseAIQuestionSets
+                                                                    ? "In use. Each interview is locked to one balanced set, so no two candidates in a batch answer the same paper."
+                                                                    : "Not in use. Every candidate is asked this channel's questions in its standard order.")
+                                                            </label>
+                                                            <small class="text-muted">Read-only here. Create the sets and switch this on from the Delivery Manager page for this channel.</small>
                                                         </div>
+
+                                                        @* Assistants API is retired; the stored value is round-tripped so the column keeps its legacy data. *@
+                                                        @Html.HiddenFor(model => model.OpenAIAssistantId)
                                                         <div class="form-group">
                                                             <div class="mandate">
                                                                 @Html.LabelFor(model => model.OpenAIPromptId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -376,7 +388,10 @@
                                                         @Html.CheckBoxFor(model => model.showChatBox, new { @id = "showChatBox" })
                                                         <label for="showChatBox" class="form-label">Show ChatBox</label>
                                                     </div>
-                                                    
+                                                    <div class="mb-0">
+                                                        @Html.CheckBoxFor(model => model.IsProctoring, new { @id = "IsProctoring" })
+                                                        <label for="IsProctoring" class="form-label">Proctoring Required</label>
+                                                    </div>
                                                 </div>
 
                                                  <div class="col-md-4 col-sm-4 pull-left">
@@ -2275,9 +2290,55 @@
     }
 </script>
 <script>
+    // Emitted from the enum rather than hard-coded, so renumbering AIInterviewTypeEnum
+    // cannot silently leave this comparing against the wrong interview type.
+    var presetAIInterviewType = '@((int)AIInterviewTypeEnum.Preset)';
+
     function toggleInterviewType() {
         var isChecked = document.getElementById("IsAIInterview").checked;
         document.getElementById("InterviewTypeContainer").style.display = isChecked ? "block" : "none";
+        toggleQuestionSetsVisibility();
+    }
+
+    // Question sets exist only for preset AI interviews. For anything else the state is
+    // hidden rather than shown as "not in use", which would read as a setting someone
+    // could turn on.
+    function toggleQuestionSetsVisibility() {
+        var container = document.getElementById("UseAIQuestionSetsContainer");
+        if (!container) return;
+
+        var isAIInterview = document.getElementById("IsAIInterview").checked;
+        var typeElement = document.getElementById("AIInterviewType");
+        var isPreset = typeElement && String(typeElement.value) === presetAIInterviewType;
+
+        container.style.display = (isAIInterview && isPreset) ? "block" : "none";
+    }
+
+    // AIInterviewTypeEnum has no zero member, so an unpicked dropdown saves
+    // AIInterviewType = 0: an AI interview channel that is neither Adaptive nor Preset
+    // and that no runtime path knows how to serve.
+    function CheckAIInterviewType() {
+        var errorLabel = document.getElementById("error_AIInterviewType");
+        var checkbox = document.getElementById("IsAIInterview");
+        if (!checkbox || !errorLabel) return true;
+
+        var typeElement = document.getElementById("AIInterviewType");
+        var hasType = typeElement && typeElement.value !== "" && typeElement.value !== "0";
+
+        if (checkbox.checked && !hasType) {
+            errorLabel.innerHTML = "Please select an AI interview type.";
+            return false;
+        }
+
+        errorLabel.innerHTML = "";
+        return true;
+    }
+
+    // The form's submit gate. CheckTotalWeightage is left exactly as it was so the
+    // existing weightage behaviour is untouched.
+    function CheckEditIRFConditions() {
+        var aiTypeOk = CheckAIInterviewType();
+        return CheckTotalWeightage() && aiTypeOk;
     }
 </script>
 <script>

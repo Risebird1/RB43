@@ -9676,7 +9676,12 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> DeleteSkillChannelSampleQuestions(int questionid)
         {
             var result = await _irfService.DeleteSkillChannelSampleQuestions(questionid);
-            return Json(new { success = result });
+            return Json(new
+            {
+                success = result?.Success ?? false,
+                message = result?.Message,
+                setsDiscarded = result?.SetsDiscarded ?? 0
+            });
         }
 
         [HttpPost]
@@ -13683,5 +13688,125 @@ namespace Risebird.Web.Controllers
 
             return result;
         }
+
+        #region AI interview question sets
+
+        /// <summary>
+        /// Question sets are confidential: they must never reach a candidate or a client. Operational
+        /// profiles and the channel's own SMEs may see them; everyone else is refused before any set
+        /// data is read. usp_GetAIQuestionSetsByIRF enforces the preset check independently, so a
+        /// non-preset channel returns nothing regardless of who is asking.
+        /// </summary>
+        private async Task<bool> AuthorizeAIQuestionSetAccessAsync(int irfId)
+        {
+            if (irfId <= 0) return false;
+            var profile = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            if (DeliveryHeadInstructionViewMode.IsClientRoleProfile(profile)) return false;
+            return await AuthorizeDhiMutatingAccessAsync(irfId);
+        }
+
+        /// <summary>
+        /// Deals the channel's questions into balanced sets. The grouping is proposed by a stored
+        /// prompt and then re-validated twice -- here in C# and again inside the save transaction --
+        /// before anything is written.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> CreateAIQuestionSets(int irfid)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+                if (!await AuthorizeAIQuestionSetAccessAsync(irfid))
+                    return Json(new { success = false, message = "Forbidden" });
+
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+
+                var result = await _irfService.CreateAIQuestionSets(irfid, emailid);
+                if (result == null)
+                    return Json(new { success = false, message = "The question sets could not be created. Please try again." });
+
+                return Json(new { success = result.Success, message = result.Message, setCount = result.SetCount });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "The question sets could not be created. Please try again." });
+            }
+        }
+
+        /// <summary>
+        /// Switches this channel's question sets on or off. Same authorization as the rest of the
+        /// section: a client or a candidate must never learn whether a channel deals papers, let alone
+        /// change it.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> SetAIQuestionSetsEnabled(int irfid, bool enabled)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+                if (!await AuthorizeAIQuestionSetAccessAsync(irfid))
+                    return Json(new { success = false, message = "Forbidden" });
+
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+
+                var result = await _irfService.SetAIQuestionSetsEnabled(irfid, enabled, emailid);
+                if (result == null)
+                    return Json(new { success = false, message = "This setting could not be changed. Please try again." });
+
+                return Json(new { success = result.Success, enabled = result.Enabled, message = result.Message });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "This setting could not be changed. Please try again." });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetAIQuestionSetsByIRF(int irfid)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+                if (!await AuthorizeAIQuestionSetAccessAsync(irfid))
+                    return Json(new { success = false, message = "Forbidden" });
+
+                var sets = await _irfService.GetAIQuestionSetsByIRF(irfid) ?? new List<AIQuestionSetVM>();
+
+                return Json(new
+                {
+                    success = true,
+                    sets = sets.Select(s => new
+                    {
+                        setId = s.SetId,
+                        setName = s.SetName,
+                        totalMinutes = s.TotalMinutes,
+                        totalPoints = s.TotalPoints,
+                        promptId = s.PromptId,
+                        promptVersion = s.PromptVersion,
+                        assignedInterviews = s.AssignedInterviews,
+                        // Already in ask order. Do not re-sort.
+                        questions = s.Items.Select(i => new
+                        {
+                            itemId = i.ItemId,
+                            questionId = i.QuestionId,
+                            skillName = i.SkillName,
+                            questionText = i.QuestionText
+                        })
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "The question sets could not be loaded. Please try again." });
+            }
+        }
+
+        #endregion
     }
 }

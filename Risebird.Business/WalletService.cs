@@ -61,11 +61,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<int> SaveClientPO(int clientId, int billingType, int billingModel, decimal poCreditAmount, int poMonth, int poYear, string createdBy, int? billingOwnerId = null, string poNumber = null, string poDocumentUrl = null, string remarks = null, int? poQuantity = null, DateTime? addedDate = null)
+        public async Task<int> SaveClientPO(int clientId, int billingType, int billingModel, decimal poCreditAmount, int poMonth, int poYear, string createdBy, int? billingOwnerId = null, string poNumber = null, string poDocumentUrl = null, string remarks = null, int? poQuantity = null, DateTime? addedDate = null, DateTime? expireDate = null)
         {
             try
             {
-                return await _walletRepository.SaveClientPO(clientId, billingType, billingModel, poCreditAmount, poMonth, poYear, createdBy, billingOwnerId, poNumber, poDocumentUrl, remarks, poQuantity, addedDate);
+                return await _walletRepository.SaveClientPO(clientId, billingType, billingModel, poCreditAmount, poMonth, poYear, createdBy, billingOwnerId, poNumber, poDocumentUrl, remarks, poQuantity, addedDate, expireDate);
             }
             catch (Exception ex)
             {
@@ -334,11 +334,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> UpdateClientPO(int poId, int clientId, string poNumber, decimal poCreditAmount, int poMonth, int poYear, int? poQuantity, DateTime? addedDate, string poDocumentUrl = null, bool updateDocument = false)
+        public async Task<bool> UpdateClientPO(int poId, int clientId, string poNumber, decimal poCreditAmount, int poMonth, int poYear, int? poQuantity, DateTime? addedDate, DateTime? expireDate, string poDocumentUrl = null, bool updateDocument = false)
         {
             try
             {
-                return await _walletRepository.UpdateClientPO(poId, clientId, poNumber, poCreditAmount, poMonth, poYear, poQuantity, addedDate, poDocumentUrl, updateDocument);
+                return await _walletRepository.UpdateClientPO(poId, clientId, poNumber, poCreditAmount, poMonth, poYear, poQuantity, addedDate, expireDate, poDocumentUrl, updateDocument);
             }
             catch (Exception ex)
             {
