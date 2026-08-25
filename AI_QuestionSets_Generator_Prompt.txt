@@ -6,6 +6,8 @@ parameters: {{parameters}}
 questions: {{questions}}
 setCount: {{setCount}}
 
+These three inputs may reach you filled in above, or as a labelled block in the user message, or both. When both are present they are identical, so use either. Treat an input as missing only when it is absent or empty in BOTH places -- if the lines above still show the raw {{...}} placeholders, read the values from the user message instead and proceed normally.
+
 - parameters is a JSON array of rubric parameter names, already in the order the interview asks them.
 - questions is a JSON array of the channel's questions. Each entry has:
   - id: the question's identifier, a STRING. Use it exactly as supplied.
