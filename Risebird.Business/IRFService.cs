@@ -3959,11 +3959,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy)
+        public async Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy, string questionGist = null)
         {
             try
             {
-                return await _irfRepository.AddAIGeneratedSampleQuestion(irfId, skillName, comment, expectedAnswer, generatedPayload, createdBy);
+                return await _irfRepository.AddAIGeneratedSampleQuestion(irfId, skillName, comment, expectedAnswer, generatedPayload, createdBy, questionGist);
             }
             catch (Exception e)
             {
@@ -4031,6 +4031,32 @@ namespace Risebird.Business
                     Success = false,
                     Message = "The question could not be removed."
                 };
+            }
+        }
+
+        public async Task<IEnumerable<AISuggestedQuestion>> GetQuestionBankForJD(int irfId)
+        {
+            try
+            {
+                return await _irfRepository.GetQuestionBankForJD(irfId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<int> AddAIQuestionsWithAnswers(int irfId, IEnumerable<AISuggestedQuestion> questions, string createdBy)
+        {
+            try
+            {
+                return await _irfRepository.AddAIQuestionsWithAnswers(irfId, questions, createdBy);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return -1;
             }
         }
 

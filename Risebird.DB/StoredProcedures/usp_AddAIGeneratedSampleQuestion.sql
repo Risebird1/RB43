@@ -15,15 +15,16 @@ CREATE PROCEDURE [dbo].[usp_AddAIGeneratedSampleQuestion]
     @Comment nvarchar(max),
     @ExpectedAnswer nvarchar(max),
     @GeneratedPayload nvarchar(max),
-    @CreatedBy varchar(150)
+    @CreatedBy varchar(150),
+    @QuestionGist nvarchar(max) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
 
     INSERT INTO SkillChannelSampleQuestions
-        (IRFId, Skill, SkillName, Comment, ExpectedAnswer, GeneratedPayload, IsGeneratedByAi, CreatedBy)
+        (IRFId, Skill, SkillName, Comment, ExpectedAnswer, GeneratedPayload, IsGeneratedByAi, CreatedBy, QuestionGist)
     VALUES
-        (@IRFId, 0, @SkillName, @Comment, @ExpectedAnswer, @GeneratedPayload, 1, @CreatedBy)
+        (@IRFId, 0, @SkillName, @Comment, @ExpectedAnswer, @GeneratedPayload, 1, @CreatedBy, @QuestionGist)
 
     SELECT SCOPE_IDENTITY() AS NewId
 END
