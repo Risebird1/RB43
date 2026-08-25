@@ -23,7 +23,7 @@ BEGIN
         BEGIN TRAN
 
         INSERT INTO dbo.SkillChannelSampleQuestions
-            ([IRFId], [Skill], [Comment], [CreatedBy], [SkillName], [IdealAnswer], [ExpectedAnswer], [IsAIGenerated])
+            ([IRFId], [Skill], [Comment], [CreatedBy], [SkillName], [IdealAnswer], [ExpectedAnswer], [IsAIGenerated], [QuestionGist])
         SELECT
             t.IRFId,
             ISNULL(t.Skill, 0),
@@ -32,7 +32,8 @@ BEGIN
             t.SkillName,
             t.IdealAnswer,
             t.IdealAnswer,
-            1
+            1,
+            t.Comment
         FROM @AIQuestionAnswersBulkData t
         WHERE t.IRFId = @IRFId
           AND t.Comment IS NOT NULL

@@ -159,7 +159,7 @@ namespace Risebird.Business.Interface
         Task<bool> UpdateFormat(int irf, string format);
         Task<IRFInstructionDetailsVM> GetFormatanddifficultylevel(int irf);
         Task<bool> AddIRFSampleQuestions(TechSkillComments skillComments);
-        Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy);
+        Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy, string questionGist = null);
         Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer, bool isCodingQuestion = false, int? codingTimeLimitInMinutes = null, string questionGist = null);
 
         /// <summary>

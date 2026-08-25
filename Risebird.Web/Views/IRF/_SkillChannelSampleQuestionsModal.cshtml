@@ -22,6 +22,7 @@
                                                     <th class="table_heading b-right">Skill Name</th>
                                                     <th class="table_heading b-right">Questions</th>
                                                     <th class="table_heading b-right">Expected Answer</th>
+                                                    <th class="table_heading b-right">Question gist (spoken by AI avatar)</th>
                                                     <th class="table_heading b-right text-center">Coding Question</th>
                                                     <th colspan="2" class="table_heading text-center">Action</th>
                                                 </tr>
@@ -47,6 +48,19 @@
                                                                 <label id="expectedAnswerError_0" class="text-danger"></label>
                                                             </div>
                                                         </td>
+                                                        <td class="b-right">
+                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                <div class="talktext">
+                                                                    <textarea id="SkillCollection_0__QuestionGist" name="SkillCollection[0].QuestionGist"
+                                                                              class="form-control coding-gist" style="width:100%" rows="3"
+                                                                              placeholder="What the AI avatar should speak"
+                                                                              title="The AI avatar reads this aloud. Required for coding questions because source code cannot be narrated."
+                                                                              onblur="checkQuestionLength(this.id)"></textarea>
+                                                                </div>
+                                                                <small class="text-muted">Spoken by the AI avatar. Required when the question is coding.</small>
+                                                                <label id="gistError_0" class="text-danger gist-error"></label>
+                                                            </div>
+                                                        </td>
                                                         <td class="b-right text-center">
                                                             <label style="font-weight:normal;">
                                                                 <input type="checkbox" id="SkillCollection_0__IsCodingQuestion" name="SkillCollection[0].IsCodingQuestion" value="true" onchange="toggleCodingTimeLimit(this)" />
@@ -57,16 +71,7 @@
                                                                        id="SkillCollection_0__CodingTimeLimitInMinutes" name="SkillCollection[0].CodingTimeLimitInMinutes"
                                                                        class="form-control" style="width:100%;" disabled />
                                                             </div>
-                                                            <div style="margin-top:6px;display:none;" class="coding-gist-wrap">
-                                                                <textarea id="SkillCollection_0__QuestionGist" name="SkillCollection[0].QuestionGist"
-                                                                          class="form-control coding-gist" style="width:100%;" rows="3"
-                                                                          placeholder="Question gist in plain language"
-                                                                          title="The AI avatar reads this out instead of the code, which cannot be narrated"
-                                                                          onblur="checkQuestionLength(this.id)"></textarea>
-                                                                <small class="text-muted">Spoken by the AI avatar in place of the code.</small>
-                                                            </div>
                                                             <label id="codingError_0" class="text-danger coding-error"></label>
-                                                            <label id="gistError_0" class="text-danger gist-error"></label>
                                                         </td>
                                                         <td class="text-center action-area">
                                                             <div class="sample-btn">
@@ -143,7 +148,6 @@
         $tr.find("textarea[type=text]").val("");
         $tr.find("input[type=checkbox]").prop("checked", false);
         $tr.find("input[type=number]").val("").prop("disabled", true);
-        $tr.find(".coding-gist-wrap").hide();
         //$tr.find("textarea[type=text]").removeProp("readonly");
         $tr.find("input[type=hidden]").val('@Model.CreatedBy');
         var rowCount = $('#QuestionsNewTable tr').length;
@@ -250,22 +254,19 @@
 </script>
 
 <script>
-    // The time limit and the gist only apply to coding questions, so they stay hidden
-    // and the time limit stays disabled (and unposted) otherwise
+    // Time limit only applies to coding questions, so it stays disabled (and unposted) otherwise.
+    // Question gist stays visible for every row — it is what the AI avatar speaks.
     function toggleCodingTimeLimit(checkbox) {
         var $row = $(checkbox).closest('tr');
         var timeLimitInput = $row.find('input[type=number]');
-        var $gistWrap = $row.find('.coding-gist-wrap');
         if (checkbox.checked) {
             timeLimitInput.prop('disabled', false);
             if (!timeLimitInput.val()) {
                 timeLimitInput.val(15);
             }
-            $gistWrap.show();
         }
         else {
             timeLimitInput.prop('disabled', true).val('');
-            $gistWrap.hide();
             $row.find('label.coding-error').html('');
             $row.find('label.gist-error').html('');
         }

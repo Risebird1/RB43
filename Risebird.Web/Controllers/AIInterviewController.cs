@@ -3096,13 +3096,13 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "Question text is required before generating a video." });
                 }
 
-                // Source code narrated verbatim is unintelligible, so a coding question is
-                // voiced from its plain-language gist instead of the question text.
-                var narrationText = questionDetails.IsCodingQuestion
+                // Prefer the gist whenever it exists — that is what the avatar should speak.
+                // Coding questions always need a gist because source code cannot be narrated.
+                var narrationText = !string.IsNullOrWhiteSpace(questionDetails.QuestionGist)
                     ? questionDetails.QuestionGist
                     : questionDetails.Comment;
 
-                if (string.IsNullOrWhiteSpace(narrationText))
+                if (questionDetails.IsCodingQuestion && string.IsNullOrWhiteSpace(questionDetails.QuestionGist))
                 {
                     return Json(new { success = false, message = "Add a question gist in plain language before generating a video. The avatar reads the gist for coding questions, not the code." });
                 }

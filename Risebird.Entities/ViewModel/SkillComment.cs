@@ -24,9 +24,9 @@ namespace Risebird.Entities.ViewModel
         public int? CodingTimeLimitInMinutes { get; set; }
 
         /// <summary>
-        /// Plain-language summary of a coding question, narrated by the Synthesia avatar in
-        /// place of the question text. Code read aloud verbatim is unintelligible.
-        /// Mandatory for coding questions, unused for every other type.
+        /// Plain-language text the Synthesia avatar speaks. Required for coding questions
+        /// (code cannot be narrated). Optional for other questions; when present it is used
+        /// instead of the question text.
         /// </summary>
         public string QuestionGist { get; set; }
 

@@ -197,11 +197,16 @@
                     var isCoding = q.isCodingQuestion || q.IsCodingQuestion;
                     var codingTimeLimit = q.codingTimeLimitInMinutes || q.CodingTimeLimitInMinutes;
                     var gist = q.questionGist || q.QuestionGist || '';
+                    var isAiQuestion = q.isAIGenerated || q.IsAIGenerated || q.isGeneratedByAi || q.IsGeneratedByAi;
+                    // AI-generated rows often have no saved gist yet; the avatar would speak the question.
+                    if (!$.trim(gist) && !isCoding && $.trim(comment)) {
+                        gist = comment;
+                    }
 
                     html += '<div class="dm-v4-question-row" data-question-id="' + qid + '">';
                     html += '<div class="dm-v4-question-col">';
                     html += '<div class="dm-v4-question-label">Question Q' + (qi + 1);
-                    if (q.isAIGenerated || q.IsAIGenerated) {
+                    if (isAiQuestion) {
                         html += ' <span class="dm-v4-badge dm-v4-badge--ai">AI</span>';
                     }
                     html += '</div>';
@@ -209,6 +214,13 @@
                     if ($.trim(idealAnswer)) {
                         html += '<details class="dm-v4-ideal-answer"><summary>Ideal Answer (AI)</summary><div class="dm-v4-ideal-answer__body">' + escapeHtml(idealAnswer) + '</div></details>';
                     }
+
+                    html += '<div class="dm-v4-question-gist">';
+                    html += '<div class="dm-v4-question-label">Question gist <span class="dm-v4-question-gist-hint">spoken by the AI avatar</span></div>';
+                    html += '<textarea class="dm-v4-coding-gist" rows="2" data-id="' + qid + '"';
+                    html += ' placeholder="What the AI avatar should speak. Required for coding questions.">' + escapeHtml(gist) + '</textarea>';
+                    html += '<div class="dm-v4-question-gist-warning" hidden>Write the gist to finish enabling coding mode.</div>';
+                    html += '</div>';
 
                     // Coding mode is editable in place so questions added earlier, or generated from
                     // the rubric, can be turned into coding questions without being retyped.
@@ -218,14 +230,6 @@
                     html += ' value="' + (codingTimeLimit ? escapeHtml(String(codingTimeLimit)) : '15') + '"';
                     html += ' title="Time limit in minutes"' + (isCoding ? '' : ' disabled') + ' />';
                     html += '<span class="dm-v4-coding-mins-label"' + (isCoding ? '' : ' style="opacity:.5"') + '>min</span>';
-                    html += '</div>';
-
-                    // Code cannot be narrated, so the avatar voices this plain-language gist instead
-                    html += '<div class="dm-v4-question-gist"' + (isCoding ? '' : ' hidden') + '>';
-                    html += '<div class="dm-v4-question-label">Question gist <span class="dm-v4-question-gist-hint">spoken by the AI avatar instead of the code</span></div>';
-                    html += '<textarea class="dm-v4-coding-gist" rows="2" data-id="' + qid + '"';
-                    html += ' placeholder="Describe the coding task in plain language…">' + escapeHtml(gist) + '</textarea>';
-                    html += '<div class="dm-v4-question-gist-warning" hidden>Write the gist to finish enabling coding mode.</div>';
                     html += '</div>';
 
                     html += '</div><div class="dm-v4-question-col">';
@@ -380,7 +384,7 @@
             if (res && res.success) {
                 showQuestionToast(isCoding
                     ? 'Saved. Candidates will get the code editor for this question.'
-                    : 'Saved. This is a normal question again.', 'success');
+                    : 'Saved.', 'success');
             } else {
                 // Put the checkbox back so the panel never claims a state the server rejected
                 $cb.prop('checked', !isCoding);
@@ -471,7 +475,6 @@
             var $cb = $(this);
             var $row = $cb.closest('.dm-v4-question-row');
             var $mins = $row.find('.dm-v4-coding-mins');
-            var $gistWrap = $row.find('.dm-v4-question-gist');
             var $gist = $row.find('.dm-v4-coding-gist');
             var isCoding = $cb.prop('checked');
 
@@ -480,7 +483,6 @@
             if (isCoding && !$mins.val()) {
                 $mins.val(15);
             }
-            $gistWrap.prop('hidden', !isCoding);
 
             // A coding question has no narratable text without a gist, so hold the save
             // until one is written rather than letting the server reject the toggle.

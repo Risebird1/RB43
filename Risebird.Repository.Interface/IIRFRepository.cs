@@ -233,7 +233,7 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateFormat(int irf, string format);
         Task<IRFInstructionDetailsVM> GetFormatanddifficultylevel(int irf);
         Task<bool> AddIRFSampleQuestions(TechSkillComments obj);
-        Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy);
+        Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy, string questionGist = null);
         Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id);
         Task<bool> DeleteSkillChannelSampleQuestions(int id);
         Task<IEnumerable<AISuggestedQuestion>> GetQuestionBankForJD(int irfId);

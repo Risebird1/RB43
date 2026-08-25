@@ -21,6 +21,9 @@ namespace Risebird.Entities.Data.OpenAIModels
         public string SkillName { get; set; }
         [JsonPropertyName("idealAnswer")]
         public string IdealAnswer { get; set; }
+
+        [JsonPropertyName("questionGist")]
+        public string QuestionGist { get; set; }
     }
 
     public class AIQuestionAnswerRequest

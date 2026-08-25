@@ -48,5 +48,50 @@ namespace Risebird.Entities.ViewModel
             }
             return false;
         }
+
+        public const string QuestionGistInstruction =
+            "For every question also return question_gist: 1 to 3 spoken sentences the AI interview avatar will read aloud to the candidate. No source code, no markdown, no bullet lists. Plain conversational English only.";
+
+        /// <summary>
+        /// Spoken text for the AI avatar. Prefers an AI-supplied gist, otherwise a code-stripped
+        /// version of the question so generated rows still have something to display and narrate.
+        /// </summary>
+        public static string BuildSpokenQuestionGist(string question, string aiGist = null)
+        {
+            var fromAi = NormalizeSpokenText(aiGist);
+            if (!string.IsNullOrEmpty(fromAi))
+                return fromAi;
+
+            var fromQuestion = NormalizeSpokenText(StripCodeForSpeech(question));
+            if (!string.IsNullOrEmpty(fromQuestion))
+                return fromQuestion;
+
+            var fallback = NormalizeSpokenText(question);
+            return string.IsNullOrEmpty(fallback)
+                ? null
+                : fallback;
+        }
+
+        private static string StripCodeForSpeech(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return text;
+
+            var stripped = System.Text.RegularExpressions.Regex.Replace(
+                text, "```[\\s\\S]*?```", " ", System.Text.RegularExpressions.RegexOptions.Multiline);
+            stripped = System.Text.RegularExpressions.Regex.Replace(stripped, "`[^`]+`", " ");
+            return stripped;
+        }
+
+        private static string NormalizeSpokenText(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return null;
+
+            var normalized = System.Text.RegularExpressions.Regex.Replace(text.Trim(), @"\s+", " ");
+            if (normalized.Length > 1500)
+                normalized = normalized.Substring(0, 1500).TrimEnd() + "…";
+            return normalized;
+        }
     }
 }

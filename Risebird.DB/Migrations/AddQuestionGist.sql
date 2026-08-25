@@ -123,6 +123,79 @@ BEGIN
 END
 GO
 
+-- ---------------------------------------------------------------------
+-- 6. AI-generated questions persist the spoken gist
+-- ---------------------------------------------------------------------
+CREATE OR ALTER PROCEDURE [dbo].[usp_AddAIGeneratedSampleQuestion]
+    @IRFId int,
+    @SkillName nvarchar(500),
+    @Comment nvarchar(max),
+    @ExpectedAnswer nvarchar(max),
+    @GeneratedPayload nvarchar(max),
+    @CreatedBy varchar(150),
+    @QuestionGist nvarchar(max) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO SkillChannelSampleQuestions
+        (IRFId, Skill, SkillName, Comment, ExpectedAnswer, GeneratedPayload, IsGeneratedByAi, CreatedBy, QuestionGist)
+    VALUES
+        (@IRFId, 0, @SkillName, @Comment, @ExpectedAnswer, @GeneratedPayload, 1, @CreatedBy, @QuestionGist)
+
+    SELECT SCOPE_IDENTITY() AS NewId
+END
+GO
+
+CREATE OR ALTER PROCEDURE [dbo].[usp_AddAIQuestionsWithAnswers]
+(
+    @AIQuestionAnswersBulkData AS [dbo].[AddAIQuestionAnswers_TableType] READONLY,
+    @IRFId int
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    BEGIN TRY
+        BEGIN TRAN
+
+        INSERT INTO dbo.SkillChannelSampleQuestions
+            ([IRFId], [Skill], [Comment], [CreatedBy], [SkillName], [IdealAnswer], [ExpectedAnswer], [IsAIGenerated], [QuestionGist])
+        SELECT
+            t.IRFId,
+            ISNULL(t.Skill, 0),
+            t.Comment,
+            t.CreatedBy,
+            t.SkillName,
+            t.IdealAnswer,
+            t.IdealAnswer,
+            1,
+            t.Comment
+        FROM @AIQuestionAnswersBulkData t
+        WHERE t.IRFId = @IRFId
+          AND t.Comment IS NOT NULL
+          AND LTRIM(RTRIM(t.Comment)) <> ''
+          AND NOT EXISTS (
+              SELECT 1
+              FROM dbo.SkillChannelSampleQuestions existing
+              WHERE existing.IRFId = t.IRFId
+                AND existing.Comment = t.Comment
+          );
+
+        SELECT @@ROWCOUNT AS InsertedCount;
+
+        COMMIT TRAN
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION
+        DECLARE @Message varchar(MAX) = ERROR_MESSAGE(),
+            @Severity int = ERROR_SEVERITY(),
+            @State smallint = ERROR_STATE()
+        RAISERROR (@Message, @Severity, @State)
+    END CATCH
+END
+GO
+
 /* ---------------------------------------------------------------------
    Verification — every row should report OK.
    --------------------------------------------------------------------- */
@@ -143,6 +216,12 @@ UNION ALL SELECT 'usp_UpdateSkillChannelSampleQuestion accepts @questionGist',
             THEN 'OK' ELSE 'STALE' END
 UNION ALL SELECT 'usp_SetSampleQuestionCodingMode accepts @questionGist',
        CASE WHEN OBJECT_DEFINITION(OBJECT_ID(N'usp_SetSampleQuestionCodingMode')) LIKE '%questionGist%'
+            THEN 'OK' ELSE 'STALE' END
+UNION ALL SELECT 'usp_AddAIGeneratedSampleQuestion writes QuestionGist',
+       CASE WHEN OBJECT_DEFINITION(OBJECT_ID(N'usp_AddAIGeneratedSampleQuestion')) LIKE '%QuestionGist%'
+            THEN 'OK' ELSE 'STALE' END
+UNION ALL SELECT 'usp_AddAIQuestionsWithAnswers writes QuestionGist',
+       CASE WHEN OBJECT_DEFINITION(OBJECT_ID(N'usp_AddAIQuestionsWithAnswers')) LIKE '%QuestionGist%'
             THEN 'OK' ELSE 'STALE' END
 UNION ALL SELECT 'Coding questions still missing a gist',
        CAST((SELECT COUNT(*) FROM SkillChannelSampleQuestions

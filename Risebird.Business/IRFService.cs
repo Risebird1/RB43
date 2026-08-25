@@ -3955,11 +3955,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy)
+        public async Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy, string questionGist = null)
         {
             try
             {
-                return await _irfRepository.AddAIGeneratedSampleQuestion(irfId, skillName, comment, expectedAnswer, generatedPayload, createdBy);
+                return await _irfRepository.AddAIGeneratedSampleQuestion(irfId, skillName, comment, expectedAnswer, generatedPayload, createdBy, questionGist);
             }
             catch (Exception e)
             {

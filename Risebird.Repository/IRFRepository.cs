@@ -8773,27 +8773,50 @@ WHERE irf.IsDeleted = 0
             return false;
         }
 
-        public async Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy)
+        public async Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy, string questionGist = null)
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                return await InsertAiGeneratedSampleQuestion(irfId, skillName, comment, expectedAnswer, generatedPayload, createdBy, questionGist, includeGist: true);
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                try
                 {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@IRFId", irfId);
-                    parameters.Add("@SkillName", skillName);
-                    parameters.Add("@Comment", comment);
-                    parameters.Add("@ExpectedAnswer", expectedAnswer);
-                    parameters.Add("@GeneratedPayload", generatedPayload);
-                    parameters.Add("@CreatedBy", createdBy);
-                    var result = await SqlMapper.QueryFirstOrDefaultAsync<dynamic>(con, "usp_AddAIGeneratedSampleQuestion", parameters, commandType: CommandType.StoredProcedure);
-                    return result != null ? (int)(decimal)result.NewId : 0;
+                    var newId = await InsertAiGeneratedSampleQuestion(irfId, skillName, comment, expectedAnswer, generatedPayload, createdBy, questionGist, includeGist: false);
+                    if (newId > 0 && !string.IsNullOrWhiteSpace(questionGist))
+                        await SetSampleQuestionCodingMode(newId, false, null, questionGist);
+                    return newId;
+                }
+                catch (Exception retryEx)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, retryEx);
+                    return 0;
                 }
             }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return 0;
+            }
+        }
+
+        private async Task<int> InsertAiGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy, string questionGist, bool includeGist)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@IRFId", irfId);
+                parameters.Add("@SkillName", skillName);
+                parameters.Add("@Comment", comment);
+                parameters.Add("@ExpectedAnswer", expectedAnswer);
+                parameters.Add("@GeneratedPayload", generatedPayload);
+                parameters.Add("@CreatedBy", createdBy);
+                if (includeGist)
+                    parameters.Add("@QuestionGist", string.IsNullOrWhiteSpace(questionGist) ? (object)DBNull.Value : questionGist);
+                var result = await SqlMapper.QueryFirstOrDefaultAsync<dynamic>(con, "usp_AddAIGeneratedSampleQuestion", parameters, commandType: CommandType.StoredProcedure);
+                return result != null ? (int)(decimal)result.NewId : 0;
             }
         }
 

@@ -9612,6 +9612,12 @@ namespace Risebird.Web.Controllers
                             return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
                         }
 
+                        if (!string.IsNullOrEmpty(question.QuestionGist) && question.QuestionGist.Length > MaxSampleQuestionLength)
+                        {
+                            TempData["SuccessErrorMessageQuestions"] = $"The question gist must not exceed {MaxSampleQuestionLength} characters.";
+                            return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
+                        }
+
                         if (!question.IsCodingQuestion)
                         {
                             question.CodingTimeLimitInMinutes = null;
@@ -9631,12 +9637,6 @@ namespace Risebird.Web.Controllers
                             TempData["SuccessErrorMessageQuestions"] = "A coding question needs a gist. The avatar narrates the gist because code cannot be read aloud.";
                             return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
                         }
-
-                        if (question.QuestionGist.Length > MaxSampleQuestionLength)
-                        {
-                            TempData["SuccessErrorMessageQuestions"] = $"The question gist must not exceed {MaxSampleQuestionLength} characters.";
-                            return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
-                        }
                     }
 
                     if (await _irfService.AddIRFSampleQuestions(model))
@@ -9647,7 +9647,7 @@ namespace Risebird.Web.Controllers
                     {
                         TempData["SuccessErrorMessageQuestions"] = "Failed to save Question(s)!";
                     }
-                    return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
+                    return Redirect($"/IRF/DeliveryHeadInstruction?irfid={model.IRFId}#sample-questions");
                 }
                 else
                 {
@@ -9783,6 +9783,7 @@ namespace Risebird.Web.Controllers
                                 SkillName = q.SkillName,
                                 ExpectedAnswer = q.IdealAnswer,
                                 IdealAnswer = q.IdealAnswer,
+                                QuestionGist = DmIvQuestionRubricHelper.BuildSpokenQuestionGist(q.Question, q.QuestionGist),
                                 CreatedBy = emailId,
                                 IsAIGenerated = true
                             })
@@ -9930,7 +9931,7 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "No rubric skills found for this channel." });
 
                 var rubricPrompt = DmIvQuestionRubricHelper.BuildRubricPromptSection(irfVm.SkillCollection);
-                var rubricInput = $"Role: {irfVm.IRFId}\nInterview Type: Technical\n\n{rubricPrompt}";
+                var rubricInput = $"Role: {irfVm.IRFId}\nInterview Type: Technical\n\n{rubricPrompt}\n\n{DmIvQuestionRubricHelper.QuestionGistInstruction}";
 
                 if (useVoiceTranscript)
                 {
@@ -13671,11 +13672,13 @@ namespace Risebird.Web.Controllers
                     ?? q["expected_answer"]?.ToString()
                     ?? q["strong_answer"]?.ToString()
                     ?? q["answer"]?.ToString() ?? "";
+                var aiGist = (q["question_gist"] ?? q["questionGist"] ?? q["spoken_question"] ?? q["avatar_script"])?.ToString();
+                var questionGist = DmIvQuestionRubricHelper.BuildSpokenQuestionGist(question, aiGist);
                 var payload = q.ToString(Newtonsoft.Json.Formatting.None);
 
-                var newId = await _irfService.AddAIGeneratedSampleQuestion(irfId, matchedSkill, question, strongAnswer, payload, emailid);
+                var newId = await _irfService.AddAIGeneratedSampleQuestion(irfId, matchedSkill, question, strongAnswer, payload, emailid, questionGist);
                 if (newId > 0)
-                    result.Saved.Add(new { id = newId, skillName = matchedSkill, comment = question, expectedAnswer = strongAnswer, isGeneratedByAi = true });
+                    result.Saved.Add(new { id = newId, skillName = matchedSkill, comment = question, expectedAnswer = strongAnswer, questionGist, isGeneratedByAi = true, isAIGenerated = true });
             }
 
             return result;
