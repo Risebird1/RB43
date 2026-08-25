@@ -5533,21 +5533,39 @@ namespace Risebird.Business
                     isCodingQuestion = q.IsCodingQuestion
                 }).ToList();
 
+                var questionsJson = JsonConvert.SerializeObject(questionsPayload);
+                var parametersJson = JsonConvert.SerializeObject(parameters.Select(x => x.SkillName).ToList());
+
                 // The Responses API takes stored-prompt variables as strings, so each one is
                 // serialised before it goes in.
                 var variables = new Dictionary<string, string>
                 {
-                    ["questions"] = JsonConvert.SerializeObject(questionsPayload),
-                    ["parameters"] = JsonConvert.SerializeObject(parameters.Select(x => x.SkillName).ToList()),
+                    ["questions"] = questionsJson,
+                    ["parameters"] = parametersJson,
                     ["setCount"] = setCount.ToString()
                 };
 
+                // The same three values also go in the user message. A stored-prompt variable only
+                // reaches the model where the prompt declares a matching placeholder, so a prompt saved
+                // without them substitutes nothing and the model answers that its input is missing.
+                // Sending both keeps set creation working whichever way the stored prompt is configured.
+                var input =
+                    "Group the supplied questions into balanced interview sets and generate the output in json.\n\n"
+                    + $"parameters: {parametersJson}\n"
+                    + $"questions: {questionsJson}\n"
+                    + $"setCount: {setCount}";
+
+                // Runs on the model saved with the stored prompt. Overriding it with OpenAI:ResponsesModel
+                // is rejected outright when the prompt carries reasoning settings, because those are
+                // model-specific.
                 var runResult = await _openAIResponsesHelper.CreateJsonResponseAsync(
-                    "Group the supplied questions into balanced interview sets.",
+                    input,
                     "AIQuestionSetCreation",
                     promptId,
                     promptVersion,
-                    variables);
+                    variables,
+                    maxOutputTokens: null,
+                    useStoredPromptModel: true);
 
                 var rawText = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value;
                 if (string.IsNullOrWhiteSpace(rawText))
