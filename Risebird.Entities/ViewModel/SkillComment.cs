@@ -24,10 +24,22 @@ namespace Risebird.Entities.ViewModel
         public int? CodingTimeLimitInMinutes { get; set; }
 
         /// <summary>
-        /// Plain-language summary of a coding question, narrated by the Synthesia avatar in
-        /// place of the question text. Code read aloud verbatim is unintelligible.
-        /// Mandatory for coding questions, unused for every other type.
+        /// Plain-language text the Synthesia avatar speaks. Required for coding questions
+        /// (code cannot be narrated). Optional for other questions; when present it is used
+        /// instead of the question text.
         /// </summary>
         public string QuestionGist { get; set; }
+
+        /// <summary>
+        /// AI-written model answer stored when a question is saved from the HM
+        /// "AI Suggested Questions" flow. Null for manually added questions.
+        /// </summary>
+        public string IdealAnswer { get; set; }
+
+        /// <summary>
+        /// True when the row was saved from the JD question-bank suggestion flow.
+        /// Distinct from <see cref="IsGeneratedByAi"/>, which marks rubric "Generate with AI" rows.
+        /// </summary>
+        public bool IsAIGenerated { get; set; }
     }
 }

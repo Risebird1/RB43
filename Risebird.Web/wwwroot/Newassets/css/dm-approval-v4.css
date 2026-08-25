@@ -1324,6 +1324,30 @@
     border: 1px solid #bfdbfe;
 }
 
+.dm-v4-badge--ai {
+    background: #ede9fe;
+    color: #5b21b6;
+    border: 1px solid #ddd6fe;
+}
+
+.dm-v4-ideal-answer {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--dm-text-mid, #475569);
+}
+
+.dm-v4-ideal-answer summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: #5b21b6;
+}
+
+.dm-v4-ideal-answer__body {
+    margin-top: 6px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
 .dm-v4-btn--sm {
     padding: 5px 10px;
     font-size: 12px;
@@ -5759,6 +5783,15 @@ button.dm-v4-money-pill {
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
+}
+
+#PopupDetailsModal.modal-bg {
+    z-index: 10070 !important;
+    padding-top: 40px;
+}
+#PopupDetailsModal .modal-dialog.modal-lg {
+    max-width: 1100px !important;
+    width: 94%;
 }
 
 .dm-v4-iv-why-btn {
