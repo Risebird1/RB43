@@ -8781,27 +8781,50 @@ WHERE irf.IsDeleted = 0
             return false;
         }
 
-        public async Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy)
+        public async Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy, string questionGist = null)
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                return await InsertAiGeneratedSampleQuestion(irfId, skillName, comment, expectedAnswer, generatedPayload, createdBy, questionGist, includeGist: true);
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                try
                 {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@IRFId", irfId);
-                    parameters.Add("@SkillName", skillName);
-                    parameters.Add("@Comment", comment);
-                    parameters.Add("@ExpectedAnswer", expectedAnswer);
-                    parameters.Add("@GeneratedPayload", generatedPayload);
-                    parameters.Add("@CreatedBy", createdBy);
-                    var result = await SqlMapper.QueryFirstOrDefaultAsync<dynamic>(con, "usp_AddAIGeneratedSampleQuestion", parameters, commandType: CommandType.StoredProcedure);
-                    return result != null ? (int)(decimal)result.NewId : 0;
+                    var newId = await InsertAiGeneratedSampleQuestion(irfId, skillName, comment, expectedAnswer, generatedPayload, createdBy, questionGist, includeGist: false);
+                    if (newId > 0 && !string.IsNullOrWhiteSpace(questionGist))
+                        await SetSampleQuestionCodingMode(newId, false, null, questionGist);
+                    return newId;
+                }
+                catch (Exception retryEx)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, retryEx);
+                    return 0;
                 }
             }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return 0;
+            }
+        }
+
+        private async Task<int> InsertAiGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy, string questionGist, bool includeGist)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@IRFId", irfId);
+                parameters.Add("@SkillName", skillName);
+                parameters.Add("@Comment", comment);
+                parameters.Add("@ExpectedAnswer", expectedAnswer);
+                parameters.Add("@GeneratedPayload", generatedPayload);
+                parameters.Add("@CreatedBy", createdBy);
+                if (includeGist)
+                    parameters.Add("@QuestionGist", string.IsNullOrWhiteSpace(questionGist) ? (object)DBNull.Value : questionGist);
+                var result = await SqlMapper.QueryFirstOrDefaultAsync<dynamic>(con, "usp_AddAIGeneratedSampleQuestion", parameters, commandType: CommandType.StoredProcedure);
+                return result != null ? (int)(decimal)result.NewId : 0;
             }
         }
 
@@ -8851,6 +8874,86 @@ WHERE irf.IsDeleted = 0
                 Success = false,
                 Message = "The question could not be removed."
             };
+        }
+
+        public async Task<IEnumerable<Risebird.Entities.Data.OpenAIModels.AISuggestedQuestion>> GetQuestionBankForJD(int irfId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<Risebird.Entities.Data.OpenAIModels.AISuggestedQuestion>(con, "usp_GetQuestionBankForJD", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<int> AddAIQuestionsWithAnswers(int irfId, IEnumerable<Risebird.Entities.Data.OpenAIModels.AISuggestedQuestion> questions, string createdBy)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add("IRFId", typeof(int));
+                    dt.Columns.Add("Skill", typeof(int));
+                    dt.Columns.Add("Comment", typeof(string));
+                    dt.Columns.Add("CreatedBy", typeof(string));
+                    dt.Columns.Add("SkillName", typeof(string));
+                    dt.Columns.Add("IdealAnswer", typeof(string));
+
+                    foreach (var item in questions ?? Enumerable.Empty<Risebird.Entities.Data.OpenAIModels.AISuggestedQuestion>())
+                    {
+                        if (item == null || string.IsNullOrWhiteSpace(item.Question))
+                            continue;
+                        dt.Rows.Add(
+                            irfId,
+                            0,
+                            item.Question,
+                            createdBy,
+                            item.SkillName,
+                            string.IsNullOrWhiteSpace(item.IdealAnswer) ? (object)DBNull.Value : item.IdealAnswer);
+                    }
+
+                    if (dt.Rows.Count == 0)
+                        return 0;
+
+                    SqlCommand cmd = new SqlCommand("usp_AddAIQuestionsWithAnswers", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    var tvp = new SqlParameter("@AIQuestionAnswersBulkData", SqlDbType.Structured)
+                    {
+                        TypeName = "dbo.AddAIQuestionAnswers_TableType",
+                        Value = dt
+                    };
+                    cmd.Parameters.Add(tvp);
+                    cmd.Parameters.Add(new SqlParameter("@IRFId", SqlDbType.Int) { Value = irfId });
+                    con.Open();
+                    var scalar = await cmd.ExecuteScalarAsync();
+                    if (scalar == null || scalar == DBNull.Value)
+                        return dt.Rows.Count;
+                    return Convert.ToInt32(scalar);
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return -1;
         }
 
         public async Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer, bool isCodingQuestion = false, int? codingTimeLimitInMinutes = null, string questionGist = null)

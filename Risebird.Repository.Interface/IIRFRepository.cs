@@ -1,4 +1,5 @@
 using Risebird.Entities.Data;
+using Risebird.Entities.Data.OpenAIModels;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -232,9 +233,11 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateFormat(int irf, string format);
         Task<IRFInstructionDetailsVM> GetFormatanddifficultylevel(int irf);
         Task<bool> AddIRFSampleQuestions(TechSkillComments obj);
-        Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy);
+        Task<int> AddAIGeneratedSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, string generatedPayload, string createdBy, string questionGist = null);
         Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id);
         Task<SampleQuestionDeleteResultVM> DeleteSkillChannelSampleQuestions(int id);
+        Task<IEnumerable<AISuggestedQuestion>> GetQuestionBankForJD(int irfId);
+        Task<int> AddAIQuestionsWithAnswers(int irfId, IEnumerable<AISuggestedQuestion> questions, string createdBy);
         Task<bool> UpdateSkillChannelSampleQuestion(int id, string comment, string expectedAnswer, bool isCodingQuestion = false, int? codingTimeLimitInMinutes = null, string questionGist = null);
 
         /// <summary>
