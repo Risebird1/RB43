@@ -72,6 +72,69 @@
         font-size: 13px;
     }
     .wallet-page .stat-pill strong { color: #333; }
+
+    /* Per-owner wallets — compact layout (base journey table −2px) */
+    .owner-wallets-table {
+        font-size: 12px;
+        margin-bottom: 0;
+        table-layout: auto;
+    }
+    .owner-wallets-table th,
+    .owner-wallets-table td {
+        width: auto !important;
+        text-align: inherit;
+    }
+    .owner-wallets-table thead th {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .2px;
+        padding: 6px 8px !important;
+        vertical-align: middle !important;
+        line-height: 1.25;
+        background: #e8eaf6 !important;
+        color: #3949ab !important;
+        border-color: #c5cae9 !important;
+        white-space: normal;
+    }
+    .owner-wallets-table tbody td {
+        font-size: 12px;
+        padding: 6px 8px !important;
+        vertical-align: middle !important;
+    }
+    .owner-wallets-table .col-owner { min-width: 120px; text-align: left !important; }
+    .owner-wallets-table .col-email { min-width: 140px; max-width: 180px; text-align: left !important; font-size: 11px; color: #555; word-break: break-all; }
+    .owner-wallets-table .col-num { text-align: right !important; white-space: nowrap; min-width: 72px; }
+    .owner-wallets-table .col-state { white-space: nowrap; min-width: 88px; text-align: center !important; }
+    .owner-wallets-table .col-actions { white-space: nowrap; min-width: 200px; text-align: center !important; }
+    .owner-wallets-table .badge {
+        font-size: 9px !important;
+        padding: 3px 6px !important;
+        min-width: 72px !important;
+    }
+    .owner-wallets-table .btn-owner-act {
+        font-size: 10px;
+        padding: 2px 6px;
+        margin: 1px;
+        line-height: 1.3;
+    }
+    .owner-wallets-table .po-low-tag {
+        display: inline-block;
+        margin-left: 4px;
+        background: #e65100;
+        color: #fff;
+        font-size: 9px;
+        font-weight: 700;
+        padding: 1px 5px;
+        border-radius: 8px;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+    .owner-wallets-formula {
+        font-size: 10px;
+        color: #888;
+        margin: 0 0 10px;
+    }
 </style>
 
 <div class="main-panel wallet-page" id="main-panel">
@@ -247,11 +310,17 @@
 
                     @if (Model.SupportsPO && Model.PORecords.Any())
                     {
-                        <h5 style="margin:20px 0 12px;font-weight:600;">PO Register — @Model.DetailsPeriodLabel</h5>
+                        <h5 style="margin:20px 0 12px;font-weight:600;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                            PO Register — @Model.DetailsPeriodLabel
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="btnBulkExpire" style="display:none;" onclick="OpenBulkExpireModal()">
+                                <i class="fa fa-calendar"></i> Bulk Update Expire Date
+                            </button>
+                        </h5>
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered journey">
                                 <thead>
                                     <tr>
+                                        <th style="width:32px;"><input type="checkbox" id="chkSelectAllPO" title="Select all" /></th>
                                         <th>PO Number</th>
                                         @if (Model.IsAllDetailsView) { <th>Period</th> }
                                         @if (Model.BillingType == 1) { <th>Billing Owner</th> }
@@ -260,7 +329,7 @@
                                         <th class="text-right">Cash Received</th>
                                         <th class="text-right">Pending Cash</th>
                                         <th>Added Date</th>
-                                        <th>Expire Date</th>
+                                        <th>Expire Date / Status</th>
                                         <th>Document</th>
                                         <th class="text-center">Actions</th>
                                     </tr>
@@ -269,7 +338,13 @@
                                     @foreach (var po in Model.PORecords)
                                     {
                                         var addedDateVal = po.EffectiveAddedDate;
-                                        <tr>
+                                        var rowExpired = po.IsExpired;
+                                        <tr class="@(rowExpired ? "table-danger" : po.IsExpiringSoon ? "table-warning" : "")">
+                                            <td class="text-center">
+                                                <input type="checkbox" class="chk-po-row" value="@po.id"
+                                                       data-addeddate="@(addedDateVal?.ToString("yyyy-MM-dd") ?? "")"
+                                                       data-month="@po.POMonth" data-year="@po.POYear" />
+                                            </td>
                                             <td>@(string.IsNullOrEmpty(po.PONumber) ? "—" : po.PONumber)</td>
                                             @if (Model.IsAllDetailsView)
                                             {
@@ -284,7 +359,17 @@
                                             <td class="text-right">@(po.CashCreditReceived > 0 ? "₹ " + po.CashCreditReceived.ToString("N0") : "—")</td>
                                             <td class="text-right">@(po.POCreditAmount > 0 ? "₹ " + po.PendingCashCredit.ToString("N0") : "—")</td>
                                             <td>@(addedDateVal?.ToString("dd MMM yyyy") ?? "—")</td>
-                                            <td>@(po.ExpireDate?.ToString("dd MMM yyyy") ?? "—")</td>
+                                            <td>
+                                                @if (po.ExpireDate.HasValue)
+                                                {
+                                                    <span>@po.ExpireDate.Value.ToString("dd MMM yyyy")</span>
+                                                    <span class="badge @po.ExpiryStatusCss" style="margin-left:4px;font-size:10px;">@po.ExpiryStatusDesc</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>—</span>
+                                                }
+                                            </td>
                                             <td>
                                                 @if (!string.IsNullOrEmpty(po.PODocumentUrl))
                                                 {
@@ -336,90 +421,88 @@
                     <!-- Per-owner wallets -->
                     @if (Model.BillingType == 1 && Model.OwnerWallets.Any())
                     {
-                        <h5 style="margin:20px 0 12px;font-weight:600;">Per-Owner Wallets — @Model.DetailsPeriodLabel</h5>
+                        <h5 style="margin:20px 0 4px;font-weight:600;font-size:16px;">Per-Owner Wallets — @Model.DetailsPeriodLabel</h5>
+                        <p class="owner-wallets-formula">
+                            <strong>Remaining</strong> = PO Opening Balance + PO Credit − Consumed − Expired Not Consumed
+                            &nbsp;|&nbsp; Opening = carry-forward before period &nbsp;|&nbsp; Expired Not Consumed = lost credit on expired POs (FIFO)
+                        </p>
                         <div class="table-responsive">
                             @{
                                 var _highConsIds   = ViewBag.HighConsumptionOwnerIds as System.Collections.Generic.HashSet<int?> ?? new System.Collections.Generic.HashSet<int?>();
                                 var _openingBals   = ViewBag.POOpeningBalances as System.Collections.Generic.Dictionary<int, decimal>;
                                 var _showOpening   = _openingBals != null && _openingBals.Any(kv => kv.Value != 0m);
+                                var _showExpiredNc = Model.SupportsPO;
                             }
-                            <table class="table table-striped table-bordered journey">
+                            <table class="table table-striped table-bordered journey owner-wallets-table">
                                 <thead>
                                     <tr>
-                                        <th>Billing Owner</th>
-                                        <th>Email</th>
+                                        <th class="col-owner">Billing Owner</th>
+                                        <th class="col-email">Email</th>
                                         @if (_showOpening)
                                         {
-                                            <th class="text-right" title="Total PO credit registered in months before the selected period (carry-forward pool)">
-                                                PO Opening Balance
-                                            </th>
+                                            <th class="col-num" title="PO credit carry-forward before selected period">PO Opening<br/>Balance</th>
                                         }
-                                        <th class="text-right">PO Credit</th>
-                                        <th class="text-right">Consumed</th>
-                                        <th class="text-right" title="Opening Balance + PO Credit − Consumed">Remaining</th>
-                                        <th class="text-right">Cash</th>
-                                        <th>State</th>
-                                        <th class="text-center">Actions</th>
+                                        <th class="col-num">PO<br/>Credit</th>
+                                        <th class="col-num" title="Wallet debits in selected period">Consumed</th>
+                                        @if (_showExpiredNc)
+                                        {
+                                            <th class="col-num" title="Unconsumed credit on expired POs (FIFO)">Expired Not<br/>Consumed</th>
+                                        }
+                                        <th class="col-num" title="PO Opening Balance + PO Credit − Consumed − Expired Not Consumed">Remaining</th>
+                                        <th class="col-num">Cash</th>
+                                        <th class="col-state">State</th>
+                                        <th class="col-actions">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach (var owner in Model.OwnerWallets)
                                     {
                                         var _isHighConsumption = _highConsIds.Contains((int?)owner.BillingOwnerId);
-                                        var _openingBal    = _openingBals != null && _openingBals.TryGetValue(owner.BillingOwnerId, out var _ob) ? _ob : (decimal?)null;
-                                        var _hasOpeningBal = _openingBal.HasValue && _openingBal.Value != 0m;
-                                        if (owner.POCredit == 0 && owner.Consumed == 0 && owner.Remaining == 0 && owner.CashBalance == 0 && !_hasOpeningBal) { continue; }
+                                        var _hasOpeningBal = owner.POOpeningBalance != 0m;
+                                        var _remaining = owner.UsableRemaining;
+                                        if (owner.POCredit == 0 && owner.Consumed == 0 && _remaining == 0 && owner.CashBalance == 0 && owner.ExpiredNotConsumed == 0 && !_hasOpeningBal) { continue; }
+                                        var _showRemaining = owner.POCredit != 0 || owner.Consumed != 0 || owner.ExpiredNotConsumed != 0 || _hasOpeningBal;
+                                        var _remColor = _remaining < 0 ? "#c62828" : _remaining > 0 ? "#1565c0" : "inherit";
                                         <tr class="@(_isHighConsumption ? "table-warning" : "")">
-                                            <td>
+                                            <td class="col-owner">
                                                 @owner.BillingOwnerName
                                                 @if (_isHighConsumption)
                                                 {
-                                                    <span title="Latest PO is ≥ 90% consumed — consider adding a new PO"
-                                                          style="display:inline-block;margin-left:5px;background:#e65100;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;vertical-align:middle;white-space:nowrap;">
-                                                        ⚠ PO Low
-                                                    </span>
+                                                    <span class="po-low-tag" title="Latest PO is ≥ 90% consumed — consider adding a new PO">⚠ PO Low</span>
                                                 }
                                             </td>
-                                            <td>@owner.BillingOwnerEmail</td>
+                                            <td class="col-email">@owner.BillingOwnerEmail</td>
                                             @if (_showOpening)
                                             {
-                                                var _obColor = !_openingBal.HasValue || _openingBal.Value == 0m
-                                                    ? "inherit"
-                                                    : _openingBal.Value < 0 ? "#c62828" : "#5c6bc0";
-                                                <td class="text-right" style="color:@_obColor;font-weight:600;">
-                                                    @if (_hasOpeningBal)
-                                                    {
-                                                        @("₹ " + _openingBal!.Value.ToString("N0"))
-                                                    }
-                                                    else
-                                                    {
-                                                        <span style="color:#aaa;">—</span>
-                                                    }
+                                                var _obColor = owner.POOpeningBalance == 0m ? "inherit" : owner.POOpeningBalance < 0 ? "#c62828" : "#5c6bc0";
+                                                <td class="col-num" style="color:@_obColor;font-weight:600;">
+                                                    @(_hasOpeningBal ? "₹ " + owner.POOpeningBalance.ToString("N0") : "—")
                                                 </td>
                                             }
-                                            <td class="text-right">@(owner.POCredit > 0 ? "₹ " + owner.POCredit.ToString("N0") : "—")</td>
-                                            <td class="text-right">@(owner.Consumed > 0 ? "₹ " + owner.Consumed.ToString("N0") : "—")</td>
-                                            @{
-                                                var _showRemaining = owner.POCredit > 0 || owner.Consumed > 0 || _hasOpeningBal;
-                                                var _remColor = owner.Remaining < 0 ? "#c62828" : "inherit";
+                                            <td class="col-num">@(owner.POCredit > 0 ? "₹ " + owner.POCredit.ToString("N0") : "—")</td>
+                                            <td class="col-num">@(owner.Consumed > 0 ? "₹ " + owner.Consumed.ToString("N0") : "—")</td>
+                                            @if (_showExpiredNc)
+                                            {
+                                                <td class="col-num" style="color:@(owner.ExpiredNotConsumed > 0 ? "#c62828" : "inherit");font-weight:600;"
+                                                    title="Unconsumed credit lost on expired POs">
+                                                    @(owner.ExpiredNotConsumed > 0 ? "₹ " + owner.ExpiredNotConsumed.ToString("N0") : "—")
+                                                </td>
                                             }
-                                            <td class="text-right" style="color:@_remColor;font-weight:600;" title="Opening Balance + PO Credit − Consumed">
-                                                @(_showRemaining ? "₹ " + owner.Remaining.ToString("N0") : "—")
+                                            <td class="col-num" style="color:@_remColor;font-weight:600;" title="@($"₹ {owner.POOpeningBalance:N0} + ₹ {owner.POCredit:N0} − ₹ {owner.Consumed:N0} − ₹ {owner.ExpiredNotConsumed:N0} = ₹ {_remaining:N0}")">
+                                                @(_showRemaining ? "₹ " + _remaining.ToString("N0") : "—")
                                             </td>
-                                            <td class="text-right">@(owner.CashBalance != 0 ? "₹ " + owner.CashBalance.ToString("N0") : "—")</td>
-                                            <td>
-                                                <span class="badge @owner.StateCss" style="white-space:nowrap;display:inline-block;min-width:100px;text-align:center;font-size:11px;padding:4px 8px;">
-                                                    @owner.State
-                                                </span>
+                                            <td class="col-num">@(owner.CashBalance != 0 ? "₹ " + owner.CashBalance.ToString("N0") : "—")</td>
+                                            <td class="col-state">
+                                                <span class="badge @owner.StateCss">@owner.State</span>
                                             </td>
-                                            <td class="text-center" style="white-space:nowrap;">
-                                                <a href="javascript:void(0)" onclick="OpenWalletLogModal(@owner.BillingOwnerId)" class="btn btn-sm btn-outline-secondary" style="margin:2px;">View log</a>
+                                            <td class="col-actions">
+                                                <a href="javascript:void(0)" onclick="OpenWalletLogModal(@owner.BillingOwnerId)" class="btn btn-sm btn-outline-secondary btn-owner-act">View log</a>
                                                 @if (Model.SupportsPO)
                                                 {
                                                     var _oName = (owner.BillingOwnerName ?? "").Replace("'", "\\'");
                                                     var _oEmail = owner.BillingOwnerEmail ?? "";
-                                                    <a href="javascript:void(0)" onclick="OpenOwnerPOHistory(@owner.BillingOwnerId, '@_oName', '@_oEmail')" class="btn btn-sm btn-outline-info" style="margin:2px;">PO History</a>
-                                                    <a href="javascript:void(0)" onclick="OpenPOCreditModal(@owner.BillingOwnerId)" class="btn btn-sm btn-outline-primary" style="margin:2px;">Add PO</a>
+                                                    <a href="javascript:void(0)" onclick="OpenOwnerPOHistory(@owner.BillingOwnerId, '@_oName', '@_oEmail')" class="btn btn-sm btn-outline-info btn-owner-act">PO History</a>
+                                                    <a href="javascript:void(0)" onclick="OpenPOCreditModal(@owner.BillingOwnerId)" class="btn btn-sm btn-outline-primary btn-owner-act">Add PO</a>
                                                 }
                                             </td>
                                         </tr>
@@ -657,6 +740,27 @@
     </div>
 </div>
 
+<!-- Bulk Update Expire Date Modal -->
+<div class="modal fade" id="bulkExpireModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title">Bulk Update Expire Date</h5><button type="button" class="close" data-bs-dismiss="modal">&times;</button></div>
+            <div class="modal-body">
+                <p class="text-muted" style="font-size:13px;">Apply the same expire date to all selected POs.</p>
+                <div class="form-group">
+                    <label>Expire Date *</label>
+                    <input type="date" id="txtBulkExpireDate" class="form-control" required />
+                </div>
+                <p id="lblBulkSelectedCount" style="font-size:12px;color:#555;margin:0;"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="SubmitBulkExpire()">Update Selected</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @if (ViewBag.Message != null)
 {
     <script>
@@ -688,7 +792,44 @@
         $('input[name="detailsScope"]').change(function () {
             $('#monthFilterGroup').toggle($('#scopeMonth').is(':checked'));
         });
+
+        $('#chkSelectAllPO').on('change', function () {
+            $('.chk-po-row').prop('checked', this.checked);
+            toggleBulkExpireButton();
+        });
+        $(document).on('change', '.chk-po-row', toggleBulkExpireButton);
     });
+
+    function toggleBulkExpireButton() {
+        var count = $('.chk-po-row:checked').length;
+        $('#btnBulkExpire').toggle(count > 0);
+    }
+
+    function OpenBulkExpireModal() {
+        var count = $('.chk-po-row:checked').length;
+        if (!count) { swal.fire('Validation', 'Select at least one PO.', 'warning'); return; }
+        $('#txtBulkExpireDate').val('');
+        $('#lblBulkSelectedCount').text(count + ' PO(s) selected.');
+        $('#bulkExpireModal').modal('show');
+    }
+
+    function SubmitBulkExpire() {
+        var expireVal = $('#txtBulkExpireDate').val();
+        if (!expireVal) { swal.fire('Validation', 'Select an expire date for bulk update.', 'warning'); return; }
+        var ids = [];
+        $('.chk-po-row:checked').each(function () {
+            ids.push($(this).val());
+        });
+
+        $.post('/Wallet/BulkUpdatePOExpireDate', {
+            clientId: _clientId,
+            poIds: ids.join(','),
+            expireDate: expireVal
+        }, function (r) {
+            if (r.success) swal.fire('Success', r.message, 'success').then(function () { location.reload(); });
+            else swal.fire('Error', r.message, 'error');
+        });
+    }
 
     function OpenWalletLogModal(billingOwnerId) {
         $('#walletLogBody').html('<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></div>');

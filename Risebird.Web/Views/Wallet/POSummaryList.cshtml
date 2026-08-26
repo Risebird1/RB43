@@ -9,7 +9,10 @@
     var totalPOs      = Model.Sum(c => c.POs.Count);
     var totalCredit   = Model.Sum(c => c.TotalCredit);
     var totalConsumed = Model.Sum(c => c.TotalConsumed);
-    var totalRemaining= Model.Sum(c => c.TotalRemaining);
+    var totalExpiredNc = Model.Sum(c => c.TotalExpiredNotConsumed);
+    var totalRemaining= Model.Sum(c => c.TotalUsableRemaining);
+    var expiredPOCount = Model.Sum(c => c.POs.Count(p => p.IsExpired));
+    var expiringPOCount = Model.Sum(c => c.POs.Count(p => p.IsExpiringSoon));
 }
 
 <link href="~/Newassets/css/irf.css?v=54321" rel="stylesheet" />
@@ -109,6 +112,8 @@
     .tag-carry { background:#fff8e1; color:#e65100; border:1px solid #ffcc80; }
     .tag-cur   { background:#e3f2fd; color:#1565c0; border:1px solid #90caf9; }
     .tag-open  { background:#fce4ec; color:#880e4f; border:1px solid #f48fb1; }
+    .tag-expired { background:#ffebee; color:#b71c1c; border:1px solid #ef9a9a; }
+    .tag-expiring { background:#fff3e0; color:#e65100; border:1px solid #ffcc80; }
 
     /* ── Empty ── */
     .pos-empty { text-align:center; padding:50px; color:#aaa; font-family:Roboto,sans-serif; }
@@ -140,7 +145,7 @@
             <i class="fa fa-list-alt" style="margin-right:8px;"></i>PO Consumption Summary — All Clients
         </h4>
         <p style="color:rgba(255,255,255,.8);margin:4px 0 0;font-size:12px;font-family:Roboto,sans-serif;">
-            FIFO-based consumed &amp; remaining per billing owner across all clients. Sorted by highest consumption.
+            FIFO-based consumed &amp; remaining per billing owner. Remaining = PO Credit − Consumed − Expired Not Consumed.
         </p>
     </div>
     <div class="pull-right" style="padding-top:6px;">
@@ -156,7 +161,10 @@
     <div class="pos-stat"><div class="lbl">Total POs</div><div class="val grey">@totalPOs</div></div>
     <div class="pos-stat"><div class="lbl">Total PO Credit</div><div class="val blue">₹ @totalCredit.ToString("N0")</div></div>
     <div class="pos-stat"><div class="lbl">Total Consumed</div><div class="val green">₹ @totalConsumed.ToString("N0")</div></div>
+    <div class="pos-stat"><div class="lbl">Expired Not Consumed</div><div class="val red">₹ @totalExpiredNc.ToString("N0")</div></div>
     <div class="pos-stat"><div class="lbl">Total Remaining</div><div class="val red">₹ @totalRemaining.ToString("N0")</div></div>
+    <div class="pos-stat"><div class="lbl">Expired POs</div><div class="val red">@expiredPOCount</div></div>
+    <div class="pos-stat"><div class="lbl">Expiring Soon</div><div class="val" style="color:#e65100;">@expiringPOCount</div></div>
 </div>
 
 <!-- Filter bar -->
@@ -169,6 +177,8 @@
     <label style="font-weight:600;cursor:pointer;"><input type="radio" name="showFilter" value="all" checked onchange="applyShowFilter()"> All</label>
     <label style="font-weight:600;cursor:pointer;"><input type="radio" name="showFilter" value="active" onchange="applyShowFilter()"> Active only (carry-forward / open)</label>
     <label style="font-weight:600;cursor:pointer;"><input type="radio" name="showFilter" value="alert" onchange="applyShowFilter()"> ≥ 90% consumed</label>
+    <label style="font-weight:600;cursor:pointer;"><input type="radio" name="showFilter" value="expired" onchange="applyShowFilter()"> Expired POs</label>
+    <label style="font-weight:600;cursor:pointer;"><input type="radio" name="showFilter" value="expiring" onchange="applyShowFilter()"> Expiring soon (30 days)</label>
     <button class="btn btn-sm btn-outline-secondary" style="margin-left:auto;" onclick="expandAll()">Expand All</button>
     <button class="btn btn-sm btn-outline-secondary" onclick="collapseAll()">Collapse All</button>
 </div>
@@ -189,6 +199,8 @@ else
         var cardId    = $"card-{client.ClientId}";
         // Max latest-PO % across all owners — used for card-level alert filter
         var clientLatestPct = 0;
+        var clientHasExpired = client.POs.Any(p => p.IsExpired);
+        var clientHasExpiring = client.POs.Any(p => p.IsExpiringSoon);
         foreach (var owGrp in client.POs.GroupBy(p => p.BillingOwnerId))
         {
             var lp = owGrp.OrderByDescending(x => x.POYear).ThenByDescending(x => x.POMonth)
@@ -200,7 +212,7 @@ else
             }
         }
 
-        <div class="client-card" data-client="@client.ClientName.ToLower()" data-pct="@clientPct" data-latestpct="@clientLatestPct">
+        <div class="client-card" data-client="@client.ClientName.ToLower()" data-pct="@clientPct" data-latestpct="@clientLatestPct" data-expired="@(clientHasExpired ? "1" : "0")" data-expiring="@(clientHasExpiring ? "1" : "0")">
             <!-- Header (toggle) -->
             <div class="client-card-header" onclick="toggleCard('@cardId')">
                 <a href="@Url.Action("ClientWallet","Wallet", new { clientId = client.ClientId })"
@@ -214,7 +226,8 @@ else
                 <div class="client-totals">
                     <span>Credit: <strong style="color:#1565c0;">₹ @client.TotalCredit.ToString("N0")</strong></span>
                     <span>Consumed: <strong style="color:#2e7d32;">₹ @client.TotalConsumed.ToString("N0")</strong></span>
-                    <span>Remaining: <strong style="color:#c62828;">₹ @client.TotalRemaining.ToString("N0")</strong></span>
+                    <span>Expired NC: <strong style="color:#c62828;">₹ @client.TotalExpiredNotConsumed.ToString("N0")</strong></span>
+                    <span>Remaining: <strong style="color:#c62828;">₹ @client.TotalUsableRemaining.ToString("N0")</strong></span>
                     <span>
                         <strong style="color:@(clientPct>=90?"#c62828":clientPct>=70?"#e65100":"#555");">
                             @clientPct%
@@ -237,7 +250,8 @@ else
                 {
                     var ownerCredit    = og.Sum(p => p.POCreditAmount);
                     var ownerConsumed  = og.Sum(p => p.WalletConsumed);
-                    var ownerRemaining = og.Sum(p => p.WalletRemaining);
+                    var ownerExpiredNc = og.Where(p => p.IsExpired).Sum(p => Math.Max(0m, p.WalletRemaining));
+                    var ownerRemaining = ownerCredit - ownerConsumed - ownerExpiredNc;
                     var ownerPct       = ownerCredit > 0 ? (int)Math.Round(ownerConsumed / ownerCredit * 100) : 0;
                     var ownerName      = og.Key.BillingOwnerName ?? "—";
                     var ownerEmail     = og.Key.BillingOwnerEmail ?? "";
@@ -259,6 +273,7 @@ else
                             <div class="owner-totals">
                                 <span>Credit: <strong style="color:#1565c0;">₹ @ownerCredit.ToString("N0")</strong></span>
                                 <span>Consumed: <strong style="color:#2e7d32;">₹ @ownerConsumed.ToString("N0")</strong></span>
+                                <span>Expired NC: <strong style="color:#c62828;">₹ @ownerExpiredNc.ToString("N0")</strong></span>
                                 <span>Remaining:
                                     @if (ownerRemaining < 0)
                                     {
@@ -290,7 +305,8 @@ else
                     <div class="owner-totals" style="margin-left:auto;">
                         <span>Credit: <strong style="color:#1565c0;">₹ @client.TotalCredit.ToString("N0")</strong></span>
                         <span>Consumed: <strong style="color:#2e7d32;">₹ @client.TotalConsumed.ToString("N0")</strong></span>
-                        <span>Remaining: <strong style="color:#c62828;">₹ @client.TotalRemaining.ToString("N0")</strong></span>
+                        <span>Expired NC: <strong style="color:#c62828;">₹ @client.TotalExpiredNotConsumed.ToString("N0")</strong></span>
+                        <span>Remaining: <strong style="color:#c62828;">₹ @client.TotalUsableRemaining.ToString("N0")</strong></span>
                     </div>
                     <button class="btn btn-xs btn-outline-info" style="font-size:11px;padding:2px 8px;margin-left:8px;"
                             onclick="openPOHistory(@client.ClientId, 0, '@client.ClientName.Replace("'", "\\'")', '')">
@@ -316,12 +332,14 @@ else
                     <th>PO Number</th>
                     <th class="text-right">PO Credit</th>
                     <th class="text-right">Consumed</th>
-                    <th class="text-right">Remaining</th>
+                    <th class="text-right">Expired Not<br/>Consumed</th>
+                    <th class="text-right" title="PO Credit − Consumed − Expired Not Consumed">Remaining</th>
                     <th>Consumption</th>
                     <th>Status</th>
                     <th>Added By</th>
                     <th>Added On</th>
                     <th>Expire Date</th>
+                    <th>Expiry Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -329,19 +347,23 @@ else
                 {
                     // Cap individual PO display at credit — overflow shown only at owner total level
                     var displayConsumed  = Math.Min(po.WalletConsumed, po.POCreditAmount);
-                    var displayRemaining = Math.Max(0m, po.WalletRemaining);
+                    var poExpiredNc      = po.IsExpired ? Math.Max(0m, po.WalletRemaining) : 0m;
+                    var displayRemaining = po.IsExpired ? 0m : Math.Max(0m, po.WalletRemaining);
                     var pct      = po.POCreditAmount > 0 ? Math.Min(100, (int)Math.Round(displayConsumed / po.POCreditAmount * 100)) : 0;
                     var isFullyConsumed = displayRemaining <= 0;
                     var isCurrent       = po.POYear == today.Year && po.POMonth == today.Month;
-                    var rowCss   = isFullyConsumed ? "row-completed" : isCurrent ? "row-current" : po.WalletConsumed > 0 ? "row-carry" : "";
+                    var rowCss   = po.IsExpired ? "row-completed" : isFullyConsumed ? "row-completed" : isCurrent ? "row-current" : po.WalletConsumed > 0 ? "row-carry" : "";
                     var barColor = pct >= 100 ? "#2e7d32" : pct >= 90 ? "#c62828" : pct >= 70 ? "#ef6c00" : "#1976d2";
-                    <tr class="@rowCss">
+                    <tr class="@rowCss" data-expired="@(po.IsExpired ? "1" : "0")" data-expiring="@(po.IsExpiringSoon ? "1" : "0")">
                         <td style="white-space:nowrap;">@(po.PeriodLabel ?? CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(po.POMonth) + " " + po.POYear)</td>
                         <td style="font-size:11px;color:#666;">@(string.IsNullOrEmpty(po.PONumber) ? "—" : po.PONumber)</td>
                         <td class="text-right" style="font-weight:600;color:#1565c0;">₹ @po.POCreditAmount.ToString("N0")</td>
                         <td class="text-right" style="color:#2e7d32;font-weight:600;">@(displayConsumed > 0 ? "₹ " + displayConsumed.ToString("N0") : "—")</td>
+                        <td class="text-right" style="font-weight:600;color:@(poExpiredNc > 0 ? "#c62828" : "inherit");">
+                            @(poExpiredNc > 0 ? "₹ " + poExpiredNc.ToString("N0") : "—")
+                        </td>
                         <td class="text-right" style="font-weight:600;color:@(displayRemaining > 0 ? "#1565c0" : "#2e7d32");">
-                            ₹ @displayRemaining.ToString("N0")
+                            @(displayConsumed > 0 || poExpiredNc > 0 || displayRemaining > 0 ? "₹ " + displayRemaining.ToString("N0") : "—")
                         </td>
                         <td>
                             <div class="pct-wrap">
@@ -353,6 +375,8 @@ else
                         </td>
                         <td>
                             @if (isFullyConsumed) { <span class="po-tag tag-done">Fully Consumed</span> }
+                            else if (po.IsExpired) { <span class="po-tag tag-expired">Expired</span> }
+                            else if (po.IsExpiringSoon) { <span class="po-tag tag-expiring">Expiring Soon</span> }
                             else if (isCurrent)   { <span class="po-tag tag-cur">Current</span> }
                             else if (po.WalletConsumed > 0) { <span class="po-tag tag-carry">Carry Forward</span> }
                             else                  { <span class="po-tag tag-open">Open</span> }
@@ -360,6 +384,7 @@ else
                         <td style="font-size:11px;color:#555;">@(po.CreatedBy ?? "—")</td>
                         <td style="white-space:nowrap;font-size:11px;color:#555;">@(po.CreatedOn?.ToString("dd MMM yyyy") ?? "—")</td>
                         <td style="white-space:nowrap;font-size:11px;color:#555;">@(po.ExpireDate?.ToString("dd MMM yyyy") ?? "—")</td>
+                        <td><span class="badge @po.ExpiryStatusCss" style="font-size:10px;">@po.ExpiryStatusDesc</span></td>
                     </tr>
                 }
             </tbody>
@@ -399,23 +424,33 @@ else
         document.querySelectorAll('.client-card').forEach(function (card) {
             var pct       = parseInt(card.dataset.pct       || '0', 10);
             var latestPct = parseInt(card.dataset.latestpct || '0', 10);
+            var hasExpired = card.dataset.expired === '1';
+            var hasExpiring = card.dataset.expiring === '1';
 
             var showCard;
             if (val === 'all')         showCard = true;
             else if (val === 'active') showCard = (pct > 0 && pct < 100);
+            else if (val === 'expired') showCard = hasExpired;
+            else if (val === 'expiring') showCard = hasExpiring;
             // alert: show card if any owner's latest active PO >= 90%
             else                       showCard = (latestPct >= 90);
 
             card.style.display = showCard ? '' : 'none';
 
-            // Filter individual owner sections
+            // Filter individual owner sections and PO rows
             card.querySelectorAll('.owner-section').forEach(function (sec) {
                 if (!showCard || val === 'all') { sec.style.display = ''; return; }
                 var oPct    = parseInt(sec.dataset.ownerpct       || '0', 10);
                 var oLatest = parseInt(sec.dataset.ownerlatestpct || '0', 10);
                 if (val === 'active') sec.style.display = (oPct > 0 && oPct < 100) ? '' : 'none';
-                // alert: show owner section only if their latest PO >= 90%
+                else if (val === 'expired' || val === 'expiring') sec.style.display = '';
                 else                  sec.style.display = (oLatest >= 90) ? '' : 'none';
+            });
+
+            card.querySelectorAll('.po-sum-table tbody tr').forEach(function (tr) {
+                if (val === 'expired') tr.style.display = tr.dataset.expired === '1' ? '' : 'none';
+                else if (val === 'expiring') tr.style.display = tr.dataset.expiring === '1' ? '' : 'none';
+                else tr.style.display = '';
             });
         });
     }

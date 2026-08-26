@@ -224,6 +224,58 @@ namespace Risebird.Business
         }
 
         /// <summary>
+        /// Returns per billing owner the total unconsumed PO credit on expired POs.
+        /// Uses the same all-time FIFO ledger as PO History.
+        /// </summary>
+        public async Task<Dictionary<int, decimal>> GetOwnerExpiredNotConsumed(int clientId, int billingType)
+        {
+            var result = new Dictionary<int, decimal>();
+            if (billingType != 1) return result;
+
+            try
+            {
+                var allPos = await GetPOHistory(clientId, billingType, null, null);
+                foreach (var po in allPos.Where(p => p.IsExpired && p.BillingOwnerId.HasValue))
+                {
+                    var remaining = Math.Max(0m, po.WalletRemaining);
+                    if (remaining <= 0) continue;
+
+                    var ownerId = po.BillingOwnerId!.Value;
+                    result[ownerId] = result.TryGetValue(ownerId, out var existing)
+                        ? existing + remaining
+                        : remaining;
+                }
+            }
+            catch { /* non-critical */ }
+
+            return result;
+        }
+
+        /// <summary>Owner/client wallet metrics for report pages (opening = 0 for all-time).</summary>
+        public static void EnrichAlertRowMetrics(
+            POConsumptionAlertRowVM row,
+            IEnumerable<ClientPOVM> ownerPOs,
+            decimal openingBalance = 0m)
+        {
+            var list = ownerPOs?.ToList() ?? new List<ClientPOVM>();
+            row.POOpeningBalance = openingBalance;
+            row.OwnerTotalCredit = list.Sum(p => p.POCreditAmount);
+            row.OwnerTotalConsumed = list.Sum(p => p.WalletConsumed);
+            row.ExpiredNotConsumed = list.Where(p => p.IsExpired).Sum(p => Math.Max(0m, p.WalletRemaining));
+        }
+
+        public static void EnrichAlertRowMetrics(
+            POConsumptionAlertRowVM row,
+            ClientPOGroupVM client,
+            int? billingOwnerId)
+        {
+            var ownerPOs = billingOwnerId.HasValue
+                ? client.POs.Where(p => p.BillingOwnerId == billingOwnerId)
+                : client.POs.AsEnumerable();
+            EnrichAlertRowMetrics(row, ownerPOs);
+        }
+
+        /// <summary>
         /// Returns the BillingOwnerIds of all billing owners whose LATEST PO has had
         /// >= <paramref name="threshold"/> of its credit consumed (default 90 %).
         /// Consumption is computed using the same FIFO ledger as GetPOHistory so the
@@ -295,30 +347,132 @@ namespace Risebird.Business
                 .ThenBy(d => d.Month);
 
             foreach (var debit in orderedDebits)
-                ApplyFifo(sortedPOs, debit.TotalDebit);
+                ApplyFifo(sortedPOs, debit.TotalDebit, debit.Year, debit.Month);
         }
 
         /// <summary>
         /// Drains <paramref name="amount"/> from the PO pool using FIFO (oldest PO first).
-        /// If total debits exceed total PO credit, the overflow is added to the last PO,
-        /// making its WalletConsumed > POCreditAmount and WalletRemaining negative.
+        /// POs expired before the debit month are skipped. If total debits exceed eligible PO
+        /// credit, overflow is added to the last eligible PO (or the chronologically last PO).
         /// </summary>
-        private static void ApplyFifo(List<ClientPOVM> sortedPOs, decimal amount)
+        private static void ApplyFifo(List<ClientPOVM> sortedPOs, decimal amount, int debitYear, int debitMonth)
         {
             var rem = amount;
+            ClientPOVM lastEligible = null;
+
             foreach (var po in sortedPOs)
             {
                 if (rem <= 0) break;
+                if (!po.IsEligibleForDebitMonth(debitYear, debitMonth))
+                    continue;
+
+                lastEligible = po;
                 var available = po.POCreditAmount - po.WalletConsumed;
                 if (available <= 0) continue;
                 var consume = Math.Min(rem, available);
                 po.WalletConsumed += consume;
                 rem -= consume;
             }
-            // Overflow: total debits exceed total PO credit — push excess onto the last PO
-            // so WalletRemaining goes negative, signalling the account is over-consumed.
+
             if (rem > 0 && sortedPOs.Count > 0)
-                sortedPOs[sortedPOs.Count - 1].WalletConsumed += rem;
+            {
+                var overflowTarget = lastEligible ?? sortedPOs[sortedPOs.Count - 1];
+                overflowTarget.WalletConsumed += rem;
+            }
+        }
+
+        public async Task<int> BulkUpdateClientPOExpireDate(int clientId, IEnumerable<int> poIds, DateTime expireDate)
+        {
+            try
+            {
+                return await _walletRepository.BulkUpdateClientPOExpireDate(clientId, poIds, expireDate);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Returns alert rows for latest POs that are expired or expiring within 30 days
+        /// and still have a remaining balance (M2/M3 clients only).
+        /// </summary>
+        public async Task<List<POConsumptionAlertRowVM>> GetPOExpiryAlerts(List<ClientPOGroupVM> allSummary = null)
+        {
+            var alerts = new List<POConsumptionAlertRowVM>();
+            try
+            {
+                allSummary ??= await GetAllClientsPOSummary();
+                foreach (var client in allSummary)
+                {
+                    if (!client.BillingModelDesc.StartsWith("M2", StringComparison.OrdinalIgnoreCase)
+                        && !client.BillingModelDesc.StartsWith("M3", StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    if (client.BillingType == 1)
+                    {
+                        foreach (var ownerGroup in client.POs.GroupBy(p => new { p.BillingOwnerId, p.BillingOwnerName, p.BillingOwnerEmail }))
+                        {
+                            var latestPO = ownerGroup
+                                .OrderByDescending(p => p.POYear).ThenByDescending(p => p.POMonth)
+                                .ThenByDescending(p => p.CreatedOn ?? DateTime.MinValue)
+                                .FirstOrDefault();
+                            TryAddExpiryAlert(alerts, client, latestPO, ownerGroup.Key.BillingOwnerId,
+                                ownerGroup.Key.BillingOwnerName, ownerGroup.Key.BillingOwnerEmail);
+                        }
+                    }
+                    else
+                    {
+                        var latestPO = client.POs
+                            .OrderByDescending(p => p.POYear).ThenByDescending(p => p.POMonth)
+                            .ThenByDescending(p => p.CreatedOn ?? DateTime.MinValue)
+                            .FirstOrDefault();
+                        TryAddExpiryAlert(alerts, client, latestPO, null, null, null);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            return alerts
+                .OrderBy(a => a.IsExpired ? 0 : 1)
+                .ThenBy(a => a.ExpireDate)
+                .ToList();
+        }
+
+        private static void TryAddExpiryAlert(
+            List<POConsumptionAlertRowVM> alerts,
+            ClientPOGroupVM client,
+            ClientPOVM latestPO,
+            int? billingOwnerId,
+            string billingOwnerName,
+            string billingOwnerEmail)
+        {
+            if (latestPO == null || !latestPO.ExpireDate.HasValue) return;
+            if (!latestPO.IsExpired && !latestPO.IsExpiringSoon) return;
+            if (latestPO.WalletRemaining <= 0) return;
+
+            alerts.Add(new POConsumptionAlertRowVM
+            {
+                ClientId          = client.ClientId,
+                ClientName        = client.ClientName,
+                BillingType       = client.BillingType,
+                BillingModelDesc  = client.BillingModelDesc,
+                BillingOwnerId    = billingOwnerId,
+                BillingOwnerName  = billingOwnerName,
+                BillingOwnerEmail = billingOwnerEmail,
+                PONumber          = latestPO.PONumber,
+                POMonth           = latestPO.POMonth,
+                POYear            = latestPO.POYear,
+                POCreditAmount    = latestPO.POCreditAmount,
+                WalletConsumed    = latestPO.WalletConsumed,
+                ExpireDate        = latestPO.ExpireDate,
+                AlertType         = "Expiry"
+            });
+            EnrichAlertRowMetrics(alerts[alerts.Count - 1], client, billingOwnerId);
         }
 
         public async Task<List<WalletVM>> GetCashCreditHistory(int clientId)
@@ -441,6 +595,29 @@ namespace Risebird.Business
                     {
                         owner.State = "Active";
                         owner.StateCss = "badge-success";
+                    }
+                }
+
+                // Flag owners whose latest PO is expired with remaining balance
+                if (dashboard.BillingType == 1 && dashboard.PORecords.Any())
+                {
+                    foreach (var owner in dashboard.OwnerWallets)
+                    {
+                        var latestPO = dashboard.PORecords
+                            .Where(p => p.BillingOwnerId == owner.BillingOwnerId)
+                            .OrderByDescending(p => p.POYear).ThenByDescending(p => p.POMonth)
+                            .ThenByDescending(p => p.CreatedOn ?? DateTime.MinValue)
+                            .FirstOrDefault();
+                        if (latestPO != null && latestPO.IsExpired && owner.Remaining > 0)
+                        {
+                            owner.State = "PO expired";
+                            owner.StateCss = "badge-danger";
+                        }
+                        else if (latestPO != null && latestPO.IsExpiringSoon && owner.Remaining > 0)
+                        {
+                            owner.State = "Expiring soon";
+                            owner.StateCss = "badge-warning";
+                        }
                     }
                 }
 

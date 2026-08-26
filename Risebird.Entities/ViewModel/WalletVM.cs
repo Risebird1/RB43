@@ -156,6 +156,36 @@ namespace Risebird.Entities.ViewModel
         public decimal WalletConsumed { get; set; }
         /// <summary>Negative means debits exceeded PO credit (over-consumed). Not clamped to 0.</summary>
         public decimal WalletRemaining => POCreditAmount - WalletConsumed;
+
+        /// <summary>True when ExpireDate is set and before today.</summary>
+        public bool IsExpired =>
+            ExpireDate.HasValue && ExpireDate.Value.Date < DateTime.Today;
+
+        /// <summary>True when ExpireDate falls within the next 30 days (inclusive).</summary>
+        public bool IsExpiringSoon =>
+            ExpireDate.HasValue && !IsExpired && ExpireDate.Value.Date <= DateTime.Today.AddDays(30);
+
+        public int? DaysToExpiry =>
+            ExpireDate.HasValue ? (int)(ExpireDate.Value.Date - DateTime.Today).TotalDays : null;
+
+        public string ExpiryStatusDesc =>
+            !ExpireDate.HasValue ? "No Expiry"
+            : IsExpired ? "Expired"
+            : IsExpiringSoon ? "Expiring Soon"
+            : "Active";
+
+        public string ExpiryStatusCss =>
+            !ExpireDate.HasValue ? "badge-secondary"
+            : IsExpired ? "badge-danger"
+            : IsExpiringSoon ? "badge-warning"
+            : "badge-success";
+
+        /// <summary>PO can absorb wallet debits for the given calendar month.</summary>
+        public bool IsEligibleForDebitMonth(int year, int month)
+        {
+            if (!ExpireDate.HasValue) return true;
+            return ExpireDate.Value.Date >= new DateTime(year, month, 1);
+        }
     }
 
     /// <summary>Groups all FIFO-computed POs for one client, used on the PO Summary report page.</summary>
@@ -168,7 +198,10 @@ namespace Risebird.Entities.ViewModel
         public List<ClientPOVM> POs    { get; set; } = new List<ClientPOVM>();
         public decimal TotalCredit     => POs.Sum(p => p.POCreditAmount);
         public decimal TotalConsumed   => POs.Sum(p => p.WalletConsumed);
-        public decimal TotalRemaining  => POs.Sum(p => p.WalletRemaining);
+        public decimal TotalExpiredNotConsumed => POs.Where(p => p.IsExpired).Sum(p => Math.Max(0m, p.WalletRemaining));
+        /// <summary>PO Opening Balance (0 all-time) + Credit − Consumed − Expired Not Consumed.</summary>
+        public decimal TotalUsableRemaining => TotalCredit - TotalConsumed - TotalExpiredNotConsumed;
+        public decimal TotalRemaining => TotalUsableRemaining;
     }
 
     /// <summary>
@@ -192,9 +225,40 @@ namespace Risebird.Entities.ViewModel
         public decimal WalletConsumed   { get; set; }
         /// <summary>Negative means over-consumed. Not clamped to 0.</summary>
         public decimal WalletRemaining  => POCreditAmount - WalletConsumed;
+
+        /// <summary>All-time owner/client totals for Remaining formula (0 opening on reports).</summary>
+        public decimal POOpeningBalance { get; set; }
+        public decimal OwnerTotalCredit { get; set; }
+        public decimal OwnerTotalConsumed { get; set; }
+        public decimal ExpiredNotConsumed { get; set; }
+        /// <summary>PO Opening Balance + Owner Total Credit − Owner Total Consumed − Expired Not Consumed.</summary>
+        public decimal UsableRemaining => POOpeningBalance + OwnerTotalCredit - OwnerTotalConsumed - ExpiredNotConsumed;
+
         public int     ConsumedPct      => POCreditAmount > 0
                                             ? (int)Math.Round(WalletConsumed / POCreditAmount * 100)
                                             : 0;
+
+        public DateTime? ExpireDate     { get; set; }
+        /// <summary>Consumption or Expiry</summary>
+        public string  AlertType        { get; set; } = "Consumption";
+
+        public bool IsExpired =>
+            ExpireDate.HasValue && ExpireDate.Value.Date < DateTime.Today;
+
+        public bool IsExpiringSoon =>
+            ExpireDate.HasValue && !IsExpired && ExpireDate.Value.Date <= DateTime.Today.AddDays(30);
+
+        public string ExpiryStatusDesc =>
+            !ExpireDate.HasValue ? "No Expiry"
+            : IsExpired ? "Expired"
+            : IsExpiringSoon ? "Expiring Soon"
+            : "Active";
+
+        public string ExpiryStatusCss =>
+            !ExpireDate.HasValue ? "badge-secondary"
+            : IsExpired ? "badge-danger"
+            : IsExpiringSoon ? "badge-warning"
+            : "badge-success";
     }
 
     /// <summary>Total wallet debits per billing owner (or client) per calendar month, used for FIFO distribution.</summary>
@@ -217,8 +281,14 @@ namespace Risebird.Entities.ViewModel
         public decimal POOpeningBalance { get; set; }
         public decimal POCredit { get; set; }
         public decimal Consumed { get; set; }
-        /// <summary>Remaining = POOpeningBalance + POCredit − Consumed.</summary>
+        /// <summary>Set after column values are loaded; mirrors <see cref="UsableRemaining"/>.</summary>
         public decimal Remaining { get; set; }
+        /// <summary>Unconsumed PO credit on expired POs (FIFO-computed, all-time).</summary>
+        public decimal ExpiredNotConsumed { get; set; }
+
+        /// <summary>PO Opening Balance + PO Credit − Consumed − Expired Not Consumed.</summary>
+        public decimal UsableRemaining => POOpeningBalance + POCredit - Consumed - ExpiredNotConsumed;
+
         public decimal CashBalance { get; set; }
         public string State { get; set; }
         public string StateCss { get; set; }
