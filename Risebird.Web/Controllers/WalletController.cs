@@ -467,10 +467,15 @@ namespace Risebird.Web.Controllers
                 // Identify billing owners whose latest PO is >= 90% consumed — used for warning badge
                 ViewBag.HighConsumptionOwnerIds = await _walletService.GetHighConsumptionOwnerIds(clientId);
 
-                // PO Opening Balance = net credit carry-forward entering the selected month
-                // = Σ(PO credit before month) − Σ(debits before month)
-                // Hidden automatically for the "All Time" scope (no prior period).
-                // Remaining = Opening Balance + PO Credit − Consumed
+                var expiredNotConsumed = await _walletService.GetOwnerExpiredNotConsumed(clientId, dashboard.BillingType);
+                foreach (var owner in dashboard.OwnerWallets)
+                {
+                    owner.ExpiredNotConsumed = expiredNotConsumed.TryGetValue(owner.BillingOwnerId, out var expiredAmt)
+                        ? expiredAmt
+                        : 0m;
+                }
+
+                // Remaining = PO Opening Balance + PO Credit − Consumed − Expired Not Consumed
                 if (!allDetails)
                 {
                     var openingBalances = await _walletService.GetOwnerOpeningBalances(clientId, selectedMonth, selectedYear);
@@ -478,29 +483,17 @@ namespace Risebird.Web.Controllers
 
                     foreach (var owner in dashboard.OwnerWallets)
                     {
-                        var opening = openingBalances != null
+                        owner.POOpeningBalance = openingBalances != null
                             && openingBalances.TryGetValue(owner.BillingOwnerId, out var ob)
                             ? ob
                             : 0m;
-                        owner.POOpeningBalance = opening;
-                        owner.Remaining = opening + owner.POCredit - owner.Consumed;
-
-                        if (owner.POCredit <= 0)
-                        {
-                            owner.State = dashboard.BillingModel == (int)BillingModelEnum.M2 ? "Awaiting PO" : "No PO";
-                            owner.StateCss = "badge-warning";
-                        }
-                        else if (owner.Remaining <= 0)
-                        {
-                            owner.State = "PO exhausted";
-                            owner.StateCss = "badge-danger";
-                        }
-                        else
-                        {
-                            owner.State = "Active";
-                            owner.StateCss = "badge-success";
-                        }
                     }
+                }
+
+                foreach (var owner in dashboard.OwnerWallets)
+                {
+                    ComputeOwnerRemaining(owner);
+                    ApplyOwnerWalletState(owner, dashboard);
                 }
             }
 
@@ -640,7 +633,7 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> AddPOCreditPoints(int clientId, int creditAmount, int month, int year,
             DateTime? transactionDate = null, string transactionRefNumber = null, int? billingOwnerId = null, IFormFile poFile = null,
-            int? poQuantity = null, DateTime? addedDate = null, DateTime? expireDate = null)
+            int? poQuantity = null, DateTime? addedDate = null, string expireDate = null)
         {
             if (!IsFinanceOrAdmin()) return Json(new { success = false, message = "Unauthorized." });
 
@@ -660,6 +653,8 @@ namespace Risebird.Web.Controllers
             if (poQuantity.HasValue && poQuantity.Value < 0)
                 return Json(new { success = false, message = "PO quantity cannot be negative." });
 
+            var parsedExpireDate = ParseOptionalExpireDate(expireDate);
+
             var invoicePDF = await UploadPdfAsync(poFile);
             if (poFile != null && poFile.Length > 0 && invoicePDF == null)
             {
@@ -671,7 +666,7 @@ namespace Risebird.Web.Controllers
                 clientId, billingType, client.BillingModel, creditAmount, month, year, emailid,
                 billingType == 1 ? billingOwnerId : null,
                 transactionRefNumber, invoicePDF, "PO credit registered — cash credit to be added later in wallet",
-                poQuantity, addedDate, expireDate);
+                poQuantity, addedDate, parsedExpireDate);
 
             return Json(new
             {
@@ -685,7 +680,8 @@ namespace Risebird.Web.Controllers
         [Authorize]
         [HttpPost]
         public async Task<JsonResult> UpdateClientPO(int poId, int clientId, int creditAmount, int month, int year,
-            string transactionRefNumber = null, int? poQuantity = null, DateTime? addedDate = null, DateTime? expireDate = null, IFormFile poFile = null)
+            string transactionRefNumber = null, int? poQuantity = null, DateTime? addedDate = null, string expireDate = null,
+            IFormFile poFile = null)
         {
             if (!IsFinanceOrAdmin()) return Json(new { success = false, message = "Unauthorized." });
             if (poId <= 0) return Json(new { success = false, message = "Invalid PO." });
@@ -693,6 +689,8 @@ namespace Risebird.Web.Controllers
             if (month < 1 || month > 12 || year < 2000) return Json(new { success = false, message = "Enter a valid PO month." });
             if (poQuantity.HasValue && poQuantity.Value < 0)
                 return Json(new { success = false, message = "PO quantity cannot be negative." });
+
+            var parsedExpireDate = ParseOptionalExpireDate(expireDate);
 
             var existing = (await _walletService.GetClientPOList(clientId)).FirstOrDefault(x => x.id == poId);
             if (existing == null) return Json(new { success = false, message = "PO not found." });
@@ -717,12 +715,43 @@ namespace Risebird.Web.Controllers
 
             var result = await _walletService.UpdateClientPO(
                 poId, clientId, transactionRefNumber, creditAmount, month, year,
-                poQuantity, addedDate, expireDate, invoicePDF, updateDocument);
+                poQuantity, addedDate, parsedExpireDate, invoicePDF, updateDocument);
 
             return Json(new
             {
                 success = result,
                 message = result ? "PO information updated successfully." : "Failed to update PO information."
+            });
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> BulkUpdatePOExpireDate(int clientId, string poIds, DateTime expireDate, DateTime? addedDate = null)
+        {
+            if (!IsFinanceOrAdmin()) return Json(new { success = false, message = "Unauthorized." });
+
+            var idList = (poIds ?? "")
+                .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => int.TryParse(s.Trim(), out var id) ? id : 0)
+                .Where(id => id > 0)
+                .Distinct()
+                .ToList();
+
+            if (!idList.Any())
+                return Json(new { success = false, message = "Select at least one PO to update." });
+
+            var clientPOs = await _walletService.GetClientPOList(clientId);
+            var selected = clientPOs.Where(p => idList.Contains(p.id)).ToList();
+            if (selected.Count != idList.Count)
+                return Json(new { success = false, message = "One or more selected POs were not found." });
+
+            var updated = await _walletService.BulkUpdateClientPOExpireDate(clientId, idList, expireDate);
+            return Json(new
+            {
+                success = updated > 0,
+                message = updated > 0
+                    ? $"Expire date updated for {updated} PO(s)."
+                    : "Failed to update expire dates."
             });
         }
 
@@ -875,8 +904,11 @@ namespace Risebird.Web.Controllers
                             POMonth          = latestPO.POMonth,
                             POYear           = latestPO.POYear,
                             POCreditAmount   = latestPO.POCreditAmount,
-                            WalletConsumed   = latestPO.WalletConsumed
+                            WalletConsumed   = latestPO.WalletConsumed,
+                            ExpireDate       = latestPO.ExpireDate,
+                            AlertType        = "Consumption"
                         });
+                        WalletService.EnrichAlertRowMetrics(alerts[alerts.Count - 1], client, ownerGroup.Key.BillingOwnerId);
                     }
                 }
                 else
@@ -902,14 +934,27 @@ namespace Risebird.Web.Controllers
                         POMonth          = latestPO.POMonth,
                         POYear           = latestPO.POYear,
                         POCreditAmount   = latestPO.POCreditAmount,
-                        WalletConsumed   = latestPO.WalletConsumed
+                        WalletConsumed   = latestPO.WalletConsumed,
+                        ExpireDate       = latestPO.ExpireDate,
+                        AlertType        = "Consumption"
                     });
+                    WalletService.EnrichAlertRowMetrics(alerts[alerts.Count - 1], client, null);
                 }
             }
 
-            alerts = alerts.OrderByDescending(a => a.ConsumedPct).ToList();
-            ViewBag.Threshold    = (int)(threshold * 100);
-            ViewBag.TotalClients = allSummary.Count(c => c.BillingModelDesc.StartsWith("M2", StringComparison.OrdinalIgnoreCase));
+            var expiryAlerts = await _walletService.GetPOExpiryAlerts(allSummary);
+            alerts.AddRange(expiryAlerts);
+
+            alerts = alerts
+                .OrderByDescending(a => a.AlertType == "Expiry" && a.IsExpired)
+                .ThenByDescending(a => a.AlertType == "Expiry" && a.IsExpiringSoon)
+                .ThenByDescending(a => a.AlertType == "Consumption" ? a.ConsumedPct : 0)
+                .ToList();
+
+            ViewBag.Threshold       = (int)(threshold * 100);
+            ViewBag.TotalClients    = allSummary.Count(c => c.BillingModelDesc.StartsWith("M2", StringComparison.OrdinalIgnoreCase));
+            ViewBag.ExpiryAlertCount = expiryAlerts.Count;
+            ViewBag.ConsumptionAlertCount = alerts.Count(a => a.AlertType == "Consumption");
 
             return View(alerts);
         }
@@ -930,6 +975,41 @@ namespace Risebird.Web.Controllers
         }
 
         #endregion
+
+        private static DateTime? ParseOptionalExpireDate(string expireDate)
+        {
+            if (string.IsNullOrWhiteSpace(expireDate)) return null;
+            return DateTime.TryParse(expireDate, out var parsed) ? parsed.Date : null;
+        }
+
+        private static void ComputeOwnerRemaining(OwnerWalletRowVM owner)
+        {
+            owner.Remaining = owner.UsableRemaining;
+        }
+
+        private static void ApplyOwnerWalletState(OwnerWalletRowVM owner, ClientWalletDashboardVM dashboard)
+        {
+            if (owner.ExpiredNotConsumed > 0 && owner.Remaining <= 0)
+            {
+                owner.State = "PO expired";
+                owner.StateCss = "badge-danger";
+            }
+            else if (owner.POCredit <= 0)
+            {
+                owner.State = dashboard.BillingModel == (int)BillingModelEnum.M2 ? "Awaiting PO" : "No PO";
+                owner.StateCss = "badge-warning";
+            }
+            else if (owner.Remaining <= 0)
+            {
+                owner.State = "PO exhausted";
+                owner.StateCss = "badge-danger";
+            }
+            else
+            {
+                owner.State = "Active";
+                owner.StateCss = "badge-success";
+            }
+        }
 
         private bool IsFinanceOrAdmin()
         {
