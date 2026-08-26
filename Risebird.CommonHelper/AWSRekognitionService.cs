@@ -18,17 +18,30 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Risebird.CommonHelper
 {
     public class AWSRekognitionService : IAWSRekognitionService
     {
+        private const int StreamCopyBufferSize = 81920;
+        private static readonly TimeSpan DefaultVideoDownloadTimeout = TimeSpan.FromMinutes(15);
+
+        // Shared so repeated analyses don't churn sockets. The per-download budget is
+        // enforced with a CancellationToken instead of HttpClient.Timeout, which would
+        // otherwise cap every download at the same fixed ceiling.
+        private static readonly HttpClient httpClient = new HttpClient
+        {
+            Timeout = Timeout.InfiniteTimeSpan
+        };
+
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly string topicArn;
         private readonly string roleArn;
         private readonly string bucketName;
+        private readonly TimeSpan videoDownloadTimeout;
         //private readonly IAmazonS3 _s3Client;
         //private readonly IAmazonRekognition _rekognition;
 
@@ -39,44 +52,84 @@ namespace Risebird.CommonHelper
             topicArn = _configuration["AWSRekognition:TopicArn"];
             roleArn = _configuration["AWSRekognition:RoleArn"];
             bucketName = _configuration["AWSRekognition:BucketName"];
+            videoDownloadTimeout =
+                int.TryParse(_configuration["AWSRekognition:VideoDownloadTimeoutMinutes"], out var timeoutMinutes) && timeoutMinutes > 0
+                    ? TimeSpan.FromMinutes(timeoutMinutes)
+                    : DefaultVideoDownloadTimeout;
             //_s3Client = s3Client;
             //_rekognition = rekognition;
         }
 
         public async Task<string> UploadVideoAsync(string videoUrl)
         {
-            using var httpClient = new HttpClient();
+            // Spool to disk rather than uploading straight from the response stream:
+            // TransferUtility needs a seekable stream to size the upload, and buffering a
+            // full interview video in memory is what pushed the old download past its timeout.
+            var tempFilePath = Path.Combine(Path.GetTempPath(), $"rb_sentiment_{Guid.NewGuid():N}.tmp");
 
-            // Download the file as a stream
-            using var response = await httpClient.GetAsync(videoUrl);
-            response.EnsureSuccessStatusCode();
-
-            var contentType = response.Content.Headers.ContentType?.ToString() ?? "application/octet-stream";
-
-            // Generate a file name from the URL or a GUID
-            string fileName = Path.GetFileName(new Uri(videoUrl).LocalPath);
-            if (string.IsNullOrEmpty(fileName))
+            try
             {
-                fileName = $"file_{Guid.NewGuid()}";
+                using var downloadCts = new CancellationTokenSource(videoDownloadTimeout);
+                string contentType;
+
+                using (var response = await httpClient.GetAsync(videoUrl, HttpCompletionOption.ResponseHeadersRead, downloadCts.Token))
+                {
+                    response.EnsureSuccessStatusCode();
+                    contentType = response.Content.Headers.ContentType?.ToString() ?? "application/octet-stream";
+
+                    await using var downloadStream = await response.Content.ReadAsStreamAsync(downloadCts.Token);
+                    await using var tempFileStream = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write,
+                        FileShare.None, StreamCopyBufferSize, useAsync: true);
+                    await downloadStream.CopyToAsync(tempFileStream, StreamCopyBufferSize, downloadCts.Token);
+                }
+
+                // Generate a file name from the URL or a GUID
+                string fileName = Path.GetFileName(new Uri(videoUrl).LocalPath);
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    fileName = $"file_{Guid.NewGuid()}";
+                }
+
+                await using var uploadStream = new FileStream(tempFilePath, FileMode.Open, FileAccess.Read,
+                    FileShare.Read, StreamCopyBufferSize, useAsync: true);
+
+                if (uploadStream.Length == 0)
+                {
+                    throw new InvalidOperationException($"Downloaded video from '{videoUrl}' was empty; nothing to analyse.");
+                }
+
+                var uploadRequest = new TransferUtilityUploadRequest
+                {
+                    InputStream = uploadStream,
+                    Key = $"uploads/{Guid.NewGuid()}_{fileName}",
+                    BucketName = bucketName,
+                    ContentType = contentType
+                };
+
+                using var _s3Client = new AmazonS3Client("AKIARVQVPFDBKUR6OYIU", "ybr8/aERuORrZ0Y5p/NuGoL+8DFUZNz0ZRc8GEWh", RegionEndpoint.USEast2);
+
+                using var transfer = new TransferUtility(_s3Client);
+                await transfer.UploadAsync(uploadRequest);
+
+                return uploadRequest.Key;
             }
-
-            using var stream = await response.Content.ReadAsStreamAsync();
-
-            var uploadRequest = new TransferUtilityUploadRequest
+            finally
             {
-                InputStream = stream,
-                Key = $"uploads/{Guid.NewGuid()}_{fileName}",
-                BucketName = bucketName,
-                ContentType = contentType
-            };
-
-            var _s3Client = new AmazonS3Client("AKIARVQVPFDBKUR6OYIU", "ybr8/aERuORrZ0Y5p/NuGoL+8DFUZNz0ZRc8GEWh", RegionEndpoint.USEast2);
-
-            var transfer = new TransferUtility(_s3Client);
-            await transfer.UploadAsync(uploadRequest);
-            await stream.DisposeAsync();
-
-            return uploadRequest.Key;
+                try
+                {
+                    if (File.Exists(tempFilePath))
+                    {
+                        File.Delete(tempFilePath);
+                    }
+                }
+                catch (IOException)
+                {
+                    // A leftover temp file is not worth failing the analysis over.
+                }
+                catch (UnauthorizedAccessException)
+                {
+                }
+            }
         }
 
         public async Task<string> UploadVideoAsync(IFormFile file)
@@ -90,11 +143,10 @@ namespace Risebird.CommonHelper
                 BucketName = bucketName,
                 ContentType = file.ContentType
             };
-            var _s3Client = new AmazonS3Client("AKIARVQVPFDBKUR6OYIU", "ybr8/aERuORrZ0Y5p/NuGoL+8DFUZNz0ZRc8GEWh", RegionEndpoint.USEast2);
+            using var _s3Client = new AmazonS3Client("AKIARVQVPFDBKUR6OYIU", "ybr8/aERuORrZ0Y5p/NuGoL+8DFUZNz0ZRc8GEWh", RegionEndpoint.USEast2);
 
-            var transfer = new TransferUtility(_s3Client);
+            using var transfer = new TransferUtility(_s3Client);
             await transfer.UploadAsync(uploadRequest);
-            await stream.DisposeAsync();
 
             return uploadRequest.Key;
         }

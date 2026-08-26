@@ -2806,16 +2806,19 @@
         return '';
     }
 
+    // H.264 in MP4 is listed first because Amazon Rekognition (used for sentiment
+    // analysis on flagged answers) cannot decode VP8/VP9 at all. WebM stays as the
+    // fallback for browsers that can't record MP4.
     function pickVideoRecorderMimeType() {
         const types = [
+            'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
+            'video/mp4;codecs=avc1.42E01E',
+            'video/mp4',
             'video/webm;codecs=vp9,opus',
             'video/webm;codecs=vp8,opus',
             'video/webm;codecs=vp9',
             'video/webm;codecs=vp8',
-            'video/webm',
-            'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
-            'video/mp4;codecs=avc1.42E01E',
-            'video/mp4'
+            'video/webm'
         ];
         for (let i = 0; i < types.length; i++) {
             if (MediaRecorder.isTypeSupported(types[i])) return types[i];

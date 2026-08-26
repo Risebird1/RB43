@@ -6242,23 +6242,23 @@
 </script>
 <script>
     function GetSentimentAnalysis(videoId) {
-        debugger;
         $.ajax({
             type: "POST",
             url: "/Candidate/GetSentimentAnalysis",
             data: { 'videoId': videoId },
             success: function (data) {
-                debugger;
-                if (data) {
+                if (data && data.success) {
                     alert('Successful.');
                     setTimeout(function () {
                         location.reload();
                     }, 2000);
                 }
                 else {
-                    alert('Failed!');
+                    alert((data && data.message) ? data.message : 'Sentiment analysis failed.');
                 }
-
+            },
+            error: function () {
+                alert('Sentiment analysis could not be completed. The request may have timed out; reload the report to check whether it finished.');
             }
         });
     }
