@@ -1,0 +1,25 @@
+---
+description: SQL and database conventions for Risebird.DB
+globs: Risebird.DB/**/*
+alwaysApply: false
+---
+
+# Risebird SQL
+
+## File placement
+- Logic: `StoredProcedures/usp_*.sql`
+- One-off deploy: `Migrations/*.sql` (idempotent IF NOT EXISTS)
+- Schema: `Tables/`
+
+## Join rules
+- Meetings: `InterviewMeetings.IRFId = irf.IRFId` (varchar)
+- Plivo logs: `PlivoCXCallLogs.IRFId = Candidate.IRFId` (int) + `RecipientEmail = UserList.EmailId`
+- Candidate email path: `Candidate → CandidatesMaster → UserList`
+
+## Eligibility SPs
+Schedule/reschedule pairs must stay mutually exclusive. Pass `@NowIST` for meeting date comparisons.
+
+## Performance
+Prefer CTE pre-aggregation over correlated subqueries on log tables. Use sargable date ranges, not `CAST(col AS DATE)`.
+
+See `Docs/Database.md`.

@@ -1,0 +1,22 @@
+---
+description: Core Risebird project context — layers, docs index, conventions
+alwaysApply: true
+---
+
+# Risebird
+
+## Layers
+Web/Services/Functions → Business → Repository → SQL Server. External APIs in CommonHelper.
+
+## Docs (read one, not all)
+Index: `Docs/README.md`. Key: Architecture, VoiceAgents, Database, AzureSearch, Deployment.
+
+## Conventions
+- SQL changes: `Risebird.DB/StoredProcedures/` + optional `Migrations/` script
+- Minimize diff scope; match existing naming and patterns
+- `Candidate.IRFId` is INT (`IRF.id`); `InterviewMeetings.IRFId` is VARCHAR (`IRF.IRFId`)
+- Interview dates IST; Plivo log timestamps UTC
+- Do not commit secrets from appsettings
+
+## Skills
+Use `.cursor/skills/risebird-*` for scoped tasks before loading full docs.
