@@ -254,10 +254,45 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<VideoSentimentAnalysis> GenerateSentimentAnalysis(int videoId, string user, string videoUrl)
+        // Amazon Rekognition Video only decodes H.264 inside an MPEG-4, MOV or AVI
+        // container. Browser recordings default to WebM/VP9, which Rekognition accepts
+        // as a job and then fails asynchronously with "Unsupported codec/format", so it
+        // is worth refusing up front rather than paying for an upload to find out.
+        private static readonly HashSet<string> RekognitionSupportedVideoExtensions =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".mp4", ".m4v", ".mov", ".qt", ".avi" };
+
+        private static bool IsRekognitionSupportedFormat(string videoUrl, out string extension)
+        {
+            extension = string.Empty;
+            if (string.IsNullOrWhiteSpace(videoUrl))
+            {
+                return false;
+            }
+
+            var path = Uri.TryCreate(videoUrl, UriKind.Absolute, out var uri) ? uri.LocalPath : videoUrl;
+            extension = System.IO.Path.GetExtension(path);
+
+            return RekognitionSupportedVideoExtensions.Contains(extension);
+        }
+
+        public async Task<SentimentAnalysisResultVM> GenerateSentimentAnalysis(int videoId, string user, string videoUrl)
         {
             try
             {
+                if (!IsRekognitionSupportedFormat(videoUrl, out var extension))
+                {
+                    var describedFormat = string.IsNullOrEmpty(extension)
+                        ? "an unrecognised format"
+                        : extension.TrimStart('.').ToUpperInvariant();
+                    var refusal = $"This answer was recorded as {describedFormat}, which Amazon Rekognition cannot analyse. " +
+                                  "Sentiment analysis needs H.264 video in an MP4 or MOV container.";
+
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                        $"Skipped sentiment analysis for video {videoId}: {refusal} Video URL: {videoUrl}", user);
+
+                    return new SentimentAnalysisResultVM { Success = false, Message = refusal };
+                }
+
                 var key = await _aWSRekognitionService.UploadVideoAsync(videoUrl);
                 var sentimentAnalysis = await _aWSRekognitionService.AnalyzeVideoAsync(key);
                 if(sentimentAnalysis != null)
@@ -303,15 +338,23 @@ namespace Risebird.Business
                     sentimentObj.CreatedBy = user;
                     sentimentObj.biqvId = videoId;
                     await _aiInterviewerRepository.SaveSentimentAnalysis(sentimentObj);
-                    return sentimentObj;
+                    return new SentimentAnalysisResultVM { Success = true, Sentiment = sentimentObj };
                 }
 
-                return null;
+                return new SentimentAnalysisResultVM
+                {
+                    Success = false,
+                    Message = "Amazon Rekognition returned no face data for this video."
+                };
             }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
+                return new SentimentAnalysisResultVM
+                {
+                    Success = false,
+                    Message = "Sentiment analysis failed unexpectedly. Please check the application logs."
+                };
             }
         }
 

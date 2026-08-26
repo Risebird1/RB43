@@ -39,4 +39,15 @@ namespace Risebird.Entities.ViewModel
 
         public string CreatedBy { get; set; } = string.Empty;
     }
+
+    /// <summary>
+    /// Outcome of a sentiment analysis request, carrying the reason when analysis
+    /// could not be produced so the caller can show it instead of a bare failure.
+    /// </summary>
+    public class SentimentAnalysisResultVM
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public VideoSentimentAnalysis Sentiment { get; set; }
+    }
 }

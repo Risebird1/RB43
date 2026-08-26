@@ -7499,19 +7499,17 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "SupportAdmin")
                     {
                         var meetingDetails = await _aiInterviewerService.GetAIInterviewSpecificDetailsByCandidateVideoId(videoId);
-                        var sentimentViewModel = new VideoSentimentAnalysis();
+                        SentimentAnalysisResultVM sentimentResult;
                         if (isRedo)
                         {
-                            sentimentViewModel = await _aiInterviewerService.GenerateSentimentAnalysis(videoId, emailid, meetingDetails.CandidateAnswerVideoLink);
-
+                            sentimentResult = await _aiInterviewerService.GenerateSentimentAnalysis(videoId, emailid, meetingDetails.CandidateAnswerVideoLink);
                         }
                         else
                         {
-                            sentimentViewModel = await _aiInterviewerService.GetSentimentAnalysisById(videoId);
-                            if (sentimentViewModel == null)
-                            {
-                                sentimentViewModel = await _aiInterviewerService.GenerateSentimentAnalysis(videoId, emailid, meetingDetails.CandidateAnswerVideoLink);
-                            }
+                            var existing = await _aiInterviewerService.GetSentimentAnalysisById(videoId);
+                            sentimentResult = existing != null
+                                ? new SentimentAnalysisResultVM { Success = true, Sentiment = existing }
+                                : await _aiInterviewerService.GenerateSentimentAnalysis(videoId, emailid, meetingDetails.CandidateAnswerVideoLink);
                         }
                         //sentimentViewModel.CandidateEmail = meetingDetails.candidateEmail;
                         //sentimentViewModel.CandidateName = meetingDetails.candidateName;
@@ -7519,11 +7517,11 @@ namespace Risebird.Web.Controllers
                         //sentimentViewModel.ResumeLink = meetingDetails.resumeLink;
                         //sentimentViewModel.VideoUrl = meetingDetails.CandidateAnswerVideoLink;
                         //return View(sentimentViewModel);
-                        if (sentimentViewModel != null)
+                        return Json(new
                         {
-                            return Json(true);
-                        }
-                        return Json(false);
+                            success = sentimentResult?.Success == true,
+                            message = sentimentResult?.Message ?? string.Empty
+                        });
                     }
                     else
                     {
@@ -7539,7 +7537,11 @@ namespace Risebird.Web.Controllers
             catch (System.Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(false);
+                return Json(new
+                {
+                    success = false,
+                    message = "Sentiment analysis failed unexpectedly. Please check the application logs."
+                });
             }
         }
         [HttpPost]
