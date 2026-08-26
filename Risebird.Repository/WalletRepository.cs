@@ -232,6 +232,30 @@ namespace Risebird.Repository
             return false;
         }
 
+        public async Task<int> BulkUpdateClientPOExpireDate(int clientId, IEnumerable<int> poIds, DateTime expireDate)
+        {
+            var ids = poIds?.Where(id => id > 0).Distinct().ToList();
+            if (ids == null || ids.Count == 0) return 0;
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    const string sql = @"
+                        UPDATE ClientPO
+                        SET ExpireDate = @ExpireDate,
+                            ModifiedOn = DATEADD(MINUTE, 330, GETDATE())
+                        WHERE ClientId = @ClientId AND id IN @Ids";
+                    return await con.ExecuteAsync(sql, new { ClientId = clientId, ExpireDate = expireDate.Date, Ids = ids });
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return 0;
+        }
+
         public async Task<ClientWalletDashboardVM> GetClientWalletDashboard(int clientId, int month, int year, bool allDetails = false)
         {
             try

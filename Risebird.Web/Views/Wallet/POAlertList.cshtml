@@ -9,6 +9,8 @@
     var threshold    = ViewBag.Threshold ?? 90;
     var totalClients = ViewBag.TotalClients ?? 0;
     var totalAlerts  = Model.Count;
+    var expiryAlerts = ViewBag.ExpiryAlertCount ?? 0;
+    var consumptionAlerts = ViewBag.ConsumptionAlertCount ?? Model.Count(a => a.AlertType == "Consumption");
     var mfi          = new DateTimeFormatInfo();
 }
 
@@ -70,10 +72,10 @@
 <div class="card-header bg-w clearfix" style="border-radius:8px;margin-bottom:16px;">
     <div class="pull-left">
         <h4 style="color:#fff;margin:0;font-family:Roboto,sans-serif;font-weight:700;">
-            <i class="fa fa-exclamation-triangle" style="margin-right:8px;"></i>PO Alert List — Latest PO ≥ @threshold% Consumed
+            <i class="fa fa-exclamation-triangle" style="margin-right:8px;"></i>PO Alert List — Consumption &amp; Expiry
         </h4>
         <p style="color:rgba(255,255,255,.8);margin:4px 0 0;font-size:12px;font-family:Roboto,sans-serif;">
-            M2 clients where the latest PO of any billing owner has consumed ≥ @threshold%. Sorted by highest consumption.
+            M2 clients with latest PO ≥ @threshold% consumed, plus expired/expiring POs. Remaining = PO Credit − Consumed − Expired Not Consumed.
         </p>
     </div>
     <div class="pull-right" style="padding-top:6px;">
@@ -86,7 +88,9 @@
 <!-- Stat bar -->
 <div class="pal-stat-bar">
     <div class="pal-stat"><div class="lbl">M2 Clients</div><div class="val" style="color:#555;">@totalClients</div></div>
-    <div class="pal-stat"><div class="lbl">Alert Rows</div><div class="val" style="color:#c62828;">@totalAlerts</div></div>
+    <div class="pal-stat"><div class="lbl">Consumption Alerts</div><div class="val" style="color:#e65100;">@consumptionAlerts</div></div>
+    <div class="pal-stat"><div class="lbl">Expiry Alerts</div><div class="val" style="color:#c62828;">@expiryAlerts</div></div>
+    <div class="pal-stat"><div class="lbl">Total Rows</div><div class="val" style="color:#c62828;">@totalAlerts</div></div>
     <div class="pal-stat"><div class="lbl">Threshold</div><div class="val" style="color:#e65100;">≥ @threshold%</div></div>
 </div>
 
@@ -97,7 +101,11 @@
            placeholder="Client or owner name…" style="max-width:220px;"
            oninput="filterRows(this.value)">
     <label style="margin-left:12px;">Show:</label>
-    <label style="font-weight:600;cursor:pointer;"><input type="radio" name="palFilter" value="all" checked onchange="applyPalFilter()"> All (≥@threshold%)</label>
+    <label style="font-weight:600;cursor:pointer;"><input type="radio" name="palFilter" value="all" checked onchange="applyPalFilter()"> All alerts</label>
+    <label style="font-weight:600;cursor:pointer;"><input type="radio" name="palFilter" value="consumption" onchange="applyPalFilter()"> Consumption (≥@threshold%)</label>
+    <label style="font-weight:600;cursor:pointer;"><input type="radio" name="palFilter" value="expiry" onchange="applyPalFilter()"> Expiry alerts</label>
+    <label style="font-weight:600;cursor:pointer;"><input type="radio" name="palFilter" value="expired" onchange="applyPalFilter()"> Expired only</label>
+    <label style="font-weight:600;cursor:pointer;"><input type="radio" name="palFilter" value="expiring" onchange="applyPalFilter()"> Expiring soon</label>
     <label style="font-weight:600;cursor:pointer;"><input type="radio" name="palFilter" value="critical" onchange="applyPalFilter()"> Critical (≥95%)</label>
     <label style="font-weight:600;cursor:pointer;"><input type="radio" name="palFilter" value="full" onchange="applyPalFilter()"> Fully Consumed (100%)</label>
 </div>
@@ -120,11 +128,15 @@ else
                     <th>Client</th>
                     <th>Billing Type</th>
                     <th>Billing Owner</th>
+                    <th>Alert Type</th>
                     <th>PO Period</th>
                     <th>PO Number</th>
+                    <th>Expire Date</th>
+                    <th>Expiry Status</th>
                     <th>PO Credit</th>
                     <th>Consumed</th>
-                    <th>Remaining</th>
+                    <th>Expired Not<br/>Consumed</th>
+                    <th title="PO Credit − Consumed − Expired Not Consumed">Remaining</th>
                     <th>Consumption</th>
                     <th>Actions</th>
                 </tr>
@@ -136,10 +148,17 @@ else
                     rowNum++;
                     var pct      = Math.Min(100, row.ConsumedPct);
                     var barColor = pct >= 100 ? "#c62828" : pct >= 95 ? "#e53935" : "#ef6c00";
-                    var rowClass = pct >= 100 ? "table-danger" : pct >= 95 ? "table-warning" : "";
+                    var rowExpiredNc = row.ExpiredNotConsumed;
+                    var rowRemaining = row.UsableRemaining;
+                    var rowClass = row.AlertType == "Expiry" && row.IsExpired ? "table-danger"
+                                 : row.AlertType == "Expiry" && row.IsExpiringSoon ? "table-warning"
+                                 : pct >= 100 ? "table-danger" : pct >= 95 ? "table-warning" : "";
                     var period   = mfi.GetMonthName(row.POMonth) + " " + row.POYear;
 
                     <tr class="pal-row @rowClass" data-pct="@pct"
+                        data-alerttype="@row.AlertType.ToLower()"
+                        data-expired="@(row.IsExpired ? "1" : "0")"
+                        data-expiring="@(row.IsExpiringSoon ? "1" : "0")"
                         data-search="@((row.ClientName + " " + (row.BillingOwnerName ?? "")).ToLower())">
                         <td style="color:#888;font-size:11px;">@rowNum</td>
                         <td>
@@ -165,18 +184,34 @@ else
                                 <span style="color:#aaa;font-size:11px;">—</span>
                             }
                         </td>
-                        <td style="white-space:nowrap;">@period</td>
-                        <td style="font-size:11px;color:#555;">@row.PONumber</td>
-                        <td style="white-space:nowrap;color:#1565c0;font-weight:600;">₹ @row.POCreditAmount.ToString("N0")</td>
-                        <td style="white-space:nowrap;color:#2e7d32;font-weight:600;">₹ @row.WalletConsumed.ToString("N0")</td>
-                        <td style="white-space:nowrap;font-weight:700;color:@(row.WalletRemaining < 0 ? "#b71c1c" : row.WalletRemaining == 0 ? "#2e7d32" : "#1565c0");">
-                            @if (row.WalletRemaining < 0)
+                        <td>
+                            @if (row.AlertType == "Expiry")
                             {
-                                <span title="Over-consumed — new PO required">⚠ ₹ @row.WalletRemaining.ToString("N0")</span>
+                                <span class="badge badge-danger" style="font-size:10px;">Expiry</span>
                             }
                             else
                             {
-                                @("₹ " + row.WalletRemaining.ToString("N0"))
+                                <span class="badge badge-warning" style="font-size:10px;">Consumption</span>
+                            }
+                        </td>
+                        <td style="white-space:nowrap;">@period</td>
+                        <td style="font-size:11px;color:#555;">@row.PONumber</td>
+                        <td style="white-space:nowrap;font-size:11px;">@(row.ExpireDate?.ToString("dd MMM yyyy") ?? "—")</td>
+                        <td><span class="badge @row.ExpiryStatusCss" style="font-size:10px;">@row.ExpiryStatusDesc</span></td>
+                        <td style="white-space:nowrap;color:#1565c0;font-weight:600;">₹ @row.POCreditAmount.ToString("N0")</td>
+                        <td style="white-space:nowrap;color:#2e7d32;font-weight:600;">₹ @row.WalletConsumed.ToString("N0")</td>
+                        <td style="white-space:nowrap;font-weight:600;color:@(rowExpiredNc > 0 ? "#c62828" : "inherit");">
+                            @(rowExpiredNc > 0 ? "₹ " + rowExpiredNc.ToString("N0") : "—")
+                        </td>
+                        <td style="white-space:nowrap;font-weight:700;color:@(rowRemaining < 0 ? "#b71c1c" : rowRemaining == 0 ? "#2e7d32" : "#1565c0");"
+                            title="PO Credit − Consumed − Expired Not Consumed (owner total)">
+                            @if (rowRemaining < 0)
+                            {
+                                <span title="Over-consumed — new PO required">⚠ ₹ @rowRemaining.ToString("N0")</span>
+                            }
+                            else
+                            {
+                                @("₹ " + rowRemaining.ToString("N0"))
                             }
                         </td>
                         <td>
@@ -236,9 +271,18 @@ else
         var val = document.querySelector('input[name="palFilter"]:checked').value;
         document.querySelectorAll('.pal-row').forEach(function (tr) {
             var pct = parseInt(tr.dataset.pct || '0', 10);
-            if (val === 'all')      tr.style.display = '';
-            else if (val === 'critical') tr.style.display = (pct >= 95) ? '' : 'none';
-            else                         tr.style.display = (pct >= 100) ? '' : 'none';
+            var alertType = tr.dataset.alerttype || 'consumption';
+            var isExpired = tr.dataset.expired === '1';
+            var isExpiring = tr.dataset.expiring === '1';
+            var show = true;
+            if (val === 'all') show = true;
+            else if (val === 'consumption') show = alertType === 'consumption';
+            else if (val === 'expiry') show = alertType === 'expiry';
+            else if (val === 'expired') show = isExpired;
+            else if (val === 'expiring') show = isExpiring;
+            else if (val === 'critical') show = alertType === 'consumption' && pct >= 95;
+            else show = alertType === 'consumption' && pct >= 100;
+            tr.style.display = show ? '' : 'none';
         });
     }
 

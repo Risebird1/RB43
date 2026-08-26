@@ -27,8 +27,14 @@ namespace Risebird.Business.Interface
         /// This is the net carry-forward balance entering the selected month.
         /// </summary>
         Task<Dictionary<int, decimal>> GetOwnerOpeningBalances(int clientId, int selectedMonth, int selectedYear);
+        /// <summary>
+        /// Per billing owner: sum of unconsumed credit on expired POs (FIFO, all-time).
+        /// </summary>
+        Task<Dictionary<int, decimal>> GetOwnerExpiredNotConsumed(int clientId, int billingType);
         Task<bool> UpdatePOStatus(int poId, int clientId, int status);
         Task<bool> UpdateClientPO(int poId, int clientId, string poNumber, decimal poCreditAmount, int poMonth, int poYear, int? poQuantity, DateTime? addedDate, DateTime? expireDate, string poDocumentUrl = null, bool updateDocument = false);
+        Task<int> BulkUpdateClientPOExpireDate(int clientId, IEnumerable<int> poIds, DateTime expireDate);
+        Task<List<POConsumptionAlertRowVM>> GetPOExpiryAlerts(List<ClientPOGroupVM> allSummary = null);
         Task<AllClientsWalletVM> GetAllClientsWalletSummary(int fromMonth, int fromYear, int toMonth, int toYear);
 
         /// <summary>
