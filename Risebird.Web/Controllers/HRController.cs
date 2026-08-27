@@ -1383,5 +1383,177 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        private static bool CanAccessCallRecordings(string profileName)
+        {
+            return profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR"
+                || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement"
+                || profileName == "InterviewerManagement";
+        }
+
+        private static int ParseDurationSeconds(string duration)
+        {
+            if (int.TryParse(duration, out var seconds) && seconds >= 0)
+            {
+                return seconds;
+            }
+            return 0;
+        }
+
+        private static IEnumerable<CallRecordingDataVM> ApplyCallAnalyticsFilters(IEnumerable<CallRecordingDataVM> recordings, string type, DateTime from, DateTime to)
+        {
+            recordings = recordings ?? Enumerable.Empty<CallRecordingDataVM>();
+            var fromDate = from.Date;
+            var toExclusive = to.Date.AddDays(1);
+            recordings = recordings.Where(x => x.DateCreated >= fromDate && x.DateCreated < toExclusive);
+
+            if (string.IsNullOrEmpty(type))
+            {
+                return recordings;
+            }
+
+            if (type == "Candidate" || type == "Interviewer")
+            {
+                return recordings.Where(x => x.RecipientProfileType != null && x.RecipientProfileType.ToLower() == type.ToLower());
+            }
+
+            return recordings.Where(x => x.RecipientProfileType == null
+                || (x.RecipientProfileType.ToLower() != "candidate" && x.RecipientProfileType.ToLower() != "interviewer"));
+        }
+
+        private static List<CallAnalyticsSummaryVM> BuildCallAnalyticsSummaries(IEnumerable<CallRecordingDataVM> recordings)
+        {
+            return recordings
+                .GroupBy(x => string.IsNullOrWhiteSpace(x.Caller) ? "(unknown)" : x.Caller)
+                .Select(g =>
+                {
+                    var list = g.ToList();
+                    var candidate = list.Count(x => string.Equals(x.RecipientProfileType, "Candidate", StringComparison.OrdinalIgnoreCase));
+                    var interviewer = list.Count(x => string.Equals(x.RecipientProfileType, "Interviewer", StringComparison.OrdinalIgnoreCase));
+                    return new CallAnalyticsSummaryVM
+                    {
+                        Caller = g.Key,
+                        TotalCalls = list.Count,
+                        CandidateCalls = candidate,
+                        InterviewerCalls = interviewer,
+                        OtherCalls = list.Count - candidate - interviewer,
+                        CallsWithRecording = list.Count(x => !string.IsNullOrWhiteSpace(x.RecordingUri) || !string.IsNullOrWhiteSpace(x.RecordingSid)),
+                        TotalDurationSeconds = list.Sum(x => ParseDurationSeconds(x.Duration)),
+                        LastCallAt = list.Max(x => (DateTime?)x.DateCreated)
+                    };
+                })
+                .OrderByDescending(x => x.TotalCalls)
+                .ThenBy(x => x.Caller)
+                .ToList();
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> CallAnalytics(string type, DateTime? from, DateTime? to)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (CanAccessCallRecordings(profileName))
+                    {
+                        var fromDate = from?.Date ?? DateTime.Today.AddDays(-30);
+                        var toDate = to?.Date ?? DateTime.Today;
+                        if (toDate < fromDate)
+                        {
+                            toDate = fromDate;
+                        }
+
+                        var recordings = ApplyCallAnalyticsFilters(
+                            await _meetingService.GetCallRecordingData(profileName, emailid),
+                            type,
+                            fromDate,
+                            toDate);
+
+                        var summaries = BuildCallAnalyticsSummaries(recordings);
+                        ViewBag.type = type;
+                        ViewBag.from = fromDate.ToString("yyyy-MM-dd");
+                        ViewBag.to = toDate.ToString("yyyy-MM-dd");
+                        ViewBag.Totals = new CallAnalyticsSummaryVM
+                        {
+                            Caller = "All",
+                            TotalCalls = summaries.Sum(x => x.TotalCalls),
+                            CandidateCalls = summaries.Sum(x => x.CandidateCalls),
+                            InterviewerCalls = summaries.Sum(x => x.InterviewerCalls),
+                            OtherCalls = summaries.Sum(x => x.OtherCalls),
+                            CallsWithRecording = summaries.Sum(x => x.CallsWithRecording),
+                            TotalDurationSeconds = summaries.Sum(x => x.TotalDurationSeconds),
+                            LastCallAt = summaries.Count == 0 ? null : summaries.Max(x => x.LastCallAt)
+                        };
+                        return View(summaries);
+                    }
+
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+                return RedirectToAction("SignOut", "Session");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> CallAnalyticsByUser(string caller, string type, DateTime? from, DateTime? to)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "");
+                    ViewBag.Profile = profileName;
+                    if (CanAccessCallRecordings(profileName))
+                    {
+                        if (string.IsNullOrWhiteSpace(caller))
+                        {
+                            return RedirectToAction("CallAnalytics", new { type, from, to });
+                        }
+
+                        var fromDate = from?.Date ?? DateTime.Today.AddDays(-30);
+                        var toDate = to?.Date ?? DateTime.Today;
+                        if (toDate < fromDate)
+                        {
+                            toDate = fromDate;
+                        }
+
+                        var recordings = ApplyCallAnalyticsFilters(
+                            await _meetingService.GetCallRecordingData(profileName, emailid),
+                            type,
+                            fromDate,
+                            toDate)
+                            .Where(x => string.Equals(string.IsNullOrWhiteSpace(x.Caller) ? "(unknown)" : x.Caller, caller, StringComparison.OrdinalIgnoreCase))
+                            .OrderByDescending(x => x.DateCreated)
+                            .ToList();
+
+                        ViewBag.caller = caller;
+                        ViewBag.type = type;
+                        ViewBag.from = fromDate.ToString("yyyy-MM-dd");
+                        ViewBag.to = toDate.ToString("yyyy-MM-dd");
+                        return View(recordings);
+                    }
+
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+                return RedirectToAction("SignOut", "Session");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
     }
 }

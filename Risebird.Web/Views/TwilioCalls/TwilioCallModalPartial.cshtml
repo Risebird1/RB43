@@ -1,4 +1,14 @@
-﻿<div id="myCallModal" class="modal modal-wrap modal-bg">
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@{
+    var plivoConfigured =
+        !string.IsNullOrWhiteSpace(Configuration["Plivo:AuthId"])
+        && !string.IsNullOrWhiteSpace(Configuration["Plivo:AuthToken"])
+        && (!string.IsNullOrWhiteSpace(Configuration["Plivo:ApplicationId"]) || !string.IsNullOrWhiteSpace(Configuration["Plivo:APPLICATION_ID"]))
+        && !string.IsNullOrWhiteSpace(Configuration["Plivo:EndpointUsername"]);
+    var defaultProvider = plivoConfigured ? "plivo" : "twilio";
+}
+<div id="myCallModal" class="modal modal-wrap modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -16,6 +26,10 @@
             </button>
 
             <div class="modal-body">
+                <div id="rbCallProviderToggle" class="rb-call-provider-toggle text-center">
+                    <button type="button" id="rbProviderTwilio" class="btn btn-sm" onclick="setCallProvider('twilio')">Twilio</button>
+                    <button type="button" id="rbProviderPlivo" class="btn btn-sm" onclick="setCallProvider('plivo')" @(plivoConfigured ? null : "disabled=\"disabled\"")>Plivo</button>
+                </div>
                 <h5 class="modal-title text-center" id="callingLabel"></h5>
                 <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
                        display: block;" class="btn btn-fill btn-danger" value="Hang Up">
@@ -24,3 +38,18 @@
         </div>
     </div>
 </div>
+<style>
+    .rb-call-provider-toggle { margin-bottom: 12px; }
+    .rb-call-provider-toggle button { margin: 0 4px; border: 1px solid #c5c5c5; background: #fff; }
+    .rb-call-provider-toggle button.active { background: #1976d2; color: #fff; border-color: #1976d2; }
+    .rb-call-provider-toggle button:disabled { opacity: 0.5; cursor: not-allowed; }
+</style>
+<script>
+    window.rbPlivoConfigured = @(plivoConfigured ? "true" : "false");
+    window.rbDefaultProvider = "@defaultProvider";
+</script>
+@if (plivoConfigured)
+{
+    <script src="https://cdn.plivo.com/sdk/browser/v2/plivo.min.js"></script>
+    <script src="~/js/PlivoCallMaker.js" asp-append-version="true"></script>
+}

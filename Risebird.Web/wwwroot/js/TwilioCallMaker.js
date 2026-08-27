@@ -4,12 +4,92 @@
 let device;       // Twilio.Device instance
 let activeCall;   // Current call instance
 
-let callRecipientName = "";
-let irfIdVar = "";
-let callRecipientEmail = "";
-let callRecipientPhoneNumber = "";
-let recipientType = '';
-let interviewId = '';
+var callRecipientName = "";
+var irfIdVar = "";
+var callRecipientEmail = "";
+var callRecipientPhoneNumber = "";
+var recipientType = '';
+var interviewId = '';
+
+function isPlivoCallConfigured() {
+    return window.rbPlivoConfigured === true;
+}
+
+function getCallProvider() {
+    var stored = null;
+    try {
+        stored = localStorage.getItem("rb_call_provider");
+    } catch (e) { }
+
+    if (stored === "plivo" && isPlivoCallConfigured()) {
+        return "plivo";
+    }
+    if (stored === "twilio") {
+        return "twilio";
+    }
+    if (isPlivoCallConfigured() && window.rbDefaultProvider === "plivo") {
+        return "plivo";
+    }
+    return "twilio";
+}
+
+function highlightCallProviderToggle() {
+    var provider = getCallProvider();
+    var twilioBtn = document.getElementById("rbProviderTwilio");
+    var plivoBtn = document.getElementById("rbProviderPlivo");
+    if (twilioBtn) {
+        twilioBtn.classList.toggle("active", provider === "twilio");
+        twilioBtn.disabled = false;
+    }
+    if (plivoBtn) {
+        plivoBtn.classList.toggle("active", provider === "plivo");
+        plivoBtn.disabled = !isPlivoCallConfigured();
+        if (!isPlivoCallConfigured()) {
+            plivoBtn.title = "Plivo is not configured";
+        }
+    }
+}
+
+function setCallProvider(p) {
+    if (p === "plivo" && !isPlivoCallConfigured()) {
+        return;
+    }
+    var previous = getCallProvider();
+    try {
+        localStorage.setItem("rb_call_provider", p);
+    } catch (e) { }
+    highlightCallProviderToggle();
+
+    var inCall = window.rbCallInProgress === true;
+    if (inCall && previous !== p && callRecipientPhoneNumber) {
+        window.rbProviderSwitching = true;
+        if (previous === "plivo") {
+            if (typeof plivoHangUp === "function") {
+                plivoHangUp();
+            }
+        } else {
+            if (activeCall) {
+                activeCall.disconnect();
+                activeCall = null;
+            }
+            if (device && typeof device.disconnectAll === "function") {
+                device.disconnectAll();
+            }
+        }
+        window.rbCallInProgress = false;
+        var label = document.getElementById("callingLabel");
+        if (label) {
+            label.innerHTML = "Calling... <b>" + callRecipientName + "</b>";
+        }
+        callRecipient(callRecipientPhoneNumber);
+    }
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", highlightCallProviderToggle);
+} else {
+    highlightCallProviderToggle();
+}
 
 
 // ----------------------------
@@ -43,9 +123,14 @@ async function GenerateToken() {
 
         const data = await response.json();
 
+        if (typeof Twilio === "undefined" || typeof Twilio.Device !== "function") {
+            console.error("Twilio Device is not available.");
+            return;
+        }
+
         if (!device) {
             setupDevice(data.token);
-        } else {
+        } else if (typeof device.updateToken === "function") {
             await device.updateToken(data.token);
             console.log("Token updated successfully");
         }
@@ -60,6 +145,10 @@ async function GenerateToken() {
 
 function setupDevice(token) {
     //debugger;
+    if (typeof Twilio === "undefined" || typeof Twilio.Device !== "function") {
+        console.error("Twilio Device is not available.");
+        return;
+    }
     device = new Twilio.Device(token, {
         logLevel: 1,
         codecPreferences: ["opus", "pcmu"],
@@ -78,13 +167,22 @@ function setupDevice(token) {
 // ----------------------------
 // Outgoing Call
 // ----------------------------
-function callRecipient(phoneNumber) {    
+function callRecipient(phoneNumber) {
+    callRecipientPhoneNumber = phoneNumber;
+
+    if (getCallProvider() === "plivo") {
+        if (typeof plivoCallRecipient === "function") {
+            plivoCallRecipient(phoneNumber);
+        } else {
+            console.error("Plivo caller is not loaded.");
+        }
+        return;
+    }
+
     if (!device) {
         console.error("Device not ready. Wait for initialization or user gesture.");
         return;
     }
-
-    callRecipientPhoneNumber = phoneNumber;
 
     if (phoneNumber && phoneNumber.length >= 9) {
         const params = { phoneNumber };
@@ -109,22 +207,34 @@ function setupCallHandlers(call) {
     });
 
     call.on("accept", () => {
+        window.rbCallInProgress = true;
         const text = "In call with <b>" + callRecipientName + "</b>";
         document.getElementById("callingLabel").innerHTML = text;
         startCallRecording(call.parameters.CallSid);
     });
 
     call.on("disconnect", () => {
+        window.rbCallInProgress = false;
+        if (window.rbProviderSwitching) {
+            window.rbProviderSwitching = false;
+            return;
+        }
         document.getElementById("callingLabel").innerHTML = "Call disconnected!";
         setTimeout(afterTimeOut, 2000);
     });
 
     call.on("cancel", () => {
+        window.rbCallInProgress = false;
+        if (window.rbProviderSwitching) {
+            window.rbProviderSwitching = false;
+            return;
+        }
         document.getElementById("callingLabel").innerHTML = "Call cancelled!";
         setTimeout(afterTimeOut, 2000);
     });
 
     call.on("error", (error) => {
+        window.rbCallInProgress = false;
         console.error("⚠️ Call error:", error);
         document.getElementById("callingLabel").innerHTML = "Call failed: " + error.message;
         setTimeout(afterTimeOut, 2000);
@@ -137,14 +247,18 @@ function setupCallHandlers(call) {
 // ----------------------------
 function hangUp() {
     //debugger;
+    if (getCallProvider() === "plivo" && typeof plivoHangUp === "function") {
+        plivoHangUp();
+        return;
+    }
 
     if (activeCall) {
         //debugger;
         activeCall.disconnect();
         activeCall = null;
     }
-    
-    if (device) {
+
+    if (device && typeof device.disconnectAll === "function") {
         device.disconnectAll();
     }
 }
@@ -158,8 +272,12 @@ function afterTimeOut() {
 // ----------------------------
 // Recording trigger (backend)
 // ----------------------------
-function startCallRecording(callSid) {
-    fetch(`/User/makecall?sid=${encodeURIComponent(callSid)}&IRFId=${encodeURIComponent(irfIdVar)}&callRecipient=${encodeURIComponent(callRecipientEmail)}&callRecipientPhoneNumber=${encodeURIComponent(callRecipientPhoneNumber)}&recipientType=${encodeURIComponent(recipientType)}`)
+function startCallRecording(callSid, providerOverride) {
+    var url = `/User/makecall?sid=${encodeURIComponent(callSid)}&IRFId=${encodeURIComponent(irfIdVar)}&callRecipient=${encodeURIComponent(callRecipientEmail)}&callRecipientPhoneNumber=${encodeURIComponent(callRecipientPhoneNumber)}&recipientType=${encodeURIComponent(recipientType)}`;
+    if (providerOverride === "Plivo" || getCallProvider() === "plivo") {
+        url += "&provider=Plivo";
+    }
+    fetch(url)
         .then(() => console.log("🎙️ Recording request sent for:", callSid))
         .catch(err => console.error("Recording request failed:", err));
 }
