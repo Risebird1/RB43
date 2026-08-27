@@ -186,7 +186,7 @@
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css?v=2024'>
 <link href="~/newassets/css/rbtooltip.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css?v=2024" />
-<link href="~/Newassets/css/dm-approval-v4.css?v=20260821aiqs-popup2" rel="stylesheet" />
+<link href="~/Newassets/css/dm-approval-v4.css?v=20260826listening" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <style>
@@ -3828,44 +3828,10 @@ else
     }
 </script>
 
-<script>
-
-    const dt = new DataTransfer();
-
-    $("#ResumeFiles").on('change', function (e) {
-        for (var i = 0; i < this.files.length; i++) {
-            let fileBloc = $('<span/>', { class: 'file-block' }),
-                fileName = $('<span/>', { class: 'name', text: this.files.item(i).name });
-            fileBloc.append('<span class="file-delete"><span>+</span></span>')
-                .append(fileName);
-            $("#filesList > #files-names").append(fileBloc);
-        };
-        // Ajout des fichiers dans l'objet DataTransfer
-        for (let file of this.files) {
-            dt.items.add(file);
-        }
-        // Mise à jour des fichiers de l'input file après ajout
-        this.files = dt.files;
-
-        // EventListener pour le bouton de suppression créé
-        $('span.file-delete').click(function () {
-            let name = $(this).next('span.name').text();
-            // Supprimer l'affichage du nom de fichier
-            $(this).parent().remove();
-            for (let i = 0; i < dt.items.length; i++) {
-                // Correspondance du fichier et du nom
-                if (name === dt.items[i].getAsFile().name) {
-                    // Suppression du fichier dans l'objet DataTransfer
-                    dt.items.remove(i);
-                    continue;
-                }
-            }
-            // Mise à jour des fichiers de l'input file après suppression
-            document.getElementById('ResumeFiles').files = dt.files;
-        });
-    });
-
-</script>
+@* The resume multi-file picker (#ResumeFiles) and its DataTransfer logic live in
+   UploadInterviewerResumePartial.cshtml, which is rendered above. A duplicate copy used to
+   sit here and re-declared `const dt` in the same global scope, throwing
+   "Identifier 'dt' has already been declared" and killing this whole script block. *@
 <script>
     function CandidateVideoUpload(irfid) {
         var fileControl = document.getElementById("VideoFiles");
@@ -3965,7 +3931,7 @@ else
 <script src="~/js/dm-v4-layout.js?v=20250630badqc4"></script>
 <script src="~/js/dm-v4-voice.js?v=20250609istmeta1"></script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
-<script src="~/js/dm-v4-questions.js?v=20260825gist-ai"></script>
+<script src="~/js/dm-v4-questions.js?v=20260826listening"></script>
 
 <div id="dmV4ResumeSummaryOverlay" class="dm-v4-drawer-overlay" aria-hidden="true"></div>
 <aside id="dmV4ResumeSummaryDrawer" class="dm-v4-drawer dm-v4-drawer--verdict" aria-hidden="true" role="dialog" aria-labelledby="dmV4ResumeSummaryTitle" style="max-width:520px;">

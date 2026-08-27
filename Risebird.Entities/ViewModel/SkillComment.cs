@@ -22,6 +22,24 @@ namespace Risebird.Entities.ViewModel
         public bool IsGeneratedByAi { get; set; }
         public bool IsCodingQuestion { get; set; }
         public int? CodingTimeLimitInMinutes { get; set; }
+        public bool IsTypingSpeedAssessment { get; set; }
+
+        /// <summary>
+        /// Flags the question as a listening comprehension exercise: the candidate hears an
+        /// audio clip (at most twice) and types a summary of it within three minutes.
+        /// </summary>
+        public bool IsListeningComprehension { get; set; }
+
+        /// <summary>
+        /// Audio clip the candidate listens to for a listening comprehension question.
+        /// </summary>
+        public string ListeningAudioUrl { get; set; }
+
+        /// <summary>
+        /// Transcript of the listening audio. Used server-side to score the candidate's
+        /// summary; never sent to the candidate's browser.
+        /// </summary>
+        public string ListeningAudioTranscription { get; set; }
 
         /// <summary>
         /// Plain-language text the Synthesia avatar speaks. Required for coding questions

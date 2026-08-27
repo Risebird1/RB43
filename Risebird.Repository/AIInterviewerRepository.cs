@@ -804,6 +804,34 @@ namespace Risebird.Repository
             return new List<TypingSpeedAssessment>();
         }
 
+        // Looked up server-side at scoring time so the expected answer never reaches the
+        // candidate's browser, where it would be visible in the page source.
+        public async Task<TechSkillComments> GetListeningComprehensionQuestionDetails(int questionId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@QuestionId", questionId);
+
+                    var result = await SqlMapper.QueryAsync<TechSkillComments>(con,
+                        "usp_GetListeningComprehensionQuestionDetails", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<bool> SaveListeningComprehensionAssessment(ListeningComprehensionAssessment obj)
         {
             try
@@ -820,6 +848,14 @@ namespace Risebird.Repository
                     parameters.Add("@TimeCompleted", obj.TimeCompleted);
                     parameters.Add("@TimeTakenInSeconds", obj.TimeTakenInSeconds);
                     parameters.Add("@CreatedBy", obj.CreatedBy);
+                    parameters.Add("@ExpectedAnswer", obj.ExpectedAnswer);
+                    parameters.Add("@AudioPlayCount", obj.AudioPlayCount);
+                    parameters.Add("@IsTimeExpired", obj.IsTimeExpired);
+                    parameters.Add("@Score", obj.Score);
+                    parameters.Add("@MaxScore", obj.MaxScore);
+                    parameters.Add("@IsPassed", obj.IsPassed);
+                    parameters.Add("@OpenAIAnalysisJson", obj.OpenAIAnalysisJson);
+                    parameters.Add("@OpenAIResponseId", obj.OpenAIResponseId);
 
                     await SqlMapper.QueryAsync(con, "usp_SaveListeningComprehensionAssessment", parameters,
                          commandType: CommandType.StoredProcedure);

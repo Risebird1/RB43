@@ -9004,6 +9004,50 @@ WHERE irf.IsDeleted = 0
             return false;
         }
 
+        public async Task<bool> SetSampleQuestionListeningMode(int id, bool isListeningComprehension, string listeningAudioTranscription = null, string questionGist = null)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@isListeningComprehension", isListeningComprehension);
+                dynamicParameters.Add("@listeningAudioTranscription", listeningAudioTranscription);
+                dynamicParameters.Add("@questionGist", questionGist);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.ExecuteAsync(con, "usp_SetSampleQuestionListeningMode", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<bool> UpdateSampleQuestionListeningAudio(int id, string listeningAudioUrl)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@listeningAudioUrl", listeningAudioUrl);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.ExecuteAsync(con, "usp_UpdateSampleQuestionListeningAudio", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
         public async Task<bool> UpdateSkillChannelEmbeddableUrl(string irfId, string embedUrl)//embed url by Affinda
         {
             try
