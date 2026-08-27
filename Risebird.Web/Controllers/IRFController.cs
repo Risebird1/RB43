@@ -10037,6 +10037,158 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Turns listening comprehension mode on or off for an existing question. The candidate hears
+        /// the uploaded clip (at most twice) and types a summary within three minutes.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> SetQuestionListeningMode(int irfId, int id, bool isListeningComprehension, string listeningAudioTranscription = null, string questionGist = null, string Type = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId))
+                {
+                    return Json(new { success = false, message = "Forbidden" });
+                }
+                if (id <= 0)
+                {
+                    return Json(new { success = false, message = "Question not found." });
+                }
+
+                if (isListeningComprehension)
+                {
+                    var existing = await _irfService.GetDeliveryHeadSampleQuestionById(id);
+
+                    // The candidate cannot do the exercise without the clip, so require it up front
+                    // rather than letting a half-configured question reach an interview.
+                    if (existing == null || string.IsNullOrWhiteSpace(existing.ListeningAudioUrl))
+                    {
+                        return Json(new { success = false, message = "Upload the listening audio clip before marking this as a listening comprehension question." });
+                    }
+
+                    // The avatar introduces the exercise from the gist. It must not read the question
+                    // text, which describes what the candidate is supposed to listen for.
+                    if (string.IsNullOrWhiteSpace(questionGist) && string.IsNullOrWhiteSpace(existing.QuestionGist))
+                    {
+                        return Json(new { success = false, message = "Write a question gist in plain language before marking this as a listening comprehension question. It is what the AI avatar reads out to introduce the exercise." });
+                    }
+
+                    if (!string.IsNullOrEmpty(questionGist) && questionGist.Length > MaxSampleQuestionLength)
+                    {
+                        return Json(new { success = false, message = $"The question gist must not exceed {MaxSampleQuestionLength} characters." });
+                    }
+
+                    // The transcript is the scoring baseline, so it has to be there too.
+                    if (string.IsNullOrWhiteSpace(listeningAudioTranscription)
+                        && string.IsNullOrWhiteSpace(existing.ListeningAudioTranscription))
+                    {
+                        return Json(new { success = false, message = "Add the audio transcript before marking this as a listening comprehension question. It is what the candidate's summary is scored against." });
+                    }
+                }
+
+                var saved = await _irfService.SetSampleQuestionListeningMode(
+                    id,
+                    isListeningComprehension,
+                    string.IsNullOrWhiteSpace(listeningAudioTranscription) ? null : listeningAudioTranscription.Trim(),
+                    string.IsNullOrWhiteSpace(questionGist) ? null : questionGist.Trim());
+
+                return saved
+                    ? Json(new { success = true, isListeningComprehension })
+                    : Json(new { success = false, message = "Could not update the question." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not update the question." });
+            }
+        }
+
+        /// <summary>
+        /// Uploads the audio clip a listening comprehension question plays to the candidate and
+        /// stores its url against the question.
+        /// </summary>
+        [HttpPost]
+        [RequestSizeLimit(26214400)] // 25 MB - clips are short by design
+        public async Task<JsonResult> UploadListeningAudio(int irfId, int id, IFormFile audioFile)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId))
+                {
+                    return Json(new { success = false, message = "Forbidden" });
+                }
+                if (id <= 0)
+                {
+                    return Json(new { success = false, message = "Save the question before uploading its audio." });
+                }
+                if (audioFile == null || audioFile.Length == 0)
+                {
+                    return Json(new { success = false, message = "Choose an audio file to upload." });
+                }
+                if (audioFile.Length > 25 * 1024 * 1024)
+                {
+                    return Json(new { success = false, message = "The audio file must be 25 MB or smaller." });
+                }
+
+                var extension = Path.GetExtension(audioFile.FileName)?.ToLowerInvariant();
+                var allowedExtensions = new[] { ".mp3", ".wav", ".m4a", ".ogg", ".aac" };
+                if (string.IsNullOrWhiteSpace(extension) || !allowedExtensions.Contains(extension))
+                {
+                    return Json(new { success = false, message = "Upload an mp3, wav, m4a, ogg or aac file." });
+                }
+
+                var contentType = extension switch
+                {
+                    ".mp3" => "audio/mpeg",
+                    ".wav" => "audio/wav",
+                    ".m4a" => "audio/mp4",
+                    ".ogg" => "audio/ogg",
+                    ".aac" => "audio/aac",
+                    _ => "application/octet-stream"
+                };
+
+                // Question id plus a timestamp: re-uploading a clip writes a new blob rather than
+                // overwriting the old one, so an interview already in flight keeps working.
+                var filename = $"listening_{id}_{DateTime.Now:yyyyMMddHHmmssffff}{extension}";
+
+                string uploadedUrl;
+                using (var stream = new MemoryStream())
+                {
+                    await audioFile.CopyToAsync(stream);
+                    stream.Position = 0;
+                    uploadedUrl = await _azureStorageHelper.InsertBlobAIInterviewerAudio(
+                        filename, "botintervieweraudio", stream, contentType: contentType);
+                }
+
+                if (string.IsNullOrWhiteSpace(uploadedUrl))
+                {
+                    return Json(new { success = false, message = "The audio file could not be stored. Try again." });
+                }
+
+                // The container is not public, so the candidate's browser needs the SAS token.
+                var sas = _sasUrlHelper.CreateSasUrl("botintervieweraudio");
+                var audioUrl = string.IsNullOrEmpty(sas) ? uploadedUrl : $"{uploadedUrl}?{sas}";
+
+                var saved = await _irfService.UpdateSampleQuestionListeningAudio(id, audioUrl);
+                return saved
+                    ? Json(new { success = true, audioUrl, message = "Audio uploaded." })
+                    : Json(new { success = false, message = "Uploaded the file but could not save it against the question." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not upload the audio file." });
+            }
+        }
+
         [HttpPost]
         public async Task<JsonResult> SaveDeliveryHeadSampleQuestion(int irfId, string skillName, string comment, string expectedAnswer, int? id = null, bool isCodingQuestion = false, int? codingTimeLimitInMinutes = null, string questionGist = null)
         {

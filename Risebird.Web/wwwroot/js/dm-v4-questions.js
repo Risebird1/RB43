@@ -197,9 +197,16 @@
                     var isCoding = q.isCodingQuestion || q.IsCodingQuestion;
                     var codingTimeLimit = q.codingTimeLimitInMinutes || q.CodingTimeLimitInMinutes;
                     var gist = q.questionGist || q.QuestionGist || '';
+                    var isListening = q.isListeningComprehension || q.IsListeningComprehension;
+                    var listeningAudio = q.listeningAudioUrl || q.ListeningAudioUrl || '';
+                    var listeningTranscript = q.listeningAudioTranscription || q.ListeningAudioTranscription || '';
                     var isAiQuestion = q.isAIGenerated || q.IsAIGenerated || q.isGeneratedByAi || q.IsGeneratedByAi;
                     // AI-generated rows often have no saved gist yet; the avatar would speak the question.
-                    if (!$.trim(gist) && !isCoding && $.trim(comment)) {
+                    // Never fall back for a listening comprehension question: its text describes what
+                    // the candidate is meant to listen for, so narrating it would give the exercise
+                    // away. Pre-filling here would also satisfy the gist check and silently save the
+                    // question text as the gist.
+                    if (!$.trim(gist) && !isCoding && !isListening && $.trim(comment)) {
                         gist = comment;
                     }
 
@@ -230,6 +237,37 @@
                     html += ' value="' + (codingTimeLimit ? escapeHtml(String(codingTimeLimit)) : '15') + '"';
                     html += ' title="Time limit in minutes"' + (isCoding ? '' : ' disabled') + ' />';
                     html += '<span class="dm-v4-coding-mins-label"' + (isCoding ? '' : ' style="opacity:.5"') + '>min</span>';
+                    html += '</div>';
+
+                    // Listening comprehension: the candidate hears the clip (max twice) and types a
+                    // summary within three minutes. Needs the clip, a transcript to score against,
+                    // and a gist for the avatar to introduce the exercise with.
+                    html += '<div class="dm-v4-question-meta dm-v4-question-listening">';
+                    html += '<label class="dm-v4-question-flag"><input type="checkbox" class="dm-v4-listening-cb" data-id="' + qid + '"' + (isListening ? ' checked' : '') + (qid ? '' : ' disabled') + ' /> Listening comprehension</label>';
+                    html += '<div class="dm-v4-listening-body"' + (isListening ? '' : ' hidden') + '>';
+                    html += '<div class="dm-v4-listening-audio-row">';
+                    html += '<input type="file" class="dm-v4-listening-file" data-id="' + qid + '" accept="audio/mpeg,audio/wav,audio/mp4,audio/ogg,audio/aac,.mp3,.wav,.m4a,.ogg,.aac"' + (qid ? '' : ' disabled') + ' />';
+                    html += '<button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--xs dm-v4-listening-upload-btn" data-id="' + qid + '"' + (qid ? '' : ' disabled') + '>Upload audio</button>';
+                    html += '<a href="' + escapeHtml(listeningAudio) + '" target="_blank" rel="noopener" class="dm-v4-question-link dm-v4-listening-audio-link"' + (listeningAudio ? '' : ' hidden') + '>Audio ↗</a>';
+                    html += '</div>';
+                    html += '<div class="dm-v4-question-label">Audio transcript <span class="dm-v4-question-gist-hint">scored against the candidate\'s summary; never shown to them</span></div>';
+                    html += '<textarea class="dm-v4-listening-transcript" rows="2" data-id="' + qid + '"';
+                    html += ' placeholder="Exact transcript of the audio clip">' + escapeHtml(listeningTranscript) + '</textarea>';
+
+                    // A question flagged directly in the database (before this panel existed) can be
+                    // missing pieces. Say so on load rather than only when the checkbox is toggled.
+                    var listeningGaps = [];
+                    if (isListening) {
+                        if (!listeningAudio) listeningGaps.push('audio clip');
+                        if (!$.trim(listeningTranscript)) listeningGaps.push('transcript');
+                        if (!$.trim(gist)) listeningGaps.push('question gist');
+                    }
+                    if (listeningGaps.length) {
+                        html += '<div class="dm-v4-listening-warning">Incomplete — still needs the ' + listeningGaps.join(', ') + '.</div>';
+                    } else {
+                        html += '<div class="dm-v4-listening-warning" hidden></div>';
+                    }
+                    html += '</div>';
                     html += '</div>';
 
                     html += '</div><div class="dm-v4-question-col">';
@@ -418,6 +456,86 @@
         });
     }
 
+    function saveListeningMode(id, isListening, transcript, gist, $cb) {
+        var qid = parseInt(id, 10);
+        if (!qid) return;
+
+        var payload = getQuestionsRequestData();
+        payload.id = qid;
+        payload.isListeningComprehension = isListening;
+        if ($.trim(transcript || '')) {
+            payload.listeningAudioTranscription = $.trim(transcript);
+        }
+        if ($.trim(gist || '')) {
+            payload.questionGist = $.trim(gist);
+        }
+
+        $.post('/IRF/SetQuestionListeningMode', payload).done(function (res) {
+            if (res && res.success) {
+                showQuestionToast(isListening
+                    ? 'Saved. Candidates will get the audio clip and a summary box for this question.'
+                    : 'Saved.', 'success');
+            } else {
+                // Put the checkbox back so the panel never claims a state the server rejected
+                $cb.prop('checked', !isListening);
+                $cb.closest('.dm-v4-question-listening').find('.dm-v4-listening-body').prop('hidden', !$cb.prop('checked'));
+                showQuestionToast((res && res.message) ? res.message : 'Could not update the question.', 'error');
+            }
+        }).fail(function (xhr) {
+            $cb.prop('checked', !isListening);
+            $cb.closest('.dm-v4-question-listening').find('.dm-v4-listening-body').prop('hidden', !$cb.prop('checked'));
+            showQuestionToast('Could not reach the server (' + (xhr.status || 'unknown') + ').', 'error');
+        });
+    }
+
+    function uploadListeningAudio($btn) {
+        var qid = parseInt($btn.data('id'), 10);
+        if (!qid || $btn.prop('disabled')) return;
+
+        var $wrap = $btn.closest('.dm-v4-question-listening');
+        var $file = $wrap.find('.dm-v4-listening-file');
+        var file = ($file[0] && $file[0].files && $file[0].files[0]) || null;
+        if (!file) {
+            showQuestionToast('Choose an audio file first.', 'error');
+            return;
+        }
+
+        var data = new FormData();
+        data.append('irfId', getIrfId());
+        data.append('id', qid);
+        data.append('audioFile', file);
+
+        var origHtml = $btn.html();
+        $btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Uploading…');
+
+        $.ajax({
+            url: '/IRF/UploadListeningAudio',
+            type: 'POST',
+            data: data,
+            processData: false,
+            contentType: false,
+            timeout: 300000
+        }).done(function (res) {
+            if (res && res.success && res.audioUrl) {
+                $wrap.find('.dm-v4-listening-audio-link')
+                    .attr('href', res.audioUrl)
+                    .prop('hidden', false);
+                $file.val('');
+                $btn.prop('disabled', false).html(origHtml);
+                showQuestionToast(res.message || 'Audio uploaded.', 'success');
+            } else {
+                $btn.prop('disabled', false).html(origHtml);
+                showQuestionToast((res && res.message) ? res.message : 'Upload failed.', 'error');
+            }
+        }).fail(function (xhr, status) {
+            var msg = status === 'timeout'
+                ? 'Upload timed out. Try a smaller clip.'
+                : 'Could not reach the server (' + (xhr.status || 'unknown') + ').';
+            $btn.prop('disabled', false).html(origHtml);
+            showQuestionToast(msg, 'error');
+        });
+    }
+
     function initQuestionsV4() {
         if (!getPanel().length) return;
 
@@ -534,6 +652,61 @@
 
             $row.find('.dm-v4-question-gist-warning').prop('hidden', true);
             saveCodingMode($gist.data('id'), $cb.prop('checked'), $row.find('.dm-v4-coding-mins').val(), $cb, $gist.val());
+        });
+
+        $(document).off('change.dmV4Listening', '.dm-v4-listening-cb').on('change.dmV4Listening', '.dm-v4-listening-cb', function () {
+            var $cb = $(this);
+            var $row = $cb.closest('.dm-v4-question-row');
+            var $wrap = $cb.closest('.dm-v4-question-listening');
+            var $body = $wrap.find('.dm-v4-listening-body');
+            var $transcript = $wrap.find('.dm-v4-listening-transcript');
+            var $warning = $wrap.find('.dm-v4-listening-warning');
+            var $gist = $row.find('.dm-v4-coding-gist');
+            var isListening = $cb.prop('checked');
+
+            $body.prop('hidden', !isListening);
+
+            // Hold the save until the clip, transcript and gist are all present, rather than
+            // firing a request the server will reject.
+            if (isListening) {
+                var hasAudio = !$wrap.find('.dm-v4-listening-audio-link').prop('hidden');
+                if (!hasAudio) {
+                    $warning.text('Upload the audio clip first.').prop('hidden', false);
+                    $cb.prop('checked', false);
+                    $body.prop('hidden', false);
+                    return;
+                }
+                if (!$.trim($transcript.val())) {
+                    $warning.text('Add the audio transcript — the candidate\'s summary is scored against it.').prop('hidden', false);
+                    $cb.prop('checked', false);
+                    $transcript.focus();
+                    return;
+                }
+                if (!$.trim($gist.val())) {
+                    $warning.text('Write the question gist — the AI avatar reads it to introduce the exercise.').prop('hidden', false);
+                    $cb.prop('checked', false);
+                    $gist.focus();
+                    return;
+                }
+            }
+
+            $warning.prop('hidden', true);
+            saveListeningMode($cb.data('id'), isListening, $transcript.val(), $gist.val(), $cb);
+        });
+
+        $(document).off('change.dmV4ListeningTranscript', '.dm-v4-listening-transcript').on('change.dmV4ListeningTranscript', '.dm-v4-listening-transcript', function () {
+            var $transcript = $(this);
+            var $row = $transcript.closest('.dm-v4-question-row');
+            var $wrap = $transcript.closest('.dm-v4-question-listening');
+            var $cb = $wrap.find('.dm-v4-listening-cb');
+            if (!$cb.prop('checked') || !$.trim($transcript.val())) return;
+
+            $wrap.find('.dm-v4-listening-warning').prop('hidden', true);
+            saveListeningMode($transcript.data('id'), true, $transcript.val(), $row.find('.dm-v4-coding-gist').val(), $cb);
+        });
+
+        $(document).off('click.dmV4ListeningUpload', '.dm-v4-listening-upload-btn').on('click.dmV4ListeningUpload', '.dm-v4-listening-upload-btn', function () {
+            uploadListeningAudio($(this));
         });
 
         $('#dmV4QuestionsCollapse').off('click.dmV4QReload').on('click.dmV4QReload', '.dm-v4-collapse__head', function () {

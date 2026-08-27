@@ -5200,6 +5200,45 @@ button.dm-v4-money-pill {
     color: #c0392b;
 }
 
+/* Listening comprehension: flag, audio upload and transcript for a question */
+.dm-v4-question-listening {
+    display: block;
+    margin-top: 6px;
+}
+
+.dm-v4-listening-body {
+    margin-top: 6px;
+}
+
+.dm-v4-listening-audio-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+}
+
+.dm-v4-listening-file {
+    font-size: 11px;
+    max-width: 190px;
+}
+
+.dm-v4-listening-transcript {
+    width: 100%;
+    padding: 6px 8px;
+    font-size: 12px;
+    line-height: 1.4;
+    border: 1px solid var(--dm-border, #d8dee6);
+    border-radius: 4px;
+    resize: vertical;
+}
+
+.dm-v4-listening-warning {
+    margin-top: 4px;
+    font-size: 11px;
+    color: #c0392b;
+}
+
 .dm-v4-questions-more-hint,
 .dm-v4-questions-empty {
     padding: 14px;

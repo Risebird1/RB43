@@ -1423,19 +1423,86 @@ namespace Risebird.Web.Controllers
                         {
                             try
                             {
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug,
+                                    new Exception($"Starting OpenAI listening comprehension analysis for session {model.SessionId}"));
+
+                                // Read the transcription and expected answer from the database rather than
+                                // from the posted form. Both are grading material: if they were round-tripped
+                                // through the browser the candidate could read them off the page.
+                                var listeningQuestion = await _aiinterviewerService
+                                    .GetListeningComprehensionQuestionDetails(model.CurrentQuestionId);
+
+                                string audioTranscription = listeningQuestion?.ListeningAudioTranscription
+                                    ?? model.ListeningAudioTranscription;
+                                string expectedAnswer = listeningQuestion?.ExpectedAnswer;
+
+                                var inputs = new ListeningComprehensionInputs
+                                {
+                                    audio_transcription = audioTranscription,
+                                    expected_answer = expectedAnswer,
+                                    candidate_summary = model.ListeningSummary,
+                                    time_taken_seconds = model.ListeningTimeTaken,
+                                    audio_play_count = model.ListeningAudioPlayCount,
+                                    time_expired = model.ListeningIsTimeExpired
+                                };
+
+                                string inputsJson = JsonConvert.SerializeObject(inputs, Formatting.Indented);
+
+                                // Scored via the Responses API with a stored prompt. When the prompt id
+                                // is not configured yet the helper returns nothing and the answer is
+                                // still saved below, unscored, so it can be graded retrospectively.
+                                var (runResult, responseId) = await _assistantServiceHelper
+                                    .GenerateListeningComprehensionAssessment(inputsJson);
+
+                                string openAIResponse = runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value;
+
+                                ListeningComprehensionOpenAIResponse analysisResult = null;
+                                if (!string.IsNullOrWhiteSpace(openAIResponse))
+                                {
+                                    try
+                                    {
+                                        analysisResult = JsonConvert.DeserializeObject<ListeningComprehensionOpenAIResponse>(openAIResponse);
+                                    }
+                                    catch (JsonException jsonEx)
+                                    {
+                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                                            new Exception($"Failed to parse listening comprehension OpenAI response as JSON: {jsonEx.Message}. Raw response: {openAIResponse}"));
+                                    }
+                                }
+
+                                decimal? score = analysisResult?.scores?.comprehension_score;
+                                decimal? maxScore = analysisResult?.scores?.max_score;
+                                bool? isPassed = null;
+                                if (analysisResult?.verdict != null)
+                                {
+                                    isPassed = analysisResult.verdict.recommended;
+                                }
+
                                 var listeningAssessment = new ListeningComprehensionAssessment
                                 {
                                     SessionId = model.SessionId.ToString(),
                                     QuestionId = model.CurrentQuestionId,
                                     AudioUrl = model.ListeningAudioUrl,
-                                    AudioTranscription = model.ListeningAudioTranscription,
+                                    AudioTranscription = audioTranscription,
                                     CandidateSummary = model.ListeningSummary,
+                                    ExpectedAnswer = expectedAnswer,
                                     TimeStarted = TryParseInterviewDateTime(model.ListeningStartTime) ?? DateTime.Now,
                                     TimeCompleted = TryParseInterviewDateTime(model.ListeningEndTime) ?? DateTime.Now,
                                     TimeTakenInSeconds = model.ListeningTimeTaken,
+                                    AudioPlayCount = model.ListeningAudioPlayCount,
+                                    IsTimeExpired = model.ListeningIsTimeExpired,
+                                    Score = score,
+                                    MaxScore = maxScore,
+                                    IsPassed = isPassed,
+                                    OpenAIAnalysisJson = openAIResponse,
+                                    OpenAIResponseId = responseId,
                                     CreatedBy = model.candidateName
                                 };
+
                                 await _aiinterviewerService.SaveListeningComprehensionAssessment(listeningAssessment);
+
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Debug,
+                                    new Exception($"Listening comprehension assessment saved for session {model.SessionId}. Score: {score?.ToString() ?? "not scored"}"));
                             }
                             catch (Exception ex)
                             {
@@ -3184,6 +3251,23 @@ namespace Risebird.Web.Controllers
                 if (questionDetails.IsCodingQuestion && string.IsNullOrWhiteSpace(questionDetails.QuestionGist))
                 {
                     return Json(new { success = false, message = "Add a question gist in plain language before generating a video. The avatar reads the gist for coding questions, not the code." });
+                }
+
+                // A listening comprehension question needs its audio clip in place, and needs a
+                // gist for the avatar to speak: the avatar sets up the exercise, so it must not
+                // read out the question text, which describes the audio the candidate is
+                // supposed to be listening for.
+                if (questionDetails.IsListeningComprehension)
+                {
+                    if (string.IsNullOrWhiteSpace(questionDetails.ListeningAudioUrl))
+                    {
+                        return Json(new { success = false, message = "Upload the listening audio file before generating a video for a listening comprehension question." });
+                    }
+
+                    if (string.IsNullOrWhiteSpace(questionDetails.QuestionGist))
+                    {
+                        return Json(new { success = false, message = "Add a question gist in plain language before generating a video. For listening comprehension questions the avatar reads the gist, which introduces the exercise without revealing the audio content." });
+                    }
                 }
 
                 var irfVm = await _iRFService.GetEditIRF(questionDetails.IRFId, 0, false);
