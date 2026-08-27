@@ -246,6 +246,8 @@ namespace Risebird.Repository.Interface
         /// A null gist leaves any existing gist in place.
         /// </summary>
         Task<bool> SetSampleQuestionCodingMode(int id, bool isCodingQuestion, int? codingTimeLimitInMinutes, string questionGist = null);
+        Task<bool> SetSampleQuestionListeningMode(int id, bool isListeningComprehension, string listeningAudioTranscription = null, string questionGist = null);
+        Task<bool> UpdateSampleQuestionListeningAudio(int id, string listeningAudioUrl);
         Task<bool> UpdateSkillChannelEmbeddableUrl(string irfId, string embedUrl);
         Task<bool> ApproveDM(int id, string emailid);
         Task<bool> UpdateAffindaIndexFlag(string irfId, bool isIndexCreated);

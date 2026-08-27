@@ -48,6 +48,8 @@ namespace Risebird.Entities.ViewModel
         public string ListeningStartTime { get; set; }
         public string ListeningEndTime { get; set; }
         public decimal ListeningTimeTaken { get; set; }
+        public int ListeningAudioPlayCount { get; set; }
+        public bool ListeningIsTimeExpired { get; set; }
         public bool IsCodingQuestion { get; set; }
         public int? CodingTimeLimitInMinutes { get; set; }
         public string CodingLanguage { get; set; }

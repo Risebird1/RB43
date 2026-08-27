@@ -2031,6 +2031,37 @@ namespace Risebird.CommonHelper
             }
         }
 
+        // Scored through the Responses API with a stored prompt. There is no Assistants API
+        // fallback here - Assistants is deprecated, so an unconfigured prompt id simply means
+        // the answer gets saved unscored rather than routed down a legacy path.
+        public async Task<(RunResult Result, string ResponseId)> GenerateListeningComprehensionAssessment(string inputsJson)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(inputsJson))
+                    return (null, null);
+
+                var promptId = _configuration["OpenAI:ListeningComprehensionPromptId"];
+                if (string.IsNullOrWhiteSpace(promptId))
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                        new Exception("OpenAI:ListeningComprehensionPromptId is not configured. Skipping listening comprehension scoring."));
+                    return (null, null);
+                }
+
+                var input = $"Generate an output in JSON format as per the instructions in the stored prompt. The listening comprehension inputs are: {inputsJson}";
+                return await _openAIResponsesHelper.CreateJsonResponseWithIdAsync(
+                    input,
+                    operationType: "ListeningComprehensionAssessment",
+                    promptId: promptId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return (null, null);
+            }
+        }
+
         public async Task<RunResult> GenerateIntervieweeResponseExtraction(string transcriptData)
         {
             try

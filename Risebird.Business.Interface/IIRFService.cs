@@ -167,6 +167,8 @@ namespace Risebird.Business.Interface
         /// A null gist leaves any existing gist in place.
         /// </summary>
         Task<bool> SetSampleQuestionCodingMode(int id, bool isCodingQuestion, int? codingTimeLimitInMinutes, string questionGist = null);
+        Task<bool> SetSampleQuestionListeningMode(int id, bool isListeningComprehension, string listeningAudioTranscription = null, string questionGist = null);
+        Task<bool> UpdateSampleQuestionListeningAudio(int id, string listeningAudioUrl);
         Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id);
         Task<SampleQuestionDeleteResultVM> DeleteSkillChannelSampleQuestions(int id);
         Task<IEnumerable<AISuggestedQuestion>> GetQuestionBankForJD(int irfId);

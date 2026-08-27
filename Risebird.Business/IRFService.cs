@@ -3998,6 +3998,32 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<bool> SetSampleQuestionListeningMode(int id, bool isListeningComprehension, string listeningAudioTranscription = null, string questionGist = null)
+        {
+            try
+            {
+                return await _irfRepository.SetSampleQuestionListeningMode(id, isListeningComprehension, listeningAudioTranscription, questionGist);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateSampleQuestionListeningAudio(int id, string listeningAudioUrl)
+        {
+            try
+            {
+                return await _irfRepository.UpdateSampleQuestionListeningAudio(id, listeningAudioUrl);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         public async Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id)
         {
             try

@@ -45,6 +45,7 @@ namespace Risebird.CommonHelper.Interface
         Task<(RunResult Result, string ResponseId)> GenerateAIInterviewerMessage(string message, string previousResponseId = null);
 
         Task<RunResult> GenerateTypingAssessment(string inputsJson);
+        Task<(RunResult Result, string ResponseId)> GenerateListeningComprehensionAssessment(string inputsJson);
 
         Task<RunResult> GenerateIntervieweeResponseExtraction(string transcriptData);
 
