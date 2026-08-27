@@ -18,7 +18,15 @@ CREATE PROCEDURE usp_SaveListeningComprehensionAssessment
 	@TimeStarted DATETIME,
 	@TimeCompleted DATETIME,
 	@TimeTakenInSeconds DECIMAL(10,2),
-	@CreatedBy VARCHAR(150) = NULL
+	@CreatedBy VARCHAR(150) = NULL,
+	@ExpectedAnswer NVARCHAR(MAX) = NULL,
+	@AudioPlayCount INT = NULL,
+	@IsTimeExpired BIT = 0,
+	@Score DECIMAL(5,2) = NULL,
+	@MaxScore DECIMAL(5,2) = NULL,
+	@IsPassed BIT = NULL,
+	@OpenAIAnalysisJson NVARCHAR(MAX) = NULL,
+	@OpenAIResponseId VARCHAR(100) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -29,9 +37,17 @@ BEGIN
 		AudioUrl,
 		AudioTranscription,
 		CandidateSummary,
+		ExpectedAnswer,
 		TimeStarted,
 		TimeCompleted,
 		TimeTakenInSeconds,
+		AudioPlayCount,
+		IsTimeExpired,
+		Score,
+		MaxScore,
+		IsPassed,
+		OpenAIAnalysisJson,
+		OpenAIResponseId,
 		CreatedAt,
 		CreatedBy
 	)
@@ -41,9 +57,17 @@ BEGIN
 		@AudioUrl,
 		@AudioTranscription,
 		@CandidateSummary,
+		@ExpectedAnswer,
 		@TimeStarted,
 		@TimeCompleted,
 		@TimeTakenInSeconds,
+		@AudioPlayCount,
+		@IsTimeExpired,
+		@Score,
+		@MaxScore,
+		@IsPassed,
+		@OpenAIAnalysisJson,
+		@OpenAIResponseId,
 		GETDATE(),
 		@CreatedBy
 	)

@@ -5220,9 +5220,15 @@
             return; // Not a listening comprehension question, skip this functionality
         }
 
-        // Get audio URL and transcription from model
+        // Only the audio URL is sent to the browser. The transcription and the expected
+        // answer are deliberately NOT emitted here - they are grading material and would be
+        // readable in the page source. The server reads both from the database at scoring time.
         const audioUrl = @Json.Serialize(Model.ListeningAudioUrl);
-        const audioTranscription = @Json.Serialize(Model.ListeningAudioTranscription);
+
+        // Candidate gets three minutes to write the summary, counted from the moment the first
+        // full playback ends.
+        const LISTENING_TIME_LIMIT_SECONDS = 180;
+        const MAX_AUDIO_PLAYS = 2;
 
         // Store listening assessment data
         let listeningStartTime = null;
@@ -5230,6 +5236,7 @@
         let listeningInProgress = false;
         let audioPlayCount = 0;
         let timerStarted = false;
+        let listeningTimeExpired = false;
 
         // Show listening comprehension modal when page loads
         function showListeningComprehensionModal() {
@@ -5250,8 +5257,11 @@
                                 <li>Click "Start" to begin the assessment</li>
                                 <li>Use the audio player controls to play the audio</li>
                                 <li>You can listen to the audio up to 2 times</li>
-                                <li>Timer starts after the first playback completes</li>
-                                <li>Write a summary of what you heard in the text area</li>
+                                <li>The audio cannot be skipped or rewound while playing</li>
+                                <li>You get <strong>3 minutes</strong> to write your summary</li>
+                                <li>The 3-minute timer starts only after the first playback finishes</li>
+                                <li>The text area unlocks after the first playback finishes</li>
+                                <li>Your answer is submitted automatically when the time is up</li>
                                 <li>Video recording will track your response</li>
                                 <li>Click "Submit" when finished</li>
                             </ul>
@@ -5263,7 +5273,7 @@
                             </p>
                         </div>
                         <div id="listeningTimerDisplay" style="display: none; text-align: center; margin-bottom: 15px; font-size: 18px; font-weight: bold; color: #4eda92;">
-                            Time: <span id="listeningTimerValue">0:00</span>
+                            Time remaining: <span id="listeningTimerValue">3:00</span>
                         </div>
                         <textarea id="listeningSummaryArea"
                                   placeholder="Write your summary here after listening to the audio..."
@@ -5298,49 +5308,103 @@
                         audioElement = document.getElementById('listeningAudio');
                         audioElement.src = audioUrl;
 
-                        // Track play count and control replays
-                        audioElement.addEventListener('play', function() {
-                            if (audioPlayCount >= 2) {
+                        // Track play count and control replays. The 'ended' event is the only
+                        // thing that increments the count, so seeking has to be blocked outright -
+                        // otherwise a candidate could scrub back and re-hear the audio any number
+                        // of times without ever completing a playback.
+                        let lastAllowedTime = 0;
+                        let playbackLocked = false;
+
+                        audioElement.addEventListener('play', function () {
+                            if (playbackLocked || audioPlayCount >= MAX_AUDIO_PLAYS) {
                                 audioElement.pause();
                                 audioElement.currentTime = 0;
-                                Swal.showValidationMessage('Audio can only be played 2 times!');
+                                Swal.showValidationMessage(`Audio can only be played ${MAX_AUDIO_PLAYS} times!`);
+                            } else {
+                                // Clear any earlier warning so it does not keep the confirm button disabled.
+                                try { Swal.resetValidationMessage(); } catch (e) { }
                             }
                         });
 
-                        audioElement.addEventListener('ended', function() {
+                        audioElement.addEventListener('timeupdate', function () {
+                            // Remember the furthest legitimately reached position.
+                            if (!audioElement.seeking) {
+                                lastAllowedTime = audioElement.currentTime;
+                            }
+                        });
+
+                        audioElement.addEventListener('seeking', function () {
+                            // Snap back on any attempt to jump forward or backward mid-playback.
+                            if (Math.abs(audioElement.currentTime - lastAllowedTime) > 1) {
+                                audioElement.currentTime = lastAllowedTime;
+                            }
+                        });
+
+                        audioElement.addEventListener('ended', function () {
                             audioPlayCount++;
+                            lastAllowedTime = 0;
 
                             const playsRemainingElement = document.getElementById('playsRemaining');
                             if (playsRemainingElement) {
-                                const remaining = 2 - audioPlayCount;
+                                const remaining = MAX_AUDIO_PLAYS - audioPlayCount;
                                 if (remaining > 0) {
                                     playsRemainingElement.textContent = `You can play the audio ${remaining} more time${remaining > 1 ? 's' : ''}.`;
                                     playsRemainingElement.style.color = '#4eda92';
                                 } else {
-                                    playsRemainingElement.textContent = 'Audio playback limit reached (2/2).';
+                                    playsRemainingElement.textContent = `Audio playback limit reached (${MAX_AUDIO_PLAYS}/${MAX_AUDIO_PLAYS}).`;
                                     playsRemainingElement.style.color = '#dc3545';
-                                    // Disable audio controls
+                                    // Hard-disable playback, not just the pointer styling.
+                                    playbackLocked = true;
+                                    audioElement.controls = false;
                                     audioElement.style.pointerEvents = 'none';
                                     audioElement.style.opacity = '0.6';
                                 }
                             }
 
-                            // After first playback, start timer and enable text area
+                            // After first playback, start the one-minute countdown and unlock the text area
                             if (audioPlayCount === 1) {
-                                // Start timer only after first playback
                                 if (!timerStarted) {
                                     timerStarted = true;
                                     listeningStartTime = new Date();
                                     startTime = Date.now();
                                     timerDisplay.style.display = 'block';
 
+                                    // One-minute countdown. Auto-submits when it hits zero.
                                     timerInterval = setInterval(() => {
                                         const elapsed = Math.floor((Date.now() - startTime) / 1000);
-                                        const minutes = Math.floor(elapsed / 60);
-                                        const seconds = elapsed % 60;
+                                        const remainingSeconds = LISTENING_TIME_LIMIT_SECONDS - elapsed;
                                         const timerValueElement = document.getElementById('listeningTimerValue');
-                                        if (timerValueElement) {
-                                            timerValueElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+                                        if (remainingSeconds <= 0) {
+                                            if (timerValueElement) {
+                                                timerValueElement.textContent = '0:00';
+                                                timerValueElement.style.color = '#dc3545';
+                                            }
+                                            clearInterval(timerInterval);
+                                            timerInterval = null;
+                                            listeningTimeExpired = true;
+
+                                            // Stop the audio if it is still playing on the second pass.
+                                            try { audioElement.pause(); } catch (e) { }
+
+                                            // A lingering validation message (e.g. from an attempted
+                                            // third playback) leaves the confirm button disabled, which
+                                            // would swallow the click below and trap the candidate.
+                                            try {
+                                                Swal.resetValidationMessage();
+                                                Swal.enableButtons();
+                                            } catch (e) { }
+
+                                            confirmBtn.click(); // Trigger submit
+                                        } else {
+                                            const minutes = Math.floor(remainingSeconds / 60);
+                                            const seconds = remainingSeconds % 60;
+                                            if (timerValueElement) {
+                                                timerValueElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                                                if (remainingSeconds <= 15) {
+                                                    timerValueElement.style.color = '#dc3545';
+                                                }
+                                            }
                                         }
                                     }, 1000);
                                 }
@@ -5378,43 +5442,63 @@
                         listeningEndTime = new Date();
                         const candidateSummary = summaryArea.value;
 
-                        // Validate that candidate wrote something
-                        if (!candidateSummary || candidateSummary.trim().length === 0) {
+                        // Require a summary only on a manual submit. When the time runs out the
+                        // answer goes in as-is - blocking here would leave the candidate stuck on
+                        // a modal they can no longer clear.
+                        if (!listeningTimeExpired && (!candidateSummary || candidateSummary.trim().length === 0)) {
                             Swal.showValidationMessage('Please write a summary before submitting!');
                             return false;
                         }
 
-                        // Calculate time taken
-                        const timeTaken = (listeningEndTime - listeningStartTime) / 1000; // in seconds
+                        // Calculate time taken. listeningStartTime is set when the first playback
+                        // ends; fall back to the end time if the candidate somehow submits before that.
+                        const timeTaken = listeningStartTime
+                            ? (listeningEndTime - listeningStartTime) / 1000
+                            : 0;
 
-                        // Store data in hidden form fields
+                        // Store data in hidden form fields. The transcription is intentionally not
+                        // posted back - the server reads it from the database.
                         document.getElementById('ListeningAudioUrl').value = audioUrl;
-                        document.getElementById('ListeningAudioTranscription').value = audioTranscription;
                         document.getElementById('ListeningSummary').value = candidateSummary;
-                        document.getElementById('ListeningStartTime').value = listeningStartTime.toISOString();
+                        document.getElementById('ListeningStartTime').value = listeningStartTime
+                            ? listeningStartTime.toISOString()
+                            : listeningEndTime.toISOString();
                         document.getElementById('ListeningEndTime').value = listeningEndTime.toISOString();
                         document.getElementById('ListeningTimeTaken').value = timeTaken.toFixed(2);
+                        document.getElementById('ListeningAudioPlayCount').value = audioPlayCount;
+                        document.getElementById('ListeningIsTimeExpired').value = listeningTimeExpired ? 'true' : 'false';
 
                         // Show confirmation and submit
                         Swal.fire({
-                            title: 'Assessment Complete!',
+                            title: listeningTimeExpired ? "Time's up!" : 'Assessment Complete!',
                             html: `
                                 <div style="text-align: left;">
                                     <p style="margin-bottom: 15px; color: #666;">
-                                        Your listening comprehension assessment has been recorded.
+                                        ${listeningTimeExpired
+                                            ? 'Your three minutes are up. Your answer has been recorded as typed.'
+                                            : 'Your listening comprehension assessment has been recorded.'}
                                     </p>
                                     <p style="font-size: 14px; color: #666;">
                                         <strong>Time taken:</strong> ${timeTaken.toFixed(2)} seconds
                                     </p>
                                 </div>
                             `,
-                            icon: 'success',
+                            icon: listeningTimeExpired ? 'warning' : 'success',
                             confirmButtonText: 'Continue',
                             confirmButtonColor: '#4eda92',
                             allowOutsideClick: false
                         }).then(() => {
-                            // After showing result, trigger form submission with confirmation
                             const form = document.getElementById('chatForm');
+                            if (!form) return;
+
+                            // On a timeout there is nothing left to confirm - the time is gone,
+                            // so submit straight away.
+                            if (listeningTimeExpired) {
+                                form.submit();
+                                return;
+                            }
+
+                            // After showing result, trigger form submission with confirmation
                             if (form) {
                                 Swal.fire({
                                     title: 'Submit Answer?',
@@ -5454,11 +5538,12 @@
             const hiddenFields = [
                 { name: 'IsListeningComprehensionQuestion', value: 'true' },
                 { name: 'ListeningAudioUrl', value: '' },
-                { name: 'ListeningAudioTranscription', value: '' },
                 { name: 'ListeningSummary', value: '' },
                 { name: 'ListeningStartTime', value: '' },
                 { name: 'ListeningEndTime', value: '' },
-                { name: 'ListeningTimeTaken', value: '' }
+                { name: 'ListeningTimeTaken', value: '' },
+                { name: 'ListeningAudioPlayCount', value: '0' },
+                { name: 'ListeningIsTimeExpired', value: 'false' }
             ];
 
             hiddenFields.forEach(field => {

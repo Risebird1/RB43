@@ -422,6 +422,19 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<TechSkillComments> GetListeningComprehensionQuestionDetails(int questionId)
+        {
+            try
+            {
+                return await _aiInterviewerRepository.GetListeningComprehensionQuestionDetails(questionId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
         public async Task<bool> SaveCodingAssessment(CodingAssessment obj)
         {
             try
