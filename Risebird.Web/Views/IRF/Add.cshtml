@@ -1391,6 +1391,23 @@
                                                                     <label for="UseAIQuestionSetsDisplay" class="form-label">Not in use. Every candidate is asked this channel's questions in its standard order.</label>
                                                                     <small class="text-muted">Read-only. A new channel has no questions yet, so its sets are created and switched on afterwards, from the Delivery Manager page for this channel.</small>
                                                                 </div>
+
+                                                                <div class="form-group">
+                                                                    <div class="mandate">
+                                                                        @Html.LabelFor(model => model.OpenAIPromptId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
+                                                                    </div>
+                                                                    @Html.EditorFor(model => model.OpenAIPromptId, new { htmlAttributes = new { @class = "form-control text-box single-line", @placeholder = "pmpt_…", @id = "OpenAIPromptId" } })
+                                                                    <label id="error_OpenAIPromptId" class="text-danger"></label>
+                                                                    <small class="text-muted">Responses API prompt ID that carries this channel. For adaptive interviews it is the question generator. It also writes the candidate's report whenever the evaluator prompt below is left blank. Mandatory for an AI interview channel.</small>
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <div class="mandate">
+                                                                        @Html.LabelFor(model => model.OpenAIEvaluatorPromptId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                    </div>
+                                                                    @Html.EditorFor(model => model.OpenAIEvaluatorPromptId, new { htmlAttributes = new { @class = "form-control text-box single-line", @placeholder = "pmpt_…", @id = "OpenAIEvaluatorPromptId" } })
+                                                                    <small class="text-muted">Responses API prompt ID that generates the candidate's report. Optional — leave it blank and the primary prompt above generates the report too.</small>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1603,6 +1620,27 @@
         errorLabel.innerHTML = "";
         return true;
     }
+
+    // An AI interview channel with no Primary Prompt ID has nothing to conduct the interview
+    // with: adaptive channels would silently fall back to the globally configured prompt and
+    // ask every candidate the same generic questions. The evaluator prompt is deliberately not
+    // checked - blank there is a supported state that hands report generation to the primary.
+    function CheckPrimaryPromptId() {
+        var errorLabel = document.getElementById("error_OpenAIPromptId");
+        var checkbox = document.getElementById("IsAIInterview");
+        if (!checkbox || !errorLabel) return true;
+
+        var promptElement = document.getElementById("OpenAIPromptId");
+        var hasPrompt = promptElement && promptElement.value.trim() !== "";
+
+        if (checkbox.checked && !hasPrompt) {
+            errorLabel.innerHTML = "Primary Prompt Id is required for an AI interview skill channel.";
+            return false;
+        }
+
+        errorLabel.innerHTML = "";
+        return true;
+    }
 </script>
 <script type="text/javascript">
 
@@ -1775,10 +1813,11 @@
 
         function CheckConditions() {
             AssignPlansForClient();
-            // Evaluated before the chain below so its error label is always populated,
+            // Evaluated before the chain below so their error labels are always populated,
             // rather than being skipped when an earlier check short-circuits.
             var aiTypeOk = CheckAIInterviewType();
-            return CheckTotalWeightage() && checkUniqueness() && aiTypeOk;
+            var promptOk = CheckPrimaryPromptId();
+            return CheckTotalWeightage() && checkUniqueness() && aiTypeOk && promptOk;
         }
 
 

@@ -154,5 +154,13 @@ namespace Risebird.Entities.ViewModel
         public string ThreadId { get; set; }
         public bool IsAIInterview { get; set; }
         public int AIInterviewType { get; set; }
+
+        //Primary Prompt Id of the skill channel this session belongs to: the adaptive question
+        //generator, and the report generator whenever no evaluator prompt is configured.
+        public string OpenAIPromptId { get; set; }
+
+        //Interview Evaluator Prompt Id of the skill channel. Null means the Primary Prompt Id
+        //generates the candidate report too.
+        public string OpenAIEvaluatorPromptId { get; set; }
     }
 }

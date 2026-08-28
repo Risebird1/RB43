@@ -50,6 +50,30 @@ namespace Risebird.Services.Controllers
             _assistantServiceHelper = assistantServiceHelper;
         }
 
+        /// <summary>
+        /// Splits a skill channel's two AI-interview prompts into the two jobs they do.
+        /// The Primary Prompt ID conducts the interview - for adaptive interviews it is the question
+        /// generator. The Interview Evaluator Prompt ID generates the candidate's report, and is
+        /// optional: when it is empty the Primary Prompt ID generates the report too.
+        /// Either may come back null, in which case the helper layer falls back to the globally
+        /// configured prompt, exactly as it did before this split.
+        /// </summary>
+        private static (string PrimaryPromptId, string ReportPromptId) ResolvePromptIds(string primaryPromptId, string evaluatorPromptId)
+        {
+            var primary = string.IsNullOrWhiteSpace(primaryPromptId) ? null : primaryPromptId.Trim();
+            var evaluator = string.IsNullOrWhiteSpace(evaluatorPromptId) ? null : evaluatorPromptId.Trim();
+            return (primary, evaluator ?? primary);
+        }
+
+        /// <summary>
+        /// Looks up <see cref="ResolvePromptIds"/> for the skill channel behind an interview session.
+        /// </summary>
+        private async Task<(string PrimaryPromptId, string ReportPromptId)> ResolveSessionPromptIds(Guid sessionId)
+        {
+            var details = await _aIInterviewerService.GetAIInterviewSpecificDetails(sessionId);
+            return ResolvePromptIds(details?.OpenAIPromptId, details?.OpenAIEvaluatorPromptId);
+        }
+
         [HttpPost("start")]
         public async Task<IActionResult> Start([FromBody] InterviewMessageVM input) //string candidateContext
         {
@@ -58,7 +82,8 @@ namespace Risebird.Services.Controllers
                 _assistantId = input.AssistantId;
                 if (UseAIInterviewerResponsesApi())
                 {
-                    var (runResult, responseId) = await _assistantServiceHelper.GenerateAIInterviewerMessage(input.Message);
+                    var (primaryPromptId, _) = await ResolveSessionPromptIds(input.SessionId);
+                    var (runResult, responseId) = await _assistantServiceHelper.GenerateAIInterviewerMessage(input.Message, promptId: primaryPromptId);
                     if (runResult == null || string.IsNullOrWhiteSpace(responseId))
                         return StatusCode(500, "AI interviewer returned an empty response.");
 
@@ -122,7 +147,8 @@ namespace Risebird.Services.Controllers
                 var previousResponseId = await _aiInterviewerRepository.GetThreadId(input.SessionId);
                 await _aiInterviewerRepository.LogTranscript(input.SessionId, "user", input.Message);
 
-                var (runResult, responseId) = await _assistantServiceHelper.GenerateAIInterviewerMessage(input.Message, previousResponseId);
+                var (primaryPromptId, _) = await ResolveSessionPromptIds(input.SessionId);
+                var (runResult, responseId) = await _assistantServiceHelper.GenerateAIInterviewerMessage(input.Message, previousResponseId, primaryPromptId);
                 if (runResult == null || string.IsNullOrWhiteSpace(responseId))
                     return StatusCode(500, "AI interviewer returned an empty response.");
 
@@ -174,7 +200,8 @@ namespace Risebird.Services.Controllers
             if (UseAIInterviewerResponsesApi())
             {
                 var previousResponseId = await _aiInterviewerRepository.GetThreadId(input.SessionId);
-                var (runResult, responseId) = await _assistantServiceHelper.GenerateAIInterviewerMessage(input.Message, previousResponseId);
+                var (primaryPromptId, _) = await ResolveSessionPromptIds(input.SessionId);
+                var (runResult, responseId) = await _assistantServiceHelper.GenerateAIInterviewerMessage(input.Message, previousResponseId, primaryPromptId);
                 if (runResult == null || string.IsNullOrWhiteSpace(responseId))
                     return StatusCode(500, "AI interviewer returned an empty response.");
 
@@ -243,9 +270,11 @@ namespace Risebird.Services.Controllers
                 {
                     string threadId = null;
                     List<string> replies = null;
-                    var evaluationPromptId = !string.IsNullOrWhiteSpace(meetingDetails.OpenAIPromptId)
-                        ? meetingDetails.OpenAIPromptId.Trim()
-                        : _config["OpenAI:AIInterviewPromptMap"];
+                    // The report is written by the Interview Evaluator Prompt ID. It is an optional
+                    // field, so an empty one hands the job back to the Primary Prompt ID; only when
+                    // the channel carries neither does the globally configured prompt take over.
+                    var (_, reportPromptId) = ResolvePromptIds(meetingDetails.OpenAIPromptId, meetingDetails.OpenAIEvaluatorPromptId);
+                    var evaluationPromptId = reportPromptId ?? _config["OpenAI:AIInterviewPromptMap"];
                     var useResponsesApi = true//_config.GetValue("OpenAI:UseResponsesApi", false)
                         && !string.IsNullOrWhiteSpace(evaluationPromptId);
 
@@ -340,7 +369,12 @@ namespace Risebird.Services.Controllers
                 List<string> replies;
                 if (UseAIInterviewerResponsesApi())
                 {
-                    var (runResult, responseId) = await _assistantServiceHelper.GenerateAIInterviewerMessage(input.Message, threadId);
+                    // Closing turn of an adaptive interview: the transcript is already chained onto
+                    // threadId, and it is the Interview Evaluator Prompt ID that reads it and writes the
+                    // report. With no evaluator configured, the Primary Prompt ID that conducted the
+                    // interview reports on it too - the behaviour adaptive channels had before the split.
+                    var (_, reportPromptId) = ResolvePromptIds(aiInterviewDetails?.OpenAIPromptId, aiInterviewDetails?.OpenAIEvaluatorPromptId);
+                    var (runResult, responseId) = await _assistantServiceHelper.GenerateAIInterviewerMessage(input.Message, threadId, reportPromptId);
                     if (runResult == null || string.IsNullOrWhiteSpace(responseId))
                         return Ok(new { input.SessionId, threadId, replies = (List<string>)null, isReportSavedToDb = false });
 
