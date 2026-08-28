@@ -902,6 +902,14 @@ namespace Risebird.Web.Controllers
                             TempData["SuccessErrorMessage"] = "Adding Skills Channel has Failed. Skill Name cannot be left empty.";
                             return RedirectToAction("Index");
                         }
+                        // The Primary Prompt Id conducts the interview, so an AI interview channel cannot be
+                        // created without one. The Interview Evaluator Prompt Id stays optional: left blank,
+                        // the primary prompt generates the candidate's report as well.
+                        if (irfDetails.IsAIInterview && string.IsNullOrWhiteSpace(irfDetails.OpenAIPromptId))
+                        {
+                            TempData["SuccessErrorMessage"] = "Adding Skills Channel has Failed. Primary Prompt Id is mandatory for an AI interview skill channel.";
+                            return RedirectToAction("Index");
+                        }
                         if (irfDetails.JDFile != null)
                         {
                             var filename = irfDetails.JDFile.FileName.Replace(" ", "_");
@@ -2263,6 +2271,15 @@ namespace Risebird.Web.Controllers
                             ModelState.AddModelError("", "The Skill Name column cant be empty in the Tech Rubric.");
                             return View("EditIRF", model);
 
+                        }
+                        // The Primary Prompt Id conducts the interview, so an AI interview channel cannot be
+                        // saved without one. The Interview Evaluator Prompt Id stays optional: left blank,
+                        // the primary prompt generates the candidate's report as well.
+                        if (model.IsAIInterview && string.IsNullOrWhiteSpace(model.OpenAIPromptId))
+                        {
+                            ModelState.AddModelError("", "Primary Prompt Id is mandatory for an AI interview skill channel.");
+                            await SetEditIRFProperties(model);
+                            return View("EditIRF", model);
                         }
                         if (!model.IsClone)
                         {

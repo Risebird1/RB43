@@ -1977,9 +1977,11 @@ namespace Risebird.CommonHelper
 
         /// <summary>
         /// Adaptive AI-interviewer conversational turn. When OpenAI:UseResponsesApi is true, uses
-        /// OpenAI:AIInterviewerPromptId on the Responses API with optional previous_response_id chaining.
+        /// <paramref name="promptId"/> - the skill channel's Primary Prompt ID, or its Interview Evaluator
+        /// Prompt ID for the closing report turn - on the Responses API with optional previous_response_id
+        /// chaining. Falls back to OpenAI:AIInterviewerPromptId when no per-channel prompt is configured.
         /// </summary>
-        public async Task<(RunResult Result, string ResponseId)> GenerateAIInterviewerMessage(string message, string previousResponseId = null)
+        public async Task<(RunResult Result, string ResponseId)> GenerateAIInterviewerMessage(string message, string previousResponseId = null, string promptId = null)
         {
             try
             {
@@ -1987,15 +1989,17 @@ namespace Risebird.CommonHelper
                     return (null, null);
 
                 var useResponsesApi = UseGlobalResponsesApi();
-                var promptId = _configuration["OpenAI:AIInterviewerPromptId"];
-                if (!useResponsesApi || string.IsNullOrWhiteSpace(promptId))
+                var resolvedPromptId = !string.IsNullOrWhiteSpace(promptId)
+                    ? promptId.Trim()
+                    : _configuration["OpenAI:AIInterviewerPromptId"];
+                if (!useResponsesApi || string.IsNullOrWhiteSpace(resolvedPromptId))
                     return (null, null);
 
                 var input = $"Generate an output in JSON format as per the instructions fed to the assistant. {message}";
                 return await _openAIResponsesHelper.CreateJsonResponseWithIdAsync(
                     input,
                     operationType: "AIInterviewer",
-                    promptId: promptId,
+                    promptId: resolvedPromptId,
                     previousResponseId: previousResponseId);
             }
             catch (Exception ex)

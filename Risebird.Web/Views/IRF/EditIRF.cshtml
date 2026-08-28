@@ -341,11 +341,20 @@
                                                         @Html.HiddenFor(model => model.OpenAIAssistantId)
                                                         <div class="form-group">
                                                             <div class="mandate">
-                                                                @Html.LabelFor(model => model.OpenAIPromptId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                @Html.LabelFor(model => model.OpenAIPromptId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })<span class="red">*</span>
                                                             </div>
-                                                            @Html.EditorFor(model => model.OpenAIPromptId, new { htmlAttributes = new { @class = "form-control text-box single-line", @placeholder = "pmpt_…" } })
-                                                            @Html.ValidationMessageFor(model => model.OpenAIPromptId, "", new { @id = "error_OpenAIPromptId", @class = "text-danger" })
-                                                            <small class="text-muted">Responses API prompt ID for preset AI interview report generation. Leave blank to use the default OpenAI:AIInterviewPromptMap.</small>
+                                                            @Html.EditorFor(model => model.OpenAIPromptId, new { htmlAttributes = new { @class = "form-control text-box single-line", @placeholder = "pmpt_…", @id = "OpenAIPromptId" } })
+                                                            <label id="error_OpenAIPromptId" class="text-danger"></label>
+                                                            @Html.ValidationMessageFor(model => model.OpenAIPromptId, "", new { @class = "text-danger" })
+                                                            <small class="text-muted">Responses API prompt ID that carries this channel. For adaptive interviews it is the question generator. It also writes the candidate's report whenever the evaluator prompt below is left blank. Mandatory for an AI interview channel.</small>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.OpenAIEvaluatorPromptId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                            </div>
+                                                            @Html.EditorFor(model => model.OpenAIEvaluatorPromptId, new { htmlAttributes = new { @class = "form-control text-box single-line", @placeholder = "pmpt_…", @id = "OpenAIEvaluatorPromptId" } })
+                                                            @Html.ValidationMessageFor(model => model.OpenAIEvaluatorPromptId, "", new { @class = "text-danger" })
+                                                            <small class="text-muted">Responses API prompt ID that generates the candidate's report. Optional — leave it blank and the primary prompt above generates the report too.</small>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -2334,11 +2343,35 @@
         return true;
     }
 
+    // An AI interview channel with no Primary Prompt ID has nothing to conduct the interview
+    // with: adaptive channels would silently fall back to the globally configured prompt and
+    // ask every candidate the same generic questions. The evaluator prompt is deliberately not
+    // checked - blank there is a supported state that hands report generation to the primary.
+    function CheckPrimaryPromptId() {
+        var errorLabel = document.getElementById("error_OpenAIPromptId");
+        var checkbox = document.getElementById("IsAIInterview");
+        if (!checkbox || !errorLabel) return true;
+
+        var promptElement = document.getElementById("OpenAIPromptId");
+        var hasPrompt = promptElement && promptElement.value.trim() !== "";
+
+        if (checkbox.checked && !hasPrompt) {
+            errorLabel.innerHTML = "Primary Prompt Id is required for an AI interview skill channel.";
+            return false;
+        }
+
+        errorLabel.innerHTML = "";
+        return true;
+    }
+
     // The form's submit gate. CheckTotalWeightage is left exactly as it was so the
     // existing weightage behaviour is untouched.
     function CheckEditIRFConditions() {
+        // Both AI checks run before the chain below, so neither error label is left stale
+        // when the other check short-circuits.
         var aiTypeOk = CheckAIInterviewType();
-        return CheckTotalWeightage() && aiTypeOk;
+        var promptOk = CheckPrimaryPromptId();
+        return CheckTotalWeightage() && aiTypeOk && promptOk;
     }
 </script>
 <script>

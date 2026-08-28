@@ -32,17 +32,20 @@ namespace Risebird.CommonHelper.Interface
 
         /// <summary>
         /// Preset AI-interview evaluation via Responses API.
-        /// Uses <paramref name="promptId"/> when provided; otherwise OpenAI:AIInterviewPromptMap.
+        /// Uses <paramref name="promptId"/> when provided - the skill channel's Interview Evaluator Prompt ID,
+        /// or its Primary Prompt ID when no evaluator prompt is set; otherwise OpenAI:AIInterviewPromptMap.
         /// Returns null when UseResponsesApi is false or no prompt ID is available, so the caller
         /// can use the Assistants API.
         /// </summary>
         Task<RunResult> GenerateAIInterviewEvaluation(string techSkillsJson, string questionAnswerSetJson, string promptId = null);
 
         /// <summary>
-        /// Adaptive AI-interviewer turn via Responses API using OpenAI:AIInterviewerPromptId.
+        /// Adaptive AI-interviewer turn via Responses API. Uses <paramref name="promptId"/> - the skill
+        /// channel's Primary Prompt ID for interview turns, its Interview Evaluator Prompt ID for the
+        /// closing report turn - falling back to OpenAI:AIInterviewerPromptId when neither is configured.
         /// Returns the response id for multi-turn chaining (stored in InterviewSessions.ThreadId).
         /// </summary>
-        Task<(RunResult Result, string ResponseId)> GenerateAIInterviewerMessage(string message, string previousResponseId = null);
+        Task<(RunResult Result, string ResponseId)> GenerateAIInterviewerMessage(string message, string previousResponseId = null, string promptId = null);
 
         Task<RunResult> GenerateTypingAssessment(string inputsJson);
         Task<(RunResult Result, string ResponseId)> GenerateListeningComprehensionAssessment(string inputsJson);

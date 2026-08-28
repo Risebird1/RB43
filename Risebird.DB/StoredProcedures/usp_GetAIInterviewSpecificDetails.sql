@@ -13,8 +13,13 @@ Create Procedure usp_GetAIInterviewSpecificDetails
 AS
 BEGIN
 
-select im.id as imid, im.AssistantId, ThreadId, irf.IsAIInterview, AIInterviewType, irf.id as irfIntId from InterviewMeetings im 
-join InterviewSessions ise on ise.SessionId =  im.SessionId
+-- InterviewSessions is joined loosely on purpose. The very first adaptive turn resolves this
+-- skill channel's prompt ids before any session row exists, so an inner join would return
+-- nothing there and the turn would silently fall back to the global configured prompt.
+select im.id as imid, im.AssistantId, ise.ThreadId, irf.IsAIInterview, AIInterviewType, irf.id as irfIntId,
+irf.OpenAIPromptId, irf.OpenAIEvaluatorPromptId
+from InterviewMeetings im 
+left join InterviewSessions ise on ise.SessionId =  im.SessionId
 join irf on irf.IRFId = im.irfId
 where im.SessionId = @SessionId 
 

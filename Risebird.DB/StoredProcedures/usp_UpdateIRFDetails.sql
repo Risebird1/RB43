@@ -71,6 +71,7 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
  @TechRubricType varchar(20) = null,  
  @OpenAIAssistantId varchar(60) = null,
  @OpenAIPromptId varchar(100) = null,
+ @OpenAIEvaluatorPromptId varchar(100) = null,
  @IsVideoRequired bit,
  @IsTechQC bit,
  @IsProctoring bit = null
@@ -142,6 +143,7 @@ BEGIN
  ,[AIInterviewType]=@AIInterviewType
  ,[OpenAIAssistantId] = @OpenAIAssistantId
  ,[OpenAIPromptId] = @OpenAIPromptId
+ ,[OpenAIEvaluatorPromptId] = @OpenAIEvaluatorPromptId
  ,[IsTechQC]=@IsTechQC
  ,[IsProctoring]=ISNULL(@IsProctoring,[IsProctoring])
  --,[InterviewDuration]=@InterviewDuration  

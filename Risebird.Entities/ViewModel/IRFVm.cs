@@ -286,8 +286,20 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("AssistantId")]
         public string OpenAIAssistantId { get; set; }
 
-        [DisplayName("Report Prompt Id")]
+        /// <summary>
+        /// Primary Prompt ID of an AI interview skill channel. For adaptive interviews this is the
+        /// question generator that conducts the interview; it also generates the candidate report
+        /// whenever <see cref="OpenAIEvaluatorPromptId"/> is left blank. Mandatory when IsAIInterview is true.
+        /// </summary>
+        [DisplayName("Primary Prompt Id")]
         public string OpenAIPromptId { get; set; }
+
+        /// <summary>
+        /// Interview Evaluator Prompt ID. Generates the candidate report. Optional - when blank the
+        /// Primary Prompt ID above is used for the report too.
+        /// </summary>
+        [DisplayName("Interview Evaluator Prompt Id")]
+        public string OpenAIEvaluatorPromptId { get; set; }
 
         [DisplayName("Plivo Phone Screener Assistant URL")]
         public string PlivoAssistantUrl { get; set; }
@@ -440,6 +452,7 @@ namespace Risebird.Entities.ViewModel
         public int AIInterviewType { get; set; }
         public string OpenAIAssistantId { get; set; }
         public string OpenAIPromptId { get; set; }
+        public string OpenAIEvaluatorPromptId { get; set; }
         public int InterviewerBillingCycle { get; set; }
         public bool isMultiLingual { get; set; }
 

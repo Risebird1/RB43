@@ -67,6 +67,7 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @IsAIInterview bit,
 @AIInterviewType int,
 @OpenAIPromptId varchar(100) = null,
+@OpenAIEvaluatorPromptId varchar(100) = null,
 @MeetingPlatform varchar(25),
 @showChatBox bit = null,  
 @generateTranscriptSummary bit = null, 
@@ -122,6 +123,7 @@ Begin
 	   ,[IsAIInterview]
 	   ,[AIInterviewType]
 	   ,[OpenAIPromptId]
+	   ,[OpenAIEvaluatorPromptId]
 	   ,[MeetingPlatform]
 	   ,[IsTechQC]
 	   ,[IsProctoring])  
@@ -170,6 +172,7 @@ Begin
 	   @IsAIInterview,
 	   @AIInterviewType,
 	   @OpenAIPromptId,
+	   @OpenAIEvaluatorPromptId,
 	   @MeetingPlatform,
 	   @IsTechQC,
 	   @IsProctoring)  
