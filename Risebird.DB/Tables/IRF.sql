@@ -70,6 +70,7 @@ CREATE TABLE [dbo].[IRF](
             [AIInterviewType] [int] null,
             [OpenAIAssistantId]  [VARCHAR](60) null,
             [OpenAIPromptId]  [VARCHAR](100) null,
+            [OpenAIEvaluatorPromptId]  [VARCHAR](100) null,
             [InterviewerBillingCycle]  [int] null,
             [IsTechQC]  [bit] null,
             [showChatBox]  [bit] null,
@@ -636,6 +637,28 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add OpenAIAssistantId varchar(60)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'OpenAIPromptId')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add OpenAIPromptId varchar(100)
+END
+
+-- Interview Evaluator Prompt ID. Optional: when null the Primary Prompt ID
+-- (OpenAIPromptId) generates the candidate's report as well.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'OpenAIEvaluatorPromptId')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add OpenAIEvaluatorPromptId varchar(100)
 END
 IF NOT EXISTS(
     SELECT *

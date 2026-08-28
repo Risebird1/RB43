@@ -412,7 +412,8 @@ namespace Risebird.Entities.ViewModel
         public string CandidateAnswerVideoLink { get; set; } // in case of ai interview, fetches the link from the table BotInterviewQuestionVideos
         public int CandidateAnswerVideoIdAI { get; set; }
         public string OpenAIAssistantId { get; set; }//assistant Id on skill channel global level (Assistants API legacy)
-        public string OpenAIPromptId { get; set; }//Responses API prompt Id (pmpt_…) for preset report generation
+        public string OpenAIPromptId { get; set; }//Primary Prompt Id (pmpt_…) of the skill channel: adaptive question generator, and report generator when no evaluator prompt is set
+        public string OpenAIEvaluatorPromptId { get; set; }//Interview Evaluator Prompt Id (pmpt_…) that generates the candidate report; when null the Primary Prompt Id generates it
         public int AICandidateResponseVideoCount { get; set; }
         public int AITotalQuestionsCount { get; set; }
         public DateTime SkillChannelCreatedOn { get; set; }

@@ -797,6 +797,16 @@ WHERE si.SuspiciousStatus = 1",
             }
         }
 
+        /// <summary>
+        /// A prompt id left blank on the form arrives as an empty string. Storing that instead of NULL
+        /// would make an unset Interview Evaluator Prompt ID look configured to anything reading the
+        /// column directly, so blanks are collapsed to NULL and stray whitespace is trimmed off.
+        /// </summary>
+        private static string NormalizePromptIdForDb(string promptId)
+        {
+            return string.IsNullOrWhiteSpace(promptId) ? null : promptId.Trim();
+        }
+
         public async Task<IRFVm> GetSkillChannelDetailsForUpdate(int irfId)
         {
             try
@@ -882,6 +892,7 @@ WHERE si.SuspiciousStatus = 1",
                             _resultVM.AIInterviewType = !string.IsNullOrEmpty(dt.Rows[0]["AIInterviewType"].ToString()) ? Convert.ToInt32(dt.Rows[0]["AIInterviewType"]) : 0;
                             _resultVM.OpenAIAssistantId = !string.IsNullOrEmpty(dt.Rows[0]["OpenAIAssistantId"].ToString()) ? dt.Rows[0]["OpenAIAssistantId"].ToString() : null;
                             _resultVM.OpenAIPromptId = dt.Columns.Contains("OpenAIPromptId") && !string.IsNullOrEmpty(dt.Rows[0]["OpenAIPromptId"].ToString()) ? dt.Rows[0]["OpenAIPromptId"].ToString() : null;
+                            _resultVM.OpenAIEvaluatorPromptId = dt.Columns.Contains("OpenAIEvaluatorPromptId") && !string.IsNullOrEmpty(dt.Rows[0]["OpenAIEvaluatorPromptId"].ToString()) ? dt.Rows[0]["OpenAIEvaluatorPromptId"].ToString() : null;
                             _resultVM.IsTechQC = !string.IsNullOrEmpty(dt.Rows[0]["IsTechQC"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsTechQC"]) : false; ;
                             _resultVM.showChatBox = !string.IsNullOrEmpty(dt.Rows[0]["showChatBox"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["showChatBox"]) : false;
                             _resultVM.generateTranscriptSummary = !string.IsNullOrEmpty(dt.Rows[0]["generateTranscriptSummary"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["generateTranscriptSummary"]) : false;
@@ -1841,7 +1852,10 @@ WHERE si.SuspiciousStatus = 1",
                     cmdCreateIRF.Parameters["@AIInterviewType"].Value = irfDetails.AIInterviewType;
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@OpenAIPromptId", SqlDbType.VarChar));
-                    cmdCreateIRF.Parameters["@OpenAIPromptId"].Value = (object)irfDetails.OpenAIPromptId ?? DBNull.Value;
+                    cmdCreateIRF.Parameters["@OpenAIPromptId"].Value = (object)NormalizePromptIdForDb(irfDetails.OpenAIPromptId) ?? DBNull.Value;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@OpenAIEvaluatorPromptId", SqlDbType.VarChar));
+                    cmdCreateIRF.Parameters["@OpenAIEvaluatorPromptId"].Value = (object)NormalizePromptIdForDb(irfDetails.OpenAIEvaluatorPromptId) ?? DBNull.Value;
 
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@showChatBox", SqlDbType.Bit));
@@ -2878,7 +2892,10 @@ WHERE si.SuspiciousStatus = 1",
                     cmdUpdateIRF.Parameters["@OpenAIAssistantId"].Value = irfDetails.OpenAIAssistantId;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@OpenAIPromptId", SqlDbType.VarChar));
-                    cmdUpdateIRF.Parameters["@OpenAIPromptId"].Value = (object)irfDetails.OpenAIPromptId ?? DBNull.Value;
+                    cmdUpdateIRF.Parameters["@OpenAIPromptId"].Value = (object)NormalizePromptIdForDb(irfDetails.OpenAIPromptId) ?? DBNull.Value;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@OpenAIEvaluatorPromptId", SqlDbType.VarChar));
+                    cmdUpdateIRF.Parameters["@OpenAIEvaluatorPromptId"].Value = (object)NormalizePromptIdForDb(irfDetails.OpenAIEvaluatorPromptId) ?? DBNull.Value;
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@showChatBox", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@showChatBox"].Value = irfDetails.showChatBox;
