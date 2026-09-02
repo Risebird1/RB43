@@ -74,7 +74,12 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
  @OpenAIEvaluatorPromptId varchar(100) = null,
  @IsVideoRequired bit,
  @IsTechQC bit,
- @IsProctoring bit = null
+ @IsProctoring bit = null,
+ -- MCQ assessment section (screen.risebird.io). Defaulted so an older caller that does not send
+ -- them leaves the channel's current configuration alone rather than clearing it.
+ @HasMcqAssessmentSection bit = null,
+ @McqAssessmentSections varchar(500) = null,
+ @McqAssessmentMinutes int = null
  --@FixedAmount int = null  
  --@idRecommendation int,  
  --@RecommendationStatus bit,  
@@ -146,6 +151,16 @@ BEGIN
  ,[OpenAIEvaluatorPromptId] = @OpenAIEvaluatorPromptId
  ,[IsTechQC]=@IsTechQC
  ,[IsProctoring]=ISNULL(@IsProctoring,[IsProctoring])
+ -- MCQ assessment section. @HasMcqAssessmentSection doubles as "did the caller participate in
+ -- this feature at all": when it is NULL all three columns are left as they are, so a build
+ -- deployed before the updated repository cannot silently wipe a channel's configuration. Once
+ -- it is supplied, the sections list and duration are taken verbatim - including blank, which is
+ -- how a recruiter clears them back to the MCQ side's defaults.
+ ,[HasMcqAssessmentSection]=ISNULL(@HasMcqAssessmentSection,[HasMcqAssessmentSection])
+ ,[McqAssessmentSections]=CASE WHEN @HasMcqAssessmentSection IS NULL THEN [McqAssessmentSections]
+                               ELSE NULLIF(LTRIM(RTRIM(@McqAssessmentSections)),'') END
+ ,[McqAssessmentMinutes]=CASE WHEN @HasMcqAssessmentSection IS NULL THEN [McqAssessmentMinutes]
+                              ELSE NULLIF(@McqAssessmentMinutes,0) END
  --,[InterviewDuration]=@InterviewDuration  
  --,[IsFixedInterviewduration]=@IsFixedInterviewduration  
  --,[FixedAmount] = @FixedAmount  

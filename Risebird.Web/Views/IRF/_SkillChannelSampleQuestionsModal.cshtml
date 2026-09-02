@@ -72,6 +72,18 @@
                                                                        class="form-control" style="width:100%;" disabled />
                                                             </div>
                                                             <label id="codingError_0" class="text-danger coding-error"></label>
+
+                                                            @* Marks this row as the MCQ assessment section rather than a question the
+                                                               avatar asks. The questions come from screen.risebird.io; the row exists
+                                                               only to fix where in the interview the section falls, and its Comment is
+                                                               the spoken introduction. Mutually exclusive with Is Coding - enforced in
+                                                               usp_AddIRFSampleQuestions as well, not just here. *@
+                                                            <div style="margin-top:8px;border-top:1px dashed #ddd;padding-top:6px;">
+                                                                <label style="font-weight:normal;" title="Serves the MCQ assessment section from the MCQ system at this point in the interview">
+                                                                    <input type="checkbox" id="SkillCollection_0__IsMcqAssessmentSection" name="SkillCollection[0].IsMcqAssessmentSection" value="true" onchange="toggleMcqSection(this)" />
+                                                                    Is MCQ Section
+                                                                </label>
+                                                            </div>
                                                         </td>
                                                         <td class="text-center action-area">
                                                             <div class="sample-btn">
@@ -240,7 +252,7 @@
                     elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
                     elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
 
-                    ["IsCodingQuestion", "CodingTimeLimitInMinutes", "QuestionGist"].forEach(function (suffix) {
+                    ["IsCodingQuestion", "CodingTimeLimitInMinutes", "QuestionGist", "IsMcqAssessmentSection"].forEach(function (suffix) {
                         var codingElem = document.getElementById(collectionName + "_" + i + "__" + suffix);
                         if (codingElem) {
                             codingElem.id = collectionName + "_" + (i - 1) + "__" + suffix;
@@ -269,6 +281,25 @@
             timeLimitInput.prop('disabled', true).val('');
             $row.find('label.coding-error').html('');
             $row.find('label.gist-error').html('');
+        }
+    }
+
+    // The MCQ section is served by the MCQ system, not asked by the avatar, so it cannot also be
+    // a coding question. Ticking it clears and locks the coding controls on that row.
+    // usp_AddIRFSampleQuestions enforces the same rule, so a stale page cannot save both.
+    function toggleMcqSection(checkbox) {
+        var $row = $(checkbox).closest('tr');
+        var codingCheckbox = $row.find('input[id$="__IsCodingQuestion"]');
+        var timeLimitInput = $row.find('input[type=number]');
+
+        if (checkbox.checked) {
+            codingCheckbox.prop('checked', false).prop('disabled', true);
+            timeLimitInput.prop('disabled', true).val('');
+            $row.find('label.coding-error').html('');
+            $row.find('label.gist-error').html('');
+        }
+        else {
+            codingCheckbox.prop('disabled', false);
         }
     }
 
