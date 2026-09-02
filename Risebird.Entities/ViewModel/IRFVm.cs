@@ -283,6 +283,33 @@ namespace Risebird.Entities.ViewModel
         public int AIInterviewType { get; set; }
         public IList<SkillComment> DeliveryHeadSampleQuestions { get; set; }
 
+        /// <summary>
+        /// Opt-in for the MCQ assessment section served from screen.risebird.io inside this
+        /// channel's AI interviews.
+        ///
+        /// The channel being mirrored on the MCQ side (MCQIRF.PortalIRFId) is not on its own
+        /// consent to add a written test - a channel can be mirrored there purely for phone
+        /// screening or status webhooks - so this is a separate, explicit flag.
+        /// </summary>
+        [Display(Name = "MCQ Assessment Section")]
+        public bool HasMcqAssessmentSection { get; set; }
+
+        /// <summary>
+        /// Comma-separated MCQ section keys in the order they should be served, e.g.
+        /// "domain-knowledge,data-interpretation,logical-reasoning". Blank lets the MCQ side use
+        /// its own default set, so the section can be switched on without choosing sections.
+        /// The live list is at GET {mcq}/api/v1/ai-sessions/sections.
+        /// </summary>
+        [Display(Name = "MCQ Sections")]
+        public string McqAssessmentSections { get; set; }
+
+        /// <summary>
+        /// Total minutes for the whole MCQ section. Null or 0 lets the MCQ side add up its own
+        /// per-section budgets.
+        /// </summary>
+        [Display(Name = "MCQ Duration (minutes)")]
+        public int? McqAssessmentMinutes { get; set; }
+
         [DisplayName("AssistantId")]
         public string OpenAIAssistantId { get; set; }
 

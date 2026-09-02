@@ -408,8 +408,67 @@
                                                         @Html.CheckBoxFor(model => model.generateTranscriptSummary, new { @id = "generateTranscriptSummary" })
                                                         <label for="generateTranscriptSummary" class="form-label">Generate TranscriptSummary</label>
                                                     </div>
-                                                    
+
                                                 </div>
+
+                                                @* MCQ assessment section. The test itself runs on screen.risebird.io and is
+                                                   embedded into this channel's interviews; nothing about it is stored here.
+                                                   Requires the matching MCQ skill channel to carry this channel's IRF Id in
+                                                   MCQIRF.PortalIRFId, which is the existing channel-level link. *@
+                                                <div class="col-md-12 col-sm-12 pull-left">
+                                                    <div class="mb-0">
+                                                        @Html.CheckBoxFor(model => model.HasMcqAssessmentSection, new { @id = "HasMcqAssessmentSection" })
+                                                        <label for="HasMcqAssessmentSection" class="form-label">MCQ Assessment Section</label>
+                                                        <small class="text-muted d-block">
+                                                            Adds a sectioned written assessment, served from the MCQ system, inside this channel's AI interviews.
+                                                            Also add one sample question row with <strong>Is MCQ Assessment Section</strong> ticked, to place it in the question order.
+                                                        </small>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-8 col-sm-8 pull-left mcq-assessment-config">
+                                                    <div class="form-group">
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.McqAssessmentSections, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        </div>
+                                                        @Html.EditorFor(model => model.McqAssessmentSections, new { htmlAttributes = new { @class = "form-control text-box single-line", @placeholder = "domain-knowledge,data-interpretation,logical-reasoning", @id = "McqAssessmentSections" } })
+                                                        @Html.ValidationMessageFor(model => model.McqAssessmentSections, "", new { @class = "text-danger" })
+                                                        <small class="text-muted">
+                                                            Comma-separated section keys, in the order they should be served. Leave blank to use the MCQ system's default set.
+                                                            Available: domain-knowledge, data-interpretation, logical-reasoning, quantitative-reasoning, verbal-reasoning, critical-reasoning, situational-judgement.
+                                                        </small>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 col-sm-4 pull-left mcq-assessment-config">
+                                                    <div class="form-group">
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.McqAssessmentMinutes, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        </div>
+                                                        @Html.EditorFor(model => model.McqAssessmentMinutes, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @id = "McqAssessmentMinutes" } })
+                                                        @Html.ValidationMessageFor(model => model.McqAssessmentMinutes, "", new { @class = "text-danger" })
+                                                        <small class="text-muted">Blank lets the MCQ system add up its own per-section budgets.</small>
+                                                    </div>
+                                                </div>
+
+                                                @* The section list and duration mean nothing with the section switched off, so
+                                                   they only appear once it is ticked. Kept in the DOM either way, so the values
+                                                   still post and are not silently lost on a validation round-trip. *@
+                                                <script>
+                                                    (function () {
+                                                        var toggle = document.getElementById('HasMcqAssessmentSection');
+                                                        if (!toggle) return;
+
+                                                        function syncMcqConfigVisibility() {
+                                                            document.querySelectorAll('.mcq-assessment-config').forEach(function (el) {
+                                                                el.style.display = toggle.checked ? '' : 'none';
+                                                            });
+                                                        }
+
+                                                        toggle.addEventListener('change', syncMcqConfigVisibility);
+                                                        syncMcqConfigVisibility();
+                                                    })();
+                                                </script>
 
                                                 @* End: Multiple Skill sets*@
                                                 @*<div class="col-md-3 col-sm-3 pull-left">
