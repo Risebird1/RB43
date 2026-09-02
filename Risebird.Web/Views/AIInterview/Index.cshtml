@@ -6123,3 +6123,341 @@
 
     })();
 </script>
+
+@*
+    ================================================================================
+    MCQ assessment section
+    ================================================================================
+    One question in the delivery order is flagged as the MCQ section. When it comes up, the
+    interview hands the viewport to a full-screen overlay containing the real MCQ test, served
+    in an iframe from screen.risebird.io.
+
+    Why an iframe rather than reproducing the test here:
+
+      - The requirement is that the section must not look foreign to the MCQ UI. An iframe of the
+        actual page is not an imitation of that UI, it IS that UI - same stylesheet, same question
+        card, same navigator, same behaviour. A reimplementation would look right the day it
+        shipped and drift from then on.
+      - The test, its questions and its answer key stay on the MCQ side. Nothing about the paper
+        is copied into this application, and the browser never receives the answer key.
+      - The MCQ team keeps ownership of the test. A change to the exam page reaches this section
+        with no deployment here.
+
+    The overlay is opened automatically and cannot be dismissed by the candidate: this is a
+    proctored, timed section, and leaving it half-done has to be a submit, not a close. The
+    interview's own proctoring (screen capture, focus tracking) keeps running underneath.
+
+    The iframe reports back by postMessage. The portal never trusts it for anything but "the
+    candidate is done" - the score is read server-to-server from the MCQ API afterwards, so a
+    forged message can end the section early but cannot invent a result.
+*@
+@if (Model.IsMcqAssessmentQuestion)
+{
+    <style>
+        .rb-mcq-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 3000;
+            background: #0f172a;
+            display: none;
+        }
+
+            .rb-mcq-overlay.is-open {
+                display: flex;
+                flex-direction: column;
+            }
+
+        .rb-mcq-topbar {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 10px 18px;
+            background: #111827;
+            color: #fff;
+            font-size: 13px;
+        }
+
+        .rb-mcq-topbar-title {
+            font-weight: 600;
+        }
+
+        .rb-mcq-topbar-sections {
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        .rb-mcq-frame {
+            flex: 1 1 auto;
+            width: 100%;
+            border: 0;
+            background: #f7f8fc;
+        }
+
+        .rb-mcq-briefing {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: #0f172a;
+            z-index: 2;
+        }
+
+        .rb-mcq-briefing-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 32px 36px;
+            max-width: 560px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.4);
+        }
+
+            .rb-mcq-briefing-card h2 {
+                font-size: 20px;
+                font-weight: 700;
+                margin: 0 0 8px;
+                color: #111827;
+            }
+
+            .rb-mcq-briefing-card p {
+                font-size: 14px;
+                line-height: 1.6;
+                color: #4b5563;
+                margin: 0 0 16px;
+            }
+
+        .rb-mcq-section-list {
+            margin: 0 0 20px;
+            padding: 0;
+            list-style: none;
+        }
+
+            .rb-mcq-section-list li {
+                font-size: 13px;
+                color: #374151;
+                padding: 8px 12px;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+                margin-bottom: 8px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+        .rb-mcq-meta {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .rb-mcq-start-btn {
+            width: 100%;
+            padding: 13px;
+            border: 0;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+
+    <div class="rb-mcq-overlay" id="mcqOverlay" role="dialog" aria-modal="true" aria-label="Assessment section">
+        <div class="rb-mcq-topbar">
+            <span class="rb-mcq-topbar-title">Assessment Section</span>
+            <span class="rb-mcq-topbar-sections">
+                @if (Model.McqSectionTitles != null && Model.McqSectionTitles.Count > 0)
+                {
+                    @string.Join("  |  ", Model.McqSectionTitles)
+                }
+            </span>
+        </div>
+
+        @* Only the server-known "this channel has no usable MCQ section" case renders the notice.
+           A provisioning failure is discovered later, when Start is pressed, and is handled there. *@
+        @if (Model.McqSectionUnavailable)
+        {
+            @* The section could not be prepared. The candidate is mid-interview and being
+               proctored, so the only acceptable outcome is a clear way forward - never a dead
+               panel. The server records the section as not completed. *@
+            <div class="rb-mcq-briefing">
+                <div class="rb-mcq-briefing-card">
+                    <h2>Assessment section unavailable</h2>
+                    <p>
+                        This part of the interview could not be loaded. This is not a problem with
+                        anything you did, and it will not count against you. Please continue with
+                        the rest of your interview.
+                    </p>
+                    <button type="button" class="rb-mcq-start-btn" id="mcqSkipUnavailable">Continue interview</button>
+                </div>
+            </div>
+        }
+        else
+        {
+            @* The briefing sits above the iframe until the candidate starts, so the timer on the
+               MCQ side does not begin running while they are still reading what the section is. *@
+            <div class="rb-mcq-briefing" id="mcqBriefing">
+                <div class="rb-mcq-briefing-card">
+                    <h2>Assessment section</h2>
+                    <p>
+                        The next part of your interview is a written assessment. It is divided into
+                        sections, each with its own set of questions. Your answers are saved as you
+                        go, and you can move between questions freely within the assessment.
+                    </p>
+
+                    @if (Model.McqSectionTitles != null && Model.McqSectionTitles.Count > 0)
+                    {
+                        <ul class="rb-mcq-section-list">
+                            @foreach (var sectionTitle in Model.McqSectionTitles)
+                            {
+                                <li><i class="fa fa-check-circle" style="color:#2a5298;"></i> @sectionTitle</li>
+                            }
+                        </ul>
+                    }
+
+                    <div class="rb-mcq-meta">
+                        @if (Model.McqTotalMinutes > 0)
+                        {
+                            <text>@Model.McqTotalMinutes minutes &nbsp;-&nbsp; </text>
+                        }
+                        Recording and screen monitoring continue during this section
+                    </div>
+
+                    @* Your paper is built when you press this, not on page load: generating a
+                       sectioned paper takes a while, and doing it before the candidate is ready
+                       would burn their clock and leave them on a blank screen. *@
+                    <button type="button" class="rb-mcq-start-btn" id="mcqStartBtn">Start assessment</button>
+                    <div id="mcqPrepStatus" style="display:none;font-size:12px;color:#6b7280;margin-top:12px;text-align:center;"></div>
+                </div>
+            </div>
+
+            @* src is set on Start, not here: loading it now would start the section's clock on the
+               MCQ side while the candidate is still reading the briefing. *@
+            <iframe id="mcqFrame"
+                    class="rb-mcq-frame"
+                    title="Assessment section"
+                    allow="fullscreen"
+                    referrerpolicy="origin"></iframe>
+        }
+    </div>
+
+    <script>
+        (function () {
+            var overlay = document.getElementById('mcqOverlay');
+            var frame = document.getElementById('mcqFrame');
+            var briefing = document.getElementById('mcqBriefing');
+            var startBtn = document.getElementById('mcqStartBtn');
+            var skipBtn = document.getElementById('mcqSkipUnavailable');
+            var prepStatus = document.getElementById('mcqPrepStatus');
+            var sessionId = @Json.Serialize(Model.SessionId.ToString());
+            var submitted = false;
+
+            // Set once the section has been provisioned. Only messages from that origin are acted
+            // on - without the check, any page holding a handle on this window could end the
+            // section early.
+            var expectedOrigin = null;
+
+            if (overlay) overlay.classList.add('is-open');
+
+            // The candidate must not be able to answer the interview question underneath while
+            // the assessment is open, so the usual record/submit controls are taken out of reach.
+            function lockInterviewControls() {
+                ['startRecordingBtn', 'stopRecordingBtn', 'submitAnswerBtn', 'sendBtn'].forEach(function (id) {
+                    var el = document.getElementById(id);
+                    if (el) el.disabled = true;
+                });
+            }
+            lockInterviewControls();
+
+            function setPrepStatus(text) {
+                if (!prepStatus) return;
+                prepStatus.style.display = text ? 'block' : 'none';
+                prepStatus.textContent = text || '';
+            }
+
+            // Provisioning generates the paper, so it is slow the first time - the candidate is
+            // told what is happening rather than left watching a disabled button.
+            function startAssessment() {
+                if (!startBtn) return;
+                startBtn.disabled = true;
+                startBtn.textContent = 'Preparing your assessment...';
+                setPrepStatus('Building your question paper. This can take up to a minute - please do not close this window.');
+
+                fetch('@Url.Action("PrepareMcqSection", "AIInterview")?sid=' + encodeURIComponent(sessionId), {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(function (response) { return response.json(); })
+                    .then(function (data) {
+                        if (!data || data.unavailable || !data.embedUrl) {
+                            // Nothing to sit. Offer the way forward rather than a dead panel.
+                            startBtn.textContent = 'Continue interview';
+                            startBtn.disabled = false;
+                            startBtn.onclick = finishSection;
+                            setPrepStatus('This section could not be prepared. It will not count against you.');
+                            return;
+                        }
+
+                        try { expectedOrigin = new URL(data.embedUrl, window.location.href).origin; } catch (e) { }
+
+                        if (frame) frame.src = data.embedUrl;
+                        if (briefing) briefing.style.display = 'none';
+                    })
+                    .catch(function () {
+                        startBtn.textContent = 'Try again';
+                        startBtn.disabled = false;
+                        setPrepStatus('Could not reach the assessment service. Check your connection and try again.');
+                    });
+            }
+
+            if (startBtn) startBtn.addEventListener('click', startAssessment);
+
+            // Submits this interview question. The answer body is built server-side from the MCQ
+            // API, so nothing about the result is taken from the page.
+            function finishSection() {
+                if (submitted) return;
+                submitted = true;
+
+                var form = document.getElementById('chatForm');
+                if (!form) { window.location.reload(); return; }
+
+                // No marker is posted for "this was the MCQ section": the server decides that from
+                // CurrentQuestionId, because the flag waives the recorded-answer checks and so must
+                // not be something the browser can assert.
+
+                // No audio or video is captured for this question - there is nothing spoken to
+                // record - so the recording inputs are cleared to keep the post small.
+                ['audioInput', 'videoInput'].forEach(function (id) {
+                    var el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
+
+                if (overlay) {
+                    overlay.innerHTML =
+                        '<div class="rb-mcq-briefing"><div class="rb-mcq-briefing-card">' +
+                        '<h2>Assessment submitted</h2>' +
+                        '<p>Returning you to your interview...</p>' +
+                        '</div></div>';
+                }
+
+                form.submit();
+            }
+
+            if (skipBtn) skipBtn.addEventListener('click', finishSection);
+
+            window.addEventListener('message', function (event) {
+                if (expectedOrigin && event.origin !== expectedOrigin) return;
+
+                var data = event.data;
+                if (!data || data.source !== 'risebird-mcq-section') return;
+
+                if (data.type === 'section-complete' || data.type === 'section-unavailable') {
+                    finishSection();
+                }
+            });
+        })();
+    </script>
+}

@@ -835,3 +835,48 @@ BEGIN
     Add UseAIQuestionSets bit NULL
 END
 GO
+
+-- Opt-in for the MCQ assessment section, plus which sections it deals.
+--
+-- The link to the MCQ system already exists at channel level: MCQIRF.PortalIRFId on
+-- screen.risebird.io holds this channel's IRF.IRFId. That link alone is not consent to put an
+-- MCQ section into the interview, though - a channel can be mirrored there for phone screening
+-- or status webhooks and want nothing to do with a written test. Hence an explicit flag.
+--
+-- NULL and 0 both mean "no MCQ section", so every existing channel is unaffected.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'HasMcqAssessmentSection'
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add HasMcqAssessmentSection bit NULL
+END
+GO
+
+-- Comma-separated section keys from the MCQ catalogue (GET /api/v1/ai-sessions/sections),
+-- in the order they should be served. NULL means "use the MCQ side's default set", so a channel
+-- can be switched on without also having to choose sections.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'McqAssessmentSections'
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add McqAssessmentSections varchar(500) NULL
+END
+GO
+
+-- Total minutes for the whole MCQ section. NULL lets the MCQ side add up its per-section budgets.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'McqAssessmentMinutes'
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add McqAssessmentMinutes int NULL
+END
+GO

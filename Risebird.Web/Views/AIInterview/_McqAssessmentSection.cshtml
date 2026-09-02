@@ -1,0 +1,595 @@
+@model Risebird.Entities.ViewModel.McqAssessmentReport
+@*
+    The MCQ assessment section of an AI interview report.
+    
+    A partial because two views render this report: AIInterview/Report.cshtml for the page
+    and AIInterview/GenerateAIReportPDFFile.cshtml for the PDF, each with its own model
+    construction. Keeping one copy is what stops the PDF and the page disagreeing.
+    
+    Renders nothing when the model is null - a channel with no MCQ section.
+
+    Layout follows the HackerEarth assessment report supplied as the
+    design reference: a score header, per-section performance bars comparing the
+    candidate against the section's own weighting, a sections summary table, and a
+    detailed submission report that shows every question with the candidate's choice
+    marked against the correct one.
+
+    Two things from that reference are deliberately NOT reproduced: the global percentile
+    band ("Top 1% out of 1819 candidates") and the rank. Both require a cohort of other
+    candidates who have sat the same paper, and these papers are generated per candidate -
+    so there is no cohort, and any figure shown there would be invented. Everything below
+    is computed from this candidate's own submission.
+
+    The data behind this block never lives in this database as rows. It is fetched from
+    screen.risebird.io for the one session being rendered and cached as a JSON snapshot -
+    see Tables\AIInterviewMcqAssessment.sql.
+*@
+@if (Model != null)
+{
+    var mcq = Model;
+    var mcqSections = mcq.OrderedSections;
+
+    <style>
+        .rb-mcq-report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .rb-mcq-tile {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 16px 18px;
+            background: #fff;
+        }
+
+        .rb-mcq-tile-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .7px;
+            text-transform: uppercase;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .rb-mcq-tile-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: #111827;
+            line-height: 1.1;
+        }
+
+        .rb-mcq-tile-sub {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 6px;
+        }
+
+        .rb-mcq-verdict {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 999px;
+            margin-top: 8px;
+        }
+
+            .rb-mcq-verdict.is-pass {
+                background: #e7f6ed;
+                color: #1a7f4b;
+            }
+
+            .rb-mcq-verdict.is-borderline {
+                background: #fff5e5;
+                color: #a35b00;
+            }
+
+            .rb-mcq-verdict.is-fail {
+                background: #fdecec;
+                color: #b42318;
+            }
+
+        /* Section performance bars - the reference's "Skill-wise performance" block */
+        .rb-mcq-bars {
+            margin-bottom: 22px;
+        }
+
+        .rb-mcq-bar-row {
+            display: grid;
+            grid-template-columns: minmax(120px, 200px) 1fr 74px;
+            align-items: center;
+            gap: 14px;
+            padding: 9px 0;
+        }
+
+        .rb-mcq-bar-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .rb-mcq-bar-track {
+            position: relative;
+            height: 20px;
+            background: #f3f4f6;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .rb-mcq-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #1e3c72, #2a5298);
+        }
+
+            .rb-mcq-bar-fill.is-weak {
+                background: linear-gradient(90deg, #b42318, #e04f43);
+            }
+
+            .rb-mcq-bar-fill.is-mid {
+                background: linear-gradient(90deg, #a35b00, #dd9a2b);
+            }
+
+        .rb-mcq-bar-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: #111827;
+            text-align: right;
+        }
+
+        /* Sections summary table */
+        .rb-mcq-table-wrap {
+            overflow-x: auto;
+            margin-bottom: 22px;
+        }
+
+        .rb-mcq-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 620px;
+        }
+
+            .rb-mcq-table th {
+                text-align: left;
+                font-size: 11px;
+                font-weight: 700;
+                letter-spacing: .5px;
+                text-transform: uppercase;
+                color: #6b7280;
+                border-bottom: 2px solid #e5e7eb;
+                padding: 10px 12px;
+                white-space: nowrap;
+            }
+
+            .rb-mcq-table td {
+                border-bottom: 1px solid #f0f1f3;
+                padding: 11px 12px;
+                color: #374151;
+                vertical-align: middle;
+            }
+
+            .rb-mcq-table tfoot td {
+                font-weight: 700;
+                color: #111827;
+                border-top: 2px solid #e5e7eb;
+                border-bottom: 0;
+            }
+
+        .rb-mcq-pill {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 999px;
+        }
+
+            .rb-mcq-pill.is-pass {
+                background: #e7f6ed;
+                color: #1a7f4b;
+            }
+
+            .rb-mcq-pill.is-fail {
+                background: #fdecec;
+                color: #b42318;
+            }
+
+        /* Detailed submission report */
+        .rb-mcq-qsection-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e3c72;
+            margin: 22px 0 4px;
+        }
+
+        .rb-mcq-qsection-meta {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+
+        .rb-mcq-q {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 16px 18px;
+            margin-bottom: 12px;
+            background: #fff;
+        }
+
+        .rb-mcq-q-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+
+        .rb-mcq-q-num {
+            flex: 0 0 auto;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+            background: #1e3c72;
+            border-radius: 6px;
+            padding: 4px 9px;
+        }
+
+        .rb-mcq-q-text {
+            flex: 1 1 auto;
+            font-size: 14px;
+            font-weight: 500;
+            color: #111827;
+            line-height: 1.55;
+            white-space: pre-wrap;
+        }
+
+        .rb-mcq-q-meta {
+            flex: 0 0 auto;
+            text-align: right;
+            font-size: 11px;
+            color: #6b7280;
+            white-space: nowrap;
+        }
+
+        .rb-mcq-opt {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 13px;
+            line-height: 1.5;
+            padding: 9px 12px;
+            border: 1px solid #eceef1;
+            border-radius: 7px;
+            margin-bottom: 7px;
+            color: #374151;
+        }
+
+            .rb-mcq-opt.is-correct {
+                border-color: #1a7f4b;
+                background: #f4fbf7;
+            }
+
+            .rb-mcq-opt.is-wrong-pick {
+                border-color: #b42318;
+                background: #fdf5f4;
+            }
+
+        .rb-mcq-opt-key {
+            flex: 0 0 auto;
+            font-weight: 700;
+            color: #6b7280;
+        }
+
+        .rb-mcq-opt-tag {
+            flex: 0 0 auto;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+            padding: 2px 7px;
+            border-radius: 4px;
+            margin-left: auto;
+        }
+
+            .rb-mcq-opt-tag.is-correct {
+                background: #1a7f4b;
+                color: #fff;
+            }
+
+            .rb-mcq-opt-tag.is-wrong-pick {
+                background: #b42318;
+                color: #fff;
+            }
+
+            .rb-mcq-opt-tag.is-answer {
+                background: #e7f6ed;
+                color: #1a7f4b;
+            }
+
+        .rb-mcq-stale {
+            font-size: 12px;
+            color: #a35b00;
+            background: #fff8ec;
+            border: 1px solid #f3d9a8;
+            border-radius: 7px;
+            padding: 9px 12px;
+            margin-bottom: 16px;
+        }
+    </style>
+
+    <div class="rb-report-section" style="margin-bottom:20px;">
+        <div class="rb-section-header" style="margin-bottom:5px;">
+            <h2><i class="fa fa-list-alt"></i> Assessment Section</h2>
+        </div>
+
+        <div class="rb-analysis-content" style="overflow:hidden;">
+
+            @if (mcq.IsFromCache)
+            {
+                @* Says plainly that this is the last known result rather than a live read,
+                   so nobody makes a hiring call on a stale figure believing it is current. *@
+                <div class="rb-mcq-stale">
+                    <i class="fa fa-info-circle"></i>
+                    Showing the last saved result
+                    @if (mcq.CachedOn.HasValue)
+                    {
+                        <text>from @mcq.CachedOn.Value.ToString("dd MMM yyyy, HH:mm")</text>
+                    }
+                    &mdash; the assessment system could not be reached just now.
+                </div>
+            }
+
+            @if (!mcq.IsCompleted)
+            {
+                <div class="rb-mcq-stale">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    The candidate did not submit this section@(string.IsNullOrWhiteSpace(mcq.Status) ? "" : " (status: " + mcq.Status + ")").
+                    Any figures below cover only what was answered.
+                </div>
+            }
+
+            @{
+                // Verdict bands mirror the reference's "Qualified the 60 passing score"
+                // line. 60% is the same threshold the reference used; it is a display
+                // banding only and does not gate anything.
+                var scorePct = mcq.ScorePercent;
+                var verdictClass = scorePct >= 60 ? "is-pass" : (scorePct >= 40 ? "is-borderline" : "is-fail");
+                var verdictText = scorePct >= 60
+                    ? "Qualified the 60% passing score"
+                    : (scorePct >= 40 ? "Below the 60% passing score" : "Well below the 60% passing score");
+
+                var attemptedTotal = mcqSections.Sum(s => s.Attempted);
+                var timeUsedMinutes = mcq.Elapsed.HasValue ? mcq.Elapsed.Value.TotalMinutes : 0;
+            }
+
+            <div class="rb-mcq-report-grid">
+                <div class="rb-mcq-tile">
+                    <div class="rb-mcq-tile-label">Total Score</div>
+                    <div class="rb-mcq-tile-value">@scorePct.ToString("0.#")<span style="font-size:15px;color:#6b7280;"> / 100</span></div>
+                    <div class="rb-mcq-tile-sub">@mcq.CorrectAnswers of @mcq.TotalQuestions correct</div>
+                    <span class="rb-mcq-verdict @verdictClass">@verdictText</span>
+                </div>
+
+                <div class="rb-mcq-tile">
+                    <div class="rb-mcq-tile-label">Questions Attempted</div>
+                    <div class="rb-mcq-tile-value">@attemptedTotal<span style="font-size:15px;color:#6b7280;"> / @mcq.TotalQuestions</span></div>
+                    <div class="rb-mcq-tile-sub">
+                        Across @mcqSections.Count section@(mcqSections.Count == 1 ? "" : "s")
+                    </div>
+                </div>
+
+                <div class="rb-mcq-tile">
+                    <div class="rb-mcq-tile-label">Time Taken</div>
+                    <div class="rb-mcq-tile-value">
+                        @if (mcq.Elapsed.HasValue)
+                        {
+                            <text>@timeUsedMinutes.ToString("0")<span style="font-size:15px;color:#6b7280;"> min</span></text>
+                        }
+                        else
+                        {
+                            <text style="font-size:18px;color:#6b7280;">Not recorded</text>
+                        }
+                    </div>
+                    <div class="rb-mcq-tile-sub">
+                        @if (mcq.AllottedMinutes.HasValue)
+                        {
+                            <text>of @mcq.AllottedMinutes minutes allotted</text>
+                        }
+                    </div>
+                </div>
+
+                <div class="rb-mcq-tile">
+                    <div class="rb-mcq-tile-label">Integrity Signals</div>
+                    <div class="rb-mcq-tile-value" style="font-size:18px;">
+                        @if ((mcq.TabSwitchCount ?? 0) == 0 && mcq.RedFlags == 0)
+                        {
+                            <span style="color:#1a7f4b;">Acceptable</span>
+                        }
+                        else
+                        {
+                            <span style="color:#a35b00;">Review</span>
+                        }
+                    </div>
+                    <div class="rb-mcq-tile-sub">
+                        Window left @(mcq.TabSwitchCount ?? 0) time@((mcq.TabSwitchCount ?? 0) == 1 ? "" : "s")<br />
+                        @mcq.RedFlags question@(mcq.RedFlags == 1 ? "" : "s") flagged by the candidate
+                    </div>
+                </div>
+            </div>
+
+            @if (mcqSections.Any())
+            {
+                <div class="rb-mcq-bars">
+                    <h3 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 10px;">Section-wise performance</h3>
+                    @foreach (var section in mcqSections)
+                    {
+                        var pct = (double)section.ScorePercent;
+                        var fillClass = pct >= 60 ? "" : (pct >= 40 ? "is-mid" : "is-weak");
+                        <div class="rb-mcq-bar-row">
+                            <div class="rb-mcq-bar-label" title="@section.SectionDescription">@section.SectionTitle</div>
+                            <div class="rb-mcq-bar-track">
+                                <div class="rb-mcq-bar-fill @fillClass" style="width:@pct.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture)%;"></div>
+                            </div>
+                            <div class="rb-mcq-bar-value">@section.ScorePercent.ToString("0.#")%</div>
+                        </div>
+                    }
+                </div>
+
+                <div class="rb-mcq-table-wrap">
+                    <table class="rb-mcq-table">
+                        <thead>
+                            <tr>
+                                <th>Section</th>
+                                <th>Score (%)</th>
+                                <th>Correct</th>
+                                <th>Attempted</th>
+                                <th>Questions</th>
+                                <th>Time (min)</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var section in mcqSections)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@section.SectionTitle</strong>
+                                        @if (!string.IsNullOrWhiteSpace(section.SectionDescription))
+                                        {
+                                            <div style="font-size:11px;color:#6b7280;margin-top:2px;">@section.SectionDescription</div>
+                                        }
+                                    </td>
+                                    <td><strong>@section.ScorePercent.ToString("0.#")</strong></td>
+                                    <td>@section.Correct</td>
+                                    <td>@section.Attempted</td>
+                                    <td>@section.QuestionCount</td>
+                                    <td>@((section.TimeSpentSeconds / 60.0).ToString("0.#"))</td>
+                                    <td>
+                                        <span class="rb-mcq-pill @(section.ScorePercent >= 60 ? "is-pass" : "is-fail")">
+                                            @(section.ScorePercent >= 60 ? "Pass" : "Below par")
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td>Overall</td>
+                                <td>@mcq.ScorePercent.ToString("0.#")</td>
+                                <td>@mcq.CorrectAnswers</td>
+                                <td>@attemptedTotal</td>
+                                <td>@mcq.TotalQuestions</td>
+                                <td>@((mcqSections.Sum(s => s.TimeSpentSeconds) / 60.0).ToString("0.#"))</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            }
+
+            @if (mcq.Questions != null && mcq.Questions.Any())
+            {
+                <h3 style="font-size:14px;font-weight:700;color:#111827;margin:24px 0 4px;">Detailed submission report</h3>
+                <p style="font-size:12px;color:#6b7280;margin:0 0 4px;">
+                    Every question as it was served, with the candidate's choice marked against the correct answer.
+                </p>
+
+                @* Grouped by section so the report reads the way the paper was sat.
+                   Questions with no section (a paper generated before sectioning) fall
+                   into one unnamed group rather than disappearing. *@
+                @foreach (var group in mcq.Questions
+                    .GroupBy(q => new { q.SectionKey, q.SectionTitle })
+                    .OrderBy(g =>
+                    {
+                        // Paper order. A group whose key is not in the section list (a
+                        // paper generated before sectioning) sorts last rather than
+                        // first, which is what FindIndex's -1 would otherwise do.
+                        var index = mcqSections.FindIndex(s => s.SectionKey == g.Key.SectionKey);
+                        return index < 0 ? int.MaxValue : index;
+                    }))
+                {
+                    var groupQuestions = group.OrderBy(q => q.QuestionNumber).ToList();
+                    <div class="rb-mcq-qsection-title">
+                        @(string.IsNullOrWhiteSpace(group.Key.SectionTitle) ? "Questions" : group.Key.SectionTitle)
+                    </div>
+                    <div class="rb-mcq-qsection-meta">
+                        @groupQuestions.Count(q => q.WasAttempted) of @groupQuestions.Count attempted
+                        &nbsp;&middot;&nbsp; @groupQuestions.Count(q => q.IsCorrect) correct
+                    </div>
+
+                    @foreach (var q in groupQuestions)
+                    {
+                        <div class="rb-mcq-q">
+                            <div class="rb-mcq-q-head">
+                                <span class="rb-mcq-q-num">@q.QuestionNumber</span>
+                                <div class="rb-mcq-q-text">@q.Question</div>
+                                <div class="rb-mcq-q-meta">
+                                    @if (q.TimeSpentSeconds.HasValue && q.TimeSpentSeconds.Value > 0)
+                                    {
+                                        <div>@TimeSpan.FromSeconds(q.TimeSpentSeconds.Value).ToString(@"mm\:ss")</div>
+                                    }
+                                    <div style="font-weight:700;color:@(q.IsCorrect ? "#1a7f4b" : "#b42318");">
+                                        @(q.IsCorrect ? "1 / 1" : "0 / 1")
+                                    </div>
+                                    @if (q.RedFlag == true)
+                                    {
+                                        <div style="color:#a35b00;">Flagged</div>
+                                    }
+                                </div>
+                            </div>
+
+                            @{
+                                var selected = q.SelectedOptionNumbers;
+                                var correct = q.CorrectOptionNumbers;
+                                var optionKeys = new[] { "A", "B", "C", "D" };
+                                var options = q.Options;
+                            }
+
+                            @for (var i = 0; i < options.Count; i++)
+                            {
+                                var optionNumber = i + 1;
+                                if (string.IsNullOrWhiteSpace(options[i])) { continue; }
+
+                                var isCorrectOption = correct.Contains(optionNumber);
+                                var wasPicked = selected.Contains(optionNumber);
+                                var rowClass = wasPicked && isCorrectOption
+                                    ? "is-correct"
+                                    : (wasPicked ? "is-wrong-pick" : (isCorrectOption ? "is-correct" : ""));
+
+                                <div class="rb-mcq-opt @rowClass">
+                                    <span class="rb-mcq-opt-key">@optionKeys[i].</span>
+                                    <span>@options[i]</span>
+                                    @if (wasPicked && isCorrectOption)
+                                    {
+                                        <span class="rb-mcq-opt-tag is-correct">Correctly attempted</span>
+                                    }
+                                    else if (wasPicked)
+                                    {
+                                        <span class="rb-mcq-opt-tag is-wrong-pick">Candidate's answer</span>
+                                    }
+                                    else if (isCorrectOption)
+                                    {
+                                        <span class="rb-mcq-opt-tag is-answer">Correct answer</span>
+                                    }
+                                </div>
+                            }
+
+                            @if (!q.WasAttempted)
+                            {
+                                <div style="font-size:12px;color:#6b7280;margin-top:8px;">Not attempted.</div>
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(q.Explanation))
+                            {
+                                <div style="font-size:12px;color:#4b5563;margin-top:10px;padding-top:10px;border-top:1px dashed #e5e7eb;">
+                                    <strong>Explanation:</strong> @q.Explanation
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+}

@@ -32,5 +32,12 @@ namespace Risebird.Entities.ViewModel
         public string QuestionGist { get; set; }
         public bool IsCodingQuestion { get; set; }
         public int? CodingTimeLimitInMinutes { get; set; }
+
+        /// <summary>
+        /// This "question" is the MCQ assessment section, served in an iframe from
+        /// screen.risebird.io rather than asked by the avatar. Comment carries the spoken
+        /// introduction; the questions themselves live on the MCQ side.
+        /// </summary>
+        public bool IsMcqAssessmentSection { get; set; }
     }
 }

@@ -426,6 +426,22 @@ namespace Risebird.Entities.ViewModel
         public bool isMultiLingual { get; set; }
         public string AIResumeScreeningVerdict { get; set; }
         public int AIResumeScreeningScore { get; set; }
+
+        /// <summary>
+        /// Skill-channel opt-in for the MCQ assessment section served from screen.risebird.io.
+        /// The channel being mirrored on the MCQ side is not on its own consent to add a written
+        /// test to the interview, so this is an explicit flag - see IRF.HasMcqAssessmentSection.
+        /// </summary>
+        public bool HasMcqAssessmentSection { get; set; }
+
+        /// <summary>
+        /// Comma-separated MCQ section keys in ask order. Null means "let the MCQ side pick its
+        /// default set", so a channel can be switched on without choosing sections.
+        /// </summary>
+        public string McqAssessmentSections { get; set; }
+
+        /// <summary>Total minutes for the MCQ section; null lets the MCQ side sum its own budgets.</summary>
+        public int? McqAssessmentMinutes { get; set; }
         public DateTime? CandidateAddedOn { get; set; }
         public string ProjectTitle { get; set; }
         public string HRFirstName { get; set; }

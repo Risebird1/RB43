@@ -3096,6 +3096,9 @@
                 </div>
             </div>
         </div>
+        @* MCQ assessment section. Shared with GenerateAIReportPDFFile so the page and the
+           PDF cannot drift; renders nothing when the channel has no MCQ section. *@
+        @await Html.PartialAsync("_McqAssessmentSection", Model.McqAssessment)
         @{
             bool hasTypingData = Model.TypingSpeedAssessments != null && Model.TypingSpeedAssessments.Any();
             var typingAssessments = (ViewBag.TypingSpeedAssessments as IEnumerable<Risebird.Entities.ViewModel.TypingSpeedAssessment>) ?? Enumerable.Empty<Risebird.Entities.ViewModel.TypingSpeedAssessment>();

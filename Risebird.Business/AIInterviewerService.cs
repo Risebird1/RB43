@@ -28,11 +28,11 @@ namespace Risebird.Business
             _applicationErrorLogger = applicationErrorLogger;
             _aWSRekognitionService = aWSRekognitionService;
         }
-        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false, string candidateAnswerAudioLink = null)
+        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false, string candidateAnswerAudioLink = null, bool allowMissingVideo = false)
         {
             try
             {
-                return await _aiInterviewerRepository.UpdateBotInterviewVideoDetails(VideoLink, question, SessionId,botSynthesizedVideoLink, candidateResponse, secondsLeft, interviewId, BotAudioLink, deliveryHeadQuestionId, isTypingSpeedQuestion, isListeningComprehension, candidateAnswerAudioLink);
+                return await _aiInterviewerRepository.UpdateBotInterviewVideoDetails(VideoLink, question, SessionId,botSynthesizedVideoLink, candidateResponse, secondsLeft, interviewId, BotAudioLink, deliveryHeadQuestionId, isTypingSpeedQuestion, isListeningComprehension, candidateAnswerAudioLink, allowMissingVideo);
             }
             catch (Exception e)
             {
@@ -464,6 +464,32 @@ namespace Risebird.Business
         public async Task LogAIInterviewException(string sessionId, string httpMethod, Exception ex, LogLevelInfo logLevel = LogLevelInfo.Exception)
         {
             await _aiInterviewerRepository.LogAIInterviewException(sessionId, httpMethod, ex, logLevel);
+        }
+
+        public async Task<bool> SaveAIInterviewMcqAssessment(McqAssessmentCacheRow row)
+        {
+            try
+            {
+                return await _aiInterviewerRepository.SaveAIInterviewMcqAssessment(row);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<McqAssessmentCacheRow> GetAIInterviewMcqAssessment(string sessionId)
+        {
+            try
+            {
+                return await _aiInterviewerRepository.GetAIInterviewMcqAssessment(sessionId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
         }
     }
 }

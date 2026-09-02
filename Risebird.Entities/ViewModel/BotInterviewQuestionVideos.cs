@@ -52,6 +52,13 @@ namespace Risebird.Entities.ViewModel
         /// rendering this HTML when <see cref="AIInterviewEvaluation"/> could not be parsed.
         /// </summary>
         public string RawAIReportHtml { get; set; }
+
+        /// <summary>
+        /// The MCQ assessment section result, fetched live from screen.risebird.io or read from
+        /// the portal's cache. Null when the skill channel has no MCQ section, which is what the
+        /// report keys the whole MCQ block off.
+        /// </summary>
+        public McqAssessmentReport McqAssessment { get; set; }
     }
 
 }
