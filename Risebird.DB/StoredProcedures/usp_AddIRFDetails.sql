@@ -70,9 +70,13 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @OpenAIEvaluatorPromptId varchar(100) = null,
 @MeetingPlatform varchar(25),
 @showChatBox bit = null,  
-@generateTranscriptSummary bit = null, 
+@generateTranscriptSummary bit = null,
 @IsProctoring bit = null,
-@idIrf int output              
+-- MCQ assessment section (screen.risebird.io). Defaulted so an older caller still inserts.
+@HasMcqAssessmentSection bit = null,
+@McqAssessmentSections varchar(500) = null,
+@McqAssessmentMinutes int = null,
+@idIrf int output
               
 AS              
 Begin  
@@ -126,7 +130,10 @@ Begin
 	   ,[OpenAIEvaluatorPromptId]
 	   ,[MeetingPlatform]
 	   ,[IsTechQC]
-	   ,[IsProctoring])  
+	   ,[IsProctoring]
+	   ,[HasMcqAssessmentSection]
+	   ,[McqAssessmentSections]
+	   ,[McqAssessmentMinutes])
        --,[InterviewDuration]  
        --,[IsFixedInterviewduration]  
        --,[FixedAmount])              
@@ -175,7 +182,10 @@ Begin
 	   @OpenAIEvaluatorPromptId,
 	   @MeetingPlatform,
 	   @IsTechQC,
-	   @IsProctoring)  
+	   @IsProctoring,
+	   ISNULL(@HasMcqAssessmentSection, 0),
+	   NULLIF(LTRIM(RTRIM(@McqAssessmentSections)), ''),
+	   NULLIF(@McqAssessmentMinutes, 0))
        --@InterviewDuration,  
        --@IsFixedInterviewduration,  
        --@FixedAmount)        

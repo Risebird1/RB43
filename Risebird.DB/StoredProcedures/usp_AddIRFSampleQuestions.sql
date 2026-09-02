@@ -10,19 +10,23 @@ SET QUOTED_IDENTIFIER ON
 GO  
 Create PROCEDURE [dbo].[usp_AddIRFSampleQuestions]    
 (    
-   @IRFSampleQuestionsBulkData AS [dbo].[AddIRFSampleQuestions_TableTypeV6] READONLY,  --AddIRFSampleQuestions_TableTypeV5, AddIRFSampleQuestions_TableTypeV4, AddIRFSampleQuestions_TableTypeV3,  AddIRFSampleQuestions_TableType, AddIRFSampleQuestions_TableTypeV2
+   @IRFSampleQuestionsBulkData AS [dbo].[AddIRFSampleQuestions_TableTypeV7] READONLY,  --AddIRFSampleQuestions_TableTypeV6, AddIRFSampleQuestions_TableTypeV5, AddIRFSampleQuestions_TableTypeV4, AddIRFSampleQuestions_TableTypeV3,  AddIRFSampleQuestions_TableType, AddIRFSampleQuestions_TableTypeV2
    @IRFId int
-)    
-AS    
-BEGIN    
- begin try  
-  begin tran 
-	
-   INSERT INTO SkillChannelSampleQuestions([IRFId] ,[Skill],[Comment], CreatedBy, SkillName, ExpectedAnswer, IsCodingQuestion, CodingTimeLimitInMinutes, QuestionGist)    
+)
+AS
+BEGIN
+ begin try
+  begin tran
+
+   INSERT INTO SkillChannelSampleQuestions([IRFId] ,[Skill],[Comment], CreatedBy, SkillName, ExpectedAnswer, IsCodingQuestion, CodingTimeLimitInMinutes, QuestionGist, IsMcqAssessmentSection)
    SELECT tscbd.IRFId, tscbd.Skill, tscbd.Comment, tscbd.CreatedBy, tscbd.SkillName, tscbd.ExpectedAnswer,
-          ISNULL(tscbd.IsCodingQuestion, 0),
-          CASE WHEN ISNULL(tscbd.IsCodingQuestion, 0) = 1 THEN tscbd.CodingTimeLimitInMinutes ELSE NULL END,
-          tscbd.QuestionGist
+          -- The MCQ section is not asked by the avatar, so it can never also be a coding question.
+          -- Forcing the pair apart here keeps a mis-ticked row from becoming an unanswerable question.
+          CASE WHEN ISNULL(tscbd.IsMcqAssessmentSection, 0) = 1 THEN 0 ELSE ISNULL(tscbd.IsCodingQuestion, 0) END,
+          CASE WHEN ISNULL(tscbd.IsMcqAssessmentSection, 0) = 0 AND ISNULL(tscbd.IsCodingQuestion, 0) = 1
+               THEN tscbd.CodingTimeLimitInMinutes ELSE NULL END,
+          tscbd.QuestionGist,
+          ISNULL(tscbd.IsMcqAssessmentSection, 0)
    FROM @IRFSampleQuestionsBulkData tscbd
   
 commit tran  

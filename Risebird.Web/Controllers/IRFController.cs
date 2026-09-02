@@ -9620,8 +9620,30 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
                     }
 
+                    // One MCQ assessment section per channel. A second row would try to open a
+                    // second test against the same interview session, which the MCQ side would
+                    // refuse as already submitted - leaving the candidate on a dead panel with no
+                    // explanation. Catch it at save time instead.
+                    var mcqSectionCount = (model.SkillCollection ?? new List<SkillComment>())
+                        .Count(x => x.IsMcqAssessmentSection);
+                    if (mcqSectionCount > 1)
+                    {
+                        TempData["SuccessErrorMessageQuestions"] = "Only one question can be the MCQ assessment section. Untick the extra rows.";
+                        return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
+                    }
+
                     foreach (var question in model.SkillCollection ?? new List<SkillComment>())
                     {
+                        // The MCQ section is served by the MCQ system, never asked by the avatar,
+                        // so it can never also be a coding question. The stored procedure forces
+                        // the same thing; doing it here too keeps the coding validation below from
+                        // demanding a time limit and gist for a row that has neither.
+                        if (question.IsMcqAssessmentSection)
+                        {
+                            question.IsCodingQuestion = false;
+                            question.CodingTimeLimitInMinutes = null;
+                        }
+
                         if ((question.Comment?.Length ?? 0) > MaxSampleQuestionLength
                             || (question.ExpectedAnswer?.Length ?? 0) > MaxSampleQuestionLength)
                         {

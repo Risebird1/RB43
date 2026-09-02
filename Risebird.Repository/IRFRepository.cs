@@ -807,6 +807,58 @@ WHERE si.SuspiciousStatus = 1",
             return string.IsNullOrWhiteSpace(promptId) ? null : promptId.Trim();
         }
 
+        /// <summary>
+        /// MCQ assessment section parameters, shared by the create and update paths so the two
+        /// cannot fall out of step.
+        ///
+        /// The section list and duration are only meaningful when the section is switched on, so
+        /// they are sent as NULL when it is off - that keeps a channel from carrying a stale
+        /// section list that nothing reads. The stored procedures read a non-NULL
+        /// @HasMcqAssessmentSection as "this caller knows about the feature", so the flag is
+        /// always sent explicitly rather than left to a default.
+        /// </summary>
+        private static void AddMcqAssessmentSectionParameters(SqlCommand command, IRFVm irfDetails)
+        {
+            var isEnabled = irfDetails.HasMcqAssessmentSection;
+
+            command.Parameters.Add(new SqlParameter("@HasMcqAssessmentSection", SqlDbType.Bit));
+            command.Parameters["@HasMcqAssessmentSection"].Value = isEnabled;
+
+            var sections = isEnabled ? NormalizeSectionKeysForDb(irfDetails.McqAssessmentSections) : null;
+            command.Parameters.Add(new SqlParameter("@McqAssessmentSections", SqlDbType.VarChar, 500));
+            command.Parameters["@McqAssessmentSections"].Value = (object)sections ?? DBNull.Value;
+
+            command.Parameters.Add(new SqlParameter("@McqAssessmentMinutes", SqlDbType.Int));
+            command.Parameters["@McqAssessmentMinutes"].Value =
+                isEnabled && irfDetails.McqAssessmentMinutes.HasValue && irfDetails.McqAssessmentMinutes.Value > 0
+                    ? irfDetails.McqAssessmentMinutes.Value
+                    : (object)DBNull.Value;
+        }
+
+        /// <summary>
+        /// Tidies the comma-separated section keys typed into the skill-channel form: trims each
+        /// key, drops blanks and duplicates, and returns null for "nothing chosen" so the MCQ side
+        /// falls back to its own default set. Keys are not validated against the MCQ catalogue
+        /// here - that would need a network call on every save, and the MCQ side already ignores
+        /// keys it does not recognise.
+        /// </summary>
+        private static string NormalizeSectionKeysForDb(string sections)
+        {
+            if (string.IsNullOrWhiteSpace(sections)) return null;
+
+            var keys = sections
+                .Split(new[] { ',', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => s.Trim().ToLowerInvariant())
+                .Where(s => s.Length > 0)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (keys.Count == 0) return null;
+
+            var joined = string.Join(",", keys);
+            return joined.Length > 500 ? joined.Substring(0, 500).TrimEnd(',') : joined;
+        }
+
         public async Task<IRFVm> GetSkillChannelDetailsForUpdate(int irfId)
         {
             try
@@ -897,6 +949,20 @@ WHERE si.SuspiciousStatus = 1",
                             _resultVM.showChatBox = !string.IsNullOrEmpty(dt.Rows[0]["showChatBox"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["showChatBox"]) : false;
                             _resultVM.generateTranscriptSummary = !string.IsNullOrEmpty(dt.Rows[0]["generateTranscriptSummary"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["generateTranscriptSummary"]) : false;
                             _resultVM.IsProctoring = !dt.Columns.Contains("IsProctoring") || string.IsNullOrEmpty(dt.Rows[0]["IsProctoring"].ToString()) || Convert.ToBoolean(dt.Rows[0]["IsProctoring"]);
+                            // MCQ assessment section. Columns.Contains-guarded so the edit screen
+                            // still loads if this build reaches an environment where Tables\IRF.sql
+                            // has not been applied yet.
+                            _resultVM.HasMcqAssessmentSection = dt.Columns.Contains("HasMcqAssessmentSection")
+                                && !string.IsNullOrEmpty(dt.Rows[0]["HasMcqAssessmentSection"].ToString())
+                                && Convert.ToBoolean(dt.Rows[0]["HasMcqAssessmentSection"]);
+                            _resultVM.McqAssessmentSections = dt.Columns.Contains("McqAssessmentSections")
+                                && !string.IsNullOrEmpty(dt.Rows[0]["McqAssessmentSections"].ToString())
+                                ? dt.Rows[0]["McqAssessmentSections"].ToString()
+                                : null;
+                            _resultVM.McqAssessmentMinutes = dt.Columns.Contains("McqAssessmentMinutes")
+                                && !string.IsNullOrEmpty(dt.Rows[0]["McqAssessmentMinutes"].ToString())
+                                ? Convert.ToInt32(dt.Rows[0]["McqAssessmentMinutes"])
+                                : (int?)null;
                             _resultVM.DmIvLockNew = dt.Columns.Contains("DmIvLockNew") && !string.IsNullOrEmpty(dt.Rows[0]["DmIvLockNew"].ToString()) && Convert.ToBoolean(dt.Rows[0]["DmIvLockNew"]);
                             _resultVM.DmAssignmentPolicy = dt.Columns.Contains("DmAssignmentPolicy") && !string.IsNullOrEmpty(dt.Rows[0]["DmAssignmentPolicy"].ToString()) ? dt.Rows[0]["DmAssignmentPolicy"].ToString() : "free";
                             _resultVM.DmDefaultInterviewCap = dt.Columns.Contains("DmDefaultInterviewCap") && !string.IsNullOrEmpty(dt.Rows[0]["DmDefaultInterviewCap"].ToString()) ? Convert.ToInt32(dt.Rows[0]["DmDefaultInterviewCap"]) : 20;
@@ -1866,6 +1932,8 @@ WHERE si.SuspiciousStatus = 1",
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@IsProctoring", SqlDbType.Bit));
                     cmdCreateIRF.Parameters["@IsProctoring"].Value = DBNull.Value;
+
+                    AddMcqAssessmentSectionParameters(cmdCreateIRF, irfDetails);
 
                     var meetingPlatForm = irfDetails.MeetingPlatform ?? "Zoho";
                     if (irfDetails.IsAIInterview)
@@ -2905,6 +2973,8 @@ WHERE si.SuspiciousStatus = 1",
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsProctoring", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsProctoring"].Value = irfDetails.IsProctoring;
+
+                    AddMcqAssessmentSectionParameters(cmdUpdateIRF, irfDetails);
 
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
@@ -8765,12 +8835,14 @@ WHERE irf.IsDeleted = 0
                     techSkillCommentsDt.Columns.Add("IsCodingQuestion", typeof(bool));
                     techSkillCommentsDt.Columns.Add("CodingTimeLimitInMinutes", typeof(int));
                     techSkillCommentsDt.Columns.Add("QuestionGist", typeof(string));
+                    techSkillCommentsDt.Columns.Add("IsMcqAssessmentSection", typeof(bool));
                     foreach (var item in obj.SkillCollection?.Where(x => !string.IsNullOrEmpty(x.SkillName)))
                     {
                         techSkillCommentsDt.Rows.Add(obj.IRFId, 0, item.Comment, item.CreatedBy, item.SkillName, item.ExpectedAnswer,
                             item.IsCodingQuestion,
                             item.CodingTimeLimitInMinutes.HasValue ? (object)item.CodingTimeLimitInMinutes.Value : DBNull.Value,
-                            string.IsNullOrWhiteSpace(item.QuestionGist) ? (object)DBNull.Value : item.QuestionGist);
+                            string.IsNullOrWhiteSpace(item.QuestionGist) ? (object)DBNull.Value : item.QuestionGist,
+                            item.IsMcqAssessmentSection);
                     }
                     SqlCommand cmdAddSkillComments = new SqlCommand("usp_AddIRFSampleQuestions", con);
                     cmdAddSkillComments.CommandType = CommandType.StoredProcedure;
