@@ -12,7 +12,7 @@ namespace Risebird.Business.Interface
 {
     public interface IAIInterviewerService
     {
-        Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false, string candidateAnswerAudioLink = null);
+        Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false, string candidateAnswerAudioLink = null, bool allowMissingVideo = false);
         Task<string> GetThreadId(Guid sessionId);
         Task<List<BotInterviewQuestionVideos>> GetBotInterviewVideoDetails(Guid sessionId);
         Task<bool> UpdateTimeLeft(Guid sessionId, int secondsLeft, int interviewId);
@@ -36,5 +36,11 @@ namespace Risebird.Business.Interface
         Task<bool> SaveCodingAssessment(CodingAssessment obj);
         Task<TypingSpeedSampleText> GetRandomTypingSpeedSampleText();
         Task LogAIInterviewException(string sessionId, string httpMethod, Exception ex, LogLevelInfo logLevel = LogLevelInfo.Exception);
+
+        /// <summary>Caches the MCQ section result fetched from screen.risebird.io.</summary>
+        Task<bool> SaveAIInterviewMcqAssessment(McqAssessmentCacheRow row);
+
+        /// <summary>The cached MCQ section result, used when the live fetch is unavailable.</summary>
+        Task<McqAssessmentCacheRow> GetAIInterviewMcqAssessment(string sessionId);
     }
 }

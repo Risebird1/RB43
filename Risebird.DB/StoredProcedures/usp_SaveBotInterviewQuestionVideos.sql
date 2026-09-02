@@ -21,12 +21,22 @@ Create Procedure usp_SaveBotInterviewQuestionVideos
 @CandidateResponse nvarchar(max),
 @BotAudioLink varchar(2000) = null,
 @DeliveryHeadQuestionId int = null,
-@CandidateAnswerAudioLink varchar(2000) = null
+@CandidateAnswerAudioLink varchar(2000) = null,
+-- Records the answer even though no video accompanies it.
+--
+-- Needed by the MCQ assessment section, where the candidate answers inside an embedded test on
+-- screen.risebird.io and nothing is recorded at all - there is no spoken answer to record. Without
+-- this the proc silently does nothing (not even the TimeLeftInSeconds update below), the caller
+-- reads that as a failed save, and the candidate is shown a network error mid-interview.
+--
+-- Defaults to 0, so every existing caller keeps the old behaviour: no video means no row.
+@AllowMissingVideo bit = 0
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    if(@VideoLink is not null and @VideoLink != '' and @CandidateResponse is not null and @CandidateResponse != '')
+    if(((@VideoLink is not null and @VideoLink != '') or @AllowMissingVideo = 1)
+        and @CandidateResponse is not null and @CandidateResponse != '')
     Begin
         -- Check if a record already exists for this SessionId + DeliveryHeadQuestionId combination
         IF EXISTS (
