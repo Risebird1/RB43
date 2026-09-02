@@ -729,6 +729,11 @@
         }
         bool hasTypingData = Model.TypingSpeedAssessments != null && Model.TypingSpeedAssessments.Any();
     }
+
+    @* MCQ assessment section. The same partial the on-screen report uses, so the PDF and the
+       page cannot drift apart; renders nothing when the channel has no MCQ section. *@
+    @await Html.PartialAsync("_McqAssessmentSection", Model.McqAssessment)
+
     <div class="sec-wrap" style="padding-bottom:16px;">
         <div class="sec-head"><span class="sec-num">@tsSecNum</span><i class="fa fa-keyboard-o" style="margin-right:7px;"></i>Typing Speed Assessment</div>
         @if (hasTypingData)

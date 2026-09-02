@@ -62,6 +62,32 @@ namespace Risebird.Entities.ViewModel
         public string CodingLastRunOutput { get; set; }
         public string CodingLastRunStatus { get; set; }
         public int CodingRunCount { get; set; }
+
+        /// <summary>
+        /// The current question is the MCQ assessment section. The interview page renders it as a
+        /// full-viewport overlay hosting the MCQ test in an iframe, instead of the usual
+        /// record-an-answer UI.
+        /// </summary>
+        public bool IsMcqAssessmentQuestion { get; set; }
+
+        /// <summary>
+        /// Minutes allotted to the MCQ section, from the skill channel. Shown on the briefing
+        /// panel; the authoritative timer runs on the MCQ side.
+        /// </summary>
+        public int McqTotalMinutes { get; set; }
+
+        /// <summary>
+        /// Section titles in ask order, shown on the pre-launch briefing panel. Derived from the
+        /// channel's own configuration so the panel needs no call to the MCQ side to render - the
+        /// iframe URL itself is fetched by AIInterview/PrepareMcqSection when Start is pressed.
+        /// </summary>
+        public List<string> McqSectionTitles { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Set when the section could not be prepared (MCQ host down, generation failed). The
+        /// page shows a short notice and lets the candidate move on rather than trapping them.
+        /// </summary>
+        public bool McqSectionUnavailable { get; set; }
     }
 
     public class ChatLine

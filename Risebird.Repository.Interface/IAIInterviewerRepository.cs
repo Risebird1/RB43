@@ -14,7 +14,7 @@ namespace Risebird.Repository.Interface
         Task CreateSession(InterviewSession session);
         Task<string> GetThreadId(Guid sessionId);
         Task LogTranscript(Guid sessionId, string role, string message, int? deliveryHeadQuestionId = null);
-        Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false, string candidateAnswerAudioLink = null);
+        Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false, string candidateAnswerAudioLink = null, bool allowMissingVideo = false);
         Task<List<BotInterviewQuestionVideos>> GetBotInterviewVideoDetails(Guid sessionId);
         Task<bool> UpdateTimeLeft(Guid sessionId, int secondsLeft, int interviewId);
         Task<MeetingVM> GetAIInterviewDetailsBySessionId(Guid sessionId);
@@ -35,5 +35,14 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveCodingAssessment(CodingAssessment obj);
         Task<TypingSpeedSampleText> GetRandomTypingSpeedSampleText();
         Task LogAIInterviewException(string sessionId, string httpMethod, Exception ex, LogLevelInfo logLevel = LogLevelInfo.Exception);
+
+        /// <summary>
+        /// Caches the MCQ section result fetched from screen.risebird.io. See
+        /// Tables\AIInterviewMcqAssessment.sql for why the portal keeps a copy at all.
+        /// </summary>
+        Task<bool> SaveAIInterviewMcqAssessment(McqAssessmentCacheRow row);
+
+        /// <summary>The cached MCQ section result, used when the live fetch is unavailable.</summary>
+        Task<McqAssessmentCacheRow> GetAIInterviewMcqAssessment(string sessionId);
     }
 }

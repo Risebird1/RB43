@@ -249,6 +249,7 @@ builder.Services.AddScoped<IAssistantServiceHelper, AssistantServiceHelper>();
 builder.Services.AddScoped<IOpenAIResponsesHelper, OpenAIResponsesHelper>();
 builder.Services.AddScoped<ITeamsMeetingHelper, TeamsMeetingHelper>();
 builder.Services.AddScoped<IPdfReaderHelper, PdfReaderHelper>();
+builder.Services.AddScoped<IMcqAssessmentService, McqAssessmentService>();
 builder.Services.AddScoped<IInterviewApiService, InterviewApiService>();
 builder.Services.AddScoped<IAIInterviewerRepository, AIInterviewerRepository>();
 builder.Services.AddScoped<IOpenAIInterviewerAssistantHelper, OpenAIInterviewerAssistantHelper>();

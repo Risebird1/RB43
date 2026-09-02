@@ -72,6 +72,7 @@ namespace Risebird.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IConverter _converter;
         private readonly ICodeExecutionService _codeExecutionService;
+        private readonly IMcqAssessmentService _mcqAssessmentService;
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api,
@@ -85,7 +86,8 @@ namespace Risebird.Web.Controllers
             IProctoringScreenshotAnalysisService proctoringScreenshotAnalysisService,
             ICompositeViewEngine viewEngine, ITempDataProvider tempDataProvider,
             IHttpContextAccessor contextAccessor, IConverter converter,
-            ICodeExecutionService codeExecutionService)
+            ICodeExecutionService codeExecutionService,
+            IMcqAssessmentService mcqAssessmentService)
         {
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
@@ -111,6 +113,7 @@ namespace Risebird.Web.Controllers
             _contextAccessor = contextAccessor;
             _converter = converter;
             _codeExecutionService = codeExecutionService;
+            _mcqAssessmentService = mcqAssessmentService;
         }
 
         /// <summary>
@@ -190,6 +193,9 @@ namespace Risebird.Web.Controllers
                                     model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
                                     model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
                                     model.IsCodingQuestion = sampleQuestion.IsCodingQuestion;
+                                    model.IsMcqAssessmentQuestion = sampleQuestion.IsMcqAssessmentSection;
+                                    // Fills in the iframe URL when this question is the MCQ section; no-op otherwise.
+                                    DescribeMcqAssessmentSection(model, meetingDetails);
                                     model.CodingTimeLimitInMinutes = sampleQuestion.CodingTimeLimitInMinutes;
 
                                     // Fetch random typing sample text from database if it's a typing speed question
@@ -286,6 +292,8 @@ namespace Risebird.Web.Controllers
                                             model.CurrentQuestion = latestQuestion;
                                             model.CurrentQuestionId = latestEntry.DeliveryHeadQuestionId;
                                             await ApplyCodingQuestionAttributesAsync(model, latestEntry.DeliveryHeadQuestionId);
+                                            // Fills in the iframe URL when this question is the MCQ section; no-op otherwise.
+                                            DescribeMcqAssessmentSection(model, meetingDetails);
                                         }
                                     }
                                     //else if (latestEntry.Role.ToLower() == "user" && allQuestions.Count() < 10)
@@ -307,7 +315,14 @@ namespace Risebird.Web.Controllers
                                             .FirstOrDefault(x => x.Role != null && x.Role.ToLower() == "assistant");
                                         var lastAssistantQuestionId = lastAssistantQuestion?.DeliveryHeadQuestionId;
 
-                                        if (lastAssistantQuestionId.HasValue)
+                                        // The MCQ assessment section is exempt from this guard. It has no
+                                        // recorded answer at all - the candidate answers inside the embedded
+                                        // test, and no video or audio is captured - so requiring a VideoLink
+                                        // would hold them on that question forever.
+                                        var lastQuestionIsMcqSection = lastAssistantQuestionId.HasValue &&
+                                            await IsMcqAssessmentQuestionAsync(lastAssistantQuestionId.Value);
+
+                                        if (lastAssistantQuestionId.HasValue && !lastQuestionIsMcqSection)
                                         {
                                             var savedVideos = await _aiinterviewerService.GetBotInterviewVideoDetails(sid);
                                             var hasCandidateVideoForLastQuestion = savedVideos != null &&
@@ -330,6 +345,8 @@ namespace Risebird.Web.Controllers
                                                 model.CurrentQuestion = CleanMessage(lastAssistantQuestion?.Message);
                                                 model.CurrentQuestionId = lastAssistantQuestionId.Value;
                                                 await ApplyCodingQuestionAttributesAsync(model, lastAssistantQuestionId.Value);
+                                                // Fills in the iframe URL when this question is the MCQ section; no-op otherwise.
+                                                DescribeMcqAssessmentSection(model, meetingDetails);
 
                                                 // Optional flag for the view to show a warning if desired.
                                                 ViewData["VideoUploadError"] = true;
@@ -366,6 +383,9 @@ namespace Risebird.Web.Controllers
                                                 model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
                                                 model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
                                                 model.IsCodingQuestion = sampleQuestion.IsCodingQuestion;
+                                                model.IsMcqAssessmentQuestion = sampleQuestion.IsMcqAssessmentSection;
+                                                // Fills in the iframe URL when this question is the MCQ section; no-op otherwise.
+                                                DescribeMcqAssessmentSection(model, meetingDetails);
                                                 model.CodingTimeLimitInMinutes = sampleQuestion.CodingTimeLimitInMinutes;
 
                                                 // Fetch random typing sample text from database if it's a typing speed question
@@ -1004,6 +1024,13 @@ namespace Risebird.Web.Controllers
 
                 HydrateModelFromMeeting(model, meetingDetails);
 
+                // Whether this is the MCQ section is decided from the question, not from the post.
+                //
+                // The flag exempts the submission from the "a recorded answer must be attached"
+                // checks, so trusting the form field would let a candidate post it on an ordinary
+                // question and skip answering it altogether. The browser's copy is ignored.
+                model.IsMcqAssessmentQuestion = await IsMcqAssessmentQuestionAsync(model.CurrentQuestionId);
+
                 try
                 {
                     await ApplyAiProctoringViewBagAsync(meetingDetails, model.SessionId);
@@ -1020,9 +1047,18 @@ namespace Risebird.Web.Controllers
                     string tranScribedResponse = string.Empty;
                     string codeResponse = string.Empty;
 
+                    // The MCQ section has no spoken or typed answer to capture - the candidate
+                    // answered inside the embedded test, and the MCQ side already scored it. What
+                    // goes into the transcript is a summary of that result, so the interview's own
+                    // evaluator prompt weighs the written test alongside the spoken answers rather
+                    // than seeing a silent gap where a question should be.
+                    if (model.IsMcqAssessmentQuestion)
+                    {
+                        userMessage = await CaptureMcqAssessmentResultAsync(model, meetingDetails);
+                    }
                     // A coding answer is the written code plus anything the candidate said while writing it.
                     // Both are merged into one transcript entry so evaluation and the report see a single answer.
-                    if (model.IsCodingQuestion)
+                    else if (model.IsCodingQuestion)
                     {
                         if (model.AudioFile != null && model.AudioFile.Length > 500)
                         {
@@ -1564,6 +1600,9 @@ namespace Risebird.Web.Controllers
                             model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
                             model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
                             model.IsCodingQuestion = sampleQuestion.IsCodingQuestion;
+                            model.IsMcqAssessmentQuestion = sampleQuestion.IsMcqAssessmentSection;
+                            // Fills in the iframe URL when this question is the MCQ section; no-op otherwise.
+                            DescribeMcqAssessmentSection(model, meetingDetails);
                             model.CodingTimeLimitInMinutes = sampleQuestion.CodingTimeLimitInMinutes;
                             // Drop the answer just saved so it is not re-rendered against the next question
                             model.CodingSubmittedCode = null;
@@ -1587,6 +1626,9 @@ namespace Risebird.Web.Controllers
                                 model.ListeningAudioUrl = sampleQuestion.ListeningAudioUrl;
                                 model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
                                 model.IsCodingQuestion = sampleQuestion.IsCodingQuestion;
+                                model.IsMcqAssessmentQuestion = sampleQuestion.IsMcqAssessmentSection;
+                                // Fills in the iframe URL when this question is the MCQ section; no-op otherwise.
+                                DescribeMcqAssessmentSection(model, meetingDetails);
                                 model.CodingTimeLimitInMinutes = sampleQuestion.CodingTimeLimitInMinutes;
 
                                 // Fetch random typing sample text from database if it's a typing speed question
@@ -1963,7 +2005,8 @@ namespace Risebird.Web.Controllers
             if (string.IsNullOrWhiteSpace(userMessage)
                 && !model.IsTypingSpeedQuestion
                 && !model.IsListeningComprehensionQuestion
-                && !model.IsCodingQuestion)
+                && !model.IsCodingQuestion
+                && !model.IsMcqAssessmentQuestion)
             {
                 return View("ExitModalPartial", CreateAnswerSubmitErrorView(
                     model.SessionId,
@@ -1971,9 +2014,13 @@ namespace Risebird.Web.Controllers
                     "Your spoken answer was not captured. Please record again and wait for processing to finish."));
             }
 
+            // The MCQ assessment section is exempt from the video requirement for the same reason
+            // typing and listening assessments are: there is nothing spoken to record. The
+            // candidate answered inside the embedded test and the result is read from the MCQ API.
             if (!model.IsTypingSpeedQuestion
                 && !model.IsListeningComprehensionQuestion
                 && !model.IsCodingQuestion
+                && !model.IsMcqAssessmentQuestion
                 && (model.VideoFile == null || model.VideoFile.Length == 0))
             {
                 return View("ExitModalPartial", CreateAnswerSubmitErrorView(
@@ -2009,11 +2056,321 @@ namespace Risebird.Web.Controllers
 
                 model.IsCodingQuestion = questionDetails.IsCodingQuestion;
                 model.CodingTimeLimitInMinutes = questionDetails.CodingTimeLimitInMinutes;
+                model.IsMcqAssessmentQuestion = questionDetails.IsMcqAssessmentSection;
             }
             catch (Exception ex)
             {
                 // A lookup failure must not break the interview; the question still renders normally
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        /// <summary>
+        /// Describes the MCQ assessment section for the briefing panel. Does no network work.
+        ///
+        /// Provisioning is deliberately NOT done here. Building a sectioned paper is one question
+        /// generation call per section, which takes upwards of a minute, and doing that inside the
+        /// interview page's request would leave the candidate on a blank page for that whole time
+        /// with no idea whether anything was happening. Instead the page renders at once with a
+        /// briefing screen, and <see cref="PrepareMcqSection"/> does the provisioning when the
+        /// candidate presses Start - which is also the point at which the section's clock should
+        /// begin.
+        ///
+        /// The section names shown on the briefing come from the channel's own configuration, so
+        /// the panel can name them without waiting on the MCQ side.
+        /// </summary>
+        private void DescribeMcqAssessmentSection(ChatMessageViewModel model, MeetingVM meetingDetails)
+        {
+            if (model == null || meetingDetails == null || !model.IsMcqAssessmentQuestion)
+                return;
+
+            if (!meetingDetails.HasMcqAssessmentSection || !_mcqAssessmentService.IsConfigured)
+            {
+                // The question is flagged as the MCQ section but the channel is not switched on
+                // (or the integration is not configured at all). Treat it as unavailable so the
+                // page offers a way past it instead of rendering an empty overlay.
+                model.McqSectionUnavailable = true;
+                return;
+            }
+
+            model.McqTotalMinutes = meetingDetails.McqAssessmentMinutes ?? 0;
+            model.McqSectionTitles = ParseSectionKeys(meetingDetails.McqAssessmentSections)
+                .Select(HumanizeSectionKey)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Provisions the MCQ section and hands back the iframe URL. Called from the interview
+        /// page when the candidate presses Start on the assessment briefing.
+        ///
+        /// Idempotent on the MCQ side per interview session, so a retry after a timeout or a
+        /// reload returns the same paper and the same launch token rather than a second test.
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> PrepareMcqSection(Guid sid)
+        {
+            try
+            {
+                var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(sid);
+                if (meetingDetails == null)
+                    return Json(new { unavailable = true, reason = "session-not-found" });
+
+                if (!meetingDetails.HasMcqAssessmentSection || !_mcqAssessmentService.IsConfigured)
+                    return Json(new { unavailable = true, reason = "not-enabled" });
+
+                var sections = ParseSectionKeys(meetingDetails.McqAssessmentSections);
+
+                var result = await _mcqAssessmentService.ProvisionSectionAsync(
+                    sid.ToString(),
+                    new McqSectionProvisionRequest
+                    {
+                        // IRF.IRFId is what MCQIRF.PortalIRFId holds on the MCQ side - the channel
+                        // link that already exists between the two databases.
+                        SkillChannelId = meetingDetails.IRFId,
+                        CandidateEmail = meetingDetails.candidateEmail,
+                        CandidateName = meetingDetails.candidateName,
+                        PrimarySkill = string.IsNullOrWhiteSpace(meetingDetails.PrimarySkill)
+                            ? meetingDetails.JDTiltle
+                            : meetingDetails.PrimarySkill,
+                        JobDescription = await ResolveJobDescriptionTextAsync(meetingDetails),
+                        Sections = sections.Count > 0 ? sections : null,
+                        TotalMinutes = meetingDetails.McqAssessmentMinutes
+                    });
+
+                if (result == null || string.IsNullOrWhiteSpace(result.EmbedUrl))
+                    return Json(new { unavailable = true, reason = "provision-failed" });
+
+                return Json(new
+                {
+                    unavailable = false,
+                    embedUrl = result.EmbedUrl,
+                    totalMinutes = result.TotalMinutes,
+                    questionCount = result.QuestionCount,
+                    sections = (result.Sections ?? new List<McqSectionInfo>())
+                        .OrderBy(s => s.SortOrder)
+                        .Select(s => s.SectionTitle)
+                        .Where(s => !string.IsNullOrWhiteSpace(s))
+                        .ToList()
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { unavailable = true, reason = "error" });
+            }
+        }
+
+        /// <summary>
+        /// Whether a delivery-head question is the MCQ assessment section. Used to exempt it from
+        /// the "an answer video must exist before advancing" guard, which it can never satisfy.
+        ///
+        /// A lookup failure returns false, which keeps the guard in force - the conservative
+        /// direction, since wrongly exempting a spoken question would let the interview advance
+        /// past an answer that was never recorded.
+        /// </summary>
+        private async Task<bool> IsMcqAssessmentQuestionAsync(int questionId)
+        {
+            if (questionId <= 0) return false;
+
+            try
+            {
+                var questionDetails = await _iRFService.GetDeliveryHeadSampleQuestionById(questionId);
+                return questionDetails != null && questionDetails.IsMcqAssessmentSection;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        private static List<string> ParseSectionKeys(string configured)
+        {
+            return (configured ?? string.Empty)
+                .Split(',')
+                .Select(s => s.Trim())
+                .Where(s => s.Length > 0)
+                .ToList();
+        }
+
+        /// <summary>
+        /// "data-interpretation" -> "Data Interpretation". Only for the briefing panel, which has
+        /// to name the sections before the MCQ side has returned their real titles.
+        /// </summary>
+        private static string HumanizeSectionKey(string key)
+        {
+            if (string.IsNullOrWhiteSpace(key)) return key;
+
+            var words = key.Replace('_', '-').Split('-', StringSplitOptions.RemoveEmptyEntries);
+            return string.Join(" ", words.Select(w =>
+                w.Length == 1 ? w.ToUpperInvariant() : char.ToUpperInvariant(w[0]) + w.Substring(1)));
+        }
+
+        /// <summary>
+        /// Reads the finished MCQ section back from screen.risebird.io, caches it in the portal,
+        /// and returns a plain-language summary to store as the candidate's answer for this
+        /// question.
+        ///
+        /// The summary is what the interview's evaluator prompt reads, so it states section-level
+        /// results in words rather than as JSON - the evaluator is being asked to weigh a written
+        /// test, not to parse a payload.
+        /// </summary>
+        private async Task<string> CaptureMcqAssessmentResultAsync(ChatMessageViewModel model, MeetingVM meetingDetails)
+        {
+            var sessionId = model.SessionId.ToString();
+
+            try
+            {
+                var report = await _mcqAssessmentService.FetchReportAsync(sessionId);
+
+                if (report == null)
+                {
+                    // Either the candidate skipped the section or the MCQ host is unreachable.
+                    // Either way the interview continues; the report will retry the fetch later.
+                    return "The candidate did not complete the MCQ assessment section.";
+                }
+
+                await CacheMcqAssessmentAsync(report, meetingDetails, sessionId);
+
+                if (!report.IsCompleted)
+                    return "The candidate started but did not submit the MCQ assessment section.";
+
+                var summary = new StringBuilder();
+                summary.AppendLine(
+                    $"MCQ assessment section completed: {report.CorrectAnswers} of {report.TotalQuestions} correct " +
+                    $"({report.ScorePercent:0.#}%).");
+
+                foreach (var section in report.OrderedSections)
+                {
+                    summary.AppendLine(
+                        $"- {section.SectionTitle}: {section.Correct} of {section.QuestionCount} correct " +
+                        $"({section.ScorePercent:0.#}%), {section.Attempted} attempted.");
+                }
+
+                if (report.Elapsed.HasValue && report.AllottedMinutes.HasValue)
+                {
+                    summary.AppendLine(
+                        $"Time taken: {report.Elapsed.Value.TotalMinutes:0} of {report.AllottedMinutes} minutes allotted.");
+                }
+
+                return summary.ToString().TrimEnd();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "The MCQ assessment section result could not be retrieved.";
+            }
+        }
+
+        /// <summary>
+        /// Writes the fetched MCQ result into the portal's read-through cache. Failures are
+        /// logged and swallowed: the cache is an availability aid, and losing a write costs a
+        /// later refetch, not the result itself.
+        /// </summary>
+        private async Task CacheMcqAssessmentAsync(McqAssessmentReport report, MeetingVM meetingDetails, string sessionId)
+        {
+            try
+            {
+                await _aiinterviewerService.SaveAIInterviewMcqAssessment(new McqAssessmentCacheRow
+                {
+                    SessionId = sessionId,
+                    InterviewId = meetingDetails?.InterviewId,
+                    IRFId = meetingDetails?.irfIntId,
+                    McqId = report.McqId,
+                    Status = report.Status,
+                    TotalQuestions = report.TotalQuestions,
+                    CorrectAnswers = report.CorrectAnswers,
+                    ScorePercent = report.ScorePercent,
+                    RedFlags = report.RedFlags,
+                    AllottedMinutes = report.AllottedMinutes,
+                    ElapsedSeconds = report.ElapsedSeconds,
+                    TabSwitchCount = report.TabSwitchCount,
+                    StartedOn = report.StartedOn,
+                    CompletedOn = report.CompletedOn,
+                    ReportJson = JsonConvert.SerializeObject(report)
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        /// <summary>
+        /// The MCQ section result for a report render: live where possible, cached otherwise.
+        ///
+        /// Live is preferred because a candidate can finish the section after the interview's own
+        /// completion write, and a successful fetch refreshes the cache. The cache is what makes
+        /// the report render at all when the MCQ host is down, and what makes a PDF generated
+        /// months later show what the report showed.
+        /// </summary>
+        private async Task<McqAssessmentReport> ResolveMcqAssessmentForReportAsync(MeetingVM meetingDetails, Guid sessionId)
+        {
+            if (meetingDetails == null || !meetingDetails.HasMcqAssessmentSection)
+                return null;
+
+            var sessionKey = sessionId.ToString();
+
+            if (_mcqAssessmentService.IsConfigured)
+            {
+                try
+                {
+                    var live = await _mcqAssessmentService.FetchReportAsync(sessionKey);
+                    if (live != null)
+                    {
+                        await CacheMcqAssessmentAsync(live, meetingDetails, sessionKey);
+                        return live;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                }
+            }
+
+            try
+            {
+                var cached = await _aiinterviewerService.GetAIInterviewMcqAssessment(sessionKey);
+                if (string.IsNullOrWhiteSpace(cached?.ReportJson))
+                    return null;
+
+                var report = JsonConvert.DeserializeObject<McqAssessmentReport>(cached.ReportJson);
+                if (report == null) return null;
+
+                report.IsFromCache = true;
+                report.CachedOn = cached.FetchedOn;
+                return report;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        /// <summary>
+        /// Text of the job description, used to steer question generation for the role-specific
+        /// sections. Falls back to the JD title when the linked document cannot be read - a
+        /// weaker prompt is much better than no section.
+        /// </summary>
+        private async Task<string> ResolveJobDescriptionTextAsync(MeetingVM meetingDetails)
+        {
+            if (string.IsNullOrWhiteSpace(meetingDetails?.JDLink))
+                return meetingDetails?.JDTiltle;
+
+            try
+            {
+                var text = await _pdfReaderHelper.ReadPdfFromUrlAsync(meetingDetails.JDLink);
+                if (string.IsNullOrWhiteSpace(text))
+                    return meetingDetails.JDTiltle;
+
+                // The generation prompt does not need the whole document, and a very long JD
+                // crowds out the section brief that says what to actually test.
+                return text.Length > 8000 ? text.Substring(0, 8000) : text;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return meetingDetails.JDTiltle;
             }
         }
 
@@ -2213,7 +2570,9 @@ namespace Risebird.Web.Controllers
                 // (DeliveryHeadQuestionId=0) on every subsequent answer instead of INSERTing a new row.
                 // Passing null tells the stored proc to always INSERT a new row, creating one entry per answered question.
                 int? deliveryHeadQuestionId = model.CurrentQuestionId > 0 ? model.CurrentQuestionId : (int?)null;
-                var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, deliveryHeadQuestionId, model.IsTypingSpeedQuestion, model.IsListeningComprehensionQuestion, candidateAnswerAudioLink);
+                // The MCQ assessment section records nothing - the candidate answered inside the
+                // embedded test - so it is the one question type allowed to save without a video.
+                var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, deliveryHeadQuestionId, model.IsTypingSpeedQuestion, model.IsListeningComprehensionQuestion, candidateAnswerAudioLink, model.IsMcqAssessmentQuestion);
                 return result;
             }
             catch (Exception ex)
@@ -2445,6 +2804,10 @@ namespace Risebird.Web.Controllers
 
                 await SetProctoringEventCountForReportAsync(meetingDetails.InterviewId);
 
+                // MCQ assessment section. Null unless the skill channel is linked to an MCQ channel and
+                // opted in, which is what keys the whole MCQ block in the report view.
+                reportModel.McqAssessment = await ResolveMcqAssessmentForReportAsync(meetingDetails, seId);
+
                 return View(reportModel);
             }
             else
@@ -2581,6 +2944,10 @@ namespace Risebird.Web.Controllers
                 ViewBag.AccessType = accessType;
 
                 await SetProctoringEventCountForReportAsync(meetingDetails.InterviewId);
+
+                // MCQ assessment section. Null unless the skill channel is linked to an MCQ channel and
+                // opted in, which is what keys the whole MCQ block in the report view.
+                reportModel.McqAssessment = await ResolveMcqAssessmentForReportAsync(meetingDetails, seId);
 
                 return View(reportModel);
             }
@@ -2881,6 +3248,11 @@ namespace Risebird.Web.Controllers
                 List<TypingSpeedAssessment> typingAssessmentsPdf;
                 try { typingAssessmentsPdf = await _aiinterviewerService.GetTypingSpeedAssessmentBySessionId(seId.ToString()) ?? new List<TypingSpeedAssessment>(); } catch { typingAssessmentsPdf = new List<TypingSpeedAssessment>(); }
                 reportModel.TypingSpeedAssessments = typingAssessmentsPdf;
+
+                // This action builds its own model rather than reusing Report's, so the MCQ
+                // section has to be resolved here too or it would be missing from the PDF while
+                // being present on the page.
+                reportModel.McqAssessment = await ResolveMcqAssessmentForReportAsync(meetingDetails, seId);
 
                 ViewBag.IsAdaptive = meetingDetails?.AIInterviewType != (int)AIInterviewTypeEnum.Preset;
 

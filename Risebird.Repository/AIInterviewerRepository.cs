@@ -128,7 +128,7 @@ namespace Risebird.Repository
                 // Silently fail to not block the interview flow
             }
         }
-        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false, string candidateAnswerAudioLink = null)
+        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false, string candidateAnswerAudioLink = null, bool allowMissingVideo = false)
         {
             try
             {
@@ -170,8 +170,12 @@ namespace Risebird.Repository
                     //        return false;
                     //    }
                     //}
+                    // allowMissingVideo covers question types that record nothing at all - the MCQ
+                    // assessment section, where the candidate answers inside an embedded test.
+                    // Everything else still requires a video link, so a genuinely lost upload is
+                    // still reported as a failed save rather than silently accepted.
                     if (normalizedSessionId is null ||
-                        normalizedVideoLink is null ||
+                        (normalizedVideoLink is null && !allowMissingVideo) ||
                         normalizedCandidateResponse is null ||
                         normalizedQuestion is null ||
                         interviewId <= 0)
@@ -192,6 +196,7 @@ namespace Risebird.Repository
                     parameters.Add("@BotAudioLink", normalizedBotAudioLink);
                     parameters.Add("@DeliveryHeadQuestionId", deliveryHeadQuestionId);
                     parameters.Add("@CandidateAnswerAudioLink", normalizedCandidateAnswerAudioLink);
+                    parameters.Add("@AllowMissingVideo", allowMissingVideo);
                     await SqlMapper.QueryAsync(con, "usp_SaveBotInterviewQuestionVideos", parameters,
                          commandType: CommandType.StoredProcedure);
                     //await SqlMapper.QueryAsync(con, "usp_SaveBotInterviewQuestionVideosTestVersion", parameters,
@@ -960,5 +965,59 @@ namespace Risebird.Repository
             }
         }
 
+        
+        public async Task<bool> SaveAIInterviewMcqAssessment(McqAssessmentCacheRow row)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", row.SessionId);
+                    parameters.Add("@InterviewId", row.InterviewId);
+                    parameters.Add("@IRFId", row.IRFId);
+                    parameters.Add("@McqId", row.McqId);
+                    parameters.Add("@Status", row.Status);
+                    parameters.Add("@TotalQuestions", row.TotalQuestions);
+                    parameters.Add("@CorrectAnswers", row.CorrectAnswers);
+                    parameters.Add("@ScorePercent", row.ScorePercent);
+                    parameters.Add("@RedFlags", row.RedFlags);
+                    parameters.Add("@AllottedMinutes", row.AllottedMinutes);
+                    parameters.Add("@ElapsedSeconds", row.ElapsedSeconds);
+                    parameters.Add("@TabSwitchCount", row.TabSwitchCount);
+                    parameters.Add("@StartedOn", row.StartedOn);
+                    parameters.Add("@CompletedOn", row.CompletedOn);
+                    parameters.Add("@ReportJson", row.ReportJson);
+                    await SqlMapper.ExecuteAsync(con, "usp_SaveAIInterviewMcqAssessment", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<McqAssessmentCacheRow> GetAIInterviewMcqAssessment(string sessionId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SessionId", sessionId);
+                    var result = await SqlMapper.QueryAsync<McqAssessmentCacheRow>(con, "usp_GetAIInterviewMcqAssessment", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

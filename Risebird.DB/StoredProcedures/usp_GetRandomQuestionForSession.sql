@@ -56,7 +56,7 @@ BEGIN
     ;WITH OrderedQuestions AS (
         SELECT q.id, q.Comment, q.AIQuestionVideoLink, q.IsTypingSpeedAssessment,
                q.IsListeningComprehension, q.ListeningAudioUrl, q.ListeningAudioTranscription,
-               q.IsCodingQuestion, q.CodingTimeLimitInMinutes,
+               q.IsCodingQuestion, q.CodingTimeLimitInMinutes, q.IsMcqAssessmentSection,
                ROW_NUMBER() OVER (ORDER BY q.Id) AS RowNum
         FROM SkillChannelSampleQuestions q
         WHERE q.IRFId = @irfId
@@ -67,6 +67,7 @@ BEGIN
            ListeningAudioUrl,
            ListeningAudioTranscription,
            ISNULL(IsCodingQuestion, 0) AS IsCodingQuestion,
+           ISNULL(IsMcqAssessmentSection, 0) AS IsMcqAssessmentSection,
            CodingTimeLimitInMinutes
     FROM OrderedQuestions
     WHERE RowNum = @AskedCount + 1; -- ? pick the next question
