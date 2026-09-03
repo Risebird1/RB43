@@ -3691,34 +3691,20 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "AI question videos are only available for Preset AI interview channels." });
                 }
 
-                // Resume a render this question already has in flight rather than starting another.
-                // Rendering regularly outlasts the poll window below, and before this a give-up was
-                // terminal: the next click queued a fresh render and gave up too, so a question
-                // whose video merely took a few minutes could never get one, while every attempt
-                // orphaned a render on the Synthesia account.
-                var videoId = questionDetails.AIQuestionVideoJobId;
-                var resumedExistingRender = !string.IsNullOrWhiteSpace(videoId);
-
-                if (!resumedExistingRender)
+                string videoId;
+                try
                 {
-                    try
-                    {
-                        videoId = await _synthesiaTextToVideoService.CreateVideoAsync(narrationText, SynthesiaAIAvatarTemplates.Reema);
-                    }
-                    catch (Exception ex)
-                    {
-                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                        return Json(new { success = false, message = "Could not reach Synthesia API. Check configuration and try again." });
-                    }
+                    videoId = await _synthesiaTextToVideoService.CreateVideoAsync(narrationText, SynthesiaAIAvatarTemplates.Reema);
+                }
+                catch (Exception ex)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    return Json(new { success = false, message = "Could not reach Synthesia API. Check configuration and try again." });
+                }
 
-                    if (string.IsNullOrWhiteSpace(videoId))
-                    {
-                        return Json(new { success = false, message = "Synthesia rejected the request. Check the Synthesia API key and template configuration, then try again." });
-                    }
-
-                    // Stored before polling, so a browser that gives up, a request timeout or an
-                    // app restart still leaves the render findable by the next attempt.
-                    await _iRFService.SaveSampleQuestionAIVideoLink(id, null, videoId);
+                if (string.IsNullOrWhiteSpace(videoId))
+                {
+                    return Json(new { success = false, message = "Synthesia did not return a video id." });
                 }
 
                 string synthesiaDownloadUrl = null;
@@ -3728,18 +3714,11 @@ namespace Risebird.Web.Controllers
                     await Task.Delay(8000);
                     try
                     {
-                        // Null means "still rendering"; only a genuinely failed render throws.
                         synthesiaDownloadUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
                     }
                     catch (Exception ex)
                     {
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-
-                        // This render will never complete, so leaving the job id stored would make
-                        // every future click resume a dead render. Clear it so the next click can
-                        // start a fresh one.
-                        await _iRFService.SaveSampleQuestionAIVideoLink(id, null, null);
-                        return Json(new { success = false, message = "Synthesia could not render this video. Shorten or simplify the narration text, then try again." });
                     }
 
                     if (!string.IsNullOrWhiteSpace(synthesiaDownloadUrl))
@@ -3748,15 +3727,7 @@ namespace Risebird.Web.Controllers
 
                 if (string.IsNullOrWhiteSpace(synthesiaDownloadUrl))
                 {
-                    // The job id stays stored, so clicking again collects this same render instead
-                    // of paying for another one.
-                    return Json(new
-                    {
-                        success = false,
-                        message = resumedExistingRender
-                            ? "Still rendering at Synthesia. Give it another couple of minutes and click again - it will collect the same video, not start a new one."
-                            : "The video has been queued at Synthesia and is still rendering. Give it a couple of minutes and click again to collect it."
-                    });
+                    return Json(new { success = false, message = "Synthesia video is still processing. Please try again in a minute." });
                 }
 
                 string uploadedVideoUrl = string.Empty;
@@ -3781,8 +3752,6 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "Video upload failed." });
                 }
 
-                // Saving the link also clears AIQuestionVideoJobId - the render it referred to has
-                // now been collected, so a later click should start a fresh one, not re-fetch this.
                 var saved = await _iRFService.SaveSampleQuestionAIVideoLink(id, uploadedVideoUrl);
                 if (!saved)
                 {

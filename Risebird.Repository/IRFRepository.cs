@@ -11124,7 +11124,7 @@ WHERE id = @irfId";
             }
             return null;
         }
-        public async Task<bool> SaveSampleQuestionAIVideoLink(int id, string videoLink, string videoJobId = null)
+        public async Task<bool> SaveSampleQuestionAIVideoLink(int id, string videoLink)
         {
             try
             {
@@ -11132,7 +11132,6 @@ WHERE id = @irfId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 dynamicParameters.Add("@aiVideoLink", videoLink);
-                dynamicParameters.Add("@aiVideoJobId", videoJobId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = SqlMapper.Query(con, "usp_SaveSampleQuestionAIVideoLink", dynamicParameters,

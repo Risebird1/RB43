@@ -322,7 +322,7 @@ namespace Risebird.Repository.Interface
         Task<string> GetAssessmentGroupById(int assessmentGroupId);
         Task<bool> UpdateMagLinkEmailTriggeredTime(int agId, string sentBy);
         Task<SkillComment> GetDeliveryHeadSampleQuestionById(int id);
-        Task<bool> SaveSampleQuestionAIVideoLink(int id, string videoLink, string videoJobId = null);
+        Task<bool> SaveSampleQuestionAIVideoLink(int id, string videoLink);
         Task<List<CancelCandidateListResponse>> CancelInterviewViaApi(List<string> candidateList, string requestedBy, string jobId, string SkillChannelId);
         Task<bool> FlagQuestionForSentimentAnalysis(int id);
         Task<bool> UpdateIRFInterviewerBillingCycle(int irfId, int billingCycle, string emailid);

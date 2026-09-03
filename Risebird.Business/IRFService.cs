@@ -5100,11 +5100,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> SaveSampleQuestionAIVideoLink(int id, string videoLink, string videoJobId = null)
+        public async Task<bool> SaveSampleQuestionAIVideoLink(int id, string videoLink)
         {
             try
             {
-                return await _irfRepository.SaveSampleQuestionAIVideoLink(id, videoLink, videoJobId);
+                return await _irfRepository.SaveSampleQuestionAIVideoLink(id, videoLink);
             }
             catch (Exception ex)
             {
