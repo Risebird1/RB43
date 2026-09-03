@@ -198,6 +198,7 @@
                     var codingTimeLimit = q.codingTimeLimitInMinutes || q.CodingTimeLimitInMinutes;
                     var gist = q.questionGist || q.QuestionGist || '';
                     var isListening = q.isListeningComprehension || q.IsListeningComprehension;
+                    var isMcqSection = q.isMcqAssessmentSection || q.IsMcqAssessmentSection;
                     var listeningAudio = q.listeningAudioUrl || q.ListeningAudioUrl || '';
                     var listeningTranscript = q.listeningAudioTranscription || q.ListeningAudioTranscription || '';
                     var isAiQuestion = q.isAIGenerated || q.IsAIGenerated || q.isGeneratedByAi || q.IsGeneratedByAi;
@@ -268,6 +269,18 @@
                         html += '<div class="dm-v4-listening-warning" hidden></div>';
                     }
                     html += '</div>';
+                    html += '</div>';
+
+                    // MCQ assessment section: this row is not a question the avatar asks. It marks
+                    // where in the interview the written assessment from screen.risebird.io is
+                    // served, and its question text is the avatar's spoken introduction to it.
+                    // Mutually exclusive with the modes above, which the server also enforces.
+                    html += '<div class="dm-v4-question-meta dm-v4-question-mcq">';
+                    html += '<label class="dm-v4-question-flag" title="Serves the MCQ assessment section at this point in the interview">';
+                    html += '<input type="checkbox" class="dm-v4-mcq-cb" data-id="' + qid + '"' + (isMcqSection ? ' checked' : '') + (qid ? '' : ' disabled') + ' /> MCQ assessment section</label>';
+                    if (isMcqSection) {
+                        html += '<span class="dm-v4-question-gist-hint">Questions come from the MCQ system; this row only sets its position and spoken intro.</span>';
+                    }
                     html += '</div>';
 
                     html += '</div><div class="dm-v4-question-col">';
@@ -456,6 +469,39 @@
         });
     }
 
+    function saveMcqSectionMode(id, isMcqSection, $cb) {
+        var qid = parseInt(id, 10);
+        if (!qid) return;
+
+        var payload = getQuestionsRequestData();
+        payload.id = qid;
+        payload.isMcqAssessmentSection = isMcqSection;
+
+        $.post('/IRF/SetQuestionMcqSectionMode', payload).done(function (res) {
+            if (res && res.success) {
+                // A warning still means it saved - but on a set-dealing channel the section will
+                // not be asked until the sets are rebuilt, so that has to be said loudly.
+                if (res.warning) {
+                    showQuestionToast(res.warning, 'error');
+                } else {
+                    showQuestionToast(isMcqSection
+                        ? 'Saved. The written assessment will be served at this point in the interview.'
+                        : 'Saved.', 'success');
+                }
+                // The server clears the coding and listening modes when this is switched on, so
+                // re-read rather than leaving the panel showing a state that is no longer true.
+                loadQuestions();
+            } else {
+                // Put the checkbox back so the panel never claims a state the server rejected
+                $cb.prop('checked', !isMcqSection);
+                showQuestionToast((res && res.message) ? res.message : 'Could not update the question.', 'error');
+            }
+        }).fail(function (xhr) {
+            $cb.prop('checked', !isMcqSection);
+            showQuestionToast('Could not reach the server (' + (xhr.status || 'unknown') + ').', 'error');
+        });
+    }
+
     function saveListeningMode(id, isListening, transcript, gist, $cb) {
         var qid = parseInt(id, 10);
         if (!qid) return;
@@ -609,6 +655,11 @@
             if ($cb.prop('checked') && typeof FlagQuestionForSentimentAnalysis === 'function') {
                 FlagQuestionForSentimentAnalysis($cb.data('id'));
             }
+        });
+
+        $(document).off('change.dmV4Mcq', '.dm-v4-mcq-cb').on('change.dmV4Mcq', '.dm-v4-mcq-cb', function () {
+            var $cb = $(this);
+            saveMcqSectionMode($cb.data('id'), $cb.prop('checked'), $cb);
         });
 
         $(document).off('change.dmV4Coding', '.dm-v4-coding-cb').on('change.dmV4Coding', '.dm-v4-coding-cb', function () {
