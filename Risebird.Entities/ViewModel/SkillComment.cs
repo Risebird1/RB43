@@ -28,6 +28,13 @@ namespace Risebird.Entities.ViewModel
         /// by Dapper from SkillChannelSampleQuestions.IsMcqAssessmentSection.
         /// </summary>
         public bool IsMcqAssessmentSection { get; set; }
+
+        /// <summary>
+        /// Synthesia render currently in flight for this question's avatar video, if any. Set when
+        /// a generate attempt gives up waiting, so the next attempt resumes that render instead of
+        /// starting another. Cleared once the video has been collected.
+        /// </summary>
+        public string AIQuestionVideoJobId { get; set; }
         public bool IsTypingSpeedAssessment { get; set; }
 
         /// <summary>

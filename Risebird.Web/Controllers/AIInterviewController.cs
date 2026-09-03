@@ -2648,8 +2648,51 @@ namespace Risebird.Web.Controllers
             return View(exitModel);
         }
 
+        /// <summary>
+        /// Renders the candidate's AI interview report.
+        ///
+        /// This wrapper exists because the app is configured with
+        /// <c>UseExceptionHandler("/Home/Index")</c>: any exception escaping this action sends the
+        /// user to the site root, which then bounces an operational user to the multi-session
+        /// screen. The report appearing to "redirect to the login page" was that - a crash wearing
+        /// a login page's clothes, with the real error visible only in the logs.
+        ///
+        /// Reports pull from several places - the evaluator, blob storage for the media, and the
+        /// MCQ system for the assessment section - so a failure in any one of them has to say so
+        /// on the page instead of dumping the reader somewhere unrelated.
+        /// </summary>
         [HttpGet]
-        public async Task<IActionResult> Report(Guid seId, bool redo = false, bool? isExit = null)//Guid seId
+        public async Task<IActionResult> Report(Guid seId, bool redo = false, bool? isExit = null)
+        {
+            try
+            {
+                return await BuildReportAsync(seId, redo, isExit);
+            }
+            catch (Exception ex)
+            {
+                // Logged with the session id so the failing report can be found from the message
+                // the tester or client reports.
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                    new Exception($"AI interview report failed to render for session {seId}.", ex));
+                await _aiinterviewerService.LogAIInterviewException(seId.ToString(), "GET Report", ex);
+
+                return View("ExitModalPartial", new AIInterviewExitModalViewModel
+                {
+                    Title = "Report unavailable",
+                    Message = "This report could not be generated just now. The error has been logged. Please retry in a few minutes, and quote session "
+                              + seId + " if it keeps failing.",
+                    IconClass = "fa-exclamation-triangle",
+                    IconColor = "#dc3545",
+                    ButtonText = "Close",
+                    ButtonClass = "btn-danger",
+                    IsSuccess = false,
+                    SessionId = seId.ToString(),
+                    ExitTime = DateTime.Now
+                });
+            }
+        }
+
+        private async Task<IActionResult> BuildReportAsync(Guid seId, bool redo = false, bool? isExit = null)//Guid seId
         {
             string profileName = string.Empty;
             profileName = HttpContext?.Session?.GetString("profileName")?.Trim();
@@ -3648,20 +3691,34 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "AI question videos are only available for Preset AI interview channels." });
                 }
 
-                string videoId;
-                try
-                {
-                    videoId = await _synthesiaTextToVideoService.CreateVideoAsync(narrationText, SynthesiaAIAvatarTemplates.Reema);
-                }
-                catch (Exception ex)
-                {
-                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                    return Json(new { success = false, message = "Could not reach Synthesia API. Check configuration and try again." });
-                }
+                // Resume a render this question already has in flight rather than starting another.
+                // Rendering regularly outlasts the poll window below, and before this a give-up was
+                // terminal: the next click queued a fresh render and gave up too, so a question
+                // whose video merely took a few minutes could never get one, while every attempt
+                // orphaned a render on the Synthesia account.
+                var videoId = questionDetails.AIQuestionVideoJobId;
+                var resumedExistingRender = !string.IsNullOrWhiteSpace(videoId);
 
-                if (string.IsNullOrWhiteSpace(videoId))
+                if (!resumedExistingRender)
                 {
-                    return Json(new { success = false, message = "Synthesia did not return a video id." });
+                    try
+                    {
+                        videoId = await _synthesiaTextToVideoService.CreateVideoAsync(narrationText, SynthesiaAIAvatarTemplates.Reema);
+                    }
+                    catch (Exception ex)
+                    {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        return Json(new { success = false, message = "Could not reach Synthesia API. Check configuration and try again." });
+                    }
+
+                    if (string.IsNullOrWhiteSpace(videoId))
+                    {
+                        return Json(new { success = false, message = "Synthesia rejected the request. Check the Synthesia API key and template configuration, then try again." });
+                    }
+
+                    // Stored before polling, so a browser that gives up, a request timeout or an
+                    // app restart still leaves the render findable by the next attempt.
+                    await _iRFService.SaveSampleQuestionAIVideoLink(id, null, videoId);
                 }
 
                 string synthesiaDownloadUrl = null;
@@ -3671,11 +3728,18 @@ namespace Risebird.Web.Controllers
                     await Task.Delay(8000);
                     try
                     {
+                        // Null means "still rendering"; only a genuinely failed render throws.
                         synthesiaDownloadUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
                     }
                     catch (Exception ex)
                     {
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+
+                        // This render will never complete, so leaving the job id stored would make
+                        // every future click resume a dead render. Clear it so the next click can
+                        // start a fresh one.
+                        await _iRFService.SaveSampleQuestionAIVideoLink(id, null, null);
+                        return Json(new { success = false, message = "Synthesia could not render this video. Shorten or simplify the narration text, then try again." });
                     }
 
                     if (!string.IsNullOrWhiteSpace(synthesiaDownloadUrl))
@@ -3684,7 +3748,15 @@ namespace Risebird.Web.Controllers
 
                 if (string.IsNullOrWhiteSpace(synthesiaDownloadUrl))
                 {
-                    return Json(new { success = false, message = "Synthesia video is still processing. Please try again in a minute." });
+                    // The job id stays stored, so clicking again collects this same render instead
+                    // of paying for another one.
+                    return Json(new
+                    {
+                        success = false,
+                        message = resumedExistingRender
+                            ? "Still rendering at Synthesia. Give it another couple of minutes and click again - it will collect the same video, not start a new one."
+                            : "The video has been queued at Synthesia and is still rendering. Give it a couple of minutes and click again to collect it."
+                    });
                 }
 
                 string uploadedVideoUrl = string.Empty;
@@ -3709,6 +3781,8 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "Video upload failed." });
                 }
 
+                // Saving the link also clears AIQuestionVideoJobId - the render it referred to has
+                // now been collected, so a later click should start a fresh one, not re-fetch this.
                 var saved = await _iRFService.SaveSampleQuestionAIVideoLink(id, uploadedVideoUrl);
                 if (!saved)
                 {
