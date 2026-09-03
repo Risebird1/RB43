@@ -38,6 +38,7 @@ namespace Risebird.CommonHelper
 
             try
             {
+                // continue to parse response.Content for id...
                 var options = new RestClientOptions("https://api.synthesia.io/v2/videos/fromTemplate");
                 var client = new RestClient(options);
                 var request = new RestRequest("");
@@ -59,9 +60,27 @@ namespace Risebird.CommonHelper
                 request.AddJsonBody(body);
 
                 var response = await client.PostAsync(request);
+
+                if (string.IsNullOrWhiteSpace(response?.Content))
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                        new Exception($"Synthesia returned an empty response when creating a video. HTTP {(int?)response?.StatusCode}."));
+                    return null;
+                }
+
                 using var doc = JsonDocument.Parse(response.Content);
-                var id = doc.RootElement.GetProperty("id").GetString();
-                return id;
+
+                // A rejected request (bad key, bad template, quota) comes back as a JSON error
+                // object with no "id". Reporting the API's own message beats the caller's generic
+                // "Synthesia did not return a video id", which says nothing about what to fix.
+                if (!doc.RootElement.TryGetProperty("id", out var idElement))
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                        new Exception($"Synthesia rejected the create-video request. HTTP {(int?)response.StatusCode}. Body: {Truncate(response.Content, 1000)}"));
+                    return null;
+                }
+
+                return idElement.GetString();
             }
             catch (Exception ex)
             {
@@ -71,9 +90,19 @@ namespace Risebird.CommonHelper
 
         }
 
+        /// <summary>
+        /// The video's download URL, or null while Synthesia is still rendering it.
+        ///
+        /// Synthesia omits "download" entirely until status becomes "complete", so reading that
+        /// property unconditionally threw a KeyNotFoundException on every poll of an in-progress
+        /// video - which the caller swallowed, logging an exception every few seconds and never
+        /// distinguishing "not ready yet" from "this video failed". Null now means "still
+        /// rendering, poll again"; an exception means the render actually failed.
+        /// </summary>
         public async Task<string> GetVideoUrlAsync(string videoId)
         {
-            
+            if (string.IsNullOrWhiteSpace(videoId)) return null;
+
             var options = new RestClientOptions($"https://api.synthesia.io/v2/videos/{videoId}");
             var client = new RestClient(options);
             var request = new RestRequest("");
@@ -81,11 +110,38 @@ namespace Risebird.CommonHelper
             request.AddHeader("Authorization", _apiKey);
             var response = await client.GetAsync(request);
 
-            var result = JsonDocument.Parse(response.Content);
-            var videoUrl = result.RootElement.GetProperty("download").GetString();
-            return videoUrl;
-            
+            if (string.IsNullOrWhiteSpace(response?.Content))
+                return null;
+
+            using var result = JsonDocument.Parse(response.Content);
+            var root = result.RootElement;
+
+            var status = root.TryGetProperty("status", out var statusElement)
+                ? statusElement.GetString()
+                : null;
+
+            // Synthesia reports a render that will never finish; polling on would just burn the
+            // caller's whole window before failing with a misleading "still processing".
+            if (string.Equals(status, "failed", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(status, "rejected", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException(
+                    $"Synthesia could not render video {videoId} (status: {status}). Body: {Truncate(response.Content, 500)}");
+            }
+
+            if (root.TryGetProperty("download", out var downloadElement)
+                && downloadElement.ValueKind == JsonValueKind.String)
+            {
+                var url = downloadElement.GetString();
+                if (!string.IsNullOrWhiteSpace(url)) return url;
+            }
+
+            // Still rendering - "in_progress", or complete but the URL has not been published yet.
+            return null;
         }
+
+        private static string Truncate(string value, int max) =>
+            string.IsNullOrEmpty(value) || value.Length <= max ? value : value.Substring(0, max) + "…";
 
         private string CleanMessage(string input)
         {

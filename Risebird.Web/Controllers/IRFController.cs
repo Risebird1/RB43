@@ -10012,6 +10012,92 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>
+        /// Marks one existing question as the MCQ assessment section, or clears it.
+        ///
+        /// The section is served from screen.risebird.io, so this row carries no questions of its
+        /// own - it only fixes where in the interview the written assessment falls, and its text is
+        /// what the avatar says to introduce it.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> SetQuestionMcqSectionMode(int irfId, int id, bool isMcqAssessmentSection, string Type = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                {
+                    return Json(new { success = false, message = "Forbidden" });
+                }
+                if (id <= 0)
+                {
+                    return Json(new { success = false, message = "Question not found." });
+                }
+
+                if (isMcqAssessmentSection)
+                {
+                    // One per channel. A second would open a second test against the same interview
+                    // session, which the MCQ side refuses as already submitted - leaving the
+                    // candidate on a dead panel.
+                    var existing = await _irfService.GetMcqAssessmentSectionQuestionIds(irfId);
+                    if (existing != null && existing.Any(x => x != id))
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = "Another question on this channel is already the MCQ assessment section. Clear that one first."
+                        });
+                    }
+
+                    // Without the channel-level opt-in the interview will report the section as
+                    // unavailable, so say that here rather than letting it surface mid-interview.
+                    var channel = await _irfService.GetEditIRF(irfId, 0, false);
+                    if (channel != null && !channel.HasMcqAssessmentSection)
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = "Turn on MCQ Assessment Section in this skill channel's settings first, then mark the question."
+                        });
+                    }
+                }
+
+                var saved = await _irfService.SetSampleQuestionMcqSectionMode(id, isMcqAssessmentSection);
+                if (!saved)
+                {
+                    return Json(new { success = false, message = "Could not update the question." });
+                }
+
+                // On a channel that deals question sets, only questions inside the set bound to an
+                // interview are ever asked. Marking this row is therefore not enough on its own -
+                // it has to be dealt into the sets, or the section silently never appears and the
+                // interview looks as though the feature is broken.
+                if (isMcqAssessmentSection)
+                {
+                    var channelForSets = await _irfService.GetEditIRF(irfId, 0, false);
+                    if (channelForSets != null && channelForSets.UseAIQuestionSets)
+                    {
+                        return Json(new
+                        {
+                            success = true,
+                            isMcqAssessmentSection,
+                            warning = "Saved. This channel deals question sets, so regenerate them now - candidates are only asked questions inside their set, and this one is not in them yet."
+                        });
+                    }
+                }
+
+                return Json(new { success = true, isMcqAssessmentSection });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not update the question." });
+            }
+        }
+
+        /// <summary>
         /// Turns coding mode on or off for a question that already exists, so questions added before
         /// the feature shipped (or generated from the rubric) can be converted without retyping them.
         /// </summary>
