@@ -159,7 +159,7 @@ namespace Risebird.Repository.Interface
         //Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int userId);
         Task<DataTable> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, int? userId = null, bool isResumeParser = false, bool isApi = false, string ApiRequestedBy = null, string jobId = null, bool isStaging = false);
         Task<IRF> GetIRFForCall(int irfId);
-        IEnumerable<Users> GetEligibleChannelOwners();
+        IEnumerable<Users> GetEligibleChannelOwners(int? includeUserId = null);
         Task<string> GetTechSkillofSkillChannelByQuestion(string question, int irfId);
         bool CheckChannelOwnerByIrfid(string IRFId, string emailid);
         Task<IEnumerable<TemplateInterviewerData>> GetInterviewersByAssessmentGroup(string assessmentGroupId);

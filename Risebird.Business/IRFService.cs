@@ -228,11 +228,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public IEnumerable<Users> GetEligibleChannelOwners()
+        public IEnumerable<Users> GetEligibleChannelOwners(int? includeUserId = null)
         {
             try
             {
-                return _irfRepository.GetEligibleChannelOwners();
+                return _irfRepository.GetEligibleChannelOwners(includeUserId);
             }
 
             catch (Exception e)

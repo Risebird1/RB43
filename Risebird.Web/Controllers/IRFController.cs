@@ -2364,6 +2364,18 @@ namespace Risebird.Web.Controllers
                             await SetEditIRFProperties(model);
                             return View("EditIRF", model);
                         }
+                        // IRF.RisebirdHr is NOT NULL and foreign-keyed to UserList.id, so an unset Channel
+                        // Owner reaches SQL as 0 and the save dies with an FK_IRF_User violation that the
+                        // person only sees as "edits were not saved". The dropdown can post empty for
+                        // reasons that are not the recruiter's doing - it is disabled by the interviewer
+                        // table's change handler, or it had no option for an owner who is no longer
+                        // eligible - so this is checked here rather than trusted to the client.
+                        if (model.RisebirdHr <= 0)
+                        {
+                            ModelState.AddModelError("", "Channel Owner is mandatory. Please pick one on the Event Details tab and save again.");
+                            await SetEditIRFProperties(model);
+                            return View("EditIRF", model);
+                        }
                         if (!model.IsClone)
                         {
                             model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
@@ -2626,7 +2638,12 @@ namespace Risebird.Web.Controllers
             //ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
             //ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
             ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
-            ViewBag.ChannelOwnerOptions = new SelectList(_irfService.GetEligibleChannelOwners(), "id", "EmailId");
+            // The channel's current owner is passed in so they stay in the list even after they stop
+            // being an eligible owner (deactivated, or moved off an owner profile). Otherwise the
+            // dropdown has nothing matching RisebirdHr, renders as "Select", and the next save posts
+            // an empty owner - which fails on FK_IRF_User (IRF.RisebirdHr -> UserList.id) and makes
+            // the channel uneditable. Same reasoning as the interviewer options built above.
+            ViewBag.ChannelOwnerOptions = new SelectList(_irfService.GetEligibleChannelOwners(model.RisebirdHr), "id", "EmailId");
             //ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
 
 

@@ -29,6 +29,14 @@
     var mcq = Model;
     var mcqSections = mcq.OrderedSections;
 
+    // "not-captured" and "error" are recorded when the section could not be delivered or its
+    // result could not be read - our failure, not the candidate's. Declared here because both the
+    // banner and the score tile have to be worded from it: an unscored section caused by an outage
+    // must never read like a candidate who skipped or failed the assessment.
+    var mcqStatusKey = (mcq.Status ?? string.Empty).Trim().ToLowerInvariant();
+    var mcqIsSystemFailure = mcqStatusKey == "not-captured" || mcqStatusKey == "error";
+    var mcqNeverStarted = mcqStatusKey == "provisioned";
+
     <style>
         .rb-mcq-report-grid {
             display: grid;
@@ -342,10 +350,37 @@
 
             @if (!mcq.IsCompleted)
             {
+                @*
+                    Why the status decides the wording rather than one generic sentence:
+                    "not-captured" and "error" are recorded when the assessment could not be
+                    delivered or its result could not be read - failures on our side. Reporting
+                    those as "the candidate did not submit" blames a candidate for our outage, in a
+                    document someone makes a hiring decision from. The two cases have to read
+                    differently even though both leave the section unscored.
+                *@
                 <div class="rb-mcq-stale">
                     <i class="fa fa-exclamation-triangle"></i>
-                    The candidate did not submit this section@(string.IsNullOrWhiteSpace(mcq.Status) ? "" : " (status: " + mcq.Status + ")").
-                    Any figures below cover only what was answered.
+                    @if (mcqIsSystemFailure)
+                    {
+                        <text>
+                            This section could not be delivered or its result could not be retrieved.
+                            That is a system issue and is not attributable to the candidate &mdash; do not
+                            read the absence of a score as a result.
+                        </text>
+                    }
+                    else if (mcqNeverStarted)
+                    {
+                        <text>
+                            The assessment was made available but the candidate did not start it.
+                        </text>
+                    }
+                    else
+                    {
+                        <text>
+                            The candidate started this section but did not submit it.
+                            Any figures below cover only what was answered.
+                        </text>
+                    }
                 </div>
             }
 
@@ -354,10 +389,20 @@
                 // line. 60% is the same threshold the reference used; it is a display
                 // banding only and does not gate anything.
                 var scorePct = mcq.ScorePercent;
-                var verdictClass = scorePct >= 60 ? "is-pass" : (scorePct >= 40 ? "is-borderline" : "is-fail");
-                var verdictText = scorePct >= 60
-                    ? "Qualified the 60% passing score"
-                    : (scorePct >= 40 ? "Below the 60% passing score" : "Well below the 60% passing score");
+
+                // A verdict only means something against a paper that was actually sat. Banding a
+                // candidate who never opened the section, or whose result could not be read, as
+                // "well below the passing score" would be reporting a fact that was never measured.
+                var isScoreMeaningful = mcq.TotalQuestions > 0;
+
+                var verdictClass = !isScoreMeaningful ? "is-borderline"
+                    : scorePct >= 60 ? "is-pass"
+                    : scorePct >= 40 ? "is-borderline" : "is-fail";
+                var verdictText = !isScoreMeaningful
+                    ? (mcqIsSystemFailure ? "Not scored - the assessment could not be delivered"
+                                          : "Not scored - the assessment was not completed")
+                    : scorePct >= 60 ? "Qualified the 60% passing score"
+                    : scorePct >= 40 ? "Below the 60% passing score" : "Well below the 60% passing score";
 
                 var attemptedTotal = mcqSections.Sum(s => s.Attempted);
                 var timeUsedMinutes = mcq.Elapsed.HasValue ? mcq.Elapsed.Value.TotalMinutes : 0;
@@ -366,8 +411,22 @@
             <div class="rb-mcq-report-grid">
                 <div class="rb-mcq-tile">
                     <div class="rb-mcq-tile-label">Total Score</div>
-                    <div class="rb-mcq-tile-value">@scorePct.ToString("0.#")<span style="font-size:15px;color:#6b7280;"> / 100</span></div>
-                    <div class="rb-mcq-tile-sub">@mcq.CorrectAnswers of @mcq.TotalQuestions correct</div>
+                    @if (isScoreMeaningful)
+                    {
+                        <div class="rb-mcq-tile-value">@scorePct.ToString("0.#")<span style="font-size:15px;color:#6b7280;"> / 100</span></div>
+                        <div class="rb-mcq-tile-sub">@mcq.CorrectAnswers of @mcq.TotalQuestions correct</div>
+                    }
+                    else
+                    {
+                        <div class="rb-mcq-tile-value" style="font-size:18px;color:#6b7280;">
+                            @(mcqIsSystemFailure ? "Unavailable" : "Not attempted")
+                        </div>
+                        <div class="rb-mcq-tile-sub">
+                            @(mcqIsSystemFailure
+                                ? "The assessment could not be delivered to this candidate"
+                                : "No answers were recorded for this section")
+                        </div>
+                    }
                     <span class="rb-mcq-verdict @verdictClass">@verdictText</span>
                 </div>
 

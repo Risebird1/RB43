@@ -5296,15 +5296,24 @@ WHERE irf.IsDeleted = 0
         /// <summary>
         /// Gets Users having one of the profiles among Admin, HR and Finance
         /// </summary>
+        /// <param name="includeUserId">
+        /// A skill channel's current owner, who is kept in the list even once they stop being
+        /// eligible (deactivated, or moved off an owner profile). Without them the Channel Owner
+        /// dropdown on Edit has no option matching IRF.RisebirdHr, so it falls back to "Select",
+        /// posts an empty value that binds to 0, and the save fails on FK_IRF_User
+        /// (IRF.RisebirdHr -> UserList.id).
+        /// </param>
         /// <returns></returns>
-        public IEnumerable<Users> GetEligibleChannelOwners()
+        public IEnumerable<Users> GetEligibleChannelOwners(int? includeUserId = null)
         {
             try
             {
-                var query = "select id, EmailId from UserList where idProfile in (31, 32) and isactive=1 and EmailId != 'shivesh@risebird.io'";
+                var query = @"select id, EmailId from UserList
+                              where (idProfile in (31, 32) and isactive = 1 and EmailId != 'shivesh@risebird.io')
+                                 or (@IncludeUserId is not null and id = @IncludeUserId)";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return con.Query<Users>(query);
+                    return con.Query<Users>(query, new { IncludeUserId = includeUserId > 0 ? includeUserId : null });
                 }
 
             }
