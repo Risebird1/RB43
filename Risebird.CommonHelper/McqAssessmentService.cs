@@ -91,11 +91,17 @@ namespace Risebird.CommonHelper
             if (!IsConfigured || string.IsNullOrWhiteSpace(sessionId))
                 return null;
 
+            // 202 is returned while the candidate has started but not submitted, and it carries the
+            // partial result. That is exactly what the report should show for someone who abandoned
+            // the section - the block renders with a "did not submit" banner over the figures they
+            // did produce. Discarding it left the report with no MCQ section at all, which reads as
+            // "this channel has no assessment" rather than "the candidate skipped it".
             var body = await SendAsync(
                 HttpMethod.Get,
                 $"{BaseUrl}/api/v1/ai-sessions/{Uri.EscapeDataString(sessionId)}/mcq/report",
                 null,
-                TimeSpan.FromSeconds(30));
+                TimeSpan.FromSeconds(30),
+                acceptAccepted: true);
 
             if (body == null) return null;
 
@@ -185,7 +191,7 @@ namespace Risebird.CommonHelper
         /// which are ordinary states rather than faults and so are not logged as errors.
         /// </summary>
         private async Task<string> SendAsync(HttpMethod method, string url, object payload, TimeSpan timeout,
-            bool treatNotFoundAsEmpty = true)
+            bool treatNotFoundAsEmpty = true, bool acceptAccepted = false)
         {
             using var cts = new CancellationTokenSource(timeout);
 
@@ -212,10 +218,11 @@ namespace Risebird.CommonHelper
                 if (response.IsSuccessStatusCode)
                     return body;
 
-                // 202 carries a usable in-progress payload, but the caller asked for a finished
-                // result; treating it as "nothing yet" keeps that distinction at one place.
+                // 202 carries a usable in-progress payload. Provisioning wants a finished result and
+                // reads it as "nothing yet"; the report wants the partial, so it can show what the
+                // candidate did produce rather than omitting the section entirely.
                 if (response.StatusCode == HttpStatusCode.Accepted)
-                    return null;
+                    return acceptAccepted ? body : null;
 
                 // 404 means two very different things depending on the endpoint. On the report it is
                 // a legitimate answer - this session has no MCQ section - and logging it would be

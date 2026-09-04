@@ -87,7 +87,7 @@ namespace Risebird.Business.Tests.Fixtures
             Repository.Setup(x => x.UpdateIRFInterviewerBillingCycle(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
                 .ReturnsAsync(true);
             Repository.Setup(x => x.GetUsers()).Returns(new List<Users>());
-            Repository.Setup(x => x.GetEligibleChannelOwners()).Returns(new List<Users>
+            Repository.Setup(x => x.GetEligibleChannelOwners(It.IsAny<int?>())).Returns(new List<Users>
             {
                 new() { id = 2, EmailId = "hr@test.com" }
             });
