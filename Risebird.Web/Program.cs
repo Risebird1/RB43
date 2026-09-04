@@ -328,6 +328,19 @@ builder.Services.AddScoped<Risebird.Business.Interface.ITdsComplianceService>(sp
 });
 // ============================================
 
+// ============================================
+// KYC Payout-Lapse Module
+// ============================================
+builder.Services.AddScoped<Risebird.Repository.Interface.IKycPayoutLapseRepository, Risebird.Repository.KycPayoutLapseRepository>();
+builder.Services.AddScoped<Risebird.Business.Interface.IKycPayoutLapseService>(sp =>
+{
+    var repo    = sp.GetRequiredService<Risebird.Repository.Interface.IKycPayoutLapseRepository>();
+    var logger  = sp.GetRequiredService<IApplicationErrorLogger>();
+    var offsets = builder.Configuration.GetSection("Kyc:LapseReminder:Offsets").Get<int[]>();
+    return new Risebird.Business.KycPayoutLapseService(repo, logger, offsets);
+});
+// ============================================
+
 
 
 var app = builder.Build();

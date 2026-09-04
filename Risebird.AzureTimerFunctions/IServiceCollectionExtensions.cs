@@ -206,6 +206,17 @@ namespace Risebird.AzureFunctions
                 return new Risebird.Business.TdsComplianceService(repo, logger, offsets);
             });
 
+            // KYC Payout-Lapse Module
+            services.AddScoped<Risebird.Repository.Interface.IKycPayoutLapseRepository, Risebird.Repository.KycPayoutLapseRepository>();
+            services.AddScoped<Risebird.Business.Interface.IKycPayoutLapseService>(sp =>
+            {
+                var repo = sp.GetRequiredService<Risebird.Repository.Interface.IKycPayoutLapseRepository>();
+                var logger = sp.GetRequiredService<IApplicationErrorLogger>();
+                var cfg = sp.GetRequiredService<IConfiguration>();
+                var offsets = cfg.GetSection("Kyc:LapseReminder:Offsets").Get<int[]>();
+                return new Risebird.Business.KycPayoutLapseService(repo, logger, offsets);
+            });
+
             services.AddScoped<IInterviewerEmailAvailabilityRepository, InterviewerEmailAvailabilityRepository>();
             services.AddScoped<IPlivoCXService, PlivoCXService>();
             return services;

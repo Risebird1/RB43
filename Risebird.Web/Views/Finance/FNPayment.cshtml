@@ -96,80 +96,98 @@
                     <div class="mobile-view"> <h4 class="card-title"> RB Payment Details</h4></div>
                 </div>
 
-                <div class="pull-right client-ms">
-                    <select id="ddlmonth" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onchange="Changemonth()">
-                        <option value="1">January</option>
-                        <option value="2">February</option>
-                        <option value="3">March</option>
-                        <option value="4">April</option>
-                        <option value="5">May</option>
-                        <option value="6">June</option>
-                        <option value="7">July</option>
-                        <option value="8">August</option>
-                        <option value="9">September</option>
-                        <option value="10">October</option>
-                        <option value="11">November</option>
-                        <option value="12">December</option>
-                    </select>
-                    <select id="TdsSelectYear" name="TdsSelectYear" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onchange="Changemonth()">
-                        @foreach (var item in (List<SelectListItem>)(ViewBag.TdsYears))
-                        {
-                            @if (item != null)
+                <div class="client-ms" style="display:flex;flex-wrap:wrap;align-items:flex-start;width:100%;">
+                    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:4px;">
+                        <select id="ddlmonth" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onchange="Changemonth()">
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                        <select id="TdsSelectYear" name="TdsSelectYear" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onchange="Changemonth()">
+                            @foreach (var item in (List<SelectListItem>)(ViewBag.TdsYears))
                             {
-                                @if (item.Selected)
+                                @if (item != null)
                                 {
-                                    <option value="@item.Value" selected>@item.Text</option>
-                                }
-                                else
-                                {
-                                    <option value="@item.Value">@item.Text</option>
+                                    @if (item.Selected)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
                                 }
                             }
-                        }
-                    </select>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="1-7 of this month" onclick="Fetchinvoice(1,1)">
-                        <span data-toggle="tooltip" data-placement="top" title="1-7 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:10px;">1-7</font></span>
-                    </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="8-14 of this month" onclick="Fetchinvoice(2,1)">
-                        <span data-toggle="tooltip" data-placement="top" title="8-14 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:10px;">8-14</font></span>
-                    </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="15-21 of this month" onclick="Fetchinvoice(3,1)">
-                        <span data-toggle="tooltip" data-placement="top" title="15-21 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:10px;">15-21</font></span>
-                    </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" onclick="Fetchinvoice(4,1)">
-                        <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:10px;">22-_</font></span>
-                    </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                        <span class="fa fa-history" data-toggle="tooltip" data-placement="top" onclick="openPaymentHistory()" data-original-title="Tooltip on top">
-                            <font style="font-family: Roboto, sans-serif;font-size:10px;padding-left: 3px;">Payment History</font>
-                        </span>
-                    </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float:right;margin-left:2px;">
-                        <span class="fa fa-file" data-toggle="tooltip" data-placement="top" onclick="openmyinvoiceModel()" data-original-title="Tooltip on top">
-                            <font style="font-family: Roboto, sans-serif;font-size:10px;padding-left: 3px;">Generate Invoice</font>
-                        </span>
-                    </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-left:3px;float:right">
-                        <span class="fa fa-credit-card" data-toggle="tooltip" data-placement="top" onclick="openmyAdvancepaymentModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:10px;padding-left:3px;">Advance Payment</font></span>
-                    </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-left:3px;float:right;background-color:#1976d2;color:#fff;" onclick="openBatchPayoutModal()">
-                        <span class="fa fa-paper-plane" data-toggle="tooltip" data-placement="top" data-original-title="Batch Cashfree Payout"><font style="font-family:Roboto,sans-serif;font-size:10px;padding-left:3px;">Batch Payout</font></span>
-                    </button>
-                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float:right">
-                        @*<span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="location.href='@Url.Action("ExportFNPayment", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:10px;"> Export Excel</font></span>*@
-                        <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" onclick="ExportFNDetails()" data-original-title="Tooltip on top">
-                            <font style="font-family: Roboto, sans-serif;font-size:10px;padding-left: 3px;"> Export Excel</font>
-                        </span>
-                    </button>
-                    <div id="meeting_filter" class="dataTables_filter pull-right" style="margin-left:5PX;">
-                        <div class="searchCon mt-20">
-                            <button onclick="searchResult()" type="button" id="search">&nbsp</button>
-                            <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeypress="searchResultEnter(event)" value="@ViewBag.Searchvalue">
-                            <span id="trigger-update-search" class="ref-btn" onclick="RefreshSearch()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path fill="#6f6f6f" d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
-                        </div>
+                        </select>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="1-7 of this month" onclick="Fetchinvoice(1,1)">
+                            <span data-toggle="tooltip" data-placement="top" title="1-7 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:9px;">1-7</font></span>
+                        </button>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="8-14 of this month" onclick="Fetchinvoice(2,1)">
+                            <span data-toggle="tooltip" data-placement="top" title="8-14 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:9px;">8-14</font></span>
+                        </button>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" title="15-21 of this month" onclick="Fetchinvoice(3,1)">
+                            <span data-toggle="tooltip" data-placement="top" title="15-21 of this month" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:9px;">15-21</font></span>
+                        </button>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded Fnactive-header" onclick="Fetchinvoice(4,1)">
+                            <span data-toggle="tooltip" data-placement="top" title="" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:9px;">22-_</font></span>
+                        </button>
                     </div>
-                    <div class="dashboard-view" style="float:left;margin:10px 40px;"><a onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'"><span class="dashboard-iconcolor"></span><span class="pull-left">New Dashboard</span></a></div>
-                    <div>
+                    <div style="display:flex;flex-direction:column;align-items:flex-end;margin-left:auto;">
+                        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:4px;">
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                @*<span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="location.href='@Url.Action("ExportFNPayment", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:9px;"> Export Excel</font></span>*@
+                                <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" onclick="ExportFNDetails()" data-original-title="Tooltip on top">
+                                    <font style="font-family: Roboto, sans-serif;font-size:9px;padding-left: 3px;"> Export Excel</font>
+                                </span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="background-color:#1976d2;color:#fff;" onclick="openBatchPayoutModal()">
+                                <span class="fa fa-paper-plane" data-toggle="tooltip" data-placement="top" data-original-title="Batch Cashfree Payout"><font style="font-family:Roboto,sans-serif;font-size:9px;padding-left:3px;">Batch Payout</font></span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                <span class="fa fa-credit-card" data-toggle="tooltip" data-placement="top" onclick="openmyAdvancepaymentModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:9px;padding-left:3px;">Advance Payment</font></span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                <span class="fa fa-file" data-toggle="tooltip" data-placement="top" onclick="openmyinvoiceModel()" data-original-title="Tooltip on top">
+                                    <font style="font-family: Roboto, sans-serif;font-size:9px;padding-left: 3px;">Generate Invoice</font>
+                                </span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span class="fa fa-history" data-toggle="tooltip" data-placement="top" onclick="openPaymentHistory()" data-original-title="Tooltip on top">
+                                    <font style="font-family: Roboto, sans-serif;font-size:9px;padding-left: 3px;">Payment History</font>
+                                </span>
+                            </button>
+                        </div>
+                        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:4px;margin-top:8px;">
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'">
+                                <span class="fa fa-tachometer-alt" data-toggle="tooltip" data-placement="top" data-original-title="Tooltip on top">
+                                    <font style="font-family: Roboto, sans-serif;font-size:9px;padding-left: 3px;">New Dashboard</font>
+                                </span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
+                                <span class="fa fa-ban" data-toggle="tooltip" data-placement="top" onclick="openPaymentLapsed()" data-original-title="Tooltip on top">
+                                    <font style="font-family: Roboto, sans-serif;font-size:9px;padding-left: 3px;">Payment Lapsed</font>
+                                </span>
+                            </button>
+                            <button type="button" id="btnProcessKycLapse" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="background-color:#c62828;color:#fff;" onclick="processKycPayoutLapseCandidates()">
+                                <span class="fa fa-user-clock" data-toggle="tooltip" data-placement="top" data-original-title="Check 120+ day old payouts with incomplete KYC and start the reminder/lapse tracking"><font style="font-family:Roboto,sans-serif;font-size:9px;padding-left:3px;">Check KYC Lapses</font></span>
+                            </button>
+                            <div id="meeting_filter" class="dataTables_filter">
+                                <div class="searchCon mt-20">
+                                    <button onclick="searchResult()" type="button" id="search">&nbsp</button>
+                                    <input type="search" class="form-control form-control-sm" id="txtmeeting_filter" placeholder="Search records" aria-controls="meeting" onkeypress="searchResultEnter(event)" value="@ViewBag.Searchvalue">
+                                    <span id="trigger-update-search" class="ref-btn" onclick="RefreshSearch()"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"><path fill="#6f6f6f" d="M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z" /></svg></span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1279,6 +1297,55 @@
     }
     // ????????????????????????????????????????????????????????????????????????????
 
+    function processKycPayoutLapseCandidates() {
+        Swal.fire({
+            title: 'Check KYC Lapses',
+            text: 'Scan for interviewers with 120+ day old pending/submitted payouts whose KYC (bank + PAN) is incomplete, and start reminder/lapse tracking for them?',
+            showDenyButton: true,
+            showCancelButton: false,
+            confirmButtonText: 'Yes, Scan Now',
+            denyButtonText: 'Cancel'
+        }).then(function (result) {
+            if (!result.value) return;
+
+            var btn = document.getElementById('btnProcessKycLapse');
+            btn.disabled = true;
+
+            $.ajax({
+                url: "/Finance/ProcessKycPayoutLapseCandidates",
+                type: "POST",
+                dataType: 'json',
+                success: function (data) {
+                    btn.disabled = false;
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'KYC Lapse Scan Complete',
+                            text: data.added + ' interviewer/month record(s) added to the KYC lapse tracking list.',
+                            confirmButtonText: 'OK'
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'KYC Lapse Scan Failed',
+                            text: data.message || 'The scan could not be completed. Please try again.',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function () {
+                    btn.disabled = false;
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'KYC Lapse Scan Failed',
+                        text: 'The scan could not be completed. Please try again.',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+    }
+
     function CloseMyModelPopup() {
         var model = document.getElementById("myModal");
         model.style.display = "none";
@@ -1517,6 +1584,9 @@
     }
     function openPaymentHistory() {
         window.location.href = "/Finance/PaymentHistory";
+    }
+    function openPaymentLapsed() {
+        window.location.href = "/Finance/PaymentLapsed";
     }
     function Changemonth() {
         $(".Fnactive-header").removeClass("Fnactive-header-button");

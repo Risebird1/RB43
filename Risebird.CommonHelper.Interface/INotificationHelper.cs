@@ -143,5 +143,20 @@ namespace Risebird.CommonHelper.Interface
             DateTime lapseDate,
             string verifyLink,
             int reminderIndex);
+
+        /// <summary>
+        /// Reminds an interviewer to complete KYC (bank + PAN verification) before their
+        /// pending InterviewPoints for the given month lapse. Uses the "PaymentLapseKYC.html"
+        /// blob template. lapseDate is the 21-day tracking deadline. portalLink is the
+        /// Risebird portal home/login URL -- deliberately not a direct deep-link to the
+        /// KYC section; the template walks the interviewer through navigating there manually.
+        /// </summary>
+        Task<string> SendPaymentLapseKYCReminderAsync(
+            string toEmail,
+            string interviewerName,
+            decimal pendingAmount,
+            DateTime lapseDate,
+            string portalLink,
+            int reminderIndex);
     }
 }
