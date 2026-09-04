@@ -3641,7 +3641,7 @@ namespace Risebird.CommonHelper
             string interviewerName,
             decimal pendingAmount,
             DateTime lapseDate,
-            string kycLink,
+            string portalLink,
             int reminderIndex)
         {
             try
@@ -3653,7 +3653,9 @@ namespace Risebird.CommonHelper
 
                 string risebirdLogoLink = _configuration["RisebirdDetails:RisebirdLogo"];
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "PaymentLapseKYC.html");
-                string msgBody = string.Format(rawEmail, interviewerName, pendingAmount.ToString("N0"), lapseDate.ToString("dd MMM yyyy"), kycLink, risebirdLogoLink);
+                // {0} name, {1} pending amount, {2} lapse date, {3} portal link (not a direct KYC deep-link --
+                // the template walks the interviewer through navigating to it manually), {4} logo, {5} reminder #.
+                string msgBody = string.Format(rawEmail, interviewerName, pendingAmount.ToString("N0"), lapseDate.ToString("dd MMM yyyy"), portalLink, risebirdLogoLink, reminderIndex + 1);
                 msg.HtmlContent = msgBody;
                 return await SendMail(msg);
             }

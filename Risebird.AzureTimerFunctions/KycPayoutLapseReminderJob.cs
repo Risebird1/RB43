@@ -44,9 +44,9 @@ namespace Risebird.AzureTimerFunctions
             {
                 var lapseAfterDays = _configuration.GetValue<int?>("Kyc:LapseReminder:LapseAfterDays") ?? DefaultLapseAfterDays;
 
-                var baseUrl    = _configuration["HostDetails:baseUrl"] ?? "https://portal.risebird.io";
-                var verifyPath = _configuration["Tds:Reminder:VerifyPath"] ?? "/Account/UserProfile";
-                var kycLink    = $"{baseUrl}{verifyPath}";
+                // Portal home/login URL only -- no deep link straight to the KYC section; the
+                // email template walks the interviewer through navigating there manually.
+                var portalLink = _configuration["HostDetails:baseUrl"] ?? "https://portal.risebird.io";
 
                 var today   = DateTime.Today;
                 var targets = await _kycLapseService.GetReminderTargetsAsync(today);
@@ -94,7 +94,7 @@ namespace Risebird.AzureTimerFunctions
                             name,
                             target.PendingAmount,
                             lapseDate,
-                            kycLink,
+                            portalLink,
                             dueIndex);
 
                         await _kycLapseService.MarkReminderSentAsync(target.Id, dueIndex + 1);
