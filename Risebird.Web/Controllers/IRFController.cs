@@ -94,6 +94,7 @@ namespace Risebird.Web.Controllers
         private readonly IInterviewerEmailAvailabilityRepository _eaRepository;
         private readonly ITransInterviewerAuditRepository _transInterviewerAuditRepository;
         private readonly IPhoneScreenRepository _phoneScreenRepository;
+        private readonly IMcqAssessmentService _mcqAssessmentService;
         private readonly IServiceScopeFactory _scopeFactory;
 
 
@@ -107,6 +108,7 @@ namespace Risebird.Web.Controllers
             IInterviewerEmailAvailabilityRepository eaRepository,
             ITransInterviewerAuditRepository transInterviewerAuditRepository,
             IPhoneScreenRepository phoneScreenRepository,
+            IMcqAssessmentService mcqAssessmentService,
             IServiceScopeFactory scopeFactory)
         {
             _scopeFactory = scopeFactory;
@@ -144,6 +146,7 @@ namespace Risebird.Web.Controllers
             _eaRepository = eaRepository;
             _transInterviewerAuditRepository = transInterviewerAuditRepository;
             _phoneScreenRepository = phoneScreenRepository;
+            _mcqAssessmentService = mcqAssessmentService;
         }
 
         [Authorize]
@@ -970,7 +973,8 @@ namespace Risebird.Web.Controllers
 
                             //call fire and forget method here to send emails and whatsapp for availability
                             await FireAndForgetRequestToSendAvailabilityMails(irfDetails.AssessmentGroupId, irfDetails.id, irfDetails.FlatRate, irfDetails.PrimarySkillInvite, irfDetails.IRFId, irfDetails.JDTiltle);
-                            TempData["SuccessErrorMessage"] = "Skills Channel " + irfDetails.IRFId + " has been added Successfully!";
+                            TempData["SuccessErrorMessage"] = "Skills Channel " + irfDetails.IRFId + " has been added Successfully!"
+                                + await EnsureMcqChannelLinkAsync(irfDetails);
                             return RedirectToAction("Index");
                         }
                         else if (irfDetails.IRFId != null)
@@ -2219,6 +2223,85 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
+        /// <summary>
+        /// Makes sure the MCQ system has a skill channel linked to this one, creating it if not,
+        /// and returns a sentence to append to the save confirmation.
+        ///
+        /// The assessment section is provisioned from screen.risebird.io by matching
+        /// MCQIRF.PortalIRFId to this channel's IRF Id. That mirror channel used to be created by
+        /// hand over there, which meant switching the section on here produced a channel that
+        /// looked configured and failed at the first candidate. This closes that gap: ticking the
+        /// box is now sufficient.
+        ///
+        /// The MCQ endpoint is find-or-create and idempotent on the portal channel id, so this is
+        /// safe to call on every save and cannot produce duplicate channels.
+        ///
+        /// Returns an empty string when the section is off or the channel was already linked -
+        /// there is nothing the person needs to know in either case.
+        /// </summary>
+        private async Task<string> EnsureMcqChannelLinkAsync(IRFVm model)
+        {
+            if (model == null || !model.HasMcqAssessmentSection || string.IsNullOrWhiteSpace(model.IRFId))
+                return string.Empty;
+
+            try
+            {
+                var result = await _mcqAssessmentService.EnsureChannelLinkAsync(new McqEnsureChannelLinkRequest
+                {
+                    SkillChannelId = model.IRFId,
+                    RequestedBy = _mcqAssessmentService.ChannelOwnerEmail,
+                    Title = model.JDTiltle,
+                    PrimarySkills = ResolveMcqPrimarySkills(model),
+                    ProfileType = model.Heuristicsscore > 0 ? model.Heuristicsscore.ToString() : null,
+                    SeniorityLevel = model.JobLevel > 0 ? model.JobLevel.ToString() : null,
+                    // No job function on the portal channel, and the MCQ side treats it as optional.
+                    PortalIRFTitle = model.JDTiltle
+                });
+
+                if (result == null)
+                {
+                    // The failure itself is logged with its reason by the service. What the person
+                    // in front of the screen needs is the manual fallback, not the cause.
+                    return $" The skill channel was saved, but the matching channel on the MCQ system could not be"
+                         + $" created automatically. Create one there with AI Interview ticked and Portal IRF Id set to"
+                         + $" '{model.IRFId}', or candidates will be told the assessment section is unavailable.";
+                }
+
+                if (result.Created)
+                {
+                    return $" A matching skill channel ({result.McqIrfId}) was also created on the MCQ system for the"
+                         + $" assessment section.";
+                }
+
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Primary skills for the mirrored MCQ channel. The MCQ side needs at least one skill: it
+        /// builds the question rubric from this, and rejects an empty one. PrimarySkillInvite is
+        /// the channel's own headline skill; the tech rubric is the fallback when it is blank, and
+        /// carries more of what the channel actually tests anyway.
+        /// </summary>
+        private static string ResolveMcqPrimarySkills(IRFVm model)
+        {
+            if (!string.IsNullOrWhiteSpace(model.PrimarySkillInvite))
+                return model.PrimarySkillInvite.Trim();
+
+            var rubricSkills = (model.SkillCollection ?? new List<TransSkill>())
+                .Select(s => s?.SkillName?.Trim())
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            return rubricSkills.Count > 0 ? string.Join(", ", rubricSkills) : model.JDTiltle;
+        }
+
         public async Task<IActionResult> EditIRF(IRFVm model)
         {
             try
@@ -2364,7 +2447,8 @@ namespace Risebird.Web.Controllers
 
                                 await _irfService.UpdateAffindaIndexFlag(model.IRFId, isIndexCreated);
 
-                                TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " has been saved Successfully!";
+                                TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " has been saved Successfully!"
+                                    + await EnsureMcqChannelLinkAsync(model);
                                 return RedirectToAction("Index");
                             }
                             else if (model.IRFId != null)
@@ -2385,7 +2469,8 @@ namespace Risebird.Web.Controllers
                                 await _phoneScreenRepository.SetIRFPlivoAssistantUrlAsync(model.id, model.IRFId, model.PlivoAssistantUrl);
                                 await _phoneScreenRepository.SetIRFPlivoWhatsAppAssistantUrlAsync(model.id, model.IRFId, model.PlivoWhatsAppAssistantUrl);
                                 await _phoneScreenRepository.SetIRFElevenLabsAgentIdAsync(model.id, model.IRFId, model.ElevenLabsAgentId);
-                                TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " has been saved Successfully!";
+                                TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " has been saved Successfully!"
+                                    + await EnsureMcqChannelLinkAsync(model);
                                 return RedirectToAction("Index");
                             }
                             else if (model.IRFId != null)
@@ -9620,29 +9705,9 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
                     }
 
-                    // One MCQ assessment section per channel. A second row would try to open a
-                    // second test against the same interview session, which the MCQ side would
-                    // refuse as already submitted - leaving the candidate on a dead panel with no
-                    // explanation. Catch it at save time instead.
-                    var mcqSectionCount = (model.SkillCollection ?? new List<SkillComment>())
-                        .Count(x => x.IsMcqAssessmentSection);
-                    if (mcqSectionCount > 1)
-                    {
-                        TempData["SuccessErrorMessageQuestions"] = "Only one question can be the MCQ assessment section. Untick the extra rows.";
-                        return RedirectToAction("DeliveryHeadInstruction", new { irfid = model.IRFId });
-                    }
 
                     foreach (var question in model.SkillCollection ?? new List<SkillComment>())
                     {
-                        // The MCQ section is served by the MCQ system, never asked by the avatar,
-                        // so it can never also be a coding question. The stored procedure forces
-                        // the same thing; doing it here too keeps the coding validation below from
-                        // demanding a time limit and gist for a row that has neither.
-                        if (question.IsMcqAssessmentSection)
-                        {
-                            question.IsCodingQuestion = false;
-                            question.CodingTimeLimitInMinutes = null;
-                        }
 
                         if ((question.Comment?.Length ?? 0) > MaxSampleQuestionLength
                             || (question.ExpectedAnswer?.Length ?? 0) > MaxSampleQuestionLength)
@@ -10011,91 +10076,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        /// <summary>
-        /// Marks one existing question as the MCQ assessment section, or clears it.
-        ///
-        /// The section is served from screen.risebird.io, so this row carries no questions of its
-        /// own - it only fixes where in the interview the written assessment falls, and its text is
-        /// what the avatar says to introduce it.
-        /// </summary>
-        [HttpPost]
-        public async Task<JsonResult> SetQuestionMcqSectionMode(int irfId, int id, bool isMcqAssessmentSection, string Type = null)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") == null)
-                {
-                    return Json(new { success = false, message = "Unauthorized" });
-                }
-                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
-                {
-                    return Json(new { success = false, message = "Forbidden" });
-                }
-                if (id <= 0)
-                {
-                    return Json(new { success = false, message = "Question not found." });
-                }
-
-                if (isMcqAssessmentSection)
-                {
-                    // One per channel. A second would open a second test against the same interview
-                    // session, which the MCQ side refuses as already submitted - leaving the
-                    // candidate on a dead panel.
-                    var existing = await _irfService.GetMcqAssessmentSectionQuestionIds(irfId);
-                    if (existing != null && existing.Any(x => x != id))
-                    {
-                        return Json(new
-                        {
-                            success = false,
-                            message = "Another question on this channel is already the MCQ assessment section. Clear that one first."
-                        });
-                    }
-
-                    // Without the channel-level opt-in the interview will report the section as
-                    // unavailable, so say that here rather than letting it surface mid-interview.
-                    var channel = await _irfService.GetEditIRF(irfId, 0, false);
-                    if (channel != null && !channel.HasMcqAssessmentSection)
-                    {
-                        return Json(new
-                        {
-                            success = false,
-                            message = "Turn on MCQ Assessment Section in this skill channel's settings first, then mark the question."
-                        });
-                    }
-                }
-
-                var saved = await _irfService.SetSampleQuestionMcqSectionMode(id, isMcqAssessmentSection);
-                if (!saved)
-                {
-                    return Json(new { success = false, message = "Could not update the question." });
-                }
-
-                // On a channel that deals question sets, only questions inside the set bound to an
-                // interview are ever asked. Marking this row is therefore not enough on its own -
-                // it has to be dealt into the sets, or the section silently never appears and the
-                // interview looks as though the feature is broken.
-                if (isMcqAssessmentSection)
-                {
-                    var channelForSets = await _irfService.GetEditIRF(irfId, 0, false);
-                    if (channelForSets != null && channelForSets.UseAIQuestionSets)
-                    {
-                        return Json(new
-                        {
-                            success = true,
-                            isMcqAssessmentSection,
-                            warning = "Saved. This channel deals question sets, so regenerate them now - candidates are only asked questions inside their set, and this one is not in them yet."
-                        });
-                    }
-                }
-
-                return Json(new { success = true, isMcqAssessmentSection });
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(new { success = false, message = "Could not update the question." });
-            }
-        }
 
         /// <summary>
         /// Turns coding mode on or off for a question that already exists, so questions added before
