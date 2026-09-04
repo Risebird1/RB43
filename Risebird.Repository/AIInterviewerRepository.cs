@@ -343,6 +343,31 @@ namespace Risebird.Repository
                             _resultVM.IsAadhaarVerificationRequired = dt.Columns.Contains("IsAadhaarVerificationRequired") && !string.IsNullOrEmpty(dt.Rows[0]["IsAadhaarVerificationRequired"].ToString()) && Convert.ToBoolean(dt.Rows[0]["IsAadhaarVerificationRequired"]);
                             _resultVM.AIResumeScreeningVerdict = !string.IsNullOrEmpty(dt.Rows[0]["AIResumeScreeningVerdict"].ToString()) ? dt.Rows[0]["AIResumeScreeningVerdict"].ToString() : null;
                             _resultVM.AIResumeScreeningScore = !string.IsNullOrEmpty(dt.Rows[0]["AIResumeScreeningScore"].ToString()) ? Convert.ToInt32(dt.Rows[0]["AIResumeScreeningScore"]) : 0;
+                            // MCQ assessment section. All four are guarded with Columns.Contains so a
+                            // deployment that ships this code ahead of the updated stored procedure
+                            // degrades to "no MCQ section" instead of throwing on every page load.
+                            //
+                            // IRFId matters most: it is the value MCQIRF.PortalIRFId holds on
+                            // screen.risebird.io, so it is what addresses the MCQ API. Leaving it
+                            // unmapped makes the portal post skillChannelId: null, which the MCQ side
+                            // rejects as a validation error - and the provision call comes back null
+                            // with nothing on screen to say why.
+                            _resultVM.IRFId = dt.Columns.Contains("IRFId") && !string.IsNullOrEmpty(dt.Rows[0]["IRFId"].ToString())
+                                ? dt.Rows[0]["IRFId"].ToString()
+                                : null;
+                            _resultVM.HasMcqAssessmentSection = dt.Columns.Contains("HasMcqAssessmentSection")
+                                && !string.IsNullOrEmpty(dt.Rows[0]["HasMcqAssessmentSection"].ToString())
+                                && Convert.ToBoolean(dt.Rows[0]["HasMcqAssessmentSection"]);
+                            _resultVM.McqAssessmentSections = dt.Columns.Contains("McqAssessmentSections")
+                                && !string.IsNullOrEmpty(dt.Rows[0]["McqAssessmentSections"].ToString())
+                                ? dt.Rows[0]["McqAssessmentSections"].ToString()
+                                : null;
+                            _resultVM.McqAssessmentMinutes = dt.Columns.Contains("McqAssessmentMinutes")
+                                && !string.IsNullOrEmpty(dt.Rows[0]["McqAssessmentMinutes"].ToString())
+                                ? Convert.ToInt32(dt.Rows[0]["McqAssessmentMinutes"])
+                                : (int?)null;
+                            if (dt.Columns.Contains("PrimarySkill") && !string.IsNullOrEmpty(dt.Rows[0]["PrimarySkill"].ToString()))
+                                _resultVM.PrimarySkill = dt.Rows[0]["PrimarySkill"].ToString();
 
                             try
                             {

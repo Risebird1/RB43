@@ -162,6 +162,42 @@ namespace Risebird.Entities.ViewModel
         }
     }
 
+    /// <summary>
+    /// Answer from the MCQ channel-link endpoints - whether an MCQ skill channel is linked to a
+    /// portal channel and marked as an AI Interview channel, and whether this call created it.
+    /// </summary>
+    public class McqChannelLinkResult
+    {
+        [JsonProperty("skillChannelId")] public string SkillChannelId { get; set; }
+        [JsonProperty("linked")] public bool Linked { get; set; }
+
+        /// <summary>True only when the call that returned this created the channel.</summary>
+        [JsonProperty("created")] public bool Created { get; set; }
+
+        [JsonProperty("irfId")] public int? IrfId { get; set; }
+        [JsonProperty("mcqIrfId")] public string McqIrfId { get; set; }
+        [JsonProperty("title")] public string Title { get; set; }
+    }
+
+    /// <summary>
+    /// What the portal sends to POST {mcq}/api/v1/ai-sessions/channel-link to have the MCQ skill
+    /// channel for a portal channel created if it does not exist yet.
+    /// </summary>
+    public class McqEnsureChannelLinkRequest
+    {
+        [JsonProperty("skillChannelId")] public string SkillChannelId { get; set; }
+        [JsonProperty("requestedBy")] public string RequestedBy { get; set; }
+        [JsonProperty("title")] public string Title { get; set; }
+        [JsonProperty("primarySkills")] public string PrimarySkills { get; set; }
+        [JsonProperty("secondarySkill")] public string SecondarySkill { get; set; }
+        [JsonProperty("profileType")] public string ProfileType { get; set; }
+        [JsonProperty("seniorityLevel")] public string SeniorityLevel { get; set; }
+        [JsonProperty("employmentType")] public string EmploymentType { get; set; }
+        [JsonProperty("countryType")] public string CountryType { get; set; }
+        [JsonProperty("jobFunction")] public string JobFunction { get; set; }
+        [JsonProperty("portalIRFTitle")] public string PortalIRFTitle { get; set; }
+    }
+
     /// <summary>The cached row, before the JSON payload is unpacked.</summary>
     public class McqAssessmentCacheRow
     {

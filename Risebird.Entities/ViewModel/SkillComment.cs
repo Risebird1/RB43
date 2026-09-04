@@ -22,12 +22,6 @@ namespace Risebird.Entities.ViewModel
         public bool IsGeneratedByAi { get; set; }
         public bool IsCodingQuestion { get; set; }
         public int? CodingTimeLimitInMinutes { get; set; }
-
-        /// <summary>
-        /// This question is the MCQ assessment section served from screen.risebird.io. Populated
-        /// by Dapper from SkillChannelSampleQuestions.IsMcqAssessmentSection.
-        /// </summary>
-        public bool IsMcqAssessmentSection { get; set; }
         public bool IsTypingSpeedAssessment { get; set; }
 
         /// <summary>

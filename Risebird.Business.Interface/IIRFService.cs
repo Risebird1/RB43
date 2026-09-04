@@ -169,11 +169,6 @@ namespace Risebird.Business.Interface
         Task<bool> SetSampleQuestionCodingMode(int id, bool isCodingQuestion, int? codingTimeLimitInMinutes, string questionGist = null);
         Task<bool> SetSampleQuestionListeningMode(int id, bool isListeningComprehension, string listeningAudioTranscription = null, string questionGist = null);
 
-        /// <summary>Turns the MCQ assessment section on or off for one existing question.</summary>
-        Task<bool> SetSampleQuestionMcqSectionMode(int id, bool isMcqAssessmentSection);
-
-        /// <summary>Question ids on this channel already marked as the MCQ assessment section.</summary>
-        Task<List<int>> GetMcqAssessmentSectionQuestionIds(int irfId);
         Task<bool> UpdateSampleQuestionListeningAudio(int id, string listeningAudioUrl);
         Task<IEnumerable<SkillComment>> GetSkillSampleQuestions(int id);
         Task<SampleQuestionDeleteResultVM> DeleteSkillChannelSampleQuestions(int id);

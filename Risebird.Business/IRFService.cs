@@ -4011,31 +4011,6 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> SetSampleQuestionMcqSectionMode(int id, bool isMcqAssessmentSection)
-        {
-            try
-            {
-                return await _irfRepository.SetSampleQuestionMcqSectionMode(id, isMcqAssessmentSection);
-            }
-            catch (Exception e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-        }
-
-        public async Task<List<int>> GetMcqAssessmentSectionQuestionIds(int irfId)
-        {
-            try
-            {
-                return await _irfRepository.GetMcqAssessmentSectionQuestionIds(irfId);
-            }
-            catch (Exception e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return new List<int>();
-            }
-        }
 
         public async Task<bool> UpdateSampleQuestionListeningAudio(int id, string listeningAudioUrl)
         {

@@ -36,7 +36,7 @@ BEGIN
     ;WITH SetQuestions AS (
         SELECT q.id, q.Comment, q.AIQuestionVideoLink, q.IsTypingSpeedAssessment,
                q.IsListeningComprehension, q.ListeningAudioUrl, q.ListeningAudioTranscription,
-               q.IsCodingQuestion, q.CodingTimeLimitInMinutes, q.IsMcqAssessmentSection,
+               q.IsCodingQuestion, q.CodingTimeLimitInMinutes,
                ROW_NUMBER() OVER (ORDER BY i.id) AS RowNum
         FROM AIQuestionSetItems i
         JOIN SkillChannelSampleQuestions q ON q.id = i.QuestionId
@@ -48,7 +48,6 @@ BEGIN
            ListeningAudioUrl,
            ListeningAudioTranscription,
            ISNULL(IsCodingQuestion, 0) AS IsCodingQuestion,
-           ISNULL(IsMcqAssessmentSection, 0) AS IsMcqAssessmentSection,
            CodingTimeLimitInMinutes
     FROM SetQuestions
     WHERE RowNum = @AskedCount + 1;

@@ -8835,14 +8835,12 @@ WHERE irf.IsDeleted = 0
                     techSkillCommentsDt.Columns.Add("IsCodingQuestion", typeof(bool));
                     techSkillCommentsDt.Columns.Add("CodingTimeLimitInMinutes", typeof(int));
                     techSkillCommentsDt.Columns.Add("QuestionGist", typeof(string));
-                    techSkillCommentsDt.Columns.Add("IsMcqAssessmentSection", typeof(bool));
                     foreach (var item in obj.SkillCollection?.Where(x => !string.IsNullOrEmpty(x.SkillName)))
                     {
                         techSkillCommentsDt.Rows.Add(obj.IRFId, 0, item.Comment, item.CreatedBy, item.SkillName, item.ExpectedAnswer,
                             item.IsCodingQuestion,
                             item.CodingTimeLimitInMinutes.HasValue ? (object)item.CodingTimeLimitInMinutes.Value : DBNull.Value,
-                            string.IsNullOrWhiteSpace(item.QuestionGist) ? (object)DBNull.Value : item.QuestionGist,
-                            item.IsMcqAssessmentSection);
+                            string.IsNullOrWhiteSpace(item.QuestionGist) ? (object)DBNull.Value : item.QuestionGist);
                     }
                     SqlCommand cmdAddSkillComments = new SqlCommand("usp_AddIRFSampleQuestions", con);
                     cmdAddSkillComments.CommandType = CommandType.StoredProcedure;
@@ -9093,50 +9091,6 @@ WHERE irf.IsDeleted = 0
             return false;
         }
 
-        public async Task<bool> SetSampleQuestionMcqSectionMode(int id, bool isMcqAssessmentSection)
-        {
-            try
-            {
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@id", id);
-                dynamicParameters.Add("@isMcqAssessmentSection", isMcqAssessmentSection);
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    await SqlMapper.ExecuteAsync(con, "usp_SetSampleQuestionMcqSectionMode", dynamicParameters,
-                        commandType: CommandType.StoredProcedure);
-                    return true;
-                }
-            }
-            catch (SqlException ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// The ids of questions on this channel already marked as the MCQ assessment section.
-        /// Used to keep a channel to one - a second would try to open a second test against the
-        /// same interview session.
-        /// </summary>
-        public async Task<List<int>> GetMcqAssessmentSectionQuestionIds(int irfId)
-        {
-            try
-            {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var rows = await SqlMapper.QueryAsync<int>(con,
-                        "SELECT id FROM SkillChannelSampleQuestions WHERE IRFId = @irfId AND ISNULL(IsMcqAssessmentSection, 0) = 1",
-                        new { irfId });
-                    return rows.ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-            }
-            return new List<int>();
-        }
 
         public async Task<bool> SetSampleQuestionListeningMode(int id, bool isListeningComprehension, string listeningAudioTranscription = null, string questionGist = null)
         {
