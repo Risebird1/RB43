@@ -49,6 +49,19 @@ namespace Risebird.CommonHelper
             if (!IsConfigured || string.IsNullOrWhiteSpace(sessionId) || request == null)
                 return null;
 
+            // skillChannelId is what resolves the channel on the MCQ side (MCQIRF.PortalIRFId), and
+            // candidateEmail identifies the attempt. Serializing with NullValueHandling.Ignore drops
+            // a null field entirely, so a missing value arrives as a generic 422 that reads like an
+            // MCQ-side fault. Saying which field is missing, on this side, is far more useful.
+            if (string.IsNullOrWhiteSpace(request.SkillChannelId) || string.IsNullOrWhiteSpace(request.CandidateEmail))
+            {
+                await LogAsync(new Exception(
+                    $"Cannot provision the MCQ section for session {sessionId}: " +
+                    $"skillChannelId is '{request.SkillChannelId ?? "(null)"}' and candidateEmail is '{request.CandidateEmail ?? "(null)"}'. " +
+                    "Both are required. skillChannelId comes from IRF.IRFId on the interview's skill channel."), null);
+                return null;
+            }
+
             // Question generation for a whole sectioned paper is several model calls, so the
             // first provision of a session is slow by nature. Anything past this and the
             // candidate is better served by skipping the section than by staring at a spinner.
@@ -56,7 +69,9 @@ namespace Risebird.CommonHelper
                 HttpMethod.Post,
                 $"{BaseUrl}/api/v1/ai-sessions/{Uri.EscapeDataString(sessionId)}/mcq",
                 request,
-                TimeSpan.FromSeconds(180));
+                TimeSpan.FromSeconds(180),
+                // A 404 here is a missing route, not an empty result - let it be logged.
+                treatNotFoundAsEmpty: false);
 
             if (body == null) return null;
 
@@ -95,12 +110,82 @@ namespace Risebird.CommonHelper
             }
         }
 
+        public string ChannelOwnerEmail => _configuration["McqAssessment:ChannelOwnerEmail"];
+
+        public async Task<McqChannelLinkResult> EnsureChannelLinkAsync(McqEnsureChannelLinkRequest request)
+        {
+            if (!IsConfigured || request == null || string.IsNullOrWhiteSpace(request.SkillChannelId))
+                return null;
+
+            // Without an owner there is no MCQ client to create the channel under, and the MCQ side
+            // would reject it. Treated as "auto-creation is switched off" rather than an error, so
+            // an environment that has not configured it simply keeps the manual workflow.
+            if (string.IsNullOrWhiteSpace(request.RequestedBy))
+            {
+                await LogAsync(new Exception(
+                    $"Cannot create the MCQ skill channel for '{request.SkillChannelId}': " +
+                    "McqAssessment:ChannelOwnerEmail is not configured, so there is no MCQ client to own it."), null);
+                return null;
+            }
+
+            // Channel creation writes a row on the MCQ side but does no question generation, so it
+            // is quick - unlike provisioning, which this must not be confused with.
+            var body = await SendAsync(
+                HttpMethod.Post,
+                $"{BaseUrl}/api/v1/ai-sessions/channel-link",
+                request,
+                TimeSpan.FromSeconds(45),
+                treatNotFoundAsEmpty: false);
+
+            if (body == null) return null;
+
+            try
+            {
+                return JsonConvert.DeserializeObject<McqChannelLinkResult>(body);
+            }
+            catch (Exception ex)
+            {
+                await LogAsync(ex, $"Could not read the MCQ channel-link response for skill channel {request.SkillChannelId}.");
+                return null;
+            }
+        }
+
+        public async Task<bool?> IsChannelLinkedAsync(string skillChannelId)
+        {
+            if (!IsConfigured || string.IsNullOrWhiteSpace(skillChannelId))
+                return null;
+
+            var body = await SendAsync(
+                HttpMethod.Get,
+                $"{BaseUrl}/api/v1/ai-sessions/channel-link?skillChannelId={Uri.EscapeDataString(skillChannelId.Trim())}",
+                null,
+                TimeSpan.FromSeconds(15),
+                // A missing route here means the MCQ app has no channel-link endpoint, which is a
+                // deployment gap, not an unlinked channel. Let it be logged and reported as
+                // "could not check" rather than as a definite answer.
+                treatNotFoundAsEmpty: false);
+
+            if (body == null) return null;
+
+            try
+            {
+                var parsed = JsonConvert.DeserializeObject<McqChannelLinkResult>(body);
+                return parsed?.Linked;
+            }
+            catch (Exception ex)
+            {
+                await LogAsync(ex, $"Could not read the MCQ channel-link response for skill channel {skillChannelId}.");
+                return null;
+            }
+        }
+
         /// <summary>
         /// Returns the response body for 2xx, and null for anything else - including 404 (this
         /// session has no MCQ section) and 202 (the candidate has not finished yet), both of
         /// which are ordinary states rather than faults and so are not logged as errors.
         /// </summary>
-        private async Task<string> SendAsync(HttpMethod method, string url, object payload, TimeSpan timeout)
+        private async Task<string> SendAsync(HttpMethod method, string url, object payload, TimeSpan timeout,
+            bool treatNotFoundAsEmpty = true)
         {
             using var cts = new CancellationTokenSource(timeout);
 
@@ -129,11 +214,25 @@ namespace Risebird.CommonHelper
 
                 // 202 carries a usable in-progress payload, but the caller asked for a finished
                 // result; treating it as "nothing yet" keeps that distinction at one place.
-                if (response.StatusCode == HttpStatusCode.Accepted || response.StatusCode == HttpStatusCode.NotFound)
+                if (response.StatusCode == HttpStatusCode.Accepted)
                     return null;
 
+                // 404 means two very different things depending on the endpoint. On the report it is
+                // a legitimate answer - this session has no MCQ section - and logging it would be
+                // noise. On provisioning it means the route is not there at all, i.e. the MCQ app
+                // has not been deployed with the ai-sessions controller. That has to be loud: it is
+                // otherwise a silent null with nothing anywhere to explain it.
+                if (response.StatusCode == HttpStatusCode.NotFound && treatNotFoundAsEmpty)
+                    return null;
+
+                var hint = response.StatusCode == HttpStatusCode.NotFound
+                    ? " The route was not found - check that screen.risebird.io is deployed with the ai-sessions API."
+                    : response.StatusCode == HttpStatusCode.Unauthorized
+                        ? " Check that McqAssessment:ServiceAccountToken matches RisebirdPortalApi:ServiceAccountToken on the MCQ side."
+                        : string.Empty;
+
                 await LogAsync(
-                    new Exception($"MCQ assessment API returned {(int)response.StatusCode} for {method} {url}. Body: {Truncate(body, 1000)}"),
+                    new Exception($"MCQ assessment API returned {(int)response.StatusCode} for {method} {url}.{hint} Body: {Truncate(body, 1000)}"),
                     null);
                 return null;
             }

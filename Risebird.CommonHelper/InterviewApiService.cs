@@ -75,7 +75,7 @@ public class InterviewApiService : IInterviewApiService
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new Exception($"Failed to start conversation: {response.StatusCode}");
+            throw new Exception(await DescribeFailureAsync("Failed to start conversation", response));
         }
 
         var result = await response.Content.ReadFromJsonAsync<InterviewStartResult>();
@@ -95,7 +95,7 @@ public class InterviewApiService : IInterviewApiService
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new Exception($"Interview API error: {response.StatusCode}");
+            throw new Exception(await DescribeFailureAsync("Interview API error", response));
         }
 
         var result = await response.Content.ReadFromJsonAsync<AskResponse>();
@@ -115,7 +115,7 @@ public class InterviewApiService : IInterviewApiService
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new Exception($"Interview API error (system prompt): {response.StatusCode}");
+            throw new Exception(await DescribeFailureAsync("Interview API error (system prompt)", response));
         }
 
         var result = await response.Content.ReadFromJsonAsync<AskResponse>();
@@ -138,7 +138,7 @@ public class InterviewApiService : IInterviewApiService
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new Exception($"Failed to generate report: {response.StatusCode}");
+                throw new Exception(await DescribeFailureAsync("Failed to generate report", response));
             }
 
             var result = await response.Content.ReadFromJsonAsync<InterviewReportResult>();
@@ -149,5 +149,42 @@ public class InterviewApiService : IInterviewApiService
             await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             return null;
         }
+    }
+
+    /// <summary>
+    /// Builds the message for a failed call to the interview API, including the response body.
+    ///
+    /// These exceptions are what lands in AIInterviewExceptionLog, and a message carrying only the
+    /// status code ("Failed to start conversation: InternalServerError") says nothing about why -
+    /// the reason is in the body, which was being discarded. The endpoint and the body are what
+    /// make a logged failure diagnosable after the fact.
+    ///
+    /// Reading the body must never itself throw here: this runs on a path that is already failing,
+    /// and losing the original status to a secondary error would make things worse, not better.
+    /// </summary>
+    private static async Task<string> DescribeFailureAsync(string what, HttpResponseMessage response)
+    {
+        var endpoint = response?.RequestMessage?.RequestUri?.PathAndQuery;
+        var body = string.Empty;
+
+        try
+        {
+            if (response?.Content != null)
+            {
+                body = await response.Content.ReadAsStringAsync();
+                if (body != null && body.Length > 2000)
+                {
+                    body = body.Substring(0, 2000) + "… (truncated)";
+                }
+            }
+        }
+        catch
+        {
+            body = "(response body could not be read)";
+        }
+
+        return $"{what}: {(int?)response?.StatusCode} {response?.StatusCode}"
+             + (string.IsNullOrEmpty(endpoint) ? string.Empty : $" from {endpoint}")
+             + (string.IsNullOrWhiteSpace(body) ? " (empty response body)" : $". Response: {body}");
     }
 }
