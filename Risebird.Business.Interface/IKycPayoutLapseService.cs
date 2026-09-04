@@ -31,5 +31,8 @@ namespace Risebird.Business.Interface
 
         /// <summary>Hard cap on how many reminders are ever sent for one tracking row.</summary>
         int MaxReminderCount { get; }
+
+        /// <summary>Full tracking list (all statuses), newest first, for the Finance "Payment Lapsed" page.</summary>
+        Task<IList<KycPayoutLapseTrackingRow>> GetTrackingListAsync();
     }
 }

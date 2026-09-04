@@ -144,6 +144,11 @@
                             <font style="font-family: Roboto, sans-serif;font-size:10px;padding-left: 3px;">Payment History</font>
                         </span>
                     </button>
+                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                        <span class="fa fa-ban" data-toggle="tooltip" data-placement="top" onclick="openPaymentLapsed()" data-original-title="Tooltip on top">
+                            <font style="font-family: Roboto, sans-serif;font-size:10px;padding-left: 3px;">Payment Lapsed</font>
+                        </span>
+                    </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float:right;margin-left:2px;">
                         <span class="fa fa-file" data-toggle="tooltip" data-placement="top" onclick="openmyinvoiceModel()" data-original-title="Tooltip on top">
                             <font style="font-family: Roboto, sans-serif;font-size:10px;padding-left: 3px;">Generate Invoice</font>
@@ -1569,6 +1574,9 @@
     }
     function openPaymentHistory() {
         window.location.href = "/Finance/PaymentHistory";
+    }
+    function openPaymentLapsed() {
+        window.location.href = "/Finance/PaymentLapsed";
     }
     function Changemonth() {
         $(".Fnactive-header").removeClass("Fnactive-header-button");

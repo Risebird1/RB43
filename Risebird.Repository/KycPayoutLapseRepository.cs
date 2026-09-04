@@ -166,5 +166,27 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<IList<KycPayoutLapseTrackingRow>> FetchTrackingListAsync()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(_connectionString))
+                {
+                    var rows = await SqlMapper.QueryAsync<KycPayoutLapseTrackingRow>(con,
+                        "usp_FetchKycPayoutLapseTrackingList",
+                        commandType: CommandType.StoredProcedure);
+                    return rows.ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

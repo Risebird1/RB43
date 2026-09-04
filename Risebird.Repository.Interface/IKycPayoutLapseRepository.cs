@@ -23,5 +23,8 @@ namespace Risebird.Repository.Interface
         Task MarkReminderSentAsync(int id, int reminderCount);
 
         Task LapseInterviewPointsAsync(int userid, string month);
+
+        /// <summary>Full tracking list (all statuses), newest first, for the Finance "Payment Lapsed" page.</summary>
+        Task<IList<KycPayoutLapseTrackingRow>> FetchTrackingListAsync();
     }
 }

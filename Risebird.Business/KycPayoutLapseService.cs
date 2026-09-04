@@ -116,5 +116,18 @@ namespace Risebird.Business
                     return Math.Min(i, MaxReminderCountValue - 1);
             return -1;
         }
+
+        public async Task<IList<KycPayoutLapseTrackingRow>> GetTrackingListAsync()
+        {
+            try
+            {
+                return await _kycLapseRepo.FetchTrackingListAsync();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

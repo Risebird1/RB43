@@ -1805,6 +1805,130 @@ namespace Risebird.Web.Controllers
 
         }
 
+        /// <summary>
+        /// Finance/Admin view of the KYC payout-lapse tracking list (Active/Completed/Lapsed),
+        /// laid out the same way as PaymentHistory. Accessed from the Finance Payout page.
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> PaymentLapsed()
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "Finance")
+                {
+                    var model = await _kycPayoutLapseService.GetTrackingListAsync();
+                    if (model == null)
+                    {
+                        model = new List<KycPayoutLapseTrackingRow>();
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<FileContentResult> ExportPaymentLapsed()
+        {
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Payment Lapsed");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_PaymentLapsed.xlsx";
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "Finance")
+                    {
+                        var model = await _kycPayoutLapseService.GetTrackingListAsync() ?? new List<KycPayoutLapseTrackingRow>();
+
+                        int startColumn = 1; int endColumn = 15;
+                        for (int a = startColumn; a <= endColumn; a++)
+                        {
+                            Sheet.Column(a).Width = 18;
+                        }
+                        Sheet.Cells[1, 1].Value = "Interviewer";
+                        Sheet.Cells[1, 2].Value = "Email-Id";
+                        Sheet.Cells[1, 3].Value = "PAN";
+                        Sheet.Cells[1, 4].Value = "Name as Pan";
+                        Sheet.Cells[1, 5].Value = "Name as Bank Account";
+                        Sheet.Cells[1, 6].Value = "Month";
+                        Sheet.Cells[1, 7].Value = "Pending Amount";
+                        Sheet.Cells[1, 8].Value = "Bank Verified";
+                        Sheet.Cells[1, 9].Value = "PAN Verified";
+                        Sheet.Cells[1, 10].Value = "Reminder Count";
+                        Sheet.Cells[1, 11].Value = "Status";
+                        Sheet.Cells[1, 12].Value = "Remark";
+                        Sheet.Cells[1, 13].Value = "Added On";
+                        Sheet.Cells[1, 14].Value = "Last Reminder On";
+                        Sheet.Cells[1, 15].Value = "Lapsed On";
+
+                        int i = 2;
+                        if (model.Count() > 0)
+                        {
+                            foreach (var item in model)
+                            {
+                                Sheet.Cells[i, 1].Value = $"{item.FirstName} {item.LastName}".Trim();
+                                Sheet.Cells[i, 2].Value = item.Email;
+                                Sheet.Cells[i, 3].Value = item.PAN;
+                                Sheet.Cells[i, 4].Value = item.NameAtPan;
+                                Sheet.Cells[i, 5].Value = item.NameAtBank;
+                                Sheet.Cells[i, 6].Value = item.Month;
+                                Sheet.Cells[i, 7].Value = item.PendingAmount;
+                                Sheet.Cells[i, 8].Value = item.IsBankVerified ? "Yes" : "No";
+                                Sheet.Cells[i, 9].Value = item.IsPanVerified ? "Yes" : "No";
+                                Sheet.Cells[i, 10].Value = item.ReminderCount;
+                                Sheet.Cells[i, 11].Value = item.TrackingStatus;
+                                Sheet.Cells[i, 12].Value = item.Remark;
+                                Sheet.Cells[i, 13].Value = item.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss");
+                                Sheet.Cells[i, 14].Value = item.LastReminderOn?.ToString("yyyy-MM-dd HH:mm:ss");
+                                Sheet.Cells[i, 15].Value = item.LapsedOn?.ToString("yyyy-MM-dd HH:mm:ss");
+                                i++;
+                            }
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                        }
+                        else
+                        {
+                            ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                            Rng.Value = "No data available in table !!!";
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                        }
+                    }
+                    else
+                    {
+                        ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                        Rng.Value = "Data export failed !!!";
+                        return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                    }
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "Data export failed !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> InvoiceDetails()
