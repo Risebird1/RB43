@@ -96,7 +96,7 @@ namespace Risebird.Business.Interface
         Task AddCandidateUsingResumeParserJob(List<CandidateQuickAddModel> candidateList, int irfId);
         Task<StringBuilder> AddQuickMultipleCandidates(List<CandidateQuickAddModel> candidateList, string emailId, string profile, int irfId, bool isSendInvite, string linkurl);
         Task<IRF> GetIRFForCall(int irfId);
-        IEnumerable<Users> GetEligibleChannelOwners();
+        IEnumerable<Users> GetEligibleChannelOwners(int? includeUserId = null);
         Task<string> GetTechSkillofSkillChannelByQuestion(string question, int irfId);
         bool CheckChannelOwnerByIrfid(string IRFId, string emailid);
         Task<IEnumerable<TemplateInterviewerData>> GetInterviewersByAssessmentGroup(string assessmentGroupId);

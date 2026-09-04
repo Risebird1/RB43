@@ -2420,15 +2420,41 @@ namespace Risebird.Web.Controllers
             try
             {
                 var cached = await _aiinterviewerService.GetAIInterviewMcqAssessment(sessionKey);
-                if (string.IsNullOrWhiteSpace(cached?.ReportJson))
-                    return null;
+                if (cached == null) return null;
 
-                var report = JsonConvert.DeserializeObject<McqAssessmentReport>(cached.ReportJson);
-                if (report == null) return null;
+                if (!string.IsNullOrWhiteSpace(cached.ReportJson))
+                {
+                    var report = JsonConvert.DeserializeObject<McqAssessmentReport>(cached.ReportJson);
+                    if (report != null)
+                    {
+                        report.IsFromCache = true;
+                        report.CachedOn = cached.FetchedOn;
+                        return report;
+                    }
+                }
 
-                report.IsFromCache = true;
-                report.CachedOn = cached.FetchedOn;
-                return report;
+                // A row with no payload is the marker written when the section was reached but no
+                // result could be read - the candidate abandoned it, or the MCQ side was down at
+                // submit. Returning null here would drop the block from the report entirely, which
+                // reads as "this channel has no assessment" rather than "the candidate did not
+                // complete it". The denormalised columns are enough to say the latter honestly.
+                return new McqAssessmentReport
+                {
+                    AiSessionId = cached.SessionId,
+                    McqId = cached.McqId,
+                    Status = string.IsNullOrWhiteSpace(cached.Status) ? "not-completed" : cached.Status,
+                    TotalQuestions = cached.TotalQuestions ?? 0,
+                    CorrectAnswers = cached.CorrectAnswers ?? 0,
+                    ScorePercent = cached.ScorePercent ?? 0m,
+                    RedFlags = cached.RedFlags ?? 0,
+                    AllottedMinutes = cached.AllottedMinutes,
+                    ElapsedSeconds = cached.ElapsedSeconds,
+                    TabSwitchCount = cached.TabSwitchCount,
+                    StartedOn = cached.StartedOn,
+                    CompletedOn = cached.CompletedOn,
+                    IsFromCache = true,
+                    CachedOn = cached.FetchedOn
+                };
             }
             catch (Exception ex)
             {

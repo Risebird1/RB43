@@ -2423,6 +2423,29 @@
         return true;
     }
 
+    // IRF.RisebirdHr is NOT NULL and foreign-keyed to UserList.id, so a Channel Owner that does not
+    // reach the server binds to 0 and the save fails with an FK_IRF_User violation the recruiter only
+    // sees as "edits were not saved". A disabled <select> posts nothing, and the interviewer table's
+    // change handler disables every .select-css on the page (Channel Owner included, and unlike the
+    // other read-only dropdowns it has no hidden mirror to fall back on) - so re-enable it before the
+    // post rather than letting a value the recruiter did pick go missing. The tab-change validation
+    // only covers Event Details, so the "must be set" check is repeated here for saves from any tab.
+    function CheckChannelOwner() {
+        var channelOwner = document.getElementById("RisebirdHr");
+        var errorLabel = document.getElementById("error_RisebirdHr");
+        if (!channelOwner) return true;
+
+        channelOwner.disabled = false;
+
+        if (channelOwner.value === "" || channelOwner.value === "0") {
+            if (errorLabel) errorLabel.innerHTML = "The Channel Owner field is required.";
+            return false;
+        }
+
+        if (errorLabel) errorLabel.innerHTML = "";
+        return true;
+    }
+
     // The form's submit gate. CheckTotalWeightage is left exactly as it was so the
     // existing weightage behaviour is untouched.
     function CheckEditIRFConditions() {
@@ -2430,7 +2453,8 @@
         // when the other check short-circuits.
         var aiTypeOk = CheckAIInterviewType();
         var promptOk = CheckPrimaryPromptId();
-        return CheckTotalWeightage() && aiTypeOk && promptOk;
+        var ownerOk = CheckChannelOwner();
+        return CheckTotalWeightage() && aiTypeOk && promptOk && ownerOk;
     }
 </script>
 <script>
