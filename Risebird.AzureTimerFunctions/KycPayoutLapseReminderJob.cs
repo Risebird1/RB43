@@ -21,7 +21,7 @@ namespace Risebird.AzureTimerFunctions
 
         // Reminder cadence (day 0, 5, 10, 15, 20) and the hard 5-reminder cap both live on
         // KycPayoutLapseService; this job just enforces the cap defensively before sending.
-        private const int DefaultLapseAfterDays = 21;
+        private const int LapseAfterDays = 21;
 
         public KycPayoutLapseReminderJob(
             ILoggerFactory           loggerFactory,
@@ -42,8 +42,6 @@ namespace Risebird.AzureTimerFunctions
 
             try
             {
-                var lapseAfterDays = _configuration.GetValue<int?>("Kyc:LapseReminder:LapseAfterDays") ?? DefaultLapseAfterDays;
-
                 // Portal home/login URL only -- no deep link straight to the KYC section; the
                 // email template walks the interviewer through navigating there manually.
                 var portalLink = _configuration["HostDetails:baseUrl"] ?? "https://portal.risebird.io";
@@ -71,7 +69,7 @@ namespace Risebird.AzureTimerFunctions
                             continue;
                         }
 
-                        if (target.DaysInTracking >= lapseAfterDays)
+                        if (target.DaysInTracking >= LapseAfterDays)
                         {
                             await _kycLapseService.LapseAsync(target.Id, target.Userid, target.Month);
                             _log.LogInformation("Lapsed InterviewPoints for user {UserId} month {Month} (tracking row {Id}) after {Days} days without KYC.",
@@ -87,7 +85,7 @@ namespace Risebird.AzureTimerFunctions
                             continue;
 
                         var name      = $"{target.FirstName} {target.LastName}".Trim();
-                        var lapseDate = target.CreatedOn.AddDays(lapseAfterDays);
+                        var lapseDate = target.CreatedOn.AddDays(LapseAfterDays);
 
                         await _notificationHelper.SendPaymentLapseKYCReminderAsync(
                             target.Email,
