@@ -35,8 +35,9 @@ namespace Risebird.Web.Controllers
         private readonly IClientService _clientService;
         private readonly ICashfreePayoutService _cashfreePayoutService;
         private readonly IWalletService _walletService;
+        private readonly IKycPayoutLapseService _kycPayoutLapseService;
 
-        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IFileMimeTypeHelper fileMimeTypeHelper, IClientService clientService, ICashfreePayoutService cashfreePayoutService, IWalletService walletService)
+        public FinanceController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IInterviewerService interviewerService, IWhatsAppHelper whatsAppHelper, IConfiguration configuration, IAzureStorageHelper azureStorageHelper, IProjectService projectService, IFileMimeTypeHelper fileMimeTypeHelper, IClientService clientService, ICashfreePayoutService cashfreePayoutService, IWalletService walletService, IKycPayoutLapseService kycPayoutLapseService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -50,7 +51,11 @@ namespace Risebird.Web.Controllers
             _clientService = clientService;
             _cashfreePayoutService = cashfreePayoutService;
             _walletService = walletService;
+            _kycPayoutLapseService = kycPayoutLapseService;
         }
+
+        private string CurrentOperatorEmail()
+            => HttpContext.Session.GetString("email")?.Trim().Replace("\"", "") ?? "system";
         /// <summary>
         /// Interviewer or QC check payment status and request for payment with details
         /// </summary>
@@ -83,7 +88,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        model = model.Where(x => x.Status != "Paid").ToList();
+                        model = model.Where(x => x.Status != "Paid" && x.Status != "Lapsed").ToList();
                     }
                     model = model.Select(x => { x.InterviewStatusDetails = ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription(); x.MeetingStatusDetails = ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription(); return x; }).ToList();
                     var sum = model.Where(x => x.Status == "Submitted" || x.Status == "Pending").Sum(x => x.Points) - model.Where(x => x.Status == "Advance").Sum(x => x.Points);
@@ -197,7 +202,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            model = model.Where(x => x.Status != "Paid").ToList();
+                            model = model.Where(x => x.Status != "Paid" && x.Status != "Lapsed").ToList();
                         }
                         string userEmailId = string.Empty;
 
@@ -834,6 +839,26 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return Json(new { results, error = "An unexpected error occurred." });
+            }
+        }
+
+        /// <summary>
+        /// Scans Pending/Submitted InterviewPoints older than 120 days whose interviewer hasn't
+        /// completed KYC (bank + PAN verification), and moves each not-yet-tracked
+        /// (Interviewer, Month) combination into KycPayoutLapseTracking for the reminder/lapse job.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> ProcessKycPayoutLapseCandidates()
+        {
+            try
+            {
+                var added = await _kycPayoutLapseService.ProcessLapseCandidatesAsync(CurrentOperatorEmail());
+                return Json(new { success = true, added });
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Json(new { success = false, message = "Failed to process KYC lapse candidates.", added = 0 });
             }
         }
 

@@ -3635,5 +3635,33 @@ namespace Risebird.CommonHelper
                 return "Failed to send TDS lapse reminder.";
             }
         }
+
+        public async Task<string> SendPaymentLapseKYCReminderAsync(
+            string toEmail,
+            string interviewerName,
+            decimal pendingAmount,
+            DateTime lapseDate,
+            string kycLink,
+            int reminderIndex)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Payments");
+                msg.Subject = $"Action Required: Complete KYC to receive ₹{pendingAmount:N0}";
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(toEmail, interviewerName));
+
+                string risebirdLogoLink = _configuration["RisebirdDetails:RisebirdLogo"];
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "PaymentLapseKYC.html");
+                string msgBody = string.Format(rawEmail, interviewerName, pendingAmount.ToString("N0"), lapseDate.ToString("dd MMM yyyy"), kycLink, risebirdLogoLink);
+                msg.HtmlContent = msgBody;
+                return await SendMail(msg);
+            }
+            catch (Exception ex)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to send payment-lapse KYC reminder.";
+            }
+        }
     }
 }

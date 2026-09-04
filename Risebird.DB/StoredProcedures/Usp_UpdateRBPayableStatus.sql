@@ -14,5 +14,5 @@ AS
 BEGIN
 DECLARE @UserId int
 Select @UserId=id from UserList where EmailId=@Emailid
-Update InterviewPoints set Status='Submitted' where userid=@UserId and Status!='Paid' and Status!='Advance'  
+Update InterviewPoints set Status='Submitted' where userid=@UserId and (Status='Pending' or Status='Submitted')
 END

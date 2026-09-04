@@ -155,6 +155,9 @@
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-left:3px;float:right;background-color:#1976d2;color:#fff;" onclick="openBatchPayoutModal()">
                         <span class="fa fa-paper-plane" data-toggle="tooltip" data-placement="top" data-original-title="Batch Cashfree Payout"><font style="font-family:Roboto,sans-serif;font-size:10px;padding-left:3px;">Batch Payout</font></span>
                     </button>
+                    <button type="button" id="btnProcessKycLapse" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-left:3px;float:right;background-color:#c62828;color:#fff;" onclick="processKycPayoutLapseCandidates()">
+                        <span class="fa fa-user-clock" data-toggle="tooltip" data-placement="top" data-original-title="Check 120+ day old payouts with incomplete KYC and start the reminder/lapse tracking"><font style="font-family:Roboto,sans-serif;font-size:10px;padding-left:3px;">Check KYC Lapses</font></span>
+                    </button>
                     <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="float:right">
                         @*<span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="location.href='@Url.Action("ExportFNPayment", "Finance")'" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:10px;"> Export Excel</font></span>*@
                         <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" onclick="ExportFNDetails()" data-original-title="Tooltip on top">
@@ -1278,6 +1281,55 @@
         });
     }
     // ????????????????????????????????????????????????????????????????????????????
+
+    function processKycPayoutLapseCandidates() {
+        Swal.fire({
+            title: 'Check KYC Lapses',
+            text: 'Scan for interviewers with 120+ day old pending/submitted payouts whose KYC (bank + PAN) is incomplete, and start reminder/lapse tracking for them?',
+            showDenyButton: true,
+            showCancelButton: false,
+            confirmButtonText: 'Yes, Scan Now',
+            denyButtonText: 'Cancel'
+        }).then(function (result) {
+            if (!result.value) return;
+
+            var btn = document.getElementById('btnProcessKycLapse');
+            btn.disabled = true;
+
+            $.ajax({
+                url: "/Finance/ProcessKycPayoutLapseCandidates",
+                type: "POST",
+                dataType: 'json',
+                success: function (data) {
+                    btn.disabled = false;
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'KYC Lapse Scan Complete',
+                            text: data.added + ' interviewer/month record(s) added to the KYC lapse tracking list.',
+                            confirmButtonText: 'OK'
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'KYC Lapse Scan Failed',
+                            text: data.message || 'The scan could not be completed. Please try again.',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function () {
+                    btn.disabled = false;
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'KYC Lapse Scan Failed',
+                        text: 'The scan could not be completed. Please try again.',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+    }
 
     function CloseMyModelPopup() {
         var model = document.getElementById("myModal");
