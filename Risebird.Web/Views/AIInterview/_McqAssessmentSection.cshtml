@@ -98,65 +98,52 @@
                 color: #b42318;
             }
 
-        /* Section performance bars - the reference's "Skill-wise performance" block */
-        .rb-mcq-bars {
-            margin-bottom: 22px;
+        /* ---- Section-wise performance ----------------------------------------------------
+           One table, not a bar block and a table repeating the same figures. The comparison
+           the bars gave is kept as a slim bar inside the score cell, which also survives the
+           PDF renderer better than the grid rows it replaces.
+           Section headings shared by both blocks below. */
+        .rb-mcq-section-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 0 0 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eceef1;
         }
 
-        .rb-mcq-bar-row {
-            display: grid;
-            grid-template-columns: minmax(120px, 200px) 1fr 74px;
-            align-items: center;
-            gap: 14px;
-            padding: 9px 0;
-        }
-
-        .rb-mcq-bar-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #374151;
-        }
-
-        .rb-mcq-bar-track {
-            position: relative;
-            height: 20px;
-            background: #f3f4f6;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .rb-mcq-bar-fill {
-            height: 100%;
-            border-radius: 4px;
-            background: linear-gradient(90deg, #1e3c72, #2a5298);
-        }
-
-            .rb-mcq-bar-fill.is-weak {
-                background: linear-gradient(90deg, #b42318, #e04f43);
-            }
-
-            .rb-mcq-bar-fill.is-mid {
-                background: linear-gradient(90deg, #a35b00, #dd9a2b);
-            }
-
-        .rb-mcq-bar-value {
-            font-size: 13px;
+        .rb-mcq-section-title {
+            font-size: 14px;
             font-weight: 700;
-            color: #111827;
-            text-align: right;
+            color: #1e3c72;
+            margin: 0;
+            letter-spacing: .1px;
+        }
+
+        .rb-mcq-section-note {
+            font-size: 12px;
+            color: #6b7280;
+            margin: 0;
         }
 
         /* Sections summary table */
         .rb-mcq-table-wrap {
             overflow-x: auto;
-            margin-bottom: 22px;
+            margin-bottom: 26px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: 0 1px 2px rgba(17,24,39,.04);
         }
 
         .rb-mcq-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
-            min-width: 620px;
+            min-width: 660px;
+            font-variant-numeric: tabular-nums;
         }
 
             .rb-mcq-table th {
@@ -165,32 +152,93 @@
                 font-weight: 700;
                 letter-spacing: .5px;
                 text-transform: uppercase;
-                color: #6b7280;
-                border-bottom: 2px solid #e5e7eb;
-                padding: 10px 12px;
+                color: #4b5b78;
+                background: #f5f7fb;
+                border-bottom: 1px solid #e5e7eb;
+                padding: 11px 14px;
                 white-space: nowrap;
             }
 
             .rb-mcq-table td {
                 border-bottom: 1px solid #f0f1f3;
-                padding: 11px 12px;
+                padding: 12px 14px;
                 color: #374151;
                 vertical-align: middle;
+            }
+
+            .rb-mcq-table tbody tr:last-child td {
+                border-bottom: 0;
+            }
+
+            /* Figures right-aligned so columns read down the page; the section name stays left. */
+            .rb-mcq-table th.is-num,
+            .rb-mcq-table td.is-num {
+                text-align: right;
             }
 
             .rb-mcq-table tfoot td {
                 font-weight: 700;
                 color: #111827;
-                border-top: 2px solid #e5e7eb;
+                background: #f5f7fb;
+                border-top: 1px solid #e5e7eb;
                 border-bottom: 0;
+            }
+
+        .rb-mcq-sec-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .rb-mcq-sec-desc {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 3px;
+            max-width: 320px;
+        }
+
+        /* Score cell: the number leads, the bar supports it. */
+        .rb-mcq-score-cell {
+            min-width: 140px;
+        }
+
+        .rb-mcq-score-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .rb-mcq-bar-track {
+            position: relative;
+            height: 6px;
+            background: #eef0f4;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .rb-mcq-bar-fill {
+            display: block;
+            height: 100%;
+            border-radius: 999px;
+            background: #1e3c72;
+        }
+
+            .rb-mcq-bar-fill.is-mid {
+                background: #a35b00;
+            }
+
+            .rb-mcq-bar-fill.is-weak {
+                background: #b42318;
             }
 
         .rb-mcq-pill {
             display: inline-block;
             font-size: 11px;
             font-weight: 700;
-            padding: 3px 9px;
+            padding: 3px 10px;
             border-radius: 999px;
+            white-space: nowrap;
         }
 
             .rb-mcq-pill.is-pass {
@@ -198,23 +246,45 @@
                 color: #1a7f4b;
             }
 
+            /* Matches the bar's middle band, so the pill and the bar never disagree about
+               where a section sits. */
+            .rb-mcq-pill.is-mid {
+                background: #fff8ec;
+                color: #a35b00;
+            }
+
             .rb-mcq-pill.is-fail {
                 background: #fdecec;
                 color: #b42318;
             }
 
-        /* Detailed submission report */
+        /* ---- Detailed submission report --------------------------------------------------
+           Each section gets a quiet band header so a long report stays navigable, and each
+           question is a plain card - the colour is spent on the answer rows, where it means
+           something, rather than on the card chrome. */
         .rb-mcq-qsection-title {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 700;
+            letter-spacing: .5px;
+            text-transform: uppercase;
             color: #1e3c72;
-            margin: 22px 0 4px;
+            background: #f5f7fb;
+            border: 1px solid #e5e7eb;
+            border-bottom: 0;
+            border-radius: 8px 8px 0 0;
+            padding: 9px 14px;
+            margin: 22px 0 0;
         }
 
         .rb-mcq-qsection-meta {
-            font-size: 12px;
+            font-size: 11px;
             color: #6b7280;
-            margin-bottom: 12px;
+            background: #f5f7fb;
+            border: 1px solid #e5e7eb;
+            border-top: 0;
+            border-radius: 0 0 8px 8px;
+            padding: 0 14px 9px;
+            margin: 0 0 14px;
         }
 
         .rb-mcq-q {
@@ -223,6 +293,7 @@
             padding: 16px 18px;
             margin-bottom: 12px;
             background: #fff;
+            box-shadow: 0 1px 2px rgba(17,24,39,.04);
         }
 
         .rb-mcq-q-head {
@@ -230,17 +301,23 @@
             align-items: flex-start;
             justify-content: space-between;
             gap: 14px;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f1f3;
         }
 
         .rb-mcq-q-num {
             flex: 0 0 auto;
+            min-width: 26px;
+            text-align: center;
             font-size: 12px;
             font-weight: 700;
-            color: #fff;
-            background: #1e3c72;
+            color: #1e3c72;
+            background: #eef2f9;
+            border: 1px solid #dfe6f2;
             border-radius: 6px;
-            padding: 4px 9px;
+            padding: 3px 8px;
+            font-variant-numeric: tabular-nums;
         }
 
         .rb-mcq-q-text {
@@ -268,18 +345,23 @@
             line-height: 1.5;
             padding: 9px 12px;
             border: 1px solid #eceef1;
+            border-left: 3px solid #eceef1;
             border-radius: 7px;
             margin-bottom: 7px;
             color: #374151;
         }
 
+            /* A left accent as well as the tint, so which rows matter survives greyscale
+               printing and the PDF export. */
             .rb-mcq-opt.is-correct {
-                border-color: #1a7f4b;
+                border-color: #cdeadb;
+                border-left-color: #1a7f4b;
                 background: #f4fbf7;
             }
 
             .rb-mcq-opt.is-wrong-pick {
-                border-color: #b42318;
+                border-color: #f3d3d0;
+                border-left-color: #b42318;
                 background: #fdf5f4;
             }
 
@@ -287,6 +369,7 @@
             flex: 0 0 auto;
             font-weight: 700;
             color: #6b7280;
+            min-width: 16px;
         }
 
         .rb-mcq-opt-tag {
@@ -511,67 +594,74 @@
 
             @if (mcqSections.Any())
             {
-                <div class="rb-mcq-bars">
-                    <h3 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 10px;">Section-wise performance</h3>
-                    @foreach (var sec in mcqSections)
-                    {
-                        var pct = (double)sec.ScorePercent;
-                        var fillClass = pct >= 60 ? "" : (pct >= 40 ? "is-mid" : "is-weak");
-                        <div class="rb-mcq-bar-row">
-                            <div class="rb-mcq-bar-label" title="@sec.SectionDescription">@sec.SectionTitle</div>
-                            <div class="rb-mcq-bar-track">
-                                <div class="rb-mcq-bar-fill @fillClass" style="width:@pct.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture)%;"></div>
-                            </div>
-                            <div class="rb-mcq-bar-value">@sec.ScorePercent.ToString("0.#")%</div>
-                        </div>
-                    }
+                <div class="rb-mcq-section-head">
+                    <h3 class="rb-mcq-section-title">Section-wise performance</h3>
+                    <p class="rb-mcq-section-note">Pass mark 60% &middot; 40&ndash;59% needs review</p>
                 </div>
 
+                @*
+                    One table rather than a bar chart followed by a table of the same numbers.
+                    The score cell carries the bar, so the at-a-glance comparison survives while
+                    each figure is still readable as a column.
+                *@
                 <div class="rb-mcq-table-wrap">
                     <table class="rb-mcq-table">
                         <thead>
                             <tr>
                                 <th>Section</th>
-                                <th>Score (%)</th>
-                                <th>Correct</th>
-                                <th>Attempted</th>
-                                <th>Questions</th>
-                                <th>Time (min)</th>
+                                <th class="is-num">Score</th>
+                                <th class="is-num">Correct</th>
+                                <th class="is-num">Attempted</th>
+                                <th class="is-num">Questions</th>
+                                <th class="is-num">Time (min)</th>
                                 <th>Result</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var sec in mcqSections)
                             {
+                                var pct = (double)sec.ScorePercent;
+
+                                // Three bands, used for the bar and the pill alike so they cannot
+                                // tell the reader different things about the same section.
+                                var band = pct >= 60 ? "pass" : (pct >= 40 ? "mid" : "weak");
+                                var barClass = band == "pass" ? "" : (band == "mid" ? "is-mid" : "is-weak");
+                                var pillClass = band == "pass" ? "is-pass" : (band == "mid" ? "is-mid" : "is-fail");
+                                var pillText = band == "pass" ? "Pass" : (band == "mid" ? "Review" : "Below par");
+
+                                // Clamped so a stray value can never draw outside the track.
+                                var barWidth = Math.Max(0, Math.Min(100, pct));
+
                                 <tr>
                                     <td>
-                                        <strong>@sec.SectionTitle</strong>
+                                        <div class="rb-mcq-sec-name">@sec.SectionTitle</div>
                                         @if (!string.IsNullOrWhiteSpace(sec.SectionDescription))
                                         {
-                                            <div style="font-size:11px;color:#6b7280;margin-top:2px;">@sec.SectionDescription</div>
+                                            <div class="rb-mcq-sec-desc">@sec.SectionDescription</div>
                                         }
                                     </td>
-                                    <td><strong>@sec.ScorePercent.ToString("0.#")</strong></td>
-                                    <td>@sec.Correct</td>
-                                    <td>@sec.Attempted</td>
-                                    <td>@sec.QuestionCount</td>
-                                    <td>@((sec.TimeSpentSeconds / 60.0).ToString("0.#"))</td>
-                                    <td>
-                                        <span class="rb-mcq-pill @(sec.ScorePercent >= 60 ? "is-pass" : "is-fail")">
-                                            @(sec.ScorePercent >= 60 ? "Pass" : "Below par")
+                                    <td class="is-num rb-mcq-score-cell">
+                                        <span class="rb-mcq-score-value">@sec.ScorePercent.ToString("0.#")%</span>
+                                        <span class="rb-mcq-bar-track">
+                                            <span class="rb-mcq-bar-fill @barClass" style="width:@barWidth.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture)%;"></span>
                                         </span>
                                     </td>
+                                    <td class="is-num">@sec.Correct</td>
+                                    <td class="is-num">@sec.Attempted</td>
+                                    <td class="is-num">@sec.QuestionCount</td>
+                                    <td class="is-num">@((sec.TimeSpentSeconds / 60.0).ToString("0.#"))</td>
+                                    <td><span class="rb-mcq-pill @pillClass">@pillText</span></td>
                                 </tr>
                             }
                         </tbody>
                         <tfoot>
                             <tr>
                                 <td>Overall</td>
-                                <td>@mcq.ScorePercent.ToString("0.#")</td>
-                                <td>@mcq.CorrectAnswers</td>
-                                <td>@attemptedTotal</td>
-                                <td>@mcq.TotalQuestions</td>
-                                <td>@((mcqSections.Sum(s => s.TimeSpentSeconds) / 60.0).ToString("0.#"))</td>
+                                <td class="is-num">@mcq.ScorePercent.ToString("0.#")%</td>
+                                <td class="is-num">@mcq.CorrectAnswers</td>
+                                <td class="is-num">@attemptedTotal</td>
+                                <td class="is-num">@mcq.TotalQuestions</td>
+                                <td class="is-num">@((mcqSections.Sum(s => s.TimeSpentSeconds) / 60.0).ToString("0.#"))</td>
                                 <td></td>
                             </tr>
                         </tfoot>
@@ -581,10 +671,12 @@
 
             @if (mcq.Questions != null && mcq.Questions.Any())
             {
-                <h3 style="font-size:14px;font-weight:700;color:#111827;margin:24px 0 4px;">Detailed submission report</h3>
-                <p style="font-size:12px;color:#6b7280;margin:0 0 4px;">
-                    Every question as it was served, with the candidate's choice marked against the correct answer.
-                </p>
+                <div class="rb-mcq-section-head" style="margin-top:26px;">
+                    <h3 class="rb-mcq-section-title">Detailed submission report</h3>
+                    <p class="rb-mcq-section-note">
+                        Every question as it was served, with the candidate's choice marked against the correct answer.
+                    </p>
+                </div>
 
                 @* Grouped by section so the report reads the way the paper was sat.
                    Questions with no section (a paper generated before sectioning) fall
