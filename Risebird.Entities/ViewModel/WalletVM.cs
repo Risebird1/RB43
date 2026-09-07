@@ -117,6 +117,9 @@ namespace Risebird.Entities.ViewModel
         public string DetailsPeriodLabel { get; set; }
         public List<OwnerWalletRowVM> OwnerWallets { get; set; } = new List<OwnerWalletRowVM>();
         public List<ClientPOVM> PORecords { get; set; } = new List<ClientPOVM>();
+
+        /// <summary>Most recently added agreement for this client. Null when none exist yet.</summary>
+        public ClientAgreementVM LatestAgreement { get; set; }
     }
 
     public class ClientPOVM

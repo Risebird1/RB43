@@ -25,6 +25,15 @@ namespace Risebird.Repository.Interface
         /// for every client in a single stored-procedure call.
         /// </summary>
         Task<(List<ClientPOVM> POs, List<WalletMonthDebitVM> Debits)> GetAllClientsPOData();
+
+        Task<int> InsertClientAgreement(int clientId, int agreementType, DateTime? startDate, DateTime? expireDate, int status, string agreementFileUrl, string remarks, string createdBy);
+        Task<bool> UpdateClientAgreement(int agreementId, int clientId, int agreementType, DateTime? startDate, DateTime? expireDate, int status, string remarks, string modifiedBy, string agreementFileUrl = null, bool updateDocument = false);
+
+        /// <summary>All agreements ever added for this client (newest first) — doubles as the "Agreement History" list.</summary>
+        Task<List<ClientAgreementVM>> GetClientAgreementList(int clientId);
+
+        /// <summary>One row per client — each client's most recently added agreement. Used for the Client List page column.</summary>
+        Task<List<ClientAgreementVM>> GetAllClientsLatestAgreement();
     }
 }
 
