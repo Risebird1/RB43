@@ -2400,8 +2400,14 @@ namespace Risebird.Web.Controllers
 
             var sessionKey = sessionId.ToString();
 
+            // Why the cached copy is being shown, so the banner can say the true thing. A live
+            // lookup that answers "no result for this session" is not an outage, and a report that
+            // calls it one sends whoever reads it looking for a fault that does not exist.
+            var cacheReason = McqCacheReason.NotConfigured;
+
             if (_mcqAssessmentService.IsConfigured)
             {
+                cacheReason = McqCacheReason.NoLiveResult;
                 try
                 {
                     var live = await _mcqAssessmentService.FetchReportAsync(sessionKey);
@@ -2413,6 +2419,7 @@ namespace Risebird.Web.Controllers
                 }
                 catch (Exception ex)
                 {
+                    cacheReason = McqCacheReason.Unreachable;
                     await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 }
             }
@@ -2428,6 +2435,7 @@ namespace Risebird.Web.Controllers
                     if (report != null)
                     {
                         report.IsFromCache = true;
+                        report.CacheReason = cacheReason;
                         report.CachedOn = cached.FetchedOn;
                         return report;
                     }
@@ -2453,6 +2461,7 @@ namespace Risebird.Web.Controllers
                     StartedOn = cached.StartedOn,
                     CompletedOn = cached.CompletedOn,
                     IsFromCache = true,
+                    CacheReason = cacheReason,
                     CachedOn = cached.FetchedOn
                 };
             }

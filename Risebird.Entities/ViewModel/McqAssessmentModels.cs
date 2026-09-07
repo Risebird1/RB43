@@ -46,6 +46,22 @@ namespace Risebird.Entities.ViewModel
         [JsonProperty("timerMinutes")] public int? TimerMinutes { get; set; }
     }
 
+    /// <summary>Why a report is being served from the portal cache instead of a live read.</summary>
+    public enum McqCacheReason
+    {
+        /// <summary>Not a cached copy.</summary>
+        None = 0,
+
+        /// <summary>The live call failed - timeout, transport error, or an error status.</summary>
+        Unreachable = 1,
+
+        /// <summary>The call succeeded but the MCQ system holds no result for this session.</summary>
+        NoLiveResult = 2,
+
+        /// <summary>No MCQ base address is configured for this environment, so no call was made.</summary>
+        NotConfigured = 3
+    }
+
     /// <summary>
     /// The MCQ section result, as returned by GET {mcq}/api/v1/ai-sessions/{id}/mcq/report and as
     /// cached verbatim in AIInterviewMcqAssessment.ReportJson.
@@ -78,6 +94,15 @@ namespace Risebird.Entities.ViewModel
         [JsonIgnore] public bool IsFromCache { get; set; }
 
         [JsonIgnore] public DateTime? CachedOn { get; set; }
+
+        /// <summary>
+        /// Why the cached copy is being shown rather than a live read. The banner is worded from
+        /// this: a live lookup returning "no result for this session" is a different fact from the
+        /// assessment system being unreachable, and reporting the second when the first happened
+        /// sends someone chasing an outage that is not there.
+        /// </summary>
+        [JsonIgnore] public McqCacheReason CacheReason { get; set; }
+
 
         [JsonIgnore]
         public bool IsCompleted =>
