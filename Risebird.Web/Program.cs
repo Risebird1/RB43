@@ -357,6 +357,13 @@ else
     app.UseExceptionHandler("/Home/Index");
     app.UseHsts();
 }
+
+// Registered after the handler above so that it sits *inside* it: an exception from further down
+// the pipeline reaches this first, and a crashed AI interview report answers with a real message
+// instead of being re-executed at /Home/Index and reading as a sign-out. Scoped to the report
+// routes, so nothing else about error handling in this app changes.
+app.UseMiddleware<AIInterviewReportErrorMiddleware>();
+
 // WebSocket support required for Plivo bidirectional audio streaming
 app.UseWebSockets(new WebSocketOptions
 {
