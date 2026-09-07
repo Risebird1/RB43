@@ -818,6 +818,109 @@ namespace Risebird.Web.Controllers
             });
         }
 
+        #region Client Agreements
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> AddClientAgreement(int clientId, int agreementType, DateTime? startDate, DateTime? expireDate, int status, string remarks = null, IFormFile agreementFile = null)
+        {
+            if (!IsFinanceOrAdmin()) return Json(new { success = false, message = "Unauthorized." });
+
+            var client = await _clientService.GetClient(clientId);
+            if (client == null) return Json(new { success = false, message = "Client not found." });
+
+            if (agreementFile == null || agreementFile.Length == 0)
+            {
+                return Json(new { success = false, message = "Please select the agreement PDF." });
+            }
+
+            var agreementFileUrl = await UploadPdfAsync(agreementFile, "agreementfiles");
+            if (agreementFileUrl == null)
+            {
+                return Json(new { success = false, message = "Only PDF files are allowed." });
+            }
+
+            var createdBy = GetSessionEmail();
+            var agreementId = await _walletService.SaveClientAgreement(clientId, agreementType, startDate, expireDate, status, agreementFileUrl, remarks, createdBy);
+
+            return Json(new
+            {
+                success = agreementId > 0,
+                message = agreementId > 0 ? "Agreement saved successfully." : "Failed to save agreement."
+            });
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> UpdateClientAgreement(int agreementId, int clientId, int agreementType, DateTime? startDate, DateTime? expireDate, int status, string remarks = null, IFormFile agreementFile = null)
+        {
+            if (!IsFinanceOrAdmin()) return Json(new { success = false, message = "Unauthorized." });
+
+            string agreementFileUrl = null;
+            var updateDocument = false;
+            if (agreementFile != null && agreementFile.Length > 0)
+            {
+                agreementFileUrl = await UploadPdfAsync(agreementFile, "agreementfiles");
+                if (agreementFileUrl == null)
+                {
+                    return Json(new { success = false, message = "Only PDF files are allowed." });
+                }
+                updateDocument = true;
+            }
+
+            var modifiedBy = GetSessionEmail();
+            var result = await _walletService.UpdateClientAgreement(agreementId, clientId, agreementType, startDate, expireDate, status, remarks, modifiedBy, agreementFileUrl, updateDocument);
+
+            return Json(new
+            {
+                success = result,
+                message = result ? "Agreement updated successfully." : "Failed to update agreement."
+            });
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetAgreementHistory(int clientId)
+        {
+            if (!IsFinanceOrAdmin() && !IsOperations()) return PartialView("_AgreementHistory", new List<ClientAgreementVM>());
+
+            var list = await _walletService.GetClientAgreementList(clientId);
+            ViewBag.CanDownload = IsFinanceOrAdmin();
+            return PartialView("_AgreementHistory", list);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ViewAgreementFile(int agreementId, int clientId, bool viewOnly = false)
+        {
+            if (!IsFinanceOrAdmin() && !IsOperations()) return RedirectToAction("SignOut", "Session");
+
+            var agreement = (await _walletService.GetClientAgreementList(clientId))?.FirstOrDefault(a => a.id == agreementId);
+            if (agreement == null || string.IsNullOrEmpty(agreement.AgreementFileUrl)) return NotFound();
+
+            if (IsFinanceOrAdmin() && !viewOnly)
+            {
+                // Admin/Finance keep full download access, same as PO documents today.
+                return Redirect(agreement.AgreementFileUrl);
+            }
+
+            // Operations, or any request explicitly asking for view-only (e.g. the Client List page):
+            // stream the PDF inline server-side. Never expose the raw blob URL, so there is no
+            // download link/button in the UI for this call.
+            var fileName = agreement.AgreementFileUrl.Split('/').Last();
+            var blob = _azureStorageHelper.GetBlobDataAsBlob("agreementfiles", fileName);
+            if (blob == null) return NotFound();
+
+            using (var ms = new System.IO.MemoryStream())
+            {
+                await blob.DownloadToStreamAsync(ms);
+                Response.Headers["Content-Disposition"] = "inline";
+                return File(ms.ToArray(), "application/pdf");
+            }
+        }
+
+        #endregion
+
         #region Wallet Details — All Clients Summary (Finance)
 
         [Authorize]
@@ -1019,13 +1122,22 @@ namespace Risebird.Web.Controllers
             return profileName == "Admin" || profileName == "Finance";
         }
 
+        /// <summary>View-only role for Agreement documents — no download affordance, unlike Admin/Finance.</summary>
+        private bool IsOperations()
+        {
+            if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                return false;
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            return profileName == "Operations";
+        }
+
         private string GetSessionEmail()
         {
             var emailid = HttpContext.Session.GetString("email")?.Trim();
             return emailid?.Replace("\"", "") ?? string.Empty;
         }
 
-        private async Task<string> UploadPdfAsync(IFormFile file)
+        private async Task<string> UploadPdfAsync(IFormFile file, string containerName = "invoicefiles")
         {
             if (file == null || file.Length == 0) return null;
             var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(file);
@@ -1033,8 +1145,8 @@ namespace Risebird.Web.Controllers
 
             var fileName = file.FileName.Replace(" ", "_");
             var uniqueFileName = $"{DateTime.UtcNow:yyyyMMddHHmmss}_{fileName}";
-            await _azureStorageHelper.InsertBlob(uniqueFileName, "invoicefiles", file);
-            var containerRef = _azureStorageHelper.GetCloudBlobContainer("invoicefiles");
+            await _azureStorageHelper.InsertBlob(uniqueFileName, containerName, file);
+            var containerRef = _azureStorageHelper.GetCloudBlobContainer(containerName);
             var blob = containerRef.GetBlockBlobReference(uniqueFileName);
             return blob.Uri.ToString();
         }

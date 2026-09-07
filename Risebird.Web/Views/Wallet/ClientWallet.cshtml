@@ -231,6 +231,69 @@
                         }
                     </div>
 
+                    <!-- Current Agreement (always shows the latest one; full history via the button) -->
+                    <div class="row" style="margin-bottom:20px;">
+                        <div class="col-md-6">
+                            <div class="summary-card">
+                                <h6>Current Agreement</h6>
+                                @if (Model.LatestAgreement != null)
+                                {
+                                    var agr = Model.LatestAgreement;
+                                    <div class="amount" style="font-size:18px;">
+                                        @agr.AgreementTypeDesc
+                                        <span class="badge @agr.EffectiveStatusCss" style="font-size:11px;vertical-align:middle;">@agr.EffectiveStatusDesc</span>
+                                    </div>
+                                    <div class="sub" style="margin-top:8px;line-height:1.6;">
+                                        Start: @(agr.StartDate?.ToString("dd MMM yyyy") ?? "—") ·
+                                        Expiry: @(agr.ExpireDate?.ToString("dd MMM yyyy") ?? "—")
+                                        @if (agr.DaysRemaining.HasValue)
+                                        {
+                                            <strong style="color:@(agr.IsExpired ? "#e74c3c" : agr.IsExpiringSoon ? "#e65100" : "#2e7d32");">
+                                                · @(agr.IsExpired ? Math.Abs(agr.DaysRemaining.Value) + " day(s) overdue" : agr.DaysRemaining.Value + " day(s) remaining")
+                                            </strong>
+                                        }
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(agr.Remarks))
+                                    {
+                                        <div class="sub" style="margin-top:4px;">@agr.Remarks</div>
+                                    }
+                                    <div style="margin-top:10px;">
+                                        @if (!string.IsNullOrEmpty(agr.AgreementFileUrl))
+                                        {
+                                            <a href="@Url.Action("ViewAgreementFile", "Wallet", new { agreementId = agr.id, clientId = agr.ClientId })" target="_blank" class="btn btn-sm btn-outline-secondary" style="margin-right:6px;">
+                                                <i class="fa fa-eye"></i> View
+                                            </a>
+                                            <a href="@agr.AgreementFileUrl" target="_blank" class="btn btn-sm btn-outline-secondary" style="margin-right:6px;">
+                                                <i class="fa fa-download"></i> Download
+                                            </a>
+                                        }
+                                        <a href="javascript:void(0)"
+                                           onclick="OpenEditAgreementModal(this)"
+                                           class="btn btn-sm btn-outline-primary"
+                                           style="margin-right:6px;"
+                                           data-agreementid="@agr.id"
+                                           data-clientid="@agr.ClientId"
+                                           data-type="@agr.AgreementType"
+                                           data-status="@agr.Status"
+                                           data-startdate="@(agr.StartDate?.ToString("yyyy-MM-dd") ?? "")"
+                                           data-expiredate="@(agr.ExpireDate?.ToString("yyyy-MM-dd") ?? "")"
+                                           data-remarks="@(agr.Remarks ?? "")">Edit</a>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="OpenAgreementHistory()">
+                                            <i class="fa fa-history"></i> Agreement History
+                                        </button>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="sub">No agreement added yet.</div>
+                                    <button type="button" class="btn btn-sm btn-primary" style="margin-top:10px;" onclick="OpenAddAgreementModal()">
+                                        <i class="fa fa-plus"></i> Add Agreement
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Details filter (month-wise or all data) -->
                     <div class="info-box" style="background:#f8f9fa;border-color:#ddd;margin-top:5px;">
                         <div class="month-filter" style="flex-wrap:wrap;">
@@ -299,6 +362,12 @@
                         </button>
                         <button type="button" class="mdc-button mdc-button--outlined btn-action" onclick="OpenWalletLogModal(null)">
                             <span class="fa fa-list"></span> View Wallet Balance Log
+                        </button>
+                        <button type="button" class="mdc-button mdc-button--raised btn-action" onclick="OpenAddAgreementModal()">
+                            <span class="fa fa-plus"></span> Add Agreement
+                        </button>
+                        <button type="button" class="mdc-button mdc-button--outlined btn-action" onclick="OpenAgreementHistory()">
+                            <span class="fa fa-history"></span> Agreement History
                         </button>
                     </div>
                     @if (Model.SupportsPO)
@@ -761,6 +830,120 @@
     </div>
 </div>
 
+<!-- Agreement History Modal -->
+<div class="modal fade" id="agreementHistoryModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agreement History</h5>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="agreementHistoryBody">
+                <div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Agreement Modal -->
+<div class="modal fade" id="addAgreementModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title">Add Agreement</h5><button type="button" class="close" data-bs-dismiss="modal">&times;</button></div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Agreement Type *</label>
+                    <select id="ddlAgreementType" class="form-control">
+                        <option value="1">MSA</option>
+                        <option value="2">SOW</option>
+                        <option value="3">NDA</option>
+                        <option value="4">DPA</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" id="txtAgreementStartDate" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Expiry Date</label>
+                    <input type="date" id="txtAgreementExpireDate" class="form-control" />
+                    <small class="text-muted">A renewal reminder badge appears automatically within 30 days of this date.</small>
+                </div>
+                <div class="form-group">
+                    <label>Agreement Status *</label>
+                    <select id="ddlAgreementStatus" class="form-control">
+                        <option value="1">Active</option>
+                        <option value="2">Terminated</option>
+                    </select>
+                    <small class="text-muted">"Expired" is applied automatically once the expiry date passes.</small>
+                </div>
+                <div class="form-group">
+                    <label>Agreement File (PDF) *</label>
+                    <input type="file" id="txtAgreementFile" class="form-control" accept=".pdf" />
+                    <small class="text-muted">Operations users can only view this file — no download.</small>
+                </div>
+                <div class="form-group">
+                    <label>Remarks</label>
+                    <textarea id="txtAgreementRemarks" class="form-control" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="SubmitAddAgreement()">Save Agreement</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Agreement Modal -->
+<div class="modal fade" id="editAgreementModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title">Edit Agreement</h5><button type="button" class="close" data-bs-dismiss="modal">&times;</button></div>
+            <div class="modal-body">
+                <input type="hidden" id="hidEditAgreementId" />
+                <div class="form-group">
+                    <label>Agreement Type *</label>
+                    <select id="ddlEditAgreementType" class="form-control">
+                        <option value="1">MSA</option>
+                        <option value="2">SOW</option>
+                        <option value="3">NDA</option>
+                        <option value="4">DPA</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" id="txtEditAgreementStartDate" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Expiry Date</label>
+                    <input type="date" id="txtEditAgreementExpireDate" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Agreement Status *</label>
+                    <select id="ddlEditAgreementStatus" class="form-control">
+                        <option value="1">Active</option>
+                        <option value="2">Terminated</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Replace Agreement File (PDF)</label>
+                    <input type="file" id="txtEditAgreementFile" class="form-control" accept=".pdf" />
+                    <small class="text-muted">Leave empty to keep the existing document.</small>
+                </div>
+                <div class="form-group">
+                    <label>Remarks</label>
+                    <textarea id="txtEditAgreementRemarks" class="form-control" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="SubmitEditAgreement()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @if (ViewBag.Message != null)
 {
     <script>
@@ -1070,6 +1253,82 @@
             success: function (r) {
                 if (r.success) swal.fire('Success', r.message, 'success').then(function () { location.reload(); });
                 else swal.fire('Error', r.message, 'error');
+            }
+        });
+    }
+
+    function OpenAgreementHistory() {
+        $('#agreementHistoryBody').html('<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i></div>');
+        $('#agreementHistoryModal').modal('show');
+        $.get('/Wallet/GetAgreementHistory', { clientId: _clientId }, function (html) {
+            $('#agreementHistoryBody').html(html);
+        });
+    }
+
+    function OpenAddAgreementModal() {
+        $('#ddlAgreementType').val('1');
+        $('#txtAgreementStartDate').val('');
+        $('#txtAgreementExpireDate').val('');
+        $('#ddlAgreementStatus').val('1');
+        $('#txtAgreementFile').val('');
+        $('#txtAgreementRemarks').val('');
+        $('#addAgreementModal').modal('show');
+    }
+
+    function SubmitAddAgreement() {
+        var f = $('#txtAgreementFile')[0].files[0];
+        if (!f) { swal.fire('Validation', 'Please select the agreement PDF.', 'warning'); return; }
+        var fd = new FormData();
+        fd.append('clientId', _clientId);
+        fd.append('agreementType', $('#ddlAgreementType').val());
+        fd.append('startDate', $('#txtAgreementStartDate').val() || '');
+        fd.append('expireDate', $('#txtAgreementExpireDate').val() || '');
+        fd.append('status', $('#ddlAgreementStatus').val());
+        fd.append('remarks', $('#txtAgreementRemarks').val());
+        fd.append('agreementFile', f);
+        $.ajax({
+            url: '/Wallet/AddClientAgreement', type: 'POST', data: fd, processData: false, contentType: false,
+            success: function (r) {
+                if (r.success) {
+                    $('#addAgreementModal').modal('hide');
+                    swal.fire('Success', r.message, 'success').then(function () { OpenAgreementHistory(); });
+                } else swal.fire('Error', r.message, 'error');
+            }
+        });
+    }
+
+    function OpenEditAgreementModal(el) {
+        var $el = $(el);
+        $('#hidEditAgreementId').val($el.data('agreementid'));
+        $('#ddlEditAgreementType').val($el.data('type'));
+        $('#txtEditAgreementStartDate').val($el.data('startdate') || '');
+        $('#txtEditAgreementExpireDate').val($el.data('expiredate') || '');
+        $('#ddlEditAgreementStatus').val($el.data('status'));
+        $('#txtEditAgreementFile').val('');
+        $('#txtEditAgreementRemarks').val($el.data('remarks') || '');
+        $('#editAgreementModal').modal('show');
+    }
+
+    function SubmitEditAgreement() {
+        var agreementId = parseInt($('#hidEditAgreementId').val());
+        if (!agreementId) { swal.fire('Validation', 'Invalid agreement.', 'warning'); return; }
+        var fd = new FormData();
+        fd.append('agreementId', agreementId);
+        fd.append('clientId', _clientId);
+        fd.append('agreementType', $('#ddlEditAgreementType').val());
+        fd.append('startDate', $('#txtEditAgreementStartDate').val() || '');
+        fd.append('expireDate', $('#txtEditAgreementExpireDate').val() || '');
+        fd.append('status', $('#ddlEditAgreementStatus').val());
+        fd.append('remarks', $('#txtEditAgreementRemarks').val());
+        var f = $('#txtEditAgreementFile')[0].files[0];
+        if (f) fd.append('agreementFile', f);
+        $.ajax({
+            url: '/Wallet/UpdateClientAgreement', type: 'POST', data: fd, processData: false, contentType: false,
+            success: function (r) {
+                if (r.success) {
+                    $('#editAgreementModal').modal('hide');
+                    swal.fire('Success', r.message, 'success').then(function () { OpenAgreementHistory(); });
+                } else swal.fire('Error', r.message, 'error');
             }
         });
     }

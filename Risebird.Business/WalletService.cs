@@ -514,6 +514,67 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<int> SaveClientAgreement(int clientId, int agreementType, DateTime? startDate, DateTime? expireDate, int status, string agreementFileUrl, string remarks, string createdBy)
+        {
+            try
+            {
+                return await _walletRepository.InsertClientAgreement(clientId, agreementType, startDate, expireDate, status, agreementFileUrl, remarks, createdBy);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        public async Task<bool> UpdateClientAgreement(int agreementId, int clientId, int agreementType, DateTime? startDate, DateTime? expireDate, int status, string remarks, string modifiedBy, string agreementFileUrl = null, bool updateDocument = false)
+        {
+            try
+            {
+                return await _walletRepository.UpdateClientAgreement(agreementId, clientId, agreementType, startDate, expireDate, status, remarks, modifiedBy, agreementFileUrl, updateDocument);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public async Task<List<ClientAgreementVM>> GetClientAgreementList(int clientId)
+        {
+            try
+            {
+                var list = await _walletRepository.GetClientAgreementList(clientId);
+                foreach (var agreement in list) MapAgreementType(agreement);
+                return list;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<ClientAgreementVM>();
+            }
+        }
+
+        public async Task<List<ClientAgreementVM>> GetAllClientsLatestAgreement()
+        {
+            try
+            {
+                var list = await _walletRepository.GetAllClientsLatestAgreement();
+                foreach (var agreement in list) MapAgreementType(agreement);
+                return list;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<ClientAgreementVM>();
+            }
+        }
+
+        private static void MapAgreementType(ClientAgreementVM agreement)
+        {
+            agreement.AgreementTypeDesc = ((AgreementTypeEnum)agreement.AgreementType).ToString();
+        }
+
         private static void MapPOStatus(ClientPOVM po)
         {
             var mfi = new System.Globalization.DateTimeFormatInfo();
@@ -624,6 +685,14 @@ namespace Risebird.Business
                 foreach (var po in dashboard.PORecords)
                 {
                     MapPOStatus(po);
+                }
+
+                var agreements = await _walletRepository.GetClientAgreementList(clientId);
+                var latestAgreement = agreements.OrderByDescending(a => a.CreatedOn).ThenByDescending(a => a.id).FirstOrDefault();
+                if (latestAgreement != null)
+                {
+                    MapAgreementType(latestAgreement);
+                    dashboard.LatestAgreement = latestAgreement;
                 }
 
                 return dashboard;
