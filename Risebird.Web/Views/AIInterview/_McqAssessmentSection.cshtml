@@ -335,8 +335,9 @@
 
             @if (mcq.IsFromCache)
             {
-                @* Says plainly that this is the last known result rather than a live read,
-                   so nobody makes a hiring call on a stale figure believing it is current. *@
+                @* Says plainly that this is the last known result rather than a live read, and why,
+                   so nobody makes a hiring call on a stale figure believing it is current - and
+                   nobody goes hunting an outage when the live system simply has no result yet. *@
                 <div class="rb-mcq-stale">
                     <i class="fa fa-info-circle"></i>
                     Showing the last saved result
@@ -344,9 +345,25 @@
                     {
                         <text>from @mcq.CachedOn.Value.ToString("dd MMM yyyy, HH:mm")</text>
                     }
-                    &mdash; the assessment system could not be reached just now.
+                    &mdash;
+                    @switch (mcq.CacheReason)
+                    {
+                        case Risebird.Entities.ViewModel.McqCacheReason.Unreachable:
+                            <text>the assessment system could not be reached just now.</text>
+                            break;
+                        case Risebird.Entities.ViewModel.McqCacheReason.NoLiveResult:
+                            <text>the assessment system has no current result for this session.</text>
+                            break;
+                        case Risebird.Entities.ViewModel.McqCacheReason.NotConfigured:
+                            <text>live lookup is not configured on this environment.</text>
+                            break;
+                        default:
+                            <text>a live result was not available.</text>
+                            break;
+                    }
                 </div>
             }
+
 
             @if (!mcq.IsCompleted)
             {
@@ -393,7 +410,7 @@
                 // A verdict only means something against a paper that was actually sat. Banding a
                 // candidate who never opened the section, or whose result could not be read, as
                 // "well below the passing score" would be reporting a fact that was never measured.
-                var isScoreMeaningful = mcq.TotalQuestions > 0;
+                var isScoreMeaningful = mcq.IsCompleted && mcq.TotalQuestions > 0;
 
                 var verdictClass = !isScoreMeaningful ? "is-borderline"
                     : scorePct >= 60 ? "is-pass"
@@ -419,12 +436,27 @@
                     else
                     {
                         <div class="rb-mcq-tile-value" style="font-size:18px;color:#6b7280;">
-                            @(mcqIsSystemFailure ? "Unavailable" : "Not attempted")
+                            @(mcqIsSystemFailure ? "Unavailable" : attemptedTotal > 0 ? "Not scored" : "Not attempted")
                         </div>
                         <div class="rb-mcq-tile-sub">
-                            @(mcqIsSystemFailure
-                                ? "The assessment could not be delivered to this candidate"
-                                : "No answers were recorded for this section")
+                            @*
+                                An unsubmitted attempt still has the answers the candidate gave -
+                                they are written per question as the section runs. Saying "no
+                                answers were recorded" over real work would understate the
+                                candidate in the one document a hiring call is made from.
+                            *@
+                            @if (mcqIsSystemFailure)
+                            {
+                                <text>The assessment could not be delivered to this candidate</text>
+                            }
+                            else if (attemptedTotal > 0)
+                            {
+                                <text>@attemptedTotal of @mcq.TotalQuestions answered before the section ended</text>
+                            }
+                            else
+                            {
+                                <text>No answers were recorded for this section</text>
+                            }
                         </div>
                     }
                     <span class="rb-mcq-verdict @verdictClass">@verdictText</span>
@@ -447,7 +479,7 @@
                         }
                         else
                         {
-                            <text style="font-size:18px;color:#6b7280;">Not recorded</text>
+                            <span style="font-size:18px;color:#6b7280;">Not recorded</span>
                         }
                     </div>
                     <div class="rb-mcq-tile-sub">
@@ -481,16 +513,16 @@
             {
                 <div class="rb-mcq-bars">
                     <h3 style="font-size:14px;font-weight:700;color:#111827;margin:0 0 10px;">Section-wise performance</h3>
-                    @foreach (var section in mcqSections)
+                    @foreach (var sec in mcqSections)
                     {
-                        var pct = (double)section.ScorePercent;
+                        var pct = (double)sec.ScorePercent;
                         var fillClass = pct >= 60 ? "" : (pct >= 40 ? "is-mid" : "is-weak");
                         <div class="rb-mcq-bar-row">
-                            <div class="rb-mcq-bar-label" title="@section.SectionDescription">@section.SectionTitle</div>
+                            <div class="rb-mcq-bar-label" title="@sec.SectionDescription">@sec.SectionTitle</div>
                             <div class="rb-mcq-bar-track">
                                 <div class="rb-mcq-bar-fill @fillClass" style="width:@pct.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture)%;"></div>
                             </div>
-                            <div class="rb-mcq-bar-value">@section.ScorePercent.ToString("0.#")%</div>
+                            <div class="rb-mcq-bar-value">@sec.ScorePercent.ToString("0.#")%</div>
                         </div>
                     }
                 </div>
@@ -509,24 +541,24 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var section in mcqSections)
+                            @foreach (var sec in mcqSections)
                             {
                                 <tr>
                                     <td>
-                                        <strong>@section.SectionTitle</strong>
-                                        @if (!string.IsNullOrWhiteSpace(section.SectionDescription))
+                                        <strong>@sec.SectionTitle</strong>
+                                        @if (!string.IsNullOrWhiteSpace(sec.SectionDescription))
                                         {
-                                            <div style="font-size:11px;color:#6b7280;margin-top:2px;">@section.SectionDescription</div>
+                                            <div style="font-size:11px;color:#6b7280;margin-top:2px;">@sec.SectionDescription</div>
                                         }
                                     </td>
-                                    <td><strong>@section.ScorePercent.ToString("0.#")</strong></td>
-                                    <td>@section.Correct</td>
-                                    <td>@section.Attempted</td>
-                                    <td>@section.QuestionCount</td>
-                                    <td>@((section.TimeSpentSeconds / 60.0).ToString("0.#"))</td>
+                                    <td><strong>@sec.ScorePercent.ToString("0.#")</strong></td>
+                                    <td>@sec.Correct</td>
+                                    <td>@sec.Attempted</td>
+                                    <td>@sec.QuestionCount</td>
+                                    <td>@((sec.TimeSpentSeconds / 60.0).ToString("0.#"))</td>
                                     <td>
-                                        <span class="rb-mcq-pill @(section.ScorePercent >= 60 ? "is-pass" : "is-fail")">
-                                            @(section.ScorePercent >= 60 ? "Pass" : "Below par")
+                                        <span class="rb-mcq-pill @(sec.ScorePercent >= 60 ? "is-pass" : "is-fail")">
+                                            @(sec.ScorePercent >= 60 ? "Pass" : "Below par")
                                         </span>
                                     </td>
                                 </tr>
