@@ -571,15 +571,24 @@
         margin: 0;
     }
 
-    #pdfdownload .rb-report-section { margin-bottom: 18px; }
+    /* The partial carries no gutter of its own — on screen it inherits one from the
+       page container, which this view does not have, so the whole section ran to the
+       paper edge. 28px matches .sec-wrap, the gutter every other section of this PDF
+       uses, so the Assessment Section lines up with the rest of the document. */
+    #pdfdownload .rb-report-section {
+        margin-bottom: 18px;
+        padding: 0 28px;
+    }
+
     #pdfdownload .rb-section-header { margin-bottom: 10px; }
 
     #pdfdownload .rb-section-header h2 {
-        /* Deliberately px, and deliberately matched to .hdr-title (19px) — this is the
-           PDF's other top-level heading, and the two should read as one document. */
-        font-size: 19px;
+        /* Deliberately px, and deliberately matched to .sec-head (16px) — that is this
+           PDF's own section heading, and the two should read as one document. */
+        font-size: 16px;
         font-weight: 700;
-        color: #0b1f2e;
+        color: #0b0b18;
+        letter-spacing: -.2px;
         line-height: 1.3;
         margin: 0;
         /* Not flex+gap: html2canvas renders flex gaps inconsistently, and the icon
@@ -590,6 +599,119 @@
     #pdfdownload .rb-section-header h2 i {
         color: #4eda92;
         margin-right: 8px;
+    }
+
+    /* ── Summary tiles: one row ──────────────────────────────────────
+       The partial uses repeat(auto-fit, minmax(190px, 1fr)). Four tiles at 190px plus
+       three 14px gaps needs 802px, and the gutter above leaves 738px, so the fourth
+       tile wrapped onto a line of its own. The count is fixed at four and the tiles
+       are trimmed to suit: (738 - 30) / 4 = 177px each. */
+    #pdfdownload .rb-mcq-report-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+
+    #pdfdownload .rb-mcq-tile {
+        padding: 11px 12px;
+        border-radius: 8px;
+    }
+
+    #pdfdownload .rb-mcq-tile-label {
+        font-size: 9px;
+        letter-spacing: .4px;
+        margin-bottom: 5px;
+    }
+
+    /* !important is needed only here: three of the four tile values carry an inline
+       font-size from the partial (15px on the "/ 24" and "min" spans, 18px on the
+       Integrity Signals value), and an inline style cannot be beaten any other way. */
+    #pdfdownload .rb-mcq-tile-value {
+        font-size: 19px !important;
+        line-height: 1.15;
+    }
+
+    #pdfdownload .rb-mcq-tile-value span {
+        font-size: 11px !important;
+    }
+
+    #pdfdownload .rb-mcq-tile-sub {
+        font-size: 9.5px;
+        line-height: 1.35;
+        margin-top: 4px;
+    }
+
+    #pdfdownload .rb-mcq-verdict {
+        font-size: 9.5px;
+        padding: 3px 9px;
+        margin-top: 6px;
+    }
+
+    /* ── Section headings: title and note on separate lines ──────────
+       .rb-mcq-section-head is a flex row with space-between. The note beside
+       "Detailed submission report" is a full sentence, and as a flex item with the
+       default min-width:auto it refused to shrink and ran off the edge. Stacking the
+       two removes the constraint entirely, and avoids flex in the renderer as well. */
+    #pdfdownload .rb-mcq-section-head {
+        display: block;
+        padding-bottom: 6px;
+        margin-bottom: 12px;
+    }
+
+    #pdfdownload .rb-mcq-section-head .rb-mcq-section-title {
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    #pdfdownload .rb-mcq-section-note {
+        display: block;
+        font-size: 10px;
+        line-height: 1.4;
+    }
+
+    /* ── Group band: one thin line ───────────────────────────────────
+       The partial builds this from two stacked divs — a title box with the bottom
+       border removed and a meta box with the top border removed — which join into a
+       panel about 50px tall. That is a lot of height to spend on "Questions / 20 of 20
+       attempted", and a block that tall lands on a page boundary often enough to be
+       sliced.
+
+       Collapsed here to a single line: the title keeps a small pill, the meta becomes
+       plain text beside it. Both are inline-block on the SAME line, so they share a top
+       and bottom edge — which is what keeps html2pdf from pushing one to the next page
+       and leaving the other behind. Both are in the pagebreak.avoid list in getPDF(). */
+    #pdfdownload .rb-mcq-qsection-title {
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 10px;
+        letter-spacing: .4px;
+        padding: 3px 9px;
+        margin: 16px 8px 8px 0;
+        border: 1px solid #e5e7eb;
+        border-bottom: 1px solid #e5e7eb;
+        border-radius: 5px;
+        background: #f5f7fb;
+    }
+
+    #pdfdownload .rb-mcq-qsection-meta {
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 9.5px;
+        padding: 0;
+        margin: 16px 0 8px;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    /* ── Question number ─────────────────────────────────────────────
+       Smaller than the 12px the partial sets: at 14px question text the badge read
+       heavier than the question it labels. */
+    #pdfdownload .rb-mcq-q-num {
+        font-size: 10px;
+        min-width: 20px;
+        padding: 2px 6px;
+        border-radius: 5px;
     }
 
     /* ── Nothing may leave the page edge ─────────────────────────────── */
@@ -639,6 +761,8 @@
     #pdfdownload .rb-mcq-tile,
     #pdfdownload .rb-mcq-opt,
     #pdfdownload .rb-mcq-section-head,
+    #pdfdownload .rb-mcq-qsection-title,
+    #pdfdownload .rb-mcq-qsection-meta,
     #pdfdownload .rb-mcq-table tr {
         page-break-inside: avoid;
         break-inside: avoid;
@@ -1220,7 +1344,8 @@
                     avoid: [
                         '.qa-card', '.ql-row', '.vbox-row',
                         '.rb-mcq-q', '.rb-mcq-tile', '.rb-mcq-opt',
-                        '.rb-mcq-section-head', '.rb-mcq-table tr'
+                        '.rb-mcq-section-head', '.rb-mcq-table tr',
+                        '.rb-mcq-qsection-title', '.rb-mcq-qsection-meta'
                     ]
                 }
             })
