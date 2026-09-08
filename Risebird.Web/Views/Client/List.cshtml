@@ -1,7 +1,12 @@
 ﻿@model IEnumerable<Risebird.Entities.Data.Client>
 @using Newtonsoft.Json;
 @using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
 @inject IHttpContextAccessor HttpContextAccessor
+@{
+    var latestAgreements = ViewBag.LatestAgreements as Dictionary<int, ClientAgreementVM>
+        ?? new Dictionary<int, ClientAgreementVM>();
+}
 @{
     ViewData["Title"] = "Client";
     ViewBag.PageHeader = "Client";
@@ -56,6 +61,7 @@
                                         <th>Logo</th>
                                         <th>URL</th>
                                         <th>Company Video(GIF)</th>
+                                        <th>Agreement</th>
 
                                         <th class="disabled-sorting text-right">Actions</th>
                                         <th hidden></th>
@@ -75,6 +81,7 @@
                                         <th>Logo</th>
                                         <th>URL</th>
                                         <th>Company Video(GIF)</th>
+                                        <th>Agreement</th>
 
                                         <th class="disabled-sorting text-right">Actions</th>
                                         <th hidden></th>
@@ -186,6 +193,33 @@
                                             {
                                                 <td>No Video(GIF)</td>
                                             }
+
+                                            <td>
+                                                @{ latestAgreements.TryGetValue(item.id, out var latestAgr); }
+                                                @if (latestAgr != null)
+                                                {
+                                                    <span>@latestAgr.AgreementTypeDesc</span>
+                                                    <span class="badge @latestAgr.EffectiveStatusCss" style="font-size:10px;margin-left:4px;">@latestAgr.EffectiveStatusDesc</span>
+                                                    @if (latestAgr.DaysRemaining.HasValue)
+                                                    {
+                                                        <div style="font-size:11px;color:#777;">
+                                                            @(latestAgr.IsExpired
+                                                                ? Math.Abs(latestAgr.DaysRemaining.Value) + " day(s) overdue"
+                                                                : latestAgr.DaysRemaining.Value + " day(s) remaining")
+                                                        </div>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(latestAgr.AgreementFileUrl) && (ViewBag.profile == "Admin" || ViewBag.profile == "Finance" || ViewBag.profile == "Operations"))
+                                                    {
+                                                        <a href="@Url.Action("ViewAgreementFile", "Wallet", new { agreementId = latestAgr.id, clientId = item.id, viewOnly = true })" target="_blank" style="font-size:11px;">
+                                                            <i class="fa fa-eye"></i> View
+                                                        </a>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span style="color:#aaa;">—</span>
+                                                }
+                                            </td>
 
                                             <td class="text-right" style="padding-right:30px;">
 

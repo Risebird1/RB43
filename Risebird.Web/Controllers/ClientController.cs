@@ -37,8 +37,9 @@ namespace Risebird.Web.Controllers
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IIRFRepository _irfRepository;
         private readonly ISASUrlHelper _sasUrlHelper;
+        private readonly IWalletService _walletService;
 
-        public ClientController(IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IUserRepository userRepository, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IMeetingService meetingService, IIRFService irfService, IUserService userService, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository, ISASUrlHelper sasUrlHelper)
+        public ClientController(IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IUserRepository userRepository, IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper, IMeetingService meetingService, IIRFService irfService, IUserService userService, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository, ISASUrlHelper sasUrlHelper, IWalletService walletService)
         {
             _clientService = clientService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -52,6 +53,7 @@ namespace Risebird.Web.Controllers
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _irfRepository = irfRepository;
             _sasUrlHelper = sasUrlHelper;
+            _walletService = walletService;
         }
 
         [HttpGet]
@@ -73,6 +75,10 @@ namespace Risebird.Web.Controllers
                     var model = await _clientService.GetClients(emailid, profileName);
                     ViewBag.LoggedEmail = emailid.ToLower();
                     ViewBag.profile = profileName;
+
+                    var latestAgreements = await _walletService.GetAllClientsLatestAgreement();
+                    ViewBag.LatestAgreements = latestAgreements.ToDictionary(a => a.ClientId, a => a);
+
                     return View(model);
                 }
                 else

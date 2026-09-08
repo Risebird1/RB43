@@ -232,6 +232,96 @@ namespace Risebird.Repository
             return false;
         }
 
+        public async Task<int> InsertClientAgreement(int clientId, int agreementType, DateTime? startDate, DateTime? expireDate, int status, string agreementFileUrl, string remarks, string createdBy)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ClientId", clientId);
+                    parameters.Add("@AgreementType", agreementType);
+                    parameters.Add("@StartDate", startDate);
+                    parameters.Add("@ExpireDate", expireDate);
+                    parameters.Add("@Status", status);
+                    parameters.Add("@AgreementFileUrl", agreementFileUrl);
+                    parameters.Add("@Remarks", remarks);
+                    parameters.Add("@CreatedBy", createdBy);
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_InsertClientAgreement", parameters, commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return 0;
+        }
+
+        public async Task<bool> UpdateClientAgreement(int agreementId, int clientId, int agreementType, DateTime? startDate, DateTime? expireDate, int status, string remarks, string modifiedBy, string agreementFileUrl = null, bool updateDocument = false)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@AgreementId", agreementId);
+                    parameters.Add("@ClientId", clientId);
+                    parameters.Add("@AgreementType", agreementType);
+                    parameters.Add("@StartDate", startDate);
+                    parameters.Add("@ExpireDate", expireDate);
+                    parameters.Add("@Status", status);
+                    parameters.Add("@Remarks", remarks);
+                    parameters.Add("@ModifiedBy", modifiedBy);
+                    parameters.Add("@AgreementFileUrl", agreementFileUrl);
+                    parameters.Add("@UpdateDocument", updateDocument);
+                    var result = await SqlMapper.QueryAsync<bool>(con, "usp_UpdateClientAgreement", parameters, commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<List<ClientAgreementVM>> GetClientAgreementList(int clientId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ClientId", clientId);
+                    var result = await SqlMapper.QueryAsync<ClientAgreementVM>(con, "usp_GetClientAgreementList", parameters, commandType: CommandType.StoredProcedure);
+                    return result.ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return new List<ClientAgreementVM>();
+        }
+
+        public async Task<List<ClientAgreementVM>> GetAllClientsLatestAgreement()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<ClientAgreementVM>(con, "usp_GetAllClientsLatestAgreement", commandType: CommandType.StoredProcedure);
+                    return result.ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return new List<ClientAgreementVM>();
+        }
+
         public async Task<int> BulkUpdateClientPOExpireDate(int clientId, IEnumerable<int> poIds, DateTime expireDate)
         {
             var ids = poIds?.Where(id => id > 0).Distinct().ToList();

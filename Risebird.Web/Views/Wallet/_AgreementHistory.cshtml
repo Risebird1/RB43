@@ -1,0 +1,118 @@
+@model List<Risebird.Entities.ViewModel.ClientAgreementVM>
+@{
+    var canDownload = ViewBag.CanDownload is bool cd && cd;
+}
+
+<style>
+    .agr-hist-table thead th {
+        background: #e8eaf6 !important;
+        color: #3949ab !important;
+        font-size: 12px;
+        font-family: Roboto, sans-serif;
+        font-weight: 600;
+        white-space: nowrap;
+        padding: 8px 10px !important;
+        border: 1px solid #c5cae9 !important;
+        vertical-align: middle !important;
+    }
+    .agr-hist-table tbody td {
+        font-size: 12px;
+        font-family: Roboto, sans-serif;
+        color: #444;
+        vertical-align: middle !important;
+        padding: 7px 10px !important;
+    }
+    .agr-hist-table tbody tr.agr-expired  { background: #ffebee; }
+    .agr-hist-table tbody tr.agr-expiring { background: #fff8e1; }
+    .agr-pdf-link {
+        font-size: 12px;
+        color: #1976d2;
+        text-decoration: none;
+        white-space: nowrap;
+        margin-right: 8px;
+    }
+    .agr-pdf-link:hover { text-decoration: underline; }
+</style>
+
+@if (Model != null && Model.Any())
+{
+    var expiringCount = Model.Count(a => a.IsExpiringSoon);
+    if (expiringCount > 0)
+    {
+        <div class="info-box" style="background:#fff3e0;border-left-color:#e65100;">
+            <strong>@expiringCount agreement@(expiringCount == 1 ? "" : "s")</strong> expiring within the next 30 days — renewal recommended.
+        </div>
+    }
+
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered agr-hist-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Start Date</th>
+                    <th>Expiry Date</th>
+                    <th class="text-right">Days Remaining</th>
+                    <th>Remarks</th>
+                    <th>Added By</th>
+                    <th>Added On</th>
+                    <th>Document</th>
+                    @if (canDownload) { <th>Actions</th> }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model)
+                {
+                    var rowCss = a.IsExpired ? "agr-expired" : a.IsExpiringSoon ? "agr-expiring" : "";
+                    <tr class="@rowCss">
+                        <td>@a.AgreementTypeDesc</td>
+                        <td><span class="badge @a.EffectiveStatusCss">@a.EffectiveStatusDesc</span></td>
+                        <td style="white-space:nowrap;">@(a.StartDate?.ToString("dd MMM yyyy") ?? "—")</td>
+                        <td style="white-space:nowrap;">@(a.ExpireDate?.ToString("dd MMM yyyy") ?? "—")</td>
+                        <td class="text-right">@(a.DaysRemaining.HasValue ? a.DaysRemaining.Value.ToString() : "—")</td>
+                        <td>@(string.IsNullOrEmpty(a.Remarks) ? "—" : a.Remarks)</td>
+                        <td style="white-space:nowrap;">@(a.CreatedBy ?? "—")</td>
+                        <td style="white-space:nowrap;">@(a.CreatedOn?.ToString("dd MMM yyyy") ?? "—")</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(a.AgreementFileUrl))
+                            {
+                                <a href="@Url.Action("ViewAgreementFile", "Wallet", new { agreementId = a.id, clientId = a.ClientId })" target="_blank" class="agr-pdf-link">
+                                    <i class="fa fa-eye" style="margin-right:3px;"></i>View
+                                </a>
+                                @if (canDownload)
+                                {
+                                    <a href="@a.AgreementFileUrl" target="_blank" class="agr-pdf-link">
+                                        <i class="fa fa-download" style="margin-right:3px;"></i>Download
+                                    </a>
+                                }
+                            }
+                            else { <span style="color:#aaa;">—</span> }
+                        </td>
+                        @if (canDownload)
+                        {
+                            <td>
+                                <a href="javascript:void(0)"
+                                   onclick="OpenEditAgreementModal(this)"
+                                   class="btn btn-sm btn-outline-secondary"
+                                   data-agreementid="@a.id"
+                                   data-clientid="@a.ClientId"
+                                   data-type="@a.AgreementType"
+                                   data-status="@a.Status"
+                                   data-startdate="@(a.StartDate?.ToString("yyyy-MM-dd") ?? "")"
+                                   data-expiredate="@(a.ExpireDate?.ToString("yyyy-MM-dd") ?? "")"
+                                   data-remarks="@(a.Remarks ?? "")">Edit</a>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div style="text-align:center;padding:30px 20px;color:#999;font-size:13px;font-family:Roboto,sans-serif;">
+        <i class="fa fa-inbox fa-2x" style="display:block;margin-bottom:8px;"></i>
+        No agreements found.
+    </div>
+}
