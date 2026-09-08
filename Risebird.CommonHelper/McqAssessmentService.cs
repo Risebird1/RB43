@@ -143,11 +143,33 @@ namespace Risebird.CommonHelper
                 TimeSpan.FromSeconds(45),
                 treatNotFoundAsEmpty: false);
 
+
+
+            McqChannelLinkResult deSerializedBody;
+
+            try
+            {
+                deSerializedBody = JsonConvert.DeserializeObject<McqChannelLinkResult>(body);
+            }
+            catch (Exception ex)
+            {
+                await LogAsync(ex, $"Could not read the MCQ channel-link response for skill channel {request.SkillChannelId}.");
+                return null;
+            }
+            //call test creation api
+
+            var testBody = await SendAsync(
+                HttpMethod.Post,
+                $"{BaseUrl}/api/v1/skill-channels/{deSerializedBody.IrfId}/tests",
+                new { RequestedBy = request.RequestedBy, DurationMinutes = request.DurationMinutes },
+                TimeSpan.FromSeconds(45),
+                treatNotFoundAsEmpty: false);
+
             if (body == null) return null;
 
             try
             {
-                return JsonConvert.DeserializeObject<McqChannelLinkResult>(body);
+                return deSerializedBody;
             }
             catch (Exception ex)
             {
