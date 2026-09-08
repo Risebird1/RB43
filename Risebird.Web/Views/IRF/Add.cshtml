@@ -1419,8 +1419,7 @@
                                                                         <label for="HasMcqAssessmentSection" class="form-label">MCQ Assessment Section</label>
                                                                     </div>
                                                                     <small class="text-muted">
-                                                                        Adds a sectioned written assessment, served from the MCQ system, inside this channel's AI interviews.
-                                                                        After creating the channel, add one sample question with <strong>Is MCQ Assessment Section</strong> ticked to place it in the question order.
+                                                                        Adds a sectioned written assessment, served from the MCQ system, after this channel's spoken interview questions. Nothing else to set up &mdash; no sample question is needed.
                                                                     </small>
                                                                 </div>
 
@@ -1430,8 +1429,8 @@
                                                                     </div>
                                                                     @Html.EditorFor(model => model.McqAssessmentSections, new { htmlAttributes = new { @class = "form-control text-box single-line", @placeholder = "domain-knowledge,data-interpretation,logical-reasoning", @id = "McqAssessmentSections" } })
                                                                     <small class="text-muted">
-                                                                        Comma-separated section keys, in the order they should be served. Leave blank to use the MCQ system's default set.
-                                                                        Available: domain-knowledge, data-interpretation, logical-reasoning, quantitative-reasoning, verbal-reasoning, critical-reasoning, situational-judgement.
+                                                                        Comma-separated section keys, in the order they should be served. Leave blank for the default: <strong>domain-knowledge, data-interpretation, logical-reasoning</strong>.
+                                                                        <strong>domain-knowledge</strong> is expanded into one section per primary skill above, so each technology is tested and reported separately &mdash; drop it and the paper tests no technology at all. Available: domain-knowledge, data-interpretation, logical-reasoning, quantitative-reasoning, verbal-reasoning, critical-reasoning, situational-judgement.
                                                                     </small>
                                                                 </div>
 
