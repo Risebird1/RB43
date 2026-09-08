@@ -91,6 +91,14 @@ namespace Risebird.Entities.ViewModel
         public string IRFId { get; set; }
         public string ChannelOwner { get; set; }
         public string SchedulerUniqueid { get; set; }
+
+        /// <summary>
+        /// usp_GetSkillChannelCompletionDetails selects im.ZoomMeetingId, but this model had no
+        /// property for it, so Dapper dropped the column and the "Meeting Details" button on
+        /// SkillChannelCompletionDetails.cshtml passed an empty id. varchar(200) on
+        /// InterviewMeetings, and string in every other view model that carries it.
+        /// </summary>
+        public string ZoomMeetingId { get; set; }
         public DateTime LastInterviewDate { get; set; }
         public int LastMeetingStatus { get; set; }
         public string LastMeetingStatusStatusDesc { get; set; }
