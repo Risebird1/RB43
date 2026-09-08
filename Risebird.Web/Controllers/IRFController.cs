@@ -2249,9 +2249,9 @@ namespace Risebird.Web.Controllers
                 var result = await _mcqAssessmentService.EnsureChannelLinkAsync(new McqEnsureChannelLinkRequest
                 {
                     SkillChannelId = model.IRFId,
-                    RequestedBy = _mcqAssessmentService.ChannelOwnerEmail,
+                    RequestedBy = (await _userService.GetUser(model.BillingOwner)).EmailId,
                     Title = model.JDTiltle,
-                    PrimarySkills = ResolveMcqPrimarySkills(model),
+                    PrimarySkills =  model.McqAssessmentSections ?? model.JDTiltle,
                     ProfileType = model.Heuristicsscore > 0 ? model.Heuristicsscore.ToString() : null,
                     SeniorityLevel = model.JobLevel > 0 ? model.JobLevel.ToString() : null,
                     // No job function on the portal channel, and the MCQ side treats it as optional.

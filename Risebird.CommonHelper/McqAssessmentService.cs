@@ -162,7 +162,7 @@ namespace Risebird.CommonHelper
                 HttpMethod.Post,
                 $"{BaseUrl}/api/v1/skill-channels/{deSerializedBody.IrfId}/tests",
                 new { RequestedBy = request.RequestedBy, DurationMinutes = 20 },
-                TimeSpan.FromSeconds(45),
+                TimeSpan.FromSeconds(300),
                 treatNotFoundAsEmpty: false);
 
             if (body == null) return null;
