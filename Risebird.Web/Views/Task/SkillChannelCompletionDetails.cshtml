@@ -154,7 +154,7 @@
                                 }
                                 @if (ViewBag.AccuracyType == "MissedCandidate")
                                 {
-                                    @if (item.TotalCount >= 2 && item.IsMeetingNotificationSent == 1 && item.Joinedon != null && item.PerformedOn != null && item.IsRescheduleNotificationSent == 0)
+                                    @if (item.TotalCount >= 2 && item.IsMeetingNotificationSent && item.Joinedon != null && item.PerformedOn != null && !item.IsRescheduleNotificationSent)
                                     {
                                         if (item.EIAssigned)
                                         {
@@ -173,7 +173,7 @@
                                             <td style="color:forestgreen; background: #d0edd0;padding: 0px 5px 2px 5px;font-size:13px;">Resolved</td>
                                         }
                                     }
-                                    else if ((item.TotalCount == 1 && item.IsMeetingNotificationSent == 1) || (item.TotalCount >= 2 && item.IsMeetingNotificationSent == 1 && item.IsRescheduleNotificationSent == 1) || (item.IsMeetingNotificationSent == 1 && (item.Joinedon == null || item.PerformedOn == null)))
+                                    else if ((item.TotalCount == 1 && item.IsMeetingNotificationSent) || (item.TotalCount >= 2 && item.IsMeetingNotificationSent && item.IsRescheduleNotificationSent) || (item.IsMeetingNotificationSent && (item.Joinedon == null || item.PerformedOn == null)))
                                     {
                                         if (item.Joinedon != null && item.PerformedOn == null)
                                         {
@@ -188,7 +188,7 @@
                                             <td><span style="color: #fff;background:#e57373cc;padding: 0px 5px 2px 5px;font-size:12px;">Not Resolved</span></td>
                                         }
                                     }
-                                    else if (item.PerformedOn != null && item.IsRescheduleNotificationSent == 1)
+                                    else if (item.PerformedOn != null && item.IsRescheduleNotificationSent)
                                     {
                                         <td>Not Resolved</td>
                                     }

@@ -161,7 +161,7 @@ namespace Risebird.CommonHelper
             var testBody = await SendAsync(
                 HttpMethod.Post,
                 $"{BaseUrl}/api/v1/skill-channels/{deSerializedBody.IrfId}/tests",
-                new { RequestedBy = request.RequestedBy, DurationMinutes = request.DurationMinutes },
+                new { RequestedBy = request.RequestedBy, DurationMinutes = 20 },
                 TimeSpan.FromSeconds(45),
                 treatNotFoundAsEmpty: false);
 

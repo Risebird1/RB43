@@ -43,13 +43,13 @@
                                     {
                                         <tr>
                                             <td>
-                                                <small>@call.VapiCallId?.Substring(0, Math.Min(8, call.VapiCallId.Length ?? 0))</small>
+                                                <small>@call.VapiCallId?.Substring(0, Math.Min(8, call.VapiCallId.Length))</small>
                                             </td>
                                             <td>
-                                                <strong>@call.CandidateName</strong><br />
-                                                <small>@call.CandidateEmail</small>
+                                                <strong>@call.RecipientName</strong><br />
+                                                <small>@call.RecipientEmail</small>
                                             </td>
-                                            <td>@call.CandidatePhone</td>
+                                            <td>@call.RecipientPhone</td>
                                             <td>
                                                 <span class="badge badge-@(GetStatusBadgeClass(call.CallStatus))">
                                                     @call.CallStatus
