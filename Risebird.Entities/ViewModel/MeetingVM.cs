@@ -428,6 +428,13 @@ namespace Risebird.Entities.ViewModel
         public int AIResumeScreeningScore { get; set; }
 
         /// <summary>
+        /// The resume screener's full result, as written by AIScreenerController. Raw JSON:
+        /// it has no schema of its own, so it is parsed at the point of use inside a
+        /// try/catch rather than being bound here.
+        /// </summary>
+        public string AIScreeningResultJsonV2 { get; set; }
+
+        /// <summary>
         /// Skill-channel opt-in for the MCQ assessment section served from screen.risebird.io.
         /// The channel being mirrored on the MCQ side is not on its own consent to add a written
         /// test to the interview, so this is an explicit flag - see IRF.HasMcqAssessmentSection.

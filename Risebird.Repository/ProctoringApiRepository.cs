@@ -24,6 +24,17 @@ namespace Risebird.Repository
             _connectionString = configuration["ConnectionString:DBConnectionString"];
         }
 
+        public async Task<ProctoringCandidateInterviewValidation> ValidateCandidateInterviewAsync(int interviewId, string candidateEmail)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@InterviewId", interviewId);
+            parameters.Add("@CandidateEmail", candidateEmail);
+
+            using var con = new SqlConnection(_connectionString);
+            return await con.QuerySingleAsync<ProctoringCandidateInterviewValidation>(
+                "usp_ValidateProctoringCandidateInterview", parameters, commandType: StoredProcedure);
+        }
+
         public async Task<bool> RegisterSessionAsync(ProctoringApiSession session)
         {
             var parameters = new DynamicParameters();

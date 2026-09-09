@@ -165,6 +165,10 @@
         color: #334155;
     }
 
+        .rb-part-hd.is-resume {
+            border-left-color: #6d5bd0;
+        }
+
         .rb-part-hd.is-skill {
             border-left-color: #4eda92;
         }
@@ -172,6 +176,12 @@
         .rb-part-hd.is-knowledge {
             border-left-color: #3b82f6;
         }
+
+    /* The description strip carries its part's rail too, so the band and the sentence
+       beneath it read as one block rather than the rail stopping halfway. */
+    .rb-part-desc.is-resume {
+        border-left-color: #cdc6ee;
+    }
 
     .rb-part-desc {
         background: #f1f5f9;
@@ -206,6 +216,10 @@
         border-radius: 10px;
         overflow: hidden;
     }
+
+        .rb-sum-card.is-resume {
+            border-left-color: #6d5bd0;
+        }
 
         .rb-sum-card.is-skill {
             border-left-color: #4eda92;
@@ -3322,17 +3336,10 @@
                                 <i class="fa fa-envelope"></i>Resume:
                                 <span><a style="background:none!important;border:0px!important;text-decoration: underline;color: #039BE5!important;font-size: 15px;" id="resumeId" target="_blank" title="Resume" href=@Model.resumeLink>Click here<a></a></span>
                             </div>
-                            @if ((ViewBag.AccessType != null && ViewBag.AccessType == "Public") || (ViewBag.ProfileName != null && (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")))
-                            {
-                                @if (ViewBag.IRFId != null && ViewBag.CandidateMasterId != null && ViewBag.CandidateMasterId > 0)
-                                {
-                                    string accessType = ViewBag.AccessType ?? "";
-                                    <div class="rb-candidate-email">
-                                        <i class="fa fa-file-alt"></i>Resume Screening:
-                                        <span><a style="background:none!important;border:0px!important;text-decoration: underline;color: #039BE5!important;font-size: 15px;" target="_blank" title="Resume Screening Results" href="@Url.Action("ScreenCandidateV2", "AIScreener", new { emailId = Model.CandidateEmail, irfId = ViewBag.IRFId, candidateMasterId = ViewBag.CandidateMasterId, accessType = accessType })">Resume Screening Results</a></span>
-                                    </div>
-                                }
-                            }
+                            @* The Resume Screening link used to sit here in the candidate card.
+                               It now opens the Resume Evaluation part further down, beside the
+                               screening results it leads to, rather than in the header above a
+                               report that never showed those results at all. *@
                             <div class="rb-candidate-date">
                                 <i class="fa fa-calendar-alt"></i>
                                 Interview Date: <span>@Model.InterviewDate</span>
@@ -3372,10 +3379,56 @@
             var rbMcqRan = Model.McqAssessment != null;
             var rbMcq = Model.McqAssessment;
             var rbAnswered = Model.videoQuestionDetails?.Count ?? 0;
+
+            // Resume figures prefer the parsed record and fall back to the two columns, which
+            // is why AIResumeScreeningScore / Verdict stay on the model: a screening whose
+            // JSON will not parse still has both, and the summary should show them even
+            // though the section below cannot render.
+            var rbResume = Model.ResumeEvaluation;
+            var rbResumeScore = rbResume != null ? rbResume.TotalScore : Model.AIResumeScreeningScore;
+            var rbResumeMax = rbResume != null ? rbResume.MaxScore : 0;
+            var rbResumeVerdict = rbResume != null && !string.IsNullOrWhiteSpace(rbResume.Verdict)
+                ? rbResume.Verdict
+                : Model.AIResumeScreeningVerdict;
+            var rbScreened = rbResume != null || rbResumeScore != 0 || !string.IsNullOrWhiteSpace(rbResumeVerdict);
+            var rbResumeTone = (rbResumeVerdict ?? string.Empty).ToLowerInvariant().Contains("reject") ? "is-fail"
+                : (rbResumeVerdict ?? string.Empty).ToLowerInvariant().Contains("select")
+                    || (rbResumeVerdict ?? string.Empty).ToLowerInvariant().Contains("shortlist")
+                    || (rbResumeVerdict ?? string.Empty).ToLowerInvariant().Contains("proceed") ? "is-pass"
+                : "is-review";
         }
-        @if (rbEvalRan || rbMcqRan)
+        @if (rbEvalRan || rbMcqRan || rbScreened)
         {
             <div class="rb-sum-grid">
+                <div class="rb-sum-card is-resume">
+                    <div class="rb-sum-lbl">Resume Evaluation</div>
+                    <div class="rb-sum-stats">
+                        <div class="rb-sum-stat">
+                            @if (rbScreened)
+                            {
+                                <div class="rb-sum-v">
+                                    @rbResumeScore@if (rbResumeMax > 0)
+                                    {<small> / @rbResumeMax</small>}
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="rb-sum-v" style="color:#bbb;">&mdash;</div>
+                            }
+                            <div class="rb-sum-l">Screening score</div>
+                        </div>
+                    </div>
+                    @if (rbScreened)
+                    {
+                        <div class="rb-sum-foot @rbResumeTone">
+                            @(string.IsNullOrWhiteSpace(rbResumeVerdict) ? "Screened" : rbResumeVerdict)
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="rb-sum-foot">This candidate was not screened</div>
+                    }
+                </div>
                 @if (rbEvalRan)
                 {
                     <div class="rb-sum-card is-skill">
@@ -3456,6 +3509,43 @@
                     </div>
                 }
             </div>
+        }
+
+        @*
+            The resume is screened before anyone speaks to the candidate, so it opens the
+            report. Band and section are omitted together when there is nothing to show —
+            the partial's own guards decide that, and this @if keeps the band from standing
+            over an empty part.
+        *@
+        @{
+            // The same gate the link carried in the candidate card: Public access, or one of
+            // the three profiles, and both ids present. Moving the link must not widen who
+            // can see it.
+            bool rbCanSeeScreeningLink =
+                ((ViewBag.AccessType != null && ViewBag.AccessType == "Public")
+                    || (ViewBag.ProfileName != null && (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")))
+                && ViewBag.IRFId != null && ViewBag.CandidateMasterId != null && ViewBag.CandidateMasterId > 0;
+            string rbScreeningAccessType = ViewBag.AccessType ?? "";
+        }
+        @* The part opens when there is either a parsed evaluation to show or a link to offer.
+           Gating it on the evaluation alone would have taken the link away from a candidate
+           whose screening JSON will not parse — the case where a reader most wants to open
+           the screener's own page. *@
+        @if (Model.ResumeEvaluation != null || rbCanSeeScreeningLink)
+        {
+            <div class="rb-part-hd is-resume">Resume Evaluation</div>
+            <div class="rb-part-desc is-resume">
+                What the resume screener found before the interview: the score it gave, how it reached it, and against what the role asked for.
+                @if (rbCanSeeScreeningLink)
+                {
+                    <a style="background:none!important;border:0px!important;text-decoration: underline;color: #039BE5!important;font-size: 15px;" target="_blank" title="Resume Screening Results" href="@Url.Action("ScreenCandidateV2", "AIScreener", new { emailId = Model.CandidateEmail, irfId = ViewBag.IRFId, candidateMasterId = ViewBag.CandidateMasterId, accessType = rbScreeningAccessType })">Resume Screening Results</a>
+                }
+            </div>
+
+            @if (Model.ResumeEvaluation != null)
+            {
+                @await Html.PartialAsync("_ResumeEvaluationSection", Model.ResumeEvaluation)
+            }
         }
 
         <div class="rb-part-hd is-skill">Hands-on Skill Evaluation</div>
@@ -3828,12 +3918,23 @@
                                         </div>
                                     </div>
                                 }
-                                @if (Model.AIResumeScreeningScore != 0)
+                                @*
+                                    Guarded on the verdict as well as the score. The old
+                                    `Score != 0` test hid this tile and its verdict for a
+                                    candidate who genuinely scored 0, and for any record
+                                    scored by verdict alone — the two cases where a reader
+                                    most needs to see it.
+                                *@
+                                @if (Model.AIResumeScreeningScore != 0 || !string.IsNullOrWhiteSpace(Model.AIResumeScreeningVerdict) || Model.ResumeEvaluation != null)
                                 {
+                                    var tileMax = Model.ResumeEvaluation?.MaxScore ?? 0;
                                     <div class="rb-ai-metric">
                                         <div class="rb-ai-metric__main">
                                             <div class="rb-ai-metric__label"><img src="/img/resume-screening.png" alt="" /> Resume Screening</div>
-                                            <div class="rb-ai-metric__value">@Model.AIResumeScreeningScore</div>
+                                            <div class="rb-ai-metric__value">
+                                                @Model.AIResumeScreeningScore@if (tileMax > 0)
+                                                {<text> / @tileMax</text>}
+                                            </div>
                                         </div>
                                         @if (!string.IsNullOrWhiteSpace(Model.AIResumeScreeningVerdict))
                                         {
