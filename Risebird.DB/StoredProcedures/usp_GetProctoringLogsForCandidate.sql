@@ -16,10 +16,10 @@ BEGIN
     SET NOCOUNT ON;
 
     SELECT
-        l.[SessionToken], l.[Sequence], l.[Type], l.[Category], l.[Level], l.[Confidence],
+        s.[SessionToken], l.[Sequence], l.[Type], l.[Category], l.[Level], l.[Confidence],
         l.[OpenedAtUtc], l.[ResolvedAtUtc], l.[RedactedDetail], l.[RawDetail], l.[CreatedAtUtc]
     FROM dbo.ProctoringLogs l
-    INNER JOIN dbo.ProctoringSessions s ON s.[SessionToken] = l.[SessionToken]
+    INNER JOIN dbo.ProctoringSessions s ON s.[id] = l.[ProctoringSessionId]
     WHERE s.[CandidateEmail] = @CandidateEmail
     ORDER BY l.[OpenedAtUtc] ASC, l.[Sequence] ASC
 END
