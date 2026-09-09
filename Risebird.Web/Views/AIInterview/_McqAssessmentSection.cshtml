@@ -411,7 +411,10 @@
 
     <div class="rb-report-section" style="margin-bottom:20px;">
         <div class="rb-section-header" style="margin-bottom:5px;">
-            <h2><i class="fa fa-list-alt"></i> Assessment Section</h2>
+            @* rb-part-sub-h: this heading sits inside the Knowledge Evaluation part, so it
+               takes the part header's typography a step down rather than the page's
+               full-size section heading. Both host views define the class. *@
+            <h2 class="rb-part-sub-h"><i class="fa fa-list-alt"></i> Assessment Section</h2>
         </div>
 
         <div class="rb-analysis-content" style="overflow:hidden;">
@@ -545,13 +548,9 @@
                     <span class="rb-mcq-verdict @verdictClass">@verdictText</span>
                 </div>
 
-                <div class="rb-mcq-tile">
-                    <div class="rb-mcq-tile-label">Questions Attempted</div>
-                    <div class="rb-mcq-tile-value">@attemptedTotal<span style="font-size:15px;color:#6b7280;"> / @mcq.TotalQuestions</span></div>
-                    <div class="rb-mcq-tile-sub">
-                        Across @mcqSections.Count section@(mcqSections.Count == 1 ? "" : "s")
-                    </div>
-                </div>
+                @* Questions Attempted removed: the Total Score tile already carries
+                   "N of M correct", so the attempted count restated the same paper twice.
+                   The per-section table below still breaks attempted out by section. *@
 
                 <div class="rb-mcq-tile">
                     <div class="rb-mcq-tile-label">Time Taken</div>
@@ -573,23 +572,10 @@
                     </div>
                 </div>
 
-                <div class="rb-mcq-tile">
-                    <div class="rb-mcq-tile-label">Integrity Signals</div>
-                    <div class="rb-mcq-tile-value" style="font-size:18px;">
-                        @if ((mcq.TabSwitchCount ?? 0) == 0 && mcq.RedFlags == 0)
-                        {
-                            <span style="color:#1a7f4b;">Acceptable</span>
-                        }
-                        else
-                        {
-                            <span style="color:#a35b00;">Review</span>
-                        }
-                    </div>
-                    <div class="rb-mcq-tile-sub">
-                        Window left @(mcq.TabSwitchCount ?? 0) time@((mcq.TabSwitchCount ?? 0) == 1 ? "" : "s")<br />
-                        @mcq.RedFlags question@(mcq.RedFlags == 1 ? "" : "s") flagged by the candidate
-                    </div>
-                </div>
+                @* Integrity Signals removed: tab-switch counts and candidate flags are
+                   proctoring findings, and the proctoring report covers them in far more
+                   detail than a two-line tile could. Keeping a summary here invited a
+                   hiring call on the weaker of the two accounts. *@
             </div>
 
             @if (mcqSections.Any())
