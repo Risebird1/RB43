@@ -2945,6 +2945,7 @@ namespace Risebird.Web.Controllers
                 reportModel.resumeLink = meetingDetails.resumeLink;
                 reportModel.AIResumeScreeningVerdict = meetingDetails.AIResumeScreeningVerdict;
                 reportModel.AIResumeScreeningScore = meetingDetails.AIResumeScreeningScore;
+                reportModel.ResumeEvaluation = ParseResumeEvaluation(meetingDetails.AIScreeningResultJsonV2);
                 if (reportModel.AIInterviewEvaluation != null)
                 {
                     reportModel.AIInterviewEvaluation.AadharVerificationId = meetingDetails.AadharVerificationId;
@@ -3360,6 +3361,30 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Parses the resume screener's stored result. That JSON has no schema of its own —
+        /// it is whatever the screener wrote — so a shape change upstream must not be able
+        /// to take a whole report down. A record that will not parse yields null, and the
+        /// report simply renders no Resume Evaluation section; the score and verdict still
+        /// show in the summary because they are read from their own columns.
+        /// </summary>
+        private static CandidateResumeScreeningVM ParseResumeEvaluation(string screeningJson)
+        {
+            if (string.IsNullOrWhiteSpace(screeningJson))
+            {
+                return null;
+            }
+
+            try
+            {
+                return JsonConvert.DeserializeObject<CandidateResumeScreeningVM>(screeningJson);
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
+        }
+
         private async Task SetProctoringEventCountForReportAsync(int interviewId)
         {
             try
@@ -3411,6 +3436,13 @@ namespace Risebird.Web.Controllers
                 reportModel.InterviewId = meetingDetails?.InterviewId ?? 0;
                 reportModel.resumeLink = meetingDetails?.resumeLink;
                 reportModel.MatchScorePercentage = meetingDetails?.MatchScorePercentage ?? 0;
+
+                // Same three as Report: this action builds its own model, so the resume
+                // evaluation has to be resolved here too or it would be on the page and
+                // missing from the PDF — which is how it was before this change.
+                reportModel.AIResumeScreeningVerdict = meetingDetails?.AIResumeScreeningVerdict;
+                reportModel.AIResumeScreeningScore = meetingDetails?.AIResumeScreeningScore ?? 0;
+                reportModel.ResumeEvaluation = ParseResumeEvaluation(meetingDetails?.AIScreeningResultJsonV2);
 
                 List<TypingSpeedAssessment> typingAssessmentsPdf;
                 try { typingAssessmentsPdf = await _aiinterviewerService.GetTypingSpeedAssessmentBySessionId(seId.ToString()) ?? new List<TypingSpeedAssessment>(); } catch { typingAssessmentsPdf = new List<TypingSpeedAssessment>(); }

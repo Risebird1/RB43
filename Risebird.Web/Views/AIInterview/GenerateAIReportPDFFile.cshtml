@@ -435,6 +435,7 @@
         background: #fff;
         overflow: hidden;
     }
+        .sum-card.is-resume    { border-left-color: #6d5bd0; }
         .sum-card.is-skill     { border-left-color: #4eda92; }
         .sum-card.is-knowledge { border-left-color: #3b82f6; }
 
@@ -486,8 +487,21 @@
         font-size: 12px; font-weight: 700; letter-spacing: 1.4px;
         text-transform: uppercase; color: #ffffff;
     }
+        .part-hd.is-resume    { border-left-color: #6d5bd0; }
         .part-hd.is-skill     { border-left-color: #4eda92; }
         .part-hd.is-knowledge { border-left-color: #3b82f6; }
+
+    /* Both partials render a .rb-report-section, and #pdfdownload .rb-report-section
+       carries the written assessment's own gutter. The resume one names itself so it does
+       not inherit that rail. */
+    #pdfdownload .rb-re-section {
+        border-left: 6px solid #e5e0fa;
+        padding-left: 22px;
+    }
+
+    /* The description strip carries its part's rail too, so the band and the sentence
+       beneath it read as one block rather than the rail stopping halfway. */
+    .part-desc.is-resume { border-left-color: #cdc6ee; }
 
     .part-desc {
         background: #f6f8fa;
@@ -810,12 +824,58 @@
         var mcqRan = Model.McqAssessment != null;
         var skillQuestionCount = Model.videoQuestionDetails?.Count ?? 0;
         var mcqReport = Model.McqAssessment;
+
+        // Resume figures prefer the parsed record and fall back to the two columns. That
+        // fallback is the whole reason AIResumeScreeningScore / Verdict stay on the model:
+        // a screening whose JSON will not parse still has a score and a verdict of its own,
+        // and the summary should show them even though the section below cannot render.
+        var resumeParsed = Model.ResumeEvaluation;
+        var resumeScore = resumeParsed != null ? resumeParsed.TotalScore : Model.AIResumeScreeningScore;
+        var resumeMax = resumeParsed != null ? resumeParsed.MaxScore : 0;
+        var resumeVerdict = resumeParsed != null && !string.IsNullOrWhiteSpace(resumeParsed.Verdict)
+            ? resumeParsed.Verdict
+            : Model.AIResumeScreeningVerdict;
+        var wasScreened = resumeParsed != null || resumeScore != 0 || !string.IsNullOrWhiteSpace(resumeVerdict);
     }
-    @if (evalRan || mcqRan)
+    @if (evalRan || mcqRan || wasScreened)
     {
         <div class="sum-wrap">
             <table class="sum-table">
                 <tr>
+                    <td class="sum-td">
+                        <div class="sum-card is-resume">
+                            <div class="sum-lbl">Resume Evaluation</div>
+                            @if (wasScreened)
+                            {
+                                <table class="sum-stats">
+                                    <tr>
+                                        <td>
+                                            <div class="sum-v">
+                                                @resumeScore@if (resumeMax > 0)
+                                                {<small> / @resumeMax</small>}
+                                            </div>
+                                            <div class="sum-l">Screening score</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <div class="sum-foot">
+                                    @(string.IsNullOrWhiteSpace(resumeVerdict) ? "Screened" : resumeVerdict)
+                                </div>
+                            }
+                            else
+                            {
+                                <table class="sum-stats">
+                                    <tr>
+                                        <td>
+                                            <div class="sum-v" style="color:#bbb;">&mdash;</div>
+                                            <div class="sum-l">Screening score</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <div class="sum-foot">This candidate was not screened</div>
+                            }
+                        </div>
+                    </td>
                     @if (evalRan)
                     {
                         <td class="sum-td">
@@ -906,6 +966,23 @@
                 </tr>
             </table>
         </div>
+    }
+
+    @*
+        ══ RESUME EVALUATION ══════════════════════════════════════════════════
+        Opens the report: the resume is screened before anyone speaks to the candidate, so
+        it is the first thing that happened. Both the band and the section are omitted
+        together when there is nothing to show — the partial's own guards decide that, and
+        this @if keeps the band from standing over an empty part.
+    *@
+    @if (Model.ResumeEvaluation != null)
+    {
+        <div class="part-hd is-resume">Resume Evaluation</div>
+        <div class="part-desc is-resume">
+            What the resume screener found before the interview: the score it gave, how it reached it, and against what the role asked for.
+        </div>
+
+        @await Html.PartialAsync("_ResumeEvaluationSection", Model.ResumeEvaluation)
     }
 
     <div class="part-hd is-skill">Hands-on Skill Evaluation</div>

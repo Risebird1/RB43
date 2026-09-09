@@ -343,6 +343,13 @@ namespace Risebird.Repository
                             _resultVM.IsAadhaarVerificationRequired = dt.Columns.Contains("IsAadhaarVerificationRequired") && !string.IsNullOrEmpty(dt.Rows[0]["IsAadhaarVerificationRequired"].ToString()) && Convert.ToBoolean(dt.Rows[0]["IsAadhaarVerificationRequired"]);
                             _resultVM.AIResumeScreeningVerdict = !string.IsNullOrEmpty(dt.Rows[0]["AIResumeScreeningVerdict"].ToString()) ? dt.Rows[0]["AIResumeScreeningVerdict"].ToString() : null;
                             _resultVM.AIResumeScreeningScore = !string.IsNullOrEmpty(dt.Rows[0]["AIResumeScreeningScore"].ToString()) ? Convert.ToInt32(dt.Rows[0]["AIResumeScreeningScore"]) : 0;
+
+                            // Guarded with Columns.Contains, like the MCQ columns above: code deployed
+                            // ahead of usp_GetAIInterviewDetailsBySessionId then degrades to "no resume
+                            // evaluation" instead of throwing on every report load.
+                            _resultVM.AIScreeningResultJsonV2 = dt.Columns.Contains("AIScreeningResultJsonV2")
+                                && !string.IsNullOrEmpty(dt.Rows[0]["AIScreeningResultJsonV2"].ToString())
+                                ? dt.Rows[0]["AIScreeningResultJsonV2"].ToString() : null;
                             // MCQ assessment section. All four are guarded with Columns.Contains so a
                             // deployment that ships this code ahead of the updated stored procedure
                             // degrades to "no MCQ section" instead of throwing on every page load.
