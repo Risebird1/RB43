@@ -1,5 +1,8 @@
 -- DesktopProctor API violation/telemetry event log — one row per item from a
--- POST /api/proctoring/session/events batch (see ProctoringSessions for the parent session row).
+-- POST /api/proctoring/session/events batch. FKs to ProctoringSessions.id, so run
+-- Tables\ProctoringSessions.sql first — that table must already exist for this script's
+-- FK to attach (the FK create below is still guarded so a run in the wrong order won't
+-- error, but the constraint then needs this script re-run once ProctoringSessions exists).
 -- Idempotent on (ProctoringSessionId, Sequence): the desktop client's local durable queue can
 -- redeliver a batch after a crash/restart, so usp_InsertProctoringLog checks existence first.
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES
@@ -33,7 +36,7 @@ CREATE TABLE [dbo].[ProctoringLogs](
 END
 GO
 
-IF NOT EXISTS (
+IF OBJECT_ID('dbo.ProctoringSessions') IS NOT NULL AND NOT EXISTS (
     SELECT * FROM sys.foreign_keys WHERE name = 'FK_ProctoringLogs_ProctoringSessions'
 )
 BEGIN
