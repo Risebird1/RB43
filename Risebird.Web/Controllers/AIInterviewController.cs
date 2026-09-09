@@ -3815,10 +3815,10 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "AI question videos are only available for Preset AI interview channels." });
                 }
 
-                string videoId;
+                SynthesiaCreateResult createResult;
                 try
                 {
-                    videoId = await _synthesiaTextToVideoService.CreateVideoAsync(narrationText, SynthesiaAIAvatarTemplates.Reema);
+                    createResult = await _synthesiaTextToVideoService.CreateVideoWithDetailsAsync(narrationText, SynthesiaAIAvatarTemplates.Reema);
                 }
                 catch (Exception ex)
                 {
@@ -3826,37 +3826,98 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "Could not reach Synthesia API. Check configuration and try again." });
                 }
 
-                if (string.IsNullOrWhiteSpace(videoId))
+                if (createResult == null || !createResult.IsSuccess)
                 {
-                    return Json(new { success = false, message = "Synthesia did not return a video id." });
+                    // Repeat Synthesia's own reason. "Synthesia did not return a video id" told the
+                    // user nothing they could act on and hid the refusal behind a generic message.
+                    var reason = createResult?.ErrorMessage;
+                    return Json(new
+                    {
+                        success = false,
+                        message = string.IsNullOrWhiteSpace(reason)
+                            ? "Synthesia did not start the render and gave no reason."
+                            : "Could not start the render. " + reason,
+                        narrationLength = narrationText.Length
+                    });
                 }
 
-                string synthesiaDownloadUrl = null;
-                const int maxPollAttempts = 20;
-                for (var attempt = 0; attempt < maxPollAttempts; attempt++)
-                {
-                    await Task.Delay(8000);
-                    try
-                    {
-                        synthesiaDownloadUrl = await _synthesiaTextToVideoService.GetVideoUrlAsync(videoId);
-                    }
-                    catch (Exception ex)
-                    {
-                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                    }
+                var videoId = createResult.VideoId;
 
-                    if (!string.IsNullOrWhiteSpace(synthesiaDownloadUrl))
-                        break;
+                // Synthesia takes minutes to render, and how many is not predictable. Waiting for it
+                // inside this request meant the browser gave up — or the request hit its own limit —
+                // and the user was told the generation had failed while it was in fact still running.
+                // So the render is only kicked off here; the caller polls GetAIQuestionVideoStatus
+                // with this video id and the video is saved by whichever poll finds it finished.
+                return Json(new
+                {
+                    success = true,
+                    pending = true,
+                    videoId = videoId,
+                    message = "Generating the AI video. This usually takes a few minutes."
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Video generation failed: " + ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// One non-blocking check on a render started by CreateAIQuestionVideo. Returns
+        /// ready:false while Synthesia is still working, and on the poll that finds the render
+        /// finished it also downloads the video, stores it and links it to the question.
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> GetAIQuestionVideoStatus(int id, string videoId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                {
+                    return Json(new { success = false, message = "Unauthorized." });
                 }
 
-                if (string.IsNullOrWhiteSpace(synthesiaDownloadUrl))
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Trim('"');
+                if (!DeliveryHeadInstructionViewMode.IsOperationalProfile(profileName))
                 {
-                    return Json(new { success = false, message = "Synthesia video is still processing. Please try again in a minute." });
+                    return Json(new { success = false, message = "You do not have permission to generate AI question videos." });
+                }
+
+                if (id <= 0 || string.IsNullOrWhiteSpace(videoId))
+                {
+                    return Json(new { success = false, message = "Invalid video request." });
+                }
+
+                var questionDetails = await _iRFService.GetDeliveryHeadSampleQuestionById(id);
+                if (questionDetails == null)
+                {
+                    return Json(new { success = false, message = "Question not found." });
+                }
+
+                var state = await _synthesiaTextToVideoService.GetVideoStatusAsync(videoId);
+
+                if (state == null || !state.IsComplete)
+                {
+                    // The finished download link is the only signal trusted to end the wait, which is
+                    // what the original code did. Synthesia's status strings are reported back for
+                    // diagnostics but never end the wait on their own: a freshly created render can
+                    // read oddly for the first few seconds, and failing on that put the button back
+                    // to declaring failure almost immediately. The caller's overall time cap is what
+                    // stops a render that really is dead.
+                    return Json(new
+                    {
+                        success = true,
+                        pending = true,
+                        ready = false,
+                        videoId = videoId,
+                        status = state?.Status
+                    });
                 }
 
                 string uploadedVideoUrl = string.Empty;
                 using (var httpClient = new HttpClient { Timeout = TimeSpan.FromMinutes(5) })
-                using (var myStream = await httpClient.GetStreamAsync(synthesiaDownloadUrl))
+                using (var myStream = await httpClient.GetStreamAsync(state.DownloadUrl))
                 {
                     var fileName = $"aiVideo_{id}_{DateTime.UtcNow:yyyy-MM-ddTHH:mm:ss}";
                     try
@@ -3882,12 +3943,18 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, message = "Video was created but could not be linked to this question." });
                 }
 
+                var narrationText = !string.IsNullOrWhiteSpace(questionDetails.QuestionGist)
+                    ? questionDetails.QuestionGist
+                    : (questionDetails.Comment ?? string.Empty);
                 var preview = narrationText.Length > 25
                     ? narrationText.Substring(0, 25) + "…"
                     : narrationText;
+
                 return Json(new
                 {
                     success = true,
+                    pending = false,
+                    ready = true,
                     videoUrl = uploadedVideoUrl,
                     message = $"Successfully created an AI video for the question starting with '{preview}'."
                 });
@@ -3895,7 +3962,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return Json(new { success = false, message = "Video generation failed: " + ex.Message });
+                return Json(new { success = false, message = "Could not save the generated video: " + ex.Message });
             }
         }
 
