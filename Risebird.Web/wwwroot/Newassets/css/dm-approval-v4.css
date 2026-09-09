@@ -5130,6 +5130,16 @@ button.dm-v4-money-pill {
     color: #b91c1c;
 }
 
+/* A Synthesia render runs for minutes: the button has to keep reading as "working" for that
+   whole time, not as a greyed-out disabled control. */
+.dm-v4-regen-ai-video-btn.is-pending {
+    color: var(--dm-accent);
+    border-color: #c7d2fe;
+    background: #f8faff;
+    opacity: 1;
+    cursor: progress;
+}
+
 .dm-v4-question-link {
     font-size: 11.5px;
     font-weight: 600;
