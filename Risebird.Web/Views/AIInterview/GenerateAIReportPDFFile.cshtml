@@ -77,14 +77,20 @@
        section is a different set. */
 
     /* ══ SECTION HEADER ════════════════════════════════ */
-    .sec-wrap { padding: 22px 28px 8px; }
+    .sec-wrap { padding: 12px 28px 6px; }
     .sec-head {
         font-size: 16px; font-weight: 700;
         color: #0b0b18; text-transform: none;
         letter-spacing: -.2px;
-        padding-bottom: 9px;
+        padding-bottom: 8px;
         border-bottom: 2px solid #4eda92;
-        margin-bottom: 16px; overflow: hidden;
+        margin-bottom: 11px; overflow: hidden;
+        /* Without this a heading whose first card will not fit in the remaining space is
+           left stranded at the foot of the page with the gap below it — which is what
+           produced the blank stretch under "Video Responses". The heading now travels
+           with its content instead. */
+        page-break-after: avoid;
+        break-after: avoid;
     }
     .sec-num {
         display: inline-block;
@@ -175,8 +181,11 @@
         border: 1px solid #cceedd; border-radius: 8px;
         overflow: hidden;
     }
+    /* Tightened so the assessment block does not push Video Responses onto a page of its
+       own: these rows are two or three short lines each, and 11px/16px of padding around
+       them cost more height than their content. */
     .vbox-row {
-        padding: 11px 16px;
+        padding: 7px 13px;
         border-bottom: 1px solid #dff0e8;
         word-wrap: break-word; overflow-wrap: break-word;
         overflow: hidden;
@@ -185,18 +194,18 @@
     .vbox-row:nth-child(odd)  { background: #f8fffe; }
     .vbox-row:nth-child(even) { background: #ffffff; }
     .vbox-key {
-        font-size: 10.5px; font-weight: 700; color: #4eda92;
-        text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px;
+        font-size: 9.5px; font-weight: 700; color: #4eda92;
+        text-transform: uppercase; letter-spacing: .5px; margin-bottom: 2px;
     }
     .vbox-val {
-        font-size: 13.5px; color: #222;
+        font-size: 12px; color: #222; line-height: 1.45;
         white-space: pre-line; word-wrap: break-word; overflow-wrap: break-word;
     }
 
     /* ══ Q&A RESPONSES ═════════════════════════════════ */
     .qa-card {
         border: 1px solid #d8eee6; border-radius: 10px;
-        margin-bottom: 20px; overflow: hidden;
+        margin-bottom: 12px; overflow: hidden;
         page-break-inside: avoid;
         box-shadow: 0 2px 8px rgba(78,218,146,.10);
     }
@@ -398,8 +407,10 @@
        is no longer rendered in the PDF, so nothing references them. */
 
     /* ══ PAGE BREAK ════════════════════════════════════ */
-    .pb { page-break-before: always; }
-    .pb-pad { padding-top: 18px; }
+    /* .pb / .pb-pad forced a page break before the Q&A section. Nothing uses them now —
+       see .part-break below: the report has no forced page breaks at all. Pages are
+       broken only where html2pdf runs out of room, and break-inside rules keep blocks
+       from being sliced when it does. */
 
     /* ══ REPORT PARTS ═════════════════════════════════════════════════════
        The report carries two evaluations that are measured differently and read
@@ -445,12 +456,22 @@
 
     .sum-l { font-size: 9px; color: #6b7280; margin-top: 3px; line-height: 1.3; }
 
+    /* The verdict line is the one sentence a reader takes away from the card, so it is
+       toned by outcome rather than left as grey body text. Tone comes from
+       AIInterviewVerdict.IsSelectFamily / IsRejectFamily for the interview, and from the
+       60/40 bands for the assessment — never from matching on the wording. */
     .sum-foot {
         border-top: 1px solid #eef0f3;
-        padding: 7px 12px;
-        font-size: 10.5px; font-weight: 600; color: #2b3440;
+        padding: 8px 12px;
+        font-size: 11px; font-weight: 700; color: #2b3440;
         background: #fbfcfd;
+        letter-spacing: .2px;
     }
+        .sum-foot i { margin-right: 6px; }
+
+        .sum-foot.is-pass   { color: #14663d; background: #e9f9f0; border-top-color: #cdeddc; }
+        .sum-foot.is-review { color: #8a5300; background: #fdf6e6; border-top-color: #f2e2bd; }
+        .sum-foot.is-fail   { color: #a3261d; background: #fdeeec; border-top-color: #f5d2ce; }
 
     /* Part header. The bar is the same ink as the report header so the two read as one
        document, with the part's accent repeated on the left edge. */
@@ -458,7 +479,10 @@
         background: #141428;
         border-left: 4px solid #cbd2d9;
         padding: 9px 20px;
-        margin: 18px 0 0;
+        margin: 10px 0 0;
+        /* Keep the part header with the description and first section beneath it. */
+        page-break-after: avoid;
+        break-after: avoid;
         font-size: 12px; font-weight: 700; letter-spacing: 1.4px;
         text-transform: uppercase; color: #ffffff;
     }
@@ -474,13 +498,8 @@
         margin-bottom: 4px;
     }
 
-    /* The written assessment starts its own page. Declared here and also pushed through
-       html2pdf's own break handling by the .html2pdf__page-break element in the markup —
-       page-break-before alone is not honoured by the rasteriser. */
-    .part-break {
-        page-break-before: always;
-        break-before: page;
-    }
+    /* .part-break forced the written assessment onto a page of its own. Nothing uses it
+       now: the two parts run on, so the report has no forced breaks left at all. */
 
     .rep-end {
         padding: 10px 28px 18px;
@@ -807,7 +826,7 @@
                                         <td>
                                             @if (Model.AIInterviewEvaluation.OverallTechnicalScore != 0)
                                             {
-                                                <div class="sum-v">@((Model.AIInterviewEvaluation.OverallTechnicalScore * 10).ToString("0.#"))<small> %</small></div>
+                                                <div class="sum-v">@Model.AIInterviewEvaluation.OverallTechnicalScore.ToString("0.#")<small> %</small></div>
                                             }
                                             else
                                             {
@@ -818,7 +837,7 @@
                                         <td>
                                             @if (Model.AIInterviewEvaluation.OverallCommunicationScore != 0)
                                             {
-                                                <div class="sum-v">@((Model.AIInterviewEvaluation.OverallCommunicationScore * 10).ToString("0.#"))<small> %</small></div>
+                                                <div class="sum-v">@Model.AIInterviewEvaluation.OverallCommunicationScore.ToString("0.#")<small> %</small></div>
                                             }
                                             else
                                             {
@@ -834,7 +853,17 @@
                                 </table>
                                 @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict))
                                 {
-                                    <div class="sum-foot">@Model.AIInterviewEvaluation.FinalVerdict</div>
+                                    @* Tone from the canonical verdict helpers, not from the
+                                       wording: the AI's phrasing varies, but Normalize()
+                                       maps it onto the four-value enum first. *@
+                                    var pdfVerdict = Model.AIInterviewEvaluation.FinalVerdict;
+                                    var pdfTone = AIInterviewVerdict.IsSelectFamily(pdfVerdict) ? "is-pass"
+                                        : AIInterviewVerdict.IsRejectFamily(pdfVerdict) ? "is-fail"
+                                        : "is-review";
+                                    var pdfIcon = pdfTone == "is-pass" ? "fa-check-circle"
+                                        : pdfTone == "is-fail" ? "fa-times-circle"
+                                        : "fa-exclamation-circle";
+                                    <div class="sum-foot @pdfTone"><i class="fa @pdfIcon"></i>@pdfVerdict</div>
                                 }
                             </div>
                         </td>
@@ -856,8 +885,16 @@
                                         </td>
                                     </tr>
                                 </table>
-                                <div class="sum-foot">
-                                    @(mcqReport.ScorePercent >= 60
+                                @{
+                                    var pdfMcqTone = mcqReport.ScorePercent >= 60 ? "is-pass"
+                                        : mcqReport.ScorePercent >= 40 ? "is-review"
+                                        : "is-fail";
+                                    var pdfMcqIcon = pdfMcqTone == "is-pass" ? "fa-check-circle"
+                                        : pdfMcqTone == "is-fail" ? "fa-times-circle"
+                                        : "fa-exclamation-circle";
+                                }
+                                <div class="sum-foot @pdfMcqTone">
+                                    <i class="fa @pdfMcqIcon"></i>@(mcqReport.ScorePercent >= 60
                                         ? "Meets the 60% passing score"
                                         : mcqReport.ScorePercent >= 40
                                             ? "Below the 60% passing score — needs review"
@@ -947,7 +984,7 @@
             int asSecNum = 1;
             if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.OverallCommunicationScoreReasoning)) asSecNum++;
             if (Model.AIInterviewEvaluation.QuestionRatings != null && Model.AIInterviewEvaluation.QuestionRatings.Any()) asSecNum++;
-            <div class="sec-wrap" style="padding-bottom:16px;">
+            <div class="sec-wrap" style="padding-bottom:6px;">
                 <div class="sec-head"><span class="sec-num">@asSecNum</span>AI Interviewer Assessment</div>
                 <div class="vbox">
                     @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict))
@@ -989,7 +1026,10 @@
         }
         @* No increment for the typing test: that section is no longer rendered in the
            PDF, and counting it here would leave a gap in the section numbering. *@
-        <div class="pb pb-pad"></div>
+        @* No page break here any more. This section is part of Hands-on Skill Evaluation,
+           and forcing it onto a page of its own left the previous page half empty and put
+           a second break within a few inches of the one that opens Knowledge Evaluation —
+           which is what produced the large gaps either side of it. *@
         <div class="sec-wrap" style="padding-bottom:16px;">
             <div class="sec-head">
                 <span class="sec-num">@qaSecNum</span>
@@ -1002,8 +1042,8 @@
                     <i class="fa fa-volume-up" style="margin-right:7px;"></i><text>Audio Responses</text>
                 }
             </div>
-            <div style="font-size:14px;color:#1a1a2e;font-weight:400;margin-bottom:14px;padding-left:2px;">
-                <i class="fa fa-comments" style="margin-right:7px;color:#4eda92;font-size:14px;"></i>Question &amp; Answer Responses
+            <div style="font-size:12px;color:#55606c;font-weight:600;letter-spacing:1.1px;text-transform:uppercase;margin:-6px 0 8px;padding-left:2px;">
+                <i class="fa fa-comments" style="margin-right:6px;color:#4eda92;font-size:12px;"></i>Question &amp; Answer Responses
             </div>
             @{int qNum = 1;
               var pdfSessionId = Model.SessionId;
@@ -1089,19 +1129,20 @@
 
     @*
         ══ KNOWLEDGE EVALUATION ═══════════════════════════════════════════════
-        The written assessment, on a page of its own. The empty .html2pdf__page-break
-        div is what actually forces the break: html2pdf's rasteriser does not honour a
-        CSS page-break-before on its own, and looks for this class instead. The
-        .part-break class is kept alongside it so the intent survives if the page is
-        ever printed from the browser rather than exported.
+        The written assessment. Omitted entirely when the channel ran no written
+        assessment, rather than printing a heading over an empty page — the partial
+        already renders nothing for a null model, but the part header would not.
 
-        The whole part is omitted when the channel ran no written assessment, rather
-        than printing a heading over an empty page.
+        If a forced page break is ever wanted here again, note that html2pdf's
+        rasteriser ignores a CSS page-break-before: it looks for an empty element with
+        class html2pdf__page-break.
     *@
     @if (Model.McqAssessment != null)
     {
-        <div class="html2pdf__page-break part-break"></div>
-
+        @* No forced page break. The preview this layout came from started the written
+           assessment on a fresh page, but in practice that left most of a page blank
+           wherever the interview happened to end. The part header is distinct enough to
+           mark the boundary on its own, so the two parts now run on. *@
         <div class="part-hd is-knowledge">Knowledge Evaluation</div>
         <div class="part-desc">
             The written assessment: how each section scored, and every question as it was served.
