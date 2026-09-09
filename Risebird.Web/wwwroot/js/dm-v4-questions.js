@@ -130,13 +130,15 @@
                 toast: true,
                 position: 'top-end',
                 showConfirmButton: false,
-                timer: 4500,
+                // Failures need long enough to actually be read.
+                timer: (type === 'error') ? 9000 : 4500,
                 type: type || 'error',
                 title: message,
-                customClass: {
-                    popup: 'dm-v4-toast-popup',
-                    title: 'dm-v4-toast-title'
-                }
+                // Must be a string: the bundled SweetAlert2 (v8) splits this value and calls
+                // forEach on it, so the object form ({popup, title}) introduced in v9 throws
+                // "t.forEach is not a function" and no toast appears at all. The title is styled
+                // via ".dm-v4-toast-popup .swal2-title" instead.
+                customClass: 'dm-v4-toast-popup'
             });
         } else {
             alert(message);
@@ -331,6 +333,9 @@
         return $.post('/IRF/GetDeliveryHeadSampleQuestionsJson', getQuestionsRequestData()).then(function (res) {
             if (res && res.success) {
                 renderQuestions(res.questions || []);
+                // Rendering replaces the buttons, so any render still in flight — including one
+                // started before a page reload — has to be picked back up here.
+                resumePendingAiVideos();
             }
         });
     }
@@ -380,49 +385,289 @@
         });
     }
 
+    // A Synthesia render takes minutes, and how many is not predictable. So the server only starts
+    // the render and we poll it here: the button stays in its spinner with the elapsed time on it
+    // until the video actually lands, instead of turning red while the render is still running and
+    // telling the user something failed that hadn't.
+    var AI_VIDEO_POLL_MS = 10000;
+    var AI_VIDEO_MAX_WAIT_MS = 20 * 60 * 1000;
+    var AI_VIDEO_MAX_CONSECUTIVE_NETWORK_ERRORS = 6;
+    var AI_VIDEO_STORE_KEY = 'dmV4PendingAiVideos';
+
+    /** qid -> true while a poll loop owns that question, so nothing polls it twice. */
+    var activeAiVideoPolls = {};
+    var aiVideoTicker = null;
+
+    // Kept in localStorage so a reload mid-render resumes the wait. Without it the render finishes
+    // at Synthesia but nothing ever collects the video, and the question keeps no link.
+    function readPendingAiVideos() {
+        try {
+            var raw = window.localStorage.getItem(AI_VIDEO_STORE_KEY);
+            var parsed = raw ? JSON.parse(raw) : null;
+            return (parsed && typeof parsed === 'object') ? parsed : {};
+        } catch (e) {
+            return {};
+        }
+    }
+
+    function writePendingAiVideos(map) {
+        try {
+            window.localStorage.setItem(AI_VIDEO_STORE_KEY, JSON.stringify(map || {}));
+        } catch (e) { /* private mode / blocked storage: polling still works for this page view */ }
+    }
+
+    function rememberPendingAiVideo(qid, videoId, startedAt) {
+        var map = readPendingAiVideos();
+        map[String(qid)] = { videoId: videoId, startedAt: startedAt };
+        writePendingAiVideos(map);
+    }
+
+    function forgetPendingAiVideo(qid) {
+        var map = readPendingAiVideos();
+        if (map.hasOwnProperty(String(qid))) {
+            delete map[String(qid)];
+            writePendingAiVideos(map);
+        }
+    }
+
+    function findAiVideoButton(qid) {
+        return $('.dm-v4-regen-ai-video-btn').filter(function () {
+            return String($(this).data('id')) === String(qid);
+        }).first();
+    }
+
+    function formatElapsed(ms) {
+        var total = Math.max(0, Math.round(ms / 1000));
+        var mins = Math.floor(total / 60);
+        var secs = total % 60;
+        return mins ? (mins + 'm ' + secs + 's') : (secs + 's');
+    }
+
+    function paintAiVideoPending($btn, startedAt) {
+        if (!$btn || !$btn.length) return;
+        var elapsed = formatElapsed(Date.now() - startedAt);
+
+        // Only the counter is rewritten once the pending markup is in place — replacing the whole
+        // button every second would restart the spinner's animation on each tick.
+        var $elapsed = $btn.find('.dm-v4-ai-video-elapsed');
+        if ($elapsed.length) {
+            $elapsed.text(elapsed);
+            return;
+        }
+
+        $btn.prop('disabled', true).removeClass('is-success is-error').addClass('is-pending')
+            .attr('title', 'Synthesia is rendering this video. You can leave this page — generation continues.')
+            .html('<i class="fa fa-spinner fa-spin"></i> Generating… <span class="dm-v4-ai-video-elapsed">' +
+                escapeHtml(elapsed) + '</span>');
+    }
+
+    // One shared ticker keeps every pending button's elapsed time moving between polls, so the
+    // button visibly stays alive rather than looking stuck for ten seconds at a time.
+    function ensureAiVideoTicker() {
+        if (aiVideoTicker) return;
+        aiVideoTicker = setInterval(function () {
+            var qids = Object.keys(activeAiVideoPolls);
+            if (!qids.length) {
+                clearInterval(aiVideoTicker);
+                aiVideoTicker = null;
+                return;
+            }
+            qids.forEach(function (qid) {
+                var entry = activeAiVideoPolls[qid];
+                if (!entry) return;
+                var $btn = findAiVideoButton(qid);
+                if ($btn.length) paintAiVideoPending($btn, entry.startedAt);
+            });
+        }, 1000);
+    }
+
+    function endAiVideoPoll(qid) {
+        delete activeAiVideoPolls[String(qid)];
+        forgetPendingAiVideo(qid);
+    }
+
+    // The toast disappears after a few seconds, which is no use for diagnosing a failure that
+    // happened while nobody was watching — so the reason also stays on the button as its tooltip
+    // and goes to the console.
+    function reportAiVideoFailure($btn, message, detail) {
+        if (window.console && console.error) {
+            console.error('[AI video] ' + message, detail || '');
+        }
+        if ($btn && $btn.length) {
+            $btn.attr('title', message);
+        }
+        showQuestionToast(message, 'error');
+    }
+
+    function resetAiVideoButton($btn) {
+        if (!$btn || !$btn.length) return;
+        var hadVideo = $btn.data('has-video') === 1 || $btn.data('has-video') === '1';
+        $btn.prop('disabled', false).removeClass('is-success is-pending').addClass('is-error')
+            .html(aiVideoButtonLabel(hadVideo));
+    }
+
+    function failAiVideoPoll(qid, message, detail) {
+        endAiVideoPoll(qid);
+        var $btn = findAiVideoButton(qid);
+        resetAiVideoButton($btn);
+        reportAiVideoFailure($btn, message, detail);
+    }
+
+    function completeAiVideoPoll(qid, res) {
+        endAiVideoPoll(qid);
+        var $btn = findAiVideoButton(qid);
+
+        if ($btn.length) {
+            // Scoped to the button's own meta row: a question row has several .dm-v4-question-meta
+            // blocks (coding, listening, video), and an unscoped prepend lands in all of them.
+            var $meta = $btn.closest('.dm-v4-question-meta');
+            var $link = $meta.find('.dm-v4-question-video-link');
+            if ($link.length) {
+                $link.attr('href', res.videoUrl);
+            } else {
+                $meta.prepend('<a href="' + escapeHtml(res.videoUrl) + '" target="_blank" rel="noopener" class="dm-v4-question-link dm-v4-question-video-link">AI video ↗</a> ');
+            }
+            $btn.data('has-video', '1').removeClass('is-error is-pending').addClass('is-success')
+                .removeAttr('title')
+                .html('<i class="fa fa-check"></i> Generated');
+            setTimeout(function () {
+                var $current = findAiVideoButton(qid);
+                if ($current.length) {
+                    $current.prop('disabled', false).removeClass('is-success')
+                        .html(aiVideoButtonLabel(true));
+                }
+            }, 2200);
+        }
+
+        showQuestionToast(res.message || 'AI video ready.', 'success');
+    }
+
+    function startAiVideoPolling(qid, videoId, startedAt) {
+        qid = String(qid);
+        if (activeAiVideoPolls[qid]) return;
+        // Held in memory as well as in storage so the elapsed counter keeps running even where
+        // localStorage is unavailable.
+        activeAiVideoPolls[qid] = { videoId: videoId, startedAt: startedAt };
+
+        var consecutiveNetworkErrors = 0;
+        var lastStatus = null;
+        paintAiVideoPending(findAiVideoButton(qid), startedAt);
+        ensureAiVideoTicker();
+
+        function scheduleNext() {
+            setTimeout(poll, AI_VIDEO_POLL_MS);
+        }
+
+        function poll() {
+            if (!activeAiVideoPolls[qid]) return;
+
+            if (Date.now() - startedAt > AI_VIDEO_MAX_WAIT_MS) {
+                failAiVideoPoll(qid, 'Still not ready after ' + formatElapsed(AI_VIDEO_MAX_WAIT_MS) +
+                    '. Synthesia may be stuck on this render — please try again.');
+                return;
+            }
+
+            $.ajax({
+                url: '/AIInterview/GetAIQuestionVideoStatus',
+                type: 'POST',
+                data: { id: parseInt(qid, 10), videoId: videoId },
+                timeout: 360000
+            }).done(function (res) {
+                if (!activeAiVideoPolls[qid]) return;
+                consecutiveNetworkErrors = 0;
+
+                // A signed-out session answers a POST with the login page, not JSON. That is not a
+                // failed render, so say what it actually is instead of blaming the generation.
+                if (typeof res !== 'object' || res === null) {
+                    failAiVideoPoll(qid, 'Your session looks to have expired — sign in again, then reopen this page to pick the video up.', res);
+                    return;
+                }
+
+                if (res.success && res.ready && res.videoUrl) {
+                    completeAiVideoPoll(qid, res);
+                    return;
+                }
+                if (res.success) {
+                    // Logged on change so the real Synthesia status values are visible while a
+                    // render is in flight, rather than being guessed at.
+                    if (res.status && res.status !== lastStatus) {
+                        lastStatus = res.status;
+                        if (window.console && console.log) {
+                            console.log('[AI video] Synthesia status for question ' + qid + ': ' + res.status);
+                        }
+                    }
+                    scheduleNext();
+                    return;
+                }
+                failAiVideoPoll(qid, res.message || 'Video generation failed.', res);
+            }).fail(function (xhr, status) {
+                if (!activeAiVideoPolls[qid]) return;
+
+                // A dropped or timed-out poll says nothing about the render, which is running at
+                // Synthesia either way — so keep waiting unless the server stays unreachable.
+                consecutiveNetworkErrors += 1;
+                if (consecutiveNetworkErrors >= AI_VIDEO_MAX_CONSECUTIVE_NETWORK_ERRORS) {
+                    failAiVideoPoll(qid, status === 'timeout'
+                        ? 'Lost contact with the server while saving the video. Reload to check whether it arrived.'
+                        : 'Could not reach the server (' + (xhr.status || 'unknown') + ').');
+                    return;
+                }
+                scheduleNext();
+            });
+        }
+
+        poll();
+    }
+
+    /** Re-attaches spinners and poll loops after the question list is (re)rendered or reloaded. */
+    function resumePendingAiVideos() {
+        var pending = readPendingAiVideos();
+        Object.keys(pending).forEach(function (qid) {
+            var entry = pending[qid] || {};
+            if (!entry.videoId || !entry.startedAt) {
+                forgetPendingAiVideo(qid);
+                return;
+            }
+            if (Date.now() - entry.startedAt > AI_VIDEO_MAX_WAIT_MS) {
+                forgetPendingAiVideo(qid);
+                return;
+            }
+            if (!findAiVideoButton(qid).length) return;
+            startAiVideoPolling(qid, entry.videoId, entry.startedAt);
+        });
+    }
+
     function regenerateAiVideo($btn) {
         var qid = parseInt($btn.data('id'), 10);
         if (!qid || $btn.prop('disabled')) return;
+        if (activeAiVideoPolls[String(qid)]) return;
 
-        var $row = $btn.closest('.dm-v4-question-row');
-        var hadVideo = $btn.data('has-video') === 1 || $btn.data('has-video') === '1';
-        var normalLabel = aiVideoButtonLabel(hadVideo);
-
-        $btn.prop('disabled', true).removeClass('is-success is-error')
-            .html('<i class="fa fa-spinner fa-spin"></i> Generating…');
+        var startedAt = Date.now();
+        paintAiVideoPending($btn, startedAt);
 
         $.ajax({
             url: '/AIInterview/CreateAIQuestionVideo',
             type: 'POST',
             data: { id: qid },
-            timeout: 300000
+            timeout: 120000
         }).done(function (res) {
-            if (res && res.success && res.videoUrl) {
-                var $meta = $row.find('.dm-v4-question-meta');
-                var $link = $meta.find('.dm-v4-question-video-link');
-                if ($link.length) {
-                    $link.attr('href', res.videoUrl);
-                } else {
-                    $meta.prepend('<a href="' + escapeHtml(res.videoUrl) + '" target="_blank" rel="noopener" class="dm-v4-question-link dm-v4-question-video-link">AI video ↗</a> ');
-                }
-                $btn.data('has-video', '1').addClass('is-success')
-                    .html('<i class="fa fa-check"></i> Generated');
-                showQuestionToast(res.message || 'AI video ready.', 'success');
-                setTimeout(function () {
-                    $btn.prop('disabled', false).removeClass('is-success')
-                        .html(aiVideoButtonLabel(true));
-                }, 2200);
-            } else {
-                var msg = (res && res.message) ? res.message : 'Video generation failed.';
-                $btn.prop('disabled', false).addClass('is-error').html(normalLabel);
-                showQuestionToast(msg, 'error');
+            if (res && typeof res === 'object' && res.success && res.videoId) {
+                rememberPendingAiVideo(qid, res.videoId, startedAt);
+                showQuestionToast(res.message || 'Generating the AI video. This takes a few minutes.', 'info');
+                startAiVideoPolling(qid, res.videoId, startedAt);
+                return;
             }
+            // Nothing was started, so there is no render to keep waiting on.
+            resetAiVideoButton($btn);
+            var msg = (typeof res !== 'object' || res === null)
+                ? 'Your session looks to have expired — sign in again and try once more.'
+                : (res.message || 'Video generation failed.');
+            reportAiVideoFailure($btn, msg, res);
         }).fail(function (xhr, status) {
-            var msg = status === 'timeout'
-                ? 'Request timed out — Synthesia may still be processing. Try again shortly.'
-                : 'Could not reach the server (' + (xhr.status || 'unknown') + ').';
-            $btn.prop('disabled', false).addClass('is-error').html(normalLabel);
-            showQuestionToast(msg, 'error');
+            resetAiVideoButton($btn);
+            reportAiVideoFailure($btn, status === 'timeout'
+                ? 'Timed out asking Synthesia to start the render. Please try again.'
+                : 'Could not reach the server (' + (xhr.status || 'unknown') + ').', xhr);
         });
     }
 
