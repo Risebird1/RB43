@@ -41,8 +41,18 @@ namespace Risebird.Entities.ViewModel
         public DateTime InterviewDate { get; set; }
         public int InterviewId { get; set; }
         public string SessionId { get; set; } //Guid
-        public string AIResumeScreeningVerdict { get; set; } 
+        // Kept alongside ResumeEvaluation deliberately: these two are read from their own
+        // columns, so they survive a screening record whose JSON will not parse — which is
+        // what the summary strip falls back to when ResumeEvaluation is null.
+        public string AIResumeScreeningVerdict { get; set; }
         public int AIResumeScreeningScore { get; set; }
+
+        /// <summary>
+        /// The resume screener's full result, parsed from Candidate.AIScreeningResultJsonV2.
+        /// Null when the candidate was never screened, or when the stored JSON could not be
+        /// parsed — the report renders no Resume Evaluation section in either case.
+        /// </summary>
+        public CandidateResumeScreeningVM ResumeEvaluation { get; set; }
         public List<TypingSpeedAssessment> TypingSpeedAssessments { get; set; }
 
         /// <summary>
