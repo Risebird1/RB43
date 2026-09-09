@@ -2648,8 +2648,88 @@
     };
 </script>
 <script>
+    // Synthesia renders take minutes. The server only starts the render, so the wait happens here
+    // and the dialog keeps reporting progress instead of declaring a failure while it is still
+    // rendering.
+    function pollAIQuestionVideo(id, videoId, startedAt) {
+        var POLL_MS = 10000;
+        var MAX_WAIT_MS = 20 * 60 * 1000;
+        var MAX_NETWORK_ERRORS = 6;
+        var networkErrors = 0;
+
+        function elapsedText() {
+            var total = Math.max(0, Math.round((Date.now() - startedAt) / 1000));
+            var mins = Math.floor(total / 60);
+            return mins ? (mins + 'm ' + (total % 60) + 's') : (total + 's');
+        }
+
+        swal.fire({
+            title: 'Generating AI video…',
+            html: 'Synthesia is rendering the video (<span id="aiVideoElapsed">' + elapsedText() +
+                '</span> elapsed). This usually takes a few minutes.',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false
+        });
+        if (swal.showLoading) swal.showLoading();
+
+        // Only the elapsed counter is redrawn — re-firing the dialog each second would flicker.
+        var ticker = setInterval(function () {
+            var el = document.getElementById('aiVideoElapsed');
+            if (el) el.textContent = elapsedText();
+        }, 1000);
+
+        function stop() {
+            clearInterval(ticker);
+        }
+
+        function poll() {
+            if (Date.now() - startedAt > MAX_WAIT_MS) {
+                stop();
+                swal.fire('Still not ready', 'Synthesia has not finished this render after ' + elapsedText() + '. Please try again.', 'error');
+                return;
+            }
+
+            $.ajax({
+                url: '/AIInterview/GetAIQuestionVideoStatus',
+                type: 'POST',
+                data: { 'id': id, 'videoId': videoId },
+                timeout: 360000,
+                success: function (data) {
+                    networkErrors = 0;
+                    if (data && data.success && data.ready) {
+                        stop();
+                        // Reload only once the confirmation has been read, so the message is not
+                        // wiped off the screen the moment it appears.
+                        swal.fire((data.message) ? data.message : 'AI video ready.').then(function () {
+                            location.reload();
+                        });
+                        return;
+                    }
+                    if (data && data.success) {
+                        setTimeout(poll, POLL_MS);
+                        return;
+                    }
+                    stop();
+                    swal.fire((data && data.message) ? data.message : 'Could not generate AI video.');
+                },
+                error: function (xhr, status) {
+                    // The render continues at Synthesia regardless of a dropped poll.
+                    networkErrors += 1;
+                    if (networkErrors >= MAX_NETWORK_ERRORS) {
+                        stop();
+                        swal.fire('Lost contact with the server while waiting for the video. Reload to check whether it arrived.');
+                        return;
+                    }
+                    setTimeout(poll, POLL_MS);
+                }
+            });
+        }
+
+        poll();
+    }
+
     function CreateAIQuestionVideo(id) {
-        debugger;
         swal.fire({
             title: 'Are you sure?',
             text: "Do you want to create an AI Video that asks the question?",
@@ -2659,28 +2739,39 @@
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, go ahead',
             preConfirm: function () {
+                // Only starts the render; resolves with the Synthesia video id so the wait can be
+                // handled after this dialog has closed.
                 return new Promise(function (resolve) {
                     $.ajax({
                         url: '/AIInterview/CreateAIQuestionVideo',
                         type: 'POST',
                         data: { 'id': id },
-                        timeout: 300000,
+                        timeout: 120000,
                         success: function (data) {
-                            var msg = (data && data.message) ? data.message : (typeof data === 'string' ? data : 'Done.');
-                            swal.fire(msg);
-                            if (data && data.success) {
-                                location.reload();
+                            if (data && data.success && data.videoId) {
+                                resolve({ videoId: data.videoId });
+                                return;
                             }
-                            resolve();
+                            var msg = (data && data.message) ? data.message : (typeof data === 'string' ? data : 'Could not generate AI video.');
+                            resolve({ error: msg });
                         },
                         error: function () {
-                            swal.fire('Could not generate AI video.');
-                            resolve();
+                            resolve({ error: 'Could not generate AI video.' });
                         }
                     });
                 });
             },
             allowOutsideClick: false
+        }).then(function (result) {
+            var outcome = result ? result.value : null;
+            if (!outcome) return;                       // cancelled or dismissed
+            if (outcome.error) {
+                swal.fire(outcome.error);
+                return;
+            }
+            // Opened here rather than inside preConfirm: SweetAlert closes the confirm dialog only
+            // once preConfirm settles, which would close the waiting dialog with it.
+            pollAIQuestionVideo(id, outcome.videoId, Date.now());
         });
     }
 
@@ -3931,7 +4022,7 @@ else
 <script src="~/js/dm-v4-layout.js?v=20250630badqc4"></script>
 <script src="~/js/dm-v4-voice.js?v=20250609istmeta1"></script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
-<script src="~/js/dm-v4-questions.js?v=20260826listening"></script>
+<script src="~/js/dm-v4-questions.js?v=20260909aivideopoll3"></script>
 
 <div id="dmV4ResumeSummaryOverlay" class="dm-v4-drawer-overlay" aria-hidden="true"></div>
 <aside id="dmV4ResumeSummaryDrawer" class="dm-v4-drawer dm-v4-drawer--verdict" aria-hidden="true" role="dialog" aria-labelledby="dmV4ResumeSummaryTitle" style="max-width:520px;">
