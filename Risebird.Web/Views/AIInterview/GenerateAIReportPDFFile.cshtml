@@ -975,14 +975,35 @@
         together when there is nothing to show — the partial's own guards decide that, and
         this @if keeps the band from standing over an empty part.
     *@
-    @if (Model.ResumeEvaluation != null)
+    @{
+        // The same gate the link carries on the page: Public access, or one of the three
+        // profiles, and both ids present. The PDF must not show a link to a screening page
+        // that the person exporting it could not open themselves.
+        bool pdfCanSeeScreeningLink =
+            ((ViewBag.AccessType != null && ViewBag.AccessType == "Public")
+                || (ViewBag.ProfileName != null && (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")))
+            && ViewBag.IRFId != null && ViewBag.CandidateMasterId != null && ViewBag.CandidateMasterId > 0;
+        string pdfScreeningAccessType = ViewBag.AccessType ?? "";
+    }
+    @* Opens when there is either a parsed evaluation to show or a link to offer, so a
+       candidate whose screening JSON will not parse still gets the way through to the
+       screener's own page. html2pdf is configured with enableLinks, so the anchor stays
+       clickable in the exported document. *@
+    @if (Model.ResumeEvaluation != null || pdfCanSeeScreeningLink)
     {
         <div class="part-hd is-resume">Resume Evaluation</div>
         <div class="part-desc is-resume">
             What the resume screener found before the interview: the score it gave, how it reached it, and against what the role asked for.
+            @if (pdfCanSeeScreeningLink)
+            {
+                <a style="background:none!important;border:0px!important;text-decoration: underline;color: #039BE5!important;font-size: 11px;" target="_blank" title="Resume Screening Results" href="@Url.Action("ScreenCandidateV2", "AIScreener", new { emailId = Model.CandidateEmail, irfId = ViewBag.IRFId, candidateMasterId = ViewBag.CandidateMasterId, accessType = pdfScreeningAccessType }, Context.Request.Scheme)">Resume Screening Results</a>
+            }
         </div>
 
-        @await Html.PartialAsync("_ResumeEvaluationSection", Model.ResumeEvaluation)
+        @if (Model.ResumeEvaluation != null)
+        {
+            @await Html.PartialAsync("_ResumeEvaluationSection", Model.ResumeEvaluation)
+        }
     }
 
     <div class="part-hd is-skill">Hands-on Skill Evaluation</div>

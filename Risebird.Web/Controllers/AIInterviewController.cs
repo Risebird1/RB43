@@ -3444,6 +3444,26 @@ namespace Risebird.Web.Controllers
                 reportModel.AIResumeScreeningScore = meetingDetails?.AIResumeScreeningScore ?? 0;
                 reportModel.ResumeEvaluation = ParseResumeEvaluation(meetingDetails?.AIScreeningResultJsonV2);
 
+                // The Resume Screening link in the PDF is built from these, exactly as Report
+                // does it. Without them the view cannot form the URL, so the link would simply
+                // be absent from the exported document. Guarded: a lookup failure must not
+                // cost the whole PDF, it just costs the link.
+                try
+                {
+                    var pdfCandidate = meetingDetails != null
+                        ? await _irfRepository.GetCandidateIdAndIrfIdByMeetingId(meetingDetails.InterviewId)
+                        : null;
+                    ViewBag.IRFId = meetingDetails?.irfIntId;
+                    ViewBag.CandidateMasterId = pdfCandidate?.CandidateMasterId ?? 0;
+                    ViewBag.AccessType = profileName == ProfileNames.Client ? "Public" : string.Empty;
+                }
+                catch (Exception)
+                {
+                    ViewBag.IRFId = null;
+                    ViewBag.CandidateMasterId = 0;
+                    ViewBag.AccessType = string.Empty;
+                }
+
                 List<TypingSpeedAssessment> typingAssessmentsPdf;
                 try { typingAssessmentsPdf = await _aiinterviewerService.GetTypingSpeedAssessmentBySessionId(seId.ToString()) ?? new List<TypingSpeedAssessment>(); } catch { typingAssessmentsPdf = new List<TypingSpeedAssessment>(); }
                 reportModel.TypingSpeedAssessments = typingAssessmentsPdf;
