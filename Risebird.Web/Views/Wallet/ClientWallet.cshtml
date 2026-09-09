@@ -135,6 +135,23 @@
         color: #888;
         margin: 0 0 10px;
     }
+
+    /* Status pill — deliberately NOT ".badge": the site's global .badge rule is a fixed
+       22x22px notification-count circle and clips normal label text like "Active". */
+    .agr-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1.4;
+        border-radius: 10px;
+        white-space: nowrap;
+        color: #fff;
+    }
+    .agr-badge-success   { background-color: #2e7d32; }
+    .agr-badge-warning   { background-color: #e65100; }
+    .agr-badge-danger    { background-color: #c62828; }
+    .agr-badge-secondary { background-color: #757575; }
 </style>
 
 <div class="main-panel wallet-page" id="main-panel">
@@ -241,7 +258,7 @@
                                     var agr = Model.LatestAgreement;
                                     <div class="amount" style="font-size:18px;">
                                         @agr.AgreementTypeDesc
-                                        <span class="badge @agr.EffectiveStatusCss" style="font-size:11px;vertical-align:middle;">@agr.EffectiveStatusDesc</span>
+                                        <span class="agr-badge @agr.EffectiveStatusCss" style="vertical-align:middle;">@agr.EffectiveStatusDesc</span>
                                     </div>
                                     <div class="sub" style="margin-top:8px;line-height:1.6;">
                                         Start: @(agr.StartDate?.ToString("dd MMM yyyy") ?? "—") ·

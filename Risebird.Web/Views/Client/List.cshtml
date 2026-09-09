@@ -14,6 +14,24 @@
 }
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/interview.css?v=2024" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<style>
+    /* Status pill — deliberately NOT ".badge": the site's global .badge rule is a fixed
+       22x22px notification-count circle and clips normal label text like "Active". */
+    .agr-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1.4;
+        border-radius: 10px;
+        white-space: nowrap;
+        color: #fff;
+    }
+    .agr-badge-success   { background-color: #2e7d32; }
+    .agr-badge-warning   { background-color: #e65100; }
+    .agr-badge-danger    { background-color: #c62828; }
+    .agr-badge-secondary { background-color: #757575; }
+</style>
 <div class="main-panel" id="main-panel">
 
     <div class="pt30">
@@ -199,7 +217,7 @@
                                                 @if (latestAgr != null)
                                                 {
                                                     <span>@latestAgr.AgreementTypeDesc</span>
-                                                    <span class="badge @latestAgr.EffectiveStatusCss" style="font-size:10px;margin-left:4px;">@latestAgr.EffectiveStatusDesc</span>
+                                                    <span class="agr-badge @latestAgr.EffectiveStatusCss" style="margin-left:4px;">@latestAgr.EffectiveStatusDesc</span>
                                                     @if (latestAgr.DaysRemaining.HasValue)
                                                     {
                                                         <div style="font-size:11px;color:#777;">
