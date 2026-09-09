@@ -265,9 +265,66 @@
             background: #e2e8f0;
         }
 
+    /* The Questions Discussed panel takes the same rule-and-hairline heading as
+       AI Analysis & Recommendations, so the two read as siblings within the part. The
+       icon is dropped: the green rule already carries that job, and the two together
+       crowded the line. Both the server-rendered head and the one the adaptive script
+       builds are covered. */
+    #question-list .rb-ai-panel__head,
+    .rb-adaptive-section-card .rb-adaptive-table-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 4px 0 16px;
+        padding: 0;
+        border: 0;
+        background: none;
+    }
+
+        #question-list .rb-ai-panel__head::before,
+        .rb-adaptive-section-card .rb-adaptive-table-title::before {
+            content: "";
+            flex: 0 0 auto;
+            width: 4px;
+            height: 17px;
+            border-radius: 2px;
+            background: #4eda92;
+        }
+
+        #question-list .rb-ai-panel__head::after,
+        .rb-adaptive-section-card .rb-adaptive-table-title::after {
+            content: "";
+            flex: 1 1 auto;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        /* The icon is kept, sized to the cap height of the label so it sits on the line
+           rather than pushing it open — at its natural size it dwarfed a .76rem heading
+           and broke the rule-to-text rhythm. */
+        #question-list .rb-ai-panel__head img,
+        .rb-adaptive-section-card .rb-adaptive-table-title img {
+            display: block;
+            flex: 0 0 auto;
+            width: 17px;
+            height: 17px;
+            object-fit: contain;
+            margin-right: -2px;
+        }
+
+        #question-list .rb-ai-panel__head .rb-ai-panel__title,
+        .rb-adaptive-section-card .rb-adaptive-table-title .rb-ai-panel__title {
+            font-size: .76rem;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: #334155;
+            white-space: nowrap;
+        }
+
     /* Same family, applied to headings that already exist inside a part. */
     .rb-section-header h2.rb-part-sub-h {
-        font-size: .95rem;
+        font-size: .85rem;
         font-weight: 700;
         letter-spacing: 1.1px;
         text-transform: uppercase;
@@ -314,14 +371,41 @@
         line-height: 1.3;
     }
 
+    /* The verdict line is the one sentence a reader takes away from the card, so it is
+       toned by outcome rather than left as grey body text. Tone comes from
+       AIInterviewVerdict.IsSelectFamily / IsRejectFamily for the interview, and from the
+       60/40 bands for the assessment — never from matching on the wording. */
     .rb-sum-foot {
         border-top: 1px solid #eef0f3;
-        padding: 10px 18px;
-        font-size: .85rem;
-        font-weight: 600;
+        padding: 11px 18px;
+        font-size: .88rem;
+        font-weight: 700;
         color: #2b3440;
         background: #fbfcfd;
+        letter-spacing: .2px;
     }
+
+        .rb-sum-foot i {
+            margin-right: 7px;
+        }
+
+        .rb-sum-foot.is-pass {
+            color: #14663d;
+            background: #e9f9f0;
+            border-top-color: #cdeddc;
+        }
+
+        .rb-sum-foot.is-review {
+            color: #8a5300;
+            background: #fdf6e6;
+            border-top-color: #f2e2bd;
+        }
+
+        .rb-sum-foot.is-fail {
+            color: #a3261d;
+            background: #fdeeec;
+            border-top-color: #f5d2ce;
+        }
 
     .rb-summary-cards {
         display: grid;
@@ -443,12 +527,12 @@
         margin: 0 0 8px 0;
         color: #475569;
         font-weight: 700;
-        font-size: .7rem;
+        font-size: .85rem;
         letter-spacing: 1.1px;
         text-transform: uppercase;
         display: flex;
         align-items: center;
-        gap: 7px;
+        gap: 8px;
     }
 
     /* Sized down with the Question/Answer label it sits beside — a 28px badge against a
@@ -456,13 +540,13 @@
     .rb-question-number {
         background: linear-gradient(135deg, #4eda92 0%, #56e0cb 100%);
         color: white;
-        width: 20px;
-        height: 20px;
+        width: 23px;
+        height: 23px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.65rem;
+        font-size: 0.72rem;
         font-weight: 700;
         flex-shrink: 0;
     }
@@ -1642,12 +1726,16 @@
         width: 100%;
     }
 
+    /* Flat rather than carded. Inside a named part the panel chrome was competing with
+       the part header for the reader's eye — a gradient, a border and a shadow around
+       every block made each look like a section of its own. Padding is kept so the
+       existing rhythm holds. */
     .rb-ai-panel {
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-        border: 1px solid #e9ecef;
-        border-radius: 12px;
+        background: none;
+        border: 0;
+        border-radius: 0;
         padding: 12px 14px;
-        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06);
+        box-shadow: none;
         min-width: 0;
         max-width: 100%;
         box-sizing: border-box;
@@ -1941,13 +2029,13 @@
     .rb-ai-q-card {
         border: 1px solid #e8edf2;
         border-radius: 8px;
-        background: #fff;
+        background: #e7e5e51a;
         padding: 8px 10px;
     }
 
-    .rb-ai-q-card:nth-child(even) {
-        background: #fafbfc;
-    }
+    /* The :nth-child(even) stripe that used to sit here set an opaque #fafbfc, which
+       would have overridden the translucent background above on every second card. One
+       consistent tint instead of alternating rows. */
 
     .rb-ai-q-card__head {
         display: flex;
@@ -3272,8 +3360,12 @@
             is omitted when its evaluation did not run — a channel with no written
             assessment shows one card rather than an empty second.
 
-            Technical and communication are shown on the 0-10 scale the model carries
-            rather than restated out of 100.
+            Technical and communication are printed as they arrive, with a % sign. The
+            evaluation emits them on a 0-100 scale — nothing in AIInterviewEvaluation
+            normalises overall_technical_score / overall_communication_score, and real
+            payloads carry values like 30 and 40. Do not scale them: the old "/ 10"
+            label rendered "30 / 10", and multiplying by ten to reach a percentage
+            rendered "300 %". Both were wrong in the same place for opposite reasons.
         *@
         @{
             var rbEvalRan = Model.AIInterviewEvaluation != null;
@@ -3292,7 +3384,7 @@
                             <div class="rb-sum-stat">
                                 @if (Model.AIInterviewEvaluation.OverallTechnicalScore != 0)
                                 {
-                                    <div class="rb-sum-v">@((Model.AIInterviewEvaluation.OverallTechnicalScore * 10).ToString("0.#"))<small> %</small></div>
+                                    <div class="rb-sum-v">@Model.AIInterviewEvaluation.OverallTechnicalScore.ToString("0.#")<small> %</small></div>
                                 }
                                 else
                                 {
@@ -3303,7 +3395,7 @@
                             <div class="rb-sum-stat">
                                 @if (Model.AIInterviewEvaluation.OverallCommunicationScore != 0)
                                 {
-                                    <div class="rb-sum-v">@((Model.AIInterviewEvaluation.OverallCommunicationScore * 10).ToString("0.#"))<small> %</small></div>
+                                    <div class="rb-sum-v">@Model.AIInterviewEvaluation.OverallCommunicationScore.ToString("0.#")<small> %</small></div>
                                 }
                                 else
                                 {
@@ -3318,7 +3410,17 @@
                         </div>
                         @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict))
                         {
-                            <div class="rb-sum-foot">@Model.AIInterviewEvaluation.FinalVerdict</div>
+                            @* Tone from the canonical verdict helpers, not from the wording:
+                               the AI's phrasing varies, but Normalize() maps it onto the
+                               four-value enum first. *@
+                            var rbVerdict = Model.AIInterviewEvaluation.FinalVerdict;
+                            var rbTone = AIInterviewVerdict.IsSelectFamily(rbVerdict) ? "is-pass"
+                                : AIInterviewVerdict.IsRejectFamily(rbVerdict) ? "is-fail"
+                                : "is-review";
+                            var rbIcon = rbTone == "is-pass" ? "fa-check-circle"
+                                : rbTone == "is-fail" ? "fa-times-circle"
+                                : "fa-exclamation-circle";
+                            <div class="rb-sum-foot @rbTone"><i class="fa @rbIcon"></i>@rbVerdict</div>
                         }
                     </div>
                 }
@@ -3336,8 +3438,16 @@
                                 <div class="rb-sum-l">Correct</div>
                             </div>
                         </div>
-                        <div class="rb-sum-foot">
-                            @(rbMcq.ScorePercent >= 60
+                        @{
+                            var rbMcqTone = rbMcq.ScorePercent >= 60 ? "is-pass"
+                                : rbMcq.ScorePercent >= 40 ? "is-review"
+                                : "is-fail";
+                            var rbMcqIcon = rbMcqTone == "is-pass" ? "fa-check-circle"
+                                : rbMcqTone == "is-fail" ? "fa-times-circle"
+                                : "fa-exclamation-circle";
+                        }
+                        <div class="rb-sum-foot @rbMcqTone">
+                            <i class="fa @rbMcqIcon"></i>@(rbMcq.ScorePercent >= 60
                                 ? "Meets the 60% passing score"
                                 : rbMcq.ScorePercent >= 40
                                     ? "Below the 60% passing score — needs review"
