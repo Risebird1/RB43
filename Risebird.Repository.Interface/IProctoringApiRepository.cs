@@ -6,6 +6,13 @@ namespace Risebird.Repository.Interface
 {
     public interface IProctoringApiRepository
     {
+        /// <summary>
+        /// Validates a mint request's (interviewId, candidateEmail) pair against
+        /// InterviewMeetings/InterviewComments — this is the credential check for the
+        /// unauthenticated /mint endpoint, standing in for the bearer token a candidate can't supply.
+        /// </summary>
+        Task<ProctoringCandidateInterviewValidation> ValidateCandidateInterviewAsync(int interviewId, string candidateEmail);
+
         /// <summary>Creates the session row a launch token was minted for (state = idle). Makes the session token "recognized".</summary>
         Task<bool> RegisterSessionAsync(ProctoringApiSession session);
 

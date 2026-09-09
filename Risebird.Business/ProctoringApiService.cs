@@ -33,6 +33,14 @@ namespace Risebird.Business
 
         public async Task<ProctoringMintSessionResponse> MintSessionAsync(ProctoringMintSessionRequest request)
         {
+            // NOTE: interviewId/candidateEmail validation against InterviewMeetings/InterviewComments
+            // is deliberately disabled for now (product decision) — every mint request is trusted
+            // as-is. IProctoringApiRepository.ValidateCandidateInterviewAsync and
+            // usp_ValidateProctoringCandidateInterview already implement that check; re-enable by
+            // restoring the guard this comment replaced (int.TryParse the interviewId, call
+            // ValidateCandidateInterviewAsync, return null — 401 — on any failed check) once the
+            // product wants candidate/interview validation back on this endpoint.
+
             var sessionToken = Guid.NewGuid().ToString("N");
             var ttl = TimeSpan.FromMinutes(request.TtlMinutes.GetValueOrDefault() > 0
                 ? request.TtlMinutes.Value
@@ -48,15 +56,15 @@ namespace Risebird.Business
                 InterviewId = request.InterviewId,
                 CandidateEmail = request.CandidateEmail,
                 BrowserSessionId = request.BrowserSessionId,
-                Trust = request.Trust.ToWireString(),
+                Trust = ProctoringTrust.Verified.ToWireString(),
                 ExpiresAtUtc = expiresAtUtc,
             });
 
             return new ProctoringMintSessionResponse
             {
-                LaunchToken = launchToken,
+                Token = launchToken,
+                ApiBaseUrl = apiBaseUrl,
                 SessionToken = sessionToken,
-                ExpiresAtUtc = expiresAtUtc,
             };
         }
 

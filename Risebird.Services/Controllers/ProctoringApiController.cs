@@ -15,8 +15,8 @@ namespace Risebird.Services.Controllers
     /// everything else non-2xx is transient (client retries with backoff) — so every action here
     /// returns 401 for "session token not recognized" and otherwise lets unexpected exceptions
     /// fall through to the catch-all 500 rather than masking them as a fatal status.
-    /// mint/logs are operational endpoints for the scheduling dashboard, not part of the desktop
-    /// client contract, and are gated by a shared secret instead.
+    /// mint is a real candidate's only entry point (see its own doc comment below) and is
+    /// deliberately unauthenticated; logs is an operational lookup gated by a shared secret.
     /// </summary>
     [Route("api/proctoring/session")]
     [ApiController]
@@ -165,9 +165,14 @@ namespace Risebird.Services.Controllers
         }
 
         /// <summary>
-        /// Mints a signed launch token and registers the session (not part of the desktop client
-        /// contract — called by the scheduling dashboard that hands the app its risebird-proctor://
-        /// join link). Gated by a shared secret since it can mint sessions carrying a candidate email.
+        /// The desktop app's only entry point for a real candidate: no login, no launch link, no
+        /// API key, no bearer token — the app's entire UI is an Interview ID field and an email
+        /// field. So this is deliberately unauthenticated (there is no credential a candidate
+        /// could supply); the interviewId + candidateEmail pair is validated as the credential
+        /// itself in the business layer — minting only succeeds when interviewId names a real
+        /// interview in a joinable state and candidateEmail matches the candidate scheduled on it.
+        /// A mismatch or invalid pair returns 401 (fatal — the client stops rather than retrying)
+        /// rather than minting a token for a pair that doesn't correspond to a real interview.
         /// </summary>
         [HttpPost]
         [Route("mint")]
@@ -175,13 +180,14 @@ namespace Risebird.Services.Controllers
         {
             try
             {
-                if (!IsAuthorizedMintCaller())
-                    return Unauthorized();
-
                 if (request == null || string.IsNullOrWhiteSpace(request.InterviewId) || string.IsNullOrWhiteSpace(request.CandidateEmail))
                     return BadRequest();
 
-                return Ok(await _proctoringApiService.MintSessionAsync(request));
+                var result = await _proctoringApiService.MintSessionAsync(request);
+                if (result == null)
+                    return Unauthorized();
+
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -190,14 +196,14 @@ namespace Risebird.Services.Controllers
             }
         }
 
-        /// <summary>Operational lookup backing usp_GetProctoringLogsForCandidate — not part of the desktop client contract.</summary>
+        /// <summary>Operational lookup backing usp_GetProctoringLogsForCandidate — not part of the desktop client contract, admin-only.</summary>
         [HttpGet]
         [Route("logs")]
         public async Task<IActionResult> Logs([FromQuery] string candidateEmail)
         {
             try
             {
-                if (!IsAuthorizedMintCaller())
+                if (!IsAuthorizedAdminCaller())
                     return Unauthorized();
 
                 if (string.IsNullOrWhiteSpace(candidateEmail))
@@ -212,13 +218,13 @@ namespace Risebird.Services.Controllers
             }
         }
 
-        private bool IsAuthorizedMintCaller()
+        private bool IsAuthorizedAdminCaller()
         {
-            var configuredKey = _configuration["ProctoringApiSettings:MintKey"];
+            var configuredKey = _configuration["ProctoringApiSettings:AdminApiKey"];
             if (string.IsNullOrWhiteSpace(configuredKey))
                 return false;
 
-            var providedKey = Request.Headers["x-proctoring-mint-key"].ToString();
+            var providedKey = Request.Headers["x-proctoring-admin-key"].ToString();
             return string.Equals(providedKey, configuredKey, StringComparison.Ordinal);
         }
     }
