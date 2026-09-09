@@ -138,6 +138,9 @@ builder.Services.AddScoped<IAWSRekognitionService, AWSRekognitionService>();
 builder.Services.AddScoped<IPdfReaderHelper, PdfReaderHelper>();
 builder.Services.AddScoped<IOpenAIApiLogRepository, OpenAIApiLogRepository>();
 builder.Services.AddScoped<IOpenAIApiLogger, OpenAIApiLogger>();
+builder.Services.AddScoped<IProctoringApiRepository, ProctoringApiRepository>();
+builder.Services.AddScoped<IProctoringApiService, ProctoringApiService>();
+builder.Services.AddSingleton<IProctoringLaunchTokenService, ProctoringLaunchTokenService>();
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 
 var app = builder.Build();
