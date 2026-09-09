@@ -208,12 +208,13 @@
     }
     .qa-q-inner { width: 100%; border-collapse: collapse; }
     .qa-q-num-cell { width: 32px; vertical-align: top; padding-top: 2px; }
+    /* Sized down with the Question/Answer label it sits beside. */
     .qa-qnum {
         display: inline-block;
-        min-width: 22px; height: 22px; line-height: 22px;
+        min-width: 18px; height: 18px; line-height: 18px;
         text-align: center; padding: 0 4px;
         background: #f0f4f8;
-        color: #1a1a2e; font-size: 11px; font-weight: 700;
+        color: #1a1a2e; font-size: 9.5px; font-weight: 700;
         border-left: 3px solid #4eda92;
         border-radius: 3px;
     }
@@ -258,7 +259,7 @@
         min-height: 180px;
     }
     .qa-block-lbl {
-        font-size: 10.5px;
+        font-size: 9.5px;
         font-weight: 700;
         color: #4eda92;
         text-transform: uppercase;
@@ -393,117 +394,8 @@
         background: transparent !important;
     }
 
-    /* ══ TYPING SPEED ══════════════════════════════════ */
-    .ts-card {
-        border: 1px solid #cceedd; border-radius: 10px;
-        margin-bottom: 20px; overflow: hidden;
-        page-break-inside: avoid;
-        box-shadow: 0 2px 8px rgba(78,218,146,.10);
-    }
-    .ts-card-head {
-        background: linear-gradient(135deg, #0b0b18 0%, #141428 60%, #1a3040 100%);
-        padding: 11px 16px; overflow: hidden;
-    }
-    .ts-card-title {
-        font-size: 13px; font-weight: 600; color: #fff;
-        display: inline-block; vertical-align: middle; width: 72%;
-        word-wrap: break-word; overflow-wrap: break-word;
-    }
-    .ts-card-badge {
-        display: inline-block; vertical-align: middle;
-        font-size: 11px; font-weight: 700;
-        padding: 3px 11px; border-radius: 12px;
-        float: right; margin-top: 1px;
-    }
-    .ts-badge-pass { background: linear-gradient(135deg,#1a7a4a,#27ae72); color: #fff; }
-    .ts-badge-fail { background: linear-gradient(135deg,#b71c1c,#e53935); color: #fff; }
-    .ts-stats-row {
-        background: #f0faf6; border-bottom: 2px solid #d4ede3;
-        overflow: hidden; padding: 0;
-    }
-    .ts-stats-tbl { width: 100%; border-collapse: collapse; table-layout: fixed; }
-    .ts-stat-cell {
-        padding: 12px 10px; border-right: 1px solid #d4ede3;
-        text-align: center; vertical-align: middle;
-    }
-    .ts-stat-cell:last-child { border-right: none; }
-    .ts-stat-icon {
-        display: block; width: 30px; height: 30px; line-height: 30px;
-        background: linear-gradient(135deg, #4eda92, #56e0cb);
-        border-radius: 50%; color: #fff; font-size: 12px;
-        margin: 0 auto 5px;
-    }
-    .ts-stat-val { font-size: 20px; font-weight: 700; color: #0b0b18; line-height: 1; }
-    .ts-stat-val small { font-size: 11px; font-weight: 400; color: #888; }
-    .ts-stat-lbl { font-size: 11px; color: #666; font-weight: 600; margin-top: 4px; }
-    .ts-body { padding: 14px 16px; background: #fff; }
-    /* text boxes */
-    .ts-text-box {
-        background: #f7f9fb; border-radius: 6px;
-        padding: 10px 14px; margin-bottom: 12px;
-        border-left: 4px solid #4eda92;
-    }
-    .ts-text-box-typed { border-left-color: #17a2b8; background: #f4fbff; }
-    .ts-text-lbl {
-        font-size: 10.5px; font-weight: 700; color: #1a1a1a;
-        text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px;
-        display: flex; align-items: center; gap: 5px;
-    }
-    .ts-text-lbl-typed { color: #1a1a1a; }
-    .ts-text-val {
-        font-size: 13px; color: #333; line-height: 1.65;
-        white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word;
-    }
-    /* grade row */
-    .ts-grade-row {
-        display: flex; align-items: center; gap: 10px;
-        margin-bottom: 12px;
-    }
-    .ts-grade-badge {
-        display: inline-block; padding: 5px 16px; border-radius: 20px;
-        font-size: 13px; font-weight: 700; letter-spacing: .3px;
-        border: 2px solid transparent;
-    }
-    .ts-grade-excellent { background: #e6f9f0; color: #1a7a4a; border-color: #4eda92; }
-    .ts-grade-good      { background: #fff8e1; color: #795500; border-color: #ffc107; }
-    .ts-grade-poor      { background: #fdecea; color: #b71c1c; border-color: #ef9a9a; }
-    /* metrics table */
-    .ts-metrics-tbl { width: 100%; border-collapse: collapse; margin-bottom: 12px; border-radius: 6px; overflow: hidden; }
-    .ts-metrics-tbl tr:first-child td { border-top: none; }
-    .ts-metrics-tbl td { padding: 7px 12px; font-size: 13px; border: 1px solid #c8eef5; }
-    .ts-metrics-tbl td:first-child { width: 160px; font-weight: 700; background: #f4fbff; color: #1a1a1a; font-size: 10.5px; text-transform: uppercase; letter-spacing: .4px; }
-    .ts-metrics-tbl tr:nth-child(even) td:last-child { background: #f9fdff; }
-    /* error breakdown table */
-    .ts-err-tbl { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
-    .ts-err-tbl td {
-        text-align: center; vertical-align: middle;
-        border: 1px solid #c8eef5; padding: 8px 6px;
-        background: #fff;
-    }
-    .ts-err-tbl tr.err-val-row  td { font-size: 24px; font-weight: 700; line-height: 1; padding-bottom: 4px; border-bottom: none; }
-    .ts-err-tbl tr.err-lbl-row  td { border-top: none; padding-top: 3px; font-size: 10.5px; font-weight: 600; color: #1a1a1a; background: #f4fbff; text-transform: uppercase; letter-spacing: .3px; }
-    /* comment boxes */
-    .ts-comment-box {
-        background: #f4fbff; border: 1px solid #c8eef5;
-        border-left: 4px solid #17a2b8; border-radius: 6px;
-        padding: 10px 14px; margin-bottom: 10px;
-    }
-    .ts-comment-lbl {
-        font-size: 10.5px; font-weight: 700; color: #1a1a1a;
-        text-transform: uppercase; letter-spacing: .5px; margin-bottom: 5px;
-    }
-    .ts-comment-text { font-size: 13px; color: #333; line-height: 1.6; }
-    /* tips */
-    .ts-tips-box {
-        background: linear-gradient(135deg, #e8f4fd 0%, #edf8ff 100%);
-        border: 1px solid #b3d8f0; border-left: 4px solid #17a2b8;
-        border-radius: 6px; padding: 11px 14px;
-    }
-    .ts-tips-lbl {
-        font-size: 10.5px; font-weight: 700; color: #0c7bb3;
-        text-transform: uppercase; letter-spacing: .5px; margin-bottom: 7px;
-    }
-    .ts-tips-list { margin: 0; padding-left: 18px; font-size: 12.5px; color: #0c5460; line-height: 1.75; }
+    /* The .ts-* rules that styled the Typing Speed Assessment lived here. That section
+       is no longer rendered in the PDF, so nothing references them. */
 
     /* ══ PAGE BREAK ════════════════════════════════════ */
     .pb { page-break-before: always; }
@@ -644,12 +536,15 @@
     #pdfdownload .rb-section-header { margin-bottom: 10px; }
 
     #pdfdownload .rb-section-header h2 {
-        /* Deliberately px, and deliberately matched to .sec-head (16px) — that is this
-           PDF's own section heading, and the two should read as one document. */
-        font-size: 16px;
+        /* Deliberately px — rem is root-relative and would not track this view's 14px
+           base. Uppercase and letter-spaced to the part-header family: this heading sits
+           inside the Knowledge Evaluation part, so it reads as a section of that part
+           rather than a title of equal rank. */
+        font-size: 12px;
         font-weight: 700;
-        color: #0b0b18;
-        letter-spacing: -.2px;
+        color: #334155;
+        letter-spacing: 1.1px;
+        text-transform: uppercase;
         line-height: 1.3;
         margin: 0;
         /* Not flex+gap: html2canvas renders flex gaps inconsistently, and the icon
@@ -662,13 +557,15 @@
         margin-right: 8px;
     }
 
-    /* ── Summary tiles: one row ──────────────────────────────────────
-       The partial uses repeat(auto-fit, minmax(190px, 1fr)). Four tiles at 190px plus
-       three 14px gaps needs 802px, and the gutter above leaves 738px, so the fourth
-       tile wrapped onto a line of its own. The count is fixed at four and the tiles
-       are trimmed to suit: (738 - 30) / 4 = 177px each. */
+    /* ── Summary tiles ───────────────────────────────────────────────
+       The partial uses repeat(auto-fit, minmax(190px, 1fr)), which wrapped unpredictably
+       at this width. auto-flow rather than a fixed count so the row stays correct as
+       tiles are added or removed — it currently carries Total Score and Time Taken,
+       Questions Attempted and Integrity Signals having been dropped. */
     #pdfdownload .rb-mcq-report-grid {
-        grid-template-columns: repeat(4, 1fr);
+        grid-auto-flow: column;
+        grid-auto-columns: 1fr;
+        grid-template-columns: none;
         gap: 10px;
         margin-bottom: 16px;
     }
@@ -910,7 +807,7 @@
                                         <td>
                                             @if (Model.AIInterviewEvaluation.OverallTechnicalScore != 0)
                                             {
-                                                <div class="sum-v">@Model.AIInterviewEvaluation.OverallTechnicalScore<small> / 10</small></div>
+                                                <div class="sum-v">@((Model.AIInterviewEvaluation.OverallTechnicalScore * 10).ToString("0.#"))<small> %</small></div>
                                             }
                                             else
                                             {
@@ -921,7 +818,7 @@
                                         <td>
                                             @if (Model.AIInterviewEvaluation.OverallCommunicationScore != 0)
                                             {
-                                                <div class="sum-v">@Model.AIInterviewEvaluation.OverallCommunicationScore<small> / 10</small></div>
+                                                <div class="sum-v">@((Model.AIInterviewEvaluation.OverallCommunicationScore * 10).ToString("0.#"))<small> %</small></div>
                                             }
                                             else
                                             {
@@ -956,10 +853,6 @@
                                         <td>
                                             <div class="sum-v">@mcqReport.CorrectAnswers<small> / @mcqReport.TotalQuestions</small></div>
                                             <div class="sum-l">Correct</div>
-                                        </td>
-                                        <td>
-                                            <div class="sum-v">@(mcqReport.OrderedSections?.Count ?? 0)</div>
-                                            <div class="sum-l">Sections</div>
                                         </td>
                                     </tr>
                                 </table>
@@ -1083,222 +976,6 @@
         }
     }
 
-    <!-- ══════════════════ TYPING SPEED ASSESSMENT ════ -->
-    @{
-        int tsSecNum = 1;
-        if (Model.AIInterviewEvaluation != null)
-        {
-            if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.OverallCommunicationScoreReasoning)) tsSecNum++;
-            if (Model.AIInterviewEvaluation.QuestionRatings != null && Model.AIInterviewEvaluation.QuestionRatings.Any()) tsSecNum++;
-            if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict) || !string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalComment)) tsSecNum++;
-        }
-        bool hasTypingData = Model.TypingSpeedAssessments != null && Model.TypingSpeedAssessments.Any();
-    }
-
-    @* The MCQ assessment used to render here, between the typing test and the video
-       responses. It now opens the Knowledge Evaluation part further down, so the two
-       evaluations are not interleaved. *@
-
-    <div class="sec-wrap" style="padding-bottom:16px;">
-        <div class="sec-head"><span class="sec-num">@tsSecNum</span><i class="fa fa-keyboard-o" style="margin-right:7px;"></i>Typing Speed Assessment</div>
-        @if (hasTypingData)
-        {
-            @foreach (var tsa in Model.TypingSpeedAssessments)
-            {
-                Risebird.Entities.ViewModel.TypingAssessmentOpenAIResponse tsAnalysis = null;
-                if (!string.IsNullOrEmpty(tsa.OpenAIAnalysisJson))
-                {
-                    try { tsAnalysis = Newtonsoft.Json.JsonConvert.DeserializeObject<Risebird.Entities.ViewModel.TypingAssessmentOpenAIResponse>(tsa.OpenAIAnalysisJson); } catch { }
-                }
-                string gradeClass = "ts-grade-poor";
-                if (tsAnalysis?.scores?.overall_grade != null)
-                {
-                    var g = tsAnalysis.scores.overall_grade;
-                    gradeClass = (g == "Excellent" || g == "Very Good") ? "ts-grade-excellent" : g == "Good" ? "ts-grade-good" : "ts-grade-poor";
-                }
-                <div class="ts-card">
-                    <!-- Card header: question title + pass/fail -->
-                    <div class="ts-card-head">
-                        <span class="ts-card-title"><i class="fa fa-keyboard-o" style="margin-right:5px;color:#4eda92;"></i>@(tsa.QuestionText ?? "Typing Speed Assessment")</span>
-                        @if (tsa.IsPassed == true)
-                        {
-                            <span class="ts-card-badge ts-badge-pass"><i class="fa fa-check" style="margin-right:3px;"></i>Passed</span>
-                        }
-                        else if (tsa.IsPassed == false)
-                        {
-                            <span class="ts-card-badge ts-badge-fail"><i class="fa fa-times" style="margin-right:3px;"></i>Not Passed</span>
-                        }
-                    </div>
-
-                    <!-- Key stats row -->
-                    <div class="ts-stats-row">
-                        <table class="ts-stats-tbl">
-                            <tr>
-                                <td class="ts-stat-cell">
-                                    <span class="ts-stat-icon"><i class="fa fa-tachometer"></i></span>
-                                    <div class="ts-stat-val">@tsa.WordsPerMinute.ToString("N1") <small>WPM</small></div>
-                                    <div class="ts-stat-lbl">Words / Min</div>
-                                </td>
-                                <td class="ts-stat-cell">
-                                    <span class="ts-stat-icon" style="background:@(tsa.AccuracyPercentage >= tsa.PassingAccuracyPercentage ? "linear-gradient(135deg,#1a7a4a,#27ae72)" : "linear-gradient(135deg,#b71c1c,#e53935)");"><i class="fa fa-bullseye"></i></span>
-                                    <div class="ts-stat-val" style="color:@(tsa.AccuracyPercentage >= tsa.PassingAccuracyPercentage ? "#1a7a4a" : "#b71c1c");">
-                                        @tsa.AccuracyPercentage.ToString("N1") <small>%</small>
-                                    </div>
-                                    <div class="ts-stat-lbl">Char Accuracy</div>
-                                </td>
-                                <td class="ts-stat-cell">
-                                    <span class="ts-stat-icon"><i class="fa fa-clock-o"></i></span>
-                                    <div class="ts-stat-val">@tsa.TimeTakenInSeconds.ToString("N0") <small>s</small></div>
-                                    <div class="ts-stat-lbl">Time Taken</div>
-                                </td>
-                                <td class="ts-stat-cell">
-                                    <span class="ts-stat-icon"><i class="fa fa-font"></i></span>
-                                    <div class="ts-stat-val">@tsa.CorrectCharacters <small>/ @tsa.TotalCharacters</small></div>
-                                    <div class="ts-stat-lbl">Correct Chars</div>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <!-- Body -->
-                    <div class="ts-body">
-
-                        <!-- Sample Text -->
-                        @if (!string.IsNullOrWhiteSpace(tsa.SampleText))
-                        {
-                            <div class="ts-text-box">
-                                <div class="ts-text-lbl"><i class="fa fa-file-text-o"></i> Sample Text</div>
-                                <div class="ts-text-val">@tsa.SampleText</div>
-                            </div>
-                        }
-
-                        <!-- Candidate Typed -->
-                        @if (!string.IsNullOrWhiteSpace(tsa.TypedText))
-                        {
-                            <div class="ts-text-box ts-text-box-typed">
-                                <div class="ts-text-lbl ts-text-lbl-typed"><i class="fa fa-keyboard-o"></i> Candidate Typed</div>
-                                <div class="ts-text-val">@tsa.TypedText</div>
-                            </div>
-                        }
-
-                        @if (tsAnalysis != null && tsAnalysis.scores != null)
-                        {
-                            <!-- Grade badge -->
-                            <div style="margin-bottom:12px;">
-                                <span class="ts-grade-badge @gradeClass">
-                                    <i class="fa fa-certificate" style="margin-right:5px;"></i>Grade: @tsAnalysis.scores.overall_grade
-                                </span>
-                            </div>
-
-                            <!-- Accuracy metrics -->
-                            <table class="ts-metrics-tbl">
-                                <tr>
-                                    <td><i class="fa fa-check-circle" style="margin-right:4px;"></i>Word Accuracy</td>
-                                    <td>
-                                        <strong style="font-size:15px;color:@(tsAnalysis.scores.word_level_accuracy_percent >= 97 ? "#1a7a4a" : "#b71c1c");">@tsAnalysis.scores.word_level_accuracy_percent.ToString("N1")%</strong>
-                                        <span style="margin-left:8px;color:#aaa;font-size:11px;">(Required: 97%)</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa fa-font" style="margin-right:4px;"></i>Character Accuracy</td>
-                                    <td><strong style="font-size:15px;">@tsAnalysis.scores.character_level_accuracy_percent.ToString("N1")%</strong></td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa fa-clock-o" style="margin-right:4px;"></i>Time Taken</td>
-                                    <td><strong>@tsa.TimeTakenInSeconds.ToString("N1")</strong> seconds <span style="color:#aaa;font-size:11px;">(Max: 120s)</span></td>
-                                </tr>
-                            </table>
-
-                            @if (tsAnalysis.counts != null)
-                            {
-                                <!-- Error breakdown -->
-                                <div style="font-size:10.5px;font-weight:700;color:#1a1a1a;background:#f4fbff;display:inline-block;padding:3px 10px;border-radius:4px;border:1px solid #c8eef5;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">
-                                    <i class="fa fa-bar-chart" style="margin-right:5px;"></i>Error Breakdown
-                                </div>
-                                <table class="ts-err-tbl">
-                                    <tr class="err-val-row">
-                                        <td style="color:#1a7a4a; border-top:3px solid #4eda92;">@tsAnalysis.counts.correct_words</td>
-                                        <td style="color:#b71c1c; border-top:3px solid #e53935;">@tsAnalysis.counts.incorrect_words</td>
-                                        <td style="color:#b71c1c; border-top:3px solid #e53935;">@tsAnalysis.counts.missing_words</td>
-                                        <td style="color:#e65100; border-top:3px solid #ff7043;">@tsAnalysis.counts.spelling_errors</td>
-                                        <td style="color:#795500; border-top:3px solid #ffc107;">@tsAnalysis.counts.capitalization_errors</td>
-                                        <td style="color:#795500; border-top:3px solid #ffc107;">@tsAnalysis.counts.punctuation_errors</td>
-                                    </tr>
-                                    <tr class="err-lbl-row">
-                                        <td style="background:#f0faf6;">Correct</td>
-                                        <td style="background:#fff5f5;">Incorrect</td>
-                                        <td style="background:#fff5f5;">Missing</td>
-                                        <td style="background:#fff8f5;">Spelling</td>
-                                        <td style="background:#fffde7;">Capitals</td>
-                                        <td style="background:#fffde7;">Punctuation</td>
-                                    </tr>
-                                </table>
-                            }
-
-                            @if (tsAnalysis.verdict != null)
-                            {
-                                @if (!string.IsNullOrEmpty(tsAnalysis.verdict.speed_comment))
-                                {
-                                    <div class="ts-comment-box">
-                                        <div class="ts-comment-lbl"><i class="fa fa-tachometer" style="margin-right:5px;"></i>Speed</div>
-                                        <div class="ts-comment-text">@tsAnalysis.verdict.speed_comment</div>
-                                    </div>
-                                }
-                                @if (!string.IsNullOrEmpty(tsAnalysis.verdict.accuracy_comment))
-                                {
-                                    <div class="ts-comment-box">
-                                        <div class="ts-comment-lbl"><i class="fa fa-bullseye" style="margin-right:5px;"></i>Accuracy</div>
-                                        <div class="ts-comment-text">@tsAnalysis.verdict.accuracy_comment</div>
-                                    </div>
-                                }
-                                @if (tsAnalysis.verdict.actionable_tips != null && tsAnalysis.verdict.actionable_tips.Any())
-                                {
-                                    <div class="ts-tips-box">
-                                        <div class="ts-tips-lbl"><i class="fa fa-lightbulb-o" style="margin-right:5px;"></i>Tips for Improvement</div>
-                                        <ul class="ts-tips-list">
-                                            @foreach (var tip in tsAnalysis.verdict.actionable_tips)
-                                            {
-                                                <li>@tip</li>
-                                            }
-                                        </ul>
-                                    </div>
-                                }
-                            }
-                        }
-                        else
-                        {
-                            <!-- Fallback: basic metrics when no AI analysis -->
-                            <table class="ts-metrics-tbl">
-                                <tr>
-                                    <td><i class="fa fa-tachometer" style="margin-right:4px;"></i>Words / Min</td>
-                                    <td><strong>@tsa.WordsPerMinute.ToString("N1")</strong> <span style="color:#888;font-size:11px;">(Required: @tsa.PassingWPM WPM)</span></td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa fa-check-circle" style="margin-right:4px;"></i>Accuracy</td>
-                                    <td><strong style="color:@(tsa.AccuracyPercentage >= tsa.PassingAccuracyPercentage ? "#1a7a4a" : "#b71c1c");">@tsa.AccuracyPercentage.ToString("N1")%</strong> <span style="color:#888;font-size:11px;">(Required: @tsa.PassingAccuracyPercentage%)</span></td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa fa-clock-o" style="margin-right:4px;"></i>Time Taken</td>
-                                    <td><strong>@tsa.TimeTakenInSeconds.ToString("N1")</strong> seconds</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa fa-font" style="margin-right:4px;"></i>Characters</td>
-                                    <td>@tsa.CorrectCharacters correct / @tsa.TotalCharacters total</td>
-                                </tr>
-                            </table>
-                        }
-                    </div>
-                </div>
-            }
-        }
-        else
-        {
-            <div style="padding:18px 15px;text-align:center;color:#aaa;font-size:13px;border:1px dashed #d4ede3;border-radius:6px;background:#f8fffe;">
-                <i class="fa fa-keyboard-o" style="font-size:22px;margin-bottom:8px;display:block;color:#cde;"></i>
-                No typing speed assessment was recorded for this interview.
-            </div>
-        }
-    </div>
 
     <!-- ══════════════════ Q&A RESPONSES ═══════════════ -->
     @if (Model.videoQuestionDetails != null && Model.videoQuestionDetails.Any())
@@ -1310,7 +987,8 @@
             if (Model.AIInterviewEvaluation.QuestionRatings != null && Model.AIInterviewEvaluation.QuestionRatings.Any()) qaSecNum++;
             if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict) || !string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalComment)) qaSecNum++;
         }
-        if (Model.TypingSpeedAssessments != null && Model.TypingSpeedAssessments.Any()) qaSecNum++;
+        @* No increment for the typing test: that section is no longer rendered in the
+           PDF, and counting it here would leave a gap in the section numbering. *@
         <div class="pb pb-pad"></div>
         <div class="sec-wrap" style="padding-bottom:16px;">
             <div class="sec-head">
