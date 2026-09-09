@@ -71,35 +71,10 @@
     }
 
     /* ══ STATS TABLE ═══════════════════════════════════ */
-    .stats-wrap {
-        background: #f0faf6;
-        border-top: 3px solid #4eda92;
-        border-bottom: 1px solid #d4ede3;
-        padding: 0;
-    }
-    .stats-table {
-        width: 100%;
-        border-collapse: collapse;
-        table-layout: fixed;
-    }
-    .stats-cell {
-        padding: 8px 10px;
-        border-right: 1px solid #d4ede3;
-        vertical-align: middle;
-        text-align: center;
-    }
-    .stats-cell:last-child { border-right: none; }
-    .stats-icon {
-        display: block;
-        width: 26px; height: 26px; line-height: 26px;
-        background: linear-gradient(135deg, #4eda92, #56e0cb);
-        border-radius: 50%;
-        color: #fff; font-size: 11px;
-        margin: 0 auto 4px;
-    }
-    .stats-val { font-size: 19px; font-weight: 700; color: #0b0b18; line-height: 1; }
-    .stats-val small { font-size: 11px; font-weight: 400; color: #888; }
-    .stats-lbl { font-size: 11px; color: #666; font-weight: 600; margin-top: 3px; }
+    /* The .stats-* rules that used to sit here styled the four-tile strip (Total
+       Questions / Video Responses / Technical / Communication) that the two summary
+       cards replaced. Nothing references them any more — .ts-stats-* in the typing
+       section is a different set. */
 
     /* ══ SECTION HEADER ════════════════════════════════ */
     .sec-wrap { padding: 22px 28px 8px; }
@@ -534,6 +509,92 @@
     .pb { page-break-before: always; }
     .pb-pad { padding-top: 18px; }
 
+    /* ══ REPORT PARTS ═════════════════════════════════════════════════════
+       The report carries two evaluations that are measured differently and read
+       differently: the interview itself, and the written assessment. They used to run
+       together as one numbered list of sections, so a reader had no cue where one ended
+       and the other began. These rules give each a named part with a header, a summary
+       card at the top, and a page of its own.
+
+       Tables rather than grid or flex for the two-column and three-stat layouts: this
+       is rasterised by html2canvas before jsPDF slices it, and the surrounding view
+       already uses <table class="stats-table"> for exactly this reason.
+       ═════════════════════════════════════════════════════════════════════ */
+
+    .sum-wrap { padding: 16px 28px 4px; }
+    .sum-table { width: 100%; border-collapse: separate; border-spacing: 12px 0; table-layout: fixed; }
+    .sum-td { vertical-align: top; padding: 0; }
+
+    .sum-card {
+        border: 1px solid #e3e6ea;
+        border-left: 3px solid #cbd2d9;
+        border-radius: 7px;
+        background: #fff;
+        overflow: hidden;
+    }
+        .sum-card.is-skill     { border-left-color: #4eda92; }
+        .sum-card.is-knowledge { border-left-color: #3b82f6; }
+
+    .sum-lbl {
+        font-size: 9.5px; font-weight: 700; letter-spacing: 1px;
+        text-transform: uppercase; color: #55606c;
+        padding: 9px 12px 0;
+    }
+
+    .sum-stats { width: 100%; border-collapse: collapse; table-layout: fixed; margin-top: 2px; }
+    .sum-stats td {
+        text-align: center; padding: 6px 4px 10px;
+        border-right: 1px solid #eef0f3; vertical-align: top;
+    }
+        .sum-stats td:last-child { border-right: 0; }
+
+    .sum-v { font-size: 21px; font-weight: 700; color: #0b0b18; line-height: 1.1; }
+        .sum-v small { font-size: 10px; font-weight: 600; color: #8a939d; }
+
+    .sum-l { font-size: 9px; color: #6b7280; margin-top: 3px; line-height: 1.3; }
+
+    .sum-foot {
+        border-top: 1px solid #eef0f3;
+        padding: 7px 12px;
+        font-size: 10.5px; font-weight: 600; color: #2b3440;
+        background: #fbfcfd;
+    }
+
+    /* Part header. The bar is the same ink as the report header so the two read as one
+       document, with the part's accent repeated on the left edge. */
+    .part-hd {
+        background: #141428;
+        border-left: 4px solid #cbd2d9;
+        padding: 9px 20px;
+        margin: 18px 0 0;
+        font-size: 12px; font-weight: 700; letter-spacing: 1.4px;
+        text-transform: uppercase; color: #ffffff;
+    }
+        .part-hd.is-skill     { border-left-color: #4eda92; }
+        .part-hd.is-knowledge { border-left-color: #3b82f6; }
+
+    .part-desc {
+        background: #f6f8fa;
+        border-bottom: 1px solid #e8ebee;
+        border-left: 4px solid #eef1f4;
+        padding: 7px 20px;
+        font-size: 10.5px; color: #55606c; line-height: 1.45;
+        margin-bottom: 4px;
+    }
+
+    /* The written assessment starts its own page. Declared here and also pushed through
+       html2pdf's own break handling by the .html2pdf__page-break element in the markup —
+       page-break-before alone is not honoured by the rasteriser. */
+    .part-break {
+        page-break-before: always;
+        break-before: page;
+    }
+
+    .rep-end {
+        padding: 10px 28px 18px;
+        font-size: 9.5px; color: #93a0ad; text-align: center;
+    }
+
     /* ══ MCQ ASSESSMENT SECTION — PDF corrections ═════════════════════════
        _McqAssessmentSection.cshtml is shared with AIInterview/Report.cshtml. That view
        renders under _PublicLayout2; this one renders under _PublicLayout, a different
@@ -819,46 +880,107 @@
         </div>
     </div>
 
-    <!-- ══════════════════ STATS ═══════════════════════ -->
-    <div class="stats-wrap">
-        <table class="stats-table">
-            <tr>
-                <td class="stats-cell">
-                    <span class="stats-icon"><i class="fa fa-list-ol"></i></span>
-                    <div class="stats-val">@(Model.videoQuestionDetails?.Count ?? 0)</div>
-                    <div class="stats-lbl">Total Questions</div>
-                </td>
-                <td class="stats-cell">
-                    <span class="stats-icon"><i class="fa fa-video-camera"></i></span>
-                    <div class="stats-val">@(Model.videoQuestionDetails?.Count ?? 0)</div>
-                    <div class="stats-lbl">Video Responses</div>
-                </td>
-                <td class="stats-cell">
-                    <span class="stats-icon"><i class="fa fa-code"></i></span>
-                    @if (Model.AIInterviewEvaluation != null && Model.AIInterviewEvaluation.OverallTechnicalScore != 0)
+    @*
+        Summary. One card per evaluation rather than a single strip of four numbers, so a
+        reader can see at a glance that two different things were measured and how the
+        candidate did on each. The card is omitted entirely when its evaluation did not
+        run — a channel with no written assessment shows one card, not an empty second.
+
+        Scores are rendered on the scale the model actually carries (technical and
+        communication are 0-10), not restated out of 100.
+    *@
+    @{
+        var evalRan = Model.AIInterviewEvaluation != null;
+        var mcqRan = Model.McqAssessment != null;
+        var skillQuestionCount = Model.videoQuestionDetails?.Count ?? 0;
+        var mcqReport = Model.McqAssessment;
+    }
+    @if (evalRan || mcqRan)
+    {
+        <div class="sum-wrap">
+            <table class="sum-table">
+                <tr>
+                    @if (evalRan)
                     {
-                        <div class="stats-val">@Model.AIInterviewEvaluation.OverallTechnicalScore <small>/ 10</small></div>
+                        <td class="sum-td">
+                            <div class="sum-card is-skill">
+                                <div class="sum-lbl">Hands-on Skill Evaluation</div>
+                                <table class="sum-stats">
+                                    <tr>
+                                        <td>
+                                            @if (Model.AIInterviewEvaluation.OverallTechnicalScore != 0)
+                                            {
+                                                <div class="sum-v">@Model.AIInterviewEvaluation.OverallTechnicalScore<small> / 10</small></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="sum-v" style="color:#bbb;">&mdash;</div>
+                                            }
+                                            <div class="sum-l">Technical</div>
+                                        </td>
+                                        <td>
+                                            @if (Model.AIInterviewEvaluation.OverallCommunicationScore != 0)
+                                            {
+                                                <div class="sum-v">@Model.AIInterviewEvaluation.OverallCommunicationScore<small> / 10</small></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="sum-v" style="color:#bbb;">&mdash;</div>
+                                            }
+                                            <div class="sum-l">Communication</div>
+                                        </td>
+                                        <td>
+                                            <div class="sum-v">@skillQuestionCount</div>
+                                            <div class="sum-l">Questions answered</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                                @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict))
+                                {
+                                    <div class="sum-foot">@Model.AIInterviewEvaluation.FinalVerdict</div>
+                                }
+                            </div>
+                        </td>
                     }
-                    else
+                    @if (mcqRan)
                     {
-                        <div class="stats-val" style="color:#bbb;">—</div>
+                        <td class="sum-td">
+                            <div class="sum-card is-knowledge">
+                                <div class="sum-lbl">Knowledge Evaluation</div>
+                                <table class="sum-stats">
+                                    <tr>
+                                        <td>
+                                            <div class="sum-v">@mcqReport.ScorePercent.ToString("0.#")<small> %</small></div>
+                                            <div class="sum-l">Score</div>
+                                        </td>
+                                        <td>
+                                            <div class="sum-v">@mcqReport.CorrectAnswers<small> / @mcqReport.TotalQuestions</small></div>
+                                            <div class="sum-l">Correct</div>
+                                        </td>
+                                        <td>
+                                            <div class="sum-v">@(mcqReport.OrderedSections?.Count ?? 0)</div>
+                                            <div class="sum-l">Sections</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <div class="sum-foot">
+                                    @(mcqReport.ScorePercent >= 60
+                                        ? "Meets the 60% passing score"
+                                        : mcqReport.ScorePercent >= 40
+                                            ? "Below the 60% passing score — needs review"
+                                            : "Well below the 60% passing score")
+                                </div>
+                            </div>
+                        </td>
                     }
-                    <div class="stats-lbl">Technical Score</div>
-                </td>
-                <td class="stats-cell">
-                    <span class="stats-icon"><i class="fa fa-comments"></i></span>
-                    @if (Model.AIInterviewEvaluation != null && Model.AIInterviewEvaluation.OverallCommunicationScore != 0)
-                    {
-                        <div class="stats-val">@Model.AIInterviewEvaluation.OverallCommunicationScore <small>/ 10</small></div>
-                    }
-                    else
-                    {
-                        <div class="stats-val" style="color:#bbb;">—</div>
-                    }
-                    <div class="stats-lbl">Communication Score</div>
-                </td>
-            </tr>
-        </table>
+                </tr>
+            </table>
+        </div>
+    }
+
+    <div class="part-hd is-skill">Hands-on Skill Evaluation</div>
+    <div class="part-desc">
+        The interview itself: what was asked, how the interviewer judged it, and the candidate's own answers.
     </div>
 
     @if (Model.AIInterviewEvaluation != null)
@@ -973,9 +1095,9 @@
         bool hasTypingData = Model.TypingSpeedAssessments != null && Model.TypingSpeedAssessments.Any();
     }
 
-    @* MCQ assessment section. The same partial the on-screen report uses, so the PDF and the
-       page cannot drift apart; renders nothing when the channel has no MCQ section. *@
-    @await Html.PartialAsync("_McqAssessmentSection", Model.McqAssessment)
+    @* The MCQ assessment used to render here, between the typing test and the video
+       responses. It now opens the Knowledge Evaluation part further down, so the two
+       evaluations are not interleaved. *@
 
     <div class="sec-wrap" style="padding-bottom:16px;">
         <div class="sec-head"><span class="sec-num">@tsSecNum</span><i class="fa fa-keyboard-o" style="margin-right:7px;"></i>Typing Speed Assessment</div>
@@ -1287,6 +1409,32 @@
         </div>
     }
 
+    @*
+        ══ KNOWLEDGE EVALUATION ═══════════════════════════════════════════════
+        The written assessment, on a page of its own. The empty .html2pdf__page-break
+        div is what actually forces the break: html2pdf's rasteriser does not honour a
+        CSS page-break-before on its own, and looks for this class instead. The
+        .part-break class is kept alongside it so the intent survives if the page is
+        ever printed from the browser rather than exported.
+
+        The whole part is omitted when the channel ran no written assessment, rather
+        than printing a heading over an empty page.
+    *@
+    @if (Model.McqAssessment != null)
+    {
+        <div class="html2pdf__page-break part-break"></div>
+
+        <div class="part-hd is-knowledge">Knowledge Evaluation</div>
+        <div class="part-desc">
+            The written assessment: how each section scored, and every question as it was served.
+        </div>
+
+        @* The same partial the on-screen report uses, so the PDF and the page cannot
+           drift apart. *@
+        @await Html.PartialAsync("_McqAssessmentSection", Model.McqAssessment)
+    }
+
+    <div class="rep-end">End of report</div>
 
 </div><!-- #pdfdownload -->
 </div><!-- #main-panel -->
