@@ -1,6 +1,17 @@
 -- DesktopProctor API session lifecycle + cumulative risk score, one row per launched session.
 -- SessionToken is the business key the desktop client and dashboard address the session by;
 -- see ProctoringLogs for the child event log keyed off this table's surrogate id.
+
+-- Pre-release schema rework: an earlier version of this script made SessionToken itself the
+-- primary key, with no surrogate id. No real session data depends on that shape yet, so drop
+-- and recreate clean rather than migrate it (see ProctoringLogs.sql for the same guard).
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'ProctoringSessions')
+   AND NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'dbo.ProctoringSessions') AND name = N'id')
+BEGIN
+    DROP TABLE [dbo].[ProctoringSessions]
+END
+GO
+
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES
 WHERE TABLE_NAME = N'ProctoringSessions')
 BEGIN

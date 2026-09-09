@@ -5,6 +5,17 @@
 -- error, but the constraint then needs this script re-run once ProctoringSessions exists).
 -- Idempotent on (ProctoringSessionId, Sequence): the desktop client's local durable queue can
 -- redeliver a batch after a crash/restart, so usp_InsertProctoringLog checks existence first.
+
+-- Pre-release schema rework: an earlier version of this script created ProctoringLogs keyed by
+-- a raw SessionToken column instead of the surrogate ProctoringSessionId FK below. No real
+-- session data depends on that shape yet, so drop and recreate clean rather than migrate it.
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'ProctoringLogs')
+   AND NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'dbo.ProctoringLogs') AND name = N'ProctoringSessionId')
+BEGIN
+    DROP TABLE [dbo].[ProctoringLogs]
+END
+GO
+
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES
 WHERE TABLE_NAME = N'ProctoringLogs')
 BEGIN
