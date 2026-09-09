@@ -80,15 +80,14 @@ namespace Risebird.Entities.ViewModel
         public string InterviewId { get; set; }
         public string CandidateEmail { get; set; }
         public string BrowserSessionId { get; set; }
-        public ProctoringTrust Trust { get; set; } = ProctoringTrust.Unverified;
         public int? TtlMinutes { get; set; }
     }
 
     public class ProctoringMintSessionResponse
     {
-        public string LaunchToken { get; set; }
+        public string Token { get; set; }
+        public string ApiBaseUrl { get; set; }
         public string SessionToken { get; set; }
-        public DateTime ExpiresAtUtc { get; set; }
     }
 
     public class ProctoringLogEntry

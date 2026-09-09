@@ -6,6 +6,7 @@ namespace Risebird.Business.Interface
 {
     public interface IProctoringApiService
     {
+        /// <summary>Null means interviewId/candidateEmail didn't validate against a real, joinable interview — caller returns 401.</summary>
         Task<ProctoringMintSessionResponse> MintSessionAsync(ProctoringMintSessionRequest request);
 
         /// <summary>Null means the session token is unrecognized — caller returns 401.</summary>

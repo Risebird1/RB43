@@ -1,10 +1,10 @@
 using System;
+using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
-using Risebird.Entities.Enum;
 
 namespace Risebird.CommonHelper
 {
@@ -15,7 +15,11 @@ namespace Risebird.CommonHelper
         private readonly ECDsa _ecdsa;
         private readonly object _signLock = new object();
 
-        public ProctoringLaunchTokenService(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
+        // Registered as a Singleton (the dev key must stay the same for the process's lifetime,
+        // not regenerate per request) — so this constructor must not take a Scoped dependency like
+        // IApplicationErrorLogger (that's a captive-dependency DI validation failure). The one-time
+        // dev-key warning below goes to Trace instead, which needs nothing from the container.
+        public ProctoringLaunchTokenService(IConfiguration configuration)
         {
             var d = configuration["ProctoringApiSettings:SigningKey:D"];
             var x = configuration["ProctoringApiSettings:SigningKey:X"];
@@ -38,8 +42,7 @@ namespace Risebird.CommonHelper
                 // with a real production keypair before relying on this in a live environment.
                 _ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
                 var pub = _ecdsa.ExportParameters(includePrivateParameters: false);
-                _ = applicationErrorLogger.LogMessage(
-                    LogLevelInfo.Warning,
+                Trace.TraceWarning(
                     "ProctoringApiSettings:SigningKey is not configured — DesktopProctor is using an ephemeral, " +
                     "process-local ECDSA P-256 dev key. Public key (base64url) X=" + Base64UrlEncode(pub.Q.X) +
                     " Y=" + Base64UrlEncode(pub.Q.Y) + ". Do not use this in production.");
