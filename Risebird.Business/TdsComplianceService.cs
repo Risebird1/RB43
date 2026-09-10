@@ -57,7 +57,9 @@ namespace Risebird.Business
                 ? DateTime.Today.Year
                 : DateTime.Today.Year - 1;
 
-            var years = Enumerable.Range(currentYear - 4, 6)
+            // Six financial years ending at the current one. Range(currentYear - 4, 6) used to run
+            // one year past it, offering an FY that has not started and has nothing to file.
+            var years = Enumerable.Range(currentYear - 5, 6)
                 .Select(y => new SelectListItem
                 {
                     Value    = $"{y}-{y + 1}",
