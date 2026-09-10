@@ -18,19 +18,22 @@ namespace Risebird.Business
         private readonly IPasswordHelper _passwordHelper;
         private readonly IInterviewerListingSearchRepository _interviewerListingSearchRepository;
         private readonly ICallCatalogueListingSearchRepository _callCatalogueListingSearchRepository;
+        private readonly IIrfListingSearchRepository _irfListingSearchRepository;
 
         public UserService(
             IUserRepository userRepository,
             IApplicationErrorLogger applicationErrorLogger,
             IPasswordHelper passwordHelper,
             IInterviewerListingSearchRepository interviewerListingSearchRepository,
-            ICallCatalogueListingSearchRepository callCatalogueListingSearchRepository)
+            ICallCatalogueListingSearchRepository callCatalogueListingSearchRepository,
+            IIrfListingSearchRepository irfListingSearchRepository)
         {
             _userRepository = userRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _passwordHelper = passwordHelper;
             _interviewerListingSearchRepository = interviewerListingSearchRepository;
             _callCatalogueListingSearchRepository = callCatalogueListingSearchRepository;
+            _irfListingSearchRepository = irfListingSearchRepository;
         }
 
         public async Task<List<Menu>> GetMenuBasedOnUserEmailld(string emailId, string sessionId = null)
@@ -120,7 +123,12 @@ namespace Risebird.Business
                     EmailId = user.EmailId.Replace(" ", "")
                 };
                 user.UserPassword = await _passwordHelper.GenerateUserPassword(userDetails, false);
-                return await _userRepository.AddUser(user);
+                var result = await _userRepository.AddUser(user);
+                // AddUser writes the client assignments too (SeniorHR), which put this user into
+                // the allowedViewerEmails ACL of every IRF belonging to those clients.
+                if (result && user.Id > 0)
+                    await TrySyncIrfListingByUserIdAsync(user.Id);
+                return result;
             }
 
             catch (Exception e)
@@ -135,9 +143,17 @@ namespace Risebird.Business
             try
             {
                 var profileId = await TryResolveInterviewerProfileIdByUserIdAsync(id);
+                // The delete removes the UserList and SeniorHR rows outright, so the only way to
+                // find the affected IRFs is to look them up first.
+                var previousIrfIntIds = await TryGetIrfIntIdsForUserAsync(id);
+
                 var result = await _userRepository.DeleteUser(id);
-                if (result && profileId > 0)
-                    await TryRemoveInterviewerListingAsync(profileId);
+                if (result)
+                {
+                    if (profileId > 0)
+                        await TryRemoveInterviewerListingAsync(profileId);
+                    await TrySyncIrfListingByUserIdAsync(id, previousIrfIntIds);
+                }
                 return result;
             }
 
@@ -152,10 +168,19 @@ namespace Risebird.Business
         {
             try
             {
+                // Captured before the write: UpdateUser rewrites the user's client assignments
+                // by delete-then-insert, so an IRF they were just dropped from would not come
+                // back from the lookup afterwards — and it still carries their email in its ACL.
+                var previousIrfIntIds = await TryGetIrfIntIdsForUserAsync(user?.Id ?? 0);
+
                 var result = await _userRepository.UpdateUser(user);
                 // Name / email / IsActive on UserList are indexed for interviewer listing.
                 if (result && user != null && user.Id > 0)
+                {
                     await TrySyncInterviewerListingByUserIdAsync(user.Id);
+                    // Name / email also feed irfindex.risebirdHrEmail and allowedViewerEmails.
+                    await TrySyncIrfListingByUserIdAsync(user.Id, previousIrfIntIds);
+                }
                 return result;
             }
 
@@ -1038,6 +1063,53 @@ namespace Risebird.Business
             {
                 // No-op / false when the user is not an interviewer — expected for client users.
                 await _interviewerListingSearchRepository.UpsertInterviewerByUserIdAsync(userId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        /// <summary>
+        /// Snapshot of the IRFs a user is on, taken before a write that can change that set.
+        /// Returns empty rather than throwing — this only drives a best-effort re-index.
+        /// </summary>
+        private async Task<IReadOnlyList<int>> TryGetIrfIntIdsForUserAsync(int userId)
+        {
+            if (_irfListingSearchRepository == null
+                || !_irfListingSearchRepository.IsEnabled
+                || userId <= 0)
+                return Array.Empty<int>();
+
+            try
+            {
+                return await _irfListingSearchRepository.GetIrfIntIdsByUserIdAsync(userId)
+                       ?? (IReadOnlyList<int>)Array.Empty<int>();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Array.Empty<int>();
+            }
+        }
+
+        /// <summary>
+        /// Re-indexes the IRFs this user appears on. <paramref name="previousIrfIntIds"/> carries
+        /// the pre-write snapshot so IRFs the user was just removed from also get rewritten and
+        /// drop their stale <c>allowedViewerEmails</c> entry.
+        /// </summary>
+        private async Task TrySyncIrfListingByUserIdAsync(int userId, IReadOnlyList<int> previousIrfIntIds = null)
+        {
+            if (_irfListingSearchRepository == null
+                || !_irfListingSearchRepository.IsEnabled
+                || userId <= 0)
+                return;
+
+            try
+            {
+                // Returns 0 when the user is on no IRF at all — the common case for an
+                // interviewer or a plain candidate account.
+                await _irfListingSearchRepository.UpsertIrfsByUserIdAsync(userId, previousIrfIntIds);
             }
             catch (Exception ex)
             {
