@@ -31,7 +31,9 @@ namespace Risebird.CommonHelper
             // Step 4: Normalize line breaks
             resumeText = NormalizeLineBreaks(resumeText);
 
-            return resumeText;
+            // RemoveRepeatedContent rebuilds the text with AppendLine, which leaves a break after
+            // the last line — trim it so the result never grows a newline the input did not have.
+            return resumeText.Trim();
         }
 
         /// <summary>
