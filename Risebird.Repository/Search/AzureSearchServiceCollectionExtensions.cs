@@ -54,6 +54,12 @@ namespace Risebird.Repository
 
             services.AddScoped<IListingIndexRepositoryResolver, ListingIndexRepositoryResolver>();
 
+            // Off-request IRF re-indexing. A user edit can touch every IRF of a client, so the
+            // save enqueues and returns instead of waiting on the load and the upload.
+            services.AddSingleton<IrfIndexSyncQueue>();
+            services.AddSingleton<IIrfIndexSyncQueue>(sp => sp.GetRequiredService<IrfIndexSyncQueue>());
+            services.AddHostedService<IrfIndexSyncBackgroundService>();
+
             return services;
         }
     }

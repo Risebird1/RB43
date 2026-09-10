@@ -9,6 +9,7 @@
     <PackageReference Include="Dapper" />
     <PackageReference Include="Dapper.FluentMap" />
     <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
     <PackageReference Include="SendGrid" />
     <PackageReference Include="System.Data.SqlClient" />
     <PackageReference Include="VoiceIt" />

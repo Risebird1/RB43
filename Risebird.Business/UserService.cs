@@ -4,6 +4,7 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using Risebird.Repository.Interface.Search;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace Risebird.Business
         private readonly IInterviewerListingSearchRepository _interviewerListingSearchRepository;
         private readonly ICallCatalogueListingSearchRepository _callCatalogueListingSearchRepository;
         private readonly IIrfListingSearchRepository _irfListingSearchRepository;
+        private readonly IIrfIndexSyncQueue _irfIndexSyncQueue;
 
         public UserService(
             IUserRepository userRepository,
@@ -26,7 +28,8 @@ namespace Risebird.Business
             IPasswordHelper passwordHelper,
             IInterviewerListingSearchRepository interviewerListingSearchRepository,
             ICallCatalogueListingSearchRepository callCatalogueListingSearchRepository,
-            IIrfListingSearchRepository irfListingSearchRepository)
+            IIrfListingSearchRepository irfListingSearchRepository,
+            IIrfIndexSyncQueue irfIndexSyncQueue)
         {
             _userRepository = userRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -34,6 +37,7 @@ namespace Risebird.Business
             _interviewerListingSearchRepository = interviewerListingSearchRepository;
             _callCatalogueListingSearchRepository = callCatalogueListingSearchRepository;
             _irfListingSearchRepository = irfListingSearchRepository;
+            _irfIndexSyncQueue = irfIndexSyncQueue;
         }
 
         public async Task<List<Menu>> GetMenuBasedOnUserEmailld(string emailId, string sessionId = null)
@@ -127,7 +131,7 @@ namespace Risebird.Business
                 // AddUser writes the client assignments too (SeniorHR), which put this user into
                 // the allowedViewerEmails ACL of every IRF belonging to those clients.
                 if (result && user.Id > 0)
-                    await TrySyncIrfListingByUserIdAsync(user.Id);
+                    await QueueIrfListingSyncForUserAsync(user.Id, nameof(AddUser));
                 return result;
             }
 
@@ -152,7 +156,7 @@ namespace Risebird.Business
                 {
                     if (profileId > 0)
                         await TryRemoveInterviewerListingAsync(profileId);
-                    await TrySyncIrfListingByUserIdAsync(id, previousIrfIntIds);
+                    await QueueIrfListingSyncForUserAsync(id, nameof(DeleteUser), previousIrfIntIds);
                 }
                 return result;
             }
@@ -179,7 +183,7 @@ namespace Risebird.Business
                 {
                     await TrySyncInterviewerListingByUserIdAsync(user.Id);
                     // Name / email also feed irfindex.risebirdHrEmail and allowedViewerEmails.
-                    await TrySyncIrfListingByUserIdAsync(user.Id, previousIrfIntIds);
+                    await QueueIrfListingSyncForUserAsync(user.Id, nameof(UpdateUser), previousIrfIntIds);
                 }
                 return result;
             }
@@ -1094,26 +1098,42 @@ namespace Risebird.Business
         }
 
         /// <summary>
-        /// Re-indexes the IRFs this user appears on. <paramref name="previousIrfIntIds"/> carries
-        /// the pre-write snapshot so IRFs the user was just removed from also get rewritten and
-        /// drop their stale <c>allowedViewerEmails</c> entry.
+        /// Hands the IRF re-index to the background worker and returns immediately, so the save
+        /// does not wait on <c>usp_GetIrfIndexBatch</c> and the Azure Search upload — a user on
+        /// a large client can fan out to every IRF that client owns.
+        /// <para>
+        /// <paramref name="previousIrfIntIds"/> carries the pre-write snapshot so IRFs the user
+        /// was just removed from also get rewritten and drop their stale
+        /// <c>allowedViewerEmails</c> entry.
+        /// </para>
         /// </summary>
-        private async Task TrySyncIrfListingByUserIdAsync(int userId, IReadOnlyList<int> previousIrfIntIds = null)
+        private async Task QueueIrfListingSyncForUserAsync(
+            int userId,
+            string reason,
+            IReadOnlyList<int> previousIrfIntIds = null)
         {
-            if (_irfListingSearchRepository == null
+            if (_irfIndexSyncQueue == null
+                || _irfListingSearchRepository == null
                 || !_irfListingSearchRepository.IsEnabled
                 || userId <= 0)
                 return;
 
-            try
+            var queued = _irfIndexSyncQueue.Enqueue(new IrfIndexSyncRequest
             {
-                // Returns 0 when the user is on no IRF at all — the common case for an
-                // interviewer or a plain candidate account.
-                await _irfListingSearchRepository.UpsertIrfsByUserIdAsync(userId, previousIrfIntIds);
-            }
-            catch (Exception ex)
+                UserId = userId,
+                AdditionalIrfIntIds = previousIrfIntIds,
+                Reason = reason
+            });
+
+            if (!queued)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                // Only happens once the backlog is full, which means indexing is already far
+                // behind. Say so rather than letting the listing drift silently.
+                await _applicationErrorLogger.LogMessage(
+                    LogLevelInfo.Exception,
+                    new InvalidOperationException(
+                        $"IRF index sync queue full; dropped refresh for userId={userId} ({reason}). "
+                        + "Run IrfIndexSearch/FullCrawl to resynchronise."));
             }
         }
 

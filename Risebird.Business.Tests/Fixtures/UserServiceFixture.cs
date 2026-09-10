@@ -4,6 +4,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
+using Risebird.Repository.Interface.Search;
 
 namespace Risebird.Business.Tests.Fixtures
 {
@@ -22,6 +23,13 @@ namespace Risebird.Business.Tests.Fixtures
         public Mock<IInterviewerListingSearchRepository> InterviewerListingSearch { get; } = new(MockBehavior.Loose);
         public Mock<ICallCatalogueListingSearchRepository> CallCatalogueListingSearch { get; } = new(MockBehavior.Loose);
         public Mock<IIrfListingSearchRepository> IrfListingSearch { get; } = new(MockBehavior.Loose);
+        public Mock<IIrfIndexSyncQueue> IrfIndexSyncQueue { get; } = new(MockBehavior.Loose);
+
+        /// <summary>Everything handed to the background queue, in order.</summary>
+        public List<IrfIndexSyncRequest> Queued { get; } = new();
+
+        /// <summary>Whether the queue accepts writes (false simulates a full backlog).</summary>
+        public bool QueueAccepts { get; set; } = true;
 
         /// <summary>Every collaborator call that matters, in the order it happened.</summary>
         public List<string> Calls { get; } = new();
@@ -76,12 +84,17 @@ namespace Risebird.Business.Tests.Fixtures
                 .Callback(() => Calls.Add("irf.GetIds"))
                 .ReturnsAsync(() => CurrentIrfIntIds);
             IrfListingSearch.Setup(x => x.UpsertIrfsByUserIdAsync(It.IsAny<int>(), It.IsAny<IEnumerable<int>>()))
-                .Callback((int _, IEnumerable<int> additional) =>
-                {
-                    Calls.Add("irf.Upsert");
-                    LastAdditionalIrfIntIds = additional;
-                })
+                .Callback(() => Calls.Add("irf.Upsert"))
                 .ReturnsAsync(1);
+
+            IrfIndexSyncQueue.Setup(x => x.Enqueue(It.IsAny<IrfIndexSyncRequest>()))
+                .Callback((IrfIndexSyncRequest request) =>
+                {
+                    Calls.Add("irf.Enqueue");
+                    Queued.Add(request);
+                    LastAdditionalIrfIntIds = request?.AdditionalIrfIntIds;
+                })
+                .Returns(() => QueueAccepts);
 
             return new UserService(
                 Repository.Object,
@@ -89,7 +102,8 @@ namespace Risebird.Business.Tests.Fixtures
                 PasswordHelper.Object,
                 InterviewerListingSearch.Object,
                 CallCatalogueListingSearch.Object,
-                IrfListingSearch.Object);
+                IrfListingSearch.Object,
+                IrfIndexSyncQueue.Object);
         }
 
         public static UserList NewUser(int id = 0) => new()
