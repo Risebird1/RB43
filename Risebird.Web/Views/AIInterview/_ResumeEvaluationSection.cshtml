@@ -70,24 +70,9 @@
             .Where(m => m != null && !string.IsNullOrWhiteSpace(m.TechnicalSkill))
             .ToList() ?? new List<MustHaveTechnicalCriterion>();
 
-        // Each flag is turned into a sentence saying what was found, rather than printing which
-        // boolean is true. "StabilityConcerns: True" tells a recruiter nothing they can act on.
-        var flagLines = new List<string>();
-        if (re.DisqualificationFlags != null)
-        {
-            if (re.DisqualificationFlags.ZeroRealTimeAndRecentHandsOn)
-            {
-                flagLines.Add("No real-time implementation or recent hands-on experience was found.");
-            }
-            if (re.DisqualificationFlags.EmployerFraudSuspected)
-            {
-                flagLines.Add("The employment history has details the screener could not corroborate.");
-            }
-            if (re.DisqualificationFlags.StabilityConcerns)
-            {
-                flagLines.Add("The tenure pattern across employers was flagged as a stability concern.");
-            }
-        }
+        // The disqualification flags were turned into sentences here for the "What the
+        // screener flagged" block. That block is no longer rendered, so nothing reads them;
+        // DisqualificationFlags still arrives on the model if the block is ever restored.
 
         <style>
             .rb-re-section {
@@ -201,7 +186,8 @@
                     text-transform: uppercase;
                     color: #7d7794;
                     text-align: left;
-                    padding: 0 10px 7px;
+                    padding: 0 10px;
+                    vertical-align: middle;
                     border-bottom: 1px solid #ece9f6;
                 }
 
@@ -284,28 +270,8 @@
                 margin-top: 2px;
             }
 
-            .rb-re-note {
-                border: 1px solid #f3d9a8;
-                border-left: 3px solid #e0a33a;
-                border-radius: 7px;
-                background: #fdf8ee;
-                padding: 9px 12px;
-                font-size: 12px;
-                color: #6b5320;
-                line-height: 1.5;
-                margin-bottom: 8px;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-            }
-
-            .rb-re-note-lbl {
-                font-size: 10px;
-                font-weight: 700;
-                letter-spacing: .6px;
-                text-transform: uppercase;
-                color: #8a6a24;
-                margin-bottom: 3px;
-            }
+            /* .rb-re-note and .rb-re-note-lbl styled the amber cards in the "What the
+               screener flagged" block. Nothing renders them since that block was removed. */
         </style>
 
         <div class="rb-report-section rb-re-section">
@@ -338,31 +304,12 @@
                     <div class="rb-re-summary">@re.FitmentSummary</div>
                 }
 
-                @if (flagLines.Any() || !string.IsNullOrWhiteSpace(re.StabilityNotes) || !string.IsNullOrWhiteSpace(re.EmployerFraudNotes))
-                {
-                    <div class="rb-re-sub">What the screener flagged</div>
-
-                    foreach (var line in flagLines)
-                    {
-                        <div class="rb-re-note">@line</div>
-                    }
-
-                    @if (!string.IsNullOrWhiteSpace(re.StabilityNotes))
-                    {
-                        <div class="rb-re-note">
-                            <div class="rb-re-note-lbl">Stability</div>
-                            @re.StabilityNotes
-                        </div>
-                    }
-
-                    @if (!string.IsNullOrWhiteSpace(re.EmployerFraudNotes))
-                    {
-                        <div class="rb-re-note">
-                            <div class="rb-re-note-lbl">Employer verification</div>
-                            @re.EmployerFraudNotes
-                        </div>
-                    }
-                }
+                @* "What the screener flagged" was removed from both the report and its PDF.
+                   The heading, the disqualification sentences and the stability / employer
+                   verification notes went together: the notes sat under that heading, and
+                   removing only the heading would have left them with nothing introducing
+                   them. The underlying fields are untouched on the model and still reach
+                   the view — restoring the block is markup only. *@
 
                 @if (sectionRows.Any())
                 {
