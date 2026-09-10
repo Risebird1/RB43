@@ -32,6 +32,23 @@
         margin-right: 8px;
     }
     .agr-pdf-link:hover { text-decoration: underline; }
+
+    /* Status pill — deliberately NOT ".badge": the site's global .badge rule is a fixed
+       22x22px notification-count circle and clips normal label text like "Active". */
+    .agr-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1.4;
+        border-radius: 10px;
+        white-space: nowrap;
+        color: #fff;
+    }
+    .agr-badge-success   { background-color: #2e7d32; }
+    .agr-badge-warning   { background-color: #e65100; }
+    .agr-badge-danger    { background-color: #c62828; }
+    .agr-badge-secondary { background-color: #757575; }
 </style>
 
 @if (Model != null && Model.Any())
@@ -66,7 +83,7 @@
                     var rowCss = a.IsExpired ? "agr-expired" : a.IsExpiringSoon ? "agr-expiring" : "";
                     <tr class="@rowCss">
                         <td>@a.AgreementTypeDesc</td>
-                        <td><span class="badge @a.EffectiveStatusCss">@a.EffectiveStatusDesc</span></td>
+                        <td><span class="agr-badge @a.EffectiveStatusCss">@a.EffectiveStatusDesc</span></td>
                         <td style="white-space:nowrap;">@(a.StartDate?.ToString("dd MMM yyyy") ?? "—")</td>
                         <td style="white-space:nowrap;">@(a.ExpireDate?.ToString("dd MMM yyyy") ?? "—")</td>
                         <td class="text-right">@(a.DaysRemaining.HasValue ? a.DaysRemaining.Value.ToString() : "—")</td>

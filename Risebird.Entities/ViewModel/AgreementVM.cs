@@ -53,10 +53,14 @@ namespace Risebird.Entities.ViewModel
             : IsExpiringSoon ? "Expiring Soon"
             : "Active";
 
+        /// <summary>
+        /// Pairs with the "agr-badge" base class (not Bootstrap's "badge") — the site's global
+        /// .badge rule is a fixed 22x22px notification-count circle and clips normal label text.
+        /// </summary>
         public string EffectiveStatusCss =>
-            Status == (int)AgreementStatusEnum.Terminated ? "badge-secondary"
-            : IsExpired ? "badge-danger"
-            : IsExpiringSoon ? "badge-warning"
-            : "badge-success";
+            Status == (int)AgreementStatusEnum.Terminated ? "agr-badge-secondary"
+            : IsExpired ? "agr-badge-danger"
+            : IsExpiringSoon ? "agr-badge-warning"
+            : "agr-badge-success";
     }
 }
