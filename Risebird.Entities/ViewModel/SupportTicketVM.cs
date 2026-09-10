@@ -52,7 +52,8 @@ namespace Risebird.Entities.ViewModel
     }
 
     /// <summary>
-    /// JSON payload that Relay.app POSTs to the webhook endpoint.
+    /// JSON payload that the email-classifier automation POSTs to the webhook endpoint —
+    /// Relay.app historically, n8n after the migration.
     /// All property names match the snake_case keys defined in the agent prompt.
     /// </summary>
     public class RelayEmailWebhookPayload
@@ -142,6 +143,13 @@ namespace Risebird.Entities.ViewModel
         /// </summary>
         [JsonProperty("candidate_schedule_data")]
         public List<CandidateScheduleEntry> CandidateScheduleData { get; set; }
+
+        /// <summary>
+        /// Identifies the automation platform that produced this payload ('Relay' | 'n8n').
+        /// Absent on legacy Relay.app calls, which are treated as 'Relay'.
+        /// </summary>
+        [JsonProperty("source")]
+        public string Source                        { get; set; }
     }
 
     /// <summary>
