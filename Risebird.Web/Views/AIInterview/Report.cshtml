@@ -134,6 +134,293 @@
             color: #97caf4;
         }
 
+    /* ══ REPORT PARTS ══════════════════════════════════════════════════════
+       The report carries two evaluations that are measured differently and read
+       differently: the interview itself, and the written assessment. They used to run
+       together as one flat list of sections, with the written assessment rendering
+       between the candidate card and the typing test — so the two were interleaved and
+       nothing told a reader where one ended and the other began.
+
+       These give each a named part. The bar is built from this page's own slate palette
+       (#e2e8f0 / #334155 / #f1f5f9 / #64748b, the colours already most used in this
+       stylesheet) rather than the solid dark bar the PDF uses. That is deliberate rather
+       than a divergence: the PDF opens with a dark header, so a dark part bar belongs
+       there; this page is light throughout, and the same bar read as a slab dropped onto
+       it. Each matches the document it lives in; the accent rails stay identical so the
+       two are still recognisably the same parts.
+       ═════════════════════════════════════════════════════════════════════ */
+
+    .rb-part-hd {
+        background: #e2e8f0;
+        border: 1px solid #d7dee7;
+        border-left: 4px solid #cbd2d9;
+        border-bottom: 0;
+        border-radius: 10px 10px 0 0;
+        padding: 12px 22px;
+        margin: 8px 0 0;
+        font-size: .82rem;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: #334155;
+    }
+
+        .rb-part-hd.is-resume {
+            border-left-color: #6d5bd0;
+        }
+
+        .rb-part-hd.is-skill {
+            border-left-color: #4eda92;
+        }
+
+        .rb-part-hd.is-knowledge {
+            border-left-color: #3b82f6;
+        }
+
+    /* The description strip carries its part's rail too, so the band and the sentence
+       beneath it read as one block rather than the rail stopping halfway. */
+    .rb-part-desc.is-resume {
+        border-left-color: #cdc6ee;
+    }
+
+    .rb-part-desc {
+        background: #f1f5f9;
+        border: 1px solid #d7dee7;
+        border-left: 4px solid #eef1f4;
+        border-top: 0;
+        border-radius: 0 0 10px 10px;
+        padding: 10px 22px;
+        font-size: .85rem;
+        /* #475569 rather than the lighter #64748b: at .85rem the lighter slate measured
+           4.34:1 on this background, just under the 4.5:1 needed for body text. */
+        color: #475569;
+        line-height: 1.5;
+        margin-bottom: 26px;
+    }
+
+    /* Summary. One card per evaluation rather than a single row of numbers, so the two
+       are legible as separate things at a glance before either part is read. auto-fit
+       rather than a fixed two columns: on a narrow window the pair stacks instead of
+       crushing six figures into one line. */
+    .rb-sum-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 20px;
+        margin-bottom: 28px;
+    }
+
+    .rb-sum-card {
+        background: #fff;
+        border: 1px solid #e3e6ea;
+        border-left: 4px solid #cbd2d9;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+        .rb-sum-card.is-resume {
+            border-left-color: #6d5bd0;
+        }
+
+        .rb-sum-card.is-skill {
+            border-left-color: #4eda92;
+        }
+
+        .rb-sum-card.is-knowledge {
+            border-left-color: #3b82f6;
+        }
+
+    .rb-sum-lbl {
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: #55606c;
+        padding: 14px 18px 0;
+    }
+
+    /* auto-flow rather than a fixed three columns: the knowledge card carries two
+       figures and the skill card three, and each should fill its card either way. */
+    .rb-sum-stats {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 1fr;
+        margin-top: 4px;
+    }
+
+    /* ── Headings inside a part ────────────────────────────────────────
+       Sections that sit under a part header borrow its typography — uppercase,
+       letter-spaced, slate — a step down in size and weight so they read as children
+       of the part rather than as peers of it. */
+    .rb-subpart-hd {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 34px 0 20px;
+        font-size: .76rem;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: #334155;
+    }
+
+        .rb-subpart-hd::before {
+            content: "";
+            flex: 0 0 auto;
+            width: 4px;
+            height: 17px;
+            border-radius: 2px;
+            background: #4eda92;
+        }
+
+        .rb-subpart-hd::after {
+            content: "";
+            flex: 1 1 auto;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+    /* The Questions Discussed panel takes the same rule-and-hairline heading as
+       AI Analysis & Recommendations, so the two read as siblings within the part. The
+       icon is dropped: the green rule already carries that job, and the two together
+       crowded the line. Both the server-rendered head and the one the adaptive script
+       builds are covered. */
+    #question-list .rb-ai-panel__head,
+    .rb-adaptive-section-card .rb-adaptive-table-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 4px 0 16px;
+        padding: 0;
+        border: 0;
+        background: none;
+    }
+
+        #question-list .rb-ai-panel__head::before,
+        .rb-adaptive-section-card .rb-adaptive-table-title::before {
+            content: "";
+            flex: 0 0 auto;
+            width: 4px;
+            height: 17px;
+            border-radius: 2px;
+            background: #4eda92;
+        }
+
+        #question-list .rb-ai-panel__head::after,
+        .rb-adaptive-section-card .rb-adaptive-table-title::after {
+            content: "";
+            flex: 1 1 auto;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        /* The icon is kept, sized to the cap height of the label so it sits on the line
+           rather than pushing it open — at its natural size it dwarfed a .76rem heading
+           and broke the rule-to-text rhythm. */
+        #question-list .rb-ai-panel__head img,
+        .rb-adaptive-section-card .rb-adaptive-table-title img {
+            display: block;
+            flex: 0 0 auto;
+            width: 17px;
+            height: 17px;
+            object-fit: contain;
+            margin-right: -2px;
+        }
+
+        #question-list .rb-ai-panel__head .rb-ai-panel__title,
+        .rb-adaptive-section-card .rb-adaptive-table-title .rb-ai-panel__title {
+            font-size: .76rem;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: #334155;
+            white-space: nowrap;
+        }
+
+    /* Same family, applied to headings that already exist inside a part. */
+    .rb-section-header h2.rb-part-sub-h {
+        font-size: .85rem;
+        font-weight: 700;
+        letter-spacing: 1.1px;
+        text-transform: uppercase;
+        color: #334155;
+        gap: 9px;
+    }
+
+        .rb-section-header h2.rb-part-sub-h i {
+            font-size: 15px !important;
+            color: #4eda92;
+        }
+
+    /* The Question/Answer labels are restyled on the existing .rb-video-info h4 rule
+       further down this sheet rather than duplicated here — two rules of equal
+       specificity would just race, and the later one wins. */
+
+    .rb-sum-stat {
+        text-align: center;
+        padding: 8px 6px 14px;
+        border-right: 1px solid #eef0f3;
+    }
+
+        .rb-sum-stat:last-child {
+            border-right: 0;
+        }
+
+    .rb-sum-v {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #0b0b18;
+        line-height: 1.1;
+    }
+
+        .rb-sum-v small {
+            font-size: .8rem;
+            font-weight: 600;
+            color: #8a939d;
+        }
+
+    .rb-sum-l {
+        font-size: .75rem;
+        color: #6b7280;
+        margin-top: 4px;
+        line-height: 1.3;
+    }
+
+    /* The verdict line is the one sentence a reader takes away from the card, so it is
+       toned by outcome rather than left as grey body text. Tone comes from
+       AIInterviewVerdict.IsSelectFamily / IsRejectFamily for the interview, and from the
+       60/40 bands for the assessment — never from matching on the wording. */
+    .rb-sum-foot {
+        border-top: 1px solid #eef0f3;
+        padding: 11px 18px;
+        font-size: .88rem;
+        font-weight: 700;
+        color: #2b3440;
+        background: #fbfcfd;
+        letter-spacing: .2px;
+    }
+
+        .rb-sum-foot i {
+            margin-right: 7px;
+        }
+
+        .rb-sum-foot.is-pass {
+            color: #14663d;
+            background: #e9f9f0;
+            border-top-color: #cdeddc;
+        }
+
+        .rb-sum-foot.is-review {
+            color: #8a5300;
+            background: #fdf6e6;
+            border-top-color: #f2e2bd;
+        }
+
+        .rb-sum-foot.is-fail {
+            color: #a3261d;
+            background: #fdeeec;
+            border-top-color: #f5d2ce;
+        }
+
     .rb-summary-cards {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -247,26 +534,33 @@
         float: left;
     }
 
+    /* Sized and cased to the part-header family: these label the Q and A inside a
+       section of Hands-on Skill Evaluation, and at 20px black they were competing with
+       the section heading above them. */
     .rb-video-info h4 {
         margin: 0 0 8px 0;
-        color: #000;
-        font-weight: 600;
-        font-size: 20px;
+        color: #475569;
+        font-weight: 700;
+        font-size: .85rem;
+        letter-spacing: 1.1px;
+        text-transform: uppercase;
         display: flex;
         align-items: center;
         gap: 8px;
     }
 
+    /* Sized down with the Question/Answer label it sits beside — a 28px badge against a
+       .7rem label read as the badge labelling the text rather than the other way round. */
     .rb-question-number {
         background: linear-gradient(135deg, #4eda92 0%, #56e0cb 100%);
         color: white;
-        width: 28px;
-        height: 28px;
+        width: 23px;
+        height: 23px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.9rem;
+        font-size: 0.72rem;
         font-weight: 700;
         flex-shrink: 0;
     }
@@ -1446,12 +1740,16 @@
         width: 100%;
     }
 
+    /* Flat rather than carded. Inside a named part the panel chrome was competing with
+       the part header for the reader's eye — a gradient, a border and a shadow around
+       every block made each look like a section of its own. Padding is kept so the
+       existing rhythm holds. */
     .rb-ai-panel {
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-        border: 1px solid #e9ecef;
-        border-radius: 12px;
+        background: none;
+        border: 0;
+        border-radius: 0;
         padding: 12px 14px;
-        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.06);
+        box-shadow: none;
         min-width: 0;
         max-width: 100%;
         box-sizing: border-box;
@@ -1745,13 +2043,13 @@
     .rb-ai-q-card {
         border: 1px solid #e8edf2;
         border-radius: 8px;
-        background: #fff;
+        background: #e7e5e51a;
         padding: 8px 10px;
     }
 
-    .rb-ai-q-card:nth-child(even) {
-        background: #fafbfc;
-    }
+    /* The :nth-child(even) stripe that used to sit here set an opaque #fafbfc, which
+       would have overridden the translucent background above on every second card. One
+       consistent tint instead of alternating rows. */
 
     .rb-ai-q-card__head {
         display: flex;
@@ -3038,17 +3336,10 @@
                                 <i class="fa fa-envelope"></i>Resume:
                                 <span><a style="background:none!important;border:0px!important;text-decoration: underline;color: #039BE5!important;font-size: 15px;" id="resumeId" target="_blank" title="Resume" href=@Model.resumeLink>Click here<a></a></span>
                             </div>
-                            @if ((ViewBag.AccessType != null && ViewBag.AccessType == "Public") || (ViewBag.ProfileName != null && (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")))
-                            {
-                                @if (ViewBag.IRFId != null && ViewBag.CandidateMasterId != null && ViewBag.CandidateMasterId > 0)
-                                {
-                                    string accessType = ViewBag.AccessType ?? "";
-                                    <div class="rb-candidate-email">
-                                        <i class="fa fa-file-alt"></i>Resume Screening:
-                                        <span><a style="background:none!important;border:0px!important;text-decoration: underline;color: #039BE5!important;font-size: 15px;" target="_blank" title="Resume Screening Results" href="@Url.Action("ScreenCandidateV2", "AIScreener", new { emailId = Model.CandidateEmail, irfId = ViewBag.IRFId, candidateMasterId = ViewBag.CandidateMasterId, accessType = accessType })">Resume Screening Results</a></span>
-                                    </div>
-                                }
-                            }
+                            @* The Resume Screening link used to sit here in the candidate card.
+                               It now opens the Resume Evaluation part further down, beside the
+                               screening results it leads to, rather than in the header above a
+                               report that never showed those results at all. *@
                             <div class="rb-candidate-date">
                                 <i class="fa fa-calendar-alt"></i>
                                 Interview Date: <span>@Model.InterviewDate</span>
@@ -3064,41 +3355,204 @@
 
 
 
-            <div class="desktop-view">
-                <div class="rb-summary-cards">
-                    <div class="rb-summary-card">
-                        <div class="rb-card-icon">
-                            <i class="fa fa-comments"></i>
-                        </div>
-                        <div class="rb-card-content">
-                            <h3>Total Questions</h3>
-                            <a href="#question-list" style="text-decoration:none"> <p class="rb-card-value">@(Model.videoQuestionDetails?.Count ?? 0)</p></a>
-                        </div>
-                    </div>
-                    <div class="rb-summary-card">
-                        <div class="rb-card-icon">
-                            <i class="fa fa-video"></i>
-                        </div>
-                        <div class="rb-card-content">
-                            <h3>@(ViewBag.IsAdaptive == true ? "Audio" : "Video") Responses</h3>
-                            <a href="#video-list" style="text-decoration:none">  <p class="rb-card-value">@(Model.videoQuestionDetails?.Count ?? 0)</p></a>
-                        </div>
-                    </div>
-                    <div class="rb-summary-card">
-                        <div class="rb-card-icon">
-                            <i class="fa fa-clock"></i>
-                        </div>
-                        <div class="rb-card-content">
-                            <h3>Duration</h3>
-                            <p class="rb-card-value">~45 min</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
-        @* MCQ assessment section. Shared with GenerateAIReportPDFFile so the page and the
-           PDF cannot drift; renders nothing when the channel has no MCQ section. *@
-        @await Html.PartialAsync("_McqAssessmentSection", Model.McqAssessment)
+        @*
+            The interview itself. The MCQ assessment used to render here, straight after
+            the candidate card and before the typing test, which put the written
+            assessment in the middle of the hands-on one. It now opens its own part at
+            the foot of the report.
+        *@
+        @*
+            Summary of both evaluations, side by side, before either part is read. A card
+            is omitted when its evaluation did not run — a channel with no written
+            assessment shows one card rather than an empty second.
+
+            Technical and communication are printed as they arrive, with a % sign. The
+            evaluation emits them on a 0-100 scale — nothing in AIInterviewEvaluation
+            normalises overall_technical_score / overall_communication_score, and real
+            payloads carry values like 30 and 40. Do not scale them: the old "/ 10"
+            label rendered "30 / 10", and multiplying by ten to reach a percentage
+            rendered "300 %". Both were wrong in the same place for opposite reasons.
+        *@
+        @{
+            var rbEvalRan = Model.AIInterviewEvaluation != null;
+            var rbMcqRan = Model.McqAssessment != null;
+            var rbMcq = Model.McqAssessment;
+            var rbAnswered = Model.videoQuestionDetails?.Count ?? 0;
+
+            // Resume figures prefer the parsed record and fall back to the two columns, which
+            // is why AIResumeScreeningScore / Verdict stay on the model: a screening whose
+            // JSON will not parse still has both, and the summary should show them even
+            // though the section below cannot render.
+            var rbResume = Model.ResumeEvaluation;
+            var rbResumeScore = rbResume != null ? rbResume.TotalScore : Model.AIResumeScreeningScore;
+            var rbResumeMax = rbResume != null ? rbResume.MaxScore : 0;
+            var rbResumeVerdict = rbResume != null && !string.IsNullOrWhiteSpace(rbResume.Verdict)
+                ? rbResume.Verdict
+                : Model.AIResumeScreeningVerdict;
+            var rbScreened = rbResume != null || rbResumeScore != 0 || !string.IsNullOrWhiteSpace(rbResumeVerdict);
+            var rbResumeTone = (rbResumeVerdict ?? string.Empty).ToLowerInvariant().Contains("reject") ? "is-fail"
+                : (rbResumeVerdict ?? string.Empty).ToLowerInvariant().Contains("select")
+                    || (rbResumeVerdict ?? string.Empty).ToLowerInvariant().Contains("shortlist")
+                    || (rbResumeVerdict ?? string.Empty).ToLowerInvariant().Contains("proceed") ? "is-pass"
+                : "is-review";
+        }
+        @if (rbEvalRan || rbMcqRan || rbScreened)
+        {
+            <div class="rb-sum-grid">
+                <div class="rb-sum-card is-resume">
+                    <div class="rb-sum-lbl">Resume Evaluation</div>
+                    <div class="rb-sum-stats">
+                        <div class="rb-sum-stat">
+                            @if (rbScreened)
+                            {
+                                <div class="rb-sum-v">
+                                    @rbResumeScore@if (rbResumeMax > 0)
+                                    {<small> / @rbResumeMax</small>}
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="rb-sum-v" style="color:#bbb;">&mdash;</div>
+                            }
+                            <div class="rb-sum-l">Screening score</div>
+                        </div>
+                    </div>
+                    @if (rbScreened)
+                    {
+                        <div class="rb-sum-foot @rbResumeTone">
+                            @(string.IsNullOrWhiteSpace(rbResumeVerdict) ? "Screened" : rbResumeVerdict)
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="rb-sum-foot">This candidate was not screened</div>
+                    }
+                </div>
+                @if (rbEvalRan)
+                {
+                    <div class="rb-sum-card is-skill">
+                        <div class="rb-sum-lbl">Hands-on Skill Evaluation</div>
+                        <div class="rb-sum-stats">
+                            <div class="rb-sum-stat">
+                                @if (Model.AIInterviewEvaluation.OverallTechnicalScore != 0)
+                                {
+                                    <div class="rb-sum-v">@Model.AIInterviewEvaluation.OverallTechnicalScore.ToString("0.#")<small> %</small></div>
+                                }
+                                else
+                                {
+                                    <div class="rb-sum-v" style="color:#bbb;">&mdash;</div>
+                                }
+                                <div class="rb-sum-l">Technical</div>
+                            </div>
+                            <div class="rb-sum-stat">
+                                @if (Model.AIInterviewEvaluation.OverallCommunicationScore != 0)
+                                {
+                                    <div class="rb-sum-v">@Model.AIInterviewEvaluation.OverallCommunicationScore.ToString("0.#")<small> %</small></div>
+                                }
+                                else
+                                {
+                                    <div class="rb-sum-v" style="color:#bbb;">&mdash;</div>
+                                }
+                                <div class="rb-sum-l">Communication</div>
+                            </div>
+                            <div class="rb-sum-stat">
+                                <div class="rb-sum-v">@rbAnswered</div>
+                                <div class="rb-sum-l">Questions answered</div>
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict))
+                        {
+                            @* Tone from the canonical verdict helpers, not from the wording:
+                               the AI's phrasing varies, but Normalize() maps it onto the
+                               four-value enum first. *@
+                            var rbVerdict = Model.AIInterviewEvaluation.FinalVerdict;
+                            var rbTone = AIInterviewVerdict.IsSelectFamily(rbVerdict) ? "is-pass"
+                                : AIInterviewVerdict.IsRejectFamily(rbVerdict) ? "is-fail"
+                                : "is-review";
+                            var rbIcon = rbTone == "is-pass" ? "fa-check-circle"
+                                : rbTone == "is-fail" ? "fa-times-circle"
+                                : "fa-exclamation-circle";
+                            <div class="rb-sum-foot @rbTone"><i class="fa @rbIcon"></i>@rbVerdict</div>
+                        }
+                    </div>
+                }
+                @if (rbMcqRan)
+                {
+                    <div class="rb-sum-card is-knowledge">
+                        <div class="rb-sum-lbl">Knowledge Evaluation</div>
+                        <div class="rb-sum-stats">
+                            <div class="rb-sum-stat">
+                                <div class="rb-sum-v">@rbMcq.ScorePercent.ToString("0.#")<small> %</small></div>
+                                <div class="rb-sum-l">Score</div>
+                            </div>
+                            <div class="rb-sum-stat">
+                                <div class="rb-sum-v">@rbMcq.CorrectAnswers<small> / @rbMcq.TotalQuestions</small></div>
+                                <div class="rb-sum-l">Correct</div>
+                            </div>
+                        </div>
+                        @{
+                            var rbMcqTone = rbMcq.ScorePercent >= 60 ? "is-pass"
+                                : rbMcq.ScorePercent >= 40 ? "is-review"
+                                : "is-fail";
+                            var rbMcqIcon = rbMcqTone == "is-pass" ? "fa-check-circle"
+                                : rbMcqTone == "is-fail" ? "fa-times-circle"
+                                : "fa-exclamation-circle";
+                        }
+                        <div class="rb-sum-foot @rbMcqTone">
+                            <i class="fa @rbMcqIcon"></i>@(rbMcq.ScorePercent >= 60
+                                ? "Meets the 60% passing score"
+                                : rbMcq.ScorePercent >= 40
+                                    ? "Below the 60% passing score — needs review"
+                                    : "Well below the 60% passing score")
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        @*
+            The resume is screened before anyone speaks to the candidate, so it opens the
+            report. Band and section are omitted together when there is nothing to show —
+            the partial's own guards decide that, and this @if keeps the band from standing
+            over an empty part.
+        *@
+        @{
+            // The same gate the link carried in the candidate card: Public access, or one of
+            // the three profiles, and both ids present. Moving the link must not widen who
+            // can see it.
+            bool rbCanSeeScreeningLink =
+                ((ViewBag.AccessType != null && ViewBag.AccessType == "Public")
+                    || (ViewBag.ProfileName != null && (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")))
+                && ViewBag.IRFId != null && ViewBag.CandidateMasterId != null && ViewBag.CandidateMasterId > 0;
+            string rbScreeningAccessType = ViewBag.AccessType ?? "";
+        }
+        @* The part opens when there is either a parsed evaluation to show or a link to offer.
+           Gating it on the evaluation alone would have taken the link away from a candidate
+           whose screening JSON will not parse — the case where a reader most wants to open
+           the screener's own page. *@
+        @if (Model.ResumeEvaluation != null || rbCanSeeScreeningLink)
+        {
+            <div class="rb-part-hd is-resume">Resume Evaluation</div>
+            <div class="rb-part-desc is-resume">
+                What the resume screener found before the interview: the score it gave, how it reached it, and against what the role asked for.
+                @if (rbCanSeeScreeningLink)
+                {
+                    <a style="background:none!important;border:0px!important;text-decoration: underline;color: #039BE5!important;font-size: 15px;" target="_blank" title="Resume Screening Results" href="@Url.Action("ScreenCandidateV2", "AIScreener", new { emailId = Model.CandidateEmail, irfId = ViewBag.IRFId, candidateMasterId = ViewBag.CandidateMasterId, accessType = rbScreeningAccessType })">Resume Screening Results</a>
+                }
+            </div>
+
+            @if (Model.ResumeEvaluation != null)
+            {
+                @await Html.PartialAsync("_ResumeEvaluationSection", Model.ResumeEvaluation)
+            }
+        }
+
+        <div class="rb-part-hd is-skill">Hands-on Skill Evaluation</div>
+        <div class="rb-part-desc">
+            The interview itself: what was asked, how the interviewer judged it, and the candidate's own answers.
+        </div>
+
         @{
             bool hasTypingData = Model.TypingSpeedAssessments != null && Model.TypingSpeedAssessments.Any();
             var typingAssessments = (ViewBag.TypingSpeedAssessments as IEnumerable<Risebird.Entities.ViewModel.TypingSpeedAssessment>) ?? Enumerable.Empty<Risebird.Entities.ViewModel.TypingSpeedAssessment>();
@@ -3369,47 +3823,17 @@
             </div>
         }
       
-            <div class="rb-ai-analysis-divider @(ViewBag.IsAdaptive == true ? "rb-ai-analysis-divider--adaptive" : "")" style="display:flex; align-items:center; margin: 32px 0 0px 0; gap: 0;">
-                <div class="rb-ai-analysis-divider__line rb-ai-analysis-divider__line--left" style="flex:1; height:2px; background: linear-gradient(90deg, transparent 0%, #4eda92 40%, #56e0cb 100%); border-radius:2px; opacity:0.5;"></div>
-                <div class="rb-ai-analysis-divider__label" style="display:flex; align-items:center; gap:8px; padding: 0 18px; background:#fff; position:relative; z-index:1;">
-                    <span class="rb-ai-analysis-divider__icon" style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; background: linear-gradient(135deg, #4eda92 0%, #56e0cb 100%); box-shadow: 0 2px 8px rgba(78,218,146,0.35);">
-                        <i class="fa fa-robot" style="color:#fff; font-size:15px;"></i>
-                    </span>
-                    <span class="rb-ai-analysis-divider__title" style="font-size:17px; font-weight:600; color:#000; letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap;">AI Analysis &amp; Recommendations</span>
-                </div>
-                <div class="rb-ai-analysis-divider__line rb-ai-analysis-divider__line--right" style="flex:1; height:2px; background: linear-gradient(90deg, #56e0cb 0%, #4eda92 60%, transparent 100%); border-radius:2px; opacity:0.5;"></div>
+            @*
+                A heading inside the Hands-on Skill Evaluation part, not a divider between
+                equals. The centred gradient rule with its own icon badge read as a break
+                between two top-level things, which is what made it look like a peer of the
+                part header rather than a section within it. Restyled to the part's own
+                typography, one step down — see .rb-subpart-hd.
+            *@
+            <div class="rb-subpart-hd @(ViewBag.IsAdaptive == true ? "rb-ai-analysis-divider--adaptive" : "")">
+                AI Analysis &amp; Recommendations
             </div>
 
-            @{
-                var ssaProctoringCount = ViewBag.ProctoringEventCount as int? ?? 0;
-            }
-            @if (ssaProctoringCount > 0)
-            {
-                <div class="rb-ssa-section-wrap">
-                    <div class="rb-ssa-toolbar">
-                        <div class="rb-ssa-toolbar-copy">
-                            <div class="rb-ssa-toolbar-title"><i class="fa fa-eye"></i> AI Screenshot Analysis</div>
-                            <div class="rb-ssa-toolbar-sub">Review candidate eye gaze and suspicious apps from proctoring screenshots.</div>
-                        </div>
-                        <button class="rb-action-btn rb-secondary-btn" type="button" id="rbScreenshotAnalysisBtn" onclick="runProctoringScreenshotAnalysis()">
-                            <i class="fa fa-eye"></i> Run analysis
-                        </button>
-                    </div>
-                    <div class="rb-report-section rb-ssa-panel" id="rbScreenshotAnalysisPanel" style="display:none;">
-                        <div class="rb-ssa-head">
-                            <div class="rb-ssa-head-left">
-                                <div class="rb-ssa-icon"><i class="fa fa-shield"></i></div>
-                                <div>
-                                    <h2 class="rb-ssa-title">AI Screenshot Analysis Summary</h2>
-                                    <div id="rbScreenshotAnalysisStatus" class="rb-ssa-status">Ready</div>
-                                </div>
-                            </div>
-                            <div id="rbScreenshotAnalysisVerdict" class="rb-ssa-verdict" style="display:none;"></div>
-                        </div>
-                        <div id="rbScreenshotAnalysisSummary" class="rb-ssa-summary"></div>
-                    </div>
-                </div>
-            }
 
         
 
@@ -3494,12 +3918,23 @@
                                         </div>
                                     </div>
                                 }
-                                @if (Model.AIResumeScreeningScore != 0)
+                                @*
+                                    Guarded on the verdict as well as the score. The old
+                                    `Score != 0` test hid this tile and its verdict for a
+                                    candidate who genuinely scored 0, and for any record
+                                    scored by verdict alone — the two cases where a reader
+                                    most needs to see it.
+                                *@
+                                @if (Model.AIResumeScreeningScore != 0 || !string.IsNullOrWhiteSpace(Model.AIResumeScreeningVerdict) || Model.ResumeEvaluation != null)
                                 {
+                                    var tileMax = Model.ResumeEvaluation?.MaxScore ?? 0;
                                     <div class="rb-ai-metric">
                                         <div class="rb-ai-metric__main">
                                             <div class="rb-ai-metric__label"><img src="/img/resume-screening.png" alt="" /> Resume Screening</div>
-                                            <div class="rb-ai-metric__value">@Model.AIResumeScreeningScore</div>
+                                            <div class="rb-ai-metric__value">
+                                                @Model.AIResumeScreeningScore@if (tileMax > 0)
+                                                {<text> / @tileMax</text>}
+                                            </div>
                                         </div>
                                         @if (!string.IsNullOrWhiteSpace(Model.AIResumeScreeningVerdict))
                                         {
@@ -4236,13 +4671,15 @@
         {
             <div class="rb-report-section">
                 <div class="rb-section-header">
+                    @* Sized and cased to match the part header above it — this is a section
+                       within Hands-on Skill Evaluation, not a heading of its own rank. *@
                     @if (ViewBag.IsAdaptive == true)
                     {
-                        <h2><i class="fa fa-volume" style="font-size:27px;"></i> Audio Responses</h2>
+                        <h2 class="rb-part-sub-h"><i class="fa fa-volume"></i> Audio Responses</h2>
                     }
                     else
                     {
-                        <h2><i class="fa fa-video-camera"></i> Video Responses</h2>
+                        <h2 class="rb-part-sub-h"><i class="fa fa-video-camera"></i> Video Responses</h2>
                     }
                 </div>
                 <div id="video-list" class="rb-video-responses">
@@ -4384,6 +4821,23 @@
                 </div>
             </div>
         }
+
+        @*
+            The written assessment, as its own part at the foot of the report rather than
+            interleaved with the interview above. Omitted entirely when the channel ran no
+            written assessment, so the heading never stands over nothing — the partial
+            itself already renders nothing for a null model, but the part header would not.
+        *@
+        @if (Model.McqAssessment != null)
+        {
+            <div class="rb-part-hd is-knowledge">Knowledge Evaluation</div>
+            <div class="rb-part-desc">
+                The written assessment: how each section scored, and every question as it was served.
+            </div>
+
+            @* Shared with GenerateAIReportPDFFile so the page and the PDF cannot drift. *@
+            @await Html.PartialAsync("_McqAssessmentSection", Model.McqAssessment)
+        }
     </div>
 
     <div class="rb-report-actions">
@@ -4521,552 +4975,6 @@
         });
     });
 </script>
-<script>
-    function runProctoringScreenshotAnalysis() {
-        var btn = document.getElementById('rbScreenshotAnalysisBtn');
-        var panel = document.getElementById('rbScreenshotAnalysisPanel');
-        var statusEl = document.getElementById('rbScreenshotAnalysisStatus');
-        var summaryEl = document.getElementById('rbScreenshotAnalysisSummary');
-        var verdictEl = document.getElementById('rbScreenshotAnalysisVerdict');
-        var originalHtml = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Analyzing...';
-        panel.style.display = 'block';
-        statusEl.className = 'rb-ssa-status';
-        statusEl.textContent = 'Reviewing screenshots for eye gaze and integrity risks...';
-        summaryEl.innerHTML = '<div class="rb-ssa-loading"><span class="rb-ssa-dot"></span><span class="rb-ssa-dot"></span><span class="rb-ssa-dot"></span></div>';
-        if (verdictEl) {
-            verdictEl.style.display = 'none';
-            verdictEl.innerHTML = '';
-            verdictEl.className = 'rb-ssa-verdict';
-        }
-        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-        fetch('@Url.Action("AnalyzeProctoringScreenshots", "AIInterview")?seId=@Model.SessionId', { method: 'POST' })
-            .then(function (r) { return r.json().then(function (data) { return { httpOk: r.ok, data: data }; }); })
-            .then(function (res) {
-                if (!res.httpOk || !res.data || res.data.ok !== true) {
-                    statusEl.className = 'rb-ssa-status rb-ssa-status-error';
-                    statusEl.textContent = 'Analysis failed: ' + ((res.data && res.data.error) || 'Unexpected server error.');
-                    summaryEl.innerHTML = '';
-                    return;
-                }
-                statusEl.className = 'rb-ssa-status rb-ssa-status-ok';
-                statusEl.textContent = 'Based on ' + res.data.screenshotsAnalyzed + ' screenshot' + (res.data.screenshotsAnalyzed === 1 ? '' : 's');
-                summaryEl.innerHTML = renderProctoringAnalysisSummary(res.data.analysis, verdictEl);
-            })
-            .catch(function (err) {
-                statusEl.className = 'rb-ssa-status rb-ssa-status-error';
-                statusEl.textContent = 'Analysis failed: ' + err;
-                summaryEl.innerHTML = '';
-            })
-            .finally(function () {
-                btn.disabled = false;
-                btn.innerHTML = originalHtml;
-            });
-    }
-
-    function proctoringHumanizeLabel(key) {
-        return String(key || '')
-            .replace(/[_-]+/g, ' ')
-            .replace(/([a-z])([A-Z])/g, '$1 $2')
-            .replace(/\s+/g, ' ')
-            .trim()
-            .replace(/\b\w/g, function (c) { return c.toUpperCase(); });
-    }
-
-    function proctoringFormatValue(value) {
-        if (value === null || value === undefined) return '—';
-        if (typeof value === 'boolean') return value ? 'Yes' : 'No';
-        if (typeof value === 'number') return String(value);
-        if (typeof value === 'string') {
-            var t = value.trim();
-            return t.length ? t : '—';
-        }
-        if (Array.isArray(value)) {
-            if (!value.length) return 'None detected';
-            return value.map(function (item) {
-                if (item == null) return '';
-                if (typeof item === 'object') {
-                    return Object.keys(item).map(function (k) {
-                        var v = item[k];
-                        if (v == null || typeof v === 'object') return null;
-                        return proctoringHumanizeLabel(k) + ': ' + String(v);
-                    }).filter(Boolean).join(' · ');
-                }
-                return String(item);
-            }).filter(function (s) { return s && String(s).trim(); }).join('; ');
-        }
-        if (typeof value === 'object') {
-            var keys = Object.keys(value);
-            if (!keys.length) return '—';
-            return keys.map(function (k) {
-                var v = value[k];
-                if (v != null && typeof v === 'object') return null;
-                return proctoringHumanizeLabel(k) + ': ' + proctoringFormatValue(v);
-            }).filter(Boolean).join(' · ') || '—';
-        }
-        return String(value);
-    }
-
-    function proctoringPick(analysis, keys) {
-        if (!analysis || typeof analysis !== 'object') return undefined;
-        for (var i = 0; i < keys.length; i++) {
-            if (Object.prototype.hasOwnProperty.call(analysis, keys[i]) && analysis[keys[i]] != null && analysis[keys[i]] !== '') {
-                return analysis[keys[i]];
-            }
-            var lower = keys[i].toLowerCase();
-            var found = Object.keys(analysis).find(function (k) { return k.toLowerCase() === lower; });
-            if (found != null && analysis[found] != null && analysis[found] !== '') return analysis[found];
-        }
-        return undefined;
-    }
-
-    function proctoringNormalizeRisk(analysis) {
-        var verdictRaw = String(proctoringPick(analysis, ['verdict', 'overallVerdict', 'decision', 'integrityVerdict']) || '').toLowerCase();
-        var riskRaw = String(proctoringPick(analysis, ['riskLevel', 'risk', 'risk_level', 'severity']) || '').toLowerCase();
-        var apps = proctoringPick(analysis, ['suspiciousApps', 'suspicious_apps', 'apps', 'flaggedApps']);
-        var gazeStatus = String(proctoringPick(analysis, ['eyeGazeStatus', 'gazeStatus', 'eye_gaze_status']) || '').toLowerCase();
-        var appsStatus = String(proctoringPick(analysis, ['suspiciousAppsStatus', 'appsStatus']) || '').toLowerCase();
-        var textBlob = JSON.stringify(analysis || {}).toLowerCase();
-
-        var hasApps = (Array.isArray(apps) && apps.length > 0)
-            || /detected|found|yes|true/.test(appsStatus)
-            || /whatsapp|chatgpt|telegram|discord|cheat|external app/.test(textBlob);
-        var gazeBad = /suspicious|off.?screen|looking away|averted|abnormal/.test(gazeStatus)
-            || /off.?screen|looking away|averted gaze|suspicious gaze/.test(textBlob);
-
-        var level = 'low';
-        if (/high|critical|severe|fail|high_risk/.test(verdictRaw) || /high|critical|severe/.test(riskRaw) || (hasApps && gazeBad)) level = 'high';
-        else if (/medium|moderate|review|caution|review_needed|warn/.test(verdictRaw) || /medium|moderate/.test(riskRaw) || hasApps || gazeBad) level = 'medium';
-
-        var label = level === 'high' ? 'HIGH RISK' : (level === 'medium' ? 'REVIEW NEEDED' : 'CLEAR');
-        var tone = level === 'high' ? 'danger' : (level === 'medium' ? 'warn' : 'ok');
-        var blurb = level === 'high'
-            ? 'Integrity concerns are strong enough to escalate.'
-            : (level === 'medium'
-                ? 'Potential concerns found — manual review recommended.'
-                : 'No material integrity issues detected.');
-        return { level: level, label: label, tone: tone, blurb: blurb, hasApps: hasApps, gazeBad: gazeBad };
-    }
-
-    function proctoringDecisionBadge(text) {
-        var t = String(text || '').toLowerCase();
-        if (!t || t === '—' || t === 'none detected' || t === 'normal' || t === 'clear' || t === 'none' || t === 'low' || t === 'no') {
-            return { cls: 'ok', label: 'Clear' };
-        }
-        if (/high|critical|detected|suspicious|fail|violation|cheat|off.?screen/.test(t)) {
-            return { cls: 'danger', label: 'Flagged' };
-        }
-        if (/medium|review|caution|warn|possible|partial/.test(t)) {
-            return { cls: 'warn', label: 'Review' };
-        }
-        return { cls: 'info', label: 'Noted' };
-    }
-
-    function proctoringBuildDecisiveRows(analysis) {
-        var risk = proctoringNormalizeRisk(analysis);
-        var gaze = proctoringPick(analysis, ['eyeGaze', 'eye_gaze', 'gaze', 'gazeAnalysis', 'attention']);
-        var gazeStatus = proctoringPick(analysis, ['eyeGazeStatus', 'gazeStatus']);
-        var apps = proctoringPick(analysis, ['suspiciousApps', 'suspicious_apps', 'apps', 'flaggedApps']);
-        var appsStatus = proctoringPick(analysis, ['suspiciousAppsStatus', 'appsStatus']);
-        var findings = proctoringPick(analysis, ['keyFindings', 'findings', 'observations']);
-        var recommendation = proctoringPick(analysis, ['recommendation', 'nextAction', 'action', 'recommendedAction']);
-        var summary = proctoringPick(analysis, ['summary', 'overview', 'conclusion']);
-
-        var rows = [];
-        rows.push({
-            icon: 'fa-eye',
-            category: 'Eye Gaze',
-            decision: gazeStatus ? proctoringFormatValue(gazeStatus) : (risk.gazeBad ? 'SUSPICIOUS' : 'NORMAL'),
-            detail: proctoringFormatValue(gaze),
-            tone: risk.gazeBad ? 'danger' : 'ok'
-        });
-        rows.push({
-            icon: 'fa-desktop',
-            category: 'Suspicious Apps',
-            decision: appsStatus ? proctoringFormatValue(appsStatus) : (risk.hasApps ? 'DETECTED' : 'NONE'),
-            detail: proctoringFormatValue(apps),
-            tone: risk.hasApps ? 'danger' : 'ok'
-        });
-        rows.push({
-            icon: 'fa-exclamation-triangle',
-            category: 'Risk Level',
-            decision: risk.label,
-            detail: proctoringFormatValue(proctoringPick(analysis, ['riskLevel', 'risk', 'severity']) || risk.blurb),
-            tone: risk.tone === 'danger' ? 'danger' : (risk.tone === 'warn' ? 'warn' : 'ok')
-        });
-        if (findings != null) {
-            rows.push({
-                icon: 'fa-list-ul',
-                category: 'Key Findings',
-                decision: Array.isArray(findings) && findings.length ? findings.length + ' point' + (findings.length === 1 ? '' : 's') : 'None',
-                detail: proctoringFormatValue(findings),
-                tone: 'info'
-            });
-        }
-        if (recommendation != null) {
-            rows.push({
-                icon: 'fa-gavel',
-                category: 'Recommendation',
-                decision: 'Action',
-                detail: proctoringFormatValue(recommendation),
-                tone: risk.tone === 'ok' ? 'ok' : 'warn'
-            });
-        } else if (summary != null) {
-            rows.push({
-                icon: 'fa-file-text-o',
-                category: 'Summary',
-                decision: 'Assessment',
-                detail: proctoringFormatValue(summary),
-                tone: 'info'
-            });
-        }
-
-        // Include leftover fields not already covered, compactly
-        if (analysis && typeof analysis === 'object' && !Array.isArray(analysis)) {
-            var used = {
-                verdict: 1, overallverdict: 1, decision: 1, integrityverdict: 1,
-                risklevel: 1, risk: 1, risk_level: 1, severity: 1,
-                eyegaze: 1, eye_gaze: 1, gaze: 1, gazeanalysis: 1, attention: 1,
-                eyegazestatus: 1, gazestatus: 1, eye_gaze_status: 1,
-                suspiciousapps: 1, suspicious_apps: 1, apps: 1, flaggedapps: 1,
-                suspiciousappsstatus: 1, appsstatus: 1,
-                keyfindings: 1, findings: 1, observations: 1,
-                recommendation: 1, nextaction: 1, action: 1, recommendedaction: 1,
-                summary: 1, overview: 1, conclusion: 1, raw: 1
-            };
-            Object.keys(analysis).forEach(function (key) {
-                if (used[key.toLowerCase()]) return;
-                var val = analysis[key];
-                if (val == null || val === '') return;
-                rows.push({
-                    icon: 'fa-info-circle',
-                    category: proctoringHumanizeLabel(key),
-                    decision: 'Noted',
-                    detail: proctoringFormatValue(val),
-                    tone: 'info'
-                });
-            });
-        }
-
-        return { risk: risk, rows: rows };
-    }
-
-    function renderProctoringAnalysisSummary(analysis, verdictEl) {
-        var built = proctoringBuildDecisiveRows(analysis);
-        var risk = built.risk;
-        var rows = built.rows;
-
-        if (verdictEl) {
-            verdictEl.style.display = 'inline-flex';
-            verdictEl.className = 'rb-ssa-verdict rb-ssa-verdict-' + risk.tone;
-            verdictEl.innerHTML = '<i class="fa ' +
-                (risk.tone === 'ok' ? 'fa-check-circle' : (risk.tone === 'warn' ? 'fa-exclamation-circle' : 'fa-times-circle')) +
-                '"></i><span>' + escapeProctoringHtml(risk.label) + '</span>';
-        }
-
-        if (!rows.length) {
-            return '<div class="rb-ssa-empty">No analysis details available.</div>';
-        }
-
-        var html = '' +
-            '<div class="rb-ssa-banner rb-ssa-banner-' + risk.tone + '">' +
-                '<div class="rb-ssa-banner-main">' +
-                    '<div class="rb-ssa-banner-label">Integrity Verdict</div>' +
-                    '<div class="rb-ssa-banner-title">' + escapeProctoringHtml(risk.label) + '</div>' +
-                    '<div class="rb-ssa-banner-text">' + escapeProctoringHtml(risk.blurb) + '</div>' +
-                '</div>' +
-                '<div class="rb-ssa-metrics">' +
-                    '<div class="rb-ssa-metric"><span>Gaze</span><strong class="' + (risk.gazeBad ? 'is-bad' : 'is-good') + '">' + (risk.gazeBad ? 'Suspicious' : 'Normal') + '</strong></div>' +
-                    '<div class="rb-ssa-metric"><span>Apps</span><strong class="' + (risk.hasApps ? 'is-bad' : 'is-good') + '">' + (risk.hasApps ? 'Detected' : 'None') + '</strong></div>' +
-                    '<div class="rb-ssa-metric"><span>Risk</span><strong class="is-' + risk.tone + '">' + escapeProctoringHtml(risk.level.toUpperCase()) + '</strong></div>' +
-                '</div>' +
-            '</div>' +
-            '<div class="rb-ssa-table-wrap">' +
-            '<table class="rb-ssa-table">' +
-            '<thead><tr><th>Category</th><th>Decision</th><th>Finding</th></tr></thead><tbody>';
-
-        rows.forEach(function (row) {
-            var badge = proctoringDecisionBadge(row.decision);
-            html += '<tr>' +
-                '<td class="rb-ssa-cat"><i class="fa ' + row.icon + '"></i>' + escapeProctoringHtml(row.category) + '</td>' +
-                '<td class="rb-ssa-decision"><span class="rb-ssa-badge rb-ssa-badge-' + badge.cls + '">' + escapeProctoringHtml(String(row.decision)) + '</span></td>' +
-                '<td class="rb-ssa-finding">' + escapeProctoringHtml(row.detail) + '</td>' +
-                '</tr>';
-        });
-
-        html += '</tbody></table></div>';
-        return html;
-    }
-
-    function escapeProctoringHtml(text) {
-        var div = document.createElement('div');
-        div.appendChild(document.createTextNode(text == null ? '' : String(text)));
-        return div.innerHTML;
-    }
-</script>
-<style>
-    .rb-ssa-section-wrap {
-        margin: 14px 0 18px;
-    }
-    .rb-ssa-toolbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 12px 14px;
-        margin-bottom: 10px;
-        border: 1px solid #d7e3f0;
-        border-radius: 12px;
-        background: linear-gradient(180deg, #f7fbff 0%, #ffffff 100%);
-    }
-    .rb-ssa-toolbar-title {
-        font-size: 14px;
-        font-weight: 700;
-        color: #17324d;
-        margin-bottom: 2px;
-    }
-    .rb-ssa-toolbar-title i {
-        color: #42a5f5;
-        margin-right: 6px;
-    }
-    .rb-ssa-toolbar-sub {
-        font-size: 12px;
-        color: #6b7d90;
-    }
-    .rb-ssa-panel {
-        border: 1px solid #d7e3f0 !important;
-        border-radius: 14px !important;
-        background: linear-gradient(180deg, #f7fbff 0%, #ffffff 42%) !important;
-        padding: 14px 16px 16px !important;
-        box-shadow: 0 8px 24px rgba(32, 64, 101, 0.06);
-    }
-    .rb-ssa-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 12px;
-    }
-    .rb-ssa-head-left {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        min-width: 0;
-    }
-    .rb-ssa-icon {
-        width: 38px;
-        height: 38px;
-        border-radius: 11px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #e8f2ff;
-        color: #1f6fbf;
-        border: 1px solid #cfe2fb;
-        flex-shrink: 0;
-    }
-    .rb-ssa-title {
-        margin: 0 !important;
-        font-size: 16px !important;
-        font-weight: 700 !important;
-        color: #17324d !important;
-        line-height: 1.2 !important;
-    }
-    .rb-ssa-status {
-        margin: 2px 0 0;
-        font-size: 12px;
-        color: #6b7d90;
-    }
-    .rb-ssa-status-ok { color: #1f7a46; }
-    .rb-ssa-status-error { color: #b42318; }
-    .rb-ssa-verdict {
-        display: none;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 12px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 800;
-        letter-spacing: .04em;
-        white-space: nowrap;
-    }
-    .rb-ssa-verdict-ok { background: #e8f8ef; color: #146c3a; border: 1px solid #b7e4c7; }
-    .rb-ssa-verdict-warn { background: #fff6e5; color: #9a5b00; border: 1px solid #f0d29a; }
-    .rb-ssa-verdict-danger { background: #fdecec; color: #9b1c1c; border: 1px solid #f0b6b6; }
-    .rb-ssa-loading {
-        display: flex;
-        gap: 6px;
-        padding: 18px 8px;
-        justify-content: center;
-    }
-    .rb-ssa-dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: #42a5f5;
-        opacity: .35;
-        animation: rbSsaPulse 1s infinite ease-in-out;
-    }
-    .rb-ssa-dot:nth-child(2) { animation-delay: .15s; }
-    .rb-ssa-dot:nth-child(3) { animation-delay: .3s; }
-    @@keyframes rbSsaPulse {
-        0%, 100% { transform: translateY(0); opacity: .35; }
-        50% { transform: translateY(-3px); opacity: 1; }
-    }
-    .rb-ssa-banner {
-        display: flex;
-        justify-content: space-between;
-        gap: 14px;
-        padding: 12px 14px;
-        border-radius: 12px;
-        margin-bottom: 10px;
-        border: 1px solid transparent;
-    }
-    .rb-ssa-banner-ok { background: linear-gradient(135deg, #f0fbf4, #e7f7ee); border-color: #c6e8d3; }
-    .rb-ssa-banner-warn { background: linear-gradient(135deg, #fff9ef, #fff3dd); border-color: #f0d7a4; }
-    .rb-ssa-banner-danger { background: linear-gradient(135deg, #fff1f1, #ffe4e4); border-color: #f0c0c0; }
-    .rb-ssa-banner-label {
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: .06em;
-        text-transform: uppercase;
-        color: #6b7d90;
-        margin-bottom: 2px;
-    }
-    .rb-ssa-banner-title {
-        font-size: 15px;
-        font-weight: 700;
-        letter-spacing: .02em;
-        color: #17324d;
-        line-height: 1.15;
-        margin-bottom: 3px;
-    }
-    .rb-ssa-banner-text {
-        font-size: 12.5px;
-        color: #4d647c;
-        max-width: 420px;
-    }
-    .rb-ssa-metrics {
-        display: flex;
-        gap: 8px;
-        align-items: stretch;
-        flex-shrink: 0;
-    }
-    .rb-ssa-metric {
-        min-width: 84px;
-        background: rgba(255,255,255,.72);
-        border: 1px solid rgba(32,64,101,.08);
-        border-radius: 10px;
-        padding: 8px 10px;
-        text-align: center;
-    }
-    .rb-ssa-metric span {
-        display: block;
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: .05em;
-        text-transform: uppercase;
-        color: #7a8ea3;
-        margin-bottom: 3px;
-    }
-    .rb-ssa-metric strong {
-        display: block;
-        font-size: 12.5px;
-        font-weight: 800;
-        color: #17324d;
-    }
-    .rb-ssa-metric .is-good { color: #146c3a; }
-    .rb-ssa-metric .is-bad { color: #9b1c1c; }
-    .rb-ssa-metric .is-ok { color: #146c3a; }
-    .rb-ssa-metric .is-warn { color: #9a5b00; }
-    .rb-ssa-metric .is-danger { color: #9b1c1c; }
-    .rb-ssa-empty {
-        padding: 12px;
-        color: #667788;
-        font-size: 13px;
-        background: #f7fafc;
-        border: 1px dashed #d7e3f0;
-        border-radius: 10px;
-        text-align: center;
-    }
-    .rb-ssa-table-wrap {
-        overflow: auto;
-        border: 1px solid #dbe5ef;
-        border-radius: 12px;
-        background: #fff;
-    }
-    .rb-ssa-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 12.5px;
-        line-height: 1.35;
-    }
-    .rb-ssa-table thead th {
-        text-align: left;
-        padding: 8px 12px;
-        background: #f4f8fd;
-        color: #204065;
-        font-weight: 700;
-        border-bottom: 1px solid #dbe5ef;
-        white-space: nowrap;
-        font-size: 11px;
-        letter-spacing: .04em;
-        text-transform: uppercase;
-    }
-    .rb-ssa-table tbody td {
-        padding: 9px 12px;
-        vertical-align: top;
-        border-bottom: 1px solid #eef2f6;
-        color: #334155;
-    }
-    .rb-ssa-table tbody tr:last-child td { border-bottom: none; }
-    .rb-ssa-table tbody tr:hover td { background: #fafcff; }
-    .rb-ssa-cat {
-        width: 22%;
-        font-weight: 700;
-        color: #1f3550;
-        white-space: nowrap;
-    }
-    .rb-ssa-cat i {
-        margin-right: 7px;
-        color: #42a5f5;
-        width: 14px;
-        text-align: center;
-    }
-    .rb-ssa-decision { width: 18%; }
-    .rb-ssa-badge {
-        display: inline-block;
-        padding: 3px 8px;
-        border-radius: 999px;
-        font-size: 10.5px;
-        font-weight: 500;
-        letter-spacing: .02em;
-        border: 1px solid transparent;
-        max-width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    .rb-ssa-badge-ok { background: #e8f8ef; color: #146c3a; border-color: #b7e4c7; }
-    .rb-ssa-badge-warn { background: #fff6e5; color: #9a5b00; border-color: #f0d29a; }
-    .rb-ssa-badge-danger { background: #fdecec; color: #9b1c1c; border-color: #f0b6b6; }
-    .rb-ssa-badge-info { background: #eef5ff; color: #1f5c93; border-color: #cfe2fb; }
-    .rb-ssa-finding {
-        white-space: pre-wrap;
-        word-break: break-word;
-        color: #3f5368;
-    }
-    @@media (max-width: 768px) {
-        .rb-ssa-toolbar { flex-direction: column; align-items: stretch; }
-        .rb-ssa-head { align-items: flex-start; flex-direction: column; }
-        .rb-ssa-banner { flex-direction: column; }
-        .rb-ssa-metrics { width: 100%; }
-        .rb-ssa-metric { flex: 1; min-width: 0; }
-        .rb-ssa-cat { white-space: normal; }
-        .rb-ssa-decision { width: auto; }
-    }
-</style>
 <script>
     let interviewIdVariable;
     let sessionIdVariable;

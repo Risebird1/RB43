@@ -33,7 +33,10 @@ ISNULL(irf.HasMcqAssessmentSection, 0) as HasMcqAssessmentSection, irf.McqAssess
 irf.PrimarySkillInvite as PrimarySkill,
 ISNULL(IRF.IsProctoring, 1) as IsProctoring, ISNULL(IRF.IsAadhaarVerificationRequired, 0) as IsAadhaarVerificationRequired,
 case when irf.AIInterviewType = 1 then 1 else 0 end as IsAdaptive, @biqvId as CandidateAnswerVideoIdAI,
-ca.AIResumeScreeningVerdict, ca.AIResumeScreeningScore
+-- Resume evaluation. The screener writes its full result to AIScreeningResultJsonV2 at
+-- the same moment it writes the two columns beside it; only the columns were being read
+-- back, so everything the screener found was invisible to the report.
+ca.AIResumeScreeningVerdict, ca.AIResumeScreeningScore, ca.AIScreeningResultJsonV2
 from InterviewMeetings im
 left join InterviewComments ic on ic.InterviewId = im.id
 left join AadhaarDetails ad on (ad.email = im.candidateEmail and ad.reference_id = CAST(im.id AS varchar(50)))

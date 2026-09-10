@@ -71,45 +71,26 @@
     }
 
     /* ══ STATS TABLE ═══════════════════════════════════ */
-    .stats-wrap {
-        background: #f0faf6;
-        border-top: 3px solid #4eda92;
-        border-bottom: 1px solid #d4ede3;
-        padding: 0;
-    }
-    .stats-table {
-        width: 100%;
-        border-collapse: collapse;
-        table-layout: fixed;
-    }
-    .stats-cell {
-        padding: 8px 10px;
-        border-right: 1px solid #d4ede3;
-        vertical-align: middle;
-        text-align: center;
-    }
-    .stats-cell:last-child { border-right: none; }
-    .stats-icon {
-        display: block;
-        width: 26px; height: 26px; line-height: 26px;
-        background: linear-gradient(135deg, #4eda92, #56e0cb);
-        border-radius: 50%;
-        color: #fff; font-size: 11px;
-        margin: 0 auto 4px;
-    }
-    .stats-val { font-size: 19px; font-weight: 700; color: #0b0b18; line-height: 1; }
-    .stats-val small { font-size: 11px; font-weight: 400; color: #888; }
-    .stats-lbl { font-size: 11px; color: #666; font-weight: 600; margin-top: 3px; }
+    /* The .stats-* rules that used to sit here styled the four-tile strip (Total
+       Questions / Video Responses / Technical / Communication) that the two summary
+       cards replaced. Nothing references them any more — .ts-stats-* in the typing
+       section is a different set. */
 
     /* ══ SECTION HEADER ════════════════════════════════ */
-    .sec-wrap { padding: 22px 28px 8px; }
+    .sec-wrap { padding: 12px 28px 6px; }
     .sec-head {
         font-size: 16px; font-weight: 700;
         color: #0b0b18; text-transform: none;
         letter-spacing: -.2px;
-        padding-bottom: 9px;
+        padding-bottom: 8px;
         border-bottom: 2px solid #4eda92;
-        margin-bottom: 16px; overflow: hidden;
+        margin-bottom: 11px; overflow: hidden;
+        /* Without this a heading whose first card will not fit in the remaining space is
+           left stranded at the foot of the page with the gap below it — which is what
+           produced the blank stretch under "Video Responses". The heading now travels
+           with its content instead. */
+        page-break-after: avoid;
+        break-after: avoid;
     }
     .sec-num {
         display: inline-block;
@@ -200,8 +181,11 @@
         border: 1px solid #cceedd; border-radius: 8px;
         overflow: hidden;
     }
+    /* Tightened so the assessment block does not push Video Responses onto a page of its
+       own: these rows are two or three short lines each, and 11px/16px of padding around
+       them cost more height than their content. */
     .vbox-row {
-        padding: 11px 16px;
+        padding: 7px 13px;
         border-bottom: 1px solid #dff0e8;
         word-wrap: break-word; overflow-wrap: break-word;
         overflow: hidden;
@@ -210,18 +194,18 @@
     .vbox-row:nth-child(odd)  { background: #f8fffe; }
     .vbox-row:nth-child(even) { background: #ffffff; }
     .vbox-key {
-        font-size: 10.5px; font-weight: 700; color: #4eda92;
-        text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px;
+        font-size: 9.5px; font-weight: 700; color: #4eda92;
+        text-transform: uppercase; letter-spacing: .5px; margin-bottom: 2px;
     }
     .vbox-val {
-        font-size: 13.5px; color: #222;
+        font-size: 12px; color: #222; line-height: 1.45;
         white-space: pre-line; word-wrap: break-word; overflow-wrap: break-word;
     }
 
     /* ══ Q&A RESPONSES ═════════════════════════════════ */
     .qa-card {
         border: 1px solid #d8eee6; border-radius: 10px;
-        margin-bottom: 20px; overflow: hidden;
+        margin-bottom: 12px; overflow: hidden;
         page-break-inside: avoid;
         box-shadow: 0 2px 8px rgba(78,218,146,.10);
     }
@@ -233,12 +217,13 @@
     }
     .qa-q-inner { width: 100%; border-collapse: collapse; }
     .qa-q-num-cell { width: 32px; vertical-align: top; padding-top: 2px; }
+    /* Sized down with the Question/Answer label it sits beside. */
     .qa-qnum {
         display: inline-block;
-        min-width: 22px; height: 22px; line-height: 22px;
+        min-width: 18px; height: 18px; line-height: 18px;
         text-align: center; padding: 0 4px;
         background: #f0f4f8;
-        color: #1a1a2e; font-size: 11px; font-weight: 700;
+        color: #1a1a2e; font-size: 9.5px; font-weight: 700;
         border-left: 3px solid #4eda92;
         border-radius: 3px;
     }
@@ -283,7 +268,7 @@
         min-height: 180px;
     }
     .qa-block-lbl {
-        font-size: 10.5px;
+        font-size: 9.5px;
         font-weight: 700;
         color: #4eda92;
         text-transform: uppercase;
@@ -418,121 +403,438 @@
         background: transparent !important;
     }
 
-    /* ══ TYPING SPEED ══════════════════════════════════ */
-    .ts-card {
-        border: 1px solid #cceedd; border-radius: 10px;
-        margin-bottom: 20px; overflow: hidden;
-        page-break-inside: avoid;
-        box-shadow: 0 2px 8px rgba(78,218,146,.10);
-    }
-    .ts-card-head {
-        background: linear-gradient(135deg, #0b0b18 0%, #141428 60%, #1a3040 100%);
-        padding: 11px 16px; overflow: hidden;
-    }
-    .ts-card-title {
-        font-size: 13px; font-weight: 600; color: #fff;
-        display: inline-block; vertical-align: middle; width: 72%;
-        word-wrap: break-word; overflow-wrap: break-word;
-    }
-    .ts-card-badge {
-        display: inline-block; vertical-align: middle;
-        font-size: 11px; font-weight: 700;
-        padding: 3px 11px; border-radius: 12px;
-        float: right; margin-top: 1px;
-    }
-    .ts-badge-pass { background: linear-gradient(135deg,#1a7a4a,#27ae72); color: #fff; }
-    .ts-badge-fail { background: linear-gradient(135deg,#b71c1c,#e53935); color: #fff; }
-    .ts-stats-row {
-        background: #f0faf6; border-bottom: 2px solid #d4ede3;
-        overflow: hidden; padding: 0;
-    }
-    .ts-stats-tbl { width: 100%; border-collapse: collapse; table-layout: fixed; }
-    .ts-stat-cell {
-        padding: 12px 10px; border-right: 1px solid #d4ede3;
-        text-align: center; vertical-align: middle;
-    }
-    .ts-stat-cell:last-child { border-right: none; }
-    .ts-stat-icon {
-        display: block; width: 30px; height: 30px; line-height: 30px;
-        background: linear-gradient(135deg, #4eda92, #56e0cb);
-        border-radius: 50%; color: #fff; font-size: 12px;
-        margin: 0 auto 5px;
-    }
-    .ts-stat-val { font-size: 20px; font-weight: 700; color: #0b0b18; line-height: 1; }
-    .ts-stat-val small { font-size: 11px; font-weight: 400; color: #888; }
-    .ts-stat-lbl { font-size: 11px; color: #666; font-weight: 600; margin-top: 4px; }
-    .ts-body { padding: 14px 16px; background: #fff; }
-    /* text boxes */
-    .ts-text-box {
-        background: #f7f9fb; border-radius: 6px;
-        padding: 10px 14px; margin-bottom: 12px;
-        border-left: 4px solid #4eda92;
-    }
-    .ts-text-box-typed { border-left-color: #17a2b8; background: #f4fbff; }
-    .ts-text-lbl {
-        font-size: 10.5px; font-weight: 700; color: #1a1a1a;
-        text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px;
-        display: flex; align-items: center; gap: 5px;
-    }
-    .ts-text-lbl-typed { color: #1a1a1a; }
-    .ts-text-val {
-        font-size: 13px; color: #333; line-height: 1.65;
-        white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word;
-    }
-    /* grade row */
-    .ts-grade-row {
-        display: flex; align-items: center; gap: 10px;
-        margin-bottom: 12px;
-    }
-    .ts-grade-badge {
-        display: inline-block; padding: 5px 16px; border-radius: 20px;
-        font-size: 13px; font-weight: 700; letter-spacing: .3px;
-        border: 2px solid transparent;
-    }
-    .ts-grade-excellent { background: #e6f9f0; color: #1a7a4a; border-color: #4eda92; }
-    .ts-grade-good      { background: #fff8e1; color: #795500; border-color: #ffc107; }
-    .ts-grade-poor      { background: #fdecea; color: #b71c1c; border-color: #ef9a9a; }
-    /* metrics table */
-    .ts-metrics-tbl { width: 100%; border-collapse: collapse; margin-bottom: 12px; border-radius: 6px; overflow: hidden; }
-    .ts-metrics-tbl tr:first-child td { border-top: none; }
-    .ts-metrics-tbl td { padding: 7px 12px; font-size: 13px; border: 1px solid #c8eef5; }
-    .ts-metrics-tbl td:first-child { width: 160px; font-weight: 700; background: #f4fbff; color: #1a1a1a; font-size: 10.5px; text-transform: uppercase; letter-spacing: .4px; }
-    .ts-metrics-tbl tr:nth-child(even) td:last-child { background: #f9fdff; }
-    /* error breakdown table */
-    .ts-err-tbl { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
-    .ts-err-tbl td {
-        text-align: center; vertical-align: middle;
-        border: 1px solid #c8eef5; padding: 8px 6px;
-        background: #fff;
-    }
-    .ts-err-tbl tr.err-val-row  td { font-size: 24px; font-weight: 700; line-height: 1; padding-bottom: 4px; border-bottom: none; }
-    .ts-err-tbl tr.err-lbl-row  td { border-top: none; padding-top: 3px; font-size: 10.5px; font-weight: 600; color: #1a1a1a; background: #f4fbff; text-transform: uppercase; letter-spacing: .3px; }
-    /* comment boxes */
-    .ts-comment-box {
-        background: #f4fbff; border: 1px solid #c8eef5;
-        border-left: 4px solid #17a2b8; border-radius: 6px;
-        padding: 10px 14px; margin-bottom: 10px;
-    }
-    .ts-comment-lbl {
-        font-size: 10.5px; font-weight: 700; color: #1a1a1a;
-        text-transform: uppercase; letter-spacing: .5px; margin-bottom: 5px;
-    }
-    .ts-comment-text { font-size: 13px; color: #333; line-height: 1.6; }
-    /* tips */
-    .ts-tips-box {
-        background: linear-gradient(135deg, #e8f4fd 0%, #edf8ff 100%);
-        border: 1px solid #b3d8f0; border-left: 4px solid #17a2b8;
-        border-radius: 6px; padding: 11px 14px;
-    }
-    .ts-tips-lbl {
-        font-size: 10.5px; font-weight: 700; color: #0c7bb3;
-        text-transform: uppercase; letter-spacing: .5px; margin-bottom: 7px;
-    }
-    .ts-tips-list { margin: 0; padding-left: 18px; font-size: 12.5px; color: #0c5460; line-height: 1.75; }
+    /* The .ts-* rules that styled the Typing Speed Assessment lived here. That section
+       is no longer rendered in the PDF, so nothing references them. */
 
     /* ══ PAGE BREAK ════════════════════════════════════ */
-    .pb { page-break-before: always; }
-    .pb-pad { padding-top: 18px; }
+    /* .pb / .pb-pad forced a page break before the Q&A section. Nothing uses them now —
+       see .part-break below: the report has no forced page breaks at all. Pages are
+       broken only where html2pdf runs out of room, and break-inside rules keep blocks
+       from being sliced when it does. */
+
+    /* ══ REPORT PARTS ═════════════════════════════════════════════════════
+       The report carries two evaluations that are measured differently and read
+       differently: the interview itself, and the written assessment. They used to run
+       together as one numbered list of sections, so a reader had no cue where one ended
+       and the other began. These rules give each a named part with a header, a summary
+       card at the top, and a page of its own.
+
+       Tables rather than grid or flex for the two-column and three-stat layouts: this
+       is rasterised by html2canvas before jsPDF slices it, and the surrounding view
+       already uses <table class="stats-table"> for exactly this reason.
+       ═════════════════════════════════════════════════════════════════════ */
+
+    .sum-wrap { padding: 16px 28px 4px; }
+    /* height:1px is not a typo and is not a height. A percentage height only resolves
+       against a parent whose height is *definite*, and a table's height is auto by
+       default — so .sum-td's 100% and in turn .sum-card's 100% were both falling back to
+       auto, leaving each card only as tall as its own content. Giving the table any
+       definite value makes the chain resolve; the table still grows to fit its rows, so
+       1px never applies. Without it the three cards measured 115 / 126 / 115 because the
+       middle label wraps to two lines. */
+    .sum-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 12px 0;
+        table-layout: fixed;
+        height: 1px;
+    }
+
+    .sum-td { vertical-align: top; padding: 0; height: 100%; }
+
+    /* Matched to the page's .rb-sum-card exactly — same hairline, same 4px rail, same
+       radius — so the summary strip reads identically in both documents. height:100% is
+       what makes the three equal: they are table cells, and without it each card is only
+       as tall as its own content while the row is as tall as the tallest. */
+    .sum-card {
+        border: 1px solid #e3e6ea;
+        border-left: 4px solid #cbd2d9;
+        border-radius: 10px;
+        background: #fff;
+        overflow: hidden;
+        height: 100%;
+        box-sizing: border-box;
+    }
+        .sum-card.is-resume    { border-left-color: #6d5bd0; }
+        .sum-card.is-skill     { border-left-color: #4eda92; }
+        .sum-card.is-knowledge { border-left-color: #3b82f6; }
+
+    .sum-lbl {
+        font-size: 9.5px; font-weight: 700; letter-spacing: 1px;
+        text-transform: uppercase; color: #55606c;
+        padding: 9px 12px 0;
+    }
+
+    .sum-stats { width: 100%; border-collapse: collapse; table-layout: fixed; margin-top: 2px; }
+    .sum-stats td {
+        text-align: center; padding: 6px 4px 10px;
+        border-right: 1px solid #eef0f3; vertical-align: top;
+    }
+        .sum-stats td:last-child { border-right: 0; }
+
+    .sum-v { font-size: 21px; font-weight: 700; color: #0b0b18; line-height: 1.1; }
+        .sum-v small { font-size: 10px; font-weight: 600; color: #8a939d; }
+
+    .sum-l { font-size: 9px; color: #6b7280; margin-top: 3px; line-height: 1.3; }
+
+    /* The verdict line is the one sentence a reader takes away from the card, so it is
+       toned by outcome rather than left as grey body text. Tone comes from
+       AIInterviewVerdict.IsSelectFamily / IsRejectFamily for the interview, and from the
+       60/40 bands for the assessment — never from matching on the wording. */
+    .sum-foot {
+        border-top: 1px solid #eef0f3;
+        padding: 8px 12px;
+        font-size: 11px; font-weight: 700; color: #2b3440;
+        background: #fbfcfd;
+        letter-spacing: .2px;
+    }
+        .sum-foot i { margin-right: 6px; }
+
+        .sum-foot.is-pass   { color: #14663d; background: #e9f9f0; border-top-color: #cdeddc; }
+        .sum-foot.is-review { color: #8a5300; background: #fdf6e6; border-top-color: #f2e2bd; }
+        .sum-foot.is-fail   { color: #a3261d; background: #fdeeec; border-top-color: #f5d2ce; }
+
+    /* Part header. The bar is the same ink as the report header so the two read as one
+       document, with the part's accent repeated on the left edge. */
+    .part-hd {
+        background: #141428;
+        border-left: 4px solid #cbd2d9;
+        padding: 9px 20px;
+        margin: 10px 0 0;
+        /* Keep the part header with the description and first section beneath it. */
+        page-break-after: avoid;
+        break-after: avoid;
+        font-size: 12px; font-weight: 700; letter-spacing: 1.4px;
+        text-transform: uppercase; color: #ffffff;
+    }
+        .part-hd.is-resume    { border-left-color: #6d5bd0; }
+        .part-hd.is-skill     { border-left-color: #4eda92; }
+        .part-hd.is-knowledge { border-left-color: #3b82f6; }
+
+    /* Both partials render a .rb-report-section, and #pdfdownload .rb-report-section
+       carries the written assessment's own gutter. The resume one names itself so it does
+       not inherit that rail. */
+    /* The 6px purple rail that used to run down this section is gone: the page draws no
+       such rail, and it was an outline the PDF added on its own. The part header above
+       already says which evaluation this is. */
+    #pdfdownload .rb-re-section {
+        padding-left: 0;
+    }
+
+    /* The description strip carries its part's rail too, so the band and the sentence
+       beneath it read as one block rather than the rail stopping halfway. */
+    .part-desc.is-resume { border-left-color: #cdc6ee; }
+
+    .part-desc {
+        background: #f6f8fa;
+        border-bottom: 1px solid #e8ebee;
+        border-left: 4px solid #eef1f4;
+        padding: 7px 20px;
+        font-size: 10.5px; color: #55606c; line-height: 1.45;
+        margin-bottom: 4px;
+    }
+
+    /* .part-break forced the written assessment onto a page of its own. Nothing uses it
+       now: the two parts run on, so the report has no forced breaks left at all. */
+
+    .rep-end {
+        padding: 10px 28px 18px;
+        font-size: 9.5px; color: #93a0ad; text-align: center;
+    }
+
+    /* ══ RESUME EVALUATION — PDF density ══════════════════════════════════
+       _ResumeEvaluationSection.cshtml is shared with the page, where its spacing is
+       right for a scrolling view. In the PDF the two score tables are the longest thing
+       in the report: "How the score was reached" alone runs to twelve rows, each with a
+       sentence of reasoning under it, and at 9px of cell padding plus 11.5px/1.5 prose
+       that is most of a page for a breakdown a reader scans rather than reads.
+
+       Scoped to #pdfdownload, so the page keeps its own spacing.
+       ═════════════════════════════════════════════════════════════════════ */
+
+    #pdfdownload .rb-re-sub {
+        font-size: 11px;
+        margin: 12px 0 6px;
+        padding-bottom: 5px;
+    }
+
+    #pdfdownload .rb-re-table {
+        font-size: 11px;
+    }
+
+        #pdfdownload .rb-re-table th {
+            font-size: 9px;
+            padding: 0 8px;
+        }
+
+        #pdfdownload .rb-re-table td {
+            padding: 5px 8px;
+        }
+
+    #pdfdownload .rb-re-name {
+        line-height: 1.3;
+    }
+
+    /* The reasoning is the tallest part of each row and the part a reader skims, so it
+       takes the biggest reduction of the three. */
+    #pdfdownload .rb-re-reason {
+        font-size: 10px;
+        line-height: 1.35;
+        margin-top: 2px;
+    }
+
+    #pdfdownload .rb-re-bar {
+        height: 4px;
+        margin-top: 3px;
+    }
+
+    /* ══ MCQ ASSESSMENT SECTION — PDF corrections ═════════════════════════
+       _McqAssessmentSection.cshtml is shared with AIInterview/Report.cshtml. That view
+       renders under _PublicLayout2; this one renders under _PublicLayout, a different
+       CSS stack — and html2pdf rasterises the result rather than laying it out for
+       print. Three consequences are corrected here, every rule scoped to #pdfdownload
+       so the on-screen report is untouched.
+
+       1. HEADING SIZE. The partial's section title is a bare <h2>. Report.cshtml sizes
+          it through `.rb-section-header h2 { font-size: 1.35rem }`; this view has no
+          such rule, so Bootstrap 5.1.3 wins with `calc(1.325rem + .9vw)`. That is
+          viewport-relative, so "Assessment Section" came out at a DIFFERENT SIZE
+          depending on how wide the operator's browser happened to be when they pressed
+          Download — measured 21.2px narrow, 29.3px at 900px, 32px at >=1200px, against
+          an intended 21.6px. The reset stops any heading here inheriting from
+          Bootstrap; the rule after it restates the intent in px, since rem is
+          root-relative and would not track this view's 14px base either.
+
+       2. HORIZONTAL CUT-OFF. `.rb-mcq-table-wrap` is `overflow-x: auto`. On screen that
+          scrolls; html2canvas cannot scroll, so anything past the 794px capture width
+          is simply cut away. The table is unpinned from its 660px min-width and allowed
+          to wrap instead, and long unspaced tokens are made breakable.
+
+       3. VERTICAL SLICING. html2pdf cuts the canvas at fixed A4 offsets (1123px), so a
+          block straddling a boundary is sliced through the middle. Measured on a
+          9-question paper: questions 2, 6 and 9 were each cut in half. break-inside is
+          declared here, and the same class names are added to `pagebreak.avoid` in
+          getPDF() — html2pdf needs both.
+       ═════════════════════════════════════════════════════════════════════ */
+
+    #pdfdownload h1, #pdfdownload h2, #pdfdownload h3,
+    #pdfdownload h4, #pdfdownload h5, #pdfdownload h6 {
+        font-size: inherit;
+        font-weight: 600;
+        line-height: 1.3;
+        margin: 0;
+    }
+
+    /* The partial carries no gutter of its own — on screen it inherits one from the
+       page container, which this view does not have, so the whole section ran to the
+       paper edge. 28px matches .sec-wrap, the gutter every other section of this PDF
+       uses, so the Assessment Section lines up with the rest of the document. */
+    #pdfdownload .rb-report-section {
+        margin-bottom: 18px;
+        padding: 0 28px;
+    }
+
+    #pdfdownload .rb-section-header { margin-bottom: 10px; }
+
+    #pdfdownload .rb-section-header h2 {
+        /* Deliberately px — rem is root-relative and would not track this view's 14px
+           base. Uppercase and letter-spaced to the part-header family: this heading sits
+           inside the Knowledge Evaluation part, so it reads as a section of that part
+           rather than a title of equal rank. */
+        font-size: 12px;
+        font-weight: 700;
+        color: #334155;
+        letter-spacing: 1.1px;
+        text-transform: uppercase;
+        line-height: 1.3;
+        margin: 0;
+        /* Not flex+gap: html2canvas renders flex gaps inconsistently, and the icon
+           only needs to sit before the text. */
+        display: block;
+    }
+
+    #pdfdownload .rb-section-header h2 i {
+        color: #4eda92;
+        margin-right: 8px;
+    }
+
+    /* ── Summary tiles ───────────────────────────────────────────────
+       The partial uses repeat(auto-fit, minmax(190px, 1fr)), which wrapped unpredictably
+       at this width. auto-flow rather than a fixed count so the row stays correct as
+       tiles are added or removed — it currently carries Total Score and Time Taken,
+       Questions Attempted and Integrity Signals having been dropped. */
+    #pdfdownload .rb-mcq-report-grid {
+        grid-auto-flow: column;
+        grid-auto-columns: 1fr;
+        grid-template-columns: none;
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+
+    #pdfdownload .rb-mcq-tile {
+        padding: 11px 12px;
+        border-radius: 8px;
+    }
+
+    #pdfdownload .rb-mcq-tile-label {
+        font-size: 9px;
+        letter-spacing: .4px;
+        margin-bottom: 5px;
+    }
+
+    /* !important is needed only here: three of the four tile values carry an inline
+       font-size from the partial (15px on the "/ 24" and "min" spans, 18px on the
+       Integrity Signals value), and an inline style cannot be beaten any other way. */
+    #pdfdownload .rb-mcq-tile-value {
+        font-size: 19px !important;
+        line-height: 1.15;
+    }
+
+    #pdfdownload .rb-mcq-tile-value span {
+        font-size: 11px !important;
+    }
+
+    #pdfdownload .rb-mcq-tile-sub {
+        font-size: 9.5px;
+        line-height: 1.35;
+        margin-top: 4px;
+    }
+
+    #pdfdownload .rb-mcq-verdict {
+        font-size: 9.5px;
+        padding: 3px 9px;
+        margin-top: 6px;
+    }
+
+    /* ── Section headings: title and note on separate lines ──────────
+       .rb-mcq-section-head is a flex row with space-between. The note beside
+       "Detailed submission report" is a full sentence, and as a flex item with the
+       default min-width:auto it refused to shrink and ran off the edge. Stacking the
+       two removes the constraint entirely, and avoids flex in the renderer as well. */
+    #pdfdownload .rb-mcq-section-head {
+        display: block;
+        padding-bottom: 6px;
+        margin-bottom: 12px;
+    }
+
+    #pdfdownload .rb-mcq-section-head .rb-mcq-section-title {
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    #pdfdownload .rb-mcq-section-note {
+        display: block;
+        font-size: 10px;
+        line-height: 1.4;
+    }
+
+    /* ── Group band: one thin line ───────────────────────────────────
+       The partial builds this from two stacked divs — a title box with the bottom
+       border removed and a meta box with the top border removed — which join into a
+       panel about 50px tall. That is a lot of height to spend on "Questions / 20 of 20
+       attempted", and a block that tall lands on a page boundary often enough to be
+       sliced.
+
+       Collapsed here to a single line: the title keeps a small pill, the meta becomes
+       plain text beside it. Both are inline-block on the SAME line, so they share a top
+       and bottom edge — which is what keeps html2pdf from pushing one to the next page
+       and leaving the other behind. Both are in the pagebreak.avoid list in getPDF(). */
+    #pdfdownload .rb-mcq-qsection-title {
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 10px;
+        letter-spacing: .4px;
+        padding: 3px 9px;
+        margin: 16px 8px 8px 0;
+        border: 1px solid #e5e7eb;
+        border-bottom: 1px solid #e5e7eb;
+        border-radius: 5px;
+        background: #f5f7fb;
+    }
+
+    #pdfdownload .rb-mcq-qsection-meta {
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 9.5px;
+        padding: 0;
+        margin: 16px 0 8px;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    /* ── Question number ─────────────────────────────────────────────
+       Smaller than the 12px the partial sets: at 14px question text the badge read
+       heavier than the question it labels. */
+    #pdfdownload .rb-mcq-q-num {
+        font-size: 10px;
+        min-width: 20px;
+        padding: 2px 6px;
+        border-radius: 5px;
+    }
+
+    /* ── Nothing may leave the page edge ─────────────────────────────── */
+    #pdfdownload .rb-mcq-table-wrap {
+        overflow: visible;
+    }
+
+    #pdfdownload .rb-mcq-table {
+        min-width: 0;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    #pdfdownload .rb-mcq-table th,
+    #pdfdownload .rb-mcq-table td {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* A single long token — a URL, or an unspaced string in a question or option — is
+       the other way text leaves the page edge. */
+    #pdfdownload .rb-mcq-q-text,
+    #pdfdownload .rb-mcq-opt,
+    #pdfdownload .rb-mcq-opt span,
+    #pdfdownload .rb-mcq-qsection-title,
+    #pdfdownload .rb-mcq-tile-sub {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    #pdfdownload .rb-mcq-q-text {
+        /* pre-wrap keeps the authored line breaks; anywhere stops an unspaced token
+           still running past the edge. */
+        overflow-wrap: anywhere;
+    }
+
+    /* html2canvas is unreliable with flex `gap`, which is all that separates the
+       number, the question and the score. Restate it as margins. */
+    #pdfdownload .rb-mcq-q-head { gap: 0; }
+    #pdfdownload .rb-mcq-q-head .rb-mcq-q-num { margin-right: 12px; }
+    #pdfdownload .rb-mcq-q-head .rb-mcq-q-meta { margin-left: 12px; }
+    #pdfdownload .rb-mcq-opt { gap: 0; }
+    #pdfdownload .rb-mcq-opt .rb-mcq-opt-key { margin-right: 9px; }
+
+    /* ── Nothing may be sliced by a page boundary ────────────────────── */
+    #pdfdownload .rb-mcq-q,
+    #pdfdownload .rb-mcq-tile,
+    #pdfdownload .rb-mcq-opt,
+    #pdfdownload .rb-mcq-section-head,
+    #pdfdownload .rb-mcq-qsection-title,
+    #pdfdownload .rb-mcq-qsection-meta,
+    #pdfdownload .rb-mcq-table tr {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    /* A group heading stranded at the foot of a page with its questions overleaf is
+       the same defect in a milder form. */
+    #pdfdownload .rb-mcq-qsection-title,
+    #pdfdownload .rb-mcq-section-title,
+    #pdfdownload .rb-section-header {
+        page-break-after: avoid;
+        break-after: avoid;
+    }
 </style>
 
 <div id="main-panel" style="display:none;">
@@ -576,46 +878,214 @@
         </div>
     </div>
 
-    <!-- ══════════════════ STATS ═══════════════════════ -->
-    <div class="stats-wrap">
-        <table class="stats-table">
-            <tr>
-                <td class="stats-cell">
-                    <span class="stats-icon"><i class="fa fa-list-ol"></i></span>
-                    <div class="stats-val">@(Model.videoQuestionDetails?.Count ?? 0)</div>
-                    <div class="stats-lbl">Total Questions</div>
-                </td>
-                <td class="stats-cell">
-                    <span class="stats-icon"><i class="fa fa-video-camera"></i></span>
-                    <div class="stats-val">@(Model.videoQuestionDetails?.Count ?? 0)</div>
-                    <div class="stats-lbl">Video Responses</div>
-                </td>
-                <td class="stats-cell">
-                    <span class="stats-icon"><i class="fa fa-code"></i></span>
-                    @if (Model.AIInterviewEvaluation != null && Model.AIInterviewEvaluation.OverallTechnicalScore != 0)
+    @*
+        Summary. One card per evaluation rather than a single strip of four numbers, so a
+        reader can see at a glance that two different things were measured and how the
+        candidate did on each. The card is omitted entirely when its evaluation did not
+        run — a channel with no written assessment shows one card, not an empty second.
+
+        Scores are rendered on the scale the model actually carries (technical and
+        communication are 0-10), not restated out of 100.
+    *@
+    @{
+        var evalRan = Model.AIInterviewEvaluation != null;
+        var mcqRan = Model.McqAssessment != null;
+        var skillQuestionCount = Model.videoQuestionDetails?.Count ?? 0;
+        var mcqReport = Model.McqAssessment;
+
+        // Resume figures prefer the parsed record and fall back to the two columns. That
+        // fallback is the whole reason AIResumeScreeningScore / Verdict stay on the model:
+        // a screening whose JSON will not parse still has a score and a verdict of its own,
+        // and the summary should show them even though the section below cannot render.
+        var resumeParsed = Model.ResumeEvaluation;
+        var resumeScore = resumeParsed != null ? resumeParsed.TotalScore : Model.AIResumeScreeningScore;
+        var resumeMax = resumeParsed != null ? resumeParsed.MaxScore : 0;
+        var resumeVerdict = resumeParsed != null && !string.IsNullOrWhiteSpace(resumeParsed.Verdict)
+            ? resumeParsed.Verdict
+            : Model.AIResumeScreeningVerdict;
+        var wasScreened = resumeParsed != null || resumeScore != 0 || !string.IsNullOrWhiteSpace(resumeVerdict);
+
+        // Same tone rule the page uses, so the resume verdict is coloured identically in
+        // both documents. It was rendering as plain grey here while the page showed it in
+        // green or amber.
+        var resumeTone = (resumeVerdict ?? string.Empty).ToLowerInvariant().Contains("reject") ? "is-fail"
+            : (resumeVerdict ?? string.Empty).ToLowerInvariant().Contains("select")
+                || (resumeVerdict ?? string.Empty).ToLowerInvariant().Contains("shortlist")
+                || (resumeVerdict ?? string.Empty).ToLowerInvariant().Contains("proceed") ? "is-pass"
+            : "is-review";
+    }
+    @if (evalRan || mcqRan || wasScreened)
+    {
+        <div class="sum-wrap">
+            <table class="sum-table">
+                <tr>
+                    <td class="sum-td">
+                        <div class="sum-card is-resume">
+                            <div class="sum-lbl">Resume Evaluation</div>
+                            @if (wasScreened)
+                            {
+                                <table class="sum-stats">
+                                    <tr>
+                                        <td>
+                                            <div class="sum-v">
+                                                @resumeScore@if (resumeMax > 0)
+                                                {<small> / @resumeMax</small>}
+                                            </div>
+                                            <div class="sum-l">Screening score</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <div class="sum-foot @resumeTone">
+                                    @(string.IsNullOrWhiteSpace(resumeVerdict) ? "Screened" : resumeVerdict)
+                                </div>
+                            }
+                            else
+                            {
+                                <table class="sum-stats">
+                                    <tr>
+                                        <td>
+                                            <div class="sum-v" style="color:#bbb;">&mdash;</div>
+                                            <div class="sum-l">Screening score</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <div class="sum-foot">This candidate was not screened</div>
+                            }
+                        </div>
+                    </td>
+                    @if (evalRan)
                     {
-                        <div class="stats-val">@Model.AIInterviewEvaluation.OverallTechnicalScore <small>/ 10</small></div>
+                        <td class="sum-td">
+                            <div class="sum-card is-skill">
+                                <div class="sum-lbl">Hands-on Skill Evaluation</div>
+                                <table class="sum-stats">
+                                    <tr>
+                                        <td>
+                                            @if (Model.AIInterviewEvaluation.OverallTechnicalScore != 0)
+                                            {
+                                                <div class="sum-v">@Model.AIInterviewEvaluation.OverallTechnicalScore.ToString("0.#")<small> %</small></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="sum-v" style="color:#bbb;">&mdash;</div>
+                                            }
+                                            <div class="sum-l">Technical</div>
+                                        </td>
+                                        <td>
+                                            @if (Model.AIInterviewEvaluation.OverallCommunicationScore != 0)
+                                            {
+                                                <div class="sum-v">@Model.AIInterviewEvaluation.OverallCommunicationScore.ToString("0.#")<small> %</small></div>
+                                            }
+                                            else
+                                            {
+                                                <div class="sum-v" style="color:#bbb;">&mdash;</div>
+                                            }
+                                            <div class="sum-l">Communication</div>
+                                        </td>
+                                        <td>
+                                            <div class="sum-v">@skillQuestionCount</div>
+                                            <div class="sum-l">Questions answered</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                                @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict))
+                                {
+                                    @* Tone from the canonical verdict helpers, not from the
+                                       wording: the AI's phrasing varies, but Normalize()
+                                       maps it onto the four-value enum first. *@
+                                    var pdfVerdict = Model.AIInterviewEvaluation.FinalVerdict;
+                                    var pdfTone = AIInterviewVerdict.IsSelectFamily(pdfVerdict) ? "is-pass"
+                                        : AIInterviewVerdict.IsRejectFamily(pdfVerdict) ? "is-fail"
+                                        : "is-review";
+                                    var pdfIcon = pdfTone == "is-pass" ? "fa-check-circle"
+                                        : pdfTone == "is-fail" ? "fa-times-circle"
+                                        : "fa-exclamation-circle";
+                                    <div class="sum-foot @pdfTone"><i class="fa @pdfIcon"></i>@pdfVerdict</div>
+                                }
+                            </div>
+                        </td>
                     }
-                    else
+                    @if (mcqRan)
                     {
-                        <div class="stats-val" style="color:#bbb;">—</div>
+                        <td class="sum-td">
+                            <div class="sum-card is-knowledge">
+                                <div class="sum-lbl">Knowledge Evaluation</div>
+                                <table class="sum-stats">
+                                    <tr>
+                                        <td>
+                                            <div class="sum-v">@mcqReport.ScorePercent.ToString("0.#")<small> %</small></div>
+                                            <div class="sum-l">Score</div>
+                                        </td>
+                                        <td>
+                                            <div class="sum-v">@mcqReport.CorrectAnswers<small> / @mcqReport.TotalQuestions</small></div>
+                                            <div class="sum-l">Correct</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                                @{
+                                    var pdfMcqTone = mcqReport.ScorePercent >= 60 ? "is-pass"
+                                        : mcqReport.ScorePercent >= 40 ? "is-review"
+                                        : "is-fail";
+                                    var pdfMcqIcon = pdfMcqTone == "is-pass" ? "fa-check-circle"
+                                        : pdfMcqTone == "is-fail" ? "fa-times-circle"
+                                        : "fa-exclamation-circle";
+                                }
+                                <div class="sum-foot @pdfMcqTone">
+                                    <i class="fa @pdfMcqIcon"></i>@(mcqReport.ScorePercent >= 60
+                                        ? "Meets the 60% passing score"
+                                        : mcqReport.ScorePercent >= 40
+                                            ? "Below the 60% passing score — needs review"
+                                            : "Well below the 60% passing score")
+                                </div>
+                            </div>
+                        </td>
                     }
-                    <div class="stats-lbl">Technical Score</div>
-                </td>
-                <td class="stats-cell">
-                    <span class="stats-icon"><i class="fa fa-comments"></i></span>
-                    @if (Model.AIInterviewEvaluation != null && Model.AIInterviewEvaluation.OverallCommunicationScore != 0)
-                    {
-                        <div class="stats-val">@Model.AIInterviewEvaluation.OverallCommunicationScore <small>/ 10</small></div>
-                    }
-                    else
-                    {
-                        <div class="stats-val" style="color:#bbb;">—</div>
-                    }
-                    <div class="stats-lbl">Communication Score</div>
-                </td>
-            </tr>
-        </table>
+                </tr>
+            </table>
+        </div>
+    }
+
+    @*
+        ══ RESUME EVALUATION ══════════════════════════════════════════════════
+        Opens the report: the resume is screened before anyone speaks to the candidate, so
+        it is the first thing that happened. Both the band and the section are omitted
+        together when there is nothing to show — the partial's own guards decide that, and
+        this @if keeps the band from standing over an empty part.
+    *@
+    @{
+        // The same gate the link carries on the page: Public access, or one of the three
+        // profiles, and both ids present. The PDF must not show a link to a screening page
+        // that the person exporting it could not open themselves.
+        bool pdfCanSeeScreeningLink =
+            ((ViewBag.AccessType != null && ViewBag.AccessType == "Public")
+                || (ViewBag.ProfileName != null && (ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorHR")))
+            && ViewBag.IRFId != null && ViewBag.CandidateMasterId != null && ViewBag.CandidateMasterId > 0;
+        string pdfScreeningAccessType = ViewBag.AccessType ?? "";
+    }
+    @* Opens when there is either a parsed evaluation to show or a link to offer, so a
+       candidate whose screening JSON will not parse still gets the way through to the
+       screener's own page. html2pdf is configured with enableLinks, so the anchor stays
+       clickable in the exported document. *@
+    @if (Model.ResumeEvaluation != null || pdfCanSeeScreeningLink)
+    {
+        <div class="part-hd is-resume">Resume Evaluation</div>
+        <div class="part-desc is-resume">
+            What the resume screener found before the interview: the score it gave, how it reached it, and against what the role asked for.
+            @if (pdfCanSeeScreeningLink)
+            {
+                <a style="background:none!important;border:0px!important;text-decoration: underline;color: #039BE5!important;font-size: 11px;" target="_blank" title="Resume Screening Results" href="@Url.Action("ScreenCandidateV2", "AIScreener", new { emailId = Model.CandidateEmail, irfId = ViewBag.IRFId, candidateMasterId = ViewBag.CandidateMasterId, accessType = pdfScreeningAccessType }, Context.Request.Scheme)">Resume Screening Results</a>
+            }
+        </div>
+
+        @if (Model.ResumeEvaluation != null)
+        {
+            @await Html.PartialAsync("_ResumeEvaluationSection", Model.ResumeEvaluation)
+        }
+    }
+
+    <div class="part-hd is-skill">Hands-on Skill Evaluation</div>
+    <div class="part-desc">
+        The interview itself: what was asked, how the interviewer judged it, and the candidate's own answers.
     </div>
 
     @if (Model.AIInterviewEvaluation != null)
@@ -689,7 +1159,7 @@
             int asSecNum = 1;
             if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.OverallCommunicationScoreReasoning)) asSecNum++;
             if (Model.AIInterviewEvaluation.QuestionRatings != null && Model.AIInterviewEvaluation.QuestionRatings.Any()) asSecNum++;
-            <div class="sec-wrap" style="padding-bottom:16px;">
+            <div class="sec-wrap" style="padding-bottom:6px;">
                 <div class="sec-head"><span class="sec-num">@asSecNum</span>AI Interviewer Assessment</div>
                 <div class="vbox">
                     @if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict))
@@ -718,222 +1188,6 @@
         }
     }
 
-    <!-- ══════════════════ TYPING SPEED ASSESSMENT ════ -->
-    @{
-        int tsSecNum = 1;
-        if (Model.AIInterviewEvaluation != null)
-        {
-            if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.OverallCommunicationScoreReasoning)) tsSecNum++;
-            if (Model.AIInterviewEvaluation.QuestionRatings != null && Model.AIInterviewEvaluation.QuestionRatings.Any()) tsSecNum++;
-            if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict) || !string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalComment)) tsSecNum++;
-        }
-        bool hasTypingData = Model.TypingSpeedAssessments != null && Model.TypingSpeedAssessments.Any();
-    }
-
-    @* MCQ assessment section. The same partial the on-screen report uses, so the PDF and the
-       page cannot drift apart; renders nothing when the channel has no MCQ section. *@
-    @await Html.PartialAsync("_McqAssessmentSection", Model.McqAssessment)
-
-    <div class="sec-wrap" style="padding-bottom:16px;">
-        <div class="sec-head"><span class="sec-num">@tsSecNum</span><i class="fa fa-keyboard-o" style="margin-right:7px;"></i>Typing Speed Assessment</div>
-        @if (hasTypingData)
-        {
-            @foreach (var tsa in Model.TypingSpeedAssessments)
-            {
-                Risebird.Entities.ViewModel.TypingAssessmentOpenAIResponse tsAnalysis = null;
-                if (!string.IsNullOrEmpty(tsa.OpenAIAnalysisJson))
-                {
-                    try { tsAnalysis = Newtonsoft.Json.JsonConvert.DeserializeObject<Risebird.Entities.ViewModel.TypingAssessmentOpenAIResponse>(tsa.OpenAIAnalysisJson); } catch { }
-                }
-                string gradeClass = "ts-grade-poor";
-                if (tsAnalysis?.scores?.overall_grade != null)
-                {
-                    var g = tsAnalysis.scores.overall_grade;
-                    gradeClass = (g == "Excellent" || g == "Very Good") ? "ts-grade-excellent" : g == "Good" ? "ts-grade-good" : "ts-grade-poor";
-                }
-                <div class="ts-card">
-                    <!-- Card header: question title + pass/fail -->
-                    <div class="ts-card-head">
-                        <span class="ts-card-title"><i class="fa fa-keyboard-o" style="margin-right:5px;color:#4eda92;"></i>@(tsa.QuestionText ?? "Typing Speed Assessment")</span>
-                        @if (tsa.IsPassed == true)
-                        {
-                            <span class="ts-card-badge ts-badge-pass"><i class="fa fa-check" style="margin-right:3px;"></i>Passed</span>
-                        }
-                        else if (tsa.IsPassed == false)
-                        {
-                            <span class="ts-card-badge ts-badge-fail"><i class="fa fa-times" style="margin-right:3px;"></i>Not Passed</span>
-                        }
-                    </div>
-
-                    <!-- Key stats row -->
-                    <div class="ts-stats-row">
-                        <table class="ts-stats-tbl">
-                            <tr>
-                                <td class="ts-stat-cell">
-                                    <span class="ts-stat-icon"><i class="fa fa-tachometer"></i></span>
-                                    <div class="ts-stat-val">@tsa.WordsPerMinute.ToString("N1") <small>WPM</small></div>
-                                    <div class="ts-stat-lbl">Words / Min</div>
-                                </td>
-                                <td class="ts-stat-cell">
-                                    <span class="ts-stat-icon" style="background:@(tsa.AccuracyPercentage >= tsa.PassingAccuracyPercentage ? "linear-gradient(135deg,#1a7a4a,#27ae72)" : "linear-gradient(135deg,#b71c1c,#e53935)");"><i class="fa fa-bullseye"></i></span>
-                                    <div class="ts-stat-val" style="color:@(tsa.AccuracyPercentage >= tsa.PassingAccuracyPercentage ? "#1a7a4a" : "#b71c1c");">
-                                        @tsa.AccuracyPercentage.ToString("N1") <small>%</small>
-                                    </div>
-                                    <div class="ts-stat-lbl">Char Accuracy</div>
-                                </td>
-                                <td class="ts-stat-cell">
-                                    <span class="ts-stat-icon"><i class="fa fa-clock-o"></i></span>
-                                    <div class="ts-stat-val">@tsa.TimeTakenInSeconds.ToString("N0") <small>s</small></div>
-                                    <div class="ts-stat-lbl">Time Taken</div>
-                                </td>
-                                <td class="ts-stat-cell">
-                                    <span class="ts-stat-icon"><i class="fa fa-font"></i></span>
-                                    <div class="ts-stat-val">@tsa.CorrectCharacters <small>/ @tsa.TotalCharacters</small></div>
-                                    <div class="ts-stat-lbl">Correct Chars</div>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <!-- Body -->
-                    <div class="ts-body">
-
-                        <!-- Sample Text -->
-                        @if (!string.IsNullOrWhiteSpace(tsa.SampleText))
-                        {
-                            <div class="ts-text-box">
-                                <div class="ts-text-lbl"><i class="fa fa-file-text-o"></i> Sample Text</div>
-                                <div class="ts-text-val">@tsa.SampleText</div>
-                            </div>
-                        }
-
-                        <!-- Candidate Typed -->
-                        @if (!string.IsNullOrWhiteSpace(tsa.TypedText))
-                        {
-                            <div class="ts-text-box ts-text-box-typed">
-                                <div class="ts-text-lbl ts-text-lbl-typed"><i class="fa fa-keyboard-o"></i> Candidate Typed</div>
-                                <div class="ts-text-val">@tsa.TypedText</div>
-                            </div>
-                        }
-
-                        @if (tsAnalysis != null && tsAnalysis.scores != null)
-                        {
-                            <!-- Grade badge -->
-                            <div style="margin-bottom:12px;">
-                                <span class="ts-grade-badge @gradeClass">
-                                    <i class="fa fa-certificate" style="margin-right:5px;"></i>Grade: @tsAnalysis.scores.overall_grade
-                                </span>
-                            </div>
-
-                            <!-- Accuracy metrics -->
-                            <table class="ts-metrics-tbl">
-                                <tr>
-                                    <td><i class="fa fa-check-circle" style="margin-right:4px;"></i>Word Accuracy</td>
-                                    <td>
-                                        <strong style="font-size:15px;color:@(tsAnalysis.scores.word_level_accuracy_percent >= 97 ? "#1a7a4a" : "#b71c1c");">@tsAnalysis.scores.word_level_accuracy_percent.ToString("N1")%</strong>
-                                        <span style="margin-left:8px;color:#aaa;font-size:11px;">(Required: 97%)</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa fa-font" style="margin-right:4px;"></i>Character Accuracy</td>
-                                    <td><strong style="font-size:15px;">@tsAnalysis.scores.character_level_accuracy_percent.ToString("N1")%</strong></td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa fa-clock-o" style="margin-right:4px;"></i>Time Taken</td>
-                                    <td><strong>@tsa.TimeTakenInSeconds.ToString("N1")</strong> seconds <span style="color:#aaa;font-size:11px;">(Max: 120s)</span></td>
-                                </tr>
-                            </table>
-
-                            @if (tsAnalysis.counts != null)
-                            {
-                                <!-- Error breakdown -->
-                                <div style="font-size:10.5px;font-weight:700;color:#1a1a1a;background:#f4fbff;display:inline-block;padding:3px 10px;border-radius:4px;border:1px solid #c8eef5;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">
-                                    <i class="fa fa-bar-chart" style="margin-right:5px;"></i>Error Breakdown
-                                </div>
-                                <table class="ts-err-tbl">
-                                    <tr class="err-val-row">
-                                        <td style="color:#1a7a4a; border-top:3px solid #4eda92;">@tsAnalysis.counts.correct_words</td>
-                                        <td style="color:#b71c1c; border-top:3px solid #e53935;">@tsAnalysis.counts.incorrect_words</td>
-                                        <td style="color:#b71c1c; border-top:3px solid #e53935;">@tsAnalysis.counts.missing_words</td>
-                                        <td style="color:#e65100; border-top:3px solid #ff7043;">@tsAnalysis.counts.spelling_errors</td>
-                                        <td style="color:#795500; border-top:3px solid #ffc107;">@tsAnalysis.counts.capitalization_errors</td>
-                                        <td style="color:#795500; border-top:3px solid #ffc107;">@tsAnalysis.counts.punctuation_errors</td>
-                                    </tr>
-                                    <tr class="err-lbl-row">
-                                        <td style="background:#f0faf6;">Correct</td>
-                                        <td style="background:#fff5f5;">Incorrect</td>
-                                        <td style="background:#fff5f5;">Missing</td>
-                                        <td style="background:#fff8f5;">Spelling</td>
-                                        <td style="background:#fffde7;">Capitals</td>
-                                        <td style="background:#fffde7;">Punctuation</td>
-                                    </tr>
-                                </table>
-                            }
-
-                            @if (tsAnalysis.verdict != null)
-                            {
-                                @if (!string.IsNullOrEmpty(tsAnalysis.verdict.speed_comment))
-                                {
-                                    <div class="ts-comment-box">
-                                        <div class="ts-comment-lbl"><i class="fa fa-tachometer" style="margin-right:5px;"></i>Speed</div>
-                                        <div class="ts-comment-text">@tsAnalysis.verdict.speed_comment</div>
-                                    </div>
-                                }
-                                @if (!string.IsNullOrEmpty(tsAnalysis.verdict.accuracy_comment))
-                                {
-                                    <div class="ts-comment-box">
-                                        <div class="ts-comment-lbl"><i class="fa fa-bullseye" style="margin-right:5px;"></i>Accuracy</div>
-                                        <div class="ts-comment-text">@tsAnalysis.verdict.accuracy_comment</div>
-                                    </div>
-                                }
-                                @if (tsAnalysis.verdict.actionable_tips != null && tsAnalysis.verdict.actionable_tips.Any())
-                                {
-                                    <div class="ts-tips-box">
-                                        <div class="ts-tips-lbl"><i class="fa fa-lightbulb-o" style="margin-right:5px;"></i>Tips for Improvement</div>
-                                        <ul class="ts-tips-list">
-                                            @foreach (var tip in tsAnalysis.verdict.actionable_tips)
-                                            {
-                                                <li>@tip</li>
-                                            }
-                                        </ul>
-                                    </div>
-                                }
-                            }
-                        }
-                        else
-                        {
-                            <!-- Fallback: basic metrics when no AI analysis -->
-                            <table class="ts-metrics-tbl">
-                                <tr>
-                                    <td><i class="fa fa-tachometer" style="margin-right:4px;"></i>Words / Min</td>
-                                    <td><strong>@tsa.WordsPerMinute.ToString("N1")</strong> <span style="color:#888;font-size:11px;">(Required: @tsa.PassingWPM WPM)</span></td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa fa-check-circle" style="margin-right:4px;"></i>Accuracy</td>
-                                    <td><strong style="color:@(tsa.AccuracyPercentage >= tsa.PassingAccuracyPercentage ? "#1a7a4a" : "#b71c1c");">@tsa.AccuracyPercentage.ToString("N1")%</strong> <span style="color:#888;font-size:11px;">(Required: @tsa.PassingAccuracyPercentage%)</span></td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa fa-clock-o" style="margin-right:4px;"></i>Time Taken</td>
-                                    <td><strong>@tsa.TimeTakenInSeconds.ToString("N1")</strong> seconds</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fa fa-font" style="margin-right:4px;"></i>Characters</td>
-                                    <td>@tsa.CorrectCharacters correct / @tsa.TotalCharacters total</td>
-                                </tr>
-                            </table>
-                        }
-                    </div>
-                </div>
-            }
-        }
-        else
-        {
-            <div style="padding:18px 15px;text-align:center;color:#aaa;font-size:13px;border:1px dashed #d4ede3;border-radius:6px;background:#f8fffe;">
-                <i class="fa fa-keyboard-o" style="font-size:22px;margin-bottom:8px;display:block;color:#cde;"></i>
-                No typing speed assessment was recorded for this interview.
-            </div>
-        }
-    </div>
 
     <!-- ══════════════════ Q&A RESPONSES ═══════════════ -->
     @if (Model.videoQuestionDetails != null && Model.videoQuestionDetails.Any())
@@ -945,8 +1199,12 @@
             if (Model.AIInterviewEvaluation.QuestionRatings != null && Model.AIInterviewEvaluation.QuestionRatings.Any()) qaSecNum++;
             if (!string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalVerdict) || !string.IsNullOrWhiteSpace(Model.AIInterviewEvaluation.FinalComment)) qaSecNum++;
         }
-        if (Model.TypingSpeedAssessments != null && Model.TypingSpeedAssessments.Any()) qaSecNum++;
-        <div class="pb pb-pad"></div>
+        @* No increment for the typing test: that section is no longer rendered in the
+           PDF, and counting it here would leave a gap in the section numbering. *@
+        @* No page break here any more. This section is part of Hands-on Skill Evaluation,
+           and forcing it onto a page of its own left the previous page half empty and put
+           a second break within a few inches of the one that opens Knowledge Evaluation —
+           which is what produced the large gaps either side of it. *@
         <div class="sec-wrap" style="padding-bottom:16px;">
             <div class="sec-head">
                 <span class="sec-num">@qaSecNum</span>
@@ -959,8 +1217,8 @@
                     <i class="fa fa-volume-up" style="margin-right:7px;"></i><text>Audio Responses</text>
                 }
             </div>
-            <div style="font-size:14px;color:#1a1a2e;font-weight:400;margin-bottom:14px;padding-left:2px;">
-                <i class="fa fa-comments" style="margin-right:7px;color:#4eda92;font-size:14px;"></i>Question &amp; Answer Responses
+            <div style="font-size:12px;color:#55606c;font-weight:600;letter-spacing:1.1px;text-transform:uppercase;margin:-6px 0 8px;padding-left:2px;">
+                <i class="fa fa-comments" style="margin-right:6px;color:#4eda92;font-size:12px;"></i>Question &amp; Answer Responses
             </div>
             @{int qNum = 1;
               var pdfSessionId = Model.SessionId;
@@ -1044,6 +1302,33 @@
         </div>
     }
 
+    @*
+        ══ KNOWLEDGE EVALUATION ═══════════════════════════════════════════════
+        The written assessment. Omitted entirely when the channel ran no written
+        assessment, rather than printing a heading over an empty page — the partial
+        already renders nothing for a null model, but the part header would not.
+
+        If a forced page break is ever wanted here again, note that html2pdf's
+        rasteriser ignores a CSS page-break-before: it looks for an empty element with
+        class html2pdf__page-break.
+    *@
+    @if (Model.McqAssessment != null)
+    {
+        @* No forced page break. The preview this layout came from started the written
+           assessment on a fresh page, but in practice that left most of a page blank
+           wherever the interview happened to end. The part header is distinct enough to
+           mark the boundary on its own, so the two parts now run on. *@
+        <div class="part-hd is-knowledge">Knowledge Evaluation</div>
+        <div class="part-desc">
+            The written assessment: how each section scored, and every question as it was served.
+        </div>
+
+        @* The same partial the on-screen report uses, so the PDF and the page cannot
+           drift apart. *@
+        @await Html.PartialAsync("_McqAssessmentSection", Model.McqAssessment)
+    }
+
+    <div class="rep-end">End of report</div>
 
 </div><!-- #pdfdownload -->
 </div><!-- #main-panel -->
@@ -1090,7 +1375,21 @@
                     width: 794
                 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'p' },
-                pagebreak: { mode: 'css', avoid: ['.qa-card', '.ql-row', '.vbox-row'] }
+                // html2pdf slices the rasterised page at fixed A4 offsets, so any block
+                // straddling a boundary is cut through the middle. The MCQ classes were
+                // missing from this list, which is why question cards in the Assessment
+                // Section came out sliced. 'legacy' is added alongside 'css' so the
+                // avoid list is honoured as well as the break-inside rules in the
+                // stylesheet - html2pdf applies the two through different code paths.
+                pagebreak: {
+                    mode: ['css', 'legacy'],
+                    avoid: [
+                        '.qa-card', '.ql-row', '.vbox-row',
+                        '.rb-mcq-q', '.rb-mcq-tile', '.rb-mcq-opt',
+                        '.rb-mcq-section-head', '.rb-mcq-table tr',
+                        '.rb-mcq-qsection-title', '.rb-mcq-qsection-meta'
+                    ]
+                }
             })
             .save()
             .then(function () {

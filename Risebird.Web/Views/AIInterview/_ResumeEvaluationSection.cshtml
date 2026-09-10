@@ -1,0 +1,415 @@
+@using Risebird.Entities.ViewModel
+@using System.Linq
+@using System.Collections.Generic
+@model Risebird.Entities.ViewModel.CandidateResumeScreeningVM
+@*
+    The resume evaluation section of an AI interview report.
+
+    A partial for the same reason _McqAssessmentSection.cshtml is one: AIInterview/Report.cshtml
+    and AIInterview/GenerateAIReportPDFFile.cshtml both render this report, and one copy is what
+    stops the page and the PDF disagreeing. Every rule is scoped to .rb-re-* so it can sit inside
+    either host view without inheriting from or leaking into the blocks around it.
+
+    The data is the resume screener's own result, written to Candidate.AIScreeningResultJsonV2 by
+    AIScreenerController at the same moment it writes AIResumeScreeningScore and
+    AIResumeScreeningVerdict. Only those two columns were being read back before, so the screener's
+    reasoning — how the score was reached, skill by skill, what the role asked for — existed but
+    was never shown on the report.
+
+    Renders nothing twice over: when the model is null (never screened, or the stored JSON would
+    not parse), and when the record it holds carries no score, no verdict and no fitment summary.
+    A screening that exists but says nothing is better absent than rendered as a section of dashes.
+*@
+@if (Model != null)
+{
+    var re = Model;
+
+    var hasScore = re.TotalScore != 0 || re.MaxScore > 0;
+    var hasVerdict = !string.IsNullOrWhiteSpace(re.Verdict);
+    var hasSummary = !string.IsNullOrWhiteSpace(re.FitmentSummary);
+
+    if (hasScore || hasVerdict || hasSummary)
+    {
+        // maxScore is the one field that makes a percentage honest. Without it the section shows
+        // the raw total and no percentage anywhere, rather than working one out from a
+        // denominator nobody recorded.
+        var hasMax = re.MaxScore > 0;
+        var scorePct = hasMax ? (double)re.TotalScore * 100d / re.MaxScore : 0d;
+
+        var verdictLower = (re.Verdict ?? string.Empty).ToLowerInvariant();
+        var verdictTone = verdictLower.Contains("reject") ? "is-fail"
+            : (verdictLower.Contains("select") || verdictLower.Contains("shortlist") || verdictLower.Contains("proceed")) ? "is-pass"
+            : "is-neutral";
+
+        // SectionScores is twelve named properties rather than a list, so it is collected into
+        // one here. Nulls and empty entries are dropped — a screener that scored only half the
+        // parts should show half the rows, not twelve with six blanks.
+        var sectionRows = new List<KeyValuePair<string, SectionScore>>
+        {
+            new KeyValuePair<string, SectionScore>("Technical skills match", re.SectionScores?.TechnicalSkillsMatch),
+            new KeyValuePair<string, SectionScore>("Real-time implementation experience", re.SectionScores?.RealTimeImplementationExperience),
+            new KeyValuePair<string, SectionScore>("Employer credibility", re.SectionScores?.EmployerCredibility),
+            new KeyValuePair<string, SectionScore>("Primary specialization", re.SectionScores?.PrimarySpecialization),
+            new KeyValuePair<string, SectionScore>("Recent hands-on experience", re.SectionScores?.RecentHandsOnExperience),
+            new KeyValuePair<string, SectionScore>("Educational background", re.SectionScores?.EducationalBackground),
+            new KeyValuePair<string, SectionScore>("Certifications and training", re.SectionScores?.CertificationsAndTraining),
+            new KeyValuePair<string, SectionScore>("Multiple specializations (adjustment)", re.SectionScores?.MultipleSpecializationsAdjustment),
+            new KeyValuePair<string, SectionScore>("Teaching role (adjustment)", re.SectionScores?.TeachingRoleAdjustment),
+            new KeyValuePair<string, SectionScore>("Employment / education gaps (adjustment)", re.SectionScores?.EmploymentEducationGapsAdjustment),
+            new KeyValuePair<string, SectionScore>("Freelancing role (adjustment)", re.SectionScores?.FreelancingRoleAdjustment),
+            new KeyValuePair<string, SectionScore>("Primary specialization in current job (adjustment)", re.SectionScores?.PrimarySpecializationCurrentJobAdjustment)
+        }
+        .Where(r => r.Value != null && (r.Value.Score != 0 || r.Value.MaxScore != 0 || !string.IsNullOrWhiteSpace(r.Value.Reason)))
+        .ToList();
+
+        var criteria = re.EvaluationCriteriaScores?
+            .Where(c => c != null && (!string.IsNullOrWhiteSpace(c.TechnicalSkill) || !string.IsNullOrWhiteSpace(c.Reason)))
+            .ToList() ?? new List<EvaluationCriteriaScore>();
+
+        var mustHaves = re.MustHaveTechnicalCriteria?
+            .Where(m => m != null && !string.IsNullOrWhiteSpace(m.TechnicalSkill))
+            .ToList() ?? new List<MustHaveTechnicalCriterion>();
+
+        // The disqualification flags were turned into sentences here for the "What the
+        // screener flagged" block. That block is no longer rendered, so nothing reads them;
+        // DisqualificationFlags still arrives on the model if the block is ever restored.
+
+        <style>
+            .rb-re-section {
+                margin-bottom: 22px;
+            }
+
+            .rb-re-head {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 16px;
+                flex-wrap: wrap;
+                border: 1px solid #e6e3f5;
+                border-left: 4px solid #6d5bd0;
+                border-radius: 10px;
+                background: #faf9fe;
+                padding: 14px 18px;
+                margin-bottom: 16px;
+            }
+
+            .rb-re-score {
+                font-size: 26px;
+                font-weight: 700;
+                color: #2f2a45;
+                line-height: 1.1;
+            }
+
+                .rb-re-score small {
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #7d7794;
+                }
+
+            .rb-re-score-lbl {
+                font-size: 10.5px;
+                font-weight: 700;
+                letter-spacing: .7px;
+                text-transform: uppercase;
+                color: #7d7794;
+                margin-bottom: 5px;
+            }
+
+            .rb-re-pct {
+                font-size: 12px;
+                color: #6b6785;
+                margin-top: 4px;
+            }
+
+            .rb-re-verdict {
+                display: inline-block;
+                font-size: 12px;
+                font-weight: 700;
+                padding: 5px 13px;
+                border-radius: 999px;
+                border: 1px solid transparent;
+                white-space: nowrap;
+            }
+
+                .rb-re-verdict.is-pass {
+                    background: #e9f9f0;
+                    color: #14663d;
+                    border-color: #cdeddc;
+                }
+
+                .rb-re-verdict.is-fail {
+                    background: #fdeeec;
+                    color: #a3261d;
+                    border-color: #f5d2ce;
+                }
+
+                .rb-re-verdict.is-neutral {
+                    background: #eef1f6;
+                    color: #44506a;
+                    border-color: #dfe4ec;
+                }
+
+            .rb-re-summary {
+                font-size: 13px;
+                line-height: 1.6;
+                color: #333;
+                white-space: pre-line;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                margin-top: 10px;
+            }
+
+            .rb-re-sub {
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 1.1px;
+                text-transform: uppercase;
+                color: #4a4468;
+                margin: 20px 0 10px;
+                padding-bottom: 7px;
+                border-bottom: 1px solid #ece9f6;
+            }
+
+            /* Tables rather than grid: this partial is rasterised by html2canvas in the PDF, and
+               the surrounding views use tables for the same reason. */
+            .rb-re-table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 12.5px;
+                table-layout: fixed;
+            }
+
+                .rb-re-table th {
+                    font-size: 10.5px;
+                    font-weight: 700;
+                    letter-spacing: .5px;
+                    text-transform: uppercase;
+                    color: #7d7794;
+                    text-align: left;
+                    padding: 0 10px;
+                    vertical-align: middle;
+                    border-bottom: 1px solid #ece9f6;
+                }
+
+                .rb-re-table td {
+                    padding: 9px 10px;
+                    border-bottom: 1px solid #f2f0f9;
+                    vertical-align: top;
+                    color: #333;
+                    word-wrap: break-word;
+                    overflow-wrap: break-word;
+                }
+
+                .rb-re-table tr:last-child td {
+                    border-bottom: 0;
+                }
+
+                .rb-re-table .is-num {
+                    text-align: right;
+                    white-space: nowrap;
+                    font-variant-numeric: tabular-nums;
+                }
+
+            .rb-re-name {
+                font-weight: 600;
+                color: #2f2a45;
+            }
+
+            .rb-re-reason {
+                font-size: 11.5px;
+                color: #6b6785;
+                line-height: 1.5;
+                margin-top: 3px;
+            }
+
+            .rb-re-bar {
+                display: block;
+                width: 100%;
+                height: 5px;
+                border-radius: 3px;
+                background: #ece9f6;
+                margin-top: 5px;
+                overflow: hidden;
+            }
+
+                .rb-re-bar i {
+                    display: block;
+                    height: 100%;
+                    border-radius: 3px;
+                    background: #6d5bd0;
+                }
+
+            .rb-re-chips {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 7px;
+            }
+
+            .rb-re-chip {
+                border: 1px solid #e6e3f5;
+                border-radius: 7px;
+                background: #fff;
+                padding: 7px 11px;
+                font-size: 11.5px;
+                color: #3a3556;
+                max-width: 100%;
+            }
+
+                .rb-re-chip.is-primary {
+                    border-color: #cdc6ee;
+                    background: #f6f4fd;
+                }
+
+            .rb-re-chip-skill {
+                font-weight: 700;
+            }
+
+            .rb-re-chip-meta {
+                color: #7d7794;
+                font-size: 10.5px;
+                margin-top: 2px;
+            }
+
+            /* .rb-re-note and .rb-re-note-lbl styled the amber cards in the "What the
+               screener flagged" block. Nothing renders them since that block was removed. */
+        </style>
+
+        <div class="rb-report-section rb-re-section">
+            <div class="rb-section-header" style="margin-bottom:5px;">
+                <h2 class="rb-part-sub-h"><i class="fa fa-file-text-o"></i> Resume Evaluation</h2>
+            </div>
+
+            <div class="rb-analysis-content" style="overflow:hidden;">
+
+                <div class="rb-re-head">
+                    <div>
+                        <div class="rb-re-score-lbl">Screening Score</div>
+                        <div class="rb-re-score">
+                            @re.TotalScore@if (hasMax)
+                            {<small> / @re.MaxScore</small>}
+                        </div>
+                        @if (hasMax)
+                        {
+                            <div class="rb-re-pct">@scorePct.ToString("0.#")% of the maximum</div>
+                        }
+                    </div>
+                    @if (hasVerdict)
+                    {
+                        <div><span class="rb-re-verdict @verdictTone">@re.Verdict</span></div>
+                    }
+                </div>
+
+                @if (hasSummary)
+                {
+                    <div class="rb-re-summary">@re.FitmentSummary</div>
+                }
+
+                @* "What the screener flagged" was removed from both the report and its PDF.
+                   The heading, the disqualification sentences and the stability / employer
+                   verification notes went together: the notes sat under that heading, and
+                   removing only the heading would have left them with nothing introducing
+                   them. The underlying fields are untouched on the model and still reach
+                   the view — restoring the block is markup only. *@
+
+                @if (sectionRows.Any())
+                {
+                    <div class="rb-re-sub">How the score was reached</div>
+                    <table class="rb-re-table">
+                        <thead>
+                            <tr>
+                                <th style="width:62%;">Part</th>
+                                <th class="is-num" style="width:38%;">Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in sectionRows)
+                            {
+                                var s = row.Value;
+
+                                // Adjustments can be negative, and a bar cannot show that honestly —
+                                // a width has no sign. Those rows carry the figure alone.
+                                var drawBar = s.MaxScore > 0 && s.Score >= 0;
+                                var barWidth = drawBar
+                                    ? Math.Max(0, Math.Min(100, (double)s.Score * 100d / s.MaxScore))
+                                    : 0d;
+
+                                <tr>
+                                    <td>
+                                        <div class="rb-re-name">@row.Key</div>
+                                        @if (!string.IsNullOrWhiteSpace(s.Reason))
+                                        {
+                                            <div class="rb-re-reason">@s.Reason</div>
+                                        }
+                                    </td>
+                                    <td class="is-num">
+                                        @s.Score@if (s.MaxScore > 0)
+                                        {<text> / @s.MaxScore</text>}
+                                        @if (drawBar)
+                                        {
+                                            <span class="rb-re-bar"><i style="width:@barWidth.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture)%;"></i></span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+
+                @if (criteria.Any())
+                {
+                    <div class="rb-re-sub">Skill by skill</div>
+                    <table class="rb-re-table">
+                        <thead>
+                            <tr>
+                                <th style="width:70%;">Criterion</th>
+                                <th class="is-num" style="width:30%;">Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in criteria)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="rb-re-name">@(string.IsNullOrWhiteSpace(c.TechnicalSkill) ? c.CriterionId : c.TechnicalSkill)</div>
+                                        @if (!string.IsNullOrWhiteSpace(c.Reason))
+                                        {
+                                            <div class="rb-re-reason">@c.Reason</div>
+                                        }
+                                    </td>
+                                    <td class="is-num">
+                                        @c.Score@if (c.MaxScore > 0)
+                                        {<text> / @c.MaxScore</text>}
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+
+                @if (mustHaves.Any())
+                {
+                    <div class="rb-re-sub">What the role asked for</div>
+                    <div class="rb-re-chips">
+                        @foreach (var m in mustHaves)
+                        {
+                            var meta = string.Join(" &middot; ", new[] { m.DepthExpected, m.ComplexityExpected }
+                                .Where(v => !string.IsNullOrWhiteSpace(v)));
+
+                            <div class="rb-re-chip @(m.IsPrimarySkill ? "is-primary" : "")">
+                                <div class="rb-re-chip-skill">
+                                    @m.TechnicalSkill@if (m.IsPrimarySkill)
+                                    {<text> &middot; primary</text>}
+                                </div>
+                                @if (!string.IsNullOrWhiteSpace(meta))
+                                {
+                                    <div class="rb-re-chip-meta">@Html.Raw(meta)</div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+
+            </div>
+        </div>
+    }
+}
