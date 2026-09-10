@@ -47,7 +47,9 @@ namespace Risebird.Repository
                         ticket.DriveFolderLink,
                         ticket.SummaryMail,
                         ticket.SummaryCandidates,
-                        ticket.SummaryInterviewScores
+                        ticket.SummaryInterviewScores,
+                        ticket.JobTitle,
+                        ticket.HasAutoScheduleCandidates
                     },
                     commandType: CommandType.StoredProcedure);
                 return result;
