@@ -34,6 +34,16 @@ namespace Risebird.CommonHelper
         private readonly IValidationHelper _validationHelper;
         private readonly int _unsubscribeGroupId;
 
+        // Shared Risebird mailboxes that must never be copied on outgoing mail. Blanket-CC'ing these
+        // on every notification flooded them (100k+ messages in a day) and got talent@risebird.io
+        // rate limited by Google Workspace. Enforced both here and centrally in SendMail, so an
+        // address coming from configuration or the database can't reintroduce the flood.
+        private static readonly HashSet<string> NoCopyRecipients = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "talent@risebird.io",
+            "notification@risebird.io"
+        };
+
         public NotificationHelper(IAzureStorageHelper azureStorageHelper, IConfiguration configuration, IApplicationErrorLogger errorLogger, ISendGridRepository sendGridRepository, IHttpContextAccessor httpContextAccessor, IValidationHelper validationHelper)
         {
             _configuration = configuration;
@@ -47,6 +57,24 @@ namespace Risebird.CommonHelper
             _sendGridRepository = sendGridRepository;
             _httpContextAccessor = httpContextAccessor;
             _validationHelper = validationHelper;
+        }
+
+        /// <summary>
+        /// Splits a ";"-separated CC/BCC list into individual addresses, dropping blanks and any
+        /// mailbox on <see cref="NoCopyRecipients"/>. Returns an empty array for a null or empty
+        /// list so callers can iterate without a null check.
+        /// </summary>
+        private static string[] SplitCopyRecipients(string recipients)
+        {
+            if (string.IsNullOrWhiteSpace(recipients))
+            {
+                return Array.Empty<string>();
+            }
+
+            return recipients.Split(';')
+                .Select(x => x.Trim())
+                .Where(x => !string.IsNullOrEmpty(x) && !NoCopyRecipients.Contains(x))
+                .ToArray();
         }
 
         public async Task<string> SendHelpsupportMail(Mail model)
@@ -521,7 +549,10 @@ namespace Risebird.CommonHelper
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
 
                 }
-                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+                foreach (var ccMail in SplitCopyRecipients(model.CC))
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccMail, null));
+                }
 
 
                 object[] parameters = new object[] { UrlDetails, skills };
@@ -549,7 +580,10 @@ namespace Risebird.CommonHelper
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
 
                 }
-                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+                foreach (var ccMail in SplitCopyRecipients(model.CC))
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccMail, null));
+                }
 
 
                 object[] parameters = new object[] { UrlDetails, url };
@@ -579,7 +613,10 @@ namespace Risebird.CommonHelper
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
 
                 }
-                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+                foreach (var ccMail in SplitCopyRecipients(model.CC))
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccMail, null));
+                }
 
 
                 var anchrTag = "<a href=" + url + ">Please Click to see the video</a>";
@@ -772,7 +809,10 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+                foreach (var ccMail in SplitCopyRecipients(model.CC))
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccMail, null));
+                }
 
                 object[] parameters = new object[] { Email, "<a href=" + videoURL + ">" };
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewInterestShown.html");
@@ -879,7 +919,10 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+                foreach (var ccMail in SplitCopyRecipients(model.CC))
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccMail, null));
+                }
 
 
                 object[] parameters = new object[] { candidateCount, JDName };
@@ -1035,7 +1078,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                var ccMails = model.CC.Split(";");
+                var ccMails = SplitCopyRecipients(model.CC);
                 foreach (var mail in ccMails)
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
@@ -1159,7 +1202,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                var ccMails = model.CC.Split(";");
+                var ccMails = SplitCopyRecipients(model.CC);
                 foreach (var mail in ccMails)
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
@@ -1215,7 +1258,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                var ccMails = model.CC.Split(";");
+                var ccMails = SplitCopyRecipients(model.CC);
                 foreach (var mail in ccMails)
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
@@ -1356,6 +1399,34 @@ namespace Risebird.CommonHelper
                 //        }
                 //    }
                 //}
+
+                // ── Shared-mailbox copy suppression ──
+                // Strip the internal Risebird mailboxes from Cc/Bcc on every outgoing mail. Callers
+                // are no longer supposed to set them, but CC lists also come from configuration and
+                // from the database, so this choke-point is what actually guarantees they can't be
+                // blanket-copied again. Tos are left alone: broadcast mails legitimately use the
+                // notification mailbox as the single To anchor with the real recipients in Bcc.
+                if (msg.Personalizations != null)
+                {
+                    foreach (var personalization in msg.Personalizations)
+                    {
+                        bool IsNoCopy(SendGrid.Helpers.Mail.EmailAddress e) =>
+                            e != null && !string.IsNullOrWhiteSpace(e.Email) && NoCopyRecipients.Contains(e.Email.Trim());
+
+                        // An empty cc/bcc array is rejected by the SendGrid API, so drop the
+                        // collection entirely once the last address has been filtered out.
+                        if (personalization.Ccs != null)
+                        {
+                            var filteredCcs = personalization.Ccs.Where(x => !IsNoCopy(x)).ToList();
+                            personalization.Ccs = filteredCcs.Count > 0 ? filteredCcs : null;
+                        }
+                        if (personalization.Bccs != null)
+                        {
+                            var filteredBccs = personalization.Bccs.Where(x => !IsNoCopy(x)).ToList();
+                            personalization.Bccs = filteredBccs.Count > 0 ? filteredBccs : null;
+                        }
+                    }
+                }
 
                 // Add unsubscribe group to enable recipients to manage their email preferences
                 if (_unsubscribeGroupId > 0)
@@ -1580,7 +1651,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                var ccMails = model.CC.Split(";");
+                var ccMails = SplitCopyRecipients(model.CC);
                 foreach (var mail in ccMails)
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
@@ -1627,7 +1698,7 @@ namespace Risebird.CommonHelper
                         msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(interviews, null));
                     }
                 }
-                var ccMails = model.CC.Split(";");
+                var ccMails = SplitCopyRecipients(model.CC);
                 foreach (var mail in ccMails)
                 {
                     if (!string.IsNullOrEmpty(mail))
@@ -1660,7 +1731,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                var ccMails = model.CC.Split(";");
+                var ccMails = SplitCopyRecipients(model.CC);
                 foreach (var mail in ccMails)
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
@@ -1689,7 +1760,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                var ccMails = model.CC.Split(";");
+                var ccMails = SplitCopyRecipients(model.CC);
                 foreach (var mail in ccMails)
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
@@ -1720,7 +1791,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                var ccMails = model.CC.Split(";");
+                var ccMails = SplitCopyRecipients(model.CC);
                 foreach (var mail in ccMails)
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
@@ -1878,7 +1949,10 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+                foreach (var ccMail in SplitCopyRecipients(model.CC))
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccMail, null));
+                }
 
 
                 object[] parameters = new object[] { UrlDetails, clientlogo };
@@ -2088,7 +2162,10 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+                foreach (var ccMail in SplitCopyRecipients(model.CC))
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccMail, null));
+                }
 
 
                 object[] parameters = new object[] { UrlDetails };
@@ -2118,7 +2195,10 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+                foreach (var ccMail in SplitCopyRecipients(model.CC))
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccMail, null));
+                }
 
                 string count = string.Empty;
                 if(totalCount > 0)
@@ -2151,7 +2231,10 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+                foreach (var ccMail in SplitCopyRecipients(model.CC))
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccMail, null));
+                }
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "PasswordresetNotification.html");
                 string msgBody = string.Format(rawEmail, null);
                 msg.HtmlContent = msgBody;
@@ -2180,7 +2263,7 @@ namespace Risebird.CommonHelper
                 }
                 if (!string.IsNullOrEmpty(model.CC))
                 {
-                    var ccMails = model.CC.Split(";");
+                    var ccMails = SplitCopyRecipients(model.CC);
                     foreach (var mail in ccMails)
                     {
                         if (!string.IsNullOrEmpty(mail))
@@ -2426,7 +2509,10 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+                foreach (var ccMail in SplitCopyRecipients(model.CC))
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccMail, null));
+                }
 
                 StringBuilder sb = new StringBuilder();
                 sb.Append("<table cellpadding='5' cellspacing='0' style='border: 1px solid #ccc;font-size: 9pt;font-family:Arial'>");
@@ -2542,7 +2628,7 @@ namespace Risebird.CommonHelper
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
                 msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
-                var ccMails = model.CC.Split(";");
+                var ccMails = SplitCopyRecipients(model.CC);
                 foreach (var mail in toMails)
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
@@ -2591,7 +2677,7 @@ namespace Risebird.CommonHelper
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
                 msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
-                var ccMails = model.CC.Split(";");
+                var ccMails = SplitCopyRecipients(model.CC);
                 foreach (var mail in toMails)
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
@@ -2644,7 +2730,10 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+                foreach (var ccMail in SplitCopyRecipients(model.CC))
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccMail, null));
+                }
 
                 StringBuilder sb = new StringBuilder();
                 sb.Append("<table cellpadding='5' cellspacing='0' style='border: 1px solid #ccc;font-size: 9pt;font-family:Arial'>");
@@ -2715,7 +2804,7 @@ namespace Risebird.CommonHelper
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
                 msg.Subject = model.Subject;
                 var toMails = model.TO.Split(";");
-                var ccMails = model.CC.Split(";");
+                var ccMails = SplitCopyRecipients(model.CC);
                 foreach (var mail in toMails)
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
@@ -2819,7 +2908,10 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(model.CC, null));
+                foreach (var ccMail in SplitCopyRecipients(model.CC))
+                {
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccMail, null));
+                }
 
                 object[] parameters = new object[] { Name, publicurl, clientlogo };
                 // string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientInterviewComplentMappedPublic.html");
@@ -3197,7 +3289,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                var ccMails = model.CC.Split(";");
+                var ccMails = SplitCopyRecipients(model.CC);
                 foreach (var mail in ccMails)
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
@@ -3229,7 +3321,7 @@ namespace Risebird.CommonHelper
                 {
                     msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
                 }
-                var ccMails = model.CC.Split(";");
+                var ccMails = SplitCopyRecipients(model.CC);
                 foreach (var mail in ccMails)
                 {
                     msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
@@ -3261,7 +3353,7 @@ namespace Risebird.CommonHelper
                 }
                 if (!string.IsNullOrWhiteSpace(model.CC))
                 {
-                    var ccMails = model.CC.Split(";");
+                    var ccMails = SplitCopyRecipients(model.CC);
                     foreach (var mail in ccMails)
                     {
                         msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
@@ -3345,7 +3437,7 @@ namespace Risebird.CommonHelper
                 }
                 if (!string.IsNullOrWhiteSpace(model.CC))
                 {
-                    var bccMails = model.CC.Split(";");
+                    var bccMails = SplitCopyRecipients(model.CC);
                     foreach (var mail in bccMails)
                     {
                         msg.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(mail, null));
