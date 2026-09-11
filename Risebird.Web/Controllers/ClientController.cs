@@ -3752,7 +3752,6 @@ namespace Risebird.Web.Controllers
                 Mail _mail1 = new Mail
                 {
                     TO = Emailid,
-                    CC = "talent@risebird.io",
                     Subject = "Candidate Status Update"
                 };
                 var emailsend1 = await _notificationHelper.SendPublicUrlToClient(_mail1, sendreporturl, logolink);

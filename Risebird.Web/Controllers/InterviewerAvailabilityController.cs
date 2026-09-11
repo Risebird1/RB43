@@ -649,7 +649,6 @@ namespace Risebird.Web.Controllers
                         var mail = new Mail
                         {
                             TO = interviewerItem.EmailId,
-                            CC = "talent@risebird.io",
                             Subject = "New interviews have come up! Please assign."
                         };
 
@@ -1723,7 +1722,6 @@ namespace Risebird.Web.Controllers
                                     var mail = new Mail
                                     {
                                         TO = interviewerItem.EmailId,
-                                        CC = "talent@risebird.io",
                                         Subject = "New interviews have come up! Please assign."
                                     };
 

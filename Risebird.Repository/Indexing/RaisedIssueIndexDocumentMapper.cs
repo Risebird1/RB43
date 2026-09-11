@@ -50,13 +50,18 @@ namespace Risebird.Repository.Indexing
             {
                 [RaisedIssueIndexFields.Key] = document.Id.ToString(CultureInfo.InvariantCulture),
                 [RaisedIssueIndexFields.RequestType] = document.RequestType ?? string.Empty,
-                [RaisedIssueIndexFields.Comment] = document.Comment ?? string.Empty,
+                [RaisedIssueIndexFields.Comment] = TruncateForIndex(document.Comment),
                 [RaisedIssueIndexFields.AttachmentURL] = document.AttachmentURL ?? string.Empty,
                 [RaisedIssueIndexFields.RequestedBy] = document.RequestedBy ?? string.Empty,
                 [RaisedIssueIndexFields.RequestedOn] = ToIndexDate(document.RequestedOn),
                 [RaisedIssueIndexFields.Status] = document.Status ?? string.Empty,
-                [RaisedIssueIndexFields.StatusComment] = document.StatusComment ?? string.Empty,
+                [RaisedIssueIndexFields.StatusComment] = TruncateForIndex(document.StatusComment),
                 [RaisedIssueIndexFields.ClosedBy] = document.ClosedBy ?? string.Empty,
+                // Written even when the ticket is open: MergeOrUpload leaves an omitted field
+                // untouched, so a reopened ticket would keep the closedOn from its last closure.
+                [RaisedIssueIndexFields.ClosedOn] = document.ClosedOn.HasValue
+                    ? ToIndexDate(document.ClosedOn.Value)
+                    : (DateTimeOffset?)null,
                 [RaisedIssueIndexFields.Requester] = document.Requester ?? string.Empty,
                 [RaisedIssueIndexFields.InterviewId] = document.InterviewId.GetValueOrDefault(),
                 [RaisedIssueIndexFields.AIReviewResponse] = TruncateForIndex(document.AIReviewResponse),
@@ -67,9 +72,6 @@ namespace Risebird.Repository.Indexing
                 [RaisedIssueIndexFields.Interviewer] = document.Interviewer ?? string.Empty,
                 [RaisedIssueIndexFields.IsReopened] = document.IsReopened
             };
-
-            if (document.ClosedOn.HasValue)
-                azureDoc[RaisedIssueIndexFields.ClosedOn] = ToIndexDate(document.ClosedOn.Value);
 
             return azureDoc;
         }
