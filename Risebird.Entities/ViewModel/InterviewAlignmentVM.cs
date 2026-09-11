@@ -22,6 +22,7 @@ namespace Risebird.Entities.ViewModel
             ClientNotes = new List<InterviewAlignmentClientNote>();
             FlaggedInterviews = new List<InterviewAlignmentFlaggedInterview>();
             PerformanceSummary = new InterviewAlignmentPerformanceSummary();
+            CodeSessions = new List<CodeSessionVM>();
         }
 
         /// <summary>
@@ -38,6 +39,9 @@ namespace Risebird.Entities.ViewModel
         public List<InterviewAlignmentClientNote> ClientNotes { get; set; }
         public List<InterviewAlignmentFlaggedInterview> FlaggedInterviews { get; set; }
         public InterviewAlignmentPerformanceSummary PerformanceSummary { get; set; }
+
+        /// <summary>Sessions already generated for this interview, newest attempt last.</summary>
+        public List<CodeSessionVM> CodeSessions { get; set; }
 
         // Applied by the controller from configuration, not by the procedure.
         public string TrialPolicyUrl { get; set; }
@@ -92,6 +96,9 @@ namespace Risebird.Entities.ViewModel
         public string InterviewerCodedName { get; set; }
         public bool IsVideoRequired { get; set; }
         public string TechRubricType { get; set; }
+
+        /// <summary>Channel-level switch. Off means no code sessions anywhere on this channel.</summary>
+        public bool CodeSessionsEnabled { get; set; }
     }
 
     /// <summary>Result set 2 — the rubric the candidate is evaluated against.</summary>
@@ -135,6 +142,12 @@ namespace Risebird.Entities.ViewModel
         public string VideoLink { get; set; }
 
         public string ThumbnailLink { get; set; }
+
+        /// <summary>Per question, not per skill. A skill can hold five questions of which one is a coding question.</summary>
+        public bool IsCodingQuestion { get; set; }
+
+        /// <summary>Who authored it. The alignment page shows the interviewer their own bank.</summary>
+        public string CreatedBy { get; set; }
     }
 
     /// <summary>Result set 4 — client instructions for the IRF, plus any raised against this interview.</summary>

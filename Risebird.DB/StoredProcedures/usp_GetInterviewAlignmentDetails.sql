@@ -101,7 +101,10 @@ BEGIN
         ip.TrialOnboardingPolicyVersion             AS TrialOnboardingPolicyVersion,
         ip.NickName                                 AS InterviewerCodedName,
         CAST(ISNULL(irf.IsVideoRequired, 0) AS bit) AS IsVideoRequired,
-        irf.TechRubricType                          AS TechRubricType
+        irf.TechRubricType                          AS TechRubricType,
+        -- Off at channel level means no code sessions anywhere on this channel, whatever
+        -- the per-question IsCodingQuestion flags say.
+        CAST(ISNULL(irf.CodeSessionsEnabled, 0) AS bit) AS CodeSessionsEnabled
       FROM InterviewMeetings im
       JOIN IRF irf ON irf.IRFId = im.IRFId
       LEFT JOIN Client cl ON cl.id = irf.Clientid
@@ -147,7 +150,9 @@ BEGIN
         scsq.Comment                                     AS QuestionText,
         scsq.ExpectedAnswer                              AS ExpectedAnswer,
         scsq.AIQuestionVideoLink                         AS VideoLink,
-        scsq.ThumbnailLink                               AS ThumbnailLink
+        scsq.ThumbnailLink                               AS ThumbnailLink,
+        CAST(ISNULL(scsq.IsCodingQuestion, 0) AS bit)    AS IsCodingQuestion,
+        scsq.CreatedBy                                   AS CreatedBy
       FROM SkillChannelSampleQuestions scsq
       LEFT JOIN Skill sk ON sk.id = scsq.Skill
      WHERE scsq.IRFId = @IrfIntId

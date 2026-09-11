@@ -17,6 +17,15 @@
     var hasPolicyUrl = !string.IsNullOrWhiteSpace(Model.TrialPolicyUrl);
     var perf = Model.PerformanceSummary ?? new InterviewAlignmentPerformanceSummary();
     var isFirstTimer = perf.TotalInterviews == 0;
+
+    // Plain words rather than the stored int. "Generated" and "Opened" both mean the
+    // candidate has not answered yet, and the interviewer needs to tell them apart.
+    Func<int, string> CodeSessionStateLabel = state =>
+        state == (int)CodeSessionState.Submitted ? "Submitted"
+        : state == (int)CodeSessionState.Expired ? "Closed"
+        : state == (int)CodeSessionState.InProgress ? "In progress"
+        : state == (int)CodeSessionState.Opened ? "Opened"
+        : "Not opened";
 }
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -175,6 +184,22 @@
     .ia-restricted i { font-size: 30px; color: #cbd5e1; display: block; margin-bottom: 12px; }
     .ia-restricted h3 { font-size: 17px; color: #0f172a; margin: 0 0 7px; }
     .ia-restricted p { font-size: 14.5px; margin: 0; }
+
+    /* ── Code sessions ────────────────────────────────────────── */
+    .ia-code-q { padding: 11px 0; border-bottom: 1px solid #f4f6f8; }
+    .ia-code-q:last-of-type { border-bottom: 0; }
+    .ia-code-q-text { font-size: 14px; color: #0f172a; line-height: 1.5; white-space: pre-wrap; }
+    .ia-code-q-meta { font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: .6px; margin: 3px 0 7px; }
+    .ia-cs-list { margin-top: 8px; }
+    .ia-cs-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+    .ia-cs-state { font-size: 12px; color: #64748b; min-width: 88px; }
+    .ia-cs-link { flex: 1 1 260px; min-width: 200px; font-size: 12px; padding: 4px 8px;
+                  border: 1px solid #e3e6ea; border-radius: 6px; background: #fcfdfe; color: #475569; }
+    .ia-code-adhoc { margin-top: 16px; padding-top: 14px; border-top: 1px solid #eef0f3; }
+    .ia-cs-textarea { width: 100%; font-size: 13px; padding: 8px 10px; border: 1px solid #cbd5e1;
+                      border-radius: 7px; font-family: inherit; resize: vertical; }
+    .ia-cs-save { display: block; font-size: 12.5px; color: #475569; margin: 7px 0; }
+    .ia-cs-save input { margin-right: 6px; }
 
     /* ── Denser content in the first two cards ────────────────────
        "Who you are interviewing" and "What to evaluate against" are reference material an
@@ -572,6 +597,126 @@
                 </div>
             </div>
 
+
+            @* ── Code sessions ───────────────────────────────────────────
+               Gated by the channel switch: off means nothing renders here at all, whatever
+               the per-question flags say. The questions listed are the interviewer's OWN -
+               filtered by CreatedBy - because this is the bank they wrote and will grade
+               against, not the channel's shared sample bank, which is untouched. *@
+            @if (ctx.CodeSessionsEnabled)
+            {
+                var myCoding = Model.SampleQuestions
+                    .Where(q => q.IsCodingQuestion
+                                && !string.IsNullOrWhiteSpace(q.QuestionText)
+                                && string.Equals(q.CreatedBy, ViewBag.InterviewerEmail as string, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                // Only needed for the save-back: a bank row without a skill name is dropped
+                // on insert, so the offer has to collect one rather than guess.
+                var mySkills = Model.SampleQuestions
+                    .Where(q => !string.IsNullOrWhiteSpace(q.SkillName)
+                                && string.Equals(q.CreatedBy, ViewBag.InterviewerEmail as string, StringComparison.OrdinalIgnoreCase))
+                    .Select(q => q.SkillName.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(n => n)
+                    .ToList();
+
+                var sessionsByQuestion = Model.CodeSessions
+                    .GroupBy(s => s.SampleQuestionId ?? 0)
+                    .ToDictionary(g => g.Key, g => g.OrderBy(s => s.AttemptNumber).ToList());
+
+                var adHoc = sessionsByQuestion.ContainsKey(0) ? sessionsByQuestion[0] : new List<CodeSessionVM>();
+
+                <div class="ia-card" id="ia-section-code">
+                    <div class="ia-card-head" data-ia-section="code">
+                        <h2 class="ia-card-title"><i class="fa fa-code"></i>Coding questions</h2>
+                        <span class="ia-card-count">@Model.CodeSessions.Count session@(Model.CodeSessions.Count == 1 ? "" : "s")</span>
+                        <i class="fa fa-chevron-down ia-chev"></i>
+                    </div>
+                    <div class="ia-card-body">
+
+                        @if (!myCoding.Any())
+                        {
+                            <div class="ia-empty ia-empty-neutral">
+                                None of your questions on this channel are marked as coding questions. You can still send an ad-hoc one below.
+                            </div>
+                        }
+                        else
+                        {
+                            foreach (var q in myCoding)
+                            {
+                                var existing = sessionsByQuestion.ContainsKey(q.Id) ? sessionsByQuestion[q.Id] : new List<CodeSessionVM>();
+                                <div class="ia-code-q" data-cs-question-id="@q.Id">
+                                    <div class="ia-code-q-text">@q.QuestionText</div>
+                                    <div class="ia-code-q-meta">
+                                        @(string.IsNullOrWhiteSpace(q.SkillName) ? "Other" : q.SkillName)
+                                    </div>
+
+                                    @* Generate stays available on a question that already has sessions:
+                                       several per interview, and more than one against the same question. *@
+                                    <button type="button" class="ia-linkbtn ia-cs-generate"
+                                            data-cs-qid="@q.Id"
+                                            data-cs-skillid="@(q.SkillId.HasValue ? q.SkillId.Value.ToString() : "")"
+                                            data-cs-skill="@q.SkillName"
+                                            data-cs-text="@q.QuestionText">
+                                        Generate code session
+                                    </button>
+
+                                    <div class="ia-cs-list">
+                                        @foreach (var s in existing)
+                                        {
+                                            <div class="ia-cs-row">
+                                                <span class="ia-pill ia-pill-secondary">Attempt @s.AttemptNumber</span>
+                                                <span class="ia-cs-state">@CodeSessionStateLabel(s.SessionState)</span>
+                                                <input type="text" readonly class="ia-cs-link"
+                                                       value="@Url.Action("Index", "CodeSession", new { t = s.SessionToken }, Context.Request.Scheme)" />
+                                                <button type="button" class="ia-linkbtn ia-cs-copy">Copy</button>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+
+                        @* Ad-hoc, for something improvised. The offer to save it back to the bank is
+                           explicit and unticked: an interviewer should not discover later that the
+                           platform has been collecting their off-the-cuff questions. *@
+                        <div class="ia-code-adhoc">
+                            <div class="ia-fact-l" style="margin-bottom:6px;">Ad-hoc question</div>
+                            <textarea id="ia-cs-adhoc-text" class="ia-cs-textarea" rows="3"
+                                      placeholder="Type a coding question for this candidate"></textarea>
+                            <label class="ia-cs-save">
+                                <input type="checkbox" id="ia-cs-adhoc-save" />
+                                Also save this to my question bank
+                            </label>
+                            <div id="ia-cs-adhoc-skillwrap" style="display:none;margin-bottom:8px;">
+                                <select id="ia-cs-adhoc-skill" class="ia-cs-textarea" style="resize:none;">
+                                    <option value="">Which skill does it belong to?</option>
+                                    @foreach (var sk in mySkills)
+                                    {
+                                        <option value="@sk">@sk</option>
+                                    }
+                                </select>
+                            </div>
+                            <button type="button" class="ia-linkbtn" id="ia-cs-adhoc-generate">Generate code session</button>
+
+                            <div class="ia-cs-list">
+                                @foreach (var s in adHoc)
+                                {
+                                    <div class="ia-cs-row">
+                                        <span class="ia-pill ia-pill-secondary">Attempt @s.AttemptNumber</span>
+                                        <span class="ia-cs-state">@CodeSessionStateLabel(s.SessionState)</span>
+                                        <input type="text" readonly class="ia-cs-link"
+                                               value="@Url.Action("Index", "CodeSession", new { t = s.SessionToken }, Context.Request.Scheme)" />
+                                        <button type="button" class="ia-linkbtn ia-cs-copy">Copy</button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
             @* ── Full rubric drawer ──────────────────────────────────── *@
             <div class="offcanvas offcanvas-end" tabindex="-1" id="ia-rubric-drawer" style="width:min(560px,92vw);">
                 <div class="offcanvas-header">
@@ -731,6 +876,87 @@
                     setInterval(tick, 30000);
                 }
             }
+
+            // Code sessions: generate a link, then show it inline. Generating never replaces
+            // an earlier session, so a new row is appended rather than the list being rebuilt.
+            var interviewId = $('#ia-interview-id').val();
+
+            function stateLabel(s) {
+                return s === 4 ? 'Submitted' : s === 5 ? 'Closed' : s === 3 ? 'In progress' : s === 2 ? 'Opened' : 'Not opened';
+            }
+
+            function appendSession($list, attemptNumber, sessionState, link) {
+                var $row = $('<div class="ia-cs-row"></div>');
+                $row.append($('<span class="ia-pill ia-pill-secondary"></span>').text('Attempt ' + attemptNumber));
+                $row.append($('<span class="ia-cs-state"></span>').text(stateLabel(sessionState)));
+                $row.append($('<input type="text" readonly class="ia-cs-link" />').val(link));
+                $row.append($('<button type="button" class="ia-linkbtn ia-cs-copy">Copy</button>'));
+                $list.append($row);
+            }
+
+            function generate($btn, $list, body) {
+                $btn.prop('disabled', true).text('Generating...');
+                $.ajax({
+                    url: '@Url.Action("GenerateCodeSession", "Interview")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(body)
+                }).done(function (res) {
+                    if (res && res.created) { appendSession($list, res.attemptNumber, res.sessionState, res.link); }
+                    else { alert(res && res.message ? res.message : 'Could not generate a code session.'); }
+                }).fail(function () {
+                    alert('Could not generate a code session.');
+                }).always(function () {
+                    $btn.prop('disabled', false).text('Generate code session');
+                });
+            }
+
+            $('.ia-cs-generate').on('click', function () {
+                var $btn = $(this);
+                var skillId = $btn.data('cs-skillid');
+                generate($btn, $btn.closest('.ia-code-q').find('.ia-cs-list'), {
+                    interviewId: parseInt(interviewId, 10),
+                    sampleQuestionId: $btn.data('cs-qid'),
+                    questionText: String($btn.data('cs-text')),
+                    skillId: skillId === '' || skillId === undefined ? null : parseInt(skillId, 10),
+                    skillName: String($btn.data('cs-skill') || '')
+                });
+            });
+
+            // The skill is asked for only when the save-back is ticked - it is what the bank
+            // row needs, and it would be noise for a question that is never kept.
+            $('#ia-cs-adhoc-save').on('change', function () {
+                $('#ia-cs-adhoc-skillwrap').toggle(this.checked);
+            });
+
+            $('#ia-cs-adhoc-generate').on('click', function () {
+                var text = $.trim($('#ia-cs-adhoc-text').val());
+                if (!text) { alert('Type a question first.'); return; }
+                var $btn = $(this);
+                // saveToBank is offered, never assumed - the checkbox starts unticked.
+                var saveToBank = $('#ia-cs-adhoc-save').is(':checked');
+                var bankSkill = $.trim($('#ia-cs-adhoc-skill').val() || '');
+                if (saveToBank && !bankSkill) {
+                    alert('Pick the skill this question belongs to before saving it to your bank.');
+                    return;
+                }
+                generate($btn, $btn.siblings('.ia-cs-list'), {
+                    interviewId: parseInt(interviewId, 10),
+                    sampleQuestionId: null,
+                    questionText: text,
+                    saveToBank: saveToBank,
+                    skillName: bankSkill
+                });
+            });
+
+            $(document).on('click', '.ia-cs-copy', function () {
+                var $input = $(this).siblings('.ia-cs-link');
+                $input[0].select();
+                try { document.execCommand('copy'); $(this).text('Copied'); }
+                catch (e) { /* selection is left in place for a manual copy */ }
+                var $b = $(this);
+                setTimeout(function () { $b.text('Copy'); }, 1500);
+            });
 
             // One-time trial onboarding.
             var modalEl = document.getElementById('ia-trial-onboarding');

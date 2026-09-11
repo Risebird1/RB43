@@ -7907,6 +7907,10 @@ namespace Risebird.Web.Controllers
                 }
 
                 await GetStatusList(model, irfId, model.Userid);
+
+                // Submitted attempts only. Read here rather than at render time so the report
+                // always shows what was stored against the submission - it is never re-run.
+                model.CodeSessions = await _meetingService.GetSubmittedCodeSessionsForReport(interviewId);
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 ViewBag.ClientDetails = "";
                 if (TempData["SuccessErrorMessageQCForm"] != null)
@@ -8214,6 +8218,10 @@ namespace Risebird.Web.Controllers
                 }
 
                 await GetStatusList(model, irfId, model.Userid);
+
+                // Submitted attempts only. Read here rather than at render time so the report
+                // always shows what was stored against the submission - it is never re-run.
+                model.CodeSessions = await _meetingService.GetSubmittedCodeSessionsForReport(interviewId);
                 //if (model.Userid != 0)
                 //{
                 //    await GetStatusList(model, irfId, model.Userid);
@@ -8847,6 +8855,9 @@ namespace Risebird.Web.Controllers
                     model = new InterviewAlignmentVM { IsAssignedInterviewer = false };
                 }
 
+                // The code-session list shows the interviewer their OWN questions, so the view
+                // needs to know who they are to filter by CreatedBy.
+                ViewBag.InterviewerEmail = emailid;
                 model.TrialPolicyUrl = _configuration["TrialPolicy:Url"];
                 model.TrialPolicyVersion = _configuration["TrialPolicy:Version"];
                 model.SampleQuestionsVisibleCap = GetSampleQuestionsVisibleCap();
@@ -8903,6 +8914,96 @@ namespace Risebird.Web.Controllers
                 return cap;
             }
             return fallback;
+        }
+
+        /// <summary>
+        /// Generates one code session against one question and returns its link.
+        ///
+        /// Generate stays available on a question that already has sessions: several per
+        /// interview, and more than one against the same question. A new session never
+        /// replaces or invalidates an earlier one.
+        ///
+        /// The gate lives in usp_CreateInterviewCodeSession - assigned interviewer, and the
+        /// channel switch on - so a refused request comes back as a null session here rather
+        /// than being re-checked in C#.
+        /// </summary>
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> GenerateCodeSession([FromBody] GenerateCodeSessionRequest request)
+        {
+            try
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+
+                if (string.IsNullOrEmpty(emailid) || profileName != ProfileNames.Interviewer || request == null)
+                {
+                    return Json(new { created = false });
+                }
+
+                if (string.IsNullOrWhiteSpace(request.QuestionText))
+                {
+                    return Json(new { created = false, message = "A question is required." });
+                }
+
+                var created = await _meetingService.CreateCodeSession(new CodeSessionVM
+                {
+                    InterviewId = request.InterviewId,
+                    SampleQuestionId = request.SampleQuestionId,
+                    QuestionText = request.QuestionText,
+                    SkillId = request.SkillId,
+                    SkillName = request.SkillName,
+                    Language = request.Language,
+                    TimeLimitMinutes = request.TimeLimitMinutes
+                }, emailid);
+
+                if (created == null)
+                {
+                    return Json(new { created = false, message = "Code sessions are not enabled for this channel." });
+                }
+
+                // The save-back is deliberately secondary: the session is already created, so a
+                // failure here costs the interviewer a bank entry, never the link they asked for.
+                var savedToBank = false;
+                if (request.SaveToBank
+                    && !request.SampleQuestionId.HasValue
+                    && !string.IsNullOrWhiteSpace(request.SkillName)
+                    && created.IRFId.GetValueOrDefault() > 0)
+                {
+                    savedToBank = await _iRFService.AddIRFSampleQuestions(new TechSkillComments
+                    {
+                        IRFId = created.IRFId.Value,
+                        SkillCollection = new List<SkillComment>
+                        {
+                            new SkillComment
+                            {
+                                SkillName = request.SkillName.Trim(),
+                                Comment = request.QuestionText.Trim(),
+                                CreatedBy = emailid,
+                                IsCodingQuestion = true,
+                                CodingTimeLimitInMinutes = request.TimeLimitMinutes
+                            }
+                        }
+                    });
+                }
+
+                var link = Url.Action("Index", "CodeSession",
+                    new { t = created.SessionToken }, Request.Scheme);
+
+                return Json(new
+                {
+                    created = true,
+                    attemptNumber = created.AttemptNumber,
+                    sessionState = created.SessionState,
+                    savedToBank,
+                    link
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { created = false });
+            }
         }
 
         #endregion
@@ -10716,5 +10817,24 @@ namespace Risebird.Web.Controllers
                 "Human Report JSON:\n" + (reportStringContent ?? "");
             return message;
         }
+    }
+
+    /// <summary>What the alignment page posts to generate a session. SampleQuestionId is
+    /// null for an ad-hoc question typed during the interview.</summary>
+    public class GenerateCodeSessionRequest
+    {
+        public int InterviewId { get; set; }
+        public int? SampleQuestionId { get; set; }
+        public string QuestionText { get; set; }
+        public int? SkillId { get; set; }
+        public string SkillName { get; set; }
+        public string Language { get; set; }
+        public int? TimeLimitMinutes { get; set; }
+
+        /// <summary>
+        /// Only meaningful for an ad-hoc question. The interviewer ticks this themselves —
+        /// an improvised question is never filed into their bank silently.
+        /// </summary>
+        public bool SaveToBank { get; set; }
     }
 }

@@ -20,6 +20,9 @@ namespace Risebird.Business
     public class MeetingService : IMeetingService
     {
         private readonly IMeetingRespository _meetingRespository;
+        // Existing service (Piston/Judge0, registered in Program.cs). Code sessions reuse it
+        // rather than introducing a second runner.
+        private readonly ICodeExecutionService _codeExecutionService;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IIRFService _irfService;
         private readonly INotificationHelper _notificationHelper;
@@ -39,9 +42,10 @@ namespace Risebird.Business
         private readonly IInterviewerListingSearchRepository _interviewerListingSearchRepository;
         private readonly ICallCatalogueListingSearchRepository _callCatalogueListingSearchRepository;
 
-        public MeetingService(IMeetingRespository meetingRespository, IZoomHelper zoomHelper, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository, ICandidateRepository candidateRepository, ICandidateService candidateService, IZohoMeetingHelper zoho, ICashfreePayoutService cashfreePayoutService, IInterviewerListingSearchRepository interviewerListingSearchRepository, ICallCatalogueListingSearchRepository callCatalogueListingSearchRepository)
+        public MeetingService(IMeetingRespository meetingRespository, IZoomHelper zoomHelper, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository, ISupportRepository supportRespository, IActivityTrackerRepository activityTrackerRepository, IWhatsAppHelper whatsAppHelper, IInterviewerRepository interviewerRepository, ICandidateRepository candidateRepository, ICandidateService candidateService, IZohoMeetingHelper zoho, ICashfreePayoutService cashfreePayoutService, IInterviewerListingSearchRepository interviewerListingSearchRepository, ICallCatalogueListingSearchRepository callCatalogueListingSearchRepository, ICodeExecutionService codeExecutionService)
         {
             _meetingRespository = meetingRespository;
+            _codeExecutionService = codeExecutionService;
             _applicationErrorLogger = applicationErrorLogger;
             _irfService = irfFService;
             _notificationHelper = notificationHelper;
@@ -5268,6 +5272,13 @@ namespace Risebird.Business
                 flagged.Issues = DescribeConcerningSignals(flagged);
             }
 
+            // Sessions already generated for this interview, so the page can list them per
+            // question with their state and link. Only loaded when the channel switch is on.
+            if (model.Context != null && model.Context.CodeSessionsEnabled)
+            {
+                model.CodeSessions = await _meetingRespository.GetCodeSessionsForInterview(interviewId);
+            }
+
             if (model.PerformanceSummary == null)
             {
                 model.PerformanceSummary = new InterviewAlignmentPerformanceSummary();
@@ -5343,6 +5354,162 @@ namespace Risebird.Business
             }
 
             return issues;
+        }
+
+        #endregion
+
+        #region Per-question code sessions
+
+        /// <inheritdoc/>
+        public async Task<CodeSessionVM> CreateCodeSession(CodeSessionVM session, string interviewerEmail)
+        {
+            // The token is the whole security boundary for an unauthenticated link, so it is
+            // generated from a cryptographic RNG rather than a Guid or anything time-derived,
+            // and is long enough not to be guessable.
+            var tokenBytes = new byte[32];
+            using (var rng = System.Security.Cryptography.RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(tokenBytes);
+            }
+            var token = Convert.ToBase64String(tokenBytes)
+                .Replace("+", "-").Replace("/", "_").Replace("=", string.Empty);
+
+            return await _meetingRespository.CreateCodeSession(session, interviewerEmail, token);
+        }
+
+        /// <inheritdoc/>
+        public async Task<CodeSessionCandidateVM> GetCodeSessionByToken(string sessionToken)
+        {
+            if (string.IsNullOrWhiteSpace(sessionToken))
+            {
+                return new CodeSessionCandidateVM { IsValid = false };
+            }
+
+            var session = await _meetingRespository.GetCodeSessionByToken(sessionToken);
+            return session ?? new CodeSessionCandidateVM { IsValid = false };
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> SaveCodeSessionProgress(string sessionToken, string code, string language, int pasteEvents)
+        {
+            // Autosave carries no run result: passing RunState null leaves whatever output is
+            // already stored untouched rather than blanking it on every keystroke batch.
+            return await _meetingRespository.SaveCodeSession(sessionToken, new CodeSessionVM
+            {
+                SubmittedCode = code,
+                Language = language,
+                PasteEvents = pasteEvents
+            }, false);
+        }
+
+        /// <inheritdoc/>
+        public async Task<CodeExecutionResult> RunCodeSession(string sessionToken, string code, string language, int pasteEvents)
+        {
+            var result = await ExecuteCodeForSession(language, code);
+            await PersistCodeRun(sessionToken, code, language, pasteEvents, result, false);
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> SubmitCodeSession(string sessionToken, string code, string language, int pasteEvents)
+        {
+            // Stored output must match submitted code. A candidate can run, keep typing, then
+            // submit - attaching the earlier run's output to code that has since changed would
+            // put a result in a client report that the submitted code never produced. So the
+            // code is re-run ONCE here, and where that is not possible the attempt is recorded
+            // as NotExecuted rather than carrying a stale result.
+            var result = await ExecuteCodeForSession(language, code);
+            return await PersistCodeRun(sessionToken, code, language, pasteEvents, result, true);
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<CodeSessionVM>> GetCodeSessionsForInterview(int interviewId)
+        {
+            return await _meetingRespository.GetCodeSessionsForInterview(interviewId);
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<CodeSessionVM>> GetSubmittedCodeSessionsForReport(int interviewId)
+        {
+            var all = await _meetingRespository.GetCodeSessionsForInterview(interviewId);
+
+            // Only submitted attempts reach a client. An attempt that was generated and never
+            // opened, or opened and never submitted, is kept but never published: publishing an
+            // abandoned attempt would damage the candidate for something that was never offered
+            // as an answer.
+            return all
+                .Where(s => s.SessionState == (int)CodeSessionState.Submitted)
+                .OrderBy(s => s.SkillName ?? string.Empty)
+                .ThenBy(s => s.SampleQuestionId ?? 0)
+                .ThenBy(s => s.AttemptNumber)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Runs the code through whichever backend is configured, mapping its result onto the
+        /// three-way run state. A compile error or a thrown exception is Failed - it ran, and
+        /// the failure is evidence about the candidate. Only an unreachable or disabled runner
+        /// is NotExecuted, which says nothing about them at all.
+        /// </summary>
+        private async Task<CodeExecutionResult> ExecuteCodeForSession(string language, string code)
+        {
+            if (_codeExecutionService == null || !_codeExecutionService.IsEnabled)
+            {
+                return new CodeExecutionResult { Success = false, Status = "NotExecuted" };
+            }
+
+            try
+            {
+                return await _codeExecutionService.ExecuteAsync(new CodeExecutionRequest
+                {
+                    LanguageId = language,
+                    SourceCode = code
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new CodeExecutionResult { Success = false, Status = "NotExecuted" };
+            }
+        }
+
+        private async Task<bool> PersistCodeRun(string sessionToken, string code, string language,
+            int pasteEvents, CodeExecutionResult result, bool submit)
+        {
+            var runState = MapCodeRunState(result);
+
+            return await _meetingRespository.SaveCodeSession(sessionToken, new CodeSessionVM
+            {
+                SubmittedCode = code,
+                Language = language,
+                PasteEvents = pasteEvents,
+                Stdout = result != null ? result.Stdout : null,
+                // A compile error arrives as CompileOutput rather than Stderr on some backends.
+                // It belongs with stderr: it is the thing that went wrong, not program output.
+                Stderr = result == null
+                    ? null
+                    : (string.IsNullOrWhiteSpace(result.Stderr) ? result.CompileOutput : result.Stderr),
+                ExitStatus = result != null ? result.ExitCode : null,
+                RunState = (int)runState
+            }, submit);
+        }
+
+        private static CodeRunState MapCodeRunState(CodeExecutionResult result)
+        {
+            if (result == null || string.Equals(result.Status, "NotExecuted", StringComparison.OrdinalIgnoreCase))
+            {
+                return CodeRunState.NotExecuted;
+            }
+
+            // Ran to completion, whatever the exit code.
+            if (result.Success)
+            {
+                return CodeRunState.Executed;
+            }
+
+            // It ran and something went wrong. Evidence, not a system fault - do not swallow it
+            // into NotExecuted and do not retry it away.
+            return CodeRunState.Failed;
         }
 
         #endregion

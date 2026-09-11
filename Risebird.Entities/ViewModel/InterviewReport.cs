@@ -9,6 +9,9 @@ namespace Risebird.Entities.ViewModel
 {
     public class InterviewReport
     {
+        /// <summary>Submitted code attempts only. Generated-but-abandoned sessions are kept
+        /// but never published to a client.</summary>
+        public List<CodeSessionVM> CodeSessions { get; set; } = new List<CodeSessionVM>();
         public int id { get; set; }
         public int CandidateId { get; set; }
         public int IRFId { get; set; }

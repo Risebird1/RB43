@@ -421,5 +421,18 @@ namespace Risebird.Repository.Interface
         /// so a repeat call still returns true.
         /// </summary>
         Task<bool> SaveTrialOnboardingAcknowledgement(string interviewerEmail, string policyVersion);
+
+        /// <summary>Creates one code session. Returns null when the gate refuses — not the
+        /// assigned interviewer, or code sessions are off for the channel.</summary>
+        Task<CodeSessionVM> CreateCodeSession(CodeSessionVM session, string interviewerEmail, string sessionToken);
+
+        /// <summary>Resolves the candidate's unauthenticated link. Carries nothing beyond the one session.</summary>
+        Task<CodeSessionCandidateVM> GetCodeSessionByToken(string sessionToken);
+
+        /// <summary>Autosave or submit. A frozen session is never rewritten.</summary>
+        Task<bool> SaveCodeSession(string sessionToken, CodeSessionVM session, bool submit);
+
+        /// <summary>Every session for an interview. Callers filter to submitted for a client report.</summary>
+        Task<List<CodeSessionVM>> GetCodeSessionsForInterview(int interviewId);
     }
 }

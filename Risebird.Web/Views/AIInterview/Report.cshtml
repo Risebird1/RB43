@@ -4830,7 +4830,17 @@
         *@
         @if (Model.McqAssessment != null)
         {
-            <div class="rb-part-hd is-knowledge">Knowledge Evaluation</div>
+    
+    @* Per-question code sessions: the question as asked, the code, then the output.
+       Submitted attempts only - the model is filtered before it reaches here. *@
+    @if (Model.CodeSessions != null && Model.CodeSessions.Any())
+    {
+        <div class="rb-part-hd is-skill">Coding Answers</div>
+            <div class="rb-part-desc">What the candidate wrote when asked to code, and what it printed.</div>
+        @await Html.PartialAsync("~/Views/Shared/_CodeSessionReportSection.cshtml", Model.CodeSessions)
+    }
+
+        <div class="rb-part-hd is-knowledge">Knowledge Evaluation</div>
             <div class="rb-part-desc">
                 The written assessment: how each section scored, and every question as it was served.
             </div>

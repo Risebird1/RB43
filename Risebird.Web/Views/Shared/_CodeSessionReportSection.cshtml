@@ -1,0 +1,102 @@
+@using Risebird.Entities.ViewModel
+@model List<CodeSessionVM>
+@{
+    // Only submitted attempts reach here - the caller filters. An attempt that was generated
+    // and never opened, or opened and never submitted, is kept but never published:
+    // publishing an abandoned attempt would damage the candidate for something that was
+    // never offered as an answer.
+    var sessions = Model ?? new List<CodeSessionVM>();
+}
+
+@if (sessions.Any())
+{
+    <style>
+        /* Scoped cs-rep-. Candidate-typed code contains angle brackets, quotes and
+           script-like text by definition, and so does a stack trace - Razor encodes both,
+           and these rules make sure neither runs off the page in the PDF either. */
+        .cs-rep-group { margin-bottom: 18px; }
+        .cs-rep-skill {
+            font-size: 12px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase;
+            color: #475569; margin: 0 0 8px; padding-bottom: 5px; border-bottom: 1px solid #eef0f3;
+        }
+        .cs-rep-item { border: 1px solid #e3e6ea; border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+        .cs-rep-head {
+            padding: 9px 13px; background: #f8fafc; border-bottom: 1px solid #eef0f3;
+            font-size: 11px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: #64748b;
+        }
+        .cs-rep-q { padding: 11px 13px; font-size: 13px; color: #0f172a; line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
+        .cs-rep-lbl {
+            padding: 7px 13px; background: #fcfdfe; border-top: 1px solid #eef0f3; border-bottom: 1px solid #eef0f3;
+            font-size: 10px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: #94a3b8;
+        }
+        /* The code is the candidate's authorship; the output is not. Kept visually distinct. */
+        .cs-rep-code {
+            margin: 0; padding: 11px 13px; background: #f8fafc; color: #0f172a;
+            font-family: 'Consolas', 'Courier New', monospace; font-size: 11.5px; line-height: 1.5;
+            white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere;
+        }
+        .cs-rep-out {
+            margin: 0; padding: 11px 13px; background: #0f172a; color: #e2e8f0;
+            font-family: 'Consolas', 'Courier New', monospace; font-size: 11.5px; line-height: 1.5;
+            white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere;
+        }
+        .cs-rep-err { color: #fda4a4; }
+        /* Never a blank panel: blank reads as "the candidate produced nothing", which is a
+           different and untrue claim. */
+        .cs-rep-notrun { padding: 11px 13px; background: #fdf6e6; color: #8a5300; font-size: 12px; line-height: 1.5; }
+        .cs-rep-item, .cs-rep-code, .cs-rep-out { page-break-inside: avoid; break-inside: avoid; }
+    </style>
+
+    @foreach (var group in sessions.GroupBy(s => string.IsNullOrWhiteSpace(s.SkillName) ? "Other" : s.SkillName))
+    {
+        <div class="cs-rep-group">
+            <div class="cs-rep-skill">@group.Key</div>
+
+            @foreach (var s in group)
+            {
+                <div class="cs-rep-item">
+                    <div class="cs-rep-head">
+                        Attempt @s.AttemptNumber
+                        @if (!string.IsNullOrWhiteSpace(s.Language))
+                        {
+                            <text> &middot; @s.Language</text>
+                            @if (!string.IsNullOrWhiteSpace(s.LanguageVersionUsed))
+                            {
+                                <text> @s.LanguageVersionUsed</text>
+                            }
+                        }
+                    </div>
+
+                    @* Order is fixed: the question as asked, then the code, then the output. *@
+                    <div class="cs-rep-q">@s.QuestionText</div>
+
+                    <div class="cs-rep-lbl">Candidate's code</div>
+                    <pre class="cs-rep-code">@s.SubmittedCode</pre>
+
+                    <div class="cs-rep-lbl">Execution output</div>
+                    @if (s.RunStateValue == CodeRunState.NotExecuted)
+                    {
+                        <div class="cs-rep-notrun">@s.NotExecutedReason</div>
+                    }
+                    else
+                    {
+                        @* Failed is evidence, not a system fault - the error is shown verbatim,
+                           exactly as Executed output is. *@
+                        if (!string.IsNullOrWhiteSpace(s.Stdout))
+                        {
+                            <pre class="cs-rep-out">@s.Stdout</pre>
+                        }
+                        if (!string.IsNullOrWhiteSpace(s.Stderr))
+                        {
+                            <pre class="cs-rep-out cs-rep-err">@s.Stderr</pre>
+                        }
+                        if (string.IsNullOrWhiteSpace(s.Stdout) && string.IsNullOrWhiteSpace(s.Stderr))
+                        {
+                            <pre class="cs-rep-out">(the program produced no output)</pre>
+                        }
+                    }
+                </div>
+            }
+        </div>
+    }
+}

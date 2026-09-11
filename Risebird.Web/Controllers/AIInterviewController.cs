@@ -72,6 +72,8 @@ namespace Risebird.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IConverter _converter;
         private readonly ICodeExecutionService _codeExecutionService;
+        // Code sessions for the report are read through the meeting service, which owns them.
+        private readonly IMeetingService _meetingService;
         private readonly IMcqAssessmentService _mcqAssessmentService;
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
@@ -87,6 +89,7 @@ namespace Risebird.Web.Controllers
             ICompositeViewEngine viewEngine, ITempDataProvider tempDataProvider,
             IHttpContextAccessor contextAccessor, IConverter converter,
             ICodeExecutionService codeExecutionService,
+            IMeetingService meetingService,
             IMcqAssessmentService mcqAssessmentService)
         {
             _configuration = configuration;
@@ -113,6 +116,7 @@ namespace Risebird.Web.Controllers
             _contextAccessor = contextAccessor;
             _converter = converter;
             _codeExecutionService = codeExecutionService;
+            _meetingService = meetingService;
             _mcqAssessmentService = mcqAssessmentService;
         }
 
@@ -2946,6 +2950,9 @@ namespace Risebird.Web.Controllers
                 reportModel.AIResumeScreeningVerdict = meetingDetails.AIResumeScreeningVerdict;
                 reportModel.AIResumeScreeningScore = meetingDetails.AIResumeScreeningScore;
                 reportModel.ResumeEvaluation = ParseResumeEvaluation(meetingDetails.AIScreeningResultJsonV2);
+                // Submitted code attempts. Only submitted ones are returned - an abandoned
+                // attempt is kept but never published to a client.
+                reportModel.CodeSessions = await _meetingService.GetSubmittedCodeSessionsForReport(reportModel.InterviewId);
                 if (reportModel.AIInterviewEvaluation != null)
                 {
                     reportModel.AIInterviewEvaluation.AadharVerificationId = meetingDetails.AadharVerificationId;
@@ -3443,6 +3450,9 @@ namespace Risebird.Web.Controllers
                 reportModel.AIResumeScreeningVerdict = meetingDetails?.AIResumeScreeningVerdict;
                 reportModel.AIResumeScreeningScore = meetingDetails?.AIResumeScreeningScore ?? 0;
                 reportModel.ResumeEvaluation = ParseResumeEvaluation(meetingDetails?.AIScreeningResultJsonV2);
+                // Submitted code attempts. Only submitted ones are returned - an abandoned
+                // attempt is kept but never published to a client.
+                reportModel.CodeSessions = await _meetingService.GetSubmittedCodeSessionsForReport(reportModel.InterviewId);
 
                 // The Resume Screening link in the PDF is built from these, exactly as Report
                 // does it. Without them the view cannot form the URL, so the link would simply

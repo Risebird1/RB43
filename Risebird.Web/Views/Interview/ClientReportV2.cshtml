@@ -1364,6 +1364,14 @@
                                         }
                                         <!--End: secondary skill-->
                                         @Html.HiddenFor(m => m.IsGeneralSkillRequired)
+
+                                    @* Per-question code sessions: the question as asked, then the code,
+                                       then the execution output. Submitted attempts only - the model is
+                                       filtered before it reaches here, and nothing is re-run at render time. *@
+                                    @if (Model.CodeSessions != null && Model.CodeSessions.Any())
+                                    {
+                                        @await Html.PartialAsync("~/Views/Shared/_CodeSessionReportSection.cshtml", Model.CodeSessions)
+                                    }
                                     </div>
 
                                     @* <div>

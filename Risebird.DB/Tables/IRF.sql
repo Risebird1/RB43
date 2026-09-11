@@ -892,3 +892,15 @@ BEGIN
     ALTER TABLE IRF
     Add AITrialEnabled bit NULL
 END
+
+-- Per-question code sessions: the channel-level switch. Off (NULL or 0) means no code
+-- sessions anywhere on this channel, whatever the per-question IsCodingQuestion flags say.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CodeSessionsEnabled')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add CodeSessionsEnabled bit NULL
+END

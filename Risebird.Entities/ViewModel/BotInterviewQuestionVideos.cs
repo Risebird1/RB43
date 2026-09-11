@@ -53,6 +53,10 @@ namespace Risebird.Entities.ViewModel
         /// parsed — the report renders no Resume Evaluation section in either case.
         /// </summary>
         public CandidateResumeScreeningVM ResumeEvaluation { get; set; }
+
+        /// <summary>Submitted code attempts only. Generated-but-abandoned sessions are kept
+        /// but never published to a client.</summary>
+        public List<CodeSessionVM> CodeSessions { get; set; } = new List<CodeSessionVM>();
         public List<TypingSpeedAssessment> TypingSpeedAssessments { get; set; }
 
         /// <summary>

@@ -9085,5 +9085,113 @@ WHERE im.id IN @InterviewIds";
             }
             return false;
         }
+
+        #region Per-question code sessions
+
+        /// <inheritdoc/>
+        public async Task<CodeSessionVM> CreateCodeSession(CodeSessionVM session, string interviewerEmail, string sessionToken)
+        {
+            try
+            {
+                DynamicParameters p = new DynamicParameters();
+                p.Add("@InterviewId", session.InterviewId);
+                p.Add("@InterviewerEmail", interviewerEmail);
+                p.Add("@SampleQuestionId", session.SampleQuestionId);
+                p.Add("@QuestionText", session.QuestionText);
+                p.Add("@SkillId", session.SkillId);
+                p.Add("@SkillName", session.SkillName);
+                p.Add("@Language", session.Language);
+                p.Add("@TimeLimitMinutes", session.TimeLimitMinutes);
+                p.Add("@SessionToken", sessionToken);
+                p.Add("@TimeNow", DateTime.Now);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<CodeSessionVM>(con, "usp_CreateInterviewCodeSession",
+                        p, commandType: CommandType.StoredProcedure);
+                    // No row means the gate refused: not the assigned interviewer, or the
+                    // channel switch is off.
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex); }
+            catch (Exception ex) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex); }
+            return null;
+        }
+
+        /// <inheritdoc/>
+        public async Task<CodeSessionCandidateVM> GetCodeSessionByToken(string sessionToken)
+        {
+            try
+            {
+                DynamicParameters p = new DynamicParameters();
+                p.Add("@SessionToken", sessionToken);
+                p.Add("@TimeNow", DateTime.Now);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<CodeSessionCandidateVM>(con,
+                        "usp_GetInterviewCodeSessionByToken", p, commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex); }
+            catch (Exception ex) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex); }
+            return null;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> SaveCodeSession(string sessionToken, CodeSessionVM session, bool submit)
+        {
+            try
+            {
+                DynamicParameters p = new DynamicParameters();
+                p.Add("@SessionToken", sessionToken);
+                p.Add("@SubmittedCode", session.SubmittedCode);
+                p.Add("@Language", session.Language);
+                p.Add("@LanguageVersionUsed", session.LanguageVersionUsed);
+                p.Add("@Stdout", session.Stdout);
+                p.Add("@Stderr", session.Stderr);
+                p.Add("@ExitStatus", session.ExitStatus);
+                p.Add("@RunState", session.RunState);
+                p.Add("@RunDurationMs", session.RunDurationMs);
+                p.Add("@PasteEvents", session.PasteEvents);
+                p.Add("@Submit", submit);
+                p.Add("@TimeNow", DateTime.Now);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var saved = await SqlMapper.ExecuteScalarAsync<bool?>(con,
+                        "usp_SaveInterviewCodeSession", p, commandType: CommandType.StoredProcedure);
+                    return saved ?? false;
+                }
+            }
+            catch (SqlException ex) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex); }
+            catch (Exception ex) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex); }
+            return false;
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<CodeSessionVM>> GetCodeSessionsForInterview(int interviewId)
+        {
+            try
+            {
+                DynamicParameters p = new DynamicParameters();
+                p.Add("@InterviewId", interviewId);
+                p.Add("@TimeNow", DateTime.Now);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<CodeSessionVM>(con,
+                        "usp_GetInterviewCodeSessions", p, commandType: CommandType.StoredProcedure);
+                    return result.ToList();
+                }
+            }
+            catch (SqlException ex) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex); }
+            catch (Exception ex) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex); }
+            return new List<CodeSessionVM>();
+        }
+
+        #endregion
     }
 }

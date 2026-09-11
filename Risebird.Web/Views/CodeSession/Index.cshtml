@@ -1,0 +1,281 @@
+@using Risebird.Entities.ViewModel
+@model CodeSessionCandidateVM
+@{
+    Layout = null;
+    ViewData["Title"] = "Coding question";
+
+    var languages = ViewBag.Languages as IReadOnlyList<CodeLanguageOption> ?? new List<CodeLanguageOption>();
+    var runnerAvailable = ViewBag.RunnerAvailable as bool? ?? false;
+    var selected = languages.FirstOrDefault(l => l.Id == Model.Language) ?? languages.FirstOrDefault();
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Coding question</title>
+
+    @*
+        Layout = null on purpose. The candidate has no account and no business seeing the
+        application shell - no nav, no sidebar, no links anywhere else. One question, one
+        editor, nothing to navigate into.
+    *@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; background: #f4f6f8; color: #0f172a;
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif; font-size: 14px;
+        }
+        .cs-shell { max-width: 1180px; margin: 0 auto; padding: 18px 16px 40px; }
+        .cs-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+        .cs-title { font-size: 17px; font-weight: 700; margin: 0; }
+        .cs-sub { font-size: 12px; color: #64748b; }
+
+        .cs-card { background: #fff; border: 1px solid #e3e6ea; border-radius: 10px; margin-bottom: 14px; overflow: hidden; }
+        .cs-card-h {
+            padding: 10px 16px; background: #f8fafc; border-bottom: 1px solid #eef0f3;
+            font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #334155;
+        }
+        .cs-card-b { padding: 14px 16px; }
+
+        .cs-question { font-size: 15px; line-height: 1.6; white-space: pre-wrap; }
+
+        .cs-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 16px; border-bottom: 1px solid #eef0f3; background: #fcfdfe; }
+        .cs-bar select { padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
+        .cs-spacer { flex: 1 1 auto; }
+        .cs-btn {
+            border: 0; border-radius: 6px; padding: 7px 15px; font-size: 13px; font-weight: 600;
+            cursor: pointer; color: #fff; background: #039BE5;
+        }
+        .cs-btn[disabled] { opacity: .55; cursor: not-allowed; }
+        .cs-btn-submit { background: #14663d; }
+        .cs-status { font-size: 12px; color: #64748b; }
+
+        .CodeMirror { height: 420px; font-size: 13.5px; }
+
+        .cs-out { margin: 0; padding: 12px 16px; background: #0f172a; color: #e2e8f0;
+                  font-family: 'Consolas', 'Courier New', monospace; font-size: 12.5px;
+                  line-height: 1.55; white-space: pre-wrap; word-break: break-word;
+                  max-height: 260px; overflow: auto; }
+        .cs-out-err { color: #fda4a4; }
+        .cs-note { padding: 12px 16px; font-size: 13px; color: #8a5300; background: #fdf6e6; border-top: 1px solid #f2e2bd; }
+
+        .cs-frozen { padding: 12px 16px; background: #e9f9f0; border-top: 1px solid #cdeddc; color: #14663d; font-size: 13px; font-weight: 600; }
+        .cs-gone { background: #fff; border: 1px solid #e3e6ea; border-radius: 10px; padding: 40px 28px; text-align: center; color: #475569; }
+        .cs-gone h2 { font-size: 17px; color: #0f172a; margin: 0 0 8px; }
+    </style>
+</head>
+<body>
+<div class="cs-shell">
+
+@if (!Model.IsValid)
+{
+    @*
+        One neutral message for an unknown, expired or malformed token alike. Telling them
+        apart would let someone probe for valid tokens.
+    *@
+    <div class="cs-gone">
+        <h2>This coding session is not available</h2>
+        <p>The link may have expired, or the interview may have ended. If you are still in an interview, ask your interviewer for a new link.</p>
+    </div>
+}
+else
+{
+    <div class="cs-head">
+        <h1 class="cs-title">Coding question@(string.IsNullOrWhiteSpace(Model.SkillName) ? "" : " — " + Model.SkillName)</h1>
+        @if (Model.TimeLimitMinutes.HasValue && Model.TimeLimitMinutes.Value > 0)
+        {
+            <div class="cs-sub">Suggested time: @Model.TimeLimitMinutes.Value minutes</div>
+        }
+    </div>
+
+    <div class="cs-card">
+        <div class="cs-card-h">The question</div>
+        <div class="cs-card-b"><div class="cs-question">@Model.QuestionText</div></div>
+    </div>
+
+    <div class="cs-card">
+        <div class="cs-bar">
+            <label for="cs-lang" class="cs-status">Language</label>
+            <select id="cs-lang" @(Model.IsFrozen ? "disabled" : "")>
+                @foreach (var lang in languages)
+                {
+                    if (selected != null && lang.Id == selected.Id)
+                    {
+                        <option value="@lang.Id" selected>@lang.Label</option>
+                    }
+                    else
+                    {
+                        <option value="@lang.Id">@lang.Label</option>
+                    }
+                }
+            </select>
+            <span class="cs-spacer"></span>
+            <span class="cs-status" id="cs-save-status"></span>
+            <button type="button" class="cs-btn" id="cs-run" @(Model.IsFrozen || !runnerAvailable ? "disabled" : "")>Run</button>
+            <button type="button" class="cs-btn cs-btn-submit" id="cs-submit" @(Model.IsFrozen ? "disabled" : "")>Submit</button>
+        </div>
+
+        <textarea id="cs-code">@Model.SubmittedCode</textarea>
+
+        @if (!runnerAvailable)
+        {
+            @*
+                Told up front rather than discovered by pressing Run. Capture does not depend
+                on execution: the answer is still recorded in full.
+            *@
+            <div class="cs-note">
+                Running code is not available in this environment. You can still write and submit your answer — it will be recorded either way.
+            </div>
+        }
+
+        @if (Model.IsFrozen)
+        {
+            <div class="cs-frozen">
+                This session is closed. Your answer has been recorded.
+            </div>
+        }
+    </div>
+
+    <div class="cs-card" id="cs-output-card" style="@(string.IsNullOrEmpty(Model.Stdout) && string.IsNullOrEmpty(Model.Stderr) ? "display:none;" : "")">
+        <div class="cs-card-h">Output</div>
+        <pre class="cs-out" id="cs-stdout">@Model.Stdout</pre>
+        <pre class="cs-out cs-out-err" id="cs-stderr" style="@(string.IsNullOrEmpty(Model.Stderr) ? "display:none;" : "")">@Model.Stderr</pre>
+    </div>
+
+    <input type="hidden" id="cs-token" value="@Model.SessionToken" />
+}
+</div>
+
+@if (Model.IsValid)
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+    <script>
+        (function () {
+            'use strict';
+
+            var MODES = @Html.Raw(Json.Serialize(languages.ToDictionary(l => l.Id, l => l.CodeMirrorMode)));
+            var TEMPLATES = @Html.Raw(Json.Serialize(languages.ToDictionary(l => l.Id, l => l.Template)));
+
+            var token = document.getElementById('cs-token').value;
+            var frozen = @(Model.IsFrozen ? "true" : "false");
+            var langEl = document.getElementById('cs-lang');
+            var statusEl = document.getElementById('cs-save-status');
+
+            var editor = CodeMirror.fromTextArea(document.getElementById('cs-code'), {
+                lineNumbers: true,
+                mode: MODES[langEl.value] || 'python',
+                indentUnit: 4,
+                readOnly: frozen ? 'nocursor' : false
+            });
+
+            if (!editor.getValue() && TEMPLATES[langEl.value]) {
+                editor.setValue(TEMPLATES[langEl.value]);
+            }
+
+            // A candidate pasting a complete solution is a genuine signal on a platform that
+            // already invests in detecting substitution. Counted, stored, and deliberately not
+            // shown to the client.
+            var pasteEvents = 0;
+            editor.on('paste', function () { pasteEvents++; });
+
+            function post(url, body) {
+                return fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                }).then(function (r) { return r.json(); });
+            }
+
+            function payload() {
+                return { token: token, code: editor.getValue(), language: langEl.value, pasteEvents: pasteEvents };
+            }
+
+            // Debounced autosave. The work has to survive a closed tab, a refresh or lost
+            // connectivity - a capture mechanism that loses work under stress would be worse
+            // than the third-party site this replaces.
+            var saveTimer = null;
+            var dirty = false;
+
+            function scheduleSave() {
+                if (frozen) { return; }
+                dirty = true;
+                statusEl.textContent = 'Unsaved changes';
+                clearTimeout(saveTimer);
+                saveTimer = setTimeout(save, 1200);
+            }
+
+            function save() {
+                if (frozen || !dirty) { return Promise.resolve(); }
+                statusEl.textContent = 'Saving...';
+                return post('@Url.Action("Save", "CodeSession")', payload())
+                    .then(function (res) {
+                        if (res && res.saved) { dirty = false; statusEl.textContent = 'Saved'; }
+                        else { statusEl.textContent = 'Not saved - retrying'; }
+                    })
+                    .catch(function () { statusEl.textContent = 'Offline - will retry'; });
+            }
+
+            editor.on('change', scheduleSave);
+            langEl.addEventListener('change', function () {
+                editor.setOption('mode', MODES[langEl.value] || 'python');
+                scheduleSave();
+            });
+
+            // A last save on the way out, best effort.
+            window.addEventListener('beforeunload', function () {
+                if (!frozen && dirty) {
+                    navigator.sendBeacon &&
+                        navigator.sendBeacon('@Url.Action("Save", "CodeSession")',
+                            new Blob([JSON.stringify(payload())], { type: 'application/json' }));
+                }
+            });
+
+            var outCard = document.getElementById('cs-output-card');
+            var outEl = document.getElementById('cs-stdout');
+            var errEl = document.getElementById('cs-stderr');
+
+            function showOutput(stdout, stderr) {
+                outCard.style.display = '';
+                outEl.textContent = stdout || '';
+                if (stderr) { errEl.style.display = ''; errEl.textContent = stderr; }
+                else { errEl.style.display = 'none'; errEl.textContent = ''; }
+            }
+
+            var runBtn = document.getElementById('cs-run');
+            if (runBtn) {
+                runBtn.addEventListener('click', function () {
+                    runBtn.disabled = true;
+                    statusEl.textContent = 'Running...';
+                    save().then(function () {
+                        return post('@Url.Action("Run", "CodeSession")', payload());
+                    }).then(function (res) {
+                        if (res && res.ran) { showOutput(res.stdout, res.stderr); statusEl.textContent = 'Saved'; }
+                        else { showOutput(res && res.output ? res.output : 'Could not run.', ''); statusEl.textContent = ''; }
+                    }).catch(function () {
+                        showOutput('The code runner is temporarily unavailable. Your code is safe - you can still submit it.', '');
+                    }).finally(function () { runBtn.disabled = false; });
+                });
+            }
+
+            var submitBtn = document.getElementById('cs-submit');
+            submitBtn.addEventListener('click', function () {
+                if (!confirm('Submit your answer? The editor becomes read-only after this.')) { return; }
+                submitBtn.disabled = true;
+                statusEl.textContent = 'Submitting...';
+                post('@Url.Action("Submit", "CodeSession")', payload())
+                    .then(function (res) {
+                        if (res && res.submitted) { window.location.reload(); }
+                        else { submitBtn.disabled = false; statusEl.textContent = 'Could not submit - try again'; }
+                    })
+                    .catch(function () { submitBtn.disabled = false; statusEl.textContent = 'Could not submit - try again'; });
+            });
+        })();
+    </script>
+}
+</body>
+</html>

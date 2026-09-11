@@ -1328,6 +1328,16 @@
         @await Html.PartialAsync("_McqAssessmentSection", Model.McqAssessment)
     }
 
+
+    @* Per-question code sessions: the question as asked, the code, then the output.
+       Submitted attempts only - the model is filtered before it reaches here. *@
+    @if (Model.CodeSessions != null && Model.CodeSessions.Any())
+    {
+        <div class="part-hd is-skill">Coding Answers</div>
+        <div class="part-desc">What the candidate wrote when asked to code, and what it printed.</div>
+        @await Html.PartialAsync("~/Views/Shared/_CodeSessionReportSection.cshtml", Model.CodeSessions)
+    }
+
     <div class="rep-end">End of report</div>
 
 </div><!-- #pdfdownload -->

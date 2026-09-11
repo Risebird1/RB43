@@ -310,5 +310,26 @@ namespace Risebird.Business.Interface
 
         /// <summary>Records the one-time trial onboarding acknowledgement.</summary>
         Task<bool> SaveTrialOnboardingAcknowledgement(string interviewerEmail, string policyVersion);
+
+        /// <summary>Creates one code session with a cryptographically random token.</summary>
+        Task<CodeSessionVM> CreateCodeSession(CodeSessionVM session, string interviewerEmail);
+
+        /// <summary>Resolves a candidate link. Never returns null.</summary>
+        Task<CodeSessionCandidateVM> GetCodeSessionByToken(string sessionToken);
+
+        /// <summary>Debounced autosave. Leaves any stored run output untouched.</summary>
+        Task<bool> SaveCodeSessionProgress(string sessionToken, string code, string language, int pasteEvents);
+
+        /// <summary>Runs the code and stores the result against the session.</summary>
+        Task<CodeExecutionResult> RunCodeSession(string sessionToken, string code, string language, int pasteEvents);
+
+        /// <summary>Re-runs once and submits, so stored output always matches submitted code.</summary>
+        Task<bool> SubmitCodeSession(string sessionToken, string code, string language, int pasteEvents);
+
+        /// <summary>Every session for an interview - the interviewer's view.</summary>
+        Task<List<CodeSessionVM>> GetCodeSessionsForInterview(int interviewId);
+
+        /// <summary>Submitted attempts only, ordered for the client report.</summary>
+        Task<List<CodeSessionVM>> GetSubmittedCodeSessionsForReport(int interviewId);
     }
 }
