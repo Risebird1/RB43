@@ -93,7 +93,7 @@
                                                         <td style="width:100px">
                                                             @if (item.LogCount > 0)
                                                             {
-                                                                <button class="proctoring-action-btn" type="button" onclick="ProctoringSessionLogsDetails('@item.Id')">Report</button>
+                                                                <button class="proctoring-action-btn" type="button" onclick="window.open('/Dashboard/ProctoringSessionReport?id=@item.Id', '_blank')">Report</button>
                                                             }
                                                             else
                                                             {
@@ -114,7 +114,6 @@
         </div>
     </div>
 </div>
-@await Html.PartialAsync("~/Views/Common/_ProctoringSessionLogsDetails.cshtml")
 <script>
     $(document).ready(function () {
         applyDataTable();

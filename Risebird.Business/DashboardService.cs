@@ -996,11 +996,37 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<ProctoringSessionReportVM> GetProctoringSessionById(int id)
+        {
+            try
+            {
+                return await _dashboardRespository.GetProctoringSessionById(id);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
         public async Task<IEnumerable<ProctoringLogReportVM>> GetProctoringSessionLogs(int id)
         {
             try
             {
                 return await _dashboardRespository.GetProctoringSessionLogs(id);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<ProctoringScreenshotReportVM>> GetProctoringSessionScreenshots(int id)
+        {
+            try
+            {
+                return await _dashboardRespository.GetProctoringSessionScreenshots(id);
             }
             catch (Exception e)
             {

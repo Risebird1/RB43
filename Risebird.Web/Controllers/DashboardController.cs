@@ -5861,18 +5861,38 @@ NEVER:
             }
         }
         [HttpGet]
-        public async Task<IActionResult> GetProctoringSessionLogs(int id)
+        public async Task<IActionResult> ProctoringSessionReport(int id)
         {
             try
             {
-                var model = await _dashboardService.GetProctoringSessionLogs(id);
-
-                return PartialView(model);
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
+                    {
+                        var model = new ProctoringSessionReportDetailVM
+                        {
+                            Session = await _dashboardService.GetProctoringSessionById(id),
+                            Logs = await _dashboardService.GetProctoringSessionLogs(id),
+                            Screenshots = await _dashboardService.GetProctoringSessionScreenshots(id)
+                        };
+                        return View(model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
+                return RedirectToAction("SignOut", "Session");
             }
         }
         #region Missed Candidate
