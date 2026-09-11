@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -16,18 +17,23 @@ namespace Risebird.Business
     public class ProctoringApiService : IProctoringApiService
     {
         private const int DefaultTokenTtlMinutes = 180;
+        private const string DefaultScreenshotContainer = "desktopproctor-screenshots";
+        private const int MaxScreenshotBytes = 15 * 1024 * 1024;
 
         private readonly IProctoringApiRepository _repository;
         private readonly IProctoringLaunchTokenService _launchTokenService;
+        private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IConfiguration _configuration;
 
         public ProctoringApiService(
             IProctoringApiRepository repository,
             IProctoringLaunchTokenService launchTokenService,
+            IAzureStorageHelper azureStorageHelper,
             IConfiguration configuration)
         {
             _repository = repository;
             _launchTokenService = launchTokenService;
+            _azureStorageHelper = azureStorageHelper;
             _configuration = configuration;
         }
 
@@ -149,6 +155,46 @@ namespace Risebird.Business
             return true;
         }
 
+        public async Task<bool> SubmitScreenshotAsync(ProctoringScreenshotRequest request)
+        {
+            var session = await _repository.GetSessionByTokenAsync(request.SessionToken);
+            if (session == null)
+                return false;
+
+            var imageBytes = Convert.FromBase64String(request.ImageBase64);
+            if (imageBytes.Length == 0 || imageBytes.Length > MaxScreenshotBytes)
+                return true; // best-effort telemetry — drop silently rather than fail the call
+
+            var containerName = _configuration["ProctoringApiSettings:ScreenshotContainerName"] ?? DefaultScreenshotContainer;
+            var extension = ExtensionFromContentType(request.ContentType);
+            var blobPath = $"{request.SessionToken}/{request.CapturedAt:yyyyMMdd}/{request.CapturedAt:HHmmssfff}-{request.Sequence}.{extension}";
+
+            using var stream = new MemoryStream(imageBytes, writable: false);
+            var blobUrl = await _azureStorageHelper.InsertBlobCloudCompare(blobPath, containerName, null, stream, null, request.ContentType);
+
+            if (!string.IsNullOrWhiteSpace(blobUrl))
+            {
+                await _repository.InsertScreenshotIfNewAsync(new ProctoringScreenshot
+                {
+                    SessionToken = request.SessionToken,
+                    Sequence = request.Sequence,
+                    BlobUrl = blobUrl,
+                    ContentType = request.ContentType,
+                    CapturedAtUtc = request.CapturedAt,
+                });
+            }
+
+            return true;
+        }
+
+        private static string ExtensionFromContentType(string contentType)
+        {
+            var type = (contentType ?? string.Empty).Trim().ToLowerInvariant();
+            if (type.Contains("png")) return "png";
+            if (type.Contains("webp")) return "webp";
+            return "jpg";
+        }
+
         public async Task<IReadOnlyList<ProctoringLogEntry>> GetLogsForCandidateAsync(string candidateEmail)
         {
             var rows = await _repository.GetLogsForCandidateAsync(candidateEmail);
@@ -178,6 +224,7 @@ namespace Risebird.Business
                 new ProctoringBlockedProcess { ProcessName = "obs64", Category = "Screen recording" },
             },
             WatchedTitlePhrases = new List<string> { "chatgpt", "chat.openai", "claude.ai" },
+            AllowedDomains = new List<string> { "portal.risebird.io" },
             ForegroundFlickerFloorSeconds = 1.5,
             MaxQueuedEvents = 5000,
         };

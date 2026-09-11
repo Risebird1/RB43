@@ -164,6 +164,33 @@ namespace Risebird.Services.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("screenshot")]
+        [DisableRequestSizeLimit]
+        public async Task<IActionResult> Screenshot([FromBody] ProctoringScreenshotRequest request)
+        {
+            try
+            {
+                if (request == null || string.IsNullOrWhiteSpace(request.SessionToken) || string.IsNullOrWhiteSpace(request.ImageBase64))
+                    return BadRequest();
+
+                var accepted = await _proctoringApiService.SubmitScreenshotAsync(request);
+                if (!accepted)
+                    return Unauthorized();
+
+                return Ok();
+            }
+            catch (FormatException)
+            {
+                return BadRequest("Invalid base64 image payload.");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         /// <summary>
         /// The desktop app's only entry point for a real candidate: no login, no launch link, no
         /// API key, no bearer token — the app's entire UI is an Interview ID field and an email

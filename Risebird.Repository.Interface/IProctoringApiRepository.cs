@@ -33,5 +33,8 @@ namespace Risebird.Repository.Interface
         Task<int> AddRiskScoreAsync(string sessionToken, int delta);
 
         Task<IReadOnlyList<ProctoringApiLog>> GetLogsForCandidateAsync(string candidateEmail);
+
+        /// <summary>Idempotent on (SessionToken, Sequence), same as InsertLogIfNewAsync — screenshots aren't durably retried by the client, but a redelivered one shouldn't double-insert.</summary>
+        Task<bool> InsertScreenshotIfNewAsync(ProctoringScreenshot screenshot);
     }
 }
