@@ -415,6 +415,29 @@ namespace Risebird.Business.Tests.ProctoringTests
         }
 
         [Fact]
+        public async Task Built_in_policy_names_the_interview_platforms_own_domain()
+        {
+            var sut = new ProctoringApiServiceFixture().CreateSut();
+
+            var policy = await sut.GetPolicyAsync();
+
+            Assert.Contains("portal.risebird.io", policy.AllowedDomains);
+        }
+
+        [Fact]
+        public async Task Configuration_can_override_the_allowed_domains()
+        {
+            var fixture = new ProctoringApiServiceFixture()
+                .WithSetting("ProctoringApiSettings:Policy:Version", "1")
+                .WithSetting("ProctoringApiSettings:Policy:AllowedDomains:0", "interview.example.com");
+            var sut = fixture.CreateSut();
+
+            var policy = await sut.GetPolicyAsync();
+
+            Assert.Equal(new[] { "interview.example.com" }, policy.AllowedDomains);
+        }
+
+        [Fact]
         public async Task Configuration_replaces_the_built_in_policy_entirely()
         {
             var fixture = new ProctoringApiServiceFixture()
@@ -680,6 +703,140 @@ namespace Risebird.Business.Tests.ProctoringTests
                     SessionToken = "known-session",
                     Events = new List<ProctoringEventItem> { Event(1, (ProctoringSeverity)99) }
                 }));
+        }
+    }
+
+    public class ProctoringApiServiceScreenshotTests
+    {
+        private static ProctoringScreenshotRequest Request(
+            byte[] imageBytes = null, int sequence = 1, string contentType = "image/jpeg") => new()
+            {
+                SessionToken = "known-session",
+                Sequence = sequence,
+                CapturedAt = new DateTime(2026, 09, 11, 14, 30, 00, DateTimeKind.Utc),
+                ContentType = contentType,
+                ImageBase64 = Convert.ToBase64String(imageBytes ?? new byte[] { 1, 2, 3, 4 })
+            };
+
+        [Fact]
+        public async Task Returns_false_for_an_unrecognised_session_token()
+        {
+            var fixture = new ProctoringApiServiceFixture();
+            fixture.GivenNoSession();
+            var sut = fixture.CreateSut();
+
+            Assert.False(await sut.SubmitScreenshotAsync(Request()));
+            fixture.AzureStorageHelper.Verify(
+                x => x.InsertBlobCloudCompare(
+                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MemoryStream>(),
+                    It.IsAny<Stream>(), It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<bool?>()),
+                Times.Never);
+        }
+
+        [Fact]
+        public async Task Uploads_the_decoded_image_and_persists_the_returned_blob_url()
+        {
+            var fixture = new ProctoringApiServiceFixture();
+            fixture.GivenSession();
+            fixture.UploadedBlobUrl = "https://risebirdportal.blob.core.windows.net/desktopproctor-screenshots/x.jpg";
+            var sut = fixture.CreateSut();
+
+            var accepted = await sut.SubmitScreenshotAsync(Request(sequence: 7));
+
+            Assert.True(accepted);
+            Assert.NotNull(fixture.InsertedScreenshot);
+            Assert.Equal("known-session", fixture.InsertedScreenshot.SessionToken);
+            Assert.Equal(7, fixture.InsertedScreenshot.Sequence);
+            Assert.Equal(fixture.UploadedBlobUrl, fixture.InsertedScreenshot.BlobUrl);
+            Assert.Equal("image/jpeg", fixture.InsertedScreenshot.ContentType);
+            Assert.Equal(new DateTime(2026, 09, 11, 14, 30, 00, DateTimeKind.Utc), fixture.InsertedScreenshot.CapturedAtUtc);
+        }
+
+        [Fact]
+        public async Task Uses_the_configured_container_name()
+        {
+            var fixture = new ProctoringApiServiceFixture()
+                .WithSetting("ProctoringApiSettings:ScreenshotContainerName", "my-screenshots");
+            fixture.GivenSession();
+            var sut = fixture.CreateSut();
+
+            await sut.SubmitScreenshotAsync(Request());
+
+            fixture.AzureStorageHelper.Verify(x => x.InsertBlobCloudCompare(
+                It.IsAny<string>(), "my-screenshots", It.IsAny<MemoryStream>(),
+                It.IsAny<Stream>(), It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<bool?>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Falls_back_to_the_default_container_when_none_is_configured()
+        {
+            var fixture = new ProctoringApiServiceFixture();
+            fixture.GivenSession();
+            var sut = fixture.CreateSut();
+
+            await sut.SubmitScreenshotAsync(Request());
+
+            fixture.AzureStorageHelper.Verify(x => x.InsertBlobCloudCompare(
+                It.IsAny<string>(), "desktopproctor-screenshots", It.IsAny<MemoryStream>(),
+                It.IsAny<Stream>(), It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<bool?>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task An_empty_image_is_accepted_but_never_uploaded()
+        {
+            var fixture = new ProctoringApiServiceFixture();
+            fixture.GivenSession();
+            var sut = fixture.CreateSut();
+
+            var accepted = await sut.SubmitScreenshotAsync(Request(imageBytes: Array.Empty<byte>()));
+
+            Assert.True(accepted);
+            Assert.Null(fixture.InsertedScreenshot);
+            fixture.AzureStorageHelper.Verify(x => x.InsertBlobCloudCompare(
+                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MemoryStream>(),
+                It.IsAny<Stream>(), It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<bool?>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task An_oversized_image_is_accepted_but_never_uploaded()
+        {
+            var fixture = new ProctoringApiServiceFixture();
+            fixture.GivenSession();
+            var sut = fixture.CreateSut();
+
+            var accepted = await sut.SubmitScreenshotAsync(Request(imageBytes: new byte[16 * 1024 * 1024]));
+
+            Assert.True(accepted);
+            Assert.Null(fixture.InsertedScreenshot);
+            fixture.AzureStorageHelper.Verify(x => x.InsertBlobCloudCompare(
+                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MemoryStream>(),
+                It.IsAny<Stream>(), It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<bool?>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Invalid_base64_throws_rather_than_being_silently_dropped()
+        {
+            var fixture = new ProctoringApiServiceFixture();
+            fixture.GivenSession();
+            var sut = fixture.CreateSut();
+            var request = Request();
+            request.ImageBase64 = "not-valid-base64!!!";
+
+            await Assert.ThrowsAsync<FormatException>(() => sut.SubmitScreenshotAsync(request));
+        }
+
+        [Fact]
+        public async Task A_failed_upload_does_not_persist_a_screenshot_row()
+        {
+            var fixture = new ProctoringApiServiceFixture();
+            fixture.GivenSession();
+            fixture.UploadedBlobUrl = null;
+            var sut = fixture.CreateSut();
+
+            var accepted = await sut.SubmitScreenshotAsync(Request());
+
+            Assert.True(accepted);
+            Assert.Null(fixture.InsertedScreenshot);
         }
     }
 
