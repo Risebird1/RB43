@@ -982,6 +982,33 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IEnumerable<ProctoringSessionReportVM>> GetProctoringSessions()
+        {
+            try
+            {
+                return await _dashboardRespository.GetProctoringSessions();
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<ProctoringLogReportVM>> GetProctoringSessionLogs(int id)
+        {
+            try
+            {
+                return await _dashboardRespository.GetProctoringSessionLogs(id);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
         public async Task<IEnumerable<InterviewManagementVM>> GetInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate, string Emailid)
         {
             try
