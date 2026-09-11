@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -23,7 +24,7 @@ namespace Risebird.Entities.ViewModel
         public int LogCount { get; set; }
     }
 
-    /// <summary>Row in the dashboard's Proctoring Report "Check Report" modal — one ProctoringLogs row.</summary>
+    /// <summary>Row in the dashboard's Proctoring Session Report — one ProctoringLogs row.</summary>
     public class ProctoringLogReportVM
     {
         public int Id { get; set; }
@@ -38,5 +39,25 @@ namespace Risebird.Entities.ViewModel
         public string RedactedDetail { get; set; }
         public string RawDetail { get; set; }
         public DateTime CreatedAtUtc { get; set; }
+    }
+
+    /// <summary>Row in the dashboard's Proctoring Session Report — one Screenshots row (blob reference, not the image).</summary>
+    public class ProctoringScreenshotReportVM
+    {
+        public long Id { get; set; }
+        public int ProctoringSessionId { get; set; }
+        public int Sequence { get; set; }
+        public string BlobUrl { get; set; }
+        public string ContentType { get; set; }
+        public DateTime CapturedAtUtc { get; set; }
+        public DateTime CreatedAtUtc { get; set; }
+    }
+
+    /// <summary>Full-page Proctoring Session Report: session header + its logs + its screenshots.</summary>
+    public class ProctoringSessionReportDetailVM
+    {
+        public ProctoringSessionReportVM Session { get; set; }
+        public IEnumerable<ProctoringLogReportVM> Logs { get; set; }
+        public IEnumerable<ProctoringScreenshotReportVM> Screenshots { get; set; }
     }
 }
