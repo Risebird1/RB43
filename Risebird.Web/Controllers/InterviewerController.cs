@@ -3618,7 +3618,6 @@ namespace Risebird.Web.Controllers
                 Mail _mail1 = new Mail
                 {
                     TO = Emailid,
-                    CC = "talent@risebird.io",
                     Subject = "Open Interviews URL"
                 };
                 var emailsend1 = await _notificationHelper.SendPublicUrlToInterviewer(_mail1, sendreporturl);
@@ -5062,7 +5061,6 @@ namespace Risebird.Web.Controllers
                         Mail _mail1 = new Mail
                         {
                             TO = item.EmailId,
-                            CC = "talent@risebird.io",
                             Subject = "New interviews have come up! Please assign."
                         };
                         var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, item.uniqueid, irfId);
@@ -5375,7 +5373,6 @@ namespace Risebird.Web.Controllers
                                     Mail _mail1 = new Mail
                                     {
                                         TO = result.EmailId,
-                                        CC = "talent@risebird.io",
                                         Subject = "New interviews have come up! Please assign."
                                     };
                                     var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, result.uniqueid);
@@ -5701,7 +5698,6 @@ namespace Risebird.Web.Controllers
                                                         Mail _mail1 = new Mail
                                                         {
                                                             TO = item.EmailId,
-                                                            CC = "talent@risebird.io",
                                                             Subject = "New interviews have come up! Please assign."
                                                         };
                                                         var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, item.uniqueid, irfId);
@@ -5904,7 +5900,6 @@ namespace Risebird.Web.Controllers
                                                         Mail _mail1 = new Mail
                                                         {
                                                             TO = item.EmailId,
-                                                            CC = "talent@risebird.io",
                                                             Subject = "New interviews have come up! Please assign."
                                                         };
                                                         var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, item.uniqueid, agId: model.AssessmentGroupId);
