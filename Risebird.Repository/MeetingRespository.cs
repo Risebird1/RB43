@@ -9010,5 +9010,80 @@ WHERE im.id IN @InterviewIds";
             }
             return null;
         }
+
+        /// <inheritdoc/>
+        public async Task<InterviewAlignmentVM> GetInterviewAlignmentDetails(int interviewId, string interviewerEmail)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@InterviewId", interviewId);
+                parameters.Add("@InterviewerEmail", interviewerEmail);
+                // DateTime.Now, not UtcNow: interview dates in this system are stored in IST,
+                // matching usp_MyInterviews and usp_GetInterviewerStatsAndRatings. Switching to
+                // UtcNow here means also changing how InterviewMeetings.interviewDate is written.
+                parameters.Add("@TimeNow", DateTime.Now);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    // The six grids are read POSITIONALLY, in the order the procedure returns
+                    // them. Reordering them there breaks this silently.
+                    using (var grid = await SqlMapper.QueryMultipleAsync(con, "usp_GetInterviewAlignmentDetails",
+                        parameters, commandType: StoredProcedure, commandTimeout: 120))
+                    {
+                        var model = new InterviewAlignmentVM();
+
+                        model.Context = (await grid.ReadAsync<InterviewAlignmentContext>()).FirstOrDefault();
+                        model.RubricSkills = (await grid.ReadAsync<InterviewAlignmentRubricSkill>()).ToList();
+                        model.SampleQuestions = (await grid.ReadAsync<InterviewAlignmentSampleQuestion>()).ToList();
+                        model.ClientNotes = (await grid.ReadAsync<InterviewAlignmentClientNote>()).ToList();
+                        model.FlaggedInterviews = (await grid.ReadAsync<InterviewAlignmentFlaggedInterview>()).ToList();
+                        model.PerformanceSummary = (await grid.ReadAsync<InterviewAlignmentPerformanceSummary>()).FirstOrDefault()
+                                                   ?? new InterviewAlignmentPerformanceSummary();
+
+                        // An empty context is the procedure's authorisation signal.
+                        model.IsAssignedInterviewer = model.Context != null;
+                        return model;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> SaveTrialOnboardingAcknowledgement(string interviewerEmail, string policyVersion)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@InterviewerEmail", interviewerEmail);
+                parameters.Add("@PolicyVersion", policyVersion);
+                parameters.Add("@TimeNow", DateTime.Now);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var acknowledged = await SqlMapper.ExecuteScalarAsync<bool?>(con,
+                        "usp_SaveTrialOnboardingAcknowledgement", parameters, commandType: StoredProcedure);
+                    return acknowledged ?? false;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
     }
 }

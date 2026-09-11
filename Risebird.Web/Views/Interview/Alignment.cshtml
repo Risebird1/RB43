@@ -1,0 +1,762 @@
+@using Risebird.Entities.ViewModel
+@model InterviewAlignmentVM
+@{
+    ViewData["Title"] = "Interview Alignment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // IST is -330 in the browser-convention offset stored at scheduling time (positive west
+    // of UTC). The candidate timezone block renders only when the candidate is somewhere else.
+    const int istOffsetMinutes = -330;
+    var ctx = Model.Context;
+    var showCandidateClock = ctx != null
+        && !string.IsNullOrWhiteSpace(ctx.CandidateTimeZoneLabel)
+        && ctx.CandidateTimeZoneOffsetMinutes.HasValue
+        && ctx.CandidateTimeZoneOffsetMinutes.Value != istOffsetMinutes;
+
+    var visibleCap = Model.SampleQuestionsVisibleCap > 0 ? Model.SampleQuestionsVisibleCap : 8;
+    var hasPolicyUrl = !string.IsNullOrWhiteSpace(Model.TrialPolicyUrl);
+    var perf = Model.PerformanceSummary ?? new InterviewAlignmentPerformanceSummary();
+    var isFirstTimer = perf.TotalInterviews == 0;
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+    /* Page-scoped. Every class is prefixed ia- so nothing here can reach the shared
+       dashboard CSS, and nothing there is relied on. */
+    /* Base size matches the rest of the app (InterviewDetails and the shared theme sit at
+       14-16px). Font family is deliberately not set here - inheriting from _Layout is what
+       every other page does. */
+    .ia-wrapper { max-width: 1080px; margin: 0 auto; padding: 18px 16px 48px; font-size: 14px; }
+
+    .ia-page-head { margin-bottom: 18px; }
+    .ia-page-title { font-size: 21px; font-weight: 600; color: #0b1f2e; margin: 0; }
+    .ia-page-sub { font-size: 14.5px; color: #64748b; margin-top: 4px; }
+
+    /* ── Trial banner ─────────────────────────────────────────── */
+    .ia-trial-banner {
+        background: #fdf6e6;
+        border: 1px solid #f2e2bd;
+        border-left: 4px solid #e0a33a;
+        border-radius: 10px;
+        padding: 14px 18px;
+        margin-bottom: 20px;
+    }
+    .ia-trial-title { font-weight: 700; color: #8a5300; font-size: 15px; margin-bottom: 5px; }
+    .ia-trial-body { font-size: 14px; color: #6b5320; line-height: 1.55; }
+    .ia-trial-body a { color: #8a5300; text-decoration: underline; }
+    .ia-trial-nolink { font-style: italic; color: #8a7a55; }
+
+    /* ── Cards ────────────────────────────────────────────────── */
+    .ia-card {
+        background: #fff;
+        border: 1px solid #e3e6ea;
+        border-radius: 10px;
+        margin-bottom: 16px;
+        overflow: hidden;
+    }
+    .ia-card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 13px 18px;
+        cursor: pointer;
+        background: #f8fafc;
+        border-bottom: 1px solid #eef0f3;
+        user-select: none;
+    }
+    .ia-card-head:hover { background: #f1f5f9; }
+    .ia-card-title {
+        font-size: 13px; font-weight: 700; letter-spacing: 1.1px;
+        text-transform: uppercase; color: #334155; margin: 0;
+    }
+    .ia-card-title i { color: #4eda92; margin-right: 8px; }
+    .ia-card-count { font-size: 13px; color: #64748b; font-weight: 600; }
+    .ia-chev { color: #94a3b8; transition: transform .15s ease; }
+    .ia-card-head.collapsed .ia-chev { transform: rotate(-90deg); }
+    .ia-card-body { padding: 16px 18px; }
+
+    /* ── Candidate context ────────────────────────────────────── */
+    .ia-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+    .ia-fact-l { font-size: 11px; font-weight: 700; letter-spacing: .7px; text-transform: uppercase; color: #94a3b8; }
+    .ia-fact-v { font-size: 15px; color: #0f172a; margin-top: 3px; font-weight: 600; }
+    .ia-fact-v a { color: #039BE5; text-decoration: underline; }
+    .ia-muted { color: #94a3b8; font-weight: 400; }
+
+    .ia-clock {
+        margin-top: 14px; padding: 11px 14px;
+        background: #f1f5f9; border-radius: 8px;
+        font-size: 14px; color: #334155;
+    }
+    .ia-clock strong { font-variant-numeric: tabular-nums; }
+
+    .ia-notes { margin-top: 16px; }
+    .ia-note {
+        border: 1px solid #e3e6ea; border-left: 3px solid #94a3b8;
+        border-radius: 7px; padding: 10px 13px; margin-bottom: 9px; background: #fcfdfe;
+    }
+    .ia-note.is-specific { border-left-color: #039BE5; background: #f5fbff; }
+    .ia-note-h { font-size: 12px; font-weight: 700; text-transform: uppercase;
+                 letter-spacing: .6px; color: #64748b; margin-bottom: 4px; }
+    .ia-note-s { font-weight: 600; color: #0f172a; font-size: 14px; }
+    .ia-note-m { font-size: 14px; color: #475569; line-height: 1.5; margin-top: 3px; white-space: pre-line; }
+
+    /* ── Rubric ───────────────────────────────────────────────── */
+    .ia-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .ia-table th {
+        font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
+        color: #94a3b8; text-align: left; padding: 0 10px 7px; border-bottom: 1px solid #eef0f3;
+    }
+    .ia-table td { padding: 9px 10px; border-bottom: 1px solid #f4f6f8; vertical-align: top; color: #334155; }
+    .ia-table tr:last-child td { border-bottom: 0; }
+    .ia-skill-name { font-weight: 600; color: #0f172a; }
+
+    .ia-pill {
+        display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .4px;
+        padding: 2px 8px; border-radius: 999px; text-transform: uppercase; white-space: nowrap;
+    }
+    .ia-pill-primary { background: #e9f9f0; color: #14663d; }
+    .ia-pill-secondary { background: #eef2f7; color: #475569; }
+    .ia-pill-elim { background: #fdeeec; color: #a3261d; margin-left: 5px; }
+    .ia-pill-low { background: #e9f9f0; color: #14663d; }
+    .ia-pill-medium { background: #fdf6e6; color: #8a5300; }
+    .ia-pill-high { background: #fdeeec; color: #a3261d; }
+
+    .ia-linkbtn {
+        background: none; border: 0; padding: 0;
+        color: #039BE5; text-decoration: underline; cursor: pointer;
+        font-size: 14px; font-weight: 600;
+    }
+
+    /* ── Sample questions ─────────────────────────────────────── */
+    .ia-qgroup { margin-bottom: 16px; }
+    .ia-qgroup-h {
+        font-size: 12.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase;
+        color: #475569; margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #eef0f3;
+    }
+    .ia-q { padding: 9px 0; border-bottom: 1px solid #f4f6f8; }
+    .ia-q:last-child { border-bottom: 0; }
+    .ia-q-text { font-size: 14.5px; color: #0f172a; line-height: 1.5; }
+    .ia-q-ans { font-size: 13px; color: #64748b; margin-top: 4px; line-height: 1.5; }
+    .ia-q-ans b { color: #475569; }
+    .ia-q-video { font-size: 13px; margin-top: 4px; }
+    .ia-q-video a { color: #039BE5; text-decoration: underline; }
+    .ia-question-overflow { display: none; }
+
+    /* ── Feedback ─────────────────────────────────────────────── */
+    .ia-flag { border: 1px solid #e3e6ea; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+    .ia-flag-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    .ia-flag-meta { font-size: 13px; color: #64748b; }
+    .ia-flag-meta strong { color: #0f172a; }
+    .ia-issues { margin: 9px 0 0; padding-left: 18px; }
+    .ia-issues li { font-size: 14px; color: #475569; line-height: 1.55; margin-bottom: 3px; }
+    .ia-reason { font-size: 13.5px; color: #64748b; line-height: 1.55; margin-top: 7px;
+                 padding-top: 7px; border-top: 1px solid #f4f6f8; white-space: pre-line; }
+
+    .ia-empty {
+        background: #e9f9f0; border: 1px solid #cdeddc; border-radius: 8px;
+        padding: 14px 16px; color: #14663d; font-size: 14.5px; font-weight: 600;
+    }
+    .ia-empty-neutral { background: #f8fafc; border-color: #e3e6ea; color: #475569; font-weight: 400; }
+
+    /* ── Performance ──────────────────────────────────────────── */
+    .ia-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+    .ia-stat { border: 1px solid #e3e6ea; border-radius: 8px; padding: 11px 13px; background: #fcfdfe; }
+    .ia-stat-v { font-size: 18px; font-weight: 700; color: #0f172a; line-height: 1.1; }
+    .ia-stat-v small { font-size: 12px; font-weight: 600; color: #94a3b8; }
+    .ia-stat-l { font-size: 12.5px; color: #64748b; margin-top: 3px; line-height: 1.35; }
+
+    /* ── Restricted ───────────────────────────────────────────── */
+    .ia-restricted {
+        background: #fff; border: 1px solid #e3e6ea; border-radius: 10px;
+        padding: 34px 28px; text-align: center; color: #475569;
+    }
+    .ia-restricted i { font-size: 30px; color: #cbd5e1; display: block; margin-bottom: 12px; }
+    .ia-restricted h3 { font-size: 17px; color: #0f172a; margin: 0 0 7px; }
+    .ia-restricted p { font-size: 14.5px; margin: 0; }
+
+    /* ── Denser content in the first two cards ────────────────────
+       "Who you are interviewing" and "What to evaluate against" are reference material an
+       interviewer scans rather than reads, and both are mostly short field values, so they
+       carry their content a step down from the page default.
+
+       Scoped by section id on purpose: .ia-table, .ia-pill and .ia-linkbtn are also used by
+       the questions, feedback and performance cards, and those keep the standard size. The
+       card titles and the uppercase field labels are untouched. */
+    #ia-section-candidate .ia-fact-v { font-size: 13.5px; }
+    #ia-section-candidate .ia-clock { font-size: 13px; }
+    #ia-section-candidate .ia-note-s { font-size: 13.5px; }
+    #ia-section-candidate .ia-note-m { font-size: 13px; }
+
+    #ia-section-rubric .ia-table { font-size: 13px; }
+    #ia-section-rubric .ia-table td { padding: 8px 10px; }
+    #ia-section-rubric .ia-linkbtn { font-size: 13px; }
+
+    @@media (max-width: 767px) {
+        .ia-facts, .ia-stats { grid-template-columns: 1fr 1fr; }
+        .ia-card-body { padding: 13px 14px; }
+    }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="ia-wrapper">
+
+        @if (!Model.IsAssignedInterviewer)
+        {
+            <div class="ia-restricted">
+                <i class="fa fa-lock"></i>
+                <h3>This briefing is only available to the assigned interviewer</h3>
+                <p>If you are conducting this interview and still see this, check that you are signed in with the account the interview was assigned to.</p>
+            </div>
+        }
+        else
+        {
+            <div class="ia-page-head">
+                <h1 class="ia-page-title">Interview alignment</h1>
+                <div class="ia-page-sub">
+                    Everything worth knowing before you start. Joining the meeting is unaffected by this page.
+                </div>
+            </div>
+
+            <input type="hidden" id="ia-interview-id" value="@ctx.InterviewId" />
+            <input type="hidden" id="ia-irf-int-id" value="@ctx.IrfIntId" />
+            <input type="hidden" id="ia-candidate-offset" value="@(ctx.CandidateTimeZoneOffsetMinutes ?? istOffsetMinutes)" />
+
+            @* ── 1. Trial banner ─────────────────────────────────────── *@
+            @if (Model.IsTrialInterview)
+            {
+                <div class="ia-trial-banner">
+                    <div class="ia-trial-title"><i class="fa fa-flask"></i> This is a trial interview</div>
+                    <div class="ia-trial-body">
+                        This interview is part of a trial. Conduct it exactly as you would any other interview &mdash;
+                        the rubric, the questions and the report are unchanged. Your conduct on trial interviews is
+                        reviewed before you are confirmed for regular assignments on this channel.
+                        @if (hasPolicyUrl)
+                        {
+                            <a href="@Model.TrialPolicyUrl" target="_blank" rel="noopener">Read the full trial policy</a><text>.</text>
+                        }
+                        else
+                        {
+                            <span class="ia-trial-nolink">Full trial policy page is not published yet.</span>
+                        }
+                    </div>
+                </div>
+            }
+
+            @* ── 3. Candidate context ────────────────────────────────── *@
+            <div class="ia-card" id="ia-section-candidate">
+                <div class="ia-card-head" data-ia-section="candidate">
+                    <h2 class="ia-card-title"><i class="fa fa-user-o"></i>Who you are interviewing</h2>
+                    <i class="fa fa-chevron-down ia-chev"></i>
+                </div>
+                <div class="ia-card-body">
+                    <div class="ia-facts">
+                        <div>
+                            <div class="ia-fact-l">Candidate</div>
+                            <div class="ia-fact-v">@ctx.CandidateCodedName</div>
+                        </div>
+                        <div>
+                            <div class="ia-fact-l">Role</div>
+                            <div class="ia-fact-v">@(string.IsNullOrWhiteSpace(ctx.RoleTitle) ? "—" : ctx.RoleTitle)</div>
+                        </div>
+                        <div>
+                            <div class="ia-fact-l">Client</div>
+                            <div class="ia-fact-v">@(string.IsNullOrWhiteSpace(ctx.ClientName) ? "—" : ctx.ClientName)</div>
+                        </div>
+                        <div>
+                            <div class="ia-fact-l">IRF</div>
+                            <div class="ia-fact-v">@ctx.IRFCode</div>
+                        </div>
+                        <div>
+                            <div class="ia-fact-l">Scheduled</div>
+                            <div class="ia-fact-v">@ctx.InterviewDate.ToString("dd MMM yyyy, HH:mm")</div>
+                        </div>
+                        <div>
+                            <div class="ia-fact-l">Expected duration</div>
+                            <div class="ia-fact-v">
+                                @if (ctx.ExpectedDurationMinutes.HasValue && ctx.ExpectedDurationMinutes.Value > 0)
+                                {
+                                    <text>@ctx.ExpectedDurationMinutes.Value min</text>
+                                }
+                                else
+                                {
+                                    <span class="ia-muted">—</span>
+                                }
+                            </div>
+                        </div>
+                        <div>
+                            <div class="ia-fact-l">Coded CV</div>
+                            <div class="ia-fact-v">
+                                @if (!string.IsNullOrWhiteSpace(ctx.CandidateCodedResumeLink))
+                                {
+                                    <a href="@ctx.CandidateCodedResumeLink" target="_blank" rel="noopener">Open coded CV</a>
+                                }
+                                else
+                                {
+                                    <span class="ia-muted">Not available</span>
+                                }
+                            </div>
+                        </div>
+                        <div>
+                            <div class="ia-fact-l">Video</div>
+                            <div class="ia-fact-v">@(ctx.IsVideoRequired ? "Required" : "Not required")</div>
+                        </div>
+                    </div>
+
+                    @if (showCandidateClock)
+                    {
+                        <div class="ia-clock">
+                            <i class="fa fa-globe"></i>
+                            The candidate is in <strong>@ctx.CandidateTimeZoneLabel</strong> &mdash;
+                            their local time is now <strong id="ia-candidate-clock">—</strong>.
+                        </div>
+                    }
+
+                    @if (Model.ClientNotes.Any())
+                    {
+                        <div class="ia-notes">
+                            <div class="ia-fact-l" style="margin-bottom:8px;">Client instructions</div>
+                            @foreach (var note in Model.ClientNotes)
+                            {
+                                <div class="ia-note @(note.IsInterviewSpecific ? "is-specific" : "")">
+                                    <div class="ia-note-h">@(note.IsInterviewSpecific ? "For this interview" : "For this IRF")</div>
+                                    @if (!string.IsNullOrWhiteSpace(note.Subject))
+                                    {
+                                        <div class="ia-note-s">@note.Subject</div>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(note.Message))
+                                    {
+                                        <div class="ia-note-m">@note.Message</div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @* ── 4. Rubric preview ───────────────────────────────────── *@
+            <div class="ia-card" id="ia-section-rubric">
+                <div class="ia-card-head" data-ia-section="rubric">
+                    <h2 class="ia-card-title"><i class="fa fa-list-ul"></i>What to evaluate against</h2>
+                    <span class="ia-card-count">@Model.RubricSkills.Count skill@(Model.RubricSkills.Count == 1 ? "" : "s")</span>
+                    <i class="fa fa-chevron-down ia-chev"></i>
+                </div>
+                <div class="ia-card-body">
+                    @if (!Model.RubricSkills.Any())
+                    {
+                        <div class="ia-empty ia-empty-neutral">No rubric skills are configured on this IRF.</div>
+                    }
+                    else
+                    {
+                        <table class="ia-table">
+                            <thead>
+                                <tr>
+                                    <th style="width:42%;">Skill</th>
+                                    <th style="width:20%;">Level</th>
+                                    <th style="width:18%;">Weight</th>
+                                    <th style="width:20%;">Stack</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var skill in Model.RubricSkills)
+                                {
+                                    <tr>
+                                        <td>
+                                            <span class="ia-skill-name">@(string.IsNullOrWhiteSpace(skill.SkillName) ? "—" : skill.SkillName)</span>
+                                            @if (skill.IsEliminationSkill)
+                                            {
+                                                <span class="ia-pill ia-pill-elim">Elimination</span>
+                                            }
+                                        </td>
+                                        <td>@(string.IsNullOrWhiteSpace(skill.LevelName) ? "—" : skill.LevelName)</td>
+                                        <td>@(skill.Weightage.HasValue ? skill.Weightage.Value.ToString() : "—")</td>
+                                        <td>
+                                            <span class="ia-pill @(skill.SkillSet > 1 ? "ia-pill-secondary" : "ia-pill-primary")">
+                                                @(skill.SkillSet > 1 ? "Secondary" : "Primary")
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        <div style="margin-top:12px;">
+                            <button type="button" class="ia-linkbtn" data-bs-toggle="offcanvas" data-bs-target="#ia-rubric-drawer">
+                                Full rubric &rsaquo;
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @* ── 5. Sample questions ─────────────────────────────────── *@
+            <div class="ia-card" id="ia-section-questions">
+                <div class="ia-card-head" data-ia-section="questions">
+                    <h2 class="ia-card-title"><i class="fa fa-question-circle-o"></i>What to ask</h2>
+                    <span class="ia-card-count">@Model.SampleQuestions.Count question@(Model.SampleQuestions.Count == 1 ? "" : "s")</span>
+                    <i class="fa fa-chevron-down ia-chev"></i>
+                </div>
+                <div class="ia-card-body">
+                    @if (!Model.SampleQuestions.Any())
+                    {
+                        <div class="ia-empty ia-empty-neutral">No sample questions are configured for this skill channel yet.</div>
+                    }
+                    else
+                    {
+                        @* The overflow questions are rendered into the DOM and hidden by CSS, so
+                           "See all N" is a show(), never a network call. *@
+                        var rendered = 0;
+                        var groups = Model.SampleQuestions
+                            .GroupBy(q => string.IsNullOrWhiteSpace(q.SkillName) ? "Other" : q.SkillName)
+                            .ToList();
+
+                        foreach (var group in groups)
+                        {
+                            <div class="ia-qgroup">
+                                <div class="ia-qgroup-h">@group.Key</div>
+                                @foreach (var q in group)
+                                {
+                                    var overflow = rendered >= visibleCap;
+                                    rendered++;
+                                    <div class="ia-q @(overflow ? "ia-question-overflow" : "")">
+                                        <div class="ia-q-text">@q.QuestionText</div>
+                                        @if (!string.IsNullOrWhiteSpace(q.ExpectedAnswer))
+                                        {
+                                            <div class="ia-q-ans"><b>Looking for:</b> @q.ExpectedAnswer</div>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(q.VideoLink))
+                                        {
+                                            <div class="ia-q-video">
+                                                <a href="@q.VideoLink" target="_blank" rel="noopener">
+                                                    <i class="fa fa-play-circle"></i> Play question video
+                                                </a>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                        if (Model.SampleQuestions.Count > visibleCap)
+                        {
+                            <button type="button" class="ia-linkbtn" id="ia-show-all-questions">
+                                See all @Model.SampleQuestions.Count questions
+                            </button>
+                        }
+                    }
+                </div>
+            </div>
+
+            @* ── 6. Recent feedback ──────────────────────────────────── *@
+            <div class="ia-card" id="ia-section-feedback">
+                <div class="ia-card-head" data-ia-section="feedback">
+                    <h2 class="ia-card-title"><i class="fa fa-flag-o"></i>What went wrong before</h2>
+                    <span class="ia-card-count">@Model.FlaggedInterviews.Count flagged</span>
+                    <i class="fa fa-chevron-down ia-chev"></i>
+                </div>
+                <div class="ia-card-body">
+                    @if (!Model.FlaggedInterviews.Any())
+                    {
+                        <div class="ia-empty">
+                            <i class="fa fa-check-circle"></i>
+                            No issues flagged on your previous interviews on this IRF. Keep up the good work.
+                        </div>
+                    }
+                    else
+                    {
+                        foreach (var flagged in Model.FlaggedInterviews)
+                        {
+                            var toneClass = flagged.RiskCategory == "High" ? "ia-pill-high"
+                                : flagged.RiskCategory == "Medium" ? "ia-pill-medium" : "ia-pill-low";
+
+                            // Transcript findings go to the transcript analysis; everything else to
+                            // the AI client report. Both already accept the Interviewer profile.
+                            // Both actions take irfId as well as interviewId — TransciptAnalysis
+                            // would silently receive 0 for it otherwise.
+                            var detailsUrl = flagged.IsNegativeAITranscriptVerdict
+                                ? Url.Action("TransciptAnalysis", "AIScreener", new { interviewId = flagged.InterviewId, irfId = flagged.IrfIntId })
+                                : Url.Action("AIClientReport", "Interview", new { interviewId = flagged.InterviewId, irfId = flagged.IrfIntId, isOpenAIQC = true });
+
+                            <div class="ia-flag">
+                                <div class="ia-flag-h">
+                                    <div class="ia-flag-meta">
+                                        <strong>@flagged.CandidateCodedName</strong>
+                                        &middot; @flagged.InterviewDate.ToString("dd MMM yyyy")
+                                    </div>
+                                    <div>
+                                        <span class="ia-pill @toneClass">@flagged.RiskCategory</span>
+                                        <a class="ia-linkbtn" style="margin-left:10px;" href="@detailsUrl" target="_blank" rel="noopener">View details</a>
+                                    </div>
+                                </div>
+
+                                @if (flagged.Issues != null && flagged.Issues.Any())
+                                {
+                                    <ul class="ia-issues">
+                                        @foreach (var issue in flagged.Issues)
+                                        {
+                                            <li>@issue</li>
+                                        }
+                                    </ul>
+                                }
+
+                                @if (!string.IsNullOrWhiteSpace(flagged.AIReasoning))
+                                {
+                                    <div class="ia-reason">@flagged.AIReasoning</div>
+                                }
+                                else if (!string.IsNullOrWhiteSpace(flagged.QCComment))
+                                {
+                                    <div class="ia-reason">@flagged.QCComment</div>
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            @* ── 7. Own past performance ─────────────────────────────── *@
+            <div class="ia-card" id="ia-section-performance">
+                <div class="ia-card-head" data-ia-section="performance">
+                    <h2 class="ia-card-title"><i class="fa fa-line-chart"></i>How you have done on this IRF</h2>
+                    <i class="fa fa-chevron-down ia-chev"></i>
+                </div>
+                <div class="ia-card-body">
+                    @if (isFirstTimer)
+                    {
+                        <div class="ia-empty ia-empty-neutral">
+                            This is your first interview on this IRF, so there is nothing to summarise yet.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="ia-stats">
+                            <div class="ia-stat">
+                                <div class="ia-stat-v">@perf.TotalInterviews</div>
+                                <div class="ia-stat-l">Past interviews on this IRF</div>
+                            </div>
+                            <div class="ia-stat">
+                                <div class="ia-stat-v">@perf.TotalCompleted</div>
+                                <div class="ia-stat-l">Completed</div>
+                            </div>
+                            <div class="ia-stat">
+                                <div class="ia-stat-v">@perf.TotalSelects</div>
+                                <div class="ia-stat-l">Selected</div>
+                            </div>
+                            <div class="ia-stat">
+                                <div class="ia-stat-v">@perf.TotalRejects</div>
+                                <div class="ia-stat-l">Rejected</div>
+                            </div>
+                            <div class="ia-stat">
+                                <div class="ia-stat-v">
+                                    @(perf.AverageAIReportScore.HasValue ? perf.AverageAIReportScore.Value.ToString("0.#") : "—")
+                                </div>
+                                <div class="ia-stat-l">Average AI report score <br />across @perf.AIReportScoredInterviews scored</div>
+                            </div>
+                            <div class="ia-stat">
+                                <div class="ia-stat-v">
+                                    @(perf.AverageCandidateRating.HasValue ? perf.AverageCandidateRating.Value.ToString("0.#") : "—")<small> / 5</small>
+                                </div>
+                                <div class="ia-stat-l">Average candidate rating <br />from @perf.CandidateRatingResponses response@(perf.CandidateRatingResponses == 1 ? "" : "s")</div>
+                            </div>
+                            <div class="ia-stat">
+                                <div class="ia-stat-v">@perf.ConcerningRiskCount</div>
+                                <div class="ia-stat-l">Interviews with two or more signals</div>
+                            </div>
+                            <div class="ia-stat">
+                                <div class="ia-stat-v">@(perf.SuspiciousCount + perf.RedoCount + perf.LowRatedCount + perf.NegativeAIVerdictCount)</div>
+                                <div class="ia-stat-l">Signals in total<br />across all past interviews</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @* ── Full rubric drawer ──────────────────────────────────── *@
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="ia-rubric-drawer" style="width:min(560px,92vw);">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title">Full rubric</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    @foreach (var skill in Model.RubricSkills)
+                    {
+                        <div style="margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid #eef0f3;">
+                            <div class="ia-skill-name" style="font-size: 15px;">
+                                @(string.IsNullOrWhiteSpace(skill.SkillName) ? "—" : skill.SkillName)
+                                <span class="ia-pill @(skill.SkillSet > 1 ? "ia-pill-secondary" : "ia-pill-primary")" style="margin-left:6px;">
+                                    @(skill.SkillSet > 1 ? "Secondary" : "Primary")
+                                </span>
+                                @if (skill.IsEliminationSkill)
+                                {
+                                    <span class="ia-pill ia-pill-elim">Elimination</span>
+                                }
+                            </div>
+                            <div class="ia-fact-l" style="margin-top:8px;">Level</div>
+                            <div style="font-size: 14px;color:#334155;">@(string.IsNullOrWhiteSpace(skill.LevelName) ? "—" : skill.LevelName)</div>
+
+                            @if (!string.IsNullOrWhiteSpace(skill.Concepts))
+                            {
+                                <div class="ia-fact-l" style="margin-top:8px;">Concepts</div>
+                                <div style="font-size: 14px;color:#334155;white-space:pre-line;">@skill.Concepts</div>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(skill.NatureOfQuestion))
+                            {
+                                <div class="ia-fact-l" style="margin-top:8px;">Nature of question</div>
+                                <div style="font-size: 14px;color:#334155;white-space:pre-line;">@skill.NatureOfQuestion</div>
+                            }
+                            @if (skill.TimeLimit.HasValue && skill.TimeLimit.Value > 0)
+                            {
+                                <div class="ia-fact-l" style="margin-top:8px;">Time limit</div>
+                                <div style="font-size: 14px;color:#334155;">@skill.TimeLimit.Value min</div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @* ── One-time trial onboarding modal ─────────────────────── *@
+            @if (Model.ShowTrialOnboardingModal)
+            {
+                <div class="modal fade" id="ia-trial-onboarding" tabindex="-1"
+                     data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Before your first trial interview</h5>
+                            </div>
+                            <div class="modal-body" style="font-size: 14.5px;line-height:1.6;color:#334155;">
+                                <p>
+                                    This is your first trial interview on Risebird. Trial interviews are conducted
+                                    exactly like regular ones &mdash; the same rubric, the same questions, the same report.
+                                </p>
+                                <p>
+                                    What differs is that your conduct on trial interviews is reviewed before you are
+                                    confirmed for regular assignments on this channel. Please read the briefing on this
+                                    page before you join.
+                                </p>
+                                @if (hasPolicyUrl)
+                                {
+                                    <p><a href="@Model.TrialPolicyUrl" target="_blank" rel="noopener">Read the full trial policy</a></p>
+                                }
+                                else
+                                {
+                                    <p class="ia-trial-nolink">Full trial policy page is not published yet.</p>
+                                }
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" id="ia-trial-ack">I understand</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // The Bootstrap bundle loads after RenderBody in _Layout, so this must stay in the
+        // Scripts section. Inline in the body it produces "bootstrap is not defined".
+        (function () {
+            'use strict';
+
+            var STORAGE_KEY = 'ia-collapsed-sections';
+
+            // Collapse state is per browser session by design - the spec does not want it to
+            // persist across meetings. Wrapped because a browser blocking storage should just
+            // mean sections default to expanded, not a broken page.
+            function readCollapsed() {
+                try {
+                    return JSON.parse(sessionStorage.getItem(STORAGE_KEY) || '{}') || {};
+                } catch (e) {
+                    return {};
+                }
+            }
+
+            function writeCollapsed(state) {
+                try {
+                    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                } catch (e) { /* storage blocked - state is simply not remembered */ }
+            }
+
+            var collapsed = readCollapsed();
+
+            $('.ia-card-head').each(function () {
+                var $head = $(this);
+                var key = $head.data('ia-section');
+                var $body = $head.next('.ia-card-body');
+
+                if (key && collapsed[key]) {
+                    $head.addClass('collapsed');
+                    $body.hide();
+                }
+
+                $head.on('click', function (e) {
+                    // Let the "Full rubric" button inside a body work without toggling.
+                    if ($(e.target).closest('.ia-linkbtn').length) { return; }
+
+                    $body.slideToggle(120);
+                    $head.toggleClass('collapsed');
+
+                    if (key) {
+                        collapsed[key] = $head.hasClass('collapsed');
+                        writeCollapsed(collapsed);
+                    }
+                });
+            });
+
+            // The overflow questions are already in the DOM, hidden by CSS. No network call.
+            $('#ia-show-all-questions').on('click', function () {
+                $('.ia-question-overflow').show();
+                $(this).hide();
+            });
+
+            // Candidate clock. A fixed-offset clock computed from the offset stored at
+            // scheduling time - it will be an hour out if the candidate's region changed DST
+            // since then. Accepted rather than adding a timezone lookup, because the interview
+            // is imminent whenever this page is open.
+            var $clock = $('#ia-candidate-clock');
+            if ($clock.length) {
+                var offsetMinutes = parseInt($('#ia-candidate-offset').val(), 10);
+                if (!isNaN(offsetMinutes)) {
+                    var tick = function () {
+                        var d = new Date(Date.now() - offsetMinutes * 60000);
+                        var hh = ('0' + d.getUTCHours()).slice(-2);
+                        var mm = ('0' + d.getUTCMinutes()).slice(-2);
+                        $clock.text(hh + ':' + mm);
+                    };
+                    tick();
+                    setInterval(tick, 30000);
+                }
+            }
+
+            // One-time trial onboarding.
+            var modalEl = document.getElementById('ia-trial-onboarding');
+            if (modalEl && typeof bootstrap !== 'undefined') {
+                var modal = new bootstrap.Modal(modalEl);
+                modal.show();
+
+                $('#ia-trial-ack').on('click', function () {
+                    var $btn = $(this);
+                    $btn.prop('disabled', true).text('Saving...');
+
+                    $.ajax({
+                        url: '@Url.Action("AcknowledgeTrialOnboarding", "Interview")',
+                        type: 'POST'
+                    }).done(function (res) {
+                        if (res && res.acknowledged) {
+                            modal.hide();
+                        } else {
+                            // Never trap the interviewer behind a static backdrop.
+                            $btn.prop('disabled', false).text('I understand');
+                        }
+                    }).fail(function () {
+                        $btn.prop('disabled', false).text('I understand');
+                    });
+                });
+            }
+        })();
+    </script>
+}

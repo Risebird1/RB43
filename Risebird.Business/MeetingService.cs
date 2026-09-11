@@ -5243,6 +5243,109 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
+
+        #region Interview Alignment page
+
+        /// <inheritdoc/>
+        public async Task<InterviewAlignmentVM> GetInterviewAlignmentDetails(int interviewId, string interviewerEmail)
+        {
+            var model = await _meetingRespository.GetInterviewAlignmentDetails(interviewId, interviewerEmail);
+
+            // A data error or an unauthorised caller both collapse to the same empty model, so
+            // the controller and the view never see a half-populated one.
+            if (model == null || model.Context == null)
+            {
+                return new InterviewAlignmentVM { IsAssignedInterviewer = false };
+            }
+
+            foreach (var skill in model.RubricSkills)
+            {
+                skill.LevelName = DescribeRubricLevel(skill.LevelId);
+            }
+
+            foreach (var flagged in model.FlaggedInterviews)
+            {
+                flagged.Issues = DescribeConcerningSignals(flagged);
+            }
+
+            if (model.PerformanceSummary == null)
+            {
+                model.PerformanceSummary = new InterviewAlignmentPerformanceSummary();
+            }
+
+            return model;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> SaveTrialOnboardingAcknowledgement(string interviewerEmail, string policyVersion)
+        {
+            return await _meetingRespository.SaveTrialOnboardingAcknowledgement(interviewerEmail, policyVersion);
+        }
+
+        /// <summary>
+        /// Rubric level wording comes from the existing LevelTechEnum ladder - Novice,
+        /// Advanced, Competent, Proficient, Expert - not a new enum. System.Enum is fully
+        /// qualified because Risebird.Entities.Enum is imported in this file and would
+        /// otherwise win the name lookup.
+        /// </summary>
+        private static string DescribeRubricLevel(int? levelId)
+        {
+            if (!levelId.HasValue)
+            {
+                return null;
+            }
+
+            if (!System.Enum.IsDefined(typeof(LevelTechEnum), levelId.Value))
+            {
+                return null;
+            }
+
+            return ((LevelTechEnum)levelId.Value).GetDescription();
+        }
+
+        /// <summary>
+        /// The human wording for each concerning signal. This is the only place the row copy
+        /// lives - the view renders the strings verbatim.
+        /// </summary>
+        private static List<string> DescribeConcerningSignals(InterviewAlignmentFlaggedInterview flagged)
+        {
+            var issues = new List<string>();
+            if (flagged == null)
+            {
+                return issues;
+            }
+
+            if (flagged.IsSuspiciousQC)
+            {
+                issues.Add("QC review flagged something suspicious in this interview.");
+            }
+
+            if (flagged.IsRedo)
+            {
+                issues.Add("This interview had to be redone.");
+            }
+
+            if (flagged.IsLowCandidateRating)
+            {
+                issues.Add(flagged.CandidateRating.HasValue
+                    ? string.Format("The candidate rated this interview {0} out of 5.", flagged.CandidateRating.Value)
+                    : "The candidate rated this interview poorly.");
+            }
+
+            if (flagged.IsNegativeAIReportVerdict)
+            {
+                issues.Add("The AI review of your report returned a negative verdict.");
+            }
+
+            if (flagged.IsNegativeAITranscriptVerdict)
+            {
+                issues.Add("The AI review of the transcript found issues worth looking at.");
+            }
+
+            return issues;
+        }
+
+        #endregion
     }
 }
 

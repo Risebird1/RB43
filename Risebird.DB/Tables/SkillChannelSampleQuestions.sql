@@ -187,3 +187,18 @@ End
 GO
 
 
+
+-- Interview Alignment page: thumbnail for the sample-question video.
+-- ExpectedAnswer and AIQuestionVideoLink already exist on this table, so only the
+-- thumbnail is new. The alignment procedure reads the video from AIQuestionVideoLink
+-- rather than adding a second column for the same thing.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ThumbnailLink')
+      AND Object_ID = Object_ID(N'SkillChannelSampleQuestions'))
+BEGIN
+    ALTER TABLE SkillChannelSampleQuestions
+    Add ThumbnailLink varchar(1000) NULL
+END
+GO

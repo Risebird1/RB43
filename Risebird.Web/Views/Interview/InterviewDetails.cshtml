@@ -99,6 +99,20 @@
             <div>
                 <a style="float: none;margin: 0px auto 20px auto;width: 245px;" target="_blank" id="join-button" class="join-button" onclick="CaptureMeetingOpenTime('@ViewBag.InterviewId')" title="Meeting Link" href=@Model.zoomLink>Join Zoom Meeting now</a>
             </div>
+            @* Entry point for the Interview Alignment briefing. A sibling of the join button,
+               never a gate on it - the interviewer can join without opening this. Alignment
+               takes only interviewId and resolves the IRF itself. *@
+            @if (ViewBag.InterviewId != null)
+            {
+                <div style="text-align:center;margin:-8px auto 20px auto;">
+                    <a style="text-decoration:underline;color:#039BE5;font-size:14px;"
+                       target="_blank" rel="noopener"
+                       title="Interview alignment briefing"
+                       href="@Url.Action("Alignment", "Interview", new { interviewId = ViewBag.InterviewId })">
+                        Open interview alignment briefing
+                    </a>
+                </div>
+            }
             @*}*@
             @*  else
         {

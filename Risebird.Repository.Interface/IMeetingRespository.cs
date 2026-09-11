@@ -408,5 +408,18 @@ namespace Risebird.Repository.Interface
             int?   rowsUpdated      = null,
             string errorMessage     = null,
             string callerIp         = null);
+
+        /// <summary>
+        /// One round trip for the Interview Alignment briefing. Returns null on a data error.
+        /// Authorisation lives in usp_GetInterviewAlignmentDetails: a caller who is not the
+        /// assigned interviewer gets a model with IsAssignedInterviewer = false.
+        /// </summary>
+        Task<InterviewAlignmentVM> GetInterviewAlignmentDetails(int interviewId, string interviewerEmail);
+
+        /// <summary>
+        /// Records the one-time trial onboarding acknowledgement. Returns the stored state,
+        /// so a repeat call still returns true.
+        /// </summary>
+        Task<bool> SaveTrialOnboardingAcknowledgement(string interviewerEmail, string policyVersion);
     }
 }

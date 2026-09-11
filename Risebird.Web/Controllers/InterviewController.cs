@@ -8807,6 +8807,106 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        #region Interview Alignment page
+
+        /// <summary>
+        /// The pre-meeting briefing an interviewer opens before conducting an interview.
+        /// Takes only interviewId and resolves the IRF itself, so no caller has to pass a
+        /// consistent irfIntId pair.
+        ///
+        /// Never returns a 500 to the interviewer: any failure falls through to the empty
+        /// model, which renders the "only available to the assigned interviewer" card. This
+        /// page is a sibling of the join flow, never a gate on it.
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Alignment(int interviewId)
+        {
+            try
+            {
+                // Session values in this app are stored JSON-quoted. The Replace is required,
+                // not a typo - the same pattern is used throughout this controller.
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+
+                if (string.IsNullOrEmpty(emailid) || string.IsNullOrEmpty(profileName))
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+                ViewBag.ProfileName = profileName;
+
+                if (profileName != ProfileNames.Interviewer)
+                {
+                    return View(new InterviewAlignmentVM { IsAssignedInterviewer = false });
+                }
+
+                var model = await _meetingService.GetInterviewAlignmentDetails(interviewId, emailid);
+                if (model == null)
+                {
+                    model = new InterviewAlignmentVM { IsAssignedInterviewer = false };
+                }
+
+                model.TrialPolicyUrl = _configuration["TrialPolicy:Url"];
+                model.TrialPolicyVersion = _configuration["TrialPolicy:Version"];
+                model.SampleQuestionsVisibleCap = GetSampleQuestionsVisibleCap();
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return View(new InterviewAlignmentVM { IsAssignedInterviewer = false });
+            }
+        }
+
+        /// <summary>
+        /// Records the one-time trial onboarding acknowledgement. No anti-forgery token,
+        /// matching the other JSON POSTs on this controller such as CaptureJoinMeetingTime.
+        /// </summary>
+        [Authorize]
+        [HttpPost]
+        public async Task<JsonResult> AcknowledgeTrialOnboarding()
+        {
+            try
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+
+                if (string.IsNullOrEmpty(emailid) || profileName != ProfileNames.Interviewer)
+                {
+                    return Json(new { acknowledged = false });
+                }
+
+                var acknowledged = await _meetingService.SaveTrialOnboardingAcknowledgement(
+                    emailid, _configuration["TrialPolicy:Version"]);
+
+                return Json(new { acknowledged });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { acknowledged = false });
+            }
+        }
+
+        /// <summary>
+        /// How many sample questions render before "See all N questions". Falls back to 8 on
+        /// a missing, non-numeric or non-positive value.
+        /// </summary>
+        private int GetSampleQuestionsVisibleCap()
+        {
+            const int fallback = 8;
+            var configured = _configuration["InterviewAlignment:SampleQuestionsVisibleCap"];
+            if (int.TryParse(configured, out var cap) && cap > 0)
+            {
+                return cap;
+            }
+            return fallback;
+        }
+
+        #endregion
+
         public async Task<IActionResult> InterviewDetails(int id, int interviewId)
         {
             ViewBag.id = id;

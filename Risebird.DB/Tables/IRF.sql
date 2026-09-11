@@ -880,3 +880,15 @@ BEGIN
     Add McqAssessmentMinutes int NULL
 END
 GO
+
+-- Interview Alignment page: trial detection flag. NULL means "not a trial IRF".
+-- Dependency of item 70, added here because item 70 has not shipped.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AITrialEnabled')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add AITrialEnabled bit NULL
+END

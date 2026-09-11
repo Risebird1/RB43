@@ -304,5 +304,11 @@ namespace Risebird.Business.Interface
         Task<CashfreePayoutResult> GetCashfreePayoutStatus(string transferId);
 
         CapCheckResult CheckInterviewerCapForAssignmentByMeeting(int meetingId, string interviewerEmail);
+
+        /// <summary>The Interview Alignment briefing, shaped for display. Never returns null.</summary>
+        Task<InterviewAlignmentVM> GetInterviewAlignmentDetails(int interviewId, string interviewerEmail);
+
+        /// <summary>Records the one-time trial onboarding acknowledgement.</summary>
+        Task<bool> SaveTrialOnboardingAcknowledgement(string interviewerEmail, string policyVersion);
     }
 }

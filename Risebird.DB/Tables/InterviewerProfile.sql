@@ -501,3 +501,36 @@ BEGIN
 END
 
 End
+
+-- Interview Alignment page: one-time trial onboarding acknowledgement.
+-- TrialOnboardingAcknowledgedOn is a consent record - when the interviewer agreed, and to
+-- which version of the policy. Dependency of item 68, added here because it has not shipped.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'TrialOnboardingAcknowledged')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add TrialOnboardingAcknowledged bit NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'TrialOnboardingAcknowledgedOn')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add TrialOnboardingAcknowledgedOn datetime NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'TrialOnboardingPolicyVersion')
+      AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile
+    Add TrialOnboardingPolicyVersion varchar(50) NULL
+END
