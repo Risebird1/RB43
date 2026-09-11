@@ -1,0 +1,867 @@
+{
+  "exportedAt": "2026-09-10T04:11:18.154+00:00",
+  "exportVersion": "1.1",
+  "metadata": {
+    "templateId": "cmmyfbq4q03fa0qkq9bgx6ljg",
+    "name": "Email classifier",
+    "description": "Classify incoming emails into Category A or B using AI, enabling efficient email management based on user-defined instructions.",
+    "emoji": "📝",
+    "type": "PLUSPLUS",
+    "revision": 16549,
+    "folder": {
+      "folderId": "cmou7zxd116ah0qm75sk66vgu",
+      "path": [
+        {
+          "folderId": "cmou7zxd116ah0qm75sk66vgu",
+          "name": "Customer Support Agent"
+        }
+      ]
+    }
+  },
+  "workflow": {
+    "metadata": {
+      "name": "Email classifier",
+      "description": "Classify incoming emails into Category A or B using AI, enabling efficient email management based on user-defined instructions."
+    },
+    "threads": [
+      {
+        "threadId": "main",
+        "ancestors": [],
+        "steps": [
+          {
+            "stepId": "trigger",
+            "stepType": "gmail.mailReceived",
+            "title": "Email received",
+            "description": "Checks connection periodically and starts run for detected events. Event is automatically detected, concrete implementation depends on integration. Filters are optional and can be used to further limit which events should trigger runs. Can only trigger once per Email.",
+            "connection": "cs@risebird.io (owned by Harshit Jajoo)",
+            "inputs": [
+              {
+                "input": "filter",
+                "$ref": "relay/filter",
+                "value": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "field": "From",
+                          "operator": "notContains",
+                          "value": "risebird.io"
+                        },
+                        {
+                          "field": "From",
+                          "operator": "notContains",
+                          "value": "google.com"
+                        },
+                        {
+                          "field": "Labels",
+                          "operator": "doesNotContainAnyOf",
+                          "value": [
+                            "Category Promotions",
+                            "Category Social",
+                            "Category Updates",
+                            "Category Forums"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "input": "onlyFirst",
+                "title": "Only trigger for first email in conversation",
+                "type": "boolean",
+                "value": false
+              }
+            ],
+            "effectiveOutputSchema": {
+              "$ref": "#/resource-types/gmail.mail"
+            }
+          },
+          {
+            "stepId": "ij845r",
+            "stepType": "break",
+            "stepNr": "Step 2",
+            "title": "End run if rules are met",
+            "inputs": [
+              {
+                "input": "action",
+                "description": "Stop: End run Continue: Only continue run",
+                "type": "string",
+                "enum": [
+                  "STOP_IF",
+                  "CONTINUE_IF"
+                ],
+                "title": "Action",
+                "value": "STOP_IF"
+              },
+              {
+                "input": "rule",
+                "$ref": "relay/rule",
+                "value": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "subject": {
+                            "ref": "trigger.Sender.Email"
+                          },
+                          "operator": "endsWith",
+                          "value": "@risebird.io"
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "subject": {
+                            "ref": "trigger.Sender.Email"
+                          },
+                          "operator": "endsWith",
+                          "value": "@gmail.com"
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "subject": {
+                            "ref": "trigger.Sender.Email"
+                          },
+                          "operator": "endsWith",
+                          "value": "@yahoo.com"
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "subject": {
+                            "ref": "trigger.Sender.Email"
+                          },
+                          "operator": "endsWith",
+                          "value": "@yahoo.in"
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "subject": {
+                            "ref": "trigger.Sender.Email"
+                          },
+                          "operator": "endsWith",
+                          "value": "@hotmail.com"
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "subject": {
+                            "ref": "trigger.Sender.Email"
+                          },
+                          "operator": "endsWith",
+                          "value": "@outlook.com"
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "subject": {
+                            "ref": "trigger.Sender.Email"
+                          },
+                          "operator": "endsWith",
+                          "value": "@icloud.com"
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "subject": {
+                            "ref": "trigger.Sender.Email"
+                          },
+                          "operator": "endsWith",
+                          "value": "\t@protonmail.com"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "stepId": "ne9em2",
+            "stepType": "customCode",
+            "stepNr": "Step 3",
+            "title": "Run custom JavaScript code",
+            "inputs": [
+              {
+                "input": "input",
+                "title": "Inputs",
+                "description": "Workflow data passed to the code function. Set as an object where each property name matches a parameter in the code function signature and each value is a reference.",
+                "type": "object",
+                "additionalProperties": true,
+                "value": {
+                  "emailBody": {
+                    "ref": "trigger.Body"
+                  }
+                }
+              },
+              {
+                "input": "code",
+                "type": "string",
+                "value": "/**\n * Add your custom code to this function.\n * @param {RelayApp.Input} input An object containing the values of the inputs configured for this step.\n * @returns {RelayApp.Output} Object containing configured output values.\n */\nexport default function runCode(input) {\n  const body = input[\"emailBody\"] || \"\";\n  const truncated =\n    body.length > 2700 ? body.substring(0, 2700) + \"... [truncated]\" : body;\n  return { truncatedBody: truncated };\n}\n"
+              }
+            ],
+            "userSchema": {
+              "type": "object",
+              "properties": {
+                "truncatedBody": {
+                  "type": "string"
+                }
+              },
+              "required": []
+            },
+            "effectiveOutputSchema": {
+              "$ref": "#/steps/ne9em2/user-schema"
+            }
+          },
+          {
+            "stepId": "azein8",
+            "stepType": "ai.prompt.object",
+            "stepNr": "Step 4",
+            "title": "Prompt GPT 5.4",
+            "inputs": [
+              {
+                "input": "model",
+                "description": "relay models use AI credits, user has no API keys configured. IMPORTANT: The current model \"relay.gpt-5.4\" is deprecated and should be updated. It cannot be used in new steps. Use \"relay.gpt-5.6-terra\" instead.",
+                "type": "string",
+                "enum": [
+                  "relay.claude-sonnet-5",
+                  "relay.claude-haiku-4-5",
+                  "relay.claude-opus-4-8",
+                  "relay.claude-fable-5",
+                  "relay.gemini-3.1-flash-lite",
+                  "relay.gemini-3.5-flash",
+                  "relay.gemini-3.1-pro",
+                  "relay.gpt-5.4-mini",
+                  "relay.gpt-5.4-nano",
+                  "relay.gpt-5.5-pro",
+                  "relay.gpt-5.6-sol",
+                  "relay.gpt-5.6-terra",
+                  "relay.gpt-5.6-luna",
+                  "relay.grok-4.3",
+                  "relay.gpt-5.4"
+                ],
+                "title": "Model",
+                "value": "relay.gpt-5.4"
+              },
+              {
+                "input": "prompt",
+                "title": "User prompt",
+                "type": "string",
+                "value": "\nPURPOSE\n-------\nYou are a Customer Support Email Triage Agent for Risebird.\nYour job is to:\n  1. Read each inbound support email\n  2. Determine whether the email is eligible for processing\n  3. Classify the email into a primary intent\n  4. Extract structured operational fields (including job title and skill channel ID)\n  5. Process attachments\n  6. Upload attachments to Google Drive\n  7. Return the Drive folder link and individual resume file links\n  8. Send the structured JSON payload to the Risebird webhook\n\nYou do NOT reply to customers.\n\n--------------------------------------------------------------------------------\nPART 0  EMAIL ELIGIBILITY FILTER (MANDATORY PRE-CHECK)\n--------------------------------------------------------------------------------\n\nBefore doing any classification or extraction, first determine whether the email\nis eligible for processing.\n\nProcess the email ONLY if it is a genuine external business/support email.\n\nDo NOT process the email as a valid support request if ANY of the following are true:\n  1. The sender domain is risebird.io\n  2. The sender email is from gmail.com, yahoo.com, hotmail.com, outlook.com, or icloud.com\n  3. The sender appears to be a Google Workspace / Google Admin / Google system email\n  4. The email is promotional, marketing, newsletter, campaign, forum digest,\n     subscription update, automated product update, or community update\n  5. The email is clearly spam, irrelevant, unsolicited sales, bulk outreach,\n     or non-actionable notification\n\nExamples of emails to EXCLUDE:\n  - Internal Risebird emails\n  - Personal Gmail / Yahoo / Hotmail emails\n  - Google Admin alerts\n  - Google Workspace notifications\n  - Newsletter subscriptions\n  - Product announcements\n  - Forum / community digests\n  - Promotional campaigns\n  - Automated marketing mails\n  - Spam / junk emails\n\nIf the email matches any exclusion rule:\n  - Do NOT treat it as a valid support workflow email\n  - Set webhook_intent             = \"Cold candidate\"\n  - Set job_title                  = null\n  - Set skill_channel_id           = null\n  - Set primary_specialization     = null\n  - Set mail_body_intent           = null\n  - Set attachment_job_description = false  (unless a qualifying attachment actually exists)\n  - Set attachment_pdf             = false  (unless a PDF actually exists)\n  - Set attachment_resumes         = false  (unless a resume/CV actually exists)\n  - Set drive_folder_link          = null   (unless attachments are intentionally processed)\n  - Set resume_drive_urls          = []\n  - Set resume_associations        = []\n  - Set summary_candidates         = null\n  - Set summary_interview_scores   = null\n  - Set summary_mail               = a brief reason for exclusion\n\nEligibility guidance:\n  - Prefer exclusion when the message is clearly automated, internal,\n    promotional, or irrelevant\n  - Only continue normal classification when the email is a real external\n    operational / customer request\n\n--------------------------------------------------------------------------------\nPART 1  WEBHOOK INTENT (PRIMARY & ONLY INTENT)\n--------------------------------------------------------------------------------\n\nClassify the email into EXACTLY one of the following 20 values for\n\"webhook_intent\":\n\n   1.  New interview request\n   2.  New candidate submission\n   3.  Candidate status update\n   4.  Candidate reports\n   5.  Stop interviews\n   6.  Cold candidate\n   7.  Interviewer misalignment\n   8.  Interviewer replacement\n   9.  Interviewer false negative\n  10.  Interviewer false positive\n  11.  Score rubric concerns\n  12.  Candidate bad experience with Risebird\n  13.  Candidate bad experience with interviewer\n  14.  Delay in scheduling\n  15.  Delay in getting interviews started\n  16.  Delay in report sharing\n  17.  Good experience with Risebird\n  18.  Poor experience with Risebird support team\n  19.  Interviewer no-show\n  20.  Quality control issues\n\nRules:\n  - Choose EXACTLY one intent\n  - Pick the PRIMARY ask\n  - If multiple issues are mentioned, choose the most urgent or the first one raised\n  - Do NOT invent new categories\n  - If the email is empty, unreadable, or spam-like -> webhook_intent = \"Cold candidate\"\n\nIMPORTANT DISTINCTION FOR \"New interview request\":\n  - This intent covers TWO scenarios:\n    1. REQUEST TO CREATE A NEW SKILL CHANNEL ? sender is asking to create a new\n       channel/requirement. This typically includes a JD (job description) attachment.\n    2. ADDING RESUMES TO AN EXISTING CHANNEL ? sender is adding candidate resumes \n       for an existing channel. This typically has resumes attached but NO JD.\n  - Both scenarios use the SAME intent (\"New interview request\"), but the\n    attachment_job_description field will differ:\n      - Scenario 1 (new channel request): attachment_job_description = true\n      - Scenario 2 (adding to existing):  attachment_job_description = false\n  - This distinction is CRITICAL for downstream processing.\n\n--------------------------------------------------------------------------------\nPART 2  JOB TITLE\n--------------------------------------------------------------------------------\n\nExtract \"job_title\" as the specific role / position title being requested or\ndiscussed in the email.\n\nExamples:\n  - Angular Developer\n  - Senior Java Backend Engineer\n  - AWS DevOps\n  - SAP FI Consultant\n  - Python Data Engineer\n  - Oracle DBA\n\nRules:\n  - Extract the most specific role title from the subject line or body\n  - Prefer the subject line over the body when both mention a role\n  - Strip email prefixes such as \"RE:\", \"FW:\", \"AW:\" and company names\n  - Do NOT include seniority words like \"Senior\", \"Jr.\", \"Lead\" unless they are\n    the only identifier (e.g. \"Lead Consultant\" is fine; \"Senior Angular Developer\"\n    -> \"Angular Developer\" is preferred)\n  - If no role title is clearly identifiable, set to null\n  - This field is critical for \"New candidate submission\" and \"New interview request\"\n    intents ? extract it carefully for those emails\n\n--------------------------------------------------------------------------------\nPART 3  SKILL CHANNEL ID  (*** NEW FIELD ***)\n--------------------------------------------------------------------------------\n\nExtract \"skill_channel_id\" if the sender has explicitly mentioned a Risebird\nSkill Channel ID anywhere in the email subject or body.\n\nWhat a Skill Channel ID looks like:\n  - Exactly 10 characters long\n  - Contains only letters (A-Z, a-z) and digits (0-9) ? no spaces or symbols\n  - Examples: QUADRJAVA5, KPRISMRIC4, QUAJAVASER, DOTNETCORE\n\nRules:\n  - Scan the subject line and body for any standalone 10-character alphanumeric token\n  - Only extract it if the context makes it clear it is a Skill Channel / IRF reference\n    (e.g. the sender writes \"for channel QUADRJAVA5\", \"IRF: KPRISMRIC4\",\n    \"skill channel DOTNETCORE\", or simply mentions it alongside a role or request)\n  - If found, return the ID exactly as written (preserve original casing)\n  - If no such code is clearly mentioned or identifiable, set to null\n  - Do NOT guess ? only extract when you are confident it is a Skill Channel ID\n\n--------------------------------------------------------------------------------\nPART 4  PRIMARY SPECIALIZATION\n--------------------------------------------------------------------------------\n\nExtract \"primary_specialization\" as a free-text skill / domain field.\n\nExamples:\n  - SAP FI\n  - Android\n  - Java + Spring Boot\n  - Data Engineering\n  - PHP/Drupal\n\nRules:\n  - Extract the dominant or most relevant skill / domain\n  - If multiple are present, choose the most central one\n  - If none is mentioned, set to null\n\n--------------------------------------------------------------------------------\nPART 5  MAIL BODY INTENT\n--------------------------------------------------------------------------------\n\nExtract \"mail_body_intent\" as a concise free-text description of the email's\ncore request, issue, complaint, or update.\n\nRules:\n  - Keep it short and specific\n  - This is an auxiliary analytical field\n  - It does NOT replace webhook_intent\n  - If unclear, set to null\n\n--------------------------------------------------------------------------------\nPART 6  SUMMARIES\n--------------------------------------------------------------------------------\n\n1. summary_mail\n   A concise 1-3 line summary of the email.\n\n2. summary_candidates\n   Candidate-related information, if present, such as:\n     - Candidate names\n     - Candidate count\n     - Role\n     - Experience level\n     - Current status (shortlisted / rejected / pending)\n   If not present, set to null.\n\n3. summary_interview_scores\n   Interview scoring / rubric / evaluation details, if present, such as:\n     - Score details\n     - Rubric concerns\n     - False positive / false negative mentions\n     - Interviewer feedback quality issues\n   If not present, set to null.\n\n--------------------------------------------------------------------------------\nPART 7  ATTACHMENT + GOOGLE DRIVE PROCESSING  (*** UPDATED ***)\n--------------------------------------------------------------------------------\n\nFor every eligible email:\n  1. Extract all attachments\n  2. Filter: only process .pdf, .doc, and .docx files\n  3. Upload qualifying attachments to Google Drive\n  4. Create or use a Drive folder for that email\n  5. Return the Drive folder link\n  6. For each uploaded resume/CV file, capture its individual Drive file link\n\nFields:\n\n  - attachment_job_description\n    Set to true if any attachment appears to be a job description, hiring brief,\n    role requirement, or JD document. Otherwise false.\n\n  - attachment_pdf\n    Set to true if any attachment is a PDF. Otherwise false.\n\n  - attachment_resumes\n    Set to true if one or more attachments appear to be resumes, CVs, or\n    candidate profiles. Otherwise false.\n    \n    IMPORTANT: For \"New candidate submission\" or \"New interview request\" intents,\n    be INCLUSIVE when identifying resumes:\n      - Resume filenames are often just the candidate's name + role (e.g., \n        \"John_Smith_Java_Developer.pdf\", \"ABUTHAHIRM[5y_6m] - Azure Developer.pdf\")\n      - They do NOT always contain words like \"resume\", \"cv\", or \"profile\"\n      - For these two intents: treat ALL PDF/DOC/DOCX attachments as resumes\n        UNLESS the filename clearly indicates it's a JD (contains \"JD\", \n        \"job description\", \"requirement\", \"hiring brief\")\n      - Set attachment_resumes = true if ANY such files exist\n\n  - drive_folder_link\n    Set this to the Google Drive folder link where the attachments were uploaded.\n    If no attachments exist and no folder is created, set to null.\n\n  - resume_drive_urls  (DEPRECATED - use resume_associations instead)\n    Legacy array of individual Google Drive file URLs for resume files.\n    Set to [] (empty array).\n\n  - resume_associations  (*** NEW - REPLACES resume_drive_urls ***)\n    An array of objects where EACH resume is mapped to its intended IRF/skill channel.\n    This is CRITICAL: different resumes in the same email may be intended for \n    DIFFERENT skill channels/roles. You MUST analyze the email body to determine\n    which resume belongs to which role.\n\n    For each uploaded resume:\n      1. Identify the candidate name from the filename or email body\n      2. Determine which skill channel / job title this resume is intended for\n         by reading the email body context\n      3. Extract the skill_channel_id (10-char alphanumeric code) if mentioned\n      4. Extract the job_title for this specific resume\n\n    Structure:\n    \"resume_associations\": [\n      {\n        \"resume_url\": \"https://drive.google.com/file/d/abc123/view\",\n        \"skill_channel_id\": \"JavaDev123\" or null,\n        \"job_title\": \"Java Developer\",\n        \"candidate_name\": \"John Smith\"\n      },\n      {\n        \"resume_url\": \"https://drive.google.com/file/d/def456/view\",\n        \"skill_channel_id\": \"PythDev98\" or null,\n        \"job_title\": \"Python Developer\",\n        \"candidate_name\": \"Jane Doe\"\n      }\n    ]\n\n    IMPORTANT RULES:\n    - Parse the email body to understand which resume is for which role\n    - Look for patterns like \"Resume for Java Developer role: John Smith\"\n    - Look for skill channel IDs (10-char codes) mentioned near candidate names\n    - If the email mentions multiple roles, each resume should be mapped to its role\n    - If you cannot determine the job_title for a specific resume, set it to null\n    - If all resumes are for the same role, they should all have the same job_title\n    - skill_channel_id should only be set if explicitly mentioned in the email\n\n    Set to [] (empty array) if no attachments exist or the intent is neither\n    \"New candidate submission\" nor \"New interview request\".\n\nAttachment handling rules:\n  - Only upload .pdf, .doc, .docx files (enforced by loop filter)\n  - Preserve original filenames wherever possible\n  - Use the Drive folder as the canonical storage location\n  - If attachments exist for an eligible email, drive_folder_link must not be null\n\n--------------------------------------------------------------------------------\nPART 8  CANDIDATE SCHEDULING DATA EXTRACTION (*** NEW ***)\n--------------------------------------------------------------------------------\n\nWhen the email intent is \"New candidate submission\" or \"New interview request\",\nAND the email contains interview scheduling information (available slots/times),\nextract structured candidate scheduling data.\n\nCRITICAL: This data is used for AUTO-SCHEDULING interviews. Only extract when\nyou have 100% CONFIDENCE in ALL fields for a candidate. If ANY field is uncertain\nfor a candidate, DO NOT include that candidate in the array.\n\nFields to extract for each candidate:\n\n  - candidate_name:       Full name of the candidate (REQUIRED - 100% confidence)\n  - candidate_email:      Email address if mentioned (null if not explicitly stated)\n  - interview_date:       Date in YYYY-MM-DD format (REQUIRED - 100% confidence)\n  - interview_time:       Time in HH:MM format, 24-hour (REQUIRED - 100% confidence)\n  - timezone:             Timezone code (default \"IST\" if not specified)\n  - skill_channel_id:     10-character IRF ID for THIS candidate (REQUIRED - 100% confidence)\n  - resume_drive_url:     The specific Google Drive URL for THIS candidate's resume\n\nRules:\n  - Only extract candidates where you can CONFIDENTLY match:\n    * Name to a specific resume attachment\n    * Date and time slot to that candidate\n    * Skill Channel ID to that candidate (may be same for all or different)\n  \n  - If the email mentions multiple candidates with different slots/IRFs, extract each separately\n  \n  - If you CANNOT confidently associate a resume with a candidate, set resume_drive_url to null\n  \n  - Date/Time parsing examples:\n    * \"available on 5th April at 2 PM IST\" -> date: \"2026-04-05\", time: \"14:00\", timezone: \"IST\"\n    * \"tomorrow 10:30 AM\" -> calculate actual date, time: \"10:30\"\n    * \"March 15, 2026 at 3:00 PM\" -> date: \"2026-03-15\", time: \"15:00\"\n  \n  - If candidate has multiple available slots, pick the FIRST mentioned slot\n  \n  - If timezone is not specified, default to \"IST\"\n  \n  - NEVER guess or infer. Only extract with 100% certainty.\n\nOutput format:\n  \"candidate_schedule_data\": [\n    {\n      \"candidate_name\": \"John Doe\",\n      \"candidate_email\": \"john.doe@example.com\",\n      \"interview_date\": \"2026-04-05\",\n      \"interview_time\": \"14:00\",\n      \"timezone\": \"IST\",\n      \"skill_channel_id\": \"QUADRJAVA5\",\n      \"resume_drive_url\": \"https://drive.google.com/file/d/xxx/view\"\n    }\n  ]\n\nSet to empty array [] if:\n  - Intent is not \"New candidate submission\" or \"New interview request\"\n  - No scheduling information is present in the email\n  - Cannot extract data with 100% confidence for any candidate\n\n--------------------------------------------------------------------------------\nPART 9  CLASSIFICATION FLOW\n--------------------------------------------------------------------------------\n\n  1.  Read the email\n  2.  Run the mandatory email eligibility filter (Part 0)\n  3.  If excluded -> assign webhook_intent = \"Cold candidate\" and stop\n  4.  If eligible -> assign webhook_intent using the 20-category list (Part 1)\n  5.  Extract job_title (Part 2)\n  6.  Extract skill_channel_id (Part 3)\n  7.  Extract primary_specialization (Part 4)\n  8.  Extract mail_body_intent (Part 5)\n  9.  Generate summaries (Part 6)\n  10. Process and upload attachments (Part 7)\n  11. Collect individual resume Drive URLs into resume_drive_urls (Part 7)\n  12. Extract candidate scheduling data if applicable (Part 8) ? 100% CONFIDENCE ONLY\n  13. Populate the final JSON (Part 10)\n  14. Send the webhook payload\n\n--------------------------------------------------------------------------------\nPART 10  FINAL OUTPUT JSON  (*** UPDATED ***)\n--------------------------------------------------------------------------------\n\n{\n  \"sender_email\":               \"\\{{trigger.from_email}}\",\n  \"subject\":                    \"\\{{trigger.subject}}\",\n  \"mail_content\":               \"\\{{trigger.body_text}}\",\n  \"received_at\":                \"\\{{trigger.date}}\",\n  \"webhook_intent\":             \"<one of the 20 categories above>\",\n  \"job_title\":                  \"<string or null>\",\n  \"skill_channel_id\":           \"<string or null>\",\n  \"primary_specialization\":     \"<string or null>\",\n  \"mail_body_intent\":           \"<string or null>\",\n  \"attachment_job_description\": <true|false>,\n  \"attachment_pdf\":             <true|false>,\n  \"attachment_resumes\":         <true|false>,\n  \"drive_folder_link\":          \"<string or null>\",\n  \"resume_drive_urls\":          [],\n  \"resume_associations\":        [\n    {\n      \"resume_url\":        \"<Google Drive URL>\",\n      \"skill_channel_id\":  \"<10-char string or null>\",\n      \"job_title\":         \"<string or null>\",\n      \"candidate_name\":    \"<string or null>\"\n    }\n  ],\n  \"summary_mail\":               \"<string>\",\n  \"summary_candidates\":         \"<string or null>\",\n  \"summary_interview_scores\":   \"<string or null>\",\n  \"candidate_schedule_data\":    [\n    {\n      \"candidate_name\":      \"<string>\",\n      \"candidate_email\":     \"<string or null>\",\n      \"interview_date\":      \"<YYYY-MM-DD>\",\n      \"interview_time\":      \"<HH:MM>\",\n      \"timezone\":            \"<string, default IST>\",\n      \"skill_channel_id\":    \"<10-char string>\",\n      \"resume_drive_url\":    \"<string or null>\"\n    }\n  ]\n}\n\n{{trigger.Subject}}\n{{trigger.Send date/time}}\n{{ne9em2.truncatedBody}}\n\n"
+              },
+              {
+                "input": "codeSandbox",
+                "description": "Recommendation: OFF, The task involves processing email text, classifying intents, and extracting structured fields. While attachments will be uploaded to Google Drive, the AI doesn't need a sandbox to read or process emails or generate JSON output; the model can handle text classification and data extraction natively.",
+                "type": "string",
+                "enum": [
+                  "AUTO",
+                  "OFF",
+                  "ON"
+                ],
+                "value": "AUTO"
+              },
+              {
+                "input": "webAccess",
+                "description": "Recommendation: OFF, The task is to process and classify support emails locally, extract structured data, and upload attachments to Google Drive. No web search or external information retrieval is needed—all information comes from the email content itself.",
+                "type": "string",
+                "enum": [
+                  "AUTO",
+                  "OFF",
+                  "ON"
+                ],
+                "value": "AUTO"
+              },
+              {
+                "input": "review",
+                "title": "Review (human-in-the-loop)",
+                "type": "string",
+                "enum": [
+                  "OFF",
+                  "ON"
+                ],
+                "value": "OFF"
+              },
+              {
+                "input": "knowledgeSources",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "title": "Knowledge item ID",
+                  "remoteEnumId": "relay.knowledgeSources"
+                },
+                "value": []
+              },
+              {
+                "input": "outputMode",
+                "type": "string",
+                "enum": [
+                  "text",
+                  "object"
+                ],
+                "value": "object"
+              },
+              {
+                "input": "reasoningEffort",
+                "description": "Defaults to low.",
+                "type": "string",
+                "enum": [
+                  "MINIMAL",
+                  "LOW",
+                  "MEDIUM",
+                  "HIGH"
+                ],
+                "title": "Reasoning effort",
+                "value": null
+              },
+              {
+                "input": "maxTokens",
+                "description": "Defaults to unrestricted.",
+                "type": "number",
+                "title": "Max output tokens",
+                "value": null
+              }
+            ],
+            "userSchema": {
+              "type": "object",
+              "title": "Response",
+              "properties": {
+                "sender_email": {
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string"
+                },
+                "mail_content": {
+                  "type": "string"
+                },
+                "received_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "webhook_intent": {
+                  "type": "string",
+                  "enum": [
+                    "New interview request",
+                    "New candidate submission",
+                    "Candidate status update",
+                    "Candidate reports",
+                    "Stop interviews",
+                    "Cold candidate",
+                    "Interviewer misalignment",
+                    "Interviewer replacement",
+                    "Interviewer false negative",
+                    "Interviewer false positive",
+                    "Score rubric concerns",
+                    "Candidate bad experience with Risebird",
+                    "Candidate bad experience with interviewer",
+                    "Delay in scheduling",
+                    "Delay in getting interviews started",
+                    "Delay in report sharing",
+                    "Good experience with Risebird",
+                    "Poor experience with Risebird support team",
+                    "Interviewer no-show",
+                    "Quality control issues"
+                  ]
+                },
+                "job_title": {
+                  "type": "string"
+                },
+                "skill_channel_id": {
+                  "type": "string"
+                },
+                "primary_specialization": {
+                  "type": "string"
+                },
+                "mail_body_intent": {
+                  "type": "string"
+                },
+                "attachment_job_description": {
+                  "type": "boolean"
+                },
+                "attachment_pdf": {
+                  "type": "boolean"
+                },
+                "attachment_resumes": {
+                  "type": "boolean"
+                },
+                "drive_folder_link": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "resume_drive_urls": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uri"
+                  }
+                },
+                "resume_associations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "resume_url": {
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      "skill_channel_id": {
+                        "type": "string"
+                      },
+                      "job_title": {
+                        "type": "string"
+                      },
+                      "candidate_name": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "resume_url",
+                      "skill_channel_id",
+                      "job_title",
+                      "candidate_name"
+                    ]
+                  }
+                },
+                "summary_mail": {
+                  "type": "string"
+                },
+                "summary_candidates": {
+                  "type": "string"
+                },
+                "summary_interview_scores": {
+                  "type": "string"
+                },
+                "candidate_schedule_data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "candidate_name": {
+                        "type": "string"
+                      },
+                      "candidate_email": {
+                        "type": "string",
+                        "format": "email"
+                      },
+                      "interview_date": {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      "interview_time": {
+                        "type": "string"
+                      },
+                      "timezone": {
+                        "type": "string"
+                      },
+                      "skill_channel_id": {
+                        "type": "string"
+                      },
+                      "resume_drive_url": {
+                        "type": "string",
+                        "format": "uri"
+                      }
+                    },
+                    "required": [
+                      "candidate_name",
+                      "interview_date",
+                      "interview_time",
+                      "timezone",
+                      "skill_channel_id"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "sender_email",
+                "subject",
+                "mail_content",
+                "received_at",
+                "webhook_intent",
+                "attachment_job_description",
+                "attachment_pdf",
+                "attachment_resumes",
+                "drive_folder_link",
+                "resume_drive_urls",
+                "resume_associations",
+                "summary_mail"
+              ]
+            },
+            "effectiveOutputSchema": {
+              "$ref": "#/steps/azein8/user-schema"
+            }
+          },
+          {
+            "stepId": "bl4utn",
+            "stepType": "drive.createFolder",
+            "stepNr": "Step 5",
+            "title": "Create folder",
+            "connection": "cs@risebird.io (owned by Harshit Jajoo)",
+            "inputs": [
+              {
+                "input": "title",
+                "title": "Folder title",
+                "type": "string",
+                "value": "Support - {{trigger.Subject}} -{{trigger.Send date/time}}"
+              },
+              {
+                "input": "parentType",
+                "title": "Parent of the new folder",
+                "type": "string",
+                "enum": [
+                  "Another folder",
+                  "A shared drive"
+                ],
+                "value": "Another folder"
+              },
+              {
+                "input": "parent",
+                "title": "Parent folder",
+                "description": "If unset: Create as top-level folder (My Drive)",
+                "type": "resource",
+                "resourceTypeId": "drive.folder",
+                "value": {
+                  "pointer": "drive.folder/1ELqUDJy0TyVQ27HCGxI_aafZXkEb8jYa",
+                  "label": "RB Iaas Recruiter Support"
+                }
+              }
+            ],
+            "effectiveOutputSchema": {
+              "$ref": "#/resource-types/drive.folder"
+            }
+          },
+          {
+            "stepId": "o78wj4",
+            "stepType": "iterator",
+            "stepNr": "Step 6",
+            "title": "For each item in {scope} run these steps",
+            "scope": {
+              "title": "List",
+              "description": "List of items to iterate over. This can only be set to a reference to a list from another step. To loop over a constant list, use a 'transform' step to create the constant.",
+              "type": "array",
+              "items": {
+                "type": "any"
+              },
+              "value": {
+                "ref": "trigger.Attachments"
+              }
+            },
+            "inputs": [
+              {
+                "input": "filter",
+                "$ref": "relay/filter"
+              },
+              {
+                "input": "execution",
+                "description": "Prefer parallel unless sequential execution is required",
+                "type": "string",
+                "enum": [
+                  "PARALLEL",
+                  "SEQUENTIAL"
+                ],
+                "title": "Execution",
+                "value": "PARALLEL"
+              }
+            ],
+            "forEach": {
+              "threadId": "o78wj4_each",
+              "effectiveParameterSchema": {
+                "type": "file"
+              }
+            },
+            "effectiveOutputSchema": {
+              "type": "object",
+              "properties": {
+                "agg_nj9eqq": {
+                  "title": "Files",
+                  "type": "array",
+                  "items": {
+                    "type": "resource",
+                    "resourceTypeId": "drive.file"
+                  }
+                }
+              },
+              "description": "Automatically derived"
+            }
+          },
+          {
+            "stepId": "jpgwrk",
+            "stepType": "http.request",
+            "stepNr": "Step 9",
+            "title": "Custom HTTP request",
+            "inputs": [
+              {
+                "input": "webhookUrl",
+                "title": "Request URL",
+                "type": "string",
+                "value": "https://portal.risebird.io/SupportTicket/Webhook"
+              },
+              {
+                "input": "urlParams",
+                "title": "URL params",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              {
+                "input": "httpMethod",
+                "title": "HTTP method",
+                "type": "string",
+                "enum": [
+                  "POST",
+                  "GET",
+                  "PATCH",
+                  "PUT",
+                  "DELETE"
+                ],
+                "value": "POST"
+              },
+              {
+                "input": "headers",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "value": {
+                  "Content-Type": "application/json",
+                  "X-Relay-Secret": "168DC25A-DFC9-453A-B406-895DC51A3C11"
+                }
+              },
+              {
+                "input": "encoding",
+                "type": "string",
+                "enum": [
+                  "JSON (application/json)",
+                  "Form (application/x-www-form-urlencoded)",
+                  "Multipart (multipart/form-data)",
+                  "Binary (raw file upload)"
+                ],
+                "value": "JSON (application/json)"
+              },
+              {
+                "input": "bodyJson",
+                "title": "Body",
+                "type": "object",
+                "additionalProperties": true,
+                "value": {
+                  "webhook_intent": {
+                    "ref": "azein8.webhook_intent"
+                  },
+                  "primary_specialization": {
+                    "ref": "azein8.primary_specialization"
+                  },
+                  "mail_body_intent": {
+                    "ref": "azein8.mail_body_intent"
+                  },
+                  "attachment_pdf": {
+                    "ref": "azein8.attachment_pdf"
+                  },
+                  "attachment_resumes": {
+                    "ref": "azein8.attachment_resumes"
+                  },
+                  "attachment_job_description": {
+                    "ref": "azein8.attachment_job_description"
+                  },
+                  "summary_mail": {
+                    "ref": "azein8.summary_mail"
+                  },
+                  "summary_candidates": {
+                    "ref": "azein8.summary_candidates"
+                  },
+                  "summary_interview_scores": {
+                    "ref": "azein8.summary_interview_scores"
+                  },
+                  "drive_folder_link": {
+                    "ref": "bl4utn.Folder URL"
+                  },
+                  "sender_email": {
+                    "ref": "trigger.Sender.Email"
+                  },
+                  "subject": {
+                    "ref": "trigger.Subject"
+                  },
+                  "mail_content": {
+                    "ref": "trigger.Body"
+                  },
+                  "received_at": {
+                    "ref": "trigger.Send date/time"
+                  },
+                  "job_title": {
+                    "ref": "azein8.job_title"
+                  },
+                  "resume_drive_urls": [
+                    {
+                      "ref": "372b30qc.agg_nj9eqq._url"
+                    }
+                  ],
+                  "skill_channel_id": {
+                    "ref": "azein8.skill_channel_id"
+                  },
+                  "candidate_schedule_data": {
+                    "ref": "azein8.candidate_schedule_data"
+                  },
+                  "resume_associations ": {
+                    "ref": "azein8.resume_associations"
+                  },
+                  "resume_filenames": [
+                    {
+                      "ref": "ns2e309v.agg_nj9eqq.fileContent.fileName"
+                    }
+                  ]
+                }
+              },
+              {
+                "input": "errorHandling",
+                "title": "Error handling",
+                "type": "string",
+                "enum": [
+                  "Fail",
+                  "Continue for client errors (4xx)",
+                  "Continue for all errors"
+                ],
+                "value": "Fail"
+              }
+            ],
+            "userSchema": {
+              "type": "object",
+              "properties": {
+                "payload": {
+                  "type": "object",
+                  "title": "Response",
+                  "properties": {},
+                  "required": []
+                }
+              },
+              "required": [
+                "payload"
+              ]
+            },
+            "effectiveOutputSchema": {
+              "$ref": "#/steps/jpgwrk/user-schema"
+            }
+          }
+        ]
+      },
+      {
+        "threadId": "o78wj4_each",
+        "ancestors": [
+          "main"
+        ],
+        "parameterId": "o78wj4_each",
+        "parameter": {
+          "title": "File",
+          "effectiveOutputSchema": {
+            "type": "file"
+          }
+        },
+        "steps": [
+          {
+            "stepId": "ttr8vd",
+            "stepType": "break",
+            "stepNr": "Step 7",
+            "title": "End loop instance if rules are met",
+            "inputs": [
+              {
+                "input": "action",
+                "description": "Stop: End loop instance Continue: Only continue loop instance",
+                "type": "string",
+                "enum": [
+                  "STOP_IF",
+                  "CONTINUE_IF"
+                ],
+                "title": "Action",
+                "value": "STOP_IF"
+              },
+              {
+                "input": "rule",
+                "$ref": "relay/rule",
+                "value": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "subject": {
+                            "ref": "o78wj4_each.fileName"
+                          },
+                          "operator": "notEndsWith",
+                          "value": ".pdf"
+                        },
+                        {
+                          "subject": {
+                            "ref": "o78wj4_each.fileName"
+                          },
+                          "operator": "notEndsWith",
+                          "value": ".doc"
+                        },
+                        {
+                          "subject": {
+                            "ref": "o78wj4_each.fileName"
+                          },
+                          "operator": "notEndsWith",
+                          "value": ".docx"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "stepId": "nj9eqq",
+            "stepType": "drive.uploadFile",
+            "stepNr": "Step 8",
+            "title": "Upload file",
+            "connection": "cs@risebird.io (owned by Harshit Jajoo)",
+            "inputs": [
+              {
+                "input": "parent",
+                "title": "Parent folder",
+                "description": "If unset: My Drive",
+                "type": "resource",
+                "resourceTypeId": "drive.folder",
+                "value": {
+                  "ref": "bl4utn"
+                }
+              },
+              {
+                "input": "file",
+                "type": "file",
+                "value": {
+                  "ref": "o78wj4_each"
+                }
+              },
+              {
+                "input": "name",
+                "type": "string",
+                "value": {
+                  "ref": "o78wj4_each.fileName"
+                }
+              }
+            ],
+            "effectiveOutputSchema": {
+              "$ref": "#/resource-types/drive.file"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

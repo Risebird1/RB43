@@ -10,6 +10,7 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using Risebird.Web.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -421,7 +422,7 @@ namespace Risebird.Web.Controllers
             return (int)((double)matches / Math.Max(fWords.Count, jtWords.Count) * 90);
         }
 
-        // ── Relay webhook ─────────────────────────────────────────────────────
+        // ── Automation webhook (Relay.app / n8n → our server) ─────────────────
 
         [AllowAnonymous]
         [HttpPost]
@@ -430,14 +431,11 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                // Shared-secret validation
+                // Accepts X-Webhook-Secret, X-Relay-Secret and X-N8N-Secret, so Relay and
+                // n8n can post to this endpoint side by side during the cutover.
                 var expectedSecret = _configuration["RelayWebhook:Secret"];
-                if (!string.IsNullOrWhiteSpace(expectedSecret))
-                {
-                    var incoming = Request.Headers["X-Relay-Secret"].ToString();
-                    if (incoming != expectedSecret)
-                        return Unauthorized(new { error = "Invalid secret." });
-                }
+                if (!AutomationWebhookHelper.IsSecretValid(Request.Headers, expectedSecret))
+                    return Unauthorized(new { error = "Invalid secret." });
 
                 string rawBody;
                 using (var reader = new StreamReader(Request.Body))
@@ -452,11 +450,10 @@ namespace Risebird.Web.Controllers
                 if (payload == null || string.IsNullOrWhiteSpace(payload.SenderEmail))
                     return BadRequest(new { error = "Missing required field: sender_email." });
 
-                DateTime? receivedAt = null;
-                if (!string.IsNullOrWhiteSpace(payload.ReceivedAt) &&
-                    DateTime.TryParse(payload.ReceivedAt, null,
-                        System.Globalization.DateTimeStyles.RoundtripKind, out var parsed))
-                    receivedAt = parsed;
+                // n8n normalizes to ISO-8601 UTC; legacy Relay calls and any raw Gmail
+                // RFC 2822 date are handled by the same helper the other workflows use.
+                var platform   = AutomationWebhookHelper.ResolvePlatform(payload.Source);
+                DateTime? receivedAt = AutomationWebhookHelper.ParseTimestamp(payload.ReceivedAt);
 
                 var ticket = new SupportTicket
                 {
@@ -474,7 +471,9 @@ namespace Risebird.Web.Controllers
                     SummaryMail = payload.SummaryMail?.Trim(),
                     SummaryCandidates = payload.SummaryCandidates?.Trim(),
                     SummaryInterviewScores = payload.SummaryInterviewScores?.Trim(),
-                    JobTitle = payload.JobTitle?.Trim()
+                    JobTitle = payload.JobTitle?.Trim(),
+                    HasAutoScheduleCandidates = payload.CandidateScheduleData != null
+                                             && payload.CandidateScheduleData.Count > 0
                 };
 
                 // Correct attachment flags based on actual resume_drive_urls content
@@ -533,7 +532,14 @@ namespace Risebird.Web.Controllers
                     {
                         foreach (var candidate in payload.CandidateScheduleData)
                         {
-                            if (string.IsNullOrWhiteSpace(candidate.ResumeDriveUrl))
+                            // n8n only fills resume_drive_url when the candidate's name
+                            // actually matches an uploaded file — guessing there would
+                            // schedule the wrong person. Fall back to the Drive folder so
+                            // the candidate still reaches HR instead of being dropped.
+                            var resumeUrl = candidate.ResumeDriveUrl?.Trim();
+                            if (string.IsNullOrWhiteSpace(resumeUrl))
+                                resumeUrl = ticket.DriveFolderLink?.Trim();
+                            if (string.IsNullOrWhiteSpace(resumeUrl))
                                 continue;
 
                             try
@@ -586,7 +592,7 @@ namespace Risebird.Web.Controllers
                                 // Insert pending resume
                                 var pendingId = await _repository.InsertPendingResumeAsync(
                                     newId,
-                                    candidate.ResumeDriveUrl.Trim(),
+                                    resumeUrl,
                                     cleanFilename,
                                     candidate.CandidateName?.Trim(),
                                     candidate.CandidateEmail?.Trim(),
@@ -896,6 +902,7 @@ namespace Risebird.Web.Controllers
                 {
                     success = true,
                     ticketId = newId,
+                    source = platform,
                     pendingResumes = pendingCount,
                     message = pendingResumeResult.ToString()
                 });

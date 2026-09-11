@@ -425,15 +425,35 @@
        ═════════════════════════════════════════════════════════════════════ */
 
     .sum-wrap { padding: 16px 28px 4px; }
-    .sum-table { width: 100%; border-collapse: separate; border-spacing: 12px 0; table-layout: fixed; }
-    .sum-td { vertical-align: top; padding: 0; }
+    /* height:1px is not a typo and is not a height. A percentage height only resolves
+       against a parent whose height is *definite*, and a table's height is auto by
+       default — so .sum-td's 100% and in turn .sum-card's 100% were both falling back to
+       auto, leaving each card only as tall as its own content. Giving the table any
+       definite value makes the chain resolve; the table still grows to fit its rows, so
+       1px never applies. Without it the three cards measured 115 / 126 / 115 because the
+       middle label wraps to two lines. */
+    .sum-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 12px 0;
+        table-layout: fixed;
+        height: 1px;
+    }
 
+    .sum-td { vertical-align: top; padding: 0; height: 100%; }
+
+    /* Matched to the page's .rb-sum-card exactly — same hairline, same 4px rail, same
+       radius — so the summary strip reads identically in both documents. height:100% is
+       what makes the three equal: they are table cells, and without it each card is only
+       as tall as its own content while the row is as tall as the tallest. */
     .sum-card {
         border: 1px solid #e3e6ea;
-        border-left: 3px solid #cbd2d9;
-        border-radius: 7px;
+        border-left: 4px solid #cbd2d9;
+        border-radius: 10px;
         background: #fff;
         overflow: hidden;
+        height: 100%;
+        box-sizing: border-box;
     }
         .sum-card.is-resume    { border-left-color: #6d5bd0; }
         .sum-card.is-skill     { border-left-color: #4eda92; }
@@ -494,9 +514,11 @@
     /* Both partials render a .rb-report-section, and #pdfdownload .rb-report-section
        carries the written assessment's own gutter. The resume one names itself so it does
        not inherit that rail. */
+    /* The 6px purple rail that used to run down this section is gone: the page draws no
+       such rail, and it was an outline the PDF added on its own. The part header above
+       already says which evaluation this is. */
     #pdfdownload .rb-re-section {
-        border-left: 6px solid #e5e0fa;
-        padding-left: 22px;
+        padding-left: 0;
     }
 
     /* The description strip carries its part's rail too, so the band and the sentence
@@ -518,6 +540,52 @@
     .rep-end {
         padding: 10px 28px 18px;
         font-size: 9.5px; color: #93a0ad; text-align: center;
+    }
+
+    /* ══ RESUME EVALUATION — PDF density ══════════════════════════════════
+       _ResumeEvaluationSection.cshtml is shared with the page, where its spacing is
+       right for a scrolling view. In the PDF the two score tables are the longest thing
+       in the report: "How the score was reached" alone runs to twelve rows, each with a
+       sentence of reasoning under it, and at 9px of cell padding plus 11.5px/1.5 prose
+       that is most of a page for a breakdown a reader scans rather than reads.
+
+       Scoped to #pdfdownload, so the page keeps its own spacing.
+       ═════════════════════════════════════════════════════════════════════ */
+
+    #pdfdownload .rb-re-sub {
+        font-size: 11px;
+        margin: 12px 0 6px;
+        padding-bottom: 5px;
+    }
+
+    #pdfdownload .rb-re-table {
+        font-size: 11px;
+    }
+
+        #pdfdownload .rb-re-table th {
+            font-size: 9px;
+            padding: 0 8px;
+        }
+
+        #pdfdownload .rb-re-table td {
+            padding: 5px 8px;
+        }
+
+    #pdfdownload .rb-re-name {
+        line-height: 1.3;
+    }
+
+    /* The reasoning is the tallest part of each row and the part a reader skims, so it
+       takes the biggest reduction of the three. */
+    #pdfdownload .rb-re-reason {
+        font-size: 10px;
+        line-height: 1.35;
+        margin-top: 2px;
+    }
+
+    #pdfdownload .rb-re-bar {
+        height: 4px;
+        margin-top: 3px;
     }
 
     /* ══ MCQ ASSESSMENT SECTION — PDF corrections ═════════════════════════
@@ -836,6 +904,15 @@
             ? resumeParsed.Verdict
             : Model.AIResumeScreeningVerdict;
         var wasScreened = resumeParsed != null || resumeScore != 0 || !string.IsNullOrWhiteSpace(resumeVerdict);
+
+        // Same tone rule the page uses, so the resume verdict is coloured identically in
+        // both documents. It was rendering as plain grey here while the page showed it in
+        // green or amber.
+        var resumeTone = (resumeVerdict ?? string.Empty).ToLowerInvariant().Contains("reject") ? "is-fail"
+            : (resumeVerdict ?? string.Empty).ToLowerInvariant().Contains("select")
+                || (resumeVerdict ?? string.Empty).ToLowerInvariant().Contains("shortlist")
+                || (resumeVerdict ?? string.Empty).ToLowerInvariant().Contains("proceed") ? "is-pass"
+            : "is-review";
     }
     @if (evalRan || mcqRan || wasScreened)
     {
@@ -858,7 +935,7 @@
                                         </td>
                                     </tr>
                                 </table>
-                                <div class="sum-foot">
+                                <div class="sum-foot @resumeTone">
                                     @(string.IsNullOrWhiteSpace(resumeVerdict) ? "Screened" : resumeVerdict)
                                 </div>
                             }

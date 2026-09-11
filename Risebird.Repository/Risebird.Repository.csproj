@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Lets Risebird.Repository.Tests exercise the internal index document mappers,
+         field-name constants and Dapper helper directly. -->
+    <InternalsVisibleTo Include="Risebird.Repository.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Azure.Search.Documents" />
     <PackageReference Include="Dapper" />
     <PackageReference Include="Dapper.FluentMap" />

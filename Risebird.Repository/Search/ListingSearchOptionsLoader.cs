@@ -33,11 +33,13 @@ namespace Risebird.Repository.Search
             var listing = new ListingSearchOptions
             {
                 ListingKey = listingKey,
-                Enabled = section.GetValue<bool>("Enabled"),
+                // TryParse rather than GetValue<bool>: a blank or malformed flag in appsettings
+                // should fall back to off, not throw on startup.
+                Enabled = bool.TryParse(section["Enabled"], out bool enabled) && enabled,
                 IndexName = section["IndexName"] ?? defaultIndexName,
                 PageSize = int.TryParse(section["PageSize"], out int pageSize) ? pageSize : defaultPageSize,
                 BatchSize = int.TryParse(section["BatchSize"], out int batchSize) ? batchSize : defaultBatchSize,
-                ManageIndexSchema = section.GetValue<bool>("ManageIndexSchema")
+                ManageIndexSchema = bool.TryParse(section["ManageIndexSchema"], out bool manageSchema) && manageSchema
             };
 
             return (service, listing);

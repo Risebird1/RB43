@@ -38,7 +38,9 @@ namespace Risebird.CommonHelper
             // Step 6: Normalize line breaks
             transcriptText = NormalizeLineBreaks(transcriptText);
 
-            return transcriptText;
+            // RemoveRepeatedPhrases rebuilds the text with AppendLine, which leaves a break after
+            // the last line — trim it so the result never grows a newline the input did not have.
+            return transcriptText.Trim();
         }
 
         /// <summary>

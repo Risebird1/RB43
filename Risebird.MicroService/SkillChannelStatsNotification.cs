@@ -57,7 +57,6 @@ namespace Risebird.MicroService
                             Mail _mail1 = new Mail
                             {
                                 TO = item.EmailId,
-                                CC = "talent@risebird.io",
                                 Subject = "Skill Channel Stats Details :" + DateTime.Now.AddDays(-30).ToShortDateString() + " to " + DateTime.Now.AddDays(7).ToShortDateString()
                             };
                             var emailsend = await _notificationHelper.SendSkillChannelStatsDetails(_mail1, item.FirstName, dt, item.logolink);
