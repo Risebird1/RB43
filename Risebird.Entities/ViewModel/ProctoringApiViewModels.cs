@@ -47,6 +47,13 @@ namespace Risebird.Entities.ViewModel
         public int Version { get; set; }
         public List<ProctoringBlockedProcess> BlockedProcesses { get; set; } = new List<ProctoringBlockedProcess>();
         public List<string> WatchedTitlePhrases { get; set; } = new List<string>();
+        /// <summary>
+        /// The interview platform's own domain(s). The client reads the real address bar (via UI
+        /// Automation, not the window title) of any open browser window and flags anything not on
+        /// this list. Left empty, the client has no "home" domain to compare against and this
+        /// check simply doesn't run — it never guesses.
+        /// </summary>
+        public List<string> AllowedDomains { get; set; } = new List<string>();
         public double ForegroundFlickerFloorSeconds { get; set; }
         public int MaxQueuedEvents { get; set; }
     }
@@ -73,6 +80,15 @@ namespace Risebird.Entities.ViewModel
     public class ProctoringEventsResponse
     {
         public int RiskScore { get; set; }
+    }
+
+    public class ProctoringScreenshotRequest
+    {
+        public string SessionToken { get; set; }
+        public int Sequence { get; set; }
+        public DateTime CapturedAt { get; set; }
+        public string ContentType { get; set; }
+        public string ImageBase64 { get; set; }
     }
 
     public class ProctoringMintSessionRequest
