@@ -1,0 +1,209 @@
+@model Risebird.Entities.ViewModel.ProctoringSessionReportDetailVM
+@{
+    ViewData["Title"] = "Proctoring Session Report";
+    ViewBag.PageHeader = "Proctoring Session Report";
+    Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+    var session = Model?.Session;
+}
+
+<style>
+    .proctoring-report-wrap {
+        max-width: 1100px;
+        margin: 30px auto;
+        padding: 0 15px;
+    }
+
+    .proctoring-report-card {
+        background: #fff;
+        border: 1px solid #e6e6e6;
+        border-radius: 6px;
+        padding: 20px 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .proctoring-report-card h4 {
+        margin: 0 0 15px 0;
+        font-weight: 600;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+    }
+
+    .proctoring-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 14px 24px;
+    }
+
+    .proctoring-summary-item label {
+        display: block;
+        font-size: 12px;
+        color: #8a8a8a;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+        margin-bottom: 3px;
+    }
+
+    .proctoring-summary-item div {
+        font-size: 14px;
+        font-weight: 600;
+        color: #2b2b2b;
+        word-break: break-all;
+    }
+
+    .proctoring-risk-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 100px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #fff;
+        background: #4a8f52;
+    }
+
+        .proctoring-risk-badge.risk-medium {
+            background: #d9a441;
+        }
+
+        .proctoring-risk-badge.risk-high {
+            background: #d9534f;
+        }
+
+    .proctoring-screenshot-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 15px;
+    }
+
+    .proctoring-screenshot-item {
+        border: 1px solid #eee;
+        border-radius: 4px;
+        overflow: hidden;
+        text-align: center;
+        background: #fafafa;
+    }
+
+        .proctoring-screenshot-item img {
+            width: 100%;
+            height: 130px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .proctoring-screenshot-item .caption {
+            font-size: 11px;
+            color: #777;
+            padding: 6px;
+            border-top: 1px solid #eee;
+        }
+
+    .proctoring-nodata {
+        color: #8a8a8a;
+        font-size: 14px;
+        padding: 10px 0;
+    }
+</style>
+
+<div class="proctoring-report-wrap">
+    @if (session == null)
+    {
+        <div class="proctoring-report-card">
+            <div class="proctoring-nodata">Session not found.</div>
+        </div>
+    }
+    else
+    {
+        <div class="proctoring-report-card">
+            <h4>Session Summary</h4>
+            <div class="proctoring-summary-grid">
+                <div class="proctoring-summary-item"><label>Candidate Email</label><div>@session.CandidateEmail</div></div>
+                <div class="proctoring-summary-item"><label>Interview Id</label><div>@session.InterviewId</div></div>
+                <div class="proctoring-summary-item"><label>Session Token</label><div>@session.SessionToken</div></div>
+                <div class="proctoring-summary-item"><label>Trust</label><div>@session.Trust</div></div>
+                <div class="proctoring-summary-item"><label>State</label><div>@session.State</div></div>
+                <div class="proctoring-summary-item">
+                    <label>Risk Score</label>
+                    <div>
+                        <span class="proctoring-risk-badge @(session.RiskScore >= 70 ? "risk-high" : session.RiskScore >= 30 ? "risk-medium" : "")">@session.RiskScore</span>
+                    </div>
+                </div>
+                <div class="proctoring-summary-item"><label>Created At (UTC)</label><div>@session.CreatedAtUtc</div></div>
+                <div class="proctoring-summary-item"><label>Joined At (UTC)</label><div>@(session.JoinedAtUtc?.ToString() ?? "-")</div></div>
+                <div class="proctoring-summary-item"><label>Started At (UTC)</label><div>@(session.StartedAtUtc?.ToString() ?? "-")</div></div>
+                <div class="proctoring-summary-item"><label>Last Heartbeat (UTC)</label><div>@(session.LastHeartbeatAtUtc?.ToString() ?? "-")</div></div>
+                <div class="proctoring-summary-item"><label>Ended At (UTC)</label><div>@(session.EndedAtUtc?.ToString() ?? "-")</div></div>
+            </div>
+        </div>
+
+        <div class="proctoring-report-card">
+            <h4>Activity Logs</h4>
+            @if (Model.Logs != null && Model.Logs.Count() > 0)
+            {
+                <div style="overflow-x:scroll" class="scrollbar">
+                    <table class="table table-striped table-bordered" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Seq</th>
+                                <th>Type</th>
+                                <th>Category</th>
+                                <th>Level</th>
+                                <th>Confidence</th>
+                                <th>Opened At (UTC)</th>
+                                <th>Resolved At (UTC)</th>
+                                <th>Detail</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Logs)
+                            {
+                                <tr>
+                                    <td>@item.Sequence</td>
+                                    <td>@item.Type</td>
+                                    <td>@item.Category</td>
+                                    <td>@item.Level</td>
+                                    <td>@item.Confidence</td>
+                                    <td>@item.OpenedAtUtc</td>
+                                    <td>@item.ResolvedAtUtc</td>
+                                    <td>
+                                        @if (!string.IsNullOrWhiteSpace(item.RawDetail))
+                                        {
+                                            <div class="tags">@item.RawDetail</div>
+                                        }
+                                        else if (!string.IsNullOrWhiteSpace(item.RedactedDetail))
+                                        {
+                                            <div class="tags">@item.RedactedDetail</div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="proctoring-nodata">No logs recorded for this session.</div>
+            }
+        </div>
+
+        <div class="proctoring-report-card">
+            <h4>Screenshots</h4>
+            @if (Model.Screenshots != null && Model.Screenshots.Count() > 0)
+            {
+                <div class="proctoring-screenshot-grid">
+                    @foreach (var shot in Model.Screenshots)
+                    {
+                        <a href="@shot.BlobUrl" target="_blank" class="proctoring-screenshot-item">
+                            <img src="@shot.BlobUrl" alt="Screenshot @shot.Sequence" loading="lazy" />
+                            <div class="caption">#@shot.Sequence &middot; @shot.CapturedAtUtc</div>
+                        </a>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="proctoring-nodata">No screenshots recorded for this session.</div>
+            }
+        </div>
+    }
+</div>
