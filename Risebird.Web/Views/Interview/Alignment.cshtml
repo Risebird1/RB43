@@ -613,10 +613,18 @@
 
                 // Only needed for the save-back: a bank row without a skill name is dropped
                 // on insert, so the offer has to collect one rather than guess.
-                var mySkills = Model.SampleQuestions
-                    .Where(q => !string.IsNullOrWhiteSpace(q.SkillName)
-                                && string.Equals(q.CreatedBy, ViewBag.InterviewerEmail as string, StringComparison.OrdinalIgnoreCase))
-                    .Select(q => q.SkillName.Trim())
+                //
+                // Sourced from the RUBRIC, not from the interviewer's existing questions: on a
+                // channel where they have written nothing yet the question list is empty, and
+                // deriving the options from it would leave the interviewer unable to satisfy a
+                // requirement the page itself imposes. The rubric skills are what this interview
+                // is scored against, so they are the right set to file a new question under.
+                var mySkills = Model.RubricSkills
+                    .Where(r => !string.IsNullOrWhiteSpace(r.SkillName))
+                    .Select(r => r.SkillName.Trim())
+                    .Concat(Model.SampleQuestions
+                        .Where(q => !string.IsNullOrWhiteSpace(q.SkillName))
+                        .Select(q => q.SkillName.Trim()))
                     .Distinct(StringComparer.OrdinalIgnoreCase)
                     .OrderBy(n => n)
                     .ToList();
@@ -685,10 +693,16 @@
                             <div class="ia-fact-l" style="margin-bottom:6px;">Ad-hoc question</div>
                             <textarea id="ia-cs-adhoc-text" class="ia-cs-textarea" rows="3"
                                       placeholder="Type a coding question for this candidate"></textarea>
-                            <label class="ia-cs-save">
-                                <input type="checkbox" id="ia-cs-adhoc-save" />
-                                Also save this to my question bank
-                            </label>
+                            @* With no skills on the rubric there is nothing to file the question
+                               under, so the offer is withdrawn rather than shown and then refused.
+                               The session itself is unaffected - it never needed a skill. *@
+                            @if (mySkills.Any())
+                            {
+                                <label class="ia-cs-save">
+                                    <input type="checkbox" id="ia-cs-adhoc-save" />
+                                    Also save this to my question bank
+                                </label>
+                            }
                             <div id="ia-cs-adhoc-skillwrap" style="display:none;margin-bottom:8px;">
                                 <select id="ia-cs-adhoc-skill" class="ia-cs-textarea" style="resize:none;">
                                     <option value="">Which skill does it belong to?</option>
