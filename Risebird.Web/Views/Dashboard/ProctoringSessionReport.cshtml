@@ -1,0 +1,402 @@
+@model Risebird.Entities.ViewModel.ProctoringSessionReportDetailVM
+@{
+    ViewData["Title"] = "Proctoring Session Report";
+    ViewBag.PageHeader = "Proctoring Session Report";
+    Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+    var session = Model?.Session;
+    string RiskClass(int score) => score >= 70 ? "high" : score >= 30 ? "medium" : "low";
+    string LevelClass(string level) => (level ?? "").ToLowerInvariant() switch
+    {
+        "high" => "high",
+        "medium" => "medium",
+        "low" => "low",
+        _ => "info"
+    };
+}
+
+<style>
+    .psr-wrap {
+        max-width: 1150px;
+        margin: 24px auto 60px;
+        padding: 0 15px;
+    }
+
+    .psr-header {
+        background: linear-gradient(135deg,#1f3a5f 0%,#2f6690 100%);
+        border-radius: 8px;
+        color: #fff;
+        padding: 24px 28px;
+        margin-bottom: 22px;
+        box-shadow: 0 4px 14px rgba(31,58,95,0.25);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+    }
+
+        .psr-header .psr-title {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+            .psr-header .psr-title .icon-circle {
+                width: 46px;
+                height: 46px;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.15);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+            }
+
+            .psr-header .psr-title h2 {
+                margin: 0;
+                font-size: 20px;
+                font-weight: 600;
+            }
+
+            .psr-header .psr-title span {
+                font-size: 13px;
+                opacity: .85;
+            }
+
+        .psr-header .psr-badges {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+    .psr-badge {
+        padding: 6px 16px;
+        border-radius: 100px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .02em;
+        text-transform: uppercase;
+        color: #fff;
+        background: rgba(255,255,255,0.18);
+        border: 1px solid rgba(255,255,255,0.35);
+    }
+
+        .psr-badge.risk-high { background: #d9534f; border-color: #d9534f; }
+        .psr-badge.risk-medium { background: #d9a441; border-color: #d9a441; }
+        .psr-badge.risk-low { background: #4a8f52; border-color: #4a8f52; }
+
+    .psr-card {
+        background: #fff;
+        border-radius: 8px;
+        margin-bottom: 22px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+
+    .psr-card-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 16px 22px;
+        border-bottom: 1px solid #eef0f2;
+        background: #fafbfc;
+    }
+
+        .psr-card-header i {
+            color: #2f6690;
+            font-size: 16px;
+        }
+
+        .psr-card-header h3 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 700;
+            color: #2b2b2b;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+        }
+
+        .psr-card-header .psr-count-pill {
+            margin-left: auto;
+            background: #eef2f6;
+            color: #2f6690;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 100px;
+        }
+
+    .psr-card-body {
+        padding: 20px 22px;
+    }
+
+    .psr-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 18px 26px;
+    }
+
+    .psr-summary-item label {
+        display: block;
+        font-size: 11px;
+        color: #9aa3ab;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        margin-bottom: 4px;
+        font-weight: 600;
+    }
+
+    .psr-summary-item div {
+        font-size: 14px;
+        font-weight: 600;
+        color: #24313d;
+        word-break: break-all;
+    }
+
+    .psr-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .psr-table th {
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: #9aa3ab;
+            padding: 10px 12px;
+            border-bottom: 2px solid #eef0f2;
+            white-space: nowrap;
+        }
+
+        .psr-table td {
+            padding: 11px 12px;
+            font-size: 13px;
+            color: #33414d;
+            border-bottom: 1px solid #f2f4f6;
+            vertical-align: top;
+        }
+
+        .psr-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+    .psr-level-pill {
+        display: inline-block;
+        padding: 3px 11px;
+        border-radius: 100px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #fff;
+    }
+
+        .psr-level-pill.high { background: #d9534f; }
+        .psr-level-pill.medium { background: #d9a441; }
+        .psr-level-pill.low { background: #4a90c4; }
+        .psr-level-pill.info { background: #9aa3ab; }
+
+    .psr-detail-text {
+        color: #55636e;
+        font-size: 12.5px;
+    }
+
+    .psr-screenshot-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+        gap: 16px;
+    }
+
+    .psr-screenshot-item {
+        display: block;
+        border-radius: 6px;
+        overflow: hidden;
+        background: #f4f6f8;
+        border: 1px solid #eef0f2;
+        text-decoration: none;
+        transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+        .psr-screenshot-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+        }
+
+        .psr-screenshot-item img {
+            width: 100%;
+            height: 130px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .psr-screenshot-item .caption {
+            font-size: 11px;
+            color: #6b7680;
+            padding: 8px 10px;
+            border-top: 1px solid #eef0f2;
+            background: #fff;
+        }
+
+    .psr-empty {
+        text-align: center;
+        color: #9aa3ab;
+        font-size: 13px;
+        padding: 30px 10px;
+    }
+
+        .psr-empty i {
+            display: block;
+            font-size: 26px;
+            margin-bottom: 8px;
+            opacity: .5;
+        }
+
+    .psr-back-btn {
+        background: rgba(255,255,255,0.15) !important;
+        border: 1px solid rgba(255,255,255,0.4) !important;
+        color: #fff !important;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+        .psr-back-btn:hover {
+            background: rgba(255,255,255,0.28) !important;
+            color: #fff !important;
+        }
+</style>
+
+<div class="psr-wrap">
+    @if (session == null)
+    {
+        <div class="psr-card">
+            <div class="psr-empty">
+                <i class="fa fa-exclamation-triangle"></i>
+                Session not found.
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="psr-header">
+            <div class="psr-title">
+                <div class="icon-circle"><i class="fa fa-user-secret"></i></div>
+                <div>
+                    <h2>@session.CandidateEmail</h2>
+                    <span>Interview @session.InterviewId &middot; Session @session.SessionToken</span>
+                </div>
+            </div>
+            <div class="psr-badges">
+                <span class="psr-badge">@session.Trust</span>
+                <span class="psr-badge">@session.State</span>
+                <span class="psr-badge risk-@RiskClass(session.RiskScore)">Risk @session.RiskScore</span>
+            </div>
+            <a class="psr-back-btn" href="javascript:window.close();"><i class="fa fa-arrow-left"></i> Close</a>
+        </div>
+
+        <div class="psr-card">
+            <div class="psr-card-header">
+                <i class="fa fa-id-card"></i>
+                <h3>Session Summary</h3>
+            </div>
+            <div class="psr-card-body">
+                <div class="psr-summary-grid">
+                    <div class="psr-summary-item"><label>Created At (UTC)</label><div>@session.CreatedAtUtc</div></div>
+                    <div class="psr-summary-item"><label>Joined At (UTC)</label><div>@(session.JoinedAtUtc?.ToString() ?? "-")</div></div>
+                    <div class="psr-summary-item"><label>Started At (UTC)</label><div>@(session.StartedAtUtc?.ToString() ?? "-")</div></div>
+                    <div class="psr-summary-item"><label>Last Heartbeat (UTC)</label><div>@(session.LastHeartbeatAtUtc?.ToString() ?? "-")</div></div>
+                    <div class="psr-summary-item"><label>Ended At (UTC)</label><div>@(session.EndedAtUtc?.ToString() ?? "-")</div></div>
+                    <div class="psr-summary-item"><label>Client State</label><div>@(session.ClientState ?? "-")</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="psr-card">
+            <div class="psr-card-header">
+                <i class="fa fa-list-alt"></i>
+                <h3>Activity Logs</h3>
+                <span class="psr-count-pill">@(Model.Logs?.Count() ?? 0)</span>
+            </div>
+            <div class="psr-card-body">
+                @if (Model.Logs != null && Model.Logs.Count() > 0)
+                {
+                    <div style="overflow-x:auto">
+                        <table class="psr-table">
+                            <thead>
+                                <tr>
+                                    <th>Seq</th>
+                                    <th>Type</th>
+                                    <th>Category</th>
+                                    <th>Level</th>
+                                    <th>Confidence</th>
+                                    <th>Opened At (UTC)</th>
+                                    <th>Resolved At (UTC)</th>
+                                    <th>Detail</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Logs)
+                                {
+                                    <tr>
+                                        <td>@item.Sequence</td>
+                                        <td>@item.Type</td>
+                                        <td>@item.Category</td>
+                                        <td><span class="psr-level-pill @LevelClass(item.Level)">@item.Level</span></td>
+                                        <td>@item.Confidence</td>
+                                        <td>@item.OpenedAtUtc</td>
+                                        <td>@(item.ResolvedAtUtc?.ToString() ?? "-")</td>
+                                        <td class="psr-detail-text">
+                                            @(!string.IsNullOrWhiteSpace(item.RawDetail) ? item.RawDetail : item.RedactedDetail)
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="psr-empty">
+                        <i class="fa fa-check-circle"></i>
+                        No logs recorded for this session.
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="psr-card">
+            <div class="psr-card-header">
+                <i class="fa fa-camera"></i>
+                <h3>Screenshots</h3>
+                <span class="psr-count-pill">@(Model.Screenshots?.Count() ?? 0)</span>
+            </div>
+            <div class="psr-card-body">
+                @if (Model.Screenshots != null && Model.Screenshots.Count() > 0)
+                {
+                    <div class="psr-screenshot-grid">
+                        @foreach (var shot in Model.Screenshots)
+                        {
+                            <a href="@shot.BlobUrl" target="_blank" class="psr-screenshot-item">
+                                <img src="@shot.BlobUrl" alt="Screenshot @shot.Sequence" loading="lazy" />
+                                <div class="caption">#@shot.Sequence &middot; @shot.CapturedAtUtc</div>
+                            </a>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="psr-empty">
+                        <i class="fa fa-picture-o"></i>
+                        No screenshots recorded for this session.
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

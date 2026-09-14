@@ -2818,6 +2818,19 @@ namespace Risebird.Business
                 return "";
             }
         }
+        public async Task<string> AddPointsForInterviewerByEmail(string Interviewer, int Points, string Comment, DateTime PointDate)
+        {
+            try
+            {
+                var result = _meetingRespository.AddPointsForInterviewerByEmail(Interviewer, Points, Comment, PointDate);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
         public async Task<List<RBInterviewDetails>> FNGenerateInvoiceDetails(DateTime st, DateTime se)
         {
             try
