@@ -163,11 +163,7 @@
                                     <font style="font-family: Roboto, sans-serif;font-size:9px;padding-left: 3px;">Generate Invoice</font>
                                 </span>
                             </button>
-                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                                <span class="fa fa-history" data-toggle="tooltip" data-placement="top" onclick="openPaymentHistory()" data-original-title="Tooltip on top">
-                                    <font style="font-family: Roboto, sans-serif;font-size:9px;padding-left: 3px;">Payment History</font>
-                                </span>
-                            </button>
+                           
                         </div>
                         <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:4px;margin-top:8px;">
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="location.href='@Url.Action("EmergencyDashboard", "Dashboard")'">
@@ -180,9 +176,16 @@
                                     <font style="font-family: Roboto, sans-serif;font-size:9px;padding-left: 3px;">Payment Lapsed</font>
                                 </span>
                             </button>
+                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
+                                <span class="fa fa-history" data-toggle="tooltip" data-placement="top" onclick="openPaymentHistory()" data-original-title="Tooltip on top">
+                                    <font style="font-family: Roboto, sans-serif;font-size:9px;padding-left: 3px;">Payment History</font>
+                                </span>
+                            </button>
                             <button type="button" id="btnProcessKycLapse" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="background-color:#c62828;color:#fff;" onclick="processKycPayoutLapseCandidates()">
                                 <span class="fa fa-user-clock" data-toggle="tooltip" data-placement="top" data-original-title="Check 120+ day old payouts with incomplete KYC and start the reminder/lapse tracking"><font style="font-family:Roboto,sans-serif;font-size:9px;padding-left:3px;">Check KYC Lapses</font></span>
                             </button>
+                        </div>
+                        <div>
                             <div id="meeting_filter" class="dataTables_filter">
                                 <div class="searchCon mt-20">
                                     <button onclick="searchResult()" type="button" id="search">&nbsp</button>
