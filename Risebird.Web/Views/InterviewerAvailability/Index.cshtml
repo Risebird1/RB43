@@ -419,7 +419,10 @@
                                                 </td>
                                                 <td class="col-job" style="font-size:12px;">
                                                     <span style="white-space: break-spaces;"> @(r.JobTitle ?? "—")</span>
-                                                    @if (!string.IsNullOrEmpty(r.MagName)) { <br /><span class="text-muted" style="font-size:10px;">@r.MagName</span> }
+                                                    @* The campaign MAG doubles as the job title when the reply names no role, so only show it when it adds something. *@
+                                                    @if (!string.IsNullOrEmpty(r.MagName)
+                                                         && !string.Equals(r.MagName, r.JobTitle, StringComparison.OrdinalIgnoreCase))
+                                                    { <br /><span class="text-muted" style="font-size:10px;">@r.MagName</span> }
                                                 </td>
                                                 <td class="col-employed" style="font-size:12px;">
                                                     @if (r.IsEmployed == true)
