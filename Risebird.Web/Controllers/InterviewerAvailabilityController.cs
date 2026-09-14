@@ -1899,8 +1899,7 @@ namespace Risebird.Web.Controllers
                 && concern != "none" && concern != "no" && concern != "n/a" && concern != "na" && concern != "nil";
 
             var text = $"{availabilityIntent} {mailBodyIntent}".ToLowerInvariant();
-            var negativeKeywords = new[] { "not available", "unavailable", "not interested", "declined", "decline" };
-            if (hasBlockingConcern || negativeKeywords.Any(k => text.Contains(k)))
+            if (hasBlockingConcern || NegativeAvailabilityPhrases.Any(k => text.Contains(k)))
                 return "NotAvailable";
 
             return null;
@@ -2027,7 +2026,19 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>
-        /// Determines whether the Relay-extracted availability signals indicate a favorable
+        /// Phrases that mean the interviewer is declining. Shared by the favorability test and
+        /// the intent mapper so the two can never disagree about the same reply.
+        /// </summary>
+        private static readonly string[] NegativeAvailabilityPhrases =
+        {
+            "not available", "no longer available", "unavailable", "no availability",
+            "not interested", "no longer interested", "not able", "unable",
+            "won't be able", "will not be able", "not willing", "not confirmed",
+            "declined", "decline", "cannot", "can't"
+        };
+
+        /// <summary>
+        /// Determines whether the extracted availability signals indicate a favorable
         /// (auto-closeable) disposition — i.e. the interviewer is available/interested and
         /// has not expressed concerns or disinterest.
         /// </summary>
@@ -2037,6 +2048,14 @@ namespace Risebird.Web.Controllers
             var concern = (concernsOrNotInterested ?? "").Trim().ToLower();
             if (!string.IsNullOrEmpty(concern)
                 && concern != "none" && concern != "no" && concern != "n/a" && concern != "na" && concern != "nil")
+                return false;
+
+            // Negation has to be tested first. Every positive keyword below is a substring of
+            // its own negation — "not available" contains "available", "not interested"
+            // contains "interested" — so without this guard a decline reads as an acceptance
+            // and the record is auto-closed against what the interviewer actually said.
+            var combined = $"{availabilityIntent} {mailBodyIntent}".ToLower();
+            if (NegativeAvailabilityPhrases.Any(k => combined.Contains(k)))
                 return false;
 
             var positiveKeywords = new[] { "available", "yes", "interested", "confirmed", "willing", "agree", "positive" };
@@ -2137,10 +2156,29 @@ namespace Risebird.Web.Controllers
                 if (newId > 0)
                     await _repository.InsertHistoryAsync(newId, "RecordCreated", null, "Open", actor);
 
+                // A failed extraction carries no signal, only 'N/A' placeholders. Record that
+                // plainly and skip the intent and auto-close decisions rather than inferring
+                // anything from placeholder text.
+                if (newId > 0 && payload.AiParseFailed)
+                {
+                    await _repository.InsertHistoryAsync(newId, "AIExtractionFailed", null,
+                        "Automation could not extract any fields from this email; all values are placeholders. Needs manual review.",
+                        actor);
+
+                    return Ok(new
+                    {
+                        success       = true,
+                        id            = newId,
+                        aiParseFailed = true,
+                        message       = $"Record created (#{newId}) for {record.SenderEmail}, but AI extraction failed — left open for manual review."
+                    });
+                }
+
                 // Unified Intent — the email reply feeds the same single Intent as the Plivo call.
+                string emailIntent = null;
                 if (newId > 0)
                 {
-                    string emailIntent = MapEmailToIntent(
+                    emailIntent = MapEmailToIntent(
                         payload.AvailabilityIntent, payload.MailBodyIntent, payload.ConcernsOrNotInterested);
                     if (!string.IsNullOrEmpty(emailIntent))
                     {
@@ -2155,8 +2193,9 @@ namespace Risebird.Web.Controllers
                 }
 
                 // Auto-close if the extracted availability intent is favorable
-                if (newId > 0 && IsFavorableAvailabilityIntent(
-                        payload.AvailabilityIntent, payload.MailBodyIntent, payload.ConcernsOrNotInterested))
+                bool autoCloseTriggered = newId > 0 && IsFavorableAvailabilityIntent(
+                    payload.AvailabilityIntent, payload.MailBodyIntent, payload.ConcernsOrNotInterested);
+                if (autoCloseTriggered)
                 {
                     _ = Task.Run(async () =>
                     {
@@ -2165,11 +2204,21 @@ namespace Risebird.Web.Controllers
                     });
                 }
 
+                // Report the decisions, not just the insert. The n8n execution log is where
+                // this is read, and a bare "record created" is what let a month of records
+                // land with no intent and no auto-close without anyone noticing.
                 return Ok(new
                 {
-                    success = true,
-                    id      = newId,
-                    message = $"Interviewer availability record created (#{newId}) for {record.SenderEmail}."
+                    success            = true,
+                    id                 = newId,
+                    source,
+                    intent             = emailIntent ?? "(none inferred)",
+                    autoCloseTriggered,
+                    message            = $"Interviewer availability record created (#{newId}) for {record.SenderEmail}. "
+                                       + $"Intent: {emailIntent ?? "none inferred"}; "
+                                       + (autoCloseTriggered
+                                            ? "auto-close pipeline started (final status depends on the resume-fitment and assessment-group gates)."
+                                            : "auto-close not triggered.")
                 });
             }
             catch (Exception ex)

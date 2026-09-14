@@ -152,5 +152,11 @@ namespace Risebird.Entities.ViewModel
         // Absent on legacy Relay.app calls, which are treated as 'Relay'.
         [JsonProperty("source")]
         public string Source                    { get; set; }
+
+        // True when the workflow's AI extraction step returned nothing, so every field above
+        // is the placeholder 'N/A' rather than a real reading of the email. Without this the
+        // server cannot tell a failed extraction from an email that genuinely said nothing.
+        [JsonProperty("ai_parse_failed")]
+        public bool AiParseFailed               { get; set; }
     }
 }
