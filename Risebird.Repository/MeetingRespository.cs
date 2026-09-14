@@ -4007,6 +4007,64 @@ namespace Risebird.Repository
                 return "";
             }
         }
+        public async Task<string> AddPointsForInterviewerByEmail(string Interviewer, int Points, string Comment, DateTime PointDate)
+        {
+            try
+            {
+                int userid = 0;
+                int Interviewerpresent = 0;
+                var query = "Select id from UserList where Emailid=@Emailid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Emailid", Interviewer);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<int>(query, dynamicParameters);
+                    userid = results.FirstOrDefault();
+                }
+                if (userid == 0)
+                {
+                    return "Failed";
+                }
+                var querycheck = "Select idProfile from UserList where id=@Userid";
+                var dynamicParameterscheck = new DynamicParameters();
+                dynamicParameterscheck.Add("@Userid", userid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<int>(querycheck, dynamicParameterscheck);
+                    Interviewerpresent = results.FirstOrDefault();
+                }
+                if (Interviewerpresent != 3)
+                {
+                    return "Failed";
+                }
+                int interviewid = 0;
+                var status = "Submitted";
+                var Type = "Admin";
+                var date = PointDate;
+                var interviewerids = 0;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    string sqlInsertReport = "INSERT INTO InterviewPoints (Interviewid, userid, Points,Type,Comment, Status, Date,Interviewerid ) Values (@interviewid, @userid, @Points, @Type, @Comment, @status, @date,@interviewerids);";
+                    var affectedRows = await con.ExecuteAsync(sqlInsertReport, new
+                    {
+                        interviewid,
+                        userid,
+                        Points,
+                        Type,
+                        Comment,
+                        status,
+                        date,
+                        interviewerids
+                    });
+                    return "Success";
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
         public async Task<List<RBInterviewDetails>> FNGenerateInvoiceDetails(DateTime st, DateTime se)
         {
             try
