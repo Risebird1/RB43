@@ -186,6 +186,146 @@ No database changes: `usp_InsertNaukriProspectiveInterviewer` already accepts ev
 
 ---
 
+## Fix — 14 Sep 2026: fewer tickets than Naukri responses
+
+**Symptom.** For MAG "HIL Tester", 16 responses arrived on Naukri but only 11 tickets
+appeared on `/NaukriOnboarding`. Similar gaps across other MAGs.
+
+**Candidates are dropped at five points, and four of them leave no trace at all.**
+
+| # | Drop point | Intended? |
+|---|-----------|-----------|
+| 1 | `Experience >= 8 years` — the false branch was deliberately unconnected | Was intended; **now files a Not Qualified ticket instead** |
+| 2 | The same gate firing on an experience figure that could not be *parsed* | **No — bug, now fixed** |
+| 3 | Gmail trigger `readStatus: unread` — a mail opened in the shared inbox before the poll is never processed | Inherited from Relay |
+| 4 | `Only Naukri Interviewer Emails` — needs `@naukri.com` **and** subject containing "Online Interviewer" | Inherited from Relay |
+| 5 | `Upload Resume to Drive` had no `onError`, so one Drive failure killed the whole poll batch | **No — bug, now fixed** |
+
+Point 1 was the expected explanation for most of any given gap, and it was invisible by
+design: a dropped candidate was written nowhere, so the page could not be reconciled against
+Naukri by counting. **That is now changed** — see below.
+
+### Under-experienced candidates now become Not Qualified tickets
+
+The gate (renamed `Qualifies for onboarding`) routes both ways:
+
+```
+Qualifies for onboarding [TRUE ] -> Prepare LinkedIn Query -> … -> Finalize Record
+Qualifies for onboarding [FALSE] ------------------------------> Finalize Record
+```
+
+The false branch deliberately skips the LinkedIn search, the AI verification and the Drive
+upload — none of that is worth spending on a rejected candidate. It still reaches
+`Send to Risebird Webhook`, carrying `qualifies_for_onboarding: false`. The server then calls
+`SetFunnelOutcomeAsync(id, "NotQualified", "Closed")` and writes a `NotQualified` history
+entry, exactly like a failed Employment Verification.
+
+Every Naukri response that clears the Gmail filter now produces a row, so the page count
+reconciles against Naukri and the difference is visible as the Not Qualified funnel stage.
+
+`usp_GetEligibleProspectsForAutomation` excludes these twice over — `Status IN ('Open',
+'InProgress')` and `FunnelStage NOT IN (…, 'NotQualified')` — so they consume no Employment
+Verification, invitation emails or Plivo calls.
+
+`qualifies_for_onboarding` is nullable server-side: legacy Relay payloads omit it, and absent
+must mean qualified.
+
+**Point 2 was the real defect.** `Merge Candidate` derived experience as:
+
+```js
+const years = modelYears > 0 ? modelYears : yearsFromSubject(subject);
+```
+
+so `0` meant *both* "fresher" and "could not read it". A candidate with 15 years whose
+figure did not parse failed `>= 8` and vanished exactly like a junior. That matters more
+than it looks, because the extractor currently contributes nothing (see below) — leaving
+`yearsFromSubject` carrying the entire gate on its own.
+
+The gate now tests an explicit `qualifies_for_onboarding`, which `Merge Candidate` sets to
+true whenever the experience is *unknown*. Genuinely under-experienced candidates are still
+dropped; unreadable ones reach the page for a human to judge. `experience_years` is reported
+as blank rather than `"0"` when unknown, and `experience_known` records the difference.
+
+---
+
+## Resume never reached blob storage (fixed)
+
+A 15 Sep run returned `resumeUploaded: false` despite a valid `resume_link` and
+`has_attachment: true`. The link was:
+
+```
+https://docs.google.com/document/d/13PZBIA…/edit?usp=drivesdk&…
+```
+
+Drive converts an uploaded `.doc`/`.docx` resume into a **native Google Doc** and returns an
+`/edit` link. `ConvertToDirectDownloadUrl` only rewrote `drive.google.com/file/d/{ID}` and
+`open?id={ID}`, so this URL passed through untouched, the fetch returned the editor's HTML
+page, the `isHtml` guard rejected it, and `blobResumeUrl` stayed null.
+
+That matters beyond the missing blob copy: Naukri hides the candidate's email and phone
+behind "View Contact Details", so both come from the resume. No resume bytes means
+`candidate_email` and `candidate_phone` stay empty — and the outreach automation has nobody
+to email or call.
+
+`ConvertToDirectDownloadUrl` now rewrites Google Docs links to
+`/export?format=docx`. `Share Resume File` already grants `role: reader, type: anyone`, so
+the export needs no authentication. Both download call sites already map the
+`wordprocessingml` content type to `.docx`, so the blob is stored with the right extension.
+A resume that still cannot be fetched now writes a `ResumeFetchFailed` history entry rather
+than leaving a prospect with no contact details and no explanation.
+
+---
+
+## Known broken — LinkedIn verification returns nothing
+
+Every row shows `NO MATCH 0%`. The 15 Sep payload shows why:
+
+```json
+"search_result_count": 0,
+"search_results_text": "NO SEARCH RESULTS AVAILABLE.",
+"linkedin_match": "NO",
+"linkedin_reason": "No Google search results were available, so there was no LinkedIn profile to compare against."
+```
+
+`Google Search (LinkedIn)` calls SerpAPI with `nodeCredentialType: serpApi` and returns zero
+results for every query, so `Verify LinkedIn Match` is correctly answering NO against an
+empty result set. The model and the workflow logic are both behaving; the search itself is
+returning nothing, which points at the **SerpAPI credential** — missing, expired, or out of
+quota. `onError: continueRegularOutput` on that node is what makes the failure silent.
+
+This cannot be fixed in the workflow JSON. Check the SerpAPI credential and its quota.
+
+---
+
+## Resolved — extracted fields arriving empty
+
+`CURRENT ROLE`, `LOCATION` and `KEY SKILLS` render blank (not the `—` placeholder the view
+emits for null), so they are arriving as empty strings. The split is exactly along one line:
+
+| Field | Source in `Merge Candidate` | On the page |
+|-------|-----------------------------|-------------|
+| `candidate_name` | model → **From display name** | populated |
+| `experience_years` | model → **subject regex** | populated |
+| `mag_name` | **subject regex** → model | partly populated |
+| `location`, `current_role`, `key_skills`, `education`, `salary` | model only | **blank** |
+
+Every field with a deterministic fallback is populated; every model-only field is empty.
+That points at `Extract Candidate Data` returning nothing — the same class of failure the
+Interviewer Availability workflow had, and consistent with `linkedin_match` reading
+"NO MATCH 0%" on every row, since `Verify LinkedIn Match` shares the `GPT-5.4 mini` sub-node.
+
+Both extractor nodes run `onError: continueRegularOutput`, so a failure is silent: the input
+item passes through, `items[i].json.output` is `undefined`, and every extracted field becomes
+`''`.
+
+**Outcome:** a 15 Sep execution showed every one of those fields populated —
+`location: "Bengaluru"`, `current_role: "Manager at Deloitte Consulting"`, full `key_skills`,
+`education`, `salary`. So `Extract Candidate Data` is working, and the inference above did
+not hold. Records created before that (the 14 Sep rows) still carry the empty strings and
+would need reprocessing or manual correction; new records are fine.
+
+---
+
 ## Setup Checklist
 
 1. Import `Risebird-n8n-Naukri-Onboarding.json`. It arrives **inactive** on purpose.
