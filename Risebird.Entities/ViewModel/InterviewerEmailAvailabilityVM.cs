@@ -159,4 +159,20 @@ namespace Risebird.Entities.ViewModel
         [JsonProperty("ai_parse_failed")]
         public bool AiParseFailed               { get; set; }
     }
+
+    /// <summary>
+    /// Outcome of usp_AssignInterviewerToAssessmentGroup. The procedure both assigns the
+    /// assessment group and maps the interviewer onto that group's live skill channels;
+    /// reporting the two counts separately is what makes "mapped 0 channels" diagnosable —
+    /// ActiveChannels = 0 means the group has no live channels at all, whereas
+    /// ActiveChannels > 0 with MappedChannels = 0 means they were already on every one.
+    /// </summary>
+    public class AssessmentGroupAssignmentResult
+    {
+        public int Success          { get; set; }
+        public int MappedChannels   { get; set; }
+        public int ActiveChannels   { get; set; }
+
+        public bool Assigned => Success > 0;
+    }
 }
