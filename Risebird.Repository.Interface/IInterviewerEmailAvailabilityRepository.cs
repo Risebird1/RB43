@@ -29,9 +29,22 @@ namespace Risebird.Repository.Interface
             int id, bool? employmentVerified, bool? resumeAIAnalysisCompleted,
             string resumeAIAnalysisResult, string newStatus);
 
-        Task<bool> AssignInterviewerToAssessmentGroupAsync(
+        /// <summary>
+        /// Assigns the assessment group and maps the interviewer onto that group's live skill
+        /// channels. Returns how many channels were mapped, and how many the group has at all,
+        /// so a zero can be told apart from a group with nothing live in it.
+        /// </summary>
+        Task<AssessmentGroupAssignmentResult> AssignInterviewerToAssessmentGroupAsync(
             int emailAvailabilityId, int interviewerProfileId,
             int assessmentGroupId, string assignedBy);
+
+        /// <summary>
+        /// How many of the assessment group's live skill channels this interviewer is currently
+        /// mapped onto, and how many that group has. Used to show the mapping outcome after the
+        /// fact, since the assignment itself may have happened days ago.
+        /// </summary>
+        Task<AssessmentGroupAssignmentResult> GetChannelMappingAsync(
+            int interviewerProfileId, int assessmentGroupId);
 
         Task<bool> DeleteEmailAvailabilityAsync(int id);
 
