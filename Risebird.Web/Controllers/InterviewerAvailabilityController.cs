@@ -170,6 +170,16 @@ namespace Risebird.Web.Controllers
                 if (record == null)
                     return Json(new { success = false, error = "Record not found." });
 
+                // Read the channel mapping live rather than trusting a stored flag — the
+                // assignment may have run days ago, and channels come and go afterwards.
+                var mapping = new AssessmentGroupAssignmentResult();
+                if (record.InterviewerProfileId.HasValue
+                    && record.AssessmentGroupId.HasValue && record.AssessmentGroupId.Value > 0)
+                {
+                    mapping = await _repository.GetChannelMappingAsync(
+                        record.InterviewerProfileId.Value, record.AssessmentGroupId.Value);
+                }
+
                 return Json(new
                 {
                     success = true,
@@ -205,6 +215,8 @@ namespace Risebird.Web.Controllers
                         record.ResumeAIAnalysisResult,
                         record.AssessmentGroupId,
                         assessmentGroupAssignedAt = record.AssessmentGroupAssignedAt?.ToString("dd MMM yyyy, HH:mm"),
+                        mappedChannels = mapping.MappedChannels,
+                        activeChannels = mapping.ActiveChannels,
                         record.ProcessedBy,
                         record.InterviewerNickName,
                         record.CurrentRole,
@@ -614,10 +626,10 @@ namespace Risebird.Web.Controllers
                 int profileId = record.InterviewerProfileId.Value;
                 string assignedBy = HttpContext.Session.GetString("email").Trim('"');
 
-                var ok = await _repository.AssignInterviewerToAssessmentGroupAsync(
+                var assignment = await _repository.AssignInterviewerToAssessmentGroupAsync(
                     id, profileId, agId, assignedBy);
 
-                if (!ok)
+                if (!assignment.Assigned)
                     return Json(new { success = false, error = "Failed to assign interviewer to assessment group." });
 
                 // Send notification (email + WhatsApp) matching InterviewerCommonInterviewNotification pattern
@@ -682,14 +694,17 @@ namespace Risebird.Web.Controllers
                 }
 
                 string agName = record.AssessmentGroupName ?? "Assessment Group #" + agId;
-                await _repository.InsertHistoryAsync(id, "AGAssignment", null, agName, assignedBy);
+                await _repository.InsertHistoryAsync(id, "AGAssignment", null,
+                    $"{agName} — {DescribeChannelMapping(assignment)}", assignedBy);
 
                 return Json(new
                 {
                     success = true,
                     assessmentGroupId = agId,
                     assessmentGroupName = agName,
-                    message = $"Interviewer assigned to {agName} and mapped to active skill channels. Notification sent."
+                    mappedChannels = assignment.MappedChannels,
+                    activeChannels = assignment.ActiveChannels,
+                    message = $"Interviewer assigned to {agName} — {DescribeChannelMapping(assignment)} Notification sent."
                 });
             }
             catch (Exception ex)
@@ -1684,16 +1699,17 @@ namespace Risebird.Web.Controllers
                         int agId = record.ResolvedAssessmentGroupId.Value;
                         int profileId = record.InterviewerProfileId.Value;
 
-                        var assigned = await _repository.AssignInterviewerToAssessmentGroupAsync(
+                        var assignment = await _repository.AssignInterviewerToAssessmentGroupAsync(
                             eaId, profileId, agId, actor);
 
-                        if (assigned)
+                        if (assignment.Assigned)
                         {
                             agMapped = true;
+                            string mapping = DescribeChannelMapping(assignment);
                             await _repository.InsertHistoryAsync(eaId, "AssignedToAG", null,
-                                $"AutoClose — Assigned to AG #{agId}", actor);
+                                $"AutoClose — Assigned to AG #{agId} — {mapping}", actor);
                             await SaveIaCp("ia_autoclose_ag_assigned",
-                                $"Assigned #{eaId} to AG #{agId}", callLogId: eaId);
+                                $"Assigned #{eaId} to AG #{agId} — {mapping}", callLogId: eaId);
 
                             // Send notification email + WhatsApp
                             try
@@ -2069,6 +2085,25 @@ namespace Risebird.Web.Controllers
                 return true;
 
             return false;
+        }
+
+        /// <summary>
+        /// Puts the channel-mapping outcome into words. A bare "mapped 0 channels" is
+        /// ambiguous, and that ambiguity is exactly why an empty mapping went unexplained:
+        /// it can mean the group has nothing live, or that the interviewer was already on
+        /// everything it does have.
+        /// </summary>
+        private static string DescribeChannelMapping(AssessmentGroupAssignmentResult assignment)
+        {
+            if (assignment.MappedChannels > 0)
+                return $"mapped to {assignment.MappedChannels} active skill channel"
+                     + (assignment.MappedChannels == 1 ? "." : "s.");
+
+            if (assignment.ActiveChannels == 0)
+                return "no active skill channels exist for this assessment group, so nothing was mapped.";
+
+            return $"already on all {assignment.ActiveChannels} active skill channel"
+                 + (assignment.ActiveChannels == 1 ? "" : "s") + " for this assessment group; nothing new to map.";
         }
 
         private static string NormalizePhone(string phone)

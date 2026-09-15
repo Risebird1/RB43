@@ -172,7 +172,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> AssignInterviewerToAssessmentGroupAsync(
+        public async Task<AssessmentGroupAssignmentResult> AssignInterviewerToAssessmentGroupAsync(
             int emailAvailabilityId, int interviewerProfileId,
             int assessmentGroupId, string assignedBy)
         {
@@ -185,16 +185,50 @@ namespace Risebird.Repository
                 parameters.Add("@AssessmentGroupId", assessmentGroupId);
                 parameters.Add("@AssignedBy", assignedBy);
 
-                var result = await con.QueryFirstOrDefaultAsync<int>(
+                var row = await con.QueryFirstOrDefaultAsync<AssessmentGroupAssignmentResult>(
                     "usp_AssignInterviewerToAssessmentGroup", parameters,
                     commandType: CommandType.StoredProcedure, commandTimeout: 60);
 
-                return result > 0;
+                return row ?? new AssessmentGroupAssignmentResult();
             }
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                return false;
+                return new AssessmentGroupAssignmentResult();
+            }
+        }
+
+        public async Task<AssessmentGroupAssignmentResult> GetChannelMappingAsync(
+            int interviewerProfileId, int assessmentGroupId)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                const string sql = @"
+SELECT
+    1 AS Success,
+    (SELECT COUNT(*)
+       FROM TransInterviewer ti
+       JOIN IRF irf ON irf.id = ti.IRFId
+      WHERE ti.InterviewerId = @InterviewerProfileId
+        AND LTRIM(RTRIM(irf.AssessmentGroupId)) = CAST(@AssessmentGroupId AS VARCHAR)
+        AND ISNULL(irf.IsPaused, 0) = 0
+        AND irf.EndDate >= GETDATE()) AS MappedChannels,
+    (SELECT COUNT(*)
+       FROM IRF irf
+      WHERE LTRIM(RTRIM(irf.AssessmentGroupId)) = CAST(@AssessmentGroupId AS VARCHAR)
+        AND ISNULL(irf.IsPaused, 0) = 0
+        AND irf.EndDate >= GETDATE()) AS ActiveChannels;";
+
+                var row = await con.QueryFirstOrDefaultAsync<AssessmentGroupAssignmentResult>(
+                    sql, new { InterviewerProfileId = interviewerProfileId, AssessmentGroupId = assessmentGroupId });
+
+                return row ?? new AssessmentGroupAssignmentResult();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new AssessmentGroupAssignmentResult();
             }
         }
 

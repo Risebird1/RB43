@@ -1054,7 +1054,20 @@
         }
 
         if (r.assessmentGroupId && r.assessmentGroupId > 0) {
-            markStep(2, 'completed', 'Assigned to ' + (r.assessmentGroupName || 'AG #' + r.assessmentGroupId) + (r.assessmentGroupAssignedAt ? ' on ' + r.assessmentGroupAssignedAt : ''));
+            // Assignment and channel mapping are two separate outcomes of the same step. Saying
+            // only "Assigned to X" leaves a silent mapping indistinguishable from a successful
+            // one, which is exactly how an empty mapping went unnoticed.
+            var mapped = Number(r.mappedChannels || 0), active = Number(r.activeChannels || 0), mapMsg;
+            if (mapped > 0) {
+                mapMsg = '<br/><span class="text-success" style="font-size:11px;">Mapped to ' + mapped +
+                         ' active skill channel' + (mapped === 1 ? '' : 's') + '.</span>';
+            } else if (active === 0) {
+                mapMsg = '<br/><span class="text-warning" style="font-size:11px;">No active skill channels exist for this assessment group, so nothing was mapped.</span>';
+            } else {
+                mapMsg = '<br/><span class="text-warning" style="font-size:11px;">Not mapped to any of the ' + active +
+                         ' active skill channel' + (active === 1 ? '' : 's') + ' in this assessment group.</span>';
+            }
+            markStep(2, 'completed', 'Assigned to ' + (r.assessmentGroupName || 'AG #' + r.assessmentGroupId) + (r.assessmentGroupAssignedAt ? ' on ' + r.assessmentGroupAssignedAt : '') + mapMsg);
         } else if (r.resumeAIAnalysisCompleted === true && !verdictPositive) {
             $('#step2Subtitle').html('<span class="text-danger">Resume fitment analysis was negative. Cannot assign AG.</span>');
             $('#step2Card').addClass('disabled');
