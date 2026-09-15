@@ -197,6 +197,18 @@ namespace Risebird.Entities.ViewModel
         // Source, which stays 'Naukri' regardless of which platform ran the workflow.
         [JsonProperty("source")]
         public string Source                    { get; set; }
+
+        // False when the workflow judged the candidate under the eight-year experience bar.
+        // These used to be discarded by the workflow and never reached us at all; they are now
+        // filed as NotQualified/Closed tickets so the page reconciles against Naukri.
+        // Nullable on purpose: legacy Relay.app calls omit it, and absent must mean qualified.
+        [JsonProperty("qualifies_for_onboarding")]
+        public bool? QualifiesForOnboarding     { get; set; }
+
+        // False when neither the model nor the subject line yielded an experience figure. Such
+        // a candidate is let through rather than judged, so the value is worth recording.
+        [JsonProperty("experience_known")]
+        public bool? ExperienceKnown            { get; set; }
     }
 
     public class RelayLinkedInPayload
