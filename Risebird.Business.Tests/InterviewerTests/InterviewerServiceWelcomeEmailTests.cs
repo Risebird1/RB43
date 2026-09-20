@@ -25,10 +25,12 @@ namespace Risebird.Business.Tests.InterviewerTests
         public async Task The_generated_password_is_emailed_when_one_was_created()
         {
             var fixture = new InterviewerServiceFixture();
+            // CreateSut re-registers the fixture's own stub for this call, so the override has to
+            // come after it or Moq's last-setup-wins rule discards it.
+            var sut = fixture.CreateSut();
             fixture.Repository
                 .Setup(x => x.UpdateInterviewerActiveStatus(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>()))
                 .ReturnsAsync(ActivatedInterviewer("Ab@123456"));
-            var sut = fixture.CreateSut();
 
             await sut.UpdateInterviewerActiveStatus(1, UserId);
 
@@ -43,10 +45,10 @@ namespace Risebird.Business.Tests.InterviewerTests
             // Regression guard: suppressing the whole email here would also withhold the interview
             // instructions, which is worse than sending it without credentials.
             var fixture = new InterviewerServiceFixture();
+            var sut = fixture.CreateSut();
             fixture.Repository
                 .Setup(x => x.UpdateInterviewerActiveStatus(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>()))
                 .ReturnsAsync(ActivatedInterviewer(string.Empty));
-            var sut = fixture.CreateSut();
 
             await sut.UpdateInterviewerActiveStatus(1, UserId);
 
@@ -62,10 +64,10 @@ namespace Risebird.Business.Tests.InterviewerTests
         public async Task A_blank_credential_is_never_emailed()
         {
             var fixture = new InterviewerServiceFixture();
+            var sut = fixture.CreateSut();
             fixture.Repository
                 .Setup(x => x.UpdateInterviewerActiveStatus(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>()))
                 .ReturnsAsync(ActivatedInterviewer(null));
-            var sut = fixture.CreateSut();
 
             await sut.UpdateInterviewerActiveStatus(1, UserId);
 
