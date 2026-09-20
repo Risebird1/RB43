@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Risebird.Mcp.BugTriage</RootNamespace>
+    <AssemblyName>Risebird.Mcp.BugTriage</AssemblyName>
+    <UserSecretsId>risebird-mcp-bugtriage</UserSecretsId>
+    <!--
+      The MCP SDK pulls the 10.0.10 servicing band of Microsoft.Extensions.*, while the solution pins
+      10.0.0 centrally. Transitive pinning is disabled here so that graph resolves on its own instead
+      of forcing a solution-wide bump. Direct references are still centrally versioned.
+    -->
+    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
+    <!-- The MCP SDK uses source generators that need the tool metadata preserved. -->
+    <IsTrimmable>false</IsTrimmable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ModelContextProtocol" />
+    <PackageReference Include="Azure.Monitor.Query" />
+    <PackageReference Include="Azure.Identity" />
+    <PackageReference Include="Microsoft.Extensions.Http" VersionOverride="10.0.10" />
+    <!--
+      ModelContextProtocol 2.2.0 requires the 10.0.10 servicing band of the hosting stack. These are
+      overridden here rather than in Directory.Packages.props so the rest of the solution keeps its
+      pinned 10.0.0 versions.
+    -->
+    <PackageReference Include="Microsoft.Extensions.Hosting" VersionOverride="10.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" VersionOverride="10.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" VersionOverride="10.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

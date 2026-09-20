@@ -2,10 +2,12 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
+using Microsoft.Graph.Models.ODataErrors;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -31,9 +33,11 @@ namespace Risebird.CommonHelper
         private readonly IConfiguration _configuration;
         private AuthenticationContext authContext;
         private ClientCredential credential;
+        private readonly IApplicationErrorLogger _errorLogger;
 
         public B2CClientService(IConfiguration configuration, IApplicationErrorLogger errorLogger)
         {
+            _errorLogger = errorLogger;
             clientId = configuration["RisebirdGraphB2C:RisebirdGraphClientId"];
             clientSecret = configuration["RisebirdGraphB2C:RisebirdGraphClientSecret"];
             tenant = configuration["RisebirdGraphB2C:RisebirdGraphTenant"];
@@ -46,8 +50,10 @@ namespace Risebird.CommonHelper
             this.credential = new ClientCredential(clientId, clientSecret);
         }
 
-        public async Task<bool> CreateUser(UserList externalUser, bool forcePasswordChangeNextLogin = false)
+        public async Task<B2CProvisioningOutcome> CreateUser(UserList externalUser, bool forcePasswordChangeNextLogin = false)
         {
+            var emailId = externalUser?.EmailId ?? string.Empty;
+
             try
             {
                 var graphUserToAdd = UserViewModelToGraphUser(externalUser, forcePasswordChangeNextLogin);
@@ -56,13 +62,44 @@ namespace Risebird.CommonHelper
                       .Users
                       .PostAsync(graphUserToAdd);
 
-                return newUser != null ? true : false;
+                return newUser != null
+                    ? B2CProvisioningOutcome.Created
+                    : B2CProvisioningOutcome.Failed;
+            }
+            catch (ODataError odataError) when (IsAlreadyExists(odataError))
+            {
+                // Re-adding somebody who is already in the directory is a normal case, not a failure.
+                // Reported separately so callers can continue without treating the generated password
+                // as valid - it was never applied to the existing account.
+                await _errorLogger.LogMessage(LogLevelInfo.Info,
+                    "Azure AD B2C account already exists; the generated password was not applied.", emailId);
+                return B2CProvisioningOutcome.AlreadyExists;
             }
             catch (Exception ex)
             {
-                return false;
+                // Without this log there is no record anywhere of why the B2C account could not be
+                // created, and the caller cannot tell a real failure from an existing account.
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex, emailId);
+                return B2CProvisioningOutcome.Failed;
             }
-           
+        }
+
+        /// <summary>
+        /// Graph reports a duplicate B2C identity as 409 with an ObjectConflict error code. The
+        /// message check is a fallback in case the code or status is not populated.
+        /// </summary>
+        private static bool IsAlreadyExists(ODataError odataError)
+        {
+            if (odataError.ResponseStatusCode == (int)HttpStatusCode.Conflict)
+            {
+                return true;
+            }
+
+            var code = odataError.Error?.Code ?? string.Empty;
+            var message = odataError.Error?.Message ?? string.Empty;
+
+            return code.IndexOf("ObjectConflict", StringComparison.OrdinalIgnoreCase) >= 0
+                || message.IndexOf("already exists", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private async Task<GraphServiceClient> CreateGraphClient()

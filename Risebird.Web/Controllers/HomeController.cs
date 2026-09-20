@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
+using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using System;
 using System.Linq;
@@ -19,12 +20,14 @@ namespace Risebird.Web.Controllers
         private readonly ISettingsService _settingsService;
         private readonly IClientService _clientService;
         private readonly IMeetingService _meetingService;
-        public HomeController(IUserService userService, ISettingsService settingsService, IClientService clientService, IMeetingService meetingService)
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+        public HomeController(IUserService userService, ISettingsService settingsService, IClientService clientService, IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger)
         {
             _userService = userService;
             _settingsService = settingsService;
             _clientService = clientService;
             _meetingService = meetingService;
+            _applicationErrorLogger = applicationErrorLogger;
         }
 
         public async Task<IActionResult> Index(string url = null)
@@ -36,6 +39,15 @@ namespace Risebird.Web.Controllers
                 string name = userClaims?.FindFirst("name")?.Value;
                 // The 'Name' claim can be used for showing the username 
                 string emailId = userClaims?.FindFirst("emails")?.Value;
+                if (string.IsNullOrWhiteSpace(emailId))
+                {
+                    // B2C did not emit the 'emails' claim. Common for social/federated sign-ins when
+                    // the user flow is not configured to return it. Without it no user can be resolved,
+                    // so the sign-out below would otherwise happen with no explanation anywhere.
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Error,
+                        $"Login failed: 'emails' claim was empty. Claims present: {string.Join(", ", userClaims?.Claims.Select(c => c.Type) ?? Enumerable.Empty<string>())}");
+                    return RedirectToAction("SignOut", "Session");
+                }
                 if (await _userService.CheckMultiSession(emailId))
                 {
                     return RedirectToAction("Index", "MultiSession");
@@ -115,6 +127,8 @@ namespace Risebird.Web.Controllers
                     var menuAccess = menus.Where(x => x.dAccess)?.FirstOrDefault();
                     if (menuAccess == null)
                     {
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                            "Login failed: menus returned but none has dAccess set, so there is no landing page.", emailId);
                         return RedirectToAction("SignOut", "Session");
                     }
                     var menuslink = menuAccess.sUrl.Split('/');
@@ -137,6 +151,9 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                        "Login failed: no menus returned. User is most likely missing from UserList, inactive, " +
+                        "or their idProfile does not match a Profile row.", emailId);
                     return RedirectToAction("SignOut", "Session");
                 }
             }

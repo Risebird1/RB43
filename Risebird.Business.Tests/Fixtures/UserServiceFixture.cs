@@ -43,6 +43,13 @@ namespace Risebird.Business.Tests.Fixtures
         /// <summary>Result the user repository returns for Add / Update / Delete.</summary>
         public bool RepositorySucceeds { get; set; } = true;
 
+        /// <summary>
+        /// Outcome the Azure AD B2C provisioning step reports. Defaults to a freshly created account;
+        /// set it to Failed to exercise the abort path, or AlreadyExists to check that provisioning
+        /// still continues without a usable password.
+        /// </summary>
+        public B2CProvisioningOutcome B2CProvisioning { get; set; } = B2CProvisioningOutcome.Created;
+
         /// <summary>Captured <c>additionalIrfIntIds</c> from the last upsert call.</summary>
         public IEnumerable<int> LastAdditionalIrfIntIds { get; private set; }
 
@@ -54,7 +61,11 @@ namespace Risebird.Business.Tests.Fixtures
                 .Returns(Task.CompletedTask);
 
             PasswordHelper.Setup(x => x.GenerateUserPassword(It.IsAny<UserDetails>(), It.IsAny<bool>()))
-                .ReturnsAsync("Ab@123456");
+                .ReturnsAsync(() => new B2CProvisioningResult
+                {
+                    Outcome = B2CProvisioning,
+                    Password = B2CProvisioning == B2CProvisioningOutcome.Created ? "Ab@123456" : string.Empty
+                });
 
             // AddUser is what assigns the identity, so the sync that follows depends on it.
             Repository.Setup(x => x.AddUser(It.IsAny<UserList>()))

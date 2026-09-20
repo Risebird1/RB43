@@ -249,7 +249,19 @@ namespace Risebird.Business
                     LastName = interviewerProfile.LastName.Replace(" ", ""),
                     EmailId = interviewerProfile.EmailId.Replace(" ", "")
                 };
-                interviewerProfile.UserPassword = _passwordHelper.GenerateUserPassword(userDetails).Result;
+                var provisioning = _passwordHelper.GenerateUserPassword(userDetails).Result;
+                if (provisioning.ShouldAbort)
+                {
+                    // Continuing after a genuine failure would create an interviewer who looks
+                    // provisioned but is told "account not found" when signing in. An account that
+                    // already exists is fine to continue with. This method is synchronous, so the
+                    // log call blocks like the line above.
+                    _applicationErrorLogger.LogMessage(LogLevelInfo.Error,
+                        "Aborting AddInterviewerProfile: the Azure AD B2C account could not be created, so no interviewer profile was written.",
+                        interviewerProfile.EmailId).GetAwaiter().GetResult();
+                    return false;
+                }
+                interviewerProfile.UserPassword = provisioning.Password;
                 var NickNamesList = GetNickNames(0);
                 if (string.IsNullOrEmpty(interviewerProfile.NickName))
                 {
@@ -2039,7 +2051,19 @@ namespace Risebird.Business
                 {
                     await TrySyncInterviewerListingSearchByUserIdAsync(userId);
                     //sendwelcomeEmailtointerviewer
-                    await _notificationHelper.SendWelcomeEmailToInterviewer(result.EmailId, result.UserPassword, result.HMVideoForTargetIRF);
+                    if (!string.IsNullOrEmpty(result.UserPassword))
+                    {
+                        await _notificationHelper.SendWelcomeEmailToInterviewer(result.EmailId, result.UserPassword, result.HMVideoForTargetIRF);
+                    }
+                    else
+                    {
+                        // No stored password means the B2C account already existed when this
+                        // interviewer was provisioned, so they keep their own credentials. Emailing a
+                        // blank password would only confuse them.
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
+                            "Skipped the welcome email: no generated password is stored, so this interviewer already had an Azure AD B2C account.",
+                            result.EmailId);
+                    }
                 }
                 return result;
             }

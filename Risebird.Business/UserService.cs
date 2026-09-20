@@ -126,7 +126,18 @@ namespace Risebird.Business
                     LastName = user.LastName.Replace(" ", ""),
                     EmailId = user.EmailId.Replace(" ", "")
                 };
-                user.UserPassword = await _passwordHelper.GenerateUserPassword(userDetails, false);
+                var provisioning = await _passwordHelper.GenerateUserPassword(userDetails, false);
+                if (provisioning.ShouldAbort)
+                {
+                    // Writing the UserList row when B2C creation genuinely failed leaves a user who
+                    // looks fully provisioned in the portal but is told "account not found" at the
+                    // B2C sign-in page. An account that already exists is fine to continue with.
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Error,
+                        "Aborting AddUser: the Azure AD B2C account could not be created, so no UserList row was written.",
+                        user.EmailId);
+                    return false;
+                }
+                user.UserPassword = provisioning.Password;
                 var result = await _userRepository.AddUser(user);
                 // AddUser writes the client assignments too (SeniorHR), which put this user into
                 // the allowedViewerEmails ACL of every IRF belonging to those clients.
@@ -243,7 +254,15 @@ namespace Risebird.Business
                 var isPasswordReset = await _userRepository.GetClientPasswordResetEnableStatus(clientUser.SelectedClient.Value);
                 //clientUser.UserPassword = GenerateUserPassword(clientUser).Result;
                 // TODO for Prashant, Please call method to fetch PasswordReswet Flag and pass it below
-                clientUser.UserPassword = await _passwordHelper.GenerateUserPassword(userDetails, isPasswordReset);
+                var provisioning = await _passwordHelper.GenerateUserPassword(userDetails, isPasswordReset);
+                if (provisioning.ShouldAbort)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Error,
+                        "Aborting AddClientUser: the Azure AD B2C account could not be created, so no client user was written.",
+                        clientUser.EmailId);
+                    return false;
+                }
+                clientUser.UserPassword = provisioning.Password;
                 return await _userRepository.AddClientUser(clientUser);
             }
 
@@ -922,7 +941,15 @@ namespace Risebird.Business
                     EmailId = clientUser.EmailId.Replace(" ", "")
                 };
                 var isPasswordReset = await _userRepository.GetClientPasswordResetEnableStatus(clientUser.SelectedClient.Value);
-                clientUser.UserPassword = await _passwordHelper.GenerateUserPassword(userDetails, isPasswordReset);
+                var provisioning = await _passwordHelper.GenerateUserPassword(userDetails, isPasswordReset);
+                if (provisioning.ShouldAbort)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Error,
+                        "Aborting AddPremiumClientUser: the Azure AD B2C account could not be created, so no client user was written.",
+                        clientUser.EmailId);
+                    return false;
+                }
+                clientUser.UserPassword = provisioning.Password;
                 return await _userRepository.AddPremiumClientUser(clientUser);
             }
 

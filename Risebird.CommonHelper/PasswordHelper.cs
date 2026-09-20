@@ -1,5 +1,6 @@
 ﻿using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 using System;
 using System.Threading.Tasks;
 
@@ -16,7 +17,7 @@ namespace Risebird.CommonHelper
 
         }
 
-        public async Task<string> GenerateUserPassword(UserDetails user, bool forcePasswordChangeNextLogin = false)
+        public async Task<B2CProvisioningResult> GenerateUserPassword(UserDetails user, bool forcePasswordChangeNextLogin = false)
         {
             Random rand = new Random(); // <-- Make this static somewhere
 
@@ -40,11 +41,16 @@ namespace Risebird.CommonHelper
                 EmailId = user.EmailId,
                 UserPassword = password
             };
-            if (await _b2CClientService.CreateUser(userobj, forcePasswordChangeNextLogin))
+            var outcome = await _b2CClientService.CreateUser(userobj, forcePasswordChangeNextLogin);
+
+            return new B2CProvisioningResult
             {
-                return userobj.UserPassword;
-            }
-            return string.Empty;
+                Outcome = outcome,
+                // Only a freshly created account actually has this password. For one that already
+                // existed the generated password was never applied, so handing it back would store
+                // and email a credential that does not work.
+                Password = outcome == B2CProvisioningOutcome.Created ? userobj.UserPassword : string.Empty
+            };
         }
     }
 }
