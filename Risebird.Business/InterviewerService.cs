@@ -2051,19 +2051,19 @@ namespace Risebird.Business
                 {
                     await TrySyncInterviewerListingSearchByUserIdAsync(userId);
                     //sendwelcomeEmailtointerviewer
-                    if (!string.IsNullOrEmpty(result.UserPassword))
+                    // An interviewer provisioned against an Azure AD B2C account that already existed
+                    // has no generated password stored. The welcome email still carries the portal
+                    // walkthrough and the interview-instruction video, so it must still go out - only
+                    // the credential line changes, rather than the whole message being suppressed.
+                    var welcomePassword = result.UserPassword;
+                    if (string.IsNullOrEmpty(welcomePassword))
                     {
-                        await _notificationHelper.SendWelcomeEmailToInterviewer(result.EmailId, result.UserPassword, result.HMVideoForTargetIRF);
-                    }
-                    else
-                    {
-                        // No stored password means the B2C account already existed when this
-                        // interviewer was provisioned, so they keep their own credentials. Emailing a
-                        // blank password would only confuse them.
+                        welcomePassword = "Sign in with the password you already use for Risebird.";
                         await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
-                            "Skipped the welcome email: no generated password is stored, so this interviewer already had an Azure AD B2C account.",
+                            "Welcome email sent without generated credentials: this interviewer already had an Azure AD B2C account.",
                             result.EmailId);
                     }
+                    await _notificationHelper.SendWelcomeEmailToInterviewer(result.EmailId, welcomePassword, result.HMVideoForTargetIRF);
                 }
                 return result;
             }
