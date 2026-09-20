@@ -39,6 +39,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Risebird.AzureTimerFunction
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Risebird.Business.Tests", "Risebird.Business.Tests\Risebird.Business.Tests.csproj", "{7E7CE088-F07E-4F69-B96C-4FA301895DF2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Risebird.CommonHelper.Tests", "Risebird.CommonHelper.Tests\Risebird.CommonHelper.Tests.csproj", "{3A7C1F52-9B4D-4E88-A1C6-2F5D8B0E7411}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Risebird.Repository.Tests", "Risebird.Repository.Tests\Risebird.Repository.Tests.csproj", "{6D2E8B14-77AF-4C39-9E52-0B4A1C6F8D23}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Risebird.Mcp.BugTriage", "Risebird.Mcp.BugTriage\Risebird.Mcp.BugTriage.csproj", "{4CB3D6ED-D4BB-45E5-A2AE-621C9C09B78C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Risebird.Mcp.BugTriage.Tests", "Risebird.Mcp.BugTriage.Tests\Risebird.Mcp.BugTriage.Tests.csproj", "{64044F92-9624-4141-A8F6-DAB8DD3E4B31}"
@@ -221,6 +225,14 @@ Global
 		{64044F92-9624-4141-A8F6-DAB8DD3E4B31}.Release|x64.Build.0 = Release|Any CPU
 		{64044F92-9624-4141-A8F6-DAB8DD3E4B31}.Release|x86.ActiveCfg = Release|Any CPU
 		{64044F92-9624-4141-A8F6-DAB8DD3E4B31}.Release|x86.Build.0 = Release|Any CPU
+		{3A7C1F52-9B4D-4E88-A1C6-2F5D8B0E7411}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A7C1F52-9B4D-4E88-A1C6-2F5D8B0E7411}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A7C1F52-9B4D-4E88-A1C6-2F5D8B0E7411}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A7C1F52-9B4D-4E88-A1C6-2F5D8B0E7411}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D2E8B14-77AF-4C39-9E52-0B4A1C6F8D23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D2E8B14-77AF-4C39-9E52-0B4A1C6F8D23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D2E8B14-77AF-4C39-9E52-0B4A1C6F8D23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D2E8B14-77AF-4C39-9E52-0B4A1C6F8D23}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

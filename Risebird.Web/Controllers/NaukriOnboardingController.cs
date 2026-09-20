@@ -2260,13 +2260,43 @@ namespace Risebird.Web.Controllers
                             $"LinkedIn: {record.LinkedInMatch} (confidence {record.LinkedInConfidence?.ToString() ?? "—"}) — {record.LinkedInUrl ?? "no url"}"
                             + (string.IsNullOrWhiteSpace(record.LinkedInReason) ? "" : $" — {record.LinkedInReason}")
                             + $" (verified by {platform} agent)", actor);
+
+                    // Naukri hides the candidate's email and phone behind 'View Contact Details',
+                    // so they come from the resume. If the resume could not be fetched, say so —
+                    // otherwise a prospect simply sits there with no contact details and no
+                    // explanation, and the outreach automation can never reach them.
+                    if (!string.IsNullOrWhiteSpace(sourceResumeUrl)
+                        && !sourceResumeUrl.Equals("None", StringComparison.OrdinalIgnoreCase)
+                        && string.IsNullOrWhiteSpace(blobResumeUrl))
+                        await _repository.InsertHistoryAsync(newId, "ResumeFetchFailed", "—",
+                            $"Resume could not be downloaded from {sourceResumeUrl}; contact details cannot be parsed from it.",
+                            actor);
+
+                    if (payload.ExperienceKnown == false)
+                        await _repository.InsertHistoryAsync(newId, "ExperienceUnknown", "—",
+                            "Experience could not be read from the email or the resume; the candidate was let through for manual review rather than judged against the eight-year bar.",
+                            actor);
+                }
+
+                // Under the experience bar → terminal NotQualified outcome, same as a failed
+                // Employment Verification. These used to be discarded inside the workflow, so
+                // the page could not be reconciled against what Naukri actually sent.
+                bool notQualified = newId > 0 && payload.QualifiesForOnboarding == false;
+                if (notQualified)
+                {
+                    await _repository.SetFunnelOutcomeAsync(newId, "NotQualified", "Closed");
+                    await _repository.InsertHistoryAsync(newId, "NotQualified", "—",
+                        $"Experience {(string.IsNullOrWhiteSpace(record.ExperienceYears) ? "unknown" : record.ExperienceYears)} years is below the eight-year bar. Funnel → Not Qualified.",
+                        actor);
                 }
 
                 return Ok(new
                 {
                     success = true,
                     id = newId,
-                    message = $"Naukri prospect created (#{newId}) for {record.CandidateName}.",
+                    message = $"Naukri prospect created (#{newId}) for {record.CandidateName}."
+                            + (notQualified ? " Filed as Not Qualified (under the eight-year experience bar)." : ""),
+                    notQualified,
                     resumeUploaded = !string.IsNullOrWhiteSpace(blobResumeUrl)
                 });
             }
@@ -2891,6 +2921,14 @@ namespace Risebird.Web.Controllers
             match = Regex.Match(url, @"drive\.google\.com/open\?id=([^&]+)");
             if (match.Success)
                 return $"https://drive.google.com/uc?export=download&id={match.Groups[1].Value}";
+
+            // Google Docs editor links. Drive turns an uploaded .doc/.docx resume into a native
+            // Google Doc and hands back an /edit link; fetching that returns the editor's HTML
+            // page rather than the file, which the caller then discards as not-a-document. Ask
+            // for an export of the real content instead.
+            match = Regex.Match(url, @"docs\.google\.com/document/d/([^/?#]+)");
+            if (match.Success)
+                return $"https://docs.google.com/document/d/{match.Groups[1].Value}/export?format=docx";
 
             return url;
         }

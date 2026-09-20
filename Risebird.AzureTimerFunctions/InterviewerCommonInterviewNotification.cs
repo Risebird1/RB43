@@ -63,7 +63,6 @@ namespace Risebird.AzureTimerFunctions
                             Mail _mail1 = new Mail
                             {
                                 TO = item.EmailId,
-                                CC = "talent@risebird.io",
                                 Subject = "New interviews have come up! Please assign."
                             };
                             var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, item.uniqueid, item.irfIntId);
@@ -140,7 +139,6 @@ namespace Risebird.AzureTimerFunctions
                             Mail _mail1 = new Mail
                             {
                                 TO = item,
-                                CC = "talent@risebird.io",
                                 Subject = "New Interview(s) Scheduled"
                             };
                             var emailsend1 = await _notificationHelper.SendClientCommonInterviewNotification(_mail1, dt, details.FirstOrDefault().logolink);

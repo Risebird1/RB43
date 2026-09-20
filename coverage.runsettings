@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Coverage settings for the Risebird unit-test suites.
+
+    dotnet test RisebirdPortal.sln -s coverage.runsettings
+
+  Produces Cobertura XML under each test project's TestResults/<guid>/ folder.
+  Use ./coverage.ps1 to run it and print a per-project summary.
+
+  GATED PROJECTS: Risebird.Business and Risebird.CommonHelper.
+  Risebird.Repository is measured separately (coverage.repository.runsettings) because its
+  coverage ceiling under unit tests is ~7% by construction - see COVERAGE_PLAN.md.
+-->
+<RunSettings>
+  <RunConfiguration>
+    <!-- Test hosts run in parallel across projects; assemblies stay single-threaded so the
+         reflection sweep's shared AutoMocker state cannot interleave. -->
+    <MaxCpuCount>0</MaxCpuCount>
+    <ResultsDirectory>TestResults</ResultsDirectory>
+  </RunConfiguration>
+
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <Format>cobertura,opencover</Format>
+
+          <!-- The gated projects. Risebird.Repository is deliberately NOT here: ~94% of it is
+               Dapper against a live SqlConnection with no injectable seam, so a unit-test
+               percentage for it is meaningless. Measure it separately with
+               coverage.repository.runsettings, and cover it properly with integration tests. -->
+          <Include>
+            [Risebird.Business]*
+            [Risebird.CommonHelper]*
+          </Include>
+
+          <Exclude>
+            [Risebird.*.Tests]*
+            [Risebird.Entities]*
+            [Risebird.Repository]*
+            [Risebird.Web]*
+            [Risebird.Services]*
+            [Risebird.AzureTimerFunctions]*
+            [Risebird.MicroService]*
+          </Exclude>
+
+          <!-- Generated and non-executable members skew the denominator. -->
+          <ExcludeByAttribute>
+            Obsolete,
+            GeneratedCodeAttribute,
+            CompilerGeneratedAttribute,
+            ExcludeFromCodeCoverageAttribute
+          </ExcludeByAttribute>
+
+          <ExcludeByFile>
+            **/obj/**,
+            **/bin/**,
+            **/*.Designer.cs,
+            **/*.g.cs,
+            **/*.g.i.cs
+          </ExcludeByFile>
+
+          <SingleHit>false</SingleHit>
+          <UseSourceLink>false</UseSourceLink>
+          <IncludeTestAssembly>false</IncludeTestAssembly>
+          <SkipAutoProps>true</SkipAutoProps>
+          <DeterministicReport>false</DeterministicReport>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

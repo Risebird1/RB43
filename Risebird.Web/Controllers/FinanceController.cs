@@ -541,6 +541,20 @@ namespace Risebird.Web.Controllers
             return Json(model);
         }
         /// <summary>
+        /// Admin or Finance Team may add points to an interviewer looked up by email, from the FN Payment toolbar
+        /// </summary>
+        /// <param name="Interviewer"></param>
+        /// <param name="Points"></param>
+        /// <param name="Comment"></param>
+        /// <param name="PointDate"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<JsonResult> AddPointsByEmail(string Interviewer, int Points, string Comment, DateTime PointDate)
+        {
+            var model = await _meetingService.AddPointsForInterviewerByEmail(Interviewer, Points, Comment, PointDate);
+            return Json(model);
+        }
+        /// <summary>
         /// Finance Team can raise query againsted the payment
         /// </summary>
         /// <param name="emailid"></param>
