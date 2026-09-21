@@ -1178,32 +1178,48 @@
         openCarryForwardModal();
     }
     // ??? Bulk Carry Forward (Batch Payout-style multiselect popup) ????????????????
+    // Fetches the FULL (unpaginated) week-scoped list from the server-side session
+    // cache, same way openBatchPayoutModal() does for Batch Payout, instead of relying
+    // on currentTableData (which only holds the current page's 10 rows).
     function openCarryForwardModal() {
-        var negativeRows = (currentTableData || []).filter(function (row) {
-            return parseInt(row.points) < 0;
-        });
         var tbody = document.getElementById('tblCarryForwardBody');
+        tbody.innerHTML = '<tr><td colspan="3" class="text-center"><img src="/Newassets/img/lazyload.gif" style="height:30px;" /></td></tr>';
         document.getElementById('chkSelectAllCarryForward').checked = false;
         document.getElementById('spnCarryForwardSelected').textContent = '0 interviewer(s) selected';
         document.getElementById('divCarryForwardResult').style.display = 'none';
         document.getElementById('divCarryForwardResult').innerHTML = '';
         document.getElementById('btnProceedCarryForward').disabled = false;
-
-        if (negativeRows.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="3" class="text-center">No interviewer has a negative total for this week.</td></tr>';
-        } else {
-            var html = '';
-            for (var i = 0; i < negativeRows.length; i++) {
-                var row = negativeRows[i];
-                html += '<tr>';
-                html += '<td style="text-align:center;"><input type="checkbox" class="chkCarryForwardInterviewer" data-id="' + row.id + '" data-points="' + row.points + '" onchange="updateCarryForwardCount()" /></td>';
-                html += '<td>' + (row.comment || '') + '</td>';
-                html += '<td style="text-align:right;color:#c62828;">' + row.points + '</td>';
-                html += '</tr>';
-            }
-            tbody.innerHTML = html;
-        }
         document.getElementById('myCarryForwardModel').style.display = 'block';
+
+        $.ajax({
+            url: '/Finance/GetAllCarryForwardCandidates',
+            type: 'GET',
+            dataType: 'json',
+            success: function (resp) {
+                if (!resp.success) {
+                    tbody.innerHTML = '<tr><td colspan="3" class="text-center text-danger">' + (resp.message || 'Failed to load.') + '</td></tr>';
+                    return;
+                }
+                var list = resp.data || [];
+                if (list.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" class="text-center">No interviewer has a negative total for this week.</td></tr>';
+                    return;
+                }
+                var html = '';
+                for (var i = 0; i < list.length; i++) {
+                    var row = list[i];
+                    html += '<tr>';
+                    html += '<td style="text-align:center;"><input type="checkbox" class="chkCarryForwardInterviewer" data-id="' + row.id + '" data-points="' + row.points + '" onchange="updateCarryForwardCount()" /></td>';
+                    html += '<td>' + (row.email || '') + '</td>';
+                    html += '<td style="text-align:right;color:#c62828;">' + row.points + '</td>';
+                    html += '</tr>';
+                }
+                tbody.innerHTML = html;
+            },
+            error: function () {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Failed to load interviewers. Please try again.</td></tr>';
+            }
+        });
     }
 
     function closeCarryForwardModal() {

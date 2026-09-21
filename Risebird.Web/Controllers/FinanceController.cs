@@ -869,6 +869,41 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>
+        /// Returns every interviewer from the current session-cached, WEEK-SCOPED FNPayment
+        /// list (populated by FNGenerateInvoiceJson when a 1-7/8-14/15-21/22-end week button
+        /// is clicked) whose net Points for that week is negative. Used to populate the Bulk
+        /// Carry Forward modal with the full (unpaginated) dataset, matching Batch Payout.
+        /// </summary>
+        [HttpGet]
+        public JsonResult GetAllCarryForwardCandidates()
+        {
+            try
+            {
+                var sessionData = HttpContext.Session.GetString("financemodel");
+                if (string.IsNullOrEmpty(sessionData))
+                    return Json(new { success = false, message = "Session expired. Please reload the page.", data = new List<object>() });
+
+                var allItems = JsonConvert.DeserializeObject<List<Risebird.Entities.ViewModel.RBInterviewDetails>>(sessionData);
+                var candidates = allItems
+                    .Where(x => x.Points < 0)
+                    .Select(x => new
+                    {
+                        x.id,
+                        email = x.Comment,
+                        points = x.Points
+                    })
+                    .ToList();
+
+                return Json(new { success = true, data = candidates });
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Json(new { success = false, message = "Failed to load candidates.", data = new List<object>() });
+            }
+        }
+
+        /// <summary>
         /// Processes Cashfree bank payouts for multiple interviewers in a single request.
         /// Accepts a comma-separated list of interviewer IDs; each is paid using the same
         /// index/date-range context that was active on the FNPayment page.
