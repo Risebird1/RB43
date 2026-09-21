@@ -700,7 +700,10 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> CarryForwardPayment(int id, DateTime st, DateTime se)
         {
             var (nextSt, nextSe) = GetNextWeekRange(st);
-            var result = await _meetingService.CarryForwardPayments(id, st, se.AddDays(1), nextSt);
+            // nextSt is exact midnight, the same instant as the current week's inclusive
+            // upper bound (se.AddDays(1)) below — nudge it 1 hour into next week so a
+            // carried-forward row doesn't match both weeks' inclusive date range checks.
+            var result = await _meetingService.CarryForwardPayments(id, st, se.AddDays(1), nextSt.AddHours(1));
             if (result == "Success")
             {
                 return Json(new { success = true, message = "Carried forward to next week (" + nextSt.ToString("dd MMM") + " - " + nextSe.ToString("dd MMM") + ")." });
@@ -729,7 +732,8 @@ namespace Risebird.Web.Controllers
             {
                 try
                 {
-                    var result = await _meetingService.CarryForwardPayments(id, st, se.AddDays(1), nextSt);
+                    // See CarryForwardPayment: nudge past the shared midnight boundary.
+                    var result = await _meetingService.CarryForwardPayments(id, st, se.AddDays(1), nextSt.AddHours(1));
                     results.Add(new { id, success = result == "Success" });
                 }
                 catch (Exception ex)
