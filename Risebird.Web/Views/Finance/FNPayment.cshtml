@@ -152,6 +152,9 @@
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="background-color:#1976d2;color:#fff;" onclick="openBatchPayoutModal()">
                                 <span class="fa fa-paper-plane" data-toggle="tooltip" data-placement="top" data-original-title="Batch Cashfree Payout"><font style="font-family:Roboto,sans-serif;font-size:9px;padding-left:3px;">Batch Payout</font></span>
                             </button>
+                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="background-color:#c62828;color:#fff;" onclick="bulkCarryForwardPayment()" title="Carry forward every interviewer whose total for the currently viewed week is below 0 to next week">
+                                <span class="fa fa-level-down-alt" data-toggle="tooltip" data-placement="top" data-original-title="Bulk Carry Forward to next week"><font style="font-family:Roboto,sans-serif;font-size:9px;padding-left:3px;">Bulk Carry Forward</font></span>
+                            </button>
                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
                                 <span class="fa fa-credit-card" data-toggle="tooltip" data-placement="top" onclick="openmyAdvancepaymentModel()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:9px;padding-left:3px;">Advance Payment</font></span>
                             </button>
@@ -610,6 +613,54 @@
             </div>
         </div>
 
+        <div id="myCarryForwardModel" class="modal">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="filheader">
+                            <div class="filavatar">
+                                <span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="rgb(255,255,255)" viewBox="0 0 16 16"><path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
+                                </span>
+                            </div>
+                            <h5 class="modal-title pull-left">Bulk Carry Forward to Next Week</h5>
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeCarryForwardModal()">
+                            <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+                        </button>
+                        <div class="modal-body">
+                            <p style="margin:0 0 8px;font-size:13px;color:#555;">Select the interviewers whose total for the currently viewed week is negative, to carry them forward to next week.</p>
+                            <div class="table-responsive" style="max-height:380px;overflow-y:auto;">
+                                <table class="table table-striped table-bordered" style="font-size:13px;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:40px;text-align:center;">
+                                                <input type="checkbox" id="chkSelectAllCarryForward" title="Select / Deselect All" onchange="toggleSelectAllCarryForward(this)" />
+                                            </th>
+                                            <th>Name / Email</th>
+                                            <th style="width:100px;">Points (this week)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblCarryForwardBody">
+                                        <tr><td colspan="3" class="text-center">No interviewer has a negative total for this week.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="divCarryForwardResult" style="display:none;max-height:200px;overflow-y:auto;margin-top:10px;"></div>
+                            <div class="col-md-12" style="margin-top:12px;padding:0;">
+                                <span id="spnCarryForwardSelected" style="font-size:13px;color:#555;line-height:32px;">0 interviewer(s) selected</span>
+                                <button type="button" id="btnProceedCarryForward" onclick="confirmBulkCarryForward()"
+                                    class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right"
+                                    style="background-color:#c62828;color:#fff;">
+                                    Carry Forward Selected
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="myinvoiceModel" class="modal">
             <!-- Modal content -->
             <div class="modal-dialog modal-lg" role="document">
@@ -792,6 +843,13 @@
                 html += ' </span>';
                 html += ' </button>';
             }
+            if (parseInt(pointdetails) < 0) {
+                html += ' <button class="mdc-fab app-fab--absolute" aria-label="Carry Forward" style="background-color:#c62828;">';
+                html += ' <span title="Carry forward this week\'s negative total to next week" onclick="carryForwardPayment(' + data[i].id + ')" class="mdc-fab__icon material-icons">';
+                html += '   <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" viewBox="0 0 16 16"><path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>';
+                html += '   </span>';
+                html += ' </button>';
+            }
             html += '</td>';
             html += ' </tr>';
 
@@ -868,6 +926,7 @@
 </script>
 <script>
     var confirmationpayment = 0;
+    var carryForwardInProgress = 0;
     function DetailedView(interviewerid) {
         $.ajax({
             type: "POST",
@@ -1088,6 +1147,137 @@
             confirmationpayment = 0;
         }
     }
+    function carryForwardPayment(interviewerid) {
+        if (carryForwardInProgress == 0) {
+            carryForwardInProgress = 1;
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This week\'s total for this interviewer is negative. Carry it forward to next week?',
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: "/Finance/CarryForwardPayment",
+                        type: "POST",
+                        data: { id: interviewerid, st: St_date, se: Se_date },
+                        dataType: 'json',
+                        success: function (data) {
+                            Swal.fire(data.message);
+                            FinacneChangePage(_Currentpage);
+                        }
+                    });
+                }
+                carryForwardInProgress = 0;
+            })
+        }
+    }
+    function bulkCarryForwardPayment() {
+        if (Generateinvoiceflag != 2 || !St_date || !Se_date) {
+            Swal.fire('Select a week (1-7 / 8-14 / 15-21 / 22-_) first.');
+            return;
+        }
+        openCarryForwardModal();
+    }
+    // ??? Bulk Carry Forward (Batch Payout-style multiselect popup) ????????????????
+    function openCarryForwardModal() {
+        var negativeRows = (currentTableData || []).filter(function (row) {
+            return parseInt(row.points) < 0;
+        });
+        var tbody = document.getElementById('tblCarryForwardBody');
+        document.getElementById('chkSelectAllCarryForward').checked = false;
+        document.getElementById('spnCarryForwardSelected').textContent = '0 interviewer(s) selected';
+        document.getElementById('divCarryForwardResult').style.display = 'none';
+        document.getElementById('divCarryForwardResult').innerHTML = '';
+        document.getElementById('btnProceedCarryForward').disabled = false;
+
+        if (negativeRows.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" class="text-center">No interviewer has a negative total for this week.</td></tr>';
+        } else {
+            var html = '';
+            for (var i = 0; i < negativeRows.length; i++) {
+                var row = negativeRows[i];
+                html += '<tr>';
+                html += '<td style="text-align:center;"><input type="checkbox" class="chkCarryForwardInterviewer" data-id="' + row.id + '" data-points="' + row.points + '" onchange="updateCarryForwardCount()" /></td>';
+                html += '<td>' + (row.comment || '') + '</td>';
+                html += '<td style="text-align:right;color:#c62828;">' + row.points + '</td>';
+                html += '</tr>';
+            }
+            tbody.innerHTML = html;
+        }
+        document.getElementById('myCarryForwardModel').style.display = 'block';
+    }
+
+    function closeCarryForwardModal() {
+        document.getElementById('myCarryForwardModel').style.display = 'none';
+    }
+
+    function toggleSelectAllCarryForward(chk) {
+        var boxes = document.querySelectorAll('.chkCarryForwardInterviewer');
+        for (var i = 0; i < boxes.length; i++) {
+            boxes[i].checked = chk.checked;
+        }
+        updateCarryForwardCount();
+    }
+
+    function updateCarryForwardCount() {
+        var checked = document.querySelectorAll('.chkCarryForwardInterviewer:checked');
+        var allBoxes = document.querySelectorAll('.chkCarryForwardInterviewer');
+        document.getElementById('spnCarryForwardSelected').textContent = checked.length + ' interviewer(s) selected';
+        document.getElementById('chkSelectAllCarryForward').checked = allBoxes.length > 0 && checked.length === allBoxes.length;
+    }
+
+    function confirmBulkCarryForward() {
+        var selected = document.querySelectorAll('.chkCarryForwardInterviewer:checked');
+        if (selected.length === 0) {
+            Swal.fire('Please select at least one interviewer.');
+            return;
+        }
+        var ids = [];
+        for (var i = 0; i < selected.length; i++) {
+            ids.push(selected[i].getAttribute('data-id'));
+        }
+        Swal.fire({
+            title: 'Carry Forward',
+            text: 'Carry forward ' + ids.length + ' interviewer(s) with a negative total this week to next week?',
+            showDenyButton: true,
+            showCancelButton: false,
+            confirmButtonText: 'Yes, Carry Forward',
+            denyButtonText: 'Cancel'
+        }).then(function (result) {
+            if (!result.value) return;
+
+            document.getElementById('btnProceedCarryForward').disabled = true;
+            $.ajax({
+                url: "/Finance/BulkCarryForwardPayment",
+                type: "POST",
+                data: { ids: ids.join(','), st: St_date, se: Se_date },
+                dataType: 'json',
+                success: function (data) {
+                    document.getElementById('btnProceedCarryForward').disabled = false;
+                    var failed = (data.results || []).filter(function (r) { return !r.success; }).length;
+                    var successCount = (data.results ? data.results.length : ids.length) - failed;
+                    var msg = successCount + ' interviewer(s) carried forward to ' + (data.nextWeekLabel || 'next week') + '.';
+                    if (failed > 0) msg += ' ' + failed + ' failed.';
+                    Swal.fire({
+                        icon: failed > 0 ? 'warning' : 'success',
+                        title: 'Bulk Carry Forward',
+                        text: msg,
+                        confirmButtonText: 'OK'
+                    }).then(function () {
+                        closeCarryForwardModal();
+                        FinacneChangePage(_Currentpage);
+                    });
+                },
+                error: function () {
+                    document.getElementById('btnProceedCarryForward').disabled = false;
+                    Swal.fire({ icon: 'error', title: 'Bulk Carry Forward Failed', text: 'The request could not be completed. Please try again.' });
+                }
+            });
+        });
+    }
+    // ????????????????????????????????????????????????????????????????????????????
     // ??? Batch Payout ???????????????????????????????????????????????????????????
     // currentTableData is kept in sync with every bindtableData() call and also
     // seeded from the server-rendered Razor model on first page load.
