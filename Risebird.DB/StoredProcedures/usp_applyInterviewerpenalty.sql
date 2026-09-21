@@ -34,8 +34,8 @@ Update InterviewPoints set Points=@points where Interviewid=@id and userid=@User
 END  
 ELSE  
 BEGIN  
-Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,InterviewerDisplayDate) values
-(@id,@Userid,@points,'Interview','Penalty '+@CandidateEmail,'Pending',Getdate(),0,Getdate())
+Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId) values  
+(@id,@Userid,@points,'Interview','Penalty '+@CandidateEmail,'Pending',Getdate(),0)  
 END  
 END  
 GO

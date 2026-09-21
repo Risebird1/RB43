@@ -57,8 +57,8 @@ Update InterviewPoints set QCPoints=@Points,VideoReward=@VideoReward where Inter
 end    
 else    
 begin    
-Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId,QCPoints,VideoReward,InterviewerDisplayDate) values
-(@interviewid,@Userid,0,'Interview',@CandidateEmail,'Pending',Getdate(),0,0,@Points,@VideoReward,Getdate())
+Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId,QCPoints,VideoReward) values    
+(@interviewid,@Userid,0,'Interview',@CandidateEmail,'Pending',Getdate(),0,0,@Points,@VideoReward)    
 end    
 END 
 GO
