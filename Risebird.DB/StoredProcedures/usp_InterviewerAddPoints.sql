@@ -37,7 +37,7 @@ BEGIN
 set @AddPoint=-200
 set @Candidate='Penalty '+@Candidate
 END  
-Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId,InterviewerDisplayDate) values(0,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),@interviewId,0,GetDate())
+Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId) values(0,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),@interviewId,0)
 End          
         
 END

@@ -130,7 +130,7 @@ if(@Type='Interview')
 	END
   set @Candidate=REPLACE(@Candidate,'Penalty','')    
   END
-    Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId,InterviewerDisplayDate) values(@interviewId,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),0,0,GetDate())
+    Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId) values(@interviewId,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),0,0)
     END
    Else
     BEGIN                      
@@ -222,7 +222,7 @@ END
 	END
   set @Candidate=REPLACE(@Candidate,'Penalty','')    
   END    
-    update InterviewPoints set Points = @AddPoint, [Date]=getdate(),Comment=@Candidate,InterviewerDisplayDate=getdate() where Interviewid = @interviewId and userid=@Userid and [Type]='Interview'
+    update InterviewPoints set Points = @AddPoint, [Date]=getdate(),Comment=@Candidate where Interviewid = @interviewId and userid=@Userid and [Type]='Interview'                       
     END                      
                       
  END                            
@@ -235,7 +235,7 @@ else if(@Type='Quality Controller')
     Select @AddPoint=PerSuccessRate from TransQualityController where Userid=@Userid and IRFId=@Irfid                       
     set @AddPoint= Round((ISNULL(@AddPoint,0)*ISNULL(@Points,0)/100),0)                           
      Select @Candidate=candidateEmail from InterviewMeetings where id=@interviewId                            
-    Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId,InterviewerDisplayDate) values(@interviewId,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),0,0,GetDate())
+    Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId) values(@interviewId,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),0,0)
    END
    else                  
    Begin                  
