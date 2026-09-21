@@ -182,12 +182,12 @@ END
   END               
     if(@Count=0)                                    
     Begin                                  
-    Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId,PenaltyAmount,QCPoints)
-    values(@interviewId,@Userid,@AddPoint,@Type,@CandidateEmail,'Pending',GetDate(),0,0,0,0)                                     
-    END                                    
-   Else                                    
-    BEGIN                                    
-    update InterviewPoints set Points = @AddPoint, [Date]=getdate(),Comment=@CandidateEmail,[Type]='Interview' where Interviewid = @interviewId and userid=@Userid and ([Type]='Interview' or [Type]='Redo') and Status='Pending'                             
+    Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId,PenaltyAmount,QCPoints,InterviewerDisplayDate)
+    values(@interviewId,@Userid,@AddPoint,@Type,@CandidateEmail,'Pending',GetDate(),0,0,0,0,GetDate())
+    END
+   Else
+    BEGIN
+    update InterviewPoints set Points = @AddPoint, [Date]=getdate(),Comment=@CandidateEmail,[Type]='Interview',InterviewerDisplayDate=getdate() where Interviewid = @interviewId and userid=@Userid and ([Type]='Interview' or [Type]='Redo') and Status='Pending'
   
     END                     
 END  

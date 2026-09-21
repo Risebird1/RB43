@@ -129,10 +129,10 @@ if(@Type='Interview')
 		END
 	END
   set @Candidate=REPLACE(@Candidate,'Penalty','')    
-  END    
-    Insert into InterviewPoints values(@interviewId,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),0,0)                       
-    END                      
-   Else                      
+  END
+    Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId,InterviewerDisplayDate) values(@interviewId,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),0,0,GetDate())
+    END
+   Else
     BEGIN                      
                     
      if(@IsEmergency=1)                    
@@ -222,7 +222,7 @@ END
 	END
   set @Candidate=REPLACE(@Candidate,'Penalty','')    
   END    
-    update InterviewPoints set Points = @AddPoint, [Date]=getdate(),Comment=@Candidate where Interviewid = @interviewId and userid=@Userid and [Type]='Interview'                       
+    update InterviewPoints set Points = @AddPoint, [Date]=getdate(),Comment=@Candidate,InterviewerDisplayDate=getdate() where Interviewid = @interviewId and userid=@Userid and [Type]='Interview'
     END                      
                       
  END                            
@@ -235,8 +235,8 @@ else if(@Type='Quality Controller')
     Select @AddPoint=PerSuccessRate from TransQualityController where Userid=@Userid and IRFId=@Irfid                       
     set @AddPoint= Round((ISNULL(@AddPoint,0)*ISNULL(@Points,0)/100),0)                           
      Select @Candidate=candidateEmail from InterviewMeetings where id=@interviewId                            
-    Insert into InterviewPoints values(@interviewId,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),0,0)                        
-   END                            
+    Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId,InterviewerDisplayDate) values(@interviewId,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),0,0,GetDate())
+   END
    else                  
    Begin                  
       if Not EXISTS(Select 1 from QCFeedbackReport where interviewid=@interviewId and QCStatus=1)                  

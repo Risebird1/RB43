@@ -43,8 +43,8 @@ Update ip set ip.PenaltyAmount=tp.Penalty
 Output INSERTED.interviewid as id,INSERTED.Userid into @UpdatedInterviews  
 from InterviewPoints ip join @tempInterviews tp on ip.InterviewId=tp.id and ip.userid=tp.Userid and ip.Type='Interview' and Status='Pending'  
 
-Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId,PenaltyAmount)               
-Select im.id as Interviewid,ul.id as userid,0 as Points,'Interview' as Type,im.candidateEmail as Comment,'Pending' as Status,GETDATE() as Date,0 as InterviewerId,0 as PaymentHistoryId,tp.Penalty as PenaltyAmount               
+Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId,PenaltyAmount,InterviewerDisplayDate)
+Select im.id as Interviewid,ul.id as userid,0 as Points,'Interview' as Type,im.candidateEmail as Comment,'Pending' as Status,GETDATE() as Date,0 as InterviewerId,0 as PaymentHistoryId,tp.Penalty as PenaltyAmount,GETDATE() as InterviewerDisplayDate
 from @tempInterviews tp join 
 InterviewMeetings im on tp.id=im.id    
 join Userlist ul on ul.EmailId=im.interviewer   
@@ -81,8 +81,8 @@ Update ip set ip.Points=tns.Points
 Output INSERTED.interviewid as id,INSERTED.Userid into @UpdatedNoShowInterview  
 from InterviewPoints ip join @NoShowInterview tns on ip.InterviewId=tns.id and ip.userid=tns.Userid and ip.Type='Interview' and Status='Pending'  
   
-Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId,PenaltyAmount)               
-Select im.id as Interviewid,ul.id as userid,tns.Points as Points,'Interview' as Type,im.candidateEmail as Comment,'Pending' as Status,GETDATE() as Date,0 as InterviewerId,0 as PaymentHistoryId,0 as PenaltyAmount  
+Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId,PenaltyAmount,InterviewerDisplayDate)
+Select im.id as Interviewid,ul.id as userid,tns.Points as Points,'Interview' as Type,im.candidateEmail as Comment,'Pending' as Status,GETDATE() as Date,0 as InterviewerId,0 as PaymentHistoryId,0 as PenaltyAmount,GETDATE() as InterviewerDisplayDate
 from InterviewMeetings im   
 join Userlist ul on ul.EmailId=im.interviewer   
 join @NoShowInterview tns on tns.id=im.id  

@@ -17,7 +17,8 @@ CREATE TABLE [dbo].[InterviewPoints](
 	[QCPoints] [int] NULL,
 	[PaymentSLA] [int] NULL,
 	[VideoReward] [int] NULL,
- CONSTRAINT [PK_InterviewPoints] PRIMARY KEY CLUSTERED 
+	[InterviewerDisplayDate] [datetime] NULL,
+ CONSTRAINT [PK_InterviewPoints] PRIMARY KEY CLUSTERED
 (
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
@@ -77,6 +78,15 @@ IF Not EXISTS(
 BEGIN
     ALTER TABLE InterviewPoints
     Add  VideoReward int
+END
+IF Not EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'InterviewerDisplayDate')
+      AND Object_ID = Object_ID(N'InterviewPoints'))
+BEGIN
+    ALTER TABLE InterviewPoints
+    Add  InterviewerDisplayDate datetime
 END
 GO
 
