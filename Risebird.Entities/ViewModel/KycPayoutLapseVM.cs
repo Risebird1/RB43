@@ -57,4 +57,21 @@ namespace Risebird.Entities.ViewModel
         public bool      IsBankVerified  { get; set; }
         public bool      IsPanVerified   { get; set; }
     }
+
+    // A (Interviewer, Month) group of InterviewPoints rows with Status = 'Lapsed',
+    // for the Finance "Payment Lapsed" page's "Lapsed" tab.
+    public class LapsedInterviewPointRow
+    {
+        public int     Userid         { get; set; }
+        public string  Email          { get; set; }
+        public string  FirstName      { get; set; }
+        public string  LastName       { get; set; }
+        public string  PAN            { get; set; }
+        public string  NameAtPan      { get; set; }
+        public string  NameAtBank     { get; set; }
+        public string  Month          { get; set; }
+        public decimal LapsedAmount   { get; set; }
+        public bool    IsBankVerified { get; set; }
+        public bool    IsPanVerified  { get; set; }
+    }
 }
