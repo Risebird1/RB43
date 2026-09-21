@@ -128,27 +128,19 @@
                             {
                                 <div id="pane-lapsed">
                                     <form action="@Url.Action("PaymentLapsed","Finance")" method="get" id="lapsedFilterForm"
-                                          style="background:#f5f7fa; border:1px solid #e0e0e0; border-radius:6px; padding:12px 16px; margin-bottom:14px;">
+                                          style="background:#f5f7fa; border:1px solid #e0e0e0; border-radius:6px; padding:8px 12px; margin-bottom:10px; display:flex; align-items:center; flex-wrap:wrap; gap:8px;">
                                         <input type="hidden" name="tab" value="lapsed" />
-                                        <div class="row" style="align-items:flex-end;">
-                                            <div class="col-md-3 col-sm-6">
-                                                <label class="control-label desp-label" style="font-size:12px;font-weight:600;">From Date</label>
-                                                <input type="date" name="fromDate" class="form-control form-control-sm" value="@ViewBag.LapsedFromDate" />
-                                            </div>
-                                            <div class="col-md-3 col-sm-6">
-                                                <label class="control-label desp-label" style="font-size:12px;font-weight:600;">To Date</label>
-                                                <input type="date" name="toDate" class="form-control form-control-sm" value="@ViewBag.LapsedToDate" />
-                                            </div>
-                                            <div class="col-md-4 col-sm-8" style="display:flex;gap:8px;">
-                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="font-size:12px;">
-                                                    <span class="fa fa-filter"></span> Apply
-                                                </button>
-                                                <a href="@Url.Action("PaymentLapsed","Finance", new { tab = "lapsed" })"
-                                                   class="mdc-button mdc-button--outlined mdc-ripple-upgraded" style="font-size:12px;">
-                                                    Reset
-                                                </a>
-                                            </div>
-                                        </div>
+                                        <label style="font-size:12px;font-weight:600;margin:0;">From</label>
+                                        <input type="date" name="fromDate" class="form-control form-control-sm" style="width:auto;" value="@ViewBag.LapsedFromDate" />
+                                        <label style="font-size:12px;font-weight:600;margin:0;">To</label>
+                                        <input type="date" name="toDate" class="form-control form-control-sm" style="width:auto;" value="@ViewBag.LapsedToDate" />
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="font-size:12px;">
+                                            <span class="fa fa-filter"></span> Apply
+                                        </button>
+                                        <a href="@Url.Action("PaymentLapsed","Finance", new { tab = "lapsed" })"
+                                           class="mdc-button mdc-button--outlined mdc-ripple-upgraded" style="font-size:12px;">
+                                            Reset
+                                        </a>
                                     </form>
                                     <div class="payment-history">
                                         <div id="tableIDLapsed">
