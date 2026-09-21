@@ -1,8 +1,12 @@
 @model IEnumerable<Risebird.Entities.ViewModel.KycPayoutLapseTrackingRow>
+@using Risebird.Entities.ViewModel
 @{
     ViewData["Title"] = "Payment Lapsed";
     ViewBag.PageHeader = "Payment Lapsed";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string activeTab = (ViewBag.ActiveTab ?? "process").ToString();
+    var lapsedList = ViewBag.LapsedList as List<LapsedInterviewPointRow> ?? new List<LapsedInterviewPointRow>();
 }
 <link href="~/Autocomplete/jquery-ui.min.css?v=2024" rel="stylesheet" />
 <link href="~/Newassets/css/irf.css?v=2024" rel="stylesheet" />
@@ -26,6 +30,14 @@
         white-space: nowrap;
     }
 
+    .payment-history-scroll #meeting th.col-remark,
+    .payment-history-scroll #meeting td.col-remark {
+        white-space: normal;
+        word-break: break-word;
+        min-width: 220px;
+        max-width: 320px;
+    }
+
     .lapse-badge {
         padding: 3px 10px;
         border-radius: 12px;
@@ -37,6 +49,35 @@
     .lapse-badge-active { background-color: #f0ad4e; }
     .lapse-badge-completed { background-color: #5cb85c; }
     .lapse-badge-lapsed { background-color: #d9534f; }
+
+    /* Tab nav */
+    .pl-nav-tabs {
+        border-bottom: 2px solid #dee2e6;
+        margin-bottom: 16px;
+    }
+    .pl-nav-tabs .nav-link {
+        color: #555;
+        font-size: 13px;
+        font-family: Roboto, sans-serif;
+        font-weight: 500;
+        border: none;
+        border-bottom: 3px solid transparent;
+        border-radius: 0;
+        padding: 9px 20px;
+        margin-bottom: -2px;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    .pl-nav-tabs .nav-link.active {
+        color: #3949ab;
+        border-bottom: 3px solid #3949ab;
+        background: transparent;
+    }
+    .pl-nav-tabs .nav-link:hover:not(.active) {
+        color: #3949ab;
+        border-bottom: 3px solid #c5cae9;
+        background: transparent;
+    }
 </style>
 <div class="main-panel" id="main-panel">
     <div class="pt30">
@@ -68,6 +109,111 @@
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
+                            <ul class="nav pl-nav-tabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link @(activeTab == "lapsed" ? "active" : "")"
+                                       href="@Url.Action("PaymentLapsed","Finance", new { tab = "lapsed" })">
+                                        Lapsed
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(activeTab == "process" ? "active" : "")"
+                                       href="@Url.Action("PaymentLapsed","Finance", new { tab = "process" })">
+                                        Process Lapsed
+                                    </a>
+                                </li>
+                            </ul>
+
+                            @if (activeTab == "lapsed")
+                            {
+                                <div id="pane-lapsed">
+                                    <form action="@Url.Action("PaymentLapsed","Finance")" method="get" id="lapsedFilterForm"
+                                          style="background:#f5f7fa; border:1px solid #e0e0e0; border-radius:6px; padding:12px 16px; margin-bottom:14px;">
+                                        <input type="hidden" name="tab" value="lapsed" />
+                                        <div class="row" style="align-items:flex-end;">
+                                            <div class="col-md-3 col-sm-6">
+                                                <label class="control-label desp-label" style="font-size:12px;font-weight:600;">From Date</label>
+                                                <input type="date" name="fromDate" class="form-control form-control-sm" value="@ViewBag.LapsedFromDate" />
+                                            </div>
+                                            <div class="col-md-3 col-sm-6">
+                                                <label class="control-label desp-label" style="font-size:12px;font-weight:600;">To Date</label>
+                                                <input type="date" name="toDate" class="form-control form-control-sm" value="@ViewBag.LapsedToDate" />
+                                            </div>
+                                            <div class="col-md-4 col-sm-8" style="display:flex;gap:8px;">
+                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="font-size:12px;">
+                                                    <span class="fa fa-filter"></span> Apply
+                                                </button>
+                                                <a href="@Url.Action("PaymentLapsed","Finance", new { tab = "lapsed" })"
+                                                   class="mdc-button mdc-button--outlined mdc-ripple-upgraded" style="font-size:12px;">
+                                                    Reset
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div class="payment-history">
+                                        <div id="tableIDLapsed">
+                                            <div id="lapsed_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                                <div class="clearfix"></div>
+                                                <div class="col-sm-12 nopad">
+                                                    <div class="table-responsive payment-history-scroll">
+                                                        <table id="lapsed" class="table table-striped table-bordered journey" cellspacing="0" width="100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Interviewer</th>
+                                                                    <th>Email-Id</th>
+                                                                    <th>PAN</th>
+                                                                    <th>Name as Pan</th>
+                                                                    <th>Name as Bank Account</th>
+                                                                    <th>Month</th>
+                                                                    <th>Lapsed Amount</th>
+                                                                    <th>Bank Verified</th>
+                                                                    <th>PAN Verified</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tfoot>
+                                                                <tr>
+                                                                    <th>Interviewer</th>
+                                                                    <th>Email-Id</th>
+                                                                    <th>PAN</th>
+                                                                    <th>Name as Pan</th>
+                                                                    <th>Name as Bank Account</th>
+                                                                    <th>Month</th>
+                                                                    <th>Lapsed Amount</th>
+                                                                    <th>Bank Verified</th>
+                                                                    <th>PAN Verified</th>
+                                                                </tr>
+                                                            </tfoot>
+                                                            <tbody id="tblbodyLapsed">
+                                                                @if (lapsedList.Count == 0)
+                                                                {
+                                                                    <tr><td colspan="9" style="text-align:center">No Result found</td></tr>
+                                                                }
+                                                                @foreach (var item in lapsedList)
+                                                                {
+                                                                    <tr>
+                                                                        <td>@item.FirstName @item.LastName</td>
+                                                                        <td>@item.Email</td>
+                                                                        <td>@(string.IsNullOrWhiteSpace(item.PAN) ? "" : item.PAN)</td>
+                                                                        <td>@(string.IsNullOrWhiteSpace(item.NameAtPan) ? "" : item.NameAtPan)</td>
+                                                                        <td>@(string.IsNullOrWhiteSpace(item.NameAtBank) ? "" : item.NameAtBank)</td>
+                                                                        <td>@item.Month</td>
+                                                                        <td>@item.LapsedAmount</td>
+                                                                        <td>@(item.IsBankVerified ? "Yes" : "No")</td>
+                                                                        <td>@(item.IsPanVerified ? "Yes" : "No")</td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (activeTab == "process")
+                            {
                             <div class="payment-history">
                                 <div id="tableID">
                                     <div id="meeting_wrapper" class="dataTables_wrapper dt-bootstrap4">
@@ -88,7 +234,7 @@
                                                             <th>PAN Verified</th>
                                                             <th>Reminder Count</th>
                                                             <th>Status</th>
-                                                            <th>Remark</th>
+                                                            <th class="col-remark">Remark</th>
                                                             <th>Added On</th>
                                                             <th>Last Reminder On</th>
                                                             <th>Lapsed On</th>
@@ -107,7 +253,7 @@
                                                             <th>PAN Verified</th>
                                                             <th>Reminder Count</th>
                                                             <th>Status</th>
-                                                            <th>Remark</th>
+                                                            <th class="col-remark">Remark</th>
                                                             <th>Added On</th>
                                                             <th>Last Reminder On</th>
                                                             <th>Lapsed On</th>
@@ -139,7 +285,7 @@
                                                                     }
                                                                     <span class="lapse-badge @badgeClass">@item.TrackingStatus</span>
                                                                 </td>
-                                                                <td>@item.Remark</td>
+                                                                <td class="col-remark">@item.Remark</td>
                                                                 <td>@item.CreatedOn.ToString("yyyy-MM-dd HH:mm")</td>
                                                                 <td>@(item.LastReminderOn.HasValue ? item.LastReminderOn.Value.ToString("yyyy-MM-dd HH:mm") : "")</td>
                                                                 <td>@(item.LapsedOn.HasValue ? item.LapsedOn.Value.ToString("yyyy-MM-dd HH:mm") : "")</td>
@@ -152,6 +298,7 @@
                                     </div>
                                 </div>
                             </div>
+                            }
                         </div>
                     </div>
                     <!-- end content-->
@@ -168,11 +315,13 @@
     $(".sb-container").scrollBox();
 </script>
 <script type="text/javascript">
+    var activeTableId = '@(activeTab == "lapsed" ? "lapsed" : "meeting")';
+
     function searchResult() {
-        $('#meeting').DataTable();
+        $('#' + activeTableId).DataTable();
     }
     function RefreshSearch() {
-        $('#meeting').DataTable().destroy();
+        $('#' + activeTableId).DataTable().destroy();
         setTimeout(function () {
             applyDataTable();
         }, 100);
@@ -182,7 +331,7 @@
         applyDataTable();
     });
     function applyDataTable() {
-        var table = $('#meeting').DataTable({
+        var table = $('#' + activeTableId).DataTable({
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search records",
@@ -206,11 +355,11 @@
 
     //// script for loader starts here
     $(".dataloading").hide();
-    $("#meeting").hide();
+    $("#" + activeTableId).hide();
     var loader;
     function ShowProgress() {
         $(".dataloading").hide();
-        $("#meeting").hide();
+        $("#" + activeTableId).hide();
         loader = document.getElementsByClassName("loader")[0];
         loader.style.display = "block";
         var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
@@ -224,7 +373,7 @@
         setTimeout(function () {
             loader.style.display = "none";
             $(".dataloading").show();
-            $("#meeting").show();
+            $("#" + activeTableId).show();
         }, 2000);
     };
     //// script for loader ends here

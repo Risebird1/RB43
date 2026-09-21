@@ -1825,7 +1825,7 @@ namespace Risebird.Web.Controllers
         /// </summary>
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> PaymentLapsed()
+        public async Task<IActionResult> PaymentLapsed(string tab = "process", string fromDate = null, string toDate = null)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -1833,10 +1833,31 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "Finance")
                 {
-                    var model = await _kycPayoutLapseService.GetTrackingListAsync();
-                    if (model == null)
+                    if (tab != "lapsed")
                     {
-                        model = new List<KycPayoutLapseTrackingRow>();
+                        tab = "process";
+                    }
+                    ViewBag.ActiveTab = tab;
+
+                    var model = new List<KycPayoutLapseTrackingRow>();
+                    if (tab == "process")
+                    {
+                        model = (await _kycPayoutLapseService.GetTrackingListAsync())?.ToList() ?? new List<KycPayoutLapseTrackingRow>();
+                    }
+                    else
+                    {
+                        // Default to the last 1 month when no filter is supplied.
+                        if (!DateTime.TryParse(toDate, out var lapsedToDate))
+                        {
+                            lapsedToDate = DateTime.Today;
+                        }
+                        if (!DateTime.TryParse(fromDate, out var lapsedFromDate))
+                        {
+                            lapsedFromDate = lapsedToDate.AddMonths(-1);
+                        }
+                        ViewBag.LapsedFromDate = lapsedFromDate.ToString("yyyy-MM-dd");
+                        ViewBag.LapsedToDate = lapsedToDate.ToString("yyyy-MM-dd");
+                        ViewBag.LapsedList = await _kycPayoutLapseService.GetLapsedInterviewPointsAsync(lapsedFromDate, lapsedToDate) ?? new List<LapsedInterviewPointRow>();
                     }
                     return View(model);
                 }
