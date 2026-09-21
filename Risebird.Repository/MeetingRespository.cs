@@ -3855,7 +3855,7 @@ namespace Risebird.Repository
                 var interviewerids = 0;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string sqlInsertReport = "INSERT INTO InterviewPoints (Interviewid, userid, Points,Type,Comment, Status, Date,Interviewerid ) Values (@interviewid, @interviewerid, @Points, @Type, @Comment, @status, @date,@interviewerids);";
+                    string sqlInsertReport = "INSERT INTO InterviewPoints (Interviewid, userid, Points,Type,Comment, Status, Date,Interviewerid,InterviewerDisplayDate ) Values (@interviewid, @interviewerid, @Points, @Type, @Comment, @status, @date,@interviewerids,@date);";
                     var affectedRows = await con.ExecuteAsync(sqlInsertReport, new
                     {
                         interviewid,
@@ -3985,7 +3985,7 @@ namespace Risebird.Repository
                 var date = DateTime.Now;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string sqlInsertReport = "INSERT INTO InterviewPoints (Interviewid, userid, Points,Type,Comment, Status, Date ,Interviewerid,PaymentHistoryId) Values (@interviewid, @userid, @Amount, @Type, @Comment, @status, @date,@interviewerid,@PaymentHistoryId);";
+                    string sqlInsertReport = "INSERT INTO InterviewPoints (Interviewid, userid, Points,Type,Comment, Status, Date ,Interviewerid,PaymentHistoryId,InterviewerDisplayDate) Values (@interviewid, @userid, @Amount, @Type, @Comment, @status, @date,@interviewerid,@PaymentHistoryId,@date);";
                     var affectedRows = await con.ExecuteAsync(sqlInsertReport, new
                     {
                         interviewid,
@@ -4044,7 +4044,7 @@ namespace Risebird.Repository
                 var interviewerids = 0;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    string sqlInsertReport = "INSERT INTO InterviewPoints (Interviewid, userid, Points,Type,Comment, Status, Date,Interviewerid ) Values (@interviewid, @userid, @Points, @Type, @Comment, @status, @date,@interviewerids);";
+                    string sqlInsertReport = "INSERT INTO InterviewPoints (Interviewid, userid, Points,Type,Comment, Status, Date,Interviewerid,InterviewerDisplayDate ) Values (@interviewid, @userid, @Points, @Type, @Comment, @status, @date,@interviewerids,@date);";
                     var affectedRows = await con.ExecuteAsync(sqlInsertReport, new
                     {
                         interviewid,
