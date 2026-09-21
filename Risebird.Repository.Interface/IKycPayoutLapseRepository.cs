@@ -26,5 +26,9 @@ namespace Risebird.Repository.Interface
 
         /// <summary>Full tracking list (all statuses), newest first, for the Finance "Payment Lapsed" page.</summary>
         Task<IList<KycPayoutLapseTrackingRow>> FetchTrackingListAsync();
+
+        /// <summary>(Interviewer, Month) groups of InterviewPoints rows with Status = 'Lapsed', for the "Lapsed" tab,
+        /// filtered to the effective date range [fromDate, toDate] (inclusive).</summary>
+        Task<IList<LapsedInterviewPointRow>> FetchLapsedInterviewPointsAsync(DateTime fromDate, DateTime toDate);
     }
 }
