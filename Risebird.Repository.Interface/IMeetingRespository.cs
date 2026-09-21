@@ -141,6 +141,7 @@ namespace Risebird.Repository.Interface
         Task<List<RBInterviewDetails>> RBInterviewerDetails(int interviewerid, int flag);
         Task<string> RBAddPoints(int interviewerid, int Points, string Comment, DateTime PointDate);
         Task<string> RBConfirmPayment(int interviewerid, int index, DateTime st, DateTime se, int paymenthistory);
+        Task<string> CarryForwardPayments(int interviewerid, DateTime st, DateTime se, DateTime nextDate);
         Task<List<string>> FetchInterviewerList(string searchterm);
         Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount, int PaymentHistoryId);
         Task<string> AddPointsForInterviewerByEmail(string Interviewer, int Points, string Comment, DateTime PointDate);

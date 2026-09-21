@@ -129,10 +129,10 @@ if(@Type='Interview')
 		END
 	END
   set @Candidate=REPLACE(@Candidate,'Penalty','')    
-  END    
-    Insert into InterviewPoints values(@interviewId,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),0,0)                       
-    END                      
-   Else                      
+  END
+    Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId) values(@interviewId,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),0,0)
+    END
+   Else
     BEGIN                      
                     
      if(@IsEmergency=1)                    
@@ -235,8 +235,8 @@ else if(@Type='Quality Controller')
     Select @AddPoint=PerSuccessRate from TransQualityController where Userid=@Userid and IRFId=@Irfid                       
     set @AddPoint= Round((ISNULL(@AddPoint,0)*ISNULL(@Points,0)/100),0)                           
      Select @Candidate=candidateEmail from InterviewMeetings where id=@interviewId                            
-    Insert into InterviewPoints values(@interviewId,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),0,0)                        
-   END                            
+    Insert into InterviewPoints(Interviewid,userid,Points,Type,Comment,Status,Date,InterviewerId,PaymentHistoryId) values(@interviewId,@Userid,@AddPoint,@Type,@Candidate,'Pending',GetDate(),0,0)
+   END
    else                  
    Begin                  
       if Not EXISTS(Select 1 from QCFeedbackReport where interviewid=@interviewId and QCStatus=1)                  

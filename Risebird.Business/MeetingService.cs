@@ -2792,6 +2792,19 @@ namespace Risebird.Business
                 return "";
             }
         }
+        public async Task<string> CarryForwardPayments(int interviewerid, DateTime st, DateTime se, DateTime nextDate)
+        {
+            try
+            {
+                var result = _meetingRespository.CarryForwardPayments(interviewerid, st, se, nextDate);
+                return result.Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return "";
+            }
+        }
         public async Task<List<string>> FetchInterviewerList(string searchterm)
         {
             try

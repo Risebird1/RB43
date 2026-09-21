@@ -3884,7 +3884,7 @@ namespace Risebird.Repository
                 var query = "";
                 if (index == 2)
                 {
-                    query = "Update ip Set ip.Status='Paid',PaymentHistoryId=@PaymentHistoryId from InterviewPoints ip left join InterviewMeetings im on im.id=ip.Interviewid where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)";
+                    query = "Update ip Set ip.Status='Paid',PaymentHistoryId=@PaymentHistoryId from InterviewPoints ip left join InterviewMeetings im on im.id=ip.Interviewid where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewid!=0 and (isNull(ip.CarryForwardDate,isNull(im.interviewdate,ip.Date))>=@st and isNull(ip.CarryForwardDate,isNull(im.interviewdate,ip.Date))<=@se)";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@st", st);
                     dynamicParameters.Add("@se", se);
@@ -3894,12 +3894,12 @@ namespace Risebird.Repository
                     {
                         var results = await con.QueryAsync(query, dynamicParameters);
                     }
-                    query = "Update ip Set ip.Status='Paid',PaymentHistoryId=@PaymentHistoryId from InterviewPoints ip left join UnapprovedInterviewerMeetings im on im.id=ip.Interviewerid where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewerid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)";
+                    query = "Update ip Set ip.Status='Paid',PaymentHistoryId=@PaymentHistoryId from InterviewPoints ip left join UnapprovedInterviewerMeetings im on im.id=ip.Interviewerid where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewerid!=0 and (isNull(ip.CarryForwardDate,isNull(im.interviewdate,ip.Date))>=@st and isNull(ip.CarryForwardDate,isNull(im.interviewdate,ip.Date))<=@se)";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var results = await con.QueryAsync(query, dynamicParameters);
                     }
-                    query = "Update ip Set ip.Status='Paid',PaymentHistoryId=@PaymentHistoryId from InterviewPoints ip where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewerid=0 and ip.interviewid=0 and (ip.Date>=@st and ip.Date<=@se)";
+                    query = "Update ip Set ip.Status='Paid',PaymentHistoryId=@PaymentHistoryId from InterviewPoints ip where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewerid=0 and ip.interviewid=0 and (isNull(ip.CarryForwardDate,ip.Date)>=@st and isNull(ip.CarryForwardDate,ip.Date)<=@se)";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var results = await con.QueryAsync(query, dynamicParameters);
@@ -3926,6 +3926,28 @@ namespace Risebird.Repository
                     }
                 }
 
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
+        public async Task<string> CarryForwardPayments(int interviewerid, DateTime st, DateTime se, DateTime nextDate)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Userid", interviewerid);
+                dynamicParameters.Add("@st", st);
+                dynamicParameters.Add("@se", se);
+                dynamicParameters.Add("@NextDate", nextDate);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "usp_CarryForwardInterviewerPayments", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return "Success";
+                }
             }
             catch (SqlException ex)
             {
