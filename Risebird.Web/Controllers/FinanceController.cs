@@ -674,6 +674,77 @@ namespace Risebird.Web.Controllers
             //return RedirectToAction("FNPayment");
         }
         /// <summary>
+        /// Computes the next fixed payment-week bucket (1-7/8-14/15-21/22-end) that follows
+        /// the week starting at <paramref name="currentWeekStart"/>, rolling into next month
+        /// once the 22-end bucket is reached.
+        /// </summary>
+        private static (DateTime nextSt, DateTime nextSe) GetNextWeekRange(DateTime currentWeekStart)
+        {
+            if (currentWeekStart.Day == 1)
+                return (new DateTime(currentWeekStart.Year, currentWeekStart.Month, 8), new DateTime(currentWeekStart.Year, currentWeekStart.Month, 14));
+            if (currentWeekStart.Day <= 8)
+                return (new DateTime(currentWeekStart.Year, currentWeekStart.Month, 15), new DateTime(currentWeekStart.Year, currentWeekStart.Month, 21));
+            if (currentWeekStart.Day <= 15)
+            {
+                var lastDay = DateTime.DaysInMonth(currentWeekStart.Year, currentWeekStart.Month);
+                return (new DateTime(currentWeekStart.Year, currentWeekStart.Month, 22), new DateTime(currentWeekStart.Year, currentWeekStart.Month, lastDay));
+            }
+            var nextMonth = currentWeekStart.AddMonths(1);
+            return (new DateTime(nextMonth.Year, nextMonth.Month, 1), new DateTime(nextMonth.Year, nextMonth.Month, 7));
+        }
+        /// <summary>
+        /// Carries an interviewer's negative-total week forward to the next payment week,
+        /// so those InterviewPoints rows are displayed and paid in the next week instead.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> CarryForwardPayment(int id, DateTime st, DateTime se)
+        {
+            var (nextSt, nextSe) = GetNextWeekRange(st);
+            // nextSt is exact midnight, the same instant as the current week's inclusive
+            // upper bound (se.AddDays(1)) below — nudge it 1 hour into next week so a
+            // carried-forward row doesn't match both weeks' inclusive date range checks.
+            var result = await _meetingService.CarryForwardPayments(id, st, se.AddDays(1), nextSt.AddHours(1));
+            if (result == "Success")
+            {
+                return Json(new { success = true, message = "Carried forward to next week (" + nextSt.ToString("dd MMM") + " - " + nextSe.ToString("dd MMM") + ")." });
+            }
+            return Json(new { success = false, message = "Failed to carry forward the payment." });
+        }
+        /// <summary>
+        /// Bulk variant of <see cref="CarryForwardPayment"/> for multiple interviewers selected
+        /// from the negative-total rows of the current week's FNPayment grid.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> BulkCarryForwardPayment(string ids, DateTime st, DateTime se)
+        {
+            var results = new List<object>();
+            if (string.IsNullOrWhiteSpace(ids))
+                return Json(new { results, error = "No interviewer IDs provided." });
+
+            var idList = ids.Split(',')
+                            .Select(x => x.Trim())
+                            .Where(x => !string.IsNullOrEmpty(x))
+                            .Select(int.Parse)
+                            .ToList();
+
+            var (nextSt, nextSe) = GetNextWeekRange(st);
+            foreach (var id in idList)
+            {
+                try
+                {
+                    // See CarryForwardPayment: nudge past the shared midnight boundary.
+                    var result = await _meetingService.CarryForwardPayments(id, st, se.AddDays(1), nextSt.AddHours(1));
+                    results.Add(new { id, success = result == "Success" });
+                }
+                catch (Exception ex)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    results.Add(new { id, success = false });
+                }
+            }
+            return Json(new { results, nextWeekLabel = nextSt.ToString("dd MMM") + " - " + nextSe.ToString("dd MMM") });
+        }
+        /// <summary>
         /// Finance Team triggers a Cashfree bank payout for an interviewer.
         /// Returns structured JSON: { success, message, payoutId }.
         /// </summary>
@@ -785,6 +856,41 @@ namespace Risebird.Web.Controllers
                         x.VerifiedPAN,
                         x.NameAtPan,
                         x.PanVerifiedOn
+                    })
+                    .ToList();
+
+                return Json(new { success = true, data = candidates });
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return Json(new { success = false, message = "Failed to load candidates.", data = new List<object>() });
+            }
+        }
+
+        /// <summary>
+        /// Returns every interviewer from the current session-cached, WEEK-SCOPED FNPayment
+        /// list (populated by FNGenerateInvoiceJson when a 1-7/8-14/15-21/22-end week button
+        /// is clicked) whose net Points for that week is negative. Used to populate the Bulk
+        /// Carry Forward modal with the full (unpaginated) dataset, matching Batch Payout.
+        /// </summary>
+        [HttpGet]
+        public JsonResult GetAllCarryForwardCandidates()
+        {
+            try
+            {
+                var sessionData = HttpContext.Session.GetString("financemodel");
+                if (string.IsNullOrEmpty(sessionData))
+                    return Json(new { success = false, message = "Session expired. Please reload the page.", data = new List<object>() });
+
+                var allItems = JsonConvert.DeserializeObject<List<Risebird.Entities.ViewModel.RBInterviewDetails>>(sessionData);
+                var candidates = allItems
+                    .Where(x => x.Points < 0)
+                    .Select(x => new
+                    {
+                        x.id,
+                        email = x.Comment,
+                        points = x.Points
                     })
                     .ToList();
 
