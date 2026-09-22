@@ -7,29 +7,23 @@
     <RootNamespace>Risebird.Mcp.BugTriage</RootNamespace>
     <AssemblyName>Risebird.Mcp.BugTriage</AssemblyName>
     <UserSecretsId>risebird-mcp-bugtriage</UserSecretsId>
-    <!--
-      The MCP SDK pulls the 10.0.10 servicing band of Microsoft.Extensions.*, while the solution pins
-      10.0.0 centrally. Transitive pinning is disabled here so that graph resolves on its own instead
-      of forcing a solution-wide bump. Direct references are still centrally versioned.
-    -->
-    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
     <!-- The MCP SDK uses source generators that need the tool metadata preserved. -->
     <IsTrimmable>false</IsTrimmable>
   </PropertyGroup>
 
+  <!--
+    Versions are explicit here rather than centrally managed: Directory.Packages.props in this folder
+    opts the project out of the solution's central package management, because the MCP SDK needs the
+    10.0.10 servicing band of Microsoft.Extensions.* that the solution pins to 10.0.0. See that file.
+  -->
   <ItemGroup>
-    <PackageReference Include="ModelContextProtocol" />
-    <PackageReference Include="Azure.Monitor.Query" />
-    <PackageReference Include="Azure.Identity" />
-    <PackageReference Include="Microsoft.Extensions.Http" VersionOverride="10.0.10" />
-    <!--
-      ModelContextProtocol 2.2.0 requires the 10.0.10 servicing band of the hosting stack. These are
-      overridden here rather than in Directory.Packages.props so the rest of the solution keeps its
-      pinned 10.0.0 versions.
-    -->
-    <PackageReference Include="Microsoft.Extensions.Hosting" VersionOverride="10.0.10" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" VersionOverride="10.0.10" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" VersionOverride="10.0.10" />
+    <PackageReference Include="ModelContextProtocol" Version="2.2.0" />
+    <PackageReference Include="Azure.Monitor.Query" Version="1.5.0" />
+    <PackageReference Include="Azure.Identity" Version="1.17.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.10" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,11 @@
+<Project>
+  <!--
+    Shadows the repository-root Directory.Packages.props for the same reason as the one in
+    Risebird.Mcp.BugTriage: this project references that one, so it has to resolve the same
+    10.0.10 servicing band of Microsoft.Extensions.* and must stay outside the solution's central
+    package management. See that file for the full explanation. Do not delete.
+  -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+</Project>
