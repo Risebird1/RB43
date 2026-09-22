@@ -352,7 +352,7 @@ namespace Risebird.AzureTimerFunctions
                             {
                                 var recordinginfo = _zoho.GetRecordingAsync(meeting.ZoomMeetingId, accesstoken).Result;
                                 int maxduration = 0;
-                                if (recordinginfo.Count() > 0)
+                                if (recordinginfo != null && recordinginfo.Any())
                                     maxduration = recordinginfo.Max(r => r.duration);
                                 var _recordingupload = recordinginfo?.Where(x => x.duration == maxduration).FirstOrDefault();
                                 if (string.IsNullOrEmpty(meeting.VideoLink) || (!string.IsNullOrEmpty(meeting.VideoLink) && meeting.VideoDuration < 15))
@@ -488,7 +488,7 @@ namespace Risebird.AzureTimerFunctions
                                 if (!string.IsNullOrEmpty(videoSasUrl) || !string.IsNullOrEmpty(transcriptSasUrl))
                                 {
                                     var result = _meetingRespository.UpdateUploadedVideoLinkAndTranscriptLink(meeting.imid, videoDuration, videoSasUrl, transcriptSasUrl, uploadedVideoClientExternalLink, uploadedTranscriptClientExternalLink, transcriptSummaryCleanedJson).Result;
-                                    if (result && recordinginfo.Count() == 1)
+                                    if (result && recordinginfo != null && recordinginfo.Count() == 1)
                                     {
                                         _zoho.DeleteRecordingAsync(_recordingupload.erecordingId);
                                     }
@@ -730,7 +730,7 @@ namespace Risebird.AzureTimerFunctions
                             {
                                 var recordinginfo = _zoho.GetRecordingAsync(meeting.ZoomMeetingId, accesstoken).Result;
                                 int maxduration = 0;
-                                if (recordinginfo.Count() > 0)
+                                if (recordinginfo != null && recordinginfo.Any())
                                     maxduration = recordinginfo.Max(r => r.duration);
                                 var _recordingupload = recordinginfo?.Where(x => x.duration == maxduration).FirstOrDefault();
                                 if (string.IsNullOrEmpty(meeting.VideoLink) || (!string.IsNullOrEmpty(meeting.VideoLink) && meeting.VideoDuration < 15))
@@ -848,7 +848,7 @@ namespace Risebird.AzureTimerFunctions
                                 if (!string.IsNullOrEmpty(videoSasUrl) || !string.IsNullOrEmpty(transcriptSasUrl))
                                 {
                                     var result = _meetingRespository.UpdateUploadedVideoLinkAndTranscriptLink(meeting.imid, videoDuration, videoSasUrl, transcriptSasUrl, uploadedVideoClientExternalLink, uploadedTranscriptClientExternalLink).Result;
-                                    if (result && recordinginfo.Count() == 1)
+                                    if (result && recordinginfo != null && recordinginfo.Count() == 1)
                                     {
                                         _zoho.DeleteRecordingAsync(_recordingupload.erecordingId);
                                     }

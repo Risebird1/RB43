@@ -8285,11 +8285,10 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
         {
             try
             {
-                if (ismcq)
-                {
-                    connectionString = connectionStringForMCQDb;
-                }
-                using (SqlConnection con = new SqlConnection(connectionString))
+                // A local, not the shared connectionString field: assigning the field leaves every
+                // later query on this repository instance pointed at the MCQ database.
+                var connString = ismcq ? connectionStringForMCQDb : connectionString;
+                using (SqlConnection con = new SqlConnection(connString))
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@timeEnd", DateTime.Now.AddMinutes(-30));
@@ -8313,11 +8312,9 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
         {
             try
             {
-                if (ismcq)
-                {
-                    connectionString = connectionStringForMCQDb;
-                }
-                using (SqlConnection con = new SqlConnection(connectionString))
+                // A local, not the shared connectionString field - see FetchMeetingPendingVideo.
+                var connString = ismcq ? connectionStringForMCQDb : connectionString;
+                using (SqlConnection con = new SqlConnection(connString))
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@Id", interviewId);
