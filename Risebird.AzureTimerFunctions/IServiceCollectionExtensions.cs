@@ -1,5 +1,3 @@
-using DinkToPdf;
-using DinkToPdf.Contracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -8,6 +6,7 @@ using Risebird.Business;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities;
 using Risebird.Repository;
 using Risebird.Repository.Interface;
 
@@ -53,6 +52,12 @@ namespace Risebird.AzureFunctions
 
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            // ProctorInterviewsService takes the concrete HttpClientHelper, which needs
+            // IHttpContextAccessor (above) and IOptions<ConfigurationOptions>. The web and
+            // micro-service hosts register both; this host did not, so startup failed with
+            // "Unable to resolve service for type 'Risebird.CommonHelper.HttpClientHelper'".
+            services.Configure<ConfigurationOptions>(options => configuration.Bind(options));
+            services.AddSingleton<HttpClientHelper>();
             services.AddHttpClient(); // Required for VapiService and PlivoService
             services.AddScoped<INotificationHelper, NotificationHelper>();
             // Vapi

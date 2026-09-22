@@ -208,13 +208,20 @@ namespace Risebird.CommonHelper
             req.AddHeader("Authorization", $"Zoho-oauthtoken {token}");
             req.AddHeader("Accept", "application/json");
             var resp = await client.ExecuteAsync(req);
-            if (resp.StatusCode == System.Net.HttpStatusCode.NotFound)
+            // Zoho reports "this meeting has no recording" two different ways: 404, and 400 with an
+            // INVALID_MEETING_KEY body. Neither is worth throwing for - it only means there is
+            // nothing to fetch for this meeting yet. Returning an empty collection rather than null
+            // also stops callers' recordinginfo.Count() throwing a NullReferenceException.
+            if (resp.StatusCode == System.Net.HttpStatusCode.NotFound || IsUnknownMeetingKey(resp))
             {
-                return null;
+                return Array.Empty<ZohoRecordingInfo>();
             }
             if (!resp.IsSuccessful || string.IsNullOrEmpty(resp.Content))
             {
-                throw new InvalidOperationException($"Failed to get recordings: {resp.StatusCode} {resp.ErrorMessage}");
+                // The body carries Zoho's actual error code; the status alone was never enough to
+                // diagnose these failures from the logs.
+                throw new InvalidOperationException(
+                    $"Failed to get recordings for meeting '{meetingKey}': {resp.StatusCode} {resp.ErrorMessage} {resp.Content}");
             }
             using var doc = JsonDocument.Parse(resp.Content);
             var root = doc.RootElement;
@@ -233,6 +240,21 @@ namespace Risebird.CommonHelper
             }
             return _recordings;
         }
+        /// <summary>
+        /// True when Zoho is telling us it does not recognise the meeting key. It answers with HTTP
+        /// 400 and an INVALID_MEETING_KEY body rather than 404, so the status code alone cannot
+        /// distinguish "no recording for this meeting" from a genuine failure.
+        /// </summary>
+        private static bool IsUnknownMeetingKey(RestResponse resp)
+        {
+            if (resp.StatusCode != System.Net.HttpStatusCode.BadRequest || string.IsNullOrEmpty(resp.Content))
+            {
+                return false;
+            }
+
+            return resp.Content.IndexOf("INVALID_MEETING_KEY", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
         public async Task DeleteRecordingAsync(string recordingid)
         {
             var token = await GetRecordingAccessTokenAsync();

@@ -1844,7 +1844,7 @@ NEVER:
                         {
                             var recordinginfo = _zoho.GetRecordingAsync(meeting.ZoomMeetingId, accesstoken).Result;
                             int maxduration = 0;
-                            if (recordinginfo.Count() > 0)
+                            if (recordinginfo != null && recordinginfo.Any())
                                 maxduration = recordinginfo.Max(r => r.duration);
                             var _recordingupload = recordinginfo?.Where(x => x.duration == maxduration).FirstOrDefault();
 
