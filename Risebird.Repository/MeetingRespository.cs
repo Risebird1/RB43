@@ -5415,7 +5415,7 @@ namespace Risebird.Repository
 
         public async Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, string eInvoiceFileLink, int status,
             decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable,
-            string latestRemark = null, string utrTrxn = null, decimal? cashCreditAmount = null, int taxScenario = 0)
+            string latestRemark = null, string utrTrxn = null, decimal? cashCreditAmount = null, int taxScenario = 0, decimal tdsPercentage = 10)
         {
             try
             {
@@ -5437,6 +5437,7 @@ namespace Risebird.Repository
                     parameters.Add("@UTRTrxn", utrTrxn);
                     parameters.Add("@CashCreditAmount", cashCreditAmount);
                     parameters.Add("@TaxScenario", taxScenario);
+                    parameters.Add("@TDSPercentage", tdsPercentage);
                     var result = await SqlMapper.QueryAsync<dynamic>(con, "usp_UpdateInvoiceDetails", parameters,
                         commandType: CommandType.StoredProcedure);
                     return (result.FirstOrDefault()?.UpdatedRows ?? 0) > 0;
@@ -5582,6 +5583,7 @@ namespace Risebird.Repository
                     parameters.Add("@CashCreditAmount", model.CashCreditAmount);
                     parameters.Add("@UTRTrxn", model.UTRTrxn);
                     parameters.Add("@BillingCurrency", string.IsNullOrEmpty(model.BillingCurrency) ? "INR" : model.BillingCurrency);
+                    parameters.Add("@TDSPercentage", model.TDSPercentage > 0 ? model.TDSPercentage : 10);
                     var result = await SqlMapper.QueryAsync<dynamic>(con, "usp_SaveGeneratedInvoice", parameters, commandType: CommandType.StoredProcedure);
                     return (int)(result.FirstOrDefault()?.NewId ?? 0);
                 }
