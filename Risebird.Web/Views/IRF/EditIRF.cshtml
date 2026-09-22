@@ -356,6 +356,16 @@
                                                             @Html.ValidationMessageFor(model => model.OpenAIEvaluatorPromptId, "", new { @class = "text-danger" })
                                                             <small class="text-muted">Responses API prompt ID that generates the candidate's report. Optional — leave it blank and the primary prompt above generates the report too.</small>
                                                         </div>
+                                                        @* Set by the AI screening intake (/AIScreening/New) without a human touching this form.
+                                                           It stays visible and editable, which is how a channel gets corrected without rebuilding it. *@
+                                                        <div class="form-group">
+                                                            <div class="mandate">
+                                                                @Html.LabelFor(model => model.IdealCandidateProfile, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                            </div>
+                                                            @Html.TextAreaFor(model => model.IdealCandidateProfile, new { @class = "form-control", @rows = "3", @id = "IdealCandidateProfile", @placeholder = "Java, Spring Boot, microservices | 5-8 yrs | ..." })
+                                                            @Html.ValidationMessageFor(model => model.IdealCandidateProfile, "", new { @class = "text-danger" })
+                                                            <small class="text-muted">The candidate this channel screens for. Set by the AI screening intake and editable here — the adaptive interviewer and the evaluator both read it.</small>
+                                                        </div>
                                                     </div>
                                                 </div>
 

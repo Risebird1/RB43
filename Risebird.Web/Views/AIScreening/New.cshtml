@@ -1,0 +1,580 @@
+@model Risebird.Entities.ViewModel.AIScreeningDraft
+@using Risebird.Entities.ViewModel
+@using Risebird.Entities.Data
+@using System.Linq
+@{
+    ViewData["Title"] = "New AI screening";
+    var clients = ViewBag.Clients as List<Risebird.Entities.Data.Client>;
+}
+
+<div class="ais-wrap" data-draft-id="@Model.DraftId">
+
+    <div class="ais-head">
+        <div>
+            <h2 class="ais-title">New AI screening</h2>
+            <div class="ais-draft">Draft @Model.DraftId &middot; <span id="aisAutosave">autosaved</span></div>
+        </div>
+    </div>
+
+    <ol class="ais-steps" id="aisSteps">
+        <li class="ais-step is-active" data-step="1"><span>1</span> Describe</li>
+        <li class="ais-step" data-step="2"><span>2</span> Confirm profile</li>
+        <li class="ais-step" data-step="3"><span>3</span> Review plan</li>
+        <li class="ais-step" data-step="4"><span>4</span> Create</li>
+    </ol>
+
+    <div id="aisAlert" class="ais-alert" role="status" aria-live="polite" style="display:none;"></div>
+
+    @* ---------------- Step 1 : describe ---------------- *@
+    <section class="ais-panel" data-panel="1">
+
+        <div class="ais-field">
+            <label class="ais-label">1 &nbsp; Job description</label>
+            <input type="file" id="aisJdFile" accept=".pdf,.doc,.docx,.txt" class="ais-file" />
+            <div id="aisJdState" class="ais-filestate" style="display:none;"></div>
+        </div>
+
+        <div class="ais-field">
+            <label class="ais-label">2 &nbsp; Instruction &mdash; record or type</label>
+            <textarea id="aisInstruction" class="ais-textarea" rows="4"
+                      placeholder="Budget is sixteen LPA, Bangalore hybrid. Be strict on compensation and location. Job-hoppers are a problem for this client. Twenty minutes."></textarea>
+
+            <div class="ais-row">
+                <button type="button" id="aisRecord" class="ais-btn ais-btn-ghost">
+                    <span class="ais-dot"></span> Record
+                </button>
+                <label class="ais-check">
+                    <input type="checkbox" id="aisMultilingual" /> Multilingual
+                </label>
+                <audio id="aisPlayback" controls class="ais-audio" style="display:none;"></audio>
+                <span class="ais-spacer"></span>
+                <button type="button" id="aisToStep2" class="ais-btn ais-btn-primary">Propose ideal candidate</button>
+            </div>
+            <div class="ais-hint">Typing works instead of recording &mdash; both write the same instruction.</div>
+        </div>
+    </section>
+
+    @* ---------------- Step 2 : ideal candidate ---------------- *@
+    <section class="ais-panel" data-panel="2" style="display:none;">
+        <h3 class="ais-h3">Ideal candidate</h3>
+        <p class="ais-sub" id="aisIcpMessage">Proposed from the job description &mdash; edit anything that is wrong.</p>
+
+        <div class="ais-field">
+            <label class="ais-label">3 &nbsp; Profile</label>
+            <textarea id="aisIcp" class="ais-textarea" rows="4"
+                      placeholder="Java, Spring Boot, microservices | 5-8 yrs | ..."></textarea>
+        </div>
+
+        <div class="ais-row">
+            <button type="button" class="ais-btn ais-btn-ghost" data-back="1">Back</button>
+            <span class="ais-spacer"></span>
+            <button type="button" id="aisToStep3" class="ais-btn ais-btn-primary">Confirm &amp; draft plan</button>
+        </div>
+    </section>
+
+    @* ---------------- Step 3 : plan review ---------------- *@
+    <section class="ais-panel" data-panel="3" style="display:none;">
+        <div class="ais-planhead">
+            <div>
+                <h3 class="ais-h3" id="aisRoleLabel">&nbsp;</h3>
+                <p class="ais-sub" id="aisPlanSummary">&nbsp;</p>
+            </div>
+        </div>
+
+        <div id="aisDiff" class="ais-diff" style="display:none;"></div>
+        <div id="aisPlan" class="ais-sections"></div>
+
+        <div class="ais-field">
+            <label class="ais-label">5 &nbsp; Revise by voice</label>
+            <textarea id="aisRevision" class="ais-textarea" rows="2"
+                      placeholder="Drop Career Progression and give that weight to Domain Exposure."></textarea>
+            <div class="ais-row">
+                <button type="button" id="aisRecordRevision" class="ais-btn ais-btn-ghost">
+                    <span class="ais-dot"></span> Record
+                </button>
+                <button type="button" id="aisApplyRevision" class="ais-btn ais-btn-ghost">Apply revision</button>
+                <span class="ais-spacer"></span>
+                <button type="button" class="ais-btn ais-btn-ghost" data-back="2">Back</button>
+                <button type="button" id="aisToStep4" class="ais-btn ais-btn-primary">Continue</button>
+            </div>
+        </div>
+    </section>
+
+    @* ---------------- Step 4 : create ---------------- *@
+    <section class="ais-panel" data-panel="4" style="display:none;">
+        <h3 class="ais-h3">Create screening channel</h3>
+        <p class="ais-sub">Channel creation needs a client, a client user and a billing owner.</p>
+
+        <div class="ais-grid">
+            <div class="ais-field">
+                <label class="ais-label">Client *</label>
+                <select id="aisClient" class="ais-select">
+                    <option value="">Select a client</option>
+                    @if (clients != null)
+                    {
+                        foreach (var client in clients.OrderBy(c => c.Name))
+                        {
+                            <option value="@client.id">@client.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="ais-field">
+                <label class="ais-label">Client user</label>
+                <select id="aisClientUsers" class="ais-select" multiple size="4"></select>
+            </div>
+
+            <div class="ais-field">
+                <label class="ais-label">Billing owner</label>
+                <select id="aisBillingOwner" class="ais-select">
+                    <option value="0">Pick automatically</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="ais-row">
+            <button type="button" class="ais-btn ais-btn-ghost" data-back="3">Back</button>
+            <span class="ais-spacer"></span>
+            <button type="button" id="aisCreate" class="ais-btn ais-btn-primary">Create screening channel</button>
+        </div>
+
+        <div id="aisResult" class="ais-result" style="display:none;"></div>
+    </section>
+</div>
+
+<style>
+    .ais-wrap { max-width: 1040px; margin: 24px auto; padding: 0 16px 64px; font-size: 14px; color: #1f2733; }
+    .ais-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
+    .ais-title { margin: 0; font-size: 22px; font-weight: 600; }
+    .ais-draft { color: #6b7684; font-size: 12px; margin-top: 4px; }
+
+    .ais-steps { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 18px; padding: 0; }
+    .ais-step { display: flex; align-items: center; gap: 8px; padding: 7px 14px; border: 1px solid #dde3ea; border-radius: 999px; color: #6b7684; font-size: 12.5px; background: #fff; }
+    .ais-step span { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: #eef2f7; color: #6b7684; font-size: 11px; font-weight: 600; }
+    .ais-step.is-active { border-color: #1b6fb8; color: #1b6fb8; }
+    .ais-step.is-active span { background: #1b6fb8; color: #fff; }
+    .ais-step.is-done { border-color: #2f7a5a; color: #2f7a5a; }
+    .ais-step.is-done span { background: #2f7a5a; color: #fff; }
+
+    .ais-panel { background: #fff; border: 1px solid #e3e9f0; border-radius: 8px; padding: 22px; }
+    .ais-h3 { margin: 0 0 4px; font-size: 16px; font-weight: 600; }
+    .ais-sub { margin: 0 0 16px; color: #6b7684; font-size: 13px; }
+    .ais-field { margin-bottom: 18px; }
+    .ais-label { display: block; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #6b7684; margin-bottom: 7px; }
+    .ais-textarea, .ais-select, .ais-file { width: 100%; border: 1px solid #dde3ea; border-radius: 6px; padding: 10px 12px; font: inherit; color: inherit; background: #fff; }
+    .ais-textarea { resize: vertical; }
+    .ais-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .ais-spacer { flex: 1 1 auto; }
+    .ais-hint { color: #6b7684; font-size: 12px; margin-top: 8px; }
+    .ais-check { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: #6b7684; margin: 0; }
+    .ais-audio { height: 32px; max-width: 240px; }
+    .ais-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+
+    .ais-btn { border-radius: 6px; padding: 9px 16px; font: inherit; font-weight: 500; cursor: pointer; border: 1px solid transparent; }
+    .ais-btn:disabled { opacity: .55; cursor: not-allowed; }
+    .ais-btn-primary { background: #1b6fb8; color: #fff; }
+    .ais-btn-ghost { background: #fff; border-color: #dde3ea; color: #1f2733; }
+    .ais-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #b23a20; margin-right: 6px; vertical-align: middle; }
+    .ais-btn.is-recording { border-color: #b23a20; color: #b23a20; }
+
+    .ais-filestate { margin-top: 10px; font-size: 12.5px; color: #2f7a5a; }
+    .ais-filestate.is-warn { color: #b23a20; }
+
+    .ais-alert { margin: 0 0 16px; padding: 11px 14px; border-radius: 6px; font-size: 13px; border: 1px solid #cfe0f0; background: #eef5fb; color: #16527f; }
+    .ais-alert.is-error { border-color: #f0cfc5; background: #fbeee9; color: #8f2e18; }
+    .ais-alert.is-ok { border-color: #c8e3d6; background: #eaf5f0; color: #1f5c43; }
+
+    .ais-sections { display: grid; gap: 16px; }
+    .ais-section { border: 1px solid #e3e9f0; border-radius: 8px; overflow: hidden; }
+    .ais-section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 12px 16px; background: #f6f8fb; border-bottom: 1px solid #e3e9f0; }
+    .ais-section-title { font-weight: 600; font-size: 14px; }
+    .ais-weight { font-size: 12px; font-weight: 600; color: #2f7a5a; }
+    .ais-weight.is-off { color: #b23a20; }
+    .ais-params { list-style: none; margin: 0; padding: 0; }
+    .ais-param { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 10px 16px; border-bottom: 1px solid #eef2f7; }
+    .ais-param:last-child { border-bottom: 0; }
+    .ais-param-name { flex: 1 1 auto; }
+    .ais-mand { font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #b23a20; border: 1px solid #f0cfc5; border-radius: 3px; padding: 1px 5px; margin-left: 8px; }
+    .ais-param-weight { font-variant-numeric: tabular-nums; color: #6b7684; }
+
+    .ais-diff { border: 1px solid #cfe0f0; background: #eef5fb; border-radius: 6px; padding: 12px 14px; margin-bottom: 16px; font-size: 13px; color: #16527f; }
+    .ais-diff ul { margin: 8px 0 0; padding-left: 18px; }
+
+    .ais-result { margin-top: 18px; border: 1px solid #c8e3d6; background: #eaf5f0; border-radius: 6px; padding: 14px 16px; font-size: 13px; color: #1f5c43; }
+    .ais-result a { color: #1b6fb8; }
+</style>
+
+<script>
+(function () {
+    "use strict";
+
+    var wrap = document.querySelector(".ais-wrap");
+    if (!wrap) return;
+
+    var draftId = wrap.getAttribute("data-draft-id");
+    var planState = null;
+
+    // ---------- small helpers ----------
+
+    function $(id) { return document.getElementById(id); }
+
+    function alertBox(message, kind) {
+        var box = $("aisAlert");
+        if (!message) { box.style.display = "none"; return; }
+        box.textContent = message;
+        box.className = "ais-alert" + (kind ? " is-" + kind : "");
+        box.style.display = "";
+        box.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+
+    function escapeHtml(value) {
+        return String(value == null ? "" : value)
+            .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    }
+
+    function busy(button, isBusy, busyLabel) {
+        if (!button) return;
+        if (isBusy) {
+            button.dataset.label = button.textContent;
+            button.textContent = busyLabel || "Working…";
+            button.disabled = true;
+        } else {
+            if (button.dataset.label) button.textContent = button.dataset.label;
+            button.disabled = false;
+        }
+    }
+
+    function post(url, body) {
+        return fetch(url, {
+            method: "POST",
+            credentials: "same-origin",
+            headers: body instanceof FormData ? {} : { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+            body: body
+        }).then(function (r) { return r.json(); });
+    }
+
+    function form(values) {
+        return Object.keys(values)
+            .filter(function (k) { return values[k] !== undefined && values[k] !== null; })
+            .map(function (k) { return encodeURIComponent(k) + "=" + encodeURIComponent(values[k]); })
+            .join("&");
+    }
+
+    function showStep(step) {
+        Array.prototype.forEach.call(document.querySelectorAll(".ais-panel"), function (panel) {
+            panel.style.display = panel.getAttribute("data-panel") === String(step) ? "" : "none";
+        });
+        Array.prototype.forEach.call(document.querySelectorAll(".ais-step"), function (node) {
+            var value = Number(node.getAttribute("data-step"));
+            node.classList.toggle("is-active", value === step);
+            node.classList.toggle("is-done", value < step);
+        });
+        alertBox("");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll("[data-back]"), function (button) {
+        button.addEventListener("click", function () { showStep(Number(button.getAttribute("data-back"))); });
+    });
+
+    // ---------- recorder ----------
+    // One recorder drives both the step 1 instruction and the step 3 revision.
+
+    function createRecorder(button, onDone) {
+        var recorder = null, chunks = [], stream = null;
+
+        button.addEventListener("click", function () {
+            if (recorder && recorder.state === "recording") {
+                recorder.stop();
+                return;
+            }
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alertBox("This browser cannot record audio. Type the instruction instead.", "error");
+                return;
+            }
+
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(function (micStream) {
+                stream = micStream;
+                chunks = [];
+                recorder = new MediaRecorder(micStream);
+
+                recorder.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
+                recorder.onstop = function () {
+                    button.classList.remove("is-recording");
+                    button.innerHTML = '<span class="ais-dot"></span> Record';
+                    if (stream) stream.getTracks().forEach(function (t) { t.stop(); });
+
+                    var blob = new Blob(chunks, { type: "audio/webm" });
+                    if (blob.size > 0) onDone(blob);
+                };
+
+                recorder.start();
+                button.classList.add("is-recording");
+                button.innerHTML = '<span class="ais-dot"></span> Stop';
+            }).catch(function () {
+                alertBox("Microphone permission was refused. Type the instruction instead.", "error");
+            });
+        });
+    }
+
+    function sendAudio(url, blob, then) {
+        var data = new FormData();
+        data.append("draftId", draftId);
+        data.append("isMultiLingual", $("aisMultilingual") && $("aisMultilingual").checked ? "true" : "false");
+        data.append("audio", blob, "instruction.webm");
+
+        alertBox("Transcribing…");
+        post(url + "?draftId=" + encodeURIComponent(draftId) +
+             "&isMultiLingual=" + ($("aisMultilingual") && $("aisMultilingual").checked), data)
+            .then(function (res) {
+                if (!res.success) { alertBox(res.message, "error"); return; }
+                alertBox("");
+                then(res.transcript);
+            })
+            .catch(function () { alertBox("Transcription failed. Try again.", "error"); });
+    }
+
+    // ---------- step 1 ----------
+
+    $("aisJdFile").addEventListener("change", function () {
+        var file = this.files && this.files[0];
+        if (!file) return;
+
+        var state = $("aisJdState");
+        state.style.display = "";
+        state.className = "ais-filestate";
+        state.textContent = "Reading " + file.name + "…";
+
+        var data = new FormData();
+        data.append("jd", file);
+
+        post("/AIScreening/AttachJd?draftId=" + encodeURIComponent(draftId), data)
+            .then(function (res) {
+                if (!res.success) {
+                    state.className = "ais-filestate is-warn";
+                    state.textContent = res.message || "Upload failed.";
+                    return;
+                }
+                state.className = "ais-filestate" + (res.hasText ? "" : " is-warn");
+                state.textContent = res.fileName + " · " + res.fileSizeKb + " KB" +
+                    (res.hasText
+                        ? (res.jobTitle ? " · " + res.jobTitle : "")
+                        : " · no readable text found — the plan will lean on your instruction");
+            })
+            .catch(function () {
+                state.className = "ais-filestate is-warn";
+                state.textContent = "Upload failed. Try again.";
+            });
+    });
+
+    createRecorder($("aisRecord"), function (blob) {
+        var playback = $("aisPlayback");
+        playback.src = URL.createObjectURL(blob);
+        playback.style.display = "";
+
+        sendAudio("/AIScreening/TranscribeInstruction", blob, function (transcript) {
+            $("aisInstruction").value = transcript;
+        });
+    });
+
+    $("aisToStep2").addEventListener("click", function () {
+        var button = this;
+        var instruction = $("aisInstruction").value.trim();
+
+        if (!instruction) {
+            alertBox("Record or type how you want this screen run.", "error");
+            return;
+        }
+
+        busy(button, true);
+
+        // Typing bypasses transcription: the text goes straight to the same field.
+        post("/AIScreening/SetInstruction", form({ draftId: draftId, instruction: instruction }))
+            .then(function (res) {
+                if (!res.success) { busy(button, false); alertBox(res.message, "error"); return; }
+                return post("/AIScreening/ProposeIdealCandidate", form({ draftId: draftId }))
+                    .then(function (icp) {
+                        busy(button, false);
+                        if (!icp.success) { alertBox(icp.message, "error"); return; }
+
+                        $("aisIcp").value = icp.profile || "";
+                        if (icp.message) $("aisIcpMessage").textContent = icp.message;
+                        showStep(2);
+                    });
+            })
+            .catch(function () { busy(button, false); alertBox("Something went wrong. Try again.", "error"); });
+    });
+
+    // ---------- step 2 ----------
+
+    $("aisToStep3").addEventListener("click", function () {
+        var button = this;
+        var profile = $("aisIcp").value.trim();
+
+        if (!profile) { alertBox("The ideal candidate profile cannot be empty.", "error"); return; }
+
+        busy(button, true, "Drafting plan…");
+
+        post("/AIScreening/ConfirmIdealCandidate", form({ draftId: draftId, idealCandidateProfile: profile }))
+            .then(function (res) {
+                if (!res.success) { busy(button, false); alertBox(res.message, "error"); return; }
+                return post("/AIScreening/GeneratePlan", form({ draftId: draftId }))
+                    .then(function (planRes) {
+                        busy(button, false);
+                        if (!planRes.success) { alertBox(planRes.message, "error"); return; }
+
+                        renderPlan(planRes.plan);
+                        showStep(3);
+                    });
+            })
+            .catch(function () { busy(button, false); alertBox("Something went wrong. Try again.", "error"); });
+    });
+
+    // ---------- step 3 ----------
+
+    function renderPlan(plan) {
+        planState = plan;
+        if (!plan) return;
+
+        $("aisRoleLabel").textContent = plan.roleLabel || "Screening plan";
+        $("aisPlanSummary").textContent =
+            (plan.sections ? plan.sections.length : 0) + " sections · " +
+            plan.parameterCount + " parameters · " +
+            plan.durationMinutes + " min · weights total 100 in each section";
+
+        var html = (plan.sections || []).map(function (section) {
+            var params = (section.parameters || []).map(function (p) {
+                return '<li class="ais-param">' +
+                    '<span class="ais-param-name">' + escapeHtml(p.name) +
+                    (p.mandatory ? '<span class="ais-mand">mandatory</span>' : '') +
+                    '</span>' +
+                    '<span class="ais-param-weight">' + p.weight + '</span>' +
+                    '</li>';
+            }).join("");
+
+            return '<div class="ais-section">' +
+                '<div class="ais-section-head">' +
+                    '<span class="ais-section-title">' + escapeHtml(section.title) + '</span>' +
+                    '<span class="ais-weight' + (section.isBalanced ? '' : ' is-off') + '">' +
+                        section.weightTotal + '/100' +
+                    '</span>' +
+                '</div>' +
+                '<ul class="ais-params">' + params + '</ul>' +
+            '</div>';
+        }).join("");
+
+        $("aisPlan").innerHTML = html;
+    }
+
+    function renderDiff(res) {
+        var box = $("aisDiff");
+
+        // An instruction that specifies no rubric change is a valid answer, not an error:
+        // show the message rather than an empty diff.
+        if (!res.changed) {
+            box.innerHTML = escapeHtml(res.message || "The plan is unchanged.");
+            box.style.display = "";
+            return;
+        }
+
+        var items = []
+            .concat(res.added || [], res.removed || [], res.modified || [], res.warnings || [])
+            .map(function (line) { return "<li>" + escapeHtml(line) + "</li>"; })
+            .join("");
+
+        box.innerHTML = "<strong>" + escapeHtml(res.message || "Plan revised.") + "</strong>" +
+            (items ? "<ul>" + items + "</ul>" : "");
+        box.style.display = "";
+    }
+
+    createRecorder($("aisRecordRevision"), function (blob) {
+        sendAudio("/AIScreening/TranscribeRevision", blob, function (transcript) {
+            $("aisRevision").value = transcript;
+        });
+    });
+
+    $("aisApplyRevision").addEventListener("click", function () {
+        var button = this;
+        var transcript = $("aisRevision").value.trim();
+
+        if (!transcript) { alertBox("Say or type what should change.", "error"); return; }
+
+        busy(button, true, "Applying…");
+
+        post("/AIScreening/RevisePlan", form({ draftId: draftId, transcript: transcript }))
+            .then(function (res) {
+                busy(button, false);
+                if (!res.success) { alertBox(res.message, "error"); return; }
+
+                renderPlan(res.plan);
+                renderDiff(res);
+            })
+            .catch(function () { busy(button, false); alertBox("Could not apply the revision.", "error"); });
+    });
+
+    $("aisToStep4").addEventListener("click", function () { showStep(4); });
+
+    // ---------- step 4 ----------
+
+    $("aisClient").addEventListener("change", function () {
+        var clientId = this.value;
+        var users = $("aisClientUsers");
+        var billing = $("aisBillingOwner");
+
+        users.innerHTML = "";
+        billing.innerHTML = '<option value="0">Pick automatically</option>';
+        if (!clientId) return;
+
+        fetch("/AIScreening/ClientUsers?clientId=" + encodeURIComponent(clientId), { credentials: "same-origin" })
+            .then(function (r) { return r.json(); })
+            .then(function (res) {
+                if (!res.success) return;
+                (res.users || []).forEach(function (user) {
+                    users.appendChild(new Option(user.name, user.id));
+                    billing.appendChild(new Option(user.name, user.id));
+                });
+            });
+    });
+
+    $("aisCreate").addEventListener("click", function () {
+        var button = this;
+        var clientId = $("aisClient").value;
+
+        if (!clientId) { alertBox("Select a client.", "error"); return; }
+
+        var selected = Array.prototype.filter.call($("aisClientUsers").options, function (o) { return o.selected; })
+            .map(function (o) { return o.value; });
+
+        // Creation is idempotent on draft id server-side; the button is disabled here anyway.
+        busy(button, true, "Creating…");
+
+        var body = form({ draftId: draftId, clientId: clientId, billingOwner: $("aisBillingOwner").value || 0 }) +
+            selected.map(function (id) { return "&clientUserIds=" + encodeURIComponent(id); }).join("");
+
+        post("/AIScreening/CreateChannel", body)
+            .then(function (res) {
+                if (!res.success) { busy(button, false); alertBox(res.message, "error"); return; }
+
+                var box = $("aisResult");
+                box.style.display = "";
+                box.innerHTML = "<strong>" + escapeHtml(res.message) + "</strong>" +
+                    (res.candidateLink
+                        ? '<div style="margin-top:8px;">Candidate link: <a href="' + escapeHtml(res.candidateLink) +
+                          '" target="_blank" rel="noopener">' + escapeHtml(res.candidateLink) + "</a></div>"
+                        : '<div style="margin-top:8px;">No candidate link was generated — create one from Edit IRF.</div>') +
+                    (res.editUrl
+                        ? '<div style="margin-top:6px;"><a href="' + escapeHtml(res.editUrl) + '">Open the channel</a></div>'
+                        : "");
+
+                box.scrollIntoView({ block: "nearest", behavior: "smooth" });
+            })
+            .catch(function () {
+                busy(button, false);
+                alertBox("Could not create the screening channel. Try again.", "error");
+            });
+    });
+})();
+</script>

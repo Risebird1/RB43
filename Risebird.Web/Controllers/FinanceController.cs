@@ -2420,7 +2420,7 @@ namespace Risebird.Web.Controllers
             string irn, string eInvoiceFileLink, int status, decimal subtotal, decimal gstAmount, decimal invoiceValue,
             decimal tdsAmount, decimal netReceivable, string lineItemsJson, int taxScenario = 0,
             decimal? cashCreditAmount = null, string cashTransactionRef = null, DateTime? cashTransactionDate = null,
-            string latestRemark = null)
+            string latestRemark = null, decimal tdsPercentage = 10)
         {
             try
             {
@@ -2457,7 +2457,7 @@ namespace Risebird.Web.Controllers
                 decimal? savedCashAmount = (cashCreditAmount.HasValue && cashCreditAmount.Value > 0)
                     ? (decimal?)cashCreditAmount.Value : null;
                 var success = await _meetingService.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, eInvoiceFileLink, status,
-                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, lineItems, latestRemark, cashTransactionRef, savedCashAmount, taxScenario);
+                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, lineItems, latestRemark, cashTransactionRef, savedCashAmount, taxScenario, tdsPercentage);
                 return Json(new
                 {
                     success,

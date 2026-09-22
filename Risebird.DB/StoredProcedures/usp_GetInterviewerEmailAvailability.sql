@@ -81,8 +81,11 @@ BEGIN
                  OR (@RecentlyAvailable = 0
                      AND NOT (ea.ReceivedAt >= DATEADD(HOUR, -48, GETUTCDATE())
                               AND dbo.fn_IsFavorableAvailabilityIntent(ea.AvailabilityIntent, ea.MailBodyIntent, ea.ConcernsOrNotInterested) = 1)))
-            AND (@DateFrom IS NULL OR ea.ReceivedAt >= @DateFrom)
-            AND (@DateTo IS NULL OR ea.ReceivedAt < DATEADD(DAY, 1, @DateTo))
+            -- ReceivedAt is stored UTC but the page shows and picks IST days, so the bounds
+            -- are shifted back 5h30m. Without this, a reply that reads '18 Sep 00:30' on the
+            -- grid (UTC 17 Sep 19:00) would not come back when filtering for 18 Sep.
+            AND (@DateFrom IS NULL OR ea.ReceivedAt >= DATEADD(MINUTE, -330, @DateFrom))
+            AND (@DateTo IS NULL OR ea.ReceivedAt < DATEADD(MINUTE, -330, DATEADD(DAY, 1, @DateTo)))
             AND (@IsInterviewerActive IS NULL OR ISNULL(ul.IsInterviewerAccess, 1) = @IsInterviewerActive)
             -- MAG filter: substring match against the raw MAG name stored on the record OR against
             -- the resolved MasterAssessmentGroup / AssessmentGroup name (so operators can search by

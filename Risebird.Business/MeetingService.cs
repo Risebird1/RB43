@@ -3238,7 +3238,7 @@ namespace Risebird.Business
 
         public async Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, string eInvoiceFileLink, int status,
             decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable,
-            List<InvoiceLineItemVM> lineItems, string latestRemark = null, string utrTrxn = null, decimal? cashCreditAmount = null, int taxScenario = 0)
+            List<InvoiceLineItemVM> lineItems, string latestRemark = null, string utrTrxn = null, decimal? cashCreditAmount = null, int taxScenario = 0, decimal tdsPercentage = 10)
         {
             try
             {
@@ -3249,7 +3249,7 @@ namespace Risebird.Business
                     await Task.WhenAll(tasks);
                 }
                 return await _meetingRespository.UpdateInvoiceDetails(invoiceId, gstNumber, creditPeriod, irn, eInvoiceFileLink, status,
-                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, latestRemark, utrTrxn, cashCreditAmount, taxScenario);
+                    subtotal, gstAmount, invoiceValue, tdsAmount, netReceivable, latestRemark, utrTrxn, cashCreditAmount, taxScenario, tdsPercentage);
             }
             catch (Exception e) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e); return false; }
         }

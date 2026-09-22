@@ -69,8 +69,11 @@ BEGIN
                 OR (@AssignedTo = '_unassigned_' AND np.AssignedToUserId IS NULL)
                 OR (@AssignedTo NOT IN ('_unassigned_') AND np.AssignedToEmail = @AssignedTo)
             )
-            AND (@DateFrom IS NULL OR np.ReceivedAt >= @DateFrom)
-            AND (@DateTo IS NULL OR np.ReceivedAt < DATEADD(DAY, 1, @DateTo))
+            -- ReceivedAt is stored UTC but the page shows and picks IST days, so the bounds
+            -- are shifted back 5h30m. Without this, a response that reads '18 Sep 00:30' on
+            -- the grid (UTC 17 Sep 19:00) would not come back when filtering for 18 Sep.
+            AND (@DateFrom IS NULL OR np.ReceivedAt >= DATEADD(MINUTE, -330, @DateFrom))
+            AND (@DateTo IS NULL OR np.ReceivedAt < DATEADD(MINUTE, -330, DATEADD(DAY, 1, @DateTo)))
     )
     SELECT
         bd.*,

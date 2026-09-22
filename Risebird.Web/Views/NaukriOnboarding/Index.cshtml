@@ -1165,7 +1165,7 @@
                                     </colgroup>
                                     <thead>
                                         <tr>
-                                            <th class="col-num">#</th><th class="col-date">Received</th>
+                                            <th class="col-num">#</th><th class="col-date">Received (IST)</th>
                                             <th class="col-source">Source</th>
                                             <th class="col-name">Candidate</th><th class="col-role">Current Role</th>
                                             <th class="col-exp">Exp</th><th class="col-location">Location</th>
@@ -1190,7 +1190,7 @@
 
                                             <tr id="row-@r.Id">
                                                 <td class="col-num text-muted" style="font-size:12px">@r.Id</td>
-                                                <td class="col-date" style="font-size:12px">@(r.ReceivedAt.HasValue ? r.ReceivedAt.Value.ToString("dd MMM yy, HH:mm") : "\u2014")</td>
+                                                <td class="col-date" style="font-size:12px">@(IndiaTimeHelper.FormatIstForDisplay(r.ReceivedAt, "dd MMM yy, HH:mm") ?? "\u2014")</td>
                                                 <td style="font-size:11px;">
                                                     @{
                                                         string srcLabel = r.Source ?? "Naukri";
