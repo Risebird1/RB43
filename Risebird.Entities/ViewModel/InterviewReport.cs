@@ -616,6 +616,7 @@ namespace Risebird.Entities.ViewModel
         public decimal GSTAmount { get; set; }
         public decimal InvoiceValue { get; set; }
         public decimal TDSAmount { get; set; }
+        public decimal TDSPercentage { get; set; } = 10;
         public decimal NetReceivable { get; set; }
         public int Status { get; set; }
         public string CreatedBy { get; set; }
@@ -645,6 +646,7 @@ namespace Risebird.Entities.ViewModel
         public decimal GSTAmount { get; set; }
         public decimal InvoiceValue { get; set; }
         public decimal TDSAmount { get; set; }
+        public decimal TDSPercentage { get; set; } = 10;
         public decimal NetReceivable { get; set; }
         public int Status { get; set; }
         public string CreatedBy { get; set; }

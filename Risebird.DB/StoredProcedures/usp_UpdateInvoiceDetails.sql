@@ -23,7 +23,8 @@ CREATE PROCEDURE usp_UpdateInvoiceDetails
     @LatestRemark      VARCHAR(500) = NULL,
     @UTRTrxn           VARCHAR(200) = NULL,
     @CashCreditAmount  DECIMAL(18,2) = NULL,
-    @TaxScenario       INT = 0
+    @TaxScenario       INT = 0,
+    @TDSPercentage     DECIMAL(5,2) = 10
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -43,6 +44,7 @@ BEGIN
         UTRTrxn             = CASE WHEN @UTRTrxn IS NOT NULL AND @UTRTrxn != '' THEN @UTRTrxn ELSE UTRTrxn END,
         CashCreditAmount    = @CashCreditAmount,
         TaxScenario         = @TaxScenario,
+        TDSPercentage       = ISNULL(@TDSPercentage, TDSPercentage),
         InvoiceBaseAmount   = @Subtotal,
         NetReceivableAmount = @NetReceivable,
         ModifiedOn          = GETDATE()

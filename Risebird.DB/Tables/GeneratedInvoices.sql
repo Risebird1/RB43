@@ -77,6 +77,12 @@ BEGIN
 END
 GO
 
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'TDSPercentage' AND Object_ID = Object_ID(N'GeneratedInvoices'))
+BEGIN
+    ALTER TABLE GeneratedInvoices ADD [TDSPercentage] [decimal](5,2) NULL
+END
+GO
+
 IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = N'GeneratedInvoiceLineItems')
 BEGIN
 CREATE TABLE [dbo].[GeneratedInvoiceLineItems](
