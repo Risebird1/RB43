@@ -30,30 +30,30 @@ Case When ti.Surcharge>0 and ir.IsNewSkillChannel=1 and ip.Points>0 then ti.Surc
 0 as CandidateRatingAmount,
 0 as ClientRatingAmount,ip.QCPoints,
 (ip.Points*IsNull(ip.PaymentSLA,0)/100) as PaymentSLA,(ip.Points*IsNull(ip.VideoReward,0)/100) as VideoReward
-from InterviewPoints ip join UserList ul on ul.id=ip.userid 
-left join InterviewMeetings im on im.id = ip.InterviewId 
+from InterviewPoints ip join UserList ul on ul.id=ip.userid
+left join InterviewMeetings im on im.id = ip.InterviewId
 left join IRF ir on ir.IRFId=im.IRFId
 --left join CandidateRatings cr on cr.Interviewid=im.id and cr.Interviewerid=ip.userid
 --left join CandidateFeedbackDetails cfd on cfd.Interviewid=im.id
---left join InterviewRatings clr on clr.Interviewid=im.id 
---left join ClientCommentsForReport clrs on clrs.Interviewid=im.id  
+--left join InterviewRatings clr on clr.Interviewid=im.id
+--left join ClientCommentsForReport clrs on clrs.Interviewid=im.id
 left join TransInterviewer ti on ti.IRFId=ir.id and ti.UserId=ip.userid
-where (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewid!=0 and (isNull(im.interviewdate,ip.Date)>=@st 
-and isNull(im.interviewdate,ip.Date)<=@se)
-Union 
+where (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewid!=0 and (isNull(ip.CarryForwardDate,isNull(im.interviewdate,ip.Date))>=@st
+and isNull(ip.CarryForwardDate,isNull(im.interviewdate,ip.Date))<=@se)
+Union
 Select ip.id as paymentid,ul.EmailId as Comment,ul.id,Case When ip.Points>=0 then (ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) else ip.Points end as Points,
 0 as Surcharge,0 as CandidateRatingAmount,0 as ClientRatingAmount,ip.QCPoints,
 (ip.Points*IsNull(ip.PaymentSLA,0)/100) as PaymentSLA,(ip.Points*IsNull(ip.VideoReward,0)/100) as VideoReward
-from InterviewPoints ip join UserList ul on ul.id=ip.userid 
-left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId 
-where (ip.Status='Submitted' or ip.Status='Pending') and interviewerid!=0 and (isNull(im.interviewdate,ip.Date)>=@st 
-and isNull(im.interviewdate,ip.Date)<=@se) 
-Union 
+from InterviewPoints ip join UserList ul on ul.id=ip.userid
+left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId
+where (ip.Status='Submitted' or ip.Status='Pending') and interviewerid!=0 and (isNull(ip.CarryForwardDate,isNull(im.interviewdate,ip.Date))>=@st
+and isNull(ip.CarryForwardDate,isNull(im.interviewdate,ip.Date))<=@se)
+Union
 Select ip.id as paymentid,ul.EmailId as Comment,ul.id,Case When ip.Points>=0 then (ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) else ip.Points end as Points,
 0 as Surcharge,0 as CandidateRatingAmount,0 as ClientRatingAmount,ip.QCPoints,
 (ip.Points*IsNull(ip.PaymentSLA,0)/100) as PaymentSLA,(ip.Points*IsNull(ip.VideoReward,0)/100) as VideoReward
-from InterviewPoints ip join UserList ul on ul.id=ip.userid 
-where (ip.Status='Submitted' or ip.Status='Pending') and interviewerid=0 and Interviewid=0 and (ip.Date>=@st and ip.Date<=@se))
+from InterviewPoints ip join UserList ul on ul.id=ip.userid
+where (ip.Status='Submitted' or ip.Status='Pending') and interviewerid=0 and Interviewid=0 and (isNull(ip.CarryForwardDate,ip.Date)>=@st and isNull(ip.CarryForwardDate,ip.Date)<=@se))
 Insert into @SubmitedPoints
 Select Comment,id,Sum(Points+Isnull(Surcharge,0)+ISNULL(CandidateRatingAmount,0)+ISNULL(ClientRatingAmount,0)+ISNULL(QCPoints,0)+ISNULL(VideoReward,0)-ISNULL(PaymentSLA,0)) as Points from CTE group by Comment,id
 

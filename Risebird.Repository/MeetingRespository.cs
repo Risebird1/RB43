@@ -3884,7 +3884,7 @@ namespace Risebird.Repository
                 var query = "";
                 if (index == 2)
                 {
-                    query = "Update ip Set ip.Status='Paid',PaymentHistoryId=@PaymentHistoryId from InterviewPoints ip left join InterviewMeetings im on im.id=ip.Interviewid where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)";
+                    query = "Update ip Set ip.Status='Paid',PaymentHistoryId=@PaymentHistoryId from InterviewPoints ip left join InterviewMeetings im on im.id=ip.Interviewid where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewid!=0 and (isNull(ip.CarryForwardDate,isNull(im.interviewdate,ip.Date))>=@st and isNull(ip.CarryForwardDate,isNull(im.interviewdate,ip.Date))<=@se)";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@st", st);
                     dynamicParameters.Add("@se", se);
@@ -3894,12 +3894,12 @@ namespace Risebird.Repository
                     {
                         var results = await con.QueryAsync(query, dynamicParameters);
                     }
-                    query = "Update ip Set ip.Status='Paid',PaymentHistoryId=@PaymentHistoryId from InterviewPoints ip left join UnapprovedInterviewerMeetings im on im.id=ip.Interviewerid where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewerid!=0 and (isNull(im.interviewdate,ip.Date)>=@st and isNull(im.interviewdate,ip.Date)<=@se)";
+                    query = "Update ip Set ip.Status='Paid',PaymentHistoryId=@PaymentHistoryId from InterviewPoints ip left join UnapprovedInterviewerMeetings im on im.id=ip.Interviewerid where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewerid!=0 and (isNull(ip.CarryForwardDate,isNull(im.interviewdate,ip.Date))>=@st and isNull(ip.CarryForwardDate,isNull(im.interviewdate,ip.Date))<=@se)";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var results = await con.QueryAsync(query, dynamicParameters);
                     }
-                    query = "Update ip Set ip.Status='Paid',PaymentHistoryId=@PaymentHistoryId from InterviewPoints ip where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewerid=0 and ip.interviewid=0 and (ip.Date>=@st and ip.Date<=@se)";
+                    query = "Update ip Set ip.Status='Paid',PaymentHistoryId=@PaymentHistoryId from InterviewPoints ip where ip.userid= @Userid and (ip.Status='Submitted' or ip.Status='Pending') and ip.interviewerid=0 and ip.interviewid=0 and (isNull(ip.CarryForwardDate,ip.Date)>=@st and isNull(ip.CarryForwardDate,ip.Date)<=@se)";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var results = await con.QueryAsync(query, dynamicParameters);
@@ -3926,6 +3926,28 @@ namespace Risebird.Repository
                     }
                 }
 
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "";
+            }
+        }
+        public async Task<string> CarryForwardPayments(int interviewerid, DateTime st, DateTime se, DateTime nextDate)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Userid", interviewerid);
+                dynamicParameters.Add("@st", st);
+                dynamicParameters.Add("@se", se);
+                dynamicParameters.Add("@NextDate", nextDate);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync(con, "usp_CarryForwardInterviewerPayments", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return "Success";
+                }
             }
             catch (SqlException ex)
             {
@@ -5393,7 +5415,7 @@ namespace Risebird.Repository
 
         public async Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, string eInvoiceFileLink, int status,
             decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable,
-            string latestRemark = null, string utrTrxn = null, decimal? cashCreditAmount = null, int taxScenario = 0)
+            string latestRemark = null, string utrTrxn = null, decimal? cashCreditAmount = null, int taxScenario = 0, decimal tdsPercentage = 10)
         {
             try
             {
@@ -5415,6 +5437,7 @@ namespace Risebird.Repository
                     parameters.Add("@UTRTrxn", utrTrxn);
                     parameters.Add("@CashCreditAmount", cashCreditAmount);
                     parameters.Add("@TaxScenario", taxScenario);
+                    parameters.Add("@TDSPercentage", tdsPercentage);
                     var result = await SqlMapper.QueryAsync<dynamic>(con, "usp_UpdateInvoiceDetails", parameters,
                         commandType: CommandType.StoredProcedure);
                     return (result.FirstOrDefault()?.UpdatedRows ?? 0) > 0;
@@ -5560,6 +5583,7 @@ namespace Risebird.Repository
                     parameters.Add("@CashCreditAmount", model.CashCreditAmount);
                     parameters.Add("@UTRTrxn", model.UTRTrxn);
                     parameters.Add("@BillingCurrency", string.IsNullOrEmpty(model.BillingCurrency) ? "INR" : model.BillingCurrency);
+                    parameters.Add("@TDSPercentage", model.TDSPercentage > 0 ? model.TDSPercentage : 10);
                     var result = await SqlMapper.QueryAsync<dynamic>(con, "usp_SaveGeneratedInvoice", parameters, commandType: CommandType.StoredProcedure);
                     return (int)(result.FirstOrDefault()?.NewId ?? 0);
                 }

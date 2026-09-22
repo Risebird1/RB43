@@ -316,7 +316,13 @@
                     <td class="val-col">&#8377; <span id="spnInvoiceValue">@Model.InvoiceValue.ToString("N2")</span></td>
                 </tr>
                 <tr>
-                    <td class="label-col">TDS (10%)</td>
+                    <td class="label-col">
+                        TDS
+                        <select id="editTDSPercentage" class="form-control editable-field" style="display:inline-block;width:auto;padding:2px 6px;margin-left:6px;">
+                            @if (Model.TDSPercentage == 2) { <option value="10">10%</option><option value="2" selected="selected">2%</option> }
+                            else { <option value="10" selected="selected">10%</option><option value="2">2%</option> }
+                        </select>
+                    </td>
                     <td class="val-col">&#8377; <span id="spnTDSAmount">@Model.TDSAmount.ToString("N2")</span></td>
                 </tr>
                 <tr>
@@ -351,15 +357,28 @@
     var _alreadyPaid   = @(Model.Status == 5 ? "true" : "false");
     var _existingUTR   = '@Html.Raw((Model.UTRTrxn ?? "").Replace("'", "\\'"))';
 
+    // Enable the TDS % dropdown only while the invoice is Draft (0) or Generated (1)
+    function updateTDSFieldState(status) {
+        var enabled = (status === 0 || status === 1);
+        $('#editTDSPercentage').prop('disabled', !enabled);
+    }
+    updateTDSFieldState(parseInt($('#editStatus').val() || 0));
+
     // Show/hide cash credit section when status changes
     $('#editStatus').on('change', function () {
-        var isPaid = parseInt($(this).val()) === 5;
+        var status  = parseInt($(this).val());
+        var isPaid  = status === 5;
         var isNonM1 = _billingModel !== _M1 && _billingModel !== 0;
         if (isPaid && isNonM1) {
             $('#cashCreditSection').slideDown(200);
         } else {
             $('#cashCreditSection').slideUp(200);
         }
+        updateTDSFieldState(status);
+    });
+
+    $('#editTDSPercentage').on('change', function () {
+        refreshTotals();
     });
 
     function isGstTaxScenario(taxScenario) {
@@ -423,9 +442,10 @@
         $('#tblLineItemsBody .line-total-cell').each(function () {
             subtotal += parseFloat($(this).text().replace(/,/g, '') || 0);
         });
+        var tdsPct        = parseFloat($('#editTDSPercentage').val() || 10);
         var gstAmount     = isGstTaxScenario(taxScenario) ? Math.round(subtotal * 18 / 100 * 100) / 100 : 0;
         var invoiceValue  = subtotal + gstAmount;
-        var tdsAmount     = Math.round(subtotal * 10 / 100 * 100) / 100;
+        var tdsAmount     = Math.round(subtotal * tdsPct / 100 * 100) / 100;
         var netReceivable = invoiceValue - tdsAmount;
 
         var fmt = function (n) { return n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); };
@@ -455,9 +475,10 @@
         });
 
         var subtotal      = lineItems.reduce(function (s, li) { return s + li.lineTotal; }, 0);
+        var tdsPct        = parseFloat($('#editTDSPercentage').val() || 10);
         var gstAmount     = isGstTaxScenario(taxScenario) ? Math.round(subtotal * 18 / 100 * 100) / 100 : 0;
         var invoiceValue  = subtotal + gstAmount;
-        var tdsAmount     = Math.round(subtotal * 10 / 100 * 100) / 100;
+        var tdsAmount     = Math.round(subtotal * tdsPct / 100 * 100) / 100;
         var netReceivable = invoiceValue - tdsAmount;
 
         var payload = {
@@ -472,6 +493,7 @@
             gstAmount:        gstAmount.toFixed(2),
             invoiceValue:     invoiceValue.toFixed(2),
             tdsAmount:        tdsAmount.toFixed(2),
+            tdsPercentage:    tdsPct,
             netReceivable:    netReceivable.toFixed(2),
             lineItemsJson:    JSON.stringify(lineItems),
             latestRemark:     $('#editLatestRemark').val().trim()

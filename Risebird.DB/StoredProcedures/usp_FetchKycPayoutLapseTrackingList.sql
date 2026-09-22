@@ -8,7 +8,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
--- Full KycPayoutLapseTracking listing (all statuses: Active, Completed, Lapsed) for the
+-- KycPayoutLapseTracking listing (Active/Lapsed only -- Completed rows are excluded) for the
 -- Finance "Payment Lapsed" page, joined with interviewer/KYC details for display.
 CREATE PROCEDURE [dbo].[usp_FetchKycPayoutLapseTrackingList]
 AS
@@ -40,6 +40,7 @@ BEGIN
     JOIN UserList ul ON ul.id = kt.InterviewerUserid
     LEFT JOIN InterviewerProfile irp ON irp.UserId = ul.id
     LEFT JOIN TransInterviewerAccDetails tic ON tic.InterviewerProfileId = irp.id
+    WHERE kt.TrackingStatus <> 'Completed'
     ORDER BY kt.CreatedOn DESC;
 END
 GO

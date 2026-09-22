@@ -385,7 +385,7 @@
                                 <table id="iaTable" class="table table-hover table-sm mb-0 align-top">
                                     <thead class="table-light">
                                         <tr>
-                                            <th class="col-num">#</th><th class="col-date">Received</th><th class="col-email">Email</th>
+                                            <th class="col-num">#</th><th class="col-date">Received (IST)</th><th class="col-email">Email</th>
                                             <th class="col-name">Name</th><th class="col-phone">Phone</th><th class="col-job">Job Title</th>
                                             <th class="col-employed">Employed</th><th class="col-company">Company</th>
                                             <th class="col-intent-summary">Intent</th><th class="col-source">Source</th><th class="col-active">Active</th><th class="col-status">Status</th><th class="col-actions">Actions</th>
@@ -403,7 +403,7 @@
 
                                             <tr id="row-@r.Id">
                                                 <td class="col-num text-muted" style="font-size:12px">@r.Id</td>
-                                                <td class="col-date" style="font-size:12px">@(r.ReceivedAt.HasValue ? r.ReceivedAt.Value.ToString("dd MMM yy, HH:mm") : "—")</td>
+                                                <td class="col-date" style="font-size:12px">@(IndiaTimeHelper.FormatIstForDisplay(r.ReceivedAt, "dd MMM yy, HH:mm") ?? "—")</td>
                                                 <td class="col-email">
                                                     <a href="mailto:@r.SenderEmail" class="text-decoration-none ia-email-ellipsis" title="@r.SenderEmail">@r.SenderEmail</a>
                                                     @if (r.InterviewerProfileId.HasValue) { <span class="badge bg-success" style="font-size:9px;" title="Known interviewer">RB</span> }

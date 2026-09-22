@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.PlivoCXModels;
@@ -232,7 +233,7 @@ namespace Risebird.Web.Controllers
                     record = new
                     {
                         record.Id, record.SenderEmail, record.Subject, record.MailContent,
-                        receivedAt = record.ReceivedAt?.ToString("dd MMM yyyy, HH:mm"),
+                        receivedAt = IndiaTimeHelper.FormatIstForDisplay(record.ReceivedAt, "dd MMM yyyy, HH:mm 'IST'"),
                         record.CandidateName, record.Location, record.PastExperience,
                         record.NoticePeriod, record.Education, record.KeySkills,
                         record.CurrentRole, record.ExperienceYears, record.Salary,
@@ -247,18 +248,18 @@ namespace Risebird.Web.Controllers
                         record.OnboardingCompleted, record.OnboardedUserId, record.OnboardedProfileId,
                         record.AssessmentGroupId, record.AcknowledgementEmailSent,
                         record.SelectedIRFId, record.SelectedIRFName, record.ApplicationLink,
-                        record.InvitationEmailSent, invitationEmailSentAt = record.InvitationEmailSentAt?.ToString("dd MMM yyyy, HH:mm"),
-                        record.ProspectResponse, prospectResponseAt = record.ProspectResponseAt?.ToString("dd MMM yyyy, HH:mm"),
+                        record.InvitationEmailSent, invitationEmailSentAt = IndiaTimeHelper.FormatIstForDisplay(record.InvitationEmailSentAt, "dd MMM yyyy, HH:mm 'IST'"),
+                        record.ProspectResponse, prospectResponseAt = IndiaTimeHelper.FormatIstForDisplay(record.ProspectResponseAt, "dd MMM yyyy, HH:mm 'IST'"),
                         record.SelfRegistrationCompleted,
                         record.PlivoCallStatus, record.PlivoConversationId,
-                        plivoCallAt = record.PlivoCallAt?.ToString("dd MMM yyyy, HH:mm"),
+                        plivoCallAt = IndiaTimeHelper.FormatIstForDisplay(record.PlivoCallAt, "dd MMM yyyy, HH:mm 'IST'"),
                         record.PlivoCallDuration, record.PlivoProspectDisposition,
                         record.PlivoOnboardingPreference, record.PlivoKycAccepted, record.PlivoCalledBy,
                         record.AutomationStatus, record.PlivoCallAttemptsTotal, record.PlivoCallAttemptsToday,
                         record.Status, record.Source, record.ProcessedBy,
                         record.Intent, record.IntentSource, record.FunnelStage, record.TicketStatus, record.OnboardingType,
                         record.AssignedToUserId, record.AssignedToEmail, record.AssignedToName,
-                        assignedAt = record.AssignedAt?.ToString("dd MMM yyyy, HH:mm"),
+                        assignedAt = IndiaTimeHelper.FormatIstForDisplay(record.AssignedAt, "dd MMM yyyy, HH:mm 'IST'"),
                         record.ResolvedAssessmentGroupId, record.AssessmentGroupName,
                         hasResumeLink = !string.IsNullOrEmpty(record.ResumeLink)
                                         && !string.Equals(record.ResumeLink, "None", StringComparison.OrdinalIgnoreCase)
@@ -1700,7 +1701,7 @@ namespace Risebird.Web.Controllers
                     hasEmail = true,
                     email = record.ParsedEmail,
                     sent = true,
-                    sentAt = st.SentAt?.ToString("dd MMM yyyy, HH:mm"),
+                    sentAt = IndiaTimeHelper.FormatIstForDisplay(st.SentAt, "dd MMM yyyy, HH:mm 'IST'"),
                     deliveryEvent = st.DeliveryEvent,
                     deliveryReason = st.DeliveryReason,
                     deliveryStatus = st.DeliveryStatus,
@@ -1749,14 +1750,14 @@ namespace Risebird.Web.Controllers
                             status = e.Status,
                             response = e.Response,
                             url = e.Url,
-                            at = e.EventAt?.ToString("dd MMM yyyy, HH:mm")
+                            at = IndiaTimeHelper.FormatIstForDisplay(e.EventAt, "dd MMM yyyy, HH:mm 'IST'")
                         }).ToList();
 
                     return new
                     {
                         sent = true,
                         subject = s.MailSubject,
-                        sentAt = s.SentAt?.ToString("dd MMM yyyy, HH:mm"),
+                        sentAt = IndiaTimeHelper.FormatIstForDisplay(s.SentAt, "dd MMM yyyy, HH:mm 'IST'"),
                         deliveryEvent = s.DeliveryEvent,
                         deliveryReason = s.DeliveryReason,
                         deliveryStatus = s.DeliveryStatus,
@@ -2086,7 +2087,7 @@ namespace Risebird.Web.Controllers
                     fromValue = h.FromValue ?? "—",
                     toValue = h.ToValue ?? "—",
                     changedBy = h.ChangedBy,
-                    changedAt = h.ChangedAt.ToString("dd MMM yyyy, HH:mm")
+                    changedAt = IndiaTimeHelper.FormatIstForDisplay(h.ChangedAt, "dd MMM yyyy, HH:mm 'IST'")
                 }));
             }
             catch (Exception ex)
@@ -2770,7 +2771,7 @@ namespace Risebird.Web.Controllers
                     success = true,
                     plivoCallStatus = record.PlivoCallStatus,
                     plivoConversationId = record.PlivoConversationId,
-                    plivoCallAt = record.PlivoCallAt?.ToString("dd MMM yyyy, HH:mm"),
+                    plivoCallAt = IndiaTimeHelper.FormatIstForDisplay(record.PlivoCallAt, "dd MMM yyyy, HH:mm 'IST'"),
                     plivoCallDuration = record.PlivoCallDuration,
                     plivoCallTranscript = record.PlivoCallTranscript,
                     plivoCallSummary = record.PlivoCallSummary,
@@ -2985,7 +2986,7 @@ namespace Risebird.Web.Controllers
                         p.PlivoCallStatus, p.PlivoProspectDisposition,
                         p.PlivoOnboardingPreference, p.PlivoKycAccepted,
                         p.PlivoCallDuration, p.PlivoCalledBy, p.PlivoCallSummary,
-                        plivoCallAt = p.PlivoCallAt?.ToString("dd MMM yyyy, HH:mm"),
+                        plivoCallAt = IndiaTimeHelper.FormatIstForDisplay(p.PlivoCallAt, "dd MMM yyyy, HH:mm 'IST'"),
                         p.PlivoCallAttemptsTotal, p.InvitationEmailSent, p.Status
                     })
                 });
@@ -3167,9 +3168,9 @@ namespace Risebird.Web.Controllers
                     history = history.Select(h => new
                     {
                         h.Id, h.InitiatedBy,
-                        initiatedAt = h.InitiatedAt.ToString("dd MMM yyyy, HH:mm"),
+                        initiatedAt = IndiaTimeHelper.FormatIstForDisplay(h.InitiatedAt, "dd MMM yyyy, HH:mm 'IST'"),
                         h.ProspectsAttempted, h.ProspectsSucceeded, h.ProspectsFailed, h.ProspectsSkipped,
-                        completedAt = h.CompletedAt?.ToString("dd MMM yyyy, HH:mm"),
+                        completedAt = IndiaTimeHelper.FormatIstForDisplay(h.CompletedAt, "dd MMM yyyy, HH:mm 'IST'"),
                         h.Status
                     })
                 });

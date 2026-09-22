@@ -571,7 +571,8 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<ClonableSkillChannelVM>(con, "usp_GetAllClonableSkillChannelsToBeRenewed", commandType: CommandType.StoredProcedure);
+                    var templates = await SqlMapper.QueryAsync<ClonableSkillChannelVM>(con, "usp_GetAllClonableSkillChannelsToBeRenewed", commandType: CommandType.StoredProcedure);
+                    return await ExcludeAIAudioTemplates(con, templates);
                 }
 
             }
@@ -584,6 +585,38 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        /// <summary>
+        /// Drops AI Audio templates from the rubric-renewal set.
+        ///
+        /// RenewTemplateTechRubricsJob regenerates a rubric from the template's Assessment Group
+        /// name. An AI Audio template's rubric was written from a job description and a recruiter's
+        /// instruction, and its AG is a catch-all — regenerating would overwrite the recruiter's
+        /// rubric with something generated from the wrong job title. The job's trigger is currently
+        /// every minute, so a miss here compounds fast.
+        ///
+        /// The filter is applied here rather than inside usp_GetAllClonableSkillChannelsToBeRenewed
+        /// because that proc is not in source control; this holds whatever the proc selects.
+        /// </summary>
+        private static async Task<IEnumerable<ClonableSkillChannelVM>> ExcludeAIAudioTemplates(
+            SqlConnection con, IEnumerable<ClonableSkillChannelVM> templates)
+        {
+            var list = templates?.ToList();
+            if (list == null || list.Count == 0) return list;
+
+            var ids = list.Select(t => t.ClonableSkillChannelId).Where(id => id > 0).Distinct().ToList();
+            if (ids.Count == 0) return list;
+
+            var aiAudioIds = await SqlMapper.QueryAsync<int>(
+                con,
+                "SELECT id FROM ClonableSkillChannel WHERE IsAIAudioTemplate = 1 AND id IN @ids",
+                new { ids });
+
+            var excluded = new HashSet<int>(aiAudioIds ?? Enumerable.Empty<int>());
+            return excluded.Count == 0
+                ? list
+                : list.Where(t => !excluded.Contains(t.ClonableSkillChannelId)).ToList();
         }
 
         public async Task<bool> RenewTemplateRubrics(List<TransSkill> techRubrics, int templateId)

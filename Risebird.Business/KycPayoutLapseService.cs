@@ -129,5 +129,18 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IList<LapsedInterviewPointRow>> GetLapsedInterviewPointsAsync(DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+                return await _kycLapseRepo.FetchLapsedInterviewPointsAsync(fromDate, toDate);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

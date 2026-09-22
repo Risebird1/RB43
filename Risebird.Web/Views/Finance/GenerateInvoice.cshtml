@@ -620,7 +620,14 @@
                                         <td class="val-col" id="tdInvoiceValue">&#8377; 0.00</td>
                                     </tr>
                                     <tr class="tds-row">
-                                        <td class="label-col">TDS 10% (net payment)</td>
+                                        <td class="label-col">
+                                            TDS
+                                            <select id="ddlTDSPercentage" class="form-control" style="display:inline-block;width:auto;padding:2px 6px;margin-left:6px;">
+                                                <option value="10" selected="selected">10%</option>
+                                                <option value="2">2%</option>
+                                            </select>
+                                            (net payment)
+                                        </td>
                                         <td class="val-col" id="tdTDSAmount">- &#8377; 0.00</td>
                                     </tr>
                                     <tr class="net-row">
@@ -636,6 +643,7 @@
                         <input type="hidden" name="GSTAmount"            id="hidGSTAmount"            value="0" />
                         <input type="hidden" name="InvoiceValue"         id="hidInvoiceValue"         value="0" />
                         <input type="hidden" name="TDSAmount"            id="hidTDSAmount"            value="0" />
+                        <input type="hidden" name="TDSPercentage"        id="hidTDSPercentage"        value="10" />
                         <input type="hidden" name="NetReceivable"        id="hidNetReceivable"        value="0" />
                         <input type="hidden" name="InvoiceBaseAmount"    id="hidInvoiceBaseAmount"    value="0" />
                         <input type="hidden" name="NetReceivableAmount"  id="hidNetReceivableAmount"  value="0" />
@@ -750,6 +758,13 @@
             recalcTotals(sub, ts);
         });
         refreshSezStatementBanner(parseInt($('#ddlTaxScenario').val() || 0));
+
+        $('#ddlTDSPercentage').change(function () {
+            $('#hidTDSPercentage').val($(this).val());
+            var sub = parseFloat($('#hidSubtotal').val()) || 0;
+            recalcTotals(sub, parseInt($('#ddlTaxScenario').val()));
+        });
+        applyTDSFieldStateForStatus(parseInt($('#hidStatus').val()) || 0);
 
         var initClientId = parseInt('@(ViewBag.PreFillClientId ?? 0)') || 0;
         if (initClientId > 0) {
@@ -1027,11 +1042,17 @@
         }
     }
 
+    function applyTDSFieldStateForStatus(status) {
+        var enabled = (status === 0 || status === 1);
+        $('#ddlTDSPercentage').prop('disabled', !enabled);
+    }
+
     function recalcTotals(subtotal, taxScenario) {
         subtotal = parseFloat(subtotal) || 0;
+        var tdsPct     = parseFloat($('#ddlTDSPercentage').val()) || 10;
         var gstAmt     = isGstTaxScenario(taxScenario) ? Math.round(subtotal * 18) / 100 : 0;
         var invValue   = subtotal + gstAmt;
-        var tdsAmt     = Math.round(subtotal * 10) / 100;
+        var tdsAmt     = Math.round(subtotal * tdsPct) / 100;
         var netRec     = invValue - tdsAmt;
 
         var sym = getCurrencySymbol(billingCurrency);
@@ -1047,6 +1068,7 @@
         $('#hidGSTAmount').val(gstAmt.toFixed(2));
         $('#hidInvoiceValue').val(invValue.toFixed(2));
         $('#hidTDSAmount').val(tdsAmt.toFixed(2));
+        $('#hidTDSPercentage').val(tdsPct);
         $('#hidNetReceivable').val(netRec.toFixed(2));
         // InvoiceBaseAmount = Subtotal (base before GST); NetReceivableAmount = net after TDS
         $('#hidInvoiceBaseAmount').val(subtotal.toFixed(2));
@@ -1057,6 +1079,7 @@
         if (!$('#ddlClient').val()) { alert('Please select a client.'); return; }
         if (!$('#txtInvoiceNumber').val()) { alert('Invoice number not generated. Please reselect client & month.'); return; }
         $('#hidStatus').val(status);
+        applyTDSFieldStateForStatus(status);
         $('#invoiceForm').submit();
     }
 
@@ -1090,6 +1113,7 @@
         $('#hidCashTransactionDate').val($('#txtPaidTransactionDate').val());
 
         $('#hidStatus').val(5);
+        applyTDSFieldStateForStatus(5);
         $('#invoiceForm').submit();
     }
 

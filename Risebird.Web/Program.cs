@@ -255,6 +255,9 @@ builder.Services.AddScoped<IAIInterviewerRepository, AIInterviewerRepository>();
 builder.Services.AddScoped<IOpenAIInterviewerAssistantHelper, OpenAIInterviewerAssistantHelper>();
 builder.Services.AddScoped<IOpenAISpeechToTextService, OpenAISpeechToTextService>();
 builder.Services.AddScoped<IAIInterviewerService, AIInterviewerService>();
+// AI Audio Adaptive HR screening intake (/AIScreening/New).
+builder.Services.AddScoped<IAIScreeningRepository, AIScreeningRepository>();
+builder.Services.AddScoped<IAIScreeningIntakeService, AIScreeningIntakeService>();
 builder.Services.AddScoped<IAICodeInterviewRepository, AICodeInterviewRepository>();
 builder.Services.AddScoped<IAICodeInterviewService, AICodeInterviewService>();
 builder.Services.AddScoped<ISynthesiaTextToVideoService, SynthesiaTextToVideoService>();

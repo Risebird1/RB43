@@ -32,6 +32,7 @@ BEGIN
         gi.GSTAmount,
         gi.InvoiceValue,
         gi.TDSAmount,
+        ISNULL(gi.TDSPercentage, 10)                          AS TDSPercentage,
         gi.NetReceivable,
         gi.Status,
         gi.CreatedBy,
