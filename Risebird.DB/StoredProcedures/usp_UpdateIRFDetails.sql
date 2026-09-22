@@ -72,6 +72,10 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
  @OpenAIAssistantId varchar(60) = null,
  @OpenAIPromptId varchar(100) = null,
  @OpenAIEvaluatorPromptId varchar(100) = null,
+ -- Ideal Candidate Profile, set by the AI screening intake and editable afterwards on this form.
+ -- Defaulted so a caller that does not send it leaves the stored profile alone; the Edit IRF form
+ -- always posts the field, so clearing it there sends '' and does clear the column.
+ @IdealCandidateProfile varchar(max) = null,
  @IsVideoRequired bit,
  @IsTechQC bit,
  @IsProctoring bit = null,
@@ -149,6 +153,7 @@ BEGIN
  ,[OpenAIAssistantId] = @OpenAIAssistantId
  ,[OpenAIPromptId] = @OpenAIPromptId
  ,[OpenAIEvaluatorPromptId] = @OpenAIEvaluatorPromptId
+ ,[IdealCandidateProfile] = ISNULL(@IdealCandidateProfile,[IdealCandidateProfile])
  ,[IsTechQC]=@IsTechQC
  ,[IsProctoring]=ISNULL(@IsProctoring,[IsProctoring])
  -- MCQ assessment section. @HasMcqAssessmentSection doubles as "did the caller participate in

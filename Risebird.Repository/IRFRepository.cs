@@ -945,6 +945,7 @@ WHERE si.SuspiciousStatus = 1",
                             _resultVM.OpenAIAssistantId = !string.IsNullOrEmpty(dt.Rows[0]["OpenAIAssistantId"].ToString()) ? dt.Rows[0]["OpenAIAssistantId"].ToString() : null;
                             _resultVM.OpenAIPromptId = dt.Columns.Contains("OpenAIPromptId") && !string.IsNullOrEmpty(dt.Rows[0]["OpenAIPromptId"].ToString()) ? dt.Rows[0]["OpenAIPromptId"].ToString() : null;
                             _resultVM.OpenAIEvaluatorPromptId = dt.Columns.Contains("OpenAIEvaluatorPromptId") && !string.IsNullOrEmpty(dt.Rows[0]["OpenAIEvaluatorPromptId"].ToString()) ? dt.Rows[0]["OpenAIEvaluatorPromptId"].ToString() : null;
+                            _resultVM.IdealCandidateProfile = dt.Columns.Contains("IdealCandidateProfile") && !string.IsNullOrEmpty(dt.Rows[0]["IdealCandidateProfile"].ToString()) ? dt.Rows[0]["IdealCandidateProfile"].ToString() : null;
                             _resultVM.IsTechQC = !string.IsNullOrEmpty(dt.Rows[0]["IsTechQC"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["IsTechQC"]) : false; ;
                             _resultVM.showChatBox = !string.IsNullOrEmpty(dt.Rows[0]["showChatBox"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["showChatBox"]) : false;
                             _resultVM.generateTranscriptSummary = !string.IsNullOrEmpty(dt.Rows[0]["generateTranscriptSummary"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["generateTranscriptSummary"]) : false;
@@ -2964,6 +2965,12 @@ WHERE si.SuspiciousStatus = 1",
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@OpenAIEvaluatorPromptId", SqlDbType.VarChar));
                     cmdUpdateIRF.Parameters["@OpenAIEvaluatorPromptId"].Value = (object)NormalizePromptIdForDb(irfDetails.OpenAIEvaluatorPromptId) ?? DBNull.Value;
+
+                    // Null means "not sent" and the proc keeps the stored profile; the Edit IRF form
+                    // always posts this field, so clearing it there sends '' and does clear it.
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IdealCandidateProfile", SqlDbType.VarChar, -1));
+                    cmdUpdateIRF.Parameters["@IdealCandidateProfile"].Value =
+                        irfDetails.IdealCandidateProfile == null ? DBNull.Value : (object)irfDetails.IdealCandidateProfile.Trim();
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@showChatBox", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@showChatBox"].Value = irfDetails.showChatBox;
