@@ -328,6 +328,14 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Interview Evaluator Prompt Id")]
         public string OpenAIEvaluatorPromptId { get; set; }
 
+        /// <summary>
+        /// The ideal candidate this channel screens for, confirmed by the recruiter during AI
+        /// screening intake and editable here afterwards so a channel can be corrected in place.
+        /// Null on every channel not created by that intake.
+        /// </summary>
+        [DisplayName("Ideal Candidate Profile")]
+        public string IdealCandidateProfile { get; set; }
+
         [DisplayName("Plivo Phone Screener Assistant URL")]
         public string PlivoAssistantUrl { get; set; }
 

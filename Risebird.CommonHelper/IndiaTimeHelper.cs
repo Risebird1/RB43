@@ -40,6 +40,17 @@ namespace Risebird.CommonHelper
             return UtcToIndiaWallClock(createdAtUtc).ToString(format, CultureInfo.InvariantCulture);
         }
 
+        /// <summary>
+        /// Nullable convenience overload, for the many display fields that simply have no
+        /// timestamp yet. Returns null so the caller's own "—" placeholder still applies.
+        /// </summary>
+        public static string FormatIstForDisplay(
+            DateTime? utc,
+            string format = "dd MMM yyyy, hh:mm tt 'IST'")
+        {
+            return utc.HasValue ? FormatIstForDisplay(utc.Value, format) : null;
+        }
+
         /// <summary>UTC instant as ISO-8601 with Z suffix for client-side parsing.</summary>
         public static string ToUtcIso8601(DateTime? utc)
         {

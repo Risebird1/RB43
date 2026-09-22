@@ -1,0 +1,54 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Risebird.Entities.Helpers;
+using Risebird.Entities.ViewModel;
+
+namespace Risebird.Repository.Interface
+{
+    /// <summary>
+    /// Database writes specific to the AI Audio Adaptive screening intake. Channel creation itself
+    /// still goes through the shared, unmodified usp_CreateSkillChannelFromTemplateV1.
+    /// </summary>
+    public interface IAIScreeningRepository
+    {
+        /// <summary>
+        /// Creates the AI Audio template holding the two-section rubric. Idempotent on
+        /// <paramref name="templateName"/>: returns the existing template id rather than colliding
+        /// with UC_ClonableSkillChannel_Name.
+        /// </summary>
+        Task<int> CreateAIAudioTemplate(
+            string templateName,
+            int assessmentGroupId,
+            IList<TransSkill> rubric,
+            string createdBy,
+            string meetingPlatform = "Zoho",
+            bool isAadhaarVerificationRequired = false);
+
+        /// <summary>
+        /// Stamps the fields usp_CreateSkillChannelFromTemplateV1 does not write: the two-section
+        /// count, the stored-prompt ids, the ideal candidate profile, and the rubric with its
+        /// SkillSet sections.
+        /// </summary>
+        Task<bool> SaveAIScreeningProvisioning(
+            int irfIntId,
+            int skillSetsEvaluate,
+            string openAIPromptId,
+            string openAIEvaluatorPromptId,
+            string idealCandidateProfile,
+            IList<TransSkill> rubric);
+
+        /// <summary>True when a template already carries this name.</summary>
+        Task<bool> IsTemplateNameTaken(string templateName);
+
+        /// <summary>
+        /// Resolves the nearest Assessment Group to a job title, matched on the Assessment Group's
+        /// own name. Returns 0 when nothing scores at least <paramref name="minimumScore"/>, and
+        /// the caller falls back to the configured catch-all rather than guessing.
+        /// </summary>
+        /// <param name="minimumScore">Similarity between 0 and 1 a candidate must reach.</param>
+        Task<int> ResolveAssessmentGroupIdByJobTitle(
+            string jobTitle,
+            double minimumScore = AssessmentGroupMatcher.DefaultMinimumScore);
+    }
+}

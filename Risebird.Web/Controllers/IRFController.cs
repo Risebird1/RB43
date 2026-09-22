@@ -913,6 +913,15 @@ namespace Risebird.Web.Controllers
                             TempData["SuccessErrorMessage"] = "Adding Skills Channel has Failed. Primary Prompt Id is mandatory for an AI interview skill channel.";
                             return RedirectToAction("Index");
                         }
+                        // AI Interview Type decides how the channel is conducted and is read by roughly
+                        // 15 procs (revenue reporting, QC, redo, MyInterviews) plus the IsAdaptive flag the
+                        // interview loop branches on. An unset value reaches SQL as 0, which matches neither
+                        // Adaptive nor Preset and leaves the channel in a state nothing handles.
+                        if (irfDetails.IsAIInterview && !System.Enum.IsDefined(typeof(AIInterviewTypeEnum), irfDetails.AIInterviewType))
+                        {
+                            TempData["SuccessErrorMessage"] = "Adding Skills Channel has Failed. AI Interview Type is mandatory for an AI interview skill channel.";
+                            return RedirectToAction("Index");
+                        }
                         if (irfDetails.JDFile != null)
                         {
                             var filename = irfDetails.JDFile.FileName.Replace(" ", "_");
@@ -2361,6 +2370,16 @@ namespace Risebird.Web.Controllers
                         if (model.IsAIInterview && string.IsNullOrWhiteSpace(model.OpenAIPromptId))
                         {
                             ModelState.AddModelError("", "Primary Prompt Id is mandatory for an AI interview skill channel.");
+                            await SetEditIRFProperties(model);
+                            return View("EditIRF", model);
+                        }
+                        // AI Interview Type decides how the channel is conducted and is read by roughly
+                        // 15 procs (revenue reporting, QC, redo, MyInterviews) plus the IsAdaptive flag the
+                        // interview loop branches on. An unset value reaches SQL as 0, which matches neither
+                        // Adaptive nor Preset and leaves the channel in a state nothing handles.
+                        if (model.IsAIInterview && !System.Enum.IsDefined(typeof(AIInterviewTypeEnum), model.AIInterviewType))
+                        {
+                            ModelState.AddModelError("", "AI Interview Type is mandatory for an AI interview skill channel.");
                             await SetEditIRFProperties(model);
                             return View("EditIRF", model);
                         }
