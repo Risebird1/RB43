@@ -182,6 +182,13 @@ instead of the Debug build.
 - **Content root** is pinned to `AppContext.BaseDirectory` — an MCP client launches the process with
   an arbitrary working directory, so the default (current directory) would silently miss
   `appsettings.json`.
+- **Deliberately NOT in `RisebirdPortal.sln`.** This is developer tooling, not shipped code, and it
+  must stay out of the deployment build. The MCP SDK needs the `10.0.10` servicing band of
+  `Microsoft.Extensions.*` while the solution pins `10.0.0` centrally. The `VersionOverride` +
+  `CentralPackageTransitivePinningEnabled=false` combination below satisfies `dotnet restore`, but
+  the `nuget restore` (NuGet.exe) used by the release pipeline ignores that opt-out and fails the
+  whole deployment with `NU1605: Detected package downgrade`. Build it on its own:
+  `dotnet build Risebird.Mcp.BugTriage` and `dotnet test Risebird.Mcp.BugTriage.Tests`.
 - **Package versions**: the MCP SDK requires the `10.0.10` servicing band of `Microsoft.Extensions.*`
   while the solution pins `10.0.0` centrally. This project sets
   `CentralPackageTransitivePinningEnabled=false` and uses `VersionOverride` on its direct references
