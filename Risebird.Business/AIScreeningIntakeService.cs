@@ -453,7 +453,10 @@ namespace Risebird.Business
                 return Failed("This draft has expired. Start a new screening.");
 
             // Idempotent on draft id: a double submit returns the channel already created.
-            if (draft.CreatedIrfIntId > 0)
+            // Keyed on the channel code rather than the id, because the code is recorded the moment
+            // the channel exists — a retry after provisioning failed half way must not mint a second
+            // channel just because the id was never resolved.
+            if (!string.IsNullOrWhiteSpace(draft.CreatedIrfId))
             {
                 return new AIScreeningChannelResult
                 {
@@ -533,7 +536,27 @@ namespace Risebird.Business
                 if (created == null || !created.Item1)
                     return Failed("Could not create the screening channel.");
 
-                var irfIntId = created.Item2;
+                // The channel exists from here on. Record that on the draft before anything else can
+                // fail, so a retry returns this channel instead of minting a second one.
+                draft.CreatedIrfId = irfId;
+                await SaveDraftAsync(draft);
+
+                // Item2 is the flat rate the proc computes into its @flatRate output parameter, NOT
+                // the new row's id — usp_CreateSkillChannelFromTemplateV1 does not return an
+                // identity. Resolve the real IRF.id by the channel code, the way the existing
+                // create-from-template action does. Using Item2 here would stamp the rubric, prompt
+                // ids and ideal candidate profile onto whatever unrelated channel happened to have
+                // id = the flat rate.
+                var createdChannel = await _irfService.GetSkillChannelDetailsByName(irfId);
+                var irfIntId = createdChannel?.id ?? 0;
+
+                if (irfIntId <= 0)
+                {
+                    return Failed(
+                        $"Screening channel '{irfId}' was created, but its id could not be read back, " +
+                        "so the rubric, prompt ids and ideal candidate profile were not applied. " +
+                        "Open the channel from Edit IRF and save it to finish setting it up.");
+                }
 
                 // V1 is shared with the human-panel route and left unmodified, so the two-section
                 // count, the prompt ids, the ideal candidate profile and the sectioned rubric are

@@ -61,7 +61,13 @@ uniqueness, nearest-match AG lookup.
 
 **Business** — `AIScreeningIntakeService.cs` (+ interface): the service contract from the UI spec.
 
-**Web** — `Controllers/AIScreeningController.cs`, `Views/AIScreening/New.cshtml`.
+**Web** — `Controllers/AIScreeningController.cs`, `Views/AIScreening/New.cshtml`,
+`Helpers/AIScreeningAccess.cs` (who may use it — shared by the controller and the entry-point button).
+
+**Entry point** — a **New AI Screening** button on the Templates toolbar (`Views/Template/List.cshtml`).
+That is where this flow would otherwise start: the recruiter goes to `/Template/List` looking for a
+template that matches their role, and this is the path for when none does. The button renders only
+for the profiles `AIScreeningAccess` allows, so it is never offered to someone it would turn away.
 
 **Tests** — `Risebird.Business.Tests/AIScreeningTests/` — 56 tests, all passing.
 
@@ -172,6 +178,18 @@ touching — a new proc `usp_SaveAIScreeningProvisioning` runs straight after cr
 V1 does not: `SkillSetsevaluate = 2`, the two prompt ids, the ideal candidate profile, and the rubric
 with its sections. `SkillSet` was also added to `TransClonableIRFTechSkill` so the template itself
 keeps both sections.
+
+> **Watch out:** `CreateSkillChannelUsingTemplateByInterviewLinkPopUpV1` returns
+> `Tuple<bool, int>` where the `int` is the proc's **`@flatRate` output — not the new row's id**.
+> `usp_CreateSkillChannelFromTemplateV1` never returns an identity. The channel id has to be read
+> back with `GetSkillChannelDetailsByName(irfId)`, which is what the existing create-from-template
+> action does (it passes `result.Item2` on as the flat rate). Treating it as the id points
+> provisioning at whatever unrelated channel happens to have `id` = the flat rate, and nothing
+> errors. `AIScreeningChannelCreationTests` pins this down.
+>
+> The channel code is recorded on the draft the moment the channel exists, before the id lookup, so
+> a retry after a half-completed provisioning returns the existing channel rather than minting a
+> second one.
 
 **2. The rubric-renewal exclusion is applied in the repository, not the proc.**
 
