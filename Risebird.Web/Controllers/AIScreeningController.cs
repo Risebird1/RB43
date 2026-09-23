@@ -4,6 +4,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using Risebird.Web.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,16 +22,6 @@ namespace Risebird.Web.Controllers
     /// </summary>
     public class AIScreeningController : Controller
     {
-        /// <summary>
-        /// Same set the existing create-from-template action allows. Clients are deliberately not
-        /// included: this path provisions a channel and picks its billing owner.
-        /// </summary>
-        private static readonly string[] AllowedProfiles =
-        {
-            "Admin", "SupportAdmin", "HR", "SeniorHR",
-            "InterviewerManagement", "SeniorInterviewerManagement"
-        };
-
         private readonly IAIScreeningIntakeService _aiScreeningIntakeService;
         private readonly IClientService _clientService;
         private readonly IIRFService _irfService;
@@ -506,12 +497,9 @@ namespace Risebird.Web.Controllers
         private string CurrentProfile() =>
             HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
 
-        private bool IsAllowed()
-        {
-            var profile = CurrentProfile();
-            return !string.IsNullOrWhiteSpace(profile)
-                && AllowedProfiles.Contains(profile, StringComparer.OrdinalIgnoreCase);
-        }
+        // Shared with the views that offer the entry point, so a button is never shown to someone
+        // this would turn away.
+        private bool IsAllowed() => AIScreeningAccess.IsAllowed(CurrentProfile());
 
         private static object Unauthorized_() => new { success = false, message = "Unauthorized" };
 
