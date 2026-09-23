@@ -1958,6 +1958,102 @@ Values
             }
             return null;
         }
+
+        public async Task<IEnumerable<ProctoringSessionReportVM>> GetProctoringSessions()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    var result = await SqlMapper.QueryAsync<ProctoringSessionReportVM>(con, "usp_GetProctoringSessions", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<ProctoringSessionReportVM> GetProctoringSessionById(int id)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", id);
+                    var result = await SqlMapper.QueryFirstOrDefaultAsync<ProctoringSessionReportVM>(con, "usp_GetProctoringSessionById", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<ProctoringLogReportVM>> GetProctoringSessionLogs(int id)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ProctoringSessionId", id);
+                    var result = await SqlMapper.QueryAsync<ProctoringLogReportVM>(con, "usp_GetProctoringLogsBySessionId", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<ProctoringScreenshotReportVM>> GetProctoringSessionScreenshots(int id)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ProctoringSessionId", id);
+                    var result = await SqlMapper.QueryAsync<ProctoringScreenshotReportVM>(con, "usp_GetProctoringScreenshotsBySessionId", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<IEnumerable<InterviewManagementVM>> GetInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate, string Emailid)
         {
             try

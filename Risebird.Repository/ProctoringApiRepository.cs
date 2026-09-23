@@ -141,5 +141,18 @@ namespace Risebird.Repository
             var rows = await con.QueryAsync<ProctoringApiLog>("usp_GetProctoringLogsForCandidate", parameters, commandType: StoredProcedure);
             return new List<ProctoringApiLog>(rows);
         }
+
+        public async Task<bool> InsertScreenshotIfNewAsync(ProctoringScreenshot screenshot)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@SessionToken", screenshot.SessionToken);
+            parameters.Add("@Sequence", screenshot.Sequence);
+            parameters.Add("@BlobUrl", screenshot.BlobUrl);
+            parameters.Add("@ContentType", screenshot.ContentType);
+            parameters.Add("@CapturedAtUtc", screenshot.CapturedAtUtc);
+
+            using var con = new SqlConnection(_connectionString);
+            return await con.QuerySingleAsync<bool>("usp_InsertProctoringScreenshot", parameters, commandType: StoredProcedure);
+        }
     }
 }

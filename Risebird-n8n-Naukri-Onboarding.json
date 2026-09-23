@@ -180,7 +180,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Flatten the extractor output into the flat snake_case record the Risebird webhook expects,\n// and repair the two fields the gate and the MAG assignment depend on.\nfunction text(value) {\n  return value === undefined || value === null ? '' : String(value).trim();\n}\n\n// The Naukri subject line has a fixed shape:\n//   'NVite - Naukri.com -Risebird Online Interviewer - {MAG}, {role}, {company}, ...'\n// Relay documented the 'Online Interviewer-{MAG}' form; both the bare hyphen and the\n// hyphen-with-spaces occur, so accept either and stop at the first comma. Parsing this here\n// is more reliable than asking the model to do it, and mag_name drives MAG assignment.\nfunction magFromSubject(subject) {\n  const match = String(subject || '').match(/Online\\s+Interviewer\\s*[-\\u2013\\u2014:]\\s*([^,]+)/i);\n  const mag = match ? match[1].trim() : '';\n  return mag.length > 0 && mag.length <= 120 ? mag : '';\n}\n\n// '17 Years & 0 Months' -> 17. Only used when the model returns nothing usable.\nfunction yearsFromSubject(subject) {\n  const match = String(subject || '').match(/(\\d{1,2})\\s*\\+?\\s*Years?/i);\n  return match ? Number(match[1]) : 0;\n}\n\nfunction wholeYears(value) {\n  const number = Number(text(value).replace(/[^\\d.]/g, ''));\n  return Number.isFinite(number) ? Math.floor(number) : 0;\n}\n\n// Naukri puts the candidate's name in the From display name, which is a dependable fallback\n// when extraction comes back empty.\nfunction nameFromSender(from) {\n  const match = String(from || '').match(/^\\s*\"?([^\"<]+?)\"?\\s*<[^>]*>\\s*$/);\n  const name = match ? match[1].trim() : '';\n  return name && !name.includes('@') ? name : '';\n}\n\nconst sources = $('Build AI Input').all();\nconst items = $input.all();\nconst out = [];\n\nfor (let i = 0; i < items.length; i++) {\n  const context = ((sources[i] || {}).json) || {};\n  const extracted = (((items[i] || {}).json) || {}).output || {};\n\n  const subject = text(context.subject);\n  const modelYears = wholeYears(extracted.experience_years);\n  const years = modelYears > 0 ? modelYears : yearsFromSubject(subject);\n\n  const candidateEmail = text(extracted.candidate_email).toLowerCase();\n\n  out.push({\n    json: {\n      message_id: text(context.message_id),\n      sender_email: text(context.from_email),\n      subject,\n      mail_content: text(context.body_excerpt),\n      received_at: text(context.received_at),\n      attachment_count: Number(context.attachment_count || 0),\n\n      candidate_name: text(extracted.candidate_name) || nameFromSender(context.from),\n      location: text(extracted.location),\n      past_experience: text(extracted.past_experience),\n      notice_period: text(extracted.notice_period),\n      education: text(extracted.education),\n      key_skills: text(extracted.key_skills),\n      current_role: text(extracted.current_role),\n      experience_years: String(years),\n      experience_years_num: years,\n      salary: text(extracted.salary),\n      mag_name: magFromSubject(subject) || text(extracted.mag_name),\n      // Guard against the model echoing the Naukri notification address back at us.\n      candidate_email: candidateEmail.endsWith('@naukri.com') ? '' : candidateEmail,\n      candidate_phone: text(extracted.candidate_phone).replace(/[^\\d+]/g, '')\n    }\n  });\n}\n\nreturn out;"
+        "jsCode": "// Flatten the extractor output into the flat snake_case record the Risebird webhook expects,\n// and repair the two fields the gate and the MAG assignment depend on.\nfunction text(value) {\n  return value === undefined || value === null ? \u0027\u0027 : String(value).trim();\n}\n\n// The Naukri subject line has a fixed shape:\n//   \u0027NVite - Naukri.com -Risebird Online Interviewer - {MAG}, {role}, {company}, ...\u0027\n// Relay documented the \u0027Online Interviewer-{MAG}\u0027 form; both the bare hyphen and the\n// hyphen-with-spaces occur, so accept either and stop at the first comma. Parsing this here\n// is more reliable than asking the model to do it, and mag_name drives MAG assignment.\nfunction magFromSubject(subject) {\n  const match = String(subject || \u0027\u0027).match(/Online\\s+Interviewer\\s*[-\\u2013\\u2014:]\\s*([^,]+)/i);\n  const mag = match ? match[1].trim() : \u0027\u0027;\n  return mag.length \u003e 0 \u0026\u0026 mag.length \u003c= 120 ? mag : \u0027\u0027;\n}\n\n// \u002717 Years \u0026 0 Months\u0027 -\u003e 17. Only used when the model returns nothing usable.\nfunction yearsFromSubject(subject) {\n  const match = String(subject || \u0027\u0027).match(/(\\d{1,2})\\s*\\+?\\s*Years?/i);\n  return match ? Number(match[1]) : 0;\n}\n\nfunction wholeYears(value) {\n  const number = Number(text(value).replace(/[^\\d.]/g, \u0027\u0027));\n  return Number.isFinite(number) ? Math.floor(number) : 0;\n}\n\n// Naukri puts the candidate\u0027s name in the From display name, which is a dependable fallback\n// when extraction comes back empty.\nfunction nameFromSender(from) {\n  const match = String(from || \u0027\u0027).match(/^\\s*\"?([^\"\u003c]+?)\"?\\s*\u003c[^\u003e]*\u003e\\s*$/);\n  const name = match ? match[1].trim() : \u0027\u0027;\n  return name \u0026\u0026 !name.includes(\u0027@\u0027) ? name : \u0027\u0027;\n}\n\nconst sources = $(\u0027Build AI Input\u0027).all();\nconst items = $input.all();\nconst out = [];\n\nfor (let i = 0; i \u003c items.length; i++) {\n  const context = ((sources[i] || {}).json) || {};\n  const extracted = (((items[i] || {}).json) || {}).output || {};\n\n  const subject = text(context.subject);\n  const modelYears = wholeYears(extracted.experience_years);\n  const years = modelYears \u003e 0 ? modelYears : yearsFromSubject(subject);\n\n  // Zero here means \"could not read it\", not \"fresher\" — neither the model nor the subject\n  // yielded a number. The 8-year gate drops juniors on purpose, but an unparsed value is not\n  // evidence of juniority, and a dropped candidate leaves no trace anywhere. Send those\n  // through for a human to judge instead of discarding them silently.\n  const experienceKnown = years \u003e 0;\n\n  const candidateEmail = text(extracted.candidate_email).toLowerCase();\n\n  out.push({\n    json: {\n      message_id: text(context.message_id),\n      sender_email: text(context.from_email),\n      subject,\n      mail_content: text(context.body_excerpt),\n      received_at: text(context.received_at),\n      attachment_count: Number(context.attachment_count || 0),\n\n      candidate_name: text(extracted.candidate_name) || nameFromSender(context.from),\n      location: text(extracted.location),\n      past_experience: text(extracted.past_experience),\n      notice_period: text(extracted.notice_period),\n      education: text(extracted.education),\n      key_skills: text(extracted.key_skills),\n      current_role: text(extracted.current_role),\n      experience_years: experienceKnown ? String(years) : \u0027\u0027,\n      experience_years_num: years,\n      experience_known: experienceKnown,\n      // Drop only candidates we KNOW are under eight years.\n      qualifies_for_onboarding: !experienceKnown || years \u003e= 8,\n      salary: text(extracted.salary),\n      mag_name: magFromSubject(subject) || text(extracted.mag_name),\n      // Guard against the model echoing the Naukri notification address back at us.\n      candidate_email: candidateEmail.endsWith(\u0027@naukri.com\u0027) ? \u0027\u0027 : candidateEmail,\n      candidate_phone: text(extracted.candidate_phone).replace(/[^\\d+]/g, \u0027\u0027)\n    }\n  });\n}\n\nreturn out;"
       },
       "id": "0c4b0f2e-4d5a-4c1e-9c3f-1a2b3c4d5e72",
       "name": "Merge Candidate",
@@ -204,11 +204,12 @@
           "conditions": [
             {
               "id": "exp-gate",
-              "leftValue": "={{ $json.experience_years_num }}",
-              "rightValue": 8,
+              "leftValue": "={{ $json.qualifies_for_onboarding }}",
+              "rightValue": true,
               "operator": {
-                "type": "number",
-                "operation": "gte"
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
               }
             }
           ]
@@ -216,14 +217,14 @@
         "options": {}
       },
       "id": "1851fe31-d164-45ce-b39b-3dc2738c3057",
-      "name": "Experience >= 8 years",
+      "name": "Qualifies for onboarding",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
         1472,
         112
       ],
-      "notes": "Relay used 'STOP_IF experience_years < 8'. The false branch is intentionally left unconnected — under-experienced candidates are dropped, exactly as before."
+      "notes": "Relay used 'STOP_IF experience_years < 8', which discarded under-experienced candidates without recording them anywhere — the page could never be reconciled against Naukri by counting. Both branches now reach the webhook: qualifying candidates go on to LinkedIn verification, the rest go straight to Finalize Record and are filed as a NotQualified/Closed ticket. The false branch deliberately skips LinkedIn search, the AI verification and the Drive upload, since none of that is worth spending on a rejected candidate. 'Merge Candidate' also treats an unparseable experience figure as qualifying, because a failed parse is not evidence of juniority."
     },
     {
       "parameters": {
@@ -407,6 +408,8 @@
       "retryOnFail": true,
       "maxTries": 3,
       "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput",
+      "notes": "Continues on error: a Drive failure costs this candidate their resume link, rather than failing the execution and losing every other email polled in the same batch.",
       "credentials": {
         "googleDriveOAuth2Api": {
           "id": "ctVcZMxeLYyyimDQ",
@@ -488,7 +491,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\n  sender_email: $json.sender_email,\n  subject: $json.subject,\n  mail_content: $json.mail_content,\n  received_at: $json.received_at,\n  candidate_name: $json.candidate_name,\n  location: $json.location,\n  past_experience: $json.past_experience,\n  notice_period: $json.notice_period,\n  education: $json.education,\n  key_skills: $json.key_skills,\n  current_role: $json.current_role,\n  experience_years: $json.experience_years,\n  salary: $json.salary,\n  mag_name: $json.mag_name,\n  candidate_email: $json.candidate_email,\n  candidate_phone: $json.candidate_phone,\n  resume_link: $json.resume_link,\n  has_attachment: $json.has_attachment,\n  linkedin_url: $json.linkedin_url,\n  linkedin_match: $json.linkedin_match,\n  linkedin_confidence: $json.linkedin_confidence,\n  linkedin_reason: $json.linkedin_reason,\n  source: $json.source\n}) }}",
+        "jsonBody": "={{ JSON.stringify({\n  sender_email: $json.sender_email,\n  subject: $json.subject,\n  mail_content: $json.mail_content,\n  received_at: $json.received_at,\n  candidate_name: $json.candidate_name,\n  location: $json.location,\n  past_experience: $json.past_experience,\n  notice_period: $json.notice_period,\n  education: $json.education,\n  key_skills: $json.key_skills,\n  current_role: $json.current_role,\n  experience_years: $json.experience_years,\n  salary: $json.salary,\n  mag_name: $json.mag_name,\n  candidate_email: $json.candidate_email,\n  candidate_phone: $json.candidate_phone,\n  resume_link: $json.resume_link,\n  has_attachment: $json.has_attachment,\n  linkedin_url: $json.linkedin_url,\n  linkedin_match: $json.linkedin_match,\n  linkedin_confidence: $json.linkedin_confidence,\n  linkedin_reason: $json.linkedin_reason,\n  source: $json.source,\n  qualifies_for_onboarding: $json.qualifies_for_onboarding,\n  experience_known: $json.experience_known\n}) }}",
         "options": {
           "timeout": 30000
         }
@@ -594,14 +597,14 @@
       "main": [
         [
           {
-            "node": "Experience >= 8 years",
+            "node": "Qualifies for onboarding",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Experience >= 8 years": {
+    "Qualifies for onboarding": {
       "main": [
         [
           {
@@ -610,7 +613,13 @@
             "index": 0
           }
         ],
-        []
+        [
+          {
+            "node": "Finalize Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Prepare LinkedIn Query": {

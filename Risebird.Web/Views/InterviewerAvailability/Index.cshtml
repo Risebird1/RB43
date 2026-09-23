@@ -385,7 +385,7 @@
                                 <table id="iaTable" class="table table-hover table-sm mb-0 align-top">
                                     <thead class="table-light">
                                         <tr>
-                                            <th class="col-num">#</th><th class="col-date">Received</th><th class="col-email">Email</th>
+                                            <th class="col-num">#</th><th class="col-date">Received (IST)</th><th class="col-email">Email</th>
                                             <th class="col-name">Name</th><th class="col-phone">Phone</th><th class="col-job">Job Title</th>
                                             <th class="col-employed">Employed</th><th class="col-company">Company</th>
                                             <th class="col-intent-summary">Intent</th><th class="col-source">Source</th><th class="col-active">Active</th><th class="col-status">Status</th><th class="col-actions">Actions</th>
@@ -403,7 +403,7 @@
 
                                             <tr id="row-@r.Id">
                                                 <td class="col-num text-muted" style="font-size:12px">@r.Id</td>
-                                                <td class="col-date" style="font-size:12px">@(r.ReceivedAt.HasValue ? r.ReceivedAt.Value.ToString("dd MMM yy, HH:mm") : "—")</td>
+                                                <td class="col-date" style="font-size:12px">@(IndiaTimeHelper.FormatIstForDisplay(r.ReceivedAt, "dd MMM yy, HH:mm") ?? "—")</td>
                                                 <td class="col-email">
                                                     <a href="mailto:@r.SenderEmail" class="text-decoration-none ia-email-ellipsis" title="@r.SenderEmail">@r.SenderEmail</a>
                                                     @if (r.InterviewerProfileId.HasValue) { <span class="badge bg-success" style="font-size:9px;" title="Known interviewer">RB</span> }
@@ -419,7 +419,10 @@
                                                 </td>
                                                 <td class="col-job" style="font-size:12px;">
                                                     <span style="white-space: break-spaces;"> @(r.JobTitle ?? "—")</span>
-                                                    @if (!string.IsNullOrEmpty(r.MagName)) { <br /><span class="text-muted" style="font-size:10px;">@r.MagName</span> }
+                                                    @* The campaign MAG doubles as the job title when the reply names no role, so only show it when it adds something. *@
+                                                    @if (!string.IsNullOrEmpty(r.MagName)
+                                                         && !string.Equals(r.MagName, r.JobTitle, StringComparison.OrdinalIgnoreCase))
+                                                    { <br /><span class="text-muted" style="font-size:10px;">@r.MagName</span> }
                                                 </td>
                                                 <td class="col-employed" style="font-size:12px;">
                                                     @if (r.IsEmployed == true)
@@ -1051,7 +1054,20 @@
         }
 
         if (r.assessmentGroupId && r.assessmentGroupId > 0) {
-            markStep(2, 'completed', 'Assigned to ' + (r.assessmentGroupName || 'AG #' + r.assessmentGroupId) + (r.assessmentGroupAssignedAt ? ' on ' + r.assessmentGroupAssignedAt : ''));
+            // Assignment and channel mapping are two separate outcomes of the same step. Saying
+            // only "Assigned to X" leaves a silent mapping indistinguishable from a successful
+            // one, which is exactly how an empty mapping went unnoticed.
+            var mapped = Number(r.mappedChannels || 0), active = Number(r.activeChannels || 0), mapMsg;
+            if (mapped > 0) {
+                mapMsg = '<br/><span class="text-success" style="font-size:11px;">Mapped to ' + mapped +
+                         ' active skill channel' + (mapped === 1 ? '' : 's') + '.</span>';
+            } else if (active === 0) {
+                mapMsg = '<br/><span class="text-warning" style="font-size:11px;">No active skill channels exist for this assessment group, so nothing was mapped.</span>';
+            } else {
+                mapMsg = '<br/><span class="text-warning" style="font-size:11px;">Not mapped to any of the ' + active +
+                         ' active skill channel' + (active === 1 ? '' : 's') + ' in this assessment group.</span>';
+            }
+            markStep(2, 'completed', 'Assigned to ' + (r.assessmentGroupName || 'AG #' + r.assessmentGroupId) + (r.assessmentGroupAssignedAt ? ' on ' + r.assessmentGroupAssignedAt : '') + mapMsg);
         } else if (r.resumeAIAnalysisCompleted === true && !verdictPositive) {
             $('#step2Subtitle').html('<span class="text-danger">Resume fitment analysis was negative. Cannot assign AG.</span>');
             $('#step2Card').addClass('disabled');

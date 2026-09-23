@@ -20,7 +20,7 @@ If (@flag=2)
   Case When ti.Surcharge>0 and ir.IsNewSkillChannel=1 and ip.Points>0 then ti.Surcharge when ti.Surcharge=0 and ir.IsNewSkillChannel=1 and ip.Points>0 then im.Surcharge Else 0 end as Surcharge,
   0 as CandidateRatingAmount,
   0 as ClientRatingAmount,ip.QCPoints,(ip.Points*IsNull(ip.PaymentSLA,0)/100) as PaymentSLA,(ip.Points*IsNull(ip.VideoReward,0)/100) as VideoReward,
-  isNull(im.interviewdate,ip.Date) as Date, ic.VideoDuration,Case When ir.IsNewSkillChannel=1 then pm.DurationSelectedMin else ir.interviewDuration end as MaxVideoDuration,
+  isNull(ip.CarryForwardDate,isNull(im.interviewdate,ip.Date)) as Date, ic.VideoDuration,Case When ir.IsNewSkillChannel=1 then pm.DurationSelectedMin else ir.interviewDuration end as MaxVideoDuration,
   ic.MeetingStatus,ir.JobCountry as  PreferredLocation,ic.InterviewStatus,CASE WHEN (ip.Type='Interview' or ip.Type='Penalty QC' or ip.Type='Penalty') and im.IsEmergency=0 THEN IsNull(ti.PerSuccessRate,0) WHEN (ip.Type='Interview' or ip.Type='Penalty QC' or ip.Type='Penalty') and im.IsEmergency=1 THEN IsNull(tei.PerSuccessRate,ti.PerSuccessRate) ELSE '' END as Rate           
   from InterviewPoints ip left join InterviewMeetings im on im.id = ip.InterviewId left join InterviewComments ic on ic.InterviewId=im.id left join IRF ir on ir.IRFId=im.IRFId left join Client cl on cl.id=ir.Clientid                    
   left join TransInterviewer ti on ti.IRFId=ir.id and ti.UserId=@UserId left join TransEmergencyInterviewer tei on tei.IRFId=ir.id and tei.UserId=@UserId                     
@@ -36,7 +36,7 @@ If (@flag=2)
   Select ip.id,ip.InterviewId,ip.Type,ISNULL((Isnull(ipul.FirstName,'')+Isnull(ipul.LastName,'')),ip.Comment) as Comment,ip.Status,ip.Points as PrePoints,
   Case When ip.Points>=0 then (ip.Points*IsNull(ip.PenaltyAmount,0)/100) else 0 end as Penaltyamount,Case When ip.Points>=0 then (ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) else ip.Points end as Points,
   0 as Surcharge,0 as CandidateRatingAmount,0 as ClientRatingAmount,ip.QCPoints,(ip.Points*IsNull(ip.PaymentSLA,0)/100) as PaymentSLA,(ip.Points*IsNull(ip.VideoReward,0)/100) as VideoReward,
-  isNull(im.interviewdate,ip.Date) as Date, null as VideoDuration,null as MaxVideoDuration,                  
+  isNull(ip.CarryForwardDate,isNull(im.interviewdate,ip.Date)) as Date, null as VideoDuration,null as MaxVideoDuration,                  
   ic.MeetingStatus,'' as  PreferredLocation,ic.InterviewStatus,ISNULL(ti.PerSuccessRate,0) as Rate                     
   from InterviewPoints ip left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId left join InterviewerComments ic on ic.InterviewId=im.id left join InterviewerSkillsChannel ir on ir.InterviewerSkillId=im.ISCId                     
   left join TransInterviewerSkillsLeadInterviewer ti on ti.InterviewerSkillId=ir.id and ti.UserId=@UserId              
@@ -46,7 +46,7 @@ If (@flag=2)
   Select ip.id,ip.InterviewId,ip.Type,ip.Comment,ip.Status,ip.Points as PrePoints,
   Case When ip.Points>=0 then (ip.Points*IsNull(ip.PenaltyAmount,0)/100) else 0 end as Penaltyamount,Case When ip.Points>=0 then (ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) else ip.Points end as Points,
   0 as Surcharge,0 as CandidateRatingAmount,0 as ClientRatingAmount,ip.QCPoints,(ip.Points*IsNull(ip.PaymentSLA,0)/100) as PaymentSLA,(ip.Points*IsNull(ip.VideoReward,0)/100) as VideoReward,
-  isNull(im.interviewdate,ip.Date) as Date, null as VideoDuration,null as MaxVideoDuration,                    
+  isNull(ip.CarryForwardDate,isNull(im.interviewdate,ip.Date)) as Date, null as VideoDuration,null as MaxVideoDuration,                    
   ic.MeetingStatus,'' as  PreferredLocation,ic.InterviewStatus,ISNULL(ti.PerSuccessRate,0) as Rate                     
   from InterviewPoints ip left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId left join InterviewerComments ic on ic.InterviewId=im.id left join InterviewerSkillsChannel ir on ir.InterviewerSkillId=im.ISCId                     
   left join TransInterviewerSkillsLeadInterviewer ti on ti.InterviewerSkillId=ir.id and ti.UserId=@UserId                     
@@ -64,7 +64,7 @@ Else
   0 as CandidateRatingAmount,
   0 as ClientRatingAmount,ip.QCPoints,
   (ip.Points*IsNull(ip.PaymentSLA,0)/100) as PaymentSLA,(ip.Points*IsNull(ip.VideoReward,0)/100) as VideoReward,
-  isNull(im.interviewdate,ip.Date) as Date, ic.VideoDuration,Case When ir.IsNewSkillChannel=1 then pm.DurationSelectedMin else ir.interviewDuration end as MaxVideoDuration,
+  isNull(ip.CarryForwardDate,isNull(im.interviewdate,ip.Date)) as Date, ic.VideoDuration,Case When ir.IsNewSkillChannel=1 then pm.DurationSelectedMin else ir.interviewDuration end as MaxVideoDuration,
   ic.MeetingStatus,ir.JobCountry as  PreferredLocation,ic.InterviewStatus,CASE WHEN (ip.Type='Interview' or ip.Type='Penalty QC' or ip.Type='Penalty') and im.IsEmergency=0 THEN IsNull(ti.PerSuccessRate,0) WHEN (ip.Type='Interview' or ip.Type='Penalty QC' or ip.Type='Penalty') and im.IsEmergency=1 THEN IsNull(tei.PerSuccessRate,ti.PerSuccessRate) ELSE '' END as Rate                     
   from InterviewPoints ip left join InterviewMeetings im on im.id = ip.InterviewId           
   left join InterviewComments ic on ic.InterviewId=im.id left join IRF ir on ir.IRFId=im.IRFId left join Client cl on cl.id=ir.Clientid                    
@@ -82,7 +82,7 @@ Else
   Select ip.id,ip.InterviewId,ip.Type,ISNULL((Isnull(ipul.FirstName,'')+Isnull(ipul.LastName,'')),ip.Comment) as Comment,ip.Status,ip.Points as PrePoints,
   Case When ip.Points>=0 then (ip.Points*IsNull(ip.PenaltyAmount,0)/100) else 0 end as Penaltyamount,Case When ip.Points>=0 then (ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) else ip.Points end as Points,
   0 as Surcharge,0 as CandidateRatingAmount,0 as ClientRatingAmount,ip.QCPoints,(ip.Points*IsNull(ip.PaymentSLA,0)/100) as PaymentSLA,(ip.Points*IsNull(ip.VideoReward,0)/100) as VideoReward,
-  isNull(im.interviewdate,ip.Date) as Date, null as VideoDuration,null as MaxVideoDuration,                   
+  isNull(ip.CarryForwardDate,isNull(im.interviewdate,ip.Date)) as Date, null as VideoDuration,null as MaxVideoDuration,                   
   ic.MeetingStatus,'' as  PreferredLocation,ic.InterviewStatus,IsNull(ti.PerSuccessRate,0) as Rate                     
   from InterviewPoints ip left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId                     
   left join InterviewerComments ic on ic.InterviewId=im.id left join InterviewerSkillsChannel ir on ir.InterviewerSkillId=im.ISCId                     
@@ -93,7 +93,7 @@ Else
   Select ip.id,ip.InterviewId,ip.Type,ip.Comment,ip.Status,ip.Points as PrePoints,
   Case When ip.Points>=0 then (ip.Points*IsNull(ip.PenaltyAmount,0)/100) else 0 end as Penaltyamount,Case When ip.Points>=0 then (ip.Points-(ip.Points*IsNull(ip.PenaltyAmount,0)/100)) else ip.Points end as Points,
   0 as Surcharge,0 as CandidateRatingAmount,0 as ClientRatingAmount,ip.QCPoints,(ip.Points*IsNull(ip.PaymentSLA,0)/100) as PaymentSLA,(ip.Points*IsNull(ip.VideoReward,0)/100) as VideoReward,
-  isNull(im.interviewdate,ip.Date) as Date, null as VideoDuration,null as MaxVideoDuration,                  
+  isNull(ip.CarryForwardDate,isNull(im.interviewdate,ip.Date)) as Date, null as VideoDuration,null as MaxVideoDuration,                  
   ic.MeetingStatus,'' as  PreferredLocation,ic.InterviewStatus,IsNull(ti.PerSuccessRate,0) as Rate                     
   from InterviewPoints ip left join UnapprovedInterviewerMeetings im on im.id = ip.InterviewerId                     
   left join InterviewerComments ic on ic.InterviewId=im.id left join InterviewerSkillsChannel ir on ir.InterviewerSkillId=im.ISCId                     

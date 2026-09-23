@@ -14,6 +14,7 @@ namespace Risebird.Business.Tests.Fixtures
 
         public Mock<IProctoringApiRepository> Repository { get; } = new(MockBehavior.Loose);
         public Mock<IProctoringLaunchTokenService> LaunchTokenService { get; } = new(MockBehavior.Loose);
+        public Mock<IAzureStorageHelper> AzureStorageHelper { get; } = new(MockBehavior.Loose);
 
         /// <summary>Captured argument of the last <c>RegisterSessionAsync</c> call.</summary>
         public ProctoringApiSession RegisteredSession { get; private set; }
@@ -26,6 +27,10 @@ namespace Risebird.Business.Tests.Fixtures
         public string LastMintedSessionToken { get; private set; }
         public DateTime MintedExpiry { get; set; } = new(2026, 09, 09, 18, 00, 00, DateTimeKind.Utc);
         public string MintedToken { get; set; } = "v1.payload.signature";
+        public string UploadedBlobUrl { get; set; } = "https://risebirdportal.blob.core.windows.net/desktopproctor-screenshots/known-session/1.jpg";
+
+        /// <summary>Captured argument of the last <c>InsertScreenshotIfNewAsync</c> call.</summary>
+        public ProctoringScreenshot InsertedScreenshot { get; private set; }
 
         private readonly Dictionary<string, string> _settings = new();
 
@@ -84,12 +89,24 @@ namespace Risebird.Business.Tests.Fixtures
                 });
             Repository.Setup(x => x.AddRiskScoreAsync(It.IsAny<string>(), It.IsAny<int>()))
                 .ReturnsAsync(0);
+            Repository.Setup(x => x.InsertScreenshotIfNewAsync(It.IsAny<ProctoringScreenshot>()))
+                .Returns((ProctoringScreenshot screenshot) =>
+                {
+                    InsertedScreenshot = screenshot;
+                    return Task.FromResult(true);
+                });
+
+            AzureStorageHelper
+                .Setup(x => x.InsertBlobCloudCompare(
+                    It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MemoryStream>(),
+                    It.IsAny<Stream>(), It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<bool?>()))
+                .ReturnsAsync(() => UploadedBlobUrl);
 
             var configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection(_settings)
                 .Build();
 
-            return new ProctoringApiService(Repository.Object, LaunchTokenService.Object, configuration);
+            return new ProctoringApiService(Repository.Object, LaunchTokenService.Object, AzureStorageHelper.Object, configuration);
         }
 
         /// <summary>Registers a session the repository will return for <paramref name="sessionToken"/>.</summary>

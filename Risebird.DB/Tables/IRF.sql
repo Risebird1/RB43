@@ -904,3 +904,17 @@ BEGIN
     ALTER TABLE IRF
     Add CodeSessionsEnabled bit NULL
 END
+
+-- Ideal Candidate Profile. Free text confirmed by the recruiter during AI screening intake
+-- (AiScreening/New, step 2) and shown read-write on Edit IRF so a channel can be corrected
+-- in place without rebuilding it. Null on every channel not created by that intake.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'IdealCandidateProfile'
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add IdealCandidateProfile varchar(max) NULL
+END
+GO

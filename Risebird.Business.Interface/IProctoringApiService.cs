@@ -26,6 +26,9 @@ namespace Risebird.Business.Interface
         /// <summary>False means the session token is unrecognized — caller returns 401.</summary>
         Task<bool> EndAsync(string sessionToken);
 
+        /// <summary>False means the session token is unrecognized — caller returns 401.</summary>
+        Task<bool> SubmitScreenshotAsync(ProctoringScreenshotRequest request);
+
         Task<System.Collections.Generic.IReadOnlyList<ProctoringLogEntry>> GetLogsForCandidateAsync(string candidateEmail);
     }
 }

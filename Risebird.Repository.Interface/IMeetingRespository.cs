@@ -141,8 +141,10 @@ namespace Risebird.Repository.Interface
         Task<List<RBInterviewDetails>> RBInterviewerDetails(int interviewerid, int flag);
         Task<string> RBAddPoints(int interviewerid, int Points, string Comment, DateTime PointDate);
         Task<string> RBConfirmPayment(int interviewerid, int index, DateTime st, DateTime se, int paymenthistory);
+        Task<string> CarryForwardPayments(int interviewerid, DateTime st, DateTime se, DateTime nextDate);
         Task<List<string>> FetchInterviewerList(string searchterm);
         Task<string> InsertAdvancePayment(string Interviewer, string Comment, int Amount, int PaymentHistoryId);
+        Task<string> AddPointsForInterviewerByEmail(string Interviewer, int Points, string Comment, DateTime PointDate);
         Task<List<RBInterviewDetails>> FNGenerateInvoiceDetails(DateTime st, DateTime se);
         Task<string> LockorUnlockVideo(string imid, int islock, string emailid);
         Task<List<string>> FetchClientUsers(string ClientName);
@@ -192,7 +194,7 @@ namespace Risebird.Repository.Interface
         Task<bool> SaveInvoiceExpectedDate(int invoiceId, DateTime? expectedDate);
         Task<bool> UpdateInvoiceDetails(int invoiceId, string gstNumber, string creditPeriod, string irn, string eInvoiceFileLink, int status,
             decimal subtotal, decimal gstAmount, decimal invoiceValue, decimal tdsAmount, decimal netReceivable,
-            string latestRemark = null, string utrTrxn = null, decimal? cashCreditAmount = null, int taxScenario = 0);
+            string latestRemark = null, string utrTrxn = null, decimal? cashCreditAmount = null, int taxScenario = 0, decimal tdsPercentage = 10);
         Task UpdateInvoiceLineItem(int lineItemId, decimal unitRate, decimal lineTotal);
         Task<string> GetNextInvoiceNumber(int month, int year);
         Task<int> SaveGeneratedInvoice(GenerateInvoiceVM model);
