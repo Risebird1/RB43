@@ -50,5 +50,11 @@ namespace Risebird.Repository.Interface
         Task<int> ResolveAssessmentGroupIdByJobTitle(
             string jobTitle,
             double minimumScore = AssessmentGroupMatcher.DefaultMinimumScore);
+
+        /// <summary>
+        /// Assessment Group id for an exact name, used to find the seeded "AIInterview" catch-all
+        /// without pinning its identity id in configuration. Returns 0 when it does not exist.
+        /// </summary>
+        Task<int> GetAssessmentGroupIdByName(string assessmentGroupName);
     }
 }

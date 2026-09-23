@@ -558,6 +558,12 @@
             .then(function (res) {
                 if (!res.success) { busy(button, false); alertBox(res.message, "error"); return; }
 
+                // Done, not still working. The button stays disabled so the channel cannot be
+                // submitted twice, but it must stop saying "Creating…" once it has been created.
+                button.textContent = res.alreadyCreated ? "Already created" : "Channel created";
+                button.disabled = true;
+                delete button.dataset.label;
+
                 var box = $("aisResult");
                 box.style.display = "";
                 box.innerHTML = "<strong>" + escapeHtml(res.message) + "</strong>" +
