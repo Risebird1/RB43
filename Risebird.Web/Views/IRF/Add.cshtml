@@ -1376,7 +1376,7 @@
                                                             </div>
                                                             <div class="mb-0" id="InterviewTypeContainer" style="display:none;">
                                                                 <label for="AIInterviewType" class="form-label">AI Interview Type:</label>
-                                                                @Html.DropDownList("AIInterviewType", Html.GetEnumSelectList<AIInterviewTypeEnum>(), "Select", new { @class = "select-css form-control", @id = "AIInterviewType", @onchange = "toggleQuestionSetsVisibility()" })
+                                                                @Html.DropDownList("AIInterviewType", Html.GetEnumSelectList<AIInterviewTypeEnum>(), "Select", new { @class = "select-css form-control", @id = "AIInterviewType", @onchange = "onAIInterviewTypeChanged()" })
                                                                 <label id="error_AIInterviewType" class="text-danger"></label>
 
                                                                 @* AI interview question sets. Read-only, unchecked and unbound to the model
@@ -1628,9 +1628,44 @@
     // cannot silently leave this comparing against the wrong interview type.
     var presetAIInterviewType = '@((int)AIInterviewTypeEnum.Preset)';
 
+    // Which prompt is the right default depends on the interview type: the interviewer prompt
+    // conducts an adaptive interview, while a preset channel's questions come from its own bank
+    // and the primary is only ever read as the report prompt. Both are the values the runtime
+    // already falls back to, so accepting one changes nothing about how the channel behaves.
+    var defaultPromptIdByType = {
+        '@((int)AIInterviewTypeEnum.Adaptive)': '@(ViewBag.DefaultAdaptivePromptId ?? "")',
+        '@((int)AIInterviewTypeEnum.Preset)': '@(ViewBag.DefaultPresetPromptId ?? "")'
+    };
+
+    // The value this page put in the box itself, so that changing the interview type can correct it.
+    var autoFilledPromptId = null;
+
+    // Fills an empty box, and corrects a value this page filled in when the interview type changes
+    // under it. A prompt typed by hand is never overwritten.
+    function applyDefaultPrimaryPromptId() {
+        var promptElement = document.getElementById("OpenAIPromptId");
+        var typeElement = document.getElementById("AIInterviewType");
+        if (!promptElement || !typeElement) return;
+
+        var wanted = defaultPromptIdByType[String(typeElement.value)] || "";
+        if (wanted === "") return;
+
+        var current = promptElement.value.trim();
+        if (current === "" || current === autoFilledPromptId) {
+            promptElement.value = wanted;
+            autoFilledPromptId = wanted;
+        }
+    }
+
     function toggleInterviewType() {
         var isChecked = document.getElementById("IsAIInterview").checked;
         document.getElementById("InterviewTypeContainer").style.display = isChecked ? "block" : "none";
+        if (isChecked) applyDefaultPrimaryPromptId();
+        toggleQuestionSetsVisibility();
+    }
+
+    function onAIInterviewTypeChanged() {
+        applyDefaultPrimaryPromptId();
         toggleQuestionSetsVisibility();
     }
 
