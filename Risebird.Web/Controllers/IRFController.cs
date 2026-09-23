@@ -826,6 +826,55 @@ namespace Risebird.Web.Controllers
         }
 
 
+        /// <summary>
+        /// Primary Prompt Id to stamp on an AI interview skill channel when the box is left empty.
+        /// It is deliberately the same prompt the runtime already falls back to for a channel whose
+        /// column is NULL, so filling the blank in cannot change how any existing channel behaves -
+        /// it only stops the save being refused:
+        ///
+        ///   Adaptive - the primary conducts the interview. GenerateAIInterviewerMessage falls back
+        ///              to OpenAI:AIInterviewerPromptId, so that is the value. AI screening uses its
+        ///              own AIScreening:PrimaryPromptId when one is configured, and this follows it
+        ///              so channels made by hand and channels provisioned by the intake agree.
+        ///   Preset   - questions come from the channel's question bank, never from a prompt, so the
+        ///              primary is only ever read as the report prompt (ResolvePromptIds returns
+        ///              evaluator ?? primary). The report falls back to OpenAI:AIInterviewPromptMap,
+        ///              so that is the value. Stamping the INTERVIEWER prompt here instead would hand
+        ///              every preset channel's report to the question generator.
+        ///
+        /// The Interview Evaluator Prompt Id is deliberately left alone: blank means "the primary
+        /// writes the report too", which with the values above is exactly today's behaviour.
+        /// Returns null only when nothing is configured - the single case where a save is still
+        /// refused, and the message then names the setting to fill in.
+        /// </summary>
+        private string GetDefaultPrimaryPromptId(int aiInterviewType)
+        {
+            string promptId;
+            if (aiInterviewType == (int)AIInterviewTypeEnum.Preset)
+            {
+                promptId = _configuration["OpenAI:AIInterviewPromptMap"];
+            }
+            else
+            {
+                promptId = _configuration["AIScreening:PrimaryPromptId"];
+                if (string.IsNullOrWhiteSpace(promptId))
+                {
+                    promptId = _configuration["OpenAI:AIInterviewerPromptId"];
+                }
+            }
+            return string.IsNullOrWhiteSpace(promptId) ? null : promptId.Trim();
+        }
+
+        /// <summary>
+        /// Hands both defaults to the skill-channel form so the Primary Prompt Id box can fill itself
+        /// when the AI interview type is picked or changed, without a round trip.
+        /// </summary>
+        private void SetDefaultPromptIdViewData()
+        {
+            ViewBag.DefaultAdaptivePromptId = GetDefaultPrimaryPromptId((int)AIInterviewTypeEnum.Adaptive) ?? string.Empty;
+            ViewBag.DefaultPresetPromptId = GetDefaultPrimaryPromptId((int)AIInterviewTypeEnum.Preset) ?? string.Empty;
+        }
+
         [Authorize]
 
         [HttpGet]
@@ -908,9 +957,16 @@ namespace Risebird.Web.Controllers
                         // The Primary Prompt Id conducts the interview, so an AI interview channel cannot be
                         // created without one. The Interview Evaluator Prompt Id stays optional: left blank,
                         // the primary prompt generates the candidate's report as well.
+                        // A blank box is filled with the prompt this channel's type already falls back
+                        // to at runtime rather than refused, so a channel is never lost over a field the
+                        // person had no value to type; the save fails only when nothing is configured.
                         if (irfDetails.IsAIInterview && string.IsNullOrWhiteSpace(irfDetails.OpenAIPromptId))
                         {
-                            TempData["SuccessErrorMessage"] = "Adding Skills Channel has Failed. Primary Prompt Id is mandatory for an AI interview skill channel.";
+                            irfDetails.OpenAIPromptId = GetDefaultPrimaryPromptId(irfDetails.AIInterviewType);
+                        }
+                        if (irfDetails.IsAIInterview && string.IsNullOrWhiteSpace(irfDetails.OpenAIPromptId))
+                        {
+                            TempData["SuccessErrorMessage"] = "Adding Skills Channel has Failed. Primary Prompt Id is mandatory for an AI interview skill channel, and no default is configured for this interview type (OpenAI:AIInterviewerPromptId for Adaptive, OpenAI:AIInterviewPromptMap for Preset).";
                             return RedirectToAction("Index");
                         }
                         // AI Interview Type decides how the channel is conducted and is read by roughly
@@ -1018,6 +1074,7 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         private async Task SetAddIRFProperties(IRFVm model)
         {
+            SetDefaultPromptIdViewData();
             //var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
             var AssessmentsGroups = await _irfService.GetAllMAGs();
             //var interviewers = new List<Interviewer>();
@@ -2207,6 +2264,18 @@ namespace Risebird.Web.Controllers
                     {
                         model.TechRubricType = TechRubricTypes.Basic;
                     }
+                    // Channels created before the Primary Prompt Id became mandatory come back with an
+                    // empty box, and every later edit to them would be refused for it. Open with the
+                    // prompt this channel's type already falls back to at runtime filled in instead -
+                    // still editable, and saving it changes nothing about how the channel behaves.
+                    // The filled-in value is handed to the view as well, so that changing the interview
+                    // type on the form can correct it; a prompt the channel carries of its own is not
+                    // passed on and so is never replaced.
+                    if (string.IsNullOrWhiteSpace(model.OpenAIPromptId))
+                    {
+                        model.OpenAIPromptId = GetDefaultPrimaryPromptId(model.AIInterviewType);
+                        ViewBag.AutoFilledPromptId = model.OpenAIPromptId;
+                    }
                     if (profileName == "Client" && templateId != null)
                     {
                         await _clonableSkillChannelTemplateService.PopulateDropDownsForSkillChannel(model, emailid);
@@ -2367,9 +2436,18 @@ namespace Risebird.Web.Controllers
                         // The Primary Prompt Id conducts the interview, so an AI interview channel cannot be
                         // saved without one. The Interview Evaluator Prompt Id stays optional: left blank,
                         // the primary prompt generates the candidate's report as well.
+                        // A blank box is filled with the prompt this channel's type already falls back
+                        // to at runtime rather than refused. Channels created before the column existed
+                        // carry NULL, so without this every edit to one of them is turned away over a
+                        // field that did not exist when it was made, and the recruiter has no value to
+                        // type. The save fails only when nothing is configured.
                         if (model.IsAIInterview && string.IsNullOrWhiteSpace(model.OpenAIPromptId))
                         {
-                            ModelState.AddModelError("", "Primary Prompt Id is mandatory for an AI interview skill channel.");
+                            model.OpenAIPromptId = GetDefaultPrimaryPromptId(model.AIInterviewType);
+                        }
+                        if (model.IsAIInterview && string.IsNullOrWhiteSpace(model.OpenAIPromptId))
+                        {
+                            ModelState.AddModelError("", "Primary Prompt Id is mandatory for an AI interview skill channel, and no default is configured for this interview type (OpenAI:AIInterviewerPromptId for Adaptive, OpenAI:AIInterviewPromptMap for Preset).");
                             await SetEditIRFProperties(model);
                             return View("EditIRF", model);
                         }
@@ -2537,6 +2615,7 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         private async Task SetEditIRFProperties(IRFVm model)
         {
+            SetDefaultPromptIdViewData();
             string prof = HttpContext.Session.GetString("profileName");
             if (prof != null && prof.Contains("Client"))
             {
