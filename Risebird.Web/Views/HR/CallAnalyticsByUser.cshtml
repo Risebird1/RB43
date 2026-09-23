@@ -1,0 +1,107 @@
+@model List<Risebird.Entities.ViewModel.CallRecordingDataVM>
+@using Risebird.Web.Controllers
+@{
+    ViewData["Title"] = "Call Analytics";
+    ViewBag.PageHeader = "Call Analytics";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string caller = ViewBag.Caller;
+    string type = ViewBag.Type;
+    string from = ViewBag.From;
+    string to = ViewBag.To;
+    bool showPhone = ViewBag.Profile == "Admin" || ViewBag.Profile == "SupportAdmin";
+}
+<script>
+    var Header = "<div>Call Analytics</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+
+<div class="main-panel" id="main-panel">
+    <div class="jumbotron">
+        <div class="pt30">
+            <div class="col-md-12 nopad" style="margin:0px;">
+                <div class="card-header bg-w clearfix">
+                    <div class="pull-left">
+                        <h4 class="card-title" style="margin:6px 0;">Calls by @caller</h4>
+                        <div style="font-size:12px;color:#6b7280;">@from to @to · @type · @Model.Count call(s)</div>
+                    </div>
+                    <div class="pull-right client-ms">
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" onclick="location.href='@Url.Action("CallAnalytics", "HR", new { type = type, from = from, to = to })'">
+                            <font style="font-family: Roboto, sans-serif; font-size:12px;">Back to Call Analytics</font>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="mdc-card card bl-bg">
+                        <div class="mdc-card-wrapper__text-section">
+                            <div id="tableID" class="second interview">
+                                <table id="callAnalyticsUserTable" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Called At</th>
+                                            <th>Call Recipient</th>
+                                            <th>Recipient Type</th>
+                                            @if (showPhone)
+                                            {
+                                                <th>Recipient Phone Number</th>
+                                            }
+                                            <th>Duration(s)</th>
+                                            <th>Recording</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td data-order="@item.DateCreated.ToString("yyyyMMddHHmmss")">@item.DateCreated.ToString("dd MMM yyyy, HH:mm")</td>
+                                                <td>@item.CallRecipient</td>
+                                                <td>@(string.IsNullOrWhiteSpace(item.RecipientProfileType) ? "Other" : item.RecipientProfileType)</td>
+                                                @if (showPhone)
+                                                {
+                                                    <td>@item.RecipientPhoneNumber</td>
+                                                }
+                                                <td data-order="@HRController.ParseDurationSeconds(item.Duration)">@item.Duration</td>
+                                                <td>
+                                                    @if (!string.IsNullOrWhiteSpace(item.RecordingUri))
+                                                    {
+                                                        <audio controls preload="none" style="height:32px;max-width:260px;">
+                                                            <source src="@item.RecordingUri" type="audio/mpeg" />
+                                                            <source src="@item.RecordingUri" type="audio/ogg" />
+                                                        </audio>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span style="color:#9ca3af;">No recording</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                @if (Model.Count == 0)
+                                {
+                                    <p class="text-center" style="margin:16px 0;">No calls for this user in the selected period.</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        if ($.fn.DataTable && $('#callAnalyticsUserTable tbody tr').length > 0) {
+            $('#callAnalyticsUserTable').DataTable({ order: [[0, 'desc']], pageLength: 25 });
+        }
+    });
+</script>

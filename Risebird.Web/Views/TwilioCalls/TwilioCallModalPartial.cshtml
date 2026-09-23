@@ -1,4 +1,13 @@
-﻿<div id="myCallModal" class="modal modal-wrap modal-bg">
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@{
+    // Plivo is offered (and is the default) only when all PlivoSettings values are present; otherwise Twilio only.
+    var plivoConfigured = !string.IsNullOrWhiteSpace(Configuration["PlivoSettings:AUTH_ID"])
+                          && !string.IsNullOrWhiteSpace(Configuration["PlivoSettings:AUTH_TOKEN"])
+                          && !string.IsNullOrWhiteSpace(Configuration["PlivoSettings:APPLICATION_ID"])
+                          && !string.IsNullOrWhiteSpace(Configuration["PlivoSettings:EndpointUsername"]);
+}
+<div id="myCallModal" class="modal modal-wrap modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -17,6 +26,11 @@
 
             <div class="modal-body">
                 <h5 class="modal-title text-center" id="callingLabel"></h5>
+                <div class="rb-call-provider" style="text-align:center;margin:6px 0 4px;font-size:13px;">
+                    <span style="margin-right:6px;">Call via:</span>
+                    <button type="button" class="btn btn-sm rb-call-provider-btn" data-provider="plivo" onclick="setCallProvider('plivo')" style="margin:0 2px;" disabled="@(!plivoConfigured)" title="@(plivoConfigured ? "Call via Plivo" : "Plivo is not configured")">Plivo</button>
+                    <button type="button" class="btn btn-sm rb-call-provider-btn" data-provider="twilio" onclick="setCallProvider('twilio')" style="margin:0 2px;">Twilio</button>
+                </div>
                 <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
                        display: block;" class="btn btn-fill btn-danger" value="Hang Up">
             </div>
@@ -24,3 +38,11 @@
         </div>
     </div>
 </div>
+<script>
+    window.rbPlivoConfigured = @(plivoConfigured ? "true" : "false");
+    window.rbDefaultProvider = '@(plivoConfigured ? "plivo" : "twilio")';
+</script>
+@if (plivoConfigured)
+{
+    <script src="~/js/PlivoCallMaker.js" asp-append-version="true"></script>
+}

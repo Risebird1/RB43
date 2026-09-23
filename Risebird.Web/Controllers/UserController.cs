@@ -2077,7 +2077,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> makecall(string sid, int? interviewid, string callRecipient, string callRecipientPhoneNumber = null, string IRFId = null, string recipientType = null, string CandidateEmail = null)//sid  actually means callSid here
+        public async Task<JsonResult> makecall(string sid, int? interviewid, string callRecipient, string callRecipientPhoneNumber = null, string IRFId = null, string recipientType = null, string CandidateEmail = null, string provider = null)//sid  actually means callSid here (Plivo: CallUUID)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
@@ -2085,7 +2085,9 @@ namespace Risebird.Web.Controllers
                 currentUserEmailId = currentUserEmailId.Replace("\"", "");
                 //var callbackUrl = "https://" + Request.Host.ToString() + "/User/CallRecordingback";
                 var callbackUrl = "";
-                var recordingSid = await _twiliohelper.callrecording(sid, callbackUrl);
+                // Plivo records via its own XML (PlivoVoice/Outbound); the Twilio recording API applies to Twilio calls only.
+                var isPlivo = string.Equals(provider, "Plivo", StringComparison.OrdinalIgnoreCase);
+                var recordingSid = isPlivo ? null : await _twiliohelper.callrecording(sid, callbackUrl);
                 if (!string.IsNullOrEmpty(recipientType) && recipientType == "Interviewer")
                 {
                     var resultset = _userService.SaveCallRecordingInterviewer(CandidateEmail, currentUserEmailId, sid, recordingSid);
