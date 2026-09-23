@@ -316,7 +316,7 @@
                                                     </div>
                                                     <div class="mb-0" id="InterviewTypeContainer" style="display:none;">
                                                         <label for="InterviewType" class="form-label">AI Interview Type:</label>
-                                                        @Html.DropDownList("AIInterviewType", Html.GetEnumSelectList<AIInterviewTypeEnum>(), "Select", new { @class = "select-css form-control", @id = "AIInterviewType", @onchange = "toggleQuestionSetsVisibility()" })
+                                                        @Html.DropDownList("AIInterviewType", Html.GetEnumSelectList<AIInterviewTypeEnum>(), "Select", new { @class = "select-css form-control", @id = "AIInterviewType", @onchange = "onAIInterviewTypeChanged()" })
                                                         <label id="error_AIInterviewType" class="text-danger"></label>
 
                                                         @* AI interview question sets. Read-only on purpose, and carries no name
@@ -2371,9 +2371,48 @@
     // cannot silently leave this comparing against the wrong interview type.
     var presetAIInterviewType = '@((int)AIInterviewTypeEnum.Preset)';
 
+    // The box opens carrying this channel's own prompt, or - when the channel predates the column -
+    // the prompt its interview type already falls back to at runtime, filled in by the controller.
+    // Which default is right depends on the type: the interviewer prompt conducts an adaptive
+    // interview, while a preset channel's questions come from its own bank and the primary is only
+    // ever read as the report prompt. Both are today's behaviour written down, so accepting one
+    // changes nothing about how the channel runs.
+    var defaultPromptIdByType = {
+        '@((int)AIInterviewTypeEnum.Adaptive)': '@(ViewBag.DefaultAdaptivePromptId ?? "")',
+        '@((int)AIInterviewTypeEnum.Preset)': '@(ViewBag.DefaultPresetPromptId ?? "")'
+    };
+
+    // The value this page put in the box itself, so that changing the interview type can correct it.
+    // Seeded with what the controller filled in for a channel that carries no prompt of its own, and
+    // left null when the box holds the channel's own prompt - that value is then never replaced.
+    var autoFilledPromptId = '@(ViewBag.AutoFilledPromptId ?? "")' || null;
+
+    // Fills an empty box, and corrects a value this page filled in when the interview type changes
+    // under it. A prompt the channel already carries, or one typed by hand, is never overwritten.
+    function applyDefaultPrimaryPromptId() {
+        var promptElement = document.getElementById("OpenAIPromptId");
+        var typeElement = document.getElementById("AIInterviewType");
+        if (!promptElement || !typeElement) return;
+
+        var wanted = defaultPromptIdByType[String(typeElement.value)] || "";
+        if (wanted === "") return;
+
+        var current = promptElement.value.trim();
+        if (current === "" || current === autoFilledPromptId) {
+            promptElement.value = wanted;
+            autoFilledPromptId = wanted;
+        }
+    }
+
+    function onAIInterviewTypeChanged() {
+        applyDefaultPrimaryPromptId();
+        toggleQuestionSetsVisibility();
+    }
+
     function toggleInterviewType() {
         var isChecked = document.getElementById("IsAIInterview").checked;
         document.getElementById("InterviewTypeContainer").style.display = isChecked ? "block" : "none";
+        if (isChecked) applyDefaultPrimaryPromptId();
         toggleQuestionSetsVisibility();
     }
 
