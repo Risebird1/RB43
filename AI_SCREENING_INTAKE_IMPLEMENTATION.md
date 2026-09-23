@@ -12,15 +12,10 @@ The route is `/AIScreening/New`. **The existing skill-channel create flow is not
 
 ---
 
-## Before this runs: two manual steps
+## Before this runs: one step
 
-1. **Deploy the database changes** (below).
-2. **Create the catch-all Assessment Group by hand**, e.g. "AI Audio Adaptive", through the existing
-   Assessment Group screen. **Bind no interviewers to it** — that is what keeps human-panel routing
-   from ever selecting it. Put its id in `AIScreening:CatchAllAssessmentGroupId`. It is used whenever
-   the job title does not resolve to a real group (see *Assessment Group resolution*).
-
-Creating a channel without the catch-all returns a clean error naming the missing setting.
+**Deploy the database changes** (below). That is all — the catch-all Assessment Group is seeded by
+the scripts, not created by hand, and nothing else has to be configured for the feature to work.
 
 **Recommended, not required:** set `AIScreening:PrimaryPromptId` to a stored prompt dedicated to
 screening interviews. See *Prompt ids* below for what happens if you don't.
@@ -39,6 +34,9 @@ Run in this order. All are additive and guarded with the existing `IF NOT EXISTS
 | `Risebird.DB/StoredProcedures/usp_CreateAIAudioTemplate.sql` | new |
 | `Risebird.DB/StoredProcedures/usp_SaveAIScreeningProvisioning.sql` | new |
 | `Risebird.DB/StoredProcedures/usp_UpdateIRFDetails.sql` | `+ @IdealCandidateProfile` (defaulted) |
+| `Risebird.DB/Tables/AssessmentGroup.sql` | seeds the `AIInterview` catch-all group |
+| `Risebird.DB/Tables/MasterAssessmentGroup.sql` | seeds its MAG row |
+| `Risebird.DB/StoredProcedures/usp_GetMAGsWithoutTemplates.sql` | excludes the catch-all |
 
 No existing query changes behaviour: nothing that reads these tables today selects the new columns,
 and the new `usp_UpdateIRFDetails` parameter defaults to null, which keeps the stored profile.
@@ -136,6 +134,33 @@ if too much falls through to the catch-all.
 There is **no `MasterAssessmentGroup` join** in this lookup. The MAG gate exists to guarantee a
 staffable interviewer panel, which an AI Audio channel does not have — requiring one here would only
 push matchable roles onto the catch-all for no benefit.
+
+### It never blocks channel creation
+
+Which group an AI channel belongs to does not affect how it runs — there is no panel to staff — so
+resolution is best-effort throughout. The order is:
+
+1. nearest group by name;
+2. `AIScreening:CatchAllAssessmentGroupId`, if explicitly set;
+3. the seeded catch-all, looked up **by name** (`AIScreening:CatchAllAssessmentGroupName`, default
+   `AIInterview`), so no environment carries its identity value;
+4. none — the channel is still created, with a warning logged, and `AssessmentGroupId` left unset
+   rather than `0`.
+
+An unresolved group costs visibility, not the channel: the ~19 procs that INNER JOIN on it drop the
+channel from AI resume screening, dashboard ribbon counts and the channel edit screen. Setting the
+group later on Edit IRF restores all of it.
+
+### The seeded catch-all
+
+`AssessmentGroup.sql` seeds one row named **`AIInterview`**, and `MasterAssessmentGroup.sql` seeds
+its MAG row. Both are idempotent and safe to re-run. Two things keep it out of the human-panel
+world: `Isinstaavailable = 0` / `IsRelevant = 0` keep it off the relevant-AG lists, and **no
+interviewers are bound to it**, so panel routing can never select it.
+
+`usp_GetMAGsWithoutTemplates` excludes it by name. Without that, the catch-all would show up under
+**Create Missing Templates** on the Templates page and invite someone to build a curated human-panel
+template with an empty panel.
 
 ---
 
