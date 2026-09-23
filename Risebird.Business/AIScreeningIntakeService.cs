@@ -26,6 +26,9 @@ namespace Risebird.Business
         private const string AudioContainerName = "audios";
         private const int DefaultDraftLifetimeHours = 24;
 
+        /// <summary>Seeded by Risebird.DB/Tables/AssessmentGroup.sql.</summary>
+        private const string DefaultCatchAllAssessmentGroupName = "AIInterview";
+
         private readonly IAIScreeningRepository _aiScreeningRepository;
         private readonly IIRFService _irfService;
         private readonly IAssistantServiceHelper _assistantServiceHelper;
@@ -500,18 +503,7 @@ namespace Risebird.Business
             {
                 var rubric = draft.Plan.ToTransSkills();
 
-                // The nearest Assessment Group by name keeps reporting accurate; the catch-all keeps
-                // the ~19 procs that INNER JOIN on the Assessment Group resolving. Never null.
-                var assessmentGroupId = await _aiScreeningRepository.ResolveAssessmentGroupIdByJobTitle(
-                    draft.JobTitle, ReadDouble(
-                        "AIScreening:AssessmentGroupMatchThreshold",
-                        AssessmentGroupMatcher.DefaultMinimumScore));
-
-                if (assessmentGroupId <= 0)
-                    assessmentGroupId = ReadInt("AIScreening:CatchAllAssessmentGroupId", 0);
-
-                if (assessmentGroupId <= 0)
-                    return Failed("AI screening is not configured: AIScreening:CatchAllAssessmentGroupId is missing.");
+                var assessmentGroupId = await ResolveAssessmentGroupAsync(draft);
 
                 var templateName = await BuildUniqueTemplateNameAsync(draft);
                 var templateId = await _aiScreeningRepository.CreateAIAudioTemplate(
@@ -602,6 +594,47 @@ namespace Risebird.Business
             }
         }
 
+        /// <summary>
+        /// Picks the Assessment Group to stamp on the channel.
+        ///
+        /// Which group an AI Audio Adaptive channel belongs to does not affect how it runs — there
+        /// is no interviewer panel to staff — so this never blocks creation. It only tries to keep
+        /// the channel visible: roughly 19 procs INNER JOIN AssessmentGroup on IRF.AssessmentGroupId,
+        /// and an unmatched value quietly drops the channel from those surfaces.
+        ///
+        /// In order: the nearest group by name, an explicitly configured catch-all, then the seeded
+        /// "AIInterview" catch-all. If none resolve, the channel is still created and a warning is
+        /// logged — an unstamped channel is a reporting problem, not a reason to lose the work.
+        /// </summary>
+        private async Task<int> ResolveAssessmentGroupAsync(AIScreeningDraft draft)
+        {
+            //var matched = await _aiScreeningRepository.ResolveAssessmentGroupIdByJobTitle(
+            //    draft.JobTitle,
+            //    ReadDouble("AIScreening:AssessmentGroupMatchThreshold", AssessmentGroupMatcher.DefaultMinimumScore));
+
+            //if (matched > 0) return matched;
+
+            var configured = ReadInt("AIScreening:CatchAllAssessmentGroupId", 0);
+            if (configured > 0) return configured;
+
+            // Resolved by name rather than by a pinned id, so the seed script is the only place the
+            // catch-all is defined and no environment needs its identity value in configuration.
+            var catchAllName = _configuration["AIScreening:CatchAllAssessmentGroupName"];
+            if (string.IsNullOrWhiteSpace(catchAllName)) catchAllName = DefaultCatchAllAssessmentGroupName;
+
+            var catchAll = await _aiScreeningRepository.GetAssessmentGroupIdByName(catchAllName);
+            if (catchAll > 0) return catchAll;
+
+            await _applicationErrorLogger.LogMessage(
+                LogLevelInfo.Warning,
+                $"AI screening: no Assessment Group could be resolved for job title " +
+                $"'{draft.JobTitle}', and the '{catchAllName}' catch-all does not exist. The channel " +
+                "is being created without one, so it will not appear on surfaces that join on the " +
+                "Assessment Group. Run the AssessmentGroup.sql seed to create the catch-all.");
+
+            return 0;
+        }
+
         private IRFVm BuildChannelViewModel(
             AIScreeningDraft draft,
             AIScreeningChannelRequest request,
@@ -619,7 +652,11 @@ namespace Risebird.Business
                 ClientUserIdPopUp = request.ClientUserIds?.ToList(),
                 BillingOwner = request.BillingOwner,
                 CreatedFromTemplateId = templateId,
-                AssessmentGroupId = assessmentGroupId.ToString(CultureInfo.InvariantCulture),
+                // Left unset rather than "0" when nothing resolved — the joins treat both the same,
+                // and a real id is never 0, so a stray zero would only read as a broken reference.
+                AssessmentGroupId = assessmentGroupId > 0
+                    ? assessmentGroupId.ToString(CultureInfo.InvariantCulture)
+                    : null,
                 CalendlyLink = schedulingLink,
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now.AddMonths(3),

@@ -18,6 +18,10 @@ BEGIN
     FROM dbo.MasterAssessmentGroup mag
     INNER JOIN dbo.AssessmentGroup ag ON ag.id = mag.AssessmentGroupId
     WHERE (mag.IsDeleted IS NULL OR mag.IsDeleted = 0)
+      -- The AI interview catch-all is not a role anyone staffs a panel for. It exists only so AI
+      -- channels have a non-null Assessment Group; a curated template built from it would carry an
+      -- empty interviewer panel.
+      AND ag.AssessmentGroup <> 'AIInterview'
       -- Check 1: No template linked through IRF
       AND NOT EXISTS (
           SELECT 1

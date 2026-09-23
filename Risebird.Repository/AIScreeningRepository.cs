@@ -45,7 +45,12 @@ namespace Risebird.Repository
                     };
 
                     cmd.Parameters.Add(new SqlParameter("@TemplateName", SqlDbType.VarChar) { Value = templateName });
-                    cmd.Parameters.Add(new SqlParameter("@AssessmentGroupId", SqlDbType.Int) { Value = assessmentGroupId });
+                    // NULL rather than 0 when nothing resolved: ClonableSkillChannel.AssessmentGroupId
+                    // is nullable and 0 is never a real id.
+                    cmd.Parameters.Add(new SqlParameter("@AssessmentGroupId", SqlDbType.Int)
+                    {
+                        Value = assessmentGroupId > 0 ? (object)assessmentGroupId : DBNull.Value
+                    });
                     cmd.Parameters.Add(new SqlParameter("@CreatedOn", SqlDbType.DateTime) { Value = DateTime.Now });
                     cmd.Parameters.Add(new SqlParameter("@CreatedBy", SqlDbType.VarChar)
                     {
@@ -200,6 +205,35 @@ namespace Risebird.Repository
                         $"'{match.Name}' (id {match.Id}) with score {match.Score:0.00}.");
 
                     return match.Id;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(Risebird.Entities.Enum.LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
+        public async Task<int> GetAssessmentGroupIdByName(string assessmentGroupName)
+        {
+            if (string.IsNullOrWhiteSpace(assessmentGroupName)) return 0;
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var cmd = new SqlCommand(
+                        @"SELECT TOP 1 ag.id
+                          FROM AssessmentGroup ag
+                          WHERE ag.AssessmentGroup = @name
+                          ORDER BY ag.id", con);
+                    cmd.Parameters.AddWithValue("@name", assessmentGroupName.Trim());
+
+                    con.Open();
+                    var scalar = await cmd.ExecuteScalarAsync();
+                    con.Close();
+
+                    return scalar == null || scalar == DBNull.Value ? 0 : Convert.ToInt32(scalar);
                 }
             }
             catch (SqlException ex)

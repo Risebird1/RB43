@@ -36,25 +36,32 @@ namespace Risebird.Business.Tests.AIScreeningTests
 
             public int? ProvisionedIrfId { get; private set; }
             public IList<TransSkill> ProvisionedRubric { get; private set; }
+            public int? TemplateAssessmentGroupId { get; private set; }
+
+            /// <summary>Overrides the in-memory configuration this fixture builds.</summary>
+            public Dictionary<string, string> Settings { get; } = new()
+            {
+                ["AIScreening:PrimaryPromptId"] = "pmpt_screening_primary",
+                ["AIScreening:EvaluatorPromptId"] = "pmpt_screening_evaluator"
+            };
 
             public AIScreeningIntakeService CreateSut()
             {
                 var configuration = new ConfigurationBuilder()
-                    .AddInMemoryCollection(new Dictionary<string, string>
-                    {
-                        ["AIScreening:CatchAllAssessmentGroupId"] = "99",
-                        ["AIScreening:PrimaryPromptId"] = "pmpt_screening_primary",
-                        ["AIScreening:EvaluatorPromptId"] = "pmpt_screening_evaluator"
-                    })
+                    .AddInMemoryCollection(Settings)
                     .Build();
 
                 Repository.Setup(x => x.ResolveAssessmentGroupIdByJobTitle(It.IsAny<string>(), It.IsAny<double>()))
+                    .ReturnsAsync(0);
+                Repository.Setup(x => x.GetAssessmentGroupIdByName(It.IsAny<string>()))
                     .ReturnsAsync(0);
                 Repository.Setup(x => x.IsTemplateNameTaken(It.IsAny<string>()))
                     .ReturnsAsync(false);
                 Repository.Setup(x => x.CreateAIAudioTemplate(
                         It.IsAny<string>(), It.IsAny<int>(), It.IsAny<IList<TransSkill>>(),
                         It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
+                    .Callback<string, int, IList<TransSkill>, string, string, bool>(
+                        (_, agId, _, _, _, _) => TemplateAssessmentGroupId = agId)
                     .ReturnsAsync(555);
 
                 Repository.Setup(x => x.SaveAIScreeningProvisioning(
@@ -239,6 +246,119 @@ namespace Risebird.Business.Tests.AIScreeningTests
             fixture.IrfService.Verify(x => x.CreateSkillChannelUsingTemplateByInterviewLinkPopUpV1(
                 It.IsAny<IRFVm>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
+
+        #region Assessment Group is never a blocker
+
+        [Fact]
+        public async Task A_matched_assessment_group_is_used_when_the_job_title_resolves()
+        {
+            var fixture = new Fixture();
+            var sut = fixture.CreateSut();
+
+            // After CreateSut: it registers the fixture defaults and would overwrite this.
+            fixture.Repository.Setup(x => x.ResolveAssessmentGroupIdByJobTitle(It.IsAny<string>(), It.IsAny<double>()))
+                .ReturnsAsync(42);
+
+            var draft = await ReadyDraft(sut);
+
+            await sut.CreateChannelAsync(
+                Request(draft.DraftId), "recruiter@risebird.io", "HR", _ => Task.FromResult("https://link"));
+
+            Assert.Equal(42, fixture.TemplateAssessmentGroupId);
+            fixture.Repository.Verify(x => x.GetAssessmentGroupIdByName(It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task An_explicitly_configured_catch_all_wins_over_the_seeded_one()
+        {
+            var fixture = new Fixture();
+            fixture.Settings["AIScreening:CatchAllAssessmentGroupId"] = "77";
+            fixture.Repository.Setup(x => x.GetAssessmentGroupIdByName(It.IsAny<string>()))
+                .ReturnsAsync(88);
+
+            var sut = fixture.CreateSut();
+            var draft = await ReadyDraft(sut);
+
+            await sut.CreateChannelAsync(
+                Request(draft.DraftId), "recruiter@risebird.io", "HR", _ => Task.FromResult("https://link"));
+
+            Assert.Equal(77, fixture.TemplateAssessmentGroupId);
+        }
+
+        [Fact]
+        public async Task The_seeded_AIInterview_catch_all_is_resolved_by_name_when_nothing_matches()
+        {
+            var fixture = new Fixture();
+            var sut = fixture.CreateSut();
+
+            fixture.Repository.Setup(x => x.GetAssessmentGroupIdByName("AIInterview"))
+                .ReturnsAsync(910);
+
+            var draft = await ReadyDraft(sut);
+
+            await sut.CreateChannelAsync(
+                Request(draft.DraftId), "recruiter@risebird.io", "HR", _ => Task.FromResult("https://link"));
+
+            Assert.Equal(910, fixture.TemplateAssessmentGroupId);
+        }
+
+        [Fact]
+        public async Task The_catch_all_name_can_be_overridden_in_configuration()
+        {
+            var fixture = new Fixture();
+            fixture.Settings["AIScreening:CatchAllAssessmentGroupName"] = "Generic AI";
+            var sut = fixture.CreateSut();
+
+            fixture.Repository.Setup(x => x.GetAssessmentGroupIdByName("Generic AI"))
+                .ReturnsAsync(611);
+
+            var draft = await ReadyDraft(sut);
+
+            await sut.CreateChannelAsync(
+                Request(draft.DraftId), "recruiter@risebird.io", "HR", _ => Task.FromResult("https://link"));
+
+            Assert.Equal(611, fixture.TemplateAssessmentGroupId);
+        }
+
+        [Fact]
+        public async Task The_channel_is_still_created_when_no_assessment_group_resolves_at_all()
+        {
+            // Which group an AI channel belongs to does not affect how it runs, so an unresolved
+            // Assessment Group must never cost the recruiter the channel.
+            var fixture = new Fixture();
+            var sut = fixture.CreateSut();
+            var draft = await ReadyDraft(sut);
+
+            var result = await sut.CreateChannelAsync(
+                Request(draft.DraftId), "recruiter@risebird.io", "HR", _ => Task.FromResult("https://link"));
+
+            Assert.True(result.Success, result.Message);
+            Assert.Equal(RealIrfId, fixture.ProvisionedIrfId);
+            Assert.Equal(0, fixture.TemplateAssessmentGroupId);
+        }
+
+        [Fact]
+        public async Task An_unresolved_assessment_group_is_left_unset_on_the_channel_rather_than_zero()
+        {
+            var fixture = new Fixture();
+            var sut = fixture.CreateSut();
+            IRFVm submitted = null;
+
+            fixture.IrfService.Setup(x => x.CreateSkillChannelUsingTemplateByInterviewLinkPopUpV1(
+                    It.IsAny<IRFVm>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Callback<IRFVm, string, string>((vm, _, _) => submitted = vm)
+                .ReturnsAsync(new Tuple<bool, int>(true, FlatRateReturnedByProc));
+
+            var draft = await ReadyDraft(sut);
+
+            await sut.CreateChannelAsync(
+                Request(draft.DraftId), "recruiter@risebird.io", "HR", _ => Task.FromResult("https://link"));
+
+            Assert.NotNull(submitted);
+            Assert.True(string.IsNullOrEmpty(submitted.AssessmentGroupId));
+        }
+
+        #endregion
 
         [Fact]
         public async Task The_channel_is_created_as_AI_Audio_Adaptive()
