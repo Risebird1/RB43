@@ -5431,6 +5431,22 @@ namespace Risebird.Business
         /// <inheritdoc/>
         public async Task<CodeExecutionResult> RunCodeSession(string sessionToken, string code, string language, int pasteEvents)
         {
+            // Checked BEFORE the code reaches the runner, not just before it is stored. The
+            // save procedure already refuses to write to a frozen or expired session, so
+            // running first and persisting after would still be correct on the record - but it
+            // would leave an expired token working as an anonymous, unmetered code-execution
+            // endpoint. The link expires when the interview ends; so does the ability to run.
+            if (!await IsCodeSessionOpen(sessionToken))
+            {
+                return new CodeExecutionResult
+                {
+                    Success = false,
+                    DidNotRun = true,
+                    Status = "NotExecuted",
+                    Message = "This session is closed, so your code was not run."
+                };
+            }
+
             var result = await ExecuteCodeForSession(language, code);
             await PersistCodeRun(sessionToken, code, language, pasteEvents, result, false);
             return result;
@@ -5439,6 +5455,11 @@ namespace Risebird.Business
         /// <inheritdoc/>
         public async Task<bool> SubmitCodeSession(string sessionToken, string code, string language, int pasteEvents)
         {
+            if (!await IsCodeSessionOpen(sessionToken))
+            {
+                return false;
+            }
+
             // Stored output must match submitted code. A candidate can run, keep typing, then
             // submit - attaching the earlier run's output to code that has since changed would
             // put a result in a client report that the submitted code never produced. So the
@@ -5446,6 +5467,25 @@ namespace Risebird.Business
             // as NotExecuted rather than carrying a stale result.
             var result = await ExecuteCodeForSession(language, code);
             return await PersistCodeRun(sessionToken, code, language, pasteEvents, result, true);
+        }
+
+        /// <summary>
+        /// Whether this token still belongs to a session that accepts work: it resolves, it has
+        /// not been submitted, and the interview has not ended.
+        ///
+        /// This is a courtesy gate in front of the runner, never the authority on what gets
+        /// stored - usp_SaveInterviewCodeSession holds that, so a session that freezes between
+        /// this check and the write is still refused there.
+        /// </summary>
+        private async Task<bool> IsCodeSessionOpen(string sessionToken)
+        {
+            if (string.IsNullOrWhiteSpace(sessionToken))
+            {
+                return false;
+            }
+
+            var session = await _meetingRespository.GetCodeSessionByToken(sessionToken);
+            return session != null && session.IsValid && !session.IsFrozen;
         }
 
         /// <inheritdoc/>
@@ -5481,7 +5521,7 @@ namespace Risebird.Business
         {
             if (_codeExecutionService == null || !_codeExecutionService.IsEnabled)
             {
-                return new CodeExecutionResult { Success = false, Status = "NotExecuted" };
+                return new CodeExecutionResult { Success = false, DidNotRun = true, Status = "NotExecuted" };
             }
 
             try
@@ -5495,7 +5535,7 @@ namespace Risebird.Business
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return new CodeExecutionResult { Success = false, Status = "NotExecuted" };
+                return new CodeExecutionResult { Success = false, DidNotRun = true, Status = "NotExecuted" };
             }
         }
 
@@ -5516,13 +5556,26 @@ namespace Risebird.Business
                     ? null
                     : (string.IsNullOrWhiteSpace(result.Stderr) ? result.CompileOutput : result.Stderr),
                 ExitStatus = result != null ? result.ExitCode : null,
+                // The version that actually ran, which is not always the one requested, and how
+                // long the run took. Both are only knowable at run time, so a report rendered
+                // later can state them without re-running anything.
+                LanguageVersionUsed = result != null ? result.LanguageVersionUsed : null,
+                RunDurationMs = result != null ? result.DurationMs : null,
                 RunState = (int)runState
             }, submit);
         }
 
         private static CodeRunState MapCodeRunState(CodeExecutionResult result)
         {
-            if (result == null || string.Equals(result.Status, "NotExecuted", StringComparison.OrdinalIgnoreCase))
+            // DidNotRun covers every way the runner can fail to give us an answer: not
+            // configured, refused, rate-limited, timed out, unreachable. Checking only the
+            // "NotExecuted" status string is not enough, because the execution service reports
+            // all of those with Status = "Error" and Success = false - which would otherwise
+            // land here as Failed and publish an outage to a client as the candidate's code
+            // failing, next to an empty output panel.
+            if (result == null
+                || result.DidNotRun
+                || string.Equals(result.Status, "NotExecuted", StringComparison.OrdinalIgnoreCase))
             {
                 return CodeRunState.NotExecuted;
             }

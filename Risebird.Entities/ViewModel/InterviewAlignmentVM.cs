@@ -146,6 +146,14 @@ namespace Risebird.Entities.ViewModel
         /// <summary>Per question, not per skill. A skill can hold five questions of which one is a coding question.</summary>
         public bool IsCodingQuestion { get; set; }
 
+        /// <summary>
+        /// Minutes the candidate is given for this question, or null where none is set. It is
+        /// snapshotted onto the code session at generation rather than read live, for the same
+        /// reason the question text is: the bank entry can be edited afterwards, and the attempt
+        /// must record the limit the candidate was actually held to.
+        /// </summary>
+        public int? CodingTimeLimitInMinutes { get; set; }
+
         /// <summary>Who authored it. The alignment page shows the interviewer their own bank.</summary>
         public string CreatedBy { get; set; }
     }

@@ -8073,6 +8073,13 @@ namespace Risebird.Web.Controllers
                 }
 
                 await GetStatusList(model, irfId, model.Userid);
+
+                // Submitted code attempts, the same set the V2 report and the PDF publish.
+                // ClientReportV4 delegates to this action and only swaps the view name, so both
+                // of the newer client reports are served from here. Reads what was stored during
+                // the interview; nothing is ever re-run at report time.
+                model.CodeSessions = await _meetingService.GetSubmittedCodeSessionsForReport(interviewId);
+
                 model.ResourceUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path + Request.QueryString;
                 ViewBag.ClientDetails = "";
                 if (TempData["SuccessErrorMessageQCForm"] != null)

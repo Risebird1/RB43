@@ -47,7 +47,11 @@ BEGIN
     UPDATE InterviewCodeSession
        SET SubmittedCode       = ISNULL(@SubmittedCode, SubmittedCode),
            Language            = ISNULL(@Language, Language),
-           LanguageVersionUsed = ISNULL(@LanguageVersionUsed, LanguageVersionUsed),
+           -- Follows the run, exactly as the output columns below do. Keeping the previous
+           -- run's version against a fresh result would state that this attempt ran under a
+           -- runtime it never touched - and an attempt that did not run at all would keep
+           -- advertising a version as though it had.
+           LanguageVersionUsed = CASE WHEN @RunState IS NULL THEN LanguageVersionUsed ELSE @LanguageVersionUsed END,
            Stdout              = CASE WHEN @RunState IS NULL THEN Stdout      ELSE @Stdout END,
            Stderr              = CASE WHEN @RunState IS NULL THEN Stderr      ELSE @Stderr END,
            ExitStatus          = CASE WHEN @RunState IS NULL THEN ExitStatus  ELSE @ExitStatus END,

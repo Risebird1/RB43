@@ -106,13 +106,23 @@ namespace Risebird.Web.Controllers
                 var result = await _meetingService.RunCodeSession(
                     request.Token, request.Code, request.Language, request.PasteEvents);
 
-                if (result == null || string.Equals(result.Status, "NotExecuted", StringComparison.OrdinalIgnoreCase))
+                // DidNotRun is checked as well as the status string: the execution service
+                // reports an unreachable, refusing or rate-limited runner with Status = "Error",
+                // and the candidate should be told the run did not happen rather than shown an
+                // empty output panel that reads as their program having printed nothing.
+                if (result == null
+                    || result.DidNotRun
+                    || string.Equals(result.Status, "NotExecuted", StringComparison.OrdinalIgnoreCase))
                 {
                     return Json(new
                     {
                         ran = false,
                         notExecuted = true,
-                        output = "Running code is not available right now. You can still write and submit your answer - it will be recorded either way."
+                        // The service's own message says which of the failure modes it was, which
+                        // is more use than a blanket line. The generic wording is the fallback.
+                        output = result != null && !string.IsNullOrWhiteSpace(result.Message)
+                            ? result.Message
+                            : "Running code is not available right now. You can still write and submit your answer - it will be recorded either way."
                     });
                 }
 

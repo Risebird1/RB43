@@ -46,6 +46,12 @@ BEGIN
         Stderr,
         RunState,
         TimeLimitMinutes,
+        -- The countdown runs from when the session was first opened, not from when this page
+        -- happened to load, so reloading the tab cannot hand the candidate a fresh allowance.
+        OpenedAt,
+        -- Seeds the editor's paste counter. Without it a reload restarts counting at zero and
+        -- the next few pastes are swallowed by the save procedure's "only ever grows" guard.
+        PasteEvents,
         ExpiresAt,
         CASE WHEN ExpiresAt IS NOT NULL AND ExpiresAt <= @TimeNow AND SessionState <> 4
              THEN 5 ELSE SessionState END AS SessionState,

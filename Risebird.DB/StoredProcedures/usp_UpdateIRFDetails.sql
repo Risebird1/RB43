@@ -79,6 +79,9 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
  @IsVideoRequired bit,
  @IsTechQC bit,
  @IsProctoring bit = null,
+ -- Per-question code sessions. Defaulted so an older caller that does not send it leaves the
+ -- channel's current setting alone rather than silently switching the feature off.
+ @CodeSessionsEnabled bit = null,
  -- MCQ assessment section (screen.risebird.io). Defaulted so an older caller that does not send
  -- them leaves the channel's current configuration alone rather than clearing it.
  @HasMcqAssessmentSection bit = null,
@@ -156,6 +159,10 @@ BEGIN
  ,[IdealCandidateProfile] = ISNULL(@IdealCandidateProfile,[IdealCandidateProfile])
  ,[IsTechQC]=@IsTechQC
  ,[IsProctoring]=ISNULL(@IsProctoring,[IsProctoring])
+ -- Per-question code sessions. NULL means "this caller does not know about the feature", so the
+ -- channel keeps whatever it had; the Edit IRF form always posts the checkbox, so unticking it
+ -- sends 0 and does switch the feature off.
+ ,[CodeSessionsEnabled]=ISNULL(@CodeSessionsEnabled,[CodeSessionsEnabled])
  -- MCQ assessment section. @HasMcqAssessmentSection doubles as "did the caller participate in
  -- this feature at all": when it is NULL all three columns are left as they are, so a build
  -- deployed before the updated repository cannot silently wipe a channel's configuration. Once

@@ -112,6 +112,44 @@ namespace Risebird.Entities.ViewModel
         public DateTime? ExpiresAt { get; set; }
         public int SessionState { get; set; }
 
+        /// <summary>
+        /// When the candidate first opened the link. The time limit is counted from here, not
+        /// from page load, so reloading the tab cannot buy a fresh allowance.
+        /// </summary>
+        public DateTime? OpenedAt { get; set; }
+
+        /// <summary>
+        /// Pastes already recorded against this attempt. Sent back so a reloaded editor resumes
+        /// counting from the stored total instead of from zero — the save procedure only ever
+        /// lets the count grow, so a restarted counter would have its next few pastes ignored.
+        /// </summary>
+        public int PasteEvents { get; set; }
+
+        /// <summary>
+        /// Seconds left on the per-question limit, or null where no limit is set. Zero once the
+        /// limit has passed. Derived from OpenedAt so it is the same answer on every reload.
+        /// </summary>
+        public int? SecondsRemaining
+        {
+            get
+            {
+                if (!TimeLimitMinutes.HasValue || TimeLimitMinutes.Value <= 0)
+                {
+                    return null;
+                }
+
+                // Not yet opened: the candidate has the whole allowance in front of them.
+                if (!OpenedAt.HasValue)
+                {
+                    return TimeLimitMinutes.Value * 60;
+                }
+
+                var elapsed = (DateTime.Now - OpenedAt.Value).TotalSeconds;
+                var remaining = (TimeLimitMinutes.Value * 60) - elapsed;
+                return remaining <= 0 ? 0 : (int)remaining;
+            }
+        }
+
         public bool IsFrozen =>
             SessionState == (int)CodeSessionState.Submitted
             || SessionState == (int)CodeSessionState.Expired

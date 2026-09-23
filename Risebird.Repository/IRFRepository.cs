@@ -950,6 +950,12 @@ WHERE si.SuspiciousStatus = 1",
                             _resultVM.showChatBox = !string.IsNullOrEmpty(dt.Rows[0]["showChatBox"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["showChatBox"]) : false;
                             _resultVM.generateTranscriptSummary = !string.IsNullOrEmpty(dt.Rows[0]["generateTranscriptSummary"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["generateTranscriptSummary"]) : false;
                             _resultVM.IsProctoring = !dt.Columns.Contains("IsProctoring") || string.IsNullOrEmpty(dt.Rows[0]["IsProctoring"].ToString()) || Convert.ToBoolean(dt.Rows[0]["IsProctoring"]);
+                            // Per-question code sessions. Same Columns.Contains guard as below, and
+                            // absent reads as off - the edit screen must not report a feature as on
+                            // in an environment where the column has not been added yet.
+                            _resultVM.CodeSessionsEnabled = dt.Columns.Contains("CodeSessionsEnabled")
+                                && !string.IsNullOrEmpty(dt.Rows[0]["CodeSessionsEnabled"].ToString())
+                                && Convert.ToBoolean(dt.Rows[0]["CodeSessionsEnabled"]);
                             // MCQ assessment section. Columns.Contains-guarded so the edit screen
                             // still loads if this build reaches an environment where Tables\IRF.sql
                             // has not been applied yet.
@@ -2980,6 +2986,13 @@ WHERE si.SuspiciousStatus = 1",
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsProctoring", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsProctoring"].Value = irfDetails.IsProctoring;
+
+                    // Per-question code sessions. The Edit IRF form always posts the checkbox, so
+                    // this is sent explicitly rather than left to the procedure's null default -
+                    // that is what lets the feature be switched back off as well as on. This is
+                    // the only write path for the flag; channels are created with it off.
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@CodeSessionsEnabled", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@CodeSessionsEnabled"].Value = irfDetails.CodeSessionsEnabled;
 
                     AddMcqAssessmentSectionParameters(cmdUpdateIRF, irfDetails);
 

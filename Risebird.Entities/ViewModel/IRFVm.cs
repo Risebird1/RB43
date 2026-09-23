@@ -279,6 +279,20 @@ namespace Risebird.Entities.ViewModel
         public bool showChatBox { get; set; }
         [Display(Name = "Proctoring Required")]
         public bool IsProctoring { get; set; } = true;
+
+        /// <summary>
+        /// Per-channel switch for per-question code sessions. Off at channel level means no
+        /// sessions anywhere on the channel, whatever a question's own coding flag says — the
+        /// gate is enforced in usp_CreateInterviewCodeSession and on the alignment page, and
+        /// the Edit IRF screen is the only place it can be turned on.
+        ///
+        /// Defaults to false: a channel that has never been told about the feature does not
+        /// quietly acquire it. New channels are therefore created with it off and switched on
+        /// afterwards from Edit IRF.
+        /// </summary>
+        [DisplayName("Code Sessions")]
+        public bool CodeSessionsEnabled { get; set; }
+
         public bool generateTranscriptSummary { get; set; }
         public int AIInterviewType { get; set; }
         public IList<SkillComment> DeliveryHeadSampleQuestions { get; set; }

@@ -22,6 +22,29 @@ namespace Risebird.Entities.ViewModel
 
         /// <summary>Everything the candidate saw in the console, already merged in display order.</summary>
         public string CombinedOutput { get; set; }
+
+        /// <summary>
+        /// True when the program never ran at all — the runner was unreachable, refused the
+        /// request, timed out, or is not configured in this environment.
+        ///
+        /// This is NOT the same thing as a run that failed. A compile error or a thrown
+        /// exception says something true about the candidate; an outage says nothing about
+        /// them whatsoever. Success = false cannot carry the distinction on its own, because
+        /// a program that compiled and then threw is also Success = false. A code session
+        /// stores the two as different run states, and a client report must never let them
+        /// look alike.
+        /// </summary>
+        public bool DidNotRun { get; set; }
+
+        /// <summary>
+        /// The runtime version the backend actually used, which is not always the version that
+        /// was asked for — a self-hosted instance upgrades its runtimes on its own schedule.
+        /// Null when the backend does not report one.
+        /// </summary>
+        public string LanguageVersionUsed { get; set; }
+
+        /// <summary>How long the run took, measured around the call to the backend.</summary>
+        public int? DurationMs { get; set; }
     }
 
     /// <summary>

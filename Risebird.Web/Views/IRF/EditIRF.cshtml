@@ -411,6 +411,14 @@
                                                         @Html.CheckBoxFor(model => model.IsProctoring, new { @id = "IsProctoring" })
                                                         <label for="IsProctoring" class="form-label">Proctoring Required</label>
                                                     </div>
+                                                    @* Per-channel gate for per-question code sessions. Off here means no code
+                                                       sessions anywhere on this channel, whatever the per-question flags say.
+                                                       This is the only place the switch can be turned on. *@
+                                                    <div class="mb-0">
+                                                        @Html.CheckBoxFor(model => model.CodeSessionsEnabled, new { @id = "CodeSessionsEnabled" })
+                                                        <label for="CodeSessionsEnabled" class="form-label">Code Sessions</label>
+                                                        <i title="Lets interviewers generate a per-question code session link from the alignment page. The candidate writes and runs code in the platform, and submitted attempts appear in the client report. Off means no code sessions on this channel at all." class="fa fa-info-circle"></i>
+                                                    </div>
                                                 </div>
 
                                                  <div class="col-md-4 col-sm-4 pull-left">

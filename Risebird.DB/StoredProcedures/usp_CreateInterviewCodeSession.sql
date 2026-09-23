@@ -62,12 +62,29 @@ BEGIN
     IF @IrfIntId IS NULL
         RETURN;
 
-    -- Attempt order is per question. ISNULL keeps ad-hoc questions (NULL SampleQuestionId)
-    -- in their own sequence rather than colliding with each other.
-    SELECT @AttemptNumber = ISNULL(MAX(AttemptNumber), 0) + 1
-      FROM InterviewCodeSession
-     WHERE InterviewId = @InterviewId
-       AND ISNULL(SampleQuestionId, -1) = ISNULL(@SampleQuestionId, -1);
+    -- Attempt order is scoped to this interview and THIS QUESTION.
+    --
+    -- A bank question is identified by its id. An ad-hoc question has none - every ad-hoc
+    -- session carries a NULL SampleQuestionId - so matching on the id alone would put every
+    -- improvised question in one shared sequence: ask a second, unrelated ad-hoc question and
+    -- its first attempt is labelled "Attempt 2", which reads in the client report as a retry
+    -- of a question the candidate was never asked. The question text is the only identity an
+    -- ad-hoc question has, so that is what scopes it.
+    IF @SampleQuestionId IS NULL
+    BEGIN
+        SELECT @AttemptNumber = ISNULL(MAX(AttemptNumber), 0) + 1
+          FROM InterviewCodeSession
+         WHERE InterviewId = @InterviewId
+           AND SampleQuestionId IS NULL
+           AND ISNULL(QuestionText, N'') = ISNULL(@QuestionText, N'');
+    END
+    ELSE
+    BEGIN
+        SELECT @AttemptNumber = ISNULL(MAX(AttemptNumber), 0) + 1
+          FROM InterviewCodeSession
+         WHERE InterviewId = @InterviewId
+           AND SampleQuestionId = @SampleQuestionId;
+    END
 
     INSERT INTO InterviewCodeSession
         (InterviewId, IRFId, SampleQuestionId, SkillId, SkillName, QuestionText,

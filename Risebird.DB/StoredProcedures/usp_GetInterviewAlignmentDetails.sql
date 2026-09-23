@@ -152,6 +152,10 @@ BEGIN
         scsq.AIQuestionVideoLink                         AS VideoLink,
         scsq.ThumbnailLink                               AS ThumbnailLink,
         CAST(ISNULL(scsq.IsCodingQuestion, 0) AS bit)    AS IsCodingQuestion,
+        -- The per-question time limit the candidate's editor counts down against. Carried
+        -- here because generating a code session is the only moment it can be snapshotted
+        -- onto the attempt, and the alignment page is where that happens.
+        scsq.CodingTimeLimitInMinutes                    AS CodingTimeLimitInMinutes,
         scsq.CreatedBy                                   AS CreatedBy
       FROM SkillChannelSampleQuestions scsq
       LEFT JOIN Skill sk ON sk.id = scsq.Skill

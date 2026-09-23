@@ -108,6 +108,7 @@ namespace Risebird.Business
                 return Fail("Select a supported language before running your code.");
             }
 
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
             try
             {
                 using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(TimeoutSeconds));
@@ -115,6 +116,16 @@ namespace Risebird.Business
                 var result = string.Equals(Provider, "Judge0", StringComparison.OrdinalIgnoreCase)
                     ? await ExecuteOnJudge0Async(language, request, cts.Token)
                     : await ExecuteOnPistonAsync(language, request, cts.Token);
+
+                stopwatch.Stop();
+                result.DurationMs = (int)Math.Min(stopwatch.ElapsedMilliseconds, int.MaxValue);
+
+                // Fall back to the version we asked for when the backend does not report one,
+                // so a code session records something rather than nothing.
+                if (string.IsNullOrWhiteSpace(result.LanguageVersionUsed))
+                {
+                    result.LanguageVersionUsed = language.PistonVersion;
+                }
 
                 result.Stdout = Truncate(result.Stdout);
                 result.Stderr = Truncate(result.Stderr);
@@ -124,6 +135,11 @@ namespace Risebird.Business
             }
             catch (OperationCanceledException)
             {
+                // Deliberately DidNotRun rather than a failure. Our own timeout can fire because
+                // the candidate wrote an infinite loop, but equally because the runner was queued
+                // or slow — and we cannot tell which from here. Recording it as a failure would
+                // put a verdict about the candidate into a client report on the strength of a
+                // guess, so the ambiguous case resolves the way that does not blame them.
                 return Fail($"Your program did not finish within {TimeoutSeconds} seconds. Check for an infinite loop and try again.");
             }
             catch (Exception ex)
@@ -193,7 +209,15 @@ namespace Risebird.Business
             var compileOutput = compile?["output"]?.ToString();
             var compileCode = compile?["code"]?.Value<int?>();
 
-            // A non-zero compile exit code means the program never ran
+            // We ask for version "*", so this is the only place the version that actually ran
+            // can be learned.
+            var versionUsed = json["version"]?.ToString();
+
+            // A non-zero compile exit code means the program never ran.
+            //
+            // DidNotRun is NOT set here: a compile error is the candidate's code failing to
+            // compile, which is evidence about them and publishes verbatim. DidNotRun is only
+            // for our runner being unable to give an answer at all.
             if (compileCode.HasValue && compileCode.Value != 0)
             {
                 return new CodeExecutionResult
@@ -201,7 +225,8 @@ namespace Risebird.Business
                     Success = false,
                     Status = "Compilation Error",
                     CompileOutput = compileOutput,
-                    ExitCode = compileCode
+                    ExitCode = compileCode,
+                    LanguageVersionUsed = versionUsed
                 };
             }
 
@@ -215,7 +240,8 @@ namespace Risebird.Business
                 Stdout = run?["stdout"]?.ToString(),
                 Stderr = stderr,
                 CompileOutput = compileOutput,
-                ExitCode = exitCode
+                ExitCode = exitCode,
+                LanguageVersionUsed = versionUsed
             };
         }
 
@@ -308,6 +334,9 @@ namespace Risebird.Business
                     Stderr = DecodeBase64OrRaw(json["stderr"]?.ToString()),
                     CompileOutput = DecodeBase64OrRaw(json["compile_output"]?.ToString()),
                     ExitCode = json["exit_code"]?.Value<int?>(),
+                    // Judge0 echoes the language it ran under only when asked for the full
+                    // submission fields; the name carries the version, e.g. "Python (3.8.1)".
+                    LanguageVersionUsed = json["language"]?["name"]?.ToString(),
                     Message = statusId == Judge0StatusAccepted ? null : (judgeMessage ?? statusText)
                 };
             }
@@ -429,9 +458,19 @@ namespace Risebird.Business
             return value.Substring(0, MaxOutputCharacters) + "\n... output truncated ...";
         }
 
+        /// <summary>
+        /// Every caller of this is a case where the candidate's program never ran: the runner is
+        /// not configured, refused us, rate-limited us, timed out, or there was nothing runnable
+        /// to send. So DidNotRun is set here rather than at each call site — a new failure path
+        /// added later is then classified correctly by default instead of silently arriving in a
+        /// client report as the candidate's code having failed.
+        ///
+        /// Status stays "Error" because the AI interview IDE already displays that string.
+        /// </summary>
         private static CodeExecutionResult Fail(string message) => new CodeExecutionResult
         {
             Success = false,
+            DidNotRun = true,
             Status = "Error",
             Message = message,
             CombinedOutput = message

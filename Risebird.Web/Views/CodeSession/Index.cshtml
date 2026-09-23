@@ -84,9 +84,19 @@ else
 {
     <div class="cs-head">
         <h1 class="cs-title">Coding question@(string.IsNullOrWhiteSpace(Model.SkillName) ? "" : " — " + Model.SkillName)</h1>
-        @if (Model.TimeLimitMinutes.HasValue && Model.TimeLimitMinutes.Value > 0)
+        @if (Model.TimeLimitMinutes.HasValue && Model.TimeLimitMinutes.Value > 0 && !Model.IsFrozen)
         {
-            <div class="cs-sub">Suggested time: @Model.TimeLimitMinutes.Value minutes</div>
+            @* The limit is counted down and acted on, not merely printed. When it runs out the
+               answer is submitted as it stands rather than discarded: only submitted attempts
+               reach a client, so letting the clock simply stop would lose the candidate the
+               work they had done. *@
+            <div class="cs-sub" id="cs-timer" data-cs-seconds="@(Model.SecondsRemaining ?? 0)">
+                Time remaining: <strong id="cs-timer-value">--:--</strong>
+            </div>
+        }
+        else if (Model.TimeLimitMinutes.HasValue && Model.TimeLimitMinutes.Value > 0)
+        {
+            <div class="cs-sub">Time allowed: @Model.TimeLimitMinutes.Value minutes</div>
         }
     </div>
 
@@ -154,6 +164,20 @@ else
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+    @* One per remaining language in the catalog. Without these the dropdown still offers the
+       language and the code still runs and is captured - CodeMirror just falls back to plain
+       text, so the candidate writes Go or Rust with no highlighting at all. *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/go/go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/ruby/ruby.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/rust/rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/swift/swift.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js"></script>
+    @* PHP's mode is built on htmlmixed, which in turn needs xml and css, so these four load
+       together and in this order. *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/php/php.min.js"></script>
     <script>
         (function () {
             'use strict';
@@ -180,7 +204,11 @@ else
             // A candidate pasting a complete solution is a genuine signal on a platform that
             // already invests in detecting substitution. Counted, stored, and deliberately not
             // shown to the client.
-            var pasteEvents = 0;
+            //
+            // Seeded from the stored total rather than from zero: the save procedure only ever
+            // lets this count grow, so a counter restarted by a reload would have its next few
+            // pastes silently discarded as lower than what is already on record.
+            var pasteEvents = @Model.PasteEvents;
             editor.on('paste', function () { pasteEvents++; });
 
             function post(url, body) {
@@ -263,17 +291,62 @@ else
             }
 
             var submitBtn = document.getElementById('cs-submit');
-            submitBtn.addEventListener('click', function () {
-                if (!confirm('Submit your answer? The editor becomes read-only after this.')) { return; }
+
+            function submitAnswer() {
                 submitBtn.disabled = true;
                 statusEl.textContent = 'Submitting...';
-                post('@Url.Action("Submit", "CodeSession")', payload())
+                return post('@Url.Action("Submit", "CodeSession")', payload())
                     .then(function (res) {
                         if (res && res.submitted) { window.location.reload(); }
                         else { submitBtn.disabled = false; statusEl.textContent = 'Could not submit - try again'; }
                     })
                     .catch(function () { submitBtn.disabled = false; statusEl.textContent = 'Could not submit - try again'; });
+            }
+
+            submitBtn.addEventListener('click', function () {
+                if (!confirm('Submit your answer? The editor becomes read-only after this.')) { return; }
+                submitAnswer();
             });
+
+            // The per-question time limit, counted down and acted on.
+            //
+            // The starting value is computed on the server from when the session was first
+            // opened, so reloading the tab does not hand back a fresh allowance. When it runs
+            // out the answer is submitted as it stands rather than abandoned: only submitted
+            // attempts reach a client, so stopping the clock and doing nothing would cost the
+            // candidate everything they had written.
+            var timerEl = document.getElementById('cs-timer');
+            if (timerEl && !frozen) {
+                var remaining = parseInt(timerEl.getAttribute('data-cs-seconds'), 10);
+                var valueEl = document.getElementById('cs-timer-value');
+                var expired = false;
+
+                var renderTimer = function () {
+                    var safe = remaining > 0 ? remaining : 0;
+                    var mins = Math.floor(safe / 60);
+                    var secs = safe % 60;
+                    valueEl.textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
+                    // A visual warning in the last minute, and nothing punitive before it.
+                    timerEl.style.color = safe <= 60 ? '#b45309' : '';
+                };
+
+                if (!isNaN(remaining)) {
+                    renderTimer();
+                    setInterval(function () {
+                        if (expired) { return; }
+                        remaining--;
+                        renderTimer();
+                        if (remaining <= 0) {
+                            expired = true;
+                            // Guarded so a submit already under way is not duplicated.
+                            if (!submitBtn.disabled) {
+                                alert('Time is up. Your answer is being submitted as it stands.');
+                                submitAnswer();
+                            }
+                        }
+                    }, 1000);
+                }
+            }
         })();
     </script>
 }
