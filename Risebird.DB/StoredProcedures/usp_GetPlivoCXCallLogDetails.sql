@@ -24,6 +24,7 @@
 --
 -- Run to deploy:
 --   Execute this script against productProdDB in SSMS.
+--   Run Tables/PlivoCXCallLogs_Add_Recording.sql first (adds RecordingUrl).
 -- ============================================================
 
 CREATE OR ALTER PROCEDURE [dbo].[usp_GetPlivoCXCallLogDetails]
@@ -76,6 +77,7 @@ BEGIN
             pcl.BookingApiResponse,
             pcl.CallTranscript,
             pcl.ConversationSummary,
+            pcl.RecordingUrl,               -- Plivo recording (needs PlivoCXCallLogs_Add_Recording.sql)
 
             -- ── Did the call produce an InterviewMeeting? ─────────────────────────
             CASE WHEN im.id IS NOT NULL THEN 'YES' ELSE 'NO' END AS MeetingCreated,

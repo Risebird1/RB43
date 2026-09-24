@@ -1303,6 +1303,7 @@ namespace Risebird.Web.Controllers
                             recordings = recordings.Where(x => x.DateCreated > DateTime.Now.AddDays(-7));
                         }
                         recordings = recordings.Where(x => x.DateCreated > DateTime.Now.AddDays(-7));
+                        recordings = FillMissingRecordingUris(recordings);
                         ViewBag.profile = profileName;
                         return View(recordings);
                     }
@@ -1487,7 +1488,33 @@ namespace Risebird.Web.Controllers
             {
                 recordings = recordings.Where(x => x.RecipientProfileType?.ToLower() != "candidate" && x.RecipientProfileType?.ToLower() != "interviewer");
             }
-            return recordings.ToList();
+            return FillMissingRecordingUris(recordings);
+        }
+
+        // Twilio calls since the RecordingUri job was switched off have a RecordingSid ('RE...') but no
+        // RecordingUri. Build the playable link from the sid (same URL User/FetchRecordings uses) so the
+        // Call Recordings / Call Analytics pages can play them. Display only — nothing is written back.
+        private List<CallRecordingDataVM> FillMissingRecordingUris(IEnumerable<CallRecordingDataVM> recordings)
+        {
+            var list = recordings?.ToList() ?? new List<CallRecordingDataVM>();
+            var configuration = HttpContext?.RequestServices?.GetService(typeof(Microsoft.Extensions.Configuration.IConfiguration))
+                                as Microsoft.Extensions.Configuration.IConfiguration;
+            var accountSid = configuration?["TwilioSettings:ACCOUNT_SID"];
+            if (string.IsNullOrWhiteSpace(accountSid))
+            {
+                return list;
+            }
+
+            foreach (var item in list)
+            {
+                if (string.IsNullOrWhiteSpace(item.RecordingUri)
+                    && !string.IsNullOrWhiteSpace(item.RecordingSid)
+                    && item.RecordingSid.StartsWith("RE", StringComparison.Ordinal))
+                {
+                    item.RecordingUri = $"https://api.twilio.com/2010-04-01/Accounts/{accountSid}/Recordings/{item.RecordingSid.Trim()}.mp3";
+                }
+            }
+            return list;
         }
 
         // Duration is stored as text, e.g. "125" or "00:02:05".
