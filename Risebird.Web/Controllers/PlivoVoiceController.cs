@@ -78,7 +78,12 @@ namespace Risebird.Web.Controllers
             return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
         }
 
-        // "sip:919876543210@phone.plivo.com" / "+91 98765-43210" → "919876543210"
+        // Plivo dials international format only (country code + number, no "+").
+        // Candidate/interviewer numbers are often stored as 10-digit Indian numbers without a country code;
+        // sent as-is, Plivo reads e.g. "98..." as Iran (+98) and rejects the call ("Destination Country Barred").
+        private const string DefaultCountryCode = "91";
+
+        // "sip:919876543210@phone.plivo.com" / "+91 98765-43210" / "9876543210" / "09876543210" → "919876543210"
         private static string ToDialNumber(string raw)
         {
             if (string.IsNullOrWhiteSpace(raw))
@@ -95,8 +100,29 @@ namespace Risebird.Web.Controllers
             {
                 value = value.Substring(0, at);
             }
+            var hasPlus = value.StartsWith("+");
             var digits = new string(value.Where(char.IsDigit).ToArray());
-            return digits.Length == 0 ? null : digits;
+            if (digits.Length == 0)
+            {
+                return null;
+            }
+
+            if (!hasPlus)
+            {
+                if (digits.StartsWith("00"))
+                {
+                    digits = digits.Substring(2); // international prefix: 00919876543210
+                }
+                else if (digits.Length == 11 && digits.StartsWith("0"))
+                {
+                    digits = digits.Substring(1); // local trunk prefix: 09876543210
+                }
+                if (digits.Length == 10)
+                {
+                    digits = DefaultCountryCode + digits; // national number without country code
+                }
+            }
+            return digits;
         }
     }
 }

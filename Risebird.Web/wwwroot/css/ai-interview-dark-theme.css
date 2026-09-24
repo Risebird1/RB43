@@ -102,7 +102,7 @@ body.ai-interview-dark .rb-report-actions-row {
 }
 
 body.ai-interview-dark p {
-    color: #c8ccd0f7 !important;
+    color: #fff !important;
 }
 
 body.ai-interview-dark .message-role,
@@ -1012,4 +1012,172 @@ body.ai-interview-dark ::-webkit-scrollbar-thumb {
 }
 body.ai-interview-dark ::-webkit-scrollbar-thumb:hover {
     background: #484f58;
+}
+
+/* =============================================================================
+   Report: part bands (Resume Evaluation / Hands-on Skill Evaluation), the Resume
+   Evaluation section (_ResumeEvaluationSection) and the Hands-on Skill pills/badges.
+   These were light-only (hard-coded light backgrounds in Report.cshtml / the partial).
+   ============================================================================= */
+
+/* Part header band + description strip — keep each part's coloured left rail */
+body.ai-interview-dark .rb-part-hd {
+    background: var(--ai-card) !important;
+    border-color: var(--ai-border) !important;
+    color: var(--ai-text) !important;
+}
+body.ai-interview-dark .rb-part-hd.is-resume { border-left-color: #8b7ef0 !important; }
+body.ai-interview-dark .rb-part-hd.is-skill { border-left-color: #3fb950 !important; }
+body.ai-interview-dark .rb-part-hd.is-knowledge { border-left-color: var(--ai-accent) !important; }
+body.ai-interview-dark .rb-part-desc {
+    background: var(--ai-card-2) !important;
+    border-color: var(--ai-border) !important;
+    border-left-color: var(--ai-border-soft) !important;
+    color: var(--ai-text-muted) !important;
+}
+body.ai-interview-dark .rb-part-desc.is-resume { border-left-color: #4b4380 !important; }
+body.ai-interview-dark .rb-section-header h2.rb-part-sub-h,
+body.ai-interview-dark .rb-part-sub-h {
+    color: var(--ai-text) !important;
+}
+
+/* Resume Evaluation section */
+body.ai-interview-dark .rb-re-head {
+    background: var(--ai-card) !important;
+    border-color: var(--ai-border) !important;
+    border-left-color: #8b7ef0 !important;
+}
+body.ai-interview-dark .rb-re-score,
+body.ai-interview-dark .rb-re-name {
+    color: var(--ai-text) !important;
+}
+body.ai-interview-dark .rb-re-score small,
+body.ai-interview-dark .rb-re-score-lbl,
+body.ai-interview-dark .rb-re-pct,
+body.ai-interview-dark .rb-re-reason,
+body.ai-interview-dark .rb-re-chip-meta {
+    color: var(--ai-text-muted) !important;
+}
+body.ai-interview-dark .rb-re-summary {
+    color: var(--ai-text) !important;
+}
+body.ai-interview-dark .rb-re-sub {
+    color: #b4acf5 !important;
+    border-bottom-color: var(--ai-border) !important;
+}
+body.ai-interview-dark .rb-re-verdict.is-pass {
+    background: var(--ai-green-soft) !important;
+    color: var(--ai-green) !important;
+    border-color: rgba(63, 185, 80, 0.35) !important;
+}
+body.ai-interview-dark .rb-re-verdict.is-fail {
+    background: rgba(248, 81, 73, 0.15) !important;
+    color: #ffa198 !important;
+    border-color: rgba(248, 81, 73, 0.35) !important;
+}
+body.ai-interview-dark .rb-re-verdict.is-neutral {
+    background: var(--ai-border-soft) !important;
+    color: var(--ai-text-muted) !important;
+    border-color: var(--ai-border) !important;
+}
+body.ai-interview-dark .rb-re-table th {
+    color: var(--ai-text-muted) !important;
+    border-bottom-color: var(--ai-border) !important;
+    background: transparent !important;
+}
+body.ai-interview-dark .rb-re-table td {
+    color: var(--ai-text) !important;
+    border-bottom-color: var(--ai-border-soft) !important;
+    background: transparent !important;
+}
+body.ai-interview-dark .rb-re-bar {
+    background: var(--ai-border-soft) !important;
+}
+body.ai-interview-dark .rb-re-bar i {
+    background: #8b7ef0 !important;
+}
+body.ai-interview-dark .rb-re-chip {
+    background: var(--ai-card-2) !important;
+    border-color: var(--ai-border) !important;
+    color: var(--ai-text) !important;
+}
+body.ai-interview-dark .rb-re-chip.is-primary {
+    background: rgba(139, 126, 240, 0.15) !important;
+    border-color: rgba(139, 126, 240, 0.45) !important;
+}
+
+/* Hands-on Skill Evaluation: verdict badges, pills, labels */
+body.ai-interview-dark .rb-adaptive-verdict-badge--select,
+body.ai-interview-dark .rb-ai-verdict-pill--select,
+body.ai-interview-dark .rb-adaptive-pill--positive {
+    background: var(--ai-green-soft) !important;
+    color: var(--ai-green) !important;
+}
+body.ai-interview-dark .rb-adaptive-verdict-badge--reject,
+body.ai-interview-dark .rb-ai-verdict-pill--reject,
+body.ai-interview-dark .rb-adaptive-pill--negative {
+    background: rgba(248, 81, 73, 0.15) !important;
+    color: #ffa198 !important;
+}
+body.ai-interview-dark .rb-ai-verdict-pill--avg {
+    background: rgba(210, 153, 34, 0.2) !important;
+    color: var(--ai-warn) !important;
+}
+body.ai-interview-dark .rb-adaptive-verdict-badge--neutral,
+body.ai-interview-dark .rb-ai-verdict-pill--neutral,
+body.ai-interview-dark .rb-adaptive-pill--neutral {
+    background: var(--ai-border-soft) !important;
+    color: var(--ai-text-muted) !important;
+}
+body.ai-interview-dark .rb-adaptive-label--verdict { color: var(--ai-green) !important; }
+body.ai-interview-dark .rb-adaptive-label--weakness { color: #ff7b72 !important; }
+body.ai-interview-dark .rb-adaptive-label--evidence { color: var(--ai-accent) !important; }
+
+/* Rubric table "Expected" column: plain text in the muted colour */
+body.ai-interview-dark .rb-ai-rubric-table td.rb-ai-r-level {
+    color: var(--ai-text-muted) !important;
+}
+
+/* Report summary cards (Resume Evaluation / Hands-on Skill Evaluation / Knowledge) */
+body.ai-interview-dark .rb-sum-card {
+    background: var(--ai-card) !important;
+    border-color: var(--ai-border) !important;
+}
+body.ai-interview-dark .rb-sum-card.is-resume { border-left-color: #8b7ef0 !important; }
+body.ai-interview-dark .rb-sum-card.is-skill { border-left-color: #3fb950 !important; }
+body.ai-interview-dark .rb-sum-card.is-knowledge { border-left-color: var(--ai-accent) !important; }
+body.ai-interview-dark .rb-sum-lbl,
+body.ai-interview-dark .rb-sum-l,
+body.ai-interview-dark .rb-sum-v small {
+    color: var(--ai-text-muted) !important;
+}
+body.ai-interview-dark .rb-sum-v {
+    color: var(--ai-text) !important;
+}
+body.ai-interview-dark .rb-sum-stat {
+    border-right-color: var(--ai-border-soft) !important;
+}
+body.ai-interview-dark .rb-sum-foot {
+    background: var(--ai-card-2) !important;
+    border-top-color: var(--ai-border) !important;
+    color: var(--ai-text) !important;
+}
+body.ai-interview-dark .rb-sum-foot.is-pass {
+    background: var(--ai-green-soft) !important;
+    border-top-color: rgba(63, 185, 80, 0.35) !important;
+    color: var(--ai-green) !important;
+}
+body.ai-interview-dark .rb-sum-foot.is-review {
+    background: rgba(210, 153, 34, 0.18) !important;
+    border-top-color: rgba(210, 153, 34, 0.35) !important;
+    color: #e3b341 !important;
+}
+body.ai-interview-dark .rb-sum-foot.is-fail {
+    background: rgba(248, 81, 73, 0.15) !important;
+    border-top-color: rgba(248, 81, 73, 0.35) !important;
+    color: #ffa198 !important;
+}
+body.ai-interview-dark .rb-sum-card.is-resume,
+body.ai-interview-dark .rb-sum-card.is-skill {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45) !important;
 }
