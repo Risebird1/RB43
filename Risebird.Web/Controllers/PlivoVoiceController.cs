@@ -1,10 +1,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
+using Risebird.Repository.Interface;
 using System;
 using System.Linq;
 using System.Security;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -17,10 +21,17 @@ namespace Risebird.Web.Controllers
     public class PlivoVoiceController : Controller
     {
         private readonly IConfiguration _configuration;
+        private readonly IUserRepository _userRepository;
+        private readonly IPlivoCXService _plivoCXService;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
-        public PlivoVoiceController(IConfiguration configuration)
+        public PlivoVoiceController(IConfiguration configuration, IUserRepository userRepository,
+            IPlivoCXService plivoCXService, IApplicationErrorLogger applicationErrorLogger)
         {
             _configuration = configuration;
+            _userRepository = userRepository;
+            _plivoCXService = plivoCXService;
+            _applicationErrorLogger = applicationErrorLogger;
         }
 
         // POST: PlivoVoice/Outbound — dials the number the browser asked for and records the call.
@@ -56,11 +67,45 @@ namespace Risebird.Web.Controllers
             return Content(xml.ToString(), "application/xml", Encoding.UTF8);
         }
 
-        // POST: PlivoVoice/RecordingCallback — Plivo delivers the recording details here.
-        // Stub: acknowledges only. Persisting the recording URL is a follow-up.
+        // POST: PlivoVoice/RecordingCallback — Plivo delivers the recording details here
+        // (the <Record> action / callbackUrl in Outbound). Stores the recording URL on the
+        // CallRecordingData row logged by User/makecall (CallSid = Plivo CallUUID), so the
+        // Call Recordings / Call Analytics pages can play it. Always returns 200 to Plivo.
         [HttpPost]
-        public IActionResult RecordingCallback()
+        public async Task<IActionResult> RecordingCallback()
         {
+            try
+            {
+                var callUuid = GetParam("CallUUID") ?? GetParam("call_uuid");
+                if (string.IsNullOrWhiteSpace(callUuid))
+                {
+                    return Ok();
+                }
+
+                var recordingUrl = GetParam("RecordUrl") ?? GetParam("RecordingUrl") ?? GetParam("recording_url");
+                int? duration = null;
+                if (int.TryParse(GetParam("RecordingDuration") ?? GetParam("recording_duration"), out var d) && d > 0)
+                {
+                    duration = d;
+                }
+
+                // No URL in the payload: look it up by call UUID (recording-only, no transcription cost).
+                if (string.IsNullOrWhiteSpace(recordingUrl))
+                {
+                    var info = await _plivoCXService.GetRecordingInfoAsync(callUuid);
+                    recordingUrl = info.RecordingUrl;
+                    duration ??= info.DurationSeconds;
+                }
+
+                if (!string.IsNullOrWhiteSpace(recordingUrl))
+                {
+                    await _userRepository.UpdatePlivoRecordingAsync(callUuid, recordingUrl, duration);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
             return Ok();
         }
 

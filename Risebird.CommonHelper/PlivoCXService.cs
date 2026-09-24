@@ -167,9 +167,17 @@ namespace Risebird.CommonHelper
         /// No Transcription API call, so no transcription charges. Never throws.
         /// </summary>
         public async Task<string> GetRecordingUrlAsync(string callUuid)
+            => (await GetRecordingInfoAsync(callUuid)).RecordingUrl;
+
+        /// <summary>
+        /// Recording-only: recording URL + id + duration (seconds) for a call UUID. Same MP3-first
+        /// choice as <see cref="GetRecordingUrlAsync"/>; no Transcription API call. Never throws.
+        /// </summary>
+        public async Task<PhoneScreenMediaResult> GetRecordingInfoAsync(string callUuid)
         {
+            var result = new PhoneScreenMediaResult();
             if (string.IsNullOrWhiteSpace(callUuid) || string.IsNullOrWhiteSpace(_voiceAuthId))
-                return null;
+                return result;
 
             try
             {
@@ -178,22 +186,28 @@ namespace Risebird.CommonHelper
                              $"?call_uuid={Uri.EscapeDataString(callUuid.Trim())}&limit=5";
                 var recBody = await SendVoiceApiAsync(HttpMethod.Get, recUrl);
                 if (string.IsNullOrWhiteSpace(recBody))
-                    return null;
+                    return result;
 
                 var recordings = JsonConvert.DeserializeObject<JObject>(recBody)?["objects"]?.ToList();
                 if (recordings == null || recordings.Count == 0)
-                    return null;
+                    return result;
 
                 var chosen = recordings.FirstOrDefault(r =>
                                  string.Equals(r["recording_format"]?.ToString(), "mp3", StringComparison.OrdinalIgnoreCase))
                              ?? recordings.First();
                 var url = chosen["recording_url"]?.ToString();
-                return string.IsNullOrWhiteSpace(url) ? null : url;
+                result.RecordingUrl = string.IsNullOrWhiteSpace(url) ? null : url;
+                result.RecordingId  = chosen["recording_id"]?.ToString();
+                if (double.TryParse(chosen["recording_duration_ms"]?.ToString(),
+                        System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var ms) && ms > 0)
+                    result.DurationSeconds = (int)Math.Round(ms / 1000.0);
             }
-            catch
+            catch (Exception ex)
             {
-                return null;
+                result.RecordingUrl = null;
+                result.Error = ex.Message;
             }
+            return result;
         }
 
         private async Task<string> SendVoiceApiAsync(HttpMethod method, string url, string jsonBody = null)

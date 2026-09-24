@@ -60,5 +60,11 @@ namespace Risebird.CommonHelper.Interface
         /// API, so it incurs no transcription cost. Never throws.
         /// </summary>
         Task<string> GetRecordingUrlAsync(string callUuid);
+
+        /// <summary>
+        /// Recording-only lookup returning URL, recording id and duration (seconds) for a call UUID.
+        /// Same MP3-first choice as <see cref="GetRecordingUrlAsync"/>; no Transcription API call. Never throws.
+        /// </summary>
+        Task<PhoneScreenMediaResult> GetRecordingInfoAsync(string callUuid);
     }
 }
