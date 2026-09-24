@@ -317,6 +317,7 @@
                             <th>Purpose</th>
                             <th>Status</th>
                             <th>Duration</th>
+                            <th>Recording</th>
                             <th>Disposition</th>
                             <th>AI Booked</th>
                             <th>Booking API</th>
@@ -400,6 +401,20 @@
                                 </td>
 
                                 <td class="small">@(r.DurationSeconds.HasValue ? r.DurationSeconds + "s" : "—")</td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(r.RecordingUrl))
+                                    {
+                                        <audio controls preload="none" style="height:32px; width:220px; max-width:100%;">
+                                            <source src="@r.RecordingUrl" type="audio/mpeg" />
+                                            <source src="@r.RecordingUrl" type="audio/wav" />
+                                        </audio>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
 
                                 <td>
                                     @if (!string.IsNullOrEmpty(r.CandidateDisposition))
@@ -510,7 +525,7 @@
                         @if (!Model.Any())
                         {
                             <tr>
-                                <td colspan="16" class="text-center text-muted py-5">
+                                <td colspan="17" class="text-center text-muted py-5">
                                     <i class="fas fa-phone-slash fa-2x mb-2 d-block"></i>
                                     No call logs yet.
                                 </td>

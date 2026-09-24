@@ -13,6 +13,8 @@ CREATE TABLE [dbo].[PlivoCXCallLogs] (
     -- Plivo CX identifiers
     [PlivoCXConversationId]  NVARCHAR(255)       NULL,
     [PlivoCXRequestId]       NVARCHAR(255)       NULL,
+    [PlivoCallUuid]          NVARCHAR(100)       NULL,   -- Plivo voice call UUID (from the hangup event)
+    [RecordingUrl]           NVARCHAR(1000)      NULL,   -- Plivo recording URL (Recording API, by call UUID)
 
     -- Candidate context
     [RecipientName]          NVARCHAR(255)       NULL,

@@ -614,6 +614,29 @@ namespace Risebird.Web.Controllers
                         convId: payload.ConversationId, callLogId: callLog.Id);
                 }
 
+                // ── Step 7b: Capture the call recording by call UUID ──────────────────
+                // Store the UUID (key for the Recording API) and pull the recording URL now.
+                // If the recording is not final yet (it lands ~1s after hangup) it stays NULL
+                // and PlivoCXRecordingBackfillJob fills it in on a later run.
+                if (!string.IsNullOrWhiteSpace(payload.CallUUID))
+                {
+                    callLog.PlivoCallUuid = payload.CallUUID.Trim();
+                    try
+                    {
+                        callLog.RecordingUrl = await _plivoCXService.GetRecordingUrlAsync(callLog.PlivoCallUuid)
+                                               ?? callLog.RecordingUrl;
+                        await SaveCpAsync("recording_lookup",
+                            string.IsNullOrEmpty(callLog.RecordingUrl)
+                                ? $"Recording not ready yet for call_uuid {callLog.PlivoCallUuid} — backfill job will retry"
+                                : $"Recording captured for call_uuid {callLog.PlivoCallUuid}",
+                            convId: payload.ConversationId, callLogId: callLog.Id);
+                    }
+                    catch (Exception recEx)
+                    {
+                        await _logger.LogMessage(LogLevelInfo.Exception, recEx);
+                    }
+                }
+
                 await _repository.UpdateCallLogAsync(callLog);
 
                 // Write disposition back to Candidate table so it's visible across the platform

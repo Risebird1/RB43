@@ -124,12 +124,60 @@ namespace Risebird.Repository
 
                 callLog.UpdatedAt = DateTime.UtcNow;
                 int rows = await conn.ExecuteAsync(sql, callLog);
+
+                // Recording capture (PlivoCallUuid / RecordingUrl) is written separately so that a
+                // database without the new columns yet can never block the main call-log update.
+                // COALESCE keeps any stored value when a later update does not carry it.
+                if (rows > 0 && (!string.IsNullOrWhiteSpace(callLog.PlivoCallUuid) || !string.IsNullOrWhiteSpace(callLog.RecordingUrl)))
+                {
+                    try
+                    {
+                        const string recordingSql = @"
+                            UPDATE PlivoCXCallLogs SET
+                                PlivoCallUuid = COALESCE(@PlivoCallUuid, PlivoCallUuid),
+                                RecordingUrl  = COALESCE(@RecordingUrl,  RecordingUrl)
+                            WHERE Id = @Id";
+                        await conn.ExecuteAsync(recordingSql, new
+                        {
+                            callLog.Id,
+                            PlivoCallUuid = string.IsNullOrWhiteSpace(callLog.PlivoCallUuid) ? null : callLog.PlivoCallUuid,
+                            RecordingUrl  = string.IsNullOrWhiteSpace(callLog.RecordingUrl)  ? null : callLog.RecordingUrl
+                        });
+                    }
+                    catch (Exception recEx)
+                    {
+                        await _logger.LogMessage(LogLevelInfo.Exception, recEx);
+                    }
+                }
+
                 return rows > 0;
             }
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+
+        public async Task<List<PlivoCXCallLog>> GetCallLogsMissingRecordingAsync(int maxAgeHours = 24, int count = 50)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                const string sql = @"
+                    SELECT TOP (@Count) *
+                    FROM   PlivoCXCallLogs
+                    WHERE  PlivoCallUuid IS NOT NULL
+                      AND  RecordingUrl  IS NULL
+                      AND  CallEndedAt   >= DATEADD(HOUR, -@MaxAgeHours, GETUTCDATE())
+                    ORDER BY CallEndedAt DESC";
+                var results = await conn.QueryAsync<PlivoCXCallLog>(sql, new { Count = count, MaxAgeHours = maxAgeHours });
+                return results.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<PlivoCXCallLog>();
             }
         }
 

@@ -78,6 +78,18 @@ namespace Risebird.Repository.Interface
         Task<string> SaveCallRecordingData(int? interviewId, string callRecipient, string caller, string callSid, string recordingSid, string callRecipientPhoneNumber = null, string IRFId = null);
         Task<List<CallRecordingDataVM>> GetRecordingDataToUpdate();
         Task<bool> UpdateRecordingData(CallRecordingDataVM obj);
+
+        /// <summary>
+        /// Plivo browser call: stores the recording URL (and duration when still empty) on the
+        /// CallRecordingData row whose CallSid is the Plivo call UUID. Never overwrites a stored URL.
+        /// </summary>
+        Task<bool> UpdatePlivoRecordingAsync(string callUuid, string recordingUrl, int? durationSeconds);
+
+        /// <summary>
+        /// Plivo browser calls (CallSid is a UUID) created within <paramref name="maxAgeDays"/> days
+        /// that still have no RecordingUri — used by the recording backfill job.
+        /// </summary>
+        Task<List<CallRecordingDataVM>> GetPlivoCallsMissingRecordingAsync(int maxAgeDays = 7, int count = 50);
         Task<bool> AddPremiumClientUser(ClientUserVM client);
         Task<List<ClientUserVM>> GetClientPremiumUsers(string EmailId);
         Task<ClientUserVM> GetClientPremiumUser(int id);

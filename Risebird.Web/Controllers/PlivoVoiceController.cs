@@ -1,10 +1,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
+using Risebird.Repository.Interface;
 using System;
 using System.Linq;
 using System.Security;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -17,10 +21,17 @@ namespace Risebird.Web.Controllers
     public class PlivoVoiceController : Controller
     {
         private readonly IConfiguration _configuration;
+        private readonly IUserRepository _userRepository;
+        private readonly IPlivoCXService _plivoCXService;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
 
-        public PlivoVoiceController(IConfiguration configuration)
+        public PlivoVoiceController(IConfiguration configuration, IUserRepository userRepository,
+            IPlivoCXService plivoCXService, IApplicationErrorLogger applicationErrorLogger)
         {
             _configuration = configuration;
+            _userRepository = userRepository;
+            _plivoCXService = plivoCXService;
+            _applicationErrorLogger = applicationErrorLogger;
         }
 
         // POST: PlivoVoice/Outbound — dials the number the browser asked for and records the call.
@@ -56,11 +67,45 @@ namespace Risebird.Web.Controllers
             return Content(xml.ToString(), "application/xml", Encoding.UTF8);
         }
 
-        // POST: PlivoVoice/RecordingCallback — Plivo delivers the recording details here.
-        // Stub: acknowledges only. Persisting the recording URL is a follow-up.
+        // POST: PlivoVoice/RecordingCallback — Plivo delivers the recording details here
+        // (the <Record> action / callbackUrl in Outbound). Stores the recording URL on the
+        // CallRecordingData row logged by User/makecall (CallSid = Plivo CallUUID), so the
+        // Call Recordings / Call Analytics pages can play it. Always returns 200 to Plivo.
         [HttpPost]
-        public IActionResult RecordingCallback()
+        public async Task<IActionResult> RecordingCallback()
         {
+            try
+            {
+                var callUuid = GetParam("CallUUID") ?? GetParam("call_uuid");
+                if (string.IsNullOrWhiteSpace(callUuid))
+                {
+                    return Ok();
+                }
+
+                var recordingUrl = GetParam("RecordUrl") ?? GetParam("RecordingUrl") ?? GetParam("recording_url");
+                int? duration = null;
+                if (int.TryParse(GetParam("RecordingDuration") ?? GetParam("recording_duration"), out var d) && d > 0)
+                {
+                    duration = d;
+                }
+
+                // No URL in the payload: look it up by call UUID (recording-only, no transcription cost).
+                if (string.IsNullOrWhiteSpace(recordingUrl))
+                {
+                    var info = await _plivoCXService.GetRecordingInfoAsync(callUuid);
+                    recordingUrl = info.RecordingUrl;
+                    duration ??= info.DurationSeconds;
+                }
+
+                if (!string.IsNullOrWhiteSpace(recordingUrl))
+                {
+                    await _userRepository.UpdatePlivoRecordingAsync(callUuid, recordingUrl, duration);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
             return Ok();
         }
 
@@ -78,7 +123,12 @@ namespace Risebird.Web.Controllers
             return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
         }
 
-        // "sip:919876543210@phone.plivo.com" / "+91 98765-43210" → "919876543210"
+        // Plivo dials international format only (country code + number, no "+").
+        // Candidate/interviewer numbers are often stored as 10-digit Indian numbers without a country code;
+        // sent as-is, Plivo reads e.g. "98..." as Iran (+98) and rejects the call ("Destination Country Barred").
+        private const string DefaultCountryCode = "91";
+
+        // "sip:919876543210@phone.plivo.com" / "+91 98765-43210" / "9876543210" / "09876543210" → "919876543210"
         private static string ToDialNumber(string raw)
         {
             if (string.IsNullOrWhiteSpace(raw))
@@ -95,8 +145,29 @@ namespace Risebird.Web.Controllers
             {
                 value = value.Substring(0, at);
             }
+            var hasPlus = value.StartsWith("+");
             var digits = new string(value.Where(char.IsDigit).ToArray());
-            return digits.Length == 0 ? null : digits;
+            if (digits.Length == 0)
+            {
+                return null;
+            }
+
+            if (!hasPlus)
+            {
+                if (digits.StartsWith("00"))
+                {
+                    digits = digits.Substring(2); // international prefix: 00919876543210
+                }
+                else if (digits.Length == 11 && digits.StartsWith("0"))
+                {
+                    digits = digits.Substring(1); // local trunk prefix: 09876543210
+                }
+                if (digits.Length == 10)
+                {
+                    digits = DefaultCountryCode + digits; // national number without country code
+                }
+            }
+            return digits;
         }
     }
 }
