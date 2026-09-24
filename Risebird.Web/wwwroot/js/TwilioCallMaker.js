@@ -13,6 +13,56 @@ let interviewId = '';
 
 
 // ----------------------------
+// Call provider (Twilio / Plivo)
+// ----------------------------
+// window.rbPlivoConfigured / window.rbDefaultProvider are emitted by TwilioCallModalPartial.cshtml.
+// plivoCallRecipient() / plivoHangUp() come from PlivoCallMaker.js (loaded only when Plivo is configured).
+let isSwitchingProvider = false;
+
+function getCallProvider() {
+    let stored = null;
+    try { stored = localStorage.getItem('rb_call_provider'); } catch (e) { }
+
+    if (stored === 'twilio') return 'twilio';
+    if (stored === 'plivo' && window.rbPlivoConfigured !== false) return 'plivo';
+    return window.rbDefaultProvider === 'plivo' ? 'plivo' : 'twilio';
+}
+
+function highlightCallProvider() {
+    const current = getCallProvider();
+    document.querySelectorAll('.rb-call-provider-btn').forEach(function (btn) {
+        const active = btn.getAttribute('data-provider') === current;
+        btn.classList.toggle('btn-primary', active);
+        btn.classList.toggle('btn-default', !active);
+    });
+}
+
+function setCallProvider(provider) {
+    if (provider !== 'plivo' && provider !== 'twilio') return;
+    if (provider === 'plivo' && window.rbPlivoConfigured !== true) return;
+
+    const previous = getCallProvider();
+    try { localStorage.setItem('rb_call_provider', provider); } catch (e) { }
+    highlightCallProvider();
+
+    // Mid-call: hang up and redial the same number on the new provider.
+    const modal = document.getElementById("myCallModal");
+    if (previous !== provider && callRecipientPhoneNumber && modal && modal.style.display === "block") {
+        const number = callRecipientPhoneNumber;
+        isSwitchingProvider = true;
+        hangUp();
+        setTimeout(function () {
+            document.getElementById("callingLabel").innerHTML = "Calling... <b>" + callRecipientName + "</b>";
+            callRecipient(number);
+        }, 800);
+        setTimeout(function () { isSwitchingProvider = false; }, 3000);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", highlightCallProvider);
+
+
+// ----------------------------
 // Initialization only after user gesture
 // ----------------------------
 let isDeviceInitialized = false;
@@ -60,6 +110,10 @@ async function GenerateToken() {
 
 function setupDevice(token) {
     //debugger;
+    if (typeof Twilio === "undefined" || !token) {
+        console.warn("Twilio SDK or token not available.");
+        return;
+    }
     device = new Twilio.Device(token, {
         logLevel: 1,
         codecPreferences: ["opus", "pcmu"],
@@ -78,7 +132,14 @@ function setupDevice(token) {
 // ----------------------------
 // Outgoing Call
 // ----------------------------
-function callRecipient(phoneNumber) {    
+function callRecipient(phoneNumber) {
+    highlightCallProvider();
+    if (getCallProvider() === 'plivo' && typeof plivoCallRecipient === 'function') {
+        callRecipientPhoneNumber = phoneNumber;
+        plivoCallRecipient(phoneNumber);
+        return;
+    }
+
     if (!device) {
         console.error("Device not ready. Wait for initialization or user gesture.");
         return;
@@ -115,6 +176,7 @@ function setupCallHandlers(call) {
     });
 
     call.on("disconnect", () => {
+        if (isSwitchingProvider) return; // redialing on Plivo
         document.getElementById("callingLabel").innerHTML = "Call disconnected!";
         setTimeout(afterTimeOut, 2000);
     });
@@ -137,6 +199,9 @@ function setupCallHandlers(call) {
 // ----------------------------
 function hangUp() {
     //debugger;
+    if (typeof plivoHangUp === 'function') {
+        plivoHangUp();
+    }
 
     if (activeCall) {
         //debugger;
@@ -150,6 +215,7 @@ function hangUp() {
 }
 
 function afterTimeOut() {
+    if (isSwitchingProvider) return; // keep the modal open while redialing on the other provider
     const modal = document.getElementById("myCallModal");
     if (modal) modal.style.display = "none";
 }

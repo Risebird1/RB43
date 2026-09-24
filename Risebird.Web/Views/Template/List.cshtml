@@ -103,6 +103,14 @@
 
                 <div class="pull-right">
                     <div style="display: flex; gap: 10px; align-items: center;">
+                        @* AI Audio Adaptive HR screening intake. Only rendered for the profiles the
+                           controller accepts, so nobody is offered a button that bounces them. *@
+                        @if (Risebird.Web.Helpers.AIScreeningAccess.IsAllowed(Model.Profile))
+                        {
+                            <a href="@Url.Action("New", "AIScreening")" class="btn btn-primary" title="Start an AI screening from a job description — no template needed" style="padding: 8px 16px; font-weight: 500;">
+                                <i class="fas fa-microphone me-1"></i> New AI Screening
+                            </a>
+                        }
                         <button type="button" class="btn btn-success" id="btnCreateMissingTemplates" title="Create templates for all MAGs that don't have one" style="padding: 8px 16px; font-weight: 500;">
                             <i class="fas fa-magic me-1"></i> Create Missing Templates
                         </button>

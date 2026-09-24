@@ -187,3 +187,28 @@ END
 GO
 
 
+
+-- ---------------------------------------------------------------------------------------------
+-- Catch-all Assessment Group for AI interview channels.
+--
+-- An AI Audio Adaptive channel has no human interviewer panel, so which Assessment Group it
+-- belongs to is irrelevant to how it runs. The column still has to be populated: roughly 19
+-- stored procedures INNER JOIN AssessmentGroup on IRF.AssessmentGroupId, and an unmatched value
+-- makes the channel vanish from those surfaces (AI resume screening, dashboard ribbon counts,
+-- the channel edit screen) with no error.
+--
+-- So AI screening channels are stamped with this one reusable row rather than a new row per job
+-- description. Two properties keep it out of everything else:
+--   Isinstaavailable = 0 / IsRelevant = 0  -- stays out of the relevant/insta AG lists
+--   no InterviewerProfile rows bound to it -- human-panel routing can never select it
+--
+-- Idempotent: safe to re-run.
+-- ---------------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT 1 FROM dbo.AssessmentGroup WHERE AssessmentGroup = 'AIInterview')
+BEGIN
+    INSERT INTO dbo.AssessmentGroup
+        ([AssessmentGroup], [PrimarySkills], [Isinstaavailable], [IsRelevant], [IsMasterAG])
+    VALUES
+        ('AIInterview', 'AI Interview', 0, 0, 0)
+END
+GO

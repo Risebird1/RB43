@@ -70,3 +70,17 @@ GO
 
 
 
+
+-- Rubric section. AI screening intake templates carry two scored sections
+-- (1 = Role Fitment, 2 = Motivation to Join Fitment); every other template
+-- leaves this null, which is what the channel copy already wrote before this column existed.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SkillSet')
+      AND Object_ID = Object_ID(N'TransClonableIRFTechSkill'))
+BEGIN
+    ALTER TABLE TransClonableIRFTechSkill
+    Add SkillSet int NULL
+END
+GO

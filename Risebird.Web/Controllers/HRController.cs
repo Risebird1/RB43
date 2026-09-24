@@ -1383,5 +1383,129 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        // ----------------------------
+        // Call Analytics: calls per Risebird user, split by recipient type.
+        // Same data and role gate as CallRecordingsDetails; defaults to the last 30 days.
+        // ----------------------------
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> CallAnalytics(string type, DateTime? from, DateTime? to)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement")
+                    {
+                        var calls = await GetCallAnalyticsData(profileName, emailid, type, from, to);
+
+                        var summary = calls
+                            .GroupBy(x => x.Caller ?? string.Empty, StringComparer.OrdinalIgnoreCase)
+                            .Select(g => new CallAnalyticsSummaryVM
+                            {
+                                Caller = g.Key,
+                                TotalCalls = g.Count(),
+                                CandidateCalls = g.Count(x => x.RecipientProfileType?.ToLower() == "candidate"),
+                                InterviewerCalls = g.Count(x => x.RecipientProfileType?.ToLower() == "interviewer"),
+                                OtherCalls = g.Count(x => x.RecipientProfileType?.ToLower() != "candidate" && x.RecipientProfileType?.ToLower() != "interviewer"),
+                                CallsWithRecording = g.Count(x => !string.IsNullOrEmpty(x.RecordingUri)),
+                                TotalDurationSeconds = g.Sum(x => ParseDurationSeconds(x.Duration)),
+                                LastCallOn = g.Max(x => (DateTime?)x.DateCreated)
+                            })
+                            .OrderByDescending(x => x.TotalCalls)
+                            .ToList();
+
+                        ViewBag.Profile = profileName;
+                        return View(summary);
+                    }
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> CallAnalyticsByUser(string caller, string type, DateTime? from, DateTime? to)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement")
+                    {
+                        var calls = (await GetCallAnalyticsData(profileName, emailid, type, from, to))
+                            .Where(x => string.Equals(x.Caller ?? string.Empty, caller ?? string.Empty, StringComparison.OrdinalIgnoreCase))
+                            .OrderByDescending(x => x.DateCreated)
+                            .ToList();
+
+                        ViewBag.Profile = profileName;
+                        ViewBag.Caller = caller;
+                        return View(calls);
+                    }
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        // Loads call rows and applies the recipient-type and date filters; sets ViewBag.Type/From/To for the filter form.
+        private async Task<List<CallRecordingDataVM>> GetCallAnalyticsData(string profileName, string emailid, string type, DateTime? from, DateTime? to)
+        {
+            if (type != "Candidate" && type != "Interviewer" && type != "Other")
+            {
+                type = "All";
+            }
+            var fromDate = (from ?? DateTime.Today.AddDays(-30)).Date;
+            var toDate = (to ?? DateTime.Today).Date;
+
+            ViewBag.Type = type;
+            ViewBag.From = fromDate.ToString("yyyy-MM-dd");
+            ViewBag.To = toDate.ToString("yyyy-MM-dd");
+
+            var recordings = await _meetingService.GetCallRecordingData(profileName, emailid) ?? Enumerable.Empty<CallRecordingDataVM>();
+            recordings = recordings.Where(x => x.DateCreated >= fromDate && x.DateCreated < toDate.AddDays(1));
+
+            if (type == "Candidate" || type == "Interviewer")
+            {
+                recordings = recordings.Where(x => x.RecipientProfileType?.ToLower() == type.ToLower());
+            }
+            else if (type == "Other")
+            {
+                recordings = recordings.Where(x => x.RecipientProfileType?.ToLower() != "candidate" && x.RecipientProfileType?.ToLower() != "interviewer");
+            }
+            return recordings.ToList();
+        }
+
+        // Duration is stored as text, e.g. "125" or "00:02:05".
+        public static int ParseDurationSeconds(string duration)
+        {
+            if (string.IsNullOrWhiteSpace(duration))
+            {
+                return 0;
+            }
+            if (double.TryParse(duration.Trim(), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var seconds))
+            {
+                return seconds > 0 ? (int)Math.Round(seconds) : 0;
+            }
+            if (TimeSpan.TryParse(duration.Trim(), System.Globalization.CultureInfo.InvariantCulture, out var span))
+            {
+                return span.TotalSeconds > 0 ? (int)span.TotalSeconds : 0;
+            }
+            return 0;
+        }
     }
 }
