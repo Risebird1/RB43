@@ -1,0 +1,155 @@
+@model List<Risebird.Entities.ViewModel.CallAnalyticsSummaryVM>
+@{
+    ViewData["Title"] = "Call Analytics";
+    ViewBag.PageHeader = "Call Analytics";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string type = ViewBag.Type;
+    string from = ViewBag.From;
+    string to = ViewBag.To;
+
+    int totalCalls = Model.Sum(x => x.TotalCalls);
+    int totalCandidate = Model.Sum(x => x.CandidateCalls);
+    int totalInterviewer = Model.Sum(x => x.InterviewerCalls);
+    int totalOther = Model.Sum(x => x.OtherCalls);
+    int totalRecorded = Model.Sum(x => x.CallsWithRecording);
+    int totalSeconds = Model.Sum(x => x.TotalDurationSeconds);
+
+    Func<int, string> fmt = s => s >= 3600
+        ? string.Format("{0}h {1:00}m", s / 3600, (s % 3600) / 60)
+        : string.Format("{0}m {1:00}s", s / 60, s % 60);
+}
+<script>
+    var Header = "<div>Call Analytics</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<style>
+    .ca-tiles { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0 18px; }
+    .ca-tile { flex: 1 1 150px; background: #fff; border: 1px solid #e3e6ea; border-radius: 6px; padding: 12px 14px; }
+    .ca-tile .ca-label { font-size: 12px; color: #6b7280; }
+    .ca-tile .ca-value { font-size: 22px; font-weight: 600; color: #1f2937; font-variant-numeric: tabular-nums; }
+    .ca-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+    .ca-filters label { font-size: 12px; color: #6b7280; display: block; margin-bottom: 2px; }
+    #callAnalyticsTable td.ca-num, #callAnalyticsTable th.ca-num { text-align: right; font-variant-numeric: tabular-nums; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="jumbotron">
+        <div class="pt30">
+            <div class="col-md-12 nopad" style="margin:0px;">
+                <div class="card-header bg-w clearfix">
+                    <div class="pull-left">
+                        <div class="mobile-view"> <h4 class="card-title">Call Analytics</h4></div>
+                    </div>
+                    <div class="pull-right client-ms">
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" onclick="location.href='@Url.Action("CallRecordingsDetails", "HR", new { type = "Candidate" })'">
+                            <font style="font-family: Roboto, sans-serif; font-size:12px;">Call Recordings</font>
+                        </button>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" onclick="location.href='@Url.Action("CallCatalogue", "HR", new { type = "Candidate" })'">
+                            <font style="font-family: Roboto, sans-serif; font-size:12px;">Call Catalogue</font>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="mdc-card card bl-bg">
+                        <div class="mdc-card-wrapper__text-section">
+
+                            <form method="get" action="/HR/CallAnalytics" class="ca-filters">
+                                <div>
+                                    <label for="caFrom">From</label>
+                                    <input id="caFrom" name="from" type="date" class="form-control" value="@from" />
+                                </div>
+                                <div>
+                                    <label for="caTo">To</label>
+                                    <input id="caTo" name="to" type="date" class="form-control" value="@to" />
+                                </div>
+                                <div>
+                                    <label for="caType">Recipient</label>
+                                    <select id="caType" name="type" class="form-control">
+                                        <option value="All" selected="@(type == "All")">All</option>
+                                        <option value="Candidate" selected="@(type == "Candidate")">Candidate</option>
+                                        <option value="Interviewer" selected="@(type == "Interviewer")">Interviewer</option>
+                                        <option value="Other" selected="@(type == "Other")">Others</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded"><font style="font-size:12px;">Apply</font></button>
+                                    <button type="button" class="mdc-button mdc-button--outlined mdc-ripple-upgraded" onclick="location.href='/HR/CallAnalytics'"><font style="font-size:12px;">Reset</font></button>
+                                </div>
+                            </form>
+
+                            <div class="ca-tiles">
+                                <div class="ca-tile"><div class="ca-label">Total calls</div><div class="ca-value">@totalCalls</div></div>
+                                <div class="ca-tile"><div class="ca-label">Users calling</div><div class="ca-value">@Model.Count</div></div>
+                                <div class="ca-tile"><div class="ca-label">To candidates</div><div class="ca-value">@totalCandidate</div></div>
+                                <div class="ca-tile"><div class="ca-label">To interviewers</div><div class="ca-value">@totalInterviewer</div></div>
+                                <div class="ca-tile"><div class="ca-label">To others</div><div class="ca-value">@totalOther</div></div>
+                                <div class="ca-tile"><div class="ca-label">With recording</div><div class="ca-value">@totalRecorded</div></div>
+                                <div class="ca-tile"><div class="ca-label">Talk time</div><div class="ca-value">@fmt(totalSeconds)</div></div>
+                            </div>
+
+                            <div id="tableID" class="second interview">
+                                @if (Model.Count > 0)
+                                {
+                                <table id="callAnalyticsTable" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>User (Caller)</th>
+                                            <th class="ca-num">Total</th>
+                                            <th class="ca-num">Candidate</th>
+                                            <th class="ca-num">Interviewer</th>
+                                            <th class="ca-num">Others</th>
+                                            <th class="ca-num">With Recording</th>
+                                            <th class="ca-num">Talk Time</th>
+                                            <th>Last Call</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>@item.Caller</td>
+                                                <td class="ca-num">@item.TotalCalls</td>
+                                                <td class="ca-num">@item.CandidateCalls</td>
+                                                <td class="ca-num">@item.InterviewerCalls</td>
+                                                <td class="ca-num">@item.OtherCalls</td>
+                                                <td class="ca-num">@item.CallsWithRecording</td>
+                                                <td class="ca-num" data-order="@item.TotalDurationSeconds">@fmt(item.TotalDurationSeconds)</td>
+                                                <td data-order="@(item.LastCallOn?.ToString("yyyyMMddHHmmss"))">@(item.LastCallOn?.ToString("dd MMM yyyy, HH:mm"))</td>
+                                                <td>
+                                                    <a href="@Url.Action("CallAnalyticsByUser", "HR", new { caller = item.Caller, type = type, from = from, to = to })">View calls</a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                }
+                                else
+                                {
+                                    <p class="text-center" style="margin:16px 0;">No calls in the selected period. Try a wider From / To date range.</p>
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        if ($.fn.DataTable && $('#callAnalyticsTable tbody tr').length > 0) {
+            $('#callAnalyticsTable').DataTable({ order: [[1, 'desc']], pageLength: 25 });
+        }
+    });
+</script>
