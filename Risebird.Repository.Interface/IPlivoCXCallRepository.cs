@@ -25,6 +25,12 @@ namespace Risebird.Repository.Interface
         Task<PlivoCXCallLog>   GetCallLogByRequestIdAsync(string requestId);
         Task<List<PlivoCXCallLog>> GetRecentCallLogsAsync(int count = 50);
 
+        /// <summary>
+        /// Recording backfill: recent call logs (ended within <paramref name="maxAgeHours"/>) that
+        /// have a Plivo call UUID but no RecordingUrl yet — e.g. the recording was not final at hangup.
+        /// </summary>
+        Task<List<PlivoCXCallLog>> GetCallLogsMissingRecordingAsync(int maxAgeHours = 24, int count = 50);
+
         // ── Debug logs (raw payload captures) ───────────────────────────────────
         Task<int>                         SaveWebhookDebugLogAsync(PlivoCXWebhookDebugLog log);
         Task<List<PlivoCXWebhookDebugLog>> GetRecentDebugLogsAsync(int count = 50);

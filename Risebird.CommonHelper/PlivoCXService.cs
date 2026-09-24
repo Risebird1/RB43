@@ -162,6 +162,40 @@ namespace Risebird.CommonHelper
             return result;
         }
 
+        /// <summary>
+        /// Recording-only: GET /Recording/?call_uuid=... and return the recording_url (or null).
+        /// No Transcription API call, so no transcription charges. Never throws.
+        /// </summary>
+        public async Task<string> GetRecordingUrlAsync(string callUuid)
+        {
+            if (string.IsNullOrWhiteSpace(callUuid) || string.IsNullOrWhiteSpace(_voiceAuthId))
+                return null;
+
+            try
+            {
+                // Plivo stores each call as both MP3 and WAV; prefer the MP3 (smaller, plays in every browser).
+                var recUrl = $"https://api.plivo.com/v1/Account/{_voiceAuthId}/Recording/" +
+                             $"?call_uuid={Uri.EscapeDataString(callUuid.Trim())}&limit=5";
+                var recBody = await SendVoiceApiAsync(HttpMethod.Get, recUrl);
+                if (string.IsNullOrWhiteSpace(recBody))
+                    return null;
+
+                var recordings = JsonConvert.DeserializeObject<JObject>(recBody)?["objects"]?.ToList();
+                if (recordings == null || recordings.Count == 0)
+                    return null;
+
+                var chosen = recordings.FirstOrDefault(r =>
+                                 string.Equals(r["recording_format"]?.ToString(), "mp3", StringComparison.OrdinalIgnoreCase))
+                             ?? recordings.First();
+                var url = chosen["recording_url"]?.ToString();
+                return string.IsNullOrWhiteSpace(url) ? null : url;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         private async Task<string> SendVoiceApiAsync(HttpMethod method, string url, string jsonBody = null)
         {
             try
