@@ -1044,7 +1044,7 @@
             } else {
                 html += '                                        <tr>';
             }
-            html += '                               <td>' + data[i].date.toString().replace("T", " ") + '</td>';
+            html += '                               <td>' + (data[i].actualDate || data[i].date).toString().replace("T", " ") + '</td>';
             html += '                               <td>' + data[i].comment + '</td>';
             html += '                               <td>' + data[i].type + '</td>';
             html += '                               <td>' + data[i].status + '</td>';
