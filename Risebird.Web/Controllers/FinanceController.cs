@@ -519,7 +519,7 @@ namespace Risebird.Web.Controllers
             {
                 item.MeetingStatusDetails = Enum.GetName(typeof(MeetingStatus), item.MeetingStatus);
                 item.InterviewStatusDetails = Enum.GetName(typeof(InterviewStatus), item.InterviewStatus);
-                if (item.Date >= verificationdate && item.Date < verificationenddate && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
+                if (item.ActualDate >= verificationdate && item.ActualDate < verificationenddate && @item.VideoDuration > 5 && (item.MeetingStatus == 4 || item.MeetingStatus == 6 || item.MeetingStatus == 7 || item.MeetingStatus == 8))
                 {
                     item.VideoDuration = item.VideoDuration - 5;
                 }
