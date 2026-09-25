@@ -32,7 +32,10 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<ClonableSkillChannelVM>(con, "usp_GetAllClonableSkillChannels", commandType: CommandType.StoredProcedure);
+                    // AI Audio templates are generated one per job description. They would swamp the
+                    // curated list human-panel recruiters pick from, so they are kept out of it.
+                    var templates = await SqlMapper.QueryAsync<ClonableSkillChannelVM>(con, "usp_GetAllClonableSkillChannels", commandType: CommandType.StoredProcedure);
+                    return await ExcludeAIAudioTemplates(con, templates);
                 }
 
             }

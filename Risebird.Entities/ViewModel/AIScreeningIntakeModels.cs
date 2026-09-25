@@ -167,12 +167,25 @@ namespace Risebird.Entities.ViewModel
         public bool AlreadyCreated { get; set; }
     }
 
-    /// <summary>The three ownership fields channel creation requires, captured beside the chat.</summary>
+    /// <summary>What channel creation needs beyond the draft, captured beside the chat.</summary>
     public class AIScreeningChannelRequest
     {
         public string DraftId { get; set; }
         public int ClientId { get; set; }
         public List<int> ClientUserIds { get; set; } = new List<int>();
         public int BillingOwner { get; set; }
+
+        /// <summary>
+        /// Stored prompt that conducts the interview. Lands on IRF.OpenAIPromptId — the same
+        /// Primary Prompt Id the Edit IRF form carries, used the same way.
+        /// </summary>
+        public string PrimaryPromptId { get; set; }
+
+        /// <summary>
+        /// Stored prompt that writes the candidate's report. Lands on IRF.OpenAIEvaluatorPromptId.
+        /// Optional: left blank, the Primary Prompt Id generates the report too, which is how
+        /// every other AI channel already behaves.
+        /// </summary>
+        public string EvaluatorPromptId { get; set; }
     }
 }

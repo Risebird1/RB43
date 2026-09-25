@@ -443,6 +443,18 @@ namespace Risebird.Repository
                                 //obj.Timelimit = !string.IsNullOrEmpty(dt.Rows[i]["Timelimit"].ToString()) ? Convert.ToInt32(dt.Rows[i]["Timelimit"]) : 0;
                                 obj.SkillName = !string.IsNullOrEmpty(dt.Rows[i]["SkillName"].ToString()) ? dt.Rows[i]["SkillName"].ToString() : null;
 
+                                // Which scored section this parameter belongs to. An AI screening channel
+                                // has two (1 = Role Fitment, 2 = Motivation to Join Fitment) and the
+                                // assistant cannot tell them apart without it. Guarded on the column being
+                                // present because usp_GetAIInterviewSpecificDetails has to start returning
+                                // SkillSet for this to carry anything; until it does, this is a no-op and
+                                // every other channel is unaffected.
+                                if (dt.Columns.Contains("SkillSet")
+                                    && !string.IsNullOrEmpty(dt.Rows[i]["SkillSet"].ToString()))
+                                {
+                                    obj.SkillSet = Convert.ToInt32(dt.Rows[i]["SkillSet"]);
+                                }
+
                                 techSkills.Add(obj);
                             }
 
@@ -563,6 +575,36 @@ namespace Risebird.Repository
             }
             return null;
         }
+        /// <summary>
+        /// The same stored evaluation as <see cref="GetReportOfAIInterviewByAssistant"/>, read by
+        /// interview id. The report screens carry an interview id, not a session id.
+        /// </summary>
+        public async Task<string> GetReportOfAIInterviewByInterviewId(int interviewId)
+        {
+            if (interviewId <= 0) return null;
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@InterviewId", interviewId);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_GetReportOfAIInterviewByInterviewId", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         private string CleanMessage(string input)
         {
             if (string.IsNullOrWhiteSpace(input)) return "";

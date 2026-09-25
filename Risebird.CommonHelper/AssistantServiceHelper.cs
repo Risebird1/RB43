@@ -1985,15 +1985,40 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                // Each of these returns no question at all, which the candidate experiences as the
+                // interview simply stopping. They used to return (null, null) silently, so an
+                // interview that produced nothing left no trace of why.
                 if (string.IsNullOrWhiteSpace(message))
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Warning,
+                        "AI interviewer was called with an empty message; no question was generated.");
                     return (null, null);
+                }
 
                 var useResponsesApi = UseGlobalResponsesApi();
                 var resolvedPromptId = !string.IsNullOrWhiteSpace(promptId)
                     ? promptId.Trim()
                     : _configuration["OpenAI:AIInterviewerPromptId"];
-                if (!useResponsesApi || string.IsNullOrWhiteSpace(resolvedPromptId))
+
+                if (!useResponsesApi)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Error,
+                        "AI interviewer is switched off: OpenAI:UseResponsesApi is false. No question " +
+                        "was generated and the interview will produce nothing.");
                     return (null, null);
+                }
+
+                if (string.IsNullOrWhiteSpace(resolvedPromptId))
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Error,
+                        "AI interviewer has no prompt id: the channel carries no Primary Prompt Id and " +
+                        "OpenAI:AIInterviewerPromptId is empty. No question was generated and the " +
+                        "interview will produce nothing.");
+                    return (null, null);
+                }
 
                 var input = $"Generate an output in JSON format as per the instructions fed to the assistant. {message}";
                 return await _openAIResponsesHelper.CreateJsonResponseWithIdAsync(

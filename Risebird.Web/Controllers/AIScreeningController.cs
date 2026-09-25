@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
@@ -28,6 +29,7 @@ namespace Risebird.Web.Controllers
         private readonly IInterviewSchedulerService _interviewSchedulerService;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly IConfiguration _configuration;
 
         public AIScreeningController(
             IAIScreeningIntakeService aiScreeningIntakeService,
@@ -35,7 +37,8 @@ namespace Risebird.Web.Controllers
             IIRFService irfService,
             IInterviewSchedulerService interviewSchedulerService,
             IFileMimeTypeHelper fileMimeTypeHelper,
-            IApplicationErrorLogger applicationErrorLogger)
+            IApplicationErrorLogger applicationErrorLogger,
+            IConfiguration configuration)
         {
             _aiScreeningIntakeService = aiScreeningIntakeService;
             _clientService = clientService;
@@ -43,6 +46,7 @@ namespace Risebird.Web.Controllers
             _interviewSchedulerService = interviewSchedulerService;
             _fileMimeTypeHelper = fileMimeTypeHelper;
             _applicationErrorLogger = applicationErrorLogger;
+            _configuration = configuration;
         }
 
         #region Screen
@@ -62,6 +66,11 @@ namespace Risebird.Web.Controllers
             }
 
             ViewBag.Clients = (await _clientService.GetAllClients())?.ToList();
+
+            // Pre-fill only. Whatever the recruiter submits on the form is what the channel carries.
+            ViewBag.DefaultPrimaryPromptId = _configuration["AIScreening:PrimaryPromptId"];
+            ViewBag.DefaultEvaluatorPromptId = _configuration["AIScreening:EvaluatorPromptId"];
+
             return View(draft);
         }
 
@@ -352,7 +361,8 @@ namespace Risebird.Web.Controllers
         /// </summary>
         [HttpPost]
         public async Task<JsonResult> CreateChannel(
-            string draftId, int clientId, int billingOwner, List<int> clientUserIds)
+            string draftId, int clientId, int billingOwner, List<int> clientUserIds,
+            string primaryPromptId, string evaluatorPromptId)
         {
             if (!IsSignedIn()) return Json(Unauthorized_());
             if (!IsAllowed()) return Json(Forbidden_());
@@ -364,7 +374,9 @@ namespace Risebird.Web.Controllers
                     DraftId = draftId,
                     ClientId = clientId,
                     BillingOwner = billingOwner,
-                    ClientUserIds = clientUserIds ?? new List<int>()
+                    ClientUserIds = clientUserIds ?? new List<int>(),
+                    PrimaryPromptId = primaryPromptId,
+                    EvaluatorPromptId = evaluatorPromptId
                 };
 
                 var result = await _aiScreeningIntakeService.CreateChannelAsync(
