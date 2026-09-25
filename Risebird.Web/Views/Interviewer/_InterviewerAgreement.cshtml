@@ -1,0 +1,353 @@
+@* Interviewer service agreement (My Profile → SERVICE AGREEMENT tab).
+   ZohoSign:SigningMode = Portal   → the interviewer fills in details, draws a signature and signs here.
+   ZohoSign:SigningMode = ZohoSign → the agreement is signed through Zoho Sign. *@
+<style>
+    #agreementSignaturePad { width: 100%; max-width: 520px; height: 160px; border: 1px dashed #9e9e9e; border-radius: 4px; background: #fff; touch-action: none; cursor: crosshair; display: block; }
+    /* The site stylesheet hides native checkboxes (opacity 0 / absolute) for its custom toggles; show this one. */
+    .agreement-agree { display: flex; align-items: flex-start; gap: 10px; font-weight: normal; cursor: pointer; margin-bottom: 12px; padding: 10px 12px; border: 1px solid #dcdcdc; border-radius: 4px; }
+    .agreement-agree.is-checked { border-color: #43a047; background: #f1f8f1; }
+    .agreement-agree input#agreementAgree {
+        position: static !important; display: inline-block !important; opacity: 1 !important; visibility: visible !important;
+        width: 20px !important; height: 20px !important; min-width: 20px; margin: 2px 0 0 0 !important;
+        -webkit-appearance: checkbox !important; appearance: auto !important; accent-color: #43a047; cursor: pointer;
+    }
+</style>
+<div class="tab-box" id="tab-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h4 class="info-text" style="text-align:left;">Service Agreement for Interviewer Onboarding</h4>
+            <p class="text-muted">
+                Please read the Risebird interviewer service agreement below and sign it. A signed copy is stored against your profile.
+            </p>
+
+            <div id="agreementStatusBox"><p class="text-muted">Loading agreement status...</p></div>
+
+            <div id="agreementPreviewBox" style="display:none; border:1px solid #dcdcdc; border-radius:4px; margin-bottom:16px;">
+                <iframe id="agreementPreview" title="Service Agreement" style="width:100%; height:70vh; border:0;"></iframe>
+            </div>
+
+            @* Portal signing *@
+            <div id="agreementPortalForm" style="display:none;">
+                <h5 style="margin-top:0;">Sign the agreement</h5>
+                <p class="text-muted">These details are printed on the agreement exactly as you enter them. Please use English letters.</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="agreementFullName">Interviewer Full Name <span class="text-danger">*</span></label>
+                            <input type="text" id="agreementFullName" class="form-control" maxlength="150" autocomplete="name" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="agreementFatherName">Father's / Guardian's Name <span class="text-danger">*</span></label>
+                            <input type="text" id="agreementFatherName" class="form-control" maxlength="150" autocomplete="off" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="agreementAddress">Residential Address with PIN code <span class="text-danger">*</span></label>
+                            <input type="text" id="agreementAddress" class="form-control" maxlength="150" autocomplete="street-address"
+                                   placeholder="House / street, city, state - 6-digit PIN" />
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Signature <span class="text-danger">*</span></label>
+                            <canvas id="agreementSignaturePad"></canvas>
+                            <small class="text-muted">Draw your signature with the mouse or your finger.</small>
+                            <button type="button" id="btnClearSignature" class="mdc-button mdc-ripple-upgraded" style="margin-left:8px;">Clear</button>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="agreement-agree" for="agreementAgree">
+                            <input type="checkbox" id="agreementAgree" />
+                            <span>
+                                I have read and understood the Service Agreement and agree to be bound by its terms. I confirm that
+                                the details above are correct and that the signature above is my electronic signature.
+                            </span>
+                        </label>
+                        <button type="button" id="btnPortalSign" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Sign Agreement</button>
+                        <span id="agreementPortalStatus" class="ml-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            @* Zoho Sign *@
+            <div id="agreementZohoStart" style="display:none;">
+                <p class="text-muted">
+                    When you click Review &amp; Sign, you will fill in your name, father's / guardian's name and address on the agreement and sign it.
+                </p>
+                <button type="button" id="btnGenerateAgreement" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Review &amp; Sign Agreement</button>
+                <span id="agreementStartStatus" class="ml-2"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ── Service agreement ───────────────────────────────────────────────
+    (function ($) {
+        var statusUrl = '@Url.Action("Status", "InterviewerAgreement")';
+        var initiateUrl = '@Url.Action("Initiate", "InterviewerAgreement")';
+        var portalSignUrl = '@Url.Action("SignInPortal", "InterviewerAgreement")';
+        var signUrl = '@Url.Action("Sign", "InterviewerAgreement")';
+        var downloadUrl = '@Url.Action("Download", "InterviewerAgreement")';
+        var documentUrl = '@Url.Action("Document", "InterviewerAgreement")';
+        var resendUrl = '@Url.Action("Resend", "InterviewerAgreement")';
+        var loaded = false;
+
+        function esc(value) {
+            return $('<div/>').text(value == null ? '' : value).html();
+        }
+
+        function token() {
+            return $('input[name="__RequestVerificationToken"]').first().val();
+        }
+
+        function showPreview() {
+            var $preview = $('#agreementPreview');
+            if (!$preview.attr('src')) $preview.attr('src', documentUrl + '#view=FitH');
+            $('#agreementPreviewBox').show();
+        }
+
+        function render(a) {
+            var $box = $('#agreementStatusBox');
+            $('#agreementPreviewBox, #agreementPortalForm, #agreementZohoStart').hide();
+
+            if (a && a.isSigned) {
+                $box.html('<p class="text-success"><strong>Agreement signed</strong>'
+                    + (a.signerName ? ' by ' + esc(a.signerName) : '')
+                    + (a.completedOn ? ' on ' + esc(a.completedOn) + ' IST' : '') + '.</p>'
+                    + '<a class="mdc-button mdc-button--raised mdc-ripple-upgraded" target="_blank" href="' + downloadUrl + '">View signed agreement</a>');
+                return;
+            }
+
+            var portal = !a || a.mode === 'Portal';
+            if (portal) {
+                $box.html('<p class="text-warning">Agreement not signed yet. Please read it and sign below.</p>');
+                showPreview();
+                $('#agreementPortalForm').show();
+                resizeSignaturePad();
+                return;
+            }
+
+            // Zoho Sign
+            if (a.status === 'InterviewerSigned') {
+                $box.html('<p class="text-success"><strong>You signed the agreement</strong>'
+                    + (a.signedOn ? ' on ' + esc(a.signedOn) + ' IST' : '')
+                    + '. It is awaiting Risebird\'s countersignature; the signed copy will appear here once complete.</p>');
+                return;
+            }
+            if (a.canSign && a.signByEmail) {
+                $box.html('<p class="text-warning">Your agreement was sent'
+                    + (a.sentOn ? ' on ' + esc(a.sentOn) + ' IST' : '') + ' to <strong>' + esc(a.email) + '</strong> from Zoho Sign '
+                    + 'and is waiting for your signature. Open that email, fill in your details on the agreement and sign it.</p>'
+                    + '<button type="button" id="btnResendAgreement" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Resend email</button> '
+                    + '<button type="button" id="btnRefreshAgreement" class="mdc-button mdc-ripple-upgraded">I have signed - refresh status</button>'
+                    + '<span id="agreementResendStatus" class="ml-2"></span>');
+                return;
+            }
+            if (a.canSign) {
+                $box.html('<p class="text-warning">Your agreement was generated'
+                    + (a.sentOn ? ' on ' + esc(a.sentOn) + ' IST' : '') + ' and is waiting for your signature.</p>'
+                    + '<a class="mdc-button mdc-button--raised mdc-ripple-upgraded" href="' + signUrl + '">Continue to sign</a>');
+                return;
+            }
+            var note = '<p class="text-warning">Agreement not signed yet.</p>';
+            if (a.status === 'Declined') {
+                note = '<p class="text-danger">You declined the agreement' + (a.declineReason ? ' (' + esc(a.declineReason) + ')' : '')
+                    + '. You can review and sign it again.</p>';
+            } else if (a.status === 'Expired' || a.status === 'Recalled') {
+                note = '<p class="text-danger">The previous agreement link is no longer valid (' + esc(a.status.toLowerCase()) + '). Please review and sign it again.</p>';
+            }
+            $box.html(note);
+            showPreview();
+            $('#agreementZohoStart').show();
+        }
+
+        function load() {
+            loaded = true;
+            $.get(statusUrl).done(function (res) {
+                if (res && res.success) {
+                    render(res.agreement);
+                } else {
+                    $('#agreementStatusBox').html('<p class="text-danger">' + esc(res && res.message || 'Could not load the agreement status.') + '</p>');
+                }
+            }).fail(function () {
+                $('#agreementStatusBox').html('<p class="text-danger">Could not load the agreement status. Please refresh the page.</p>');
+            });
+        }
+
+        // ── Signature pad (portal signing) ──
+        var pad = document.getElementById('agreementSignaturePad');
+        var ctx = pad.getContext('2d');
+        var drawing = false, hasInk = false, last = null;
+        var bounds = null;   // drawn area, in canvas pixels, for cropping
+
+        function resizeSignaturePad() {
+            var ratio = window.devicePixelRatio || 1;
+            var width = pad.clientWidth || 520;
+            if (pad.width === Math.round(width * ratio)) return;
+            pad.width = Math.round(width * ratio);
+            pad.height = Math.round(160 * ratio);
+            ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+            clearSignature();
+        }
+
+        function clearSignature() {
+            ctx.clearRect(0, 0, pad.width, pad.height);
+            hasInk = false;
+            bounds = null;
+        }
+
+        function point(e) {
+            var rect = pad.getBoundingClientRect();
+            return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        }
+
+        function extend(p) {
+            var ratio = window.devicePixelRatio || 1, x = p.x * ratio, y = p.y * ratio;
+            bounds = bounds
+                ? { minX: Math.min(bounds.minX, x), minY: Math.min(bounds.minY, y), maxX: Math.max(bounds.maxX, x), maxY: Math.max(bounds.maxY, y) }
+                : { minX: x, minY: y, maxX: x, maxY: y };
+        }
+
+        pad.addEventListener('pointerdown', function (e) {
+            drawing = true;
+            last = point(e);
+            extend(last);
+            pad.setPointerCapture(e.pointerId);
+        });
+        pad.addEventListener('pointermove', function (e) {
+            if (!drawing) return;
+            var p = point(e);
+            ctx.strokeStyle = '#0b1f5c';
+            ctx.lineWidth = 2.2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            ctx.moveTo(last.x, last.y);
+            ctx.lineTo(p.x, p.y);
+            ctx.stroke();
+            last = p;
+            extend(p);
+            hasInk = true;
+        });
+        ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (name) {
+            pad.addEventListener(name, function () { drawing = false; });
+        });
+        window.addEventListener('resize', function () { if ($(pad).is(':visible') && !hasInk) resizeSignaturePad(); });
+        $('#btnClearSignature').on('click', clearSignature);
+        $('#agreementAgree').on('change', function () {
+            $(this).closest('.agreement-agree').toggleClass('is-checked', this.checked);
+            if (this.checked) $('#agreementPortalStatus').removeClass('text-danger').text('');
+        });
+
+        // PNG of the drawn area only, so the signature fills the signature box on the agreement.
+        function signatureDataUrl() {
+            var margin = 8, b = bounds;
+            var x = Math.max(0, Math.floor(b.minX - margin)), y = Math.max(0, Math.floor(b.minY - margin));
+            var w = Math.min(pad.width, Math.ceil(b.maxX + margin)) - x, h = Math.min(pad.height, Math.ceil(b.maxY + margin)) - y;
+            var out = document.createElement('canvas');
+            out.width = w;
+            out.height = h;
+            out.getContext('2d').drawImage(pad, x, y, w, h, 0, 0, w, h);
+            return out.toDataURL('image/png');
+        }
+
+        $('#btnPortalSign').on('click', function () {
+            var fullName = $.trim($('#agreementFullName').val());
+            var fatherName = $.trim($('#agreementFatherName').val());
+            var address = $.trim($('#agreementAddress').val());
+            var $status = $('#agreementPortalStatus').removeClass('text-danger text-success');
+            var fail = function (msg) { $status.addClass('text-danger').text(msg); };
+
+            if (fullName.length < 2) return fail('Please enter your full name.');
+            if (fatherName.length < 2) return fail("Please enter your father's / guardian's name.");
+            if (!/\b\d{6}\b/.test(address)) return fail('Please enter your full address with a 6-digit PIN code.');
+            if (!hasInk || !bounds || (bounds.maxX - bounds.minX) < 20) return fail('Please draw your signature in the box.');
+            if (!$('#agreementAgree').is(':checked')) return fail('Please confirm that you have read and agree to the agreement.');
+
+            var $btn = $(this).prop('disabled', true);
+            $status.text('Signing your agreement...');
+            $.post(portalSignUrl, {
+                fullName: fullName,
+                fatherName: fatherName,
+                address: address,
+                signature: signatureDataUrl(),
+                agree: true,
+                __RequestVerificationToken: token()
+            }).done(function (res) {
+                if (res && res.success) {
+                    render(res.agreement);
+                    if (window.swal && swal.fire) swal.fire('Service Agreement', res.message, 'success');
+                    return;
+                }
+                fail(res && res.message || 'The agreement could not be signed.');
+                $btn.prop('disabled', false);
+            }).fail(function () {
+                fail('The agreement could not be signed. Please try again later.');
+                $btn.prop('disabled', false);
+            });
+        });
+
+        // Enter inside these fields must not submit the surrounding profile form.
+        $('#agreementFullName, #agreementFatherName, #agreementAddress').on('keydown', function (e) { if (e.key === 'Enter') e.preventDefault(); });
+
+        // ── Zoho Sign ──
+        $('#btnGenerateAgreement').on('click', function () {
+            var $status = $('#agreementStartStatus').removeClass('text-danger text-success');
+            var $btn = $(this).prop('disabled', true);
+            $status.text('Preparing your agreement...');
+            $.post(initiateUrl, { __RequestVerificationToken: token() }).done(function (res) {
+                if (res && res.success && res.signUrl) {
+                    $status.addClass('text-success').text('Opening Zoho Sign...');
+                    window.location.href = res.signUrl;
+                    return;
+                }
+                if (res && res.success) {
+                    render(res.agreement);
+                    if (window.swal && swal.fire) swal.fire('Service Agreement', res.message, 'success');
+                    return;
+                }
+                if (res && res.agreement) render(res.agreement);
+                $status.addClass('text-danger').text(res && res.message || 'The agreement could not be generated.');
+                $btn.prop('disabled', false);
+            }).fail(function () {
+                $status.addClass('text-danger').text('The agreement could not be generated. Please try again later.');
+                $btn.prop('disabled', false);
+            });
+        });
+
+        $('#agreementStatusBox').on('click', '#btnResendAgreement', function () {
+            var $btn = $(this).prop('disabled', true);
+            var $status = $('#agreementResendStatus').removeClass('text-danger text-success').text('Sending...');
+            $.post(resendUrl, { __RequestVerificationToken: token() }).done(function (res) {
+                $status.addClass(res && res.success ? 'text-success' : 'text-danger').text(res && res.message || 'Could not resend the email.');
+            }).fail(function () {
+                $status.addClass('text-danger').text('Could not resend the email. Please try again later.');
+            }).always(function () {
+                $btn.prop('disabled', false);
+            });
+        });
+        $('#agreementStatusBox').on('click', '#btnRefreshAgreement', function () {
+            $('#agreementStatusBox').html('<p class="text-muted">Checking status with Zoho Sign...</p>');
+            load();
+        });
+
+        $('.tab-menu li a[data-rel="tab-4"]').on('click', function () {
+            if (!loaded) load();
+        });
+
+        var agreementMessage = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["AgreementMessage"] as string));
+        if (agreementMessage || /[?&]tab=agreement\b/.test(window.location.search)) {
+            $(function () {
+                // Native click: the page loads a second jQuery copy later, and the generic tab
+                // handler is bound on that one, so a jQuery trigger would not reach it.
+                var tabLink = document.querySelector('.tab-menu li a[data-rel="tab-4"]');
+                if (tabLink) tabLink.click();
+                if (agreementMessage && window.swal && swal.fire) swal.fire('Service Agreement', agreementMessage, 'info');
+            });
+        }
+    })(window.jQuery);
+</script>
