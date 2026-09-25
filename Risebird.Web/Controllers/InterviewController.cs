@@ -78,6 +78,10 @@ namespace Risebird.Web.Controllers
         private readonly IDmIvChannelDeactivationService _dmIvChannelDeactivationService;
         private readonly IAICodeInterviewService _aiCodeInterviewService;
         private readonly IWebHostEnvironment _env;
+
+        private readonly IAIScreeningRepository _aiScreeningRepository;
+
+        private readonly IAIInterviewerRepository _aiInterviewerRepository;
         //private static List<MeetingVM> _modelDetails;
         //private static List<Meeting> _modelDetail;
         //private static string Searchvalue;
@@ -96,9 +100,14 @@ namespace Risebird.Web.Controllers
             IServiceProvider serviceProvider, IHttpContextAccessor contextAccessor,
             IConverter converter, IAssistantServiceHelper assistantServiceHelper, IEncryptionHelper encryptionHelper, IActivityTrackerService activityTrackerService,
             IReportQCOptimizationHelper reportQCOptimizationHelper, IDmIvChannelDeactivationService dmIvChannelDeactivationService,
-            IAICodeInterviewService aiCodeInterviewService, IWebHostEnvironment env)//IConverter converter,
+            IAICodeInterviewService aiCodeInterviewService, IWebHostEnvironment env,
+            IAIScreeningRepository aiScreeningRepository, IAIInterviewerRepository aiInterviewerRepository)//IConverter converter,
         {
             _meetingService = meetingService;
+
+            _aiScreeningRepository = aiScreeningRepository;
+
+            _aiInterviewerRepository = aiInterviewerRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
             _skillService = skillService;
@@ -8010,6 +8019,9 @@ namespace Risebird.Web.Controllers
 
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
                 await ReportSkillSetandSeperate(model);
+                // After the split, so the two sections are already separated when the evaluator's
+                // marks are mapped onto them. No-op unless this is an AI screening channel.
+                await ApplyAIScreeningReportAsync(model, irfId);
                 if (model == null)
                 {
                     if (isAdminHR)
@@ -10074,6 +10086,72 @@ namespace Risebird.Web.Controllers
             model.QuestionsCollection = model.QuestionsCollection?.Where(x => x.SkillSet != 2).ToList();
             model.TechSkillTwoReportCollection = model.TechSkillReportCollection?.Where(x => x.SkillSet == 2).ToList();
             model.TechSkillReportCollection = model.TechSkillReportCollection?.Where(x => x.SkillSet != 2).ToList();
+        }
+
+        /// <summary>
+        /// Fills in the scored half of an AI screening report.
+        ///
+        /// The rubric side already reaches the report from the channel; what is missing is the
+        /// evaluator's marks. This reads the stored evaluation and maps it onto the same
+        /// InterviewReport the report screens already render, so no second view is needed.
+        ///
+        /// Gated on IRF.IsAIAudioScreening, so an expert channel takes none of this and keeps the
+        /// report it renders today. Every failure path leaves the model exactly as it was.
+        /// </summary>
+        private async Task ApplyAIScreeningReportAsync(InterviewReport model, int irfId)
+        {
+            if (model == null || irfId <= 0) return;
+
+            try
+            {
+                if (!await _aiScreeningRepository.IsAIScreeningChannel(irfId)) return;
+
+                model.IsAIAudioScreening = true;
+
+                var raw = await _aiInterviewerRepository.GetReportOfAIInterviewByInterviewId(model.InterviewId);
+                if (string.IsNullOrWhiteSpace(raw)) return;
+
+                // The stored payload is either the evaluation itself or the wrapper the AI report
+                // endpoints persist, whose first reply carries it.
+                var evaluation = AIInterviewEvaluation.TryParse(raw)
+                                 ?? AIInterviewEvaluation.TryParse(ExtractFirstReply(raw));
+                if (evaluation == null) return;
+
+                var scores = AIScreeningReportMapper.Apply(model, evaluation);
+                if (scores == null) return;
+
+                model.ScreeningScores = scores;
+
+                if (scores.OverallDisagreesWithModel)
+                {
+                    // The displayed figure is the computed one. A disagreement means the evaluator's
+                    // own arithmetic differs from the rubric, which is worth knowing about.
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Warning,
+                        $"AI screening report for interview {model.InterviewId}: computed overall " +
+                        $"{scores.OverallScore} differs from the model's {scores.ModelReportedOverallScore}. " +
+                        "The computed value is displayed.");
+                }
+            }
+            catch (Exception ex)
+            {
+                // A report that renders without the screening block beats a report that does not render.
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        /// <summary>Pulls the first reply out of a persisted InterviewReportResult wrapper.</summary>
+        private static string ExtractFirstReply(string raw)
+        {
+            try
+            {
+                var wrapper = JsonConvert.DeserializeObject<InterviewReportResult>(raw);
+                return wrapper?.Replies?.FirstOrDefault();
+            }
+            catch
+            {
+                return null;
+            }
         }
         #endregion
 

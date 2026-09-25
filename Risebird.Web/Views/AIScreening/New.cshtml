@@ -5,6 +5,8 @@
 @{
     ViewData["Title"] = "New AI screening";
     var clients = ViewBag.Clients as List<Risebird.Entities.Data.Client>;
+    var defaultPrimaryPromptId = ViewBag.DefaultPrimaryPromptId as string;
+    var defaultEvaluatorPromptId = ViewBag.DefaultEvaluatorPromptId as string;
 }
 
 <div class="ais-wrap" data-draft-id="@Model.DraftId">
@@ -103,7 +105,26 @@
     @* ---------------- Step 4 : create ---------------- *@
     <section class="ais-panel" data-panel="4" style="display:none;">
         <h3 class="ais-h3">Create screening channel</h3>
-        <p class="ais-sub">Channel creation needs a client, a client user and a billing owner.</p>
+        <p class="ais-sub">Channel creation needs a client, a client user, a billing owner and the prompts that run the interview.</p>
+
+        @* The same two prompt ids a skill channel already carries, used the same way: the Primary
+           Prompt Id conducts the adaptive interview, the Interview Evaluator Prompt Id writes the
+           report. They land on IRF.OpenAIPromptId and IRF.OpenAIEvaluatorPromptId. *@
+        <div class="ais-grid">
+            <div class="ais-field">
+                <label class="ais-label">Primary Prompt Id *</label>
+                <input type="text" id="aisPrimaryPromptId" class="ais-input" placeholder="pmpt_…"
+                       value="@defaultPrimaryPromptId" />
+                <div class="ais-hint">Conducts the interview. Mandatory for an AI interview channel.</div>
+            </div>
+
+            <div class="ais-field">
+                <label class="ais-label">Interview Evaluator Prompt Id</label>
+                <input type="text" id="aisEvaluatorPromptId" class="ais-input" placeholder="pmpt_…"
+                       value="@defaultEvaluatorPromptId" />
+                <div class="ais-hint">Writes the candidate's report. Leave blank and the primary prompt writes it too.</div>
+            </div>
+        </div>
 
         <div class="ais-grid">
             <div class="ais-field">
@@ -162,7 +183,7 @@
     .ais-sub { margin: 0 0 16px; color: #6b7684; font-size: 13px; }
     .ais-field { margin-bottom: 18px; }
     .ais-label { display: block; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #6b7684; margin-bottom: 7px; }
-    .ais-textarea, .ais-select, .ais-file { width: 100%; border: 1px solid #dde3ea; border-radius: 6px; padding: 10px 12px; font: inherit; color: inherit; background: #fff; }
+    .ais-textarea, .ais-select, .ais-file, .ais-input { width: 100%; border: 1px solid #dde3ea; border-radius: 6px; padding: 10px 12px; font: inherit; color: inherit; background: #fff; }
     .ais-textarea { resize: vertical; }
     .ais-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
     .ais-spacer { flex: 1 1 auto; }
@@ -545,14 +566,27 @@
 
         if (!clientId) { alertBox("Select a client.", "error"); return; }
 
+        var primaryPromptId = $("aisPrimaryPromptId").value.trim();
+        if (!primaryPromptId) {
+            // Mandatory server-side for an AI interview channel, so catching it here saves a round trip.
+            alertBox("Enter the Primary Prompt Id that runs the interview.", "error");
+            $("aisPrimaryPromptId").focus();
+            return;
+        }
+
         var selected = Array.prototype.filter.call($("aisClientUsers").options, function (o) { return o.selected; })
             .map(function (o) { return o.value; });
 
         // Creation is idempotent on draft id server-side; the button is disabled here anyway.
         busy(button, true, "Creating…");
 
-        var body = form({ draftId: draftId, clientId: clientId, billingOwner: $("aisBillingOwner").value || 0 }) +
-            selected.map(function (id) { return "&clientUserIds=" + encodeURIComponent(id); }).join("");
+        var body = form({
+            draftId: draftId,
+            clientId: clientId,
+            billingOwner: $("aisBillingOwner").value || 0,
+            primaryPromptId: primaryPromptId,
+            evaluatorPromptId: $("aisEvaluatorPromptId").value.trim()
+        }) + selected.map(function (id) { return "&clientUserIds=" + encodeURIComponent(id); }).join("");
 
         post("/AIScreening/CreateChannel", body)
             .then(function (res) {

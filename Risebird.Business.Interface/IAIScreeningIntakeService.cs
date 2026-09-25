@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 
 namespace Risebird.Business.Interface
