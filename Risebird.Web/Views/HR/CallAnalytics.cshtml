@@ -1,0 +1,248 @@
+@model List<Risebird.Entities.ViewModel.CallAnalyticsSummaryVM>
+@{
+    ViewData["Title"] = "Call Analytics";
+    ViewBag.PageHeader = "Call Analytics";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string type = ViewBag.Type;
+    string from = ViewBag.From;
+    string to = ViewBag.To;
+
+    int totalCalls = Model.Sum(x => x.TotalCalls);
+    int totalCandidate = Model.Sum(x => x.CandidateCalls);
+    int totalInterviewer = Model.Sum(x => x.InterviewerCalls);
+    int totalOther = Model.Sum(x => x.OtherCalls);
+    int totalRecorded = Model.Sum(x => x.CallsWithRecording);
+    int totalSeconds = Model.Sum(x => x.TotalDurationSeconds);
+
+    Func<int, string> fmt = s => s >= 3600
+        ? string.Format("{0}h {1:00}m", s / 3600, (s % 3600) / 60)
+        : string.Format("{0}m {1:00}s", s / 60, s % 60);
+    Func<int, int, int> pct = (part, whole) => whole == 0 ? 0 : (int)Math.Round(part * 100.0 / whole);
+    Func<string, string> initial = s => string.IsNullOrWhiteSpace(s) ? "?" : s.Trim().Substring(0, 1).ToUpper();
+}
+<script>
+    var Header = "<div>Call Analytics</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<style>
+    /* All rules scoped to .cax-page so site-wide table/.num styles cannot interfere */
+    .cax-page { --cax-blue: #2196f3; --cax-blue-soft: #e3f2fd; --cax-green: #2e7d32; --cax-green-soft: #e8f5e9;
+                --cax-amber: #b26a00; --cax-amber-soft: #fff4e0; --cax-grey: #5f6b7a; --cax-grey-soft: #eef1f5;
+                --cax-border: #e4e8ee; --cax-text: #1f2a37; --cax-muted: #6b7686; font-family: Roboto, sans-serif; color: var(--cax-text); }
+
+    .cax-page .cax-toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; justify-content: space-between; margin-bottom: 16px; }
+    .cax-page .cax-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+    .cax-page .cax-filters label { display: block; font-size: 11px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--cax-muted); margin: 4px 0px; }
+    .cax-page .cax-filters .form-control { height: 36px; min-width: 150px; border: 1px solid var(--cax-border); border-radius: 6px; background: #fff; font-size: 13px; }
+
+    .cax-page .cax-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 18px; }
+    .cax-page .cax-tile { background: #fff; border: 1px solid var(--cax-border); border-radius: 8px; padding: 12px 14px; }
+    .cax-page .cax-tile-label { font-size: 12px; color: var(--cax-muted); }
+    .cax-page .cax-tile-value { font-size: 24px; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .cax-page .cax-tile-sub { font-size: 11px; color: var(--cax-muted); margin-top: 2px; }
+
+    .cax-page .cax-card { background: #fff; border: 1px solid var(--cax-border); border-radius: 8px; overflow: hidden; }
+    .cax-page .cax-card-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--cax-border); }
+    .cax-page .cax-card-title { font-size: 15px; font-weight: 600; margin: 0; }
+    .cax-page .cax-card-sub { font-size: 12px; color: var(--cax-muted); }
+    .cax-page .cax-table-wrap { padding: 4px 12px 12px; overflow-x: auto; }
+
+    .cax-page table.cax-table { width: 100% !important; border: 0 !important; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+    .cax-page table.cax-table thead th { background: #f7f9fb !important; color: var(--cax-muted); font-size: 11px; font-weight: 600 !important; letter-spacing: .04em;
+                                         text-transform: uppercase; padding: 10px 12px !important; border: 0 !important; border-bottom: 1px solid var(--cax-border) !important; white-space: nowrap; }
+    .cax-page table.cax-table tbody td { padding: 12px !important; border: 0 !important; border-bottom: 1px solid #f0f2f5 !important; vertical-align: middle !important; background: #fff; }
+    .cax-page table.cax-table tbody tr:hover td { background: #f7fbff; }
+    .cax-page table.cax-table .cax-right { text-align: right; }
+    .cax-page table.cax-table .cax-center { text-align: center; }
+
+    .cax-page .cax-user { display: flex; align-items: center; gap: 10px; min-width: 220px; }
+    .cax-page .cax-avatar { flex: 0 0 34px; width: 34px; height: 34px; border-radius: 50%; background: var(--cax-blue-soft); color: #1565c0;
+                            display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; }
+    .cax-page .cax-user-name { font-weight: 500; word-break: break-all; }
+    .cax-page .cax-user-meta { font-size: 11px; color: var(--cax-muted); margin-top: 2px; }
+
+    .cax-page .cax-big { font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .cax-page .cax-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .cax-page .cax-pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+    .cax-page .cax-pill b { font-weight: 600; font-variant-numeric: tabular-nums; }
+    .cax-page .cax-pill-cand { background: var(--cax-blue-soft); color: #1565c0; }
+    .cax-page .cax-pill-int { background: var(--cax-green-soft); color: var(--cax-green); }
+    .cax-page .cax-pill-oth { background: var(--cax-grey-soft); color: var(--cax-grey); }
+    .cax-page .cax-split { display: flex; height: 4px; border-radius: 2px; overflow: hidden; background: var(--cax-grey-soft); margin-top: 7px; max-width: 220px; }
+    .cax-page .cax-split span { display: block; height: 100%; }
+    .cax-page .cax-split .c { background: #64b5f6; } .cax-page .cax-split .i { background: #81c784; } .cax-page .cax-split .o { background: #b0bac6; }
+
+    .cax-page .cax-rec { min-width: 120px; }
+    .cax-page .cax-rec-text { font-size: 12px; color: var(--cax-muted); }
+    .cax-page .cax-rec-text b { color: var(--cax-text); font-variant-numeric: tabular-nums; }
+    .cax-page .cax-bar { height: 4px; border-radius: 2px; background: var(--cax-grey-soft); margin-top: 6px; overflow: hidden; }
+    .cax-page .cax-bar span { display: block; height: 100%; background: var(--cax-blue); }
+
+    .cax-page .cax-time { font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .cax-page .cax-view { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--cax-blue);
+                          color: var(--cax-blue); font-size: 12px; font-weight: 500; text-decoration: none; white-space: nowrap; }
+    .cax-page .cax-view:hover { background: var(--cax-blue); color: #fff; text-decoration: none; }
+    .cax-page .cax-empty { text-align: center; padding: 40px 16px; color: var(--cax-muted); }
+    .cax-page .cax-empty i { font-size: 28px; color: #c5ccd6; display: block; margin-bottom: 8px; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="jumbotron">
+        <div class="pt30">
+            <div class="col-md-12 nopad" style="margin:0px;">
+                <div class="card-header bg-w clearfix">
+                    <div class="pull-left">
+                        <div class="mobile-view"> <h4 class="card-title">Call Analytics</h4></div>
+                    </div>
+                    <div class="pull-right client-ms">
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" onclick="location.href='@Url.Action("CallRecordingsDetails", "HR", new { type = "Candidate" })'">
+                            <font style="font-family: Roboto, sans-serif; font-size:12px;">Call Recordings</font>
+                        </button>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" onclick="location.href='@Url.Action("CallCatalogue", "HR", new { type = "Candidate" })'">
+                            <font style="font-family: Roboto, sans-serif; font-size:12px;">Call Catalogue</font>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="cax-page">
+
+                        <div class="cax-toolbar">
+                            <form method="get" action="/HR/CallAnalytics" class="cax-filters">
+                                <div>
+                                    <label for="caxFrom">From</label>
+                                    <input id="caxFrom" name="from" type="date" class="form-control" value="@from" />
+                                </div>
+                                <div>
+                                    <label for="caxTo">To</label>
+                                    <input id="caxTo" name="to" type="date" class="form-control" value="@to" />
+                                </div>
+                                <div>
+                                    <label for="caxType">Recipient</label>
+                                    <select id="caxType" name="type" class="form-control">
+                                        <option value="All" selected="@(type == "All")">All recipients</option>
+                                        <option value="Candidate" selected="@(type == "Candidate")">Candidates</option>
+                                        <option value="Interviewer" selected="@(type == "Interviewer")">Interviewers</option>
+                                        <option value="Other" selected="@(type == "Other")">Others</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded"><font style="font-size:12px;">Apply</font></button>
+                                    <button type="button" class="mdc-button mdc-button--outlined mdc-ripple-upgraded" onclick="location.href='/HR/CallAnalytics'"><font style="font-size:12px;">Reset</font></button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="cax-tiles">
+                            <div class="cax-tile"><div class="cax-tile-label">Total calls</div><div class="cax-tile-value">@totalCalls</div><div class="cax-tile-sub">@from to @to</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">Users calling</div><div class="cax-tile-value">@Model.Count</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">To candidates</div><div class="cax-tile-value">@totalCandidate</div><div class="cax-tile-sub">@pct(totalCandidate, totalCalls)% of calls</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">To interviewers</div><div class="cax-tile-value">@totalInterviewer</div><div class="cax-tile-sub">@pct(totalInterviewer, totalCalls)% of calls</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">To others</div><div class="cax-tile-value">@totalOther</div><div class="cax-tile-sub">@pct(totalOther, totalCalls)% of calls</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">With recording</div><div class="cax-tile-value">@totalRecorded</div><div class="cax-tile-sub">@pct(totalRecorded, totalCalls)% of calls</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">Talk time</div><div class="cax-tile-value">@fmt(totalSeconds)</div></div>
+                        </div>
+
+                        <div class="cax-card">
+                            <div class="cax-card-head">
+                                <div>
+                                    <h5 class="cax-card-title">Calls by user</h5>
+                                    <div class="cax-card-sub">Click “View calls” to open a user’s calls and recordings in a new tab</div>
+                                </div>
+                            </div>
+
+                            @if (Model.Count > 0)
+                            {
+                                <div class="cax-table-wrap">
+                                    <table id="callAnalyticsTable" class="cax-table" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>User</th>
+                                                <th class="cax-right">Total calls</th>
+                                                <th>Recipients</th>
+                                                <th>Recordings</th>
+                                                <th class="cax-right">Talk time</th>
+                                                <th class="cax-center"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model)
+                                            {
+                                                var recPct = pct(item.CallsWithRecording, item.TotalCalls);
+                                                <tr>
+                                                    <td data-order="@item.Caller">
+                                                        <div class="cax-user">
+                                                            <div class="cax-avatar">@initial(item.Caller)</div>
+                                                            <div>
+                                                                <div class="cax-user-name">@(string.IsNullOrWhiteSpace(item.Caller) ? "(unknown)" : item.Caller)</div>
+                                                                <div class="cax-user-meta">Last call @(item.LastCallOn?.ToString("dd MMM yyyy, HH:mm"))</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="cax-right" data-order="@item.TotalCalls"><span class="cax-big">@item.TotalCalls</span></td>
+                                                    <td data-order="@item.CandidateCalls">
+                                                        <div class="cax-pills">
+                                                            <span class="cax-pill cax-pill-cand" title="Candidate calls"><b>@item.CandidateCalls</b> Candidate</span>
+                                                            <span class="cax-pill cax-pill-int" title="Interviewer calls"><b>@item.InterviewerCalls</b> Interviewer</span>
+                                                            <span class="cax-pill cax-pill-oth" title="Other calls"><b>@item.OtherCalls</b> Others</span>
+                                                        </div>
+                                                        <div class="cax-split" aria-hidden="true">
+                                                            <span class="c" style="width:@pct(item.CandidateCalls, item.TotalCalls)%"></span>
+                                                            <span class="i" style="width:@pct(item.InterviewerCalls, item.TotalCalls)%"></span>
+                                                            <span class="o" style="width:@pct(item.OtherCalls, item.TotalCalls)%"></span>
+                                                        </div>
+                                                    </td>
+                                                    <td data-order="@item.CallsWithRecording">
+                                                        <div class="cax-rec">
+                                                            <div class="cax-rec-text"><b>@item.CallsWithRecording</b> of @item.TotalCalls · @recPct%</div>
+                                                            <div class="cax-bar"><span style="width:@recPct%"></span></div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="cax-right cax-time" data-order="@item.TotalDurationSeconds">@fmt(item.TotalDurationSeconds)</td>
+                                                    <td class="cax-center">
+                                                        <a class="cax-view" target="_blank" rel="noopener"
+                                                           href="@Url.Action("CallAnalyticsByUser", "HR", new { caller = item.Caller, type = type, from = from, to = to })">
+                                                            View calls <i class="fas fa-external-link-alt"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="cax-empty">
+                                    <i class="fas fa-phone-slash"></i>
+                                    No calls in the selected period. Try a wider From / To date range.
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        if ($.fn.DataTable && $('#callAnalyticsTable tbody tr').length > 0) {
+            $('#callAnalyticsTable').DataTable({
+                order: [[1, 'desc']],
+                pageLength: 25,
+                columnDefs: [{ orderable: false, targets: [5] }],
+                language: { search: "", searchPlaceholder: "Search user" }
+            });
+        }
+    });
+</script>

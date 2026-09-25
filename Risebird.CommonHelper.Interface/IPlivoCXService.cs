@@ -52,5 +52,19 @@ namespace Risebird.CommonHelper.Interface
         /// transcript back to our webhook (it includes the call UUID for resolution).
         /// </summary>
         Task<PhoneScreenMediaResult> FetchCallMediaAsync(string callUuid, string transcriptionCallbackUrl = null);
+
+        /// <summary>
+        /// Recording-only lookup: returns the Plivo recording URL for a call UUID via the
+        /// Recording API, or null when there is no recording yet (it finalises shortly after
+        /// hangup). Unlike <see cref="FetchCallMediaAsync"/> it never calls the Transcription
+        /// API, so it incurs no transcription cost. Never throws.
+        /// </summary>
+        Task<string> GetRecordingUrlAsync(string callUuid);
+
+        /// <summary>
+        /// Recording-only lookup returning URL, recording id and duration (seconds) for a call UUID.
+        /// Same MP3-first choice as <see cref="GetRecordingUrlAsync"/>; no Transcription API call. Never throws.
+        /// </summary>
+        Task<PhoneScreenMediaResult> GetRecordingInfoAsync(string callUuid);
     }
 }

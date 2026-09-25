@@ -17,6 +17,12 @@ namespace Risebird.Entities.Data.PlivoCXModels
         /// <summary>API request ID from the trigger response</summary>
         public string PlivoCXRequestId           { get; set; }
 
+        /// <summary>Plivo voice call UUID (from the hangup event) — key for the Recording API</summary>
+        public string PlivoCallUuid              { get; set; }
+
+        /// <summary>Plivo recording URL for this call (pulled from the Recording API by call UUID)</summary>
+        public string RecordingUrl               { get; set; }
+
         // ── Candidate context (passed as variables to the CX trigger) ───────────
         public string RecipientName              { get; set; }
         public string RecipientPhone             { get; set; }

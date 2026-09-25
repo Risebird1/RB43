@@ -1,0 +1,210 @@
+@model List<Risebird.Entities.ViewModel.CallRecordingDataVM>
+@using Risebird.Web.Controllers
+@{
+    ViewData["Title"] = "Call Analytics";
+    ViewBag.PageHeader = "Call Analytics";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string caller = ViewBag.Caller;
+    string type = ViewBag.Type;
+    string from = ViewBag.From;
+    string to = ViewBag.To;
+    bool showPhone = ViewBag.Profile == "Admin" || ViewBag.Profile == "SupportAdmin";
+
+    Func<string, string> group = t =>
+        string.Equals(t, "Candidate", StringComparison.OrdinalIgnoreCase) ? "Candidate"
+        : string.Equals(t, "Interviewer", StringComparison.OrdinalIgnoreCase) ? "Interviewer"
+        : "Other";
+    Func<int, string> fmt = s => s >= 3600
+        ? string.Format("{0}h {1:00}m", s / 3600, (s % 3600) / 60)
+        : string.Format("{0}m {1:00}s", s / 60, s % 60);
+    Func<int, string> clock = s => string.Format("{0}:{1:00}", s / 60, s % 60);
+    Func<string, string> initial = s => string.IsNullOrWhiteSpace(s) ? "?" : s.Trim().Substring(0, 1).ToUpper();
+
+    int candidateCalls = Model.Count(x => group(x.RecipientProfileType) == "Candidate");
+    int interviewerCalls = Model.Count(x => group(x.RecipientProfileType) == "Interviewer");
+    int otherCalls = Model.Count - candidateCalls - interviewerCalls;
+    int recorded = Model.Count(x => !string.IsNullOrWhiteSpace(x.RecordingUri));
+    int talkSeconds = Model.Sum(x => HRController.ParseDurationSeconds(x.Duration));
+    string typeLabel = type == "All" ? "All recipients" : type == "Other" ? "Others" : type + "s";
+}
+<script>
+    var Header = "<div>Call Analytics</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<style>
+    /* All rules scoped to .cax-page so site-wide table styles cannot interfere */
+    .cax-page { --cax-blue: #2196f3; --cax-blue-soft: #e3f2fd; --cax-green: #2e7d32; --cax-green-soft: #e8f5e9;
+                --cax-grey: #5f6b7a; --cax-grey-soft: #eef1f5; --cax-border: #e4e8ee; --cax-text: #1f2a37; --cax-muted: #6b7686;
+                font-family: Roboto, sans-serif; color: var(--cax-text); }
+
+    .cax-page .cax-profile { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;
+                             background: #fff; border: 1px solid var(--cax-border); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+    .cax-page .cax-profile-main { display: flex; align-items: center; gap: 14px; min-width: 0; }
+    .cax-page .cax-avatar-lg { flex: 0 0 48px; width: 48px; height: 48px; border-radius: 50%; background: var(--cax-blue-soft); color: #1565c0;
+                               display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 20px; }
+    .cax-page .cax-profile-name { font-size: 17px; font-weight: 600; word-break: break-all; }
+    .cax-page .cax-profile-meta { font-size: 12px; color: var(--cax-muted); margin-top: 2px; }
+    .cax-page .cax-stats { display: flex; flex-wrap: wrap; gap: 22px; }
+    .cax-page .cax-stat-label { font-size: 11px; color: var(--cax-muted); text-transform: uppercase; letter-spacing: .04em; }
+    .cax-page .cax-stat-value { font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+    .cax-page .cax-card { background: #fff; border: 1px solid var(--cax-border); border-radius: 8px; overflow: hidden; }
+    .cax-page .cax-card-head { padding: 12px 16px; border-bottom: 1px solid var(--cax-border); }
+    .cax-page .cax-card-title { font-size: 15px; font-weight: 600; margin: 0; }
+    .cax-page .cax-table-wrap { padding: 4px 12px 12px; overflow-x: auto; }
+
+    .cax-page table.cax-table { width: 100% !important; border: 0 !important; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+    .cax-page table.cax-table thead th { background: #f7f9fb !important; color: var(--cax-muted); font-size: 11px; font-weight: 600 !important; letter-spacing: .04em;
+                                         text-transform: uppercase; padding: 10px 12px !important; border: 0 !important; border-bottom: 1px solid var(--cax-border) !important; white-space: nowrap; }
+    .cax-page table.cax-table tbody td { padding: 12px !important; border: 0 !important; border-bottom: 1px solid #f0f2f5 !important; vertical-align: middle !important; background: #fff; }
+    .cax-page table.cax-table tbody tr:hover td { background: #f7fbff; }
+    .cax-page table.cax-table .cax-right { text-align: right; }
+
+    .cax-page .cax-date { font-weight: 500; white-space: nowrap; }
+    .cax-page .cax-sub { font-size: 11px; color: var(--cax-muted); margin-top: 2px; }
+    .cax-page .cax-recipient { display: flex; align-items: center; gap: 10px; min-width: 200px; }
+    .cax-page .cax-avatar { flex: 0 0 30px; width: 30px; height: 30px; border-radius: 50%; background: var(--cax-grey-soft); color: var(--cax-grey);
+                            display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; }
+    .cax-page .cax-recipient-name { word-break: break-all; }
+    .cax-page .cax-pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+    .cax-page .cax-pill-Candidate { background: var(--cax-blue-soft); color: #1565c0; }
+    .cax-page .cax-pill-Interviewer { background: var(--cax-green-soft); color: var(--cax-green); }
+    .cax-page .cax-pill-Other { background: var(--cax-grey-soft); color: var(--cax-grey); }
+    .cax-page .cax-duration { font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .cax-page audio.cax-audio { height: 34px; width: 260px; max-width: 100%; }
+    .cax-page .cax-norec { font-size: 12px; color: #9aa4b2; white-space: nowrap; }
+    .cax-page .cax-empty { text-align: center; padding: 40px 16px; color: var(--cax-muted); }
+    .cax-page .cax-empty i { font-size: 28px; color: #c5ccd6; display: block; margin-bottom: 8px; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="jumbotron">
+        <div class="pt30">
+            <div class="col-md-12 nopad" style="margin:0px;">
+                <div class="card-header bg-w clearfix">
+                    <div class="pull-left">
+                        <div class="mobile-view"> <h4 class="card-title">Call Analytics</h4></div>
+                    </div>
+                    <div class="pull-right client-ms">
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" onclick="location.href='@Url.Action("CallAnalytics", "HR", new { type = type, from = from, to = to })'">
+                            <font style="font-family: Roboto, sans-serif; font-size:12px;">All users</font>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="cax-page">
+
+                        <div class="cax-profile">
+                            <div class="cax-profile-main">
+                                <div class="cax-avatar-lg">@initial(caller)</div>
+                                <div>
+                                    <div class="cax-profile-name">@(string.IsNullOrWhiteSpace(caller) ? "(unknown)" : caller)</div>
+                                    <div class="cax-profile-meta">@from to @to · @typeLabel</div>
+                                </div>
+                            </div>
+                            <div class="cax-stats">
+                                <div><div class="cax-stat-label">Calls</div><div class="cax-stat-value">@Model.Count</div></div>
+                                <div><div class="cax-stat-label">Candidate</div><div class="cax-stat-value">@candidateCalls</div></div>
+                                <div><div class="cax-stat-label">Interviewer</div><div class="cax-stat-value">@interviewerCalls</div></div>
+                                <div><div class="cax-stat-label">Others</div><div class="cax-stat-value">@otherCalls</div></div>
+                                <div><div class="cax-stat-label">Recorded</div><div class="cax-stat-value">@recorded</div></div>
+                                <div><div class="cax-stat-label">Talk time</div><div class="cax-stat-value">@fmt(talkSeconds)</div></div>
+                            </div>
+                        </div>
+
+                        <div class="cax-card">
+                            <div class="cax-card-head">
+                                <h5 class="cax-card-title">Calls</h5>
+                            </div>
+
+                            @if (Model.Count > 0)
+                            {
+                                <div class="cax-table-wrap">
+                                    <table id="callAnalyticsUserTable" class="cax-table" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Called at</th>
+                                                <th>Recipient</th>
+                                                <th>Type</th>
+                                                <th class="cax-right">Duration</th>
+                                                <th>Recording</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model)
+                                            {
+                                                var seconds = HRController.ParseDurationSeconds(item.Duration);
+                                                var recipientGroup = group(item.RecipientProfileType);
+                                                <tr>
+                                                    <td data-order="@item.DateCreated.ToString("yyyyMMddHHmmss")">
+                                                        <div class="cax-date">@item.DateCreated.ToString("dd MMM yyyy")</div>
+                                                        <div class="cax-sub">@item.DateCreated.ToString("HH:mm")</div>
+                                                    </td>
+                                                    <td data-order="@item.CallRecipient">
+                                                        <div class="cax-recipient">
+                                                            <div class="cax-avatar">@initial(item.CallRecipient)</div>
+                                                            <div>
+                                                                <div class="cax-recipient-name">@(string.IsNullOrWhiteSpace(item.CallRecipient) ? "(unknown)" : item.CallRecipient)</div>
+                                                                @if (showPhone && !string.IsNullOrWhiteSpace(item.RecipientPhoneNumber))
+                                                                {
+                                                                    <div class="cax-sub"><i class="fas fa-phone-alt"></i> @item.RecipientPhoneNumber</div>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td data-order="@recipientGroup"><span class="cax-pill cax-pill-@recipientGroup">@(recipientGroup == "Other" ? "Others" : recipientGroup)</span></td>
+                                                    <td class="cax-right cax-duration" data-order="@seconds">@(seconds > 0 ? clock(seconds) : "—")</td>
+                                                    <td data-order="@(string.IsNullOrWhiteSpace(item.RecordingUri) ? 0 : 1)">
+                                                        @if (!string.IsNullOrWhiteSpace(item.RecordingUri))
+                                                        {
+                                                            <audio class="cax-audio" controls preload="none">
+                                                                <source src="@item.RecordingUri" type="audio/mpeg" />
+                                                                <source src="@item.RecordingUri" type="audio/ogg" />
+                                                            </audio>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="cax-norec"><i class="fas fa-microphone-slash"></i> No recording</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="cax-empty">
+                                    <i class="fas fa-phone-slash"></i>
+                                    No calls for this user in the selected period.
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        if ($.fn.DataTable && $('#callAnalyticsUserTable tbody tr').length > 0) {
+            $('#callAnalyticsUserTable').DataTable({
+                order: [[0, 'desc']],
+                pageLength: 25,
+                language: { search: "", searchPlaceholder: "Search recipient" }
+            });
+        }
+    });
+</script>
