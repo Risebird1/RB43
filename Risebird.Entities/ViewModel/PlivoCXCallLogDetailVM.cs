@@ -49,6 +49,7 @@ namespace Risebird.Entities.ViewModel
         // ── Transcript / summary (for detail panel) ───────────────────────────
         public string   CallTranscript        { get; set; }
         public string   ConversationSummary   { get; set; }
+        public string   RecordingUrl          { get; set; }   // Plivo recording (NULL until captured)
 
         // ── Did the call land as an InterviewMeeting? ─────────────────────────
         public string   MeetingCreated        { get; set; }   // 'YES' | 'NO'

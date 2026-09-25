@@ -1562,6 +1562,63 @@ namespace Risebird.Repository
             }
             return false;
         }
+
+        public async Task<bool> UpdatePlivoRecordingAsync(string callUuid, string recordingUrl, int? durationSeconds)
+        {
+            if (string.IsNullOrWhiteSpace(callUuid) || string.IsNullOrWhiteSpace(recordingUrl))
+                return false;
+            try
+            {
+                const string sql = @"
+                    UPDATE CallRecordingData SET
+                        RecordingUri = @RecordingUrl,
+                        Duration     = CASE WHEN (Duration IS NULL OR Duration = '') AND @Duration IS NOT NULL
+                                            THEN @Duration ELSE Duration END
+                    WHERE CallSid = @CallUuid
+                      AND (RecordingUri IS NULL OR RecordingUri = '')";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var rows = await con.ExecuteAsync(sql, new
+                    {
+                        CallUuid = callUuid.Trim(),
+                        RecordingUrl = recordingUrl.Trim(),
+                        Duration = durationSeconds.HasValue && durationSeconds.Value > 0 ? durationSeconds.Value.ToString() : null
+                    });
+                    return rows > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<List<CallRecordingDataVM>> GetPlivoCallsMissingRecordingAsync(int maxAgeDays = 7, int count = 50)
+        {
+            try
+            {
+                // Plivo call UUIDs look like 8-4-4-4-12 hex; Twilio CallSids start with 'CA'.
+                const string sql = @"
+                    SELECT TOP (@Count) id, CallSid, Duration, RecordingUri, DateCreated
+                    FROM   CallRecordingData
+                    WHERE  CallSid LIKE '________-____-____-____-____________'
+                      AND  (RecordingUri IS NULL OR RecordingUri = '')
+                      AND  DateCreated >= DATEADD(DAY, -@MaxAgeDays, GETDATE())
+                    ORDER BY id DESC";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var data = await con.QueryAsync<CallRecordingDataVM>(sql, new { Count = count, MaxAgeDays = maxAgeDays });
+                    return data.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return new List<CallRecordingDataVM>();
+        }
+
         public async Task<bool> AddPremiumClientUser(ClientUserVM client)
         {
             try

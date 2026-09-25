@@ -1,7 +1,8 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.CallRecordingDataVM>
+@model IEnumerable<Risebird.Entities.ViewModel.CallRecordingDataVM>
 @using Microsoft.AspNetCore.Http
 @using Newtonsoft.Json;
 @using Risebird.Entities.ViewModel
+@using Risebird.Web.Controllers
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Call Recordings Details";
@@ -10,20 +11,32 @@
     dynamic filter = null;
     string strtDte = string.Empty;
     string endDte = string.Empty;
-    //string[] RFID = new string[] { };
-    //string[] primarySkills = new string[] { };
-    //string[] ClientHR = new string[] { };
-    //string[] ClientName = new string[] { };
+
+    string currentType = ViewBag.type ?? "Candidate";
+    bool showPricing = ViewBag.Profile == "Admin" || ViewBag.Profile == "SupportAdmin";
+    var calls = (Model ?? Enumerable.Empty<CallRecordingDataVM>()).ToList();
+
+    int totalCalls = calls.Count;
+    int recordedCalls = calls.Count(x => !string.IsNullOrWhiteSpace(x.RecordingUri));
+    int talkSeconds = calls.Sum(x => HRController.ParseDurationSeconds(x.Duration));
+    int callers = calls.Select(x => (x.Caller ?? string.Empty).Trim().ToLower()).Distinct().Count();
+
+    Func<int, string> fmt = s => s >= 3600
+        ? string.Format("{0}h {1:00}m", s / 3600, (s % 3600) / 60)
+        : string.Format("{0}m {1:00}s", s / 60, s % 60);
+    Func<int, string> clock = s => string.Format("{0}:{1:00}", s / 60, s % 60);
+    Func<string, string> initial = s => string.IsNullOrWhiteSpace(s) ? "?" : s.Trim().Substring(0, 1).ToUpper();
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("CallRecordingsfilters") != null)
 {
     filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("CallRecordingsfilters"));
     strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
     endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
-    //RFID = filter.RFID != null ? filter.RFID : new string[] { };
-    //primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
-    //ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
-    //ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
+}
+@{
+    string rangeLabel = (!string.IsNullOrEmpty(strtDte) || !string.IsNullOrEmpty(endDte))
+        ? ((string.IsNullOrEmpty(strtDte) ? "…" : strtDte) + " to " + (string.IsNullOrEmpty(endDte) ? "today" : endDte))
+        : "Last 7 days";
 }
 <script>
     var Header = "<div>Call Recordings Details</div>";
@@ -31,9 +44,54 @@
 </script>
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css?v=2024"/>
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/demo.css?v=2024" />
-<link rel="stylesheet" type="text/css" href="~/Newassets/css/chardinjs.css?v=2024" />
+<style>
+    /* All rules scoped to .cax-page so site-wide table styles cannot interfere (same look as Call Analytics) */
+    .cax-page { --cax-blue: #2196f3; --cax-blue-soft: #e3f2fd; --cax-green: #2e7d32; --cax-green-soft: #e8f5e9;
+                --cax-grey: #5f6b7a; --cax-grey-soft: #eef1f5; --cax-border: #e4e8ee; --cax-text: #1f2a37; --cax-muted: #6b7686;
+                font-family: Roboto, sans-serif; color: var(--cax-text); }
+
+    .cax-page .cax-toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; justify-content: space-between; margin-bottom: 16px; }
+    .cax-page .cax-tabs { display: inline-flex; background: #fff; border: 1px solid var(--cax-border); border-radius: 8px; padding: 3px; }
+    .cax-page .cax-tab { border: 0; background: transparent; padding: 7px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; color: var(--cax-muted); cursor: pointer; }
+    .cax-page .cax-tab:hover { color: var(--cax-text); }
+    .cax-page .cax-tab.active { background: var(--cax-blue); color: #fff; }
+    .cax-page .cax-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin: 0; }
+    .cax-page .cax-filters label { display: block; font-size: 11px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--cax-muted); margin: 4px 0px; }
+    .cax-page .cax-filters .form-control { height: 36px; min-width: 150px; border: 1px solid var(--cax-border); border-radius: 6px; background: #fff; font-size: 13px; }
+    .cax-page .cax-hint { font-size: 11px; color: var(--cax-muted); margin-top: 4px; }
+
+    .cax-page .cax-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 18px; }
+    .cax-page .cax-tile { background: #fff; border: 1px solid var(--cax-border); border-radius: 8px; padding: 12px 14px; }
+    .cax-page .cax-tile-label { font-size: 12px; color: var(--cax-muted); }
+    .cax-page .cax-tile-value { font-size: 24px; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .cax-page .cax-tile-sub { font-size: 11px; color: var(--cax-muted); margin-top: 2px; }
+
+    .cax-page .cax-card { background: #fff; border: 1px solid var(--cax-border); border-radius: 8px; overflow: hidden; }
+    .cax-page .cax-card-head { padding: 12px 16px; border-bottom: 1px solid var(--cax-border); }
+    .cax-page .cax-card-title { font-size: 15px; font-weight: 600; margin: 0; }
+    .cax-page .cax-card-sub { font-size: 12px; color: var(--cax-muted); }
+    .cax-page .cax-table-wrap { padding: 4px 12px 12px; overflow-x: auto; }
+
+    .cax-page table.cax-table { width: 100% !important; border: 0 !important; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+    .cax-page table.cax-table thead th { background: #f7f9fb !important; color: var(--cax-muted); font-size: 11px; font-weight: 600 !important; letter-spacing: .04em;
+                                         text-transform: uppercase; padding: 10px 12px !important; border: 0 !important; border-bottom: 1px solid var(--cax-border) !important; white-space: nowrap; }
+    .cax-page table.cax-table tbody td { padding: 12px !important; border: 0 !important; border-bottom: 1px solid #f0f2f5 !important; vertical-align: middle !important; background: #fff; }
+    .cax-page table.cax-table tbody tr:hover td { background: #f7fbff; }
+    .cax-page table.cax-table .cax-right { text-align: right; }
+
+    .cax-page .cax-person { display: flex; align-items: center; gap: 10px; min-width: 190px; }
+    .cax-page .cax-avatar { flex: 0 0 30px; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; }
+    .cax-page .cax-avatar-caller { background: var(--cax-blue-soft); color: #1565c0; }
+    .cax-page .cax-avatar-recipient { background: var(--cax-grey-soft); color: var(--cax-grey); }
+    .cax-page .cax-name { word-break: break-all; }
+    .cax-page .cax-date { font-weight: 500; white-space: nowrap; }
+    .cax-page .cax-sub { font-size: 11px; color: var(--cax-muted); margin-top: 2px; }
+    .cax-page .cax-num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .cax-page audio.cax-audio { height: 34px; width: 250px; max-width: 100%; }
+    .cax-page .cax-norec { font-size: 12px; color: #9aa4b2; white-space: nowrap; }
+    .cax-page .cax-empty { text-align: center; padding: 40px 16px; color: var(--cax-muted); }
+    .cax-page .cax-empty i { font-size: 28px; color: #c5ccd6; display: block; margin-bottom: 8px; }
+</style>
 
 <div class="main-panel" id="main-panel">
     <div class="jumbotron">
@@ -41,61 +99,16 @@
             <div class="col-md-12 nopad" style="margin:0px;">
                 <div class="card-header bg-w clearfix">
                     <div class="pull-left">
-                        @*<img style="visibility:hidden" src="img/chardin.png" data-position="right" />*@
-                        <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
-                        <h4 class="card-title"></h4>
                         <div class="mobile-view"> <h4 class="card-title">Call Recordings Details</h4></div>
                     </div>
-                    <div class="pull-left">
-                        @if (ViewBag.type == "Interviewer")
-                        {
-                            <div class="feedback-tab" onclick="Changeurldetails('Candidate')"><strong>Candidate</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('Interviewer')"><strong>Interviewer</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('Other')"><strong>Others</strong></div>
-                        }
-                        else if (ViewBag.type == "Candidate")
-                        {
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate')"><strong>Candidate</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('Interviewer')"><strong>Interviewer</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('Other')"><strong>Others</strong></div>
-                        }
-                        else
-                        {
-                            <div class="feedback-tab" onclick="Changeurldetails('Candidate')"><strong>Candidate</strong></div>
-                            <div class="feedback-tab" onclick="Changeurldetails('Interviewer')"><strong>Interviewer</strong></div>
-                            <div class="feedback-tab-ac" onclick="Changeurldetails('Other')"><strong>Others</strong></div>
-                        }
-                    </div>
-                    @*<div class="pull-right client-ms">
-                        <div style="float:left">
-                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-bs-toggle="modal" data-bs-target="#filterModal">
-                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                <div class="mdc-button__ripple"></div>
-                            </button>
-                        </div>
-                        <div style="float:left">
-                        </div>
-                    </div>*@
-@*                    <span class="interview_2 pull-right"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Export to an Excel file." data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("CallCatalogueExporttoExcel", "HR")'"></i></span>
-*@
-                    @*<div class="note-filter" style="text-align: right;"> Note: To visualize data older than 45 days, please apply filter</div>*@
-                <div class="pull-right client-ms">
-                    <div style="float:left">
-                        @*<div class="filter-note" style="text-align:right;right:290px;"> Note: To visualize data older than 45 days, please apply filter</div>*@
-                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-bs-toggle="modal" data-bs-target="#filterModal">
-                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                            <div class="mdc-button__ripple"></div>
+                    <div class="pull-right client-ms">
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" onclick="location.href='@Url.Action("CallCatalogue", "HR", new { type = "Candidate" })'">
+                            <font style="font-family: Roboto, sans-serif; font-size:12px;">Archived Data</font>
                         </button>
-                        @*<span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("ReScheduleMeetingstoExcel", "Client")'"></i></span>*@
-                    </div>
-                    <div style="float:left">
-                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
-                            <span data-toggle="tooltip" data-placement="top" title="" onclick="location.href='@Url.Action("CallCatalogue", "HR", new { type = "Candidate"})'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Archived Data</font></span>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" onclick="location.href='/HR/CallAnalytics'">
+                            <font style="font-family: Roboto, sans-serif; font-size:12px;">Call Analytics</font>
                         </button>
-
                     </div>
-                </div>
-                    
                 </div>
             </div>
         </div>
@@ -103,426 +116,147 @@
         <div class="content client">
             <div class="row bl-bg">
                 <div class="col-md-12">
-                    <div class="mdc-card card bl-bg">
-                        <div class="mdc-card-wrapper__text-section">
-                            <div class="loader text-center">
-                                <img src="~/Newassets/img/lazyload.gif" />
-                            </div>
-                            
-                           <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">
-                                        <div class="filheader">
-                                            <div class="filavatar">
-                                                <span class="fa fa-filter"></span>
-                                            </div>
-                                            <h5 class="modal-title pull-left" id="filterModalLabel"> Filter</h5>
-                                        </div>
-                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                        <form action="@Url.Action("CallRecordingsDetails","HR",new { type=ViewBag.type})" method="post" id="form" onsubmit="return checkfilterDate();">
-                                            <div class="modal-body">
-                                                <div class="row">
-                                                    <div class="col-md-6 col-sm-6 border-rv">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
-                                                                Start Date
-                                                            </label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <input id="StartDate" name="StartDate" type="date" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
-                                                                End Date
-                                                            </label>
-                                                            <div class="col-md-12 col-sm-12">
-                                                                <input id="EndDate" name="EndDate" type="date" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    @*@if (ViewBag.type != "Interviewer")
-        {
-            <div class="col-md-6 col-sm-6 border-rv">
-                <div class="form-group">
-                    <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">JD Title</label>
-                    <div class="col-md-12 col-sm-12">
-                        <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
-                            @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
-                            {
-                                @if (item != null && item != "")
-                                {
-                                    <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
-                                }
-                            }
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">
-                        Skill Channel Id
-                    </label>
-                    <div class="col-md-12 col-sm-12">
-                        <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
-                            @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
-                            {
-                                @if (item != null && item != "")
-                                {
-                                    <option value="@item">@item</option>
-                                }
-                            }
-                        </select>
-                    </div>
-                </div>
-            </div>
-        }*@
-                                                    <div class="col-md-6 col-sm-6 border-rv">
-                                                        <div class="form-group">
-                                                        </div>
-                                                    </div>
+                    <div class="cax-page">
 
-                                                    <div class="col-md-6 col-sm-6">
-                                                        @*@if (ViewBag.profile != "Client")
-            {
-                <div class="form-group">
-                    <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">
-                        Client Name
-                    </label>
-                    <div class="col-md-12 col-sm-12">
-                        <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
-                            @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
-                            {
-                                @if (item != null && item != "")
-                                {
-                                    <option value="@item">@item</option>
-                                }
-                            }
-                        </select>
-                    </div>
-                </div>
-            }*@
-                                                        <div class="form-group">
-                                                            <div>
-                                                                <div class="col-md-12 col-sm-12">
-                                                                    <button type="button" onclick="ResetFilter('@ViewBag.Type')" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin: 10px 0px;float:right;margin-left:5px;">
-                                                                        <font style="font-size:12px;"> Reset Filter</font>
-                                                                    </button>
-                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 10px;float:right">
-                                                                        <font style="font-size:12px;"> Apply Filter</font>
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
+                        <div class="cax-toolbar">
+                            <div class="cax-tabs" role="tablist">
+                                <button type="button" class="cax-tab @(currentType == "Candidate" ? "active" : "")" onclick="Changeurldetails('Candidate')">Candidate</button>
+                                <button type="button" class="cax-tab @(currentType == "Interviewer" ? "active" : "")" onclick="Changeurldetails('Interviewer')">Interviewer</button>
+                                <button type="button" class="cax-tab @(currentType != "Candidate" && currentType != "Interviewer" ? "active" : "")" onclick="Changeurldetails('Other')">Others</button>
                             </div>
 
-                        
-                            <div @*style="overflow-x:scroll" class="scrollbar" id="style-2"*@>
-
-                                    <div id="tableID" class="second interview">
-                                    <table id="recordingsTable" class="table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
-                                            <thead>
-                                                <tr>
-                                                    <th>Caller</th>
-                                                    <th>Call Recipient</th>
-                                                    <th>Called At</th>
-                                                    <th>Duration(s)</th>
-                                                    @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "SupportAdmin")
-                                                    {
-                                                        <th>Price</th>
-                                                        <th>Price Unit</th>
-                                                        <th>Recipient Phone Number</th>
-                                                    }
-                                                    
-                                                    <th>Recording</th>
-                                                </tr>
-                                            </thead>
-                                            <tfoot>
-                                                <tr>
-                                                    <th>Caller</th>
-                                                    <th>Call Recipient</th>
-                                                    <th>Called At</th>
-                                                    <th>Duration(s)</th>
-                                                    @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "SupportAdmin")
-                                                    {
-                                                        <th>Price</th>
-                                                        <th>Price Unit</th>
-                                                        <th>Recipient Phone Number</th>
-                                                    }
-                                                    <th>Recording</th>
-                                                </tr>
-                                            </tfoot>
-                                            <tbody>
-                                                @if(Model !=null && Model.Count()>0)
-                                                {
-                                                    foreach (var item in Model)
-                                                    {
-                                                        <tr>
-
-                                                            <td>@item.Caller</td>
-                                                            <td>@item.CallRecipient</td>
-                                                            <td>@item.DateCreated</td>
-                                                            <td>@item.Duration</td>
-                                                            @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "SupportAdmin")
-                                                            {
-                                                                string price = item.Price;
-                                                                if(!string.IsNullOrEmpty(item.Price) && item.Price.IndexOf("-") == 0)
-                                                                {
-                                                                    price = item.Price.Remove(0, 1);
-                                                                }
-                                                                <td>@price</td>
-                                                                <td>@item.PriceUnit</td>
-                                                                <td>@item.RecipientPhoneNumber</td>
-                                                            }
-                                                            
-                                                            @*<td>
-                                                                <audio asp-append-version="true" src="@item.RecordingUri" controls></audio>
-                                                            </td>*@
-                                                            <td style="text-align:center">
-                                                                <button class="mdc-fab app-fab--absolute record-btn trash-btn" aria-label="Call Record">
-                                                                    <span onclick="FetchRecording('@item.Caller', '@item.CallRecipient', '@item.RecordingUri')" title="Call Record">
-                                                                        <i class="fa fa-dot-circle"></i>
-                                                                    </span>
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    }
-                                                }
-                                                
-                                            </tbody>
-                                        </table>
-                                    </div>
+                            <form action="@Url.Action("CallRecordingsDetails", "HR", new { type = currentType })" method="post" id="form" class="cax-filters" onsubmit="return checkfilterDate();">
+                                <div>
+                                    <label for="StartDate">Start date</label>
+                                    <input id="StartDate" name="StartDate" type="date" class="form-control" value="@strtDte" />
                                 </div>
-                        
+                                <div>
+                                    <label for="EndDate">End date</label>
+                                    <input id="EndDate" name="EndDate" type="date" class="form-control" value="@endDte" />
+                                </div>
+                                <div>
+                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded"><font style="font-size:12px;">Apply</font></button>
+                                    <button type="button" class="mdc-button mdc-button--outlined mdc-ripple-upgraded" onclick="ResetFilter('@currentType')"><font style="font-size:12px;">Reset</font></button>
+                                    <div class="cax-hint">Maximum range: 45 days</div>
+                                </div>
+                            </form>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <!-- end content-->
-        </div>
-        <!--  end card  -->
-    </div>
-    <!-- end col-md-12 -->
-</div>
-<!-- end row -->
-<div id="myCallRecords" class="modal modal-bg">
-    <!-- Modal content -->
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar">
-                    <span>
-                        <i class="fa fa-phone-square" style="font-size: 25px;"></i>
-                    </span>
-                </div>
-@*                <h5 class="modal-title pull-left">Call Details <span class="popup-text" id="candidate_email_pop"></span> </h5>
-*@            </div>
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                <span onclick="closemyCallRecords()" aria-hidden="true"  style="cursor:pointer;">&times;</span>
-            </button>
-            <div class="modal-body" style="padding: 2px 16px;">
-                <div class="row">
-                    <div class="table-responsive style-2" style="height:150px;margin-top:20px;">
-                        <table class="table table-striped table-bordered" style="width:100%;" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th>Called By</th>
-                                    <th>Call Recipient</th>
-                                    <th>Recording</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tblcallrecdetails">
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                
-                </div>
-                <div class="row">
-                    <div class="col-md-12 text-right">
-                        <input style="color: #fff;line-height: 13px;margin-bottom:10px;" type="button" onclick="closemyCallRecords()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
-                    </div>
-                </div>
-            </div>
 
+                        <div class="cax-tiles">
+                            <div class="cax-tile"><div class="cax-tile-label">Calls</div><div class="cax-tile-value">@totalCalls</div><div class="cax-tile-sub">@rangeLabel</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">Callers</div><div class="cax-tile-value">@callers</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">With recording</div><div class="cax-tile-value">@recordedCalls</div><div class="cax-tile-sub">@(totalCalls == 0 ? 0 : (int)Math.Round(recordedCalls * 100.0 / totalCalls))% of calls</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">Talk time</div><div class="cax-tile-value">@fmt(talkSeconds)</div></div>
+                        </div>
+
+                        <div class="cax-card">
+                            <div class="cax-card-head">
+                                <h5 class="cax-card-title">@(currentType == "Candidate" ? "Calls to candidates" : currentType == "Interviewer" ? "Calls to interviewers" : "Calls to others")</h5>
+                                <div class="cax-card-sub">@rangeLabel</div>
+                            </div>
+
+                            @if (totalCalls > 0)
+                            {
+                                <div class="cax-table-wrap">
+                                    <table id="recordingsTable" class="cax-table" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Caller</th>
+                                                <th>Call recipient</th>
+                                                <th>Called at</th>
+                                                <th class="cax-right">Duration</th>
+                                                @if (showPricing)
+                                                {
+                                                    <th class="cax-right">Price</th>
+                                                    <th>Price unit</th>
+                                                    <th>Recipient phone</th>
+                                                }
+                                                <th>Recording</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in calls)
+                                            {
+                                                var seconds = HRController.ParseDurationSeconds(item.Duration);
+                                                string price = item.Price;
+                                                if (!string.IsNullOrEmpty(price) && price.IndexOf("-") == 0)
+                                                {
+                                                    price = price.Remove(0, 1);
+                                                }
+                                                <tr>
+                                                    <td data-order="@item.Caller">
+                                                        <div class="cax-person">
+                                                            <div class="cax-avatar cax-avatar-caller">@initial(item.Caller)</div>
+                                                            <div class="cax-name">@item.Caller</div>
+                                                        </div>
+                                                    </td>
+                                                    <td data-order="@item.CallRecipient">
+                                                        <div class="cax-person">
+                                                            <div class="cax-avatar cax-avatar-recipient">@initial(item.CallRecipient)</div>
+                                                            <div class="cax-name">@item.CallRecipient</div>
+                                                        </div>
+                                                    </td>
+                                                    <td data-order="@item.DateCreated.ToString("yyyyMMddHHmmss")">
+                                                        <div class="cax-date">@item.DateCreated.ToString("dd MMM yyyy")</div>
+                                                        <div class="cax-sub">@item.DateCreated.ToString("HH:mm")</div>
+                                                    </td>
+                                                    <td class="cax-right cax-num" data-order="@seconds">@(seconds > 0 ? clock(seconds) : "—")</td>
+                                                    @if (showPricing)
+                                                    {
+                                                        <td class="cax-right cax-num">@price</td>
+                                                        <td>@item.PriceUnit</td>
+                                                        <td class="cax-num">@item.RecipientPhoneNumber</td>
+                                                    }
+                                                    <td data-order="@(string.IsNullOrWhiteSpace(item.RecordingUri) ? 0 : 1)">
+                                                        @if (!string.IsNullOrWhiteSpace(item.RecordingUri))
+                                                        {
+                                                            <audio class="cax-audio" controls preload="none">
+                                                                <source src="@item.RecordingUri" type="audio/ogg" />
+                                                                <source src="@item.RecordingUri" type="audio/mpeg" />
+                                                            </audio>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="cax-norec"><i class="fas fa-microphone-slash"></i> No recording</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="cax-empty">
+                                    <i class="fas fa-phone-slash"></i>
+                                    No calls in this period.
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    function closemyCallRecords() {
-        var modal = document.getElementById("myCallRecords");
-        modal.style.display = "none";
-    }
-    function FetchRecording(caller, callRecipient, recordingUrl) {
-        
-        bindCallData(caller, callRecipient, recordingUrl);
-        var modal = document.getElementById("myCallRecords");
-        modal.style.display = "block";
-    }
-    function bindCallData(caller, callRecipient, recordingUrl) {
-        var html = '';
-        
-        html += '<tr>';
-        html += '<td>' + caller + '</td>';
-        html += '<td>' + callRecipient + '</td>';
-        html += '<td><audio controls><source src = "' + recordingUrl + '" type = "audio/ogg" ><source src="' + recordingUrl + '" type="audio/mpeg"></audio></td>';
-        html += '</tr>';
-        
-        $("#tblcallrecdetails").empty().html(html);
-    }
-    
-</script>
-
-
-<script type="text/javascript">
-
     $(document).ready(function () {
-       
-        if ('@filter' != "") {
-            ApplySessionFilter();
+        if ($.fn.DataTable && $('#recordingsTable tbody tr').length > 0) {
+            $('#recordingsTable').DataTable({
+                order: [[2, 'desc']],
+                pageLength: 25,
+                language: { search: "", searchPlaceholder: "Search caller or recipient" }
+            });
         }
-
-        //    $("#PrimarySkill").multiselect({
-        //            includeSelectAllOption: true,
-        //            selectedClass: 'active1',
-        //            buttonWidth: '100%',
-        //            maxHeight: 200
-        //        });
-
-
-        //    $("#ClientHR").multiselect({
-        //        includeSelectAllOption: true,
-        //        selectedClass: 'active1',
-        //        buttonWidth: '100%',
-        //        maxHeight: 200
-        //    });
-        //$("#RFID").multiselect({
-        //    includeSelectAllOption: true,
-        //    selectedClass: 'active1',
-        //    buttonWidth: '100%',
-        //    maxHeight: 200
-        //});
-        //    $("#ClientName").multiselect({
-        //        includeSelectAllOption: true,
-        //        selectedClass: 'active1',
-        //        buttonWidth: '100%',
-        //        maxHeight: 200
-        //    });
-
     });
+
     function ResetFilter(type) {
         window.location.href = "/HR/ResetCallRecordingsDetails?type=" + type;
     }
 
-    function ApplySessionFilter() {
-        var strtDte = '@strtDte';
-        var endDte = '@endDte';
-        @*var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
-        var clientHR = @Html.Raw(Json.Serialize(ClientHR));
-        var clientName = @Html.Raw(Json.Serialize(ClientName));
-        var rFID = @Html.Raw(Json.Serialize(RFID));*@
-
-        $('input[name=startdate]').val(strtDte);
-        $('input[name=enddate]').val(endDte);
-        //$("#PrimarySkill").val(primarySkillsArr);
-        //$("#ClientHR").val(clientHR);
-        //$("#ClientName").val(clientName);
-        //$("#RFID").val(rFID);
-        var form = $("#form").serialize();
-    }
-
-</script>
-<script>
-    function searchResult() {
-        $('#recordingsTable').DataTable();
-    }
-    function RefreshSearch() {
-        $('#recordingsTable').DataTable().destroy();
-        setTimeout(function () {
-            applyDataTable();
-        }, 2000);
-    }
-
-    $(document).ready(function () {
-        //applyDataTable();
-        $('#recordingsTable').DataTable();
-    });
-
-    //function applyDataTable() {
-    //    $('#recordingsTable').DataTable({
-    //        "pagingType": "full_numbers",
-    //        "lengthMenu": [
-    //            [10, 25, 50, -1],
-    //            [10, 25, 50, "All"]
-    //        ],
-    //        order: [],
-    //        responsive: true,
-    //        language: {
-    //            search: "_INPUT_",
-    //            searchPlaceholder: "Search records",
-    //        },
-    //        "fnInitComplete": function () {
-
-    //            //$(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
-    //            $(".dataTables_filter").keyup(function (e) {
-    //                if ($(this).val() != "") {
-    //                    $("#x").show();
-    //                }
-    //                else { $("#x").show(); }
-    //            });
-    //        }
-    //    });
-    //}
-
-    //$(document).ready(function () {
-    //    $("#x").click(function (e) {
-    //        $(".dataTables_filter input").val('');
-    //        $(this).hide();
-    //    });
-    //});
-</script>
-@*<script type="text/javascript">
-    //// script for loader starts here
-    $(".dataloading").hide();
-    $("#recordingsTable").hide();
-    var loader;
-    function ShowProgress() {
-        $(".dataloading").hide();
-        $("#recordingsTable").hide();
-        loader = document.getElementsByClassName("loader")[0];
-        loader.style.display = "block";
-        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-        loader.style.top = top + "px";
-        loader.style.left = left + "px";
-    };
-    ShowProgress();
-
-    window.onload = function () {
-        setTimeout(function () {
-            loader.style.display = "none";
-            $(".dataloading").show();
-            $("#recordingsTable").show();
-        }, 1000);
-    };
-    //// script for loader ends here
-</script>*@
-
-<script>
-    
     function Changeurldetails(type) {
         window.location.href = "/HR/CallRecordingsDetails?type=" + type;
     }

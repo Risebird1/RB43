@@ -225,6 +225,11 @@
             border-left-color: #4eda92;
         }
 
+        .rb-sum-card.is-resume,
+        .rb-sum-card.is-skill {
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+        }
+
         .rb-sum-card.is-knowledge {
             border-left-color: #3b82f6;
         }
@@ -260,7 +265,7 @@
         font-weight: 700;
         letter-spacing: 1.2px;
         text-transform: uppercase;
-        color: #334155;
+        color: #fff;
     }
 
         .rb-subpart-hd::before {
@@ -410,7 +415,7 @@
         }
 
         .rb-sum-foot.is-review {
-            color: #8a5300;
+            color: #fff;
             background: #fdf6e6;
             border-top-color: #f2e2bd;
         }
@@ -1970,7 +1975,7 @@
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.03em;
-        color: #64748b;
+        color: #fff;
         margin-bottom: 4px;
     }
 
@@ -3280,7 +3285,23 @@
 </style>
 @if (ViewBag.AiInterviewDarkTheme == true)
 {
-    <link rel="stylesheet" href="~/css/ai-interview-dark-theme.css?v=26" />
+    <link rel="stylesheet" href="~/css/ai-interview-dark-theme.css?v=29" />
+    <style>
+        /* Report only: brighter muted text than the shared dark theme's #8b949e
+           (the interview page keeps the original value). */
+        body.ai-interview-dark {
+            --ai-text-muted: #e8ecf4 !important;
+        }
+        body.ai-interview-dark .rb-audio-util-btn span,
+        body.ai-interview-dark .rb-audio-timer-label,
+        body.ai-interview-dark .rb-ai-q-card__note-label,
+        body.ai-interview-dark .rb-adaptive-metric-card__label,
+        body.ai-interview-dark .rb-ai-adaptive-report .rb-adaptive-metric-card__label,
+        body.ai-interview-dark .rb-ai-metric__label,
+        body.ai-interview-dark .rb-ai-metric__main {
+            color: #e8ecf4 !important;
+        }
+    </style>
 }
 <div class="rb-report-container">
     <div class="rb-report-header">
@@ -3999,20 +4020,11 @@
                                                     {
                                                         var expectedText = string.IsNullOrWhiteSpace(r.ExpectedLevel) ? "—" : r.ExpectedLevel.Trim();
                                                         var observedText = string.IsNullOrWhiteSpace(r.ObservedLevel) ? "—" : r.ObservedLevel.Trim();
-                                                        var expectedPill = GetRubricLevelPillClass(expectedText);
                                                         var observedPill = GetRubricLevelPillClass(observedText);
                                                         <tr>
                                                             <td>@r.RubricItem</td>
-                                                            <td class="rb-ai-r-level">
-                                                                @if (expectedPill != null)
-                                                                {
-                                                                    <span class="rb-adaptive-rating-pill @expectedPill">@expectedText</span>
-                                                                }
-                                                                else
-                                                                {
-                                                                    @expectedText
-                                                                }
-                                                            </td>
+                                                            @* Expected is the target level, not a result: plain text, no coloured pill. *@
+                                                            <td class="rb-ai-r-level">@expectedText</td>
                                                             <td class="rb-ai-r-level">
                                                                 @if (observedPill != null)
                                                                 {
@@ -5700,7 +5712,7 @@
                     var tr = document.createElement('tr');
                     tr.innerHTML =
                         '<td>' + escapeHtml(item) + '</td>' +
-                        '<td class="rb-ai-r-level">' + levelPillHtml(expected) + '</td>' +
+                        '<td class="rb-ai-r-level">' + escapeHtml((expected || '').trim() || '—') + '</td>' + // target level: plain text, no pill
                         '<td class="rb-ai-r-level">' + levelPillHtml(observed) + '</td>' +
                         '<td class="rb-ai-r-score">' + escapeHtml(score || '—') + '</td>';
                     tbody.appendChild(tr);
