@@ -1205,6 +1205,9 @@ namespace Risebird.Web.Controllers
                 {
                     item.Points = Convert.ToInt32(Math.Round(item.Points * .9));
                 }
+                // Sum of every interviewer's negative Amount for this week, across the
+                // full (unpaginated) list, so it matches what Bulk Carry Forward operates on.
+                var negativeBalance = model.Where(x => x.Points < 0).Sum(x => x.Points);
                 //var payableAmount = model.Sum(x => x.Points);
                 var payableAmount = totalpaidamount + pendingAmount;
                 var Tds = totalAmount - payableAmount;
@@ -1240,7 +1243,7 @@ namespace Risebird.Web.Controllers
                     Pageend = 0;
                 }
                 HttpContext.Session.SetString("financemodel", JsonConvert.SerializeObject(model));
-                return Json(new { result = model.Skip((Page - 1) * 10).Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count, currentpage = Page, totalAmount = totalAmount, payableAmount = payableAmount, tds = Tds, totalpaidamount = totalpaidamount, totalinterviewamount = totalinterviewamount, totaldroppedamount = totaldroppedamount, totalNoShowamount = totalNoShowamount, pendingAmount = pendingAmount });
+                return Json(new { result = model.Skip((Page - 1) * 10).Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = model.Count, currentpage = Page, totalAmount = totalAmount, payableAmount = payableAmount, tds = Tds, totalpaidamount = totalpaidamount, totalinterviewamount = totalinterviewamount, totaldroppedamount = totaldroppedamount, totalNoShowamount = totalNoShowamount, pendingAmount = pendingAmount, negativeBalance = negativeBalance });
             }
             catch (Exception ex)
             {
