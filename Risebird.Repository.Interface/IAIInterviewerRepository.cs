@@ -21,6 +21,11 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<TranscriptConv>> GetAIInterviewTranscriptBySessionId(Guid sessionId);
         Task<bool> SaveReportOfAIInterviewByAssistant(Guid sessionId, string serializedReportOfAIInterviewByAssistant = null, bool? isExit = null, int? interviewStatus = null, string interviewerComment = null, int? meetingStatus = null);
         Task<string> GetReportOfAIInterviewByAssistant(Guid sessionId);
+
+
+        /// <summary>The same stored evaluation, read by interview id rather than session id.</summary>
+
+        Task<string> GetReportOfAIInterviewByInterviewId(int interviewId);
         Task<AddUpdateMeetingVM> GetAIInterviewSpecificDetails(Guid sessionId);
         Task<TechSkillComments> GetRandomQuestionForSession(int interviewId, int irfId);
         Task<bool> UpdateCandidateAnswerById(int questionId, string updatedAnswer, string updatedBy);

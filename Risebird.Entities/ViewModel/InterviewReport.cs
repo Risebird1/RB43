@@ -374,6 +374,20 @@ namespace Risebird.Entities.ViewModel
         public string CodeSnippet { get; set; }
         public bool IsQCDone { get; set; }
         public int SkillSetsevaluate { get; set; }
+
+        /// <summary>
+        /// True when this channel came from the AI screening intake. Gates the screening-only parts
+        /// of the report — the joint overall verdict and the two-section score breakdown — so
+        /// expert channels keep the headline they have today.
+        /// </summary>
+        public bool IsAIAudioScreening { get; set; }
+
+        /// <summary>
+        /// Computed screening scores: each section out of 100 and the overall as the mean of both.
+        /// Null on every report that is not an AI screening report.
+        /// </summary>
+        public AIScreeningScores ScreeningScores { get; set; }
+
         public int? InterviewStatusTwo { get; set; }
         public int? MeetingStatusTwo { get; set; }
         [Display(Name = "Interviewer Comment")]

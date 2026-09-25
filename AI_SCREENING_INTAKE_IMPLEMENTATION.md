@@ -17,8 +17,8 @@ The route is `/AIScreening/New`. **The existing skill-channel create flow is not
 **Deploy the database changes** (below). That is all — the catch-all Assessment Group is seeded by
 the scripts, not created by hand, and nothing else has to be configured for the feature to work.
 
-**Recommended, not required:** set `AIScreening:PrimaryPromptId` to a stored prompt dedicated to
-screening interviews. See *Prompt ids* below for what happens if you don't.
+**Optional:** set `AIScreening:PrimaryPromptId` / `AIScreening:EvaluatorPromptId` to pre-fill the
+intake form. The recruiter enters both on the form either way. See *Prompt ids* below.
 
 ---
 
@@ -37,6 +37,15 @@ Run in this order. All are additive and guarded with the existing `IF NOT EXISTS
 | `Risebird.DB/Tables/AssessmentGroup.sql` | seeds the `AIInterview` catch-all group |
 | `Risebird.DB/Tables/MasterAssessmentGroup.sql` | seeds its MAG row |
 | `Risebird.DB/StoredProcedures/usp_GetMAGsWithoutTemplates.sql` | excludes the catch-all |
+| `Risebird.DB/Tables/IRF.sql` | `+ IsAIAudioScreening bit NULL` |
+| `Risebird.DB/StoredProcedures/usp_GetReportOfAIInterviewByInterviewId.sql` | new |
+| `Risebird.DB/Migrations/AddSkillSetToAIInterviewRubric.sql` | **manual** — adds `SkillSet` to the rubric the assistant sees |
+
+> **Do not deploy `StoredProcedures/usp_GetAIInterviewSpecificDetails.sql`.** The copy in this repo
+> is stale: it returns one result set where `AIInterviewerRepository` reads three (channel, rubric,
+> Q&A). Running it would drop the rubric and Q&A sets and break every AI interview. The one column
+> that needs adding is described in `Migrations/AddSkillSetToAIInterviewRubric.sql`; apply it to the
+> live definition scripted out of the target database.
 
 No existing query changes behaviour: nothing that reads these tables today selects the new columns,
 and the new `usp_UpdateIRFDetails` parameter defaults to null, which keeps the stored profile.
@@ -67,30 +76,44 @@ That is where this flow would otherwise start: the recruiter goes to `/Template/
 template that matches their role, and this is the path for when none does. The button renders only
 for the profiles `AIScreeningAccess` allows, so it is never offered to someone it would turn away.
 
-**Tests** — `Risebird.Business.Tests/AIScreeningTests/` — 56 tests, all passing.
+**Tests** — `Risebird.Business.Tests/AIScreeningTests/` — 96 tests, all passing.
 
 ---
 
 ## Prompt ids
 
-Two prompts, both stamped onto the channel at provisioning time:
+The same two prompt ids a skill channel already carries, used the same way. Both are entered on the
+intake form at step 4 and stamped onto the channel:
 
-| | Stamped onto | Form label | Set from |
+| | Entered as | Stamped onto | Runs |
 | --- | --- | --- | --- |
-| Runs the interview | `IRF.OpenAIPromptId` | Primary Prompt Id | `AIScreening:PrimaryPromptId` |
-| Writes the report | `IRF.OpenAIEvaluatorPromptId` | Interview Evaluator Prompt Id | `AIScreening:EvaluatorPromptId` |
+| Primary Prompt Id | form field (**required**) | `IRF.OpenAIPromptId` | the adaptive interview |
+| Interview Evaluator Prompt Id | form field (optional) | `IRF.OpenAIEvaluatorPromptId` | the candidate's report |
 
-The evaluator is optional — left blank, the Primary Prompt Id generates the report too.
+The evaluator is optional — left blank, the Primary Prompt Id generates the report too, which is how
+every other AI channel already behaves.
 
-**The Primary Prompt Id is always written to the channel**, never left to the runtime config
-fallback. `IRFController.cs:913` and `:2363` guard the field as mandatory server-side, so a channel
-without one cannot be saved afterwards.
+`AIScreening:PrimaryPromptId` and `AIScreening:EvaluatorPromptId` only **pre-fill** the form. Whatever
+the recruiter submits wins. With the form field blank and no configured default, the global
+`OpenAI:AIInterviewerPromptId` is stamped as a last resort and a warning is logged — that prompt is
+shared by every AI interview running today, so editing its content changes all of them.
 
-If `AIScreening:PrimaryPromptId` is not set, the provisioning path stamps the global
-`OpenAI:AIInterviewerPromptId` instead and **logs a warning**. That gets the feature working out of
-the box, but it is the prompt every AI interview running today uses — editing its content in the
-OpenAI account changes behaviour for all of them. Set a dedicated one before screening channels
-carry real candidates.
+Both remain editable afterwards on Edit IRF, which is where a channel gets corrected without being
+rebuilt.
+
+### The interview and the report share one conversation
+
+An adaptive interview and its report run on **one chained conversation**, and a channel with no
+Interview Evaluator Prompt Id uses the same prompt for both jobs (`OpenAIApiController` line ~377).
+A prompt that emits its evaluation JSON part-way through therefore gets it read aloud to the
+candidate by text-to-speech and stored as the question text on the report.
+
+`AIInterviewReplySanitizer` strips report JSON out of conversational turns — and only those; the
+report endpoints need it intact — and logs a warning when it fires. In a healthy interview no turn
+carries those keys, so it does nothing. **It is a guard, not a fix**: if the warning appears, the
+prompt in use is still leaking its report. The fix is a Primary Prompt Id that only asks questions
+(draft in `AIScreening_PrimaryPrompt_Draft.txt`), or a separate `AIScreening:EvaluatorPromptId` so
+the two jobs stop sharing a prompt.
 
 ### If an interview produces nothing, check these two first
 
@@ -240,16 +263,18 @@ Done and verified by build and tests:
   idempotent on template name, so a double submit cannot mint two templates or two channels. The
   button is disabled on first click as well.
 
-**Not wired: the computed scores on the live report.** The two-section *structure* already reaches
-ClientReportV3 unaided — `MeetingService.GetInteviewReport` already carries `SkillSet` into
-`TechSkillReport`, and the view already branches on `SkillSetsevaluate > 1` — so a screening
-channel's report renders as two sections today. What is not yet connected is
-`AIScreeningReportMapper`, which computes each section score and the overall figure from the
-evaluator's 1–5 ratings and flags when the model's own overall figure disagrees. The mapper is
-written and has tests; it needs to be called where the AI evaluation JSON is merged into the report.
+**The report.** Both halves now reach ClientReportV3, and there is no second report view.
 
-That merge sits in the report path shared by every existing interview type, which is why it was left
-as its own change rather than folded into this one.
+The rubric side already arrived unaided: `MeetingService.GetInteviewReport` carries `SkillSet` into
+`TechSkillReport`, `ReportSkillSetandSeperate` splits the two collections, and the view branches on
+`SkillSetsevaluate > 1`. The scored side is now mapped in by `AIScreeningReportMapper`, which fills
+that same `InterviewReport` -- section one into `TechSkillReportCollection`, section two into
+`TechSkillTwoReportCollection` -- rather than a parallel class of its own.
+
+`InterviewController.ApplyAIScreeningReportAsync` calls it straight after the section split, reading
+the stored evaluation from `InterviewComments` by interview id. Every step is gated and every failure
+path leaves the model untouched, so a report that cannot be enriched still renders exactly as it does
+today.
 
 ---
 

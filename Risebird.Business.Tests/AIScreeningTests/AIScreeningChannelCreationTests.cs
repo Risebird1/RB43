@@ -34,9 +34,14 @@ namespace Risebird.Business.Tests.AIScreeningTests
             public Mock<IAssistantServiceHelper> Assistant { get; } = new(MockBehavior.Loose);
             public Mock<IApplicationErrorLogger> Logger { get; } = new(MockBehavior.Loose);
 
+
+
             public int? ProvisionedIrfId { get; private set; }
             public IList<TransSkill> ProvisionedRubric { get; private set; }
             public int? TemplateAssessmentGroupId { get; private set; }
+            public string ProvisionedJdTitleTwo { get; private set; }
+            public string ProvisionedPrimaryPromptId { get; private set; }
+            public string ProvisionedEvaluatorPromptId { get; private set; }
 
             /// <summary>Overrides the in-memory configuration this fixture builds.</summary>
             public Dictionary<string, string> Settings { get; } = new()
@@ -45,6 +50,15 @@ namespace Risebird.Business.Tests.AIScreeningTests
                 ["AIScreening:EvaluatorPromptId"] = "pmpt_screening_evaluator"
             };
 
+            /// <summary>
+            /// What the nearest-match lookup returns. Set before CreateSut — the mock defaults are
+            /// registered there, so a Setup afterwards is easy to get subtly wrong.
+            /// </summary>
+            public int MatchedAssessmentGroupId { get; set; }
+
+            /// <summary>What the catch-all-by-name lookup returns. Set before CreateSut.</summary>
+            public int CatchAllAssessmentGroupIdByName { get; set; }
+
             public AIScreeningIntakeService CreateSut()
             {
                 var configuration = new ConfigurationBuilder()
@@ -52,9 +66,9 @@ namespace Risebird.Business.Tests.AIScreeningTests
                     .Build();
 
                 Repository.Setup(x => x.ResolveAssessmentGroupIdByJobTitle(It.IsAny<string>(), It.IsAny<double>()))
-                    .ReturnsAsync(0);
+                    .ReturnsAsync(() => MatchedAssessmentGroupId);
                 Repository.Setup(x => x.GetAssessmentGroupIdByName(It.IsAny<string>()))
-                    .ReturnsAsync(0);
+                    .ReturnsAsync(() => CatchAllAssessmentGroupIdByName);
                 Repository.Setup(x => x.IsTemplateNameTaken(It.IsAny<string>()))
                     .ReturnsAsync(false);
                 Repository.Setup(x => x.CreateAIAudioTemplate(
@@ -66,12 +80,15 @@ namespace Risebird.Business.Tests.AIScreeningTests
 
                 Repository.Setup(x => x.SaveAIScreeningProvisioning(
                         It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(),
-                        It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IList<TransSkill>>()))
-                    .Callback<int, int, string, string, string, IList<TransSkill>>(
-                        (irfId, _, _, _, _, rubric) =>
+                        It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IList<TransSkill>>(), It.IsAny<string>()))
+                    .Callback<int, int, string, string, string, IList<TransSkill>, string>(
+                        (irfId, _, primaryPromptId, evaluatorPromptId, _, rubric, jdTitleTwo) =>
                         {
                             ProvisionedIrfId = irfId;
                             ProvisionedRubric = rubric;
+                            ProvisionedJdTitleTwo = jdTitleTwo;
+                            ProvisionedPrimaryPromptId = primaryPromptId;
+                            ProvisionedEvaluatorPromptId = evaluatorPromptId;
                         })
                     .ReturnsAsync(true);
 
@@ -200,7 +217,7 @@ namespace Risebird.Business.Tests.AIScreeningTests
             Assert.Null(fixture.ProvisionedIrfId);
             fixture.Repository.Verify(x => x.SaveAIScreeningProvisioning(
                 It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(),
-                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IList<TransSkill>>()), Times.Never);
+                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IList<TransSkill>>(), It.IsAny<string>()), Times.Never);
         }
 
         [Fact]
@@ -247,34 +264,148 @@ namespace Risebird.Business.Tests.AIScreeningTests
                 It.IsAny<IRFVm>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
-        #region Assessment Group is never a blocker
+        #region The prompt ids come off the form
+
+        private static AIScreeningChannelRequest RequestWithPrompts(
+            string draftId, string primary, string evaluator)
+        {
+            var request = Request(draftId);
+            request.PrimaryPromptId = primary;
+            request.EvaluatorPromptId = evaluator;
+            return request;
+        }
 
         [Fact]
-        public async Task A_matched_assessment_group_is_used_when_the_job_title_resolves()
+        public async Task The_prompt_ids_entered_on_the_form_are_stamped_on_the_channel()
         {
             var fixture = new Fixture();
             var sut = fixture.CreateSut();
+            var draft = await ReadyDraft(sut);
 
-            // After CreateSut: it registers the fixture defaults and would overwrite this.
-            fixture.Repository.Setup(x => x.ResolveAssessmentGroupIdByJobTitle(It.IsAny<string>(), It.IsAny<double>()))
-                .ReturnsAsync(42);
+            var result = await sut.CreateChannelAsync(
+                RequestWithPrompts(draft.DraftId, "pmpt_form_primary", "pmpt_form_evaluator"),
+                "recruiter@risebird.io", "HR", _ => Task.FromResult("https://link"));
 
+            Assert.True(result.Success, result.Message);
+            Assert.Equal("pmpt_form_primary", fixture.ProvisionedPrimaryPromptId);
+            Assert.Equal("pmpt_form_evaluator", fixture.ProvisionedEvaluatorPromptId);
+        }
+
+        [Fact]
+        public async Task The_form_wins_over_the_configured_defaults()
+        {
+            // The config values only pre-fill the form; whatever was submitted is what the channel carries.
+            var fixture = new Fixture();
+            var sut = fixture.CreateSut();
+            var draft = await ReadyDraft(sut);
+
+            await sut.CreateChannelAsync(
+                RequestWithPrompts(draft.DraftId, "pmpt_typed_by_hand", "pmpt_also_typed"),
+                "recruiter@risebird.io", "HR", _ => Task.FromResult("https://link"));
+
+            Assert.Equal("pmpt_typed_by_hand", fixture.ProvisionedPrimaryPromptId);
+            Assert.NotEqual("pmpt_screening_primary", fixture.ProvisionedPrimaryPromptId);
+        }
+
+        [Fact]
+        public async Task The_configured_default_is_used_when_the_form_leaves_it_blank()
+        {
+            var fixture = new Fixture();
+            var sut = fixture.CreateSut();
+            var draft = await ReadyDraft(sut);
+
+            await sut.CreateChannelAsync(
+                RequestWithPrompts(draft.DraftId, null, null),
+                "recruiter@risebird.io", "HR", _ => Task.FromResult("https://link"));
+
+            Assert.Equal("pmpt_screening_primary", fixture.ProvisionedPrimaryPromptId);
+            Assert.Equal("pmpt_screening_evaluator", fixture.ProvisionedEvaluatorPromptId);
+        }
+
+        [Fact]
+        public async Task Whitespace_is_trimmed_off_the_prompt_ids()
+        {
+            var fixture = new Fixture();
+            var sut = fixture.CreateSut();
+            var draft = await ReadyDraft(sut);
+
+            await sut.CreateChannelAsync(
+                RequestWithPrompts(draft.DraftId, "  pmpt_padded  ", "  pmpt_padded_eval  "),
+                "recruiter@risebird.io", "HR", _ => Task.FromResult("https://link"));
+
+            Assert.Equal("pmpt_padded", fixture.ProvisionedPrimaryPromptId);
+            Assert.Equal("pmpt_padded_eval", fixture.ProvisionedEvaluatorPromptId);
+        }
+
+        [Fact]
+        public async Task An_evaluator_left_blank_stays_blank_so_the_primary_writes_the_report()
+        {
+            var fixture = new Fixture();
+            fixture.Settings["AIScreening:EvaluatorPromptId"] = "";
+
+            var sut = fixture.CreateSut();
+            var draft = await ReadyDraft(sut);
+
+            await sut.CreateChannelAsync(
+                RequestWithPrompts(draft.DraftId, "pmpt_form_primary", null),
+                "recruiter@risebird.io", "HR", _ => Task.FromResult("https://link"));
+
+            Assert.Equal("pmpt_form_primary", fixture.ProvisionedPrimaryPromptId);
+            Assert.True(string.IsNullOrWhiteSpace(fixture.ProvisionedEvaluatorPromptId));
+        }
+
+        [Fact]
+        public async Task Creation_is_refused_when_no_primary_prompt_id_can_be_found_anywhere()
+        {
+            // Mandatory server-side for an AI interview channel: a channel without one cannot be
+            // saved from Edit IRF afterwards either.
+            var fixture = new Fixture();
+            fixture.Settings["AIScreening:PrimaryPromptId"] = "";
+
+            var sut = fixture.CreateSut();
+            var draft = await ReadyDraft(sut);
+
+            var result = await sut.CreateChannelAsync(
+                RequestWithPrompts(draft.DraftId, null, null),
+                "recruiter@risebird.io", "HR", _ => Task.FromResult("https://link"));
+
+            Assert.False(result.Success);
+            Assert.Contains("Primary Prompt Id", result.Message);
+            Assert.Null(fixture.ProvisionedIrfId);
+        }
+
+        #endregion
+
+        #region Assessment Group is never a blocker
+
+        [Fact]
+        public async Task The_catch_all_is_used_even_when_the_job_title_would_match_a_real_group()
+        {
+            // Nearest-match resolution is deliberately switched off: which Assessment Group an AI
+            // channel belongs to does not affect how it runs, so every screening channel takes the
+            // catch-all rather than risking a wrong group on a best guess. If the nearest-match
+            // lookup is ever turned back on in ResolveAssessmentGroupAsync, this test should fail.
+            var fixture = new Fixture
+            {
+                MatchedAssessmentGroupId = 42,
+                CatchAllAssessmentGroupIdByName = 910
+            };
+            var sut = fixture.CreateSut();
             var draft = await ReadyDraft(sut);
 
             await sut.CreateChannelAsync(
                 Request(draft.DraftId), "recruiter@risebird.io", "HR", _ => Task.FromResult("https://link"));
 
-            Assert.Equal(42, fixture.TemplateAssessmentGroupId);
-            fixture.Repository.Verify(x => x.GetAssessmentGroupIdByName(It.IsAny<string>()), Times.Never);
+            Assert.Equal(910, fixture.TemplateAssessmentGroupId);
+            fixture.Repository.Verify(
+                x => x.ResolveAssessmentGroupIdByJobTitle(It.IsAny<string>(), It.IsAny<double>()), Times.Never);
         }
 
         [Fact]
         public async Task An_explicitly_configured_catch_all_wins_over_the_seeded_one()
         {
-            var fixture = new Fixture();
+            var fixture = new Fixture { CatchAllAssessmentGroupIdByName = 88 };
             fixture.Settings["AIScreening:CatchAllAssessmentGroupId"] = "77";
-            fixture.Repository.Setup(x => x.GetAssessmentGroupIdByName(It.IsAny<string>()))
-                .ReturnsAsync(88);
 
             var sut = fixture.CreateSut();
             var draft = await ReadyDraft(sut);
@@ -288,12 +419,8 @@ namespace Risebird.Business.Tests.AIScreeningTests
         [Fact]
         public async Task The_seeded_AIInterview_catch_all_is_resolved_by_name_when_nothing_matches()
         {
-            var fixture = new Fixture();
+            var fixture = new Fixture { CatchAllAssessmentGroupIdByName = 910 };
             var sut = fixture.CreateSut();
-
-            fixture.Repository.Setup(x => x.GetAssessmentGroupIdByName("AIInterview"))
-                .ReturnsAsync(910);
-
             var draft = await ReadyDraft(sut);
 
             await sut.CreateChannelAsync(
@@ -305,19 +432,19 @@ namespace Risebird.Business.Tests.AIScreeningTests
         [Fact]
         public async Task The_catch_all_name_can_be_overridden_in_configuration()
         {
-            var fixture = new Fixture();
+            var fixture = new Fixture { CatchAllAssessmentGroupIdByName = 611 };
             fixture.Settings["AIScreening:CatchAllAssessmentGroupName"] = "Generic AI";
+
             var sut = fixture.CreateSut();
-
-            fixture.Repository.Setup(x => x.GetAssessmentGroupIdByName("Generic AI"))
-                .ReturnsAsync(611);
-
             var draft = await ReadyDraft(sut);
 
             await sut.CreateChannelAsync(
                 Request(draft.DraftId), "recruiter@risebird.io", "HR", _ => Task.FromResult("https://link"));
 
             Assert.Equal(611, fixture.TemplateAssessmentGroupId);
+
+            // The configured name is what gets looked up, not the built-in default.
+            fixture.Repository.Verify(x => x.GetAssessmentGroupIdByName("Generic AI"), Times.Once);
         }
 
         [Fact]
@@ -359,6 +486,32 @@ namespace Risebird.Business.Tests.AIScreeningTests
         }
 
         #endregion
+
+        [Fact]
+        public async Task Section_two_gets_a_heading_and_the_job_title_is_left_alone()
+        {
+            var fixture = new Fixture();
+            var sut = fixture.CreateSut();
+            IRFVm submitted = null;
+
+            fixture.IrfService.Setup(x => x.CreateSkillChannelUsingTemplateByInterviewLinkPopUpV1(
+                    It.IsAny<IRFVm>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Callback<IRFVm, string, string>((vm, _, _) => submitted = vm)
+                .ReturnsAsync(new Tuple<bool, int>(true, FlatRateReturnedByProc));
+
+            var draft = await ReadyDraft(sut);
+
+            await sut.CreateChannelAsync(
+                Request(draft.DraftId), "recruiter@risebird.io", "HR", _ => Task.FromResult("https://link"));
+
+            // ClientReportV3 heads section two from JDTitleTwo, which nothing else on this route sets.
+            Assert.Equal("Motivation to Join Fitment", fixture.ProvisionedJdTitleTwo);
+
+            // JDTiltle stays the role, NOT a section label: the adaptive interviewer is told to
+            // interview the candidate for it, and it is the channel's title everywhere else.
+            Assert.NotNull(submitted);
+            Assert.Equal("Senior Backend Engineer - Bangalore", submitted.JDTiltle);
+        }
 
         [Fact]
         public async Task The_channel_is_created_as_AI_Audio_Adaptive()

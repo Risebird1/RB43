@@ -28,6 +28,11 @@ Create PROCEDURE [dbo].[usp_SaveAIScreeningProvisioning]
 @OpenAIPromptId varchar(100) = null,
 @OpenAIEvaluatorPromptId varchar(100) = null,
 @IdealCandidateProfile varchar(max) = null,
+-- Heading for the second scored section. ClientReportV3 renders section one from JDTiltle (the
+-- job title) and section two from JDTitleTwo, which nothing else populates on this route.
+-- JDTiltle is deliberately NOT overwritten with a section label: it is the channel's job title
+-- everywhere else, including the adaptive interviewer's "interview the candidate for {JDTiltle}".
+@JDTitleTwo varchar(150) = null,
 @TechSkillBulkData AS [dbo].[TransTechSkill_TableTypeV5] READONLY
 AS
 BEGIN
@@ -41,6 +46,9 @@ BEGIN
            ,[OpenAIPromptId]          = @OpenAIPromptId
            ,[OpenAIEvaluatorPromptId] = @OpenAIEvaluatorPromptId
            ,[IdealCandidateProfile]   = @IdealCandidateProfile
+           ,[JDTitleTwo]              = ISNULL(@JDTitleTwo, [JDTitleTwo])
+           -- The single predicate the report gates screening-only behaviour on.
+           ,[IsAIAudioScreening]      = 1
         WHERE id = @IRFId;
 
         -- Replace the flat rubric V1 copied from the template with the sectioned one.
