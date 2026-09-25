@@ -46,6 +46,7 @@ namespace Risebird.Entities.ViewModel
     {
         public static readonly string Meeting = "Meeting";
         public static readonly string Recording = "Recording";
+        public static readonly string Sign = "Sign";
     }
     public class ZohoParticipantList
     {
