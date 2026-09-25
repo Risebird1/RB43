@@ -361,6 +361,25 @@ namespace Risebird.Business
             {
                 if (await _meetingRespository.AddMeeting(meeting))
                 {
+                    // usp_AddMeeting stamps sCreatedBy = 'System', so record who booked it for the Team Productivity dashboard.
+                    if (!string.IsNullOrWhiteSpace(meeting.LoggedInUser))
+                    {
+                        try
+                        {
+                            await _activityTrackerRepository.AddActivity(new ActivityTrackerVM
+                            {
+                                ActivityType = (int)ActivityTypes.ScheduleMeeting,
+                                Particulars = "Meeting with: " + meeting.candidateEmail,
+                                PerformedBy = meeting.LoggedInUser,
+                                Summary = "Meeting Scheduled"
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        }
+                    }
+
                     //var interviwers = await _irfService.GetListOfInterviwerBasedOnIRFId(meeting.IRFId);
                     var interviwers = await _meetingRespository.GetEmergencyInterviewersForIRF(meeting.irfIntId);
 
@@ -4476,6 +4495,19 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+        public async Task<IEnumerable<CandidateOutreachConversionVM>> GetCandidateOutreachConversion(DateTime from, DateTime to, int callTimeOffsetMinutes, int windowDays)
+        {
+            try
+            {
+                return await _meetingRespository.GetCandidateOutreachConversion(from, to, callTimeOffsetMinutes, windowDays)
+                       ?? new List<CandidateOutreachConversionVM>();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<CandidateOutreachConversionVM>();
             }
         }
         public async Task<bool> CheckReportClientShareDetails(string Emailid, string uniqueid, int Interviewid)

@@ -1,0 +1,207 @@
+@model List<Risebird.Entities.ViewModel.CallRoleRecipientSummaryVM>
+@using Risebird.Web.Controllers
+@{
+    ViewData["Title"] = "Call Analytics - By Role";
+    ViewBag.PageHeader = "Call Analytics";
+    ViewData["CaxActiveTab"] = "role";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string type = ViewBag.Type;
+    string from = ViewBag.From;
+    string to = ViewBag.To;
+
+    int totalCalls = Model.Sum(x => x.TotalCalls);
+    int totalPeople = Model.Sum(x => x.People);
+    int totalCandidate = Model.Sum(x => x.CandidateCalls);
+    int totalInterviewer = Model.Sum(x => x.InterviewerCalls);
+    int totalOther = Model.Sum(x => x.OtherCalls);
+    int totalRecorded = Model.Sum(x => x.CallsWithRecording);
+    int totalSeconds = Model.Sum(x => x.TotalDurationSeconds);
+
+    Func<int, string> fmt = s => s >= 3600
+        ? string.Format("{0}h {1:00}m", s / 3600, (s % 3600) / 60)
+        : string.Format("{0}m {1:00}s", s / 60, s % 60);
+    Func<int, int, int> pct = (part, whole) => whole == 0 ? 0 : (int)Math.Round(part * 100.0 / whole);
+    Func<string, string> roleClass = r => r == "HR" || r == "SeniorHR" ? "cax-role cax-role-hr"
+        : r == "InterviewerManagement" || r == "SeniorInterviewerManagement" ? "cax-role cax-role-im" : "cax-role";
+    Func<string, string> roleBlurb = r => r switch
+    {
+        "HR" => "front-line coordinators",
+        "SeniorHR" => "escalations & QC",
+        "InterviewerManagement" => "interviewer coordination",
+        "SeniorInterviewerManagement" => "interviewer escalations",
+        "Unknown" => "caller not found in UserList",
+        _ => ""
+    };
+}
+<script>
+    var Header = "<div>Call Analytics</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/call-analytics.css" asp-append-version="true" />
+
+<div class="main-panel" id="main-panel">
+    <div class="jumbotron">
+        <div class="pt30">
+            <div class="col-md-12 nopad" style="margin:0px;">
+                <div class="card-header bg-w clearfix">
+                    <div class="pull-left">
+                        <div class="mobile-view"> <h4 class="card-title">Call Analytics · By role &amp; recipient</h4></div>
+                    </div>
+                    <div class="pull-right client-ms">
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" onclick="location.href='@Url.Action("CallAnalytics", "HR", new { type = type, from = from, to = to })'">
+                            <font style="font-family: Roboto, sans-serif; font-size:12px;">By User</font>
+                        </button>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" onclick="location.href='@Url.Action("CallRecordingsDetails", "HR", new { type = "Candidate" })'">
+                            <font style="font-family: Roboto, sans-serif; font-size:12px;">Call Recordings</font>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="cax-page">
+
+                        <partial name="_CallAnalyticsTabs" />
+
+                        <div class="cax-toolbar">
+                            <form method="get" action="/HR/CallAnalyticsByRole" class="cax-filters">
+                                <div>
+                                    <label for="caxFrom">From</label>
+                                    <input id="caxFrom" name="from" type="date" class="form-control" value="@from" />
+                                </div>
+                                <div>
+                                    <label for="caxTo">To</label>
+                                    <input id="caxTo" name="to" type="date" class="form-control" value="@to" />
+                                </div>
+                                <div>
+                                    <label for="caxType">Recipient</label>
+                                    <select id="caxType" name="type" class="form-control">
+                                        <option value="All" selected="@(type == "All")">All recipients</option>
+                                        <option value="Candidate" selected="@(type == "Candidate")">Candidates</option>
+                                        <option value="Interviewer" selected="@(type == "Interviewer")">Interviewers</option>
+                                        <option value="Other" selected="@(type == "Other")">Others</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded"><font style="font-size:12px;">Apply</font></button>
+                                    <button type="button" class="mdc-button mdc-button--outlined mdc-ripple-upgraded" onclick="location.href='/HR/CallAnalyticsByRole'"><font style="font-size:12px;">Reset</font></button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="cax-tiles">
+                            <div class="cax-tile"><div class="cax-tile-label">Total calls</div><div class="cax-tile-value">@totalCalls</div><div class="cax-tile-sub">@from to @to</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">Caller roles</div><div class="cax-tile-value">@Model.Count</div><div class="cax-tile-sub">@totalPeople people calling</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">To candidates</div><div class="cax-tile-value">@totalCandidate</div><div class="cax-tile-sub">@pct(totalCandidate, totalCalls)% of calls</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">To interviewers</div><div class="cax-tile-value">@totalInterviewer</div><div class="cax-tile-sub">@pct(totalInterviewer, totalCalls)% of calls</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">To others</div><div class="cax-tile-value">@totalOther</div><div class="cax-tile-sub">@pct(totalOther, totalCalls)% of calls</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">Talk time</div><div class="cax-tile-value">@fmt(totalSeconds)</div></div>
+                        </div>
+
+                        <div class="cax-card">
+                            <div class="cax-card-head">
+                                <div>
+                                    <h5 class="cax-card-title">Calls by caller role × recipient type</h5>
+                                    <div class="cax-card-sub">Caller role comes from the caller’s profile; recipient type from what the call screen dialled, else the recipient’s profile</div>
+                                </div>
+                            </div>
+
+                            @if (Model.Count > 0)
+                            {
+                                <div class="cax-table-wrap">
+                                    <table id="callAnalyticsByRoleTable" class="cax-table" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Caller role</th>
+                                                <th class="cax-right">People</th>
+                                                <th class="cax-right">Total calls</th>
+                                                <th class="cax-right">Candidate</th>
+                                                <th class="cax-right">Interviewer</th>
+                                                <th class="cax-right">Others</th>
+                                                <th>With recording</th>
+                                                <th class="cax-right">Talk time</th>
+                                                <th>Last call</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model)
+                                            {
+                                                var recPct = pct(item.CallsWithRecording, item.TotalCalls);
+                                                <tr>
+                                                    <td data-order="@HRController.CallerRoleLabel(item.CallerProfileType)">
+                                                        <span class="@roleClass(item.CallerProfileType)">@HRController.CallerRoleLabel(item.CallerProfileType)</span>
+                                                        @if (!string.IsNullOrEmpty(roleBlurb(item.CallerProfileType)))
+                                                        {
+                                                            <div class="cax-role-sub">@roleBlurb(item.CallerProfileType)</div>
+                                                        }
+                                                    </td>
+                                                    <td class="cax-right cax-num">@item.People</td>
+                                                    <td class="cax-right" data-order="@item.TotalCalls"><span class="cax-big">@item.TotalCalls</span></td>
+                                                    <td class="cax-right cax-num">@item.CandidateCalls</td>
+                                                    <td class="cax-right cax-num">@item.InterviewerCalls</td>
+                                                    <td class="cax-right cax-num">@item.OtherCalls</td>
+                                                    <td data-order="@item.CallsWithRecording">
+                                                        <div class="cax-muted" style="font-size:12px;"><b style="color:#1f2a37;">@item.CallsWithRecording</b> of @item.TotalCalls · @recPct%</div>
+                                                        <div class="cax-bar"><span style="width:@recPct%"></span></div>
+                                                    </td>
+                                                    <td class="cax-right cax-time" data-order="@item.TotalDurationSeconds">@fmt(item.TotalDurationSeconds)</td>
+                                                    <td data-order="@(item.LastCallOn?.ToString("yyyyMMddHHmm"))">@(item.LastCallOn?.ToString("dd MMM yyyy, HH:mm"))</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td>All roles</td>
+                                                <td class="cax-right">@totalPeople</td>
+                                                <td class="cax-right">@totalCalls</td>
+                                                <td class="cax-right">@totalCandidate</td>
+                                                <td class="cax-right">@totalInterviewer</td>
+                                                <td class="cax-right">@totalOther</td>
+                                                <td>@totalRecorded of @totalCalls · @pct(totalRecorded, totalCalls)%</td>
+                                                <td class="cax-right cax-time">@fmt(totalSeconds)</td>
+                                                <td></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="cax-empty">
+                                    <i class="fas fa-phone-slash"></i>
+                                    No calls in the selected period. Try a wider From / To date range.
+                                </div>
+                            }
+                        </div>
+
+                        <p class="cax-note">
+                            Calls to an Interviewer Management person are counted under Others — that role is not a recipient type.
+                            A caller whose email is not in UserList shows as Unknown. Open a user’s calls from the By user tab.
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        if ($.fn.DataTable && $('#callAnalyticsByRoleTable tbody tr').length > 0) {
+            $('#callAnalyticsByRoleTable').DataTable({
+                order: [[2, 'desc']],
+                pageLength: 25,
+                searching: false,
+                paging: false,
+                info: false
+            });
+        }
+    });
+</script>

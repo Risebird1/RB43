@@ -30,4 +30,16 @@ CREATE TABLE [dbo].[CallRecordingData](
 End
 GO
 
+-- recipientType sent by the call UI (Candidate / Interviewer); preferred over RecipientProfileType in Call Analytics
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'RecipientKind')
+      AND Object_ID = Object_ID(N'CallRecordingData'))
+BEGIN
+    ALTER TABLE CallRecordingData
+    Add RecipientKind varchar(20) NULL
+END
+GO
+
 

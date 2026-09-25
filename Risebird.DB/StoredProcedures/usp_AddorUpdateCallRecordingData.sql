@@ -16,7 +16,8 @@ Create Procedure usp_AddorUpdateCallRecordingData
 @callRecipient varchar(150),
 @caller varchar(150),
 @timeNow datetime,
-@callRecipientPhoneNumber nvarchar(20)
+@callRecipientPhoneNumber nvarchar(20),
+@recipientType varchar(20) = null -- what the call UI says it dialled (Candidate / Interviewer); stored as RecipientKind
 AS
 BEGIN
 
@@ -50,8 +51,8 @@ Begin try
 		if not Exists (Select 1 from CallRecordingData where [CallSid]= @CallSid)
 		BEGIN
 
-			Insert into CallRecordingData(InterviewId, IRFId, RecordingSid, [CallSid], CallRecipient, [Caller], RecipientProfileType, DateCreated, RecipientPhoneNumber)   
-			values(@interviewId, @irfIntId, @RecordingSid, @CallSid, @callRecipient,  @caller, @recipientProfileType, @timeNow, @callRecipientPhoneNumber) 
+			Insert into CallRecordingData(InterviewId, IRFId, RecordingSid, [CallSid], CallRecipient, [Caller], RecipientProfileType, DateCreated, RecipientPhoneNumber, RecipientKind)
+			values(@interviewId, @irfIntId, @RecordingSid, @CallSid, @callRecipient,  @caller, @recipientProfileType, @timeNow, @callRecipientPhoneNumber, NULLIF(LTRIM(RTRIM(@recipientType)), ''))
 
 
 			

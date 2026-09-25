@@ -32,3 +32,14 @@ INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (10, N'Create C
 INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (11, N'Meeting Cancelled')
 SET IDENTITY_INSERT [dbo].[ActivityTypeOptions] OFF
 GO
+
+-- ActivityTypes 12-14 (usp_GetAllActivities inner-joins this table, so a missing row hides those activities)
+SET IDENTITY_INSERT [dbo].[ActivityTypeOptions] ON
+IF NOT EXISTS (SELECT 1 FROM [dbo].[ActivityTypeOptions] WHERE id = 12)
+    INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (12, N'QC Done')
+IF NOT EXISTS (SELECT 1 FROM [dbo].[ActivityTypeOptions] WHERE id = 13)
+    INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (13, N'Update Interviewer')
+IF NOT EXISTS (SELECT 1 FROM [dbo].[ActivityTypeOptions] WHERE id = 14)
+    INSERT [dbo].[ActivityTypeOptions] ([id], [ActivityName]) VALUES (14, N'Schedule Meeting')
+SET IDENTITY_INSERT [dbo].[ActivityTypeOptions] OFF
+GO

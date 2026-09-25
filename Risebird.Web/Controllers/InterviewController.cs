@@ -1148,6 +1148,7 @@ namespace Risebird.Web.Controllers
                             {
                                 meeting.resumeLink = uploadedFileURL;
                                 meeting.candidateEmail = meeting.candidateEmail.ToLower();
+                                meeting.LoggedInUser = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
                                 if (await _meetingService.AddMeeting(meeting))
                                 {
                                     TempData["SuccessErrorMessageInterview"] = "Meeting has been added Successfully!";

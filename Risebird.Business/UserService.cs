@@ -764,11 +764,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<string> SaveCallRecordingData(int? interviewId, string callRecipient, string caller, string CallSid, string RecordingSid, string callRecipientPhoneNumber = null, string IRFId = null)
+        public async Task<string> SaveCallRecordingData(int? interviewId, string callRecipient, string caller, string CallSid, string RecordingSid, string callRecipientPhoneNumber = null, string IRFId = null, string recipientType = null)
         {
             try
             {
-                return await _userRepository.SaveCallRecordingData(interviewId, callRecipient, caller, CallSid, RecordingSid, callRecipientPhoneNumber, IRFId);
+                return await _userRepository.SaveCallRecordingData(interviewId, callRecipient, caller, CallSid, RecordingSid, callRecipientPhoneNumber, IRFId, recipientType);
             }
 
             catch (Exception e)
