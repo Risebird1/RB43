@@ -478,26 +478,37 @@ namespace Risebird.Business
             if (request.ClientId <= 0)
                 return Failed("Select a client.");
 
+            // The two prompts that run this channel, exactly as a skill channel already carries them:
+            // the Primary Prompt Id conducts the adaptive interview and the Interview Evaluator
+            // Prompt Id writes the report. Both are supplied on the intake form; the configured
+            // defaults only pre-fill it, so whatever the recruiter submitted wins.
+            //
             // IRF.OpenAIPromptId is mandatory for an AI interview channel and guarded server-side,
             // so the provisioning path always stamps it rather than leaving the channel to the
-            // runtime config fallback. A dedicated prompt is preferred: OpenAI:AIInterviewerPromptId
-            // is shared by every AI interview running today, so editing its content in the OpenAI
-            // account would change behaviour for all of them.
-            var primaryPromptId = _configuration["AIScreening:PrimaryPromptId"];
+            // runtime config fallback.
+            var primaryPromptId = Trimmed(request.PrimaryPromptId)
+                                  ?? Trimmed(_configuration["AIScreening:PrimaryPromptId"]);
             var usingSharedPrompt = false;
 
             if (string.IsNullOrWhiteSpace(primaryPromptId))
             {
-                primaryPromptId = _configuration["OpenAI:AIInterviewerPromptId"];
+                // OpenAI:AIInterviewerPromptId is shared by every AI interview running today, so
+                // editing its content in the OpenAI account changes behaviour for all of them.
+                primaryPromptId = Trimmed(_configuration["OpenAI:AIInterviewerPromptId"]);
                 usingSharedPrompt = !string.IsNullOrWhiteSpace(primaryPromptId);
             }
 
             if (string.IsNullOrWhiteSpace(primaryPromptId))
             {
                 return Failed(
-                    "AI screening is not configured: set AIScreening:PrimaryPromptId " +
-                    "(or OpenAI:AIInterviewerPromptId) to the stored prompt that runs the interview.");
+                    "Enter the Primary Prompt Id that runs the interview. It is mandatory for an AI " +
+                    "interview channel and cannot be filled in later without it.");
             }
+
+            // Optional. Left blank, the Primary Prompt Id generates the report too — which is how
+            // every other AI channel already behaves.
+            var evaluatorPromptId = Trimmed(request.EvaluatorPromptId)
+                                    ?? Trimmed(_configuration["AIScreening:EvaluatorPromptId"]);
 
             try
             {
@@ -557,9 +568,13 @@ namespace Risebird.Business
                     irfIntId,
                     skillSetsEvaluate: 2,
                     openAIPromptId: primaryPromptId,
-                    openAIEvaluatorPromptId: _configuration["AIScreening:EvaluatorPromptId"],
+                    openAIEvaluatorPromptId: evaluatorPromptId,
                     idealCandidateProfile: draft.ConfirmedIdealCandidateProfile ?? draft.ProposedIdealCandidateProfile,
-                    rubric: draft.Plan.ToTransSkills(irfIntId));
+                    rubric: draft.Plan.ToTransSkills(irfIntId),
+                    // Heading for section two on the report. Section one is headed by JDTiltle, which
+                    // stays the job title — it is what the adaptive interviewer is told to interview for.
+                    jdTitleTwo: AIScreeningIntakeHelper.GetSectionTitle(
+                        AIScreeningSectionEnum.MotivationToJoinFitment));
 
                 if (usingSharedPrompt)
                 {
@@ -569,8 +584,8 @@ namespace Risebird.Business
                     await _applicationErrorLogger.LogMessage(
                         LogLevelInfo.Warning,
                         $"AI screening channel '{irfId}' was provisioned with the shared " +
-                        $"OpenAI:AIInterviewerPromptId because AIScreening:PrimaryPromptId is not set. " +
-                        $"Set a dedicated prompt for screening channels.");
+                        $"OpenAI:AIInterviewerPromptId because no Primary Prompt Id was supplied on the " +
+                        $"intake form and AIScreening:PrimaryPromptId is not set. Set one on the channel.");
                 }
 
                 draft.CreatedIrfIntId = irfIntId;
@@ -746,6 +761,10 @@ namespace Risebird.Business
 
         private static AIScreeningChannelResult Failed(string message) =>
             new AIScreeningChannelResult { Success = false, Message = message };
+
+        /// <summary>Trimmed value, or null when there is nothing there — so ?? chains read correctly.</summary>
+        private static string Trimmed(string value) =>
+            string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
         private int ReadInt(string key, int fallback) =>
             int.TryParse(_configuration[key], out var value) && value > 0 ? value : fallback;

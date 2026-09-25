@@ -894,3 +894,20 @@ BEGIN
     Add IdealCandidateProfile varchar(max) NULL
 END
 GO
+
+-- Marks a channel created by the AI screening intake (AIScreening/New). One predicate for the
+-- screening-specific behaviour that must not change expert channels: the joint overall verdict on
+-- the report, and the two-section score breakdown.
+--
+-- IsAIInterview + AIInterviewType = Adaptive is not enough on its own - expert adaptive channels
+-- carry exactly that, and SkillSetsevaluate = 2 is also used by multi-stack expert channels.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'IsAIAudioScreening'
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add IsAIAudioScreening bit NULL
+END
+GO

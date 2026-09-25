@@ -95,7 +95,7 @@ namespace Risebird.Services.Controllers
                         CandidateEmail = ""
                     });
 
-                    var responseReplies = ExtractRunResultReplies(runResult);
+                    var responseReplies = await SanitizeSpokenRepliesAsync(ExtractRunResultReplies(runResult), input.SessionId);
                     if (responseReplies != null && responseReplies.Count > 0)
                         await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", responseReplies.FirstOrDefault());
 
@@ -160,7 +160,7 @@ namespace Risebird.Services.Controllers
                     CandidateEmail = ""
                 });
 
-                var responseReplies = ExtractRunResultReplies(runResult);
+                var responseReplies = await SanitizeSpokenRepliesAsync(ExtractRunResultReplies(runResult), input.SessionId);
                 if (responseReplies != null && responseReplies.Count > 0)
                     await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", responseReplies.FirstOrDefault());
 
@@ -213,7 +213,7 @@ namespace Risebird.Services.Controllers
                     CandidateEmail = ""
                 });
 
-                var responseReplies = ExtractRunResultReplies(runResult);
+                var responseReplies = await SanitizeSpokenRepliesAsync(ExtractRunResultReplies(runResult), input.SessionId);
                 if (responseReplies != null && responseReplies.Count > 0)
                     await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", responseReplies.FirstOrDefault());
 
@@ -475,6 +475,47 @@ namespace Risebird.Services.Controllers
                 return null;
 
             return new List<string> { text };
+        }
+
+        /// <summary>
+        /// Keeps report JSON out of the turns a candidate hears.
+        ///
+        /// An adaptive interview and its report run on ONE chained conversation, and a channel with
+        /// no Interview Evaluator Prompt Id uses the same prompt for both jobs. If that prompt emits
+        /// its evaluation JSON part-way through, the raw blob is spoken aloud by text-to-speech and
+        /// stored as the question text on the report — which is what candidates were hearing.
+        ///
+        /// Applied ONLY to conversational turns; the report endpoints need the JSON intact. In a
+        /// healthy interview no turn contains these keys, so this does nothing — but it warns when
+        /// it fires, so a misbehaving prompt stays visible rather than quietly papered over.
+        /// </summary>
+        private async Task<List<string>> SanitizeSpokenRepliesAsync(List<string> replies, Guid sessionId)
+        {
+            if (replies == null || replies.Count == 0) return replies;
+
+            var sanitized = new List<string>(replies.Count);
+            var warned = false;
+
+            foreach (var reply in replies)
+            {
+                var cleaned = AIInterviewReplySanitizer.StripOrFallback(reply, out var stripped);
+
+                if (stripped && !warned)
+                {
+                    warned = true;
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Warning,
+                        $"AI interview session {sessionId}: the interviewing prompt returned report JSON " +
+                        "in a conversational turn. It was removed before reaching the candidate. Give this " +
+                        "channel a Primary Prompt Id that only asks questions, or a separate Interview " +
+                        "Evaluator Prompt Id, so the interview and the report stop sharing one prompt.");
+                }
+
+                if (!string.IsNullOrWhiteSpace(cleaned))
+                    sanitized.Add(cleaned);
+            }
+
+            return sanitized;
         }
 
         private AIInterviewEvaluation TryParseEvaluation(string raw)

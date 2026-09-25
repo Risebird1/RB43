@@ -6,124 +6,237 @@ using Risebird.Entities.Enum;
 namespace Risebird.Entities.ViewModel
 {
     /// <summary>
-    /// Maps an AI screening evaluation onto the structures ClientReportV3 already renders, so the
-    /// two-section screening report needs no new report view.
+    /// Maps an AI screening evaluation onto <see cref="InterviewReport"/> — the model
+    /// ClientReportV3 already renders — so the two-section screening report needs no second
+    /// report view and no parallel schema.
+    ///
+    /// Section one lands in <see cref="InterviewReport.TechSkillReportCollection"/> and section two
+    /// in <see cref="InterviewReport.TechSkillTwoReportCollection"/>, which is the split V3 already
+    /// draws when SkillSetsevaluate is greater than 1.
     ///
     /// Section scores, the overall figure and each parameter score are computed here from the
     /// model's 1-5 ratings rather than taken from the evaluation JSON. Display the computed values;
-    /// <see cref="AIScreeningReport.OverallDisagreesWithModel"/> says when the model's own overall
+    /// <see cref="AIScreeningScores.OverallDisagreesWithModel"/> says when the model's own overall
     /// figure disagrees, which is worth a warning in the log.
     /// </summary>
     public static class AIScreeningReportMapper
     {
+        private const int SelectedStatus = 2;
+        private const int RejectedStatus = 3;
+
         /// <summary>
-        /// Builds the report from the channel's two-section rubric and the evaluator's ratings.
-        /// Rubric rows are matched to evaluation items by name; an unrated parameter scores zero
-        /// rather than being dropped, so a section's weights still total 100.
+        /// Fills <paramref name="report"/> from the channel's two-section rubric and the evaluator's
+        /// ratings, and returns the computed scores.
+        ///
+        /// The rubric normally comes from the report itself, which already carries the channel's
+        /// parameters and their weights; pass <paramref name="rubric"/> to override that.
+        /// Returns null and leaves the report untouched when there is nothing to map.
         /// </summary>
-        public static AIScreeningReport Build(
-            IEnumerable<TransSkill> rubric,
-            AIInterviewEvaluation evaluation)
+        public static AIScreeningScores Apply(
+            InterviewReport report,
+            AIInterviewEvaluation evaluation,
+            IEnumerable<TransSkill> rubric = null)
         {
-            var report = new AIScreeningReport();
+            if (report == null || evaluation == null) return null;
 
-            var rubricRows = (rubric ?? Enumerable.Empty<TransSkill>())
-                .Where(s => s != null && !string.IsNullOrWhiteSpace(s.SkillName))
-                .ToList();
-
-            if (rubricRows.Count == 0) return report;
+            var rubricRows = ResolveRubric(report, rubric);
+            if (rubricRows.Count == 0) return null;
 
             var ratings = BuildRatingLookup(evaluation);
+            var scores = new AIScreeningScores();
 
-            foreach (AIScreeningSectionEnum section in System.Enum.GetValues(typeof(AIScreeningSectionEnum)))
+            var roleRows = BuildSectionRows(rubricRows, AIScreeningSectionEnum.RoleFitment, ratings, scores);
+            var motivationRows = BuildSectionRows(rubricRows, AIScreeningSectionEnum.MotivationToJoinFitment, ratings, scores);
+
+            if (roleRows.Count == 0 && motivationRows.Count == 0) return null;
+
+            report.TechSkillReportCollection = roleRows;
+            report.TechSkillTwoReportCollection = motivationRows;
+            report.SkillSetsevaluate = 2;
+
+            // The two sections carry equal weight, so the headline figure is the mean of both. It is
+            // deliberately not section one's score: a candidate who fits the role perfectly but will
+            // not join must not read as a pass.
+            scores.OverallScore = AIScreeningIntakeHelper.ComputeOverallScore(
+                scores.RoleFitmentScore, scores.MotivationScore);
+
+            report.OverallScore = (float)scores.OverallScore;
+
+            if (evaluation.OverallTechnicalScore > 0)
             {
-                var rows = rubricRows.Where(s => s.SkillSet == (int)section).ToList();
-                if (rows.Count == 0) continue;
+                scores.ModelReportedOverallScore = (decimal)evaluation.OverallTechnicalScore;
+                scores.OverallDisagreesWithModel =
+                    Math.Abs(scores.ModelReportedOverallScore - scores.OverallScore) > 0.5m;
+            }
 
-                var sectionResult = new AIScreeningReportSection
+            scores.FinalVerdict = evaluation.FinalVerdict;
+            scores.FinalComment = evaluation.FinalComment;
+
+            if (!string.IsNullOrWhiteSpace(evaluation.FinalComment))
+                report.FinalComments = evaluation.FinalComment;
+
+            // One joint verdict for the whole screen, written to both sections so nothing on the
+            // page can read as section one's outcome alone.
+            var status = ResolveStatus(evaluation.FinalVerdict);
+            if (status.HasValue)
+            {
+                report.InterviewStatus = status;
+                report.InterviewStatusTwo = status;
+                scores.InterviewStatus = status;
+            }
+
+            ApplyQuestions(report, evaluation, rubricRows);
+            return scores;
+        }
+
+        /// <summary>Questions asked, split across the two sections by the parameter each one targeted.</summary>
+        private static void ApplyQuestions(
+            InterviewReport report, AIInterviewEvaluation evaluation, List<TransSkill> rubricRows)
+        {
+            if (evaluation.QuestionRatings == null || evaluation.QuestionRatings.Count == 0) return;
+
+            var sectionByParameter = rubricRows
+                .GroupBy(s => s.SkillName.Trim(), StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.First().SkillSet, StringComparer.OrdinalIgnoreCase);
+
+            var role = new List<QuestionsDiscussed>();
+            var motivation = new List<QuestionsDiscussed>();
+
+            foreach (var rating in evaluation.QuestionRatings)
+            {
+                if (rating == null || string.IsNullOrWhiteSpace(rating.Question)) continue;
+
+                var parameter = MatchParameter(sectionByParameter.Keys, rating.Question);
+                var section = parameter != null && sectionByParameter.TryGetValue(parameter, out var s)
+                    ? s
+                    : (int)AIScreeningSectionEnum.RoleFitment;
+
+                var entry = new QuestionsDiscussed
                 {
-                    Section = section,
-                    Title = AIScreeningIntakeHelper.GetSectionTitle(section)
+                    InterviewId = report.InterviewId,
+                    Comment = rating.Question,
+                    SkillName = parameter,
+                    RatingId = (int)Math.Round(rating.Score, MidpointRounding.AwayFromZero),
+                    QuestionStatus = rating.Verdict,
+                    SkillSet = section
                 };
 
-                foreach (var row in rows)
-                {
-                    var score = LookupScore(ratings, row.SkillName);
-
-                    sectionResult.Parameters.Add(new AIScreeningParameterRating
-                    {
-                        ParameterName = row.SkillName.Trim(),
-                        Section = section,
-                        Weight = Math.Max(0, row.Weightage),
-                        Score = score
-                    });
-                }
-
-                sectionResult.Score = AIScreeningIntakeHelper.ComputeSectionScore(sectionResult.Parameters);
-                report.Sections.Add(sectionResult);
+                if (section == (int)AIScreeningSectionEnum.MotivationToJoinFitment) motivation.Add(entry);
+                else role.Add(entry);
             }
 
-            if (report.Sections.Count == 0) return report;
-
-            var roleFitment = report.GetSection(AIScreeningSectionEnum.RoleFitment)?.Score ?? 0m;
-            var motivation = report.GetSection(AIScreeningSectionEnum.MotivationToJoinFitment)?.Score ?? 0m;
-
-            // The two sections carry equal weight, so the headline figure is the mean of both.
-            // It is deliberately not section one's score: a candidate who fits the role perfectly
-            // but will not join must not read as a pass.
-            report.OverallScore = AIScreeningIntakeHelper.ComputeOverallScore(roleFitment, motivation);
-
-            if (evaluation != null && evaluation.OverallTechnicalScore > 0)
-            {
-                report.ModelReportedOverallScore = (decimal)evaluation.OverallTechnicalScore;
-                report.OverallDisagreesWithModel =
-                    Math.Abs(report.ModelReportedOverallScore - report.OverallScore) > 0.5m;
-            }
-
-            report.FinalVerdict = evaluation?.FinalVerdict;
-            report.FinalComment = evaluation?.FinalComment;
-            return report;
+            if (role.Count > 0) report.QuestionsCollection = role;
+            if (motivation.Count > 0) report.QuestionsTwoCollection = motivation;
         }
 
         /// <summary>
-        /// Rubric rows as TechSkillReport entries carrying their section, which is what
-        /// ClientReportV3 groups on when SkillSetsevaluate is greater than 1.
+        /// Rubric rows for one section, scored. An unrated parameter scores zero rather than being
+        /// dropped, so the section's weights still total 100.
         /// </summary>
-        public static List<TechSkillReport> ToTechSkillReports(
-            AIScreeningReport report,
-            IEnumerable<TransSkill> rubric)
+        private static List<TechSkillReport> BuildSectionRows(
+            List<TransSkill> rubricRows,
+            AIScreeningSectionEnum section,
+            Dictionary<string, decimal> ratings,
+            AIScreeningScores scores)
         {
             var rows = new List<TechSkillReport>();
-            if (report?.Sections == null) return rows;
+            var sectionRubric = rubricRows.Where(s => s.SkillSet == (int)section).ToList();
+            if (sectionRubric.Count == 0) return rows;
 
-            var rubricByName = (rubric ?? Enumerable.Empty<TransSkill>())
-                .Where(s => s != null && !string.IsNullOrWhiteSpace(s.SkillName))
-                .GroupBy(s => s.SkillName.Trim(), StringComparer.OrdinalIgnoreCase)
-                .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+            var parameterRatings = new List<AIScreeningParameterRating>();
 
-            foreach (var section in report.Sections)
+            foreach (var source in sectionRubric)
             {
-                foreach (var parameter in section.Parameters ?? new List<AIScreeningParameterRating>())
-                {
-                    rubricByName.TryGetValue(parameter.ParameterName ?? string.Empty, out var source);
+                var name = source.SkillName.Trim();
+                var score = LookupScore(ratings, name);
 
-                    rows.Add(new TechSkillReport
-                    {
-                        SkillName = parameter.ParameterName,
-                        SkillSet = (int)section.Section,
-                        WeightageRequired = parameter.Weight,
-                        WeightageActual = (float)parameter.ParameterScore,
-                        RequiredLevel = source?.LevelName,
-                        RequiredLevelId = source?.LevelId ?? 0,
-                        Concepts = source?.Concepts,
-                        Natureofquestion = source?.Natureofquestion,
-                        Timelimit = source != null && source.Timelimit > 0 ? source.Timelimit : 3,
-                        isEliminationskill = source?.isEliminationskill ?? false
-                    });
-                }
+                var rating = new AIScreeningParameterRating
+                {
+                    ParameterName = name,
+                    Section = section,
+                    Weight = Math.Max(0, source.Weightage),
+                    Score = score
+                };
+                parameterRatings.Add(rating);
+
+                rows.Add(new TechSkillReport
+                {
+                    SkillName = name,
+                    SkillSet = (int)section,
+                    WeightageRequired = rating.Weight,
+                    WeightageActual = (float)rating.ParameterScore,
+                    RequiredLevel = source.LevelName,
+                    RequiredLevelId = source.LevelId,
+                    Concepts = source.Concepts,
+                    Natureofquestion = source.Natureofquestion,
+                    Timelimit = source.Timelimit > 0 ? source.Timelimit : 3,
+                    isEliminationskill = source.isEliminationskill
+                });
+            }
+
+            var sectionScore = AIScreeningIntakeHelper.ComputeSectionScore(parameterRatings);
+
+            if (section == AIScreeningSectionEnum.RoleFitment)
+            {
+                scores.RoleFitmentScore = sectionScore;
+                scores.RoleFitmentParameters = parameterRatings;
+            }
+            else
+            {
+                scores.MotivationScore = sectionScore;
+                scores.MotivationParameters = parameterRatings;
             }
 
             return rows;
+        }
+
+        /// <summary>
+        /// The channel's rubric. Preferred from the report's own collections, which
+        /// MeetingService.GetInteviewReport has already filled from the channel and which carry
+        /// SkillSet per row.
+        /// </summary>
+        private static List<TransSkill> ResolveRubric(InterviewReport report, IEnumerable<TransSkill> rubric)
+        {
+            if (rubric != null)
+            {
+                var supplied = rubric
+                    .Where(s => s != null && !string.IsNullOrWhiteSpace(s.SkillName))
+                    .ToList();
+                if (supplied.Count > 0) return supplied;
+            }
+
+            var rows = new List<TransSkill>();
+            rows.AddRange(ToTransSkills(report.TechSkillReportCollection, AIScreeningSectionEnum.RoleFitment));
+            rows.AddRange(ToTransSkills(report.TechSkillTwoReportCollection, AIScreeningSectionEnum.MotivationToJoinFitment));
+            return rows;
+        }
+
+        private static IEnumerable<TransSkill> ToTransSkills(
+            IEnumerable<TechSkillReport> source, AIScreeningSectionEnum fallbackSection)
+        {
+            return (source ?? Enumerable.Empty<TechSkillReport>())
+                .Where(r => r != null && !string.IsNullOrWhiteSpace(r.SkillName))
+                .Select(r => new TransSkill
+                {
+                    SkillName = r.SkillName,
+                    Weightage = (int)Math.Round(r.WeightageRequired, MidpointRounding.AwayFromZero),
+                    LevelId = r.RequiredLevelId,
+                    LevelName = r.RequiredLevel,
+                    Concepts = r.Concepts,
+                    Natureofquestion = r.Natureofquestion,
+                    Timelimit = r.Timelimit,
+                    isEliminationskill = r.isEliminationskill,
+                    // Rows written before SkillSet was carried through fall back to their collection.
+                    SkillSet = r.SkillSet > 0 ? r.SkillSet : (int)fallbackSection
+                });
+        }
+
+        private static int? ResolveStatus(string verdict)
+        {
+            if (string.IsNullOrWhiteSpace(verdict)) return null;
+            if (AIInterviewVerdict.IsSelectFamily(verdict)) return SelectedStatus;
+            if (AIInterviewVerdict.IsRejectFamily(verdict)) return RejectedStatus;
+            return null;
         }
 
         private static Dictionary<string, decimal> BuildRatingLookup(AIInterviewEvaluation evaluation)
@@ -160,12 +273,25 @@ namespace Risebird.Entities.ViewModel
 
             return 0m;
         }
+
+        private static string MatchParameter(IEnumerable<string> parameters, string question)
+        {
+            return parameters.FirstOrDefault(p =>
+                question.IndexOf(p, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
     }
 
-    /// <summary>The computed two-section screening result.</summary>
-    public class AIScreeningReport
+    /// <summary>
+    /// The computed figures behind a screening report. The report itself carries what V3 renders;
+    /// this carries what the caller needs to log or to render in the screening-only overall block.
+    /// </summary>
+    public class AIScreeningScores
     {
-        public List<AIScreeningReportSection> Sections { get; set; } = new List<AIScreeningReportSection>();
+        /// <summary>Out of 100, computed from the parameters' weights and 1-5 ratings.</summary>
+        public decimal RoleFitmentScore { get; set; }
+
+        /// <summary>Out of 100, computed independently of section one.</summary>
+        public decimal MotivationScore { get; set; }
 
         /// <summary>Mean of both section scores. Not section one's score.</summary>
         public decimal OverallScore { get; set; }
@@ -179,19 +305,10 @@ namespace Risebird.Entities.ViewModel
         public string FinalVerdict { get; set; }
         public string FinalComment { get; set; }
 
-        public AIScreeningReportSection GetSection(AIScreeningSectionEnum section) =>
-            Sections?.FirstOrDefault(s => s.Section == section);
-    }
+        /// <summary>2 = selected, 3 = rejected, null = neither could be read from the verdict.</summary>
+        public int? InterviewStatus { get; set; }
 
-    /// <summary>One scored section of the screening report.</summary>
-    public class AIScreeningReportSection
-    {
-        public AIScreeningSectionEnum Section { get; set; }
-        public string Title { get; set; }
-
-        public List<AIScreeningParameterRating> Parameters { get; set; } = new List<AIScreeningParameterRating>();
-
-        /// <summary>Out of 100, computed from the parameters' weights and 1-5 ratings.</summary>
-        public decimal Score { get; set; }
+        public List<AIScreeningParameterRating> RoleFitmentParameters { get; set; } = new List<AIScreeningParameterRating>();
+        public List<AIScreeningParameterRating> MotivationParameters { get; set; } = new List<AIScreeningParameterRating>();
     }
 }

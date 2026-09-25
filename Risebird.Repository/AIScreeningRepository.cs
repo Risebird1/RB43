@@ -97,7 +97,8 @@ namespace Risebird.Repository
             string openAIPromptId,
             string openAIEvaluatorPromptId,
             string idealCandidateProfile,
-            IList<TransSkill> rubric)
+            IList<TransSkill> rubric,
+            string jdTitleTwo = null)
         {
             try
             {
@@ -125,6 +126,10 @@ namespace Risebird.Repository
                         Value = string.IsNullOrWhiteSpace(idealCandidateProfile)
                             ? (object)DBNull.Value
                             : idealCandidateProfile.Trim()
+                    });
+                    cmd.Parameters.Add(new SqlParameter("@JDTitleTwo", SqlDbType.VarChar, 150)
+                    {
+                        Value = string.IsNullOrWhiteSpace(jdTitleTwo) ? (object)DBNull.Value : jdTitleTwo.Trim()
                     });
                     cmd.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured)
                     {
@@ -211,6 +216,34 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(Risebird.Entities.Enum.LogLevelInfo.Exception, ex);
                 return 0;
+            }
+        }
+
+        public async Task<bool> IsAIScreeningChannel(int irfIntId)
+        {
+            if (irfIntId <= 0) return false;
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var cmd = new SqlCommand(
+                        "SELECT TOP 1 ISNULL(IsAIAudioScreening, 0) FROM IRF WHERE id = @id", con);
+                    cmd.Parameters.AddWithValue("@id", irfIntId);
+
+                    con.Open();
+                    var scalar = await cmd.ExecuteScalarAsync();
+                    con.Close();
+
+                    return scalar != null && scalar != DBNull.Value && Convert.ToBoolean(scalar);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(Risebird.Entities.Enum.LogLevelInfo.Exception, ex);
+                // Treat an unreadable answer as "not a screening channel" so the report falls back
+                // to exactly what it renders today rather than switching behaviour on a failure.
+                return false;
             }
         }
 

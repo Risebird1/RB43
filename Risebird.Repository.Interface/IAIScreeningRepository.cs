@@ -36,10 +36,18 @@ namespace Risebird.Repository.Interface
             string openAIPromptId,
             string openAIEvaluatorPromptId,
             string idealCandidateProfile,
-            IList<TransSkill> rubric);
+            IList<TransSkill> rubric,
+            string jdTitleTwo = null);
 
         /// <summary>True when a template already carries this name.</summary>
         Task<bool> IsTemplateNameTaken(string templateName);
+
+        /// <summary>
+        /// True when the channel was created by the AI screening intake (IRF.IsAIAudioScreening).
+        /// The single predicate the report gates screening-only behaviour on, so expert channels
+        /// keep their current headline verdict.
+        /// </summary>
+        Task<bool> IsAIScreeningChannel(int irfIntId);
 
         /// <summary>
         /// Resolves the nearest Assessment Group to a job title, matched on the Assessment Group's
