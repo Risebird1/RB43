@@ -226,7 +226,8 @@
                                             <label id="txtinterviewamount" style="padding:0 0 0 0">Interview Amount: 0</label> |
                                             <label id="txtnoshowamount" style="padding:0 0 0 0">No Show Amount: 0</label> |
                                             <label id="txtdroppedamount" style="padding:0 0 0 0">Dropped Amount: 0</label> |
-                                            <label id="txtpendingamount" style="padding:0 0 0 0">Pending Amount: 0</label>
+                                            <label id="txtpendingamount" style="padding:0 0 0 0">Pending Amount: 0</label> |
+                                            <label id="txtnegativebalance" style="padding:0 0 0 0;color:#c62828;">-veBalance: 0</label>
                                         </div>
                                         <div class="col-sm-12 nopad">
                                             <div class="table-responsive">
@@ -1237,7 +1238,13 @@
     function updateCarryForwardCount() {
         var checked = document.querySelectorAll('.chkCarryForwardInterviewer:checked');
         var allBoxes = document.querySelectorAll('.chkCarryForwardInterviewer');
-        document.getElementById('spnCarryForwardSelected').textContent = checked.length + ' interviewer(s) selected';
+        var totalAmt = 0;
+        for (var i = 0; i < checked.length; i++) {
+            totalAmt += parseInt(checked[i].getAttribute('data-points') || 0);
+        }
+        var txt = checked.length + ' interviewer(s) selected';
+        if (checked.length > 0) txt += ' &nbsp;|&nbsp; Total Amount: <strong>' + totalAmt + '</strong>';
+        document.getElementById('spnCarryForwardSelected').innerHTML = txt;
         document.getElementById('chkSelectAllCarryForward').checked = allBoxes.length > 0 && checked.length === allBoxes.length;
     }
 
@@ -1832,6 +1839,7 @@
                     $("#txtnoshowamount").text("No Show Amount: " + data.totalNoShowamount);
                     $("#txtdroppedamount").text("Dropped Amount: " + data.totaldroppedamount);
                     $("#txtpendingamount").text("Pending Amount: " + data.pendingAmount);
+                    $("#txtnegativebalance").text("-veBalance: " + data.negativeBalance);
                 }
             }
         });
@@ -1872,6 +1880,7 @@
                             $("#txtnoshowamount").text("No Show Amount: " + data.totalNoShowamount);
                             $("#txtdroppedamount").text("Dropped Amount: " + data.totaldroppedamount);
                             $("#txtpendingamount").text("Pending Amount: " + data.pendingAmount);
+                            $("#txtnegativebalance").text("-veBalance: " + data.negativeBalance);
                         }
                     }
                 });
@@ -1913,6 +1922,7 @@
         $("#txtnoshowamount").text("No Show Amount: 0");
         $("#txtdroppedamount").text("Dropped Amount: 0");
         $("#txtpendingamount").text("Pending Amount: 0");
+        $("#txtnegativebalance").text("-veBalance: 0");
     }
     function bindtableDataChangeMonth() {
         var html = '';
