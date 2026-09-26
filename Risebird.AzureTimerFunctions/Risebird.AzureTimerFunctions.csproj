@@ -4,6 +4,9 @@
     <OutputType>Exe</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <!-- Referenced libraries (and Risebird.Web) target x64; match them so ResolveAssemblyReference
+         does not emit MSB3270 MSIL/AMD64 mismatch warnings. Publish profile is win-x64 already. -->
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="local.settings.json" />
