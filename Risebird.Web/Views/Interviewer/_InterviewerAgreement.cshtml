@@ -4,6 +4,17 @@
 <style>
     #agreementSignaturePad { width: 100%; max-width: 520px; height: 160px; border: 1px dashed #9e9e9e; border-radius: 4px; background: #fff; touch-action: none; cursor: crosshair; display: block; }
     /* The site stylesheet hides native checkboxes (opacity 0 / absolute) for its custom toggles; show this one. */
+    .agreement-sig-modes { display: flex; gap: 0; margin-bottom: 8px; }
+    .agreement-sig-mode { border: 1px solid #2196f3; background: #fff; color: #2196f3; padding: 6px 14px; font-size: 13px; cursor: pointer; }
+    .agreement-sig-mode:first-child { border-radius: 4px 0 0 4px; }
+    .agreement-sig-mode:last-child { border-radius: 0 4px 4px 0; border-left: 0; }
+    .agreement-sig-mode.active { background: #2196f3; color: #fff; }
+    .agreement-sig-upload-box { width: 100%; max-width: 520px; height: 160px; border: 1px dashed #9e9e9e; border-radius: 4px; background: #fff;
+        display: flex; align-items: center; justify-content: center; }
+    .agreement-sig-upload-box img { max-width: 90%; max-height: 140px; }
+    #agreementSigUploadBox { cursor: pointer; }
+    #agreementSigFile { display: none !important; }
+    .agreement-sig-mode { position: relative; z-index: 2; }
     .agreement-agree { display: flex; align-items: flex-start; gap: 10px; font-weight: normal; cursor: pointer; margin-bottom: 12px; padding: 10px 12px; border: 1px solid #dcdcdc; border-radius: 4px; }
     .agreement-agree.is-checked { border-color: #43a047; background: #f1f8f1; }
     .agreement-agree input#agreementAgree {
@@ -53,9 +64,32 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <label>Signature <span class="text-danger">*</span></label>
-                            <canvas id="agreementSignaturePad"></canvas>
-                            <small class="text-muted">Draw your signature with the mouse or your finger.</small>
-                            <button type="button" id="btnClearSignature" class="mdc-button mdc-ripple-upgraded" style="margin-left:8px;">Clear</button>
+                            <div class="agreement-sig-modes">
+                                <button type="button" class="agreement-sig-mode active" data-mode="draw">Draw signature</button>
+                                <button type="button" class="agreement-sig-mode" data-mode="upload">Upload signature</button>
+                            </div>
+
+                            <div id="agreementSigDraw">
+                                <canvas id="agreementSignaturePad"></canvas>
+                                <small class="text-muted">Draw your signature with the mouse or your finger.</small>
+                                <button type="button" id="btnClearSignature" class="mdc-button mdc-ripple-upgraded" style="margin-left:8px;">Clear</button>
+                            </div>
+
+                            <div id="agreementSigUpload" style="display:none;">
+                                <div class="agreement-sig-upload-box" id="agreementSigUploadBox" title="Click to choose an image">
+                                    <img id="agreementSigPreview" alt="Uploaded signature" style="display:none;" />
+                                    <span id="agreementSigPlaceholder" class="text-muted">Click here or "Choose image" to upload your signature</span>
+                                </div>
+                                @* Kept out of layout: the site theme turns file inputs into invisible full-size overlays
+                                   that swallow clicks on nearby buttons. It is opened from the button / box instead. *@
+                                <input type="file" id="agreementSigFile" accept="image/png,image/jpeg" tabindex="-1" aria-hidden="true" data-bfi-disabled />
+                                <div style="margin-top:8px;">
+                                    <button type="button" id="btnChooseSigFile" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Choose image</button>
+                                    <button type="button" id="btnRemoveSigUpload" class="mdc-button mdc-ripple-upgraded" style="display:none;">Remove</button>
+                                    <span id="agreementSigFileName" class="text-muted" style="margin-left:8px;"></span>
+                                </div>
+                                <div><small class="text-muted">PNG or JPG, up to 2 MB. Sign on plain white paper and take a clear photo or scan; the white background is removed automatically.</small></div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-12">
@@ -238,6 +272,94 @@
         });
         window.addEventListener('resize', function () { if ($(pad).is(':visible') && !hasInk) resizeSignaturePad(); });
         $('#btnClearSignature').on('click', clearSignature);
+        // ── Signature: draw or upload ──
+        var signatureMode = 'draw';
+        var uploadedSignature = null;   // PNG data URL of the processed upload
+
+        $('.agreement-sig-mode').on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            signatureMode = $(this).data('mode');
+            $('.agreement-sig-mode').removeClass('active');
+            $(this).addClass('active');
+            $('#agreementSigDraw').toggle(signatureMode === 'draw');
+            $('#agreementSigUpload').toggle(signatureMode === 'upload');
+            if (signatureMode === 'draw') resizeSignaturePad();
+        });
+
+        function clearUpload() {
+            uploadedSignature = null;
+            $('#agreementSigFile').val('');
+            $('#agreementSigPreview').hide().attr('src', '');
+            $('#agreementSigPlaceholder').show();
+            $('#btnRemoveSigUpload').hide();
+            $('#agreementSigFileName').text('');
+        }
+        $('#btnRemoveSigUpload').on('click', clearUpload);
+        $('#btnChooseSigFile, #agreementSigUploadBox').on('click', function (e) {
+            e.preventDefault();
+            document.getElementById('agreementSigFile').click();
+        });
+
+        $('#agreementSigFile').on('change', function () {
+            var file = this.files && this.files[0];
+            var $status = $('#agreementPortalStatus').removeClass('text-danger text-success').text('');
+            if (!file) return;
+            if (!/^image\/(png|jpeg)$/.test(file.type)) { clearUpload(); $status.addClass('text-danger').text('Please upload a PNG or JPG image.'); return; }
+            if (file.size > 2 * 1024 * 1024) { clearUpload(); $status.addClass('text-danger').text('The signature image must be 2 MB or smaller.'); return; }
+
+            var reader = new FileReader();
+            reader.onload = function () {
+                var img = new Image();
+                img.onload = function () {
+                    var result = processUploadedSignature(img);
+                    if (!result) { clearUpload(); $status.addClass('text-danger').text('No signature found in the image. Please upload a clear image of your signature on white paper.'); return; }
+                    uploadedSignature = result;
+                    $('#agreementSigFileName').text(file.name);
+                    $('#agreementSigPreview').attr('src', result).show();
+                    $('#agreementSigPlaceholder').hide();
+                    $('#btnRemoveSigUpload').show();
+                };
+                img.onerror = function () { clearUpload(); $status.addClass('text-danger').text('The image could not be read. Please try another file.'); };
+                img.src = reader.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Scales the image to fit 600x200, turns the light (paper) background transparent and crops to the ink.
+        function processUploadedSignature(img) {
+            var scale = Math.min(1, 600 / img.width, 200 / img.height);
+            var w = Math.max(1, Math.round(img.width * scale)), h = Math.max(1, Math.round(img.height * scale));
+            var c = document.createElement('canvas');
+            c.width = w; c.height = h;
+            var cx = c.getContext('2d');
+            cx.drawImage(img, 0, 0, w, h);
+            var data = cx.getImageData(0, 0, w, h), px = data.data;
+            var minX = w, minY = h, maxX = -1, maxY = -1;
+            for (var y = 0; y < h; y++) {
+                for (var x = 0; x < w; x++) {
+                    var i = (y * w + x) * 4;
+                    var light = 0.299 * px[i] + 0.587 * px[i + 1] + 0.114 * px[i + 2];
+                    if (px[i + 3] < 20 || light > 200) { px[i + 3] = 0; continue; }
+                    if (x < minX) minX = x; if (x > maxX) maxX = x;
+                    if (y < minY) minY = y; if (y > maxY) maxY = y;
+                }
+            }
+            if (maxX - minX < 10 || maxY - minY < 3) return null;
+            cx.putImageData(data, 0, 0);
+            var m = 4, cropX = Math.max(0, minX - m), cropY = Math.max(0, minY - m);
+            var cropW = Math.min(w, maxX + m + 1) - cropX, cropH = Math.min(h, maxY + m + 1) - cropY;
+            var out = document.createElement('canvas');
+            out.width = cropW; out.height = cropH;
+            out.getContext('2d').drawImage(c, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+            return out.toDataURL('image/png');
+        }
+
+        function currentSignature() {
+            if (signatureMode === 'upload') return uploadedSignature;
+            return hasInk && bounds && (bounds.maxX - bounds.minX) >= 20 ? signatureDataUrl() : null;
+        }
+
         $('#agreementAgree').on('change', function () {
             $(this).closest('.agreement-agree').toggleClass('is-checked', this.checked);
             if (this.checked) $('#agreementPortalStatus').removeClass('text-danger').text('');
@@ -265,7 +387,8 @@
             if (fullName.length < 2) return fail('Please enter your full name.');
             if (fatherName.length < 2) return fail("Please enter your father's / guardian's name.");
             if (!/\b\d{6}\b/.test(address)) return fail('Please enter your full address with a 6-digit PIN code.');
-            if (!hasInk || !bounds || (bounds.maxX - bounds.minX) < 20) return fail('Please draw your signature in the box.');
+            var signature = currentSignature();
+            if (!signature) return fail(signatureMode === 'upload' ? 'Please upload an image of your signature.' : 'Please draw your signature in the box.');
             if (!$('#agreementAgree').is(':checked')) return fail('Please confirm that you have read and agree to the agreement.');
 
             var $btn = $(this).prop('disabled', true);
@@ -274,7 +397,7 @@
                 fullName: fullName,
                 fatherName: fatherName,
                 address: address,
-                signature: signatureDataUrl(),
+                signature: signature,
                 agree: true,
                 __RequestVerificationToken: token()
             }).done(function (res) {

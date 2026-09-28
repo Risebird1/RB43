@@ -39,21 +39,22 @@ namespace Risebird.Web.Helpers
 
         public async Task<AgreementDocument> GetDocumentAsync()
         {
-            var key = $"{_options.DocumentSource}|{_options.DocumentBlobContainer}|{_options.LocalDocumentFolder}|{_options.DocumentName}";
+            var key = $"{_options.DocumentSource}|{_options.DocumentBlobContainer}|{_options.LocalDocumentFolder}|{_options.DocumentName}|{_options.ResolvedLayoutName}";
             lock (CacheLock)
             {
                 if (_cache.Key == key && DateTime.UtcNow - _cache.LoadedAt < CacheDuration)
                     return _cache.Document;
             }
 
-            var pdf = await ReadFileAsync(_options.DocumentName);
-            var layoutJson = await ReadFileAsync(Path.ChangeExtension(_options.DocumentName, ".layout.json"));
+            var pdf = await ReadFileAsync(_options.DocumentName, allowLocalFallback: false);
+            var layoutJson = await ReadFileAsync(_options.ResolvedLayoutName, allowLocalFallback: true);
             var layout = JsonSerializer.Deserialize<AgreementDocumentLayout>(layoutJson,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true, ReadCommentHandling = JsonCommentHandling.Skip, AllowTrailingCommas = true })
                 ?? throw new InvalidOperationException($"Agreement layout for {_options.DocumentName} is empty.");
 
             var document = Prepare(pdf, layout);
             document.FileName = _options.DocumentName;
+            document.SourceSha256 = Convert.ToHexString(SHA256.HashData(pdf));
             lock (CacheLock)
             {
                 _cache = (key, DateTime.UtcNow, document);
@@ -137,7 +138,8 @@ namespace Risebird.Web.Helpers
         // Electronic-signature evidence: a block on the audit page and a reference line on every page.
         private void DrawAudit(PdfStamper stamper, PdfReader reader, AgreementDocument document, PortalSignatureStamp stamp, BaseFont font, BaseFont bold)
         {
-            var fingerprint = Convert.ToHexString(SHA256.HashData(document.Pdf)).Substring(0, 16);
+            // Fingerprint of the source agreement (stable; matches the file in blob / the folder).
+            var fingerprint = (document.SourceSha256 ?? Convert.ToHexString(SHA256.HashData(document.Pdf))).Substring(0, 16);
             var signedAt = stamp.SignedOn.ToString("dd MMM yyyy, hh:mm:ss tt", CultureInfo.InvariantCulture);
             var lines = new[]
             {
@@ -187,15 +189,21 @@ namespace Risebird.Web.Helpers
             }
         }
 
-        private async Task<byte[]> ReadFileAsync(string fileName)
+        // Blob source: the PDF must be in the container. The layout may be uploaded next to it; if it is
+        // not there, the layout in the local AgreementDocuments folder is used.
+        private async Task<byte[]> ReadFileAsync(string fileName, bool allowLocalFallback)
         {
             if (string.Equals(_options.DocumentSource, "Blob", StringComparison.OrdinalIgnoreCase))
             {
-                var blob = _azureStorageHelper.GetBlobDataAsBlob(_options.DocumentBlobContainer, fileName)
-                    ?? throw new FileNotFoundException($"Agreement file {fileName} not found in blob container {_options.DocumentBlobContainer}.");
-                using var ms = new MemoryStream();
-                await blob.DownloadToStreamAsync(ms);
-                return ms.ToArray();
+                var blob = _azureStorageHelper.GetBlobDataAsBlob(_options.DocumentBlobContainer, fileName);
+                if (blob != null && await blob.ExistsAsync())
+                {
+                    using var ms = new MemoryStream();
+                    await blob.DownloadToStreamAsync(ms);
+                    return ms.ToArray();
+                }
+                if (!allowLocalFallback)
+                    throw new FileNotFoundException($"Agreement file '{fileName}' not found in blob container '{_options.DocumentBlobContainer}'.");
             }
 
             var path = Path.Combine(_environment.ContentRootPath, _options.LocalDocumentFolder, fileName);
