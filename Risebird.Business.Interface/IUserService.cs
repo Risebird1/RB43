@@ -67,7 +67,7 @@ namespace Risebird.Business.Interface
         Task<AssignmentVM> GetInterviewerEntitleById(int assessmentid);
         Task<string> SaveCallRecordingInterviewer(string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl);
         Task<List<CallRecordingDetailsVM>> FetchCallRecordingInterviewer(string Emailid);
-        Task<string> SaveCallRecordingData(int? interviewId, string callRecipient, string caller, string CallSid, string RecordingSid, string callRecipientPhoneNumber = null, string IRFId = null);
+        Task<string> SaveCallRecordingData(int? interviewId, string callRecipient, string caller, string CallSid, string RecordingSid, string callRecipientPhoneNumber = null, string IRFId = null, string recipientType = null);
         Task<bool> AddPremiumClientUser(ClientUserVM clientUser);
         Task<List<ClientUserVM>> GetClientPremiumUsers(string EmailId);
         Task<ClientUserVM> GetClientPremiumUser(int id);

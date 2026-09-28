@@ -1,0 +1,10 @@
+@* View tabs shared by CallAnalytics, CallAnalyticsByRole and CallAnalyticsConversion. Keeps the current filters. *@
+@{
+    string active = ViewData["CaxActiveTab"] as string;
+    var routeValues = new { type = (string)ViewBag.Type, from = (string)ViewBag.From, to = (string)ViewBag.To };
+}
+<nav class="cax-tabs" aria-label="Call Analytics views">
+    <a class="cax-tab @(active == "user" ? "active" : "")" href="@Url.Action("CallAnalytics", "HR", routeValues)">By user</a>
+    <a class="cax-tab @(active == "role" ? "active" : "")" href="@Url.Action("CallAnalyticsByRole", "HR", routeValues)">By role &amp; recipient</a>
+    <a class="cax-tab @(active == "conversion" ? "active" : "")" href="@Url.Action("CallAnalyticsConversion", "HR", routeValues)">Conversion</a>
+</nav>

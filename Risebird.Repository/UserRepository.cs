@@ -1223,7 +1223,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<string> SaveCallRecordingData(int? interviewId, string callRecipient, string caller, string callSid, string recordingSid, string callRecipientPhoneNumber = null, string IRFId = null)
+        public async Task<string> SaveCallRecordingData(int? interviewId, string callRecipient, string caller, string callSid, string recordingSid, string callRecipientPhoneNumber = null, string IRFId = null, string recipientType = null)
         {
             try
             {
@@ -1237,6 +1237,9 @@ namespace Risebird.Repository
                 parameters.Add("@caller", caller);
                 parameters.Add("@timeNow", DateTime.Now);
                 parameters.Add("@callRecipientPhoneNumber", callRecipientPhoneNumber);
+                // The call UI sends "" / "undefined" when no type was set; store those as NULL.
+                var recipientKind = recipientType?.Trim();
+                parameters.Add("@recipientType", string.IsNullOrEmpty(recipientKind) || recipientKind == "undefined" || recipientKind == "null" ? null : recipientKind);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(con, "usp_AddorUpdateCallRecordingData", parameters,

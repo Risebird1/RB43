@@ -7372,6 +7372,31 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
             }
             return null;
         }
+        public async Task<IEnumerable<CandidateOutreachConversionVM>> GetCandidateOutreachConversion(DateTime from, DateTime to, int callTimeOffsetMinutes, int windowDays)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@from", from.Date);
+                    parameters.Add("@to", to.Date);
+                    parameters.Add("@callTimeOffsetMinutes", callTimeOffsetMinutes);
+                    parameters.Add("@windowDays", windowDays);
+                    return await SqlMapper.QueryAsync<CandidateOutreachConversionVM>(con, "usp_GetCandidateOutreachConversion", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
         public async Task<bool> CheckReportClientShareDetails(string Emailid, string uniqueid, int Interviewid)
         {
             try

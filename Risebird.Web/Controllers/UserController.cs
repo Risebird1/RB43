@@ -2096,7 +2096,7 @@ namespace Risebird.Web.Controllers
                 {
                     var resultset = _userService.SaveCallRecording((interviewid.HasValue ? interviewid.Value : 0), IRFId, callRecipient, currentUserEmailId, sid, recordingSid);
                 }
-                _ = await _userService.SaveCallRecordingData(interviewid, (callRecipient != null ? callRecipient : CandidateEmail), currentUserEmailId, sid, recordingSid, callRecipientPhoneNumber, IRFId);
+                _ = await _userService.SaveCallRecordingData(interviewid, (callRecipient != null ? callRecipient : CandidateEmail), currentUserEmailId, sid, recordingSid, callRecipientPhoneNumber, IRFId, recipientType);
                 return Json(recordingSid);
             }
             return Json("Fail");

@@ -1,0 +1,221 @@
+@model List<Risebird.Entities.ViewModel.CandidateOutreachConversionVM>
+@using Risebird.Web.Controllers
+@{
+    ViewData["Title"] = "Call Analytics - Conversion";
+    ViewBag.PageHeader = "Call Analytics";
+    ViewData["CaxActiveTab"] = "conversion";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string type = ViewBag.Type;
+    string from = ViewBag.From;
+    string to = ViewBag.To;
+    int windowDays = ViewBag.WindowDays;
+
+    var rs = Model.Where(x => x.OutreachType == "Reschedule").ToList();
+    var ns = Model.Where(x => x.OutreachType == "NewSchedule").ToList();
+    int rsPlaced = rs.Sum(x => x.CallsPlaced), rsConnected = rs.Sum(x => x.CallsConnected), rsConverted = rs.Sum(x => x.Converted);
+    int nsPlaced = ns.Sum(x => x.CallsPlaced), nsConnected = ns.Sum(x => x.CallsConnected), nsConverted = ns.Sum(x => x.Converted);
+    int allPlaced = rsPlaced + nsPlaced, allConverted = rsConverted + nsConverted;
+
+    var byCaller = Model
+        .GroupBy(x => x.Caller ?? string.Empty, StringComparer.OrdinalIgnoreCase)
+        .Select(g => new
+        {
+            Caller = g.Key,
+            Role = g.Select(x => x.CallerProfileType).FirstOrDefault(v => !string.IsNullOrEmpty(v)),
+            RsPlaced = g.Where(x => x.OutreachType == "Reschedule").Sum(x => x.CallsPlaced),
+            RsConverted = g.Where(x => x.OutreachType == "Reschedule").Sum(x => x.Converted),
+            NsPlaced = g.Where(x => x.OutreachType == "NewSchedule").Sum(x => x.CallsPlaced),
+            NsConverted = g.Where(x => x.OutreachType == "NewSchedule").Sum(x => x.Converted),
+            Connected = g.Sum(x => x.CallsConnected)
+        })
+        .OrderByDescending(x => x.RsPlaced + x.NsPlaced)
+        .ToList();
+
+    Func<int, int, int> pct = (part, whole) => whole == 0 ? 0 : (int)Math.Round(part * 100.0 / whole);
+    Func<string, string> initial = s => string.IsNullOrWhiteSpace(s) ? "?" : s.Trim().Substring(0, 1).ToUpper();
+    Func<string, string> roleClass = r => r == "HR" || r == "SeniorHR" ? "cax-role cax-role-hr" : "cax-role";
+}
+<script>
+    var Header = "<div>Call Analytics</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=2024" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/call-analytics.css" asp-append-version="true" />
+
+<div class="main-panel" id="main-panel">
+    <div class="jumbotron">
+        <div class="pt30">
+            <div class="col-md-12 nopad" style="margin:0px;">
+                <div class="card-header bg-w clearfix">
+                    <div class="pull-left">
+                        <div class="mobile-view"> <h4 class="card-title">Call Analytics · Candidate outreach conversion</h4></div>
+                    </div>
+                    <div class="pull-right client-ms">
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" onclick="location.href='@Url.Action("CallAnalytics", "HR", new { type = type, from = from, to = to })'">
+                            <font style="font-family: Roboto, sans-serif; font-size:12px;">By User</font>
+                        </button>
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" onclick="location.href='@Url.Action("CallAnalyticsByRole", "HR", new { type = type, from = from, to = to })'">
+                            <font style="font-family: Roboto, sans-serif; font-size:12px;">By Role</font>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="cax-page">
+
+                        <partial name="_CallAnalyticsTabs" />
+
+                        <div class="cax-toolbar">
+                            <form method="get" action="/HR/CallAnalyticsConversion" class="cax-filters">
+                                <input type="hidden" name="type" value="@type" />
+                                <div>
+                                    <label for="caxFrom">From</label>
+                                    <input id="caxFrom" name="from" type="date" class="form-control" value="@from" />
+                                </div>
+                                <div>
+                                    <label for="caxTo">To</label>
+                                    <input id="caxTo" name="to" type="date" class="form-control" value="@to" />
+                                </div>
+                                <div>
+                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded"><font style="font-size:12px;">Apply</font></button>
+                                    <button type="button" class="mdc-button mdc-button--outlined mdc-ripple-upgraded" onclick="location.href='/HR/CallAnalyticsConversion'"><font style="font-size:12px;">Reset</font></button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="cax-funnels">
+                            <div class="cax-funnel">
+                                <h5 class="cax-funnel-title">Reschedule calls</h5>
+                                <div class="cax-funnel-sub">HR + Senior HR → candidates who already had a meeting</div>
+                                <div class="cax-funnel-head"><b>@rsPlaced</b><span class="cax-muted">calls placed</span></div>
+                                <div class="cax-funnel-step">
+                                    <div class="cax-funnel-row"><span><b>@rsConnected</b> connected</span><span class="cax-muted">@pct(rsConnected, rsPlaced)%</span></div>
+                                    <div class="cax-bar"><span style="width:@pct(rsConnected, rsPlaced)%"></span></div>
+                                </div>
+                                <div class="cax-funnel-step">
+                                    <div class="cax-funnel-row"><span><b>@rsConverted</b> rebooked</span><span class="cax-muted">@pct(rsConverted, rsPlaced)% of placed</span></div>
+                                    <div class="cax-bar cax-bar-green"><span style="width:@pct(rsConverted, rsPlaced)%"></span></div>
+                                </div>
+                            </div>
+                            <div class="cax-funnel">
+                                <h5 class="cax-funnel-title">New-schedule calls</h5>
+                                <div class="cax-funnel-sub">HR + Senior HR → candidates with no meeting yet</div>
+                                <div class="cax-funnel-head"><b>@nsPlaced</b><span class="cax-muted">calls placed</span></div>
+                                <div class="cax-funnel-step">
+                                    <div class="cax-funnel-row"><span><b>@nsConnected</b> connected</span><span class="cax-muted">@pct(nsConnected, nsPlaced)%</span></div>
+                                    <div class="cax-bar"><span style="width:@pct(nsConnected, nsPlaced)%"></span></div>
+                                </div>
+                                <div class="cax-funnel-step">
+                                    <div class="cax-funnel-row"><span><b>@nsConverted</b> booked</span><span class="cax-muted">@pct(nsConverted, nsPlaced)% of placed</span></div>
+                                    <div class="cax-bar cax-bar-green"><span style="width:@pct(nsConverted, nsPlaced)%"></span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cax-tiles">
+                            <div class="cax-tile"><div class="cax-tile-label">Candidate outreach calls</div><div class="cax-tile-value">@allPlaced</div><div class="cax-tile-sub">@from to @to</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">Booked / rebooked</div><div class="cax-tile-value">@allConverted</div><div class="cax-tile-sub">within @windowDays days of the call</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">Overall conversion</div><div class="cax-tile-value">@pct(allConverted, allPlaced)%</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">Follow-up needed</div><div class="cax-tile-value">@(allPlaced - allConverted)</div><div class="cax-tile-sub">calls with no booking yet</div></div>
+                        </div>
+
+                        <div class="cax-card">
+                            <div class="cax-card-head">
+                                <div>
+                                    <h5 class="cax-card-title">Conversion by caller</h5>
+                                    <div class="cax-card-sub">HR and Senior HR calls to candidates</div>
+                                </div>
+                            </div>
+
+                            @if (byCaller.Count > 0)
+                            {
+                                <div class="cax-table-wrap">
+                                    <table id="callAnalyticsConversionTable" class="cax-table" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>User</th>
+                                                <th>Role</th>
+                                                <th class="cax-right">Reschedule calls</th>
+                                                <th class="cax-right">Rebooked</th>
+                                                <th class="cax-right">New-schedule calls</th>
+                                                <th class="cax-right">Booked</th>
+                                                <th class="cax-right">Connected</th>
+                                                <th>Conversion</th>
+                                                <th class="cax-center"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in byCaller)
+                                            {
+                                                var placed = item.RsPlaced + item.NsPlaced;
+                                                var convPct = pct(item.RsConverted + item.NsConverted, placed);
+                                                <tr>
+                                                    <td data-order="@item.Caller">
+                                                        <div class="cax-user">
+                                                            <div class="cax-avatar">@initial(item.Caller)</div>
+                                                            <div class="cax-user-name">@(string.IsNullOrWhiteSpace(item.Caller) ? "(unknown)" : item.Caller)</div>
+                                                        </div>
+                                                    </td>
+                                                    <td><span class="@roleClass(item.Role)">@HRController.CallerRoleLabel(item.Role)</span></td>
+                                                    <td class="cax-right cax-num">@item.RsPlaced</td>
+                                                    <td class="cax-right cax-num">@item.RsConverted <span class="cax-muted">(@pct(item.RsConverted, item.RsPlaced)%)</span></td>
+                                                    <td class="cax-right cax-num">@item.NsPlaced</td>
+                                                    <td class="cax-right cax-num">@item.NsConverted <span class="cax-muted">(@pct(item.NsConverted, item.NsPlaced)%)</span></td>
+                                                    <td class="cax-right cax-num">@item.Connected <span class="cax-muted">(@pct(item.Connected, placed)%)</span></td>
+                                                    <td data-order="@convPct" style="min-width:120px;">
+                                                        <div class="cax-muted" style="font-size:12px;"><b style="color:#1f2a37;">@convPct%</b> of @placed calls</div>
+                                                        <div class="cax-bar cax-bar-green"><span style="width:@convPct%"></span></div>
+                                                    </td>
+                                                    <td class="cax-center">
+                                                        <a class="cax-view" target="_blank" rel="noopener"
+                                                           href="@Url.Action("CallAnalyticsByUser", "HR", new { caller = item.Caller, type = "Candidate", from = from, to = to })">
+                                                            View calls <i class="fas fa-external-link-alt"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="cax-empty">
+                                    <i class="fas fa-phone-slash"></i>
+                                    No HR / Senior HR candidate calls in the selected period. Try a wider From / To date range.
+                                </div>
+                            }
+                        </div>
+
+                        <p class="cax-note">
+                            <b>This is a rate, not proof.</b> Reschedule vs new-schedule is inferred from whether the candidate already had a meeting
+                            on the same IRF before the call; a call counts as converted when a meeting for that IRF and candidate is created, or an
+                            existing meeting’s interview date is changed, within @windowDays days after the call. Unrelated bookings in that window are
+                            over-counted and later bookings are missed, so read it as a team / role trend rather than a per-call fact.
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        if ($.fn.DataTable && $('#callAnalyticsConversionTable tbody tr').length > 0) {
+            $('#callAnalyticsConversionTable').DataTable({
+                order: [[2, 'desc']],
+                pageLength: 25,
+                columnDefs: [{ orderable: false, targets: [8] }],
+                language: { search: "", searchPlaceholder: "Search user" }
+            });
+        }
+    });
+</script>

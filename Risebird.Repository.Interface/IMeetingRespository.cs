@@ -273,6 +273,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetRedoInterviewList();
         bool CheckInterviewClerityTime(int meetingid);
         Task<IEnumerable<CallRecordingDataVM>> GetCallRecordingData(string profile, string Emailid);
+        Task<IEnumerable<CandidateOutreachConversionVM>> GetCandidateOutreachConversion(DateTime from, DateTime to, int callTimeOffsetMinutes, int windowDays);
         Task<bool> CheckReportClientShareDetails(string Emailid, string uniqueid, int Interviewid);
         Task<string> CheckReportClientUrlSave(string Emailid, string uniqueid, int Interviewid);
         Task<bool> SaveInterviewsReview(int rating, string comments, string Emailid);
