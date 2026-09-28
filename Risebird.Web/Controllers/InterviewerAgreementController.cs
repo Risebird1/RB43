@@ -368,6 +368,48 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Deployment check for the agreement feature: which build is running and whether the PDF
+        /// library's dependency (BouncyCastle.Cryptography) can be loaded. No personal data or secrets.
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet]
+        public JsonResult Health()
+        {
+            var webAssembly = typeof(InterviewerAgreementController).Assembly;
+            var bouncyCastleOnDisk = System.IO.File.Exists(Path.Combine(AppContext.BaseDirectory, "BouncyCastle.Cryptography.dll"));
+            var embedded = webAssembly.GetManifestResourceNames().Contains("EmbeddedAssemblies.BouncyCastle.Cryptography.dll");
+
+            string pdfLibrary;
+            try
+            {
+                // Writes and reads back a one-page PDF with iTextSharp; PdfReader is where the missing
+                // BouncyCastle dependency fails.
+                using var ms = new MemoryStream();
+                var document = new iTextSharp.text.Document();
+                iTextSharp.text.pdf.PdfWriter.GetInstance(document, ms);
+                document.Open();
+                document.Add(new iTextSharp.text.Paragraph("health"));
+                document.Close();
+                _ = new iTextSharp.text.pdf.PdfReader(ms.ToArray());
+                pdfLibrary = "ok";
+            }
+            catch (Exception ex)
+            {
+                pdfLibrary = $"{ex.GetType().Name}: {ex.Message}";
+            }
+
+            return Json(new
+            {
+                build = System.IO.File.GetLastWriteTimeUtc(webAssembly.Location).ToString("u"),
+                signingMode = _signOptions.SigningMode,
+                documentSource = _signOptions.DocumentSource,
+                bouncyCastleOnDisk,
+                bouncyCastleEmbedded = embedded,
+                pdfLibrary
+            });
+        }
+
         // ── Zoho Sign webhook (Zoho Sign → our server) ───────────────────────
 
         /// <summary>
