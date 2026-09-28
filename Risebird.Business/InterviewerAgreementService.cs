@@ -12,7 +12,8 @@ namespace Risebird.Business
 {
     /// <summary>
     /// Interviewer service agreement: the interviewer reads the agreement, enters their details and signs;
-    /// the signature image goes to blob storage and the details are saved on InterviewerProfile.
+    /// the signature image and a screenshot of the signing page (proof) go to blob storage and the details are
+    /// saved on InterviewerProfile.
     /// </summary>
     public class InterviewerAgreementService : IInterviewerAgreementService
     {
@@ -43,13 +44,12 @@ namespace Risebird.Business
                 if (agreement.IsAgreementSigned)
                     return "The agreement is already signed.";
 
-                var fileName = $"InterviewerAgreementSignature_{interviewerProfileId}_{Guid.NewGuid():N}.png";
-                var blob = _azureStorageHelper.GetCloudBlockBlob(_options.SignatureContainer, fileName);
-                blob.Properties.ContentType = "image/png";
-                await blob.UploadFromByteArrayAsync(request.SignatureImage, 0, request.SignatureImage.Length);
+                var id = Guid.NewGuid().ToString("N");
+                var signatureUrl = await UploadImage($"InterviewerAgreementSignature_{interviewerProfileId}_{id}.png", "image/png", request.SignatureImage);
+                var proofUrl = await UploadProof($"InterviewerAgreementProof_{interviewerProfileId}_{id}.jpg", request.ProofImage);
 
                 var saved = await _agreementRepository.SaveInterviewerAgreement(interviewerProfileId, _options.Version,
-                    request.SignerName, request.FatherName, request.Address, blob.Uri.ToString());
+                    request.SignerName, request.FatherName, request.Address, signatureUrl, proofUrl);
                 return saved ? null : "Your signature could not be saved. Please try again.";
             }
             catch (Exception e)
@@ -57,6 +57,30 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return "The agreement could not be signed right now. Please try again later.";
             }
+        }
+
+        // The proof screenshot is best effort: without it (or if its upload fails) the agreement is still saved.
+        private async Task<string> UploadProof(string fileName, byte[] content)
+        {
+            if (content == null || content.Length == 0)
+                return null;
+            try
+            {
+                return await UploadImage(fileName, "image/jpeg", content);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        private async Task<string> UploadImage(string fileName, string contentType, byte[] content)
+        {
+            var blob = _azureStorageHelper.GetCloudBlockBlob(_options.SignatureContainer, fileName);
+            blob.Properties.ContentType = contentType;
+            await blob.UploadFromByteArrayAsync(content, 0, content.Length);
+            return blob.Uri.ToString();
         }
     }
 }
