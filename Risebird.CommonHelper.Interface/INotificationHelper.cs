@@ -158,5 +158,18 @@ namespace Risebird.CommonHelper.Interface
             DateTime lapseDate,
             string portalLink,
             int reminderIndex);
+
+        /// <summary>
+        /// Informs an interviewer that their pending InterviewPoints for the given month have
+        /// just been marked Lapsed (KYC not completed within the 21-day tracking window). Uses
+        /// the "PaymentLapsed.html" blob template. portalLink is the Risebird portal home/login
+        /// URL, same as SendPaymentLapseKYCReminderAsync.
+        /// </summary>
+        Task<string> SendPaymentLapsedNotificationAsync(
+            string toEmail,
+            string interviewerName,
+            decimal lapsedAmount,
+            string month,
+            string portalLink);
     }
 }

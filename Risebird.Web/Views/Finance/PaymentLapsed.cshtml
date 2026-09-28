@@ -160,6 +160,7 @@
                                                                     <th>Lapsed Amount</th>
                                                                     <th>Bank Verified</th>
                                                                     <th>PAN Verified</th>
+                                                                    <th>Reference</th>
                                                                 </tr>
                                                             </thead>
                                                             <tfoot>
@@ -173,12 +174,13 @@
                                                                     <th>Lapsed Amount</th>
                                                                     <th>Bank Verified</th>
                                                                     <th>PAN Verified</th>
+                                                                    <th>Reference</th>
                                                                 </tr>
                                                             </tfoot>
                                                             <tbody id="tblbodyLapsed">
                                                                 @if (lapsedList.Count == 0)
                                                                 {
-                                                                    <tr><td colspan="9" style="text-align:center">No Result found</td></tr>
+                                                                    <tr><td colspan="10" style="text-align:center">No Result found</td></tr>
                                                                 }
                                                                 @foreach (var item in lapsedList)
                                                                 {
@@ -192,6 +194,7 @@
                                                                         <td>@item.LapsedAmount</td>
                                                                         <td>@(item.IsBankVerified ? "Yes" : "No")</td>
                                                                         <td>@(item.IsPanVerified ? "Yes" : "No")</td>
+                                                                        <td>@(item.PaymentHistoryId.HasValue && item.PaymentHistoryId > 0 ? item.PaymentHistoryId.ToString() : "-")</td>
                                                                     </tr>
                                                                 }
                                                             </tbody>

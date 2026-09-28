@@ -73,5 +73,8 @@ namespace Risebird.Entities.ViewModel
         public decimal LapsedAmount   { get; set; }
         public bool    IsBankVerified { get; set; }
         public bool    IsPanVerified  { get; set; }
+        // Reference back to PaymentHistory, same field Paid InterviewPoints rows carry.
+        // Lapsed rows are never paid so this is normally null/0, kept for parity with Paid.
+        public int?    PaymentHistoryId { get; set; }
     }
 }

@@ -74,6 +74,15 @@ namespace Risebird.AzureTimerFunctions
                             await _kycLapseService.LapseAsync(target.Id, target.Userid, target.Month);
                             _log.LogInformation("Lapsed InterviewPoints for user {UserId} month {Month} (tracking row {Id}) after {Days} days without KYC.",
                                 target.Userid, target.Month, target.Id, target.DaysInTracking);
+
+                            var lapsedName = $"{target.FirstName} {target.LastName}".Trim();
+                            await _notificationHelper.SendPaymentLapsedNotificationAsync(
+                                target.Email,
+                                lapsedName,
+                                target.PendingAmount,
+                                target.Month,
+                                portalLink);
+
                             continue;
                         }
 
