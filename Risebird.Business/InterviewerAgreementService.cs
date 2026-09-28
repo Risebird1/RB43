@@ -46,6 +46,8 @@ namespace Risebird.Business
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                // Also as plain text: the reason must be visible even if the exception entry cannot be written.
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Interviewer agreement document failed: {e.GetType().Name}: {e.Message}");
                 return null;
             }
         }
