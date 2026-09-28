@@ -314,7 +314,13 @@ namespace Risebird.Web.Controllers
 
                 var pdf = await _agreementService.GetAgreementDocumentForReview();
                 if (pdf == null)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                        $"Interviewer agreement document unavailable: source={_signOptions.DocumentSource}, container={_signOptions.DocumentBlobContainer}, " +
+                        $"document={_signOptions.DocumentName}, layout={_signOptions.ResolvedLayoutName}, localFolder={_signOptions.LocalDocumentFolder}.",
+                        GetSessionValue("email"));
                     return NotFound();
+                }
 
                 Response.Headers["Content-Disposition"] = "inline; filename=\"Risebird_Service_Agreement.pdf\"";
                 return File(pdf, "application/pdf");

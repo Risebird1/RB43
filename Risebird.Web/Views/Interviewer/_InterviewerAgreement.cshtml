@@ -33,8 +33,14 @@
 
             <div id="agreementStatusBox"><p class="text-muted">Loading agreement status...</p></div>
 
-            <div id="agreementPreviewBox" style="display:none; border:1px solid #dcdcdc; border-radius:4px; margin-bottom:16px;">
-                <iframe id="agreementPreview" title="Service Agreement" style="width:100%; height:70vh; border:0;"></iframe>
+            @* Pages are drawn with pdf.js, so the agreement shows in every browser (the built-in PDF viewer
+               is not available in all browsers / on mobile, and an iframe then stays blank). *@
+            <div id="agreementPreviewBox" style="display:none; margin-bottom:16px;">
+                <div id="agreementPdfPages" aria-label="Service Agreement"
+                     style="height:70vh; overflow:auto; background:#e9e9e9; border:1px solid #dcdcdc; border-radius:4px; padding:10px;">
+                    <p class="text-muted" id="agreementPdfLoading" style="text-align:center; margin-top:30px;">Loading the agreement...</p>
+                </div>
+                <small><a id="agreementOpenNewTab" href="#" target="_blank" rel="noopener">Open the agreement in a new tab</a></small>
             </div>
 
             @* Portal signing *@
@@ -168,10 +174,69 @@
             return $('input[name="__RequestVerificationToken"]').first().val();
         }
 
+        var previewLoaded = false;
         function showPreview() {
-            var $preview = $('#agreementPreview');
-            if (!$preview.attr('src')) $preview.attr('src', documentUrl + '#view=FitH');
             $('#agreementPreviewBox').show();
+            $('#agreementOpenNewTab').attr('href', documentUrl);
+            if (previewLoaded) return;
+            previewLoaded = true;
+            renderAgreementPdf();
+        }
+
+        function previewError(message) {
+            previewLoaded = false;   // allow a retry on the next render
+            $('#agreementPdfPages').html('<p class="text-danger" style="text-align:center; margin-top:30px;">' + esc(message)
+                + '<br/><a href="' + documentUrl + '" target="_blank" rel="noopener">Open the agreement in a new tab</a></p>');
+        }
+
+        function loadPdfJs(done) {
+            if (window.pdfjsLib) return done();
+            var s = document.createElement('script');
+            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+            s.onload = function () {
+                window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+                done();
+            };
+            s.onerror = function () { previewError('The agreement viewer could not be loaded. Please use the link below to open the agreement.'); };
+            document.head.appendChild(s);
+        }
+
+        function renderAgreementPdf() {
+            fetch(documentUrl, { credentials: 'same-origin', cache: 'no-store' }).then(function (resp) {
+                var type = resp.headers.get('Content-Type') || '';
+                if (!resp.ok) throw new Error('The agreement could not be loaded (HTTP ' + resp.status + '). Please refresh the page or try again later.');
+                if (type.indexOf('application/pdf') < 0) throw new Error('Your session may have expired. Please sign in again and reopen this tab.');
+                return resp.arrayBuffer();
+            }).then(function (data) {
+                loadPdfJs(function () {
+                    window.pdfjsLib.getDocument({ data: new Uint8Array(data) }).promise.then(function (pdf) {
+                        var $pages = $('#agreementPdfPages').empty();
+                        var width = Math.max(300, $pages[0].clientWidth - 24);
+                        var chain = Promise.resolve();
+                        for (var n = 1; n <= pdf.numPages; n++) {
+                            (function (pageNo) {
+                                chain = chain.then(function () {
+                                    return pdf.getPage(pageNo).then(function (page) {
+                                        var ratio = window.devicePixelRatio || 1;
+                                        var viewport = page.getViewport({ scale: width / page.getViewport({ scale: 1 }).width });
+                                        var canvas = document.createElement('canvas');
+                                        canvas.width = Math.floor(viewport.width * ratio);
+                                        canvas.height = Math.floor(viewport.height * ratio);
+                                        canvas.style.cssText = 'display:block; width:' + Math.floor(viewport.width) + 'px; margin:0 auto 10px; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.25);';
+                                        $pages.append(canvas);
+                                        return page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport, transform: ratio !== 1 ? [ratio, 0, 0, ratio, 0, 0] : null }).promise;
+                                    });
+                                });
+                            })(n);
+                        }
+                        return chain;
+                    }).catch(function () {
+                        previewError('The agreement could not be displayed. Please use the link below to open it.');
+                    });
+                });
+            }).catch(function (err) {
+                previewError(err && err.message ? err.message : 'The agreement could not be loaded.');
+            });
         }
 
         function render(a) {
