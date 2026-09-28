@@ -24,6 +24,7 @@ BEGIN
         SELECT
             ip.userid,
             ip.Points,
+            ip.PaymentHistoryId,
             ISNULL(im.interviewDate, ip.[Date]) AS EffectiveDate
         FROM InterviewPoints ip
         LEFT JOIN InterviewMeetings im ON im.id = ip.Interviewid
@@ -42,7 +43,8 @@ BEGIN
         FORMAT(c.EffectiveDate, 'yyyy-MM') AS [Month],
         SUM(c.Points)                  AS LapsedAmount,
         ISNULL(tic.IsBankVerified, 0)  AS IsBankVerified,
-        ISNULL(tic.IsPanVerified, 0)   AS IsPanVerified
+        ISNULL(tic.IsPanVerified, 0)   AS IsPanVerified,
+        MAX(c.PaymentHistoryId)        AS PaymentHistoryId
     FROM CTE c
     JOIN UserList ul ON ul.id = c.userid
     LEFT JOIN InterviewerProfile irp ON irp.UserId = ul.id

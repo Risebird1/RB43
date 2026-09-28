@@ -3757,5 +3757,33 @@ namespace Risebird.CommonHelper
                 return "Failed to send payment-lapse KYC reminder.";
             }
         }
+
+        public async Task<string> SendPaymentLapsedNotificationAsync(
+            string toEmail,
+            string interviewerName,
+            decimal lapsedAmount,
+            string month,
+            string portalLink)
+        {
+            try
+            {
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Payments");
+                msg.Subject = $"Your Risebird payment of ₹{lapsedAmount:N0} for {month} has lapsed";
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(toEmail, interviewerName));
+
+                string risebirdLogoLink = _configuration["RisebirdDetails:RisebirdLogo"];
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "PaymentLapsed.html");
+                // {0} name, {1} lapsed amount, {2} month, {3} portal link, {4} logo.
+                string msgBody = string.Format(rawEmail, interviewerName, lapsedAmount.ToString("N0"), month, portalLink, risebirdLogoLink);
+                msg.HtmlContent = msgBody;
+                return await SendMail(msg);
+            }
+            catch (Exception ex)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to send payment-lapsed notification.";
+            }
+        }
     }
 }
