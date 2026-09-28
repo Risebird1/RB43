@@ -105,7 +105,8 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [RequestSizeLimit(2_000_000)]
-        public async Task<JsonResult> SignInPortal(string fullName, string fatherName, string address, string signature, bool agree)
+        public async Task<JsonResult> SignInPortal(string fullName, string fatherName, string addressLine1, string addressLine2,
+            string city, string state, string pinCode, string signature, bool agree)
         {
             try
             {
@@ -118,15 +119,30 @@ namespace Risebird.Web.Controllers
 
                 fullName = CleanText(fullName);
                 fatherName = CleanText(fatherName);
-                address = CleanText(address);
+                addressLine1 = CleanText(addressLine1);
+                addressLine2 = CleanText(addressLine2);
+                city = CleanText(city);
+                pinCode = CleanText(pinCode);
+                state = IndianStates.Normalize(state);
                 if (!agree)
                     return Json(new { success = false, message = "Please confirm that you have read and agree to the agreement." });
                 if (!IsValidText(fullName, 2, 150))
                     return Json(new { success = false, message = "Please enter your full name (English letters, up to 150 characters)." });
                 if (!IsValidText(fatherName, 2, 150))
                     return Json(new { success = false, message = "Please enter your father's / guardian's name (English letters, up to 150 characters)." });
-                if (!IsValidText(address, 10, 150) || !System.Text.RegularExpressions.Regex.IsMatch(address, @"\b\d{6}\b"))
-                    return Json(new { success = false, message = "Please enter your address with a 6-digit PIN code (English letters, up to 150 characters)." });
+                if (!IsValidText(addressLine1, 3, 80))
+                    return Json(new { success = false, message = "Please enter your house / flat number and street (English letters, up to 80 characters)." });
+                if (addressLine2.Length > 0 && !IsValidText(addressLine2, 2, 60))
+                    return Json(new { success = false, message = "Area / locality must be in English letters, up to 60 characters." });
+                if (!IsValidText(city, 2, 40))
+                    return Json(new { success = false, message = "Please enter your city (English letters, up to 40 characters)." });
+                if (state == null)
+                    return Json(new { success = false, message = "Please select your state." });
+                if (!System.Text.RegularExpressions.Regex.IsMatch(pinCode, @"^[1-9][0-9]{5}$"))
+                    return Json(new { success = false, message = "Please enter a valid 6-digit PIN code." });
+
+                // One line on the agreement: "House & street, Area, City, State - PIN".
+                var address = $"{string.Join(", ", new[] { addressLine1, addressLine2, city }.Where(p => p.Length > 0))}, {state} - {pinCode}";
 
                 var signatureImage = DecodeSignature(signature);
                 if (signatureImage == null)

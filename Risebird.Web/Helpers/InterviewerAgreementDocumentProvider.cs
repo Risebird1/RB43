@@ -98,7 +98,7 @@ namespace Risebird.Web.Helpers
                         _ => null
                     };
                     if (!string.IsNullOrEmpty(value))
-                        DrawFittedText(canvas, textFont, value, field.X + 1, bottom + 3.5f, field.Width - 2, field.FontSize);
+                        DrawFittedText(canvas, textFont, value, field.X + 1, bottom, field.Width - 2, field.Height, field.FontSize);
                 }
 
                 DrawAudit(stamper, reader, document, stamp, auditFont, auditBold);
@@ -121,12 +121,47 @@ namespace Risebird.Web.Helpers
             return null;
         }
 
-        // Shrinks the font (down to 6pt) so the value fits the field width.
-        private static void DrawFittedText(PdfContentByte canvas, BaseFont font, string value, float x, float baseline, float maxWidth, float fontSize)
+        // Fits the value in the field box: one line, shrinking the font down to 7.5pt; if it still does not
+        // fit, two lines (split at the comma / space nearest the middle) shrinking down to 5.5pt.
+        private static void DrawFittedText(PdfContentByte canvas, BaseFont font, string value, float x, float bottom, float maxWidth, float boxHeight, float fontSize)
         {
             var size = fontSize;
-            while (size > 6 && font.GetWidthPoint(value, size) > maxWidth)
+            while (size > 7.5f && font.GetWidthPoint(value, size) > maxWidth)
                 size -= 0.5f;
+            if (font.GetWidthPoint(value, size) <= maxWidth || boxHeight < 13)
+            {
+                while (size > 6 && font.GetWidthPoint(value, size) > maxWidth)
+                    size -= 0.5f;
+                ShowLine(canvas, font, value, x, bottom + 3.5f, size);
+                return;
+            }
+
+            var (first, second) = SplitNearMiddle(value);
+            size = Math.Min(fontSize, (boxHeight - 2.5f) / 2.1f);
+            while (size > 5.5f && Math.Max(font.GetWidthPoint(first, size), font.GetWidthPoint(second, size)) > maxWidth)
+                size -= 0.25f;
+            ShowLine(canvas, font, first, x, bottom + 2 + size * 1.1f, size);
+            ShowLine(canvas, font, second, x, bottom + 2, size);
+        }
+
+        private static (string First, string Second) SplitNearMiddle(string value)
+        {
+            var middle = value.Length / 2;
+            int Best(char separator)
+            {
+                int best = -1;
+                for (var i = value.IndexOf(separator); i >= 0; i = value.IndexOf(separator, i + 1))
+                    if (best < 0 || Math.Abs(i - middle) < Math.Abs(best - middle)) best = i;
+                return best;
+            }
+            var cut = Best(',');
+            if (cut < 0 || Math.Abs(cut - middle) > value.Length / 4) cut = Best(' ');
+            if (cut <= 0) cut = middle;
+            return (value.Substring(0, cut + 1).Trim(), value.Substring(cut + 1).Trim());
+        }
+
+        private static void ShowLine(PdfContentByte canvas, BaseFont font, string value, float x, float baseline, float size)
+        {
             canvas.BeginText();
             canvas.SetColorFill(BaseColor.BLACK);
             canvas.SetFontAndSize(font, size);

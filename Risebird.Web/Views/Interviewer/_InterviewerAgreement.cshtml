@@ -54,11 +54,41 @@
                             <input type="text" id="agreementFatherName" class="form-control" maxlength="150" autocomplete="off" />
                         </div>
                     </div>
-                    <div class="col-md-12">
+                    <div class="col-md-12"><label style="margin-bottom:4px;">Residential Address</label></div>
+                    <div class="col-md-6">
                         <div class="form-group">
-                            <label for="agreementAddress">Residential Address with PIN code <span class="text-danger">*</span></label>
-                            <input type="text" id="agreementAddress" class="form-control" maxlength="150" autocomplete="street-address"
-                                   placeholder="House / street, city, state - 6-digit PIN" />
+                            <label for="agreementAddressLine1">House / Flat No. &amp; Street <span class="text-danger">*</span></label>
+                            <input type="text" id="agreementAddressLine1" class="form-control" maxlength="80" autocomplete="address-line1" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="agreementAddressLine2">Area / Locality</label>
+                            <input type="text" id="agreementAddressLine2" class="form-control" maxlength="60" autocomplete="address-line2" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="agreementCity">City <span class="text-danger">*</span></label>
+                            <input type="text" id="agreementCity" class="form-control" maxlength="40" autocomplete="address-level2" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="agreementState">State <span class="text-danger">*</span></label>
+                            <select id="agreementState" class="form-control" autocomplete="address-level1">
+                                <option value="">-- Select State --</option>
+                                @foreach (var state in Risebird.Entities.Data.IndianStates.All)
+                                {
+                                    <option value="@state">@state</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="agreementPinCode">PIN Code <span class="text-danger">*</span></label>
+                            <input type="text" id="agreementPinCode" class="form-control" maxlength="6" inputmode="numeric" autocomplete="postal-code" placeholder="6 digits" />
                         </div>
                     </div>
                     <div class="col-md-12">
@@ -380,13 +410,20 @@
         $('#btnPortalSign').on('click', function () {
             var fullName = $.trim($('#agreementFullName').val());
             var fatherName = $.trim($('#agreementFatherName').val());
-            var address = $.trim($('#agreementAddress').val());
+            var addressLine1 = $.trim($('#agreementAddressLine1').val());
+            var addressLine2 = $.trim($('#agreementAddressLine2').val());
+            var city = $.trim($('#agreementCity').val());
+            var state = $('#agreementState').val();
+            var pinCode = $.trim($('#agreementPinCode').val());
             var $status = $('#agreementPortalStatus').removeClass('text-danger text-success');
             var fail = function (msg) { $status.addClass('text-danger').text(msg); };
 
             if (fullName.length < 2) return fail('Please enter your full name.');
             if (fatherName.length < 2) return fail("Please enter your father's / guardian's name.");
-            if (!/\b\d{6}\b/.test(address)) return fail('Please enter your full address with a 6-digit PIN code.');
+            if (addressLine1.length < 3) return fail('Please enter your house / flat number and street.');
+            if (city.length < 2) return fail('Please enter your city.');
+            if (!state) return fail('Please select your state.');
+            if (!/^[1-9][0-9]{5}$/.test(pinCode)) return fail('Please enter a valid 6-digit PIN code.');
             var signature = currentSignature();
             if (!signature) return fail(signatureMode === 'upload' ? 'Please upload an image of your signature.' : 'Please draw your signature in the box.');
             if (!$('#agreementAgree').is(':checked')) return fail('Please confirm that you have read and agree to the agreement.');
@@ -396,7 +433,11 @@
             $.post(portalSignUrl, {
                 fullName: fullName,
                 fatherName: fatherName,
-                address: address,
+                addressLine1: addressLine1,
+                addressLine2: addressLine2,
+                city: city,
+                state: state,
+                pinCode: pinCode,
                 signature: signature,
                 agree: true,
                 __RequestVerificationToken: token()
@@ -415,7 +456,10 @@
         });
 
         // Enter inside these fields must not submit the surrounding profile form.
-        $('#agreementFullName, #agreementFatherName, #agreementAddress').on('keydown', function (e) { if (e.key === 'Enter') e.preventDefault(); });
+        $('#agreementFullName, #agreementFatherName, #agreementAddressLine1, #agreementAddressLine2, #agreementCity, #agreementPinCode')
+            .on('keydown', function (e) { if (e.key === 'Enter') e.preventDefault(); });
+        // PIN code: digits only.
+        $('#agreementPinCode').on('input', function () { this.value = this.value.replace(/\D/g, '').slice(0, 6); });
 
         // ── Zoho Sign ──
         $('#btnGenerateAgreement').on('click', function () {
