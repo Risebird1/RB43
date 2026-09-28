@@ -25,6 +25,9 @@ using System.IO.Compression;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 
+// Loads BouncyCastle.Cryptography (iTextSharp dependency) from Risebird.Web.dll if a deployment left it out.
+Risebird.Web.Helpers.EmbeddedAssemblyResolver.Register();
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

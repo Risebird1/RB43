@@ -275,6 +275,14 @@
     <EmbeddedResource Include="AgreementDocuments\*.layout.json" LogicalName="AgreementLayouts.%(Filename)%(Extension)" />
   </ItemGroup>
 
+  <!-- iTextSharp's dependency, embedded so a deployment that copies only the Risebird DLLs still works
+       (loaded by Helpers/EmbeddedAssemblyResolver only when the file is missing on disk).
+       Keep the version in step with the BouncyCastle.Cryptography version iTextSharp resolves to. -->
+  <ItemGroup>
+    <EmbeddedResource Include="$(NuGetPackageRoot)bouncycastle.cryptography\2.4.0\lib\net6.0\BouncyCastle.Cryptography.dll"
+                      LogicalName="EmbeddedAssemblies.BouncyCastle.Cryptography.dll" Visible="false" />
+  </ItemGroup>
+
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>
