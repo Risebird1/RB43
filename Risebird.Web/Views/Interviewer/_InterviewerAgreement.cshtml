@@ -1,33 +1,20 @@
-@* Interviewer service agreement (My Profile → SERVICE AGREEMENT tab).
-   ZohoSign:SigningMode = Portal   → the interviewer fills in details, draws a signature and signs here.
-   ZohoSign:SigningMode = ZohoSign → the agreement is signed through Zoho Sign. *@
-@inject Microsoft.Extensions.Options.IOptions<Risebird.Entities.Data.ZohoSignOptions> AgreementOptions
-@inject Microsoft.Extensions.Configuration.IConfiguration AgreementConfiguration
+@* Interviewer service agreement (My Profile → SERVICE AGREEMENT tab): read the agreement, fill in details, sign. *@
+@inject Microsoft.Extensions.Options.IOptions<Risebird.Entities.Data.ServiceAgreementOptions> AgreementOptions
 @{
-    // Public blob URL of the agreement (the container allows public read). Used to show the original
-    // agreement in an iframe when the portal cannot prepare it.
-    var agreementBlobUrl = string.Empty;
-    var agreementOptions = AgreementOptions.Value;
-    var storageAccount = AgreementConfiguration["StorageSettings:StorageName"];
-    if (string.Equals(agreementOptions.DocumentSource, "Blob", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(storageAccount))
-    {
-        agreementBlobUrl = $"https://{storageAccount}.blob.core.windows.net/{agreementOptions.DocumentBlobContainer}/{Uri.EscapeDataString(agreementOptions.DocumentName)}";
-    }
+    var agreementDocumentUrl = AgreementOptions.Value.DocumentUrl;
 }
 <style>
     #agreementSignaturePad { width: 100%; max-width: 520px; height: 160px; border: 1px dashed #9e9e9e; border-radius: 4px; background: #fff; touch-action: none; cursor: crosshair; display: block; }
-    /* The site stylesheet hides native checkboxes (opacity 0 / absolute) for its custom toggles; show this one. */
-    .agreement-sig-modes { display: flex; gap: 0; margin-bottom: 8px; }
-    .agreement-sig-mode { border: 1px solid #2196f3; background: #fff; color: #2196f3; padding: 6px 14px; font-size: 13px; cursor: pointer; }
+    .agreement-sig-modes { display: flex; margin-bottom: 8px; }
+    .agreement-sig-mode { position: relative; z-index: 2; border: 1px solid #2196f3; background: #fff; color: #2196f3; padding: 6px 14px; font-size: 13px; cursor: pointer; }
     .agreement-sig-mode:first-child { border-radius: 4px 0 0 4px; }
     .agreement-sig-mode:last-child { border-radius: 0 4px 4px 0; border-left: 0; }
     .agreement-sig-mode.active { background: #2196f3; color: #fff; }
     .agreement-sig-upload-box { width: 100%; max-width: 520px; height: 160px; border: 1px dashed #9e9e9e; border-radius: 4px; background: #fff;
-        display: flex; align-items: center; justify-content: center; }
+        display: flex; align-items: center; justify-content: center; cursor: pointer; }
     .agreement-sig-upload-box img { max-width: 90%; max-height: 140px; }
-    #agreementSigUploadBox { cursor: pointer; }
+    /* The site theme hides / overlays native checkboxes and file inputs; show the checkbox, keep the file input out of layout. */
     #agreementSigFile { display: none !important; }
-    .agreement-sig-mode { position: relative; z-index: 2; }
     .agreement-agree { display: flex; align-items: flex-start; gap: 10px; font-weight: normal; cursor: pointer; margin-bottom: 12px; padding: 10px 12px; border: 1px solid #dcdcdc; border-radius: 4px; }
     .agreement-agree.is-checked { border-color: #43a047; background: #f1f8f1; }
     .agreement-agree input#agreementAgree {
@@ -40,27 +27,16 @@
     <div class="row">
         <div class="col-md-12">
             <h4 class="info-text" style="text-align:left;">Service Agreement for Interviewer Onboarding</h4>
-            <p class="text-muted">
-                Please read the Risebird interviewer service agreement below and sign it. A signed copy is stored against your profile.
-            </p>
+            <div id="agreementStatusBox"><p class="text-muted">Loading...</p></div>
 
-            <div id="agreementStatusBox"><p class="text-muted">Loading agreement status...</p></div>
-
-            @* Pages are drawn with pdf.js, so the agreement shows in every browser (the built-in PDF viewer
-               is not available in all browsers / on mobile, and an iframe then stays blank). *@
-            <div id="agreementPreviewBox" style="display:none; margin-bottom:16px;">
-                <div id="agreementPdfPages" aria-label="Service Agreement"
-                     style="height:70vh; overflow:auto; background:#e9e9e9; border:1px solid #dcdcdc; border-radius:4px; padding:10px;">
-                    <p class="text-muted" id="agreementPdfLoading" style="text-align:center; margin-top:30px;">Loading the agreement...</p>
+            <div id="agreementSignSection" style="display:none;">
+                <p class="text-muted">Please read the agreement below, fill in your details and sign it.</p>
+                <div style="border:1px solid #dcdcdc; border-radius:4px;">
+                    <iframe id="agreementDocument" title="Service Agreement" style="width:100%; height:70vh; border:0; background:#fff;"></iframe>
                 </div>
-                <small><a id="agreementOpenNewTab" href="#" target="_blank" rel="noopener">Open the agreement in a new tab</a></small>
-            </div>
+                <small><a href="@agreementDocumentUrl" target="_blank" rel="noopener">Open the agreement in a new tab</a></small>
 
-            @* Portal signing *@
-            <div id="agreementPortalForm" style="display:none;">
-                <h5 style="margin-top:0;">Sign the agreement</h5>
-                <p class="text-muted">These details are printed on the agreement exactly as you enter them. Please use English letters.</p>
-                <div class="row">
+                <div class="row" style="margin-top:16px;">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="agreementFullName">Interviewer Full Name <span class="text-danger">*</span></label>
@@ -73,7 +49,6 @@
                             <input type="text" id="agreementFatherName" class="form-control" maxlength="150" autocomplete="off" />
                         </div>
                     </div>
-                    <div class="col-md-12"><label style="margin-bottom:4px;">Residential Address</label></div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="agreementAddressLine1">House / Flat No. &amp; Street <span class="text-danger">*</span></label>
@@ -95,7 +70,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="agreementState">State <span class="text-danger">*</span></label>
-                            <select id="agreementState" class="form-control" autocomplete="address-level1">
+                            <select id="agreementState" class="form-control">
                                 <option value="">-- Select State --</option>
                                 @foreach (var state in Risebird.Entities.Data.IndianStates.All)
                                 {
@@ -110,6 +85,7 @@
                             <input type="text" id="agreementPinCode" class="form-control" maxlength="6" inputmode="numeric" autocomplete="postal-code" placeholder="6 digits" />
                         </div>
                     </div>
+
                     <div class="col-md-12">
                         <div class="form-group">
                             <label>Signature <span class="text-danger">*</span></label>
@@ -117,51 +93,33 @@
                                 <button type="button" class="agreement-sig-mode active" data-mode="draw">Draw signature</button>
                                 <button type="button" class="agreement-sig-mode" data-mode="upload">Upload signature</button>
                             </div>
-
                             <div id="agreementSigDraw">
                                 <canvas id="agreementSignaturePad"></canvas>
                                 <small class="text-muted">Draw your signature with the mouse or your finger.</small>
                                 <button type="button" id="btnClearSignature" class="mdc-button mdc-ripple-upgraded" style="margin-left:8px;">Clear</button>
                             </div>
-
                             <div id="agreementSigUpload" style="display:none;">
-                                <div class="agreement-sig-upload-box" id="agreementSigUploadBox" title="Click to choose an image">
+                                <div class="agreement-sig-upload-box" id="agreementSigUploadBox">
                                     <img id="agreementSigPreview" alt="Uploaded signature" style="display:none;" />
-                                    <span id="agreementSigPlaceholder" class="text-muted">Click here or "Choose image" to upload your signature</span>
+                                    <span id="agreementSigPlaceholder" class="text-muted">Click here to upload your signature (PNG or JPG, up to 2 MB)</span>
                                 </div>
-                                @* Kept out of layout: the site theme turns file inputs into invisible full-size overlays
-                                   that swallow clicks on nearby buttons. It is opened from the button / box instead. *@
                                 <input type="file" id="agreementSigFile" accept="image/png,image/jpeg" tabindex="-1" aria-hidden="true" data-bfi-disabled />
-                                <div style="margin-top:8px;">
-                                    <button type="button" id="btnChooseSigFile" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Choose image</button>
-                                    <button type="button" id="btnRemoveSigUpload" class="mdc-button mdc-ripple-upgraded" style="display:none;">Remove</button>
-                                    <span id="agreementSigFileName" class="text-muted" style="margin-left:8px;"></span>
-                                </div>
-                                <div><small class="text-muted">PNG or JPG, up to 2 MB. Sign on plain white paper and take a clear photo or scan; the white background is removed automatically.</small></div>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-md-12">
                         <label class="agreement-agree" for="agreementAgree">
                             <input type="checkbox" id="agreementAgree" />
                             <span>
                                 I have read and understood the Service Agreement and agree to be bound by its terms. I confirm that
-                                the details above are correct and that the signature above is my electronic signature.
+                                the details above are correct and that the signature above is my signature.
                             </span>
                         </label>
-                        <button type="button" id="btnPortalSign" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Sign Agreement</button>
-                        <span id="agreementPortalStatus" class="ml-2"></span>
+                        <button type="button" id="btnSignAgreement" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Sign Agreement</button>
+                        <span id="agreementSignStatus" class="ml-2"></span>
                     </div>
                 </div>
-            </div>
-
-            @* Zoho Sign *@
-            <div id="agreementZohoStart" style="display:none;">
-                <p class="text-muted">
-                    When you click Review &amp; Sign, you will fill in your name, father's / guardian's name and address on the agreement and sign it.
-                </p>
-                <button type="button" id="btnGenerateAgreement" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Review &amp; Sign Agreement</button>
-                <span id="agreementStartStatus" class="ml-2"></span>
             </div>
         </div>
     </div>
@@ -171,168 +129,40 @@
     // ── Service agreement ───────────────────────────────────────────────
     (function ($) {
         var statusUrl = '@Url.Action("Status", "InterviewerAgreement")';
-        var initiateUrl = '@Url.Action("Initiate", "InterviewerAgreement")';
-        var portalSignUrl = '@Url.Action("SignInPortal", "InterviewerAgreement")';
         var signUrl = '@Url.Action("Sign", "InterviewerAgreement")';
-        var downloadUrl = '@Url.Action("Download", "InterviewerAgreement")';
-        var documentUrl = '@Url.Action("Document", "InterviewerAgreement")';
-        var resendUrl = '@Url.Action("Resend", "InterviewerAgreement")';
-        var blobDocumentUrl = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(agreementBlobUrl));
+        var documentUrl = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(agreementDocumentUrl));
         var loaded = false;
 
-        function esc(value) {
-            return $('<div/>').text(value == null ? '' : value).html();
-        }
-
-        function token() {
-            return $('input[name="__RequestVerificationToken"]').first().val();
-        }
-
-        var previewLoaded = false;
-        function showPreview() {
-            $('#agreementPreviewBox').show();
-            $('#agreementOpenNewTab').attr('href', documentUrl);
-            if (previewLoaded) return;
-            previewLoaded = true;
-            renderAgreementPdf();
-        }
-
-        function previewError(message) {
-            previewLoaded = false;   // allow a retry on the next render
-            if (blobDocumentUrl) {
-                // The portal could not prepare the agreement: show the original from Azure Blob instead.
-                $('#agreementPdfPages').css('padding', 0).html(
-                    '<iframe src="' + blobDocumentUrl + '#view=FitH" title="Service Agreement" style="width:100%; height:100%; border:0; background:#fff;"></iframe>');
-                $('#agreementOpenNewTab').attr('href', blobDocumentUrl);
-                return;
-            }
-            $('#agreementPdfPages').html('<p class="text-danger" style="text-align:center; margin-top:30px;">' + esc(message)
-                + '<br/><a href="' + documentUrl + '" target="_blank" rel="noopener">Open the agreement in a new tab</a></p>');
-        }
-
-        function loadPdfJs(done) {
-            if (window.pdfjsLib) return done();
-            var s = document.createElement('script');
-            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
-            s.onload = function () {
-                window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-                done();
-            };
-            s.onerror = function () { previewError('The agreement viewer could not be loaded. Please use the link below to open the agreement.'); };
-            document.head.appendChild(s);
-        }
-
-        function renderAgreementPdf() {
-            fetch(documentUrl, { credentials: 'same-origin', cache: 'no-store' }).then(function (resp) {
-                var type = resp.headers.get('Content-Type') || '';
-                if (!resp.ok) throw new Error('The agreement could not be loaded (HTTP ' + resp.status + '). Please refresh the page or try again later.');
-                if (type.indexOf('application/pdf') < 0) throw new Error('Your session may have expired. Please sign in again and reopen this tab.');
-                return resp.arrayBuffer();
-            }).then(function (data) {
-                loadPdfJs(function () {
-                    window.pdfjsLib.getDocument({ data: new Uint8Array(data) }).promise.then(function (pdf) {
-                        var $pages = $('#agreementPdfPages').empty();
-                        var width = Math.max(300, $pages[0].clientWidth - 24);
-                        var chain = Promise.resolve();
-                        for (var n = 1; n <= pdf.numPages; n++) {
-                            (function (pageNo) {
-                                chain = chain.then(function () {
-                                    return pdf.getPage(pageNo).then(function (page) {
-                                        var ratio = window.devicePixelRatio || 1;
-                                        var viewport = page.getViewport({ scale: width / page.getViewport({ scale: 1 }).width });
-                                        var canvas = document.createElement('canvas');
-                                        canvas.width = Math.floor(viewport.width * ratio);
-                                        canvas.height = Math.floor(viewport.height * ratio);
-                                        canvas.style.cssText = 'display:block; width:' + Math.floor(viewport.width) + 'px; margin:0 auto 10px; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.25);';
-                                        $pages.append(canvas);
-                                        return page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport, transform: ratio !== 1 ? [ratio, 0, 0, ratio, 0, 0] : null }).promise;
-                                    });
-                                });
-                            })(n);
-                        }
-                        return chain;
-                    }).catch(function () {
-                        previewError('The agreement could not be displayed. Please use the link below to open it.');
-                    });
-                });
-            }).catch(function (err) {
-                previewError(err && err.message ? err.message : 'The agreement could not be loaded.');
-            });
-        }
+        function esc(value) { return $('<div/>').text(value == null ? '' : value).html(); }
 
         function render(a) {
-            var $box = $('#agreementStatusBox');
-            $('#agreementPreviewBox, #agreementPortalForm, #agreementZohoStart').hide();
-
             if (a && a.isSigned) {
-                $box.html('<p class="text-success"><strong>Agreement signed</strong>'
-                    + (a.signerName ? ' by ' + esc(a.signerName) : '')
-                    + (a.completedOn ? ' on ' + esc(a.completedOn) + ' IST' : '') + '.</p>'
-                    + '<a class="mdc-button mdc-button--raised mdc-ripple-upgraded" target="_blank" href="' + downloadUrl + '">View signed agreement</a>');
+                $('#agreementSignSection').hide();
+                $('#agreementStatusBox').html('<p class="text-success"><strong>Agreement signed</strong>'
+                    + (a.signerName ? ' by ' + esc(a.signerName) : '') + (a.signedOn ? ' on ' + esc(a.signedOn) + ' IST' : '') + '.</p>');
                 return;
             }
-
-            var portal = !a || a.mode === 'Portal';
-            if (portal) {
-                $box.html('<p class="text-warning">Agreement not signed yet. Please read it and sign below.</p>');
-                showPreview();
-                $('#agreementPortalForm').show();
-                resizeSignaturePad();
-                return;
-            }
-
-            // Zoho Sign
-            if (a.status === 'InterviewerSigned') {
-                $box.html('<p class="text-success"><strong>You signed the agreement</strong>'
-                    + (a.signedOn ? ' on ' + esc(a.signedOn) + ' IST' : '')
-                    + '. It is awaiting Risebird\'s countersignature; the signed copy will appear here once complete.</p>');
-                return;
-            }
-            if (a.canSign && a.signByEmail) {
-                $box.html('<p class="text-warning">Your agreement was sent'
-                    + (a.sentOn ? ' on ' + esc(a.sentOn) + ' IST' : '') + ' to <strong>' + esc(a.email) + '</strong> from Zoho Sign '
-                    + 'and is waiting for your signature. Open that email, fill in your details on the agreement and sign it.</p>'
-                    + '<button type="button" id="btnResendAgreement" class="mdc-button mdc-button--raised mdc-ripple-upgraded">Resend email</button> '
-                    + '<button type="button" id="btnRefreshAgreement" class="mdc-button mdc-ripple-upgraded">I have signed - refresh status</button>'
-                    + '<span id="agreementResendStatus" class="ml-2"></span>');
-                return;
-            }
-            if (a.canSign) {
-                $box.html('<p class="text-warning">Your agreement was generated'
-                    + (a.sentOn ? ' on ' + esc(a.sentOn) + ' IST' : '') + ' and is waiting for your signature.</p>'
-                    + '<a class="mdc-button mdc-button--raised mdc-ripple-upgraded" href="' + signUrl + '">Continue to sign</a>');
-                return;
-            }
-            var note = '<p class="text-warning">Agreement not signed yet.</p>';
-            if (a.status === 'Declined') {
-                note = '<p class="text-danger">You declined the agreement' + (a.declineReason ? ' (' + esc(a.declineReason) + ')' : '')
-                    + '. You can review and sign it again.</p>';
-            } else if (a.status === 'Expired' || a.status === 'Recalled') {
-                note = '<p class="text-danger">The previous agreement link is no longer valid (' + esc(a.status.toLowerCase()) + '). Please review and sign it again.</p>';
-            }
-            $box.html(note);
-            showPreview();
-            $('#agreementZohoStart').show();
+            $('#agreementStatusBox').html('<p class="text-warning">Agreement not signed yet.</p>');
+            var $doc = $('#agreementDocument');
+            if (!$doc.attr('src')) $doc.attr('src', documentUrl);
+            $('#agreementSignSection').show();
+            resizeSignaturePad();
         }
 
         function load() {
             loaded = true;
             $.get(statusUrl).done(function (res) {
-                if (res && res.success) {
-                    render(res.agreement);
-                } else {
-                    $('#agreementStatusBox').html('<p class="text-danger">' + esc(res && res.message || 'Could not load the agreement status.') + '</p>');
-                }
+                if (res && res.success) render(res.agreement);
+                else $('#agreementStatusBox').html('<p class="text-danger">' + esc(res && res.message || 'Could not load the agreement.') + '</p>');
             }).fail(function () {
-                $('#agreementStatusBox').html('<p class="text-danger">Could not load the agreement status. Please refresh the page.</p>');
+                $('#agreementStatusBox').html('<p class="text-danger">Could not load the agreement. Please refresh the page.</p>');
             });
         }
 
-        // ── Signature pad (portal signing) ──
+        // ── Signature: draw ──
         var pad = document.getElementById('agreementSignaturePad');
         var ctx = pad.getContext('2d');
-        var drawing = false, hasInk = false, last = null;
-        var bounds = null;   // drawn area, in canvas pixels, for cropping
+        var drawing = false, hasInk = false, last = null, bounds = null;
 
         function resizeSignaturePad() {
             var ratio = window.devicePixelRatio || 1;
@@ -343,191 +173,102 @@
             ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
             clearSignature();
         }
-
-        function clearSignature() {
-            ctx.clearRect(0, 0, pad.width, pad.height);
-            hasInk = false;
-            bounds = null;
-        }
-
-        function point(e) {
-            var rect = pad.getBoundingClientRect();
-            return { x: e.clientX - rect.left, y: e.clientY - rect.top };
-        }
-
+        function clearSignature() { ctx.clearRect(0, 0, pad.width, pad.height); hasInk = false; bounds = null; }
+        function point(e) { var r = pad.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
         function extend(p) {
             var ratio = window.devicePixelRatio || 1, x = p.x * ratio, y = p.y * ratio;
-            bounds = bounds
-                ? { minX: Math.min(bounds.minX, x), minY: Math.min(bounds.minY, y), maxX: Math.max(bounds.maxX, x), maxY: Math.max(bounds.maxY, y) }
-                : { minX: x, minY: y, maxX: x, maxY: y };
+            bounds = bounds ? { minX: Math.min(bounds.minX, x), minY: Math.min(bounds.minY, y), maxX: Math.max(bounds.maxX, x), maxY: Math.max(bounds.maxY, y) }
+                            : { minX: x, minY: y, maxX: x, maxY: y };
         }
-
-        pad.addEventListener('pointerdown', function (e) {
-            drawing = true;
-            last = point(e);
-            extend(last);
-            pad.setPointerCapture(e.pointerId);
-        });
+        pad.addEventListener('pointerdown', function (e) { drawing = true; last = point(e); extend(last); pad.setPointerCapture(e.pointerId); });
         pad.addEventListener('pointermove', function (e) {
             if (!drawing) return;
             var p = point(e);
-            ctx.strokeStyle = '#0b1f5c';
-            ctx.lineWidth = 2.2;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.beginPath();
-            ctx.moveTo(last.x, last.y);
-            ctx.lineTo(p.x, p.y);
-            ctx.stroke();
-            last = p;
-            extend(p);
-            hasInk = true;
+            ctx.strokeStyle = '#0b1f5c'; ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+            ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke();
+            last = p; extend(p); hasInk = true;
         });
-        ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (name) {
-            pad.addEventListener(name, function () { drawing = false; });
-        });
-        window.addEventListener('resize', function () { if ($(pad).is(':visible') && !hasInk) resizeSignaturePad(); });
+        ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (n) { pad.addEventListener(n, function () { drawing = false; }); });
         $('#btnClearSignature').on('click', clearSignature);
-        // ── Signature: draw or upload ──
-        var signatureMode = 'draw';
-        var uploadedSignature = null;   // PNG data URL of the processed upload
 
+        // PNG of the drawn area only.
+        function drawnSignature() {
+            if (!hasInk || !bounds || (bounds.maxX - bounds.minX) < 20) return null;
+            var m = 8, x = Math.max(0, Math.floor(bounds.minX - m)), y = Math.max(0, Math.floor(bounds.minY - m));
+            var w = Math.min(pad.width, Math.ceil(bounds.maxX + m)) - x, h = Math.min(pad.height, Math.ceil(bounds.maxY + m)) - y;
+            var out = document.createElement('canvas'); out.width = w; out.height = h;
+            out.getContext('2d').drawImage(pad, x, y, w, h, 0, 0, w, h);
+            return out.toDataURL('image/png');
+        }
+
+        // ── Signature: upload ──
+        var signatureMode = 'draw', uploadedSignature = null;
         $('.agreement-sig-mode').on('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
+            e.preventDefault(); e.stopPropagation();
             signatureMode = $(this).data('mode');
-            $('.agreement-sig-mode').removeClass('active');
-            $(this).addClass('active');
+            $('.agreement-sig-mode').removeClass('active'); $(this).addClass('active');
             $('#agreementSigDraw').toggle(signatureMode === 'draw');
             $('#agreementSigUpload').toggle(signatureMode === 'upload');
             if (signatureMode === 'draw') resizeSignaturePad();
         });
-
-        function clearUpload() {
-            uploadedSignature = null;
-            $('#agreementSigFile').val('');
-            $('#agreementSigPreview').hide().attr('src', '');
-            $('#agreementSigPlaceholder').show();
-            $('#btnRemoveSigUpload').hide();
-            $('#agreementSigFileName').text('');
-        }
-        $('#btnRemoveSigUpload').on('click', clearUpload);
-        $('#btnChooseSigFile, #agreementSigUploadBox').on('click', function (e) {
-            e.preventDefault();
-            document.getElementById('agreementSigFile').click();
-        });
-
+        $('#agreementSigUploadBox').on('click', function (e) { e.preventDefault(); document.getElementById('agreementSigFile').click(); });
         $('#agreementSigFile').on('change', function () {
             var file = this.files && this.files[0];
-            var $status = $('#agreementPortalStatus').removeClass('text-danger text-success').text('');
+            var $status = $('#agreementSignStatus').removeClass('text-danger text-success').text('');
             if (!file) return;
-            if (!/^image\/(png|jpeg)$/.test(file.type)) { clearUpload(); $status.addClass('text-danger').text('Please upload a PNG or JPG image.'); return; }
-            if (file.size > 2 * 1024 * 1024) { clearUpload(); $status.addClass('text-danger').text('The signature image must be 2 MB or smaller.'); return; }
-
+            if (!/^image\/(png|jpeg)$/.test(file.type)) { $status.addClass('text-danger').text('Please upload a PNG or JPG image.'); return; }
+            if (file.size > 2 * 1024 * 1024) { $status.addClass('text-danger').text('The signature image must be 2 MB or smaller.'); return; }
             var reader = new FileReader();
             reader.onload = function () {
                 var img = new Image();
                 img.onload = function () {
-                    var result = processUploadedSignature(img);
-                    if (!result) { clearUpload(); $status.addClass('text-danger').text('No signature found in the image. Please upload a clear image of your signature on white paper.'); return; }
-                    uploadedSignature = result;
-                    $('#agreementSigFileName').text(file.name);
-                    $('#agreementSigPreview').attr('src', result).show();
+                    // Convert to PNG, at most 600 x 200.
+                    var scale = Math.min(1, 600 / img.width, 200 / img.height);
+                    var c = document.createElement('canvas');
+                    c.width = Math.max(1, Math.round(img.width * scale)); c.height = Math.max(1, Math.round(img.height * scale));
+                    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+                    uploadedSignature = c.toDataURL('image/png');
+                    $('#agreementSigPreview').attr('src', uploadedSignature).show();
                     $('#agreementSigPlaceholder').hide();
-                    $('#btnRemoveSigUpload').show();
                 };
-                img.onerror = function () { clearUpload(); $status.addClass('text-danger').text('The image could not be read. Please try another file.'); };
+                img.onerror = function () { $status.addClass('text-danger').text('The image could not be read. Please try another file.'); };
                 img.src = reader.result;
             };
             reader.readAsDataURL(file);
         });
 
-        // Scales the image to fit 600x200, turns the light (paper) background transparent and crops to the ink.
-        function processUploadedSignature(img) {
-            var scale = Math.min(1, 600 / img.width, 200 / img.height);
-            var w = Math.max(1, Math.round(img.width * scale)), h = Math.max(1, Math.round(img.height * scale));
-            var c = document.createElement('canvas');
-            c.width = w; c.height = h;
-            var cx = c.getContext('2d');
-            cx.drawImage(img, 0, 0, w, h);
-            var data = cx.getImageData(0, 0, w, h), px = data.data;
-            var minX = w, minY = h, maxX = -1, maxY = -1;
-            for (var y = 0; y < h; y++) {
-                for (var x = 0; x < w; x++) {
-                    var i = (y * w + x) * 4;
-                    var light = 0.299 * px[i] + 0.587 * px[i + 1] + 0.114 * px[i + 2];
-                    if (px[i + 3] < 20 || light > 200) { px[i + 3] = 0; continue; }
-                    if (x < minX) minX = x; if (x > maxX) maxX = x;
-                    if (y < minY) minY = y; if (y > maxY) maxY = y;
-                }
-            }
-            if (maxX - minX < 10 || maxY - minY < 3) return null;
-            cx.putImageData(data, 0, 0);
-            var m = 4, cropX = Math.max(0, minX - m), cropY = Math.max(0, minY - m);
-            var cropW = Math.min(w, maxX + m + 1) - cropX, cropH = Math.min(h, maxY + m + 1) - cropY;
-            var out = document.createElement('canvas');
-            out.width = cropW; out.height = cropH;
-            out.getContext('2d').drawImage(c, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
-            return out.toDataURL('image/png');
-        }
+        // ── Sign ──
+        $('#agreementAgree').on('change', function () { $(this).closest('.agreement-agree').toggleClass('is-checked', this.checked); });
+        $('#agreementPinCode').on('input', function () { this.value = this.value.replace(/\D/g, '').slice(0, 6); });
+        $('#agreementSignSection input[type=text]').on('keydown', function (e) { if (e.key === 'Enter') e.preventDefault(); });
 
-        function currentSignature() {
-            if (signatureMode === 'upload') return uploadedSignature;
-            return hasInk && bounds && (bounds.maxX - bounds.minX) >= 20 ? signatureDataUrl() : null;
-        }
-
-        $('#agreementAgree').on('change', function () {
-            $(this).closest('.agreement-agree').toggleClass('is-checked', this.checked);
-            if (this.checked) $('#agreementPortalStatus').removeClass('text-danger').text('');
-        });
-
-        // PNG of the drawn area only, so the signature fills the signature box on the agreement.
-        function signatureDataUrl() {
-            var margin = 8, b = bounds;
-            var x = Math.max(0, Math.floor(b.minX - margin)), y = Math.max(0, Math.floor(b.minY - margin));
-            var w = Math.min(pad.width, Math.ceil(b.maxX + margin)) - x, h = Math.min(pad.height, Math.ceil(b.maxY + margin)) - y;
-            var out = document.createElement('canvas');
-            out.width = w;
-            out.height = h;
-            out.getContext('2d').drawImage(pad, x, y, w, h, 0, 0, w, h);
-            return out.toDataURL('image/png');
-        }
-
-        $('#btnPortalSign').on('click', function () {
-            var fullName = $.trim($('#agreementFullName').val());
-            var fatherName = $.trim($('#agreementFatherName').val());
-            var addressLine1 = $.trim($('#agreementAddressLine1').val());
-            var addressLine2 = $.trim($('#agreementAddressLine2').val());
-            var city = $.trim($('#agreementCity').val());
-            var state = $('#agreementState').val();
-            var pinCode = $.trim($('#agreementPinCode').val());
-            var $status = $('#agreementPortalStatus').removeClass('text-danger text-success');
+        $('#btnSignAgreement').on('click', function () {
+            var data = {
+                fullName: $.trim($('#agreementFullName').val()),
+                fatherName: $.trim($('#agreementFatherName').val()),
+                addressLine1: $.trim($('#agreementAddressLine1').val()),
+                addressLine2: $.trim($('#agreementAddressLine2').val()),
+                city: $.trim($('#agreementCity').val()),
+                state: $('#agreementState').val(),
+                pinCode: $.trim($('#agreementPinCode').val()),
+                signature: signatureMode === 'upload' ? uploadedSignature : drawnSignature(),
+                agree: $('#agreementAgree').is(':checked'),
+                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').first().val()
+            };
+            var $status = $('#agreementSignStatus').removeClass('text-danger text-success');
             var fail = function (msg) { $status.addClass('text-danger').text(msg); };
-
-            if (fullName.length < 2) return fail('Please enter your full name.');
-            if (fatherName.length < 2) return fail("Please enter your father's / guardian's name.");
-            if (addressLine1.length < 3) return fail('Please enter your house / flat number and street.');
-            if (city.length < 2) return fail('Please enter your city.');
-            if (!state) return fail('Please select your state.');
-            if (!/^[1-9][0-9]{5}$/.test(pinCode)) return fail('Please enter a valid 6-digit PIN code.');
-            var signature = currentSignature();
-            if (!signature) return fail(signatureMode === 'upload' ? 'Please upload an image of your signature.' : 'Please draw your signature in the box.');
-            if (!$('#agreementAgree').is(':checked')) return fail('Please confirm that you have read and agree to the agreement.');
+            if (data.fullName.length < 2) return fail('Please enter your full name.');
+            if (data.fatherName.length < 2) return fail("Please enter your father's / guardian's name.");
+            if (data.addressLine1.length < 3) return fail('Please enter your house / flat number and street.');
+            if (data.city.length < 2) return fail('Please enter your city.');
+            if (!data.state) return fail('Please select your state.');
+            if (!/^[1-9][0-9]{5}$/.test(data.pinCode)) return fail('Please enter a valid 6-digit PIN code.');
+            if (!data.signature) return fail('Please draw or upload your signature.');
+            if (!data.agree) return fail('Please confirm that you have read and agree to the agreement.');
 
             var $btn = $(this).prop('disabled', true);
-            $status.text('Signing your agreement...');
-            $.post(portalSignUrl, {
-                fullName: fullName,
-                fatherName: fatherName,
-                addressLine1: addressLine1,
-                addressLine2: addressLine2,
-                city: city,
-                state: state,
-                pinCode: pinCode,
-                signature: signature,
-                agree: true,
-                __RequestVerificationToken: token()
-            }).done(function (res) {
+            $status.text('Saving...');
+            $.post(signUrl, data).done(function (res) {
                 if (res && res.success) {
                     render(res.agreement);
                     if (window.swal && swal.fire) swal.fire('Service Agreement', res.message, 'success');
@@ -541,66 +282,6 @@
             });
         });
 
-        // Enter inside these fields must not submit the surrounding profile form.
-        $('#agreementFullName, #agreementFatherName, #agreementAddressLine1, #agreementAddressLine2, #agreementCity, #agreementPinCode')
-            .on('keydown', function (e) { if (e.key === 'Enter') e.preventDefault(); });
-        // PIN code: digits only.
-        $('#agreementPinCode').on('input', function () { this.value = this.value.replace(/\D/g, '').slice(0, 6); });
-
-        // ── Zoho Sign ──
-        $('#btnGenerateAgreement').on('click', function () {
-            var $status = $('#agreementStartStatus').removeClass('text-danger text-success');
-            var $btn = $(this).prop('disabled', true);
-            $status.text('Preparing your agreement...');
-            $.post(initiateUrl, { __RequestVerificationToken: token() }).done(function (res) {
-                if (res && res.success && res.signUrl) {
-                    $status.addClass('text-success').text('Opening Zoho Sign...');
-                    window.location.href = res.signUrl;
-                    return;
-                }
-                if (res && res.success) {
-                    render(res.agreement);
-                    if (window.swal && swal.fire) swal.fire('Service Agreement', res.message, 'success');
-                    return;
-                }
-                if (res && res.agreement) render(res.agreement);
-                $status.addClass('text-danger').text(res && res.message || 'The agreement could not be generated.');
-                $btn.prop('disabled', false);
-            }).fail(function () {
-                $status.addClass('text-danger').text('The agreement could not be generated. Please try again later.');
-                $btn.prop('disabled', false);
-            });
-        });
-
-        $('#agreementStatusBox').on('click', '#btnResendAgreement', function () {
-            var $btn = $(this).prop('disabled', true);
-            var $status = $('#agreementResendStatus').removeClass('text-danger text-success').text('Sending...');
-            $.post(resendUrl, { __RequestVerificationToken: token() }).done(function (res) {
-                $status.addClass(res && res.success ? 'text-success' : 'text-danger').text(res && res.message || 'Could not resend the email.');
-            }).fail(function () {
-                $status.addClass('text-danger').text('Could not resend the email. Please try again later.');
-            }).always(function () {
-                $btn.prop('disabled', false);
-            });
-        });
-        $('#agreementStatusBox').on('click', '#btnRefreshAgreement', function () {
-            $('#agreementStatusBox').html('<p class="text-muted">Checking status with Zoho Sign...</p>');
-            load();
-        });
-
-        $('.tab-menu li a[data-rel="tab-4"]').on('click', function () {
-            if (!loaded) load();
-        });
-
-        var agreementMessage = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["AgreementMessage"] as string));
-        if (agreementMessage || /[?&]tab=agreement\b/.test(window.location.search)) {
-            $(function () {
-                // Native click: the page loads a second jQuery copy later, and the generic tab
-                // handler is bound on that one, so a jQuery trigger would not reach it.
-                var tabLink = document.querySelector('.tab-menu li a[data-rel="tab-4"]');
-                if (tabLink) tabLink.click();
-                if (agreementMessage && window.swal && swal.fire) swal.fire('Service Agreement', agreementMessage, 'info');
-            });
-        }
+        $('.tab-menu li a[data-rel="tab-4"]').on('click', function () { if (!loaded) load(); });
     })(window.jQuery);
 </script>

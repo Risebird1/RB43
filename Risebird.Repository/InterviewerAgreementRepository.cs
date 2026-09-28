@@ -25,71 +25,10 @@ namespace Risebird.Repository
 
         public async Task<InterviewerAgreementVM> GetInterviewerAgreement(int interviewerProfileId)
         {
-            var parameters = new DynamicParameters();
-            parameters.Add("@InterviewerProfileId", interviewerProfileId);
-            return await GetAgreement(parameters);
-        }
-
-        public async Task<InterviewerAgreementVM> GetInterviewerAgreementByZohoRequestId(string zohoRequestId)
-        {
-            var parameters = new DynamicParameters();
-            parameters.Add("@ZohoRequestId", zohoRequestId);
-            return await GetAgreement(parameters);
-        }
-
-        // New request: usp_SaveInterviewerAgreement with @InterviewerProfileId.
-        public Task<bool> SaveInterviewerAgreementRequest(int interviewerProfileId, ZohoSignRequestResult request, string agreementVersion)
-        {
-            var parameters = new DynamicParameters();
-            parameters.Add("@InterviewerProfileId", interviewerProfileId);
-            parameters.Add("@ZohoRequestId", request.RequestId);
-            parameters.Add("@ZohoActionId", request.ActionId);
-            parameters.Add("@AgreementStatus", InterviewerAgreementStatus.Sent);
-            parameters.Add("@AgreementVersion", agreementVersion);
-            return SaveAgreement(parameters);
-        }
-
-        // Status update: usp_SaveInterviewerAgreement keyed by @ZohoRequestId (no @InterviewerProfileId).
-        public Task<bool> UpdateInterviewerAgreementStatus(string zohoRequestId, string agreementStatus, bool isAgreementSigned,
-            DateTime? signedOn, DateTime? completedOn, string documentUrl, string declineReason,
-            string signerName = null, string fatherName = null, string address = null)
-        {
-            var parameters = new DynamicParameters();
-            parameters.Add("@ZohoRequestId", zohoRequestId);
-            parameters.Add("@AgreementStatus", agreementStatus);
-            parameters.Add("@IsAgreementSigned", isAgreementSigned);
-            parameters.Add("@SignedOn", signedOn);
-            parameters.Add("@CompletedOn", completedOn);
-            parameters.Add("@DocumentUrl", documentUrl);
-            parameters.Add("@DeclineReason", declineReason);
-            parameters.Add("@SignerName", signerName);
-            parameters.Add("@FatherName", fatherName);
-            parameters.Add("@Address", address);
-            return SaveAgreement(parameters);
-        }
-
-        private async Task<bool> SaveAgreement(DynamicParameters parameters)
-        {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    var rows = await SqlMapper.QueryAsync<int>(con, "usp_SaveInterviewerAgreement", parameters,
-                        commandType: CommandType.StoredProcedure);
-                    return rows.FirstOrDefault() > 0;
-                }
-            }
-            catch (Exception e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-        }
-
-        private async Task<InterviewerAgreementVM> GetAgreement(DynamicParameters parameters)
-        {
-            try
-            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@InterviewerProfileId", interviewerProfileId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<InterviewerAgreementVM>(con, "usp_GetInterviewerAgreement", parameters,
@@ -101,6 +40,31 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+
+        public async Task<bool> SaveInterviewerAgreement(int interviewerProfileId, string agreementVersion, string signerName, string fatherName, string address, string signatureUrl)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@InterviewerProfileId", interviewerProfileId);
+                parameters.Add("@AgreementVersion", agreementVersion);
+                parameters.Add("@SignerName", signerName);
+                parameters.Add("@FatherName", fatherName);
+                parameters.Add("@Address", address);
+                parameters.Add("@SignatureUrl", signatureUrl);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var rows = await SqlMapper.QueryAsync<int>(con, "usp_SaveInterviewerAgreement", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return rows.FirstOrDefault() > 0;
+                }
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
         }
     }
