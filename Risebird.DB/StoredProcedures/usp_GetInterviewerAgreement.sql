@@ -24,7 +24,8 @@ BEGIN
         AgreementFatherName,
         AgreementAddress,
         AgreementSignedOn,
-        AgreementSignatureUrl
+        AgreementSignatureUrl,
+        AgreementProofUrl
     FROM InterviewerProfile
     WHERE Id = @InterviewerProfileId
 END

@@ -31,10 +31,14 @@
 
             <div id="agreementSignSection" style="display:none;">
                 <p class="text-muted">Please read the agreement below, fill in your details and sign it.</p>
-                <div style="border:1px solid #dcdcdc; border-radius:4px;">
-                    <iframe id="agreementDocument" title="Service Agreement" style="width:100%; height:70vh; border:0; background:#fff;"></iframe>
+                <div id="agreementDocumentBox">
+                    <div style="border:1px solid #dcdcdc; border-radius:4px;">
+                        <iframe id="agreementDocument" title="Service Agreement" style="width:100%; height:70vh; border:0; background:#fff;"></iframe>
+                    </div>
+                    <small><a href="@agreementDocumentUrl" target="_blank" rel="noopener">Open the agreement in a new tab</a></small>
                 </div>
-                <small><a href="@agreementDocumentUrl" target="_blank" rel="noopener">Open the agreement in a new tab</a></small>
+                @* Shown only in the proof screenshot, in place of the agreement viewer (which cannot be captured). *@
+                <div id="agreementProofCaption" style="display:none; padding:10px 12px; border:1px solid #dcdcdc; border-radius:4px; background:#fafafa;"></div>
 
                 <div class="row" style="margin-top:16px;">
                     <div class="col-md-6">
@@ -131,6 +135,7 @@
         var statusUrl = '@Url.Action("Status", "InterviewerAgreement")';
         var signUrl = '@Url.Action("Sign", "InterviewerAgreement")';
         var documentUrl = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(agreementDocumentUrl));
+        var agreementVersion = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(AgreementOptions.Value.Version));
         var loaded = false;
 
         function esc(value) { return $('<div/>').text(value == null ? '' : value).html(); }
@@ -268,6 +273,52 @@
 
             var $btn = $(this).prop('disabled', true);
             $status.text('Saving...');
+            captureProof(function (screenshot) {
+                data.screenshot = screenshot || '';
+                submitSignature(data, $btn, fail);
+            });
+        });
+
+        // ── Proof screenshot of the signing page (best effort: signing never waits on or fails because of it) ──
+        function loadHtml2Canvas(done) {
+            if (window.html2canvas) return done(true);
+            var s = document.createElement('script');
+            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+            s.onload = function () { done(!!window.html2canvas); };
+            s.onerror = function () { done(false); };
+            document.head.appendChild(s);
+        }
+
+        function captureProof(done) {
+            var finished = false;
+            var finish = function (image) {
+                if (finished) return;
+                finished = true;
+                $('#agreementProofCaption').hide();
+                $('#agreementDocumentBox').show();
+                done(image);
+            };
+            setTimeout(function () { finish(null); }, 15000);
+            loadHtml2Canvas(function (ok) {
+                if (!ok) return finish(null);
+                try {
+                    // The agreement viewer (an iframe from Azure Blob) cannot be captured; name the document instead.
+                    $('#agreementProofCaption').html('<strong>Service Agreement ' + esc(agreementVersion) + '</strong><br/>'
+                        + esc(documentUrl) + '<br/>Signed on this page on ' + esc(new Date().toString()));
+                    $('#agreementDocumentBox').hide();
+                    $('#agreementProofCaption').show();
+                    window.html2canvas(document.getElementById('agreementSignSection'), { scale: 1, backgroundColor: '#ffffff', logging: false })
+                        .then(function (canvas) {
+                            try { finish(canvas.toDataURL('image/jpeg', 0.8)); } catch (e) { finish(null); }
+                        })
+                        .catch(function () { finish(null); });
+                } catch (e) {
+                    finish(null);
+                }
+            });
+        }
+
+        function submitSignature(data, $btn, fail) {
             $.post(signUrl, data).done(function (res) {
                 if (res && res.success) {
                     render(res.agreement);
@@ -280,7 +331,7 @@
                 fail('The agreement could not be signed. Please try again later.');
                 $btn.prop('disabled', false);
             });
-        });
+        }
 
         $('.tab-menu li a[data-rel="tab-4"]').on('click', function () { if (!loaded) load(); });
     })(window.jQuery);

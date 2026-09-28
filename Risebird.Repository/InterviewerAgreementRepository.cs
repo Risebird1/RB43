@@ -43,7 +43,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> SaveInterviewerAgreement(int interviewerProfileId, string agreementVersion, string signerName, string fatherName, string address, string signatureUrl)
+        public async Task<bool> SaveInterviewerAgreement(int interviewerProfileId, string agreementVersion, string signerName, string fatherName, string address, string signatureUrl, string proofUrl)
         {
             try
             {
@@ -54,6 +54,7 @@ namespace Risebird.Repository
                 parameters.Add("@FatherName", fatherName);
                 parameters.Add("@Address", address);
                 parameters.Add("@SignatureUrl", signatureUrl);
+                parameters.Add("@ProofUrl", proofUrl);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var rows = await SqlMapper.QueryAsync<int>(con, "usp_SaveInterviewerAgreement", parameters,

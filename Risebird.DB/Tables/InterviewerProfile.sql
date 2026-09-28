@@ -536,4 +536,10 @@ BEGIN
     ALTER TABLE InterviewerProfile Add AgreementSignatureUrl varchar(500) null
 END
 
+-- Screenshot of the signing page taken when the interviewer signed (proof of signing).
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'AgreementProofUrl' AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile Add AgreementProofUrl varchar(500) null
+END
+
 End
