@@ -80,6 +80,8 @@ namespace Risebird.Entities.ViewModel
     {
         public string FileName { get; set; }
         public byte[] Pdf { get; set; }
+        /// <summary>SHA-256 (hex) of the source agreement PDF as stored, before preparation.</summary>
+        public string SourceSha256 { get; set; }
         public AgreementDocumentLayout Layout { get; set; }
         /// <summary>Page sizes in points, index 0 = page 1.</summary>
         public List<(float Width, float Height)> PageSizes { get; set; } = new List<(float Width, float Height)>();

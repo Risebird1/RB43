@@ -39,21 +39,22 @@ namespace Risebird.Web.Helpers
 
         public async Task<AgreementDocument> GetDocumentAsync()
         {
-            var key = $"{_options.DocumentSource}|{_options.DocumentBlobContainer}|{_options.LocalDocumentFolder}|{_options.DocumentName}";
+            var key = $"{_options.DocumentSource}|{_options.DocumentBlobContainer}|{_options.LocalDocumentFolder}|{_options.DocumentName}|{_options.ResolvedLayoutName}";
             lock (CacheLock)
             {
                 if (_cache.Key == key && DateTime.UtcNow - _cache.LoadedAt < CacheDuration)
                     return _cache.Document;
             }
 
-            var pdf = await ReadFileAsync(_options.DocumentName);
-            var layoutJson = await ReadFileAsync(Path.ChangeExtension(_options.DocumentName, ".layout.json"));
+            var pdf = await ReadFileAsync(_options.DocumentName, allowLocalFallback: false);
+            var layoutJson = await ReadFileAsync(_options.ResolvedLayoutName, allowLocalFallback: true);
             var layout = JsonSerializer.Deserialize<AgreementDocumentLayout>(layoutJson,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true, ReadCommentHandling = JsonCommentHandling.Skip, AllowTrailingCommas = true })
                 ?? throw new InvalidOperationException($"Agreement layout for {_options.DocumentName} is empty.");
 
             var document = Prepare(pdf, layout);
             document.FileName = _options.DocumentName;
+            document.SourceSha256 = Convert.ToHexString(SHA256.HashData(pdf));
             lock (CacheLock)
             {
                 _cache = (key, DateTime.UtcNow, document);
@@ -97,7 +98,7 @@ namespace Risebird.Web.Helpers
                         _ => null
                     };
                     if (!string.IsNullOrEmpty(value))
-                        DrawFittedText(canvas, textFont, value, field.X + 1, bottom + 3.5f, field.Width - 2, field.FontSize);
+                        DrawFittedText(canvas, textFont, value, field.X + 1, bottom, field.Width - 2, field.Height, field.FontSize);
                 }
 
                 DrawAudit(stamper, reader, document, stamp, auditFont, auditBold);
@@ -120,12 +121,47 @@ namespace Risebird.Web.Helpers
             return null;
         }
 
-        // Shrinks the font (down to 6pt) so the value fits the field width.
-        private static void DrawFittedText(PdfContentByte canvas, BaseFont font, string value, float x, float baseline, float maxWidth, float fontSize)
+        // Fits the value in the field box: one line, shrinking the font down to 7.5pt; if it still does not
+        // fit, two lines (split at the comma / space nearest the middle) shrinking down to 5.5pt.
+        private static void DrawFittedText(PdfContentByte canvas, BaseFont font, string value, float x, float bottom, float maxWidth, float boxHeight, float fontSize)
         {
             var size = fontSize;
-            while (size > 6 && font.GetWidthPoint(value, size) > maxWidth)
+            while (size > 7.5f && font.GetWidthPoint(value, size) > maxWidth)
                 size -= 0.5f;
+            if (font.GetWidthPoint(value, size) <= maxWidth || boxHeight < 13)
+            {
+                while (size > 6 && font.GetWidthPoint(value, size) > maxWidth)
+                    size -= 0.5f;
+                ShowLine(canvas, font, value, x, bottom + 3.5f, size);
+                return;
+            }
+
+            var (first, second) = SplitNearMiddle(value);
+            size = Math.Min(fontSize, (boxHeight - 2.5f) / 2.1f);
+            while (size > 5.5f && Math.Max(font.GetWidthPoint(first, size), font.GetWidthPoint(second, size)) > maxWidth)
+                size -= 0.25f;
+            ShowLine(canvas, font, first, x, bottom + 2 + size * 1.1f, size);
+            ShowLine(canvas, font, second, x, bottom + 2, size);
+        }
+
+        private static (string First, string Second) SplitNearMiddle(string value)
+        {
+            var middle = value.Length / 2;
+            int Best(char separator)
+            {
+                int best = -1;
+                for (var i = value.IndexOf(separator); i >= 0; i = value.IndexOf(separator, i + 1))
+                    if (best < 0 || Math.Abs(i - middle) < Math.Abs(best - middle)) best = i;
+                return best;
+            }
+            var cut = Best(',');
+            if (cut < 0 || Math.Abs(cut - middle) > value.Length / 4) cut = Best(' ');
+            if (cut <= 0) cut = middle;
+            return (value.Substring(0, cut + 1).Trim(), value.Substring(cut + 1).Trim());
+        }
+
+        private static void ShowLine(PdfContentByte canvas, BaseFont font, string value, float x, float baseline, float size)
+        {
             canvas.BeginText();
             canvas.SetColorFill(BaseColor.BLACK);
             canvas.SetFontAndSize(font, size);
@@ -137,7 +173,8 @@ namespace Risebird.Web.Helpers
         // Electronic-signature evidence: a block on the audit page and a reference line on every page.
         private void DrawAudit(PdfStamper stamper, PdfReader reader, AgreementDocument document, PortalSignatureStamp stamp, BaseFont font, BaseFont bold)
         {
-            var fingerprint = Convert.ToHexString(SHA256.HashData(document.Pdf)).Substring(0, 16);
+            // Fingerprint of the source agreement (stable; matches the file in blob / the folder).
+            var fingerprint = (document.SourceSha256 ?? Convert.ToHexString(SHA256.HashData(document.Pdf))).Substring(0, 16);
             var signedAt = stamp.SignedOn.ToString("dd MMM yyyy, hh:mm:ss tt", CultureInfo.InvariantCulture);
             var lines = new[]
             {
@@ -187,15 +224,21 @@ namespace Risebird.Web.Helpers
             }
         }
 
-        private async Task<byte[]> ReadFileAsync(string fileName)
+        // Blob source: the PDF must be in the container. The layout may be uploaded next to it; if it is
+        // not there, the layout in the local AgreementDocuments folder is used.
+        private async Task<byte[]> ReadFileAsync(string fileName, bool allowLocalFallback)
         {
             if (string.Equals(_options.DocumentSource, "Blob", StringComparison.OrdinalIgnoreCase))
             {
-                var blob = _azureStorageHelper.GetBlobDataAsBlob(_options.DocumentBlobContainer, fileName)
-                    ?? throw new FileNotFoundException($"Agreement file {fileName} not found in blob container {_options.DocumentBlobContainer}.");
-                using var ms = new MemoryStream();
-                await blob.DownloadToStreamAsync(ms);
-                return ms.ToArray();
+                var blob = _azureStorageHelper.GetBlobDataAsBlob(_options.DocumentBlobContainer, fileName);
+                if (blob != null && await blob.ExistsAsync())
+                {
+                    using var ms = new MemoryStream();
+                    await blob.DownloadToStreamAsync(ms);
+                    return ms.ToArray();
+                }
+                if (!allowLocalFallback)
+                    throw new FileNotFoundException($"Agreement file '{fileName}' not found in blob container '{_options.DocumentBlobContainer}'.");
             }
 
             var path = Path.Combine(_environment.ContentRootPath, _options.LocalDocumentFolder, fileName);
