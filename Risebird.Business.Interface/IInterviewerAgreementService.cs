@@ -6,7 +6,7 @@ namespace Risebird.Business.Interface
     public interface IInterviewerAgreementService
     {
         Task<InterviewerAgreementVM> GetInterviewerAgreement(int interviewerProfileId);
-        /// <summary>Uploads the signature image to blob storage and saves the agreement details. Returns an error message, or null on success.</summary>
+        /// <summary>Uploads the signature image and the proof screenshot to blob storage and saves the agreement details. Returns an error message, or null on success.</summary>
         Task<string> SignAgreement(int interviewerProfileId, InterviewerAgreementSignRequest request);
     }
 }

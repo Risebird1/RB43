@@ -54,9 +54,9 @@ namespace Risebird.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [RequestSizeLimit(2_000_000)]
+        [RequestSizeLimit(8_000_000)]
         public async Task<JsonResult> Sign(string fullName, string fatherName, string addressLine1, string addressLine2,
-            string city, string state, string pinCode, string signature, bool agree)
+            string city, string state, string pinCode, string signature, string screenshot, bool agree)
         {
             try
             {
@@ -99,7 +99,9 @@ namespace Risebird.Web.Controllers
                     SignerName = fullName,
                     FatherName = fatherName,
                     Address = address,
-                    SignatureImage = signatureImage
+                    SignatureImage = signatureImage,
+                    // Proof screenshot of the signing page: optional, signing never depends on it.
+                    ProofImage = DecodeScreenshot(screenshot)
                 });
                 if (error != null)
                     return Json(new { success = false, message = error });
@@ -119,16 +121,21 @@ namespace Risebird.Web.Controllers
         private static bool IsValidText(string value, int min, int max) => value.Length >= min && value.Length <= max;
 
         // Signature from the page: "data:image/png;base64,...". Returns null if it is not a PNG.
-        private static byte[] DecodeSignature(string dataUrl)
+        private static byte[] DecodeSignature(string dataUrl) =>
+            DecodeImage(dataUrl, "data:image/png;base64,", 1_500_000, b => b[0] == 0x89 && b[1] == 0x50 && b[2] == 0x4E && b[3] == 0x47);
+
+        // Proof screenshot of the page: "data:image/jpeg;base64,...". Returns null if missing or not a JPEG.
+        private static byte[] DecodeScreenshot(string dataUrl) =>
+            DecodeImage(dataUrl, "data:image/jpeg;base64,", 6_000_000, b => b[0] == 0xFF && b[1] == 0xD8 && b[2] == 0xFF);
+
+        private static byte[] DecodeImage(string dataUrl, string prefix, int maxLength, Func<byte[], bool> hasSignature)
         {
-            const string prefix = "data:image/png;base64,";
-            if (string.IsNullOrEmpty(dataUrl) || !dataUrl.StartsWith(prefix, StringComparison.Ordinal) || dataUrl.Length > 1_500_000)
+            if (string.IsNullOrEmpty(dataUrl) || !dataUrl.StartsWith(prefix, StringComparison.Ordinal) || dataUrl.Length > maxLength)
                 return null;
             try
             {
                 var bytes = Convert.FromBase64String(dataUrl.Substring(prefix.Length));
-                var isPng = bytes.Length > 8 && bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47;
-                return isPng ? bytes : null;
+                return bytes.Length > 8 && hasSignature(bytes) ? bytes : null;
             }
             catch (FormatException)
             {
