@@ -21,8 +21,8 @@
     Func<int, string> clock = s => string.Format("{0}:{1:00}", s / 60, s % 60);
     Func<string, string> initial = s => string.IsNullOrWhiteSpace(s) ? "?" : s.Trim().Substring(0, 1).ToUpper();
 
-    int candidateCalls = Model.Count(x => group(x.RecipientProfileType) == "Candidate");
-    int interviewerCalls = Model.Count(x => group(x.RecipientProfileType) == "Interviewer");
+    int candidateCalls = Model.Count(x => group(string.IsNullOrWhiteSpace(x.RecipientKind) ? x.RecipientProfileType : x.RecipientKind) == "Candidate");
+    int interviewerCalls = Model.Count(x => group(string.IsNullOrWhiteSpace(x.RecipientKind) ? x.RecipientProfileType : x.RecipientKind) == "Interviewer");
     int otherCalls = Model.Count - candidateCalls - interviewerCalls;
     int recorded = Model.Count(x => !string.IsNullOrWhiteSpace(x.RecordingUri));
     int talkSeconds = Model.Sum(x => HRController.ParseDurationSeconds(x.Duration));
@@ -142,7 +142,7 @@
                                             @foreach (var item in Model)
                                             {
                                                 var seconds = HRController.ParseDurationSeconds(item.Duration);
-                                                var recipientGroup = group(item.RecipientProfileType);
+                                                var recipientGroup = group(string.IsNullOrWhiteSpace(item.RecipientKind) ? item.RecipientProfileType : item.RecipientKind);
                                                 <tr>
                                                     <td data-order="@item.DateCreated.ToString("yyyyMMddHHmmss")">
                                                         <div class="cax-date">@item.DateCreated.ToString("dd MMM yyyy")</div>

@@ -16,7 +16,10 @@ BEGIN
 
 select crd.id, crd.InterviewId, crd.IRFId, crd.[Caller], crd.CallRecipient, crd.DateCreated,
 crd.Duration, crd.Price, crd.PriceUnit, crd.CallSid, crd.StartTime, crd.RecipientProfileType, crd.RecordingUri, 
-crd.RecordingSid, crd.RecipientPhoneNumber
+crd.RecordingSid, crd.RecipientPhoneNumber, crd.RecipientKind,
+-- Caller role: email -> UserList -> Profile.Name (same lookup usp_AddorUpdateCallRecordingData uses for the recipient)
+(select top 1 pr.[Name] from UserList ul join [Profile] pr on pr.id = ul.idProfile
+ where ul.EmailId = crd.[Caller]) as CallerProfileType
 from CallRecordingData crd
 order by DateCreated desc
 

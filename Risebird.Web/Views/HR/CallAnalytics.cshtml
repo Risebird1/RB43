@@ -1,7 +1,9 @@
 @model List<Risebird.Entities.ViewModel.CallAnalyticsSummaryVM>
+@using Risebird.Web.Controllers
 @{
-    ViewData["Title"] = "Call Analytics";
-    ViewBag.PageHeader = "Call Analytics";
+    ViewData["Title"] = "Call & Productivity Analytics";
+    ViewBag.PageHeader = "Call & Productivity Analytics";
+    ViewData["CaxActiveTab"] = "user";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     string type = ViewBag.Type;
@@ -14,6 +16,13 @@
     int totalOther = Model.Sum(x => x.OtherCalls);
     int totalRecorded = Model.Sum(x => x.CallsWithRecording);
     int totalSeconds = Model.Sum(x => x.TotalDurationSeconds);
+    int usersCalling = Model.Count(x => x.TotalCalls > 0);
+
+    // Productivity metrics (ActivityTracker)
+    int totalRs = Model.Sum(x => x.Reschedules), totalNs = Model.Sum(x => x.NewSchedules), totalMc = Model.Sum(x => x.MeetingsConfirmed),
+        totalOb = Model.Sum(x => x.InterviewersOnboarded), totalQc = Model.Sum(x => x.QCDone);
+    Func<string, string> roleClass = r => r == "HR" || r == "SeniorHR" ? "cax-role cax-role-hr"
+        : r == "InterviewerManagement" || r == "SeniorInterviewerManagement" ? "cax-role cax-role-im" : "cax-role";
 
     Func<int, string> fmt = s => s >= 3600
         ? string.Format("{0}h {1:00}m", s / 3600, (s % 3600) / 60)
@@ -22,11 +31,12 @@
     Func<string, string> initial = s => string.IsNullOrWhiteSpace(s) ? "?" : s.Trim().Substring(0, 1).ToUpper();
 }
 <script>
-    var Header = "<div>Call Analytics</div>";
+    var Header = "<div>Call &amp; Productivity Analytics</div>";
     $('#txtpageHeader').empty().html(Header);
 </script>
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/call-analytics.css" asp-append-version="true" />
 <style>
     /* All rules scoped to .cax-page so site-wide table/.num styles cannot interfere */
     .cax-page { --cax-blue: #2196f3; --cax-blue-soft: #e3f2fd; --cax-green: #2e7d32; --cax-green-soft: #e8f5e9;
@@ -95,9 +105,12 @@
             <div class="col-md-12 nopad" style="margin:0px;">
                 <div class="card-header bg-w clearfix">
                     <div class="pull-left">
-                        <div class="mobile-view"> <h4 class="card-title">Call Analytics</h4></div>
+                        <div class="mobile-view"> <h4 class="card-title">Call &amp; Productivity Analytics</h4></div>
                     </div>
                     <div class="pull-right client-ms">
+                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" onclick="location.href='@Url.Action("CallAnalyticsByRole", "HR", new { type = type, from = from, to = to })'">
+                            <font style="font-family: Roboto, sans-serif; font-size:12px;">By Role</font>
+                        </button>
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space" onclick="location.href='@Url.Action("CallRecordingsDetails", "HR", new { type = "Candidate" })'">
                             <font style="font-family: Roboto, sans-serif; font-size:12px;">Call Recordings</font>
                         </button>
@@ -113,6 +126,8 @@
             <div class="row bl-bg">
                 <div class="col-md-12">
                     <div class="cax-page">
+
+                        <partial name="_CallAnalyticsTabs" />
 
                         <div class="cax-toolbar">
                             <form method="get" action="/HR/CallAnalytics" class="cax-filters">
@@ -138,23 +153,31 @@
                                     <button type="button" class="mdc-button mdc-button--outlined mdc-ripple-upgraded" onclick="location.href='/HR/CallAnalytics'"><font style="font-size:12px;">Reset</font></button>
                                 </div>
                             </form>
+                            <a class="cax-export" href="@Url.Action("CallAnalyticsExport", "HR", new { type = type, from = from, to = to })">
+                                <i class="fas fa-file-download"></i> Export CSV
+                            </a>
                         </div>
 
                         <div class="cax-tiles">
                             <div class="cax-tile"><div class="cax-tile-label">Total calls</div><div class="cax-tile-value">@totalCalls</div><div class="cax-tile-sub">@from to @to</div></div>
-                            <div class="cax-tile"><div class="cax-tile-label">Users calling</div><div class="cax-tile-value">@Model.Count</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">Users calling</div><div class="cax-tile-value">@usersCalling</div></div>
                             <div class="cax-tile"><div class="cax-tile-label">To candidates</div><div class="cax-tile-value">@totalCandidate</div><div class="cax-tile-sub">@pct(totalCandidate, totalCalls)% of calls</div></div>
                             <div class="cax-tile"><div class="cax-tile-label">To interviewers</div><div class="cax-tile-value">@totalInterviewer</div><div class="cax-tile-sub">@pct(totalInterviewer, totalCalls)% of calls</div></div>
                             <div class="cax-tile"><div class="cax-tile-label">To others</div><div class="cax-tile-value">@totalOther</div><div class="cax-tile-sub">@pct(totalOther, totalCalls)% of calls</div></div>
                             <div class="cax-tile"><div class="cax-tile-label">With recording</div><div class="cax-tile-value">@totalRecorded</div><div class="cax-tile-sub">@pct(totalRecorded, totalCalls)% of calls</div></div>
                             <div class="cax-tile"><div class="cax-tile-label">Talk time</div><div class="cax-tile-value">@fmt(totalSeconds)</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">Reschedules</div><div class="cax-tile-value">@totalRs</div><div class="cax-tile-sub">RS done</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">New schedules</div><div class="cax-tile-value">@totalNs</div><div class="cax-tile-sub">NS done (Add Meeting)</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">Confirmed</div><div class="cax-tile-value">@totalMc</div><div class="cax-tile-sub">meetings confirmed</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">Onboarded</div><div class="cax-tile-value">@totalOb</div><div class="cax-tile-sub">interviewers added</div></div>
+                            <div class="cax-tile"><div class="cax-tile-label">QC done</div><div class="cax-tile-value">@totalQc</div><div class="cax-tile-sub">reviewed</div></div>
                         </div>
 
                         <div class="cax-card">
                             <div class="cax-card-head">
                                 <div>
-                                    <h5 class="cax-card-title">Calls by user</h5>
-                                    <div class="cax-card-sub">Click “View calls” to open a user’s calls and recordings in a new tab</div>
+                                    <h5 class="cax-card-title">Calls &amp; productivity by user</h5>
+                                    <div class="cax-card-sub">Click “View calls” to open a user’s calls and recordings in a new tab. Reschedules, schedules, confirmed, onboarded and QC come from the activity log.</div>
                                 </div>
                             </div>
 
@@ -165,10 +188,16 @@
                                         <thead>
                                             <tr>
                                                 <th>User</th>
+                                                <th>Role</th>
                                                 <th class="cax-right">Total calls</th>
                                                 <th>Recipients</th>
                                                 <th>Recordings</th>
                                                 <th class="cax-right">Talk time</th>
+                                                <th class="cax-right" title="Interview date changed">Reschedules</th>
+                                                <th class="cax-right" title="Meetings booked via Add Meeting">Schedules</th>
+                                                <th class="cax-right" title="Meetings confirmed">Confirmed</th>
+                                                <th class="cax-right" title="Interviewers added">Onboarded</th>
+                                                <th class="cax-right" title="QC passed / failed / form filled">QC</th>
                                                 <th class="cax-center"></th>
                                             </tr>
                                         </thead>
@@ -182,10 +211,11 @@
                                                             <div class="cax-avatar">@initial(item.Caller)</div>
                                                             <div>
                                                                 <div class="cax-user-name">@(string.IsNullOrWhiteSpace(item.Caller) ? "(unknown)" : item.Caller)</div>
-                                                                <div class="cax-user-meta">Last call @(item.LastCallOn?.ToString("dd MMM yyyy, HH:mm"))</div>
+                                                                <div class="cax-user-meta">@(item.LastCallOn.HasValue ? "Last call " + item.LastCallOn.Value.ToString("dd MMM yyyy, HH:mm") : "No calls in period")</div>
                                                             </div>
                                                         </div>
                                                     </td>
+                                                    <td data-order="@HRController.CallerRoleLabel(item.CallerProfileType)"><span class="@roleClass(item.CallerProfileType)">@HRController.CallerRoleLabel(item.CallerProfileType)</span></td>
                                                     <td class="cax-right" data-order="@item.TotalCalls"><span class="cax-big">@item.TotalCalls</span></td>
                                                     <td data-order="@item.CandidateCalls">
                                                         <div class="cax-pills">
@@ -206,6 +236,11 @@
                                                         </div>
                                                     </td>
                                                     <td class="cax-right cax-time" data-order="@item.TotalDurationSeconds">@fmt(item.TotalDurationSeconds)</td>
+                                                    <td class="cax-right cax-num">@item.Reschedules</td>
+                                                    <td class="cax-right cax-num">@item.NewSchedules</td>
+                                                    <td class="cax-right cax-num">@item.MeetingsConfirmed</td>
+                                                    <td class="cax-right cax-num">@item.InterviewersOnboarded</td>
+                                                    <td class="cax-right cax-num">@item.QCDone</td>
                                                     <td class="cax-center">
                                                         <a class="cax-view" target="_blank" rel="noopener"
                                                            href="@Url.Action("CallAnalyticsByUser", "HR", new { caller = item.Caller, type = type, from = from, to = to })">
@@ -215,6 +250,22 @@
                                                 </tr>
                                             }
                                         </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td>Team total</td>
+                                                <td></td>
+                                                <td class="cax-right">@totalCalls</td>
+                                                <td>@totalCandidate candidate · @totalInterviewer interviewer · @totalOther others</td>
+                                                <td>@totalRecorded of @totalCalls · @pct(totalRecorded, totalCalls)%</td>
+                                                <td class="cax-right cax-time">@fmt(totalSeconds)</td>
+                                                <td class="cax-right">@totalRs</td>
+                                                <td class="cax-right">@totalNs</td>
+                                                <td class="cax-right">@totalMc</td>
+                                                <td class="cax-right">@totalOb</td>
+                                                <td class="cax-right">@totalQc</td>
+                                                <td></td>
+                                            </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             }
@@ -238,9 +289,9 @@
     $(document).ready(function () {
         if ($.fn.DataTable && $('#callAnalyticsTable tbody tr').length > 0) {
             $('#callAnalyticsTable').DataTable({
-                order: [[1, 'desc']],
+                order: [[2, 'desc']],
                 pageLength: 25,
-                columnDefs: [{ orderable: false, targets: [5] }],
+                columnDefs: [{ orderable: false, targets: [11] }],
                 language: { search: "", searchPlaceholder: "Search user" }
             });
         }

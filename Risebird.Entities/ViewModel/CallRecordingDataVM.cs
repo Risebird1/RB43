@@ -12,6 +12,8 @@ namespace Risebird.Entities.ViewModel
         public string CallRecipient { get; set; }
         public string Caller { get; set; }
         public string RecipientProfileType { get; set; }
+        public string RecipientKind { get; set; } // recipientType sent by the call UI (Candidate / Interviewer); null for older rows
+        public string CallerProfileType { get; set; } // caller's Profile.Name, resolved in usp_FetchCallRecordingDataDB
         public DateTime DateCreated { get; set; }
         public DateTime? StartTime { get; set; }
         public string Price { get; set; }

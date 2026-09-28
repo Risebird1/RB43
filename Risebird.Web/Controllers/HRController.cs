@@ -27,14 +27,17 @@ namespace Risebird.Web.Controllers
         private static List<Meeting> _modelDetail;
         private static string Searchvalue;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        private readonly IActivityTrackerService _activityTrackerService;
 
 
-        public HRController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper)
+        public HRController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper,
+            IActivityTrackerService activityTrackerService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
             _fileMimeTypeHelper = fileMimeTypeHelper;
+            _activityTrackerService = activityTrackerService;
         }
 
         [Authorize]
@@ -1401,23 +1404,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement")
                     {
-                        var calls = await GetCallAnalyticsData(profileName, emailid, type, from, to);
-
-                        var summary = calls
-                            .GroupBy(x => x.Caller ?? string.Empty, StringComparer.OrdinalIgnoreCase)
-                            .Select(g => new CallAnalyticsSummaryVM
-                            {
-                                Caller = g.Key,
-                                TotalCalls = g.Count(),
-                                CandidateCalls = g.Count(x => x.RecipientProfileType?.ToLower() == "candidate"),
-                                InterviewerCalls = g.Count(x => x.RecipientProfileType?.ToLower() == "interviewer"),
-                                OtherCalls = g.Count(x => x.RecipientProfileType?.ToLower() != "candidate" && x.RecipientProfileType?.ToLower() != "interviewer"),
-                                CallsWithRecording = g.Count(x => !string.IsNullOrEmpty(x.RecordingUri)),
-                                TotalDurationSeconds = g.Sum(x => ParseDurationSeconds(x.Duration)),
-                                LastCallOn = g.Max(x => (DateTime?)x.DateCreated)
-                            })
-                            .OrderByDescending(x => x.TotalCalls)
-                            .ToList();
+                        var summary = await GetProductivitySummary(profileName, emailid, type, from, to);
 
                         ViewBag.Profile = profileName;
                         return View(summary);
@@ -1430,6 +1417,226 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+
+        // Team Productivity CSV - the same rows as CallAnalytics, replacing the manually emailed weekly report.
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> CallAnalyticsExport(string type, DateTime? from, DateTime? to)
+        {
+            try
+            {
+                if (TryGetCallAnalyticsUser(out var profileName, out var emailid))
+                {
+                    var summary = await GetProductivitySummary(profileName, emailid, type, from, to);
+
+                    var sb = new System.Text.StringBuilder();
+                    sb.AppendLine("User,Role,Calls,Talk time,Candidate,Interviewer,Others,With recording,Reschedules,New schedules,Meetings confirmed,Interviewers onboarded,QC done,Last call");
+                    foreach (var r in summary)
+                    {
+                        sb.AppendLine(string.Join(",",
+                            CsvField(r.Caller), CsvField(CallerRoleLabel(r.CallerProfileType)),
+                            r.TotalCalls, r.TotalDurationDisplay, r.CandidateCalls, r.InterviewerCalls, r.OtherCalls, r.CallsWithRecording,
+                            r.Reschedules, r.NewSchedules, r.MeetingsConfirmed, r.InterviewersOnboarded, r.QCDone,
+                            r.LastCallOn?.ToString("yyyy-MM-dd HH:mm") ?? ""));
+                    }
+
+                    // BOM so Excel opens the UTF-8 file with the right encoding
+                    var bytes = System.Text.Encoding.UTF8.GetPreamble().Concat(System.Text.Encoding.UTF8.GetBytes(sb.ToString())).ToArray();
+                    return File(bytes, "text/csv",
+                        $"team_productivity_{(from ?? DateTime.Today.AddDays(-30)):yyyyMMdd}_{(to ?? DateTime.Today):yyyyMMdd}.csv");
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        // Call Analytics by caller role (HR / Senior HR / Interviewer Mgmt / Senior IM) x recipient type.
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> CallAnalyticsByRole(string type, DateTime? from, DateTime? to)
+        {
+            try
+            {
+                if (TryGetCallAnalyticsUser(out var profileName, out var emailid))
+                {
+                    var calls = await GetCallAnalyticsData(profileName, emailid, type, from, to);
+                    var summary = calls
+                        .GroupBy(x => string.IsNullOrEmpty(x.CallerProfileType) ? "Unknown" : x.CallerProfileType, StringComparer.OrdinalIgnoreCase)
+                        .Select(g => new CallRoleRecipientSummaryVM
+                        {
+                            CallerProfileType = g.Key,
+                            People = g.Select(x => x.Caller ?? string.Empty).Distinct(StringComparer.OrdinalIgnoreCase).Count(),
+                            TotalCalls = g.Count(),
+                            CandidateCalls = g.Count(x => RecipientTypeOf(x) == "candidate"),
+                            InterviewerCalls = g.Count(x => RecipientTypeOf(x) == "interviewer"),
+                            OtherCalls = g.Count(x => RecipientTypeOf(x) != "candidate" && RecipientTypeOf(x) != "interviewer"),
+                            CallsWithRecording = g.Count(x => !string.IsNullOrEmpty(x.RecordingUri)),
+                            TotalDurationSeconds = g.Sum(x => ParseDurationSeconds(x.Duration)),
+                            LastCallOn = g.Max(x => (DateTime?)x.DateCreated)
+                        })
+                        .OrderByDescending(x => x.TotalCalls)
+                        .ToList();
+
+                    ViewBag.Profile = profileName;
+                    return View(summary);
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        // Candidate outreach -> booked interview, for HR / Senior HR callers (usp_GetCandidateOutreachConversion).
+        // Inferred by matching a later InterviewMeetings booking on the same IRF + candidate within a time window.
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> CallAnalyticsConversion(string type, DateTime? from, DateTime? to)
+        {
+            try
+            {
+                if (TryGetCallAnalyticsUser(out var profileName, out _))
+                {
+                    const int windowDays = 3;
+                    var fromDate = (from ?? DateTime.Today.AddDays(-30)).Date;
+                    var toDate = (to ?? DateTime.Today).Date;
+
+                    ViewBag.Type = type != "Candidate" && type != "Interviewer" && type != "Other" ? "All" : type;
+                    ViewBag.From = fromDate.ToString("yyyy-MM-dd");
+                    ViewBag.To = toDate.ToString("yyyy-MM-dd");
+                    ViewBag.WindowDays = windowDays;
+                    ViewBag.Profile = profileName;
+
+                    // CallRecordingData.DateCreated is written with this server's DateTime.Now; the SP converts it to UTC.
+                    var offsetMinutes = (int)TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).TotalMinutes;
+                    var rows = (await _meetingService.GetCandidateOutreachConversion(fromDate, toDate, offsetMinutes, windowDays))?.ToList()
+                               ?? new List<CandidateOutreachConversionVM>();
+                    return View(rows);
+                }
+                return RedirectToAction("SignOut", "Session");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        // Calls per user (CallRecordingData.Caller) merged with that user's ActivityTracker counts (PerformedBy).
+        private async Task<List<CallAnalyticsSummaryVM>> GetProductivitySummary(string profileName, string emailid, string type, DateTime? from, DateTime? to)
+        {
+            var calls = await GetCallAnalyticsData(profileName, emailid, type, from, to);
+
+            var summary = calls
+                .GroupBy(x => x.Caller ?? string.Empty, StringComparer.OrdinalIgnoreCase)
+                .Select(g => new CallAnalyticsSummaryVM
+                {
+                    Caller = g.Key,
+                    CallerProfileType = g.Select(x => x.CallerProfileType).FirstOrDefault(v => !string.IsNullOrEmpty(v)),
+                    TotalCalls = g.Count(),
+                    CandidateCalls = g.Count(x => RecipientTypeOf(x) == "candidate"),
+                    InterviewerCalls = g.Count(x => RecipientTypeOf(x) == "interviewer"),
+                    OtherCalls = g.Count(x => RecipientTypeOf(x) != "candidate" && RecipientTypeOf(x) != "interviewer"),
+                    CallsWithRecording = g.Count(x => !string.IsNullOrEmpty(x.RecordingUri)),
+                    TotalDurationSeconds = g.Sum(x => ParseDurationSeconds(x.Duration)),
+                    LastCallOn = g.Max(x => (DateTime?)x.DateCreated)
+                })
+                .ToList();
+
+            var fromDate = (from ?? DateTime.Today.AddDays(-30)).Date;
+            var toDate = (to ?? DateTime.Today).Date;
+            var activities = (await _activityTrackerService.GetAllActivities(fromDate, toDate)) ?? Enumerable.Empty<ActivityTrackerVM>();
+
+            var byUser = new Dictionary<string, CallAnalyticsSummaryVM>(StringComparer.OrdinalIgnoreCase);
+            foreach (var s in summary)
+            {
+                byUser[s.Caller ?? string.Empty] = s;
+            }
+
+            foreach (var grp in activities.Where(a => !string.IsNullOrWhiteSpace(a.PerformedBy))
+                                          .GroupBy(a => a.PerformedBy.Trim(), StringComparer.OrdinalIgnoreCase))
+            {
+                int reschedules = grp.Count(a => a.ActivityType == (int)ActivityTypes.UpdateMeeting && SummaryHas(a, "Interview Date changed"));
+                int confirmed = grp.Count(a => a.ActivityType == (int)ActivityTypes.UpdateMeeting && SummaryHas(a, "Meeting Confirmed"));
+                int newSchedules = grp.Count(a => a.ActivityType == (int)ActivityTypes.ScheduleMeeting);
+                int onboarded = grp.Count(a => a.ActivityType == (int)ActivityTypes.UpdateInterviewer && SummaryHas(a, "Add Interviewer"));
+                // QCDone(12) is also logged for Payment SLA saves, which are not QC reviews.
+                int qc = grp.Count(a => a.ActivityType == (int)ActivityTypes.QCPassed || a.ActivityType == (int)ActivityTypes.QCFailed
+                                        || (a.ActivityType == (int)ActivityTypes.QCDone && !SummaryHas(a, "Payment SLA")));
+
+                if (!byUser.TryGetValue(grp.Key, out var row))
+                {
+                    // Users with no calls only get a row when they did something the dashboard counts.
+                    if (reschedules + confirmed + newSchedules + onboarded + qc == 0)
+                    {
+                        continue;
+                    }
+                    row = new CallAnalyticsSummaryVM { Caller = grp.Key };
+                    byUser[grp.Key] = row;
+                    summary.Add(row);
+                }
+
+                row.Reschedules = reschedules;
+                row.MeetingsConfirmed = confirmed;
+                row.NewSchedules = newSchedules;
+                row.InterviewersOnboarded = onboarded;
+                row.QCDone = qc;
+            }
+
+            return summary
+                .OrderByDescending(x => x.TotalCalls)
+                .ThenByDescending(x => x.Reschedules)
+                .ThenByDescending(x => x.QCDone)
+                .ToList();
+        }
+
+        private static bool SummaryHas(ActivityTrackerVM activity, string text)
+        {
+            return (activity.Summary ?? string.Empty).IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        // Recipient type for analytics: what the call UI said it dialled (RecipientKind), else the profile lookup.
+        private static string RecipientTypeOf(CallRecordingDataVM call)
+        {
+            var kind = !string.IsNullOrWhiteSpace(call.RecipientKind) ? call.RecipientKind : call.RecipientProfileType;
+            return kind?.Trim().ToLower();
+        }
+
+        public static string CallerRoleLabel(string profileName)
+        {
+            return profileName switch
+            {
+                "HR" => "HR",
+                "SeniorHR" => "Senior HR",
+                "InterviewerManagement" => "Interviewer Mgmt",
+                "SeniorInterviewerManagement" => "Senior Interviewer Mgmt",
+                "SupportAdmin" => "Support Admin",
+                _ => string.IsNullOrEmpty(profileName) ? "Unknown" : profileName
+            };
+        }
+
+        private static string CsvField(string value)
+        {
+            return "\"" + (value ?? string.Empty).Replace("\"", "\"\"") + "\"";
+        }
+
+        // Same session + role gate as CallAnalytics.
+        private bool TryGetCallAnalyticsUser(out string profileName, out string emailid)
+        {
+            profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            if (string.IsNullOrEmpty(profileName) || string.IsNullOrEmpty(emailid))
+            {
+                return false;
+            }
+            return profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement";
         }
 
         [Authorize]
@@ -1482,11 +1689,11 @@ namespace Risebird.Web.Controllers
 
             if (type == "Candidate" || type == "Interviewer")
             {
-                recordings = recordings.Where(x => x.RecipientProfileType?.ToLower() == type.ToLower());
+                recordings = recordings.Where(x => RecipientTypeOf(x) == type.ToLower());
             }
             else if (type == "Other")
             {
-                recordings = recordings.Where(x => x.RecipientProfileType?.ToLower() != "candidate" && x.RecipientProfileType?.ToLower() != "interviewer");
+                recordings = recordings.Where(x => RecipientTypeOf(x) != "candidate" && RecipientTypeOf(x) != "interviewer");
             }
             return FillMissingRecordingUris(recordings);
         }

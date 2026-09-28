@@ -42,5 +42,8 @@ namespace Risebird.Entities.Enum
 
         [Description("Update Interviewer")]
         UpdateInterviewer = 13,
+
+        [Description("Schedule Meeting")]
+        ScheduleMeeting = 14,
     }
 }
