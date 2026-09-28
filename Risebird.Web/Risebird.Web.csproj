@@ -271,6 +271,8 @@
   <ItemGroup>
     <None Update="AgreementDocuments\*.pdf" CopyToPublishDirectory="PreserveNewest" />
     <Content Update="AgreementDocuments\*.json" CopyToPublishDirectory="PreserveNewest" />
+    <!-- Also compiled into the DLL, so the layout is available even if a deployment skips the folder. -->
+    <EmbeddedResource Include="AgreementDocuments\*.layout.json" LogicalName="AgreementLayouts.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>

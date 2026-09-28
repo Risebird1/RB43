@@ -242,9 +242,22 @@ namespace Risebird.Web.Helpers
             }
 
             var path = Path.Combine(_environment.ContentRootPath, _options.LocalDocumentFolder, fileName);
-            if (!File.Exists(path))
-                throw new FileNotFoundException($"Agreement file not found: {path}");
-            return await File.ReadAllBytesAsync(path);
+            if (File.Exists(path))
+                return await File.ReadAllBytesAsync(path);
+
+            // Layouts are also compiled into this assembly (see Risebird.Web.csproj), in case the
+            // AgreementDocuments folder was not deployed.
+            if (allowLocalFallback)
+            {
+                using var resource = typeof(InterviewerAgreementDocumentProvider).Assembly.GetManifestResourceStream($"AgreementLayouts.{fileName}");
+                if (resource != null)
+                {
+                    using var ms = new MemoryStream();
+                    await resource.CopyToAsync(ms);
+                    return ms.ToArray();
+                }
+            }
+            throw new FileNotFoundException($"Agreement file '{fileName}' not found (blob container '{_options.DocumentBlobContainer}', folder '{path}', embedded layouts).");
         }
 
         private static AgreementDocument Prepare(byte[] pdf, AgreementDocumentLayout layout)
