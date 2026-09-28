@@ -26,6 +26,12 @@ namespace Risebird.Entities.Data
         // "Blob":  read from DocumentBlobContainer in Azure Storage.
         public string DocumentSource { get; set; } = "Local";
         public string DocumentName { get; set; } = "Interviewer_Service_Agreement_v2.pdf";
+        // Layout file name; empty = "<DocumentName without .pdf>.layout.json". With DocumentSource = Blob it is read
+        // from the blob container if present there, otherwise from LocalDocumentFolder.
+        public string LayoutName { get; set; } = string.Empty;
+        public string ResolvedLayoutName => string.IsNullOrWhiteSpace(LayoutName)
+            ? System.IO.Path.ChangeExtension(DocumentName, ".layout.json")
+            : LayoutName;
         public string LocalDocumentFolder { get; set; } = "AgreementDocuments";
         public string DocumentBlobContainer { get; set; } = "agreementfiles";
         public string InterviewerAgreementVersion { get; set; } = "v2";
