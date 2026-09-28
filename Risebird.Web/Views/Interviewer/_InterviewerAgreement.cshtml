@@ -1,6 +1,19 @@
 @* Interviewer service agreement (My Profile → SERVICE AGREEMENT tab).
    ZohoSign:SigningMode = Portal   → the interviewer fills in details, draws a signature and signs here.
    ZohoSign:SigningMode = ZohoSign → the agreement is signed through Zoho Sign. *@
+@inject Microsoft.Extensions.Options.IOptions<Risebird.Entities.Data.ZohoSignOptions> AgreementOptions
+@inject Microsoft.Extensions.Configuration.IConfiguration AgreementConfiguration
+@{
+    // Public blob URL of the agreement (the container allows public read). Used to show the original
+    // agreement in an iframe when the portal cannot prepare it.
+    var agreementBlobUrl = string.Empty;
+    var agreementOptions = AgreementOptions.Value;
+    var storageAccount = AgreementConfiguration["StorageSettings:StorageName"];
+    if (string.Equals(agreementOptions.DocumentSource, "Blob", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(storageAccount))
+    {
+        agreementBlobUrl = $"https://{storageAccount}.blob.core.windows.net/{agreementOptions.DocumentBlobContainer}/{Uri.EscapeDataString(agreementOptions.DocumentName)}";
+    }
+}
 <style>
     #agreementSignaturePad { width: 100%; max-width: 520px; height: 160px; border: 1px dashed #9e9e9e; border-radius: 4px; background: #fff; touch-action: none; cursor: crosshair; display: block; }
     /* The site stylesheet hides native checkboxes (opacity 0 / absolute) for its custom toggles; show this one. */
@@ -164,6 +177,7 @@
         var downloadUrl = '@Url.Action("Download", "InterviewerAgreement")';
         var documentUrl = '@Url.Action("Document", "InterviewerAgreement")';
         var resendUrl = '@Url.Action("Resend", "InterviewerAgreement")';
+        var blobDocumentUrl = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(agreementBlobUrl));
         var loaded = false;
 
         function esc(value) {
@@ -185,6 +199,13 @@
 
         function previewError(message) {
             previewLoaded = false;   // allow a retry on the next render
+            if (blobDocumentUrl) {
+                // The portal could not prepare the agreement: show the original from Azure Blob instead.
+                $('#agreementPdfPages').css('padding', 0).html(
+                    '<iframe src="' + blobDocumentUrl + '#view=FitH" title="Service Agreement" style="width:100%; height:100%; border:0; background:#fff;"></iframe>');
+                $('#agreementOpenNewTab').attr('href', blobDocumentUrl);
+                return;
+            }
             $('#agreementPdfPages').html('<p class="text-danger" style="text-align:center; margin-top:30px;">' + esc(message)
                 + '<br/><a href="' + documentUrl + '" target="_blank" rel="noopener">Open the agreement in a new tab</a></p>');
         }
