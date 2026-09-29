@@ -267,12 +267,6 @@
     <Folder Include="wwwroot\js\SidePanelJS\" />
   </ItemGroup>
 
-  <!-- Interviewer service agreement PDF + layout (ZohoSign:DocumentSource = Local) -->
-  <ItemGroup>
-    <None Update="AgreementDocuments\*.pdf" CopyToPublishDirectory="PreserveNewest" />
-    <Content Update="AgreementDocuments\*.json" CopyToPublishDirectory="PreserveNewest" />
-  </ItemGroup>
-
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

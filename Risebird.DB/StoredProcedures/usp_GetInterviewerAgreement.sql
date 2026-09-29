@@ -9,39 +9,24 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
--- Interviewer service agreement (Zoho Sign) details.
--- Looks up by profile id, or by the Zoho Sign request id when called from the webhook.
+-- Interviewer service agreement details of one interviewer.
 CREATE PROCEDURE dbo.usp_GetInterviewerAgreement
-@InterviewerProfileId int = null,
-@ZohoRequestId varchar(50) = null
+@InterviewerProfileId int
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    SELECT TOP (1)
-        ipr.Id AS InterviewerProfileId,
-        ipr.UserId,
-        ul.FirstName,
-        ul.LastName,
-        ul.EmailId,
-        ul.MobileNumber,
-        ipr.City,
-        ISNULL(ipr.IsAgreementSigned, 0) AS IsAgreementSigned,
-        ipr.AgreementStatus,
-        ipr.AgreementVersion,
-        ipr.AgreementZohoRequestId,
-        ipr.AgreementZohoActionId,
-        ipr.AgreementSignerName,
-        ipr.AgreementFatherName,
-        ipr.AgreementAddress,
-        ipr.AgreementSentOn,
-        ipr.AgreementSignedOn,
-        ipr.AgreementCompletedOn,
-        ipr.AgreementDocumentUrl,
-        ipr.AgreementDeclineReason
-    FROM InterviewerProfile ipr
-    INNER JOIN dbo.UserList ul ON ul.id = ipr.UserId
-    WHERE (@InterviewerProfileId IS NOT NULL AND ipr.Id = @InterviewerProfileId)
-       OR (@InterviewerProfileId IS NULL AND @ZohoRequestId IS NOT NULL AND ipr.AgreementZohoRequestId = @ZohoRequestId)
+    SELECT
+        Id AS InterviewerProfileId,
+        ISNULL(IsAgreementSigned, 0) AS IsAgreementSigned,
+        AgreementVersion,
+        AgreementSignerName,
+        AgreementFatherName,
+        AgreementAddress,
+        AgreementSignedOn,
+        AgreementSignatureUrl,
+        AgreementProofUrl
+    FROM InterviewerProfile
+    WHERE Id = @InterviewerProfileId
 END
 GO

@@ -32,7 +32,7 @@ builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration, "Authentication:AzureAdB2C");
 builder.Services.Configure<ConfigurationOptions>(options => builder.Configuration.Bind(options));
 builder.Services.Configure<Risebird.Entities.Data.ZohoOptions>(builder.Configuration.GetSection("Zoho"));
-builder.Services.Configure<Risebird.Entities.Data.ZohoSignOptions>(builder.Configuration.GetSection("ZohoSign"));
+builder.Services.Configure<Risebird.Entities.Data.ServiceAgreementOptions>(builder.Configuration.GetSection("ServiceAgreement"));
 var configOptions = new ConfigurationOptions();
 builder.Configuration.Bind(configOptions);
 
@@ -260,11 +260,9 @@ builder.Services.AddScoped<IAICodeInterviewRepository, AICodeInterviewRepository
 builder.Services.AddScoped<IAICodeInterviewService, AICodeInterviewService>();
 builder.Services.AddScoped<ISynthesiaTextToVideoService, SynthesiaTextToVideoService>();
 builder.Services.AddScoped<IZohoMeetingHelper, ZohoMeetingHelper>();
-// Interviewer service agreement e-signing (Zoho Sign)
-builder.Services.AddHttpClient<IZohoSignHelper, ZohoSignHelper>();
+// Interviewer service agreement
 builder.Services.AddScoped<IInterviewerAgreementRepository, InterviewerAgreementRepository>();
 builder.Services.AddScoped<IInterviewerAgreementService, InterviewerAgreementService>();
-builder.Services.AddScoped<IInterviewerAgreementDocumentProvider, Risebird.Web.Helpers.InterviewerAgreementDocumentProvider>();
 builder.Services.AddScoped<IAWSRekognitionService, AWSRekognitionService>();
 builder.Services.AddScoped<IProctoringSessionEventRepository, ProctoringSessionEventRepository>();
 builder.Services.AddScoped<IOpenAIApiLogRepository, OpenAIApiLogRepository>();
