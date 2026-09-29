@@ -267,7 +267,7 @@ namespace Risebird.Web.Controllers
                     var latest = g.OrderByDescending(x => x.Timestamp).First();
                     return new ApplicationLogGroupVM
                     {
-                        LatestTimestamp = latest.Timestamp,
+                        LatestTimestamp = latest.Timestamp.GetValueOrDefault(),
                         LogeLevel = latest.LogeLevel,
                         UserEmailId = latest.UserEmailId,
                         ClassName = latest.ClassName,

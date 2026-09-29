@@ -1,4 +1,4 @@
-using Microsoft.WindowsAzure.Storage.Table;
+using Risebird.Entities.Storage;
 using System;
 
 namespace Risebird.Entities.ViewModel
@@ -7,7 +7,7 @@ namespace Risebird.Entities.ViewModel
     /// Pre-aggregated daily log counts for Operation → Logs index.
     /// PartitionKey = yyyy-MM-dd (UTC), RowKey = "counts".
     /// </summary>
-    public class ApplicationLogDailyCountEntity : TableEntity
+    public class ApplicationLogDailyCountEntity : RbTableEntity
     {
         public const string TableName = "Risebirdlogdailycounts";
         public const string CountsRowKey = "counts";

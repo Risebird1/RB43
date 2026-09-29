@@ -1,13 +1,10 @@
-
 using Microsoft.AspNetCore.Http;
-//using Microsoft.Azure.Management.Media;
-//using Microsoft.Azure.Management.Media.Models;
 using Microsoft.Extensions.Configuration;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
-using Microsoft.WindowsAzure.Storage.Blob;
-using Microsoft.WindowsAzure.Storage.Table;
+using Azure.Data.Tables;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Risebird.CommonHelper.Interface;
+using Risebird.CommonHelper.Storage;
 using Risebird.Entities.ViewModel;
 using Syncfusion.DocIO;
 using Syncfusion.DocIO.DLS;
@@ -18,284 +15,301 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-
 
 namespace Risebird.CommonHelper
 {
     public class AzureStorageHelper : IAzureStorageHelper
     {
-        public CloudTableClient TableClient;
         private readonly string accountName;
         private readonly string accountKey;
-        private readonly string _AADTenantDomain;
-        private readonly string _AADTenantId;
-        private readonly string _RESTAPIEndpoint;
-        private readonly string _AMSClientId;
-        private readonly string _AMSClientSecret;
-        private readonly string _ARMEndpoint;
-        private readonly string _AMSSubscriptionId;
-        private readonly string _AMSResourceGroup;
-        private readonly string _AMSAccountName;
-        //private static CloudMediaContext _context = null;
-        //private const string AdaptiveStreamingTransformName = "MyTransformWithAdaptiveStreamingPreset";
-        //private const string OutputFolderName = @"Output";
+        private readonly string _connectionString;
+        private readonly BlobServiceClient _blobService;
+        private readonly TableServiceClient _tableService;
 
         private readonly IConfiguration _configuration;
+
         public AzureStorageHelper(IConfiguration configuration)
         {
             _configuration = configuration;
             accountName = _configuration["StorageSettings:StorageName"];
             accountKey = _configuration["StorageSettings:SecretKey"];
-            _AADTenantDomain = _configuration["AzureMediaServices:AMSAADTenantDomain"];
-            _RESTAPIEndpoint = _configuration["AzureMediaServices:AMSRESTAPIEndpoint"];
-            _AMSClientId = _configuration["AzureMediaServices:AMSClientId"];
-            _AMSClientSecret = _configuration["AzureMediaServices:AMSClientSecret"];
-            _AADTenantId = _configuration["AzureMediaServices:AADTenantId"];
-            _ARMEndpoint = _configuration["AzureMediaServices:ARMEndpoint"];
-            _AMSSubscriptionId = _configuration["AzureMediaServices:AMSSubscriptionId"];
-            _AMSResourceGroup = _configuration["AzureMediaServices:AMSResourceGroup"];
-            _AMSAccountName = _configuration["AzureMediaServices:AMSAccountName"];
+            _connectionString = BuildConnectionString(accountName, accountKey);
+            _blobService = new BlobServiceClient(_connectionString);
+            _tableService = new TableServiceClient(_connectionString);
         }
 
-        /// <summary>
-        /// Risebird storage account details
-        /// </summary>
-        /// <returns></returns>
-        public CloudStorageAccount GetStorageAccount()
+        private static string BuildConnectionString(string storageAccountName, string storageAccountKey) =>
+            $"DefaultEndpointsProtocol=https;AccountName={storageAccountName};AccountKey={storageAccountKey};EndpointSuffix=core.windows.net";
+
+        // ---------------------------------------------------------------------
+        // Table storage (Azure.Data.Tables)
+        // ---------------------------------------------------------------------
+
+        /// <summary>Returns a table client, creating the table if it does not exist.</summary>
+        private TableClient GetTableClient(string tableName)
         {
-            StorageCredentials creds = new StorageCredentials(accountName, accountKey);
-            CloudStorageAccount account = new CloudStorageAccount(creds, useHttps: true);
-            return account;
-        }
-
-        /// <summary>
-        /// GET THE REFERENCE OF TABLE OBJECT
-        /// </summary>
-        /// <param name="tableName"></param>
-        /// <returns></returns>
-        public CloudTable GetTable(string tableName)
-        {
-            CloudStorageAccount account = GetStorageAccount();
-            CloudTableClient client = account.CreateCloudTableClient();
-
-            CloudTable table = client.GetTableReference(tableName);
-            table.CreateIfNotExistsAsync();
-
+            var table = _tableService.GetTableClient(tableName);
+            table.CreateIfNotExists();
             return table;
         }
 
-        /// <summary>
-        /// From client storage account delete blob container file
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <param name="containerName"></param>
-        /// <returns></returns>
-        public bool DeleteBlobContainerFile(string fileName, string containerName)
+        public async Task<bool> CheckTableExistsOrNot(string tableName)
         {
-            try
-            {
-                CloudStorageAccount account = GetStorageAccount();
-                CloudBlobClient blobClient = account.CreateCloudBlobClient();
-                CloudBlobContainer blobContainer = blobClient.GetContainerReference(containerName);
-                if (!blobContainer.ExistsAsync().Result)
-                {
-                    blobContainer.CreateIfNotExistsAsync();
-                    var permission = new BlobContainerPermissions();
-                    permission.PublicAccess = BlobContainerPublicAccessType.Container;
-                    blobContainer.SetPermissionsAsync(permission);
-                }
-
-                CloudBlockBlob blob = blobClient.GetContainerReference(containerName).GetBlockBlobReference(fileName);
-
-                blob.DeleteAsync();
-
+            await foreach (var _ in _tableService.QueryAsync(filter: $"TableName eq '{tableName}'").ConfigureAwait(false))
                 return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            return false;
         }
 
-        /// <summary>
-        /// From client storage account check if blob container file exist or not
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
-        public Task<bool> CheckBlobContainerFile(string fileName, string containerName)
-        {
-            try
-            {
-                CloudStorageAccount account = GetStorageAccount();
-
-                CloudBlobClient blobClient = account.CreateCloudBlobClient();
-                CloudBlobContainer blobContainer = blobClient.GetContainerReference(containerName);
-                if (!blobContainer.ExistsAsync().Result)
-                {
-                    blobContainer.CreateIfNotExistsAsync();
-                    var permission = new BlobContainerPermissions();
-                    permission.PublicAccess = BlobContainerPublicAccessType.Container;
-                    blobContainer.SetPermissionsAsync(permission);
-                }
-                var blob = blobContainer.GetBlobReference(fileName);
-
-                return blob.ExistsAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public Task<bool> CheckTableExistsOrNot(string tableName)
-        {
-            CloudStorageAccount account = GetStorageAccount();
-            CloudTableClient client = account.CreateCloudTableClient();
-            CloudTable table = client.GetTableReference(tableName);
-            return table.ExistsAsync();
-        }
-
-
-        public CloudTable GetTableWithAccessKey(string tableName)
-        {
-            CloudStorageAccount account = GetStorageAccount();
-            CloudTableClient client = account.CreateCloudTableClient();
-            CloudTable table = client.GetTableReference(tableName);
-            return table;
-        }
-
-        /// <summary>
-        /// DELETE THE TABLE OBJECT BY TABLE NAME
-        /// </summary>
-        /// <param name="tableName"></param>
-        /// <returns></returns>
         public bool DeleteTable(string tableName)
         {
-
-            CloudStorageAccount account = GetStorageAccount();
-            CloudTableClient client = account.CreateCloudTableClient();
-            CloudTable table = client.GetTableReference(tableName);
-            table.DeleteIfExistsAsync();
-
+            try { _tableService.DeleteTable(tableName); }
+            catch { /* table may not exist */ }
             return true;
         }
 
-
-        /// <summary>
-        /// Get all the entities from Table
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="tableName"></param>
-        /// <returns></returns>
-        public IEnumerable<T> GetAllEntities<T>(string tableName) where T : TableEntity, new()
-        {
-            var table = GetTable(tableName);
-            var entities = new List<T>();
-            try
-            {
-                TableContinuationToken token = null;
-                do
-                {
-                    var queryResult = table.ExecuteQuerySegmentedAsync(new TableQuery<T>(), token);
-                    entities.AddRange(queryResult.Result);
-                    token = queryResult.Result.ContinuationToken;
-                } while (token != null);
-            }
-            catch (StorageException)
-            {
-                return entities;
-            }
-            return entities;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="tableName"></param>
-        /// <returns></returns>
-        public async Task<CloudTable> GetTableAsync(string tableName)
-        {
-            CloudStorageAccount account = GetStorageAccount();
-            CloudTableClient client = account.CreateCloudTableClient();
-
-            CloudTable table = client.GetTableReference(tableName);
-            await table.CreateIfNotExistsAsync();
-
-            return table;
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="tableName"></param>
-        /// <returns></returns>
-        public async Task<IEnumerable<T>> GetAllEntitiesAsync<T>(string tableName) where T : TableEntity, new()
-        {
-            var table = await GetTableAsync(tableName);
-            var entities = new List<T>();
-            try
-            {
-                TableContinuationToken token = null;
-                do
-                {
-                    var queryResult = await table.ExecuteQuerySegmentedAsync(new TableQuery<T>(), token);
-                    entities.AddRange(queryResult);
-                    token = queryResult.ContinuationToken;
-                } while (token != null);
-            }
-            catch (StorageException)
-            {
-                return entities;
-            }
-            return entities;
-        }
-
-        /// <summary>
-        /// INSERT NEW SINGLE ROW
-        /// </summary>
-        /// <param name="tableName"></param>
-        /// <param name="obj"></param>
-        /// <returns></returns>
+        /// <summary>INSERT OR REPLACE A SINGLE ROW.</summary>
         public async Task<bool> InsertEntity(string tableName, object obj)
         {
-            bool insertResult;
-            try
-            {
-                var table = GetTable(tableName);
-                TableOperation insertOperation = TableOperation.InsertOrReplace(obj as TableEntity);
-
-                TableResult result = await table.ExecuteAsync(insertOperation);
-
-                insertResult = true;
-
-                return insertResult;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var table = GetTableClient(tableName);
+            await table.UpsertEntityAsync((ITableEntity)obj, TableUpdateMode.Replace).ConfigureAwait(false);
+            return true;
         }
 
-        /// <summary>
-        /// DELETE SINGLE ROW
-        /// </summary>
-        /// <param name="table"></param>
-        /// <param name="obj"></param>
-        /// <returns></returns>
+        /// <summary>DELETE A SINGLE ROW.</summary>
         public async Task<bool> DeleteEntity(string tableName, object obj)
         {
             try
             {
-                var table = GetTable(tableName);
+                var table = GetTableClient(tableName);
+                var entity = (ITableEntity)obj;
+                await table.DeleteEntityAsync(entity.PartitionKey, entity.RowKey).ConfigureAwait(false);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
-                TableOperation deleteOperation = TableOperation.Delete(obj as TableEntity);
+        public IEnumerable<T> GetAllEntities<T>(string tableName) where T : class, ITableEntity, new()
+        {
+            var table = GetTableClient(tableName);
+            try
+            {
+                return table.Query<T>().ToList();
+            }
+            catch
+            {
+                return new List<T>();
+            }
+        }
 
-                TableResult result = await table.ExecuteAsync(deleteOperation);
+        public async Task<IEnumerable<T>> GetAllEntitiesAsync<T>(string tableName) where T : class, ITableEntity, new()
+        {
+            var table = GetTableClient(tableName);
+            var entities = new List<T>();
+            try
+            {
+                await foreach (var entity in table.QueryAsync<T>().ConfigureAwait(false))
+                    entities.Add(entity);
+            }
+            catch
+            {
+                return entities;
+            }
+            return entities;
+        }
 
+        public IEnumerable<T> GetLogEntities<T>(string tableName) where T : class, ITableEntity, new()
+        {
+            var table = GetTableClient(tableName);
+            try
+            {
+                var lowerlimit = new DateTimeOffset(DateTime.Today.AddDays(-2).ToUniversalTime());
+                var filter = TableClient.CreateQueryFilter($"Timestamp ge {lowerlimit}");
+                return table.Query<T>(filter).ToList();
+            }
+            catch
+            {
+                return new List<T>();
+            }
+        }
+
+        /// <summary>
+        /// Fetches Risebirdlogs rows for a UTC date window.
+        /// PartitionKey is reverse-ticks (DateTime.MaxValue.Ticks - UtcNow.Ticks), so date filters
+        /// must use PartitionKey range — Timestamp filters force a full table scan and hang on large tables.
+        /// </summary>
+        public async Task<IList<T>> GetLogEntitiesByDateRangeAsync<T>(
+            string tableName,
+            DateTime startUtc,
+            DateTime endUtcExclusive,
+            int? logLevel = null,
+            IList<string> selectColumns = null,
+            int? maxResults = null)
+            where T : class, ITableEntity, new()
+        {
+            var entities = new List<T>();
+            try
+            {
+                var table = GetTableClient(tableName);
+                var start = DateTime.SpecifyKind(startUtc, DateTimeKind.Utc);
+                var end = DateTime.SpecifyKind(endUtcExclusive, DateTimeKind.Utc);
+                if (end <= start)
+                    return entities;
+
+                // Newer logs have smaller reverse-tick PartitionKeys.
+                // start <= T < end  ⇒  (MaxTicks-end) < PK <= (MaxTicks-start)
+                var pkLowerExclusive = ToReverseTickPartitionKey(end);
+                var pkUpperInclusive = ToReverseTickPartitionKey(start);
+
+                var filter = BuildPartitionRangeFilter(pkLowerExclusive, pkUpperInclusive, logLevel);
+
+                await foreach (var entity in table.QueryAsync<T>(filter: filter, select: selectColumns).ConfigureAwait(false))
+                {
+                    entities.Add(entity);
+                    if (maxResults.HasValue && entities.Count >= maxResults.Value)
+                        break;
+                }
+            }
+            catch
+            {
+                return entities;
+            }
+
+            return entities;
+        }
+
+        /// <summary>
+        /// Paged Risebirdlogs query by reverse-tick PartitionKey range. Pass continuationToken from a prior page for Next.
+        /// </summary>
+        public async Task<AzureTablePageResult<T>> GetLogEntitiesByDateRangePagedAsync<T>(
+            string tableName,
+            DateTime startUtc,
+            DateTime endUtcExclusive,
+            int pageSize,
+            string continuationToken = null,
+            int? logLevel = null,
+            IList<string> selectColumns = null)
+            where T : class, ITableEntity, new()
+        {
+            var result = new AzureTablePageResult<T>();
+            if (pageSize <= 0)
+                pageSize = 100;
+
+            try
+            {
+                var table = GetTableClient(tableName);
+                var start = DateTime.SpecifyKind(startUtc, DateTimeKind.Utc);
+                var end = DateTime.SpecifyKind(endUtcExclusive, DateTimeKind.Utc);
+                if (end <= start)
+                    return result;
+
+                var pkLowerExclusive = ToReverseTickPartitionKey(end);
+                var pkUpperInclusive = ToReverseTickPartitionKey(start);
+
+                var filter = BuildPartitionRangeFilter(pkLowerExclusive, pkUpperInclusive, logLevel);
+
+                var pages = table.QueryAsync<T>(filter: filter, maxPerPage: pageSize, select: selectColumns)
+                    .AsPages(string.IsNullOrWhiteSpace(continuationToken) ? null : continuationToken);
+
+                await foreach (var page in pages.ConfigureAwait(false))
+                {
+                    result.Items = page.Values.ToList();
+                    result.ContinuationToken = page.ContinuationToken;
+                    break; // a single page per call
+                }
+            }
+            catch
+            {
+                return result;
+            }
+
+            return result;
+        }
+
+        /// <summary>Fetches entities whose PartitionKey is within an inclusive string range (e.g. yyyy-MM-dd dates).</summary>
+        public async Task<IList<T>> GetEntitiesByPartitionKeyRangeAsync<T>(
+            string tableName,
+            string partitionKeyFromInclusive,
+            string partitionKeyToInclusive)
+            where T : class, ITableEntity, new()
+        {
+            var entities = new List<T>();
+            try
+            {
+                var table = GetTableClient(tableName);
+                var filter = TableClient.CreateQueryFilter(
+                    $"PartitionKey ge {partitionKeyFromInclusive} and PartitionKey le {partitionKeyToInclusive}");
+
+                await foreach (var entity in table.QueryAsync<T>(filter: filter).ConfigureAwait(false))
+                    entities.Add(entity);
+            }
+            catch
+            {
+                return entities;
+            }
+
+            return entities;
+        }
+
+        private static string BuildPartitionRangeFilter(string pkLowerExclusive, string pkUpperInclusive, int? logLevel)
+        {
+            var filter = TableClient.CreateQueryFilter(
+                $"PartitionKey gt {pkLowerExclusive} and PartitionKey le {pkUpperInclusive}");
+            if (logLevel.HasValue)
+            {
+                var levelFilter = TableClient.CreateQueryFilter($"LogeLevel eq {logLevel.Value}");
+                filter = $"({filter}) and ({levelFilter})";
+            }
+            return filter;
+        }
+
+        /// <summary>Same encoding ApplicationErrorLogger uses for Risebirdlogs PartitionKey.</summary>
+        private static string ToReverseTickPartitionKey(DateTime utc)
+        {
+            var ticks = DateTime.SpecifyKind(utc, DateTimeKind.Utc).Ticks;
+            return (DateTime.MaxValue.Ticks - ticks).ToString("d19");
+        }
+
+        // ---------------------------------------------------------------------
+        // Blob storage (Azure.Storage.Blobs, via Risebird.CommonHelper.Storage adapters)
+        // ---------------------------------------------------------------------
+
+        /// <summary>Returns a container adapter, creating the container (with public Container access) if missing.</summary>
+        public RbBlobContainer GetCloudBlobContainer(string containerName)
+        {
+            var container = _blobService.GetBlobContainerClient(containerName);
+            container.CreateIfNotExists(PublicAccessType.BlobContainer);
+            return new RbBlobContainer(container);
+        }
+
+        public RbBlockBlob GetCloudBlockBlob(string containerName, string filename) =>
+            GetCloudBlobContainer(containerName).GetBlockBlobReference(filename);
+
+        public RbBlockBlob GetCloudBlockBlobClient(string containerName, string filename) =>
+            GetCloudBlobContainer(containerName).GetBlockBlobReference(filename);
+
+        public RbBlob GetBlobDataAsBlob(string containerName, string fileName)
+        {
+            try
+            {
+                return GetCloudBlobContainer(containerName).GetBlobReference(fileName);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public bool DeleteBlobContainerFile(string fileName, string containerName)
+        {
+            try
+            {
+                var container = _blobService.GetBlobContainerClient(containerName);
+                container.CreateIfNotExists(PublicAccessType.BlobContainer);
+                container.GetBlobClient(fileName).DeleteIfExists();
                 return true;
             }
             catch (Exception)
@@ -304,81 +318,25 @@ namespace Risebird.CommonHelper
             }
         }
 
-        /// <summary>
-        /// Returns Blob container from client storage account
-        /// </summary>
-        /// <param name="containerName"></param>
-        /// <param name="filename"></param>
-        /// <returns></returns>
-        public CloudBlockBlob GetCloudBlockBlob(string containerName, string filename)
+        public async Task<bool> CheckBlobContainerFile(string fileName, string containerName)
         {
-            CloudStorageAccount account = GetStorageAccount();
-            CloudBlobClient blobClient = account.CreateCloudBlobClient();
-            CloudBlobContainer blobContainer = blobClient.GetContainerReference(containerName);
-            if (!blobContainer.ExistsAsync().Result)
-            {
-                blobContainer.CreateIfNotExistsAsync();
-                var permission = new BlobContainerPermissions();
-                permission.PublicAccess = BlobContainerPublicAccessType.Container;
-                blobContainer.SetPermissionsAsync(permission);
-            }
-            CloudBlockBlob blob = blobClient.GetContainerReference(containerName).GetBlockBlobReference(filename);
-
-            return blob;
-        }
-        /// <summary>
-        /// Reads the file content using the container name and file name
-        /// </summary>
-        /// <param name="containerName"></param>
-        /// <param name="filename"></param>
-        /// <returns></returns>
-        public CloudBlockBlob GetCloudBlockBlobClient(string containerName, string filename)
-        {
-
-            StorageCredentials creds = new StorageCredentials(accountName, accountKey);
-            CloudStorageAccount account = new CloudStorageAccount(creds, useHttps: true);
-
-            CloudBlobClient blobClient = account.CreateCloudBlobClient();
-            CloudBlobContainer blobContainer = blobClient.GetContainerReference(containerName);
-            if (!blobContainer.ExistsAsync().Result)
-            {
-                blobContainer.CreateIfNotExistsAsync();
-                var permission = new BlobContainerPermissions();
-                permission.PublicAccess = BlobContainerPublicAccessType.Container;
-                blobContainer.SetPermissionsAsync(permission);
-            }
-            CloudBlockBlob blob = blobClient.GetContainerReference(containerName).GetBlockBlobReference(filename);
-
-            return blob;
+            var blob = GetCloudBlobContainer(containerName).GetBlobReference(fileName);
+            return await blob.ExistsAsync().ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// method to store file in blob
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="containerName"></param>
-        /// <param name="blobFile"></param>
-        /// <param name="connectionString"></param>
-        /// <param name="isClient"></param>
-        /// <returns></returns>
         public async Task InsertBlob(string filename, string containerName, IFormFile blobFile)
         {
-            CloudBlockBlob blob;
-            blob = GetCloudBlockBlobClient(containerName, filename);
+            var blob = GetCloudBlockBlobClient(containerName, filename);
             using (var fileStream = blobFile.OpenReadStream())
             {
                 await blob.UploadFromStreamAsync(fileStream).ConfigureAwait(false);
             }
-
-
         }
 
         public async Task InsertResumeBlob(string filename, string containerName, IFormFile blobFile, string extension)
         {
-            CloudBlockBlob blob;
-            blob = GetCloudBlockBlobClient(containerName, filename);
-            string contentType = string.Empty;
-
+            var blob = GetCloudBlockBlobClient(containerName, filename);
+            string contentType;
             switch (extension)
             {
                 case ".pdf":
@@ -406,45 +364,31 @@ namespace Risebird.CommonHelper
             {
                 await blob.UploadFromStreamAsync(fileStream).ConfigureAwait(false);
             }
-
-
         }
 
         public async Task<string> InsertBlobCloudCompare(string filename, string containerName, MemoryStream blobFile = null, Stream blobFileStream = null, Stream transcriptStream = null, string contentType = null, bool? isOpenAiQc = false)
         {
-            CloudBlockBlob blob;
-            blob = GetCloudBlockBlobClient(containerName, filename);
+            var blob = GetCloudBlockBlobClient(containerName, filename);
             if (blobFile != null)
             {
                 if (isOpenAiQc.HasValue && isOpenAiQc.Value)
                 {
-                    await blob.UploadFromStreamAsync(blobFile);
+                    await blob.UploadFromStreamAsync(blobFile).ConfigureAwait(false);
                 }
                 else
                 {
-                    await blob.UploadFromStreamAsync(blobFileStream);
+                    await blob.UploadFromStreamAsync(blobFileStream).ConfigureAwait(false);
                 }
-                //await blob.UploadFromStreamAsync(blobFile);
             }
             else if (blobFileStream != null)
             {
-                if (!string.IsNullOrEmpty(contentType))
-                {
-                    blob.Properties.ContentType = contentType;
-
-                }
-                else
-                {
-                    blob.Properties.ContentType = "video/mp4";
-
-                }
-                await blob.UploadFromStreamAsync(blobFileStream);
-
+                blob.Properties.ContentType = !string.IsNullOrEmpty(contentType) ? contentType : "video/mp4";
+                await blob.UploadFromStreamAsync(blobFileStream).ConfigureAwait(false);
             }
             else if (transcriptStream != null)
             {
                 blob.Properties.ContentType = "text/plain";
-                await blob.UploadFromStreamAsync(transcriptStream);
+                await blob.UploadFromStreamAsync(transcriptStream).ConfigureAwait(false);
             }
             else
             {
@@ -454,17 +398,15 @@ namespace Risebird.CommonHelper
             return blob.Uri.ToString();
         }
 
-
         public async Task<string> InsertBlobAIInterviewerAudio(string filename, string containerName, MemoryStream blobFile = null, string contentType = null)
         {
-            CloudBlockBlob blob;
-            blob = GetCloudBlockBlobClient(containerName, filename);
+            var blob = GetCloudBlockBlobClient(containerName, filename);
             blob.Properties.ContentType = contentType;
             if (blobFile != null)
             {
-                await blob.UploadFromStreamAsync(blobFile);
+                await blob.UploadFromStreamAsync(blobFile).ConfigureAwait(false);
             }
-           
+
             return blob.Uri.ToString();
         }
 
@@ -472,44 +414,20 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                // Create credentials for the custom storage account
-                StorageCredentials creds = new StorageCredentials(storageAccountName, storageAccountKey);
-                CloudStorageAccount customAccount = new CloudStorageAccount(creds, useHttps: true);
+                var customService = new BlobServiceClient(BuildConnectionString(storageAccountName, storageAccountKey));
+                var container = customService.GetBlobContainerClient(containerName);
+                container.CreateIfNotExists(PublicAccessType.BlobContainer);
 
-                // Create blob client and container reference
-                CloudBlobClient blobClient = customAccount.CreateCloudBlobClient();
-                CloudBlobContainer blobContainer = blobClient.GetContainerReference(containerName);
-                
-                // Create container if it doesn't exist
-                if (!await blobContainer.ExistsAsync())
-                {
-                    await blobContainer.CreateIfNotExistsAsync();
-                    var permission = new BlobContainerPermissions();
-                    permission.PublicAccess = BlobContainerPublicAccessType.Container;
-                    await blobContainer.SetPermissionsAsync(permission);
-                }
+                var blob = new RbBlobContainer(container).GetBlockBlobReference(filename);
+                blob.Properties.ContentType = !string.IsNullOrEmpty(contentType) ? contentType : "video/mp4";
 
-                // Get blob reference
-                CloudBlockBlob blob = blobContainer.GetBlockBlobReference(filename);
-
-                // Set content type
-                if (!string.IsNullOrEmpty(contentType))
-                {
-                    blob.Properties.ContentType = contentType;
-                }
-                else
-                {
-                    blob.Properties.ContentType = "video/mp4";
-                }
-
-                // Upload from the appropriate stream
                 if (blobFile != null)
                 {
-                    await blob.UploadFromStreamAsync(blobFile);
+                    await blob.UploadFromStreamAsync(blobFile).ConfigureAwait(false);
                 }
                 else if (blobFileStream != null)
                 {
-                    await blob.UploadFromStreamAsync(blobFileStream);
+                    await blob.UploadFromStreamAsync(blobFileStream).ConfigureAwait(false);
                 }
                 else
                 {
@@ -530,7 +448,6 @@ namespace Risebird.CommonHelper
             {
                 var blob = GetCloudBlockBlob(containerName, fileName);
                 blob.DeleteAsync();
-
                 return true;
             }
             catch (Exception)
@@ -543,15 +460,8 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                CloudBlobContainer blobContainer = GetCloudBlobContainer(containerName);
-                if (blobContainer.GetBlobReference(fileName).ExistsAsync().Result)
-                {
-                    return fileName;
-                }
-                else
-                {
-                    return null;
-                }
+                var container = GetCloudBlobContainer(containerName);
+                return container.GetBlobReference(fileName).ExistsAsync().Result ? fileName : null;
             }
             catch (Exception)
             {
@@ -559,1069 +469,50 @@ namespace Risebird.CommonHelper
             }
         }
 
-        /// <summary>
-        /// Get Blob data based container name and file name of the blob
-        /// </summary>
-        /// <param name="containerName"></param>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
         public string GetBlobData(string containerName, string fileName)
         {
             try
             {
-                CloudBlobContainer blobContainer = GetCloudBlobContainer(containerName);
-                CloudBlob blob = blobContainer.GetBlobReference(fileName);
-                string contents; /* content to append */
+                var container = GetCloudBlobContainer(containerName);
+                var blob = container.GetBlobReference(fileName);
                 if (!blob.ExistsAsync().Result)
+                    return "";
+                using (var reader = new StreamReader(blob.OpenReadAsync().Result))
                 {
-                    contents = "";
+                    return reader.ReadToEnd();
                 }
-                else
-                {
-                    using (StreamReader reader = new StreamReader(blob.OpenReadAsync().Result))
-                    {
-                        contents = reader.ReadToEnd();
-                    }
-                }
-                return contents;
             }
             catch (Exception)
             {
                 return null;
             }
         }
-        public CloudBlobContainer GetCloudBlobContainer(string containerName)
-        {
-            CloudStorageAccount account = GetStorageAccount();
-            CloudBlobClient blobClient = account.CreateCloudBlobClient();
-            CloudBlobContainer blobContainer = blobClient.GetContainerReference(containerName);
-            if (!blobContainer.ExistsAsync().Result)
-            {
-                blobContainer.CreateIfNotExistsAsync();
-                var permission = new BlobContainerPermissions();
-                permission.PublicAccess = BlobContainerPublicAccessType.Container;
-                blobContainer.SetPermissionsAsync(permission);
-            }
-            return blobContainer;
-        }
 
-        public TableResult RetriveByPartitionAndRowKey(string tableName, string partitionKey, string rowKey)
-        {
-            var table = GetTable(tableName);
-            var retrieveOperation = TableOperation.Retrieve(partitionKey, rowKey);
-            var retrieveResult = table.ExecuteAsync(retrieveOperation);
-            return retrieveResult.Result;
-        }
-
-        public async Task<TableResult> RetriveByPartitionAndRowKeyAsync(string tableName, string partitionKey, string rowKey)
-        {
-            var table = GetTable(tableName);
-            var retrieveOperation = TableOperation.Retrieve(partitionKey, rowKey);
-            var retrieveResult = await table.ExecuteAsync(retrieveOperation).ConfigureAwait(false);
-            return retrieveResult;
-        }
-
-        public void InsertBatchInTable(string tableName, TableBatchOperation tableBatchOperation)
-        {
-            try
-            {
-                var table = GetTable(tableName);
-                table.ExecuteBatchAsync(tableBatchOperation);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        ///// <summary>
-        ///// upload video using Azure's media services
-        ///// </summary>
-        ///// <param name="filename"></param>
-        ///// <param name="containerName"></param>
-        ///// <param name="blobFile"></param>
-        ///// <returns></returns>
-        //public string UploadVideo(string filename)
-        //{
-        //    var result = CreateAssetAndUploadSingleFile(filename).Uri.ToString();
-        //    return result;
-        //}
-
-        //public IAsset CreateAssetAndUploadSingleFile(string singleFilePath)
-        //{
-        //    //if (!File.Exists(singleFilePath))
-        //    //{
-        //    //    Console.WriteLine("File does not exist.");
-        //    //    return null;
-        //    //}
-        //    try
-        //    {
-        //        var tokenCredentials = new AzureAdTokenCredentials(_AADTenantDomain,
-        //                                new AzureAdClientSymmetricKey(_AMSClientId, _AMSClientSecret),
-        //                                AzureEnvironments.AzureCloudEnvironment);
-
-        //        var tokenProvider = new AzureAdTokenProvider(tokenCredentials);
-        //        CloudMediaContext _context = new CloudMediaContext(new Uri(_RESTAPIEndpoint), tokenProvider);
-
-        //        AssetCreationOptions assetCreationOptions = AssetCreationOptions.None;
-        //        var assetName = Path.GetFileNameWithoutExtension(singleFilePath);
-        //        IAsset inputAsset = _context.Assets.Create(assetName, assetCreationOptions);
-
-        //        var assetFile = inputAsset.AssetFiles.Create(Path.GetFileName(singleFilePath));
-
-        //        //Console.WriteLine("Upload {0}", assetFile.Name);
-
-        //        assetFile.Upload(singleFilePath);
-
-        //        //Console.WriteLine("Done uploading {0}", assetFile.Name);
-
-        //        return inputAsset;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return null;
-        //        //throw;
-        //    }
-
-        //}
-
-        //#region Attempt 2
-        ///// <summary>
-        ///// attempt 2
-        ///// </summary>
-        ///// <param name="filename"></param>
-        ///// <returns></returns
-        //public async Task<string> UploadVideoAsset(string filePath)
-        //{
-
-        //    try
-        //    {
-        //        // Creating a unique suffix so that we don't have name collisions if you run the sample
-        //        // multiple times without cleaning up.
-        //        string uniqueness = Guid.NewGuid().ToString("N");
-        //        string jobName = $"job-{uniqueness}";
-        //        string locatorName = $"locator-{uniqueness}";
-        //        string outputAssetName = $"output-{uniqueness}";
-        //        string outputUrl = string.Empty;
-        //        IAzureMediaServicesClient client = await CreateMediaServicesClientAsync();
-        //        var fileName = Path.GetFileName(filePath);
-        //        var inputAssetName = Path.GetFileNameWithoutExtension(filePath);
-
-        //        Transform transform = await GetOrCreateTransformAsync(client, _AMSResourceGroup, _AMSAccountName, AdaptiveStreamingTransformName);
-
-
-        //        // Create a new input Asset and upload the specified local video file into it.
-        //        await CreateInputAssetAsync(client, _AMSResourceGroup, _AMSAccountName, inputAssetName, fileName, filePath);
-
-        //        // Use the name of the created input asset to create the job input.
-        //        JobInput jobInput = new JobInputAsset(assetName: inputAssetName);
-
-
-        //        // Output from the encoding Job must be written to an Asset, so let's create one
-        //        Asset outputAsset = await CreateOutputAssetAsync(client, _AMSResourceGroup, _AMSAccountName, outputAssetName);
-
-        //        Job job = await SubmitJobAsync(client, _AMSResourceGroup, _AMSAccountName, AdaptiveStreamingTransformName, jobName, inputAssetName, outputAsset.Name);
-
-        //        job = await WaitForJobToFinishAsync(client, _AMSResourceGroup, _AMSAccountName, AdaptiveStreamingTransformName, jobName);
-
-        //        if (job.State == JobState.Finished)
-        //        {
-        //            //Console.WriteLine("Job finished.");
-        //            //if (!Directory.Exists(OutputFolderName))
-        //            //    Directory.CreateDirectory(OutputFolderName);
-
-        //            //await DownloadOutputAssetAsync(client, _AMSResourceGroup, _AMSAccountName, outputAsset.Name, OutputFolderName);
-
-        //            StreamingLocator locator = await CreateStreamingLocatorAsync(client, _AMSResourceGroup, _AMSAccountName, outputAsset.Name, locatorName);
-
-        //            IList<string> urls = await GetStreamingUrlsAsync(client, _AMSResourceGroup, _AMSAccountName, locator.Name);
-        //            outputUrl = urls.LastOrDefault();
-        //            //foreach (var url in urls)
-        //            //{
-        //            //    Console.WriteLine(url);
-        //            //}
-        //        }
-
-
-        //        return outputUrl;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw;
-        //    }
-
-        //    //var result = CreateAssetAndUploadSingleFile(filename).Uri.ToString();
-        //    //return result;
-        //}
-
-        ///// <summary>
-        ///// Creates the AzureMediaServicesClient object based on the credentials
-        ///// supplied in local configuration file.
-        ///// </summary>
-        ///// <param name="config">The parm is of type ConfigWrapper. This class reads values from local configuration file.</param>
-        ///// <returns></returns>
-        //// <CreateMediaServicesClient>
-        //private async Task<IAzureMediaServicesClient> CreateMediaServicesClientAsync()
-        //{
-        //    var credentials = await GetCredentialsAsync();
-        //    //_ARMEndpoint,
-        //    return new AzureMediaServicesClient(new Uri(_ARMEndpoint), credentials)
-        //    {
-        //        SubscriptionId = _AMSSubscriptionId,
-        //    };
-        //}
-
-        ///// <summary>
-        ///// Create the ServiceClientCredentials object based on the credentials
-        ///// supplied in local configuration file.
-        ///// </summary>
-        ///// <param name="config">The parm is of type ConfigWrapper. This class reads values from local configuration file.</param>
-        ///// <returns></returns>
-        //// <GetCredentialsAsync>
-        //private async Task<ServiceClientCredentials> GetCredentialsAsync()
-        //{
-        //    // Use ApplicationTokenProvider.LoginSilentWithCertificateAsync or UserTokenProvider.LoginSilentAsync to get a token using service principal with certificate
-        //    //// ClientAssertionCertificate
-        //    //// ApplicationTokenProvider.LoginSilentWithCertificateAsync
-
-        //    // Use ApplicationTokenProvider.LoginSilentAsync to get a token using a service principal with symetric key
-        //    ClientCredential clientCredential = new ClientCredential(_AMSClientId, _AMSClientSecret);
-        //    return await ApplicationTokenProvider.LoginSilentAsync(_AADTenantId, clientCredential, ActiveDirectoryServiceSettings.Azure);
-        //}
-
-        ///// <summary>
-        ///// Creates a new input Asset and uploads the specified local video file into it.
-        ///// </summary>
-        ///// <param name="client">The Media Services client.</param>
-        ///// <param name="resourceGroupName">The name of the resource group within the Azure subscription.</param>
-        ///// <param name="accountName"> The Media Services account name.</param>
-        ///// <param name="assetName">The asset name.</param>
-        ///// <param name="fileToUpload">The file you want to upload into the asset.</param>
-        ///// <returns></returns>
-        ///// 
-        //private static async Task<Asset> CreateInputAssetAsync(
-        //    IAzureMediaServicesClient client,
-        //    string resourceGroupName,
-        //    string accountName,
-        //    string assetName,
-        //    string fileToUpload,
-        //    string filePath)
-        //{
-        //    try
-        //    {
-        //        // In this example, we are assuming that the asset name is unique.
-        //        //
-        //        // If you already have an asset with the desired name, use the Assets.Get method
-        //        // to get the existing asset. In Media Services v3, the Get method on entities returns null 
-        //        // if the entity doesn't exist (a case-insensitive check on the name).
-
-        //        // Call Media Services API to create an Asset.
-        //        // This method creates a container in storage for the Asset.
-        //        // The files (blobs) associated with the asset will be stored in this container.
-        //        Microsoft.Azure.Management.Media.Models.Asset asset = await client.Assets.CreateOrUpdateAsync(resourceGroupName, accountName, assetName, new Microsoft.Azure.Management.Media.Models.Asset());
-
-        //        // Use Media Services API to get back a response that contains
-        //        // SAS URL for the Asset container into which to upload blobs.
-        //        // That is where you would specify read-write permissions 
-        //        // and the exparation time for the SAS URL.
-        //        var response = await client.Assets.ListContainerSasAsync(
-        //            resourceGroupName,
-        //            accountName,
-        //            assetName,
-        //            permissions: AssetContainerPermission.ReadWrite,
-        //            expiryTime: DateTime.UtcNow.AddHours(4).ToUniversalTime());
-
-        //        var sasUri = new Uri(response.AssetContainerSasUrls.First());
-
-        //        // Use Storage API to get a reference to the Asset container
-        //        // that was created by calling Asset's CreateOrUpdate method.  
-        //        CloudBlobContainer container = new CloudBlobContainer(sasUri);
-        //        //var blob = container.GetBlockBlobReference(Path.GetFileName(fileToUpload));
-        //        var blob = container.GetBlockBlobReference(fileToUpload);
-        //        // Use Strorage API to upload the file into the container in storage.
-
-        //        //await blob.UploadFromFileAsync(fileToUpload);
-        //        await blob.UploadFromFileAsync(filePath);
-        //        //return sasUri.ToString();
-        //        return asset;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return null;
-        //    }
-
-
-        //}
-
-
-
-        ///// <summary>
-        ///// If the specified transform exists, get that transform.
-        ///// If the it does not exist, creates a new transform with the specified output. 
-        ///// In this case, the output is set to encode a video using one of the built-in encoding presets.
-        ///// </summary>
-        ///// <param name="client">The Media Services client.</param>
-        ///// <param name="resourceGroupName">The name of the resource group within the Azure subscription.</param>
-        ///// <param name="accountName"> The Media Services account name.</param>
-        ///// <param name="transformName">The name of the transform.</param>
-        ///// <returns></returns>
-        //// <EnsureTransformExists>
-        //private static async Task<Transform> GetOrCreateTransformAsync(
-        //    IAzureMediaServicesClient client,
-        //    string resourceGroupName,
-        //    string accountName,
-        //    string transformName)
-        //{
-        //    // Does a Transform already exist with the desired name? Assume that an existing Transform with the desired name
-        //    // also uses the same recipe or Preset for processing content.
-        //    Transform transform = await client.Transforms.GetAsync(resourceGroupName, accountName, transformName);
-
-        //    if (transform == null)
-        //    {
-        //        // You need to specify what you want it to produce as an output
-        //        TransformOutput[] output = new TransformOutput[]
-        //        {
-        //            new TransformOutput
-        //            {
-        //                // The preset for the Transform is set to one of Media Services built-in sample presets.
-        //                // You can  customize the encoding settings by changing this to use "StandardEncoderPreset" class.
-        //                Preset = new BuiltInStandardEncoderPreset()
-        //                {
-        //                    // This sample uses the built-in encoding preset for Adaptive Bitrate Streaming.
-        //                    PresetName = EncoderNamedPreset.AdaptiveStreaming
-        //                }
-        //            }
-        //        };
-
-        //        // Create the Transform with the output defined above
-        //        transform = await client.Transforms.CreateOrUpdateAsync(resourceGroupName, accountName, transformName, output);
-        //    }
-
-        //    return transform;
-        //}
-        //// </EnsureTransformExists>
-
-
-        ///// <summary>
-        ///// Creates an ouput asset. The output from the encoding Job must be written to an Asset.
-        ///// </summary>
-        ///// <param name="client">The Media Services client.</param>
-        ///// <param name="resourceGroupName">The name of the resource group within the Azure subscription.</param>
-        ///// <param name="accountName"> The Media Services account name.</param>
-        ///// <param name="assetName">The output asset name.</param>
-        ///// <returns></returns>
-        //// <CreateOutputAsset>
-        //private static async Task<Asset> CreateOutputAssetAsync(IAzureMediaServicesClient client, string resourceGroupName, string accountName, string assetName)
-        //{
-        //    // Check if an Asset already exists
-        //    Asset outputAsset = await client.Assets.GetAsync(resourceGroupName, accountName, assetName);
-        //    Asset asset = new Asset();
-        //    string outputAssetName = assetName;
-
-        //    if (outputAsset != null)
-        //    {
-        //        // Name collision! In order to get the sample to work, let's just go ahead and create a unique asset name
-        //        // Note that the returned Asset can have a different name than the one specified as an input parameter.
-        //        // You may want to update this part to throw an Exception instead, and handle name collisions differently.
-        //        string uniqueness = $"-{Guid.NewGuid().ToString("N")}";
-        //        outputAssetName += uniqueness;
-
-        //        //Console.WriteLine("Warning – found an existing Asset with name = " + assetName);
-        //        //Console.WriteLine("Creating an Asset with this name instead: " + outputAssetName);
-        //    }
-
-        //    return await client.Assets.CreateOrUpdateAsync(resourceGroupName, accountName, outputAssetName, asset);
-        //}
-        //// </CreateOutputAsset>
-
-        ///// <summary>
-        ///// Submits a request to Media Services to apply the specified Transform to a given input video.
-        ///// </summary>
-        ///// <param name="client">The Media Services client.</param>
-        ///// <param name="resourceGroupName">The name of the resource group within the Azure subscription.</param>
-        ///// <param name="accountName"> The Media Services account name.</param>
-        ///// <param name="transformName">The name of the transform.</param>
-        ///// <param name="jobName">The (unique) name of the job.</param>
-        ///// <param name="inputAssetName">The name of the input asset.</param>
-        ///// <param name="outputAssetName">The (unique) name of the  output asset that will store the result of the encoding job. </param>
-        //// <SubmitJob>
-        //private static async Task<Job> SubmitJobAsync(IAzureMediaServicesClient client,
-        //    string resourceGroupName,
-        //    string accountName,
-        //    string transformName,
-        //    string jobName,
-        //    string inputAssetName,
-        //    string outputAssetName)
-        //{
-        //    // Use the name of the created input asset to create the job input.
-        //    JobInput jobInput = new JobInputAsset(assetName: inputAssetName);
-
-        //    JobOutput[] jobOutputs =
-        //    {
-        //        new JobOutputAsset(outputAssetName),
-        //    };
-
-        //    // In this example, we are assuming that the job name is unique.
-        //    //
-        //    // If you already have a job with the desired name, use the Jobs.Get method
-        //    // to get the existing job. In Media Services v3, the Get method on entities returns null 
-        //    // if the entity doesn't exist (a case-insensitive check on the name).
-        //    Job job = await client.Jobs.CreateAsync(
-        //        resourceGroupName,
-        //        accountName,
-        //        transformName,
-        //        jobName,
-        //        new Job
-        //        {
-        //            Input = jobInput,
-        //            Outputs = jobOutputs,
-        //        });
-
-        //    return job;
-        //}
-        //// </SubmitJob>
-
-        ///// <summary>
-        ///// Polls Media Services for the status of the Job.
-        ///// </summary>
-        ///// <param name="client">The Media Services client.</param>
-        ///// <param name="resourceGroupName">The name of the resource group within the Azure subscription.</param>
-        ///// <param name="accountName"> The Media Services account name.</param>
-        ///// <param name="transformName">The name of the transform.</param>
-        ///// <param name="jobName">The name of the job you submitted.</param>
-        ///// <returns></returns>
-        //// <WaitForJobToFinish>
-        //private static async Task<Job> WaitForJobToFinishAsync(IAzureMediaServicesClient client,
-        //    string resourceGroupName,
-        //    string accountName,
-        //    string transformName,
-        //    string jobName)
-        //{
-        //    const int SleepIntervalMs = 60 * 1000;
-
-        //    Job job = null;
-
-        //    do
-        //    {
-        //        job = await client.Jobs.GetAsync(resourceGroupName, accountName, transformName, jobName);
-
-        //        //Console.WriteLine($"Job is '{job.State}'.");
-        //        for (int i = 0; i < job.Outputs.Count; i++)
-        //        {
-        //            JobOutput output = job.Outputs[i];
-        //            //Console.Write($"\tJobOutput[{i}] is '{output.State}'.");
-        //            if (output.State == JobState.Processing)
-        //            {
-        //                //Console.Write($"  Progress: '{output.Progress}'.");
-        //            }
-
-        //            //Console.WriteLine();
-        //        }
-
-        //        if (job.State != JobState.Finished && job.State != JobState.Error && job.State != JobState.Canceled)
-        //        {
-        //            await Task.Delay(SleepIntervalMs);
-        //        }
-        //    }
-        //    while (job.State != JobState.Finished && job.State != JobState.Error && job.State != JobState.Canceled);
-
-        //    return job;
-        //}
-        //// </WaitForJobToFinish>
-
-        ///// <summary>
-        /////  Downloads the results from the specified output asset, so you can see what you got.
-        ///// </summary>
-        ///// <param name="client">The Media Services client.</param>
-        ///// <param name="resourceGroupName">The name of the resource group within the Azure subscription.</param>
-        ///// <param name="accountName"> The Media Services account name.</param>
-        ///// <param name="assetName">The output asset.</param>
-        ///// <param name="outputFolderName">The name of the folder into which to download the results.</param>
-        //// <DownloadResults>
-        //private static async Task DownloadOutputAssetAsync(
-        //    IAzureMediaServicesClient client,
-        //    string resourceGroup,
-        //    string accountName,
-        //    string assetName,
-        //    string outputFolderName)
-        //{
-        //    if (!Directory.Exists(outputFolderName))
-        //    {
-        //        Directory.CreateDirectory(outputFolderName);
-        //    }
-
-        //    AssetContainerSas assetContainerSas = await client.Assets.ListContainerSasAsync(
-        //        resourceGroup,
-        //        accountName,
-        //        assetName,
-        //        permissions: AssetContainerPermission.Read,
-        //        expiryTime: DateTime.UtcNow.AddHours(1).ToUniversalTime());
-
-        //    Uri containerSasUrl = new Uri(assetContainerSas.AssetContainerSasUrls.FirstOrDefault());
-        //    CloudBlobContainer container = new CloudBlobContainer(containerSasUrl);
-
-        //    string directory = Path.Combine(outputFolderName, assetName);
-        //    Directory.CreateDirectory(directory);
-
-        //    //Console.WriteLine($"Downloading output results to '{directory}'...");
-
-        //    BlobContinuationToken continuationToken = null;
-        //    IList<Task> downloadTasks = new List<Task>();
-
-        //    do
-        //    {
-        //        // A non-negative integer value that indicates the maximum number of results to be returned at a time,
-        //        // up to the per-operation limit of 5000. If this value is null, the maximum possible number of results
-        //        // will be returned, up to 5000.
-        //        int? ListBlobsSegmentMaxResult = null;
-
-        //        BlobResultSegment segment = await container.ListBlobsSegmentedAsync(null, true, BlobListingDetails.None, ListBlobsSegmentMaxResult, continuationToken, null, null);
-
-        //        foreach (IListBlobItem blobItem in segment.Results)
-        //        {
-        //            CloudBlockBlob blob = blobItem as CloudBlockBlob;
-        //            if (blob != null)
-        //            {
-        //                string path = Path.Combine(directory, blob.Name);
-
-        //                downloadTasks.Add(blob.DownloadToFileAsync(path, FileMode.Create));
-        //            }
-        //        }
-
-        //        continuationToken = segment.ContinuationToken;
-        //    }
-        //    while (continuationToken != null);
-
-        //    await Task.WhenAll(downloadTasks);
-
-        //    //Console.WriteLine("Download complete.");
-        //}
-        //// </DownloadResults>
-
-        ///// <summary>
-        ///// Creates a StreamingLocator for the specified asset and with the specified streaming policy name.
-        ///// Once the StreamingLocator is created the output asset is available to clients for playback.
-        ///// </summary>
-        ///// <param name="client">The Media Services client.</param>
-        ///// <param name="resourceGroupName">The name of the resource group within the Azure subscription.</param>
-        ///// <param name="accountName"> The Media Services account name.</param>
-        ///// <param name="assetName">The name of the output asset.</param>
-        ///// <param name="locatorName">The StreamingLocator name (unique in this case).</param>
-        ///// <returns></returns>
-        //// <CreateStreamingLocator>
-        //private static async Task<StreamingLocator> CreateStreamingLocatorAsync(
-        //    IAzureMediaServicesClient client,
-        //    string resourceGroup,
-        //    string accountName,
-        //    string assetName,
-        //    string locatorName)
-        //{
-        //    StreamingLocator locator = await client.StreamingLocators.CreateAsync(
-        //        resourceGroup,
-        //        accountName,
-        //        locatorName,
-        //        new StreamingLocator
-        //        {
-        //            AssetName = assetName,
-        //            StreamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly
-        //        });
-
-        //    return locator;
-        //}
-        //// </CreateStreamingLocator>
-
-
-        ///// <summary>
-        ///// Checks if the "default" streaming endpoint is in the running state,
-        ///// if not, starts it.
-        ///// Then, builds the streaming URLs.
-        ///// </summary>
-        ///// <param name="client">The Media Services client.</param>
-        ///// <param name="resourceGroupName">The name of the resource group within the Azure subscription.</param>
-        ///// <param name="accountName"> The Media Services account name.</param>
-        ///// <param name="locatorName">The name of the StreamingLocator that was created.</param>
-        ///// <returns></returns>
-        //// <GetStreamingURLs>
-        //private static async Task<IList<string>> GetStreamingUrlsAsync(
-        //    IAzureMediaServicesClient client,
-        //    string resourceGroupName,
-        //    string accountName,
-        //    string locatorName)
-        //{
-        //    const string DefaultStreamingEndpointName = "default";
-
-        //    IList<string> streamingUrls = new List<string>();
-
-        //    StreamingEndpoint streamingEndpoint = await client.StreamingEndpoints.GetAsync(resourceGroupName, accountName, DefaultStreamingEndpointName);
-
-        //    if (streamingEndpoint != null)
-        //    {
-        //        if (streamingEndpoint.ResourceState != StreamingEndpointResourceState.Running)
-        //        {
-        //            await client.StreamingEndpoints.StartAsync(resourceGroupName, accountName, DefaultStreamingEndpointName);
-        //        }
-        //    }
-
-        //    ListPathsResponse paths = await client.StreamingLocators.ListPathsAsync(resourceGroupName, accountName, locatorName);
-
-        //    foreach (StreamingPath path in paths.StreamingPaths)
-        //    {
-        //        UriBuilder uriBuilder = new UriBuilder();
-        //        uriBuilder.Scheme = "https";
-        //        uriBuilder.Host = streamingEndpoint.HostName;
-
-        //        uriBuilder.Path = path.Paths[0];
-        //        streamingUrls.Add(uriBuilder.ToString());
-        //    }
-
-        //    return streamingUrls;
-        //}
-        //// </GetStreamingURLs>
-
-        //#endregion
-
-        //#region  Attempt 3
-
-        //public string UploadAndPublishVideo(string filePath)
-        //{
-        //    try
-        //    {
-        //        AzureAdTokenCredentials tokenCredentials =
-        //        new AzureAdTokenCredentials(_AADTenantDomain,
-        //            new AzureAdClientSymmetricKey(_AMSClientId, _AMSClientSecret),
-        //            AzureEnvironments.AzureCloudEnvironment);
-
-        //        //AzureAdTokenCredentials tokenCredentials = new AzureAdTokenCredentials(_AADTenantDomain, AzureEnvironments.AzureCloudEnvironment);
-        //        AzureAdTokenProvider tokenProvider = new AzureAdTokenProvider(tokenCredentials);
-
-        //       // _context = new CloudMediaContext(new Uri(_RESTAPIEndpoint), tokenProvider);
-        //        _context = new CloudMediaContext(new Uri(_RESTAPIEndpoint), tokenProvider);
-        //        IAsset inputAsset =
-        //                UploadFile(filePath, AssetCreationOptions.None);
-
-        //        IAsset encodedAsset =
-        //                EncodeToAdaptiveBitrateMP4s(inputAsset, AssetCreationOptions.None);
-
-        //        PublishAssetGetURLs(encodedAsset);
-        //        return "";
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //        throw;
-        //    }
-
-        //}
-
-        //static public IAsset UploadFile(string fileName, AssetCreationOptions options)
-        //{
-        //    IAsset inputAsset = _context.Assets.CreateFromFile(
-        //        fileName,
-        //        options
-        //        );
-
-        //    //Console.WriteLine("Asset {0} created.", inputAsset.Id);
-
-        //    return inputAsset;
-        //}
-
-        //static public IAsset EncodeToAdaptiveBitrateMP4s(IAsset asset, AssetCreationOptions options)
-        //{
-
-        //    // Prepare a job with a single task to transcode the specified asset
-        //    // into a multi-bitrate asset.
-
-        //    IJob job = _context.Jobs.CreateWithSingleTask(
-        //        "Media Encoder Standard",
-        //        "Adaptive Streaming",
-        //        asset,
-        //        "Adaptive Bitrate MP4",
-        //        options);
-
-        //    //Console.WriteLine("Submitting transcoding job...");
-
-
-        //    // Submit the job and wait until it is completed.
-        //    job.Submit();
-
-        //    job = job.StartExecutionProgressTask(
-        //        j =>
-        //        {
-        //            //Console.WriteLine("Job state: {0}", j.State);
-        //            //Console.WriteLine("Job progress: {0:0.##}%", j.GetOverallProgress());
-        //        },
-        //        CancellationToken.None).Result;
-
-        //    //Console.WriteLine("Transcoding job finished.");
-
-        //    IAsset outputAsset = job.OutputMediaAssets[0];
-
-        //    return outputAsset;
-        //}
-
-
-        //static public void PublishAssetGetURLs(IAsset asset, bool onDemaindURL = true, string fileExt = "")
-        //{
-        //    // Publish the output asset by creating an Origin locator for adaptive streaming,
-        //    // and a SAS locator for progressive download.
-
-        //    if (onDemaindURL)
-        //    {
-        //        _context.Locators.Create(
-        //            LocatorType.OnDemandOrigin,
-        //            asset,
-        //            AccessPermissions.Read,
-        //            TimeSpan.FromDays(30));
-
-        //        // Get the Smooth Streaming, HLS and MPEG-DASH URLs for adaptive streaming,
-        //        // and the Progressive Download URL.
-        //        Uri smoothStreamingUri = asset.GetSmoothStreamingUri();
-        //        Uri hlsUri = asset.GetHlsUri();
-        //        Uri mpegDashUri = asset.GetMpegDashUri();
-
-        //        // Display  the streaming URLs.
-        //        //Console.WriteLine("Use the following URLs for adaptive streaming: ");
-        //        //Console.WriteLine(smoothStreamingUri);
-        //        //Console.WriteLine(hlsUri);
-        //        //Console.WriteLine(mpegDashUri);
-        //        //Console.WriteLine();
-        //    }
-        //    else
-        //    {
-        //        _context.Locators.Create(
-        //            LocatorType.Sas,
-        //            asset,
-        //            AccessPermissions.Read,
-        //            TimeSpan.FromDays(30));
-
-        //        IEnumerable<IAssetFile> assetFiles = asset
-        //            .AssetFiles
-        //            .ToList()
-        //            .Where(af => af.Name.EndsWith(fileExt, StringComparison.OrdinalIgnoreCase));
-
-
-        //        // Get the URls for progressive download for each specified file that was generated as a result
-        //        // of encoding.
-
-        //        List<Uri> sasUris = assetFiles.Select(af => af.GetSasUri()).ToList();
-
-        //        // Display the URLs for progressive download.
-        //        //Console.WriteLine("Use the following URLs for progressive download.");
-        //        //sasUris.ForEach(uri => Console.WriteLine(uri + "\n"));
-        //        //Console.WriteLine();
-        //    }
-        //}
-
-        //#endregion
-
-        public CloudBlob GetBlobDataAsBlob(string containerName, string fileName)
-        {
-            try
-            {
-                CloudBlobContainer blobContainer = GetCloudBlobContainer(containerName);
-                CloudBlob blob = blobContainer.GetBlobReference(fileName);
-
-                return blob;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
         public async Task InsertImageBlob(string filename, string containerName, IFormFile blobFile, string contentType)
         {
-            try
+            var blob = GetCloudBlockBlobClient(containerName, filename);
+            blob.Properties.ContentType = contentType;
+            using (var fileStream = blobFile.OpenReadStream())
             {
-                CloudBlockBlob blob;
-                blob = GetCloudBlockBlobClient(containerName, filename);
-                blob.Properties.ContentType = contentType;
-                using (var fileStream = blobFile.OpenReadStream())
-                {
-                    await blob.UploadFromStreamAsync(fileStream).ConfigureAwait(false);
-                }
-            }
-            catch (Exception ex)
-            {
-
-                throw;
+                await blob.UploadFromStreamAsync(fileStream).ConfigureAwait(false);
             }
         }
+
         public string InsertBlobVMFile(string filename, string containerName, string blobFile)
         {
-            CloudBlockBlob blob;
-            blob = GetCloudBlockBlob(containerName, filename);
+            var blob = GetCloudBlockBlob(containerName, filename);
             blob.UploadTextAsync(blobFile);
             return blob.Uri.ToString();
         }
-        public IEnumerable<T> GetLogEntities<T>(string tableName) where T : TableEntity, new()
-        {
-            var table = GetTable(tableName);
-            var entities = new List<T>();
-            try
-            {
-                TableContinuationToken token = null;
-                var lowerlimit = DateTime.Today.AddDays(-2);
-                string dateRangeFilter = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, lowerlimit);
-                do
-                {
-                    var queryResult = table.ExecuteQuerySegmentedAsync(new TableQuery<T>().Where(dateRangeFilter), token);
-                    entities.AddRange(queryResult.Result);
-                    token = queryResult.Result.ContinuationToken;
-                } while (token != null);
-            }
-            catch (StorageException)
-            {
-                return entities;
-            }
-            return entities;
-        }
 
-        /// <summary>
-        /// Fetches Risebirdlogs rows for a UTC date window.
-        /// PartitionKey is reverse-ticks (DateTime.MaxValue.Ticks - UtcNow.Ticks), so date filters
-        /// must use PartitionKey range — Timestamp filters force a full table scan and hang on large tables.
-        /// </summary>
-        public async Task<IList<T>> GetLogEntitiesByDateRangeAsync<T>(
-            string tableName,
-            DateTime startUtc,
-            DateTime endUtcExclusive,
-            int? logLevel = null,
-            IList<string> selectColumns = null,
-            int? maxResults = null)
-            where T : TableEntity, new()
-        {
-            var entities = new List<T>();
-            try
-            {
-                var table = GetTable(tableName);
-                var start = DateTime.SpecifyKind(startUtc, DateTimeKind.Utc);
-                var end = DateTime.SpecifyKind(endUtcExclusive, DateTimeKind.Utc);
-                if (end <= start)
-                    return entities;
-
-                // Newer logs have smaller reverse-tick PartitionKeys.
-                // start <= T < end  ⇒  (MaxTicks-end) < PK <= (MaxTicks-start)
-                var pkLowerExclusive = ToReverseTickPartitionKey(end);
-                var pkUpperInclusive = ToReverseTickPartitionKey(start);
-
-                var fromFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.GreaterThan, pkLowerExclusive);
-                var toFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.LessThanOrEqual, pkUpperInclusive);
-                var filter = TableQuery.CombineFilters(fromFilter, TableOperators.And, toFilter);
-
-                if (logLevel.HasValue)
-                {
-                    var levelFilter = TableQuery.GenerateFilterConditionForInt("LogeLevel", QueryComparisons.Equal, logLevel.Value);
-                    filter = TableQuery.CombineFilters(filter, TableOperators.And, levelFilter);
-                }
-
-                var query = new TableQuery<T>().Where(filter);
-                if (selectColumns != null && selectColumns.Count > 0)
-                    query = query.Select(selectColumns);
-
-                TableContinuationToken token = null;
-                do
-                {
-                    var queryResult = await table.ExecuteQuerySegmentedAsync(query, token).ConfigureAwait(false);
-                    entities.AddRange(queryResult.Results);
-                    token = queryResult.ContinuationToken;
-
-                    if (maxResults.HasValue && entities.Count >= maxResults.Value)
-                    {
-                        if (entities.Count > maxResults.Value)
-                            entities.RemoveRange(maxResults.Value, entities.Count - maxResults.Value);
-                        break;
-                    }
-                } while (token != null);
-            }
-            catch (StorageException)
-            {
-                return entities;
-            }
-
-            return entities;
-        }
-
-        /// <summary>
-        /// Paged Risebirdlogs query by reverse-tick PartitionKey range. Pass continuationToken from a prior page for Next.
-        /// </summary>
-        public async Task<AzureTablePageResult<T>> GetLogEntitiesByDateRangePagedAsync<T>(
-            string tableName,
-            DateTime startUtc,
-            DateTime endUtcExclusive,
-            int pageSize,
-            string continuationToken = null,
-            int? logLevel = null,
-            IList<string> selectColumns = null)
-            where T : TableEntity, new()
-        {
-            var result = new AzureTablePageResult<T>();
-            if (pageSize <= 0)
-                pageSize = 100;
-
-            try
-            {
-                var table = GetTable(tableName);
-                var start = DateTime.SpecifyKind(startUtc, DateTimeKind.Utc);
-                var end = DateTime.SpecifyKind(endUtcExclusive, DateTimeKind.Utc);
-                if (end <= start)
-                    return result;
-
-                var pkLowerExclusive = ToReverseTickPartitionKey(end);
-                var pkUpperInclusive = ToReverseTickPartitionKey(start);
-
-                var fromFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.GreaterThan, pkLowerExclusive);
-                var toFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.LessThanOrEqual, pkUpperInclusive);
-                var filter = TableQuery.CombineFilters(fromFilter, TableOperators.And, toFilter);
-
-                if (logLevel.HasValue)
-                {
-                    var levelFilter = TableQuery.GenerateFilterConditionForInt("LogeLevel", QueryComparisons.Equal, logLevel.Value);
-                    filter = TableQuery.CombineFilters(filter, TableOperators.And, levelFilter);
-                }
-
-                var token = DeserializeContinuationToken(continuationToken);
-                var items = new List<T>();
-
-                do
-                {
-                    var remaining = pageSize - items.Count;
-                    var pageQuery = new TableQuery<T>().Where(filter).Take(remaining);
-                    if (selectColumns != null && selectColumns.Count > 0)
-                        pageQuery = pageQuery.Select(selectColumns);
-
-                    var queryResult = await table.ExecuteQuerySegmentedAsync(pageQuery, token).ConfigureAwait(false);
-                    items.AddRange(queryResult.Results);
-                    token = queryResult.ContinuationToken;
-                } while (token != null && items.Count < pageSize);
-
-                result.Items = items;
-                result.ContinuationToken = SerializeContinuationToken(token);
-            }
-            catch (StorageException)
-            {
-                return result;
-            }
-
-            return result;
-        }
-
-        private static string SerializeContinuationToken(TableContinuationToken token)
-        {
-            if (token == null)
-                return null;
-
-            var payload = JsonConvert.SerializeObject(new
-            {
-                token.NextPartitionKey,
-                token.NextRowKey,
-                token.NextTableName,
-                TargetLocation = token.TargetLocation?.ToString()
-            });
-            return Convert.ToBase64String(Encoding.UTF8.GetBytes(payload));
-        }
-
-        private static TableContinuationToken DeserializeContinuationToken(string encoded)
-        {
-            if (string.IsNullOrWhiteSpace(encoded))
-                return null;
-
-            try
-            {
-                var json = Encoding.UTF8.GetString(Convert.FromBase64String(encoded));
-                var dto = JsonConvert.DeserializeObject<ContinuationTokenDto>(json);
-                if (dto == null || (string.IsNullOrEmpty(dto.NextPartitionKey) && string.IsNullOrEmpty(dto.NextRowKey)))
-                    return null;
-
-                var token = new TableContinuationToken
-                {
-                    NextPartitionKey = dto.NextPartitionKey,
-                    NextRowKey = dto.NextRowKey,
-                    NextTableName = dto.NextTableName
-                };
-
-                if (!string.IsNullOrEmpty(dto.TargetLocation)
-                    && Enum.TryParse<StorageLocation>(dto.TargetLocation, out var location))
-                {
-                    token.TargetLocation = location;
-                }
-
-                return token;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        private sealed class ContinuationTokenDto
-        {
-            public string NextPartitionKey { get; set; }
-            public string NextRowKey { get; set; }
-            public string NextTableName { get; set; }
-            public string TargetLocation { get; set; }
-        }
-
-        /// <summary>
-        /// Same encoding ApplicationErrorLogger uses for Risebirdlogs PartitionKey.
-        /// </summary>
-        private static string ToReverseTickPartitionKey(DateTime utc)
-        {
-            var ticks = DateTime.SpecifyKind(utc, DateTimeKind.Utc).Ticks;
-            return (DateTime.MaxValue.Ticks - ticks).ToString("d19");
-        }
-
-        /// <summary>
-        /// Fetches entities whose PartitionKey is within an inclusive string range (e.g. yyyy-MM-dd dates).
-        /// </summary>
-        public async Task<IList<T>> GetEntitiesByPartitionKeyRangeAsync<T>(
-            string tableName,
-            string partitionKeyFromInclusive,
-            string partitionKeyToInclusive)
-            where T : TableEntity, new()
-        {
-            var entities = new List<T>();
-            try
-            {
-                var table = GetTable(tableName);
-                var fromFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.GreaterThanOrEqual, partitionKeyFromInclusive);
-                var toFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.LessThanOrEqual, partitionKeyToInclusive);
-                var filter = TableQuery.CombineFilters(fromFilter, TableOperators.And, toFilter);
-
-                TableContinuationToken token = null;
-                do
-                {
-                    var queryResult = await table.ExecuteQuerySegmentedAsync(new TableQuery<T>().Where(filter), token).ConfigureAwait(false);
-                    entities.AddRange(queryResult.Results);
-                    token = queryResult.ContinuationToken;
-                } while (token != null);
-            }
-            catch (StorageException)
-            {
-                return entities;
-            }
-
-            return entities;
-        }
+        // ---------------------------------------------------------------------
+        // Resume format conversion helpers
+        // ---------------------------------------------------------------------
 
         public async Task<bool> IsDocFileAsync(string url)
         {
             try
             {
-                //using (HttpClient client = new HttpClient())
-                //{
-                //    var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
-                //    if (response.IsSuccessStatusCode)
-                //    {
-                //        var contentType = response.Content.Headers.ContentType?.MediaType;
-                //        var contentDisposition = response.Content.Headers.ContentDisposition?.FileName;
-
-                //        if (contentType == "application/msword" ||
-                //            (contentDisposition != null && contentDisposition.EndsWith(".doc", StringComparison.OrdinalIgnoreCase)))
-                //        {
-                //            return true;
-                //        }
-                //    }
-                //}
                 if (url.EndsWith(".doc"))
                 {
                     return true;
@@ -1633,6 +524,7 @@ namespace Risebird.CommonHelper
             }
             return false;
         }
+
         public async Task<string> DownloadAndConvertFromDocToPdfAsync(string url)
         {
             try
@@ -1648,7 +540,6 @@ namespace Risebird.CommonHelper
                         {
                             await response.Content.CopyToAsync(fs);
                         }
-                        //return localPath;
                     }
                 }
 
@@ -1658,59 +549,8 @@ namespace Risebird.CommonHelper
                     return null;
                 }
 
-                // Convert .doc to .pdf
-                //Document doc = new Document(localPath);
-                //string pdfPath = Path.ChangeExtension(localPath, ".pdf");
-                //doc.Save(pdfPath);
-
-
                 string pdfPath = Path.ChangeExtension(localPath, ".pdf");
-                //using (var document = DocX.Load(localPath))
-                //{
-                //    //var pdfDoc = new PdfDocument();
-                //    var pdfDoc = new PdfDocument();
-                //    var pdfPage = pdfDoc.AddPage();
-                //    var graphics = XGraphics.FromPdfPage(pdfPage);
-                //    var font = new XFont("Arial", 12, XFontStyle.Regular);
-                //    var yPoint = 0;
 
-                //    foreach (var paragraph in document.Paragraphs)
-                //    {
-                //        graphics.DrawString(paragraph.Text, font, XBrushes.Black, new XRect(0, yPoint, pdfPage.Width.Point, pdfPage.Height.Point), XStringFormats.TopLeft);
-                //        yPoint += 20; // Move to the next line
-                //    }
-
-                //    pdfDoc.Save(pdfPath);
-                //}
-                //using (FileStream stream = new FileStream(localPath, FileMode.Open, FileAccess.Read))
-                //{
-                //    HWPFDocument doc = new HWPFDocument(stream);
-                //    PdfDocument pdfDoc = new PdfDocument();
-                //    PdfPage pdfPage = pdfDoc.AddPage();
-                //    XGraphics graphics = XGraphics.FromPdfPage(pdfPage);
-                //    XFont font = new XFont("Arial", 12, XFontStyle.Regular);
-
-                //    Range range = doc.GetRange();
-                //    var text = range.Text;
-                //    var yPoint = 0;
-
-                //    foreach (var line in text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
-                //    {
-                //        graphics.DrawString(line, font, XBrushes.Black, new XRect(0, yPoint, pdfPage.Width.Point, pdfPage.Height.Point), XStringFormats.TopLeft);
-                //        yPoint += 20; // Move to the next line
-                //    }
-
-                //    pdfDoc.Save(pdfPath);
-                //}
-
-                //using (Converter converterGr = new Converter(localPath))
-                //{
-                //    PdfConvertOptions options = new PdfConvertOptions();
-                //    converterGr.Convert(pdfPath, options);
-                //}
-
-
-                ///use the follwing
                 using (FileStream inputStream = new FileStream(localPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     WordDocument document = new WordDocument();
@@ -1722,7 +562,6 @@ namespace Risebird.CommonHelper
                         renderer.Settings.AutoTag = true;
                         using (PdfDocument pdfDocument = renderer.ConvertToPDF(document))
                         {
-                            // Save the PDF document
                             using (FileStream outputFileStream = new FileStream(pdfPath, FileMode.Create, FileAccess.ReadWrite))
                             {
                                 pdfDocument.Save(outputFileStream);
@@ -1731,62 +570,14 @@ namespace Risebird.CommonHelper
                     }
                 }
 
-                //Document document = new Document();
-                //document.LoadFromFile(localPath);
-                //document.SaveToFile(pdfPath, FileFormat.PDF);
-
-
-                //var appWord = new Microsoft.Office.Interop.Word.Application();
-                //if (appWord.Documents != null)
-                //{
-                //    //yourDoc is your word document
-                //    //var wordDocument = appWord.Documents.Open(yourDoc);
-                //    var wordDocument = appWord.Documents.Open(localPath);
-                //    //string pdfDocName = "pdfDocument.pdf";
-                //    if (wordDocument != null)
-                //    {
-                //        wordDocument.ExportAsFixedFormat(pdfPath,
-                //        Microsoft.Office.Interop.Word.WdExportFormat.wdExportFormatPDF);
-                //        wordDocument.Close();
-                //    }
-                //    appWord.Quit();
-                //}
-
-                //string htmlContent = ExtractTextFromDoc(localPath);
-
-                //var converter = new SynchronizedConverter(new PdfTools());
-                //var doc = new HtmlToPdfDocument()
-                //{
-                //    GlobalSettings = new GlobalSettings
-                //    {
-                //        ColorMode = ColorMode.Color,
-                //        Orientation = Orientation.Portrait,
-                //        PaperSize = PaperKind.A4,
-                //        Out = pdfPath
-                //    },
-                //    Objects = {
-                //    new ObjectSettings
-                //    {
-                //        HtmlContent = htmlContent
-                //    }
-                //}
-                //};
-                //converter.Convert(doc);
-
                 string uploadedFileUri = string.Empty;
 
                 // Upload the converted .pdf back to Azure Blob Storage
-                // Read the file content into a byte array
                 byte[] fileContent = File.ReadAllBytes(pdfPath);
-
-                // Create a MemoryStream from the byte array
                 using (Stream memoryStream = new MemoryStream(fileContent))
                 {
                     uploadedFileUri = await InsertBlobCloudCompare(url.Split("/").Last().Split(".").First() + ".pdf", "resumes", blobFileStream: memoryStream, contentType: "application/pdf");
                 }
-
-
-                //Console.WriteLine("File converted and uploaded successfully.");
 
                 // Cleanup temporary files
                 File.Delete(localPath);
@@ -1799,7 +590,5 @@ namespace Risebird.CommonHelper
             }
             return null;
         }
-
     }
-
 }

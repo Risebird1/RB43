@@ -84,7 +84,7 @@ namespace Risebird.CommonHelper
                 ErrorCount = errorTask.Result.Count,
                 WarningCount = warningTask.Result.Count,
                 AggregatedAtUtc = DateTime.UtcNow,
-                ETag = "*"
+                ETag = Azure.ETag.All
             };
 
             await _azureStorageHelper.InsertEntity(ApplicationLogDailyCountEntity.TableName, entity);

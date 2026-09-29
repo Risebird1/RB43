@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Search.Documents" />
+    <PackageReference Include="Azure.Storage.Blobs" />
     <PackageReference Include="Dapper" />
     <PackageReference Include="Dapper.FluentMap" />
     <PackageReference Include="Microsoft.Extensions.Configuration" />

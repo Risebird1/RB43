@@ -8,7 +8,7 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Google.Apis.Calendar.v3" />
     <PackageReference Include="RestSharp" />
-    <PackageReference Include="WindowsAzure.Storage" />
+    <PackageReference Include="Azure.Data.Tables" />
   </ItemGroup>
 
 </Project>

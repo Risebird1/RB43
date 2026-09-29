@@ -119,7 +119,7 @@
     <PackageVersion Include="RestClient" Version="3.1024.23771" />
     <PackageVersion Include="VoiceIt" Version="2.8.0" />
     <PackageVersion Include="VirusTotalNet" Version="2.2.0" />
-    <PackageVersion Include="WindowsAzure.Storage" Version="9.3.3" />
+    <PackageVersion Include="Azure.Data.Tables" Version="12.11.0" />
     <PackageVersion Include="OfficeOpenXml.Core.ExcelPackage" Version="1.0.0" />
     <PackageVersion Include="OfficeOpenXml.Extends" Version="1.0.6" />
     <PackageVersion Include="X.PagedList.Mvc" Version="8.0.7" />
