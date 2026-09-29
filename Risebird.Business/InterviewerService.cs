@@ -237,6 +237,7 @@ namespace Risebird.Business
             assessmentGroupList = string.Empty;
             userId = 0;
             uniqueid = string.Empty;
+            LastAddProfileException = null;
             try
             {
                 if (interviewerProfile.AssessmentGroupArray != null)
