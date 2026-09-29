@@ -92,8 +92,11 @@ begin try
   End  
 if(@assessmentGroupList is null or @assessmentGroupList = '')  
 Begin  
- If Exists (select 1 from [dbo].[InterviewerProfile] where userId = @UserId)              
--- Edit in both the tables              
+ -- Only a real (positive) UserId is an EDIT. New profiles are sent with @UserId = 0; without the
+ -- @UserId > 0 guard, any stray InterviewerProfile row with UserId = 0 would route every new
+ -- interviewer into this UPDATE branch (overwriting that stray row and returning @outputUserId = 0).
+ If (ISNULL(@UserId, 0) > 0 AND Exists (select 1 from [dbo].[InterviewerProfile] where userId = @UserId))
+-- Edit in both the tables
  Begin              
   -- Set flag to indicate UPDATE operation
   SET @IsInsertOperation = 0;

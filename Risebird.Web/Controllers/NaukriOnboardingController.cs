@@ -1335,7 +1335,10 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             var innerEx = _interviewerService.LastAddProfileException;
-                            string detail = innerEx != null ? innerEx.Message : "Unknown reason";
+                            string detail = innerEx != null ? innerEx.Message
+                                : (addResult && createdUserId <= 0)
+                                    ? "Profile save returned no UserId (usp_AddOrEditInterviewerProfile took the UPDATE path for UserId 0)"
+                                    : "Unknown reason";
                             errMsg = $"Failed to create interviewer profile. Reason: {detail} [Email: {profileVM.EmailId}, Phone: {profileVM.MobileNumber}, AG: {agId}]";
                         }
                         return Json(new { success = false, error = errMsg });
