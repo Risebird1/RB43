@@ -44,8 +44,10 @@ namespace Risebird.CommonHelper
 
             var fromNumber = ToDialNumber(from);
             var toNumber = ToDialNumber(to);
-            if (string.IsNullOrEmpty(fromNumber) || string.IsNullOrEmpty(toNumber))
-                return new ExotelConnectResult { ErrorMessage = "Invalid phone number" };
+            if (string.IsNullOrEmpty(fromNumber))
+                return new ExotelConnectResult { ErrorMessage = "Invalid phone number on your profile" };
+            if (string.IsNullOrEmpty(toNumber))
+                return new ExotelConnectResult { ErrorMessage = "Invalid phone number to call" };
 
             var form = new List<KeyValuePair<string, string>>
             {
@@ -72,6 +74,7 @@ namespace Risebird.CommonHelper
                 return new ExotelConnectResult
                 {
                     ErrorMessage = $"Exotel call failed ({(int)response.StatusCode}): {(string.IsNullOrEmpty(message) ? body : message)}"
+                                 + $" [From {Mask(fromNumber)}, To {Mask(toNumber)}]"
                 };
             }
 
@@ -110,6 +113,15 @@ namespace Risebird.CommonHelper
             };
         }
 
+        // "+919876543210" → "+91…210 (13 chars)": enough to spot a malformed number in an error without exposing it.
+        private static string Mask(string number)
+        {
+            if (string.IsNullOrEmpty(number)) return "(empty)";
+            if (number.Any(char.IsLetter)) return "SIP user";
+            var head = number.StartsWith("+") ? number.Substring(0, Math.Min(3, number.Length)) : number.Substring(0, Math.Min(2, number.Length));
+            return $"{head}…{number.Substring(Math.Max(0, number.Length - 3))} ({number.Length} chars)";
+        }
+
         private static JObject TryParse(string body)
         {
             try { return string.IsNullOrWhiteSpace(body) ? null : JObject.Parse(body); }
@@ -139,6 +151,12 @@ namespace Risebird.CommonHelper
             if (value.Any(char.IsLetter))
                 return value;
 
+            // Some records hold two numbers ("98765 43210 / 91234 56789"); dial the first.
+            var first = value.Split(new[] { '/', ',', ';', '|' }, StringSplitOptions.RemoveEmptyEntries)
+                             .FirstOrDefault(part => part.Count(char.IsDigit) >= 9);
+            if (first != null)
+                value = first.Trim();
+
             var hasPlus = value.StartsWith("+");
             var digits = new string(value.Where(char.IsDigit).ToArray());
             if (digits.Length < 9)
@@ -153,7 +171,7 @@ namespace Risebird.CommonHelper
                 if (digits.Length == 10)
                     digits = DefaultCountryCode + digits;   // national number without country code
             }
-            return "+" + digits;
+            return digits.Length > 15 ? null : "+" + digits;   // E.164 allows at most 15 digits
         }
     }
 }

@@ -1626,12 +1626,13 @@ namespace Risebird.Repository
         {
             try
             {
-                // Exotel Sids are 32 hex chars with no dashes; Twilio CallSids are 34 ('CA' + 32), Plivo UUIDs 36.
+                // Exotel Sids are 32 alphanumeric chars with no dashes (they can end in a letter, e.g. '...1a9u');
+                // Twilio CallSids are 34 ('CA' + 32), Plivo UUIDs 36 with dashes.
                 const string sql = @"
                     SELECT TOP (@Count) id, CallSid, Duration, RecordingUri, DateCreated
                     FROM   CallRecordingData
                     WHERE  LEN(CallSid) = 32
-                      AND  CallSid NOT LIKE '%[^0-9a-fA-F]%'
+                      AND  CallSid NOT LIKE '%[^0-9a-zA-Z]%'
                       AND  (RecordingUri IS NULL OR RecordingUri = '')
                       AND  DateCreated >= DATEADD(DAY, -@MaxAgeDays, GETDATE())
                     ORDER BY id DESC";

@@ -92,7 +92,7 @@ namespace Risebird.Repository.Interface
         Task<List<CallRecordingDataVM>> GetPlivoCallsMissingRecordingAsync(int maxAgeDays = 7, int count = 50);
 
         /// <summary>
-        /// Exotel calls (CallSid is a 32-char Exotel Sid) created within <paramref name="maxAgeDays"/> days
+        /// Exotel calls (CallSid is a 32-char alphanumeric Exotel Sid) created within <paramref name="maxAgeDays"/> days
         /// that still have no RecordingUri — used by the recording backfill job.
         /// </summary>
         Task<List<CallRecordingDataVM>> GetExotelCallsMissingRecordingAsync(int maxAgeDays = 7, int count = 50);
