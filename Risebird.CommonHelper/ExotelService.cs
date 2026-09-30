@@ -51,7 +51,7 @@ namespace Risebird.CommonHelper
             {
                 new KeyValuePair<string, string>("From", fromNumber),
                 new KeyValuePair<string, string>("To", toNumber),
-                new KeyValuePair<string, string>("CallerId", _settings.CallerId.Trim()),
+                new KeyValuePair<string, string>("CallerId", ToExoPhone(_settings.CallerId)),
                 new KeyValuePair<string, string>("Record", _settings.Record ? "true" : "false")
             };
             if (!string.IsNullOrWhiteSpace(statusCallbackUrl))
@@ -114,6 +114,18 @@ namespace Risebird.CommonHelper
         {
             try { return string.IsNullOrWhiteSpace(body) ? null : JObject.Parse(body); }
             catch (Exception) { return null; }
+        }
+
+        // ExoPhones are passed as Exotel lists them — national format with the trunk 0, no "+91":
+        // "+918064061496" / "918064061496" / "8064061496" → "08064061496". Toll-free (1800…) numbers pass through.
+        private static string ToExoPhone(string raw)
+        {
+            var digits = new string((raw ?? string.Empty).Where(char.IsDigit).ToArray());
+            if (digits.Length == 12 && digits.StartsWith(DefaultCountryCode))
+                return "0" + digits.Substring(2);
+            if (digits.Length == 10)
+                return "0" + digits;
+            return digits;
         }
 
         // "+91 98765-43210" / "9876543210" / "09876543210" → "+919876543210".

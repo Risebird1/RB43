@@ -2166,7 +2166,9 @@ namespace Risebird.Web.Controllers
                     }
                 }
 
-                var statusCallbackUrl = "https://" + Request.Host + "/TwilioCalls/ExotelStatus";
+                // Exotel cannot reach a local machine; there ExotelCallRecordingBackfillJob fills the recording instead.
+                var isLocalHost = string.Equals(Request.Host.Host, "localhost", StringComparison.OrdinalIgnoreCase) || Request.Host.Host == "127.0.0.1";
+                var statusCallbackUrl = isLocalHost ? null : "https://" + Request.Host + "/TwilioCalls/ExotelStatus";
                 var result = await _exotelService.ConnectCallAsync(from, request.PhoneNumber, statusCallbackUrl);
                 if (!result.Success)
                 {
