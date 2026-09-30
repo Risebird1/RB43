@@ -160,12 +160,14 @@
             const response = await fetch("/User/ExotelConnect", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
+                // Pages pass ids as numbers (e.g. IRFId from the candidate JSON); the server expects strings,
+                // and a number in a string field makes the whole JSON body fail to bind.
                 body: JSON.stringify({
                     phoneNumber: phone,
                     interviewId: isNaN(numericInterviewId) ? null : numericInterviewId,
-                    callRecipient: callRecipientEmail || null,
-                    irfId: irfIdVar || null,
-                    recipientType: recipientType || null,
+                    callRecipient: callRecipientEmail ? String(callRecipientEmail) : null,
+                    irfId: irfIdVar ? String(irfIdVar) : null,
+                    recipientType: recipientType ? String(recipientType) : null,
                     mode: useSoftphone ? "webrtc" : "phone"
                 })
             });

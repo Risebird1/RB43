@@ -2137,7 +2137,12 @@ namespace Risebird.Web.Controllers
             {
                 return Json(new { success = false, error = "Exotel is not configured" });
             }
-            if (request == null || string.IsNullOrWhiteSpace(request.PhoneNumber))
+            if (request == null)
+            {
+                var reason = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).FirstOrDefault(m => !string.IsNullOrEmpty(m));
+                return Json(new { success = false, error = "Invalid call request" + (string.IsNullOrEmpty(reason) ? "" : ": " + reason) });
+            }
+            if (string.IsNullOrWhiteSpace(request.PhoneNumber))
             {
                 return Json(new { success = false, error = "No phone number to call" });
             }
