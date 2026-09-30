@@ -1622,6 +1622,51 @@ namespace Risebird.Repository
             return new List<CallRecordingDataVM>();
         }
 
+        public async Task<List<CallRecordingDataVM>> GetExotelCallsMissingRecordingAsync(int maxAgeDays = 7, int count = 50)
+        {
+            try
+            {
+                // Exotel Sids are 32 hex chars with no dashes; Twilio CallSids are 34 ('CA' + 32), Plivo UUIDs 36.
+                const string sql = @"
+                    SELECT TOP (@Count) id, CallSid, Duration, RecordingUri, DateCreated
+                    FROM   CallRecordingData
+                    WHERE  LEN(CallSid) = 32
+                      AND  CallSid NOT LIKE '%[^0-9a-fA-F]%'
+                      AND  (RecordingUri IS NULL OR RecordingUri = '')
+                      AND  DateCreated >= DATEADD(DAY, -@MaxAgeDays, GETDATE())
+                    ORDER BY id DESC";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var data = await con.QueryAsync<CallRecordingDataVM>(sql, new { Count = count, MaxAgeDays = maxAgeDays });
+                    return data.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return new List<CallRecordingDataVM>();
+        }
+
+        public async Task<string> GetUserMobileNumberByEmail(string emailId)
+        {
+            if (string.IsNullOrWhiteSpace(emailId))
+                return null;
+            try
+            {
+                const string sql = "SELECT TOP 1 CAST(MobileNumber AS varchar(20)) FROM UserList WHERE EmailId = @EmailId AND MobileNumber IS NOT NULL";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await con.QueryFirstOrDefaultAsync<string>(sql, new { EmailId = emailId.Trim() });
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<bool> AddPremiumClientUser(ClientUserVM client)
         {
             try

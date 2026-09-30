@@ -747,6 +747,18 @@ namespace Risebird.Business
                 return "";
             }
         }
+        public async Task<string> GetUserMobileNumberByEmail(string emailId)
+        {
+            try
+            {
+                return await _userRepository.GetUserMobileNumberByEmail(emailId);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
         public async Task<string> SaveCallRecording(int interviewid, string IRFId, string CandidateEmail, string WhoCalled, string CallSid, string RecordingUrl)
         {
             try

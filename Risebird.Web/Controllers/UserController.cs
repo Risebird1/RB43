@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using Risebird.Business.Interface;
@@ -35,10 +36,17 @@ namespace Risebird.Web.Controllers
         private ITwilioHelper _twiliohelper;
         private readonly IConfiguration _configuration;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
+        private readonly IExotelService _exotelService;
+        private readonly ExotelSettings _exotelSettings;
+        private readonly ExotelWebRtcSettings _exotelWebRtcSettings;
         public UserController(IUserService userService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-                                ISkillService skillService, IProfileService profileService, ITwilioHelper twiliohelper, IConfiguration configuration, IFileMimeTypeHelper fileMimeTypeHelper)
+                                ISkillService skillService, IProfileService profileService, ITwilioHelper twiliohelper, IConfiguration configuration, IFileMimeTypeHelper fileMimeTypeHelper,
+                                IExotelService exotelService, IOptions<ExotelSettings> exotelSettings, IOptions<ExotelWebRtcSettings> exotelWebRtcSettings)
 
         {
+            _exotelService = exotelService;
+            _exotelSettings = exotelSettings.Value;
+            _exotelWebRtcSettings = exotelWebRtcSettings.Value;
             _userService = userService;
             _clientService = clientService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -2101,6 +2109,85 @@ namespace Risebird.Web.Controllers
             }
             return Json("Fail");
         }
+
+        public class ExotelConnectRequest
+        {
+            public string PhoneNumber { get; set; }
+            public int? InterviewId { get; set; }
+            public string CallRecipient { get; set; }
+            public string IRFId { get; set; }
+            public string RecipientType { get; set; }
+            /// <summary>"webrtc" = ring the agent's browser softphone (ExotelCallMaker.js is registered); otherwise the agent's phone.</summary>
+            public string Mode { get; set; }
+        }
+
+        // POST: User/ExotelConnect — the Exotel counterpart of makecall. Exotel calls are placed server-side
+        // (Calls/connect): Exotel rings the agent first (their phone, or their browser softphone), then dials the
+        // recipient. The Exotel Sid is logged like a Twilio/Plivo CallSid so the call shows on Call Analytics.
+        // POST + JSON body (not GET like makecall) so a cross-site link or form cannot place billable calls.
+        [HttpPost]
+        public async Task<JsonResult> ExotelConnect([FromBody] ExotelConnectRequest request)
+        {
+            var currentUserEmailId = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            if (string.IsNullOrEmpty(currentUserEmailId) || HttpContext.Session.GetString("profileName") == null)
+            {
+                return Json(new { success = false, error = "Session expired, please sign in again" });
+            }
+            if (!_exotelSettings.IsConfigured)
+            {
+                return Json(new { success = false, error = "Exotel is not configured" });
+            }
+            if (request == null || string.IsNullOrWhiteSpace(request.PhoneNumber))
+            {
+                return Json(new { success = false, error = "No phone number to call" });
+            }
+
+            try
+            {
+                string from;
+                var subscriber = string.Equals(request.Mode, "webrtc", StringComparison.OrdinalIgnoreCase) && _exotelWebRtcSettings.IsConfigured
+                    ? _exotelWebRtcSettings.FindSubscriber(currentUserEmailId)
+                    : null;
+                if (subscriber != null)
+                {
+                    from = subscriber.UserName.Trim();
+                }
+                else
+                {
+                    from = await _userService.GetUserMobileNumberByEmail(currentUserEmailId);
+                    if (string.IsNullOrWhiteSpace(from))
+                    {
+                        return Json(new { success = false, error = "Add your mobile number to your profile to call via Exotel" });
+                    }
+                }
+
+                var statusCallbackUrl = "https://" + Request.Host + "/TwilioCalls/ExotelStatus";
+                var result = await _exotelService.ConnectCallAsync(from, request.PhoneNumber, statusCallbackUrl);
+                if (!result.Success)
+                {
+                    return Json(new { success = false, error = result.ErrorMessage });
+                }
+
+                var sid = result.Sid;
+                if (string.Equals(request.RecipientType, "Interviewer", StringComparison.OrdinalIgnoreCase))
+                {
+                    _ = await _userService.SaveCallRecordingInterviewer(request.CallRecipient, currentUserEmailId, sid, null);
+                }
+                else
+                {
+                    _ = await _userService.SaveCallRecording(request.InterviewId ?? 0, request.IRFId, request.CallRecipient, currentUserEmailId, sid, null);
+                }
+                _ = await _userService.SaveCallRecordingData(request.InterviewId, request.CallRecipient, currentUserEmailId, sid, null, request.PhoneNumber, request.IRFId, request.RecipientType);
+
+                return Json(new { success = true, sid, mode = subscriber != null ? "webrtc" : "phone" });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, error = "Could not place the Exotel call" });
+            }
+        }
+
         [HttpGet]
         public async Task<JsonResult> makecallInterviewer(string sid, string CandidateEmail)
         {

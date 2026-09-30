@@ -1,11 +1,19 @@
 ﻿@using Microsoft.Extensions.Configuration
+@using Microsoft.Extensions.Options
 @inject IConfiguration Configuration
+@inject IOptions<Risebird.Entities.Data.ExotelSettings> ExotelOptions
+@inject IOptions<Risebird.Entities.Data.ExotelWebRtcSettings> ExotelWebRtcOptions
 @{
     // Plivo is offered (and is the default) only when all PlivoSettings values are present; otherwise Twilio only.
     var plivoConfigured = !string.IsNullOrWhiteSpace(Configuration["PlivoSettings:AUTH_ID"])
                           && !string.IsNullOrWhiteSpace(Configuration["PlivoSettings:AUTH_TOKEN"])
                           && !string.IsNullOrWhiteSpace(Configuration["PlivoSettings:APPLICATION_ID"])
                           && !string.IsNullOrWhiteSpace(Configuration["PlivoSettings:EndpointUsername"]);
+    // Exotel is offered only when all Exotel values are present; it is the default only with Exotel:IsDefaultProvider.
+    // ExotelWebRtc (in-browser softphone) is optional — without it Exotel rings the agent's phone.
+    var exotelConfigured = ExotelOptions.Value.IsConfigured;
+    var exotelWebRtcConfigured = exotelConfigured && ExotelWebRtcOptions.Value.IsConfigured;
+    var defaultProvider = exotelConfigured && ExotelOptions.Value.IsDefaultProvider ? "exotel" : (plivoConfigured ? "plivo" : "twilio");
 }
 <div id="myCallModal" class="modal modal-wrap modal-bg">
     <!-- Modal content -->
@@ -29,6 +37,7 @@
                 <div class="rb-call-provider" style="text-align:center;margin:6px 0 4px;font-size:13px;">
                     <span style="margin-right:6px;">Call via:</span>
                     <button type="button" class="btn btn-sm rb-call-provider-btn" data-provider="plivo" onclick="setCallProvider('plivo')" style="margin:0 2px;" disabled="@(!plivoConfigured)" title="@(plivoConfigured ? "Call via Plivo" : "Plivo is not configured")">Plivo</button>
+                    <button type="button" class="btn btn-sm rb-call-provider-btn" data-provider="exotel" onclick="setCallProvider('exotel')" style="margin:0 2px;" disabled="@(!exotelConfigured)" title="@(exotelConfigured ? (exotelWebRtcConfigured ? "Call via Exotel" : "Call via Exotel (rings your phone first)") : "Exotel is not configured")">Exotel</button>
                     <button type="button" class="btn btn-sm rb-call-provider-btn" data-provider="twilio" onclick="setCallProvider('twilio')" style="margin:0 2px;">Twilio</button>
                 </div>
                 <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
@@ -40,9 +49,19 @@
 </div>
 <script>
     window.rbPlivoConfigured = @(plivoConfigured ? "true" : "false");
-    window.rbDefaultProvider = '@(plivoConfigured ? "plivo" : "twilio")';
+    window.rbExotelConfigured = @(exotelConfigured ? "true" : "false");
+    window.rbExotelWebRtc = @(exotelWebRtcConfigured ? "true" : "false");
+    window.rbDefaultProvider = '@defaultProvider';
 </script>
 @if (plivoConfigured)
 {
     <script src="~/js/PlivoCallMaker.js" asp-append-version="true"></script>
+}
+@if (exotelConfigured)
+{
+    if (exotelWebRtcConfigured)
+    {
+        <script src="@Url.Content(ExotelWebRtcOptions.Value.SdkUrl)"></script>
+    }
+    <script src="~/js/ExotelCallMaker.js" asp-append-version="true"></script>
 }

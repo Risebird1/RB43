@@ -33,6 +33,8 @@ builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration,
 builder.Services.Configure<ConfigurationOptions>(options => builder.Configuration.Bind(options));
 builder.Services.Configure<Risebird.Entities.Data.ZohoOptions>(builder.Configuration.GetSection("Zoho"));
 builder.Services.Configure<Risebird.Entities.Data.ServiceAgreementOptions>(builder.Configuration.GetSection("ServiceAgreement"));
+builder.Services.Configure<Risebird.Entities.Data.ExotelSettings>(builder.Configuration.GetSection("Exotel"));
+builder.Services.Configure<Risebird.Entities.Data.ExotelWebRtcSettings>(builder.Configuration.GetSection("ExotelWebRtc"));
 var configOptions = new ConfigurationOptions();
 builder.Configuration.Bind(configOptions);
 
@@ -297,6 +299,9 @@ builder.Services.AddScoped<IPlivoWhatsAppService, PlivoWhatsAppService>();
 builder.Services.AddScoped<IPlivoWhatsAppRepository, PlivoWhatsAppRepository>();
 builder.Services.AddScoped<IElevenLabsAgentService, ElevenLabsAgentService>();
 // ============================================
+
+// Exotel calling provider ("Call via: Exotel" in the call modal)
+builder.Services.AddScoped<IExotelService, ExotelService>();
 
 // ============================================
 // Relay.app Customer Support Tickets

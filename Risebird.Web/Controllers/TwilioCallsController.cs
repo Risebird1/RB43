@@ -1,7 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
+using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 //using Twilio.AspNetCore
@@ -15,10 +23,103 @@ namespace Risebird.Web.Controllers
     {
         private IAzureStorageHelper _azureStorageHelper;
         private readonly IFileMimeTypeHelper _fileMimeTypeHelper;
-        public TwilioCallsController(IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper)
+        private readonly IExotelService _exotelService;
+        private readonly ExotelWebRtcSettings _exotelWebRtcSettings;
+        private readonly IUserRepository _userRepository;
+        private readonly IApplicationErrorLogger _applicationErrorLogger;
+        public TwilioCallsController(IAzureStorageHelper azureStorageHelper, IFileMimeTypeHelper fileMimeTypeHelper,
+            IExotelService exotelService, IOptions<ExotelWebRtcSettings> exotelWebRtcSettings,
+            IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger)
         {
             _azureStorageHelper = azureStorageHelper;
             _fileMimeTypeHelper = fileMimeTypeHelper;
+            _exotelService = exotelService;
+            _exotelWebRtcSettings = exotelWebRtcSettings.Value;
+            _userRepository = userRepository;
+            _applicationErrorLogger = applicationErrorLogger;
+        }
+
+        // POST: TwilioCalls/ExotelToken — SIP account for the signed-in agent's Exotel softphone (ExotelCallMaker.js).
+        // Returns only this agent's own subscriber; the Exotel API Key/Token never reach the browser.
+        // { sip: null } means no softphone for this agent — the modal then uses click-to-call (agent's phone).
+        [HttpPost]
+        public IActionResult ExotelToken()
+        {
+            var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            if (string.IsNullOrEmpty(email))
+            {
+                return Unauthorized();
+            }
+
+            var subscriber = _exotelWebRtcSettings.IsConfigured ? _exotelWebRtcSettings.FindSubscriber(email) : null;
+            if (subscriber == null)
+            {
+                return Json(new { sip = (object)null });
+            }
+
+            var wssHost = _exotelWebRtcSettings.WssHost.Trim();
+            var colon = wssHost.LastIndexOf(':');
+            var port = colon > 0 ? wssHost.Substring(colon + 1) : "443";
+
+            return Json(new
+            {
+                sip = new
+                {
+                    userName = subscriber.UserName.Trim(),
+                    secret = subscriber.Password,
+                    sipDomain = _exotelWebRtcSettings.SipDomain.Trim(),
+                    domain = colon > 0 ? wssHost : wssHost + ":" + port,
+                    port,
+                    displayName = HttpContext.Session.GetString("profileName") ?? subscriber.UserName.Trim()
+                }
+            });
+        }
+
+        // POST: TwilioCalls/ExotelStatus — Exotel StatusCallback (StatusCallbackEvents=terminal) for calls placed by
+        // User/ExotelConnect. The payload is not trusted: the call is re-read from the Exotel API by Sid and its
+        // recording URL / duration stored on the CallRecordingData row. Recordings that are not ready yet are picked
+        // up by ExotelCallRecordingBackfillJob. Always returns 200 to Exotel.
+        [HttpPost]
+        [AllowAnonymous]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> ExotelStatus()
+        {
+            try
+            {
+                string callSid = null;
+                if (Request.HasFormContentType)
+                {
+                    callSid = Request.Form["CallSid"].ToString();
+                }
+                else if (Request.ContentType != null && Request.ContentType.Contains("json", StringComparison.OrdinalIgnoreCase))
+                {
+                    using (var reader = new StreamReader(Request.Body))
+                    {
+                        var body = JObject.Parse(await reader.ReadToEndAsync());
+                        callSid = body["CallSid"]?.ToString();
+                    }
+                }
+                if (string.IsNullOrWhiteSpace(callSid))
+                {
+                    callSid = Request.Query["CallSid"].ToString();
+                }
+                if (string.IsNullOrWhiteSpace(callSid))
+                {
+                    return Ok();
+                }
+
+                var details = await _exotelService.GetCallDetailsAsync(callSid);
+                if (!string.IsNullOrWhiteSpace(details?.RecordingUrl))
+                {
+                    // Keyed on CallRecordingData.CallSid — provider-agnostic despite the name.
+                    await _userRepository.UpdatePlivoRecordingAsync(callSid.Trim(), details.RecordingUrl, details.DurationSeconds);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return Ok();
         }
 
         [HttpGet]

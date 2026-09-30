@@ -64,6 +64,8 @@ namespace Risebird.AzureFunctions
             services.AddScoped<IPlivoCallRepository, PlivoCallRepository>();
             services.AddScoped<IPlivoCXService, PlivoCXService>();
             services.AddScoped<IPlivoCXCallRepository, PlivoCXCallRepository>();
+            // Exotel (recording backfill for "Call via: Exotel" calls)
+            services.AddScoped<IExotelService, ExotelService>();
             services.AddScoped<INaukriOnboardingRepository, NaukriOnboardingRepository>();
             services.AddScoped<IInterviewerEmailAvailabilityRepository, InterviewerEmailAvailabilityRepository>();
             services.AddScoped<ITransInterviewerAuditRepository, TransInterviewerAuditRepository>();

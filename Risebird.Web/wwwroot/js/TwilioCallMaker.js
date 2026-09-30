@@ -13,10 +13,11 @@ let interviewId = '';
 
 
 // ----------------------------
-// Call provider (Twilio / Plivo)
+// Call provider (Twilio / Plivo / Exotel)
 // ----------------------------
-// window.rbPlivoConfigured / window.rbDefaultProvider are emitted by TwilioCallModalPartial.cshtml.
+// window.rbPlivoConfigured / window.rbExotelConfigured / window.rbDefaultProvider are emitted by TwilioCallModalPartial.cshtml.
 // plivoCallRecipient() / plivoHangUp() come from PlivoCallMaker.js (loaded only when Plivo is configured).
+// exotelCallRecipient() / exotelHangUp() come from ExotelCallMaker.js (loaded only when Exotel is configured).
 let isSwitchingProvider = false;
 
 function getCallProvider() {
@@ -25,6 +26,8 @@ function getCallProvider() {
 
     if (stored === 'twilio') return 'twilio';
     if (stored === 'plivo' && window.rbPlivoConfigured !== false) return 'plivo';
+    if (stored === 'exotel' && window.rbExotelConfigured === true) return 'exotel';
+    if (window.rbDefaultProvider === 'exotel' && window.rbExotelConfigured === true) return 'exotel';
     return window.rbDefaultProvider === 'plivo' ? 'plivo' : 'twilio';
 }
 
@@ -38,8 +41,9 @@ function highlightCallProvider() {
 }
 
 function setCallProvider(provider) {
-    if (provider !== 'plivo' && provider !== 'twilio') return;
+    if (provider !== 'plivo' && provider !== 'twilio' && provider !== 'exotel') return;
     if (provider === 'plivo' && window.rbPlivoConfigured !== true) return;
+    if (provider === 'exotel' && window.rbExotelConfigured !== true) return;
 
     const previous = getCallProvider();
     try { localStorage.setItem('rb_call_provider', provider); } catch (e) { }
@@ -139,6 +143,11 @@ function callRecipient(phoneNumber) {
         plivoCallRecipient(phoneNumber);
         return;
     }
+    if (getCallProvider() === 'exotel' && typeof exotelCallRecipient === 'function') {
+        callRecipientPhoneNumber = phoneNumber;
+        exotelCallRecipient(phoneNumber);
+        return;
+    }
 
     if (!device) {
         console.error("Device not ready. Wait for initialization or user gesture.");
@@ -176,7 +185,7 @@ function setupCallHandlers(call) {
     });
 
     call.on("disconnect", () => {
-        if (isSwitchingProvider) return; // redialing on Plivo
+        if (isSwitchingProvider) return; // redialing on another provider
         document.getElementById("callingLabel").innerHTML = "Call disconnected!";
         setTimeout(afterTimeOut, 2000);
     });
@@ -201,6 +210,9 @@ function hangUp() {
     //debugger;
     if (typeof plivoHangUp === 'function') {
         plivoHangUp();
+    }
+    if (typeof exotelHangUp === 'function') {
+        exotelHangUp();
     }
 
     if (activeCall) {

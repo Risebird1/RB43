@@ -90,6 +90,17 @@ namespace Risebird.Repository.Interface
         /// that still have no RecordingUri — used by the recording backfill job.
         /// </summary>
         Task<List<CallRecordingDataVM>> GetPlivoCallsMissingRecordingAsync(int maxAgeDays = 7, int count = 50);
+
+        /// <summary>
+        /// Exotel calls (CallSid is a 32-char Exotel Sid) created within <paramref name="maxAgeDays"/> days
+        /// that still have no RecordingUri — used by the recording backfill job.
+        /// </summary>
+        Task<List<CallRecordingDataVM>> GetExotelCallsMissingRecordingAsync(int maxAgeDays = 7, int count = 50);
+
+        /// <summary>
+        /// Mobile number on the UserList row for this email (the phone Exotel click-to-call rings first).
+        /// </summary>
+        Task<string> GetUserMobileNumberByEmail(string emailId);
         Task<bool> AddPremiumClientUser(ClientUserVM client);
         Task<List<ClientUserVM>> GetClientPremiumUsers(string EmailId);
         Task<ClientUserVM> GetClientPremiumUser(int id);
