@@ -142,6 +142,9 @@ builder.Services.AddHttpClient<ICodeExecutionService, CodeExecutionService>();
 builder.Services.AddHttpClient<ICodeProjectRunner, HttpCodeProjectRunner>();
 builder.Services.AddHttpClient<ICodeProjectEnvironmentProvisioner, HttpCodeProjectEnvironmentProvisioner>();
 builder.Services.AddSingleton<ICodeProjectBlobStore, CodeProjectBlobStore>();
+// Configuration first, then what the one-click setup stored in CodeProjectSettings.
+builder.Services.AddScoped<ICodeProjectSettingsRepository, CodeProjectSettingsRepository>();
+builder.Services.AddScoped<ICodeProjectSettingsProvider, CodeProjectSettingsProvider>();
 builder.Services.AddScoped<ICodeProjectQuestionRepository, CodeProjectQuestionRepository>();
 builder.Services.AddScoped<ICodeProjectQuestionService, CodeProjectQuestionService>();
 builder.Services.AddSingleton<CodeProjectBackgroundQueue>();

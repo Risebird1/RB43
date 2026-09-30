@@ -288,6 +288,81 @@ namespace Risebird.CommonHelper
                 new JsonResponseAttempt { ResponseId = responseId };
         }
 
+        public async Task<string> CreateJsonWithInstructionsAsync(
+            string instructions,
+            string input,
+            string operationType,
+            int? maxOutputTokens = null)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(_apiKey))
+                    throw new InvalidOperationException("OpenAI:ApiKey is not configured.");
+                if (string.IsNullOrWhiteSpace(_responsesModel))
+                    throw new InvalidOperationException("OpenAI:ResponsesModel is not configured.");
+                if (string.IsNullOrWhiteSpace(input))
+                    throw new InvalidOperationException($"OpenAI Responses input is required for operation {operationType}.");
+
+                // Inline instructions instead of a stored prompt: the caller owns the whole prompt in code.
+                var body = new Dictionary<string, object>
+                {
+                    ["model"] = _responsesModel,
+                    ["instructions"] = instructions,
+                    ["input"] = input,
+                    ["text"] = new { format = new { type = "json_object" } },
+                    ["max_output_tokens"] = Math.Min(maxOutputTokens ?? _maxOutputTokensCeiling, _maxOutputTokensCeiling)
+                };
+
+                using var client = new HttpClient { Timeout = TimeSpan.FromMinutes(6) };
+                var jsonContent = JsonConvert.SerializeObject(body);
+                using var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/responses")
+                {
+                    Headers = { { "Authorization", $"Bearer {_apiKey}" } },
+                    Content = new StringContent(jsonContent, Encoding.UTF8, "application/json")
+                };
+
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+                using var response = await client.SendAsync(request);
+                sw.Stop();
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                await _openAIApiLogger.LogApiCallAsync(
+                    apiEndpoint: $"{_baseUrl}/responses",
+                    apiMethod: "POST",
+                    requestPayload: jsonContent,
+                    responsePayload: responseContent,
+                    responseTimeMs: (int)sw.ElapsedMilliseconds,
+                    statusCode: (int)response.StatusCode,
+                    isSuccess: response.IsSuccessStatusCode,
+                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                    model: ExtractModelFromResponse(responseContent) ?? _responsesModel,
+                    assistantId: null,
+                    threadId: null,
+                    runId: ExtractResponseId(responseContent),
+                    fileId: null,
+                    context: new OpenAIApiLogContext { OperationType = operationType });
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                        new Exception($"OpenAI Responses API failed ({(int)response.StatusCode}) for {operationType}: {responseContent}"));
+                    return null;
+                }
+                if (IsIncompleteResponse(responseContent, out var incompleteReason))
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                        new Exception($"OpenAI Responses API returned incomplete output for {operationType}. Reason: {incompleteReason}"));
+                    return null;
+                }
+                return ExtractOutputText(responseContent);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public Task<RunResult> CreateTextResponseAsync(
             string input,
             string operationType,

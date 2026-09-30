@@ -96,6 +96,54 @@ namespace Risebird.Web.Controllers
 
         //private readonly IIRFService _irfService;
 
+        private readonly ICodeProjectSettingsProvider _codeProjectSettings;
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        #region Code project infrastructure setup
+
+        /// <summary>
+        /// Admin-only proxy to the functions app's one-click code project setup
+        /// (CodeProjects/Setup in Risebird.AzureTimerFunctions). The target is CodeProjects:FunctionsBaseUrl,
+        /// or the local functions host (http://localhost:7071/api) when running in Development.
+        /// </summary>
+        [HttpPost]
+        public Task<IActionResult> CodeProjectSetupStart() => ProxyCodeProjectSetupAsync(HttpMethod.Post, "start");
+
+        [HttpGet]
+        public Task<IActionResult> CodeProjectSetupStatus() => ProxyCodeProjectSetupAsync(HttpMethod.Get, "status");
+
+        private async Task<IActionResult> ProxyCodeProjectSetupAsync(HttpMethod method, string action)
+        {
+            var profile = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            if (string.IsNullOrEmpty(email) || profile != "Admin")
+                return Json(new { status = "error", message = "Only an Admin can run the code project setup." });
+
+            var baseUrl = _codeProjectSettings.FunctionsBaseUrl();
+            if (string.IsNullOrEmpty(baseUrl))
+                return Json(new { status = "error", message = "Set CodeProjects:FunctionsBaseUrl (or run the web app in Development next to 'func start')." });
+
+            try
+            {
+                var url = $"{baseUrl}/codeprojects/setup/{action}" + (action == "start" ? "?by=" + Uri.EscapeDataString(email) : "");
+                using var client = _httpClientFactory.CreateClient();
+                // Start runs the first steps (database, providers, …) before answering.
+                client.Timeout = TimeSpan.FromMinutes(action == "start" ? 10 : 1);
+                using var request = new HttpRequestMessage(method, url);
+                var key = _codeProjectSettings.Get(CodeProjectSettingNames.FunctionsKey);
+                if (!string.IsNullOrEmpty(key)) request.Headers.Add("x-functions-key", key);
+                using var response = await client.SendAsync(request);
+                var body = await response.Content.ReadAsStringAsync();
+                return Content(body, "application/json");
+            }
+            catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
+            {
+                return Json(new { status = "error", message = $"Could not reach the functions app at {baseUrl}: {ex.Message}. Is it running?" });
+            }
+        }
+
+        #endregion
+
         public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger,
             IAzureStorageHelper azureStorageHelper, INotificationHelper notificationHelper,
             IUserService userService, IConfiguration configuration, IMeetingService meetingService,
@@ -120,8 +168,12 @@ namespace Risebird.Web.Controllers
             ITrialJudgmentService trialJudgmentService,
             IClientRepository clientRepository,
             IClientService clientService,
-            IClonableSkillChannelTemplateService clonableSkillChannelTemplateService)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
+            IClonableSkillChannelTemplateService clonableSkillChannelTemplateService,
+            ICodeProjectSettingsProvider codeProjectSettings,
+            IHttpClientFactory httpClientFactory)//, IAffIndaResumeParserHelper affIndaResumeParserHelper, ICandidateRepository candidateRepository, IValidationHelper validationHelper, IIRFService irfService
         {
+            _codeProjectSettings = codeProjectSettings;
+            _httpClientFactory = httpClientFactory;
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;

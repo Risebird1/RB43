@@ -1,5 +1,12 @@
 # Code project candidate machines — Azure setup
 
+> **Use the one-click setup instead of these manual steps.** Admin dashboard → "Code project
+> infrastructure" → **Set up**. It calls `POST /api/codeprojects/setup/start` on the functions app,
+> which does everything below through ARM: database migrations, network, Bastion, VM images
+> (Azure Image Builder), grading runners (ACR + Container Apps jobs), `StackImages` rows and the settings
+> both apps read (`CodeProjectSettings` table). Code: `Risebird.AzureTimerFunctions/CodeProjects/Setup`.
+> The notes below remain as a reference for what it builds; `main.bicep` is an equivalent of the network part.
+
 The provisioner lives in `Risebird.AzureTimerFunctions/CodeProjects`. The web app calls it at
 `CodeProjects:ProvisionerUrl`. Setup order:
 
