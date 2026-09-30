@@ -17,6 +17,13 @@ namespace Risebird.CommonHelper.Interface
         /// Calls/{Sid}: status, duration and recording URL of a call. Returns null when the lookup fails.
         /// </summary>
         Task<ExotelCallDetails> GetCallDetailsAsync(string callSid);
+
+        /// <summary>
+        /// Downloads a recording (Exotel recording URLs need the API credentials). Only *.exotel.com URLs are fetched.
+        /// <paramref name="range"/> is the browser's Range header, forwarded so audio players can seek.
+        /// The caller disposes the response. Returns null when the URL is not an Exotel URL.
+        /// </summary>
+        Task<System.Net.Http.HttpResponseMessage> GetRecordingAsync(string recordingUrl, string range);
     }
 
     public class ExotelConnectResult

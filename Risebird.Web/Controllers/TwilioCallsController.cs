@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -10,6 +11,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 //using Twilio.AspNetCore
@@ -75,6 +77,71 @@ namespace Risebird.Web.Controllers
             });
         }
 
+        // GET: TwilioCalls/ExotelRecording?callSid=... — plays an Exotel call recording for signed-in portal users.
+        // Exotel recording URLs need the API Key/Token, so the recording is fetched server-side and streamed
+        // (Range requests are passed through so audio players can seek). CallRecordingData.RecordingUri for
+        // Exotel calls points here.
+        [HttpGet]
+        public async Task<IActionResult> ExotelRecording(string callSid)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("email")))
+            {
+                return Unauthorized();
+            }
+            if (string.IsNullOrWhiteSpace(callSid) || callSid.Length > 64 || !callSid.All(char.IsLetterOrDigit))
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var details = await _exotelService.GetCallDetailsAsync(callSid);
+                if (string.IsNullOrWhiteSpace(details?.RecordingUrl))
+                {
+                    return NotFound();
+                }
+
+                var upstream = await _exotelService.GetRecordingAsync(details.RecordingUrl, Request.Headers["Range"].ToString());
+                if (upstream == null)
+                {
+                    return NotFound();
+                }
+                HttpContext.Response.RegisterForDispose(upstream);
+                if (!upstream.IsSuccessStatusCode)
+                {
+                    return StatusCode((int)upstream.StatusCode);
+                }
+
+                Response.StatusCode = (int)upstream.StatusCode; // 200, or 206 for a Range request
+                Response.Headers["Accept-Ranges"] = "bytes";
+                Response.Headers["Cache-Control"] = "private, max-age=3600";
+                if (upstream.Content.Headers.ContentRange != null)
+                {
+                    Response.Headers["Content-Range"] = upstream.Content.Headers.ContentRange.ToString();
+                }
+                if (upstream.Content.Headers.ContentLength.HasValue)
+                {
+                    Response.ContentLength = upstream.Content.Headers.ContentLength;
+                }
+                Response.ContentType = upstream.Content.Headers.ContentType?.ToString() ?? "audio/mpeg";
+
+                await using (var body = await upstream.Content.ReadAsStreamAsync())
+                {
+                    await body.CopyToAsync(Response.Body, HttpContext.RequestAborted);
+                }
+                return new EmptyResult();
+            }
+            catch (OperationCanceledException)
+            {
+                return new EmptyResult(); // player closed / seeked away mid-download
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return StatusCode(502);
+            }
+        }
+
         // POST: TwilioCalls/ExotelStatus — Exotel StatusCallback (StatusCallbackEvents=terminal) for calls placed by
         // User/ExotelConnect. The payload is not trusted: the call is re-read from the Exotel API by Sid and its
         // recording URL / duration stored on the CallRecordingData row. Recordings that are not ready yet are picked
@@ -111,8 +178,9 @@ namespace Risebird.Web.Controllers
                 var details = await _exotelService.GetCallDetailsAsync(callSid);
                 if (!string.IsNullOrWhiteSpace(details?.RecordingUrl))
                 {
-                    // Keyed on CallRecordingData.CallSid — provider-agnostic despite the name.
-                    await _userRepository.UpdatePlivoRecordingAsync(callSid.Trim(), details.RecordingUrl, details.DurationSeconds);
+                    // Store our playback link (Exotel's URL needs the API credentials). Keyed on
+                    // CallRecordingData.CallSid — provider-agnostic despite the name.
+                    await _userRepository.UpdatePlivoRecordingAsync(callSid.Trim(), ExotelService.RecordingLink(callSid), details.DurationSeconds);
                 }
             }
             catch (Exception ex)

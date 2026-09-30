@@ -125,6 +125,26 @@ namespace Risebird.CommonHelper
             return $"{head}…{number.Substring(Math.Max(0, number.Length - 3))} ({number.Length} chars)";
         }
 
+        /// <summary>
+        /// Link stored in CallRecordingData.RecordingUri for an Exotel call. Exotel recording URLs need the API
+        /// credentials, so the portal plays them through TwilioCalls/ExotelRecording instead of linking them directly.
+        /// </summary>
+        public static string RecordingLink(string callSid) =>
+            "/TwilioCalls/ExotelRecording?callSid=" + Uri.EscapeDataString(callSid.Trim());
+
+        /// <inheritdoc/>
+        public async Task<HttpResponseMessage> GetRecordingAsync(string recordingUrl, string range)
+        {
+            if (!Uri.TryCreate(recordingUrl, UriKind.Absolute, out var uri) || uri.Scheme != Uri.UriSchemeHttps
+                || !(uri.Host == "exotel.com" || uri.Host.EndsWith(".exotel.com", StringComparison.OrdinalIgnoreCase)))
+                return null;
+
+            var request = new HttpRequestMessage(HttpMethod.Get, uri);
+            if (!string.IsNullOrWhiteSpace(range) && RangeHeaderValue.TryParse(range, out var parsedRange))
+                request.Headers.Range = parsedRange;
+            return await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+        }
+
         private static JObject TryParse(string body)
         {
             try { return string.IsNullOrWhiteSpace(body) ? null : JObject.Parse(body); }

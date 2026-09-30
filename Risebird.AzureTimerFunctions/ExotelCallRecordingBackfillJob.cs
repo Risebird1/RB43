@@ -1,5 +1,6 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Repository.Interface;
@@ -57,8 +58,9 @@ namespace Risebird.AzureTimerFunctions
                         if (string.IsNullOrWhiteSpace(details?.RecordingUrl))
                             continue; // no recording (yet) — next run retries while within the window
 
-                        // Keyed on CallRecordingData.CallSid — provider-agnostic despite the name.
-                        if (await _userRepository.UpdatePlivoRecordingAsync(call.CallSid, details.RecordingUrl, details.DurationSeconds))
+                        // Store the portal's playback link (Exotel's URL needs the API credentials). Keyed on
+                        // CallRecordingData.CallSid — provider-agnostic despite the name.
+                        if (await _userRepository.UpdatePlivoRecordingAsync(call.CallSid, ExotelService.RecordingLink(call.CallSid), details.DurationSeconds))
                             filled++;
                     }
                     catch (Exception ex)
