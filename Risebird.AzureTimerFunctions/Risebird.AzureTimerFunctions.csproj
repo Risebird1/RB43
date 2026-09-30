@@ -47,4 +47,10 @@
   <ItemGroup>
     <Using Include="System.Threading.ExecutionContext" Alias="ExecutionContext" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- Applied by the one-click code project setup (CodeProjects/Setup). -->
+    <EmbeddedResource Include="..\Risebird.DB\Migrations\AddCodeProjectQuestionSupport.sql" LogicalName="Migrations.AddCodeProjectQuestionSupport.sql" />
+    <EmbeddedResource Include="..\Risebird.DB\Migrations\AddCodeProjectVmProvisioning.sql" LogicalName="Migrations.AddCodeProjectVmProvisioning.sql" />
+    <EmbeddedResource Include="..\Risebird.DB\Migrations\AddCodeProjectInfraSetup.sql" LogicalName="Migrations.AddCodeProjectInfraSetup.sql" />
+  </ItemGroup>
 </Project>

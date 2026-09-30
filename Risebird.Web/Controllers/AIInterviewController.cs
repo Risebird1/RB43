@@ -73,6 +73,8 @@ namespace Risebird.Web.Controllers
         private readonly IConverter _converter;
         private readonly ICodeExecutionService _codeExecutionService;
         private readonly IMcqAssessmentService _mcqAssessmentService;
+        private readonly ICodeProjectQuestionService _codeProjectQuestionService;
+        private readonly Risebird.Web.Services.CodeProjectBackgroundQueue _codeProjectQueue;
 
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api,
@@ -87,8 +89,12 @@ namespace Risebird.Web.Controllers
             ICompositeViewEngine viewEngine, ITempDataProvider tempDataProvider,
             IHttpContextAccessor contextAccessor, IConverter converter,
             ICodeExecutionService codeExecutionService,
-            IMcqAssessmentService mcqAssessmentService)
+            IMcqAssessmentService mcqAssessmentService,
+            ICodeProjectQuestionService codeProjectQuestionService,
+            Risebird.Web.Services.CodeProjectBackgroundQueue codeProjectQueue)
         {
+            _codeProjectQuestionService = codeProjectQuestionService;
+            _codeProjectQueue = codeProjectQueue;
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
             _applicationErrorLogger = applicationErrorLogger;
@@ -194,6 +200,7 @@ namespace Risebird.Web.Controllers
                                     model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
                                     model.IsCodingQuestion = sampleQuestion.IsCodingQuestion;
                                     model.CodingTimeLimitInMinutes = sampleQuestion.CodingTimeLimitInMinutes;
+                                    model.IsCodeProjectQuestion = sampleQuestion.IsCodeProjectQuestion;
 
                                     // Fetch random typing sample text from database if it's a typing speed question
                                     if (sampleQuestion.IsTypingSpeedAssessment)
@@ -213,6 +220,7 @@ namespace Risebird.Web.Controllers
                                     }
 
                                     await _aiinterviewerService.LogTranscript(sid, "assistant", model.CurrentQuestion, sampleQuestion.id);
+                                    QueueCodeProjectLookAhead(sid.ToString(), meetingDetails.InterviewId, meetingDetails.irfIntId, model);
 
                                 }
 
@@ -373,6 +381,7 @@ namespace Risebird.Web.Controllers
                                                 model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
                                                 model.IsCodingQuestion = sampleQuestion.IsCodingQuestion;
                                                 model.CodingTimeLimitInMinutes = sampleQuestion.CodingTimeLimitInMinutes;
+                                                model.IsCodeProjectQuestion = sampleQuestion.IsCodeProjectQuestion;
 
                                                 // Fetch random typing sample text from database if it's a typing speed question
                                                 if (sampleQuestion.IsTypingSpeedAssessment)
@@ -392,6 +401,7 @@ namespace Risebird.Web.Controllers
                                                 }
 
                                                 await _aiinterviewerService.LogTranscript(sid, "assistant", model.CurrentQuestion, sampleQuestion.id);
+                                                QueueCodeProjectLookAhead(sid.ToString(), meetingDetails.InterviewId, meetingDetails.irfIntId, model);
 
                                             }
                                         }
@@ -1050,6 +1060,11 @@ namespace Risebird.Web.Controllers
                     string tranScribedResponse = string.Empty;
                     string codeResponse = string.Empty;
 
+                    // Decided server-side from the question id, like the MCQ section: the flag waives the
+                    // recorded-answer checks, so it must not be something the browser can assert.
+                    model.IsCodeProjectQuestion = model.CurrentQuestionId > 0
+                        && (await _codeProjectQuestionService.GetDetails(model.CurrentQuestionId)) != null;
+
                     // The MCQ section has no spoken or typed answer to capture - the candidate
                     // answered inside the embedded test, and the MCQ side already scored it. What
                     // goes into the transcript is a summary of that result, so the interview's own
@@ -1058,6 +1073,18 @@ namespace Risebird.Web.Controllers
                     if (model.IsMcqAssessmentQuestion)
                     {
                         userMessage = await CaptureMcqAssessmentResultAsync(model, meetingDetails);
+                    }
+                    // A code project answer is the candidate's last commit, graded against the hidden
+                    // tests. SubmitCodeProject normally ran just before this post; SubmitAsync is
+                    // idempotent, so this only grades here if the page posted without it (time ran out).
+                    // The transcript gets the requirement results and the diff, so the interview's
+                    // evaluator scores the project against the same rubric as every other answer.
+                    else if (model.IsCodeProjectQuestion)
+                    {
+                        var (projectAssessment, projectGrade) = await _codeProjectQuestionService.SubmitAsync(
+                            model.SessionId.ToString(), model.CurrentQuestionId, model.candidateName);
+                        var projectDetails = await _codeProjectQuestionService.GetDetails(model.CurrentQuestionId);
+                        userMessage = _codeProjectQuestionService.BuildTranscriptAnswer(projectDetails, projectAssessment, projectGrade);
                     }
                     // A coding answer is the written code plus anything the candidate said while writing it.
                     // Both are merged into one transcript entry so evaluation and the report see a single answer.
@@ -1604,6 +1631,7 @@ namespace Risebird.Web.Controllers
                             model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
                             model.IsCodingQuestion = sampleQuestion.IsCodingQuestion;
                             model.CodingTimeLimitInMinutes = sampleQuestion.CodingTimeLimitInMinutes;
+                            model.IsCodeProjectQuestion = sampleQuestion.IsCodeProjectQuestion;
                             // Drop the answer just saved so it is not re-rendered against the next question
                             model.CodingSubmittedCode = null;
                             model.CodingLanguage = null;
@@ -1627,6 +1655,7 @@ namespace Risebird.Web.Controllers
                                 model.ListeningAudioTranscription = sampleQuestion.ListeningAudioTranscription;
                                 model.IsCodingQuestion = sampleQuestion.IsCodingQuestion;
                                 model.CodingTimeLimitInMinutes = sampleQuestion.CodingTimeLimitInMinutes;
+                                model.IsCodeProjectQuestion = sampleQuestion.IsCodeProjectQuestion;
 
                                 // Fetch random typing sample text from database if it's a typing speed question
                                 if (sampleQuestion.IsTypingSpeedAssessment)
@@ -1646,6 +1675,7 @@ namespace Risebird.Web.Controllers
                                 }
 
                                 await _aiinterviewerService.LogTranscript(model.SessionId, "assistant", model.CurrentQuestion, sampleQuestion.id);
+                                QueueCodeProjectLookAhead(model.SessionId.ToString(), model.InterviewId, model.IRFId, model);
 
                             }
 
@@ -2021,6 +2051,7 @@ namespace Risebird.Web.Controllers
                 && !model.IsTypingSpeedQuestion
                 && !model.IsListeningComprehensionQuestion
                 && !model.IsCodingQuestion
+                && !model.IsCodeProjectQuestion
                 && !model.IsMcqAssessmentQuestion)
             {
                 return View("ExitModalPartial", CreateAnswerSubmitErrorView(
@@ -2035,6 +2066,7 @@ namespace Risebird.Web.Controllers
             if (!model.IsTypingSpeedQuestion
                 && !model.IsListeningComprehensionQuestion
                 && !model.IsCodingQuestion
+                && !model.IsCodeProjectQuestion
                 && !model.IsMcqAssessmentQuestion
                 && (model.VideoFile == null || model.VideoFile.Length == 0))
             {
@@ -2071,6 +2103,7 @@ namespace Risebird.Web.Controllers
 
                 model.IsCodingQuestion = questionDetails.IsCodingQuestion;
                 model.CodingTimeLimitInMinutes = questionDetails.CodingTimeLimitInMinutes;
+                model.IsCodeProjectQuestion = questionDetails.IsCodeProjectQuestion;
             }
             catch (Exception ex)
             {
@@ -2338,6 +2371,7 @@ namespace Risebird.Web.Controllers
             model.SynthesizedVideoUrl = null;
             model.IsCodingQuestion = false;
             model.CodingTimeLimitInMinutes = null;
+            model.IsCodeProjectQuestion = false;
             model.IsTypingSpeedQuestion = false;
             model.IsListeningComprehensionQuestion = false;
             model.ListeningAudioUrl = null;
@@ -2936,6 +2970,7 @@ namespace Risebird.Web.Controllers
                 try { typingAssessments = await _aiinterviewerService.GetTypingSpeedAssessmentBySessionId(seId.ToString()) ?? new List<TypingSpeedAssessment>(); } catch { typingAssessments = new List<TypingSpeedAssessment>(); }
                 ViewBag.TypingSpeedAssessments = typingAssessments;
                 reportModel.TypingSpeedAssessments = typingAssessments;
+                reportModel.CodeProjectAssessments = await LoadCodeProjectAssessmentsAsync(seId);
                 reportModel.CandidateEmail = meetingDetails.candidateEmail;
                 reportModel.CandidateName = meetingDetails.candidateName;
                 reportModel.InterviewDate = meetingDetails.interviewDate;
@@ -3091,6 +3126,7 @@ namespace Risebird.Web.Controllers
                 try { typingAssessmentsAdaptive = await _aiinterviewerService.GetTypingSpeedAssessmentBySessionId(seId.ToString()) ?? new List<TypingSpeedAssessment>(); } catch { typingAssessmentsAdaptive = new List<TypingSpeedAssessment>(); }
                 ViewBag.TypingSpeedAssessments = typingAssessmentsAdaptive;
                 reportModel.TypingSpeedAssessments = typingAssessmentsAdaptive;
+                reportModel.CodeProjectAssessments = await LoadCodeProjectAssessmentsAsync(seId);
                 reportModel.CandidateEmail = meetingDetails.candidateEmail;
                 reportModel.CandidateName = meetingDetails.candidateName;
                 reportModel.resumeLink = meetingDetails.resumeLink;
@@ -3467,6 +3503,7 @@ namespace Risebird.Web.Controllers
                 List<TypingSpeedAssessment> typingAssessmentsPdf;
                 try { typingAssessmentsPdf = await _aiinterviewerService.GetTypingSpeedAssessmentBySessionId(seId.ToString()) ?? new List<TypingSpeedAssessment>(); } catch { typingAssessmentsPdf = new List<TypingSpeedAssessment>(); }
                 reportModel.TypingSpeedAssessments = typingAssessmentsPdf;
+                reportModel.CodeProjectAssessments = await LoadCodeProjectAssessmentsAsync(seId);
 
                 // This action builds its own model rather than reusing Report's, so the MCQ
                 // section has to be resolved here too or it would be missing from the PDF while
@@ -3734,6 +3771,174 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        #region Code project questions
+
+        /// <summary>
+        /// Look-ahead provisioning. A VM takes 30-60 s to boot, which at fifteen minutes is a real slice
+        /// of the slot, so while the candidate is on question N-1 the machine for question N is started.
+        /// The current question is also prepared, covering a code project that is the first question
+        /// or a resumed session. Both are queued: nothing here waits on Azure.
+        /// </summary>
+        private void QueueCodeProjectLookAhead(string sessionId, int interviewId, int irfId, ChatMessageViewModel model)
+        {
+            if (model == null || model.CurrentQuestionId <= 0) return;
+            if (model.IsCodeProjectQuestion)
+                _codeProjectQueue.Enqueue(new Risebird.Web.Services.CodeProjectBackgroundQueue.PrepareEnvironment(sessionId, model.CurrentQuestionId));
+            _codeProjectQueue.Enqueue(new Risebird.Web.Services.CodeProjectBackgroundQueue.PrepareNextEnvironment(sessionId, interviewId, irfId, model.CurrentQuestionId));
+        }
+
+        /// <summary>
+        /// Candidate endpoints act only on the code project question currently on screen for a live
+        /// session, so a session id cannot be used to probe or start machines for other questions.
+        /// </summary>
+        private async Task<CodeProjectDetails> AuthorizeCodeProjectAsync(Guid sid, int questionId)
+        {
+            if (sid == Guid.Empty || questionId <= 0) return null;
+            var meeting = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(sid);
+            if (meeting == null) return null;
+
+            var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(sid);
+            var current = transcript?.FirstOrDefault(t => string.Equals(t.Role, "assistant", StringComparison.OrdinalIgnoreCase));
+            if (current == null || current.DeliveryHeadQuestionId != questionId) return null;
+
+            var details = await _codeProjectQuestionService.GetDetails(questionId);
+            if (details == null || details.IRFId != meeting.irfIntId
+                || details.ValidationStatus != CodeProjectValidationStatus.Passed)
+                return null;
+            return details;
+        }
+
+        /// <summary>What the candidate sees in "Your task". Built from the sanitized payload — never tier 3.</summary>
+        private static object BuildCodeProjectTask(CodeProjectDetails details)
+        {
+            var requirements = new List<string>();
+            var editable = new List<string>();
+            var files = new List<string>();
+            if (!string.IsNullOrWhiteSpace(details.GeneratedPayload))
+            {
+                try
+                {
+                    var p = Newtonsoft.Json.Linq.JObject.Parse(details.GeneratedPayload);
+                    requirements = (p["requirements"] as Newtonsoft.Json.Linq.JArray)?.Select(r => r["text"]?.ToString()).Where(t => !string.IsNullOrWhiteSpace(t)).ToList() ?? requirements;
+                    editable = p["editable_files"]?.ToObject<List<string>>() ?? editable;
+                    files = p["project_files"]?.ToObject<List<string>>() ?? files;
+                }
+                catch (Newtonsoft.Json.JsonException) { }
+            }
+            return new
+            {
+                questionText = details.Comment,
+                skillName = details.SkillName,
+                stackImageCode = details.StackImageCode,
+                framework = details.Framework,
+                language = details.Language,
+                timeLimitMinutes = details.CodingTimeLimitInMinutes ?? CodeProjectQuestionHelper.DefaultTimeLimitMinutes,
+                requirements,
+                editableFiles = editable,
+                files,
+                buildCommand = details.BuildCommand,
+                testCommand = details.TestCommand,
+                runCommand = details.RunCommand
+            };
+        }
+
+        private static object BuildCodeProjectEnvironmentView(CodeProjectEnvironment env, CodeProjectDetails details,
+            CodeProjectEnvironmentStatus connection = null)
+        {
+            var limit = details.CodingTimeLimitInMinutes ?? CodeProjectQuestionHelper.DefaultTimeLimitMinutes;
+            int? secondsRemaining = null;
+            if (env?.HandedOverAtUtc != null)
+                secondsRemaining = Math.Max(0, (int)(env.HandedOverAtUtc.Value.AddMinutes(limit) - DateTime.UtcNow).TotalSeconds);
+            var connected = env?.State == CodeProjectEnvironmentState.HandedOver;
+            return new
+            {
+                state = env?.State ?? CodeProjectEnvironmentState.Requested,
+                message = env?.Message,
+                // The link and sign-in are only released on handover, which is also when the clock starts.
+                connectUrl = connected ? (connection?.ConnectUrl ?? env.ConnectUrl) : null,
+                username = connected ? connection?.Username : null,
+                password = connected ? connection?.Password : null,
+                secondsRemaining,
+                timeLimitMinutes = limit
+            };
+        }
+
+        /// <summary>Task text plus environment state. Polled while the machine comes up.</summary>
+        [HttpGet]
+        public async Task<JsonResult> CodeProjectEnvironment(Guid sid, int questionId)
+        {
+            try
+            {
+                var details = await AuthorizeCodeProjectAsync(sid, questionId);
+                if (details == null)
+                    return Json(new { success = false, message = "Your interview session could not be verified. Please reload the page." });
+                var env = await _codeProjectQuestionService.RefreshEnvironmentAsync(sid.ToString(), questionId);
+                var connection = await _codeProjectQuestionService.GetConnectionAsync(env);
+                return Json(new { success = true, task = BuildCodeProjectTask(details), environment = BuildCodeProjectEnvironmentView(env, details, connection) });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not check your environment. Retrying…" });
+            }
+        }
+
+        /// <summary>Report data. A failure here must never take the rest of the report down.</summary>
+        private async Task<List<CodeProjectAssessment>> LoadCodeProjectAssessmentsAsync(Guid seId)
+        {
+            try { return await _codeProjectQuestionService.GetAssessmentsForSession(seId.ToString()) ?? new List<CodeProjectAssessment>(); }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<CodeProjectAssessment>();
+            }
+        }
+
+        /// <summary>"Launch environment". Hands the machine over once it is ready; the clock starts then.</summary>
+        [HttpPost]
+        public async Task<JsonResult> CodeProjectLaunch(Guid sid, int questionId)
+        {
+            try
+            {
+                var details = await AuthorizeCodeProjectAsync(sid, questionId);
+                if (details == null)
+                    return Json(new { success = false, message = "Your interview session could not be verified. Please reload the page." });
+                var env = await _codeProjectQuestionService.HandOverAsync(sid.ToString(), questionId);
+                var connection = await _codeProjectQuestionService.GetConnectionAsync(env);
+                return Json(new { success = true, environment = BuildCodeProjectEnvironmentView(env, details, connection) });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not open your environment. Retrying…" });
+            }
+        }
+
+        /// <summary>
+        /// Grades the candidate's last pushed commit. The candidate is not shown the hidden-test
+        /// results; the page then posts the answer form to move to the next question.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> SubmitCodeProject(Guid sid, int questionId)
+        {
+            try
+            {
+                var details = await AuthorizeCodeProjectAsync(sid, questionId);
+                if (details == null)
+                    return Json(new { success = false, message = "Your interview session could not be verified. Please reload the page." });
+                var meeting = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(sid);
+                var (assessment, grade) = await _codeProjectQuestionService.SubmitAsync(sid.ToString(), questionId, meeting?.candidateName);
+                return Json(new { success = assessment != null, graded = string.IsNullOrEmpty(grade?.Error) });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Your work is saved on the machine. Submitting again…" });
+            }
+        }
+
+        #endregion
+
         /// <summary>
         /// Compiles and runs the code a candidate has written for a coding question.
         /// Read-only with respect to the interview: running code never advances the interview
@@ -3839,7 +4044,7 @@ namespace Risebird.Web.Controllers
                     ? questionDetails.QuestionGist
                     : questionDetails.Comment;
 
-                if (questionDetails.IsCodingQuestion && string.IsNullOrWhiteSpace(questionDetails.QuestionGist))
+                if ((questionDetails.IsCodingQuestion || questionDetails.IsCodeProjectQuestion) && string.IsNullOrWhiteSpace(questionDetails.QuestionGist))
                 {
                     return Json(new { success = false, message = "Add a question gist in plain language before generating a video. The avatar reads the gist for coding questions, not the code." });
                 }
