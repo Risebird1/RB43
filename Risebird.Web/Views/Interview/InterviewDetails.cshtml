@@ -1381,7 +1381,7 @@
 </script>
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
-<script src="~/js/TwilioCallMaker.js?v=2024"></script>
+<script src="~/js/TwilioCallMaker.js" asp-append-version="true"></script>
 <script>
     function closePopupDetailsModal() {
         var modal = document.getElementById("PopupDetailsModal");
