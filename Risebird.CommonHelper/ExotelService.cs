@@ -50,7 +50,7 @@ namespace Risebird.CommonHelper
                 return new ExotelConnectResult { ErrorMessage = "Invalid phone number to call" };
             // Exotel rings From first and then dials To; it rejects a call to the same number with a bare 400.
             if (fromNumber == toNumber)
-                return new ExotelConnectResult { ErrorMessage = "That is your own phone number — Exotel rings your phone first, so call a different number" };
+                return new ExotelConnectResult { ErrorMessage = $"That is your own phone number ({Mask(toNumber)}) — Exotel rings your phone first, so call a different number" };
 
             var form = new List<KeyValuePair<string, string>>
             {

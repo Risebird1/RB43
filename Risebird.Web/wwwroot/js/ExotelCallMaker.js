@@ -156,6 +156,7 @@
                 }, ANSWER_TIMEOUT_MS);
             }
 
+            console.log("📞 Exotel: calling", phone, useSoftphone ? "(softphone)" : "(rings your phone first)");
             const numericInterviewId = parseInt(typeof interviewId !== "undefined" ? interviewId : "", 10);
             const response = await fetch("/User/ExotelConnect", {
                 method: "POST",
