@@ -33,7 +33,21 @@ namespace Risebird.Entities.ViewModel
             $"- estimated_minutes is your honest estimate of candidate effort and must be at most {MaxEstimatedMinutes}.",
             "- Shape: one focused defect to fix, or one small feature to add. Never \"explore this codebase\".",
             "- The starter project must build, and the hidden tests must mostly FAIL against it. The reference solution must make every hidden test pass.",
-            "- hidden_tests, reference_solution and seeded_defects are server-side only. Do not copy their content into project_files."
+            "- hidden_tests, reference_solution and seeded_defects are server-side only. Do not copy their content into project_files.",
+            "- Builds run OFFLINE. Use only the dependencies, versions and exact build_command/test_command listed for the chosen stack image.",
+            "- test_command must write machine-readable results: Maven Surefire reports, pytest --junitxml=test-results/junit.xml, " +
+                "vitest --reporter=junit --outputFile=test-results/junit.xml, or dotnet test --logger trx --results-directory TestResults.",
+            "- Each requirement's test_name is the test method/function name exactly as the framework reports it (no class prefix, no parentheses)."
+        });
+
+        /// <summary>System instructions for the Responses API call; the request input carries the brief, rubric and allowlists.</summary>
+        public static string GeneratorInstructions => string.Join("\n\n", new[]
+        {
+            "You generate small, runnable coding projects for timed technical interviews. The candidate works on a real machine with an IDE and a terminal.",
+            ScopeRulesInstruction,
+            DmIvQuestionRubricHelper.QuestionGistInstruction,
+            ResponseContractInstruction,
+            "Respond with the JSON object only."
         });
 
         public const string ResponseContractInstruction =

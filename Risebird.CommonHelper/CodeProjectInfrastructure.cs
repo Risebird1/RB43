@@ -100,10 +100,23 @@ namespace Risebird.CommonHelper
             sas.SetPermissions(BlobSasPermissions.Read | BlobSasPermissions.Add | BlobSasPermissions.Create | BlobSasPermissions.Write);
             return blob.GenerateSasUri(sas).ToString();
         }
+
+        public async Task DeleteAsync(string container, string blobName, CancellationToken ct = default)
+        {
+            var blob = new BlobContainerClient(_connectionString, container).GetBlobClient(blobName);
+            await blob.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots, cancellationToken: ct);
+        }
+
+        public async Task<bool> ExistsAsync(string container, string blobName, CancellationToken ct = default)
+        {
+            var blob = new BlobContainerClient(_connectionString, container).GetBlobClient(blobName);
+            return (await blob.ExistsAsync(ct)).Value;
+        }
     }
 
     /// <summary>
-    /// Calls the container runner (an HTTP-triggered function) configured at CodeProjects:RunnerUrl.
+    /// Calls the container runner (the CodeProjectRun function). URL: CodeProjects:RunnerUrl, else
+    /// {functions base}/codeprojects/run from the one-click setup (or the local functions host in Development).
     /// Contract: POST CodeProjectRunRequest as JSON, receive CodeProjectRunResult.
     /// </summary>
     public class HttpCodeProjectRunner : ICodeProjectRunner
@@ -113,11 +126,12 @@ namespace Risebird.CommonHelper
         private readonly string _url;
         private readonly string _key;
 
-        public HttpCodeProjectRunner(HttpClient http, IConfiguration configuration)
+        public HttpCodeProjectRunner(HttpClient http, ICodeProjectSettingsProvider settings)
         {
             _http = http;
-            _url = configuration["CodeProjects:RunnerUrl"];
-            _key = configuration["CodeProjects:RunnerKey"];
+            var functions = settings.FunctionsBaseUrl();
+            _url = settings.Get(CodeProjectSettingNames.RunnerUrl) ?? (functions == null ? null : functions + "/codeprojects/run");
+            _key = settings.Get(CodeProjectSettingNames.RunnerKey) ?? settings.Get(CodeProjectSettingNames.FunctionsKey);
             _http.Timeout = TimeSpan.FromMinutes(5);
         }
 
@@ -161,11 +175,12 @@ namespace Risebird.CommonHelper
         private readonly string _baseUrl;
         private readonly string _key;
 
-        public HttpCodeProjectEnvironmentProvisioner(HttpClient http, IConfiguration configuration)
+        public HttpCodeProjectEnvironmentProvisioner(HttpClient http, ICodeProjectSettingsProvider settings)
         {
             _http = http;
-            _baseUrl = configuration["CodeProjects:ProvisionerUrl"]?.TrimEnd('/');
-            _key = configuration["CodeProjects:ProvisionerKey"];
+            var functions = settings.FunctionsBaseUrl();
+            _baseUrl = (settings.Get(CodeProjectSettingNames.ProvisionerUrl) ?? (functions == null ? null : functions + "/codeprojects"))?.TrimEnd('/');
+            _key = settings.Get(CodeProjectSettingNames.ProvisionerKey) ?? settings.Get(CodeProjectSettingNames.FunctionsKey);
             // Collect runs a Run Command on the VM and can take up to ~3 minutes.
             _http.Timeout = TimeSpan.FromMinutes(4);
         }

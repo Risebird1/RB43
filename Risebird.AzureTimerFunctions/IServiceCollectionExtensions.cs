@@ -178,6 +178,12 @@ namespace Risebird.AzureFunctions
             services.AddScoped<ICodeProjectVmRepository, CodeProjectVmRepository>();
             services.AddSingleton<ICodeProjectBlobStore, CodeProjectBlobStore>();
             services.AddScoped<Risebird.AzureTimerFunctions.CodeProjects.CodeProjectVmProvisioner>();
+            // Settings written by the one-click setup, the container runner and the setup itself.
+            services.AddScoped<ICodeProjectSettingsRepository, CodeProjectSettingsRepository>();
+            services.AddScoped<ICodeProjectSetupRepository, CodeProjectSetupRepository>();
+            services.AddScoped<ICodeProjectSettingsProvider, CodeProjectSettingsProvider>();
+            services.AddScoped<Risebird.AzureTimerFunctions.CodeProjects.CodeProjectContainerRunner>();
+            services.AddScoped<Risebird.AzureTimerFunctions.CodeProjects.Setup.CodeProjectInfraSetupService>();
             services.AddScoped<IGoogleEventHelper, GoogleEventHelper>();
             services.AddScoped<IAffIndaResumeParserHelper, AffIndaResumeParserHelper>();
             services.AddScoped<IEncryptionHelper, EncryptionHelper>();

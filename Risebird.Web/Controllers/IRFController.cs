@@ -98,6 +98,7 @@ namespace Risebird.Web.Controllers
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly ICodeProjectQuestionService _codeProjectQuestionService;
         private readonly Risebird.Web.Services.CodeProjectBackgroundQueue _codeProjectQueue;
+        private readonly IOpenAIResponsesHelper _openAIResponsesHelper;
 
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
@@ -113,11 +114,13 @@ namespace Risebird.Web.Controllers
             IMcqAssessmentService mcqAssessmentService,
             IServiceScopeFactory scopeFactory,
             ICodeProjectQuestionService codeProjectQuestionService,
-            Risebird.Web.Services.CodeProjectBackgroundQueue codeProjectQueue)
+            Risebird.Web.Services.CodeProjectBackgroundQueue codeProjectQueue,
+            IOpenAIResponsesHelper openAIResponsesHelper)
         {
             _scopeFactory = scopeFactory;
             _codeProjectQuestionService = codeProjectQuestionService;
             _codeProjectQueue = codeProjectQueue;
+            _openAIResponsesHelper = openAIResponsesHelper;
             _userService = userService;
             _irfRepository = iRFRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -10268,12 +10271,10 @@ namespace Risebird.Web.Controllers
                 if (!string.IsNullOrWhiteSpace(skillName) && !DmIvQuestionRubricHelper.TryMatchSkill(skillName, validSkillNames, out preferredSkill))
                     return Json(new { success = false, message = "The skill must be one of this channel's rubric skills." });
 
-                var assistantId = _configuration["OpenAI:CodeProjectAssistantId"];
-                if (string.IsNullOrEmpty(assistantId))
-                    return Json(new { success = false, message = "Code project assistant not configured." });
-                var apiKey = _configuration["OpenAI:ApiKey"];
-                if (string.IsNullOrEmpty(apiKey))
-                    return Json(new { success = false, message = "OpenAI API key not configured." });
+                // Responses API with the instructions inline: OpenAI retired the Assistants API on
+                // 26 Aug 2026, and inline instructions need no stored prompt or assistant to be set up.
+                if (string.IsNullOrEmpty(_configuration["OpenAI:ApiKey"]) || string.IsNullOrEmpty(_configuration["OpenAI:ResponsesModel"]))
+                    return Json(new { success = false, message = "OpenAI:ApiKey and OpenAI:ResponsesModel must be configured." });
 
                 var input = BuildCodeProjectGenerationInput(irfVm, images, requestedStack, brief.Trim(), difficulty, preferredSkill,
                     language, framework, timeLimitMinutes);
@@ -10284,7 +10285,8 @@ namespace Risebird.Web.Controllers
                 List<string> errors = null;
                 for (var attempt = 0; attempt < 2; attempt++)
                 {
-                    var raw = await FetchAssistantTextResponseAsync(assistantId, apiKey, input, allowResponsesApi: false);
+                    var raw = await _openAIResponsesHelper.CreateJsonWithInstructionsAsync(
+                        CodeProjectQuestionHelper.GeneratorInstructions, input, "GenerateCodeProjectQuestion");
                     generation = CodeProjectQuestionHelper.Parse(raw, out var parseError);
                     errors = generation == null
                         ? new List<string> { parseError }
@@ -10411,12 +10413,8 @@ namespace Risebird.Web.Controllers
             sb.AppendLine(DmIvQuestionRubricHelper.BuildRubricPromptSection(irfVm.SkillCollection));
             sb.AppendLine("secondary_skills is optional; every entry must also be copied exactly from the Score Rubric list.");
             sb.AppendLine();
+            // Rules and the response contract travel as the call's instructions (CodeProjectQuestionHelper.GeneratorInstructions).
             sb.AppendLine(DmIvQuestionRubricHelper.BuildStackImagePromptSection(images));
-            sb.AppendLine();
-            sb.AppendLine(CodeProjectQuestionHelper.ScopeRulesInstruction);
-            sb.AppendLine();
-            sb.AppendLine(DmIvQuestionRubricHelper.QuestionGistInstruction);
-            sb.AppendLine(CodeProjectQuestionHelper.ResponseContractInstruction);
             return sb.ToString();
         }
 
@@ -14213,13 +14211,9 @@ namespace Risebird.Web.Controllers
             return new RubricQuestionGenerationResult { Response = response, RetryAttempted = isRetry };
         }
 
-        /// <param name="allowResponsesApi">
-        /// The Responses API path is wired to the rubric question prompt, so callers with their own
-        /// assistant (code project generation) pass false to always use that assistant.
-        /// </param>
-        private async Task<string> FetchAssistantTextResponseAsync(string assistantId, string apiKey, string rubricInput, bool allowResponsesApi = true)
+        private async Task<string> FetchAssistantTextResponseAsync(string assistantId, string apiKey, string rubricInput)
         {
-            var useResponsesApi = allowResponsesApi && _configuration.GetValue("OpenAI:UseResponsesApi", false);
+            var useResponsesApi = _configuration.GetValue("OpenAI:UseResponsesApi", false);
             if (useResponsesApi)
             {
                 var result = await _assistantServiceHelper.GenerateRubricQuestions(rubricInput);
@@ -14254,8 +14248,7 @@ namespace Risebird.Web.Controllers
                 var pollStart = DateTime.UtcNow;
                 while (runStatus == "queued" || runStatus == "in_progress")
                 {
-                    // A whole project is a much larger response than a question list.
-                    if ((DateTime.UtcNow - pollStart).TotalSeconds > (allowResponsesApi ? 90 : 240)) return null;
+                    if ((DateTime.UtcNow - pollStart).TotalSeconds > 90) return null;
                     await System.Threading.Tasks.Task.Delay(3000);
                     var statusResp = await http.GetAsync($"https://api.openai.com/v1/threads/{threadId}/runs/{runId}");
                     var statusJson = Newtonsoft.Json.Linq.JObject.Parse(await statusResp.Content.ReadAsStringAsync());

@@ -31,13 +31,25 @@ namespace Risebird.AzureTimerFunctions.CodeProjects
         public string CollectContainer { get; set; } = "codeprojectcollect";
         public string WorkspacePath { get; set; } = @"C:\workspace";
 
-        public static CodeProjectAzureOptions From(IConfiguration configuration)
+        /// <summary>Configuration first; blanks are filled from what the one-click setup stored.</summary>
+        public static CodeProjectAzureOptions From(IConfiguration configuration, ICodeProjectSettingsProvider settings)
         {
             var o = new CodeProjectAzureOptions();
             configuration.GetSection("CodeProjects:Azure").Bind(o);
+            if (settings != null)
+            {
+                o.ResourceGroup = Fill(o.ResourceGroup, settings, CodeProjectSettingNames.AzureResourceGroup);
+                o.Location = Fill(o.Location, settings, CodeProjectSettingNames.AzureLocation);
+                o.SubnetId = Fill(o.SubnetId, settings, CodeProjectSettingNames.AzureSubnetId);
+                o.BastionName = Fill(o.BastionName, settings, CodeProjectSettingNames.AzureBastionName);
+                o.BastionResourceGroup = Fill(o.BastionResourceGroup, settings, CodeProjectSettingNames.AzureBastionResourceGroup);
+            }
             o.BastionResourceGroup = string.IsNullOrWhiteSpace(o.BastionResourceGroup) ? o.ResourceGroup : o.BastionResourceGroup;
             return o;
         }
+
+        private static string Fill(string current, ICodeProjectSettingsProvider settings, string key) =>
+            string.IsNullOrWhiteSpace(current) ? settings.Get(key) : current;
 
         public string MissingSetting() =>
             string.IsNullOrWhiteSpace(ResourceGroup) ? "CodeProjects:Azure:ResourceGroup"
@@ -67,14 +79,14 @@ namespace Risebird.AzureTimerFunctions.CodeProjects
         private readonly CodeProjectAzureOptions _options;
 
         public CodeProjectVmProvisioner(AzureArmRestClient arm, ICodeProjectVmRepository repository, ICodeProjectBlobStore blobStore,
-            IEncryptionHelper encryption, IApplicationErrorLogger logger, IConfiguration configuration)
+            IEncryptionHelper encryption, IApplicationErrorLogger logger, IConfiguration configuration, ICodeProjectSettingsProvider settings)
         {
             _arm = arm;
             _repository = repository;
             _blobStore = blobStore;
             _encryption = encryption;
             _logger = logger;
-            _options = CodeProjectAzureOptions.From(configuration);
+            _options = CodeProjectAzureOptions.From(configuration, settings);
         }
 
         private string Compute => "api-version=" + _options.ComputeApiVersion;
