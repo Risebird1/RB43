@@ -2162,7 +2162,7 @@ namespace Risebird.Web.Controllers
                     from = await _userService.GetUserMobileNumberByEmail(currentUserEmailId);
                     if (string.IsNullOrWhiteSpace(from))
                     {
-                        return Json(new { success = false, error = "Add your mobile number to your profile to call via Exotel" });
+                        return Json(new { success = false, error = "No mobile number on the profile of " + currentUserEmailId + " — add one to call via Exotel" });
                     }
                 }
 
