@@ -22,7 +22,15 @@ let isSwitchingProvider = false;
 
 function getCallProvider() {
     let stored = null;
-    try { stored = localStorage.getItem('rb_call_provider'); } catch (e) { }
+    try {
+        stored = localStorage.getItem('rb_call_provider');
+        // A choice made under a different default (e.g. Plivo before Exotel became the default) is dropped once,
+        // so a new default reaches everyone; choices made under the current default stick.
+        if (stored && localStorage.getItem('rb_call_provider_default') !== window.rbDefaultProvider) {
+            localStorage.removeItem('rb_call_provider');
+            stored = null;
+        }
+    } catch (e) { }
 
     if (stored === 'twilio') return 'twilio';
     if (stored === 'plivo' && window.rbPlivoConfigured !== false) return 'plivo';
@@ -46,7 +54,10 @@ function setCallProvider(provider) {
     if (provider === 'exotel' && window.rbExotelConfigured !== true) return;
 
     const previous = getCallProvider();
-    try { localStorage.setItem('rb_call_provider', provider); } catch (e) { }
+    try {
+        localStorage.setItem('rb_call_provider', provider);
+        localStorage.setItem('rb_call_provider_default', window.rbDefaultProvider || '');
+    } catch (e) { }
     highlightCallProvider();
 
     // Mid-call: hang up and redial the same number on the new provider.
