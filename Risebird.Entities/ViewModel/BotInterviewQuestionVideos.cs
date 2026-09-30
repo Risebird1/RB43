@@ -54,6 +54,8 @@ namespace Risebird.Entities.ViewModel
         /// </summary>
         public CandidateResumeScreeningVM ResumeEvaluation { get; set; }
         public List<TypingSpeedAssessment> TypingSpeedAssessments { get; set; }
+        /// <summary>Graded code project questions (CodingAssessment rows that have CodeProjectDetails).</summary>
+        public List<CodeProjectAssessment> CodeProjectAssessments { get; set; }
 
         /// <summary>
         /// Raw report content returned by the AI assistant. For Adaptive interviews the

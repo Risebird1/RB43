@@ -49,6 +49,39 @@ namespace Risebird.Entities.ViewModel
             return false;
         }
 
+        public const string StackImageInstruction =
+            "You must use ONLY these exact codes in stack_image_code. Do not invent codes.";
+
+        /// <summary>
+        /// Prompt allowlist of VM stack images for code project questions. Same shape as the rubric
+        /// section: an exact list rather than a naming rule, so the model cannot emit a code for an
+        /// image nobody baked (which would only fail minutes later, at VM provisioning).
+        /// </summary>
+        public static string BuildStackImagePromptSection(IEnumerable<StackImage> images)
+        {
+            var lines = new List<string> { "Stack images (use these exact codes only):", "" };
+            foreach (var i in images ?? Enumerable.Empty<StackImage>())
+            {
+                if (i == null || !i.IsActive || string.IsNullOrWhiteSpace(i.Code)) continue;
+                lines.Add($"- {i.Code.Trim()} | {i.Toolchain?.Trim()}");
+            }
+            lines.Add("");
+            lines.Add(StackImageInstruction);
+            return string.Join("\n", lines);
+        }
+
+        public static HashSet<string> BuildValidStackImageSet(IEnumerable<StackImage> images) =>
+            new HashSet<string>(
+                (images ?? Enumerable.Empty<StackImage>())
+                    .Where(i => i != null && i.IsActive)
+                    .Select(i => i.Code?.Trim())
+                    .Where(c => !string.IsNullOrEmpty(c)),
+                StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>Case-insensitive exact match — same rule as <see cref="TryMatchSkill"/>.</summary>
+        public static bool TryMatchStackImage(string returnedCode, HashSet<string> validCodes, out string matchedCanonical) =>
+            TryMatchSkill(returnedCode, validCodes, out matchedCanonical);
+
         public const string QuestionGistInstruction =
             "For every question also return question_gist: 1 to 3 spoken sentences the AI interview avatar will read aloud to the candidate. No source code, no markdown, no bullet lists. Plain conversational English only.";
 

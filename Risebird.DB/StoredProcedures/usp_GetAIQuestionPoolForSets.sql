@@ -82,6 +82,18 @@ BEGIN
     IF COL_LENGTH('dbo.SkillChannelSampleQuestions', 'IsCodingQuestion') IS NOT NULL
         SET @IsCoding = 'CAST(ISNULL(q.IsCodingQuestion, 0) AS bit)';
 
+    -- Code project questions: never deal one into a set before it has passed validation, and
+    -- count a validated one as hands-on so set creation spreads them like coding questions.
+    DECLARE @ProjectFilter nvarchar(400) = N'';
+    IF COL_LENGTH('dbo.SkillChannelSampleQuestions', 'IsCodeProjectQuestion') IS NOT NULL
+       AND OBJECT_ID(N'dbo.CodeProjectDetails') IS NOT NULL
+    BEGIN
+        SET @IsCoding = 'CAST(CASE WHEN ISNULL(q.IsCodingQuestion, 0) = 1 OR ISNULL(q.IsCodeProjectQuestion, 0) = 1 THEN 1 ELSE 0 END AS bit)';
+        SET @ProjectFilter = N'
+      AND (ISNULL(q.IsCodeProjectQuestion, 0) = 0
+           OR EXISTS (SELECT 1 FROM CodeProjectDetails cpd WHERE cpd.QuestionId = q.id AND cpd.ValidationStatus = ''passed''))';
+    END
+
     DECLARE @Sql nvarchar(max) = N'
     SELECT q.id,
            LTRIM(RTRIM(q.SkillName)) AS SkillName,
@@ -95,7 +107,7 @@ BEGIN
       AND q.SkillName IS NOT NULL
       AND LTRIM(RTRIM(q.SkillName)) <> ''''
       AND q.Comment IS NOT NULL
-      AND LTRIM(RTRIM(q.Comment)) <> ''''
+      AND LTRIM(RTRIM(q.Comment)) <> ''''' + @ProjectFilter + N'
     ORDER BY q.id;';
 
     EXEC sp_executesql @Sql, N'@IRFId int', @IRFId = @IRFId;

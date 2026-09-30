@@ -173,6 +173,11 @@ namespace Risebird.AzureFunctions
             services.AddScoped<IPhoneNumberHelper, PhoneNumberHelper>();
             services.AddScoped<IHttpRequestHelper, HttpRequestHelper>();
             services.AddScoped<IVmHelper, VmHelper>();
+            // Code project candidate machines (CodeProjects/*): ARM over REST, provisioner state, private blobs.
+            services.AddHttpClient<AzureArmRestClient>();
+            services.AddScoped<ICodeProjectVmRepository, CodeProjectVmRepository>();
+            services.AddSingleton<ICodeProjectBlobStore, CodeProjectBlobStore>();
+            services.AddScoped<Risebird.AzureTimerFunctions.CodeProjects.CodeProjectVmProvisioner>();
             services.AddScoped<IGoogleEventHelper, GoogleEventHelper>();
             services.AddScoped<IAffIndaResumeParserHelper, AffIndaResumeParserHelper>();
             services.AddScoped<IEncryptionHelper, EncryptionHelper>();

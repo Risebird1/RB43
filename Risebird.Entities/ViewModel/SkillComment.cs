@@ -22,6 +22,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsGeneratedByAi { get; set; }
         public bool IsCodingQuestion { get; set; }
         public int? CodingTimeLimitInMinutes { get; set; }
+        /// <summary>Code project question: the candidate works on a provisioned VM, not the in-page editor. Details in CodeProjectDetails.</summary>
+        public bool IsCodeProjectQuestion { get; set; }
         public bool IsTypingSpeedAssessment { get; set; }
 
         /// <summary>
