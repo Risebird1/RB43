@@ -30,7 +30,9 @@ namespace Risebird.CommonHelper
             _settings = settings.Value;
             _httpClient = httpClientFactory.CreateClient();
 
-            var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_settings.ApiKey}:{_settings.ApiToken}"));
+            // Trimmed: a stray space pasted into the config makes Exotel answer every call with a bare
+            // 400 "Bad or missing parameters" (code 34001) rather than an authentication error.
+            var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_settings.ApiKey?.Trim()}:{_settings.ApiToken?.Trim()}"));
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
         }
 
