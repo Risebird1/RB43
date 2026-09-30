@@ -29,7 +29,8 @@ IF (@Profile = 'Admin')
 
 		select vmp.*, tvm.LastAction, tq.QuestionsCount from VMProperties vmp left join TransVMTriggerDetails tvm  on tvm.VMPropertyId=vmp.id 
 		left join @TotalQuestions tq on tq.VmId = vmp.id
-		where IsRemoved=0 and IsDeleted=0 
+		where IsRemoved=0 and IsDeleted=0 and ISNULL(vmp.Purpose, '') <> 'CodeProject'
+
 
 	End
 Else
@@ -39,7 +40,7 @@ Else
 
 		select vmp.*, tvm.LastAction, tq.QuestionsCount from VMProperties vmp left join TransVMTriggerDetails tvm  on tvm.VMPropertyId=vmp.id join TransVMUser tvu on tvu.VmId = vmp.id
 		left join @TotalQuestions tq on tq.VmId = vmp.id
-		where IsRemoved=0 and IsDeleted=0 and tvu.UserId = @userId
+		where IsRemoved=0 and IsDeleted=0 and tvu.UserId = @userId and ISNULL(vmp.Purpose, '') <> 'CodeProject'
 
 	End
 End

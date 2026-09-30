@@ -78,6 +78,17 @@ BEGIN
     ALTER TABLE VMProperties
     Add CreateDate datetime
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Purpose')
+      AND Object_ID = Object_ID(N'VMProperties'))
+BEGIN
+    -- 'CodeProject' for code project candidate machines. Those are owned by the code project
+    -- provisioner and are excluded from the proctor VM lists and the IP/status timers.
+    ALTER TABLE VMProperties
+    Add Purpose varchar(30) NULL
+END
 
 END
 GO

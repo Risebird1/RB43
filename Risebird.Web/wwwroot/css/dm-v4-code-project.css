@@ -1,0 +1,78 @@
+/* Code project question authoring (DM V4 questions panel). Layout follows the
+   "Create question" screen: brief on the left, generation pipeline on the right. */
+
+.dm-cp-banner { margin-top: 10px; }
+.dm-cp-modal[hidden], .dm-cp-modal [hidden] { display: none !important; }
+
+.dm-cp-status { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 11px; white-space: nowrap; background: #EDF1F6; color: #7C8798; }
+.dm-cp-status--passed { background: #E6F4EC; color: #1F7A45; }
+.dm-cp-status--validating { background: #E8F2FD; color: #1668C0; }
+.dm-cp-status--failed { background: #FBE9EB; color: #DC3545; }
+
+.dm-cp-modal { position: fixed; inset: 0; z-index: 10080; background: rgba(15, 24, 41, .55); display: flex; align-items: flex-start; justify-content: center; padding: 28px 16px; overflow: auto; }
+.dm-cp-dialog { background: #F4F6F9; border-radius: 8px; width: 100%; max-width: 1180px; box-shadow: 0 18px 48px rgba(15, 24, 41, .35); font-size: 14px; line-height: 1.55; color: #152033; }
+.dm-cp-dialog-head { background: #16233A; color: #fff; display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-radius: 8px 8px 0 0; }
+.dm-cp-dialog-head h2 { font-size: 15px; font-weight: 700; margin: 0; letter-spacing: .01em; }
+.dm-cp-dialog-head .dm-cp-close { margin-left: auto; background: none; border: none; color: #AFBBCE; font-size: 22px; line-height: 1; cursor: pointer; padding: 0 4px; }
+.dm-cp-dialog-head .dm-cp-close:hover { color: #fff; }
+.dm-cp-dialog-body { padding: 18px; }
+.dm-cp-sub { color: #7C8798; font-size: 13px; margin: 0 0 14px; }
+
+.dm-cp-split { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 16px; align-items: start; }
+.dm-cp-split.is-status-only { grid-template-columns: minmax(0, 1fr); }
+.dm-cp-split.is-status-only .dm-cp-brief { display: none; }
+@media (max-width: 1000px) { .dm-cp-split { grid-template-columns: 1fr; } }
+
+.dm-cp-panel { background: #fff; border: 1px solid #DDE3EC; border-radius: 5px; }
+.dm-cp-panel > .ph { padding: 11px 15px; border-bottom: 1px solid #EDF1F6; display: flex; align-items: center; gap: 10px; }
+.dm-cp-panel > .ph h3 { font-size: 13.5px; margin: 0; font-weight: 600; }
+.dm-cp-panel > .ph .r { margin-left: auto; font-size: 11px; color: #7C8798; }
+.dm-cp-pb { padding: 15px; }
+
+.dm-cp-fld { margin-bottom: 13px; }
+.dm-cp-fld label { display: block; font-size: 12px; font-weight: 600; color: #4A5568; margin-bottom: 5px; }
+.dm-cp-fld textarea, .dm-cp-fld select { width: 100%; border: 1px solid #DDE3EC; border-radius: 4px; padding: 9px 11px; font-family: inherit; font-size: 13.5px; color: #152033; background: #fff; }
+.dm-cp-fld textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+.dm-cp-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+.dm-cp-hint { font-size: 11.5px; color: #7C8798; margin-top: 4px; }
+
+.dm-cp-btn { background: #1E7BE0; color: #fff; border: none; border-radius: 4px; padding: 10px 17px; font-weight: 600; font-size: 13.5px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+.dm-cp-btn:hover { background: #1668C0; }
+.dm-cp-btn:disabled { background: #A9BDD6; cursor: default; }
+.dm-cp-btn.ghost { background: #fff; color: #1E7BE0; border: 1px solid #1E7BE0; }
+.dm-cp-btn.ghost:hover { background: #E8F2FD; }
+.dm-cp-btn.wide { width: 100%; }
+
+.dm-cp-note { background: #FCF3E6; border-left: 3px solid #D98324; padding: 10px 13px; font-size: 12.5px; color: #4A5568; border-radius: 0 4px 4px 0; margin-top: 13px; }
+.dm-cp-note b { color: #152033; }
+.dm-cp-error { background: #FBE9EB; border-left: 3px solid #DC3545; padding: 10px 13px; font-size: 12.5px; color: #4A5568; border-radius: 0 4px 4px 0; margin-top: 13px; }
+.dm-cp-error ul { margin: 6px 0 0; padding-left: 18px; }
+
+.dm-cp-idle { text-align: center; padding: 52px 22px; color: #7C8798; }
+.dm-cp-idle .ic { font-size: 30px; margin-bottom: 10px; }
+.dm-cp-idle p { margin: 0 auto; font-size: 13px; max-width: 36ch; }
+
+.dm-cp-pipe { list-style: none; margin: 0; padding: 0; }
+.dm-cp-pipe li { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 11px; align-items: start; padding: 11px 0; border-bottom: 1px solid #EDF1F6; }
+.dm-cp-pipe li:last-child { border-bottom: none; }
+.dm-cp-pipe .dot { width: 19px; height: 19px; border-radius: 50%; border: 2px solid #DDE3EC; display: grid; place-items: center; font-size: 10px; font-weight: 700; margin-top: 1px; color: transparent; background: #fff; }
+.dm-cp-pipe li.run .dot { border-color: #1E7BE0; border-right-color: transparent; animation: dmCpSpin .7s linear infinite; }
+.dm-cp-pipe li.ok .dot { border-color: #2E9E5B; background: #2E9E5B; color: #fff; }
+.dm-cp-pipe li.failed .dot { border-color: #DC3545; background: #DC3545; color: #fff; }
+@keyframes dmCpSpin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .dm-cp-pipe li.run .dot { animation: none; } }
+.dm-cp-pipe .t { font-weight: 600; font-size: 13px; color: #7C8798; }
+.dm-cp-pipe li.run .t, .dm-cp-pipe li.ok .t, .dm-cp-pipe li.failed .t { color: #152033; }
+.dm-cp-pipe .d { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; color: #7C8798; margin-top: 3px; line-height: 1.6; word-break: break-word; }
+.dm-cp-pipe li.failed .d { color: #DC3545; }
+.dm-cp-pipe .ms { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: #7C8798; white-space: nowrap; margin-top: 2px; }
+
+.dm-cp-gen { border: 1px solid #EDF1F6; border-radius: 4px; padding: 13px 15px; background: #FAFBFD; margin-bottom: 13px; }
+.dm-cp-gen h4 { margin: 0 0 6px; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: #7C8798; font-weight: 700; }
+.dm-cp-gen p { margin: 0; font-size: 13px; color: #4A5568; line-height: 1.6; white-space: pre-wrap; }
+.dm-cp-gen ul { margin: 0; padding-left: 18px; font-size: 13px; color: #4A5568; }
+
+.dm-cp-tree { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; line-height: 1.95; color: #4A5568; background: #FAFBFD; border: 1px solid #EDF1F6; border-radius: 4px; padding: 11px 13px; max-height: 240px; overflow: auto; white-space: pre; }
+.dm-cp-tree .new { color: #1F7A45; }
+.dm-cp-tree .ro { color: #7C8798; }
+.dm-cp-actions { margin-top: 14px; display: flex; gap: 9px; flex-wrap: wrap; }

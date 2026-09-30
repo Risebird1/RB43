@@ -71,3 +71,19 @@ BEGIN
     ON CodingAssessment (SessionId, QuestionId);
 END
 GO
+
+-- =====================================================
+-- Code project question results
+-- =====================================================
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'VMPropertyId' AND Object_ID = Object_ID(N'CodingAssessment'))
+    ALTER TABLE CodingAssessment ADD VMPropertyId int NULL;   -- FK -> VMProperties
+GO
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'RequirementsPassed' AND Object_ID = Object_ID(N'CodingAssessment'))
+    ALTER TABLE CodingAssessment ADD RequirementsPassed int NULL;
+GO
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'RequirementsTotal' AND Object_ID = Object_ID(N'CodingAssessment'))
+    ALTER TABLE CodingAssessment ADD RequirementsTotal int NULL;
+GO
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'ResultsJson' AND Object_ID = Object_ID(N'CodingAssessment'))
+    ALTER TABLE CodingAssessment ADD ResultsJson nvarchar(max) NULL;
+GO

@@ -3843,7 +3843,11 @@
                 </div>
             </div>
         }
-      
+        @if (Model.CodeProjectAssessments != null && Model.CodeProjectAssessments.Any())
+        {
+            @await Html.PartialAsync("_CodeProjectReportSection", Model.CodeProjectAssessments)
+        }
+
             @*
                 A heading inside the Hands-on Skill Evaluation part, not a divider between
                 equals. The centred gradient rule with its own icon badge read as a break

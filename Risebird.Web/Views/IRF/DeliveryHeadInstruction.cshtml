@@ -1119,6 +1119,19 @@
                                                     </div>
                                                     <button type="button" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" id="dmV4GenerateQuestionsBtn" @(aiQGenEnabled ? "" : "disabled") title="@(aiQGenEnabled ? "Generate questions from rubric using AI" : "AI question generation is not enabled yet")"><i class="fa fa-magic"></i> Generate with AI</button>
                                               </div>
+                                                @if (Model.IsAIInterview && Model.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
+                                                {
+                                                    @* Code project questions: the candidate gets a real machine with a small runnable project. *@
+                                                    <div class="dm-v4-questions-ai-banner dm-cp-banner">
+                                                        <div class="dm-v4-questions-ai-banner__left">
+                                                            <div>
+                                                                <div class="dm-v4-questions-ai-title">Code project question</div>
+                                                                <div class="dm-v4-questions-ai-sub">Describe a small project in plain English. Risebird generates it, then proves it builds and is solvable before it can reach a candidate.</div>
+                                                            </div>
+                                                        </div>
+                                                        <button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" id="dmCpNewBtn" @(aiQGenEnabled ? "" : "disabled")><i class="fa fa-code"></i> New code project</button>
+                                                    </div>
+                                                }
                                                 <div id="dmV4QuestionsSkills" class="dm-v4-questions-skills"></div>
                                             </div>
                                         </div>
@@ -4022,7 +4035,9 @@ else
 <script src="~/js/dm-v4-layout.js?v=20250630badqc4"></script>
 <script src="~/js/dm-v4-voice.js?v=20250609istmeta1"></script>
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
-<script src="~/js/dm-v4-questions.js?v=20260909aivideopoll3"></script>
+<script src="~/js/dm-v4-questions.js?v=20260929codeproject1"></script>
+<link rel="stylesheet" href="~/css/dm-v4-code-project.css?v=20260929codeproject1" />
+<script src="~/js/dm-v4-code-project.js?v=20260929codeproject1"></script>
 
 <div id="dmV4ResumeSummaryOverlay" class="dm-v4-drawer-overlay" aria-hidden="true"></div>
 <aside id="dmV4ResumeSummaryDrawer" class="dm-v4-drawer dm-v4-drawer--verdict" aria-hidden="true" role="dialog" aria-labelledby="dmV4ResumeSummaryTitle" style="max-width:520px;">

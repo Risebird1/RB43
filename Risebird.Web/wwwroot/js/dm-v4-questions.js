@@ -203,6 +203,8 @@
                     var listeningAudio = q.listeningAudioUrl || q.ListeningAudioUrl || '';
                     var listeningTranscript = q.listeningAudioTranscription || q.ListeningAudioTranscription || '';
                     var isAiQuestion = q.isAIGenerated || q.IsAIGenerated || q.isGeneratedByAi || q.IsGeneratedByAi;
+                    var isCodeProject = q.isCodeProjectQuestion || q.IsCodeProjectQuestion;
+                    var projectStatus = isCodeProject ? (codeProjectStatuses[qid] || 'pending') : null;
                     // AI-generated rows often have no saved gist yet; the avatar would speak the question.
                     // Never fall back for a listening comprehension question: its text describes what
                     // the candidate is meant to listen for, so narrating it would give the exercise
@@ -218,6 +220,10 @@
                     if (isAiQuestion) {
                         html += ' <span class="dm-v4-badge dm-v4-badge--ai">AI</span>';
                     }
+                    if (isCodeProject) {
+                        html += ' <span class="dm-v4-badge dm-v4-badge--neutral dm-v4-badge--xs">Code project</span>';
+                        html += ' <span class="dm-cp-status dm-cp-status--' + escapeHtml(projectStatus) + '">' + escapeHtml(codeProjectStatusLabel(projectStatus)) + '</span>';
+                    }
                     html += '</div>';
                     html += '<div class="dm-v4-question-text">' + (hasComment ? escapeHtml(comment) : '<span class="dm-v4-question-text--placeholder">Add question…</span>') + '</div>';
                     if ($.trim(idealAnswer)) {
@@ -226,11 +232,27 @@
 
                     html += '<div class="dm-v4-question-gist">';
                     html += '<div class="dm-v4-question-label">Question gist <span class="dm-v4-question-gist-hint">spoken by the AI avatar</span></div>';
+                    if (isCodeProject) {
+                        // Generated with the project and validated with it; change it by regenerating.
+                        html += '<div class="dm-v4-question-text">' + escapeHtml(gist) + '</div>';
+                    } else {
                     html += '<textarea class="dm-v4-coding-gist" rows="2" data-id="' + qid + '"';
                     html += ' placeholder="What the AI avatar should speak. Required for coding questions.">' + escapeHtml(gist) + '</textarea>';
                     html += '<div class="dm-v4-question-gist-warning" hidden>Write the gist to finish enabling coding mode.</div>';
+                    }
                     html += '</div>';
 
+                    // A code project question opens a machine, not the editor: it must never be
+                    // toggled into a coding or listening question, so those controls are replaced
+                    // by a link to its validation pipeline.
+                    if (isCodeProject) {
+                        html += '<div class="dm-v4-question-meta">';
+                        html += '<button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--xs dm-cp-view-btn" data-id="' + qid + '">View project &amp; validation</button>';
+                        if (projectStatus !== 'passed') {
+                            html += '<span class="dm-v4-question-gist-hint">Not served to candidates until validation passes.</span>';
+                        }
+                        html += '</div>';
+                    } else {
                     // Coding mode is editable in place so questions added earlier, or generated from
                     // the rubric, can be turned into coding questions without being retyped.
                     html += '<div class="dm-v4-question-meta dm-v4-question-coding">';
@@ -271,6 +293,7 @@
                     }
                     html += '</div>';
                     html += '</div>';
+                    }
 
                     html += '</div><div class="dm-v4-question-col">';
                     html += '<div class="dm-v4-question-label">Expected answer</div>';
@@ -285,7 +308,7 @@
                         }
                         var btnLabel = aiVideoButtonLabel(hasVideo);
                         // A coding question is narrated from its gist, so that is what must exist
-                        var needsGist = isCoding && !$.trim(gist);
+                        var needsGist = (isCoding || isCodeProject) && !$.trim(gist);
                         var btnDisabled = !qid || !hasComment || needsGist;
                         html += '<button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--xs dm-v4-regen-ai-video-btn"';
                         html += ' data-id="' + qid + '" data-has-video="' + (hasVideo ? '1' : '0') + '"';
@@ -329,8 +352,30 @@
         return data;
     }
 
+    /** questionId -> validation status for code project questions. */
+    var codeProjectStatuses = {};
+
+    function codeProjectStatusLabel(status) {
+        switch (status) {
+            case 'passed': return 'Validated';
+            case 'failed': return 'Validation failed';
+            case 'validating': return 'Validating…';
+            default: return 'Pending';
+        }
+    }
+
+    function loadCodeProjectStatuses() {
+        return $.post('/IRF/GetCodeProjectStatuses', getQuestionsRequestData()).then(function (res) {
+            codeProjectStatuses = {};
+            ((res && res.statuses) || []).forEach(function (s) { codeProjectStatuses[s.questionId] = s.status; });
+        }, function () { codeProjectStatuses = {}; return $.Deferred().resolve(); });
+    }
+
     function loadQuestions() {
+        var statuses = loadCodeProjectStatuses();
         return $.post('/IRF/GetDeliveryHeadSampleQuestionsJson', getQuestionsRequestData()).then(function (res) {
+            return statuses.then(function () { return res; }, function () { return res; });
+        }).then(function (res) {
             if (res && res.success) {
                 renderQuestions(res.questions || []);
                 // Rendering replaces the buttons, so any render still in flight — including one
@@ -834,6 +879,13 @@
                 .always(function () {
                     $btn.prop('disabled', false).html(origHtml);
                 });
+        });
+
+        // dm-v4-code-project.js refreshes the list when a project publishes or fails.
+        window.dmV4ReloadQuestions = loadQuestions;
+        window.dmV4GetQuestionsRequestData = getQuestionsRequestData;
+        $(document).off('click.dmCpView', '.dm-cp-view-btn').on('click.dmCpView', '.dm-cp-view-btn', function () {
+            if (window.dmCodeProject) window.dmCodeProject.open(parseInt($(this).data('id'), 10));
         });
 
         $(document).off('click.dmV4AddQ', '.dm-v4-add-question-btn').on('click.dmV4AddQ', '.dm-v4-add-question-btn', function () {
