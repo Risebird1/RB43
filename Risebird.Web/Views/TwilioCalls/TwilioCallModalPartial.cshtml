@@ -36,8 +36,8 @@
                 <h5 class="modal-title text-center" id="callingLabel"></h5>
                 <div class="rb-call-provider" style="text-align:center;margin:6px 0 4px;font-size:13px;">
                     <span style="margin-right:6px;">Call via:</span>
-                    <button type="button" class="btn btn-sm rb-call-provider-btn" data-provider="plivo" onclick="setCallProvider('plivo')" style="margin:0 2px;" disabled="@(!plivoConfigured)" title="@(plivoConfigured ? "Call via Plivo" : "Plivo is not configured")">Plivo</button>
                     <button type="button" class="btn btn-sm rb-call-provider-btn" data-provider="exotel" onclick="setCallProvider('exotel')" style="margin:0 2px;" disabled="@(!exotelConfigured)" title="@(exotelConfigured ? (exotelWebRtcConfigured ? "Call via Exotel" : "Call via Exotel (rings your phone first)") : "Exotel is not configured")">Exotel</button>
+                    <button type="button" class="btn btn-sm rb-call-provider-btn" data-provider="plivo" onclick="setCallProvider('plivo')" style="margin:0 2px;" disabled="@(!plivoConfigured)" title="@(plivoConfigured ? "Call via Plivo" : "Plivo is not configured")">Plivo</button>
                     <button type="button" class="btn btn-sm rb-call-provider-btn" data-provider="twilio" onclick="setCallProvider('twilio')" style="margin:0 2px;">Twilio</button>
                 </div>
                 <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
