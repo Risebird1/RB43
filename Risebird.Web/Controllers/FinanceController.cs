@@ -1674,9 +1674,8 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "Finance")
                 {
-                    var model = await _meetingService.FetchFNPaymentHistory();
-                    if (model != null)
-                        model = model.OrderByDescending(x => x.Date).ToList();
+                    var model = (await _meetingService.FetchFNPaymentHistory()) ?? new List<RBInterviewDetails>();
+                    model = model.OrderByDescending(x => x.Date).ToList();
                     //var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
                     //foreach (var item in model)
                     //{
@@ -1709,8 +1708,13 @@ namespace Risebird.Web.Controllers
                         {
                             model = model.Where(t => t.Date >= filter.StartDate && t.Date <= filter.EndDate).ToList();
                         }
-                        filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.InterviewerEmailid).ToArray() : filter.HREmail = filter.HREmail;
-                        model = model.Where(x => filter.HREmail.Contains(x.InterviewerEmailid)).ToList();
+                        // No interviewer selected = all interviewers. HashSet avoids the O(rows x emails)
+                        // array scan that made this filter very slow on large histories.
+                        if (filter.HREmail != null && filter.HREmail.Length > 0)
+                        {
+                            var emails = new HashSet<string>(filter.HREmail);
+                            model = model.Where(x => x.InterviewerEmailid != null && emails.Contains(x.InterviewerEmailid)).ToList();
+                        }
                     }
                     else
                     {
@@ -1834,8 +1838,11 @@ namespace Risebird.Web.Controllers
                             {
                                 model = model.Where(t => t.Date >= filter.StartDate && t.Date <= filter.EndDate).ToList();
                             }
-                            filter.HREmail = filter.HREmail == null ? filter.HREmail = model.Select(x => x.InterviewerEmailid).ToArray() : filter.HREmail = filter.HREmail;
-                            model = model.Where(x => filter.HREmail.Contains(x.InterviewerEmailid)).ToList();
+                            if (filter.HREmail != null && filter.HREmail.Length > 0)
+                            {
+                                var emails = new HashSet<string>(filter.HREmail);
+                                model = model.Where(x => x.InterviewerEmailid != null && emails.Contains(x.InterviewerEmailid)).ToList();
+                            }
                         }
                         else
                         {
@@ -3170,7 +3177,8 @@ namespace Risebird.Web.Controllers
                     DateTime stdate = new DateTime(resolvedFromYear, resolvedFromMonth, 1);
                     DateTime endate = new DateTime(resolvedToYear, resolvedToMonth, 1).AddMonths(1);
 
-                    var model = await _meetingService.FetchRevenueDetails(stdate, endate, resolvedFromYear, resolvedFromMonth, resolvedToYear, resolvedToMonth);
+                    var model = await _meetingService.FetchRevenueDetails(stdate, endate, resolvedFromYear, resolvedFromMonth, resolvedToYear, resolvedToMonth)
+                                ?? new List<FnRevenueVM>();
                     decimal totalamount = 0;
                     foreach (var item in model)
                     {

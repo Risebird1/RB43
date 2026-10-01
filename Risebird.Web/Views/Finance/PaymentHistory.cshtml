@@ -11,6 +11,28 @@
     string strtDte = string.Empty;
     string endDte = string.Empty;
     string[] HREmail = new string[] { };
+    // Rows are bound client-side by DataTables (deferRender) instead of rendering
+    // thousands of <tr> elements server-side; values are pre-formatted to match the old display.
+    var paymentRows = Model.Select(item => new
+    {
+        id = item.id,
+        name = item.FirstName ?? "",
+        email = item.InterviewerEmailid ?? "",
+        pan = item.PAN ?? "",
+        nameAtPan = item.NameAtPan ?? "",
+        nameAtBank = item.NameAtBank ?? "",
+        total = item.TotalAmount,
+        paid = item.Points,
+        tds = item.Status == "Advance" ? 0 : item.TotalAmount - item.Points,
+        status = item.Status ?? "",
+        comment = item.Comment ?? "",
+        date = item.Date.ToString(),
+        transferId = item.TransferId ?? "",
+        utr = item.TransferUtr ?? "",
+        transactionDate = item.TransactionDate.HasValue ? item.TransactionDate.Value.ToString("yyyy-MM-dd HH:mm:ss") : "",
+        cfTransferId = item.CfTransferId ?? "",
+        payoutStatus = item.PayoutStatus ?? ""
+    });
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("PaymentHistoryfilters") != null)
 {
@@ -209,61 +231,6 @@
                                                         </tr>
                                                     </tfoot>
                                                     <tbody id="tblbodyPayment">
-                                                        @if (Model.Count() == 0)
-                                                        {
-                                                            <tr><td colspan="17" style="text-align:center">No Result found</td></tr>
-                                                        }
-                                                        @foreach (var item in Model)
-                                                        {
-                                                            <tr>
-                                                                <td style="display:none;"></td>
-                                                                <td>@item.FirstName</td>
-                                                                <td>@item.InterviewerEmailid<input type="hidden" id="hidcomment_@item.id" value="@item.InterviewerEmailid" /></td>
-                                                                <td>@(string.IsNullOrWhiteSpace(item.PAN) ? "" : item.PAN)</td>
-                                                                <td>@(string.IsNullOrWhiteSpace(item.NameAtPan) ? "" : item.NameAtPan)</td>
-                                                                <td>@(string.IsNullOrWhiteSpace(item.NameAtBank) ? "" : item.NameAtBank)</td>
-                                                                <td>@item.TotalAmount</td>
-                                                                <td>@item.Points</td>
-                                                                @if (item.Status == "Advance")
-                                                                {
-                                                                    <td>0</td>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td>@(item.TotalAmount - item.Points)</td>
-                                                                }
-                                                                <td>@item.Status</td>
-                                                                <td>@item.Comment</td>
-                                                                <td>@item.Date</td>
-                                                                <td>@item.TransferId</td>
-                                                                <td>@item.TransferUtr</td>
-                                                                <td>@(item.TransactionDate.HasValue ? item.TransactionDate.Value.ToString("yyyy-MM-dd HH:mm:ss") : "")</td>
-                                                                <td>@item.CfTransferId</td>
-                                                                <td>@item.PayoutStatus</td>
-                                                                <td>
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Detailed View">
-                                                                        <span onclick="DetailedView(@item.id)" title="Detailed View" class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
-                                                                                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
-                                                                                <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
-                                                                            </svg>
-                                                                        </span>
-                                                                    </button>
-                                                                    @if (item.PayoutStatus == "TRANSFER_FAILED")
-                                                                    {
-                                                                        <button class="mdc-fab app-fab--absolute" aria-label="Retry Payment" style="background-color:#e53935;" title="Retry Payment">
-                                                                            <span onclick="RetryPayment(@item.id)" title="Retry Payment" class="mdc-fab__icon material-icons">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
-                                                                                    <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
-                                                                                    <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 7.757 2.997a.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
-                                                                                </svg>
-                                                                            </span>
-                                                                        </button>
-                                                                    }
-                                                                </td>
-                                                            </tr>
-                                                        }
-
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -326,7 +293,7 @@
             data: { 'id': interviewerid },
             success: function (data) {
                 binddata(data.result);
-                $("#txtInterviewerEmailid").text($("#hidcomment_" + interviewerid).val());
+                $("#txtInterviewerEmailid").text(paymentEmailById[interviewerid] || "");
                 //$("#txtAmountD").text("Amount: " + data.totalAmount);
                 //$("#txtPayableAmountD").text("Payable Amount: " + data.payableAmount);
                 //$("#txtTdsdeductedD").text("Tds deducted: " + data.tds);
@@ -448,12 +415,58 @@
     $(document).ready(function () {
         applyDataTable();
     });
+    var paymentRows = @Html.Raw(JsonConvert.SerializeObject(paymentRows, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }));
+    var paymentEmailById = {};
+    for (var r = 0; r < paymentRows.length; r++) {
+        paymentEmailById[paymentRows[r].id] = paymentRows[r].email;
+    }
+
+    var eyeIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16"><path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" /><path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" /></svg>';
+    var retryIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16"><path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/><path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 7.757 2.997a.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/></svg>';
+    var textCol = $.fn.dataTable.render.text();
+
+    function renderActions(data, type, row) {
+        if (type !== 'display') return '';
+        var html = '<button class="mdc-fab app-fab--absolute" aria-label="Detailed View">'
+            + '<span onclick="DetailedView(' + row.id + ')" title="Detailed View" class="mdc-fab__icon material-icons">' + eyeIcon + '</span></button>';
+        if (row.payoutStatus === 'TRANSFER_FAILED') {
+            html += '<button class="mdc-fab app-fab--absolute" aria-label="Retry Payment" style="background-color:#e53935;" title="Retry Payment">'
+                + '<span onclick="RetryPayment(' + row.id + ')" title="Retry Payment" class="mdc-fab__icon material-icons">' + retryIcon + '</span></button>';
+        }
+        return html;
+    }
+
     function applyDataTable() {
         var table = $('#meeting').DataTable({
+            data: paymentRows,
+            deferRender: true,
+            order: [],
+            columns: [
+                { data: null, defaultContent: '', visible: false, orderable: false, searchable: false },
+                { data: 'name', render: textCol },
+                { data: 'email', render: textCol },
+                { data: 'pan', render: textCol },
+                { data: 'nameAtPan', render: textCol },
+                { data: 'nameAtBank', render: textCol },
+                { data: 'total' },
+                { data: 'paid' },
+                { data: 'tds' },
+                { data: 'status', render: textCol },
+                { data: 'comment', render: textCol },
+                { data: 'date', render: textCol },
+                { data: 'transferId', render: textCol },
+                { data: 'utr', render: textCol },
+                { data: 'transactionDate', render: textCol },
+                { data: 'cfTransferId', render: textCol },
+                { data: 'payoutStatus', render: textCol },
+                { data: null, orderable: false, searchable: false, render: renderActions }
+            ],
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search records",
-            }
+                emptyTable: "No Result found"
+            },
+            initComplete: HideProgress
         });
         $(".dataTables_filter input:eq(0)").after("<button onclick='searchResult()' type='button' id='search'>&nbsp</button><span id='trigger-update' class='ref-btn' onclick='RefreshSearch()'><svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 18 18'><path fill='#6f6f6f' d='M9 13.5c-2.49 0-4.5-2.01-4.5-4.5S6.51 4.5 9 4.5c1.24 0 2.36.52 3.17 1.33L10 8h5V3l-1.76 1.76C12.15 3.68 10.66 3 9 3 5.69 3 3.01 5.69 3.01 9S5.69 15 9 15c2.97 0 5.43-2.16 5.9-5h-1.52c-.46 2-2.24 3.5-4.38 3.5z' /></svg></span>");
 
@@ -492,13 +505,13 @@
     };
     ShowProgress();
 
-    window.onload = function () {
-        setTimeout(function () {
-            loader.style.display = "none";
-            $(".dataloading").show();
-            $("#meeting").show();
-        }, 2000);
-    };
+    // Hide the loader as soon as DataTables has bound the data (was window.onload + fixed 2s delay)
+    function HideProgress() {
+        loader.style.display = "none";
+        $(".dataloading").show();
+        $("#meeting").show();
+        $('#meeting').DataTable().columns.adjust();
+    }
     //// script for loader ends here
 </script>
 <script type="text/javascript">
