@@ -3043,8 +3043,7 @@ namespace Risebird.Business
         {
             try
             {
-                var result = _meetingRespository.FetchFNPaymentHistory();
-                return result.Result;
+                return await _meetingRespository.FetchFNPaymentHistory();
             }
             catch (Exception e)
             {
@@ -4262,8 +4261,7 @@ namespace Risebird.Business
         {
             try
             {
-                var result = _meetingRespository.FetchRevenueDetails(stdate, endate, fromYear, fromMonth, toYear, toMonth);
-                return result.Result;
+                return await _meetingRespository.FetchRevenueDetails(stdate, endate, fromYear, fromMonth, toYear, toMonth);
             }
             catch (Exception e)
             {
