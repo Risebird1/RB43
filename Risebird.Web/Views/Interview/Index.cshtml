@@ -1146,7 +1146,7 @@
                                                                 <span class="call-area">
                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                     {
-                                                                        <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.imid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="15" /></span>
+                                                                        <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(item.candidateName ?? "")', '@System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(item.MobileNumber ?? "")', '@System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(item.candidateEmail ?? "")','@item.imid')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="15" /></span>
                                                                     }
                                                                 </span>
                                                                 @item.MobileNumber
