@@ -1,0 +1,246 @@
+@model List<Risebird.Entities.ViewModel.CodeProjectAssessment>
+@*
+    Code project questions: graded on the diff between the baseline commit and what the
+    candidate pushed. Correctness comes from the hidden tests, weighted per requirement.
+    Code quality is judged by the interview evaluator from the same diff, against the
+    rubric, and appears in AI Analysis below — it is not re-scored here.
+*@
+@{
+    var jsonOptions = new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web);
+}
+<style>
+    .rb-cp { margin-bottom: 20px; }
+    .rb-cp-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+    .rb-cp-head h3 { font-size: 16px; font-weight: 700; margin: 0; }
+    .rb-cp-sub { color: #7C8798; font-size: 13px; }
+    .rb-cp-badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 11px; white-space: nowrap; background: #EDF1F6; color: #7C8798; }
+    .rb-cp-badge.ok { background: #E6F4EC; color: #1F7A45; }
+    .rb-cp-badge.warn { background: #FCF3E6; color: #D98324; }
+    .rb-cp-scores { display: grid; grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .rb-cp-sc { background: #fff; border: 1px solid #DDE3EC; border-radius: 5px; padding: 14px 16px; }
+    .rb-cp-sc.final { background: #16233A; border-color: #16233A; color: #fff; }
+    .rb-cp-sc .lab { font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: #7C8798; font-weight: 700; margin-bottom: 5px; }
+    .rb-cp-sc.final .lab, .rb-cp-sc.final .wt, .rb-cp-sc.final .val small { color: #9FB0CA; }
+    .rb-cp-sc .val { font-size: 27px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; }
+    .rb-cp-sc .val small { font-size: 14px; font-weight: 600; color: #7C8798; }
+    .rb-cp-sc .wt { font-family: ui-monospace, Menlo, monospace; font-size: 10.5px; color: #7C8798; margin-top: 3px; }
+    .rb-cp-meter { height: 5px; background: #EDF1F6; border-radius: 3px; margin-top: 9px; overflow: hidden; }
+    .rb-cp-meter i { display: block; height: 100%; border-radius: 3px; }
+    .rb-cp-panel { background: #fff; border: 1px solid #DDE3EC; border-radius: 5px; }
+    .rb-cp-panel > .ph { padding: 11px 15px; border-bottom: 1px solid #EDF1F6; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .rb-cp-panel > .ph h4 { font-size: 13.5px; margin: 0; font-weight: 600; }
+    .rb-cp-panel > .ph .r { margin-left: auto; font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: #7C8798; }
+    .rb-cp-panel .pb { padding: 15px; }
+    .rb-cp-diff { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; line-height: 1.75; overflow-x: auto; max-height: 520px; overflow-y: auto; }
+    .rb-cp-diff .fh { background: #FAFBFD; border-top: 1px solid #EDF1F6; border-bottom: 1px solid #EDF1F6; padding: 6px 14px; color: #4A5568; font-weight: 500; }
+    .rb-cp-diff .ln { white-space: pre; padding: 0 14px; min-width: max-content; }
+    .rb-cp-diff .a { background: #E6F6EC; color: #1F7A45; }
+    .rb-cp-diff .r { background: #FCEAE8; color: #B32D25; }
+    .rb-cp-diff .h { color: #7C8798; background: #FAFBFD; }
+    .rb-cp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; align-items: start; margin-top: 16px; }
+    .rb-cp-tests { list-style: none; margin: 0; padding: 0; font-size: 12.5px; }
+    .rb-cp-tests li { display: flex; gap: 9px; align-items: flex-start; padding: 7px 0; border-bottom: 1px solid #EDF1F6; }
+    .rb-cp-tests li:last-child { border: none; }
+    .rb-cp-tests .m { font-family: ui-monospace, Menlo, monospace; font-size: 11px; font-weight: 700; width: 15px; flex: none; margin-top: 1px; }
+    .rb-cp-tests .p { color: #2E9E5B; } .rb-cp-tests .f { color: #DC3545; }
+    .rb-cp-tests .nm { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; color: #152033; }
+    .rb-cp-tests .rq { color: #4A5568; display: block; }
+    .rb-cp-tests .rs { color: #7C8798; font-size: 11.5px; display: block; }
+    .rb-cp-tl { list-style: none; margin: 0; padding: 0; font-size: 12.5px; position: relative; }
+    .rb-cp-tl:before { content: ""; position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1px; background: #DDE3EC; }
+    .rb-cp-tl li { padding: 6px 0 6px 20px; position: relative; color: #4A5568; }
+    .rb-cp-tl li:before { content: ""; position: absolute; left: 2px; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: #1E7BE0; border: 2px solid #fff; }
+    .rb-cp-tl .tm { font-family: ui-monospace, Menlo, monospace; font-size: 10.5px; color: #7C8798; }
+    .rb-cp-note { background: #FCF3E6; border-left: 3px solid #D98324; padding: 10px 13px; font-size: 12.5px; color: #4A5568; border-radius: 0 4px 4px 0; margin-top: 13px; }
+    .rb-cp-empty { color: #7C8798; font-size: 12.5px; padding: 8px 0; }
+</style>
+
+<div class="rb-report-section rb-cp-wrap" style="margin-bottom:20px;">
+    <div class="rb-section-header" style="margin-bottom:5px;">
+        <h2><i class="fa fa-code"></i> Code Project</h2>
+    </div>
+    <div class="rb-analysis-content" style="overflow:hidden;">
+        @foreach (var a in Model)
+        {
+            Risebird.Entities.ViewModel.CodeProjectGradeResult grade = null;
+            if (!string.IsNullOrWhiteSpace(a.ResultsJson))
+            {
+                try { grade = System.Text.Json.JsonSerializer.Deserialize<Risebird.Entities.ViewModel.CodeProjectGradeResult>(a.ResultsJson, jsonOptions); }
+                catch (System.Text.Json.JsonException) { }
+            }
+            grade ??= new Risebird.Entities.ViewModel.CodeProjectGradeResult();
+
+            var passed = a.RequirementsPassed ?? 0;
+            var total = a.RequirementsTotal ?? 0;
+            var correctness = grade.CorrectnessScore;
+            var minutesUsed = a.TimeTakenInSeconds.HasValue ? (int)Math.Round((double)a.TimeTakenInSeconds.Value / 60.0) : (int?)null;
+            var commits = grade.Commits ?? new List<Risebird.Entities.ViewModel.CodeProjectCommit>();
+            var diffLines = (a.SubmittedCode ?? "").Replace("\r\n", "\n").Split('\n');
+            var filesChanged = diffLines.Count(l => l.StartsWith("diff --git "));
+            var plus = diffLines.Count(l => l.StartsWith("+") && !l.StartsWith("+++"));
+            var minus = diffLines.Count(l => l.StartsWith("-") && !l.StartsWith("---"));
+
+            <div class="rb-cp">
+                <div class="rb-cp-head">
+                    <h3>@(a.QuestionText?.Length > 90 ? a.QuestionText.Substring(0, 90) + "…" : a.QuestionText)</h3>
+                    @if (minutesUsed.HasValue)
+                    {
+                        <span class="rb-cp-badge @(a.IsTimeExpired == true ? "warn" : "ok")">Submitted · @minutesUsed min of @a.TimeLimitInMinutes</span>
+                    }
+                    else
+                    {
+                        <span class="rb-cp-badge">Not started</span>
+                    }
+                </div>
+                <div class="rb-cp-sub" style="margin-bottom:12px;">Graded on the diff between the baseline commit and what the candidate pushed.</div>
+
+                <div class="rb-cp-scores">
+                    <div class="rb-cp-sc final">
+                        <div class="lab">Correctness</div>
+                        <div class="val">@correctness.ToString("0.#")<small>/100</small></div>
+                        <div class="wt">@passed of @total requirements · weighted</div>
+                        <div class="rb-cp-meter" style="background:#2E4468"><i style="width:@(correctness.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture))%;background:#5EA9F0"></i></div>
+                    </div>
+                    <div class="rb-cp-sc">
+                        <div class="lab">Hidden tests</div>
+                        <div class="val">@passed<small>/@total</small></div>
+                        <div class="wt">@(grade.BuildSucceeded ? "build passed" : "build failed")</div>
+                        <div class="rb-cp-meter"><i style="width:@(total > 0 ? (passed * 100 / total) : 0)%;background:#2E9E5B"></i></div>
+                    </div>
+                    <div class="rb-cp-sc">
+                        <div class="lab">Process</div>
+                        <div class="val">@commits.Count<small> commits</small></div>
+                        <div class="wt">@filesChanged files · +@plus −@minus</div>
+                    </div>
+                    <div class="rb-cp-sc">
+                        <div class="lab">Code quality</div>
+                        <div class="val" style="font-size:15px;line-height:1.4;padding-top:6px;">Scored against the rubric</div>
+                        <div class="wt">see AI Analysis below</div>
+                    </div>
+                </div>
+
+                <div class="rb-cp-panel">
+                    <div class="ph">
+                        <h4>What the candidate wrote</h4>
+                        <span class="r">
+                            @if (!string.IsNullOrEmpty(grade.BaselineSha) && !string.IsNullOrEmpty(grade.HeadSha))
+                            {
+                                @($"git diff {Short(grade.BaselineSha)}..{Short(grade.HeadSha)} · ")
+                            }
+                            @filesChanged files · +@plus −@minus
+                        </span>
+                    </div>
+                    @if (string.IsNullOrWhiteSpace(a.SubmittedCode))
+                    {
+                        <div class="pb rb-cp-empty">No changes were pushed.</div>
+                    }
+                    else
+                    {
+                        <div class="rb-cp-diff">
+                            @foreach (var line in diffLines)
+                            {
+                                if (line.StartsWith("diff --git "))
+                                {
+                                    var parts = line.Split(' ');
+                                    <div class="fh">@(parts.Length >= 4 ? parts[3].Substring(parts[3].StartsWith("b/") ? 2 : 0) : line)</div>
+                                }
+                                else if (line.StartsWith("index ") || line.StartsWith("---") || line.StartsWith("+++") || line.StartsWith("new file") || line.StartsWith("deleted file"))
+                                {
+                                    continue;
+                                }
+                                else if (line.StartsWith("@@"))
+                                {
+                                    <div class="ln h">@line</div>
+                                }
+                                else if (line.StartsWith("+"))
+                                {
+                                    <div class="ln a">@line</div>
+                                }
+                                else if (line.StartsWith("-"))
+                                {
+                                    <div class="ln r">@line</div>
+                                }
+                                else
+                                {
+                                    <div class="ln">@line</div>
+                                }
+                            }
+                        </div>
+                    }
+                </div>
+
+                <div class="rb-cp-grid">
+                    <div class="rb-cp-panel">
+                        <div class="ph"><h4>Hidden tests</h4><span class="r">@passed / @total passed</span></div>
+                        <div class="pb">
+                            @if (!grade.Requirements.Any())
+                            {
+                                <div class="rb-cp-empty">No results.</div>
+                            }
+                            <ul class="rb-cp-tests">
+                                @foreach (var r in grade.Requirements)
+                                {
+                                    <li>
+                                        <span class="m @(r.Passed ? "p" : "f")">@(r.Passed ? "✓" : "✕")</span>
+                                        <span>
+                                            <span class="nm">@(r.TestName ?? r.Id)</span>
+                                            <span class="rq">@r.Id — @r.Text</span>
+                                            @if (!r.Passed && !string.IsNullOrWhiteSpace(r.Message))
+                                            {
+                                                <span class="rs">@r.Message</span>
+                                            }
+                                        </span>
+                                    </li>
+                                }
+                            </ul>
+                            @if (!string.IsNullOrWhiteSpace(grade.Error))
+                            {
+                                <div class="rb-cp-note"><b>Grading note.</b> @grade.Error</div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="rb-cp-panel">
+                        <div class="ph"><h4>How they worked</h4><span class="r">@commits.Count commits@(minutesUsed.HasValue ? $" · {minutesUsed} min" : "")</span></div>
+                        <div class="pb">
+                            @if (!commits.Any())
+                            {
+                                <div class="rb-cp-empty">No commits after the baseline.</div>
+                            }
+                            <ul class="rb-cp-tl">
+                                @if (a.TimeStarted.HasValue)
+                                {
+                                    <li><span class="tm">00:00</span><br />Baseline — environment handed over</li>
+                                }
+                                @foreach (var c in commits)
+                                {
+                                    <li>
+                                        <span class="tm">@Offset(a.TimeStarted, c.AtUtc)</span><br />
+                                        <b>@c.Message</b>
+                                        @if (c.FilesChanged.HasValue)
+                                        {
+                                            <span class="rb-cp-sub"> — @c.FilesChanged files, +@(c.Insertions ?? 0) −@(c.Deletions ?? 0)</span>
+                                        }
+                                        <code style="font-size:10.5px;">@Short(c.Sha)</code>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@functions {
+    private static string Short(string sha) => string.IsNullOrEmpty(sha) ? "" : sha.Length > 7 ? sha.Substring(0, 7) : sha;
+
+    private static string Offset(DateTime? start, DateTime? at)
+    {
+        if (!start.HasValue || !at.HasValue) return "--:--";
+        var span = at.Value - start.Value;
+        if (span < TimeSpan.Zero) span = TimeSpan.Zero;
+        return $"{(int)span.TotalMinutes:00}:{span.Seconds:00}";
+    }
+}

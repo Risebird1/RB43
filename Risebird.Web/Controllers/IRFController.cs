@@ -96,6 +96,9 @@ namespace Risebird.Web.Controllers
         private readonly IPhoneScreenRepository _phoneScreenRepository;
         private readonly IMcqAssessmentService _mcqAssessmentService;
         private readonly IServiceScopeFactory _scopeFactory;
+        private readonly ICodeProjectQuestionService _codeProjectQuestionService;
+        private readonly Risebird.Web.Services.CodeProjectBackgroundQueue _codeProjectQueue;
+        private readonly IOpenAIResponsesHelper _openAIResponsesHelper;
 
 
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
@@ -109,9 +112,15 @@ namespace Risebird.Web.Controllers
             ITransInterviewerAuditRepository transInterviewerAuditRepository,
             IPhoneScreenRepository phoneScreenRepository,
             IMcqAssessmentService mcqAssessmentService,
-            IServiceScopeFactory scopeFactory)
+            IServiceScopeFactory scopeFactory,
+            ICodeProjectQuestionService codeProjectQuestionService,
+            Risebird.Web.Services.CodeProjectBackgroundQueue codeProjectQueue,
+            IOpenAIResponsesHelper openAIResponsesHelper)
         {
             _scopeFactory = scopeFactory;
+            _codeProjectQuestionService = codeProjectQuestionService;
+            _codeProjectQueue = codeProjectQueue;
+            _openAIResponsesHelper = openAIResponsesHelper;
             _userService = userService;
             _irfRepository = iRFRepository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -10192,6 +10201,293 @@ namespace Risebird.Web.Controllers
         }
 
 
+        #region Code project questions
+
+        /// <summary>Active stack images for the author's picker. Only these codes enter the generator's allowlist.</summary>
+        [HttpPost]
+        public async Task<JsonResult> GetCodeProjectStackImages(int irfId, string Type = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                    return Json(new { success = false, message = "Forbidden" });
+
+                var images = await _codeProjectQuestionService.GetActiveStackImages();
+                return Json(new
+                {
+                    success = true,
+                    images = images.Select(i => new { code = i.Code, displayName = i.DisplayName, toolchain = i.Toolchain }),
+                    timeLimitMinutes = CodeProjectQuestionHelper.DefaultTimeLimitMinutes
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not load stack images." });
+            }
+        }
+
+        /// <summary>
+        /// Generates a code project question from the rubric. Mirrors GenerateQuestionsFromRubric with
+        /// one structural difference: building and test-running the project takes minutes, so this
+        /// persists the question as 'validating', enqueues the validation job and returns at once.
+        /// The panel polls CodeProjectValidationStatus.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> GenerateCodeProjectQuestion(int irfId, string stackImageCode, string brief,
+            string difficulty = null, string skillName = null, string language = null, string framework = null,
+            int timeLimitMinutes = CodeProjectQuestionHelper.DefaultTimeLimitMinutes, string Type = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                    return Json(new { success = false, message = "Forbidden" });
+                if (string.IsNullOrWhiteSpace(brief))
+                    return Json(new { success = false, message = "Describe what the candidate should build or fix." });
+                if (brief.Length > MaxSampleQuestionLength)
+                    return Json(new { success = false, message = $"The brief must not exceed {MaxSampleQuestionLength} characters." });
+                if (timeLimitMinutes < 10 || timeLimitMinutes > 60)
+                    return Json(new { success = false, message = "Time limit must be between 10 and 60 minutes." });
+
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+
+                var irfVm = await _irfService.GetEditIRF(irfId, 0, false);
+                if (irfVm == null || irfVm.SkillCollection == null || !irfVm.SkillCollection.Any())
+                    return Json(new { success = false, message = "No rubric skills found for this channel." });
+
+                var images = await _codeProjectQuestionService.GetActiveStackImages();
+                var validStackCodes = DmIvQuestionRubricHelper.BuildValidStackImageSet(images);
+                if (validStackCodes.Count == 0)
+                    return Json(new { success = false, message = "No stack images are available yet. A VM image has to be baked and registered before code project questions can be generated." });
+                if (!DmIvQuestionRubricHelper.TryMatchStackImage(stackImageCode, validStackCodes, out var requestedStack))
+                    return Json(new { success = false, message = "Choose one of the listed stack images." });
+
+                var validSkillNames = DmIvQuestionRubricHelper.BuildValidSkillNameSet(irfVm.SkillCollection);
+                string preferredSkill = null;
+                if (!string.IsNullOrWhiteSpace(skillName) && !DmIvQuestionRubricHelper.TryMatchSkill(skillName, validSkillNames, out preferredSkill))
+                    return Json(new { success = false, message = "The skill must be one of this channel's rubric skills." });
+
+                // Responses API with the instructions inline: OpenAI retired the Assistants API on
+                // 26 Aug 2026, and inline instructions need no stored prompt or assistant to be set up.
+                if (string.IsNullOrEmpty(_configuration["OpenAI:ApiKey"]) || string.IsNullOrEmpty(_configuration["OpenAI:ResponsesModel"]))
+                    return Json(new { success = false, message = "OpenAI:ApiKey and OpenAI:ResponsesModel must be configured." });
+
+                var input = BuildCodeProjectGenerationInput(irfVm, images, requestedStack, brief.Trim(), difficulty, preferredSkill,
+                    language, framework, timeLimitMinutes);
+
+                // One retry on any mismatch, same policy as the rubric generator.
+                CodeProjectGeneration generation = null;
+                string matchedSkill = null;
+                List<string> errors = null;
+                for (var attempt = 0; attempt < 2; attempt++)
+                {
+                    var raw = await _openAIResponsesHelper.CreateJsonWithInstructionsAsync(
+                        CodeProjectQuestionHelper.GeneratorInstructions, input, "GenerateCodeProjectQuestion");
+                    generation = CodeProjectQuestionHelper.Parse(raw, out var parseError);
+                    errors = generation == null
+                        ? new List<string> { parseError }
+                        : CheckCodeProjectGeneration(generation, validSkillNames, validStackCodes, requestedStack, preferredSkill, timeLimitMinutes, out matchedSkill);
+                    if (errors.Count == 0) break;
+
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
+                        new Exception($"GenerateCodeProjectQuestion IRF {irfId} attempt {attempt + 1} rejected: {string.Join(" | ", errors)}"));
+                    input += "\n\nREMINDER — your previous answer was rejected for these reasons. Fix every one:\n- " + string.Join("\n- ", errors);
+                }
+                if (errors.Count > 0)
+                    return Json(new { success = false, message = "The generated project did not meet the rules.", errors });
+
+                generation.TimeLimitMinutes = timeLimitMinutes;
+                generation.Language = string.IsNullOrWhiteSpace(generation.Language) ? (language ?? requestedStack) : generation.Language;
+                generation.QuestionGist = DmIvQuestionRubricHelper.BuildSpokenQuestionGist(generation.QuestionText, generation.QuestionGist);
+
+                var (questionId, storeError) = await _codeProjectQuestionService.CreateQuestionAsync(irfId, matchedSkill, generation, timeLimitMinutes, emailid);
+                if (questionId <= 0)
+                    return Json(new { success = false, message = storeError ?? "Could not save the generated question." });
+
+                if (storeError == null)
+                    _codeProjectQueue.Enqueue(new Risebird.Web.Services.CodeProjectBackgroundQueue.Validate(questionId));
+
+                return Json(new
+                {
+                    success = storeError == null,
+                    questionId,
+                    status = storeError == null ? Risebird.Entities.ViewModel.CodeProjectValidationStatus.Validating : Risebird.Entities.ViewModel.CodeProjectValidationStatus.Failed,
+                    message = storeError
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "An error occurred: " + ex.Message });
+            }
+        }
+
+        /// <summary>Polled by the panel while the validation job runs.</summary>
+        [HttpGet]
+        public async Task<JsonResult> CodeProjectValidationStatus(int irfId, int questionId, string Type = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                    return Json(new { success = false, message = "Forbidden" });
+
+                var details = await _codeProjectQuestionService.GetDetails(questionId);
+                if (details == null || details.IRFId != irfId)
+                    return Json(new { success = false, message = "Question not found." });
+
+                CodeProjectValidationReport report = null;
+                if (!string.IsNullOrWhiteSpace(details.ValidationJson))
+                {
+                    try { report = System.Text.Json.JsonSerializer.Deserialize<CodeProjectValidationReport>(details.ValidationJson, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web)); }
+                    catch (System.Text.Json.JsonException) { }
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    status = details.ValidationStatus,
+                    detail = report,
+                    question = BuildCodeProjectPreview(details)
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not read the validation status." });
+            }
+        }
+
+        /// <summary>Validation status for every code project question on the channel, for the list badges.</summary>
+        [HttpPost]
+        public async Task<JsonResult> GetCodeProjectStatuses(int irfId, string Type = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                    return Json(new { success = false });
+                var rows = await _codeProjectQuestionService.GetStatusesByIRF(irfId);
+                return Json(new { success = true, statuses = rows.Select(r => new { questionId = r.QuestionId, status = r.ValidationStatus, stackImageCode = r.StackImageCode }) });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false });
+            }
+        }
+
+        private const string CodeProjectNotEditableMessage =
+            "This is a code project question. Its text, gist and time limit were validated together with the project, so edit the brief and regenerate instead.";
+
+        /// <summary>
+        /// Code project questions share the coding columns (CodingTimeLimitInMinutes is their slot), so the
+        /// coding/listening toggles and in-place edits would silently clear them. They are refused instead.
+        /// </summary>
+        private async Task<bool> IsCodeProjectQuestionAsync(int questionId) =>
+            questionId > 0 && (await _irfService.GetDeliveryHeadSampleQuestionById(questionId))?.IsCodeProjectQuestion == true;
+
+        private static string BuildCodeProjectGenerationInput(IRFVm irfVm, List<StackImage> images, string stackImageCode, string brief,
+            string difficulty, string preferredSkill, string language, string framework, int timeLimitMinutes)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"Role: {irfVm.IRFId}");
+            sb.AppendLine("Interview Type: Technical — code project question (the candidate works on a real machine)");
+            sb.AppendLine();
+            sb.AppendLine("Author brief:");
+            sb.AppendLine(brief);
+            sb.AppendLine();
+            if (!string.IsNullOrWhiteSpace(difficulty)) sb.AppendLine($"Difficulty: {difficulty.Trim()}");
+            if (!string.IsNullOrWhiteSpace(preferredSkill)) sb.AppendLine($"Primary skill (skill_or_competency must be exactly this): {preferredSkill}");
+            if (!string.IsNullOrWhiteSpace(language)) sb.AppendLine($"Language: {language.Trim()}");
+            if (!string.IsNullOrWhiteSpace(framework)) sb.AppendLine($"Framework: {framework.Trim()}");
+            sb.AppendLine($"stack_image_code must be: {stackImageCode}");
+            sb.AppendLine($"time_limit_minutes must be: {timeLimitMinutes}");
+            sb.AppendLine();
+            sb.AppendLine(DmIvQuestionRubricHelper.BuildRubricPromptSection(irfVm.SkillCollection));
+            sb.AppendLine("secondary_skills is optional; every entry must also be copied exactly from the Score Rubric list.");
+            sb.AppendLine();
+            // Rules and the response contract travel as the call's instructions (CodeProjectQuestionHelper.GeneratorInstructions).
+            sb.AppendLine(DmIvQuestionRubricHelper.BuildStackImagePromptSection(images));
+            return sb.ToString();
+        }
+
+        /// <summary>Rubric match, stack allowlist match, then the static scope rules.</summary>
+        private static List<string> CheckCodeProjectGeneration(CodeProjectGeneration g, HashSet<string> validSkillNames,
+            HashSet<string> validStackCodes, string requestedStack, string preferredSkill, int timeLimitMinutes, out string matchedSkill)
+        {
+            var errors = new List<string>();
+            if (!DmIvQuestionRubricHelper.TryMatchSkill(g.SkillOrCompetency, validSkillNames, out matchedSkill))
+                errors.Add($"skill_or_competency '{g.SkillOrCompetency}' is not one of the rubric skills: {string.Join(", ", validSkillNames)}.");
+            else if (preferredSkill != null && !string.Equals(matchedSkill, preferredSkill, StringComparison.OrdinalIgnoreCase))
+                errors.Add($"skill_or_competency must be '{preferredSkill}'.");
+
+            var secondaries = new List<string>();
+            foreach (var s in g.SecondarySkills)
+            {
+                if (DmIvQuestionRubricHelper.TryMatchSkill(s, validSkillNames, out var m)) secondaries.Add(m);
+                else errors.Add($"secondary skill '{s}' is not one of the rubric skills.");
+            }
+            g.SecondarySkills = secondaries;
+
+            if (!DmIvQuestionRubricHelper.TryMatchStackImage(g.StackImageCode, validStackCodes, out var matchedStack))
+                errors.Add($"stack_image_code '{g.StackImageCode}' is not in the allowlist.");
+            else if (!string.Equals(matchedStack, requestedStack, StringComparison.OrdinalIgnoreCase))
+                errors.Add($"stack_image_code must be '{requestedStack}'.");
+            else
+                g.StackImageCode = matchedStack;
+
+            errors.AddRange(CodeProjectQuestionHelper.ValidateScope(g, timeLimitMinutes));
+            return errors;
+        }
+
+        /// <summary>What the author sees: statement, gist, requirements and the file tree. Never tier 3.</summary>
+        private static object BuildCodeProjectPreview(CodeProjectDetails details)
+        {
+            List<string> files = new List<string>(), editable = new List<string>(), readOnly = new List<string>();
+            List<object> requirements = new List<object>();
+            if (!string.IsNullOrWhiteSpace(details.GeneratedPayload))
+            {
+                try
+                {
+                    var p = Newtonsoft.Json.Linq.JObject.Parse(details.GeneratedPayload);
+                    files = p["project_files"]?.ToObject<List<string>>() ?? files;
+                    editable = p["editable_files"]?.ToObject<List<string>>() ?? editable;
+                    readOnly = p["read_only_paths"]?.ToObject<List<string>>() ?? readOnly;
+                    requirements = (p["requirements"] as Newtonsoft.Json.Linq.JArray)?
+                        .Select(r => (object)new { id = r["id"]?.ToString(), text = r["text"]?.ToString() }).ToList() ?? requirements;
+                }
+                catch (Newtonsoft.Json.JsonException) { }
+            }
+            return new
+            {
+                id = details.QuestionId,
+                skillName = details.SkillName,
+                questionText = details.Comment,
+                questionGist = details.QuestionGist,
+                stackImageCode = details.StackImageCode,
+                framework = details.Framework,
+                language = details.Language,
+                timeLimitMinutes = details.CodingTimeLimitInMinutes,
+                estimatedMinutes = details.EstimatedMinutes,
+                requirements,
+                files = files.Select(f => new
+                {
+                    path = f,
+                    editable = editable.Contains(f, StringComparer.OrdinalIgnoreCase),
+                    readOnly = CodeProjectQuestionHelper.IsReadOnly(f, readOnly)
+                })
+            };
+        }
+
+        #endregion
+
         /// <summary>
         /// Turns coding mode on or off for a question that already exists, so questions added before
         /// the feature shipped (or generated from the rubric) can be converted without retyping them.
@@ -10212,6 +10508,10 @@ namespace Risebird.Web.Controllers
                 if (id <= 0)
                 {
                     return Json(new { success = false, message = "Question not found." });
+                }
+                if (await IsCodeProjectQuestionAsync(id))
+                {
+                    return Json(new { success = false, message = CodeProjectNotEditableMessage });
                 }
 
                 if (!isCodingQuestion)
@@ -10277,6 +10577,10 @@ namespace Risebird.Web.Controllers
                 if (id <= 0)
                 {
                     return Json(new { success = false, message = "Question not found." });
+                }
+                if (await IsCodeProjectQuestionAsync(id))
+                {
+                    return Json(new { success = false, message = CodeProjectNotEditableMessage });
                 }
 
                 if (isListeningComprehension)
@@ -10452,6 +10756,10 @@ namespace Risebird.Web.Controllers
                 var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
                 if (id.HasValue && id.Value > 0)
                 {
+                    if (await IsCodeProjectQuestionAsync(id.Value))
+                    {
+                        return Json(new { success = false, message = CodeProjectNotEditableMessage });
+                    }
                     var ok = await _irfService.UpdateSkillChannelSampleQuestion(id.Value, comment.Trim(), expectedAnswer?.Trim(), isCodingQuestion, codingTimeLimitInMinutes, questionGist?.Trim());
                     return Json(new { success = ok, id = id.Value });
                 }

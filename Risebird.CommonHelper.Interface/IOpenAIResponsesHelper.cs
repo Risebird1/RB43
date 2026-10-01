@@ -55,6 +55,16 @@ namespace Risebird.CommonHelper.Interface
             bool useStoredPromptModel = false);
 
         /// <summary>
+        /// Responses API JSON call with inline instructions on OpenAI:ResponsesModel — no stored prompt or
+        /// assistant needed. Returns the output text, or null on failure (already logged).
+        /// </summary>
+        Task<string> CreateJsonWithInstructionsAsync(
+            string instructions,
+            string input,
+            string operationType,
+            int? maxOutputTokens = null);
+
+        /// <summary>
         /// Calls the Responses API without JSON output formatting (free-form text).
         /// </summary>
         Task<RunResult> CreateTextResponseAsync(

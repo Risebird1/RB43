@@ -183,6 +183,19 @@ BEGIN
     Add IsAIGenerated bit NULL
 END
 
+-- Code project question: the candidate gets a VM with a small runnable project.
+-- Sits alongside IsCodingQuestion (in-page editor), never replacing it. The project
+-- delta lives in CodeProjectDetails. Backfilled to 0 by Migrations\AddCodeProjectQuestionSupport.sql.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsCodeProjectQuestion')
+      AND Object_ID = Object_ID(N'SkillChannelSampleQuestions'))
+BEGIN
+    ALTER TABLE SkillChannelSampleQuestions
+    Add IsCodeProjectQuestion bit NULL DEFAULT 0
+END
+
 End
 GO
 

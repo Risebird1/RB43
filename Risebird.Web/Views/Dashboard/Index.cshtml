@@ -415,6 +415,103 @@
               <!-- PAGE CONTENT WRAPPER -->
         <div class="page-content-wrap dashboard">
 
+            @* @if (ViewBag.ProfileName == "Admin")
+            {
+                
+                <style>
+                    .rb-cps { background: #fff; border: 1px solid #DDE3EC; border-radius: 6px; padding: 14px 16px; margin: 0 0 16px; font-size: 13px; color: #152033; }
+                    .rb-cps-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+                    .rb-cps-head h4 { margin: 0; font-size: 15px; font-weight: 700; }
+                    .rb-cps-sub { color: #7C8798; margin: 4px 0 0; }
+                    .rb-cps-btn { margin-left: auto; background: #1E7BE0; color: #fff; border: none; border-radius: 4px; padding: 8px 14px; font-weight: 600; cursor: pointer; }
+                    .rb-cps-btn:disabled { background: #A9BDD6; cursor: default; }
+                    .rb-cps-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: #EDF1F6; color: #7C8798; text-transform: uppercase; letter-spacing: .04em; }
+                    .rb-cps-badge.running { background: #E8F2FD; color: #1668C0; }
+                    .rb-cps-badge.completed { background: #E6F4EC; color: #1F7A45; }
+                    .rb-cps-badge.failed, .rb-cps-badge.blocked, .rb-cps-badge.error { background: #FBE9EB; color: #DC3545; }
+                    .rb-cps-steps { list-style: none; margin: 12px 0 0; padding: 0; display: none; }
+                    .rb-cps-steps li { display: grid; grid-template-columns: 18px 230px minmax(0, 1fr); gap: 10px; padding: 6px 0; border-top: 1px solid #EDF1F6; align-items: start; }
+                    .rb-cps-steps .m { font-weight: 700; text-align: center; }
+                    .rb-cps-steps .t { font-weight: 600; }
+                    .rb-cps-steps .d { color: #4A5568; word-break: break-word; }
+                    .rb-cps-steps li.done .m { color: #2E9E5B; } .rb-cps-steps li.skipped .m { color: #7C8798; }
+                    .rb-cps-steps li.running .m { color: #1E7BE0; } .rb-cps-steps li.failed .m, .rb-cps-steps li.blocked .m { color: #DC3545; }
+                    .rb-cps-steps li.pending { color: #7C8798; }
+                    .rb-cps-log { display: none; margin-top: 10px; }
+                    .rb-cps-log pre { max-height: 200px; overflow: auto; background: #FAFBFD; border: 1px solid #EDF1F6; padding: 8px 10px; font-size: 11.5px; white-space: pre-wrap; }
+                    @@media (max-width: 760px) { .rb-cps-steps li { grid-template-columns: 18px minmax(0, 1fr); } .rb-cps-steps .d { grid-column: 2; } }
+                </style>
+                <div class="row"><div class="col-md-12">
+                    <div class="rb-cps" id="rbCps">
+                        <div class="rb-cps-head">
+                            <h4>Code project infrastructure</h4>
+                            <span class="rb-cps-badge" id="rbCpsBadge">checking…</span>
+                            <button type="button" class="rb-cps-btn" id="rbCpsBtn" disabled>Set up / resume</button>
+                        </div>
+                        <p class="rb-cps-sub">Creates everything code project questions need in Azure (network, Bastion, VM images, grading runners) and stores the settings both apps read. Safe to run again: it only creates what is missing. First run takes about 1.5–2.5 hours; keep the functions host running until it completes.</p>
+                        <ul class="rb-cps-steps" id="rbCpsSteps"></ul>
+                        <div class="rb-cps-log" id="rbCpsLogWrap"><a href="#" id="rbCpsLogToggle">Show log</a><pre id="rbCpsLog" style="display:none"></pre></div>
+                    </div>
+                </div></div>
+                <script>
+                    (function () {
+                        var badge = document.getElementById('rbCpsBadge'), btn = document.getElementById('rbCpsBtn');
+                        var list = document.getElementById('rbCpsSteps'), logWrap = document.getElementById('rbCpsLogWrap'), log = document.getElementById('rbCpsLog');
+                        var marks = { done: '✓', skipped: '–', running: '…', failed: '✕', blocked: '!', pending: '·' };
+                        var timer = null;
+
+                        function render(data) {
+                            var status = (data && data.status) || 'error';
+                            badge.className = 'rb-cps-badge ' + status;
+                            badge.textContent = status === 'not-started' ? 'not set up' : status;
+                            btn.disabled = status === 'running';
+                            btn.textContent = status === 'completed' ? 'Run again (verify)' : status === 'not-started' ? 'Set up' : 'Set up / resume';
+                            list.innerHTML = '';
+                            (data && data.steps || []).forEach(function (s) {
+                                var li = document.createElement('li');
+                                li.className = s.status;
+                                ['m', 't', 'd'].forEach(function (c) { var span = document.createElement('span'); span.className = c; li.appendChild(span); });
+                                li.children[0].textContent = marks[s.status] || '·';
+                                li.children[1].textContent = s.title;
+                                li.children[2].textContent = s.detail || '';
+                                list.appendChild(li);
+                            });
+                            list.style.display = list.children.length ? 'block' : 'none';
+                            if (data && data.message) { var li = document.createElement('li'); li.className = 'failed'; li.textContent = data.message; list.appendChild(li); list.style.display = 'block'; }
+                            logWrap.style.display = data && data.log && data.log.length ? 'block' : 'none';
+                            log.textContent = (data && data.log || []).join('\n');
+                            if (timer) clearTimeout(timer);
+                            if (status === 'running') timer = setTimeout(poll, 5000);
+                        }
+
+                        function poll() {
+                            fetch('@Url.Action("CodeProjectSetupStatus", "Dashboard")', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                                .then(function (r) { return r.json(); }).then(render)
+                                .catch(function () { render({ status: 'error', message: 'Could not read the setup status.' }); });
+                        }
+
+                        btn.addEventListener('click', function () {
+                            var go = function () {
+                                btn.disabled = true; badge.className = 'rb-cps-badge running'; badge.textContent = 'starting';
+                                fetch('@Url.Action("CodeProjectSetupStart", "Dashboard")', { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                                    .then(function (r) { return r.json(); }).then(render)
+                                    .catch(function () { render({ status: 'error', message: 'Could not start the setup.' }); });
+                            };
+                            var text = 'This creates billable Azure resources in the subscription configured for the functions app (Bastion Standard, NAT gateway, container registry, VM image builds) and applies the code project database migrations to the database the functions app points at. Continue?';
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({ title: 'Set up code project infrastructure?', text: text, icon: 'warning', showCancelButton: true, confirmButtonText: 'Set up' })
+                                    .then(function (r) { if (r.isConfirmed || r.value === true) go(); });
+                            } else if (window.confirm(text)) { go(); }
+                        });
+
+                        document.getElementById('rbCpsLogToggle').addEventListener('click', function (e) {
+                            e.preventDefault(); log.style.display = log.style.display === 'none' ? 'block' : 'none';
+                        });
+                        poll();
+                    })();
+                </script>
+            } *@
+
             <div class="row">
                 <div class="col-md-12">
                     <div class="dashboard-view">

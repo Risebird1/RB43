@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using System;
@@ -58,26 +58,23 @@ namespace Risebird.CommonHelper
         }
 
 
+        /// <summary>
+        /// Service-principal token for Azure Resource Manager via Azure.Identity. ADAL
+        /// (Microsoft.IdentityModel.Clients.ActiveDirectory), used here before, is retired.
+        /// One credential per client id is kept for the process so its token cache is reused
+        /// instead of a fresh token being requested for every ARM call.
+        /// </summary>
         private string GetAuthorizationHeaderForAccessToken()
         {
-            try
-            {
-                var cc = new ClientCredential(_AADClientId, _AADAccessKey);
-                var context = new AuthenticationContext(_AuthenticationUri + _AADTenantDomain);
-                AuthenticationResult result = null;
-                result = context.AcquireTokenAsync(_ARMEndpoint, cc).Result;
-
-                if (result == null)
-                {
-                    throw new InvalidOperationException("Failed to obtain the JWT token");
-                }
-                string token = result.AccessToken;
-                return token;
-            }
-            catch (Exception ex)
-            {
-                return ex.InnerException.Message;
-            }
+            var credential = Credentials.GetOrAdd($"{_AADTenantDomain}|{_AADClientId}",
+                _ => new Azure.Identity.ClientSecretCredential(_AADTenantDomain, _AADClientId, _AADAccessKey));
+            var scope = (string.IsNullOrWhiteSpace(_ARMEndpoint) ? "https://management.azure.com" : _ARMEndpoint.TrimEnd('/')) + "/.default";
+            // Callers are synchronous; a failure surfaces as a null token (see GetAzureTokenCredentials)
+            // rather than, as before, an exception message sent to Azure as the bearer token.
+            return credential.GetToken(new Azure.Core.TokenRequestContext(new[] { scope }), default).Token;
         }
+
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Azure.Identity.ClientSecretCredential> Credentials =
+            new System.Collections.Concurrent.ConcurrentDictionary<string, Azure.Identity.ClientSecretCredential>();
     }
 }

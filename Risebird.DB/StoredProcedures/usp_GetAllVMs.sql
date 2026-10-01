@@ -17,7 +17,8 @@ CREATE PROCEDURE [dbo].[usp_GetAllVMs]
 AS
 Begin
 
-select vmp.*, tvm.LastAction from VMProperties vmp left join TransVMTriggerDetails tvm  on tvm.VMPropertyId=vmp.id  where IsRemoved=0 and IsDeleted=0 
+select vmp.*, tvm.LastAction from VMProperties vmp left join TransVMTriggerDetails tvm  on tvm.VMPropertyId=vmp.id  where IsRemoved=0 and IsDeleted=0 and ISNULL(vmp.Purpose, '') <> 'CodeProject'
+
 
 End
 

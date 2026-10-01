@@ -136,6 +136,19 @@ builder.Services.AddScoped<IWalletService, WalletService>();
 builder.Services.AddScoped<IMeetingService, MeetingService>();
 builder.Services.AddHttpClient<ICashfreePayoutService, CashfreePayoutService>();
 builder.Services.AddHttpClient<ICodeExecutionService, CodeExecutionService>();
+
+// Code project questions: container runner + VM provisioner behind HTTP (see CodeProjects:* config),
+// private blob store for the project and its secrets, and the worker that validates and pre-provisions.
+builder.Services.AddHttpClient<ICodeProjectRunner, HttpCodeProjectRunner>();
+builder.Services.AddHttpClient<ICodeProjectEnvironmentProvisioner, HttpCodeProjectEnvironmentProvisioner>();
+builder.Services.AddSingleton<ICodeProjectBlobStore, CodeProjectBlobStore>();
+// Configuration first, then what the one-click setup stored in CodeProjectSettings.
+builder.Services.AddScoped<ICodeProjectSettingsRepository, CodeProjectSettingsRepository>();
+builder.Services.AddScoped<ICodeProjectSettingsProvider, CodeProjectSettingsProvider>();
+builder.Services.AddScoped<ICodeProjectQuestionRepository, CodeProjectQuestionRepository>();
+builder.Services.AddScoped<ICodeProjectQuestionService, CodeProjectQuestionService>();
+builder.Services.AddSingleton<CodeProjectBackgroundQueue>();
+builder.Services.AddHostedService<CodeProjectBackgroundWorker>();
 builder.Services.AddScoped<IQcInterviewAIMergeJobService, QcInterviewAIMergeJobService>();
 builder.Services.AddScoped<ITransInterviewerAuditRepository, TransInterviewerAuditRepository>();
 builder.Services.AddScoped<IDmIvAutoQcRemovalService, DmIvAutoQcRemovalService>();
