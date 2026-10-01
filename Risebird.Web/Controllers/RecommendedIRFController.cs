@@ -464,7 +464,7 @@ namespace Risebird.Web.Controllers
         //            if (string.IsNullOrEmpty(model.OldCalendlyLink))
         //            {
         //                //Start: Auto Generate Scheduling Link 
-        //                var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
+        //                var _schedulinglink = await AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
         //                model.CalendlyLink = _schedulinglink;
         //                //End: Auto Generate Scheduling Link
         //            }
@@ -637,7 +637,7 @@ namespace Risebird.Web.Controllers
             }
             return;
         }
-        public string AutoGenerateSchedulingLink(DateTime eventStartdate, string SkillChannel, string EventName)
+        public async Task<string> AutoGenerateSchedulingLink(DateTime eventStartdate, string SkillChannel, string EventName)
         {
             var model_Second = new List<daytimes_second>();
             var sun = new List<perdaytime>();
@@ -662,8 +662,8 @@ namespace Risebird.Web.Controllers
             model_report.Concurrency = 10;
             model_report.BufferTime = 18;
             model_report.TimeSlotDays = 6;
-            var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report).Result;
-            var model = _interviewSchedulerservice.FetchEventById(eventid).Result;
+            var eventid = await _interviewSchedulerservice.AutoCreateEvent(model_report);
+            var model = await _interviewSchedulerservice.FetchEventById(eventid);
             if (model != null)
             {
                 var eventurl = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + model.Uniqueid;
@@ -703,7 +703,7 @@ namespace Risebird.Web.Controllers
             //return finalString;
         }
         [HttpPost]
-        public string RecommendedImportQuickCandidates(IFormCollection formCollection)
+        public async Task<string> RecommendedImportQuickCandidates(IFormCollection formCollection)
         {
             var IRFId = Convert.ToInt32((formCollection["IRFId"].ToString()));
             var isSendInvite = true;
@@ -730,7 +730,7 @@ namespace Risebird.Web.Controllers
                                 if (fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                     || fileMimeType == "application/vnd.ms-excel")
                                 {
-                                    _applicationErrorLogger.LogMessage(LogLevelInfo.Info, $"Mime type of file {file.FileName} is {fileMimeType}");
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, $"Mime type of file {file.FileName} is {fileMimeType}");
                                     string fileName = file.FileName;
                                     string fileContentType = file.ContentType;
                                     byte[] fileBytes = new byte[file.Length];
@@ -770,7 +770,7 @@ namespace Risebird.Web.Controllers
                                     StringBuilder result = new StringBuilder();
                                     if (candidateList != null && candidateList.Any())
                                     {
-                                        result = _irfService.AddQuickMultipleCandidates(candidateList, emailid, profileName, IRFId, isSendInvite, linkurl).Result;
+                                        result = await _irfService.AddQuickMultipleCandidates(candidateList, emailid, profileName, IRFId, isSendInvite, linkurl);
                                     }
                                     else
                                     {
@@ -798,7 +798,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to import candidates!"; ;
             }
             return null;
@@ -890,7 +890,7 @@ namespace Risebird.Web.Controllers
                     //Start: Auto Generate Scheduling Link 
                     model.StartDate = DateTime.Now;
                     model.EndDate = DateTime.Now.AddMonths(3);
-                    var _schedulinglink = AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
+                    var _schedulinglink = await AutoGenerateSchedulingLink(model.StartDate, model.IRFId, model.JDTiltle + "_Scheduling");
                     model.CalendlyLink = _schedulinglink;
                     var result = await _irfService.CreateSkillChannelUsingTemplateByInterviewLinkPopUp(model, emailId, "Client");
                     //End: Auto Generate Scheduling Link

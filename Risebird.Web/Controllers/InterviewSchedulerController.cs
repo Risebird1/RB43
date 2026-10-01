@@ -1261,13 +1261,13 @@ namespace Risebird.Web.Controllers
             {
                 return null;
             }
-            var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime, interviewduration);
+            var zoomlink = await CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime, interviewduration);
             zoomlink.accountemail = accountEmail;
             var succeresult = await _interviewSchedulerservice.UpdateInstaZoomDetails(indianTime, indianTime.AddMinutes(60), accountEmail);
             return zoomlink;
         }
 
-        private InstaZoomMeetingResponse CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject, string accountEmail, DateTime indianTime, int interviewduration)
+        private async Task<InstaZoomMeetingResponse> CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject, string accountEmail, DateTime indianTime, int interviewduration)
         {
             _zoommetingobject.type = 2;
             //_zoommetingobject.duration = 60;
@@ -1282,7 +1282,7 @@ namespace Risebird.Web.Controllers
             //string token = ZoomToken();
 
             //get oauth token
-            string token = _zoomHelper.GenerateAccessToken().Result;
+            string token = await _zoomHelper.GenerateAccessToken();
 
             var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"users/" + accountEmail + "/meetings"));
 
@@ -1323,11 +1323,11 @@ namespace Risebird.Web.Controllers
             var eventid = await _interviewSchedulerservice.FetchEventidByUniqueid(id);
             return RedirectToAction("EditEvent", new { eventid = eventid, eventtype = 1 });
         }
-        public string DeleteMeetingLink(string meetingid)
+        public async Task<string> DeleteMeetingLink(string meetingid)
         {
             //string token = ZoomToken();
             //get oauth token
-            string token = _zoomHelper.GenerateAccessToken().Result;
+            string token = await _zoomHelper.GenerateAccessToken();
             var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingid));
             var request = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingid), Method.Delete);
             request.AddHeader("content-type", "application/json");
@@ -1467,7 +1467,7 @@ namespace Risebird.Web.Controllers
                             }
                             else if (model.MeetingPlatform == MeetingPlatforms.Zoom)
                             {
-                                DeleteMeetingLink(candidateuniqueid.ZoomMeetingId);
+                                await DeleteMeetingLink(candidateuniqueid.ZoomMeetingId);
                             }
                             //var result1 = await _iRFService.AddCandidateStatus("Candidate", candidateId, Irfid, "Reschedule on " + indianTime.ToString(), (int)CandidateStatusOptions.Cancelled, model.interviewid);
                         }
@@ -1998,7 +1998,7 @@ namespace Risebird.Web.Controllers
             {
                 return null;
             }
-            var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime, 60);
+            var zoomlink = await CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime, 60);
             zoomlink.accountemail = accountEmail;
             var succeresult = await _interviewSchedulerservice.UpdateInstaZoomDetails(indianTime, indianTime.AddMinutes(60), accountEmail);
             return zoomlink;

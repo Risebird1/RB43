@@ -263,13 +263,13 @@ namespace Risebird.Repository
                 BlobContainerClient blobContainer = GetCloudBlobContainer(containerName);
                 BlobClient blob = blobContainer.GetBlobClient(fileName);
                 string contents; /* content to append */
-                if (!blob.ExistsAsync().Result.Value)
+                if (!blob.Exists().Value)
                 {
                     contents = "";
                 }
                 else
                 {
-                    using (StreamReader reader = new StreamReader(blob.OpenReadAsync().Result))
+                    using (StreamReader reader = new StreamReader(blob.OpenRead()))
                     {
                         contents = reader.ReadToEnd();
                     }

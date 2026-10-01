@@ -1560,7 +1560,7 @@ namespace Risebird.Web.Controllers
                                  select new { ID = (int)s, Name = s.GetDescription() };
 
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
-            var questions = _meetingService.GetTechSkillComments(irfId, userId).Result;
+            var questions = await _meetingService.GetTechSkillComments(irfId, userId);
             model.QuestionsList = new SelectList(questions, "Comment", "Comment");
             //model.QuestionsListData = JsonConvert.SerializeObject(questions.Select(x => (x.Comment.Replace("\r", "").Replace("\n", ""), x.SkillName)));
         }
@@ -3656,7 +3656,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                var model = await _meetingService.GetInteviewReport(interviewId, irfId);
                 if (model.QuestionsCollection == null)
                 {
                     ViewBag.QuestionsDiscussedCount = 0;

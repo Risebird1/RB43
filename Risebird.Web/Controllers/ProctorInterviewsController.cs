@@ -134,7 +134,7 @@ namespace Risebird.Web.Controllers
                     var functionKey = "dzI10CMPKBEqBJchDE1jQ/klyimLhWISbH7q0aDZZHtI8K8sBu8THg==";
 
                     var response = await _httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
-                    if (response.Content.ReadAsStringAsync().Result.ToLower().Contains("success"))
+                    if ((await response.Content.ReadAsStringAsync()).ToLower().Contains("success"))
                     {
                         //save the email of the performer
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -207,7 +207,7 @@ namespace Risebird.Web.Controllers
                     var response = await _httpClient.SendRequestAsync(HttpMethod.Get, path, vmId, functionKey, "", _cancellationToken);
                     if (response != null)
                     {
-                        var rdpfile = response.Content.ReadAsStringAsync().Result;
+                        var rdpfile = await response.Content.ReadAsStringAsync();
                         if (rdpfile != null)
                         {
                             rdpfile = rdpfile.Replace("\"", "").Replace("\\", "\"");
@@ -634,7 +634,7 @@ namespace Risebird.Web.Controllers
                 var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/GetVMList";
                 var functionKey = "fa19fIch6k8mPgiWRkbjvYSpBf26kJffV8jUaXFyWCk2yOXbofkRDA==";
                 var response = await _httpClient.SendRequestAsync(HttpMethod.Get, path, null, functionKey, "", _cancellationToken);
-                var result = response.Content.ReadAsStringAsync().Result;
+                var result = await response.Content.ReadAsStringAsync();
                 result = result.Replace("\\r", "\r").Replace("\\n", "\n").Replace("\"", "").Replace("\\", "\"");
                 var vmsInCloudPortal = JsonConvert.DeserializeObject<VMServerProperty>(result);
                 if (!vmsInCloudPortal.value.Select(x => x.name).Contains(model.Name))

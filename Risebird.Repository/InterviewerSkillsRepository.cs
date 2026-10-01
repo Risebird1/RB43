@@ -721,13 +721,13 @@ namespace Risebird.Repository
                     foreach (var item in model)
                     {
                         string sqlAddInterviewer = "INSERT INTO TransInterviewerListInterviewerSkills (UserId, ISCId, InterviewerProfileId) Values (@UserId, @ISCId, @InterviewerProfileId);";
-                        var result1 = con.ExecuteAsync(sqlAddInterviewer, new
+                        var result1 = con.Execute(sqlAddInterviewer, new
                         {
                             item.UserId,
                             ISCId = iscId,
                             item.InterviewerProfileId
 
-                        }).Result;
+                        });
                     }
                     return true;
 
@@ -757,13 +757,13 @@ namespace Risebird.Repository
                         if (Convert.ToInt32(Count) == 0)
                         {
                             var query = "insert into [dbo].[TransInterviewerListInterviewerSkills] (UserId,PrimarySkill,InterviewerSkillId,IsAdded) Values(@UserId,@PrimarySkill,@InterviewerSkillId,@IsAdded) ";
-                            var results = con.ExecuteAsync(query, new
+                            var results = con.Execute(query, new
                             {
                                 item.UserId,
                                 item.PrimarySkill,
                                 item.InterviewerSkillId,
                                 item.IsAdded
-                            }).Result;
+                            });
                         }
                     }
 

@@ -496,7 +496,7 @@ namespace Risebird.Web.Controllers
             }
             catch (System.Exception ex)
             {
-                var resultDe = _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty).Result;
+                var resultDe = await _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty);
 
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(null);
@@ -613,7 +613,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                var resultDe = _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty).Result;
+                var resultDe = await _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty);
 
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
 

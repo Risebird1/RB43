@@ -215,7 +215,7 @@ namespace Risebird.Web.Controllers
                                 InterviewerSkillsDetails.JDLink = uploadedFileURL;
                             }
                         }
-                        var _schedulinglink = AutoGenerateSchedulingLink(InterviewerSkillsDetails.StartDate, InterviewerSkillsDetails.InterviewerSkillId, InterviewerSkillsDetails.JDTiltle + "_Scheduling");
+                        var _schedulinglink = await AutoGenerateSchedulingLink(InterviewerSkillsDetails.StartDate, InterviewerSkillsDetails.InterviewerSkillId, InterviewerSkillsDetails.JDTiltle + "_Scheduling");
                         InterviewerSkillsDetails.CalendlyLink = _schedulinglink;
                         if (await _iInterviewerSkillsService.AddInterviewerSkillsDetails(InterviewerSkillsDetails))
                         {
@@ -249,13 +249,13 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult EditInterviewerSkills(string id, bool isClone = false)
+        public async Task<IActionResult> EditInterviewerSkills(string id, bool isClone = false)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    var model = _iInterviewerSkillsService.GetEditInterviewerSkills(Convert.ToInt32(id)).Result;
+                    var model = await _iInterviewerSkillsService.GetEditInterviewerSkills(Convert.ToInt32(id));
                     var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
                     //string skills = string.Empty;
                     //skills = string.Join(",", from item in model.SkillCollection select item.SkillId);
@@ -299,7 +299,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
 
@@ -352,7 +352,7 @@ namespace Risebird.Web.Controllers
                                 TempData["SuccessErrorMessageISCInterviewer"] = "Sorry! An Interviewer Skills Channel with this name already exits!";
                                 return RedirectToAction("Index");
                             }
-                            if (_iInterviewerSkillsService.AddInterviewerSkillsDetails(model).Result)
+                            if (await _iInterviewerSkillsService.AddInterviewerSkillsDetails(model))
                             {
                                 TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel has been saved Successfully!";
                                 return RedirectToAction("Index");
@@ -433,7 +433,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult DeleteInterviewerSkills(int id)
+        public async Task<IActionResult> DeleteInterviewerSkills(int id)
         {
             try
             {
@@ -443,7 +443,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
-                        if (_iInterviewerSkillsService.DeleteInterviewerSkillsChannel(id).Result)
+                        if (await _iInterviewerSkillsService.DeleteInterviewerSkillsChannel(id))
                         {
                             return RedirectToAction("Index");
                         }
@@ -464,7 +464,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
 
@@ -472,7 +472,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult UnArchiveISC(int id)
+        public async Task<IActionResult> UnArchiveISC(int id)
         {
             try
             {
@@ -482,7 +482,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
-                        if (_iInterviewerSkillsService.UnArchiveISC(id).Result)
+                        if (await _iInterviewerSkillsService.UnArchiveISC(id))
                         {
                             TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel has been restored Successfully!";
                             return RedirectToAction("Index");
@@ -505,7 +505,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageISCInterviewer"] = "Failed to restore Interviewer Skills Channel!";
                 return RedirectToAction("Index");
             }
@@ -560,7 +560,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult DeleteISCInterviewer(int id, int iscId, string iscName)
+        public async Task<IActionResult> DeleteISCInterviewer(int id, int iscId, string iscName)
         {
             try
             {
@@ -572,7 +572,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
-                        if (_iInterviewerSkillsService.DeleteISCInterviewer(id).Result)
+                        if (await _iInterviewerSkillsService.DeleteISCInterviewer(id))
                         {
                             //TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer removed Successfully.";
                             return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
@@ -596,7 +596,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageISCInterviewer"] = "Could not remove Interviewer.";
                 return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
             }
@@ -878,7 +878,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult InterviewerSearch(int? Page, string searchvalue)
+        public async Task<IActionResult> InterviewerSearch(int? Page, string searchvalue)
         {
             try
             {
@@ -902,7 +902,7 @@ namespace Risebird.Web.Controllers
                         }
                         int totalMeetings = 0;
 
-                        modelList = _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsPaged(Page.Value, searchvalue).Result;
+                        modelList = await _iInterviewerSkillsService.GetInterviewerRiseTubeMeetingsPaged(Page.Value, searchvalue);
                         modelList = modelList.Select(x => { x.ProfileType = ((Heuristicsscorelevel)Convert.ToInt32(x.ProfileType)).GetDescription(); x.CompentencyLevel = ((CompetencyLevel)Convert.ToInt32(x.CompentencyLevel)).GetDescription(); return x; }).ToList();
                         if (HttpContext.Session.GetString("InterviewerRiseTubefilters") != null)
                         {
@@ -997,7 +997,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -1087,7 +1087,7 @@ namespace Risebird.Web.Controllers
                             x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
                             return x;
                         }).ToList();
-                        var IRListModel = _interviewerService.GetInterviewerinteviewReport(model.imid, model.irfIntId).Result;
+                        var IRListModel = await _interviewerService.GetInterviewerinteviewReport(model.imid, model.irfIntId);
                         var exprienceyears = _iRFRepository.GetInterviewerExprienceYear();
                         var CompanyStageList = _iRFRepository.GetCompanyStage();
                         var SkillNatureList = _iRFRepository.GetSkillNature();
@@ -1250,7 +1250,7 @@ namespace Risebird.Web.Controllers
                         x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
                         return x;
                     }).ToList();
-                    var IRListModel = _interviewerService.GetInterviewerinteviewReport(model.imid, model.irfIntId).Result;
+                    var IRListModel = await _interviewerService.GetInterviewerinteviewReport(model.imid, model.irfIntId);
                     var exprienceyears = _iRFRepository.GetInterviewerExprienceYear();
                     var CompanyStageList = _iRFRepository.GetCompanyStage();
                     var SkillNatureList = _iRFRepository.GetSkillNature();
@@ -1457,7 +1457,7 @@ namespace Risebird.Web.Controllers
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
 
-            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId).Result, "Comment", "Comment");
+            model.QuestionsList = new SelectList(await _meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
         }
 
         [HttpGet]
@@ -1740,7 +1740,7 @@ namespace Risebird.Web.Controllers
             //clientUsers.ToList().Add(new Users { id = 0, FirstName = "No Client User" });
             return new SelectList(list, "Value", "Text");
         }
-        public string AutoGenerateSchedulingLink(DateTime eventStartdate, string SkillChannel, string EventName, string meetingPlatform = null)
+        public async Task<string> AutoGenerateSchedulingLink(DateTime eventStartdate, string SkillChannel, string EventName, string meetingPlatform = null)
         {
             var model_Second = new List<daytimes_second>();
             var sun = new List<perdaytime>();
@@ -1767,8 +1767,8 @@ namespace Risebird.Web.Controllers
             model_report.BufferTime = 18;
             model_report.TimeSlotDays = 6;
             model_report.MeetingPlatform = meetingPlatform;
-            var eventid = _interviewSchedulerservice.AutoCreateEvent(model_report).Result;
-            var model = _interviewSchedulerservice.FetchEventById(eventid).Result;
+            var eventid = await _interviewSchedulerservice.AutoCreateEvent(model_report);
+            var model = await _interviewSchedulerservice.FetchEventById(eventid);
             if (model != null)
             {
                 var eventurl = "https://" + Request.Host.ToString() + "/InterviewScheduler/ScheduleEvent?id=" + model.Uniqueid;
