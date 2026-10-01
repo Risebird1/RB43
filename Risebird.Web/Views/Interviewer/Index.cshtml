@@ -465,7 +465,7 @@
                                                             </button>
                                                             @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                             {
-                                                                <span class="call" onclick="CallButtonClickInterviewer('@item.FirstName', '@item.MobileNumber','@item.EmailId')">
+                                                                <span class="call" onclick="CallButtonClickInterviewer('@System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(item.FirstName ?? "")', '@System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(item.MobileNumber ?? "")','@System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(item.EmailId ?? "")')">
                                                                     <button type="button" class="btn-act btn-act-call" title="Call">
                                                                         <svg class="icon-m" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                                                                     </button>
@@ -1230,7 +1230,7 @@
             html += ' </tr>';
         }
         for (var i = 0; i < data.length; i++) {
-            html += '<input type="hidden" id="hidname' + data[i].id + '" value="' + (data[i].firstName || '') + '"/><input id="hidfirstname' + data[i].userId + '" type="hidden" value="' + (data[i].firstName || '') + '"/><tr id="' + data[i].id + '" data-changes="1">';
+            html += '<input type="hidden" id="hidname' + data[i].id + '" value="' + (data[i].firstName || '') + '"/><input id="hidfirstname' + data[i].userId + '" type="hidden" value="' + (data[i].firstName || '') + '"/><input id="hidmobile' + data[i].userId + '" type="hidden" value="' + (data[i].mobileNumber || '') + '"/><input id="hidcandidateEmail_' + data[i].userId + '" type="hidden" value="' + (data[i].emailId || '') + '"/><tr id="' + data[i].id + '" data-changes="1">';
             html += '<td class="personal-details-cell"><div class="pd-name-row"><span class="pd-name">' + (data[i].firstName || '') + ' ' + (data[i].lastName || '') + '</span></div><div class="pd-meta"><span class="pd-coded"><strong>' + (data[i].nickName || '—') + '</strong></span>';
             if ($("#txtprofile").val() == "Admin" && data[i].emailId) html += '<span class="pd-email" data-tooltip="' + data[i].emailId + '">' + data[i].emailId + '</span>';
             if ($("#txtprofile").val() == "Admin" && data[i].mobileNumber) html += '<span class="pd-mobile">' + data[i].mobileNumber + '</span>';
@@ -1349,7 +1349,7 @@
     }
 
 </script>
-<script src="~/js/TwilioCallMaker.js?v=2024"></script>
+<script src="~/js/TwilioCallMaker.js" asp-append-version="true"></script>
 <script src="~/js/buttonclickevent.js"></script>
 <script>
 

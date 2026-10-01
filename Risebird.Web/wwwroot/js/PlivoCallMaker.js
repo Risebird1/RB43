@@ -111,11 +111,51 @@
     // ----------------------------
     // Outgoing call / hang up
     // ----------------------------
+
+    // Numbers typed into forms (e.g. InterviewMeetings.MobileNumber) are free text. Plivo needs one number
+    // as country code + digits, so:
+    //   "98765 43210 / 91234 56789" -> first number only     "+91 098765 43210" -> drop the trunk 0
+    //   "09876543210" / "0091..."   -> drop the prefix       "9876543210"       -> "919876543210"
+    function toPlivoNumber(raw) {
+        const text = String(raw || "");
+        const digitsOf = function (s) { return s.replace(/[^\d]/g, ""); };
+
+        // Several numbers in one field: take the first that looks like a phone number.
+        let digits = "";
+        const parts = text.split(/[\/,;|]|\bor\b/i);
+        for (let i = 0; i < parts.length && !digits; i++) {
+            const d = digitsOf(parts[i]);
+            if (d.length >= 10) digits = d;
+        }
+        if (digits.length > 13) {
+            // Two numbers separated only by spaces: "9876543210 9123456789"
+            const tokens = text.split(/\s+/);
+            for (let i = 0; i < tokens.length; i++) {
+                const d = digitsOf(tokens[i]);
+                if (d.length >= 10 && d.length <= 13) { digits = d; break; }
+            }
+        }
+        if (!digits) digits = digitsOf(text);
+
+        if (digits.startsWith("00")) digits = digits.substring(2);                          // 0091...
+        if (digits.length === 11 && digits.startsWith("0")) digits = digits.substring(1);   // 09876543210
+        if (digits.length === 13 && digits.startsWith("910")) digits = "91" + digits.substring(3); // +91 0987...
+        if (digits.length === 10) digits = "91" + digits;                                  // national number
+        return digits;
+    }
+
+    function escapeHtml(value) {
+        return String(value || "").replace(/[&<>"']/g, function (c) {
+            return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+        });
+    }
     async function plivoCallRecipient(phoneNumber) {
         // Plivo expects digits only (no +, spaces or dashes), also in X-PH- header values.
-        const phone = String(phoneNumber || "").replace(/[^\d]/g, "");
-        if (phone.length < 9) {
-            console.warn("Invalid phone number");
+        const phone = toPlivoNumber(phoneNumber);
+        if (phone.length < 11 || phone.length > 15) {
+            console.warn("Invalid phone number:", phoneNumber);
+            document.getElementById("callingLabel").innerHTML = "Invalid phone number: <b>" + escapeHtml(phoneNumber) + "</b>";
+            setTimeout(afterTimeOut, 3000);
             return;
         }
 
