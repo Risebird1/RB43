@@ -172,6 +172,7 @@ namespace Risebird.Web.Controllers
                         return AadhaarRequiredExitView(sid, meetingDetails);
 
                     await ApplyAiProctoringViewBagAsync(meetingDetails, sid);
+                    ViewBag.CandidateTranscriptReview = IsCandidateTranscriptReviewEnabled();
                     if (meetingDetails.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
                     {
                         var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(sid);
@@ -1047,6 +1048,7 @@ namespace Risebird.Web.Controllers
                 try
                 {
                     await ApplyAiProctoringViewBagAsync(meetingDetails, model.SessionId);
+                    ViewBag.CandidateTranscriptReview = IsCandidateTranscriptReviewEnabled();
                 }
                 catch (Exception proctorEx)
                 {
@@ -1142,21 +1144,36 @@ namespace Risebird.Web.Controllers
 
                         if (model.AudioFile != null && model.AudioFile.Length > 0)
                         {
-                            try
+                            // The candidate has already read this transcript and corrected it if it
+                            // was wrong, so it is not transcribed again - what they confirmed is the
+                            // answer. TranscribeAnswer produced it from this same recording.
+                            var transcriptReview = BuildTranscriptReview(model);
+
+                            if (transcriptReview != null)
                             {
-                                using var stream = model.AudioFile.OpenReadStream();
-                                userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName, model.isMultiLingual);
+                                userMessage = transcriptReview.ConfirmedTranscript;
                             }
-                            catch (Exception sttEx)
+                            else
                             {
-                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, sttEx);
-                                return View("ExitModalPartial", CreateAnswerSubmitErrorView(
-                                    model.SessionId,
-                                    "Error with audio",
-                                    "Could not transcribe your recording. Please check your microphone and try again."));
+                                try
+                                {
+                                    using var stream = model.AudioFile.OpenReadStream();
+                                    userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName, model.isMultiLingual);
+                                }
+                                catch (Exception sttEx)
+                                {
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, sttEx);
+                                    return View("ExitModalPartial", CreateAnswerSubmitErrorView(
+                                        model.SessionId,
+                                        "Error with audio",
+                                        "Could not transcribe your recording. Please check your microphone and try again."));
+                                }
                             }
 
-                            if (!IsTranscriptionValid(userMessage, model.isMultiLingual))//!model.isMultiLingual &&
+                            // A confirmed transcript is the candidate's own words, so it is not held
+                            // to the speech-to-text quality check - that check exists to catch a bad
+                            // recording, which is exactly what the review step already let them fix.
+                            if (transcriptReview == null && !IsTranscriptionValid(userMessage, model.isMultiLingual))//!model.isMultiLingual &&
                             {
                                 // Rewind the stream to re-run transcription
                                 var exitModel = new AIInterviewExitModalViewModel
@@ -1725,13 +1742,28 @@ namespace Risebird.Web.Controllers
                 {
                     string question = model.CurrentQuestion;
                     string userMessage = model.Message;
+                    CandidateTranscriptReview transcriptReview = null;
+
                     if (model.AudioFile != null && model.AudioFile.Length > 0)
                     {
-                        using var stream = model.AudioFile.OpenReadStream();
-                        userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName, model.isMultiLingual);
+                        // Already read and corrected by the candidate during review, so it is not
+                        // transcribed again - what they confirmed is the answer.
+                        transcriptReview = BuildTranscriptReview(model);
+
+                        if (transcriptReview != null)
+                        {
+                            userMessage = transcriptReview.ConfirmedTranscript;
+                        }
+                        else
+                        {
+                            using var stream = model.AudioFile.OpenReadStream();
+                            userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName, model.isMultiLingual);
+                        }
                     }
 
-                    if (!IsTranscriptionValid(userMessage, model.isMultiLingual))//!model.isMultiLingual && 
+                    // A confirmed transcript is the candidate's own words and is not held to the
+                    // speech-to-text quality check; the review step already let them fix a bad one.
+                    if (transcriptReview == null && !IsTranscriptionValid(userMessage, model.isMultiLingual))//!model.isMultiLingual &&
                     {
                         // Rewind the stream to re-run transcription
                         var exitModel = new AIInterviewExitModalViewModel
@@ -1926,6 +1958,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 await ApplyAiProctoringViewBagAsync(meeting, model.SessionId);
+                ViewBag.CandidateTranscriptReview = IsCandidateTranscriptReviewEnabled();
             }
             catch (Exception proctorEx)
             {
@@ -2533,6 +2566,111 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>
+        /// Transcribes a recorded answer and hands the text back to the candidate to read and
+        /// correct, without submitting anything.
+        ///
+        /// The answer is only saved when the candidate submits the form afterwards, carrying the
+        /// text they confirmed. Nothing here writes to the database, and the interview timer is
+        /// untouched — it keeps running while they read, exactly as it does while they think.
+        /// </summary>
+        [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 1048576000)]
+        [RequestSizeLimit(1048576000)]
+        public async Task<JsonResult> TranscribeAnswer(Guid sessionId, bool isMultiLingual = false)
+        {
+            try
+            {
+                if (!IsCandidateTranscriptReviewEnabled())
+                    return Json(new { success = false, message = "Transcript review is not enabled." });
+
+                var file = Request.Form.Files.FirstOrDefault();
+                if (file == null || file.Length == 0)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Your recording was not received. Please record again."
+                    });
+                }
+
+                if (file.Length < 500)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Your recording was too short to transcribe. Please speak for at least a few seconds."
+                    });
+                }
+
+                string transcript;
+                try
+                {
+                    using var stream = file.OpenReadStream();
+                    transcript = await _speechToTextService.TranscribeAsync(stream, file.FileName, isMultiLingual);
+                }
+                catch (Exception sttEx)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, sttEx);
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Could not transcribe your recording. Please check your microphone and try again."
+                    });
+                }
+
+                if (LooksLikeSilenceHallucination(transcript))
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                        new Exception($"Discarded a hallucinated transcript during review for session {sessionId}."));
+                    transcript = string.Empty;
+                }
+
+                if (!IsTranscriptionValid(transcript, isMultiLingual))
+                {
+                    // Not an error the candidate caused, and not a reason to lose the take: they can
+                    // type the answer in the box instead of re-recording.
+                    return Json(new
+                    {
+                        success = true,
+                        transcript = string.Empty,
+                        warning = "We could not make out your recording clearly. Please type your answer below before submitting."
+                    });
+                }
+
+                return Json(new { success = true, transcript = transcript?.Trim() ?? string.Empty });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not transcribe your recording. Please try again." });
+            }
+        }
+
+        /// <summary>
+        /// Whether candidates review their transcript before submitting. On by default; the switch
+        /// exists so it can be turned off without a deploy if it misbehaves in a live interview.
+        /// </summary>
+        private bool IsCandidateTranscriptReviewEnabled() =>
+            _configuration.GetValue("AIInterview:CandidateTranscriptReview", true);
+
+        /// <summary>
+        /// The reviewed transcript this submission carries, or null when the answer did not go
+        /// through review and the server should transcribe the recording itself.
+        ///
+        /// Both halves have to be present: a confirmed transcript with no raw one beside it would
+        /// mean the posted text was never checked against anything the candidate actually said.
+        /// </summary>
+        private CandidateTranscriptReview BuildTranscriptReview(ChatMessageViewModel model)
+        {
+            if (!IsCandidateTranscriptReviewEnabled()) return null;
+            if (model == null) return null;
+            if (string.IsNullOrWhiteSpace(model.ConfirmedTranscript)) return null;
+            if (model.RawTranscript == null) return null;
+
+            return CandidateTranscriptReview.Build(model.RawTranscript, model.ConfirmedTranscript);
+        }
+
+        /// <summary>
         /// Speech-to-text models answer silence with a confident, highly repetitive sentence,
         /// often in an unrelated language. Detects that signature so it can be discarded instead
         /// of being filed as the candidate's spoken answer.
@@ -2730,7 +2868,9 @@ namespace Risebird.Web.Controllers
                 int? deliveryHeadQuestionId = model.CurrentQuestionId > 0 ? model.CurrentQuestionId : (int?)null;
                 // The MCQ assessment section records nothing - the candidate answered inside the
                 // embedded test - so it is the one question type allowed to save without a video.
-                var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, deliveryHeadQuestionId, model.IsTypingSpeedQuestion, model.IsListeningComprehensionQuestion, candidateAnswerAudioLink, model.IsMcqAssessmentQuestion);
+                // What speech-to-text heard is stored beside what the candidate confirmed, so a
+                // dispute can be read back against the recording rather than argued from memory.
+                var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, deliveryHeadQuestionId, model.IsTypingSpeedQuestion, model.IsListeningComprehensionQuestion, candidateAnswerAudioLink, model.IsMcqAssessmentQuestion, BuildTranscriptReview(model));
                 return result;
             }
             catch (Exception ex)
