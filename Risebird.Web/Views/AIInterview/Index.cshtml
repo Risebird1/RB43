@@ -2033,6 +2033,21 @@
         }
     }
 
+/* ---- transcript review ---- */
+.rb-tr-panel { margin: 12px 0; padding: 14px 16px; border: 1px solid #3a4452; border-left: 3px solid #4eda92;
+    border-radius: 6px; background: #1b222c; color: #e6ebf2; }
+.rb-tr-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.rb-tr-title { font-weight: 600; font-size: 15px; }
+.rb-tr-timer { font-size: 12px; color: #ffc107; }
+.rb-tr-note { margin: 7px 0 10px; font-size: 13px; color: #a8b3c1; }
+.rb-tr-note.rb-tr-warn { color: #ffc107; }
+.rb-tr-text { width: 100%; border: 1px solid #3a4452; border-radius: 5px; padding: 10px 12px;
+    background: #121820; color: #e6ebf2; font: inherit; font-size: 14px; line-height: 1.5; resize: vertical; }
+.rb-tr-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
+.rb-tr-btn { background: #4eda92; color: #10151c; border: 0; border-radius: 5px; padding: 9px 20px;
+    font: inherit; font-weight: 600; cursor: pointer; }
+.rb-tr-btn:disabled { opacity: .6; cursor: not-allowed; }
+.rb-tr-busy { margin: 12px 0; padding: 10px 14px; border-radius: 6px; background: #1b222c; color: #a8b3c1; font-size: 13px; }
 </style>
 @if (useCodingSplitLayout)
 {
@@ -2269,6 +2284,29 @@
                         <!-- Audio and Video file inputs - Always available for recording functionality -->
                         <input type="file" name="AudioFile" accept="audio/*" class="form-control" id="audioInput" hidden />
                         <input type="file" name="VideoFile" accept="video/*" class="form-control" id="videoInput" hidden />
+
+                        @* Transcript review. The candidate reads what speech-to-text heard and corrects
+                           it before the answer is submitted. RawTranscript travels with it so the
+                           machine's version is kept beside the one they confirmed. *@
+                        <input type="hidden" name="ConfirmedTranscript" id="confirmedTranscriptInput" />
+                        <input type="hidden" name="RawTranscript" id="rawTranscriptInput" />
+
+                        <div id="transcriptReviewPanel" class="rb-tr-panel" style="display:none;">
+                            <div class="rb-tr-head">
+                                <span class="rb-tr-title">Check your answer before submitting</span>
+                                <span class="rb-tr-timer">The timer is still running</span>
+                            </div>
+                            <p id="transcriptReviewNote" class="rb-tr-note"></p>
+                            <textarea id="transcriptReviewText" class="rb-tr-text" rows="6"
+                                      aria-label="Your transcribed answer, editable"></textarea>
+                            <div class="rb-tr-actions">
+                                <button type="button" id="transcriptReviewSubmit" class="rb-tr-btn">Submit answer</button>
+                            </div>
+                        </div>
+
+                        <div id="transcriptReviewBusy" class="rb-tr-busy" style="display:none;">
+                            Transcribing your answer&hellip;
+                        </div>
 
                         <!-- Chat Input positioned below footer and aligned with video feed -->
                         @if (Model.showChatBox == true)
@@ -2770,6 +2808,144 @@
         return Boolean(codingField && String(codingField.value).toLowerCase() === 'true');
     }
 
+    // ---- transcript review ----
+    // Speech-to-text sometimes mishears a name, a number or a place. The candidate reads what it
+    // produced and corrects it before the answer is submitted, so what gets scored is what they
+    // meant to say. The interview timer is untouched and keeps running while they read.
+
+    window.rbCandidateTranscriptReview = @((ViewBag.CandidateTranscriptReview as bool? ?? true) ? "true" : "false");
+
+    var transcriptReviewConfirmed = false;
+    var transcriptReviewInFlight = false;
+
+    function transcriptReviewEnabled() {
+        return window.rbCandidateTranscriptReview === true;
+    }
+
+    // Only answers whose text comes from the recording. Coding carries the code itself, typing and
+    // listening assessments are typed, chatbox mode is already text, and the MCQ section records
+    // nothing to transcribe.
+    function answerIsTranscribedSpeech() {
+        if (isCodingAnswer()) return false;
+        if (!answerSubmitNeedsVideo()) return false;
+
+        const chatField = document.querySelector('input[name="showChatBox"]');
+        if (chatField && String(chatField.value).toLowerCase() === 'true') return false;
+
+        const mcqField = document.querySelector('input[name="IsMcqAssessmentQuestion"]');
+        if (mcqField && String(mcqField.value).toLowerCase() === 'true') return false;
+
+        return true;
+    }
+
+    function shouldReviewTranscript() {
+        return transcriptReviewEnabled()
+            && !transcriptReviewConfirmed
+            && !transcriptReviewInFlight
+            && answerIsTranscribedSpeech()
+            && answerRecordingHasUsableAudio();
+    }
+
+    function showTranscriptReviewPanel(transcript, warning) {
+        const panel = document.getElementById('transcriptReviewPanel');
+        const text = document.getElementById('transcriptReviewText');
+        const note = document.getElementById('transcriptReviewNote');
+        if (!panel || !text) return;
+
+        text.value = transcript || '';
+        document.getElementById('rawTranscriptInput').value = transcript || '';
+
+        if (note) {
+            note.textContent = warning
+                || 'This is what we heard. Correct anything that is wrong, then submit. The timer is still running.';
+            note.className = warning ? 'rb-tr-note rb-tr-warn' : 'rb-tr-note';
+        }
+
+        panel.style.display = '';
+        text.focus();
+    }
+
+    function hideTranscriptReviewPanel() {
+        const panel = document.getElementById('transcriptReviewPanel');
+        if (panel) panel.style.display = 'none';
+    }
+
+    function beginTranscriptReview() {
+        transcriptReviewInFlight = true;
+
+        const sessionField = document.querySelector('input[name="SessionId"]');
+        const multiField = document.querySelector('input[name="isMultiLingual"]');
+        const sessionId = sessionField ? sessionField.value : '';
+        const isMultiLingual = Boolean(multiField && String(multiField.value).toLowerCase() === 'true');
+
+        const data = new FormData();
+        data.append('audio', audioInput.files[0], audioInput.files[0].name || 'answer.webm');
+
+        const busy = document.getElementById('transcriptReviewBusy');
+        if (busy) busy.style.display = '';
+
+        fetch('/AIInterview/TranscribeAnswer?sessionId=' + encodeURIComponent(sessionId) +
+              '&isMultiLingual=' + isMultiLingual, {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: data
+        })
+            .then(function (r) { return r.json(); })
+            .then(function (res) {
+                if (busy) busy.style.display = 'none';
+                transcriptReviewInFlight = false;
+
+                if (!res || !res.success) {
+                    // Nothing to review. Rather than trap the candidate, fall through to the server,
+                    // which transcribes the same recording exactly as it did before this step existed.
+                    transcriptReviewConfirmed = true;
+                    if (!tryFinalizeAnswerSubmit()) scheduleAnswerSubmitFallback();
+                    return;
+                }
+
+                showTranscriptReviewPanel(res.transcript, res.warning);
+            })
+            .catch(function () {
+                if (busy) busy.style.display = 'none';
+                transcriptReviewInFlight = false;
+                // Same fallback: a failed review must never cost the candidate their answer.
+                transcriptReviewConfirmed = true;
+                if (!tryFinalizeAnswerSubmit()) scheduleAnswerSubmitFallback();
+            });
+    }
+
+    function confirmTranscriptAndSubmit() {
+        const text = document.getElementById('transcriptReviewText');
+        const value = text ? text.value.trim() : '';
+
+        if (!value) {
+            const note = document.getElementById('transcriptReviewNote');
+            if (note) {
+                note.textContent = 'Please type your answer before submitting.';
+                note.className = 'rb-tr-note rb-tr-warn';
+            }
+            if (text) text.focus();
+            return;
+        }
+
+        document.getElementById('confirmedTranscriptInput').value = value;
+        transcriptReviewConfirmed = true;
+        hideTranscriptReviewPanel();
+
+        if (!tryFinalizeAnswerSubmit()) scheduleAnswerSubmitFallback();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const submitBtn = document.getElementById('transcriptReviewSubmit');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function () {
+                // Disabled on click: the answer is submitted once, and the panel is about to close.
+                submitBtn.disabled = true;
+                confirmTranscriptAndSubmit();
+            });
+        }
+    });
+
     // Coding answers are recorded on video like any spoken answer; only typing and
     // listening assessments submit without one.
     function answerSubmitNeedsVideo() {
@@ -2935,6 +3111,16 @@
         if (!answerRecordingHasUsableAudio() && !isCodingAnswer()) return false;
         const needsVideo = answerSubmitNeedsVideo();
         if (needsVideo && !answerRecordingHasUsableVideo()) return false;
+
+        // The recording is complete, but a spoken answer is not submitted until the candidate has
+        // read the transcript and confirmed it. Returning true stops the fallback timers from
+        // firing behind the review panel and submitting it from under them.
+        if (shouldReviewTranscript()) {
+            clearAnswerSubmitFallbacks();
+            beginTranscriptReview();
+            return true;
+        }
+
         answerSubmitInFlight = true;
         syncMessageFromEditor();
         showSubmitLoadingState();
