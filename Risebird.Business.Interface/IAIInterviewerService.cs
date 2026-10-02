@@ -12,7 +12,7 @@ namespace Risebird.Business.Interface
 {
     public interface IAIInterviewerService
     {
-        Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false, string candidateAnswerAudioLink = null, bool allowMissingVideo = false);
+        Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false, string candidateAnswerAudioLink = null, bool allowMissingVideo = false, CandidateTranscriptReview transcriptReview = null);
         Task<string> GetThreadId(Guid sessionId);
         Task<List<BotInterviewQuestionVideos>> GetBotInterviewVideoDetails(Guid sessionId);
         Task<bool> UpdateTimeLeft(Guid sessionId, int secondsLeft, int interviewId);

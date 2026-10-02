@@ -132,3 +132,45 @@ END
 GO
 
 
+
+-- ---------------------------------------------------------------------------------------------
+-- Candidate transcript review.
+--
+-- The candidate now sees what speech-to-text produced and may correct it before submitting, so
+-- CandidateAnswer is what they CONFIRMED. These three keep what the machine actually heard:
+--
+--   RawTranscript                what speech-to-text returned, before any correction. Never
+--                                overwritten -- it is the tiebreaker on any dispute, alongside
+--                                the recording itself.
+--   TranscriptEditedByCandidate  1 when the confirmed text differs from the raw transcript.
+--   TranscriptDivergencePct      how much it differs, 0-100. A small number is a mis-heard name
+--                                or figure; a large one is worth a QC look.
+--
+-- NULL on every answer recorded before this existed, and on channels where review is switched off.
+-- ---------------------------------------------------------------------------------------------
+IF NOT EXISTS(
+    SELECT * FROM sys.columns
+    WHERE Name = N'RawTranscript' AND Object_ID = Object_ID(N'BotInterviewQuestionVideos'))
+BEGIN
+    ALTER TABLE BotInterviewQuestionVideos
+    Add RawTranscript nvarchar(max) NULL
+END
+GO
+
+IF NOT EXISTS(
+    SELECT * FROM sys.columns
+    WHERE Name = N'TranscriptEditedByCandidate' AND Object_ID = Object_ID(N'BotInterviewQuestionVideos'))
+BEGIN
+    ALTER TABLE BotInterviewQuestionVideos
+    Add TranscriptEditedByCandidate bit NULL
+END
+GO
+
+IF NOT EXISTS(
+    SELECT * FROM sys.columns
+    WHERE Name = N'TranscriptDivergencePct' AND Object_ID = Object_ID(N'BotInterviewQuestionVideos'))
+BEGIN
+    ALTER TABLE BotInterviewQuestionVideos
+    Add TranscriptDivergencePct int NULL
+END
+GO

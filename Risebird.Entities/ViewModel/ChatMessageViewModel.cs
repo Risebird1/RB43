@@ -11,6 +11,20 @@ namespace Risebird.Entities.ViewModel
         //public string BotReply { get; set; }
         public List<ChatLine> ChatLog { get; set; } = new();
         public IFormFile AudioFile { get; set; }
+
+        /// <summary>
+        /// The transcript the candidate reviewed and submitted, after any correction they made.
+        /// When this is present the server does not transcribe the audio again — the candidate has
+        /// already seen what speech-to-text produced and this is what they stand behind.
+        /// </summary>
+        public string ConfirmedTranscript { get; set; }
+
+        /// <summary>
+        /// What speech-to-text returned before the candidate touched it. Posted back alongside
+        /// <see cref="ConfirmedTranscript"/> so the machine's version is never lost; it is the
+        /// tiebreaker on any dispute about what was said.
+        /// </summary>
+        public string RawTranscript { get; set; }
         public string AIInterviewerAudioLink { get; set; }//points to a url that is the audio recieved from text to speech api, for the ai interviewer
         public IFormFile VideoFile { get; set; }
         public string SynthesizedVideoUrl { get; set; } //synthesised by synthesia, this will be the video of the AI Interviewer speaking
