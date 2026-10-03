@@ -104,7 +104,7 @@ namespace Risebird.Web.Controllers
                     if (menus.FirstOrDefault()?.profileName == "Client")
                     {
                         //role = _clientService.GetClientRoleByEmailId(emailId).Result;
-                        var clientDetails = _clientService.GetClientRoleAndCompanyNameByEmailId(emailId).Result;
+                        var clientDetails = await _clientService.GetClientRoleAndCompanyNameByEmailId(emailId);
                         role = clientDetails.Item1;
                         client = clientDetails.Item2;
                         HttpContext.Session.SetString("clientName", client);

@@ -55,14 +55,14 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public TwiMLResult IvrInterviewerAvailability(string uniqueId, string irfId, string jdTitle, string assessmentGroupId, int retryCount = 0)
+        public async Task<TwiMLResult> IvrInterviewerAvailability(string uniqueId, string irfId, string jdTitle, string assessmentGroupId, int retryCount = 0)
         {
             //var response = new VoiceResponse();
             //var message = string.Format("Dear {0}! Empty function worked. Greetings from RiseBird. This is to remind you that your interview is scheduled at {1}. Please confirm your availability by responding to the mail.",
             //    recipientName, interviewdate);
             //response.Say(message);
             //return TwiML(response);
-            var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/IvrInterviewerAvailability function invked succesfully", "ivr", string.Empty).Result;
+            var debugResult = await _activityTrackerService.DebugLogger($"TwilioVoice/IvrInterviewerAvailability function invked succesfully", "ivr", string.Empty);
 
             var response = new VoiceResponse();
             try
@@ -98,7 +98,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                var resultDe = _activityTrackerService.DebugLogger($"TwilioVoice/IvrInterviewerAvailability function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
+                var resultDe = await _activityTrackerService.DebugLogger($"TwilioVoice/IvrInterviewerAvailability function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty);
 
                 //response.Say($"Error in Ivr Interviewer Availability with the message: {ex.Message} on line number {ex.StackTrace}, and source {ex.Source}");
                 return TwiML(response);
@@ -138,11 +138,11 @@ namespace Risebird.Web.Controllers
 
 
         [HttpPost]
-        public IActionResult Show([FromForm] string digits, [FromQuery] string uniqueId, [FromQuery] string irfId, [FromQuery] string jdTitle, [FromQuery] string assessmentGroupId)
+        public async Task<IActionResult> Show([FromForm] string digits, [FromQuery] string uniqueId, [FromQuery] string irfId, [FromQuery] string jdTitle, [FromQuery] string assessmentGroupId)
         {
             try
             {
-                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/Show function invked succesfully", "ivr", string.Empty).Result;
+                var debugResult = await _activityTrackerService.DebugLogger($"TwilioVoice/Show function invked succesfully", "ivr", string.Empty);
 
                 var irfintId = Convert.ToInt16(irfId);
                 var agIdInt = Convert.ToInt16(assessmentGroupId);
@@ -151,29 +151,29 @@ namespace Risebird.Web.Controllers
                 {
                     if (irfintId > 0)
                     {
-                        return UpdateInterviewerAvailbilityStatusForIRF(1, uniqueId, irfintId);
+                        return await UpdateInterviewerAvailbilityStatusForIRF(1, uniqueId, irfintId);
                     }
                     else
                     {
-                        return UpdateInterviewerAvailbilityStatusForAssessmentGroup(1, uniqueId, agIdInt);
+                        return await UpdateInterviewerAvailbilityStatusForAssessmentGroup(1, uniqueId, agIdInt);
                     }
                 }
                 else if (selectedOption == "2")
                 {
                     if (irfintId > 0)
                     {
-                        return UpdateInterviewerAvailbilityStatusForIRF(2, uniqueId, irfintId);
+                        return await UpdateInterviewerAvailbilityStatusForIRF(2, uniqueId, irfintId);
                     }
                     else
                     {
-                        return UpdateInterviewerAvailbilityStatusForAssessmentGroup(2, uniqueId, agIdInt);
+                        return await UpdateInterviewerAvailbilityStatusForAssessmentGroup(2, uniqueId, agIdInt);
                     }
                 }
                 else if (selectedOption == "3")
                 {
                     if (irfintId > 0)
                     {
-                        return UpdateInterviewerAvailbilityStatusForIRF(4, uniqueId, irfintId);
+                        return await UpdateInterviewerAvailbilityStatusForIRF(4, uniqueId, irfintId);
                     }
 
                 }
@@ -193,7 +193,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/Show function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
+                var debugResult = await _activityTrackerService.DebugLogger($"TwilioVoice/Show function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty);
 
                 //_applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 var response = new VoiceResponse();
@@ -203,12 +203,12 @@ namespace Risebird.Web.Controllers
         }
 
 
-        private TwiMLResult UpdateInterviewerAvailbilityStatusForIRF(int status, string unqId, int irfintId)
+        private async Task<TwiMLResult> UpdateInterviewerAvailbilityStatusForIRF(int status, string unqId, int irfintId)
         {
             //check link expiry befire hitting db
             try
             {
-                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/UpdateInterviewerAvailbilityStatusForIRF function invked succesfully", "ivr", string.Empty).Result;
+                var debugResult = await _activityTrackerService.DebugLogger($"TwilioVoice/UpdateInterviewerAvailbilityStatusForIRF function invked succesfully", "ivr", string.Empty);
 
                 var response = new VoiceResponse();
                 if (status == 1)
@@ -230,7 +230,7 @@ namespace Risebird.Web.Controllers
                 //voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
 
 
-                var result = _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, unqId, irfintId, "ivr").Result;
+                var result = await _meetingService.UpdateInterviewerAvailbilityStatusForIRF(status, unqId, irfintId, "ivr");
 
                 //response.Say($"result is {result.Item1} and mailId is {result.Item2}");
 
@@ -244,7 +244,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/UpdateInterviewerAvailbilityStatusForIRF function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
+                var debugResult = await _activityTrackerService.DebugLogger($"TwilioVoice/UpdateInterviewerAvailbilityStatusForIRF function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty);
 
                 //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 var response = new VoiceResponse();
@@ -254,12 +254,12 @@ namespace Risebird.Web.Controllers
 
         }
 
-        private TwiMLResult UpdateInterviewerAvailbilityStatusForAssessmentGroup(int status, string unqId, int assessmentGroupId)
+        private async Task<TwiMLResult> UpdateInterviewerAvailbilityStatusForAssessmentGroup(int status, string unqId, int assessmentGroupId)
         {
             //check link expiry befire hitting db
             try
             {
-                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/UpdateInterviewerAvailbilityStatusForAssessmentGroup function invked succesfully", "ivr", string.Empty).Result;
+                var debugResult = await _activityTrackerService.DebugLogger($"TwilioVoice/UpdateInterviewerAvailbilityStatusForAssessmentGroup function invked succesfully", "ivr", string.Empty);
 
                 var response = new VoiceResponse();
                 if (status == 1)
@@ -280,7 +280,7 @@ namespace Risebird.Web.Controllers
                 //             voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
                 //}
 
-                var result = _meetingService.UpdateInterviewerAvailbilityStatusForAssessmentGroup(status == 1 ? true : false, unqId, assessmentGroupId, "ivr").Result;
+                var result = await _meetingService.UpdateInterviewerAvailbilityStatusForAssessmentGroup(status == 1 ? true : false, unqId, assessmentGroupId, "ivr");
 
                 //response.Say($"result is {result}");
                 response.Say("Thank you for submitting your response. Good bye.");
@@ -291,7 +291,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/UpdateInterviewerAvailbilityStatusForAssessmentGroup function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
+                var debugResult = await _activityTrackerService.DebugLogger($"TwilioVoice/UpdateInterviewerAvailbilityStatusForAssessmentGroup function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty);
 
                 //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 var response = new VoiceResponse();
@@ -303,11 +303,11 @@ namespace Risebird.Web.Controllers
 
 
         [HttpPost]
-        public TwiMLResult IvrCandidateInterviewAvailability(string uniqueId, int irfId,int interviewId,int candidateId, int retryCount = 0)
+        public async Task<TwiMLResult> IvrCandidateInterviewAvailability(string uniqueId, int irfId,int interviewId,int candidateId, int retryCount = 0)
         {
-            var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/IvrCandidateInterviewAvailability function invked succesfully", "ivr", string.Empty).Result;
+            var debugResult = await _activityTrackerService.DebugLogger($"TwilioVoice/IvrCandidateInterviewAvailability function invked succesfully", "ivr", string.Empty);
 
-            var candidateInterviewDetails = _meetingService.GetCandidateInterviewDetails(uniqueId, irfId, interviewId, candidateId).Result;
+            var candidateInterviewDetails = await _meetingService.GetCandidateInterviewDetails(uniqueId, irfId, interviewId, candidateId);
             var response = new VoiceResponse();
             try
             {
@@ -337,29 +337,29 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                var resultDe = _activityTrackerService.DebugLogger($"TwilioVoice/IvrCandidateInterviewAvailability function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
+                var resultDe = await _activityTrackerService.DebugLogger($"TwilioVoice/IvrCandidateInterviewAvailability function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty);
                 return TwiML(response);
             }
         }
         [HttpPost]
-        public IActionResult CandidateInterviewAvailabilityShow([FromForm] string digits, [FromQuery] string uniqueId, [FromQuery] int irfId, [FromQuery] int interviewId, [FromQuery] int candidateId)
+        public async Task<IActionResult> CandidateInterviewAvailabilityShow([FromForm] string digits, [FromQuery] string uniqueId, [FromQuery] int irfId, [FromQuery] int interviewId, [FromQuery] int candidateId)
         {
             try
             {
-                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/CandidateInterviewAvailabilityShow function invked succesfully", "ivr", string.Empty).Result;
+                var debugResult = await _activityTrackerService.DebugLogger($"TwilioVoice/CandidateInterviewAvailabilityShow function invked succesfully", "ivr", string.Empty);
 
                 var selectedOption = digits;
                 if (selectedOption == "1")
                 {
-                    return UpdateCandidateInterviewAvailbilityStatus(1, uniqueId, irfId, interviewId, candidateId); 
+                    return await UpdateCandidateInterviewAvailbilityStatus(1, uniqueId, irfId, interviewId, candidateId); 
                 }
                 else if (selectedOption == "2")
                 {
-                    return UpdateCandidateInterviewAvailbilityStatus(2, uniqueId, irfId, interviewId, candidateId);
+                    return await UpdateCandidateInterviewAvailbilityStatus(2, uniqueId, irfId, interviewId, candidateId);
                 }
                 else if (selectedOption == "3")
                 {
-                    return UpdateCandidateInterviewAvailbilityStatus(3, uniqueId, irfId, interviewId, candidateId);
+                    return await UpdateCandidateInterviewAvailbilityStatus(3, uniqueId, irfId, interviewId, candidateId);
                 }
 
                 return RedirectToAction("IvrCandidateInterviewAvailability", new { uniqueId = uniqueId, irfId = irfId, interviewId = interviewId, candidateId = candidateId });
@@ -368,7 +368,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/CandidateInterviewAvailabilityShow function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
+                var debugResult = await _activityTrackerService.DebugLogger($"TwilioVoice/CandidateInterviewAvailabilityShow function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty);
 
                 //_applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 var response = new VoiceResponse();
@@ -378,12 +378,12 @@ namespace Risebird.Web.Controllers
 
         }
 
-        private TwiMLResult UpdateCandidateInterviewAvailbilityStatus(int status, string unqId, int irfintId, int meetingid,  int candidateId)
+        private async Task<TwiMLResult> UpdateCandidateInterviewAvailbilityStatus(int status, string unqId, int irfintId, int meetingid,  int candidateId)
         {
             //check link expiry befire hitting db
             try
             {
-                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/UpdateCandidateInterviewAvailbilityStatus function invked succesfully", "ivr", string.Empty).Result;
+                var debugResult = await _activityTrackerService.DebugLogger($"TwilioVoice/UpdateCandidateInterviewAvailbilityStatus function invked succesfully", "ivr", string.Empty);
 
                 var response = new VoiceResponse();
                 if (status == 1)
@@ -404,7 +404,7 @@ namespace Risebird.Web.Controllers
                 //response.Say($"the irfId is {irfintId} and {unqId}",
                 //voice: Say.VoiceEnum.PollyAmy, language: "en-GB");
 
-                var message = _meetingService.CandidateMeetingsStatus(meetingid, status, unqId, irfintId, candidateId,"").Result;
+                var message = await _meetingService.CandidateMeetingsStatus(meetingid, status, unqId, irfintId, candidateId,"");
 
                 //response.Say($"result is {result.Item1} and mailId is {result.Item2}");
 
@@ -418,7 +418,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/UpdateCandidateInterviewAvailbilityStatus function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
+                var debugResult = await _activityTrackerService.DebugLogger($"TwilioVoice/UpdateCandidateInterviewAvailbilityStatus function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty);
                 var response = new VoiceResponse();               
                 return TwiML(response);
             }
@@ -427,11 +427,11 @@ namespace Risebird.Web.Controllers
 
 
         [HttpPost]
-        public TwiMLResult IvrInterviewerMeetingReminder(int interviewId, int retryCount = 0)
+        public async Task<TwiMLResult> IvrInterviewerMeetingReminder(int interviewId, int retryCount = 0)
         {
-            var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/IvrInterviewerMeetingReminder function invked succesfully", "ivr", string.Empty).Result;
+            var debugResult = await _activityTrackerService.DebugLogger($"TwilioVoice/IvrInterviewerMeetingReminder function invked succesfully", "ivr", string.Empty);
 
-            var interviewerInterviewDetails = _meetingService.GetInterviewerInterviewDetails(interviewId).Result;
+            var interviewerInterviewDetails = await _meetingService.GetInterviewerInterviewDetails(interviewId);
             var response = new VoiceResponse();
             try
             {
@@ -458,26 +458,26 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                var resultDe = _activityTrackerService.DebugLogger($"TwilioVoice/IvrInterviewerMeetingReminder function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
+                var resultDe = await _activityTrackerService.DebugLogger($"TwilioVoice/IvrInterviewerMeetingReminder function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty);
                 return TwiML(response);
             }
         }
 
         [HttpPost]
-        public IActionResult InterviewerInterviewAvailabilityShow([FromForm] string digits, [FromQuery] string emailId, [FromQuery] int interviewId)
+        public async Task<IActionResult> InterviewerInterviewAvailabilityShow([FromForm] string digits, [FromQuery] string emailId, [FromQuery] int interviewId)
         {
             try
             {
-                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/InterviewerInterviewAvailabilityShow function invked succesfully", "ivr", string.Empty).Result;
+                var debugResult = await _activityTrackerService.DebugLogger($"TwilioVoice/InterviewerInterviewAvailabilityShow function invked succesfully", "ivr", string.Empty);
 
                 var selectedOption = digits;
                 if (selectedOption == "1")
                 {
-                    return UpdateInterviewerInterviewAvailbilityStatus(1, emailId, interviewId);
+                    return await UpdateInterviewerInterviewAvailbilityStatus(1, emailId, interviewId);
                 }
                 else if (selectedOption == "2")
                 {
-                    return UpdateInterviewerInterviewAvailbilityStatus(2, emailId, interviewId);
+                    return await UpdateInterviewerInterviewAvailbilityStatus(2, emailId, interviewId);
                 }               
 
                 return RedirectToAction("IvrInterviewerMeetingReminder", new { interviewId = interviewId});
@@ -486,7 +486,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/InterviewerInterviewAvailabilityShow function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
+                var debugResult = await _activityTrackerService.DebugLogger($"TwilioVoice/InterviewerInterviewAvailabilityShow function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty);
 
                 //_applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 var response = new VoiceResponse();
@@ -496,12 +496,12 @@ namespace Risebird.Web.Controllers
 
         }
 
-        private TwiMLResult UpdateInterviewerInterviewAvailbilityStatus(int status, string emailId, int id)
+        private async Task<TwiMLResult> UpdateInterviewerInterviewAvailbilityStatus(int status, string emailId, int id)
         {
             //check link expiry befire hitting db
             try
             {
-                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/UpdateInterviewerInterviewAvailbilityStatus function invked succesfully", "ivr", string.Empty).Result;
+                var debugResult = await _activityTrackerService.DebugLogger($"TwilioVoice/UpdateInterviewerInterviewAvailbilityStatus function invked succesfully", "ivr", string.Empty);
                 string type = string.Empty;
                 var response = new VoiceResponse();
                 if (status == 1)
@@ -529,7 +529,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                var debugResult = _activityTrackerService.DebugLogger($"TwilioVoice/UpdateInterviewerInterviewAvailbilityStatus function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty).Result;
+                var debugResult = await _activityTrackerService.DebugLogger($"TwilioVoice/UpdateInterviewerInterviewAvailbilityStatus function error : {ex.Message}, {ex.StackTrace}", "ivr", string.Empty);
                 var response = new VoiceResponse();
                 return TwiML(response);
             }

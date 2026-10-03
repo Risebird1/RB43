@@ -188,7 +188,7 @@ namespace Risebird.Web.Controllers
                 {
                     //var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     //profileName = profileName.Replace("\"", "");
-                    if (_projectService.AddProject(model).Result)
+                    if (await _projectService.AddProject(model))
                     {
                         TempData["SuccessErrorMessageProject"] = "Project has been added Successfully!";
                         return RedirectToAction("Index");
@@ -265,7 +265,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult DeleteProject(string id)
+        public async Task<IActionResult> DeleteProject(string id)
         {
             try
             {
@@ -275,7 +275,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SupportAdmin")
                     {
-                        if (_projectService.DeleteProject(Convert.ToInt32(id)).Result)
+                        if (await _projectService.DeleteProject(Convert.ToInt32(id)))
                         {
                             //TempData["SuccessErrorMessage"] = "Project deleted Successfully";
                             return RedirectToAction("Index");
@@ -298,7 +298,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessage"] = "Project delete Failed";
                 return RedirectToAction("Index");
             }
@@ -307,7 +307,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult UnArchiveProject(int id)
+        public async Task<IActionResult> UnArchiveProject(int id)
         {
             try
             {
@@ -317,7 +317,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SupportAdmin")
                     {
-                        if (_projectService.UnArchiveProject(id).Result)
+                        if (await _projectService.UnArchiveProject(id))
                         {
                             TempData["SuccessErrorMessageProject"] = "Project has been restored Successfully!";
                             return RedirectToAction("Index");
@@ -340,7 +340,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessage"] = "Project restore Failed";
                 return RedirectToAction("Index");
             }

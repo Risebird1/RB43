@@ -15,6 +15,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -117,7 +118,7 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public IActionResult SignOut()
+        public async Task<IActionResult> SignOut()
         {
             string userEmailId = string.Empty;
             CancellationToken ct = new CancellationToken();
@@ -135,11 +136,11 @@ namespace Risebird.Web.Controllers
                     var path = $"https://{TenantName}.b2clogin.com/{TenantName}.onmicrosoft.com/{SignUpSignInPolicyId}/oauth2/v2.0/logout?post_logout_redirect_uri={RedirectUri}";
                     var request = new HttpRequestMessage(HttpMethod.Get, path);
                     request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    var response = _httpClient.SendAsync(request, ct).Result;
+                    var response = await _httpClient.SendAsync(request, ct);
 
                     if (token != null)
                     {
-                        HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+                        await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
                         HttpContext.Session.Clear();
                         CookieOptions option = new CookieOptions();
                         if (Request.Cookies["Risebirdportal.Session"] != null)
@@ -173,7 +174,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex, userEmailId);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex, userEmailId);
                 return null;
             }
         }

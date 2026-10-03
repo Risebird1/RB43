@@ -917,7 +917,7 @@ ORDER BY COUNT(im.id) DESC";
 (Client,ClientId,PrimarySkill,Location,JdLink,CreatedBy,CreatedDate,Status,RequesterEmailid,Title,SeniorityLevel,TurnAroundTimeindays,Comments,NumberofInterviews,PlanType,ClientType,Origin,RequesterType,Requester,RequesterMobile,EndClient,MAGId,TemplateId,IRFIDs,ChannelOwner)
 Values
 (@Client,@ClientId,@PrimarySkill,@Location,@JdLink,@CreatedBy,@CreatedDate,@Status,@RequesterEmailid,@Title,@SeniorityLevel,@TurnAroundTimeindays,@Comments,@NumberofInterviews,@PlanType,@ClientType,@Origin,@RequesterType,@Requester,@RequesterMobile,@EndClient,@MAGId,@TemplateId,@IRFIDs,@ChannelOwner);";
-                        var affectedRows = con.ExecuteAsync(sqlInsertReport, new
+                        var affectedRows = await con.ExecuteAsync(sqlInsertReport, new
                         {
                             request.Client,
                             ClientId = request.ClientId > 0 ? request.ClientId : (int?)null,
@@ -944,7 +944,7 @@ Values
                             TemplateId = (int?)null,
                             IRFIDs = (string)null,
                             ChannelOwner = string.IsNullOrWhiteSpace(request.ChannelOwner) ? null : request.ChannelOwner.Trim()
-                        }).Result;
+                        });
                     }
                     else
                     {
@@ -1234,14 +1234,14 @@ Values
                     foreach (var item in model)
                     {
                         string sqlAddInterviewer = "INSERT INTO TransChannelInterviewerList (UserId, Channelid, InterviewerProfileId,status) Values (@UserId, @Channelid, @InterviewerProfileId,@status);";
-                        var result1 = con.ExecuteAsync(sqlAddInterviewer, new
+                        var result1 = con.Execute(sqlAddInterviewer, new
                         {
                             item.UserId,
                             Channelid = channelid,
                             item.InterviewerProfileId,
                             item.status
 
-                        }).Result;
+                        });
                     }
                     return true;
 
