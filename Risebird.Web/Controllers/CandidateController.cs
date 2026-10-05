@@ -2723,7 +2723,7 @@ namespace Risebird.Web.Controllers
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
 
-            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId).Result, "Comment", "Comment");
+            model.QuestionsList = new SelectList(await _meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
         }
 
         [HttpGet]
@@ -2832,7 +2832,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public string ImportQuickCandidates(IFormCollection formCollection)
+        public async Task<string> ImportQuickCandidates(IFormCollection formCollection)
         {
             var IRFId = Convert.ToInt32((formCollection["IRFId"].ToString()));
             var isSendInvite = Convert.ToBoolean((formCollection["IsSendInvite"].ToString()));
@@ -2861,7 +2861,7 @@ namespace Risebird.Web.Controllers
                                 if (fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                     || fileMimeType == "application/vnd.ms-excel")
                                 {
-                                    _applicationErrorLogger.LogMessage(LogLevelInfo.Info, $"Mime type of file {file.FileName} is {fileMimeType}");
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, $"Mime type of file {file.FileName} is {fileMimeType}");
                                     string fileName = file.FileName;
                                     string fileContentType = file.ContentType;
                                     byte[] fileBytes = new byte[file.Length];
@@ -2873,7 +2873,7 @@ namespace Risebird.Web.Controllers
                                         var workSheet = currentSheet.First();
                                         var noOfCol = workSheet.Dimension.End.Column;
                                         var noOfRow = workSheet.Dimension.End.Row;
-                                        var ClientEmailid = _candidateService.FetchBillingownerById(IRFId).Result;
+                                        var ClientEmailid = await _candidateService.FetchBillingownerById(IRFId);
                                         var ClientDomain = string.Empty;
                                         if (string.IsNullOrWhiteSpace(ClientEmailid))
                                         {
@@ -2929,7 +2929,7 @@ namespace Risebird.Web.Controllers
                                                     }
 
                                                     result.Append("Failed!");
-                                                    _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
 
                                                     return result.ToString();
                                                 }
@@ -2938,7 +2938,7 @@ namespace Risebird.Web.Controllers
                                     }
                                     if (candidateList != null && candidateList.Any())
                                     {
-                                        result = _irfService.AddQuickMultipleCandidates(candidateList, emailid, profileName, IRFId, isSendInvite, linkurl).Result;
+                                        result = await _irfService.AddQuickMultipleCandidates(candidateList, emailid, profileName, IRFId, isSendInvite, linkurl);
                                     }
                                     else
                                     {
@@ -2966,13 +2966,13 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to import candidates!"; ;
             }
             return null;
         }
         [HttpPost]
-        public string ImportQuickCandidatesPublic(IFormCollection formCollection)
+        public async Task<string> ImportQuickCandidatesPublic(IFormCollection formCollection)
         {
             if (_env.IsDevelopment())
             {
@@ -3004,7 +3004,7 @@ namespace Risebird.Web.Controllers
                             if (fileMimeType == "application/x-java-archive" || fileMimeType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                 || fileMimeType == "application/vnd.ms-excel")
                             {
-                                _applicationErrorLogger.LogMessage(LogLevelInfo.Info, $"Mime type of file {file.FileName} is {fileMimeType}");
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Info, $"Mime type of file {file.FileName} is {fileMimeType}");
                                 string fileName = file.FileName;
                                 string fileContentType = file.ContentType;
                                 byte[] fileBytes = new byte[file.Length];
@@ -3016,7 +3016,7 @@ namespace Risebird.Web.Controllers
                                     var workSheet = currentSheet.First();
                                     var noOfCol = workSheet.Dimension.End.Column;
                                     var noOfRow = workSheet.Dimension.End.Row;
-                                    var ClientEmailid = _candidateService.FetchBillingownerById(IRFId).Result;
+                                    var ClientEmailid = await _candidateService.FetchBillingownerById(IRFId);
                                     var ClientDomain = string.Empty;
                                     if (string.IsNullOrWhiteSpace(ClientEmailid))
                                     {
@@ -3072,7 +3072,7 @@ namespace Risebird.Web.Controllers
                                                 }
 
                                                 result.Append("Failed!");
-                                                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
 
                                                 return result.ToString();
                                             }
@@ -3081,7 +3081,7 @@ namespace Risebird.Web.Controllers
                                 }
                                 if (candidateList != null && candidateList.Any())
                                 {
-                                    result = _irfService.AddQuickMultipleCandidates(candidateList, emailid, ProfileNames.Client, IRFId, isSendInvite, linkurl).Result;
+                                    result = await _irfService.AddQuickMultipleCandidates(candidateList, emailid, ProfileNames.Client, IRFId, isSendInvite, linkurl);
                                 }
                                 else
                                 {
@@ -3108,7 +3108,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to import candidates!"; ;
             }
         }
@@ -3197,10 +3197,10 @@ namespace Risebird.Web.Controllers
                 string oneTimeSchedulingLink = string.Empty;
                 string stepfirst = result.CalendlyLink.Split("?")[result.CalendlyLink.Split("?").Length];
                 var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length];
-                oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, CandidateEmail).Result;
+                oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, CandidateEmail);
                 if (string.IsNullOrEmpty(oneTimeSchedulingLink))
                 {
-                    oneTimeSchedulingLink = _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, CandidateEmail).Result;
+                    oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, CandidateEmail);
                 }
                 oneTimeSchedulingLink = linkurl + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + CandidateEmail;
                 //oneTimeSchedulingLink = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
@@ -5567,7 +5567,7 @@ namespace Risebird.Web.Controllers
 
                     HttpClient myWebClient = new HttpClient();
                     string uploadedCodedResumeLink = string.Empty;
-                    using (Stream myStream = myWebClient.GetStreamAsync(redactedResumeLink).Result)
+                    using (Stream myStream = await myWebClient.GetStreamAsync(redactedResumeLink))
                     {
                         long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
@@ -5575,7 +5575,7 @@ namespace Risebird.Web.Controllers
                         //var fileName = resumeFileName + "_redacted" + "_" + unixTime.ToString();
                         try
                         {
-                            uploadedCodedResumeLink = _azureStorageHelper.InsertBlobCloudCompare(fileName, "resumes", null, myStream, contentType: "application/pdf").Result;
+                            uploadedCodedResumeLink = await _azureStorageHelper.InsertBlobCloudCompare(fileName, "resumes", null, myStream, contentType: "application/pdf");
 
                         }
                         catch (Exception ex)

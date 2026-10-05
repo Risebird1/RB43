@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using Microsoft.WindowsAzure.Storage.Blob;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.ViewModel;
 
@@ -27,38 +26,20 @@ namespace Risebird.Web.Services.Proctoring
 
             try
             {
-                var container = azureStorageHelper.GetCloudBlobContainer(containerName);
+                var container = azureStorageHelper.GetCloudBlobContainer(containerName).Client;
                 var prefix = $"{interviewId}/";
-                BlobContinuationToken continuation = null;
-                do
+                await foreach (var item in container.GetBlobsAsync(prefix: prefix).ConfigureAwait(false))
                 {
-                    var segment = await container.ListBlobsSegmentedAsync(
-                        prefix,
-                        true,
-                        BlobListingDetails.None,
-                        null,
-                        continuation,
-                        null,
-                        null).ConfigureAwait(false);
-                    continuation = segment?.ContinuationToken;
-                    if (segment?.Results == null)
+                    // Length is often unset when listing; only skip known-empty blobs.
+                    if (item.Properties?.ContentLength != null && item.Properties.ContentLength == 0)
                         continue;
-                    foreach (var item in segment.Results)
+                    list.Add(new ProctoringCapturedBlobViewModel
                     {
-                        var blob = item as CloudBlockBlob;
-                        if (blob == null)
-                            continue;
-                        // Length is often unset when listing with BlobListingDetails.None; only skip known-empty blobs.
-                        if (blob.Properties?.Length != null && blob.Properties.Length == 0)
-                            continue;
-                        list.Add(new ProctoringCapturedBlobViewModel
-                        {
-                            BlobUrl = blob.Uri?.ToString() ?? string.Empty,
-                            CapturedAtUtc = blob.Properties.LastModified?.UtcDateTime,
-                            Kind = kind,
-                        });
-                    }
-                } while (continuation != null);
+                        BlobUrl = container.GetBlobClient(item.Name).Uri?.ToString() ?? string.Empty,
+                        CapturedAtUtc = item.Properties.LastModified?.UtcDateTime,
+                        Kind = kind,
+                    });
+                }
             }
             catch
             {

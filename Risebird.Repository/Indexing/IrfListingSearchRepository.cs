@@ -109,6 +109,92 @@ namespace Risebird.Repository
             await LoadDocumentsFromDatabaseAsync(irfIntId);
 
         /// <inheritdoc />
+        public async Task<IReadOnlyList<int>> GetIrfIntIdsByUserIdAsync(int userId)
+        {
+            if (userId <= 0)
+                return Array.Empty<int>();
+
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                var ids = await connection.QueryAsync<int>(
+                    "usp_GetIrfIntIdsByUserId",
+                    new { UserId = userId },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 300);
+
+                return ids.ToList();
+            }
+            catch (Exception ex)
+            {
+                // Read-only lookup feeding a best-effort re-index; a failure here must not fail
+                // the user save that triggered it.
+                await LogExceptionAsync(ex, $"GetIrfIntIdsByUserIdAsync failed (userId={userId.ToString(CultureInfo.InvariantCulture)}).");
+                return Array.Empty<int>();
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task<int> UpsertIrfsByUserIdAsync(int userId, IEnumerable<int> additionalIrfIntIds = null)
+        {
+            if (!IsEnabled)
+                return 0;
+
+            try
+            {
+                var irfIntIds = new HashSet<int>(await GetIrfIntIdsByUserIdAsync(userId));
+
+                if (additionalIrfIntIds != null)
+                {
+                    foreach (var irfIntId in additionalIrfIntIds)
+                    {
+                        if (irfIntId > 0)
+                            irfIntIds.Add(irfIntId);
+                    }
+                }
+
+                if (irfIntIds.Count == 0)
+                    return 0;
+
+                await EnsureIndexAsync();
+
+                // One SP round trip for the whole set, then batched uploads — a per-id Upsert
+                // loop would re-run the batch SP's CTEs once per IRF, and a senior HR can be
+                // attached to every IRF of a client.
+                var documents = await LoadDocumentsByIdsAsync(irfIntIds);
+                return await MergeOrUploadDocumentsAsync(documents);
+            }
+            catch (Exception ex)
+            {
+                await LogExceptionAsync(ex, $"UpsertIrfsByUserIdAsync failed (userId={userId.ToString(CultureInfo.InvariantCulture)}).");
+                return 0;
+            }
+        }
+
+        /// <summary>Loads the given IRFs in one call. Soft-deleted ids simply come back empty.</summary>
+        private async Task<IReadOnlyList<IrfIndexDocument>> LoadDocumentsByIdsAsync(IReadOnlyCollection<int> irfIntIds)
+        {
+            var csv = string.Join(",", irfIntIds.Select(id => id.ToString(CultureInfo.InvariantCulture)));
+
+            try
+            {
+                using var connection = new SqlConnection(_connectionString);
+                var rows = await connection.QueryAsync<IrfIndexDocumentRow>(
+                    "usp_GetIrfIndexBatch",
+                    new { IrfIntId = (int?)null, IrfIntIdCsv = csv },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 300);
+
+                return rows.Select(IrfIndexDocumentMapper.FromDatabaseRow).ToList();
+            }
+            catch (Exception ex)
+            {
+                await LogExceptionAsync(ex, $"LoadDocumentsByIdsAsync failed for {irfIntIds.Count.ToString(CultureInfo.InvariantCulture)} id(s).");
+                throw;
+            }
+        }
+
+        /// <inheritdoc />
         protected override async Task<IReadOnlyList<IrfIndexDocument>> LoadDocumentsFromDatabaseAsync(int? documentId)
         {
             try

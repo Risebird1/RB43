@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "risebird-bug-triage": {
+      "command": "C:\\Users\\premvm\\source\\repos\\Risebird\\Risebird.Mcp.BugTriage\\bin\\Release\\publish\\Risebird.Mcp.BugTriage.exe",
+      "args": []
+    }
+  }
+}

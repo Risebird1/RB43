@@ -258,7 +258,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult SelectabilityReport(int candidateId, int irfId)
+        public async Task<IActionResult> SelectabilityReport(int candidateId, int irfId)
         {
             try
             {
@@ -267,11 +267,11 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "ResumeEvaluator" || profileName == "HR")
                 {
-                    var model = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
-                    model.HRReport = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
-                    model.TechSkillEvaluatorReportCollection = _evaluatorService.GetTechReport(candidateId, irfId).Result;
-                    model.SkillGeneralEvaluatorReportCollection = _evaluatorService.GetSkillGeneralReport(candidateId, irfId).Result;
-                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result.ToList().Where(x => !x.IsVoiceBiometric).ToList();
+                    var model = (await _evaluatorService.GetEvaluatorReport(candidateId, irfId));
+                    model.HRReport = (await _evaluatorService.GetHRJoinabilityReport(candidateId, irfId));
+                    model.TechSkillEvaluatorReportCollection = (await _evaluatorService.GetTechReport(candidateId, irfId));
+                    model.SkillGeneralEvaluatorReportCollection = (await _evaluatorService.GetSkillGeneralReport(candidateId, irfId));
+                    model.CandidateAudioCollection = (await _evaluatorService.GetCandidateAudios(candidateId, irfId)).ToList().Where(x => !x.IsVoiceBiometric).ToList();
                     return View(model);
                 }
                 else
@@ -284,7 +284,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("MyEvaluations");
             }
         }
@@ -304,7 +304,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "ResumeEvaluator" || profileName == "HR")
                     {
 
-                        if (_evaluatorService.AddSelectabilityReport(model).Result)
+                        if (await _evaluatorService.AddSelectabilityReport(model))
                         {
                             TempData["SuccessErrorMessageEvaluator"] = "Data has been saved Successfully!";
                             return RedirectToAction("MyEvaluations");
@@ -484,7 +484,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult JoinabilityReport(int candidateId, int irfId)
+        public async Task<IActionResult> JoinabilityReport(int candidateId, int irfId)
         {
             try
             {
@@ -493,11 +493,11 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "HR" || profileName == "ResumeEvaluator")
                 {
-                    var model = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
-                    model.EvaluatorReport = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
-                    model.TechSkillEvaluatorReportCollection = _evaluatorService.GetTechReport(candidateId, irfId).Result;
-                    model.SkillGeneralEvaluatorReportCollection = _evaluatorService.GetSkillGeneralReport(candidateId, irfId).Result;
-                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result.ToList().Where(x => !x.IsVoiceBiometric).ToList();
+                    var model = (await _evaluatorService.GetHRJoinabilityReport(candidateId, irfId));
+                    model.EvaluatorReport = (await _evaluatorService.GetEvaluatorReport(candidateId, irfId));
+                    model.TechSkillEvaluatorReportCollection = (await _evaluatorService.GetTechReport(candidateId, irfId));
+                    model.SkillGeneralEvaluatorReportCollection = (await _evaluatorService.GetSkillGeneralReport(candidateId, irfId));
+                    model.CandidateAudioCollection = (await _evaluatorService.GetCandidateAudios(candidateId, irfId)).ToList().Where(x => !x.IsVoiceBiometric).ToList();
                     return View(model);
                 }
                 else
@@ -510,7 +510,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("MyEvaluations");
             }
         }
@@ -529,7 +529,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "HR" || profileName == "ResumeEvaluator")
                     {
-                        if (_evaluatorService.AddJoinabilityReport(model).Result)
+                        if (await _evaluatorService.AddJoinabilityReport(model))
                         {
                             TempData["SuccessErrorMessageEvaluator"] = "Data has been saved Successfully!";
                             return RedirectToAction("MyHREvaluations");
@@ -624,7 +624,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public IActionResult RecruiterReport(int candidateId, int irfId)
+        public async Task<IActionResult> RecruiterReport(int candidateId, int irfId)
         {
             try
             {
@@ -633,11 +633,11 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Recruiter")
                 {
-                    var model = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
-                    model.HRReport = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
-                    model.TechSkillEvaluatorReportCollection = _evaluatorService.GetTechReport(candidateId, irfId).Result;
-                    model.SkillGeneralEvaluatorReportCollection = _evaluatorService.GetSkillGeneralReport(candidateId, irfId).Result;
-                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result.ToList().Where(x => !x.IsVoiceBiometric).ToList();
+                    var model = (await _evaluatorService.GetEvaluatorReport(candidateId, irfId));
+                    model.HRReport = (await _evaluatorService.GetHRJoinabilityReport(candidateId, irfId));
+                    model.TechSkillEvaluatorReportCollection = (await _evaluatorService.GetTechReport(candidateId, irfId));
+                    model.SkillGeneralEvaluatorReportCollection = (await _evaluatorService.GetSkillGeneralReport(candidateId, irfId));
+                    model.CandidateAudioCollection = (await _evaluatorService.GetCandidateAudios(candidateId, irfId)).ToList().Where(x => !x.IsVoiceBiometric).ToList();
                     return View(model);
                 }
                 else
@@ -650,7 +650,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("RecruiterCandidates");
             }
         }
@@ -670,7 +670,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Recruiter")
                     {
 
-                        if (_evaluatorService.AddSelectabilityReport(model).Result)
+                        if (await _evaluatorService.AddSelectabilityReport(model))
                         {
                             TempData["SuccessErrorMessageRecruiter"] = "Data has been saved Successfully!";
                             return RedirectToAction("RecruiterCandidates");
@@ -785,7 +785,7 @@ namespace Risebird.Web.Controllers
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
 
-                        if (_evaluatorService.AddCandidateAudio(model, emailid, profileName).Result)
+                        if (await _evaluatorService.AddCandidateAudio(model, emailid, profileName))
                         {
                             TempData["SuccessErrorMessageAudio"] = "Audio has been uploaded Successfully!";
                             return RedirectToAction(actMethod);
@@ -815,7 +815,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult EnrollVoiceItUser(int candidateId, int irfId, string actMethod = "")
+        public async Task<IActionResult> EnrollVoiceItUser(int candidateId, int irfId, string actMethod = "")
         {
             try
             {
@@ -824,7 +824,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "ResumeEvaluator" || profileName == "HR" || profileName == "Recruiter")
                 {
-                    var model = (IList<CandidateAudio>)_evaluatorService.GetCandidateAudios(candidateId, irfId).Result.Where(x => x.IsVoiceBiometric == true).ToList();
+                    var model = (IList<CandidateAudio>)(await _evaluatorService.GetCandidateAudios(candidateId, irfId)).Where(x => x.IsVoiceBiometric == true).ToList();
                     TempData["actMethod"] = actMethod;
                     ViewBag.BackMethod = actMethod;
                     if (TempData["SuccessErrorMessageEnroll"] != null)
@@ -844,7 +844,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction(actMethod);
             }
         }

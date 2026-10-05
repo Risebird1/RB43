@@ -552,7 +552,7 @@ namespace Risebird.Web.Controllers
                             x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
                             return x;
                         }).ToList();
-                        var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
+                        var IRListModel = await _meetingService.GetInteviewReport(model.imid, model.irfIntId);
                         var modelList = modelList1;
                         if (HttpContext.Session.GetString("RiseTubefilters") != null)
                         {
@@ -776,7 +776,7 @@ namespace Risebird.Web.Controllers
                             model = new MeetingVM();
                             ViewBag.ResultStatus = "VideoNotPresent";
                         }
-                        var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
+                        var IRListModel = await _meetingService.GetInteviewReport(model.imid, model.irfIntId);
                         if (IRListModel == null)
                         {
                             IRListModel = new InterviewReport();
@@ -1013,7 +1013,7 @@ namespace Risebird.Web.Controllers
                             modelList = modelList.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
 
                         }
-                        var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
+                        var IRListModel = await _meetingService.GetInteviewReport(model.imid, model.irfIntId);
                         if (HttpContext.Session.GetString("RiseTubefilters") != null)
                         {
                             var filter1 = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("RiseTubefilters"));
@@ -1256,7 +1256,7 @@ namespace Risebird.Web.Controllers
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
 
-            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId).Result, "Comment", "Comment");
+            model.QuestionsList = new SelectList(await _meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
         }
 
         [HttpPost]
@@ -1587,7 +1587,7 @@ namespace Risebird.Web.Controllers
                             x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
                             return x;
                         }).ToList();
-                        var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
+                        var IRListModel = await _meetingService.GetInteviewReport(model.imid, model.irfIntId);
                         var modelList = modelList1;
                         if (HttpContext.Session.GetString("RiseTubefilters") != null)
                         {
@@ -1862,13 +1862,13 @@ namespace Risebird.Web.Controllers
                 //Start: Share button functionaly
                 ViewBag.ResultStatus = "VideoPresent";
                 //Get Video Details From SharedInterviewComments
-                var interviewid = _meetingService.SharedGetInterviewId(id).Result;
+                var interviewid = await _meetingService.SharedGetInterviewId(id);
 
                 MeetingVM model = await _meetingService.GetMeetingbyid(interviewid, "");
                 var status = string.IsNullOrEmpty(model.IsShared) ? "" : model.IsShared;
 
                 //update with help of new tables
-                var IRListModel = _meetingService.GetSharedInteviewReport(model.imid, model.irfIntId, id).Result;
+                var IRListModel = await _meetingService.GetSharedInteviewReport(model.imid, model.irfIntId, id);
                 if (IRListModel == null)
                 {
                     IRListModel = new InterviewReport();
@@ -2577,7 +2577,7 @@ namespace Risebird.Web.Controllers
                     model = new MeetingVM();
                     ViewBag.ResultStatus = "VideoNotPresent";
                 }
-                var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
+                var IRListModel = await _meetingService.GetInteviewReport(model.imid, model.irfIntId);
                 if (IRListModel == null)
                 {
                     IRListModel = new InterviewReport();
@@ -2814,7 +2814,7 @@ namespace Risebird.Web.Controllers
                             x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
                             return x;
                         }).ToList();
-                        var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
+                        var IRListModel = await _meetingService.GetInteviewReport(model.imid, model.irfIntId);
                         var modelList = modelList1;
                         if (HttpContext.Session.GetString("RiseTubefilters") != null)
                         {

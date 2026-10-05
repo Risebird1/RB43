@@ -1894,9 +1894,9 @@ NEVER:
 
                         try
                         {
-                            var recordinginfo = _zoho.GetRecordingAsync(meeting.ZoomMeetingId, accesstoken).Result;
+                            var recordinginfo = await _zoho.GetRecordingAsync(meeting.ZoomMeetingId, accesstoken);
                             int maxduration = 0;
-                            if (recordinginfo.Count() > 0)
+                            if (recordinginfo != null && recordinginfo.Any())
                                 maxduration = recordinginfo.Max(r => r.duration);
                             var _recordingupload = recordinginfo?.Where(x => x.duration == maxduration).FirstOrDefault();
 
@@ -2740,7 +2740,7 @@ NEVER:
 
         [Authorize]
         [HttpGet]
-        public DashboardVM GetDateWiseInterviews(DateTime date)
+        public async Task<DashboardVM> GetDateWiseInterviews(DateTime date)
         {
             try
             {
@@ -2751,7 +2751,7 @@ NEVER:
                     Emailid = Emailid.Replace("\"", "");
                 }
                 var model = new DashboardVM();
-                model.Meetings = _dashboardService.GetDateWiseMeetings(date, Emailid).Result;
+                model.Meetings = await _dashboardService.GetDateWiseMeetings(date, Emailid);
                 var meetingTimes = model.Meetings.Select(x => x.interviewDate).Distinct();
                 //var irfList = model.Meetings.Select(x => x.IRFID).Distinct();
                 var irfList = model.Meetings.Select(x => x.IRFnSkill).Distinct();
@@ -2774,14 +2774,14 @@ NEVER:
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
 
         [Authorize]
         [HttpGet]
-        public IActionResult GetDateWiseInterviewStatus(DateTime date)
+        public async Task<IActionResult> GetDateWiseInterviewStatus(DateTime date)
         {
             try
             {
@@ -2792,20 +2792,20 @@ NEVER:
                     Emailid = Emailid.Replace("\"", "");
                 }
                 var model = new DashboardVM();
-                model.Meetings = _dashboardService.GetDateWiseMeetings(date, Emailid).Result;
+                model.Meetings = await _dashboardService.GetDateWiseMeetings(date, Emailid);
                 model.TotalCompletedMeetings = model.Meetings != null ? model.Meetings.Where(x => x.InterviewStatus.HasValue).Count() : 0;
                 return PartialView("InterviewStatusPartial", model);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
 
         [Authorize]
         [HttpGet]
-        public IActionResult GetDateWiseMeetingsSlots(DateTime date)
+        public async Task<IActionResult> GetDateWiseMeetingsSlots(DateTime date)
         {
             try
             {
@@ -2818,12 +2818,12 @@ NEVER:
                     Emailid = Emailid.Replace("\"", "");
                 }
                 var model = new DashboardVM();
-                model.DailyInterviewSlots = _dashboardService.GetDateWiseMeetingsSlots(date, Emailid).Result;
+                model.DailyInterviewSlots = await _dashboardService.GetDateWiseMeetingsSlots(date, Emailid);
                 return PartialView("InterviewSlotsPartial", model);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -2955,12 +2955,12 @@ NEVER:
 
         [Authorize]
         [HttpGet]
-        public ClientDashboardVM GetDateWiseClientInterviews(DateTime dateValue, string emailId)
+        public async Task<ClientDashboardVM> GetDateWiseClientInterviews(DateTime dateValue, string emailId)
         {
             try
             {
                 var model = new ClientDashboardVM();
-                model.Meetings = _dashboardService.GetDateWiseClientMeetings(dateValue, emailId).Result;
+                model.Meetings = await _dashboardService.GetDateWiseClientMeetings(dateValue, emailId);
                 var meetingTimes = model.Meetings.Select(x => x.interviewDate).Distinct();
 
                 var irfList = model.Meetings.Select(x => x.IRFnSkill).Distinct();
@@ -2983,24 +2983,24 @@ NEVER:
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
 
         [Authorize]
         [HttpGet]
-        public IActionResult GetDateWiseClientMeetingsSlots(DateTime dateValue, string emailId)
+        public async Task<IActionResult> GetDateWiseClientMeetingsSlots(DateTime dateValue, string emailId)
         {
             try
             {
                 var model = new ClientDashboardVM();
-                model.DailyMeetingResultsSlots = _dashboardService.GetDateWiseClientMeetingsSlots(dateValue, emailId).Result;
+                model.DailyMeetingResultsSlots = await _dashboardService.GetDateWiseClientMeetingsSlots(dateValue, emailId);
                 return PartialView("ClientSlotsStatusPartial", model);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }
@@ -4046,7 +4046,7 @@ NEVER:
         }
 
         [HttpGet]
-        public IActionResult DeleteChannelInterviewer(int id, int iscId, string iscName)
+        public async Task<IActionResult> DeleteChannelInterviewer(int id, int iscId, string iscName)
         {
             try
             {
@@ -4058,7 +4058,7 @@ NEVER:
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
                     {
-                        if (_dashboardService.DeleteChannelInterviewer(id).Result)
+                        if (await _dashboardService.DeleteChannelInterviewer(id))
                         {
                             //TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer removed Successfully.";
                             return RedirectToAction("AddInterviewerList", new { id = iscId, channelname = iscName });
@@ -4082,7 +4082,7 @@ NEVER:
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageISCInterviewer"] = "Could not remove Interviewer.";
                 return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
             }
@@ -4090,7 +4090,7 @@ NEVER:
         }
 
         [HttpGet]
-        public IActionResult ChannelInterviewerAction(int id, string channelName, int channelid, string status)
+        public async Task<IActionResult> ChannelInterviewerAction(int id, string channelName, int channelid, string status)
         {
             try
             {
@@ -4102,7 +4102,7 @@ NEVER:
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Client")
                     {
-                        if (_dashboardService.ChannelInterviewerAction(id, status).Result)
+                        if (await _dashboardService.ChannelInterviewerAction(id, status))
                         {
                             if (status == "Approved")
                             {
@@ -4141,7 +4141,7 @@ NEVER:
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageISCInterviewer"] = "Could not remove Interviewer.";
                 return RedirectToAction("GetISCInterviewers", new { id = channelid, channelname = channelName });
             }

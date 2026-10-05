@@ -2822,6 +2822,11 @@
         return window.rbCandidateTranscriptReview === true;
     }
 
+    function hideWaitOverlay() {
+        const waitOverlay = document.getElementById('waitOverlay');
+        if (waitOverlay) waitOverlay.style.display = 'none';
+    }
+
     // Only answers whose text comes from the recording. Coding carries the code itself, typing and
     // listening assessments are typed, chatbox mode is already text, and the MCQ section records
     // nothing to transcribe.
@@ -2838,10 +2843,14 @@
         return true;
     }
 
-    function shouldReviewTranscript() {
+    // True for any answer that still owes the candidate a review. Deliberately does NOT look at
+    // transcriptReviewInFlight: the audio and video recorders both finish independently and both
+    // call tryFinalizeAnswerSubmit, so a second call arriving mid-review must still be told to
+    // hold. Treating "already transcribing" as "no review needed" submitted the answer from
+    // underneath the panel.
+    function transcriptReviewPending() {
         return transcriptReviewEnabled()
             && !transcriptReviewConfirmed
-            && !transcriptReviewInFlight
             && answerIsTranscribedSpeech()
             && answerRecordingHasUsableAudio();
     }
@@ -2861,7 +2870,15 @@
             note.className = warning ? 'rb-tr-note rb-tr-warn' : 'rb-tr-note';
         }
 
+        // Belt and braces: nothing may sit over the panel while the candidate is expected to use it,
+        // and the button is live every time the panel opens.
+        hideWaitOverlay();
+
+        const submitBtn = document.getElementById('transcriptReviewSubmit');
+        if (submitBtn) submitBtn.disabled = false;
+
         panel.style.display = '';
+        panel.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         text.focus();
     }
 
@@ -2872,6 +2889,12 @@
 
     function beginTranscriptReview() {
         transcriptReviewInFlight = true;
+
+        // The recorder raises the full-screen "preparing the next question" overlay the moment it
+        // stops, because until now stopping meant submitting. Nothing is being prepared yet - the
+        // candidate still has to read their answer - and at z-index 2000 it covers the review panel
+        // and swallows every click. It goes back up when they actually submit.
+        hideWaitOverlay();
 
         const sessionField = document.querySelector('input[name="SessionId"]');
         const multiField = document.querySelector('input[name="isMultiLingual"]');
@@ -2884,14 +2907,22 @@
         const busy = document.getElementById('transcriptReviewBusy');
         if (busy) busy.style.display = '';
 
+        // A request that never comes back would leave the candidate watching "Transcribing..."
+        // for the rest of their interview. After this it is abandoned and the answer is submitted
+        // the old way, which is slower for them but never stuck.
+        const abort = new AbortController();
+        const timeoutId = window.setTimeout(function () { abort.abort(); }, 45000);
+
         fetch('/AIInterview/TranscribeAnswer?sessionId=' + encodeURIComponent(sessionId) +
               '&isMultiLingual=' + isMultiLingual, {
             method: 'POST',
             credentials: 'same-origin',
-            body: data
+            body: data,
+            signal: abort.signal
         })
             .then(function (r) { return r.json(); })
             .then(function (res) {
+                window.clearTimeout(timeoutId);
                 if (busy) busy.style.display = 'none';
                 transcriptReviewInFlight = false;
 
@@ -2906,9 +2937,11 @@
                 showTranscriptReviewPanel(res.transcript, res.warning);
             })
             .catch(function () {
+                window.clearTimeout(timeoutId);
                 if (busy) busy.style.display = 'none';
                 transcriptReviewInFlight = false;
-                // Same fallback: a failed review must never cost the candidate their answer.
+                // Same fallback: a failed or abandoned review must never cost the candidate their
+                // answer. The server transcribes the same recording, as it did before review existed.
                 transcriptReviewConfirmed = true;
                 if (!tryFinalizeAnswerSubmit()) scheduleAnswerSubmitFallback();
             });
@@ -2918,6 +2951,8 @@
         const text = document.getElementById('transcriptReviewText');
         const value = text ? text.value.trim() : '';
 
+        // Nothing to submit yet. The button stays live — disabling it here would strand the
+        // candidate with a panel they can never get past.
         if (!value) {
             const note = document.getElementById('transcriptReviewNote');
             if (note) {
@@ -2928,6 +2963,10 @@
             return;
         }
 
+        // Only now, with an answer in hand and the submit about to run, is the button closed off.
+        const submitBtn = document.getElementById('transcriptReviewSubmit');
+        if (submitBtn) submitBtn.disabled = true;
+
         document.getElementById('confirmedTranscriptInput').value = value;
         transcriptReviewConfirmed = true;
         hideTranscriptReviewPanel();
@@ -2935,16 +2974,19 @@
         if (!tryFinalizeAnswerSubmit()) scheduleAnswerSubmitFallback();
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    // Bound immediately, not on DOMContentLoaded: this script runs below the panel markup, and in a
+    // page this large DOMContentLoaded may already have fired by the time it executes — in which
+    // case the listener would never attach and the button would simply do nothing when pressed.
+    function bindTranscriptReviewSubmit() {
         const submitBtn = document.getElementById('transcriptReviewSubmit');
-        if (submitBtn) {
-            submitBtn.addEventListener('click', function () {
-                // Disabled on click: the answer is submitted once, and the panel is about to close.
-                submitBtn.disabled = true;
-                confirmTranscriptAndSubmit();
-            });
-        }
-    });
+        if (!submitBtn || submitBtn.dataset.rbBound === '1') return;
+
+        submitBtn.dataset.rbBound = '1';
+        submitBtn.addEventListener('click', function () { confirmTranscriptAndSubmit(); });
+    }
+
+    bindTranscriptReviewSubmit();
+    document.addEventListener('DOMContentLoaded', bindTranscriptReviewSubmit);
 
     // Coding answers are recorded on video like any spoken answer; only typing and
     // listening assessments submit without one.
@@ -3114,10 +3156,11 @@
 
         // The recording is complete, but a spoken answer is not submitted until the candidate has
         // read the transcript and confirmed it. Returning true stops the fallback timers from
-        // firing behind the review panel and submitting it from under them.
-        if (shouldReviewTranscript()) {
+        // firing behind the review panel and submitting it from under them, and the early return
+        // means no later caller can submit while a review is still owed.
+        if (transcriptReviewPending()) {
             clearAnswerSubmitFallbacks();
-            beginTranscriptReview();
+            if (!transcriptReviewInFlight) beginTranscriptReview();
             return true;
         }
 

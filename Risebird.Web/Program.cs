@@ -101,6 +101,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 
 //builder.Services.AddMvc();
 builder.Services.AddDistributedMemoryCache();
+builder.Services.AddMemoryCache();
 builder.Services.AddApplicationInsightsTelemetry();
 
 builder.Services.AddHsts(options =>
@@ -127,6 +128,7 @@ builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 builder.Services.AddScoped<INotificationHelper, NotificationHelper>();
 builder.Services.AddScoped<IAzureStorageHelper, AzureStorageHelper>();
+builder.Services.AddScoped<IApplicationLogDailyCountService, ApplicationLogDailyCountService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<ISkillService, SkillService>();

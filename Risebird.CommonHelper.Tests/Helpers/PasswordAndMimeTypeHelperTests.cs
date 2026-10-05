@@ -4,6 +4,7 @@ using Moq;
 using Risebird.CommonHelper.Interface;
 using Risebird.CommonHelper.Tests.Infrastructure;
 using Risebird.Entities.Data;
+using Risebird.Entities.Enum;
 
 namespace Risebird.CommonHelper.Tests.Helpers
 {
@@ -17,12 +18,21 @@ namespace Risebird.CommonHelper.Tests.Helpers
     {
         private static readonly Regex Shape = new(@"^[A-Z0-9]{1,4}@\d{3}$", RegexOptions.Compiled);
 
-        private static Mock<IB2CClientService> B2C(bool created = true)
+        private static Mock<IB2CClientService> B2C(
+            B2CProvisioningOutcome outcome = B2CProvisioningOutcome.Created)
         {
             var mock = new Mock<IB2CClientService>(MockBehavior.Loose);
-            mock.Setup(x => x.CreateUser(It.IsAny<UserList>(), It.IsAny<bool>())).ReturnsAsync(created);
+            mock.Setup(x => x.CreateUser(It.IsAny<UserList>(), It.IsAny<bool>())).ReturnsAsync(outcome);
             return mock;
         }
+
+        /// <summary>
+        /// GenerateUserPassword returns the provisioning outcome alongside the password; these tests
+        /// are about the generated value, so they go through this.
+        /// </summary>
+        private static async Task<string> Generate(
+            PasswordHelper sut, UserDetails user, bool forceChange = false) =>
+            (await sut.GenerateUserPassword(user, forceChange)).Password;
 
         private static UserDetails User(string firstName = "Ashawantha", string lastName = "Rao") => new()
         {
@@ -36,7 +46,7 @@ namespace Risebird.CommonHelper.Tests.Helpers
         {
             var sut = new PasswordHelper(B2C().Object);
 
-            var password = await sut.GenerateUserPassword(User());
+            var password = await Generate(sut, User());
 
             Assert.Matches(Shape, password);
         }
@@ -46,7 +56,7 @@ namespace Risebird.CommonHelper.Tests.Helpers
         {
             var sut = new PasswordHelper(B2C().Object);
 
-            var password = await sut.GenerateUserPassword(User("Ashawantha", "Rao"));
+            var password = await Generate(sut, User("Ashawantha", "Rao"));
 
             Assert.StartsWith("ASHA@", password);
         }
@@ -56,7 +66,7 @@ namespace Risebird.CommonHelper.Tests.Helpers
         {
             var sut = new PasswordHelper(B2C().Object);
 
-            var password = await sut.GenerateUserPassword(User("Asha", "Rao"));
+            var password = await Generate(sut, User("Asha", "Rao"));
 
             Assert.StartsWith("ASHA@", password);
         }
@@ -66,7 +76,7 @@ namespace Risebird.CommonHelper.Tests.Helpers
         {
             var sut = new PasswordHelper(B2C().Object);
 
-            var password = await sut.GenerateUserPassword(User("Jo", "Baker"));
+            var password = await Generate(sut, User("Jo", "Baker"));
 
             Assert.StartsWith("JOBA@", password);
         }
@@ -76,7 +86,7 @@ namespace Risebird.CommonHelper.Tests.Helpers
         {
             var sut = new PasswordHelper(B2C().Object);
 
-            var password = await sut.GenerateUserPassword(User("Jo", "Li"));
+            var password = await Generate(sut, User("Jo", "Li"));
 
             Assert.StartsWith("JOLI@", password);
         }
@@ -88,7 +98,7 @@ namespace Risebird.CommonHelper.Tests.Helpers
             // password policies allow. Recorded because it is a real edge the portal can hit.
             var sut = new PasswordHelper(B2C().Object);
 
-            var password = await sut.GenerateUserPassword(User("A", "B"));
+            var password = await Generate(sut, User("A", "B"));
 
             Assert.StartsWith("AB@", password);
             Assert.Equal(6, password.Length);
@@ -99,7 +109,7 @@ namespace Risebird.CommonHelper.Tests.Helpers
         {
             var sut = new PasswordHelper(B2C().Object);
 
-            var password = await sut.GenerateUserPassword(User("Jo", ""));
+            var password = await Generate(sut, User("Jo", ""));
 
             Assert.StartsWith("JO@", password);
         }
@@ -109,7 +119,7 @@ namespace Risebird.CommonHelper.Tests.Helpers
         {
             var sut = new PasswordHelper(B2C().Object);
 
-            var password = await sut.GenerateUserPassword(User("Jo", null));
+            var password = await Generate(sut, User("Jo", null));
 
             Assert.StartsWith("JO@", password);
         }
@@ -122,7 +132,7 @@ namespace Risebird.CommonHelper.Tests.Helpers
             var sut = new PasswordHelper(B2C().Object);
 
             await Assert.ThrowsAsync<NullReferenceException>(
-                () => sut.GenerateUserPassword(User(null, "Rao")));
+                () => Generate(sut, User(null, "Rao")));
         }
 
         [Fact]
@@ -130,7 +140,7 @@ namespace Risebird.CommonHelper.Tests.Helpers
         {
             var sut = new PasswordHelper(B2C().Object);
 
-            var password = await sut.GenerateUserPassword(User("", ""));
+            var password = await Generate(sut, User("", ""));
 
             Assert.StartsWith("@", password);
             Assert.Equal(4, password.Length);
@@ -145,7 +155,7 @@ namespace Risebird.CommonHelper.Tests.Helpers
 
             for (var attempt = 0; attempt < 50; attempt++)
             {
-                var password = await sut.GenerateUserPassword(User());
+                var password = await Generate(sut, User());
                 var suffix = password.Substring(password.IndexOf('@') + 1);
                 Assert.Equal(3, suffix.Length);
                 Assert.True(suffix.All(char.IsDigit));
@@ -159,7 +169,7 @@ namespace Risebird.CommonHelper.Tests.Helpers
 
             for (var attempt = 0; attempt < 50; attempt++)
             {
-                var password = await sut.GenerateUserPassword(User());
+                var password = await Generate(sut, User());
                 var suffix = int.Parse(password.Substring(password.IndexOf('@') + 1));
                 Assert.InRange(suffix, 0, 999);
             }
@@ -170,9 +180,9 @@ namespace Risebird.CommonHelper.Tests.Helpers
         {
             // The caller emails whatever comes back, so leaking a password for a user that does
             // not exist would send a working-looking credential to a real address.
-            var sut = new PasswordHelper(B2C(created: false).Object);
+            var sut = new PasswordHelper(B2C(B2CProvisioningOutcome.Failed).Object);
 
-            Assert.Equal(string.Empty, await sut.GenerateUserPassword(User()));
+            Assert.Equal(string.Empty, await Generate(sut, User()));
         }
 
         [Fact]
@@ -181,7 +191,7 @@ namespace Risebird.CommonHelper.Tests.Helpers
             var b2c = B2C();
             var sut = new PasswordHelper(b2c.Object);
 
-            var password = await sut.GenerateUserPassword(User("Asha", "Rao"));
+            var password = await Generate(sut, User("Asha", "Rao"));
 
             b2c.Verify(x => x.CreateUser(
                 It.Is<UserList>(u =>
@@ -211,7 +221,7 @@ namespace Risebird.CommonHelper.Tests.Helpers
             var b2c = B2C();
             var sut = new PasswordHelper(b2c.Object);
 
-            await sut.GenerateUserPassword(User());
+            await Generate(sut, User());
 
             b2c.Verify(x => x.CreateUser(It.IsAny<UserList>(), false), Times.Once);
         }
@@ -224,8 +234,8 @@ namespace Risebird.CommonHelper.Tests.Helpers
             // wander between calls.
             var sut = new PasswordHelper(B2C().Object);
 
-            var first = await sut.GenerateUserPassword(User("Asha", "Rao"));
-            var second = await sut.GenerateUserPassword(User("Asha", "Rao"));
+            var first = await Generate(sut, User("Asha", "Rao"));
+            var second = await Generate(sut, User("Asha", "Rao"));
 
             Assert.Equal(first.Substring(0, first.IndexOf('@')), second.Substring(0, second.IndexOf('@')));
         }
@@ -235,7 +245,7 @@ namespace Risebird.CommonHelper.Tests.Helpers
         {
             var sut = new PasswordHelper(B2C().Object);
 
-            var password = await sut.GenerateUserPassword(User("O'Brien", "X"));
+            var password = await Generate(sut, User("O'Brien", "X"));
 
             Assert.StartsWith("O'BR@", password);
         }
@@ -243,10 +253,10 @@ namespace Risebird.CommonHelper.Tests.Helpers
         [Fact]
         public async Task A_failed_creation_still_asked_B2C_once()
         {
-            var b2c = B2C(created: false);
+            var b2c = B2C(B2CProvisioningOutcome.Failed);
             var sut = new PasswordHelper(b2c.Object);
 
-            await sut.GenerateUserPassword(User());
+            await Generate(sut, User());
 
             b2c.Verify(x => x.CreateUser(It.IsAny<UserList>(), It.IsAny<bool>()), Times.Once);
         }

@@ -31,5 +31,24 @@ namespace Risebird.Repository.Interface
 
         /// <summary>Loads IRF documents from SQL for indexing (full crawl or single id).</summary>
         Task<IEnumerable<IrfIndexDocument>> GetIndexDocumentsFromDatabaseAsync(int? irfIntId = null);
+
+        /// <summary>
+        /// Ids of the active IRFs the given user takes part in, as channel owner, client user,
+        /// recruiter, senior HR (via the client) or HR. Empty when the user is on none.
+        /// </summary>
+        Task<IReadOnlyList<int>> GetIrfIntIdsByUserIdAsync(int userId);
+
+        /// <summary>
+        /// Re-indexes every IRF the user takes part in, because <c>risebirdHrEmail</c> and the
+        /// <c>allowedViewerEmails</c> ACL are snapshots of <c>UserList.EmailId</c> and go stale
+        /// when the user row changes.
+        /// <para>
+        /// <paramref name="additionalIrfIntIds"/> is for ids captured *before* the edit: an edit
+        /// that drops a client assignment leaves an IRF the user no longer belongs to, so it
+        /// would not come back from the lookup, yet it still carries their email in its ACL.
+        /// </para>
+        /// </summary>
+        /// <returns>The number of IRF documents pushed to the index.</returns>
+        Task<int> UpsertIrfsByUserIdAsync(int userId, IEnumerable<int> additionalIrfIntIds = null);
     }
 }

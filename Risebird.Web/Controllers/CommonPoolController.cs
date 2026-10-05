@@ -432,7 +432,7 @@ namespace Risebird.Web.Controllers
                             x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
                             return x;
                         }).ToList();
-                        var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
+                        var IRListModel = await _meetingService.GetInteviewReport(model.imid, model.irfIntId);
                         var modelList = modelList1;
                         if (HttpContext.Session.GetString("CommonPoolfilters") != null)
                         {
@@ -596,7 +596,7 @@ namespace Risebird.Web.Controllers
                             ViewBag.ResultStatus = "VideoNotPresent";
                         }
 
-                        var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
+                        var IRListModel = await _meetingService.GetInteviewReport(model.imid, model.irfIntId);
                         if (IRListModel == null)
                         {
                             IRListModel = new InterviewReport();
@@ -808,7 +808,7 @@ namespace Risebird.Web.Controllers
                         MeetingVM model = await _meetingService.GetMeetingbyid(id, emailId);
                         //MeetingVM model = modelList.Where(a => a.imid == id).FirstOrDefault();
                         modelList = modelList.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
-                        var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
+                        var IRListModel = await _meetingService.GetInteviewReport(model.imid, model.irfIntId);
                         if (HttpContext.Session.GetString("CommonPoolfilters") != null)
                         {
                             var filter1 = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("CommonPoolfilters"));

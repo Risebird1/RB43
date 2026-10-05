@@ -496,7 +496,7 @@ namespace Risebird.Web.Controllers
             }
             catch (System.Exception ex)
             {
-                var resultDe = _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty).Result;
+                var resultDe = await _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty);
 
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(null);
@@ -613,7 +613,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                var resultDe = _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty).Result;
+                var resultDe = await _activityTrackerService.DebugLogger($"AI Resume Screener function error : {ex.Message}, {ex.StackTrace}", "aiScreener", string.Empty);
 
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
 
@@ -988,7 +988,16 @@ namespace Risebird.Web.Controllers
                                                     int userId;
                                                     string agList;
                                                     string uniqueid;
-                                                    _interviewerService.AddInterviewerProfile(obj, loggedInUser, out agList, out userId, out uniqueid, true);
+                                                    // AddInterviewerProfile returns false when Azure AD B2C provisioning fails, and
+                                                    // then no interviewer profile was written at all. Reporting a favourable verdict
+                                                    // regardless would silently drop an applicant who passed screening.
+                                                    if (!_interviewerService.AddInterviewerProfile(obj, loggedInUser, out agList, out userId, out uniqueid, true))
+                                                    {
+                                                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Error,
+                                                            "AI screening passed but the interviewer profile could not be created, so the applicant was not onboarded.",
+                                                            aiEvaluation.EmailId);
+                                                        return Json(new { isfavourableVerdict = false, aiResponseHref = aiResponseUrl, errorMessage = "The candidate passed screening, but their interviewer profile could not be created. Please retry, or add them manually.", aiAnalysisScore = aiEvaluation.AIAnalysisScore });
+                                                    }
                                                 }
                                                 return Json(new { isfavourableVerdict = true, aiResponseHref = aiResponseUrl, errorMessage = string.Empty, aiAnalysisScore = aiEvaluation.AIAnalysisScore });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
 
@@ -1168,7 +1177,15 @@ namespace Risebird.Web.Controllers
                                             int userId;
                                             string agList;
                                             string uniqueid;
-                                            _interviewerService.AddInterviewerProfile(obj, aiEvaluation.EmailId, out agList, out userId, out uniqueid, true);
+                                            // As above: a false return means no interviewer profile was written, so the
+                                            // applicant must not be reported as successfully screened.
+                                            if (!_interviewerService.AddInterviewerProfile(obj, aiEvaluation.EmailId, out agList, out userId, out uniqueid, true))
+                                            {
+                                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Error,
+                                                    "AI screening passed but the interviewer profile could not be created, so the applicant was not onboarded.",
+                                                    aiEvaluation.EmailId);
+                                                return Json(new { isfavourableVerdict = false, aiResponseHref = aiResponseUrl, errorMessage = "The candidate passed screening, but their interviewer profile could not be created. Please retry, or add them manually.", aiAnalysisScore = aiEvaluation.AIAnalysisScore });
+                                            }
                                         }
                                         return Json(new { isfavourableVerdict = true, aiResponseHref = aiResponseUrl, errorMessage = string.Empty, aiAnalysisScore = aiEvaluation.AIAnalysisScore });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
 

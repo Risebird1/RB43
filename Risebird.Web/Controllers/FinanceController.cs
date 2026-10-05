@@ -174,7 +174,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public FileContentResult ExportRBDetails(string type)
+        public async Task<FileContentResult> ExportRBDetails(string type)
         {
             ExcelPackage Ep = new ExcelPackage();
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Payable Details");
@@ -195,7 +195,7 @@ namespace Risebird.Web.Controllers
                         {
                             type = "Pending";
                         }
-                        var model = _meetingService.RBDetails(emailid).Result;
+                        var model = await _meetingService.RBDetails(emailid);
                         if (type == "Paid")
                         {
                             model = model.Where(x => x.Status == "Paid").ToList();
@@ -344,7 +344,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
                 Rng.Value = "Data export failed !!!";
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
