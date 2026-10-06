@@ -1772,7 +1772,7 @@ namespace Risebird.Repository
                     {
                         //add to interviewReport table
                         string sqlInsertReport = "INSERT INTO InterviewerReport (InterviewerSkillId, InterviewId, CandidateName,OverallScore, TechSkillComments,SkillQuality,CertificationQuality, EducationQuality, EmployersQuality,CareerProgression,ProjectsQuality,OnlinePresence,BehavioralScore,InterviwerCommunication,InterviewExperience, ProfileScore) Values   (@InterviewerSkillId, @InterviewId, @CandidateName,@OverallScore, @TechSkillComments, @SkillQuality,   @CertificationQuality, @EducationQuality, @EmployersQuality,@CareerProgression,@ProjectsQuality,@OnlinePresence,@BehavioralScore,@InterviwerCommunication,@InterviewExperience, @ProfileScore);";
-                        var affectedRows = con.ExecuteAsync(sqlInsertReport, new
+                        var affectedRows = await con.ExecuteAsync(sqlInsertReport, new
                         {
                             InterviewerSkillId = reportDetails.ISCId,
                             InterviewId = reportDetails.InterviewId,
@@ -1791,7 +1791,7 @@ namespace Risebird.Repository
                             InterviwerCommunication = reportDetails.InterviwerCommunication,
                             InterviewExperience = reportDetails.Interviewexperience,
                             ProfileScore = reportDetails.ProfileScore
-                        }).Result;
+                        });
 
                     }
 

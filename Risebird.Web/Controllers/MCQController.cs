@@ -125,7 +125,7 @@ namespace Risebird.Web.Controllers
 
                     //resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
 
-                    resultset.ClientList = new SelectList(_clientService.GetAllClients().Result, "Name", "Name");
+                    resultset.ClientList = new SelectList(await _clientService.GetAllClients(), "Name", "Name");
 
                     foreach (var item in result ?? new List<MCQVMset>())
                     {
@@ -1514,7 +1514,7 @@ namespace Risebird.Web.Controllers
 
                     resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
 
-                    resultset.ClientList = new SelectList(_clientService.GetAllClients().Result, "Name", "Name");
+                    resultset.ClientList = new SelectList(await _clientService.GetAllClients(), "Name", "Name");
 
                     foreach (var item in result ?? new List<MCQVMset>())
                     {
@@ -1868,7 +1868,7 @@ namespace Risebird.Web.Controllers
                     resultset._ProfileTypeSkills.SeniorityLevelList = new SelectList(seniorityLevels, "ID", "Name");
                     resultset._ProfileTypeSkills.EmploymentTypeOptions = new SelectList(employmentTypes, "ID", "Name");
                     resultset._ProfileTypeSkills.PrimarySkillsList = new SelectList(skillset, "id", "Name");
-                    resultset.ClientList = new SelectList(_clientService.GetAllClients().Result, "Name", "Name");
+                    resultset.ClientList = new SelectList(await _clientService.GetAllClients(), "Name", "Name");
                     foreach (var item in result ?? new List<MCQVMset>())
                     {
                         if (!string.IsNullOrEmpty(item.ProfileType))
@@ -2676,7 +2676,7 @@ namespace Risebird.Web.Controllers
                 fileName = fileName + "_" + unixTime.ToString();
                 try
                 {
-                    uploadedVideoUrl = _azureStorageHelper.InsertBlobCloudCompare(fileName, ContainerName, null, myStream).Result;
+                    uploadedVideoUrl = await _azureStorageHelper.InsertBlobCloudCompare(fileName, ContainerName, null, myStream);
                 }
                 catch (Exception ex)
                 {

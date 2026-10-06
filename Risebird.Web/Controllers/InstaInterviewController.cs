@@ -975,7 +975,7 @@ namespace Risebird.Web.Controllers
                                 var accountEmail = await _instaInterviewService.CheckInstaMeetingAccount(indianTime, indianTime.AddMinutes(60));
                                 if (string.IsNullOrEmpty(accountEmail))
                                     accountEmail = "me";
-                                var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
+                                var zoomlink = await CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
                                 var clientname = _instaInterviewService.UpdateInstaZoomLink(id, zoomlink.join_url, indianTime, indianTime.AddMinutes(60), accountEmail);
                                 var clientDetails = await _clientService.GetClientRoleAndCompanyNameByEmailId(clientname);
                                 var logolink = clientDetails.Item3;
@@ -1173,7 +1173,7 @@ namespace Risebird.Web.Controllers
                             isInterviewer = true;
                         }
                     }
-                    var model = _instaInterviewService.GetInstaInteviewReport(interviewId).Result;
+                    var model = await _instaInterviewService.GetInstaInteviewReport(interviewId);
                     if (model == null)
                     {
                         if (isAdminHR || profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
@@ -1273,7 +1273,7 @@ namespace Risebird.Web.Controllers
                         {
                             model.VideoLink = model.PageVideoLink;
                         }
-                        if (_instaInterviewService.AddInstaInterviewReport(model, emailid).Result)
+                        if (await _instaInterviewService.AddInstaInterviewReport(model, emailid))
                         {
                             if (model.MeetingStatus == 4 && model.PreviousMeetingStatus != model.MeetingStatus)
                             {
@@ -1401,7 +1401,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public InstaZoomMeetingResponse CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject, string accountEmail, DateTime indianTime)
+        public async Task<InstaZoomMeetingResponse> CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject, string accountEmail, DateTime indianTime)
         {
             _zoommetingobject.type = 2;
             _zoommetingobject.duration = 60;
@@ -1414,7 +1414,7 @@ namespace Risebird.Web.Controllers
             //string token = ZoomToken();
 
             //get oauth token
-            string token = _zoomHelper.GenerateAccessToken().Result;
+            string token = await _zoomHelper.GenerateAccessToken();
 
             var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"users/" + accountEmail + "/meetings"));
 

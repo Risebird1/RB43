@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage.Blob;
+using Azure.Storage.Blobs.Models;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Repository.Interface;
@@ -88,7 +88,7 @@ namespace Risebird.Web.Services.Proctoring
                 return result;
             }
 
-            List<CloudBlockBlob> blobs;
+            List<BlobItem> blobs;
             try
             {
                 blobs = await ListScreenshotBlobsAsync(interviewId).ConfigureAwait(false);
@@ -107,20 +107,21 @@ namespace Risebird.Web.Services.Proctoring
             }
 
             var sampled = SampleEvenly(blobs, ScreenshotSampleCount);
+            var downloadContainer = _azureStorageHelper.GetCloudBlobContainer(ScreenshotContainer).Client;
             var images = new List<(string path, string dataUrl)>();
             foreach (var blob in sampled)
             {
                 try
                 {
-                    if (blob.Properties?.Length > MaxImageBytes)
+                    if (blob.Properties?.ContentLength > MaxImageBytes)
                     {
                         _logger.LogWarning(
                             "Proctoring analysis: skipping oversized screenshot {Blob} ({Bytes} bytes) for interview {InterviewId}",
-                            blob.Name, blob.Properties.Length, interviewId);
+                            blob.Name, blob.Properties.ContentLength, interviewId);
                         continue;
                     }
                     using var ms = new MemoryStream();
-                    await blob.DownloadToStreamAsync(ms).ConfigureAwait(false);
+                    await downloadContainer.GetBlobClient(blob.Name).DownloadToAsync(ms).ConfigureAwait(false);
                     var bytes = ms.ToArray();
                     if (bytes.Length == 0)
                         continue;
@@ -165,30 +166,20 @@ namespace Risebird.Web.Services.Proctoring
             return result;
         }
 
-        private async Task<List<CloudBlockBlob>> ListScreenshotBlobsAsync(int interviewId)
+        private async Task<List<BlobItem>> ListScreenshotBlobsAsync(int interviewId)
         {
-            var list = new List<CloudBlockBlob>();
-            var container = _azureStorageHelper.GetCloudBlobContainer(ScreenshotContainer);
+            var list = new List<BlobItem>();
+            var container = _azureStorageHelper.GetCloudBlobContainer(ScreenshotContainer).Client;
             var prefix = $"{interviewId}/";
-            BlobContinuationToken continuation = null;
-            do
+            await foreach (var item in container.GetBlobsAsync(prefix: prefix).ConfigureAwait(false))
             {
-                var segment = await container.ListBlobsSegmentedAsync(
-                    prefix, true, BlobListingDetails.None, null, continuation, null, null).ConfigureAwait(false);
-                continuation = segment?.ContinuationToken;
-                if (segment?.Results == null)
+                if (!IsImageBlob(item.Name))
                     continue;
-                foreach (var item in segment.Results)
-                {
-                    if (item is CloudBlockBlob blob && IsImageBlob(blob.Name))
-                    {
-                        // Length can be unset on list; skip only known-empty blobs.
-                        if (blob.Properties?.Length != null && blob.Properties.Length <= 0)
-                            continue;
-                        list.Add(blob);
-                    }
-                }
-            } while (continuation != null);
+                // Length can be unset on list; skip only known-empty blobs.
+                if (item.Properties?.ContentLength != null && item.Properties.ContentLength <= 0)
+                    continue;
+                list.Add(item);
+            }
 
             list.Sort((a, b) =>
             {
@@ -214,11 +205,11 @@ namespace Risebird.Web.Services.Proctoring
         }
 
         /// <summary>Keeps first and last, spreads the rest evenly across the session timeline.</summary>
-        private static List<CloudBlockBlob> SampleEvenly(List<CloudBlockBlob> blobs, int count)
+        private static List<BlobItem> SampleEvenly(List<BlobItem> blobs, int count)
         {
             if (blobs.Count <= count)
                 return blobs;
-            var sampled = new List<CloudBlockBlob>(count);
+            var sampled = new List<BlobItem>(count);
             for (var i = 0; i < count; i++)
             {
                 var index = (int)Math.Round(i * (blobs.Count - 1) / (double)(count - 1));

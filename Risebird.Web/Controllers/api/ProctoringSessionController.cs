@@ -7,7 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage.Blob;
+using Azure.Storage.Blobs.Models;
+using Azure.Storage.Sas;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Repository.Interface;
@@ -148,23 +149,24 @@ namespace Risebird.Web.Controllers.Api
 
             try
             {
-                var container = _azureStorageHelper.GetCloudBlobContainer(containerName);
-                var perms = await container.GetPermissionsAsync();
-                var publicAccess = perms?.PublicAccess ?? BlobContainerPublicAccessType.Off;
-                if (publicAccess == BlobContainerPublicAccessType.Blob || publicAccess == BlobContainerPublicAccessType.Container)
+                var container = _azureStorageHelper.GetCloudBlobContainer(containerName).Client;
+                var props = await container.GetPropertiesAsync();
+                var publicAccess = props?.Value?.PublicAccess ?? PublicAccessType.None;
+                if (publicAccess == PublicAccessType.Blob || publicAccess == PublicAccessType.BlobContainer)
                     return blobUrl;
 
-                var blob = container.GetBlockBlobReference(blobPath);
-                if (!await blob.ExistsAsync())
+                var blob = container.GetBlobClient(blobPath);
+                if (!(await blob.ExistsAsync()).Value)
                     return blobUrl;
 
-                var sas = blob.GetSharedAccessSignature(new SharedAccessBlobPolicy
+                if (!blob.CanGenerateSasUri)
+                    return blobUrl;
+
+                var sasBuilder = new BlobSasBuilder(BlobSasPermissions.Read, DateTimeOffset.UtcNow.AddMinutes(BlobReadSasMinutes))
                 {
-                    SharedAccessStartTime = DateTimeOffset.UtcNow.AddMinutes(-5).UtcDateTime,
-                    SharedAccessExpiryTime = DateTimeOffset.UtcNow.AddMinutes(BlobReadSasMinutes).UtcDateTime,
-                    Permissions = SharedAccessBlobPermissions.Read,
-                });
-                return blob.Uri + sas;
+                    StartsOn = DateTimeOffset.UtcNow.AddMinutes(-5),
+                };
+                return blob.GenerateSasUri(sasBuilder).ToString();
             }
             catch (Exception ex)
             {

@@ -1,10 +1,10 @@
-﻿using Microsoft.WindowsAzure.Storage.Table;
+﻿using Risebird.Entities.Storage;
 using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.ViewModel
 {
-    public class SurveyVM : TableEntity
+    public class SurveyVM : RbTableEntity
     {
 
         [Required]

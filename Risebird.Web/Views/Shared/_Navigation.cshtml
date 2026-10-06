@@ -111,7 +111,9 @@
                 var menuList = JsonConvert.DeserializeObject<List<Menu>>(HttpContextAccessor.HttpContext.Session.GetString("userMenus"));
                 var adminMenuList = menuList.Where(a => a.idParentFunction == 3).ToList();
                 var interviewerMenuList = menuList.Where(a => a.idParentFunction == 6).ToList();
-                var menuList1 = menuList.Where(a => (a.idParentFunction != 6 && a.idParentFunction != 3)).ToList();
+                var operationMenuList = menuList.Where(a => a.sUrl != null && a.sUrl.StartsWith("/ApplicationLogs", StringComparison.OrdinalIgnoreCase)).ToList();
+                var menuList1 = menuList.Where(a => (a.idParentFunction != 6 && a.idParentFunction != 3)
+                    && !(a.sUrl != null && a.sUrl.StartsWith("/ApplicationLogs", StringComparison.OrdinalIgnoreCase))).ToList();
                 foreach (var m in menuList1)
                 {
                     if (!string.IsNullOrEmpty(m.sUrl))
@@ -745,6 +747,44 @@
 
 
                     }
+                    else if (m.functionName == "Operation")
+                    {
+                        <li id="operationmenu" class="dropmenu">
+                            <input class="toggle-box1" id="operation" type="checkbox">
+                            <label class="admin-active" for="operation">
+                                <span class="sidemenu-icon">
+                                    <i class="fas fa-clipboard-list"></i>
+                                </span>
+                                <p>@m.functionName</p>
+                            </label>
+                            <div class="drop-wrap">
+                                <ul class="nav">
+                                    @foreach (var item in operationMenuList)
+                                    {
+                                        <li>
+                                            <a class="admin-submenu" href="@item.sUrl">
+                                                <span class="sidebar-normal">
+                                                    <i class="fas fa-angle-right" style="float:left"></i>
+                                                    <span style="float:left;"> @item.functionName</span>
+                                                </span>
+                                            </a>
+                                        </li>
+                                    }
+                                    @if (operationMenuList == null || !operationMenuList.Any())
+                                    {
+                                        <li>
+                                            <a class="admin-submenu" href="/ApplicationLogs">
+                                                <span class="sidebar-normal">
+                                                    <i class="fas fa-angle-right" style="float:left"></i>
+                                                    <span style="float:left;"> Logs</span>
+                                                </span>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </li>
+                    }
                     else if (m.functionName == "Interviewer")
                     {
                         <li id="interviewer_menu" class="dropmenu interviewer_menu">
@@ -795,6 +835,35 @@
 
                     }
 
+                }
+
+                // Show Operation → Logs even if the DB menu row is missing from the session menu list.
+                var navProfile = HttpContextAccessor.HttpContext.Session.GetString("profileName")?.Trim().Trim('"');
+                var canSeeOperationLogs = navProfile == "Admin";
+                var hasOperationParent = menuList.Any(a => a.functionName == "Operation" && string.IsNullOrEmpty(a.sUrl));
+                if (canSeeOperationLogs && !hasOperationParent)
+                {
+                    <li id="operationmenu" class="dropmenu">
+                        <input class="toggle-box1" id="operation" type="checkbox">
+                        <label class="admin-active" for="operation">
+                            <span class="sidemenu-icon">
+                                <i class="fas fa-clipboard-list"></i>
+                            </span>
+                            <p>Operation</p>
+                        </label>
+                        <div class="drop-wrap">
+                            <ul class="nav">
+                                <li>
+                                    <a class="admin-submenu" href="/ApplicationLogs">
+                                        <span class="sidebar-normal">
+                                            <i class="fas fa-angle-right" style="float:left"></i>
+                                            <span style="float:left;"> Logs</span>
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
                 }
             }
         </ul>

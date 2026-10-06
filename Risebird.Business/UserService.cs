@@ -4,6 +4,7 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using Risebird.Repository.Interface.Search;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,19 +19,25 @@ namespace Risebird.Business
         private readonly IPasswordHelper _passwordHelper;
         private readonly IInterviewerListingSearchRepository _interviewerListingSearchRepository;
         private readonly ICallCatalogueListingSearchRepository _callCatalogueListingSearchRepository;
+        private readonly IIrfListingSearchRepository _irfListingSearchRepository;
+        private readonly IIrfIndexSyncQueue _irfIndexSyncQueue;
 
         public UserService(
             IUserRepository userRepository,
             IApplicationErrorLogger applicationErrorLogger,
             IPasswordHelper passwordHelper,
             IInterviewerListingSearchRepository interviewerListingSearchRepository,
-            ICallCatalogueListingSearchRepository callCatalogueListingSearchRepository)
+            ICallCatalogueListingSearchRepository callCatalogueListingSearchRepository,
+            IIrfListingSearchRepository irfListingSearchRepository,
+            IIrfIndexSyncQueue irfIndexSyncQueue)
         {
             _userRepository = userRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _passwordHelper = passwordHelper;
             _interviewerListingSearchRepository = interviewerListingSearchRepository;
             _callCatalogueListingSearchRepository = callCatalogueListingSearchRepository;
+            _irfListingSearchRepository = irfListingSearchRepository;
+            _irfIndexSyncQueue = irfIndexSyncQueue;
         }
 
         public async Task<List<Menu>> GetMenuBasedOnUserEmailld(string emailId, string sessionId = null)
@@ -119,8 +126,24 @@ namespace Risebird.Business
                     LastName = user.LastName.Replace(" ", ""),
                     EmailId = user.EmailId.Replace(" ", "")
                 };
-                user.UserPassword = await _passwordHelper.GenerateUserPassword(userDetails, false);
-                return await _userRepository.AddUser(user);
+                var provisioning = await _passwordHelper.GenerateUserPassword(userDetails, false);
+                if (provisioning.ShouldAbort)
+                {
+                    // Writing the UserList row when B2C creation genuinely failed leaves a user who
+                    // looks fully provisioned in the portal but is told "account not found" at the
+                    // B2C sign-in page. An account that already exists is fine to continue with.
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Error,
+                        "Aborting AddUser: the Azure AD B2C account could not be created, so no UserList row was written.",
+                        user.EmailId);
+                    return false;
+                }
+                user.UserPassword = provisioning.Password;
+                var result = await _userRepository.AddUser(user);
+                // AddUser writes the client assignments too (SeniorHR), which put this user into
+                // the allowedViewerEmails ACL of every IRF belonging to those clients.
+                if (result && user.Id > 0)
+                    await QueueIrfListingSyncForUserAsync(user.Id, nameof(AddUser));
+                return result;
             }
 
             catch (Exception e)
@@ -135,9 +158,17 @@ namespace Risebird.Business
             try
             {
                 var profileId = await TryResolveInterviewerProfileIdByUserIdAsync(id);
+                // The delete removes the UserList and SeniorHR rows outright, so the only way to
+                // find the affected IRFs is to look them up first.
+                var previousIrfIntIds = await TryGetIrfIntIdsForUserAsync(id);
+
                 var result = await _userRepository.DeleteUser(id);
-                if (result && profileId > 0)
-                    await TryRemoveInterviewerListingAsync(profileId);
+                if (result)
+                {
+                    if (profileId > 0)
+                        await TryRemoveInterviewerListingAsync(profileId);
+                    await QueueIrfListingSyncForUserAsync(id, nameof(DeleteUser), previousIrfIntIds);
+                }
                 return result;
             }
 
@@ -152,10 +183,19 @@ namespace Risebird.Business
         {
             try
             {
+                // Captured before the write: UpdateUser rewrites the user's client assignments
+                // by delete-then-insert, so an IRF they were just dropped from would not come
+                // back from the lookup afterwards — and it still carries their email in its ACL.
+                var previousIrfIntIds = await TryGetIrfIntIdsForUserAsync(user?.Id ?? 0);
+
                 var result = await _userRepository.UpdateUser(user);
                 // Name / email / IsActive on UserList are indexed for interviewer listing.
                 if (result && user != null && user.Id > 0)
+                {
                     await TrySyncInterviewerListingByUserIdAsync(user.Id);
+                    // Name / email also feed irfindex.risebirdHrEmail and allowedViewerEmails.
+                    await QueueIrfListingSyncForUserAsync(user.Id, nameof(UpdateUser), previousIrfIntIds);
+                }
                 return result;
             }
 
@@ -214,7 +254,15 @@ namespace Risebird.Business
                 var isPasswordReset = await _userRepository.GetClientPasswordResetEnableStatus(clientUser.SelectedClient.Value);
                 //clientUser.UserPassword = GenerateUserPassword(clientUser).Result;
                 // TODO for Prashant, Please call method to fetch PasswordReswet Flag and pass it below
-                clientUser.UserPassword = await _passwordHelper.GenerateUserPassword(userDetails, isPasswordReset);
+                var provisioning = await _passwordHelper.GenerateUserPassword(userDetails, isPasswordReset);
+                if (provisioning.ShouldAbort)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Error,
+                        "Aborting AddClientUser: the Azure AD B2C account could not be created, so no client user was written.",
+                        clientUser.EmailId);
+                    return false;
+                }
+                clientUser.UserPassword = provisioning.Password;
                 return await _userRepository.AddClientUser(clientUser);
             }
 
@@ -893,7 +941,15 @@ namespace Risebird.Business
                     EmailId = clientUser.EmailId.Replace(" ", "")
                 };
                 var isPasswordReset = await _userRepository.GetClientPasswordResetEnableStatus(clientUser.SelectedClient.Value);
-                clientUser.UserPassword = await _passwordHelper.GenerateUserPassword(userDetails, isPasswordReset);
+                var provisioning = await _passwordHelper.GenerateUserPassword(userDetails, isPasswordReset);
+                if (provisioning.ShouldAbort)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Error,
+                        "Aborting AddPremiumClientUser: the Azure AD B2C account could not be created, so no client user was written.",
+                        clientUser.EmailId);
+                    return false;
+                }
+                clientUser.UserPassword = provisioning.Password;
                 return await _userRepository.AddPremiumClientUser(clientUser);
             }
 
@@ -1042,6 +1098,69 @@ namespace Risebird.Business
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        /// <summary>
+        /// Snapshot of the IRFs a user is on, taken before a write that can change that set.
+        /// Returns empty rather than throwing — this only drives a best-effort re-index.
+        /// </summary>
+        private async Task<IReadOnlyList<int>> TryGetIrfIntIdsForUserAsync(int userId)
+        {
+            if (_irfListingSearchRepository == null
+                || !_irfListingSearchRepository.IsEnabled
+                || userId <= 0)
+                return Array.Empty<int>();
+
+            try
+            {
+                return await _irfListingSearchRepository.GetIrfIntIdsByUserIdAsync(userId)
+                       ?? (IReadOnlyList<int>)Array.Empty<int>();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Array.Empty<int>();
+            }
+        }
+
+        /// <summary>
+        /// Hands the IRF re-index to the background worker and returns immediately, so the save
+        /// does not wait on <c>usp_GetIrfIndexBatch</c> and the Azure Search upload — a user on
+        /// a large client can fan out to every IRF that client owns.
+        /// <para>
+        /// <paramref name="previousIrfIntIds"/> carries the pre-write snapshot so IRFs the user
+        /// was just removed from also get rewritten and drop their stale
+        /// <c>allowedViewerEmails</c> entry.
+        /// </para>
+        /// </summary>
+        private async Task QueueIrfListingSyncForUserAsync(
+            int userId,
+            string reason,
+            IReadOnlyList<int> previousIrfIntIds = null)
+        {
+            if (_irfIndexSyncQueue == null
+                || _irfListingSearchRepository == null
+                || !_irfListingSearchRepository.IsEnabled
+                || userId <= 0)
+                return;
+
+            var queued = _irfIndexSyncQueue.Enqueue(new IrfIndexSyncRequest
+            {
+                UserId = userId,
+                AdditionalIrfIntIds = previousIrfIntIds,
+                Reason = reason
+            });
+
+            if (!queued)
+            {
+                // Only happens once the backlog is full, which means indexing is already far
+                // behind. Say so rather than letting the listing drift silently.
+                await _applicationErrorLogger.LogMessage(
+                    LogLevelInfo.Exception,
+                    new InvalidOperationException(
+                        $"IRF index sync queue full; dropped refresh for userId={userId} ({reason}). "
+                        + "Run IrfIndexSearch/FullCrawl to resynchronise."));
             }
         }
 

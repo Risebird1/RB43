@@ -1,0 +1,300 @@
+@model Risebird.Entities.ViewModel.ApplicationLogDetailsPageVM
+@using Risebird.Entities.Enum
+@{
+    ViewData["Title"] = $"Logs — {Model.LogDate:dd MMM yyyy}";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string LevelName(int level) => level switch
+    {
+        (int)LogLevelInfo.Warning => "Warning",
+        (int)LogLevelInfo.Error => "Error",
+        (int)LogLevelInfo.Exception => "Exception",
+        _ => $"Level {level}"
+    };
+
+    string LevelBadgeClass(int level) => level switch
+    {
+        (int)LogLevelInfo.Warning => "badge-warning",
+        (int)LogLevelInfo.Error => "badge-danger",
+        (int)LogLevelInfo.Exception => "badge-danger",
+        _ => "badge-light"
+    };
+
+    int CountFor(int level) => Model.LevelCounts != null && Model.LevelCounts.ContainsKey(level) ? Model.LevelCounts[level] : 0;
+    string dateParam = Model.LogDate.ToString("yyyy-MM-dd");
+    int selected = Model.LogLevel ?? (int)LogLevelInfo.Exception;
+    int fromRow = Model.Groups != null && Model.Groups.Any() ? ((Model.Page - 1) * Model.PageSize) + 1 : 0;
+    int toRow = Model.Groups != null && Model.Groups.Any() ? ((Model.Page - 1) * Model.PageSize) + Model.Groups.Count : 0;
+}
+
+<script>
+    var Header = "<div>Logs — @Model.LogDate.ToString("dd MMM yyyy") — @LevelName(selected)</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/Newassets/css/dashboard-new.css?v=2024" rel="stylesheet" />
+<style>
+    #applicationLogsTable {
+        table-layout: fixed;
+        width: 100%;
+        font-size: 12px;
+        margin-bottom: 0;
+    }
+
+        #applicationLogsTable thead th {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: #f1f5f9;
+            vertical-align: middle;
+            white-space: nowrap;
+            padding: 8px 10px;
+        }
+
+        #applicationLogsTable tbody td {
+            vertical-align: top;
+            padding: 8px 10px;
+            line-height: 1.35;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+            white-space: normal;
+        }
+
+        #applicationLogsTable .col-count { width: 70px; text-align: center; }
+        #applicationLogsTable .col-time { width: 72px; }
+        #applicationLogsTable .col-level { width: 90px; }
+        #applicationLogsTable .col-user { width: 130px; }
+        #applicationLogsTable .col-class { width: 150px; }
+        #applicationLogsTable .col-method { width: 150px; }
+        #applicationLogsTable .col-line { width: 50px; }
+        #applicationLogsTable .col-message { width: 26%; }
+        #applicationLogsTable .col-inner { width: 20%; }
+
+        #applicationLogsTable .cell-clip {
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        #applicationLogsTable .cell-scroll {
+            max-width: 100%;
+            max-height: 110px;
+            overflow: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        #applicationLogsTable .badge {
+            width: auto;
+            display: inline-block;
+            white-space: nowrap;
+            font-size: 11px;
+            padding: 4px 8px;
+        }
+
+        #applicationLogsTable .count-badge {
+            display: inline-block;
+            min-width: 28px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            background: #1e3a5f;
+            color: #fff;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+    #appLogsPageLoader {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: rgba(255, 255, 255, 0.65);
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+        #appLogsPageLoader.is-visible {
+            display: flex;
+        }
+
+        #appLogsPageLoader img {
+            width: 64px;
+            height: 64px;
+        }
+
+        #appLogsPageLoader .loader-text {
+            margin-top: 12px;
+            font-size: 14px;
+            color: #333;
+            font-weight: 600;
+        }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div id="appLogsPageLoader" aria-live="polite" aria-busy="true">
+        <img src="~/Newassets/img/lazyload.gif" alt="Loading" />
+        <div class="loader-text">Loading logs…</div>
+    </div>
+    <div class="jumbotron">
+        <div class="pt30">
+            <div class="col-md-12 nopad">
+                <div class="card-header bg-w clearfix">
+                    <div class="pull-left">
+                        <h4 class="card-title"></h4>
+                        <div class="mobile-view"><h4 class="card-title">Logs — @Model.LogDate.ToString("dd MMM yyyy") — @LevelName(selected)</h4></div>
+                    </div>
+                    <div class="pull-right">
+                        <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Index", "ApplicationLogs")">← Back to dates</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="mdc-card card bl-bg">
+                        <div class="mdc-card-wrapper__text-section" style="padding:20px;">
+                            <div style="margin-bottom:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+                                <strong style="margin-right:8px;">Log level:</strong>
+                                <a class="btn btn-sm @(selected == (int)LogLevelInfo.Exception ? "btn-danger" : "btn-outline-danger")"
+                                   href="@Url.Action("Details", "ApplicationLogs", new { logDate = dateParam, logLevel = (int)LogLevelInfo.Exception })">
+                                    Exception (@CountFor((int)LogLevelInfo.Exception))
+                                </a>
+                                <a class="btn btn-sm @(selected == (int)LogLevelInfo.Error ? "btn-danger" : "btn-outline-danger")"
+                                   href="@Url.Action("Details", "ApplicationLogs", new { logDate = dateParam, logLevel = (int)LogLevelInfo.Error })">
+                                    Error (@CountFor((int)LogLevelInfo.Error))
+                                </a>
+                                <a class="btn btn-sm @(selected == (int)LogLevelInfo.Warning ? "btn-warning" : "btn-outline-warning")"
+                                   href="@Url.Action("Details", "ApplicationLogs", new { logDate = dateParam, logLevel = (int)LogLevelInfo.Warning })">
+                                    Warning (@CountFor((int)LogLevelInfo.Warning))
+                                </a>
+                            </div>
+
+                            <div style="margin-bottom:12px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;">
+                                <div class="text-muted" style="font-size:13px;">
+                                    @if (fromRow > 0)
+                                    {
+                                        <span>Showing groups @fromRow–@toRow of @Model.TotalGroups</span>
+                                        <span> · @Model.TotalOccurrences total occurrences</span>
+                                        <span> · Page @Model.Page · @Model.PageSize groups per page</span>
+                                    }
+                                    else
+                                    {
+                                        <span>No grouped logs for this date / level</span>
+                                    }
+                                </div>
+                                <div style="display:flex;gap:8px;">
+                                    @if (Model.HasPrevious)
+                                    {
+                                        <a class="btn btn-sm btn-secondary"
+                                           href="@Url.Action("Details", "ApplicationLogs", new { logDate = dateParam, logLevel = selected, page = Model.Page - 1 })">
+                                            ← Previous
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-sm btn-secondary" disabled>← Previous</button>
+                                    }
+                                    @if (Model.HasNext)
+                                    {
+                                        <a class="btn btn-sm btn-primary"
+                                           href="@Url.Action("Details", "ApplicationLogs", new { logDate = dateParam, logLevel = selected, page = Model.Page + 1 })">
+                                            Next →
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-sm btn-primary" disabled>Next →</button>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="table-responsive" style="overflow-x:auto;">
+                                <table class="table table-striped table-bordered" id="applicationLogsTable" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-count">Count</th>
+                                            <th class="col-time">Latest (UTC)</th>
+                                            <th class="col-level">Level</th>
+                                            <th class="col-user">User</th>
+                                            <th class="col-class">Class</th>
+                                            <th class="col-method">Method</th>
+                                            <th class="col-line">Line</th>
+                                            <th class="col-message">Message</th>
+                                            <th class="col-inner">Inner Exception</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Groups != null && Model.Groups.Any())
+                                        {
+                                            foreach (var item in Model.Groups)
+                                            {
+                                                <tr>
+                                                    <td class="col-count"><span class="count-badge">@item.Count</span></td>
+                                                    <td class="col-time">@item.LatestTimestamp.UtcDateTime.ToString("HH:mm:ss")</td>
+                                                    <td class="col-level"><span class="badge @LevelBadgeClass(item.LogeLevel)">@LevelName(item.LogeLevel)</span></td>
+                                                    <td class="col-user"><div class="cell-clip">@(item.UserEmailId ?? "-")</div></td>
+                                                    <td class="col-class"><div class="cell-clip">@(item.ClassName ?? "-")</div></td>
+                                                    <td class="col-method"><div class="cell-clip">@(item.MethodName ?? "-")</div></td>
+                                                    <td class="col-line">@(item.LineNumber > 0 ? item.LineNumber.ToString() : "-")</td>
+                                                    <td class="col-message"><div class="cell-scroll">@(item.LogMessage ?? "-")</div></td>
+                                                    <td class="col-inner">
+                                                        <div class="cell-scroll">
+                                                            @(string.IsNullOrWhiteSpace(item.InnerException) || item.InnerException == "NA" ? "-" : item.InnerException)
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="9" class="text-center">No @LevelName(selected).ToLower() logs for this date.</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            @if (Model.HasPrevious || Model.HasNext)
+                            {
+                                <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end;">
+                                    @if (Model.HasPrevious)
+                                    {
+                                        <a class="btn btn-sm btn-secondary"
+                                           href="@Url.Action("Details", "ApplicationLogs", new { logDate = dateParam, logLevel = selected, page = Model.Page - 1 })">
+                                            ← Previous
+                                        </a>
+                                    }
+                                    @if (Model.HasNext)
+                                    {
+                                        <a class="btn btn-sm btn-primary"
+                                           href="@Url.Action("Details", "ApplicationLogs", new { logDate = dateParam, logLevel = selected, page = Model.Page + 1 })">
+                                            Next →
+                                        </a>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var pageLoader = document.getElementById('appLogsPageLoader');
+        function showPageLoader() {
+            if (pageLoader) pageLoader.classList.add('is-visible');
+        }
+
+        document.querySelectorAll('a[href*="ApplicationLogs"]').forEach(function (link) {
+            link.addEventListener('click', function () {
+                showPageLoader();
+            });
+        });
+    })();
+</script>

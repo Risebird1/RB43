@@ -171,7 +171,7 @@ namespace Risebird.Web.Controllers
                 {
                     //var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     //profileName = profileName.Replace("\"", "");
-                    if (_accountService.AddAccount(model).Result)
+                    if (await _accountService.AddAccount(model))
                     {
                         TempData["SuccessErrorMessageAccount"] = "Account has been added Successfully!";
                         return RedirectToAction("Index");
@@ -250,7 +250,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult ArchiveAccount(int id)
+        public async Task<IActionResult> ArchiveAccount(int id)
         {
             try
             {
@@ -260,7 +260,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        if (_accountService.ArchiveAccount(id).Result)
+                        if (await _accountService.ArchiveAccount(id))
                         {
                             TempData["SuccessErrorMessageAccount"] = "Account has been archived Successfully!";
                             return RedirectToAction("Index");
@@ -283,7 +283,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageAccount"] = "Sorry! Archiving account failed.";
                 return RedirectToAction("Index");
             }
@@ -292,7 +292,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult UnArchiveAccount(int id)
+        public async Task<IActionResult> UnArchiveAccount(int id)
         {
             try
             {
@@ -302,7 +302,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        if (_accountService.UnArchiveAccount(id).Result)
+                        if (await _accountService.UnArchiveAccount(id))
                         {
                             TempData["SuccessErrorMessageAccount"] = "Account has been restored Successfully!";
                             return RedirectToAction("Index");
@@ -325,7 +325,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageAccount"] = "Failed to restore Account!";
                 return RedirectToAction("Index");
             }
@@ -525,7 +525,7 @@ namespace Risebird.Web.Controllers
 
 
                     }
-                    if (_interviewerService.AddInterviewerMyProfile(userProfile).Result)
+                    if (await _interviewerService.AddInterviewerMyProfile(userProfile))
                     {
                         var result = new TransInterviewersReliabilityScoresVm();
                         result.InterviewMeetingId = 0;
@@ -554,7 +554,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    if (_accountService.UpdateUserProfile(userProfile).Result)
+                    if (await _accountService.UpdateUserProfile(userProfile))
                     {
                         if (!string.IsNullOrEmpty(userProfile.ImageURL))
                         {

@@ -25,6 +25,12 @@ namespace Risebird.Business.Tests.Fixtures
         public Mock<IEncryptionHelper> EncryptionHelper { get; } = new(MockBehavior.Loose);
         public Mock<ICandidateService> CandidateService { get; } = new(MockBehavior.Loose);
 
+        /// <summary>
+        /// Outcome the Azure AD B2C provisioning step reports. Defaults to a freshly created account;
+        /// set it to Failed to exercise the abort path.
+        /// </summary>
+        public B2CProvisioningOutcome B2CProvisioning { get; set; } = B2CProvisioningOutcome.Created;
+
         public InterviewerService CreateSut()
         {
             ListingSearch.SetupGet(x => x.IsEnabled).Returns(true);
@@ -49,6 +55,15 @@ namespace Risebird.Business.Tests.Fixtures
                 .Returns(Task.CompletedTask);
             Logger.Setup(x => x.LogMessage(It.IsAny<LogLevelInfo>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
+
+            // AddInterviewerProfile now aborts when Azure AD B2C provisioning fails, so this has to be
+            // stubbed - a loose mock would otherwise return null and send every test down the abort path.
+            PasswordHelper.Setup(x => x.GenerateUserPassword(It.IsAny<UserDetails>(), It.IsAny<bool>()))
+                .ReturnsAsync(() => new B2CProvisioningResult
+                {
+                    Outcome = B2CProvisioning,
+                    Password = B2CProvisioning == B2CProvisioningOutcome.Created ? "Ab@123456" : string.Empty
+                });
 
             ActivityTracker.Setup(x => x.AddActivity(It.IsAny<ActivityTrackerVM>()))
                 .ReturnsAsync(true);

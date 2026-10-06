@@ -69,6 +69,15 @@ namespace Risebird.AzureTimerFunctions
         }
         private async Task UpdateCalibrationVideoDetails(List<PendingVideoMeetingsData> pendingVideoMeetings, bool ismcq, string accesstoken)
         {
+            // FetchMeetingPendingVideo returns null on any query failure, and Parallel.ForEach throws
+            // ArgumentNullException on a null source - which would abort the whole run rather than
+            // this one batch.
+            if (pendingVideoMeetings == null || pendingVideoMeetings.Count == 0)
+            {
+                log.LogInformation($"Zoho : no pending {(ismcq ? "MCQ " : string.Empty)}video meetings to process at: {DateTime.Now}");
+                return;
+            }
+
             Parallel.ForEach(pendingVideoMeetings, meeting =>
             {
                 try
@@ -79,9 +88,16 @@ namespace Risebird.AzureTimerFunctions
                     var ContainerName = meeting.meetingtype.ToLower();
                     var recordinginfo = _zoho.GetRecordingAsync(meeting.ZoomMeetingId, accesstoken).Result;
                     int maxduration = 0;
-                    if (recordinginfo.Count() > 0)
+                    if (recordinginfo != null && recordinginfo.Any())
                         maxduration = recordinginfo.Max(r => r.duration);
                     var _recordingupload = recordinginfo?.Where(x => x.duration == maxduration).FirstOrDefault();
+                    if (_recordingupload == null)
+                    {
+                        // Zoho has no recording for this meeting yet. Nothing to upload, and the
+                        // dereferences below would throw.
+                        log.LogInformation($"Zoho : no recording available yet for ZohoMeetingId {meeting.ZoomMeetingId} at: {DateTime.Now}");
+                        return;
+                    }
                     var downloadUrl = _recordingupload?.downloadUrl;
                     //get the download url from the response
                     if (downloadUrl != null)

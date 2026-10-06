@@ -601,7 +601,7 @@ namespace Risebird.Web.Controllers
                 if (employementdetails == 0)
                 {
                     EmployementVerification(mobilenumber, candidateemail);
-                    Task.Delay(100).Wait();
+                    await Task.Delay(100);
                     return Json("Employment verification is in process, please look in the list in couple of seconds.");
                 }
                 else

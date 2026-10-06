@@ -1,0 +1,22 @@
+<Project>
+  <!--
+    Deliberately shadows the repository-root Directory.Packages.props. NuGet stops searching upwards
+    at the first one it finds, so this file takes this project out of the solution's central package
+    management entirely.
+
+    Why: the MCP SDK requires the 10.0.10 servicing band of Microsoft.Extensions.*, while the
+    solution pins 10.0.0 centrally with CentralPackageTransitivePinningEnabled=true. Under central
+    management that is an unavoidable downgrade conflict. `dotnet restore` could be talked out of it
+    with VersionOverride, but the `nuget restore` (NuGet.exe) used by the Azure DevOps pipeline
+    ignores those opt-outs and fails the whole deployment with:
+
+        NU1605: Detected package downgrade: Microsoft.Extensions.Hosting.Abstractions
+                from 10.0.10 to 10.0.0
+
+    With central management off for this folder the project carries its own explicit versions and
+    cannot affect - or be affected by - the solution's pins. Do not delete this file.
+  -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+</Project>

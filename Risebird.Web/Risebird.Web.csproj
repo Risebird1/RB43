@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="Aspose.HTML" />
+    <PackageReference Include="Azure.Storage.Blobs" />
     <PackageReference Include="DinkToPdf" />
     <PackageReference Include="ExcelDataReader" />
     <PackageReference Include="HtmlToPdfConverter.Core" />
