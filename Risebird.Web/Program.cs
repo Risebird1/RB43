@@ -159,6 +159,10 @@ builder.Services.AddScoped<IDmIvAutoQcBackfillService, DmIvAutoQcBackfillService
 builder.Services.AddScoped<IAutoQcRemovalMonitorService, AutoQcRemovalMonitorService>();
 builder.Services.AddScoped<ITrialFlagReviewRepository, TrialFlagReviewRepository>();
 builder.Services.AddScoped<ITrialFlagReviewService, TrialFlagReviewService>();
+builder.Services.AddScoped<IQCActivityDashboardRepository, QCActivityDashboardRepository>();
+builder.Services.AddScoped<IQCActivityDashboardService, QCActivityDashboardService>();
+builder.Services.AddScoped<IInterviewerCoachingRepository, InterviewerCoachingRepository>();
+builder.Services.AddScoped<IInterviewerCoachingService, InterviewerCoachingService>();
 builder.Services.AddScoped<ITrialJudgmentRepository, TrialJudgmentRepository>();
 builder.Services.AddScoped<ITrialJudgmentService, TrialJudgmentService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();

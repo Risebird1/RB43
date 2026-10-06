@@ -3264,7 +3264,7 @@ SELECT CAST(CASE WHEN EXISTS (
             return null;
         }
 
-        public async Task<bool> DeactivateSkillChannelInterviewer(int irfId, string interviewerEmail)
+        public async Task<bool> DeactivateSkillChannelInterviewer(int irfId, string interviewerEmail, string removedBy = null, string logType = null)
         {
             try
             {
@@ -3273,10 +3273,23 @@ SELECT CAST(CASE WHEN EXISTS (
                     var parameters = new DynamicParameters();
                     parameters.Add("@irfId", irfId);
                     parameters.Add("@interviewerEmail", interviewerEmail);
+                    if (!string.IsNullOrWhiteSpace(removedBy))
+                    {
+                        // Only sent when known, so the call still works against the older two-parameter procedure.
+                        parameters.Add("@removedBy", removedBy.Trim());
+                        parameters.Add("@logType", string.IsNullOrWhiteSpace(logType) ? null : logType.Trim());
+                    }
                     _ = await SqlMapper.QueryAsync(con, "dbo.usp_DeactivateSkillChannelInterviewer", parameters, commandTimeout: 600,
                         commandType: CommandType.StoredProcedure);
                     return true;
                 }
+            }
+            catch (SqlException ex) when (ex.Number == 8144 && !string.IsNullOrWhiteSpace(removedBy))
+            {
+                // 8144 = too many arguments: the database still has the older two-parameter procedure.
+                // Remove the interviewer exactly as before, without the who-removed log row.
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return await DeactivateSkillChannelInterviewer(irfId, interviewerEmail);
             }
             catch (SqlException ex)
             {

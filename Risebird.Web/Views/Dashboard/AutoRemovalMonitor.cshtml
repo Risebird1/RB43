@@ -1936,6 +1936,8 @@
 
         // ---- High-Risk Interviewers overview (additive; does not alter channel-tab behavior) ----
         var ovListUrl = '@Url.Action("InterviewerRiskOverview", "Dashboard")';
+        // Exposure link to the Interviewer QC View coaching brief, only for profiles that can open that page.
+        var ovExposureUrl = '@(Array.IndexOf(new[] { "Admin", "SupportAdmin", "SeniorHR", "SeniorInterviewerManagement", "InterviewerManagement", "Quality Controller" }, (ViewBag.Profile as string ?? "").Trim()) >= 0 ? Url.Action("Interviewers", "QCActivity") : "")';
         var ovChannelsUrl = '@Url.Action("InterviewerRiskOverviewChannels", "Dashboard")';
         var ovExportUrl = '@Url.Action("InterviewerRiskOverviewExport", "Dashboard")';
         var expandIrfIdOnLoad = @(expandIrfId.HasValue ? expandIrfId.Value.ToString() : "null");
@@ -2016,7 +2018,9 @@
                 var coded = prop(r, 'codedId', 'CodedId') || '';
                 var incomplete = prop(r, 'coverageIncomplete', 'CoverageIncomplete');
                 html += '<tr class="irf-ov-main-row" data-interviewer-id="' + id + '">'
-                    + '<td><button type="button" class="irf-audit-expand btn-ov-expand" data-interviewer-id="' + id + '">View</button></td>'
+                    + '<td><button type="button" class="irf-audit-expand btn-ov-expand" data-interviewer-id="' + id + '">View</button>'
+                    + (ovExposureUrl && email ? ' <a class="irf-ov-exposure" target="_blank" rel="noopener" title="Open the coaching brief for this interviewer" href="' + esc(ovExposureUrl + '?interviewer=' + encodeURIComponent(email)) + '">Exposure</a>' : '')
+                    + '</td>'
                     + '<td><div class="irf-risk-iv-name">' + esc(coded || name || ('#' + id)) + '</div>'
                     + (email ? '<div class="irf-risk-iv-email">' + esc(email) + '</div>' : '')
                     + (name && coded ? '<div class="irf-risk-iv-email">' + esc(name) + '</div>' : '')

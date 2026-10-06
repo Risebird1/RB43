@@ -1744,11 +1744,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> DeactivateSkillChannelInterviewer(int irfId, string interviewerEmail)
+        public async Task<bool> DeactivateSkillChannelInterviewer(int irfId, string interviewerEmail, string removedBy = null, string logType = null)
         {
             try
             {
-                return await _interviewerRepository.DeactivateSkillChannelInterviewer(irfId, interviewerEmail);
+                return await _interviewerRepository.DeactivateSkillChannelInterviewer(irfId, interviewerEmail, removedBy, logType);
             }
             catch (SqlTypeException ex)
             {

@@ -55,7 +55,10 @@ namespace Risebird.Web.Controllers
                    .Append("\" method=\"POST\" redirect=\"false\" startOnDialAnswer=\"true\" maxLength=\"3600\" callbackUrl=\"")
                    .Append(callbackUrl).Append("\" callbackMethod=\"POST\" />");
 
-                xml.Append("<Dial");
+                // Dial events (hangup carries talk time, status and hangup cause) go to DialCallback;
+                // notification only, the call flow is unchanged.
+                var dialCallbackUrl = SecurityElement.Escape("https://" + Request.Host + "/PlivoVoice/DialCallback");
+                xml.Append("<Dial callbackUrl=\"").Append(dialCallbackUrl).Append("\" callbackMethod=\"POST\"");
                 if (!string.IsNullOrWhiteSpace(callerNumber))
                 {
                     xml.Append(" callerId=\"").Append(SecurityElement.Escape(callerNumber.Trim().TrimStart('+'))).Append('"');
@@ -101,6 +104,57 @@ namespace Risebird.Web.Controllers
                 {
                     await _userRepository.UpdatePlivoRecordingAsync(callUuid, recordingUrl, duration);
                 }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return Ok();
+        }
+
+        // POST: PlivoVoice/DialCallback — the <Dial callbackUrl> in Outbound. Plivo posts on every dial
+        // event; only DialAction = hangup is used: it stores talk time, end time, status and hangup cause
+        // on the CallRecordingData row logged by User/makecall (CallSid = A-leg CallUUID), which the
+        // QC Activity dashboard reads. Only updates existing rows. Always returns 200 to Plivo.
+        [HttpPost]
+        public async Task<IActionResult> DialCallback()
+        {
+            try
+            {
+                var dialAction = GetParam("DialAction");
+                if (!string.Equals(dialAction, "hangup", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Ok();
+                }
+
+                var callUuid = GetParam("DialALegUUID") ?? GetParam("CallUUID");
+                if (string.IsNullOrWhiteSpace(callUuid))
+                {
+                    return Ok();
+                }
+
+                int? duration = null;
+                if (int.TryParse(GetParam("DialBLegDuration"), out var d) && d >= 0)
+                {
+                    duration = d;
+                }
+                else if (int.TryParse(GetParam("DialBLegBillDuration"), out var bd) && bd >= 0)
+                {
+                    duration = bd;
+                }
+
+                var status = GetParam("DialBLegStatus");
+                var hangupCause = GetParam("DialBLegHangupCause");
+
+                // A call that was never answered has no talk time.
+                if (!duration.HasValue && !string.IsNullOrWhiteSpace(status)
+                    && !string.Equals(status, "completed", StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(status, "answer", StringComparison.OrdinalIgnoreCase))
+                {
+                    duration = 0;
+                }
+
+                await _userRepository.UpdateCallRecordingDataFromPlivo(callUuid, duration, DateTime.UtcNow, status, hangupCause, null);
             }
             catch (Exception ex)
             {
