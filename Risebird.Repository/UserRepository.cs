@@ -1597,6 +1597,33 @@ namespace Risebird.Repository
             return false;
         }
 
+        public async Task<bool> UpdateCallRecordingDataFromPlivo(string callSid, int? durationSeconds, DateTime? endTimeUtc, string status, string hangupCause, string recordingUri)
+        {
+            if (string.IsNullOrWhiteSpace(callSid))
+                return false;
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@CallSid", callSid.Trim());
+                    parameters.Add("@DurationSeconds", durationSeconds.HasValue && durationSeconds.Value >= 0 ? durationSeconds : null);
+                    parameters.Add("@EndTimeUtc", endTimeUtc);
+                    parameters.Add("@Status", string.IsNullOrWhiteSpace(status) ? null : status.Trim());
+                    parameters.Add("@HangupCause", string.IsNullOrWhiteSpace(hangupCause) ? null : hangupCause.Trim());
+                    parameters.Add("@RecordingUri", string.IsNullOrWhiteSpace(recordingUri) ? null : recordingUri.Trim());
+                    var rows = await con.ExecuteScalarAsync<int?>("dbo.usp_UpdateCallRecordingDataFromPlivo", parameters,
+                        commandTimeout: 60, commandType: StoredProcedure);
+                    return rows.GetValueOrDefault() > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
         public async Task<List<CallRecordingDataVM>> GetPlivoCallsMissingRecordingAsync(int maxAgeDays = 7, int count = 50)
         {
             try

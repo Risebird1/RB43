@@ -9069,10 +9069,14 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<JsonResult> RemoveInterviewerFromIRF(string interviewerEmail, int irfid)
+        public async Task<JsonResult> RemoveInterviewerFromIRF(string interviewerEmail, int irfid, string source = null)
         {
+            // Who removed the interviewer is logged in RedMarkerStatusDetails (QC Activity dashboard).
+            // The Total Red Marker page sends source=TotalRedMarker and logs as Type IRF; any other caller logs SkillChannelRemoval.
+            var removedBy = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "");
+            var logType = string.Equals(source, "TotalRedMarker", StringComparison.OrdinalIgnoreCase) ? "IRF" : "SkillChannelRemoval";
             //var result = await _meetingService.RemoveInterviewer(interviewid);
-            var result = await _interviewerService.DeactivateSkillChannelInterviewer(irfid, interviewerEmail);
+            var result = await _interviewerService.DeactivateSkillChannelInterviewer(irfid, interviewerEmail, removedBy, logType);
             return Json("success");
         }
         public async Task<IActionResult> PublicMyInterview(string id, string emailid)

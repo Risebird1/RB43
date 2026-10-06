@@ -1,0 +1,846 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Interviewer QC harness</title><script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>body{margin:0;font-family:Arial,sans-serif;background:#f1f5f9}</style></head><body><div style="background:#0f172a;color:#fff;padding:14px 20px;font:600 15px Arial;letter-spacing:.05em">RISEBIRD · PREVIEW WITH SAMPLE DATA <span style="font-weight:400;opacity:.7">(names and numbers are made up; in the portal the page sits right of the left menu)</span></div><div id="txtpageHeader" style="display:none"></div>
+<script>
+var FX={
+"list": {"fromIst":"2026-09-29","toIst":"2026-10-05","rangeWasCapped":false,"truncated":false,"error":null,
+ "rows":[
+  {"interviewerUserId":4,"interviewerEmail":"ayesha@example.com","interviewerName":"Ayesha Khan","mobile":"9943398718","isActive":true,"tiStatus":null,"activeIrfs":3,"completedInterviews":16,"qcReviewed":11,"penalised":5,"avgPenaltyPercent":21.4,"aiPenalised":0,"trialOpen":0,"trialKept":4,"trialRemoved":2,"auditOpen":0,"auditKept":1,"auditRemoved":1,"redMarkers":2,"trmUnderReviewNow":0,"trmOpen":1,"trmRemoved":1,"tiOpen":0,"tiRemoved":0,"calls":0,"talkSeconds":0,"distinctCallers":0,"lastCallAtIst":null,"coachingSessions":0,"lastCoachedAtIst":null,"qcActions":20,"lastActionAtIst":"2026-10-01T17:57:00","openFlags":1,"issuesInRange":9,"hasIssue":true,"needsCall":true,"removedOrInactive":true,"attentionScore":24},
+  {"interviewerUserId":5,"interviewerEmail":"shreya@example.com","interviewerName":"Shreya Das","mobile":null,"isActive":false,"tiStatus":3,"activeIrfs":2,"completedInterviews":22,"qcReviewed":14,"penalised":5,"avgPenaltyPercent":24,"aiPenalised":1,"trialOpen":1,"trialKept":1,"trialRemoved":1,"auditOpen":0,"auditKept":0,"auditRemoved":0,"redMarkers":1,"trmUnderReviewNow":0,"trmOpen":0,"trmRemoved":1,"tiOpen":0,"tiRemoved":1,"calls":2,"talkSeconds":310,"distinctCallers":1,"lastCallAtIst":"2026-09-30T15:30:00","coachingSessions":1,"lastCoachedAtIst":"2026-09-30T16:00:00","qcActions":12,"lastActionAtIst":"2026-09-30T16:00:00","openFlags":1,"issuesInRange":8,"hasIssue":true,"needsCall":false,"removedOrInactive":true,"attentionScore":17},
+  {"interviewerUserId":6,"interviewerEmail":"gaurav@example.com","interviewerName":"Gaurav Sethi","mobile":"9000000000","isActive":true,"tiStatus":1,"activeIrfs":3,"completedInterviews":10,"qcReviewed":0,"penalised":0,"avgPenaltyPercent":null,"aiPenalised":1,"trialOpen":1,"trialKept":0,"trialRemoved":0,"auditOpen":1,"auditKept":0,"auditRemoved":0,"redMarkers":2,"trmUnderReviewNow":0,"trmOpen":0,"trmRemoved":0,"tiOpen":1,"tiRemoved":0,"calls":0,"talkSeconds":0,"distinctCallers":0,"lastCallAtIst":null,"coachingSessions":0,"lastCoachedAtIst":null,"qcActions":0,"lastActionAtIst":null,"openFlags":3,"issuesInRange":1,"hasIssue":true,"needsCall":true,"removedOrInactive":false,"attentionScore":17},
+  {"interviewerUserId":7,"interviewerEmail":"nikhil@example.com","interviewerName":"Nikhil Bose","mobile":"9111111111","isActive":true,"tiStatus":null,"activeIrfs":3,"completedInterviews":23,"qcReviewed":8,"penalised":0,"avgPenaltyPercent":null,"aiPenalised":0,"trialOpen":0,"trialKept":4,"trialRemoved":0,"auditOpen":0,"auditKept":1,"auditRemoved":0,"redMarkers":0,"trmUnderReviewNow":0,"trmOpen":0,"trmRemoved":0,"tiOpen":0,"tiRemoved":0,"calls":1,"talkSeconds":125,"distinctCallers":1,"lastCallAtIst":"2026-09-30T15:30:00","coachingSessions":0,"lastCoachedAtIst":null,"qcActions":13,"lastActionAtIst":"2026-09-29T10:00:00","openFlags":0,"issuesInRange":0,"hasIssue":false,"needsCall":false,"removedOrInactive":false,"attentionScore":0}],
+ "totals":{"interviewers":4,"needsCall":2,"openFlags":3,"penalised":3,"removedOrInactive":2,"withIssue":3,"withIssueContacted":1,"coachingCoveragePercent":33}},
+"timeline": {"interviewerEmail":"ayesha@example.com","fromIst":"2026-09-29","toIst":"2026-10-05","truncated":false,"error":null,
+ "summary":{"interviewerEmail":"ayesha@example.com","interviewerName":"Ayesha Khan","mobile":"9943398718","activeIrfs":3,"completedInterviews":16,"penalised":5,"aiPenalised":0,"openFlags":1,"redMarkers":2,"calls":0,"talkSeconds":0,"coachingSessions":0},
+ "irfs":[{"irfId":1,"irfName":"INFIPOWAPP","channelOwner":"Pooja M","isActive":true,"redMarkers":2,"trmStatus":null,"autoQcVerdict":null,"trialStatus":null},
+         {"irfId":2,"irfName":"APEIOSMOBD","channelOwner":"Sarika P S","isActive":false,"redMarkers":0,"trmStatus":3,"autoQcVerdict":"Flag","trialStatus":"removed (bad_trial)"}],
+ "events":[
+  {"kind":"QC","metric":"ReportReviewed","actionAtIst":"2026-10-01T17:57:00","actorEmail":"divya@risebird.io","interviewId":709762,"irfId":1,"irfName":"MPHGENAIFT","amount":0,"detail":"Shortlist","status":null,"recordingUrl":null},
+  {"kind":"QC","metric":"TrmReviewed","actionAtIst":"2026-10-01T16:45:00","actorEmail":"neha@risebird.io","interviewId":null,"irfId":2,"irfName":"MphPy06087","amount":null,"detail":"Red markers explained by client reschedules","status":null,"recordingUrl":null},
+  {"kind":"Call","metric":"PlivoCall","actionAtIst":"2026-09-30T15:30:00","actorEmail":"neha@risebird.io","interviewId":null,"irfId":1,"irfName":"INFIPOWAPP","amount":125,"detail":null,"status":"completed | NORMAL_CLEARING","recordingUrl":"https://media.plivo.com/rec/1.mp3"},
+  {"kind":"Coaching","metric":"Coaching","actionAtIst":"2026-09-30T16:00:00","actorEmail":"neha@risebird.io","interviewId":null,"irfId":null,"irfName":null,"amount":125,"detail":"AgreedToChange - Will join early","status":"Call","recordingUrl":"javascript:alert(1)"},
+  {"kind":"AI","metric":"AiPenalty","actionAtIst":"2026-09-29T17:30:00","actorEmail":"AISystem","interviewId":2,"irfId":1,"irfName":"KPEPJFSIC4","amount":40,"detail":"Hold","status":null,"recordingUrl":null},
+  {"kind":"System","metric":"TrialFlagged","actionAtIst":"2026-09-29T10:00:00","actorEmail":"System","interviewId":1,"irfId":2,"irfName":"APEIOSMOBD","amount":null,"detail":"Trial flag raised: bad_trial","status":"removed","recordingUrl":null},
+  {"kind":"Removal","metric":"TrialRemoved","actionAtIst":"2026-09-29T15:30:00","actorEmail":"neha@risebird.io","interviewId":1,"irfId":2,"irfName":"APEIOSMOBD","amount":null,"detail":"<img src=x onerror=alert(2)>","status":"bad_trial","recordingUrl":null}]},
+"brief": {"interviewerEmail":"ayesha@example.com","interviewerName":"Ayesha Khan","firstName":"Ayesha","mobile":"9943398718","isActive":true,"fromIst":"2026-09-29","toIst":"2026-10-05","issueCount":5,"areaCount":3,"openCount":1,
+ "coachingSessionsInRange":0,"lastCoachedAtIst":null,"canEmail":true,"emailAvailableAtUtc":null,"error":null,
+ "themes":[
+  {"key":"CandidateExperience","title":"Give candidates a good experience","say":"Introduce the format, stay clear and professional, and keep the candidate at ease.","isInternal":false,"worstSeverity":"P3","sources":["Risk check"],"itemCount":2,"openCount":0,
+   "items":[{"text":"Low candidate rating","source":"Risk check","severity":"P3","irfName":"INFIPOWAPP","dateIst":"2026-09-27","interviewId":709200,"isOpen":false},{"text":"Low candidate rating","source":"Risk check","severity":"P3","irfName":"APEIOSMOBD","dateIst":"2026-09-30","interviewId":709201,"isOpen":false}]},
+  {"key":"JoinOnTime","title":"Join every interview on time","say":"Join 5 minutes before the start.","isInternal":false,"worstSeverity":null,"sources":["Trial"],"itemCount":1,"openCount":0,
+   "items":[{"text":"Joined late by 11 min on your first interview for this channel","source":"Trial","severity":null,"irfName":"APEIOSMOBD","dateIst":"2026-09-27","interviewId":709500,"isOpen":false}]},
+  {"key":"ChannelStanding","title":"Channel standing","say":"Internal context.","isInternal":true,"worstSeverity":null,"sources":["Red markers","IRF audit"],"itemCount":2,"openCount":1,
+   "items":[{"text":"2 red markers, not reviewed yet","source":"Red markers","irfName":"INFIPOWAPP","dateIst":null,"interviewId":null,"isOpen":true},{"text":"Removed by IRF audit: LateJoin","source":"IRF audit","irfName":"APEIOSMOBD","dateIst":"2026-09-29","interviewId":1,"isOpen":false}]}]}
+}
+;
+window.__calls=[];
+$.ajax=function(o){window.__calls.push({url:o.url,type:o.type,data:o.data,headers:o.headers});var d=$.Deferred();
+ setTimeout(function(){var r;
+  if(o.url==='/QCActivity/InterviewerList') r=FX.list;
+  else if(o.url==='/QCActivity/InterviewerTimeline') r=FX.timeline;
+  else if(o.url==='/QCActivity/InterviewerBrief') r=FX.brief;
+  else if(o.url==='/QCActivity/CoachingEmailPreview'){var b=JSON.parse(o.data);r={subject:'Your Risebird interview review: '+b.themes.length+' areas to work on',html:'<p>Hi Ayesha Khan,</p><p>'+b.themes.join(',')+'</p>',themeCount:b.themes.length,canSend:b.themes.length>0,message:b.themes.length?'':'Pick at least one area to include.'};}
+  else if(o.url==='/QCActivity/SendCoachingEmail') r={ok:true,message:'Summary sent to ayesha.'};
+  else if(o.url==='/QCActivity/LogCoachingSession') r={ok:true,message:'Coaching session saved and linked to your call.',linkedCallSid:'x'};
+  d.resolve(r,'success',{status:200});},20);
+ return d.promise();};
+</script>
+<script>
+    $('#txtpageHeader').empty().html("<div>Interviewer QC View</div>");
+</script>
+
+<input type="hidden" name="__RequestVerificationToken" value="tok123" />
+
+<style>
+    .iqc, .iqc-panel, .iqc-modal { --c-ink: #0f172a; --c-muted: #64748b; --c-faint: #94a3b8; --c-line: #e2e8f0; --c-bg: #f8fafc; --c-card: #fff;
+           --c-blue: #2563eb; --c-blue-soft: #eff6ff; --c-red: #b91c1c; --c-red-soft: #fee2e2; --c-amber: #b45309; --c-amber-soft: #fef3c7;
+           --c-green: #15803d; --c-green-soft: #dcfce7; --c-purple: #7c3aed; --c-orange: #ea580c; --c-teal: #0d9488; }
+    .iqc { padding: 16px; color: var(--c-ink); font-size: 14px; box-sizing: border-box; max-width: 100%; }
+    .iqc *, .iqc-panel *, .iqc-modal * { box-sizing: border-box; }
+    .iqc-switch { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+    .iqc-switch a, .iqc-switch span { border: 1px solid var(--c-line); border-radius: 999px; padding: 4px 14px; font-size: 13px; text-decoration: none; color: var(--c-ink); background: #fff; }
+    .iqc-switch span { background: var(--c-ink); color: #fff; border-color: var(--c-ink); }
+    .iqc-switch a:hover { background: var(--c-bg); text-decoration: none; }
+    .iqc-title { display: flex; align-items: center; gap: 12px; margin: 6px 0 4px; flex-wrap: wrap; }
+    .iqc-title h2 { margin: 0; font-size: 24px; font-weight: 700; color: var(--c-ink); }
+    .iqc-intro { margin: 0 0 14px; color: var(--c-muted); line-height: 1.5; max-width: 1100px; }
+    .iqc-card { background: var(--c-card); border: 1px solid var(--c-line); border-radius: 10px; }
+    .iqc-filters { padding: 14px 16px; margin-bottom: 14px; }
+    .iqc-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; }
+    .iqc-field { display: flex; flex-direction: column; gap: 4px; }
+    .iqc-label { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--c-muted); margin: 0; }
+    .iqc-btn { border: 1px solid var(--c-line); background: #fff; color: var(--c-ink); border-radius: 6px; padding: 6px 14px; font-size: 14px; cursor: pointer; line-height: 1.4; white-space: nowrap; }
+    .iqc-btn:hover { background: var(--c-bg); border-color: #cbd5e1; }
+    .iqc-btn.is-active, .iqc-btn--primary { background: var(--c-blue); border-color: var(--c-blue); color: #fff; }
+    .iqc-btn--primary:hover, .iqc-btn.is-active:hover { background: #1d4ed8; border-color: #1d4ed8; }
+    .iqc-btn--call { background: #16a34a; border-color: #16a34a; color: #fff; }
+    .iqc-btn--call:hover { background: #15803d; border-color: #15803d; }
+    .iqc-btn:disabled { opacity: .55; cursor: default; }
+    .iqc-input { border: 1px solid var(--c-line); border-radius: 6px; padding: 5px 8px; font-size: 14px; color: var(--c-ink); background: #fff; height: 34px; }
+    .iqc-search { min-width: 240px; }
+    .iqc-alert { padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; font-size: 13px; }
+    .iqc-alert--error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+    .iqc-alert--info { background: var(--c-blue-soft); border: 1px solid #bfdbfe; color: #1e3a8a; }
+
+    .iqc-tiles { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .iqc-tile { text-align: left; background: #fff; border: 1px solid var(--c-line); border-radius: 10px; padding: 12px 14px; cursor: pointer; font: inherit; color: inherit; min-width: 0; }
+    .iqc-tile:hover { border-color: #93c5fd; }
+    .iqc-tile.is-active { border: 2px solid var(--c-blue); padding: 11px 13px; }
+    .iqc-tile__label { font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--c-muted); }
+    .iqc-tile__value { font-size: 26px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .iqc-tile__sub { font-size: 12px; color: var(--c-faint); line-height: 1.35; }
+    .is-red { color: var(--c-red); } .is-amber { color: var(--c-amber); } .is-green { color: var(--c-green); }
+
+    .iqc-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .iqc-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    .iqc-table th { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #334155; padding: 8px 10px; white-space: nowrap; background: #fff; border-bottom: 1px solid var(--c-line); }
+    .iqc-table thead tr:first-child th { text-align: center; color: var(--c-ink); font-size: 12px; }
+    .iqc-table th[data-sort] { cursor: pointer; user-select: none; }
+    .iqc-table th[data-sort]:hover { color: var(--c-blue); }
+    .iqc-table th.is-sorted::after { content: " \25BE"; }
+    .iqc-table th.is-sorted.is-asc::after { content: " \25B4"; }
+    .iqc-table .g { border-left: 1px solid var(--c-line); }
+    .iqc-table th.iqc-user-h { text-align: left; vertical-align: middle; position: sticky; left: 0; z-index: 2; }
+    .iqc-table td { padding: 9px 10px; border-bottom: 1px solid #f1f5f9; text-align: right; white-space: nowrap; }
+    .iqc-table tbody tr { cursor: pointer; }
+    .iqc-table tbody tr:hover td { background: #f8fafc; }
+    .iqc-table td.iqc-user { text-align: left; position: sticky; left: 0; background: #fff; z-index: 1; border-right: 1px solid var(--c-line); min-width: 220px; }
+    .iqc-name { font-weight: 600; font-size: 15px; }
+    .iqc-email { color: var(--c-muted); font-size: 13px; }
+    .iqc-badge { border-radius: 4px; padding: 1px 6px; font-size: 11px; font-weight: 600; margin-left: 6px; white-space: nowrap; }
+    .iqc-badge--call { background: var(--c-amber-soft); color: var(--c-amber); }
+    .iqc-badge--inactive, .iqc-badge--removed { background: var(--c-red-soft); color: var(--c-red); }
+    .iqc-badge--coached { background: var(--c-green-soft); color: var(--c-green); }
+    .iqc-badge--review { background: var(--c-amber-soft); color: var(--c-amber); }
+    .iqc-badge--reviewed { background: #f1f5f9; color: #475569; }
+    .iqc-zero { color: #cbd5e1; }
+    .iqc-bar { display: inline-block; width: 70px; height: 8px; background: #f1f5f9; border-radius: 4px; vertical-align: middle; margin-right: 6px; overflow: hidden; }
+    .iqc-bar > i { display: block; height: 100%; background: var(--c-red); border-radius: 4px; }
+    .iqc-empty, .iqc-loading { padding: 28px; text-align: center; color: var(--c-muted); }
+
+    .iqc-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, .5); z-index: 1990; display: none; }
+    .iqc-overlay.is-open { display: block; }
+    .iqc-panel { position: fixed; top: 0; right: 0; bottom: 0; width: min(1200px, 62vw); background: #fff; z-index: 2000; display: none; flex-direction: column; box-shadow: -10px 0 40px rgba(0, 0, 0, .25); color: #0f172a; font-size: 14px; }
+    .iqc-panel.is-open { display: flex; }
+    .iqc-panel__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 14px 20px 10px; border-bottom: 1px solid #e2e8f0; }
+    .iqc-panel__head h3 { margin: 0; font-size: 22px; font-weight: 700; color: #0f172a; }
+    .iqc-panel__sub { color: #64748b; font-size: 13px; margin-top: 2px; word-break: break-all; }
+    .iqc-panel__body { overflow-y: auto; padding: 14px 20px 30px; }
+    .iqc-section-h { font-size: 13px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #334155; margin: 18px 0 8px; }
+    .iqc-stats { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+    .iqc-stat { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; }
+    .iqc-stat b { display: block; font-size: 22px; font-variant-numeric: tabular-nums; }
+    .iqc-stat span { font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: #64748b; }
+    .iqc-brief-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; }
+    .iqc-brief-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .iqc-coached { color: #64748b; font-size: 13px; margin: 6px 0 8px; }
+    .iqc-theme { border: 1px solid #e2e8f0; border-left: 4px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; margin-bottom: 10px; }
+    .iqc-theme.sev-0, .iqc-theme.sev-1 { border-left-color: #dc2626; }
+    .iqc-theme.sev-2, .iqc-theme.sev-3 { border-left-color: #f59e0b; }
+    .iqc-theme.is-internal { background: #f8fafc; }
+    .iqc-theme h4 { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 6px; font-size: 16px; font-weight: 700; color: #0f172a; }
+    .iqc-chip { font-size: 11px; font-weight: 600; border-radius: 4px; padding: 1px 6px; background: #f1f5f9; color: #334155; }
+    .iqc-chip--sev { background: #fee2e2; color: #b91c1c; }
+    .iqc-chip--count { background: #dbeafe; color: #1d4ed8; }
+    .iqc-chip--open { background: #fef3c7; color: #b45309; }
+    .iqc-say { background: #f8fafc; border-radius: 6px; padding: 6px 10px; margin: 0 0 6px; }
+    .iqc-theme ul { margin: 0; padding-left: 20px; }
+    .iqc-theme li { margin: 2px 0; }
+    .iqc-ctx { color: #94a3b8; }
+    .iqc-panel a { color: #2563eb; }
+    .iqc-dt { width: 100%; border-collapse: collapse; }
+    .iqc-dt th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #334155; padding: 7px 10px; border-bottom: 1px solid #e2e8f0; background: #f8fafc; white-space: nowrap; }
+    .iqc-dt td { padding: 7px 10px; border-bottom: 1px solid #f1f5f9; }
+    .iqc-legend { display: flex; flex-wrap: wrap; gap: 14px; color: #475569; font-size: 13px; margin-bottom: 6px; }
+    .iqc-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+    .k-QC { background: #2563eb; } .k-Removal { background: #dc2626; } .k-Call { background: #16a34a; }
+    .k-Coaching { background: #0d9488; } .k-AI { background: #7c3aed; } .k-System { background: #ea580c; }
+    .iqc-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+    .iqc-chips button { border: 1px solid #e2e8f0; background: #fff; border-radius: 999px; padding: 3px 12px; font-size: 13px; cursor: pointer; }
+    .iqc-chips button.is-active { background: #0f172a; color: #fff; border-color: #0f172a; }
+    .iqc-day { font-weight: 700; margin: 12px 0 6px; }
+    .iqc-ev { display: flex; gap: 14px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; }
+    .iqc-ev__time { color: #64748b; min-width: 44px; font-variant-numeric: tabular-nums; }
+    .iqc-ev__title { font-weight: 700; font-size: 15px; }
+    .iqc-ev__sub { color: #64748b; font-size: 13px; word-break: break-word; }
+    .iqc-ev a { margin-right: 8px; }
+    .iqc-ev audio { height: 30px; max-width: 280px; vertical-align: middle; margin-top: 4px; }
+
+    .iqc-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, .55); z-index: 2100; display: none; align-items: flex-start; justify-content: center; padding: 4vh 12px; color: #0f172a; font-size: 14px; }
+    .iqc-modal.is-open { display: flex; }
+    .iqc-modal__box { background: #fff; border-radius: 10px; width: min(1000px, 100%); max-height: 92vh; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0, 0, 0, .3); }
+    .iqc-modal__head { display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-bottom: 1px solid #e2e8f0; }
+    .iqc-modal__head h3 { margin: 0; font-size: 19px; font-weight: 700; color: #0f172a; }
+    .iqc-modal__body { overflow-y: auto; padding: 12px 18px; }
+    .iqc-modal__foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 18px; border-top: 1px solid #e2e8f0; color: #475569; }
+    .iqc-modal label.iqc-cb { display: flex; align-items: center; gap: 8px; margin: 3px 0; font-weight: normal; cursor: pointer; }
+    .iqc-modal label.iqc-cb input { width: 16px; height: 16px; margin: 0; }
+    .iqc-modal textarea, .iqc-modal select { width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 10px; font-size: 14px; font-family: inherit; color: #0f172a; background: #fff; }
+    .iqc-modal textarea { min-height: 90px; resize: vertical; }
+    .iqc-preview { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; max-height: 45vh; overflow-y: auto; }
+    .iqc-preview__subject { color: #64748b; font-size: 13px; margin-bottom: 8px; }
+    .iqc-msg { margin: 6px 0; font-size: 13px; }
+
+    @media (max-width: 1280px) { .iqc-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } .iqc-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    @media (max-width: 900px) { .iqc-panel { width: 100vw; } }
+    @media (max-width: 768px) {
+        .iqc { padding: 12px 16px; }
+        .iqc-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .iqc-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .iqc-search { min-width: 0; width: 100%; }
+        .iqc-field--grow { flex: 1 1 100%; }
+        .iqc-panel__body { padding: 12px 16px 30px; }
+        .iqc-modal { padding: 0; }
+        .iqc-modal__box { max-height: 100vh; height: 100vh; border-radius: 0; }
+    }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad" style="margin:0px;">
+            <div class="card-header bg-w clearfix">
+                <div class="pull-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"><h4 class="card-title">Interviewer QC View</h4></div>
+                </div>
+                <div class="pull-right iqc-switch" role="navigation" aria-label="QC views">
+                    <a href="QC-Activity-Preview.html">QC Activity by Quality Controller</a>
+                    <span aria-current="page">By Interviewer</span>
+                </div>
+            </div>
+        </div>
+        <div class="content client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+<div class="iqc" id="iqcRoot"
+     data-deeplink=""
+     data-default-days="7"
+     data-max-days="92"
+     data-tpl-report="/Interview/ReportAIDetailsReport?interviewId=__INTERVIEW_ID__"
+     data-tpl-transcript="/AIScreener/TransciptAnalysis?interviewId=__INTERVIEW_ID__&amp;irfId=__IRF_ID__"
+     data-tpl-contradiction="/Interview/ContradictionReport?interviewId=__INTERVIEW_ID__"
+     data-tpl-qcmerge="/Interview/QCMergedAIDetails?interviewId=__INTERVIEW_ID__">
+
+    <div class="iqc-title"><h2>Interviewer QC View</h2></div>
+    <p class="iqc-intro">
+        Everything QC knows about each interviewer: reports reviewed and penalised, trial and IRF audit flags, red markers,
+        Total Interviews status, and every QC call they received. Interviewers appear if QC touched them in the range,
+        the AI penalised a report, or they have an open flag now. Click a row for the interviewer's full timeline. Dates are IST.
+    </p>
+
+    <div class="iqc-card iqc-filters">
+        <div class="iqc-row">
+            <div class="iqc-field">
+                <span class="iqc-label">Period</span>
+                <div class="iqc-row" style="gap:6px" role="group" aria-label="Period">
+                    <button type="button" class="iqc-btn" data-preset="7">7 days</button>
+                    <button type="button" class="iqc-btn" data-preset="30">30 days</button>
+                    <button type="button" class="iqc-btn" data-preset="90">90 days</button>
+                </div>
+            </div>
+            <div class="iqc-field"><label class="iqc-label" for="iqcFrom">From (IST)</label><input type="date" id="iqcFrom" class="iqc-input" /></div>
+            <div class="iqc-field"><label class="iqc-label" for="iqcTo">To (IST)</label><input type="date" id="iqcTo" class="iqc-input" /></div>
+            <div class="iqc-field iqc-field--grow"><label class="iqc-label" for="iqcSearch">Interviewer</label><input type="search" id="iqcSearch" class="iqc-input iqc-search" placeholder="Name or email" maxlength="150" /></div>
+            <button type="button" class="iqc-btn iqc-btn--primary" id="iqcApply">Apply</button>
+            <button type="button" class="iqc-btn" id="iqcExport">Export CSV</button>
+        </div>
+    </div>
+
+    <div id="iqcAlert"></div>
+    <div class="iqc-tiles" id="iqcTiles"></div>
+
+    <div class="iqc-card iqc-table-wrap">
+        <table class="iqc-table" id="iqcTable">
+            <thead>
+                <tr>
+                    <th rowspan="2" class="iqc-user-h" data-sort="interviewerName">Interviewer</th>
+                    <th colspan="2" class="g">Work</th>
+                    <th colspan="4" class="g">Reports</th>
+                    <th colspan="3" class="g">Trial</th>
+                    <th colspan="3" class="g">IRF audit</th>
+                    <th colspan="3" class="g">Red markers (TRM)</th>
+                    <th colspan="2" class="g">Total Interviews</th>
+                    <th colspan="4" class="g">QC calls received</th>
+                    <th rowspan="2" class="g" data-sort="attentionScore" style="vertical-align:middle">Attention</th>
+                </tr>
+                <tr>
+                    <th class="g" data-sort="activeIrfs" title="Active skill channels now">IRFs</th>
+                    <th data-sort="completedInterviews" title="Completed interviews in the range">Interviews</th>
+                    <th class="g" data-sort="qcReviewed">QC reviewed</th>
+                    <th data-sort="penalised">Penalised</th>
+                    <th data-sort="avgPenaltyPercent">Avg %</th>
+                    <th data-sort="aiPenalised" title="Reports the AI review penalised">AI penalised</th>
+                    <th class="g" data-sort="trialOpen" title="Pending trial flags now">Open</th>
+                    <th data-sort="trialKept">Kept</th>
+                    <th data-sort="trialRemoved">Removed</th>
+                    <th class="g" data-sort="auditOpen" title="Auto-QC verdicts awaiting review now">Open</th>
+                    <th data-sort="auditKept">Kept</th>
+                    <th data-sort="auditRemoved">Removed</th>
+                    <th class="g" data-sort="redMarkers">Markers</th>
+                    <th data-sort="trmUnderReviewNow" title="Channels under review now">Under rev.</th>
+                    <th data-sort="trmRemoved">Removed</th>
+                    <th class="g" data-sort="tiStatus">Status</th>
+                    <th data-sort="tiRemoved">Removed</th>
+                    <th class="g" data-sort="calls">Calls</th>
+                    <th data-sort="talkSeconds">Talk time</th>
+                    <th data-sort="distinctCallers">Callers</th>
+                    <th data-sort="lastCallAtIst">Last call</th>
+                </tr>
+            </thead>
+            <tbody id="iqcBody"><tr><td colspan="26" class="iqc-loading">Loading…</td></tr></tbody>
+        </table>
+    </div>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="iqc-overlay" id="iqcOverlay"></div>
+<aside class="iqc-panel" id="iqcPanel" role="dialog" aria-modal="true" aria-labelledby="iqcPanelTitle">
+    <div class="iqc-panel__head">
+        <div><h3 id="iqcPanelTitle">Interviewer</h3><div class="iqc-panel__sub" id="iqcPanelSub"></div></div>
+        <button type="button" class="iqc-btn" id="iqcPanelClose">Close</button>
+    </div>
+    <div class="iqc-panel__body" id="iqcPanelBody"></div>
+</aside>
+
+<div class="iqc-modal" id="iqcEmailModal" role="dialog" aria-modal="true" aria-labelledby="iqcEmailTitle">
+    <div class="iqc-modal__box">
+        <div class="iqc-modal__head"><h3 id="iqcEmailTitle">Email summary</h3><button type="button" class="iqc-btn" data-close-modal>Close</button></div>
+        <div class="iqc-modal__body">
+            <div class="iqc-label">Areas to include</div>
+            <div id="iqcEmailThemes"></div>
+            <div class="iqc-msg" style="color:#94a3b8">Channel standing is internal and never emailed.</div>
+            <label class="iqc-label" for="iqcEmailNote" style="display:block;margin-top:10px">Personal note (optional, shown at the top)</label>
+            <textarea id="iqcEmailNote" maxlength="2000"></textarea>
+            <div class="iqc-label" style="margin-top:10px">Preview</div>
+            <div class="iqc-preview"><div class="iqc-preview__subject" id="iqcEmailSubject"></div><div id="iqcEmailPreview"></div></div>
+            <div class="iqc-msg" id="iqcEmailMsg" aria-live="polite"></div>
+        </div>
+        <div class="iqc-modal__foot">
+            <span>Replies go to you. The email is logged as a coaching session.</span>
+            <span style="display:flex;gap:8px">
+                <button type="button" class="iqc-btn" id="iqcEmailRefresh">Refresh preview</button>
+                <button type="button" class="iqc-btn iqc-btn--primary" id="iqcEmailSend">Send email</button>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="iqc-modal" id="iqcLogModal" role="dialog" aria-modal="true" aria-labelledby="iqcLogTitle">
+    <div class="iqc-modal__box" style="width:min(900px,100%)">
+        <div class="iqc-modal__head"><h3 id="iqcLogTitle">Log coaching session</h3><button type="button" class="iqc-btn" data-close-modal>Close</button></div>
+        <div class="iqc-modal__body">
+            <label class="iqc-label" for="iqcLogChannel">How you reached them</label>
+            <select id="iqcLogChannel">
+                <option value="Call">Call</option>
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="Meeting">Video meeting</option>
+                <option value="Other">Other</option>
+            </select>
+            <label class="iqc-label" for="iqcLogOutcome" style="display:block;margin-top:10px">Outcome</label>
+            <select id="iqcLogOutcome">
+                <option value="AgreedToChange">Agreed to change</option>
+                <option value="Disputed">Disputed</option>
+                <option value="CallBack">Call back</option>
+                <option value="NoAnswer">No answer</option>
+                <option value="EmailOnly">Email only</option>
+            </select>
+            <div class="iqc-label" style="margin-top:10px">Areas you discussed</div>
+            <div id="iqcLogThemes"></div>
+            <label class="iqc-label" for="iqcLogAgreed" style="display:block;margin-top:10px">What was agreed</label>
+            <textarea id="iqcLogAgreed" maxlength="2000" placeholder="At least 15 characters"></textarea>
+            <div class="iqc-msg" id="iqcLogMsg" aria-live="polite"></div>
+        </div>
+        <div class="iqc-modal__foot">
+            <span>A call you made to this interviewer in the last 3 hours is linked automatically.</span>
+            <button type="button" class="iqc-btn iqc-btn--primary" id="iqcLogSave">Save session</button>
+        </div>
+    </div>
+</div>
+
+
+<script>function CommonCallButtonClick(){window.__called=[].slice.call(arguments);}</script>
+
+<script>
+    (function () {
+        'use strict';
+
+        var root = document.getElementById('iqcRoot');
+        var defaultDays = parseInt(root.getAttribute('data-default-days'), 10) || 7;
+        var maxDays = parseInt(root.getAttribute('data-max-days'), 10) || 92;
+        var tpl = {
+            report: root.getAttribute('data-tpl-report'),
+            transcript: root.getAttribute('data-tpl-transcript'),
+            contradiction: root.getAttribute('data-tpl-contradiction'),
+            qcmerge: root.getAttribute('data-tpl-qcmerge')
+        };
+        var token = $('input[name="__RequestVerificationToken"]').val();
+
+        var state = { from: '', to: '', search: '', rows: [], totals: {}, filter: 'all', sortKey: 'attentionScore', sortAsc: false,
+                      current: null, brief: null, eventFilter: 'all', events: [] };
+
+        // ---------- helpers ----------
+        function esc(v) {
+            if (v === null || v === undefined) return '';
+            return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+        function istToday() { return new Date(Date.now() + 330 * 60000).toISOString().slice(0, 10); }
+        function addDays(ymd, days) {
+            var p = ymd.split('-'); var dt = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2]));
+            dt.setUTCDate(dt.getUTCDate() + days); return dt.toISOString().slice(0, 10);
+        }
+        function daysBetween(a, b) {
+            var pa = a.split('-'), pb = b.split('-');
+            return Math.round((Date.UTC(+pb[0], +pb[1] - 1, +pb[2]) - Date.UTC(+pa[0], +pa[1] - 1, +pa[2])) / 86400000);
+        }
+        function fmtIst(v) { if (!v) return '—'; var s = String(v).replace('T', ' '); return s.length >= 16 ? s.slice(0, 16) : s; }
+        function num(v) { return v ? Number(v) : 0; }
+        function fmtTalk(sec) {
+            sec = num(sec); if (!sec) return '0m';
+            var h = Math.floor(sec / 3600), m = Math.round((sec % 3600) / 60);
+            return h > 0 ? h + 'h ' + m + 'm' : m + 'm';
+        }
+        function fmtDuration(sec) {
+            if (sec === null || sec === undefined) return 'n/a';
+            sec = Math.max(0, Math.round(sec));
+            var m = Math.floor(sec / 60), s = sec % 60;
+            return m > 0 ? m + 'm ' + (s < 10 ? '0' : '') + s + 's' : s + 's';
+        }
+        function safeUrl(u) { return /^https?:\/\//i.test(u || '') ? u : null; }
+        function fill(t, id, irf) { return t.replace('__INTERVIEW_ID__', encodeURIComponent(id)).replace('__IRF_ID__', encodeURIComponent(irf || 0)); }
+        function n(v, cls) { var x = num(v); return x > 0 ? '<span class="' + (cls || '') + '">' + x + '</span>' : '<span class="iqc-zero">0</span>'; }
+        function tiPill(s) {
+            if (s === 1) return '<span class="iqc-badge iqc-badge--review">Under review</span>';
+            if (s === 2) return '<span class="iqc-badge iqc-badge--reviewed">Reviewed</span>';
+            if (s === 3) return '<span class="iqc-badge iqc-badge--removed">Removed</span>';
+            return '<span class="iqc-zero">—</span>';
+        }
+        function post(url, body) {
+            return $.ajax({ url: url, type: 'POST', contentType: 'application/json', data: JSON.stringify(body),
+                            headers: { 'RequestVerificationToken': token } });
+        }
+        function onAuthError(xhr) { if (xhr.status === 401 || xhr.status === 403) { window.location.href = '/Session/SignOut'; return true; } return false; }
+
+        // ---------- filters ----------
+        function readQuery() {
+            var q = new URLSearchParams(window.location.search), re = /^\d{4}-\d{2}-\d{2}$/;
+            if (re.test(q.get('from') || '')) state.from = q.get('from');
+            if (re.test(q.get('to') || '')) state.to = q.get('to');
+            if (q.get('search')) state.search = q.get('search').slice(0, 150);
+        }
+        function writeQuery() {
+            try {
+                var q = new URLSearchParams();
+                q.set('from', state.from); q.set('to', state.to);
+                if (state.search) q.set('search', state.search);
+                if (state.current) q.set('interviewer', state.current);
+                history.replaceState(null, '', window.location.pathname + '?' + q.toString());
+            } catch (e) { /* ignore */ }
+        }
+        function syncInputs() {
+            $('#iqcFrom').val(state.from); $('#iqcTo').val(state.to); $('#iqcSearch').val(state.search);
+            $('#iqcFrom, #iqcTo').attr('max', istToday());
+            var span = state.from && state.to ? daysBetween(state.from, state.to) + 1 : -1, isToday = state.to === istToday();
+            $('[data-preset]').each(function () { $(this).toggleClass('is-active', isToday && span === parseInt($(this).attr('data-preset'), 10)); });
+        }
+
+        // ---------- list ----------
+        function load() {
+            syncInputs();
+            $('#iqcApply').prop('disabled', true);
+            $('#iqcAlert').empty();
+            $('#iqcBody').html('<tr><td colspan="26" class="iqc-loading">Loading…</td></tr>');
+            $.ajax({ url: '/QCActivity/InterviewerList', type: 'GET', cache: false,
+                     data: { from: state.from, to: state.to, search: state.search || null } })
+                .done(function (d) {
+                    d = d || {};
+                    state.rows = d.rows || []; state.totals = d.totals || {};
+                    state.from = d.fromIst || state.from; state.to = d.toIst || state.to;
+                    syncInputs(); writeQuery();
+                    if (d.rangeWasCapped) $('#iqcAlert').append('<div class="iqc-alert iqc-alert--info">The range was cut to the last ' + maxDays + ' days of the period you picked.</div>');
+                    if (d.truncated) $('#iqcAlert').append('<div class="iqc-alert iqc-alert--info">Showing the ' + state.rows.length + ' interviewers with the highest attention score. Search or narrow the range to see others.</div>');
+                    if (d.error) $('#iqcAlert').append('<div class="iqc-alert iqc-alert--error">' + esc(d.error) + '</div>');
+                    renderTiles(); renderTable();
+                })
+                .fail(function (xhr) {
+                    if (onAuthError(xhr)) return;
+                    $('#iqcAlert').html('<div class="iqc-alert iqc-alert--error">Could not load interviewers (' + esc(xhr.status) + ').</div>');
+                    $('#iqcBody').html('<tr><td colspan="26" class="iqc-empty">No data.</td></tr>');
+                })
+                .always(function () { $('#iqcApply').prop('disabled', false); });
+        }
+
+        var filters = {
+            all: function () { return true; },
+            needsCall: function (r) { return r.needsCall; },
+            openFlags: function (r) { return num(r.openFlags) > 0; },
+            penalised: function (r) { return num(r.penalised) > 0 || num(r.aiPenalised) > 0; },
+            removed: function (r) { return r.removedOrInactive; },
+            withIssue: function (r) { return r.hasIssue; }
+        };
+
+        function renderTiles() {
+            var t = state.totals || {};
+            var cov = t.coachingCoveragePercent === null || t.coachingCoveragePercent === undefined ? '—' : t.coachingCoveragePercent + '%';
+            function tile(key, label, value, sub, cls) {
+                return '<button type="button" class="iqc-tile' + (state.filter === key ? ' is-active' : '') + '" data-filter="' + key + '" aria-pressed="' + (state.filter === key) + '">' +
+                    '<div class="iqc-tile__label">' + label + '</div><div class="iqc-tile__value ' + (cls || '') + '">' + value + '</div><div class="iqc-tile__sub">' + sub + '</div></button>';
+            }
+            $('#iqcTiles').html(
+                tile('all', 'Interviewers', num(t.interviewers), 'touched by QC or flagged') +
+                tile('needsCall', 'Need a QC call', num(t.needsCall), 'issue in range, no call or coaching yet', 'is-red') +
+                tile('openFlags', 'Open flags now', num(t.openFlags), 'trial, audit, red marker or Total Interviews', 'is-amber') +
+                tile('penalised', 'Penalised', num(t.penalised), 'by a QC or the AI review') +
+                tile('removed', 'Removed or inactive', num(t.removedOrInactive), 'from an IRF, the channel or the system') +
+                tile('withIssue', 'Coaching coverage', cov, num(t.withIssueContacted) + ' of ' + num(t.withIssue) + ' with an issue got a call'));
+        }
+
+        function sortedRows() {
+            var f = filters[state.filter] || filters.all, k = state.sortKey, asc = state.sortAsc ? 1 : -1;
+            return state.rows.filter(f).slice().sort(function (a, b) {
+                var x = a[k], y = b[k];
+                if (k === 'interviewerName') { x = (a.interviewerName || a.interviewerEmail || '').toLowerCase(); y = (b.interviewerName || b.interviewerEmail || '').toLowerCase(); }
+                if (x === null || x === undefined) x = typeof y === 'string' ? '' : -1;
+                if (y === null || y === undefined) y = typeof x === 'string' ? '' : -1;
+                return x < y ? -asc : x > y ? asc : 0;
+            });
+        }
+
+        function renderTable() {
+            $('#iqcTable th[data-sort]').removeClass('is-sorted is-asc');
+            $('#iqcTable th[data-sort="' + state.sortKey + '"]').addClass('is-sorted' + (state.sortAsc ? ' is-asc' : ''));
+            var rows = sortedRows();
+            if (!rows.length) { $('#iqcBody').html('<tr><td colspan="26" class="iqc-empty">No interviewers match.</td></tr>'); return; }
+            var maxScore = Math.max.apply(null, state.rows.map(function (r) { return num(r.attentionScore); }).concat([1]));
+            var html = '';
+            rows.forEach(function (r) {
+                var badges = '';
+                if (r.needsCall) badges += '<span class="iqc-badge iqc-badge--call">Needs call</span>';
+                if (!r.isActive) badges += '<span class="iqc-badge iqc-badge--inactive">Inactive</span>';
+                if (num(r.coachingSessions) > 0) badges += '<span class="iqc-badge iqc-badge--coached">Coached</span>';
+                var avg = r.avgPenaltyPercent === null || r.avgPenaltyPercent === undefined ? '<span class="iqc-zero">—</span>' : Math.round(r.avgPenaltyPercent) + '%';
+                var pct = Math.round(100 * num(r.attentionScore) / maxScore);
+                html += '<tr data-email="' + esc(r.interviewerEmail) + '" tabindex="0">' +
+                    '<td class="iqc-user"><div class="iqc-name">' + esc(r.interviewerName || r.interviewerEmail) + badges + '</div><div class="iqc-email">' + esc(r.interviewerEmail) + '</div></td>' +
+                    '<td class="g">' + n(r.activeIrfs) + '</td><td>' + n(r.completedInterviews) + '</td>' +
+                    '<td class="g">' + n(r.qcReviewed) + '</td><td>' + n(r.penalised, 'is-red') + '</td><td>' + avg + '</td><td>' + n(r.aiPenalised, 'is-amber') + '</td>' +
+                    '<td class="g">' + n(r.trialOpen, 'is-amber') + '</td><td>' + n(r.trialKept) + '</td><td>' + n(r.trialRemoved, 'is-red') + '</td>' +
+                    '<td class="g">' + n(r.auditOpen, 'is-amber') + '</td><td>' + n(r.auditKept) + '</td><td>' + n(r.auditRemoved, 'is-red') + '</td>' +
+                    '<td class="g">' + n(r.redMarkers) + '</td><td>' + n(r.trmUnderReviewNow, 'is-amber') + '</td><td>' + n(r.trmRemoved, 'is-red') + '</td>' +
+                    '<td class="g">' + tiPill(r.tiStatus) + '</td><td>' + n(r.tiRemoved, 'is-red') + '</td>' +
+                    '<td class="g">' + n(r.calls, 'is-green') + '</td><td>' + (num(r.calls) ? fmtTalk(r.talkSeconds) : '<span class="iqc-zero">—</span>') + '</td>' +
+                    '<td>' + n(r.distinctCallers) + '</td><td>' + (r.lastCallAtIst ? esc(fmtIst(r.lastCallAtIst)) : '<span class="iqc-zero">—</span>') + '</td>' +
+                    '<td class="g" style="text-align:left"><span class="iqc-bar"><i style="width:' + pct + '%"></i></span>' + num(r.attentionScore) + '</td>' +
+                    '</tr>';
+            });
+            $('#iqcBody').html(html);
+        }
+
+        // ---------- side panel ----------
+        function openPanel(email) {
+            state.current = email; state.brief = null; state.events = []; state.eventFilter = 'all';
+            writeQuery();
+            $('#iqcPanelTitle').text(email); $('#iqcPanelSub').text('');
+            $('#iqcPanelBody').html('<div class="iqc-loading">Loading…</div>');
+            $('#iqcOverlay, #iqcPanel').addClass('is-open'); $('body').css('overflow', 'hidden');
+
+            var range = { interviewer: email, from: state.from, to: state.to };
+            var tl = $.ajax({ url: '/QCActivity/InterviewerTimeline', type: 'GET', cache: false, data: range });
+            var br = $.ajax({ url: '/QCActivity/InterviewerBrief', type: 'GET', cache: false, data: range });
+            $.when(tl, br).done(function (a, b) {
+                if (state.current !== email) return;
+                renderPanel(a[0] || {}, b[0] || {});
+            }).fail(function (xhr) {
+                if (onAuthError(xhr)) return;
+                $('#iqcPanelBody').html('<div class="iqc-alert iqc-alert--error">Could not load this interviewer (' + esc(xhr.status) + ').</div>');
+            });
+        }
+        function closePanel() {
+            state.current = null; writeQuery();
+            $('#iqcOverlay, #iqcPanel').removeClass('is-open'); $('body').css('overflow', '');
+        }
+
+        function renderPanel(t, brief) {
+            state.brief = brief; state.events = t.events || [];
+            var s = t.summary;
+            if (t.error || !s) { $('#iqcPanelBody').html('<div class="iqc-alert iqc-alert--error">' + esc(t.error || 'No interviewer found.') + '</div>'); return; }
+            $('#iqcPanelTitle').text(s.interviewerName || s.interviewerEmail);
+            $('#iqcPanelSub').text([s.interviewerEmail, s.mobile, (t.fromIst + ' to ' + t.toIst + ' (IST)')].filter(Boolean).join(' · '));
+
+            function stat(v, l) { return '<div class="iqc-stat"><b>' + v + '</b><span>' + l + '</span></div>'; }
+            var html = '<div class="iqc-stats">' +
+                stat(num(s.activeIrfs), 'Active IRFs') + stat(num(s.completedInterviews), 'Interviews') +
+                stat(num(s.penalised) + num(s.aiPenalised), 'Penalised reports') + stat(num(s.openFlags), 'Open flags') +
+                stat(num(s.redMarkers), 'Red markers') + stat(num(s.calls), 'QC calls') +
+                stat(fmtTalk(s.talkSeconds), 'Talk time') + stat(num(s.coachingSessions), 'Coaching sessions') + '</div>';
+
+            html += '<div class="iqc-section-h">Coaching brief: everything to raise in one call</div>' + renderBrief(brief, s);
+            html += '<div class="iqc-section-h">IRFs</div>' + renderIrfs(t.irfs || []);
+            html += '<div class="iqc-section-h">Timeline</div>' +
+                '<div class="iqc-legend"><span><i class="iqc-dot k-QC"></i>QC action</span><span><i class="iqc-dot k-Removal"></i>Removal</span>' +
+                '<span><i class="iqc-dot k-Call"></i>QC call</span><span><i class="iqc-dot k-Coaching"></i>Coaching</span>' +
+                '<span><i class="iqc-dot k-AI"></i>AI review</span><span><i class="iqc-dot k-System"></i>System flag</span></div>' +
+                '<div class="iqc-chips" id="iqcEvChips">' +
+                ['all:All', 'qc:QC actions', 'calls:Calls', 'ai:AI', 'system:System flags'].map(function (c) {
+                    var p = c.split(':'); return '<button type="button" data-ev="' + p[0] + '"' + (state.eventFilter === p[0] ? ' class="is-active"' : '') + '>' + p[1] + '</button>';
+                }).join('') + '</div><div id="iqcEvents"></div>' +
+                (t.truncated ? '<div class="iqc-msg">Showing the latest 1000 events; narrow the range to see older ones.</div>' : '');
+
+            $('#iqcPanelBody').html(html);
+            renderEvents();
+        }
+
+        function renderBrief(b, s) {
+            if (!b || b.error) return '<div class="iqc-alert iqc-alert--error">' + esc((b && b.error) || 'The brief could not be loaded.') + '</div>';
+            var first = b.firstName || b.interviewerName || 'interviewer';
+            var mobile = b.mobile || s.mobile;
+            var bar = '<div class="iqc-brief-bar"><div><b>' + num(b.issueCount) + ' issue' + (num(b.issueCount) === 1 ? '' : 's') + '</b> across <b>' +
+                num(b.areaCount) + ' area' + (num(b.areaCount) === 1 ? '' : 's') + '</b>' +
+                (num(b.openCount) ? ' · ' + num(b.openCount) + ' flag' + (num(b.openCount) === 1 ? '' : 's') + ' awaiting a decision' : '') + '</div>' +
+                '<div class="iqc-brief-actions">' +
+                '<button type="button" class="iqc-btn iqc-btn--call" id="iqcCallBtn"' + (mobile ? '' : ' disabled title="No phone number on file"') + '>Call ' + esc(first) + '</button>' +
+                '<button type="button" class="iqc-btn" id="iqcEmailBtn"' + (b.canEmail && b.areaCount ? '' : ' disabled') +
+                (b.emailAvailableAtUtc ? ' title="A summary was sent recently. Next one after ' + esc(fmtIst(utcToIst(b.emailAvailableAtUtc))) + ' IST"' : '') + '>Email summary</button>' +
+                '<button type="button" class="iqc-btn iqc-btn--primary" id="iqcLogBtn">Log coaching session</button></div></div>';
+
+            var coached = num(b.coachingSessionsInRange) > 0 || b.lastCoachedAtIst
+                ? 'Coached ' + num(b.coachingSessionsInRange) + ' time' + (num(b.coachingSessionsInRange) === 1 ? '' : 's') + ' in this range' +
+                  (b.lastCoachedAtIst ? '; last on ' + esc(fmtIst(b.lastCoachedAtIst)) + (b.lastCoachingOutcome ? ' (' + esc(outcomeLabel(b.lastCoachingOutcome)) + ')' : '') +
+                   (b.lastCoachEmail ? ' by ' + esc(b.lastCoachEmail) : '') : '')
+                : 'Not coached yet';
+
+            var themes = (b.themes || []).map(function (t) {
+                var sev = t.worstSeverity ? parseInt(String(t.worstSeverity).slice(1), 10) : 9;
+                var items = (t.items || []).map(function (i) {
+                    var ctx = [i.irfName, i.dateIst].filter(Boolean).join(', ');
+                    return '<li>' + esc(i.text) + (ctx ? ' <span class="iqc-ctx">(' + esc(ctx) + ')</span>' : '') +
+                        (i.interviewId ? ' <a href="' + esc(fill(tpl.report, i.interviewId, 0)) + '" target="_blank" rel="noopener">#' + esc(i.interviewId) + '</a>' : '') +
+                        (i.isOpen ? ' <span class="iqc-chip iqc-chip--open">open</span>' : '') + '</li>';
+                }).join('');
+                return '<div class="iqc-theme sev-' + sev + (t.isInternal ? ' is-internal' : '') + '"><h4>' + esc(t.title) +
+                    (t.worstSeverity ? ' <span class="iqc-chip iqc-chip--sev">' + esc(t.worstSeverity) + '</span>' : '') +
+                    ' <span class="iqc-chip iqc-chip--count">' + num(t.itemCount) + ' item' + (num(t.itemCount) === 1 ? '' : 's') + '</span>' +
+                    (t.sources || []).map(function (x) { return ' <span class="iqc-chip">' + esc(x) + '</span>'; }).join('') +
+                    (t.isInternal ? ' <span class="iqc-chip">internal</span>' : '') + '</h4>' +
+                    '<p class="iqc-say"><b>Say:</b> ' + esc(t.say) + '</p><ul>' + items + '</ul></div>';
+            }).join('');
+            return bar + '<div class="iqc-coached">' + coached + '</div>' + (themes || '<div class="iqc-empty">Nothing to raise in this range.</div>');
+        }
+
+        function utcToIst(v) { var d = new Date(String(v).replace(/Z?$/, 'Z')); return isNaN(d) ? v : new Date(d.getTime() + 330 * 60000).toISOString().slice(0, 16); }
+        var outcomes = { AgreedToChange: 'Agreed to change', Disputed: 'Disputed', CallBack: 'Call back', NoAnswer: 'No answer', EmailOnly: 'Email only' };
+        function outcomeLabel(k) { return outcomes[k] || k; }
+
+        function renderIrfs(irfs) {
+            if (!irfs.length) return '<div class="iqc-empty">Not on any IRF.</div>';
+            var trm = { 1: 'Under review', 2: 'Reviewed', 3: 'Removed' };
+            return '<div class="iqc-table-wrap"><table class="iqc-dt"><thead><tr><th>IRF</th><th>Channel owner</th><th>On IRF</th><th>Red markers</th><th>TRM</th><th>Auto-QC</th><th>Trial</th></tr></thead><tbody>' +
+                irfs.map(function (i) {
+                    return '<tr><td>' + esc(i.irfName || ('#' + i.irfId)) + '</td><td>' + esc(i.channelOwner || '—') + '</td>' +
+                        '<td>' + (i.isActive ? 'Active' : '<b class="is-red">Inactive</b>') + '</td><td>' + num(i.redMarkers) + '</td>' +
+                        '<td>' + esc(trm[i.trmStatus] || '—') + '</td><td>' + esc(i.autoQcVerdict || '—') + '</td><td>' + esc(i.trialStatus || '—') + '</td></tr>';
+                }).join('') + '</tbody></table></div>';
+        }
+
+        var evFilters = {
+            all: function () { return true; },
+            qc: function (e) { return e.kind === 'QC' || e.kind === 'Removal' || e.kind === 'Coaching'; },
+            calls: function (e) { return e.kind === 'Call' || e.kind === 'Coaching'; },
+            ai: function (e) { return e.kind === 'AI'; },
+            system: function (e) { return e.kind === 'System' || (e.kind === 'Removal' && e.metric === 'AutoQcRemoval'); }
+        };
+        var evTitles = {
+            SlaApproved: 'Payment SLA: Approved', SlaNotApproved: 'Payment SLA: Not approved', QCForm: 'QC form: QC form filled',
+            TrialKept: 'Trial: Kept', TrialRemoved: 'Trial: Removed', AuditKept: 'IRF audit: Kept', AuditRemoved: 'IRF audit: Removed',
+            TrmUnderReview: 'Red markers: Moved to Under review', TrmReviewed: 'Red markers: Moved to Reviewed', TrmRemoved: 'Red markers: Removed',
+            TiUnderReview: 'Total Interviews: Moved to Under review', TiReviewed: 'Total Interviews: Moved to Reviewed', TiRemoved: 'Total Interviews: Removed',
+            TrialFlagged: 'Trial flag raised', AutoQcFlag: 'Auto-QC flag', AutoQcRemoval: 'Auto-QC removal'
+        };
+        function evTitle(e) {
+            var amt = e.amount === null || e.amount === undefined ? null : Number(e.amount);
+            if (e.metric === 'ReportReviewed') return 'Report review: ' + (amt > 0 ? 'Penalty ' + amt + '%' : 'No penalty');
+            if (e.metric === 'AiPenalty') return 'AI review: Penalty ' + amt + '%';
+            if (e.metric === 'PlivoCall') return 'QC call: ' + (amt > 0 ? fmtDuration(amt) : (amt === 0 ? 'not connected' : 'talk time n/a'));
+            if (e.metric === 'Coaching') return 'Coaching session: ' + esc(e.status || '');
+            return evTitles[e.metric] || esc(e.metric);
+        }
+        function renderEvents() {
+            var list = state.events.filter(evFilters[state.eventFilter] || evFilters.all);
+            if (!list.length) { $('#iqcEvents').html('<div class="iqc-empty">No events.</div>'); return; }
+            var html = '', day = '';
+            list.forEach(function (e) {
+                var t = fmtIst(e.actionAtIst), d = t.slice(0, 10);
+                if (d !== day) { day = d; html += '<div class="iqc-day">' + esc(d) + '</div>'; }
+                var detail = e.detail || '';
+                if (e.metric === 'QCForm') detail = 'Red flags: ' + num(e.amount);
+                if (e.metric === 'Coaching') detail = detail.replace(/^(\w+)/, function (k) { return outcomeLabel(k); });
+                var sub = [e.actorEmail, e.irfName, detail, (e.metric === 'PlivoCall' || e.metric === 'Coaching' ? '' : e.status)].filter(Boolean).map(esc).join(' · ');
+                if (e.metric === 'PlivoCall' && e.status) sub += (sub ? ' · ' : '') + esc(e.status);
+                var links = '';
+                if (e.interviewId) {
+                    links = '<div class="iqc-ev__sub">Interview #' + esc(e.interviewId) + ': ' +
+                        '<a href="' + esc(fill(tpl.report, e.interviewId, e.irfId)) + '" target="_blank" rel="noopener">Report</a>' +
+                        '<a href="' + esc(fill(tpl.transcript, e.interviewId, e.irfId)) + '" target="_blank" rel="noopener">Transcript</a>' +
+                        '<a href="' + esc(fill(tpl.contradiction, e.interviewId, e.irfId)) + '" target="_blank" rel="noopener">Contradiction</a>' +
+                        '<a href="' + esc(fill(tpl.qcmerge, e.interviewId, e.irfId)) + '" target="_blank" rel="noopener">QC Merge</a></div>';
+                }
+                var url = safeUrl(e.recordingUrl);
+                var rec = url ? '<div><audio controls preload="none" src="' + esc(url) + '"></audio> <a href="' + esc(url) + '" target="_blank" rel="noopener">Open</a></div>' : '';
+                html += '<div class="iqc-ev"><div class="iqc-ev__time">' + esc(t.slice(11)) + '</div><div><i class="iqc-dot k-' + esc(e.kind) + '"></i></div>' +
+                    '<div style="min-width:0"><div class="iqc-ev__title">' + evTitle(e) + '</div><div class="iqc-ev__sub">' + sub + '</div>' + links + rec + '</div></div>';
+            });
+            $('#iqcEvents').html(html);
+        }
+
+        // ---------- email modal ----------
+        function themeBoxes(container, includeInternal) {
+            var themes = ((state.brief && state.brief.themes) || []).filter(function (t) { return includeInternal || !t.isInternal; });
+            $(container).html(themes.length ? themes.map(function (t) {
+                return '<label class="iqc-cb"><input type="checkbox" value="' + esc(t.key) + '" checked /> ' + esc(t.title) + ' <span class="iqc-ctx">(' + num(t.itemCount) + ')</span></label>';
+            }).join('') : '<div class="iqc-msg">No areas in this range.</div>');
+        }
+        function checkedThemes(container) { return $(container).find('input:checked').map(function () { return this.value; }).get(); }
+        function emailBody() {
+            return { interviewerEmail: state.current, from: state.from, to: state.to, themes: checkedThemes('#iqcEmailThemes'), note: $('#iqcEmailNote').val() };
+        }
+        function refreshPreview() {
+            $('#iqcEmailMsg').text('Building preview…');
+            post('/QCActivity/CoachingEmailPreview', emailBody()).done(function (p) {
+                p = p || {};
+                $('#iqcEmailSubject').text(p.subject ? 'Subject: ' + p.subject : '');
+                $('#iqcEmailPreview').html(p.html || '');   // server-built, every value HTML-encoded
+                $('#iqcEmailMsg').text(p.message || '').css('color', p.canSend ? '' : '#b91c1c');
+                $('#iqcEmailSend').prop('disabled', !p.canSend);
+            }).fail(function (xhr) { if (!onAuthError(xhr)) $('#iqcEmailMsg').text('Could not build the preview (' + xhr.status + ').').css('color', '#b91c1c'); });
+        }
+        function openEmail() {
+            var b = state.brief || {};
+            $('#iqcEmailTitle').text('Email summary to ' + (b.interviewerName || state.current));
+            themeBoxes('#iqcEmailThemes', false);
+            $('#iqcEmailNote').val(''); $('#iqcEmailPreview').empty(); $('#iqcEmailSubject').empty();
+            $('#iqcEmailModal').addClass('is-open');
+            refreshPreview();
+        }
+
+        // ---------- log modal ----------
+        function openLog() {
+            var b = state.brief || {};
+            $('#iqcLogTitle').text('Log coaching session with ' + (b.interviewerName || state.current));
+            themeBoxes('#iqcLogThemes', true);
+            $('#iqcLogAgreed').val(''); $('#iqcLogMsg').text(''); $('#iqcLogChannel').val('Call'); $('#iqcLogOutcome').val('AgreedToChange');
+            $('#iqcLogModal').addClass('is-open');
+        }
+
+        function closeModals() { $('.iqc-modal').removeClass('is-open'); }
+
+        // ---------- CSV ----------
+        function csvCell(v) {
+            if (v === null || v === undefined) return '';
+            var s = String(v); if (/^[=+\-@]/.test(s)) s = "'" + s;
+            return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+        }
+        function exportCsv() {
+            var cols = [['Name', 'interviewerName'], ['Email', 'interviewerEmail'], ['Active', 'isActive'], ['Active IRFs', 'activeIrfs'],
+                ['Completed interviews', 'completedInterviews'], ['QC reviewed', 'qcReviewed'], ['Penalised', 'penalised'], ['Avg penalty %', 'avgPenaltyPercent'],
+                ['AI penalised', 'aiPenalised'], ['Trial open', 'trialOpen'], ['Trial kept', 'trialKept'], ['Trial removed', 'trialRemoved'],
+                ['Audit open', 'auditOpen'], ['Audit kept', 'auditKept'], ['Audit removed', 'auditRemoved'], ['Red markers', 'redMarkers'],
+                ['TRM under review', 'trmUnderReviewNow'], ['TRM removed', 'trmRemoved'], ['Total Interviews status', 'tiStatus'], ['Total Interviews removed', 'tiRemoved'],
+                ['QC calls', 'calls'], ['Talk seconds', 'talkSeconds'], ['Distinct callers', 'distinctCallers'], ['Last call (IST)', 'lastCallAtIst'],
+                ['Coaching sessions', 'coachingSessions'], ['Open flags', 'openFlags'], ['Needs call', 'needsCall'], ['Attention score', 'attentionScore']];
+            var tiNames = { 1: 'Under review', 2: 'Reviewed', 3: 'Removed' };
+            var lines = [cols.map(function (c) { return csvCell(c[0]); }).join(',')];
+            sortedRows().forEach(function (r) {
+                lines.push(cols.map(function (c) {
+                    var v = r[c[1]];
+                    if (c[1] === 'tiStatus') v = tiNames[v] || '';
+                    if (c[1] === 'lastCallAtIst' && v) v = fmtIst(v);
+                    return csvCell(v);
+                }).join(','));
+            });
+            var blob = new Blob([String.fromCharCode(0xFEFF) + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+            var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = 'interviewer-qc-view_' + state.from + '_to_' + state.to + '.csv';
+            document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+        }
+
+        // ---------- wiring ----------
+        $('[data-preset]').on('click', function () {
+            state.to = istToday(); state.from = addDays(state.to, -(parseInt($(this).attr('data-preset'), 10) - 1)); load();
+        });
+        $('#iqcApply').on('click', function () {
+            var f = $('#iqcFrom').val(), t = $('#iqcTo').val();
+            if (f && t && f > t) { var x = f; f = t; t = x; }
+            if (f && t && daysBetween(f, t) + 1 > maxDays) f = addDays(t, -(maxDays - 1));
+            state.from = f || state.from; state.to = t || state.to; state.search = ($('#iqcSearch').val() || '').trim();
+            load();
+        });
+        $('#iqcSearch').on('keydown', function (e) { if (e.key === 'Enter') $('#iqcApply').click(); });
+        $('#iqcExport').on('click', exportCsv);
+        $(document).on('click', '.iqc-tile', function () { state.filter = $(this).attr('data-filter'); renderTiles(); renderTable(); });
+        $(document).on('click', '#iqcTable th[data-sort]', function () {
+            var k = $(this).attr('data-sort');
+            if (state.sortKey === k) state.sortAsc = !state.sortAsc; else { state.sortKey = k; state.sortAsc = k === 'interviewerName'; }
+            renderTable();
+        });
+        $(document).on('click keydown', '#iqcBody tr[data-email]', function (e) {
+            if (e.type === 'keydown' && e.key !== 'Enter') return;
+            openPanel($(this).attr('data-email'));
+        });
+        $('#iqcPanelClose, #iqcOverlay').on('click', closePanel);
+        $(document).on('click', '#iqcEvChips button', function () {
+            state.eventFilter = $(this).attr('data-ev');
+            $('#iqcEvChips button').removeClass('is-active'); $(this).addClass('is-active'); renderEvents();
+        });
+        $(document).on('click', '#iqcCallBtn', function () {
+            var b = state.brief || {};
+            if (typeof CommonCallButtonClick === 'function' && b.mobile) {
+                CommonCallButtonClick(b.interviewerName || b.interviewerEmail, b.mobile, b.interviewerEmail, null, null, 'Interviewer');
+            }
+        });
+        $(document).on('click', '#iqcEmailBtn', openEmail);
+        $(document).on('click', '#iqcLogBtn', openLog);
+        $('#iqcEmailRefresh').on('click', refreshPreview);
+        $(document).on('change', '#iqcEmailThemes input', refreshPreview);
+        $('#iqcEmailSend').on('click', function () {
+            var $b = $(this).prop('disabled', true);
+            $('#iqcEmailMsg').text('Sending…').css('color', '');
+            post('/QCActivity/SendCoachingEmail', emailBody()).done(function (r) {
+                r = r || {};
+                $('#iqcEmailMsg').text(r.message || '').css('color', r.ok ? '#15803d' : '#b91c1c');
+                if (r.ok) { setTimeout(function () { closeModals(); if (state.current) openPanel(state.current); }, 900); }
+                else $b.prop('disabled', false);
+            }).fail(function (xhr) { if (!onAuthError(xhr)) { $('#iqcEmailMsg').text('Could not send (' + xhr.status + ').').css('color', '#b91c1c'); $b.prop('disabled', false); } });
+        });
+        $('#iqcLogSave').on('click', function () {
+            var agreed = ($('#iqcLogAgreed').val() || '').trim();
+            if (agreed.length < 15) { $('#iqcLogMsg').text('Describe what was agreed in at least 15 characters.').css('color', '#b91c1c'); return; }
+            var $b = $(this).prop('disabled', true);
+            post('/QCActivity/LogCoachingSession', {
+                interviewerEmail: state.current, channel: $('#iqcLogChannel').val(), outcome: $('#iqcLogOutcome').val(),
+                themes: checkedThemes('#iqcLogThemes'), agreed: agreed, from: state.from, to: state.to
+            }).done(function (r) {
+                r = r || {};
+                $('#iqcLogMsg').text(r.message || '').css('color', r.ok ? '#15803d' : '#b91c1c');
+                if (r.ok) { setTimeout(function () { closeModals(); if (state.current) openPanel(state.current); load(); }, 900); }
+            }).fail(function (xhr) { if (!onAuthError(xhr)) $('#iqcLogMsg').text('Could not save (' + xhr.status + ').').css('color', '#b91c1c'); })
+              .always(function () { $b.prop('disabled', false); });
+        });
+        $(document).on('click', '[data-close-modal]', closeModals);
+        $('.iqc-modal').on('click', function (e) { if (e.target === this) closeModals(); });
+        $(document).on('keydown', function (e) {
+            if (e.key !== 'Escape') return;
+            if ($('.iqc-modal.is-open').length) closeModals(); else if (state.current) closePanel();
+        });
+
+        readQuery();
+        if (!state.to) state.to = istToday();
+        if (!state.from) state.from = addDays(state.to, -(defaultDays - 1));
+        load();
+        var deep = root.getAttribute('data-deeplink') || new URLSearchParams(window.location.search).get('interviewer');
+        if (deep) openPanel(deep);
+    })();
+</script>
+</body></html>

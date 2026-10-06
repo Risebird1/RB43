@@ -1,0 +1,114 @@
+using Dapper;
+using Microsoft.Extensions.Configuration;
+using Risebird.Entities.ViewModel;
+using Risebird.Repository.Interface;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Risebird.Repository
+{
+    /// <summary>
+    /// QC Activity dashboard data access. Both procedures read usp_QCActivity_CollectRows,
+    /// so a summary number and its drill-down always agree. Errors propagate to the service,
+    /// which logs them and returns an error message to the page.
+    /// </summary>
+    public class QCActivityDashboardRepository : IQCActivityDashboardRepository
+    {
+        private const int CommandTimeoutSeconds = 120;
+
+        private readonly string _connectionString;
+
+        public QCActivityDashboardRepository(IConfiguration configuration)
+        {
+            _connectionString = configuration["ConnectionString:DBConnectionString"];
+        }
+
+        public async Task<(IReadOnlyList<QCActivitySummaryRowVM> Rows, QCActivityBacklogVM Backlog)> GetSummaryAsync(
+            DateTime fromIst, DateTime toIst, bool onlyQualityController, string actorEmail = null)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@FromIst", fromIst.Date, DbType.Date);
+            parameters.Add("@ToIst", toIst.Date, DbType.Date);
+            parameters.Add("@OnlyQualityController", onlyQualityController);
+            parameters.Add("@ActorEmail", string.IsNullOrWhiteSpace(actorEmail) ? null : actorEmail.Trim(), DbType.AnsiString, size: 150);
+
+            using var con = new SqlConnection(_connectionString);
+            using var multi = await con.QueryMultipleAsync(
+                "dbo.usp_GetQCActivityDashboardSummary",
+                parameters,
+                commandTimeout: CommandTimeoutSeconds,
+                commandType: CommandType.StoredProcedure);
+
+            var rows = (await multi.ReadAsync<QCActivitySummaryRowVM>()).ToList();
+            var backlog = multi.IsConsumed
+                ? new QCActivityBacklogVM()
+                : (await multi.ReadFirstOrDefaultAsync<QCActivityBacklogVM>()) ?? new QCActivityBacklogVM();
+
+            return (rows, backlog);
+        }
+
+        public async Task<IReadOnlyList<QCActivityDetailRowVM>> GetDetailsAsync(
+            string actorEmail, string metric, DateTime fromIst, DateTime toIst)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@ActorEmail", actorEmail?.Trim(), DbType.AnsiString, size: 150);
+            parameters.Add("@Metric", metric, DbType.AnsiString, size: 40);
+            parameters.Add("@FromIst", fromIst.Date, DbType.Date);
+            parameters.Add("@ToIst", toIst.Date, DbType.Date);
+
+            using var con = new SqlConnection(_connectionString);
+            var rows = await con.QueryAsync<QCActivityDetailRowVM>(
+                "dbo.usp_GetQCActivityDashboardDetails",
+                parameters,
+                commandTimeout: CommandTimeoutSeconds,
+                commandType: CommandType.StoredProcedure);
+
+            return rows.ToList();
+        }
+
+        public async Task<IReadOnlyList<InterviewerQCRowVM>> GetInterviewerViewAsync(
+            DateTime fromIst, DateTime toIst, string search = null, string interviewerEmail = null)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@FromIst", fromIst.Date, DbType.Date);
+            parameters.Add("@ToIst", toIst.Date, DbType.Date);
+            parameters.Add("@Search", string.IsNullOrWhiteSpace(search) ? null : search.Trim(), DbType.String, size: 150);
+            parameters.Add("@InterviewerEmail", string.IsNullOrWhiteSpace(interviewerEmail) ? null : interviewerEmail.Trim(), DbType.AnsiString, size: 150);
+
+            using var con = new SqlConnection(_connectionString);
+            var rows = await con.QueryAsync<InterviewerQCRowVM>(
+                "dbo.usp_GetInterviewerQCView",
+                parameters,
+                commandTimeout: CommandTimeoutSeconds,
+                commandType: CommandType.StoredProcedure);
+
+            return rows.ToList();
+        }
+
+        public async Task<(IReadOnlyList<InterviewerQCIrfVM> Irfs, IReadOnlyList<InterviewerQCEventVM> Events)> GetInterviewerTimelineAsync(
+            string interviewerEmail, DateTime fromIst, DateTime toIst)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@InterviewerEmail", interviewerEmail?.Trim(), DbType.AnsiString, size: 150);
+            parameters.Add("@FromIst", fromIst.Date, DbType.Date);
+            parameters.Add("@ToIst", toIst.Date, DbType.Date);
+
+            using var con = new SqlConnection(_connectionString);
+            using var multi = await con.QueryMultipleAsync(
+                "dbo.usp_GetInterviewerQCTimeline",
+                parameters,
+                commandTimeout: CommandTimeoutSeconds,
+                commandType: CommandType.StoredProcedure);
+
+            var irfs = (await multi.ReadAsync<InterviewerQCIrfVM>()).ToList();
+            var events = multi.IsConsumed
+                ? new List<InterviewerQCEventVM>()
+                : (await multi.ReadAsync<InterviewerQCEventVM>()).ToList();
+            return (irfs, events);
+        }
+    }
+}
