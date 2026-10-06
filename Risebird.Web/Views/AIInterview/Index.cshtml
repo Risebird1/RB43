@@ -2042,7 +2042,22 @@
 .rb-tr-note { margin: 7px 0 10px; font-size: 13px; color: #a8b3c1; }
 .rb-tr-note.rb-tr-warn { color: #ffc107; }
 .rb-tr-text { width: 100%; border: 1px solid #3a4452; border-radius: 5px; padding: 10px 12px;
-    background: #121820; color: #e6ebf2; font: inherit; font-size: 14px; line-height: 1.5; resize: vertical; }
+    font: inherit; font-size: 14px; line-height: 1.5; resize: vertical; }
+/* The candidate has to be able to read this to check it, so the two colours that decide whether
+   they can are pinned rather than left to the cascade. This view carries six style blocks plus
+   external stylesheets, and a later rule was winning the background but not the text colour,
+   leaving pale grey on white. Dark on white: legible whatever else loads. */
+#transcriptReviewPanel textarea#transcriptReviewText {
+    background: #ffffff !important;
+    color: #12161c !important;
+    -webkit-text-fill-color: #12161c; /* Safari/iOS ignore `color` on some inputs */
+    caret-color: #12161c;
+    opacity: 1;
+}
+#transcriptReviewPanel textarea#transcriptReviewText::placeholder { color: #6b7684; opacity: 1; }
+#transcriptReviewPanel textarea#transcriptReviewText:focus {
+    outline: 2px solid #4eda92; outline-offset: 1px; border-color: #4eda92;
+}
 .rb-tr-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
 .rb-tr-btn { background: #4eda92; color: #10151c; border: 0; border-radius: 5px; padding: 9px 20px;
     font: inherit; font-weight: 600; cursor: pointer; }
