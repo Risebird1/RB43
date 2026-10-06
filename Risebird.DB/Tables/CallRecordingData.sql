@@ -43,3 +43,26 @@ END
 GO
 
 
+
+-- Plivo DialCallback data (QC Activity dashboard): hangup cause and end time of the dialled leg
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'HangupCause')
+      AND Object_ID = Object_ID(N'CallRecordingData'))
+BEGIN
+    ALTER TABLE CallRecordingData
+    Add HangupCause varchar(100) NULL
+END
+GO
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'EndTime')
+      AND Object_ID = Object_ID(N'CallRecordingData'))
+BEGIN
+    ALTER TABLE CallRecordingData
+    Add EndTime datetime NULL
+END
+GO

@@ -19,7 +19,8 @@ function moreless(id) {
         $('#read_' + id).val('Readmore');
     }
 }
-function RemoveInterviewerFromSkillChannel(interviewerEmail, irfid) {
+// source (optional): the calling page, e.g. 'TotalRedMarker', so the removal is logged against the right page (QC Activity dashboard).
+function RemoveInterviewerFromSkillChannel(interviewerEmail, irfid, source) {
     swal.fire({
         title: 'Are you sure?',
         text: 'Want to remove interviewer ' + interviewerEmail + ' from the Skill channel interviews?',
@@ -33,7 +34,7 @@ function RemoveInterviewerFromSkillChannel(interviewerEmail, irfid) {
                 $.ajax({
                     type: "POST",
                     url: "/Interview/RemoveInterviewerFromIRF",
-                    data: { interviewerEmail: interviewerEmail, irfid: irfid },
+                    data: { interviewerEmail: interviewerEmail, irfid: irfid, source: source || '' },
                     success: function (result) {
                         resolve(result);
                     }
