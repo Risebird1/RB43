@@ -4803,7 +4803,9 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
-                        var result = await _interviewerService.DeactivateSkillChannelInterviewer(irfId, interviewerEmail);
+                        // Log who removed the interviewer (QC Activity dashboard).
+                        var removedBy = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "");
+                        var result = await _interviewerService.DeactivateSkillChannelInterviewer(irfId, interviewerEmail, removedBy, "SkillChannelRemoval");
                         return Json(result);
                     }
                     else

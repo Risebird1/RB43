@@ -86,6 +86,13 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdatePlivoRecordingAsync(string callUuid, string recordingUrl, int? durationSeconds);
 
         /// <summary>
+        /// Plivo DialCallback / RecordingCallback data (usp_UpdateCallRecordingDataFromPlivo): talk time, end time (UTC),
+        /// status, hangup cause and recording URL on the existing CallRecordingData row for this CallUUID.
+        /// Duration is only ever raised; a stored recording URL is never overwritten. Returns false when no row matched.
+        /// </summary>
+        Task<bool> UpdateCallRecordingDataFromPlivo(string callSid, int? durationSeconds, System.DateTime? endTimeUtc, string status, string hangupCause, string recordingUri);
+
+        /// <summary>
         /// Plivo browser calls (CallSid is a UUID) created within <paramref name="maxAgeDays"/> days
         /// that still have no RecordingUri — used by the recording backfill job.
         /// </summary>
