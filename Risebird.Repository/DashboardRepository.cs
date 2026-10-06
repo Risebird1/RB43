@@ -2102,6 +2102,174 @@ Values
             return null;
         }
 
+        #region Bounce & Dropped Mail page
+        // List parameters of usp_GetEmailRecipientsActivityBounceDropped are CHAR(31)-separated (STRING_SPLIT).
+        private const char BounceListSeparator = '\u001f';
+
+        private static string JoinBounceFilter(string[] values)
+        {
+            if (values == null) return null;
+            var cleaned = values.Where(v => !string.IsNullOrWhiteSpace(v)).Select(v => v.Replace(BounceListSeparator.ToString(), string.Empty)).ToArray();
+            return cleaned.Length == 0 ? null : string.Join(BounceListSeparator, cleaned);
+        }
+
+        public async Task<BounceDroppedPageVM> GetBounceDroppedPage(BounceDroppedQuery query)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@recipientType", query.RecipientType);
+                parameters.Add("@startDate", query.StartDate, DbType.DateTime);
+                parameters.Add("@endDate", query.EndDate, DbType.DateTime);
+                parameters.Add("@timeNow", DateTime.Now, DbType.DateTime);
+                parameters.Add("@EmailId", query.EmailId);
+                parameters.Add("@IncludeResolved", query.IncludeResolved);
+                parameters.Add("@SkillChannels", JoinBounceFilter(query.SkillChannels));
+                parameters.Add("@SentBy", JoinBounceFilter(query.SentBy));
+                parameters.Add("@Recipients", JoinBounceFilter(query.Recipients));
+                parameters.Add("@Activities", JoinBounceFilter(query.Activities));
+                parameters.Add("@BounceReasons", JoinBounceFilter(query.BounceReasons));
+                parameters.Add("@Search", string.IsNullOrWhiteSpace(query.Search) ? null : query.Search.Trim());
+                parameters.Add("@SortColumn", query.SortColumn);
+                parameters.Add("@SortDir", query.SortDir);
+                parameters.Add("@Offset", query.Offset);
+                parameters.Add("@PageSize", query.PageSize);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    using (var multi = await con.QueryMultipleAsync("usp_GetEmailRecipientsActivityBounceDropped", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure))
+                    {
+                        var page = new BounceDroppedPageVM();
+                        page.Rows = (await multi.ReadAsync<MailRecipientActivityDetailsVM>()).ToList();
+                        var counts = await multi.ReadFirstOrDefaultAsync<BounceDroppedPageVM>();
+                        if (counts != null)
+                        {
+                            page.RecordsTotal = counts.RecordsTotal;
+                            page.RecordsFiltered = counts.RecordsFiltered;
+                        }
+                        return page;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<BounceDroppedFilterOption>> GetBounceDroppedFilterOptions(string recipientType, DateTime startDate, DateTime endDate, string emailId, bool includeResolved)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@recipientType", recipientType);
+                parameters.Add("@startDate", startDate, DbType.DateTime);
+                parameters.Add("@endDate", endDate, DbType.DateTime);
+                parameters.Add("@timeNow", DateTime.Now, DbType.DateTime);
+                parameters.Add("@EmailId", emailId);
+                parameters.Add("@IncludeResolved", includeResolved);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await con.QueryAsync<BounceDroppedFilterOption>("usp_GetBounceDroppedFilterOptions", parameters, commandTimeout: 600,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<BounceDroppedRowContext> GetBounceDroppedRowForAction(int sendgridEventId, int? candidateId, string emailId)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@SendgridEventId", sendgridEventId);
+                parameters.Add("@CandidateId", candidateId);
+                parameters.Add("@EmailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await con.QueryFirstOrDefaultAsync<BounceDroppedRowContext>("usp_GetBounceDroppedRowForAction", parameters, commandTimeout: 120,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<string> UpdateBouncedCandidateEmail(int candidateId, int sendgridEventId, string newEmail, string actionBy)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@CandidateId", candidateId);
+                parameters.Add("@SendgridEventId", sendgridEventId);
+                parameters.Add("@NewEmail", newEmail);
+                parameters.Add("@ActionBy", actionBy);
+                parameters.Add("@Result", dbType: DbType.String, direction: ParameterDirection.Output, size: 50);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await con.ExecuteAsync("usp_UpdateBouncedCandidateEmail", parameters, commandTimeout: 120,
+                        commandType: CommandType.StoredProcedure);
+                    return parameters.Get<string>("@Result");
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> ResolveMailBounce(int sendgridEventId, int? candidateId, string status, string note, string actionBy)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@SendgridEventId", sendgridEventId);
+                parameters.Add("@CandidateId", candidateId);
+                parameters.Add("@Status", status);
+                parameters.Add("@Note", note);
+                parameters.Add("@ActionBy", actionBy);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await con.ExecuteScalarAsync<bool>("usp_ResolveMailBounce", parameters, commandTimeout: 120,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<BounceMailContent> GetSentMailForBounce(int sendgridEventId)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@SendgridEventId", sendgridEventId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await con.QueryFirstOrDefaultAsync<BounceMailContent>("usp_GetBounceMailContent", parameters, commandTimeout: 120,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        #endregion
+
         public async Task<List<MeetingVM>> GetDMApproveDetailsRepository(string EmailId)
         {
             try

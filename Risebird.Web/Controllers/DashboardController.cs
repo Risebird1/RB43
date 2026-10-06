@@ -6133,71 +6133,105 @@ NEVER:
             }
         }
         #endregion
+        #region Bounce & Dropped Mail
+        // Who may open the page and use its row actions. "Unreachable" is not offered to Client users.
+        private static readonly string[] BounceDroppedProfiles = { "Admin", "HR", "SeniorHR", "SupportAdmin", "Client" };
+        private static readonly string[] BounceDroppedRisebirdProfiles = { "Admin", "HR", "SeniorHR", "SupportAdmin" };
+        private const string BounceNoAccessMessage = "Candidate not found or you do not have access.";
+        private const string BounceDuplicateMessage = "This email is already used by another user.";
+        private const string BounceDomainMessage = "Email domain is not allowed for a candidate.";
+        private const string BounceUpdateFailedMessage = "Could not update email. Please try again.";
+        private static readonly TimeSpan BounceResendCooldown = TimeSpan.FromMinutes(10);
+
+        /// <summary>Session email + profile, or nulls when not signed in.</summary>
+        private (string Email, string Profile) GetBounceDroppedSessionUser()
+        {
+            var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            var profile = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(profile))
+            {
+                return (null, null);
+            }
+            return (email, profile);
+        }
+
+        private MailActivityFilter GetBounceDroppedSessionFilter()
+        {
+            var json = HttpContext.Session.GetString("MailActivityFilters");
+            return string.IsNullOrEmpty(json) ? null : JsonConvert.DeserializeObject<MailActivityFilter>(json);
+        }
+
+        private static string[] NullIfEmpty(string[] values)
+        {
+            var cleaned = values?.Where(v => !string.IsNullOrWhiteSpace(v)).ToArray();
+            return cleaned == null || cleaned.Length == 0 ? null : cleaned;
+        }
+
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetEmailRecipientsBounceAndDropped(string recipientType, int returnBack, string pagetype)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    ViewBag.Profile = profileName;
-                    ViewBag.ReturnBack = returnBack;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client")
-                    {
-                        IEnumerable<MailRecipientActivityDetailsVM> recipients = null;
-
-                        if (HttpContext.Session.GetString("MailActivityFilters") != null && string.IsNullOrEmpty(recipientType))
-                        {
-                            var filter = JsonConvert.DeserializeObject<MailActivityFilter>(HttpContext.Session.GetString("MailActivityFilters"));
-
-                            recipientType = filter.RecipientType;
-                            ViewBag.ReturnBack = filter.returnBack;
-                            recipients = await _dashboardService.GetEmailRecipientsDetails(recipientType, filter.StartDate, filter.EndDate, emailid);
-
-                            filter.SkillChannel = filter.SkillChannel == null ? filter.SkillChannel = recipients.Select(x => x.SkillChannelName).ToArray() : filter.SkillChannel = filter.SkillChannel;
-                            filter.SentBy = filter.SentBy == null ? filter.SentBy = recipients.Select(x => x.SentBy).ToArray() : filter.SentBy = filter.SentBy;
-                            filter.Recipient = filter.Recipient == null ? filter.Recipient = recipients.Select(x => x.email).ToArray() : filter.Recipient = filter.Recipient;
-                            filter.Activity = filter.Activity == null ? filter.Activity = recipients.Select(x => x.latestEvent).ToArray() : filter.Activity = filter.Activity;
-
-                            recipients = recipients.Where(c => filter.SkillChannel != null && filter.SkillChannel.Contains(c.SkillChannelName)
-                                                    && ((filter.Activity != null && filter.Activity.Count() > 0) ? filter.Activity.Contains(c.latestEvent) : c.latestEvent == null)
-                                                    && ((filter.SentBy != null && filter.SentBy.Count() > 0) ? filter.SentBy.Contains(c.SentBy) : c.SentBy == null)
-                                                    && ((filter.Recipient != null && filter.Recipient.Count() > 0) ? filter.Recipient.Contains(c.email) : c.email == null)).ToList();
-                        }
-                        else
-                        {
-                            HttpContext.Session.Remove("MailActivityFilters");
-                            if (string.IsNullOrEmpty(recipientType))
-                            {
-                                recipientType = "Candidate";
-                            }
-
-                            recipients = await _dashboardService.GetEmailRecipientsDetails(recipientType, DateTime.Now.AddDays(-2), DateTime.Now, emailid);
-                        }
-                        if (recipients == null)
-                        {
-                            recipients = new List<MailRecipientActivityDetailsVM>();
-                        }
-                        ViewBag.recipientType = recipientType;
-
-                        ViewBag.UserProfile = profileName;
-                        ViewBag.pagetype = pagetype;
-
-                        return View(recipients);
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Session");
-                    }
-                }
-                else
+                var (emailid, profileName) = GetBounceDroppedSessionUser();
+                if (emailid == null || !BounceDroppedProfiles.Contains(profileName))
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
+                ViewBag.Profile = profileName;
+                ViewBag.UserProfile = profileName;
+                ViewBag.ReturnBack = returnBack;
+                ViewBag.pagetype = pagetype;
+
+                var filter = GetBounceDroppedSessionFilter();
+                if (filter != null && string.IsNullOrEmpty(recipientType))
+                {
+                    recipientType = filter.RecipientType;
+                    ViewBag.ReturnBack = filter.returnBack;
+                }
+                else
+                {
+                    // Opening a tab (recipientType in the query) starts from the default view.
+                    HttpContext.Session.Remove("MailActivityFilters");
+                    filter = new MailActivityFilter { RangeDays = BounceDroppedDateRange.DefaultDays };
+                }
+                if (string.IsNullOrEmpty(recipientType))
+                {
+                    recipientType = "Candidate";
+                }
+
+                var today = DateTime.Today;
+                var range = BounceDroppedDateRange.Resolve(filter.RangeDays, filter.StartDate, filter.EndDate, today);
+                var settings = new BounceDroppedPageSettingsVM
+                {
+                    RecipientType = recipientType,
+                    StartDate = range.Start,
+                    EndDate = range.End,
+                    RangeDays = range.RangeDays,
+                    MinDate = BounceDroppedDateRange.EarliestStart(today),
+                    MaxDate = today,
+                    RangeLabel = BounceDroppedDateRange.Label(range.Start, range.End),
+                    Notice = range.Notice,
+                    IncludeResolved = filter.IncludeResolved,
+                    SelectedSkillChannels = filter.SkillChannel ?? new string[0],
+                    SelectedSentBy = filter.SentBy ?? new string[0],
+                    SelectedRecipients = filter.Recipient ?? new string[0],
+                    SelectedActivities = filter.Activity ?? new string[0],
+                    SelectedBounceReasons = filter.BounceReason ?? new string[0],
+                };
+
+                // Filter options come from the whole date range, not from the rows on screen.
+                var options = await _dashboardService.GetBounceDroppedFilterOptions(recipientType, range.Start, range.End, emailid, filter.IncludeResolved)
+                              ?? Enumerable.Empty<BounceDroppedFilterOption>();
+                List<string> OptionsFor(string name) => options.Where(o => o.FilterName == name).Select(o => o.FilterValue).Distinct().ToList();
+                settings.SkillChannelOptions = OptionsFor("SkillChannel");
+                settings.SentByOptions = OptionsFor("SentBy");
+                settings.RecipientOptions = OptionsFor("Recipient");
+                settings.ActivityOptions = OptionsFor("Activity");
+                settings.BounceReasonOptions = OptionsFor("BounceReason");
+
+                ViewBag.recipientType = recipientType;
+                return View(settings);
             }
             catch (Exception ex)
             {
@@ -6205,6 +6239,8 @@ NEVER:
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> GetEmailRecipientsBounceAndDropped(MailActivityFilter filter, string recipientType, int returnBack, string pagetype)
         {
@@ -6214,6 +6250,28 @@ NEVER:
                 {
                     filter.RecipientType = recipientType;
                     filter.returnBack = returnBack;
+                    // Store the resolved window so a preset keeps meaning "ending today" and custom dates are clamped.
+                    var range = BounceDroppedDateRange.Resolve(filter.RangeDays, filter.StartDate, filter.EndDate, DateTime.Today);
+                    filter.RangeDays = range.RangeDays;
+                    if (range.RangeDays == null)
+                    {
+                        filter.StartDate = range.Start;
+                        filter.EndDate = range.End;
+                        if (range.Notice != null)
+                        {
+                            TempData["BounceDroppedNotice"] = range.Notice;
+                        }
+                    }
+                    else
+                    {
+                        filter.StartDate = null;
+                        filter.EndDate = null;
+                    }
+                    filter.SkillChannel = NullIfEmpty(filter.SkillChannel);
+                    filter.SentBy = NullIfEmpty(filter.SentBy);
+                    filter.Recipient = NullIfEmpty(filter.Recipient);
+                    filter.Activity = NullIfEmpty(filter.Activity);
+                    filter.BounceReason = NullIfEmpty(filter.BounceReason);
                     HttpContext.Session.SetString("MailActivityFilters", JsonConvert.SerializeObject(filter));
                 }
                 return RedirectToAction("GetEmailRecipientsBounceAndDropped", new { pagetype = pagetype });
@@ -6224,13 +6282,15 @@ NEVER:
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [Authorize]
         [HttpGet]
-        public async Task<IActionResult> ResetRecipientActivityDetails(int returnBack, string pagetype)
+        public async Task<IActionResult> ResetRecipientActivityDetails(int returnBack, string pagetype, string recipientType)
         {
             try
             {
                 HttpContext.Session.Remove("MailActivityFilters");
-                return RedirectToAction("GetEmailRecipientsBounceAndDropped", new { returnBack = returnBack, pagetype = pagetype });
+                return RedirectToAction("GetEmailRecipientsBounceAndDropped", new { recipientType = string.IsNullOrEmpty(recipientType) ? "Candidate" : recipientType, returnBack = returnBack, pagetype = pagetype });
             }
             catch (Exception ex)
             {
@@ -6238,6 +6298,347 @@ NEVER:
                 return RedirectToAction("Index");
             }
         }
+
+        /// <summary>Server-side paging endpoint of the Bounce &amp; Dropped Mail DataTable.</summary>
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GetEmailRecipientsBounceAndDroppedData(string recipientType)
+        {
+            int.TryParse(Request.Form["draw"], out var draw);
+            try
+            {
+                var (emailid, profileName) = GetBounceDroppedSessionUser();
+                if (emailid == null || !BounceDroppedProfiles.Contains(profileName))
+                {
+                    return Unauthorized();
+                }
+                if (recipientType != "Interviewer") recipientType = "Candidate";
+
+                int.TryParse(Request.Form["start"], out var offset);
+                int.TryParse(Request.Form["length"], out var pageSize);
+                if (pageSize <= 0) pageSize = 10;
+                if (pageSize > 100) pageSize = 100;
+                if (offset < 0) offset = 0;
+                string sortColumn = null;
+                if (int.TryParse(Request.Form["order[0][column]"], out var sortIndex))
+                {
+                    sortColumn = Request.Form[$"columns[{sortIndex}][name]"];
+                }
+                string sortDir = Request.Form["order[0][dir]"];
+
+                var filter = GetBounceDroppedSessionFilter();
+                if (filter != null && filter.RecipientType != recipientType)
+                {
+                    filter = null;
+                }
+                filter ??= new MailActivityFilter { RangeDays = BounceDroppedDateRange.DefaultDays };
+                var range = BounceDroppedDateRange.Resolve(filter.RangeDays, filter.StartDate, filter.EndDate, DateTime.Today);
+
+                var page = await _dashboardService.GetBounceDroppedPage(new BounceDroppedQuery
+                {
+                    RecipientType = recipientType,
+                    StartDate = range.Start,
+                    EndDate = range.End,
+                    EmailId = emailid,
+                    IncludeResolved = filter.IncludeResolved,
+                    SkillChannels = filter.SkillChannel,
+                    SentBy = filter.SentBy,
+                    Recipients = filter.Recipient,
+                    Activities = filter.Activity,
+                    BounceReasons = filter.BounceReason,
+                    Search = Request.Form["search[value]"],
+                    SortColumn = sortColumn,
+                    SortDir = sortDir,
+                    Offset = offset,
+                    PageSize = pageSize,
+                }) ?? new BounceDroppedPageVM();
+
+                var data = page.Rows.Select(r => new
+                {
+                    sendgridEventId = r.SendgridEventId,
+                    candidateId = r.CandidateId,
+                    interviewerId = r.InterviewerId,
+                    email = r.email,
+                    candidateName = r.candidateName,
+                    candidateEmail = r.candidateEmail,
+                    mailSubject = r.MailSubject,
+                    sentOn = r.SentOn.ToString("dd MMM yyyy hh:mm tt"),
+                    sentBy = r.SentBy,
+                    latestEvent = r.latestEvent,
+                    bounceReason = r.BounceReason,
+                    bounceStatus = r.status,
+                    bounceCount = r.BounceCount,
+                    activityDate = r.ActivityDate.ToString("dd MMM yyyy hh:mm tt"),
+                    skillChannelName = r.SkillChannelName,
+                    irfId = r.IRFId,
+                    interviewId = r.InterviewId,
+                    interviewDate = r.interviewDate?.ToString("dd MMM yyyy hh:mm tt"),
+                    channelOwner = r.ChannelOwner,
+                    mobileNumber = r.MobileNumber,
+                    resumeLink = r.ResumeLink,
+                    resolutionStatus = r.ResolutionStatus,
+                    clientDomain = r.ClientDomain,
+                    emailCorrected = r.EmailCorrected,
+                    isResolved = r.IsResolved,
+                    recipientActivityUrl = Url.Action("GetRecipientMailActivitiesByMessageId", "Mail", new { recipientEmail = r.email, messageId = r.sg_message_id }),
+                    scheduleUrl = Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = r.SchedulerUniqueid, CandidateEmail = r.candidateEmail }),
+                    sendInviteUrl = string.IsNullOrEmpty(r.candidateEmail) ? null : Url.Action("SendInvite", "Candidate", new { IRFName = r.IRFId, irfId = r.InterviewId, emailId = r.candidateEmail, endDate = r.EndDate }),
+                    openCandidateUrl = r.CandidateId.HasValue ? Url.Action("Edit", "Candidate", new { id = r.CandidateId, irfName = r.SkillChannelName, irfId = r.IRFId }) : null,
+                    editInterviewerUrl = r.InterviewerId.HasValue ? Url.Action("EditInterviewer", "User", new { id = r.InterviewerId }) : null,
+                });
+
+                return Json(new { draw, recordsTotal = page.RecordsTotal, recordsFiltered = page.RecordsFiltered, data });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { draw, recordsTotal = 0, recordsFiltered = 0, data = new object[0], error = "Could not load the list. Please try again." });
+            }
+        }
+
+        /// <summary>Mail body of a bounce row, loaded on click instead of being embedded in the page.</summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetBounceMailContent(int sendgridEventId, int? candidateId)
+        {
+            try
+            {
+                var (emailid, profileName) = GetBounceDroppedSessionUser();
+                if (emailid == null || !BounceDroppedProfiles.Contains(profileName))
+                {
+                    return Unauthorized();
+                }
+                var row = await _dashboardService.GetBounceDroppedRowForAction(sendgridEventId, candidateId, emailid);
+                if (row == null)
+                {
+                    return Json(new { success = false, message = "Mail not found or you do not have access." });
+                }
+                var mail = await _dashboardService.GetSentMailForBounce(sendgridEventId);
+                if (mail == null)
+                {
+                    return Json(new { success = false, message = "Mail not found or you do not have access." });
+                }
+                return Json(new { success = true, subject = mail.MailSubject, body = mail.MailBody ?? string.Empty });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not load the mail. Please try again." });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateBouncedCandidateEmail(int candidateId, int sendgridEventId, string newEmail, bool resend)
+        {
+            try
+            {
+                var (emailid, profileName) = GetBounceDroppedSessionUser();
+                if (emailid == null || !BounceDroppedProfiles.Contains(profileName))
+                {
+                    return Json(new { success = false, message = BounceNoAccessMessage });
+                }
+
+                newEmail = (newEmail ?? string.Empty).Trim().ToLowerInvariant();
+                if (newEmail.Length == 0 || newEmail.Length > 150 || !IsValidBounceEmail(newEmail))
+                {
+                    return Json(new { success = false, message = "Please enter a valid email address." });
+                }
+
+                // Never trust ids from the browser: the pair must be a row this user can see.
+                var row = await _dashboardService.GetBounceDroppedRowForAction(sendgridEventId, candidateId, emailid);
+                if (row == null || !row.CandidateId.HasValue)
+                {
+                    return Json(new { success = false, message = BounceNoAccessMessage });
+                }
+                if (IsClosedBounceStatus(row.ResolutionStatus))
+                {
+                    return Json(new { success = false, message = "This row is already closed." });
+                }
+                if (string.Equals(row.CandidateCurrentEmail?.Trim(), newEmail, StringComparison.OrdinalIgnoreCase))
+                {
+                    return Json(new { success = false, message = "The new email is the same as the current email." });
+                }
+
+                var billingOwner = row.IRFId.HasValue ? await _candidateService.FetchBillingownerById(row.IRFId.Value) : null;
+                if (CandidateEmailDomainRule.IsBlocked(newEmail, CandidateEmailDomainRule.GetClientDomain(billingOwner)))
+                {
+                    return Json(new { success = false, message = BounceDomainMessage });
+                }
+
+                var result = await _dashboardService.UpdateBouncedCandidateEmail(row.CandidateId.Value, sendgridEventId, newEmail, emailid);
+                switch (result)
+                {
+                    case "OK":
+                        break;
+                    case "DUPLICATE":
+                        return Json(new { success = false, message = BounceDuplicateMessage });
+                    case "NOT_FOUND":
+                        return Json(new { success = false, message = BounceNoAccessMessage });
+                    case "SAME":
+                        return Json(new { success = false, message = "The new email is the same as the current email." });
+                    default:
+                        return Json(new { success = false, message = BounceUpdateFailedMessage });
+                }
+
+                if (!resend)
+                {
+                    return Json(new { success = true, message = "Email updated", resent = false });
+                }
+
+                var resendResult = await ResendBouncedMailCore(sendgridEventId, row.CandidateId, emailid);
+                return Json(new
+                {
+                    success = true,
+                    message = resendResult.Success ? "Email updated and mail resent" : "Email updated",
+                    resent = resendResult.Success,
+                    resendMessage = resendResult.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = BounceUpdateFailedMessage });
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResendBouncedMail(int sendgridEventId, int? candidateId)
+        {
+            try
+            {
+                var (emailid, profileName) = GetBounceDroppedSessionUser();
+                if (emailid == null || !BounceDroppedProfiles.Contains(profileName))
+                {
+                    return Json(new { success = false, message = BounceNoAccessMessage });
+                }
+                var result = await ResendBouncedMailCore(sendgridEventId, candidateId, emailid);
+                return Json(new { success = result.Success, message = result.Message });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not resend the mail. Please try again." });
+            }
+        }
+
+        /// <summary>
+        /// Resends the stored SentMailDetails mail (original subject + HTML body, no CC/BCC) to the candidate's
+        /// current address and records MailBounceResolution(Status = 'Resent'). The body never comes from the client.
+        /// </summary>
+        private async Task<(bool Success, string Message)> ResendBouncedMailCore(int sendgridEventId, int? candidateId, string actionBy)
+        {
+            var row = await _dashboardService.GetBounceDroppedRowForAction(sendgridEventId, candidateId, actionBy);
+            if (row == null || !row.CandidateId.HasValue || string.IsNullOrWhiteSpace(row.CandidateCurrentEmail))
+            {
+                return (false, BounceNoAccessMessage);
+            }
+            if (IsClosedBounceStatus(row.ResolutionStatus))
+            {
+                return (false, "This row is already closed.");
+            }
+            if (string.Equals(row.CandidateCurrentEmail.Trim(), row.BouncedEmail?.Trim(), StringComparison.OrdinalIgnoreCase))
+            {
+                return (false, "Fix the email first.");
+            }
+            if (row.LastResentAt.HasValue && DateTime.Now - row.LastResentAt.Value < BounceResendCooldown)
+            {
+                return (false, "This mail was resent less than 10 minutes ago. Please wait before resending.");
+            }
+
+            var mail = await _dashboardService.GetSentMailForBounce(sendgridEventId);
+            if (mail == null || string.IsNullOrWhiteSpace(mail.MailBody))
+            {
+                return (false, "The original mail could not be found.");
+            }
+
+            var sendResult = await _notificationHelper.ResendStoredMail(row.CandidateCurrentEmail, mail.MailSubject, mail.MailBody, mail.IRFId, mail.InterviewId);
+            if (sendResult != "Mail sent successfully.")
+            {
+                return (false, "Could not resend the mail. Please try again.");
+            }
+
+            await _dashboardService.ResolveMailBounce(sendgridEventId, row.CandidateId, "Resent", "Resent to " + row.CandidateCurrentEmail, actionBy);
+            return (true, "Mail resent to " + row.CandidateCurrentEmail);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResolveMailBounce(int sendgridEventId, int? candidateId, string status, string note)
+        {
+            try
+            {
+                var (emailid, profileName) = GetBounceDroppedSessionUser();
+                if (emailid == null || !BounceDroppedProfiles.Contains(profileName))
+                {
+                    return Json(new { success = false, message = BounceNoAccessMessage });
+                }
+                if (status != "Resolved" && status != "Unreachable")
+                {
+                    return Json(new { success = false, message = "Invalid status." });
+                }
+                if (status == "Unreachable" && !BounceDroppedRisebirdProfiles.Contains(profileName))
+                {
+                    return Json(new { success = false, message = BounceNoAccessMessage });
+                }
+                note = note?.Trim();
+                if (status == "Unreachable" && string.IsNullOrEmpty(note))
+                {
+                    return Json(new { success = false, message = "Please add a note." });
+                }
+                if (note != null && note.Length > 500)
+                {
+                    return Json(new { success = false, message = "Note must be 500 characters or less." });
+                }
+
+                var row = await _dashboardService.GetBounceDroppedRowForAction(sendgridEventId, candidateId, emailid);
+                if (row == null)
+                {
+                    return Json(new { success = false, message = BounceNoAccessMessage });
+                }
+                if (IsClosedBounceStatus(row.ResolutionStatus))
+                {
+                    return Json(new { success = false, message = "This row is already closed." });
+                }
+
+                var ok = await _dashboardService.ResolveMailBounce(sendgridEventId, row.CandidateId, status, note, emailid);
+                return Json(ok
+                    ? new { success = true, message = status == "Resolved" ? "Marked as resolved" : "Marked as unreachable" }
+                    : new { success = false, message = "Could not save. Please try again." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not save. Please try again." });
+            }
+        }
+
+        private static bool IsClosedBounceStatus(string status) =>
+            status == "Resolved" || status == "Unreachable" || status == "Resent";
+
+        private static bool IsValidBounceEmail(string email)
+        {
+            if (email.Contains(" ") || email.Count(c => c == '@') != 1)
+            {
+                return false;
+            }
+            try
+            {
+                var address = new System.Net.Mail.MailAddress(email);
+                var domain = address.Host;
+                return address.Address == email && domain.Contains('.') && !domain.StartsWith('.') && !domain.EndsWith('.');
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
+        }
+        #endregion
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetDMApproveDetails(int returnBack)
