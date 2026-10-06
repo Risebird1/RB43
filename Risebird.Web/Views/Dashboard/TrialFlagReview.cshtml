@@ -1069,6 +1069,8 @@
             var coded = row.interviewerCodedId || row.InterviewerCodedId || '';
             var phone = displayPhone(row.interviewerMobileNumber || row.InterviewerMobileNumber);
             var phoneH = telHref(row.interviewerMobileNumber || row.InterviewerMobileNumber);
+            var rawPhone = String(row.interviewerMobileNumber || row.InterviewerMobileNumber || '').replace(/[^\d]/g, '');
+            var jsq = function (s) { return String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/'/g, "\\'"); };
             var alt = displayPhone(row.interviewerAltMobileNumber || row.InterviewerAltMobileNumber);
             var altH = telHref(row.interviewerAltMobileNumber || row.InterviewerAltMobileNumber);
             var uid = row.interviewerUserId || row.InterviewerUserId || 0;
@@ -1077,7 +1079,9 @@
                 + '<div class="tfr-interviewer__coded"><span class="tfr-interviewer__coded-label">Coded</span> ' + esc(coded || '—') + '</div>';
             if (email && email.toLowerCase() !== String(name).toLowerCase())
                 html += '<div class="tfr-interviewer__email">' + esc(email) + '</div>';
-            if (phoneH && phone) html += '<div class="tfr-phone"><a href="' + phoneH + '">' + esc(phone) + '</a></div>';
+            if (phoneH && phone) html += '<div class="tfr-phone"><a href="' + phoneH + '">' + esc(phone) + '</a>'
+                + (rawPhone ? ' <span class="call rb-call-icon" role="button" style="margin-left:4px;" title="Call via Risebird softphone" onclick="CommonCallButtonClickEditable(\'' + jsq(name) + '\',\'' + rawPhone + '\',\'' + jsq(email) + '\',null,null,\'Interviewer\')"><i class="fas fa-phone-alt"></i></span>' : '')
+                + '</div>';
             if (altH && alt && altH !== phoneH) html += '<div class="tfr-phone tfr-phone--alt"><a href="' + altH + '">' + esc(alt) + '</a></div>';
             if (row.isSuspicious || row.IsSuspicious) {
                 html += '<span class="tfr-suspicious-badge"><i class="fa fa-user-secret"></i> Suspicious</span>';
@@ -1667,3 +1671,7 @@
         };
     })();
 </script>
+
+@* Manual click-to-call: shared provider modal + TwilioCallMaker.js (added for interviewer click-to-call). *@
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+<script src="~/js/TwilioCallMaker.js" asp-append-version="true"></script>

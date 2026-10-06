@@ -416,6 +416,13 @@
                                                 <td class="col-phone" style="font-size:12px;">
                                                     @{ string displayPhone = !string.IsNullOrEmpty(r.UserMobileNumber) ? r.UserMobileNumber : r.Phone; }
                                                     @(displayPhone ?? "—")
+                                                    @if (!string.IsNullOrEmpty(displayPhone))
+                                                    {
+                                                        <span class="call rb-call-icon ms-1" role="button" title="Call this interviewer"
+                                                              onclick="CommonCallButtonClickEditable('@(r.InterviewerName)', '@displayPhone', '@(r.UserEmail ?? r.SenderEmail ?? "")', null, null, 'Interviewer')">
+                                                            <i class="fas fa-phone-alt"></i>
+                                                        </span>
+                                                    }
                                                 </td>
                                                 <td class="col-job" style="font-size:12px;">
                                                     <span style="white-space: break-spaces;"> @(r.JobTitle ?? "—")</span>
@@ -822,7 +829,11 @@
     </div>
 </div>
 
+@* Manual click-to-call: shared provider modal (CommonCallButtonClick dials the interviewer). *@
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+
 @section scripts {
+<script src="~/js/TwilioCallMaker.js" asp-append-version="true"></script>
 <script>
     var currentRecordId = null, currentRecord = null;
     var canDelete = @(canDelete ? "true" : "false");
