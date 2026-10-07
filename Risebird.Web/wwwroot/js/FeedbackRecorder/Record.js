@@ -10,7 +10,9 @@ var input; 							//MediaStreamAudioSourceNode we'll be recording
 // shim for AudioContext when it's not avb. 
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext;//audio context to help us record
-var interviewId;
+// Own name (was the global "interviewId"): TwilioCallMaker.js declares "let interviewId", and a global var with the same name
+// made the browser reject that script on pages loading both (e.g. IRF/DeliveryHeadInstruction), so calling did nothing.
+var feedbackRecordInterviewId;
 var irfid;
 var candidateType;
 var smeProfileId;
@@ -92,7 +94,7 @@ function stopRecording(id, canType) {
     document.getElementById("cancelRecButton").disabled = true;
     document.getElementById("recordingStatus").innerHTML = "Recording stopped!";
     setTimeout(afterTimeOut, 500);
-    interviewId = id;
+    feedbackRecordInterviewId = id;
     candidateType = canType;
     //tell the recorder to stop the recording
     rec.stop();
@@ -120,7 +122,7 @@ function createDownloadLink(blob) {
     var link = document.createElement('a');
     //var recordingList = document.getElementById("recordingsList");
     //name of .wav file to use during upload and download (without extendion)
-    var filename = "Audio_FeedBack_" + interviewId + "_" + new Date().toISOString();//new Date().toISOString();
+    var filename = "Audio_FeedBack_" + feedbackRecordInterviewId + "_" + new Date().toISOString();//new Date().toISOString();
 
     //add controls to the <audio> element
     au.controls = true;
@@ -197,7 +199,7 @@ function stopIRFRecording(id) {
     document.getElementById("startRecButton").disabled = false;
     document.getElementById("cancelRecButton").disabled = true;
     document.getElementById("recordingStatus").innerHTML = "Recording stopped!";
-    interviewId = id;
+    feedbackRecordInterviewId = id;
     candidateType = 3;
     //tell the recorder to stop the recording
     rec.stop();
@@ -219,7 +221,7 @@ function createIRFDownloadLink(blob) {
     var au = document.createElement('audio');
     var li = document.createElement('div');
     var link = document.createElement('a');
-    var filename = "Audio_ClientIRF_" + interviewId + "_" + new Date().toISOString();
+    var filename = "Audio_ClientIRF_" + feedbackRecordInterviewId + "_" + new Date().toISOString();
 
     au.controls = true;
     au.src = url;
@@ -317,7 +319,7 @@ function stopClientRecording(id,_irfid) {
     document.getElementById("cancelClientRecButton").disabled = true;
     document.getElementById("clientRecordingStatus").innerHTML = "Recording stopped!";
     setTimeout(afterClientRecordingTimeOut, 500);
-    interviewId = id;
+    feedbackRecordInterviewId = id;
     irfid = _irfid;
     //candidateType = canType;
     //tell the recorder to stop the recording
@@ -334,10 +336,10 @@ function stopClientRecording(id,_irfid) {
 
 function createClientRecordingDownloadLink(blob) {
 
-    var filename = "Audio_ClientFeedback_" + interviewId + "_" + new Date().toISOString();
+    var filename = "Audio_ClientFeedback_" + feedbackRecordInterviewId + "_" + new Date().toISOString();
     var fd = new FormData();
     fd.append("audio_data", blob, filename + ".wav");
-    fd.append('interviewId', interviewId);
+    fd.append('interviewId', feedbackRecordInterviewId);
     fd.append('irfid', irfid);
     fd.append('isClientFeedback', true);
 

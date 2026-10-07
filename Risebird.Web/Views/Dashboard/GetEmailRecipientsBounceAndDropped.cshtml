@@ -52,6 +52,12 @@
     .bd-status.Resent, .bd-status.Resolved { background: #e8f5e9; color: #1b5e20; }
     .bd-status.Unreachable { background: #ffebee; color: #b71c1c; }
     .bd-range-label { font-size: 13px; color: #455a64; margin: 8px 0 4px; }
+    /* Long subjects / bounce reasons wrap inside their own column instead of running over the next one. */
+    .bd-text { min-width: 180px; max-width: 260px; white-space: normal; word-break: break-word; overflow-wrap: anywhere; line-height: 1.4; }
+    .bd-text .bd-more-text { display: none; }
+    .bd-text.bd-expanded .bd-more-text { display: inline; }
+    .bd-text.bd-expanded .bd-ellipsis { display: none; }
+    .bd-text .bd-toggle { display: inline-block; margin-left: 4px; font-size: 12px; color: #039BE5; cursor: pointer; white-space: nowrap; }
     .bd-notice { font-size: 13px; color: #8a6d3b; background: #fcf8e3; border: 1px solid #faebcc; padding: 6px 10px; border-radius: 4px; margin: 6px 0; }
     .bd-modal-error { color: #c62828; font-size: 13px; margin-top: 8px; }
     .bd-readonly dt { font-weight: 600; font-size: 12px; color: #607d8b; }
@@ -485,6 +491,24 @@
         return value.length > len ? value.substring(0, len) + '…' : value;
     }
 
+    // Wrapping text block: the first `len` characters, with Read more / Read less for the rest.
+    function readMore(value, len) {
+        value = value || '';
+        if (value.length <= len) {
+            return '<div class="bd-text">' + esc(value) + '</div>';
+        }
+        return '<div class="bd-text">' + esc(value.substring(0, len))
+            + '<span class="bd-ellipsis">…</span><span class="bd-more-text">' + esc(value.substring(len)) + '</span>'
+            + '<a class="bd-toggle" role="button" tabindex="0">Read more</a></div>';
+    }
+
+    $(document).on('click keydown', '#recipientsTable .bd-toggle', function (e) {
+        if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        var $box = $(this).closest('.bd-text').toggleClass('bd-expanded');
+        $(this).text($box.hasClass('bd-expanded') ? 'Read less' : 'Read more');
+    });
+
     function bdToast(message, ok) {
         var $t = $('#bdToast');
         $t.removeClass('ok err').addClass(ok ? 'ok' : 'err').text(message).stop(true, true).fadeIn(150);
@@ -663,7 +687,7 @@
             columns: [
                 { data: 'email', name: 'email', render: function (d) { return esc(d); } },
                 { data: 'candidateName', name: 'candidateName', render: function (d) { return esc(d); } },
-                { data: 'mailSubject', name: 'MailSubject', render: function (d) { return '<span title="' + esc(d) + '">' + esc(truncate(d, 60)) + '</span>'; } },
+                { data: 'mailSubject', name: 'MailSubject', render: function (d) { return readMore(d, 60); } },
                 { data: null, orderable: false, render: function (d, t, row) { return '<a class="bd-content" data-id="' + row.sendgridEventId + '" style="color:blue; cursor:pointer"><u>Content</u></a>'; } },
                 { data: 'sentOn', name: 'SentOn', render: function (d) { return esc(d); } },
                 { data: 'sentBy', name: 'SentBy', render: function (d) { return esc(d); } },
@@ -671,7 +695,7 @@
                 {
                     data: 'bounceReason', name: 'BounceReason', render: function (d, t, row) {
                         var full = (d || '') + (row.bounceStatus ? ' (' + row.bounceStatus + ')' : '');
-                        return '<span title="' + esc(full) + '">' + esc(truncate(full, 60)) + '</span>';
+                        return readMore(full, 60);
                     }
                 },
                 { data: 'bounceCount', name: 'BounceCount', render: function (d) { return esc(d); } },

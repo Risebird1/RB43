@@ -72,8 +72,31 @@ async function initializeTwilioAfterGesture() {
     console.log("Initializing Twilio Device...");
 
     await GenerateToken();
-    isDeviceInitialized = true;
-    console.log("Twilio Device ready.");
+    // Only count it as done when the device really exists, so a failed start (e.g. SDK not loaded) can be retried.
+    isDeviceInitialized = !!device;
+    console.log(isDeviceInitialized ? "Twilio Device ready." : "Twilio Device not ready.");
+}
+
+// The Twilio browser SDK is loaded by _Layout, but pages on _PublicLayout / _PublicLayout2 (e.g. IRF/DeliveryHeadInstruction)
+// do not include it, so load it on demand here, the same way PlivoCallMaker.js loads the Plivo SDK.
+const TWILIO_SDK_URL = "/lib/twilio.min.js";
+let twilioSdkPromise = null;
+
+function ensureTwilioSdk() {
+    if (typeof Twilio !== "undefined") return Promise.resolve();
+    if (!twilioSdkPromise) {
+        twilioSdkPromise = new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = TWILIO_SDK_URL;
+            script.onload = () => resolve();
+            script.onerror = () => {
+                twilioSdkPromise = null; // allow a retry on the next call
+                reject(new Error("Could not load the Twilio SDK"));
+            };
+            document.head.appendChild(script);
+        });
+    }
+    return twilioSdkPromise;
 }
 
 document.addEventListener("click", initializeTwilioAfterGesture, { once: true });
@@ -94,6 +117,7 @@ async function GenerateToken() {
         const data = await response.json();
 
         if (!device) {
+            await ensureTwilioSdk();
             setupDevice(data.token);
         } else {
             await device.updateToken(data.token);
@@ -141,7 +165,17 @@ function callRecipient(phoneNumber) {
     }
 
     if (!device) {
-        console.error("Device not ready. Wait for initialization or user gesture.");
+        // Not started yet (or the start failed): start it now, then dial once. Previously the call was silently dropped.
+        isDeviceInitialized = false;
+        initializeTwilioAfterGesture().then(() => {
+            if (device) {
+                callRecipient(phoneNumber);
+            } else {
+                console.error("Twilio device could not be started.");
+                const label = document.getElementById("callingLabel");
+                if (label) label.innerHTML = "Call failed: calling is not available right now. Please try again.";
+            }
+        });
         return;
     }
 
@@ -363,6 +397,13 @@ function CommonCallButtonClick(name, mobileNumber, emailId = '', interviewIdPara
 
     showCallModal(callRecipientName);
     callRecipient(callRecipientPhoneNumber);
+}
+
+// Same as CommonCallButtonClickEditable, reading the values from the element's data- attributes
+// (data-name, data-mobile, data-email, data-interview, data-irf, data-type) so quotes in names cannot break the click.
+function CommonCallButtonClickFromData(el) {
+    const d = (el && el.dataset) || {};
+    CommonCallButtonClickEditable(d.name || '', d.mobile || '', d.email || '', d.interview || null, d.irf || null, d.type || null);
 }
 
 function CommonCallButtonClickJson(imid) {

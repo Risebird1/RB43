@@ -283,8 +283,11 @@
                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                         {
                                                             <td>
+                                                                @* Values go through data- attributes (read in JS), so names like D'Souza cannot break the click. *@
                                                                 <span aria-label="Click here to call the candidate">
-                                                                    <span onclick="CommonCallButtonClick('@item.candidateName','@item.MobileNumber', '@item.candidateEmail','@item.id', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" width="20"></span>
+                                                                    <span class="imd-call-candidate" role="button" style="cursor:pointer;" title="Click here to call the candidate."
+                                                                          data-name="@item.candidateName" data-mobile="@item.MobileNumber" data-email="@item.candidateEmail"
+                                                                          data-interview="@item.id" data-irf="@item.irfIntId"><img src="/img/calling.png" width="20"></span>
                                                                 </span>@item.MobileNumber
                                                             </td>
                                                         }
@@ -487,7 +490,7 @@
                 </div>
                 <div class="col-md-12 ">
                     <div class="text-right">
-                        <input style="color:#fff;line-height: 13px;" type="button" onclick="closeZoomMeetingHistory()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
+                        <input style="color:#fff;line-height: 13px;" type="button" onclick="closeZoomMeetingHistory()" id="zoomHistoryCloseButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
                 </div>
             </div>
@@ -500,7 +503,17 @@
 <div id="modal_candidateCommunicationDetails_placeholder"></div>
 
 <script src="~/js/ModalFormServerValidation.js?v=2024"></script>
-<script src="~/js/TwilioCallMaker.js?v=2024"></script>
+@* Shared call popup (Twilio / Plivo): CommonCallButtonClick needs it; without it the candidate call icon did nothing. *@
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+<script src="~/js/TwilioCallMaker.js" asp-append-version="true"></script>
+<script>
+    // Candidate call (Candidate Mobile column): opens the call popup and dials, as on Candidate/GetCandidates.
+    // Delegated, so it also works on rows drawn by table paging.
+    $(document).on('click', '.imd-call-candidate', function () {
+        var d = this.dataset;
+        CommonCallButtonClick(d.name || '', d.mobile || '', d.email || '', d.interview || null, d.irf || null, 'Candidate');
+    });
+</script>
 <script src="~/autocallcandidate.js"></script>
 <script>
     function searchResult() {
