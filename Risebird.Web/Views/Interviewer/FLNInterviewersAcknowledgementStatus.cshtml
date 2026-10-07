@@ -163,7 +163,16 @@
                                                             {
                                                                 <td></td>
                                                             }
-                                                            <td>@item.MobileNumber</td>
+                                                            <td>
+                                                                @item.MobileNumber
+                                                                @if (!string.IsNullOrEmpty(item.MobileNumber))
+                                                                {
+                                                                    <span class="call rb-call-icon ms-1" role="button" title="Call this interviewer"
+                                                                          onclick="CommonCallButtonClickEditable('@(item.Name)', '@item.MobileNumber', '', null, null, 'Interviewer')">
+                                                                        <i class="fas fa-phone-alt"></i>
+                                                                    </span>
+                                                                }
+                                                            </td>
                                                             <td>@item.Name</td>
                                                             <td>@item.AcknowledgementStatus</td>
                                                             <td>@item.TargetSkillChannel</td>
@@ -340,3 +349,7 @@
 
 
 
+
+@* Manual click-to-call: shared provider modal + TwilioCallMaker.js (added for interviewer click-to-call). *@
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+<script src="~/js/TwilioCallMaker.js" asp-append-version="true"></script>

@@ -107,7 +107,7 @@
                                                                 <span class="call-area">
                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                     {
-                                                                        <span data-toggle="tooltip" data-placement="top" title="Click here to call." onclick="CommonCallButtonClick('@item.InterviewerName','@item.MobileNumber','@item.EmailId')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="20" /></span>
+                                                                        <span data-toggle="tooltip" data-placement="top" title="Click here to call." onclick="CommonCallButtonClickEditable('@item.InterviewerName','@item.MobileNumber','@(item.EmailId ?? "")', null, null, 'Interviewer')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="20" /></span>
                                                                     }
                                                                 </span>@item.MobileNumber
                                                             </td>
@@ -301,3 +301,7 @@
         }
     }
 </script>
+
+@* Manual click-to-call: shared provider modal + TwilioCallMaker.js (added for interviewer click-to-call). *@
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+<script src="~/js/TwilioCallMaker.js" asp-append-version="true"></script>
