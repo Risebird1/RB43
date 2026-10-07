@@ -81,7 +81,7 @@ tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumbe
 ca.IsResumeRedactFailed,  
 --si.Uniqueid as SchedulerUniqueid,  
 SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid  
-,ISNULL(wc.WhatsappCount, 0) as WhatsappCount, ISNULL(cc.CallsCount, 0) as CallsCount, ISNULL(mc.MailCount, 0) as MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue,IRF.JDTiltle,ulcho.EmailId as ChannelOwnerEmail,  
+,ISNULL(CountTable.WhatsappCount, 0) as WhatsappCount, ISNULL(CountTable.CallsCount, 0) as CallsCount, ISNULL(CountTable.MailCount, 0) as MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue,IRF.JDTiltle,ulcho.EmailId as ChannelOwnerEmail,  
 cci.IsColdCandidate, ca.AIResumeScreeningVerdict, ca.AIResumeScreeningScore   
 from Candidate ca join IRF on ca.IRFId=IRF.id      
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id        
@@ -118,7 +118,7 @@ tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumbe
 ca.IsResumeRedactFailed,  
 --si.Uniqueid as SchedulerUniqueid,  
 SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid  
-,ISNULL(wc.WhatsappCount, 0) as WhatsappCount, ISNULL(cc.CallsCount, 0) as CallsCount, ISNULL(mc.MailCount, 0) as MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue,IRF.JDTiltle,ulcho.EmailId as ChannelOwnerEmail,  
+,ISNULL(CountTable.WhatsappCount, 0) as WhatsappCount, ISNULL(CountTable.CallsCount, 0) as CallsCount, ISNULL(CountTable.MailCount, 0) as MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue,IRF.JDTiltle,ulcho.EmailId as ChannelOwnerEmail,  
 cci.IsColdCandidate, ca.AIResumeScreeningVerdict, ca.AIResumeScreeningScore    
 from Candidate ca join IRF on ca.IRFId=IRF.id      
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id        
@@ -156,7 +156,7 @@ tasc.AttemptsCount, ca.ClientHRAttemptContact, ca.ProfileSource,ul.WhatsappNumbe
 ca.IsResumeRedactFailed,  
 --si.Uniqueid as SchedulerUniqueid,  
 SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid  
-,ISNULL(wc.WhatsappCount, 0) as WhatsappCount, ISNULL(cc.CallsCount, 0) as CallsCount, ISNULL(mc.MailCount, 0) as MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue, IRF.JDTiltle,
+,ISNULL(CountTable.WhatsappCount, 0) as WhatsappCount, ISNULL(CountTable.CallsCount, 0) as CallsCount, ISNULL(CountTable.MailCount, 0) as MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue, IRF.JDTiltle,
 ulcho.EmailId as ChannelOwnerEmail  
 ,cci.IsColdCandidate, ca.AIResumeScreeningVerdict, ca.AIResumeScreeningScore  
 from Candidate ca join IRF on ca.IRFId=IRF.id      
