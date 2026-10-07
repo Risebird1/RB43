@@ -1,4 +1,4 @@
-﻿using Risebird.Entities.Data;
+using Risebird.Entities.Data;
 using System;
 
 namespace Risebird.Entities.ViewModel
@@ -37,5 +37,27 @@ namespace Risebird.Entities.ViewModel
         public string IsAvailable { get; set; }
         public string CampaignName { get; set; }
         public string SchedulerUniqueid { get; set; }
+        public int? InterviewerId { get; set; }
+        public int? CandidateId { get; set; }
+        public int SendgridEventId { get; set; }
+        public int SentMailDetailsId { get; set; }
+        public string BounceReason { get; set; }
+        public int BounceCount { get; set; }
+        /// <summary>Latest MailBounceResolution.Status: EmailCorrected | Resent | Resolved | Unreachable; null = Open.</summary>
+        public string ResolutionStatus { get; set; }
+        /// <summary>Domain of the skill channel's billing owner; not allowed for a candidate email.</summary>
+        public string ClientDomain { get; set; }
+
+        /// <summary>
+        /// The bounced address has been fixed: either this row was corrected, or the candidate's current
+        /// address no longer matches the bounced one (another row of the same address was corrected).
+        /// </summary>
+        public bool EmailCorrected =>
+            ResolutionStatus == "EmailCorrected"
+            || (!string.IsNullOrWhiteSpace(candidateEmail) && !string.IsNullOrWhiteSpace(email)
+                && !string.Equals(candidateEmail.Trim(), email.Trim(), StringComparison.OrdinalIgnoreCase));
+
+        public bool IsResolved =>
+            ResolutionStatus == "Resolved" || ResolutionStatus == "Unreachable" || ResolutionStatus == "Resent";
     }
 }

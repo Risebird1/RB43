@@ -112,6 +112,11 @@ namespace Risebird.CommonHelper.Interface
         /// string.Format. Logged in SentMailDetails like every mail sent through SendMail.
         /// </summary>
         Task<string> SendInterviewerCoachingEmail(string toEmail, string toName, string replyToEmail, string subject, string htmlBody);
+        /// <summary>
+        /// Resends a stored mail (subject + HTML body from SentMailDetails) to a single corrected address.
+        /// No CC/BCC. Logged to SentMailDetails through SendMail so SendGrid events track it.
+        /// </summary>
+        Task<string> ResendStoredMail(string toEmail, string subject, string htmlBody, int? irfId, int? interviewId);
         Task<string> SendClientRisebirdReview(Mail model, string Name, string reviewurl, string clientlogo);
         Task<string> SharedReminderTestLink(Mail model, string title, string timeduration, string Url, string ClientName, DateTime Expiretime);
         Task<string> SendInterviewerIntrest(Mail model, string Name, string reviewurl, string uniqueId);

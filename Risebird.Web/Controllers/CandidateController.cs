@@ -1,6 +1,7 @@
 using Aspose.Html;
 using iTextSharp.text.pdf.parser.clipper;
 using Microsoft.AspNetCore.Authorization;
+using Risebird.Web.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -1116,26 +1117,11 @@ namespace Risebird.Web.Controllers
                 }
 
                 var ClientEmailid = await _candidateService.FetchBillingownerById(model.IRFId);
-                var ClientDomain = string.Empty;
-                if (string.IsNullOrWhiteSpace(ClientEmailid))
-                {
-                    ClientDomain = "risebird.io";
-                }
-                else
-                {
-                    ClientDomain = ClientEmailid.Split("@")[1];
-                }
+                var ClientDomain = CandidateEmailDomainRule.GetClientDomain(ClientEmailid);
                 string result = string.Empty;
-                if ((model.EmailId.Split("@").Contains("risebird.io")) || model.EmailId.Split("@").Contains(ClientDomain)) //HttpContext.Session.GetString("IRFId")
+                if (CandidateEmailDomainRule.IsBlocked(model.EmailId, ClientDomain)) //HttpContext.Session.GetString("IRFId")
                 {
-                    if (ClientDomain == "risebird.io")
-                    {
-                        result = "Domain @Risebird.io is prohibited for a candidate";
-                    }
-                    else
-                    {
-                        result = "Domain @Risebird.io and " + ClientDomain + " is prohibited for a candidate";
-                    }
+                    result = CandidateEmailDomainRule.BlockedMessage(ClientDomain);
                 }
                 else
                 {
@@ -1265,17 +1251,9 @@ namespace Risebird.Web.Controllers
                         }
 
                         var ClientEmailid = await _candidateService.FetchBillingownerById(model.IRFId);
-                        var ClientDomain = string.Empty;
-                        if (string.IsNullOrWhiteSpace(ClientEmailid))
-                        {
-                            ClientDomain = "risebird.io";
-                        }
-                        else
-                        {
-                            ClientDomain = ClientEmailid.Split("@")[1];
-                        }
+                        var ClientDomain = CandidateEmailDomainRule.GetClientDomain(ClientEmailid);
                         string result = string.Empty;
-                        if (!model.EmailId.Split("@").Contains("risebird.io") && !model.EmailId.Split("@").Contains(ClientDomain)) //HttpContext.Session.GetString("IRFId"))
+                        if (!CandidateEmailDomainRule.IsBlocked(model.EmailId, ClientDomain)) //HttpContext.Session.GetString("IRFId"))
                         {
                             if (await _irfService.UpdateCandidate(model, emailid))
                             {

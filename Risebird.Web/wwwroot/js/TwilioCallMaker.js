@@ -266,6 +266,62 @@ function showCallModal(name, type = '') {
     modal.style.display = "block";
     document.getElementById("callingLabel").innerHTML = "Calling... <b>" + name + "</b>";
     document.getElementById("idCallingTitle").innerHTML = type ? "Call " + type : "Call";
+    // Default state: no edit step, Hang Up visible. The editable flow re-shows the row.
+    var _row = document.getElementById("rbEditNumberRow");
+    if (_row) _row.style.display = "none";
+    var _hu = document.getElementById("hangUpButton");
+    if (_hu) _hu.style.display = "block";
+}
+
+// Normalise to digits only and toggle the Indian country code (91) prefix.
+function rbToggle91() {
+    var el = document.getElementById("rbEditNumber");
+    if (!el) return;
+    var n = String(el.value || "").replace(/[^\d]/g, "");
+    if (n.indexOf("91") === 0 && n.length > 10) {
+        n = n.substring(2);          // remove 91
+    } else if (n.length === 10) {
+        n = "91" + n;                // add 91 to a bare 10-digit number
+    }
+    el.value = n;
+}
+
+// Call button with an edit-the-number step: opens the modal with the number
+// pre-filled and editable, and dials only when the agent presses Call.
+function CommonCallButtonClickEditable(name, mobileNumber, emailId = '', interviewIdParam = null, irfIdParam = null, recipientTypeParam = null) {
+    callRecipientName = name;
+    if (interviewIdParam) interviewId = interviewIdParam;
+    callRecipientEmail = emailId;
+    if (irfIdParam) irfIdVar = irfIdParam;
+    if (recipientTypeParam) recipientType = recipientTypeParam;
+    // Clear the previous call's number: otherwise picking Plivo/Twilio before pressing
+    // Call makes setCallProvider() redial that old number, skipping the edit step.
+    callRecipientPhoneNumber = "";
+
+    showCallModal(name, recipientTypeParam || '');
+    document.getElementById("callingLabel").innerHTML = "Call <b>" + (name || '') + "</b>";
+    var el = document.getElementById("rbEditNumber");
+    if (el) el.value = String(mobileNumber || "").replace(/[^\d]/g, "");
+    var row = document.getElementById("rbEditNumberRow");
+    if (row) row.style.display = "block";
+    var hu = document.getElementById("hangUpButton");
+    if (hu) hu.style.display = "none";   // nothing to hang up until the call is placed
+}
+
+function rbPlaceEditedCall() {
+    var el = document.getElementById("rbEditNumber");
+    var num = el ? String(el.value || "").replace(/[^\d]/g, "") : callRecipientPhoneNumber;
+    if (!num || num.length < 9) { alert("Please enter a valid phone number."); return; }
+    // Twilio's <Dial><Number> needs E.164 ("+91..."): without the "+" it reads the number as
+    // national to the US caller ID and the call never connects. Plivo strips the "+" itself.
+    if (num.length > 10) num = "+" + num;
+    callRecipientPhoneNumber = num;
+    var row = document.getElementById("rbEditNumberRow");
+    if (row) row.style.display = "none";
+    var hu = document.getElementById("hangUpButton");
+    if (hu) hu.style.display = "block";
+    document.getElementById("callingLabel").innerHTML = "Calling... <b>" + (callRecipientName || '') + "</b>";
+    callRecipient(num);
 }
 function CallButtonClick(candidateObj, indexid) {
     callRecipientName = indexid === 1 ? candidateObj.Name : candidateObj.name;

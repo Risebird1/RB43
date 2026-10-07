@@ -5,7 +5,7 @@ BEGIN
 
 CREATE TABLE [dbo].[SendgridEventData](
 	[id] [int] IDENTITY(1,1) NOT NULL,
-	[email] [varchar](50) NULL,
+	[email] [varchar](150) NULL,
 	[timestamp] [varchar](50) NULL,
 	[event] [varchar](25) NULL,
 	[smtp-id] [varchar](50) NULL,
@@ -58,6 +58,17 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE SendgridEventData
     Alter column [sg_event_id] varchar(200)
+END
+
+-- Bounce & Dropped Mail page (bug #7): addresses longer than 50 chars were truncated.
+IF EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Object_ID = Object_ID(N'SendgridEventData')
+      AND Name = N'email' AND max_length < 150)
+BEGIN
+    ALTER TABLE SendgridEventData
+    Alter column [email] varchar(150) NULL
 END
 
 End

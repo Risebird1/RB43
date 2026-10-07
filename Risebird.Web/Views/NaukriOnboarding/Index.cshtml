@@ -1424,6 +1424,14 @@
                                                                 data-record-id="@r.Id">
                                                             <i class="fas fa-bars me-1"></i>Manage
                                                         </button>
+                                                        @if (!string.IsNullOrEmpty(r.ParsedPhone))
+                                                        {
+                                                            <button type="button" title="Call this prospect"
+                                                                    class="rb-call-icon"
+                                                                    onclick="CommonCallButtonClickEditable('@(r.CandidateName)', '@r.ParsedPhone', '@(r.ParsedEmail ?? "")', null, null, 'Interviewer')">
+                                                                <i class="fas fa-phone-alt"></i>
+                                                            </button>
+                                                        }
                                                         @if (canDelete)
                                                         {
                                                             <button type="button" title="Delete this record"
@@ -1547,6 +1555,11 @@
                             <div class="mgm-info-row">
                                 <span><i class="fas fa-phone me-1"></i>Parsed Phone:</span>
                                 <span class="value" id="mgmParsedPhone">\u2014</span>
+                                <button type="button" id="mgmCallBtn" class="rb-call-icon ms-2" style="display:none;"
+                                        title="Call this interviewer (edit number first if needed)"
+                                        onclick="CommonCallButtonClickEditable((currentRecord &amp;&amp; currentRecord.candidateName) || '', (currentRecord &amp;&amp; currentRecord.parsedPhone) || '', (currentRecord &amp;&amp; currentRecord.parsedEmail) || '', null, null, 'Interviewer')">
+                                    <i class="fas fa-phone-alt"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1937,7 +1950,11 @@
     </div>
 </div>
 
+@* Manual click-to-call: shared provider modal + TwilioCallMaker.js (CommonCallButtonClick). *@
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+
 @section scripts {
+<script src="~/js/TwilioCallMaker.js" asp-append-version="true"></script>
 <script>
     var currentRecordId = null, currentRecord = null;
     var canDelete = @(canDelete ? "true" : "false");
@@ -2007,6 +2024,7 @@
 
         $('#mgmParsedEmail').text(r.parsedEmail || '\u2014');
         $('#mgmParsedPhone').text(r.parsedPhone || '\u2014');
+        $('#mgmCallBtn').toggle(!!(r.parsedPhone));
 
         if (r.employmentCompanyName) { $('#mgmCompany').text(r.employmentCompanyName); }
         if (r.employmentIsEmployed === true) { $('#mgmEmployed').html('<span class="employed-yes"><i class="fas fa-check-circle me-1"></i>Yes</span>'); }
@@ -2417,7 +2435,7 @@
         $('#btnResendInvitation').hide();
         $('#btnCheckProgress').prop('disabled',false).html('<i class="fas fa-sync-alt me-1"></i>Check Progress');
         $('#resumeUploadArea').hide(); $('#resumeFileInput').val(''); $('#uploadProgress, #uploadResult').hide();
-        $('#mgmParsedEmail').text('\u2014'); $('#mgmParsedPhone').text('\u2014');
+        $('#mgmParsedEmail').text('\u2014'); $('#mgmParsedPhone').text('\u2014'); $('#mgmCallBtn').hide();
         $('#mgmCompany').text('\u2014'); $('#mgmEmployed').text('\u2014');
         $('#mgmLinkedIn').text('\u2014');
         $('#mgmLinkedInReason').text(''); $('#mgmLinkedInReasonRow').hide();
@@ -3093,6 +3111,7 @@
                         currentRecord.parsedPhone = newVal;
                         $('#step1Result .s1-phone-val').text(newVal);
                         $('#mgmParsedPhone').text(newVal);
+                        $('#mgmCallBtn').toggle(!!newVal);
                     }
                     
                 } else { alert(res.error || 'Failed to update.'); }
