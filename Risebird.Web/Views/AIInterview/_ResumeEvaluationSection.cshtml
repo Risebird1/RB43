@@ -37,8 +37,10 @@
         var scorePct = hasMax ? (double)re.TotalScore * 100d / re.MaxScore : 0d;
 
         var verdictLower = (re.Verdict ?? string.Empty).ToLowerInvariant();
-        var verdictTone = verdictLower.Contains("reject") ? "is-fail"
-            : (verdictLower.Contains("select") || verdictLower.Contains("shortlist") || verdictLower.Contains("proceed")) ? "is-pass"
+        // "not recommended" / "recommended" are the advanced screener's scale; the negative form is
+        // tested first because it contains the positive one.
+        var verdictTone = (verdictLower.Contains("reject") || verdictLower.Contains("not recommend")) ? "is-fail"
+            : (verdictLower.Contains("select") || verdictLower.Contains("shortlist") || verdictLower.Contains("proceed") || verdictLower.Contains("recommend")) ? "is-pass"
             : "is-neutral";
 
         // SectionScores is twelve named properties rather than a list, so it is collected into

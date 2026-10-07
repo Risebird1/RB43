@@ -170,6 +170,8 @@ namespace Risebird.Entities.ViewModel
         public string ResumeSummary { get; set; }
         public string AIResumeScreeningVerdict { get; set; }
         public string AIScreeningResultJsonV2 { get; set; }
+        public int? AIResumeScreeningScore { get; set; }
+        public string AIAdvancedScreeningResultJson { get; set; }
         public string AssessmentGroup { get; set; }
         public bool IsAadhaarVerificationRequired { get; set; }
         public bool IsProctoring { get; set; }

@@ -357,6 +357,9 @@ namespace Risebird.Repository
                             _resultVM.AIScreeningResultJsonV2 = dt.Columns.Contains("AIScreeningResultJsonV2")
                                 && !string.IsNullOrEmpty(dt.Rows[0]["AIScreeningResultJsonV2"].ToString())
                                 ? dt.Rows[0]["AIScreeningResultJsonV2"].ToString() : null;
+                            _resultVM.AIAdvancedScreeningResultJson = dt.Columns.Contains("AIAdvancedScreeningResultJson")
+                                && !string.IsNullOrEmpty(dt.Rows[0]["AIAdvancedScreeningResultJson"].ToString())
+                                ? dt.Rows[0]["AIAdvancedScreeningResultJson"].ToString() : null;
                             // MCQ assessment section. All four are guarded with Columns.Contains so a
                             // deployment that ships this code ahead of the updated stored procedure
                             // degrades to "no MCQ section" instead of throwing on every page load.

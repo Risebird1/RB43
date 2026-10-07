@@ -54,6 +54,7 @@ CREATE TABLE [dbo].[Candidate](
 	[AIResumeScreeningVerdict] [varchar](30) NULL,
 	[AIScreeningResultJsonV2] [varchar](max) NULL,
 	[AIResumeScreeningScore] [int] NULL,
+	[AIAdvancedScreeningResultJson] [varchar](max) NULL,
 	[VapiCallAttempts] [int] NOT NULL DEFAULT 0,
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
 (
@@ -553,6 +554,19 @@ BEGIN
     -- (voice) so the two channels can be monitored and capped independently.
     ALTER TABLE Candidate
     ADD PlivoWhatsAppAttempts INT NOT NULL DEFAULT 0
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'AIAdvancedScreeningResultJson')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    -- The advanced (rubric-based) resume screening result. Kept apart from
+    -- AIScreeningResultJsonV2 because the AI interview report deserialises that column as the
+    -- V2 shape; the verdict and score still go to AIResumeScreeningVerdict / AIResumeScreeningScore.
+    ALTER TABLE Candidate
+    ADD AIAdvancedScreeningResultJson VARCHAR(max) NULL
 END
 
 End
