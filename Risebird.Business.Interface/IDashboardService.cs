@@ -86,7 +86,7 @@ namespace Risebird.Business.Interface
         Task<BounceDroppedPageVM> GetBounceDroppedPage(BounceDroppedQuery query);
         Task<IEnumerable<BounceDroppedFilterOption>> GetBounceDroppedFilterOptions(string recipientType, DateTime startDate, DateTime endDate, string emailId, bool includeResolved);
         Task<BounceDroppedRowContext> GetBounceDroppedRowForAction(int sendgridEventId, int? candidateId, string emailId);
-        Task<string> UpdateBouncedCandidateEmail(int candidateId, int sendgridEventId, string newEmail, string actionBy);
+        Task<BounceEmailUpdateResult> UpdateBouncedCandidateEmail(int candidateId, int sendgridEventId, string newEmail, string actionBy);
         Task<bool> ResolveMailBounce(int sendgridEventId, int? candidateId, string status, string note, string actionBy);
         Task<BounceMailContent> GetSentMailForBounce(int sendgridEventId);
         Task<List<MeetingVM>> GetDMApproveDetails(string EmailId);

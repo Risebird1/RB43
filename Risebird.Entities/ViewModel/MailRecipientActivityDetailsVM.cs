@@ -47,6 +47,8 @@ namespace Risebird.Entities.ViewModel
         public string ResolutionStatus { get; set; }
         /// <summary>Domain of the skill channel's billing owner; not allowed for a candidate email.</summary>
         public string ClientDomain { get; set; }
+        /// <summary>Temporary (4.x.x, mailbox full, quota, try again) or Permanent.</summary>
+        public string BounceKind { get; set; }
 
         /// <summary>
         /// The bounced address has been fixed: either this row was corrected, or the candidate's current
@@ -58,6 +60,7 @@ namespace Risebird.Entities.ViewModel
                 && !string.Equals(candidateEmail.Trim(), email.Trim(), StringComparison.OrdinalIgnoreCase));
 
         public bool IsResolved =>
-            ResolutionStatus == "Resolved" || ResolutionStatus == "Unreachable" || ResolutionStatus == "Resent";
+            ResolutionStatus == "Resolved" || ResolutionStatus == "Unreachable" || ResolutionStatus == "Resent"
+            || ResolutionStatus == "RetriedSameAddress";
     }
 }
