@@ -1,0 +1,347 @@
+@model string
+@using Risebird.CommonHelper
+@using Risebird.Entities.ViewModel
+@{
+    ViewData["Title"] = "Advanced AI Resume Analysis";
+    ViewBag.PageHeader = "Advanced AI Resume Analysis";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Ported from screen.risebird.io's AdvancedScreenCandidate. The criterion cards come from
+    // AdvancedResumeScreening.ScoredCriteria, the one list that names the screener's response
+    // keys, rather than a hand-written block per criterion.
+    var analysis = AdvancedResumeScreening.ParseModelJson<AdvancedScreeningResponse>(Model);
+    var scored = AdvancedResumeScreening.ScoredCriteria(analysis);
+    var sections = new[]
+    {
+        new { Name = AdvancedResumeScreening.SectionSkills, Title = "Skills Analysis", Icon = "fa-code",
+              Score = analysis?.skillsSection?.skillsSectionScore, Max = analysis?.skillsSection?.skillsSectionEffectiveMax },
+        new { Name = AdvancedResumeScreening.SectionWork, Title = "Work Experience Analysis", Icon = "fa-briefcase",
+              Score = analysis?.workExperienceSection?.workExperienceSectionScore, Max = analysis?.workExperienceSection?.workExperienceSectionEffectiveMax },
+        new { Name = AdvancedResumeScreening.SectionEducation, Title = "Education Analysis", Icon = "fa-graduation-cap",
+              Score = analysis?.educationSection?.educationSectionScore, Max = analysis?.educationSection?.educationSectionEffectiveMax }
+    };
+
+    var percentage = analysis != null ? AdvancedResumeScreening.ParsePercentage(analysis.overallfitmentpercentage) : 0;
+
+    // The model's own verdict, normalised, first; the stored verdict when the model left it out.
+    // The prompt is not pinned to a schema, so overallverdict is sometimes absent.
+    var storedVerdict = ViewBag.AIVerdict as string;
+    var shownVerdict = analysis != null && !string.IsNullOrWhiteSpace(analysis.overallverdict)
+        ? AdvancedResumeScreening.NormalizeVerdict(analysis.overallverdict)
+        : (!string.IsNullOrWhiteSpace(storedVerdict) ? storedVerdict : "N/A");
+
+    var canRescreen = (ViewBag.CanRescreen as bool?) == true;
+    var canEditRubric = (ViewBag.CanEditRubric as bool?) == true;
+}
+<script>
+    var Header = "Advanced AI Resume Analysis";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+@functions {
+    private static string ScoreClass(int score)
+    {
+        if (score >= 80) return "excellent";
+        if (score >= 60) return "good";
+        if (score >= 40) return "average";
+        if (score >= 20) return "below-average";
+        return "poor";
+    }
+
+    private static string VerdictClass(string verdict)
+    {
+        switch (verdict)
+        {
+            case AdvancedResumeScreening.StronglyRecommended: return "v-strong";
+            case AdvancedResumeScreening.Recommended: return "v-good";
+            case AdvancedResumeScreening.Consider: return "v-consider";
+            case AdvancedResumeScreening.NotRecommended: return "v-not";
+            default: return "v-unknown";
+        }
+    }
+
+    private static decimal Ratio(SectionsInfo i)
+    {
+        decimal a, m;
+        return decimal.TryParse(i?.actualscore, out a) && decimal.TryParse(i?.maxscore, out m) && m > 0 ? a / m : 0m;
+    }
+
+    private static decimal Weight(SectionsInfo i)
+    {
+        decimal m;
+        return decimal.TryParse(i?.maxscore, out m) ? m : 0m;
+    }
+
+    /// <summary>
+    /// The model's analysis as safe HTML: encoded first, then line breaks and markdown headings
+    /// restored. The MCQ page wrote this text out raw, which renders whatever markup the model
+    /// returns.
+    /// </summary>
+    private static string FormatAnalysisText(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return "No detailed analysis available.";
+        }
+
+        var lines = System.Net.WebUtility.HtmlEncode(text.Replace("**", "")).Replace("\r", "").Split('\n');
+        var sb = new System.Text.StringBuilder();
+        foreach (var line in lines)
+        {
+            var t = line.TrimStart();
+            if (t.StartsWith("#"))
+            {
+                sb.Append("<div class=\"adv-rs-md-h\">").Append(t.TrimStart('#').Trim()).Append("</div>");
+            }
+            else
+            {
+                sb.Append(line).Append("<br>");
+            }
+        }
+        return sb.ToString();
+    }
+}
+
+<style>
+    .adv-rs { background: #f5f7fa; min-height: 100vh; padding: 18px 0 30px; font-size: 13px; color: #1f2937; }
+    .adv-rs .adv-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 2px 10px rgba(15, 23, 42, .05); margin-bottom: 18px; }
+    .adv-rs .adv-card-h { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-bottom: 1px solid #eef0f3; }
+    .adv-rs .adv-card-h h5 { margin: 0; font-size: 15px; font-weight: 600; color: #111827; }
+    .adv-rs .adv-card-h h5 i { color: #42a5f5; margin-right: 8px; }
+    .adv-rs .adv-card-b { padding: 18px 20px; }
+
+    .adv-rs .adv-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 22px; border-left: 4px solid #42a5f5; }
+    .adv-rs .adv-head .email { font-size: 18px; font-weight: 700; color: #111827; word-break: break-all; }
+    .adv-rs .adv-head .sub { color: #6b7280; margin-top: 4px; }
+    .adv-rs .adv-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .adv-rs .adv-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; color: #1f2937 !important; font-weight: 600; font-size: 12px; text-decoration: none !important; cursor: pointer; }
+    .adv-rs .adv-btn:hover { background: #f1f5f9; }
+    .adv-rs .adv-btn.primary { background: #42a5f5; border-color: #42a5f5; color: #fff !important; }
+    .adv-rs .adv-btn.primary:hover { background: #1e88e5; }
+
+    .adv-rs .adv-alert { border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; font-weight: 500; }
+    .adv-rs .adv-alert.err { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+    .adv-rs .adv-alert.ok { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+
+    .adv-rs .adv-overall { display: flex; flex-wrap: wrap; }
+    .adv-rs .adv-score { flex: 0 0 230px; text-align: center; padding: 22px 16px; border-right: 1px solid #eef0f3; }
+    .adv-rs .adv-score h6 { font-weight: 700; margin-bottom: 12px; }
+    .adv-rs .score-circle { width: 104px; height: 104px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; color: #fff; font-size: 22px; font-weight: 700; }
+    .adv-rs .score-circle.excellent { background: linear-gradient(135deg, #22c55e, #16a34a); }
+    .adv-rs .score-circle.good { background: linear-gradient(135deg, #60a5fa, #3b82f6); }
+    .adv-rs .score-circle.average { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .adv-rs .score-circle.below-average { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .adv-rs .score-circle.poor { background: linear-gradient(135deg, #6b7280, #4b5563); }
+    .adv-rs .verdict { display: inline-block; margin-top: 12px; padding: 5px 12px; border-radius: 999px; font-weight: 700; font-size: 12px; border: 1px solid; }
+    .adv-rs .verdict.v-strong { background: #dcfce7; color: #166534; border-color: #86efac; }
+    .adv-rs .verdict.v-good { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+    .adv-rs .verdict.v-consider { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+    .adv-rs .verdict.v-not { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+    .adv-rs .verdict.v-unknown { background: #f3f4f6; color: #374151; border-color: #d1d5db; }
+    .adv-rs .raw-score { margin-top: 8px; color: #6b7280; }
+
+    .adv-rs .adv-detail { flex: 1 1 400px; padding: 20px 24px; min-width: 0; }
+    .adv-rs .adv-detail h6 { font-weight: 700; margin-bottom: 8px; }
+    .adv-rs .analysis-text { max-height: 190px; overflow-y: auto; padding: 12px 14px; background: #f8fafc; border-left: 4px solid #94a3b8; border-radius: 8px; line-height: 1.6; }
+    .adv-rs .adv-rs-md-h { font-weight: 700; color: #1e40af; margin: 6px 0 2px; }
+    .adv-rs .summary { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 16px; }
+    .adv-rs .summary > div { flex: 1 1 220px; }
+    .adv-rs .summary ul { list-style: none; padding: 0; margin: 0; }
+    .adv-rs .summary li { padding: 3px 0; }
+    .adv-rs .summary .ok { color: #16a34a; }
+    .adv-rs .summary .warn { color: #d97706; }
+
+    .adv-rs .crit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+    .adv-rs .crit { border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px 14px; background: #fcfdfe; }
+    .adv-rs .crit.unmatched { border-left: 3px solid #ef4444; }
+    .adv-rs .crit.matched { border-left: 3px solid #22c55e; }
+    .adv-rs .crit-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+    .adv-rs .crit-name { font-weight: 600; color: #111827; }
+    .adv-rs .crit-name i { color: #42a5f5; margin-right: 6px; }
+    .adv-rs .crit-score { white-space: nowrap; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: #eef2f7; color: #334155; font-size: 11px; }
+    .adv-rs .crit-reason { color: #6b7280; font-size: 12px; margin: 0; }
+    .adv-rs .sec-score { font-weight: 600; font-size: 12px; padding: 3px 10px; border-radius: 10px; background: #eef2f7; color: #334155; }
+
+    @@media (max-width: 768px) {
+        .adv-rs .adv-score { flex-basis: 100%; border-right: none; border-bottom: 1px solid #eef0f3; }
+    }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="content client candidate adv-rs">
+        <div class="container-fluid">
+
+            <div class="adv-card adv-head">
+                <div>
+                    <div class="email">@ViewBag.CandidateEmail</div>
+                    <div class="sub">
+                        @ViewBag.JobTitle
+                        @if (!string.IsNullOrWhiteSpace(ViewBag.IRFName as string))
+                        {
+                            <span> &middot; @ViewBag.IRFName</span>
+                        }
+                    </div>
+                </div>
+                <div class="adv-actions">
+                    @if (!string.IsNullOrWhiteSpace(ViewBag.ResumeLink as string))
+                    {
+                        <a class="adv-btn" href="@ViewBag.ResumeLink" target="_blank"><i class="fas fa-file-alt"></i> View Resume</a>
+                    }
+                    @if (canEditRubric)
+                    {
+                        <a class="adv-btn" href="@Url.Action("ScreeningCriteria", "AIScreener", new { irfId = ViewBag.IRFId })" target="_blank"
+                           title="The weighted criteria every resume on this skill channel is scored against">
+                            <i class="fas fa-sliders-h"></i> Screening Rubric
+                        </a>
+                    }
+                    @if (canRescreen)
+                    {
+                        <a class="adv-btn primary" id="advRescreen"
+                           href="@Url.Action("AdvancedScreenCandidate", "AIScreener", new { emailId = ViewBag.CandidateEmail, irfId = ViewBag.IRFId, candidateMasterId = ViewBag.CandidateMasterId, accessType = ViewBag.AccessType, isRedo = true })"
+                           title="Screen this resume again against the current rubric">
+                            <i class="fas fa-redo"></i> Re-screen
+                        </a>
+                    }
+                </div>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(ViewBag.ErrorMessage as string))
+            {
+                <div class="adv-alert err"><i class="fas fa-exclamation-triangle"></i> @ViewBag.ErrorMessage</div>
+            }
+            else if (ViewBag.SaveOperationResult as string == "Evaluation saved successfully.")
+            {
+                <div class="adv-alert ok"><i class="fas fa-check"></i> @ViewBag.SaveOperationResult</div>
+            }
+
+            @if (analysis != null)
+            {
+                var strengths = scored.Where(c => c.Info.matched)
+                    .OrderByDescending(c => Ratio(c.Info)).ThenByDescending(c => Weight(c.Info))
+                    .Take(3).ToList();
+                var concerns = scored.Where(c => !c.Info.matched)
+                    .OrderByDescending(c => Weight(c.Info))
+                    .Take(3).ToList();
+
+                <div class="adv-card">
+                    <div class="adv-card-h"><h5><i class="fas fa-chart-pie"></i>Overall Analysis Summary</h5></div>
+                    <div class="adv-overall">
+                        <div class="adv-score">
+                            <h6>Overall Fitment</h6>
+                            <div class="score-circle @ScoreClass(percentage)">@percentage%</div>
+                            <div class="verdict @VerdictClass(shownVerdict)">Verdict: @shownVerdict</div>
+                            @if (!string.IsNullOrWhiteSpace(analysis.overallFitmentScore))
+                            {
+                                <div class="raw-score">Score: @analysis.overallFitmentScore</div>
+                            }
+                        </div>
+                        <div class="adv-detail">
+                            <h6><i class="fas fa-clipboard-list"></i> Detailed Analysis</h6>
+                            <div class="analysis-text">@Html.Raw(FormatAnalysisText(analysis.overallFitmentAnalysis))</div>
+
+                            <div class="summary">
+                                <div>
+                                    <h6 class="ok"><i class="fas fa-thumbs-up"></i> Key Strengths</h6>
+                                    <ul>
+                                        @if (!strengths.Any())
+                                        {
+                                            <li class="text-muted">None identified.</li>
+                                        }
+                                        @foreach (var s in strengths)
+                                        {
+                                            <li><i class="fas fa-check ok"></i> @s.Label</li>
+                                        }
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h6 class="warn"><i class="fas fa-exclamation"></i> Areas of Concern</h6>
+                                    <ul>
+                                        @if (!concerns.Any())
+                                        {
+                                            <li class="text-muted">None identified.</li>
+                                        }
+                                        @foreach (var c in concerns)
+                                        {
+                                            <li><i class="fas fa-exclamation-triangle warn"></i> @c.Label</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @foreach (var sec in sections)
+                {
+                    var rows = scored.Where(c => c.Section == sec.Name).ToList();
+                    if (!rows.Any())
+                    {
+                        continue;
+                    }
+
+                    <div class="adv-card">
+                        <div class="adv-card-h">
+                            <h5><i class="fas @sec.Icon"></i>@sec.Title</h5>
+                            @if (!string.IsNullOrWhiteSpace(sec.Score))
+                            {
+                                <span class="sec-score">Score: @(string.IsNullOrWhiteSpace(sec.Max) ? sec.Score : sec.Score + " / " + sec.Max)</span>
+                            }
+                        </div>
+                        <div class="adv-card-b">
+                            <div class="crit-grid">
+                                @foreach (var c in rows)
+                                {
+                                    <div class="crit @(c.Info.matched ? "matched" : "unmatched")">
+                                        <div class="crit-top">
+                                            <div class="crit-name"><i class="fas @c.Icon"></i>@c.Label</div>
+                                            <div>
+                                                @if (!string.IsNullOrWhiteSpace(c.Info.actualscore) && !string.IsNullOrWhiteSpace(c.Info.maxscore))
+                                                {
+                                                    <span class="crit-score">@c.Info.actualscore / @c.Info.maxscore</span>
+                                                }
+                                                @if (c.Info.matched)
+                                                {
+                                                    <i class="fas fa-check-circle" style="color:#22c55e" title="Matched"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="fas fa-times-circle" style="color:#ef4444" title="Not matched"></i>
+                                                }
+                                            </div>
+                                        </div>
+                                        @if (!string.IsNullOrWhiteSpace(c.Info.reasonOrObservation))
+                                        {
+                                            <p class="crit-reason">@c.Info.reasonOrObservation</p>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else if (string.IsNullOrWhiteSpace(ViewBag.ErrorMessage as string))
+            {
+                <div class="adv-card">
+                    <div class="adv-card-b" style="text-align:center;padding:30px;">
+                        <i class="fas fa-exclamation-triangle" style="color:#d97706"></i>
+                        No advanced analysis is available for this candidate.
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    // Re-screening is a paid model call that takes a while; one click, and say so.
+    $(function () {
+        $('#advRescreen').on('click', function (e) {
+            if (!confirm('Screen this resume again against the current rubric? The new result replaces this one.')) {
+                e.preventDefault();
+                return;
+            }
+            $(this).css('pointer-events', 'none').html('<i class="fas fa-spinner fa-spin"></i> Screening&hellip;');
+        });
+    });
+</script>

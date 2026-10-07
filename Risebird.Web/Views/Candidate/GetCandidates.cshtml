@@ -487,6 +487,18 @@
                         }
                     }
 
+                    @if (ViewBag.AccessType != "Public" && (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin"))
+                    {
+                        @* Advanced resume screening: the weighted rubric resumes on this channel are
+                           scored against, and a bulk run over every resume not yet screened on it. *@
+                        <button type="button" class="pcs-nav-pill" title="The weighted criteria every resume on this skill channel is scored against" onclick="window.open('@Url.Action("ScreeningCriteria", "AIScreener", new { irfId = ViewBag.IRFId })', '_blank')">
+                            <i class="fa fa-sliders-h" style="font-size:10px;"></i> Screening Rubric
+                        </button>
+                        <button type="button" class="pcs-nav-pill" id="btnBulkResumeScreen" title="Screen every resume on this skill channel that has not been screened against the rubric yet" onclick="BulkAdvancedResumeScreen('@ViewBag.IRFId')">
+                            <i class="fa fa-file-signature" style="font-size:10px;"></i> Screen All Resumes
+                        </button>
+                    }
+
                     @if (ViewBag.AccessType != "Public")
                     {
                         <button id="getstatus_13" type="button" class="pcs-nav-pill" title="Back to IRF list" onclick="location.href='@Url.Action("Index", "IRF")'">
@@ -1016,7 +1028,13 @@
 
                                                                 @if (!string.IsNullOrEmpty(item.AIResumeScreeningVerdict))
                                                                 {
-                                                                    <td>@item.AIResumeScreeningVerdict</td>
+                                                                    <td>
+                                                                        @item.AIResumeScreeningVerdict
+                                                                        @if (item.AIResumeScreeningScore.HasValue && item.AIResumeScreeningScore.Value > 0)
+                                                                        {
+                                                                            <span style="color:#64748b;font-size:11px;" title="AI resume screening score">(@item.AIResumeScreeningScore)</span>
+                                                                        }
+                                                                    </td>
 
                                                                 }
                                                                 else
@@ -2256,6 +2274,30 @@ else if (ViewBag.Message != null)
     document.onmousemove = mouseMoveHandler;
 
     const loop = setInterval(toggleHandler, 1000);
+</script>
+<script>
+    // Queues advanced (rubric-based) screening for every resume on the channel not yet screened
+    // against the rubric. The work runs in the background; the verdicts appear on refresh.
+    function BulkAdvancedResumeScreen(irfId) {
+        if (!confirm('Screen every resume on this skill channel that has not been screened against the rubric yet? This runs in the background and can take several minutes.')) {
+            return;
+        }
+        var btn = $('#btnBulkResumeScreen').prop('disabled', true);
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("BulkAdvancedScreenCandidate", "AIScreener")',
+            data: { irfId: irfId },
+            success: function (res) {
+                alert(res && res.message ? res.message : 'Resume screening has started.');
+            },
+            error: function () {
+                alert('Failed to start resume screening. Try again after some time.');
+            },
+            complete: function () {
+                btn.prop('disabled', false);
+            }
+        });
+    }
 </script>
 <style>
     .primary-specialization .fa, .far, .fas{
