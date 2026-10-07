@@ -250,7 +250,19 @@ namespace Risebird.Business
                     LastName = interviewerProfile.LastName.Replace(" ", ""),
                     EmailId = interviewerProfile.EmailId.Replace(" ", "")
                 };
-                interviewerProfile.UserPassword = _passwordHelper.GenerateUserPassword(userDetails).Result;
+                var provisioning = _passwordHelper.GenerateUserPassword(userDetails).Result;
+                if (provisioning.ShouldAbort)
+                {
+                    // Continuing after a genuine failure would create an interviewer who looks
+                    // provisioned but is told "account not found" when signing in. An account that
+                    // already exists is fine to continue with. This method is synchronous, so the
+                    // log call blocks like the line above.
+                    _applicationErrorLogger.LogMessage(LogLevelInfo.Error,
+                        "Aborting AddInterviewerProfile: the Azure AD B2C account could not be created, so no interviewer profile was written.",
+                        interviewerProfile.EmailId).GetAwaiter().GetResult();
+                    return false;
+                }
+                interviewerProfile.UserPassword = provisioning.Password;
                 var NickNamesList = GetNickNames(0);
                 if (string.IsNullOrEmpty(interviewerProfile.NickName))
                 {
@@ -1744,11 +1756,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> DeactivateSkillChannelInterviewer(int irfId, string interviewerEmail)
+        public async Task<bool> DeactivateSkillChannelInterviewer(int irfId, string interviewerEmail, string removedBy = null, string logType = null)
         {
             try
             {
-                return await _interviewerRepository.DeactivateSkillChannelInterviewer(irfId, interviewerEmail);
+                return await _interviewerRepository.DeactivateSkillChannelInterviewer(irfId, interviewerEmail, removedBy, logType);
             }
             catch (SqlTypeException ex)
             {
@@ -2040,7 +2052,19 @@ namespace Risebird.Business
                 {
                     await TrySyncInterviewerListingSearchByUserIdAsync(userId);
                     //sendwelcomeEmailtointerviewer
-                    await _notificationHelper.SendWelcomeEmailToInterviewer(result.EmailId, result.UserPassword, result.HMVideoForTargetIRF);
+                    // An interviewer provisioned against an Azure AD B2C account that already existed
+                    // has no generated password stored. The welcome email still carries the portal
+                    // walkthrough and the interview-instruction video, so it must still go out - only
+                    // the credential line changes, rather than the whole message being suppressed.
+                    var welcomePassword = result.UserPassword;
+                    if (string.IsNullOrEmpty(welcomePassword))
+                    {
+                        welcomePassword = "Sign in with the password you already use for Risebird.";
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
+                            "Welcome email sent without generated credentials: this interviewer already had an Azure AD B2C account.",
+                            result.EmailId);
+                    }
+                    await _notificationHelper.SendWelcomeEmailToInterviewer(result.EmailId, welcomePassword, result.HMVideoForTargetIRF);
                 }
                 return result;
             }

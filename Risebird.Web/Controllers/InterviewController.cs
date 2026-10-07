@@ -1371,7 +1371,7 @@ namespace Risebird.Web.Controllers
                             {
                                 if (!string.IsNullOrEmpty(zoomMeetingId) && meetingUpdated.confirmationStatus == "2")
                                 {
-                                    DeleteMeetingLink(zoomMeetingId);
+                                    await DeleteMeetingLink(zoomMeetingId);
                                 }
                                 TempData["SuccessErrorMessageUpdatedInterview"] = "Meeting has been updated Successfully!";
                                 return RedirectToAction("Edit", new { id = meetingUpdated.imid });
@@ -3614,7 +3614,7 @@ namespace Risebird.Web.Controllers
             var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
-            var questions = _meetingService.GetTechSkillComments(irfId, userId).Result;
+            var questions = await _meetingService.GetTechSkillComments(irfId, userId);
             model.QuestionsList = new SelectList(questions, "Comment", "Comment");
             model.QuestionsSkillMapping = questions;
             model.QuestionsListData = JsonConvert.SerializeObject(questions.Select(x => (x.Comment.Replace("\r", "").Replace("\n", ""), x.SkillName)));
@@ -6120,11 +6120,11 @@ namespace Risebird.Web.Controllers
             }
         }
         #endregion
-        public string DeleteMeetingLink(string meetingid)
+        public async Task<string> DeleteMeetingLink(string meetingid)
         {
             //string token = _zoomHelper.ZoomToken();//ZoomToken();
             //get oauth token
-            string token = _zoomHelper.GenerateAccessToken().Result;
+            string token = await _zoomHelper.GenerateAccessToken();
             var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingid));
             var request = new RestRequest(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"meetings/" + meetingid), Method.Delete);
             request.AddHeader("content-type", "application/json");
@@ -7194,12 +7194,12 @@ namespace Risebird.Web.Controllers
             {
                 return null;
             }
-            var zoomlink = CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
+            var zoomlink = await CreateZoomMeetings(_zoommetingobject, accountEmail, indianTime);
             zoomlink.accountemail = accountEmail;
             var succeresult = await _interviewSchedulerservice.UpdateInstaZoomDetails(indianTime, indianTime.AddMinutes(60), accountEmail);
             return zoomlink;
         }
-        private InstaZoomMeetingResponse CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject, string accountEmail, DateTime indianTime)
+        private async Task<InstaZoomMeetingResponse> CreateZoomMeetings(InstaZoomMeetingVM _zoommetingobject, string accountEmail, DateTime indianTime)
         {
             _zoommetingobject.type = 2;
             _zoommetingobject.duration = 60;
@@ -7213,7 +7213,7 @@ namespace Risebird.Web.Controllers
             //string token = _zoomHelper.ZoomToken();//ZoomToken();
 
             //get oauth token
-            string token = _zoomHelper.GenerateAccessToken().Result;
+            string token = await _zoomHelper.GenerateAccessToken();
 
             var client = new RestClient(string.Concat(_configuration["ZoomAppDetails:endPoint"], $"users/" + accountEmail + "/meetings"));
 
@@ -9069,10 +9069,14 @@ namespace Risebird.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<JsonResult> RemoveInterviewerFromIRF(string interviewerEmail, int irfid)
+        public async Task<JsonResult> RemoveInterviewerFromIRF(string interviewerEmail, int irfid, string source = null)
         {
+            // Who removed the interviewer is logged in RedMarkerStatusDetails (QC Activity dashboard).
+            // The Total Red Marker page sends source=TotalRedMarker and logs as Type IRF; any other caller logs SkillChannelRemoval.
+            var removedBy = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "");
+            var logType = string.Equals(source, "TotalRedMarker", StringComparison.OrdinalIgnoreCase) ? "IRF" : "SkillChannelRemoval";
             //var result = await _meetingService.RemoveInterviewer(interviewid);
-            var result = await _interviewerService.DeactivateSkillChannelInterviewer(irfid, interviewerEmail);
+            var result = await _interviewerService.DeactivateSkillChannelInterviewer(irfid, interviewerEmail, removedBy, logType);
             return Json("success");
         }
         public async Task<IActionResult> PublicMyInterview(string id, string emailid)

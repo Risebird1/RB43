@@ -128,7 +128,7 @@ namespace Risebird.Repository
                 // Silently fail to not block the interview flow
             }
         }
-        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false, string candidateAnswerAudioLink = null, bool allowMissingVideo = false)
+        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false, string candidateAnswerAudioLink = null, bool allowMissingVideo = false, CandidateTranscriptReview transcriptReview = null)
         {
             try
             {
@@ -197,6 +197,13 @@ namespace Risebird.Repository
                     parameters.Add("@DeliveryHeadQuestionId", deliveryHeadQuestionId);
                     parameters.Add("@CandidateAnswerAudioLink", normalizedCandidateAnswerAudioLink);
                     parameters.Add("@AllowMissingVideo", allowMissingVideo);
+
+                    // What speech-to-text heard, kept beside what the candidate confirmed. Null when
+                    // the answer did not go through transcript review, and the proc leaves the
+                    // columns alone in that case.
+                    parameters.Add("@RawTranscript", NormalizeForDb(transcriptReview?.RawTranscript));
+                    parameters.Add("@TranscriptEditedByCandidate", transcriptReview?.EditedByCandidate);
+                    parameters.Add("@TranscriptDivergencePct", transcriptReview?.DivergencePct);
                     await SqlMapper.QueryAsync(con, "usp_SaveBotInterviewQuestionVideos", parameters,
                          commandType: CommandType.StoredProcedure);
                     //await SqlMapper.QueryAsync(con, "usp_SaveBotInterviewQuestionVideosTestVersion", parameters,
@@ -350,6 +357,9 @@ namespace Risebird.Repository
                             _resultVM.AIScreeningResultJsonV2 = dt.Columns.Contains("AIScreeningResultJsonV2")
                                 && !string.IsNullOrEmpty(dt.Rows[0]["AIScreeningResultJsonV2"].ToString())
                                 ? dt.Rows[0]["AIScreeningResultJsonV2"].ToString() : null;
+                            _resultVM.AIAdvancedScreeningResultJson = dt.Columns.Contains("AIAdvancedScreeningResultJson")
+                                && !string.IsNullOrEmpty(dt.Rows[0]["AIAdvancedScreeningResultJson"].ToString())
+                                ? dt.Rows[0]["AIAdvancedScreeningResultJson"].ToString() : null;
                             // MCQ assessment section. All four are guarded with Columns.Contains so a
                             // deployment that ships this code ahead of the updated stored procedure
                             // degrades to "no MCQ section" instead of throwing on every page load.

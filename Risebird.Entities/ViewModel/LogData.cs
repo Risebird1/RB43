@@ -1,8 +1,8 @@
-﻿using Microsoft.WindowsAzure.Storage.Table;
+﻿using Risebird.Entities.Storage;
 
 namespace Risebird.Entities.ViewModel
 {
-    public class LogData : TableEntity
+    public class LogData : RbTableEntity
     {
         public LogData(string PartitionKey, string RowKey)
         {

@@ -1,8 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
-using Microsoft.WindowsAzure.Storage.Blob;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -261,16 +260,16 @@ namespace Risebird.Repository
         {
             try
             {
-                CloudBlobContainer blobContainer = GetCloudBlobContainer(containerName);
-                CloudBlob blob = blobContainer.GetBlobReference(fileName);
+                BlobContainerClient blobContainer = GetCloudBlobContainer(containerName);
+                BlobClient blob = blobContainer.GetBlobClient(fileName);
                 string contents; /* content to append */
-                if (!blob.ExistsAsync().Result)
+                if (!blob.Exists().Value)
                 {
                     contents = "";
                 }
                 else
                 {
-                    using (StreamReader reader = new StreamReader(blob.OpenReadAsync().Result))
+                    using (StreamReader reader = new StreamReader(blob.OpenRead()))
                     {
                         contents = reader.ReadToEnd();
                     }
@@ -282,25 +281,16 @@ namespace Risebird.Repository
                 return null;
             }
         }
-        public static CloudBlobContainer GetCloudBlobContainer(string containerName)
+        public static BlobContainerClient GetCloudBlobContainer(string containerName)
         {
-            CloudStorageAccount account = GetStorageAccount();
-            CloudBlobClient blobClient = account.CreateCloudBlobClient();
-            CloudBlobContainer blobContainer = blobClient.GetContainerReference(containerName);
-            if (!blobContainer.ExistsAsync().Result)
-            {
-                blobContainer.CreateIfNotExistsAsync();
-                var permission = new BlobContainerPermissions();
-                permission.PublicAccess = BlobContainerPublicAccessType.Container;
-                blobContainer.SetPermissionsAsync(permission);
-            }
+            var blobContainer = GetBlobServiceClient().GetBlobContainerClient(containerName);
+            blobContainer.CreateIfNotExists(PublicAccessType.BlobContainer);
             return blobContainer;
         }
-        public static CloudStorageAccount GetStorageAccount()
+        private static BlobServiceClient GetBlobServiceClient()
         {
-            StorageCredentials creds = new StorageCredentials("risebirdportal", "2AKmR4SJlNvtr0BY5h7gVJANY7vBcCqph7KWywH9cqLcel/cxT0fKLXyGUVrSj3Xj89HUf2Z0QuWmQ8Zd5SqeQ==");
-            CloudStorageAccount account = new CloudStorageAccount(creds, useHttps: true);
-            return account;
+            const string connectionString = "DefaultEndpointsProtocol=https;AccountName=risebirdportal;AccountKey=2AKmR4SJlNvtr0BY5h7gVJANY7vBcCqph7KWywH9cqLcel/cxT0fKLXyGUVrSj3Xj89HUf2Z0QuWmQ8Zd5SqeQ==;EndpointSuffix=core.windows.net";
+            return new BlobServiceClient(connectionString);
         }
         public void RecruiterStatusCheck(int interviewid, string CandidateEmailid, string IRFName, DateTime interviewDate)
         {

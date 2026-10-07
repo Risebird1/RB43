@@ -1634,6 +1634,65 @@ namespace Risebird.CommonHelper
             }
         }
 
+        // The two below drive advanced resume screening, ported from screen.risebird.io. The input
+        // wording is kept identical to that product's because both call the same stored prompts,
+        // and a stored prompt is tuned against the input it is given.
+        public async Task<RunResult> GenerateAdvancedResumeAnalysis(string resumeStringData, string screeningCriteriaJson)
+        {
+            try
+            {
+                var promptId = _configuration["OpenAI:AdvancedScreenerPromptId"];
+                if (string.IsNullOrWhiteSpace(promptId))
+                {
+                    return null;
+                }
+
+                var input = $"Evaluate the candidate's resume in JSON format against the following criteria. Here's a JSON string:{screeningCriteriaJson} . The Resume data you need to generate an analysis against is {resumeStringData}.";
+                return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                    input,
+                    operationType: "CandidateAdvancedScreening",
+                    promptId: promptId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<RunResult> GenerateJDToScreeningCriteria(string hiringManagerCallData, string jdStringData,
+            string recruiterInstructions = null, string icpStringData = null)
+        {
+            try
+            {
+                var promptId = _configuration["OpenAI:JdToScreeningPromptId"];
+                if (string.IsNullOrWhiteSpace(promptId))
+                {
+                    return null;
+                }
+
+                var input = $"Generate Screening Criteria in JSON format using the following JD. Here's a JD string:{jdStringData} . The Hiring Manager Call TransScript data you need to generate an analysis against is {hiringManagerCallData}.";
+                if (!string.IsNullOrWhiteSpace(icpStringData))
+                {
+                    input += $" The Ideal Candidate Profile (ICP) you must align the screening criteria with is: {icpStringData}";
+                }
+                if (!string.IsNullOrWhiteSpace(recruiterInstructions))
+                {
+                    input += $" Additionally, the recruiter has recorded the following instructions which you must take into account while generating the screening criteria: {recruiterInstructions}";
+                }
+
+                return await _openAIResponsesHelper.CreateJsonResponseAsync(
+                    input,
+                    operationType: "JdToScreeningCriteria",
+                    promptId: promptId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public async Task<RunResult> GenerateInterviewerScreening(string resumeStringData, string jobTitle)
         {
             try

@@ -1,0 +1,246 @@
+@model Risebird.Entities.ViewModel.ResumeScreeningCriteriaVM
+@using Risebird.CommonHelper
+@using Risebird.Entities.ViewModel
+@{
+    ViewData["Title"] = "Screening Rubric";
+    ViewBag.PageHeader = "Screening Rubric";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Ported from screen.risebird.io's ScreeningProject/ScreeningCriteria. Rows come from
+    // AdvancedResumeScreening.BuildCriteriaRows and are named by ResumeScreeningCriteriaVM
+    // property, so the posted form binds straight back with no per-field markup.
+    var criteria = ViewBag.Criteria as List<ScreeningCriterionRow> ?? new List<ScreeningCriterionRow>();
+    var sections = new[] { AdvancedResumeScreening.SectionSkills, AdvancedResumeScreening.SectionWork, AdvancedResumeScreening.SectionEducation };
+    var budget = AdvancedResumeScreening.PointsBudget;
+    var allocated = criteria.Sum(c => c.Score);
+    var isUnsavedDraft = (ViewBag.IsUnsavedDraft as bool?) == true;
+}
+<script>
+    var Header = "Screening Rubric";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<style>
+    .rs-page { background: #f5f7fa; min-height: 100vh; padding: 18px 0 30px; font-size: 13px; color: #1f2937; }
+    .rs-page .rs-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 2px 10px rgba(15, 23, 42, .05); margin-bottom: 18px; }
+    .rs-page .rs-card-b { padding: 18px 22px; }
+    .rs-page .rs-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; border-left: 4px solid #42a5f5; }
+    .rs-page .rs-head h4 { margin: 0; font-size: 18px; font-weight: 700; }
+    .rs-page .rs-head p { margin: 4px 0 0; color: #6b7280; }
+    .rs-page .rs-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; color: #1f2937 !important; font-weight: 600; font-size: 12px; text-decoration: none !important; cursor: pointer; }
+    .rs-page .rs-btn:hover { background: #f1f5f9; }
+    .rs-page .rs-btn.primary { background: #42a5f5; border-color: #42a5f5; color: #fff !important; }
+    .rs-page .rs-btn.primary:hover { background: #1e88e5; }
+    .rs-page .rs-btn[disabled] { opacity: .7; cursor: default; }
+
+    .rs-page .rs-alert { border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; font-weight: 500; }
+    .rs-page .rs-alert.err { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+    .rs-page .rs-alert.ok { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+    .rs-page .rs-alert.warn { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+    .rs-page .validation-summary-errors ul { margin: 0; padding-left: 18px; }
+    .rs-page .validation-summary-valid { display: none; }
+
+    .rs-page .rs-sources { display: flex; flex-wrap: wrap; gap: 8px 22px; color: #6b7280; }
+    .rs-page .rs-sources .yes { color: #166534; }
+    .rs-page .rs-sources .no { color: #9ca3af; }
+
+    .rs-page .rs-budget { display: flex; align-items: baseline; gap: 22px; flex-wrap: wrap; padding: 12px 16px; border-radius: 10px; background: #f8fafc; border: 1px solid #e5e7eb; margin-bottom: 8px; color: #6b7280; }
+    .rs-page .rs-budget .num { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 16px; color: #111827; }
+    .rs-page .rs-budget .num.over { color: #dc2626; }
+    .rs-page .rs-budget .num.exact { color: #16a34a; }
+
+    .rs-page .rs-section-label { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #1e88e5; margin: 22px 0 8px; }
+    .rs-page table.rs-table { width: 100%; border-collapse: collapse; }
+    .rs-page .rs-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #6b7280; padding: 8px 10px; border-bottom: 1px solid #e5e7eb; }
+    .rs-page .rs-table td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+    .rs-page .rs-table td:first-child { font-weight: 600; padding-top: 14px; }
+    .rs-page .rs-table textarea, .rs-page .rs-table input { width: 100%; border: 1px solid #d1d5db; border-radius: 8px; padding: 7px 9px; font-size: 13px; }
+    .rs-page .rs-table textarea { resize: vertical; min-height: 38px; }
+    .rs-page .rs-table tr.off td { opacity: .55; }
+    .rs-page .rs-required { color: #dc2626; margin-left: 3px; }
+    .rs-page .rs-foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="content client candidate rs-page">
+        <div class="container-fluid">
+
+            <div class="rs-card rs-card-b rs-head">
+                <div>
+                    <h4>Screening Rubric &mdash; @Model.IRFName</h4>
+                    <p>@Model.JDTiltle</p>
+                </div>
+                <div>
+                    @if (Model.IRFId > 0 && !string.IsNullOrWhiteSpace(Model.IRFName))
+                    {
+                        <a class="rs-btn" href="@Url.Action("GetCandidates", "Candidate", new { id = Model.IRFId, irfName = Model.IRFName })">
+                            <i class="fa fa-arrow-left"></i> Candidates
+                        </a>
+                    }
+                </div>
+            </div>
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="rs-alert ok"><i class="fa fa-check"></i> @TempData["SuccessMessage"]</div>
+            }
+            @if (!string.IsNullOrWhiteSpace(ViewBag.ErrorMessage as string))
+            {
+                <div class="rs-alert err"><i class="fa fa-exclamation-triangle"></i> @ViewBag.ErrorMessage</div>
+            }
+            @if (isUnsavedDraft)
+            {
+                <div class="rs-alert warn">
+                    <i class="fa fa-info-circle"></i>
+                    Generated from this skill channel and <strong>not saved yet</strong>. Review the criteria and weights, then save.
+                    Nothing is scored against a draft.
+                </div>
+            }
+            else if (Model.HasCriteria && Model.IsAutoGenerated)
+            {
+                <div class="rs-alert warn">
+                    <i class="fa fa-info-circle"></i>
+                    Generated automatically when the first resume on this skill channel was screened
+                    @(Model.CreatedOn.HasValue ? "(" + Model.CreatedOn.Value.ToString("dd MMM yyyy") + ")" : "")
+                    and <strong>not reviewed yet</strong>. Saving it marks it reviewed.
+                </div>
+            }
+            else if (Model.HasCriteria && Model.UpdatedOn.HasValue)
+            {
+                <div class="rs-alert ok" style="font-weight:400;">
+                    Last saved @Model.UpdatedOn.Value.ToString("dd MMM yyyy HH:mm") UTC
+                    @(string.IsNullOrWhiteSpace(Model.UpdatedBy) ? "" : "by " + Model.UpdatedBy)
+                </div>
+            }
+
+            <form asp-action="ScreeningCriteria" asp-controller="AIScreener" method="post" id="criteriaForm">
+                @* The form tag helper adds the antiforgery token. *@
+                <input type="hidden" name="IRFId" value="@Model.IRFId" />
+
+                <div class="rs-card rs-card-b">
+                    <p style="margin-top:0;">
+                        Every resume on this skill channel is scored against these criteria, with a reason per criterion.
+                        Set a weight to zero to switch a criterion off &mdash; it then drops out of the denominator rather than
+                        counting against the candidate. A criterion left without a description is treated as off.
+                    </p>
+
+                    <div class="rs-sources" title="What the rubric generator reads from this skill channel">
+                        <span>Generated from:</span>
+                        <span class="@(string.IsNullOrWhiteSpace(Model.JDLink) ? "no" : "yes")"><i class="fa @(string.IsNullOrWhiteSpace(Model.JDLink) ? "fa-minus" : "fa-check")"></i> JD document</span>
+                        <span class="@(string.IsNullOrWhiteSpace(Model.CalibrationNotes) ? "no" : "yes")"><i class="fa @(string.IsNullOrWhiteSpace(Model.CalibrationNotes) ? "fa-minus" : "fa-check")"></i> Calibration meeting notes</span>
+                        <span class="@(string.IsNullOrWhiteSpace(Model.RecruiterInstructions) ? "no" : "yes")"><i class="fa @(string.IsNullOrWhiteSpace(Model.RecruiterInstructions) ? "fa-minus" : "fa-check")"></i> Recorded instructions</span>
+                    </div>
+
+                    <div asp-validation-summary="ModelOnly" class="rs-alert err" style="margin-top:14px;"></div>
+
+                    <div class="rs-budget" style="margin-top:14px;">
+                        <div>Allocated <span class="num" id="allocatedTotal">@allocated</span> of @budget points</div>
+                        <div>Criteria in use <span class="num" id="activeCount">0</span> of @criteria.Count</div>
+                        <div id="budgetHint"></div>
+                    </div>
+
+                    @foreach (var sec in sections)
+                    {
+                        var rows = criteria.Where(c => c.Section == sec).ToList();
+                        if (!rows.Any())
+                        {
+                            continue;
+                        }
+
+                        <div class="rs-section-label">@sec &mdash; @rows.Count criteria</div>
+                        <div style="overflow-x:auto;">
+                            <table class="rs-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width:230px;">Criterion</th>
+                                        <th>What the screener is told it means</th>
+                                        <th style="width:100px;">Weight</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var row in rows)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @row.Label
+                                                @if (row.IsRequired)
+                                                {
+                                                    <span class="rs-required" title="Required, minimum 1 point">*</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <textarea name="@row.TextField" rows="2" maxlength="@row.MaxLength" class="rs-text">@row.Text</textarea>
+                                            </td>
+                                            <td>
+                                                <input name="@row.ScoreField" value="@row.Score" type="number" min="@(row.IsRequired ? 1 : 0)" max="@budget" step="1" class="rs-score" required />
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+
+                <div class="rs-card rs-card-b rs-foot">
+                    <a class="rs-btn" id="regenerate" href="@Url.Action("ScreeningCriteria", "AIScreener", new { irfId = Model.IRFId, regenerate = true })"
+                       title="Generate a fresh rubric from the skill channel. Nothing is saved until you save it.">
+                        <i class="fa fa-sync-alt"></i> Regenerate
+                    </a>
+                    <button type="submit" class="rs-btn primary" id="criteriaSubmit">
+                        <i class="fa fa-save"></i> Save rubric
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        var budget = @budget;
+
+        // The budget is advisory, and honestly so: the screener scores against an effective
+        // maximum that excludes criteria left at zero, so the denominator is whatever is actually
+        // in use rather than a fixed total. Blocking on the total would imply a precision the
+        // scoring does not have.
+        function recalc() {
+            var total = 0, active = 0;
+            $('.rs-score').each(function () {
+                var v = parseInt($(this).val(), 10) || 0;
+                var text = $.trim($(this).closest('tr').find('.rs-text').val());
+                var on = v > 0 && text.length > 0;
+                total += v;
+                if (on) { active++; }
+                $(this).closest('tr').toggleClass('off', !on);
+            });
+
+            var el = $('#allocatedTotal').text(total).removeClass('over exact');
+            if (total > budget) { el.addClass('over'); }
+            else if (total === budget) { el.addClass('exact'); }
+
+            $('#activeCount').text(active);
+            $('#budgetHint').text(
+                total > budget ? 'Over budget by ' + (total - budget) + '.'
+                : total === budget ? ''
+                : (budget - total) + ' points unallocated.');
+        }
+
+        $(document).on('input change', '.rs-score, .rs-text', recalc);
+        recalc();
+
+        $('#regenerate').on('click', function (e) {
+            if (!confirm('Generate a fresh rubric from this skill channel? Unsaved edits on this page are lost; the saved rubric is unchanged until you save.')) {
+                e.preventDefault();
+                return;
+            }
+            $(this).css('pointer-events', 'none').html('<i class="fa fa-spinner fa-spin"></i> Generating&hellip;');
+        });
+
+        $('#criteriaForm').on('submit', function () {
+            $('#criteriaSubmit').prop('disabled', true)
+                .html('<i class="fa fa-spinner fa-spin"></i> Saving&hellip;');
+            return true;
+        });
+    });
+</script>

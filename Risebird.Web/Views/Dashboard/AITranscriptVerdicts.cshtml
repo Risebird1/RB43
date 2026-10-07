@@ -225,7 +225,16 @@
                                                         @if (ViewBag.Pagetype != "Public")
                                                         {
                                                             <td>@item.candidateEmail</td>
-                                                            <td>@item.InterviewerMobileNumber</td>
+                                                            <td>
+                                                                @item.InterviewerMobileNumber
+                                                                @if (!string.IsNullOrEmpty(item.InterviewerMobileNumber))
+                                                                {
+                                                                    <span class="call rb-call-icon ms-1" role="button" title="Call this interviewer"
+                                                                          onclick="CommonCallButtonClickEditable('@(item.interviewer)', '@item.InterviewerMobileNumber', '@(item.interviewer ?? "")', null, null, 'Interviewer')">
+                                                                        <i class="fas fa-phone-alt"></i>
+                                                                    </span>
+                                                                }
+                                                            </td>
                                                         }
                                                         <td>@item.IRFId</td>
                                                         <td>@item.ChannelOwner</td>
@@ -314,3 +323,7 @@
         });
     }
 </script>
+
+@* Manual click-to-call: shared provider modal + TwilioCallMaker.js (added for interviewer click-to-call). *@
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+<script src="~/js/TwilioCallMaker.js" asp-append-version="true"></script>

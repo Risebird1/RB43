@@ -572,8 +572,35 @@ namespace Risebird.Web.Controllers
                 callLog.PlivoCXConversationId = payload.ConversationId  ?? callLog.PlivoCXConversationId;
                 callLog.CallStatus            = payload.CallStatus      ?? callLog.CallStatus;
                 callLog.HangupCause           = payload.HangupCause;
-                callLog.CallTranscript        = payload.Transcript;
-                callLog.ConversationSummary   = payload.Summary;
+                // Don't wipe a transcript we already have: Plivo CX often delivers the
+                // hangup webhook before the transcript is ready, so payload.Transcript is null.
+                callLog.CallTranscript        = payload.Transcript ?? callLog.CallTranscript;
+                callLog.ConversationSummary   = payload.Summary ?? callLog.ConversationSummary;
+
+                // If still no transcript, pull it from Plivo by call_uuid (the Recording +
+                // Transcription APIs). FetchCallMediaAsync creates the transcription if one
+                // doesn't exist yet; a later backfill run picks it up once Plivo finishes.
+                if (string.IsNullOrWhiteSpace(callLog.CallTranscript) && !string.IsNullOrWhiteSpace(payload.CallUUID))
+                {
+                    try
+                    {
+                        var media = await _plivoCXService.FetchCallMediaAsync(payload.CallUUID);
+                        if (!string.IsNullOrWhiteSpace(media?.Transcript))
+                            callLog.CallTranscript = media.Transcript;
+                        if ((callLog.DurationSeconds ?? 0) == 0 && media?.DurationSeconds > 0)
+                            callLog.DurationSeconds = media.DurationSeconds;
+                        await SaveCpAsync("transcript_fetch_attempted",
+                            string.IsNullOrWhiteSpace(media?.Transcript)
+                                ? $"No transcript from Plivo yet for call_uuid={payload.CallUUID} ({media?.Error ?? "pending"})"
+                                : $"Fetched transcript from Plivo ({media.Transcript.Length} chars) for call_uuid={payload.CallUUID}",
+                            convId: payload.ConversationId, callLogId: callLog.Id);
+                    }
+                    catch (Exception fx)
+                    {
+                        await SaveCpAsync("transcript_fetch_failed", fx.Message,
+                            convId: payload.ConversationId, callLogId: callLog.Id);
+                    }
+                }
                 callLog.BookedInterviewDate   = ResolveRelativeDate(payload.InterviewDate);
                 callLog.BookedInterviewTime   = payload.InterviewTime;
                 callLog.CandidateDisposition  = NormaliseDisposition(payload.CandidateDisposition);

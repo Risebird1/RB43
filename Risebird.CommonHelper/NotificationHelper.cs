@@ -77,6 +77,56 @@ namespace Risebird.CommonHelper
                 .ToArray();
         }
 
+        public async Task<string> SendInterviewerCoachingEmail(string toEmail, string toName, string replyToEmail, string subject, string htmlBody)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(toEmail) || string.IsNullOrWhiteSpace(htmlBody))
+                {
+                    return "Failed to send mail.";
+                }
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Quality Team");
+                if (!string.IsNullOrWhiteSpace(replyToEmail))
+                {
+                    msg.ReplyTo = new SendGrid.Helpers.Mail.EmailAddress(replyToEmail.Trim());
+                }
+                msg.Subject = subject;
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(toEmail.Trim(), string.IsNullOrWhiteSpace(toName) ? null : toName.Trim()));
+                // Pre-built, already encoded HTML: never run through string.Format (braces in comments would break it).
+                msg.HtmlContent = htmlBody;
+                return await SendMail(msg);
+            }
+            catch (Exception ex)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to send mail. Please check all fields and try again.";
+            }
+        }
+
+        public async Task<string> ResendStoredMail(string toEmail, string subject, string htmlBody, int? irfId, int? interviewId)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(toEmail) || string.IsNullOrWhiteSpace(htmlBody))
+                {
+                    return "Failed to send mail.";
+                }
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = subject;
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(toEmail.Trim()));
+                // Stored HTML from our own templates: send as-is, never through string.Format.
+                msg.HtmlContent = htmlBody;
+                return await SendMail(msg, irfId, interviewId);
+            }
+            catch (Exception ex)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to send mail.";
+            }
+        }
+
         public async Task<string> SendHelpsupportMail(Mail model)
         {
             try

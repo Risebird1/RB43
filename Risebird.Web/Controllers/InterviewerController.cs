@@ -1216,7 +1216,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    List<InterviewerProfessional> EmployerList = _interviewerRepository.GetEmployerListById(id).Result;
+                    List<InterviewerProfessional> EmployerList = await _interviewerRepository.GetEmployerListById(id);
                     GetAllEmployerSelectList();
 
                     if (TempData["InterviewerEmployerMessage"] != null)
@@ -1276,7 +1276,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
 
-                    if (_interviewerService.AddEmployerProfile(interviewerProfessional).Result)
+                    if (await _interviewerService.AddEmployerProfile(interviewerProfessional))
                     {
                         TempData["InterviewerEmployerMessage"] = "Adding Interviewer Employer Details is Successful";
                         return RedirectToAction("IndexEmployer", new { id = interviewerProfessional.InterviewerProfileId });
@@ -1367,7 +1367,7 @@ namespace Risebird.Web.Controllers
 
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (_interviewerService.EditEmployerProfile(interviewerProfessional).Result)
+                    if (await _interviewerService.EditEmployerProfile(interviewerProfessional))
                     {
                         TempData["InterviewerEmployerMessage"] = "Editing Interviewer Employer Details is Successful";
                         return RedirectToAction("IndexEmployer", new { id = interviewerProfessional.InterviewerProfileId });
@@ -1399,7 +1399,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
 
-                    if (_interviewerService.DeleteEmployerProfile(id).Result)
+                    if (await _interviewerService.DeleteEmployerProfile(id))
                     {
                         //TempData["InterviewerEmployerMessage"] = "Successfully Deleted";
                         return Json(new { url = Url.Action("IndexEmployer", "Interviewer", new { id = IProfileId }) });
@@ -2067,7 +2067,7 @@ namespace Risebird.Web.Controllers
                             }
 
                         }
-                        if (_interviewerService.AddInterviewerMyProfile(interviewerProfile).Result)
+                        if (await _interviewerService.AddInterviewerMyProfile(interviewerProfile))
                         {
                             TempData["MyProfileMessage"] = "Profile has been updated Successfully!";
                             return RedirectToAction("MyProfile");
@@ -2706,7 +2706,7 @@ namespace Risebird.Web.Controllers
 
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "InterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                     {
-                        var model = _interviewerService.GetInterviewerinteviewReport(interviewId, iscId).Result;
+                        var model = await _interviewerService.GetInterviewerinteviewReport(interviewId, iscId);
                         model.profileName = profileName;
                         await GetStatusList(model, iscId);
                         model.BackUrl = backUrl;
@@ -2803,7 +2803,7 @@ namespace Risebird.Web.Controllers
                             model.VideoLink = model.PageVideoLink;
                         }
 
-                        if (_interviewerService.AddInterviewerReport(model).Result)
+                        if (await _interviewerService.AddInterviewerReport(model))
                         {
                             TempData["SuccessErrorMessageLeadInterviewer"] = "Report has been saved Successfully!";
                             if (profileName == "Admin")
@@ -3499,7 +3499,7 @@ namespace Risebird.Web.Controllers
                             }
 
                         }
-                        if (_interviewerService.InterviewerRecommendation(model).Result)
+                        if (await _interviewerService.InterviewerRecommendation(model))
                         {
                             TempData["MessageInterviewer"] = "Recommendation has been saved Successfully!";
                             return RedirectToAction("Index");
@@ -4550,7 +4550,7 @@ namespace Risebird.Web.Controllers
 
                     HttpClient myWebClient = new HttpClient();
                     string uploadedCodedResumeLink = string.Empty;
-                    using (Stream myStream = myWebClient.GetStreamAsync(redactedResumeLink).Result)
+                    using (Stream myStream = await myWebClient.GetStreamAsync(redactedResumeLink))
                     {
                         long unixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
@@ -4558,7 +4558,7 @@ namespace Risebird.Web.Controllers
                         //var fileName = resumeFileName + "_redacted" + "_" + unixTime.ToString();
                         try
                         {
-                            uploadedCodedResumeLink = _azureStorageHelper.InsertBlobCloudCompare(fileName, "resumes", null, myStream, contentType: "application/pdf").Result;
+                            uploadedCodedResumeLink = await _azureStorageHelper.InsertBlobCloudCompare(fileName, "resumes", null, myStream, contentType: "application/pdf");
 
                         }
                         catch (Exception ex)
@@ -4803,7 +4803,9 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
-                        var result = await _interviewerService.DeactivateSkillChannelInterviewer(irfId, interviewerEmail);
+                        // Log who removed the interviewer (QC Activity dashboard).
+                        var removedBy = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "");
+                        var result = await _interviewerService.DeactivateSkillChannelInterviewer(irfId, interviewerEmail, removedBy, "SkillChannelRemoval");
                         return Json(result);
                     }
                     else

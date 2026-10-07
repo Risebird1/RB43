@@ -288,3 +288,49 @@ today.
 | Client / client user / billing owner | Captured as fields beside the chat on step 4 |
 | Who can use it | Admin, SupportAdmin, HR, SeniorHR, InterviewerManagement, SeniorInterviewerManagement — the same set as the existing template action. Clients excluded |
 | Visibility in `/Template/List` | Not addressed here — `usp_GetAllClonableSkillChannels` is not in this repo. Generated per-JD templates will appear in the curated list until that proc filters on `IsAIAudioTemplate` |
+
+---
+
+## Candidate transcript review
+
+Speech-to-text used to be submitted unseen: the candidate stopped recording, the server transcribed
+the audio inside the submit handler, and whatever came back was filed as their answer. A mis-heard
+word — "four years" heard as "fourteen years" — was scored as spoken, and nobody could tell.
+
+The candidate now reads the transcript and corrects it before the answer is submitted.
+
+**The flow.** Recording stops → `AIInterview/TranscribeAnswer` transcribes it and returns the text
+without saving anything → the text appears in an editable box → the candidate submits. The existing
+form post is unchanged apart from two new fields, so everything downstream of the submit works as it
+did.
+
+**The timer keeps running** while they read. It is the same clock that runs while they think about
+the question; review is not free time and the panel says so.
+
+**What is stored.** `CandidateAnswer` is what the candidate *confirmed* — that is what gets scored.
+Three columns on `BotInterviewQuestionVideos` keep what the machine heard:
+
+| Column | |
+| --- | --- |
+| `RawTranscript` | what speech-to-text returned, never overwritten |
+| `TranscriptEditedByCandidate` | 1 when the confirmed text differs |
+| `TranscriptDivergencePct` | how much, 0–100 |
+
+Divergence is measured in **words**, ignoring case and punctuation, so fixing a comma reads as no
+edit and a changed word reads as one word. A small number is a mis-heard name or figure; a large one
+is worth a QC look. `CandidateTranscriptReview` holds that logic and has tests.
+
+**Scope.** Only answers whose text comes from the recording. Coding questions (the code is the
+answer), typing and listening assessments (already typed), chatbox mode and the MCQ section are
+untouched and still submit exactly as before.
+
+**Failure never costs the answer.** If transcription fails or returns nothing usable, the candidate
+is not trapped: the submit falls through to the server, which transcribes the same recording exactly
+as it did before this existed. A recording that could not be made out comes back with an empty box
+and a prompt to type the answer instead.
+
+**Switch.** `AIInterview:CandidateTranscriptReview` (default `true`). Set it to `false` to go back to
+submitting the transcript unseen, without a deploy.
+
+Not built: re-record (one of two takes) and QC flagging on large divergence. The columns those would
+use are in place.

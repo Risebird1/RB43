@@ -10,10 +10,13 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 -- Returns denormalized IRF rows for Azure AI Search index (irfindex).
--- @IrfIntId NULL  = all active IRFs (FullCrawl)
--- @IrfIntId set   = single IRF including deleted (Upsert / Remove)
+-- @IrfIntId NULL, @IrfIntIdCsv NULL = all active IRFs (FullCrawl)
+-- @IrfIntId set                     = single IRF including deleted (Upsert / Remove)
+-- @IrfIntIdCsv set                  = the listed active IRFs (bulk re-index, e.g. after a
+--                                      user edit changes risebirdHrEmail / allowedViewerEmails)
 CREATE PROCEDURE [dbo].[usp_GetIrfIndexBatch]
-    @IrfIntId INT = NULL
+    @IrfIntId INT = NULL,
+    @IrfIntIdCsv NVARCHAR(MAX) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -160,6 +163,10 @@ BEGIN
     LEFT JOIN  ScheduledMeetings sch ON sch.IrfIntId = irf.id
     LEFT JOIN  ViewerEmails ve ON ve.IrfIntId = irf.id
     WHERE (@IrfIntId IS NULL OR irf.id = @IrfIntId)
+      AND (@IrfIntIdCsv IS NULL
+           OR irf.id IN (SELECT TRY_CAST(LTRIM(RTRIM(value)) AS INT) FROM STRING_SPLIT(@IrfIntIdCsv, ',')))
+      -- Bulk mode leaves @IrfIntId NULL, so soft-deleted rows stay excluded there too; their
+      -- removal from the index is handled by the single-id Upsert path.
       AND (@IrfIntId IS NOT NULL OR ISNULL(irf.IsDeleted, 0) = 0);
 END
 GO

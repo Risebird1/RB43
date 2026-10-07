@@ -1696,16 +1696,16 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult IsQuestionUsedInReport(string question)
+        public async Task<JsonResult> IsQuestionUsedInReport(string question)
         {
             try
             {
-                bool isQuestionUsed = _irfService.IsQuestionUsedInReport(question/*.Replace("\n", "").Replace("\r", "")*/).Result;
+                bool isQuestionUsed = await _irfService.IsQuestionUsedInReport(question/*.Replace("\n", "").Replace("\r", "")*/);
                 return Json(isQuestionUsed);
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(false);
             }
         }
@@ -2559,7 +2559,7 @@ namespace Risebird.Web.Controllers
                             }
                             //End: Auto Generate Scheduling Link
                             model.id = 0;
-                            if (_irfService.AddIRFDetails(model, emailId, domain).Result)
+                            if (await _irfService.AddIRFDetails(model, emailId, domain))
                             {
                                 var isIndexCreated = await _affIndaResumeParserHelper.CreateIndex(model.IRFId);
 
@@ -2951,7 +2951,7 @@ namespace Risebird.Web.Controllers
                         {
                             model.VideoLink = model.PageVideoLink;
                         }
-                        if (_meetingService.AddInterviewReport(model, emailid).Result)
+                        if (await _meetingService.AddInterviewReport(model, emailid))
                         {
                             TempData["SuccessErrorMessage"] = "Report has been saved Successfully!";
                             return RedirectToAction("AddReport", new { interviewId = model.InterviewId, irfId = model.IRFId });
@@ -4192,7 +4192,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
 
-                        if (_irfService.AddUpdateInterviewPlanner(model).Result)
+                        if (await _irfService.AddUpdateInterviewPlanner(model))
                         {
                             TempData["SuccessErrorMessage"] = "Interview Planner has been updated Successfully!";
                             return RedirectToAction("Index");
@@ -4223,7 +4223,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult EnrollVoiceItUser(int candidateId, string candidateEmail, int irfId, string irfName)
+        public async Task<IActionResult> EnrollVoiceItUser(int candidateId, string candidateEmail, int irfId, string irfName)
         {
             try
             {
@@ -4237,7 +4237,7 @@ namespace Risebird.Web.Controllers
                         IRFId = irfId,
                         CandidateEmail = candidateEmail
                     };
-                    var model = (IList<CandidateAudio>)_evaluatorService.GetCandidateAudios(candidateId, irfId).Result.Where(x => x.IsVoiceBiometric == true).ToList();
+                    var model = (IList<CandidateAudio>)(await _evaluatorService.GetCandidateAudios(candidateId, irfId)).Where(x => x.IsVoiceBiometric == true).ToList();
                     datamodel.CandidateAudios = model.ToList();
                     if (TempData["SuccessErrorMessageEnroll"] != null)
                     {
@@ -4256,7 +4256,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Candidates", new { id = irfId, irfName = irfName });
             }
         }
@@ -4524,7 +4524,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public bool Subscribe(int id)
+        public async Task<bool> Subscribe(int id)
         {
             try
             {
@@ -4532,12 +4532,12 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                return _irfService.SubscribeCuratedGroup(id, emailid, profileName).Result;
+                return await _irfService.SubscribeCuratedGroup(id, emailid, profileName);
 
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
 
@@ -4545,7 +4545,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public bool UnSubscribe(int id)
+        public async Task<bool> UnSubscribe(int id)
         {
             try
             {
@@ -4553,12 +4553,12 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                return _irfService.UnSubscribeCuratedGroup(id, emailid, profileName).Result;
+                return await _irfService.UnSubscribeCuratedGroup(id, emailid, profileName);
 
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
 
@@ -4694,7 +4694,7 @@ namespace Risebird.Web.Controllers
                 {
                     //var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     //profileName = profileName.Replace("\"", "");
-                    if (_irfService.AddCuratedGroup(irfList, cgName).Result)
+                    if (await _irfService.AddCuratedGroup(irfList, cgName))
                     {
                         TempData["SuccessErrorMessageCG"] = "Curated Group has been added Successfully!";
                         return Json(true);
@@ -6634,7 +6634,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                var model = await _meetingService.GetInteviewReport(interviewId, irfId);
                 ViewBag.IsSelected = IsSelected;
                 if (model.QuestionsCollection == null)
                 {
@@ -7514,7 +7514,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult BroadcastIRFmembers(string message, string subject, int irfid, int interviewId = 0, bool shouldSendEmail = true)
+        public async Task<JsonResult> BroadcastIRFmembers(string message, string subject, int irfid, int interviewId = 0, bool shouldSendEmail = true)
         {
             try
             {
@@ -7540,12 +7540,12 @@ namespace Risebird.Web.Controllers
                         if (interviewId > 0 && !shouldSendEmail)
                         {
                             model.InterviewId = interviewId;
-                            result = _meetingService.StoreClientBroadcastMessage(model).Result;
+                            result = await _meetingService.StoreClientBroadcastMessage(model);
 
                         }
                         else
                         {
-                            result = _meetingService.BroadcastIRFmembers(model).Result;
+                            result = await _meetingService.BroadcastIRFmembers(model);
 
                         }
                         return Json(result);
@@ -7562,7 +7562,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json("Broadcast failed, Please try again.");
             }
         }
@@ -9546,7 +9546,7 @@ namespace Risebird.Web.Controllers
                 var smeVoiceBrief = _irfService.FetchVoiceInstructionBrief(resolvedIrfId);
                 smeModel.VoiceInstructionTranscript = smeVoiceBrief?.Transcript;
                 smeModel.VoiceInstructionTranscriptUpdatedOn = smeVoiceBrief?.TranscriptUpdatedOn;
-                smeModel.CandidateVideo = _irfService.GetVideoConsentForm(resolvedIrfId).Result;
+                smeModel.CandidateVideo = (await _irfService.GetVideoConsentForm(resolvedIrfId));
                 await checkSkillSetandSeperate(smeModel);
                 return View(smeModel);
             }
@@ -9586,7 +9586,7 @@ namespace Risebird.Web.Controllers
             var voiceBrief = _irfService.FetchVoiceInstructionBrief(resolvedIrfId);
             model.VoiceInstructionTranscript = voiceBrief?.Transcript;
             model.VoiceInstructionTranscriptUpdatedOn = voiceBrief?.TranscriptUpdatedOn;
-            model.CandidateVideo = _irfService.GetVideoConsentForm(resolvedIrfId).Result;
+            model.CandidateVideo = (await _irfService.GetVideoConsentForm(resolvedIrfId));
             await checkSkillSetandSeperate(model);
             return View(model);
         }

@@ -1,0 +1,385 @@
+@model IEnumerable<Risebird.Entities.ViewModel.ApplicationLogDaySummaryVM>
+@using Risebird.Entities.Enum
+@{
+    ViewData["Title"] = "Application Logs";
+    ViewBag.PageHeader = "Application Logs";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var maxRangeDays = (int)(ViewBag.MaxRangeDays ?? 7);
+    var maxLookbackDays = (int)(ViewBag.MaxLookbackDays ?? 30);
+    var minAllowedDate = (string)(ViewBag.MinAllowedDate ?? "");
+    var maxAllowedDate = (string)(ViewBag.MaxAllowedDate ?? "");
+}
+
+<script>
+    var Header = "<div>Application Logs</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+<link href="~/Newassets/css/dashboard-new.css?v=2024" rel="stylesheet" />
+<style>
+    [type="date"] {
+        background: #ebecee url(https://icla.org/wp-content/uploads/2018/02/blue-calendar-icon.png) 99% 50% no-repeat !important;
+        background-size: 1.8% !important;
+    }
+
+    .date-filter-group {
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .date-filter-item {
+        margin-bottom: 0;
+    }
+
+        .date-filter-item label {
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 3px;
+            display: block;
+            white-space: nowrap;
+        }
+
+    .date-input {
+        min-width: 140px;
+        padding: 6px 8px;
+        font-size: 13px;
+        height: 37px;
+    }
+
+    .date-filter-buttons {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+    }
+
+        .date-filter-buttons .btn {
+            height: 37px;
+            padding: 6px 12px;
+            font-size: 13px;
+            white-space: nowrap;
+            border-radius: 4px;
+        }
+
+    .app-log-date-link {
+        color: #0d6efd;
+        text-decoration: underline;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+        .app-log-date-link:hover {
+            color: #0a58ca;
+        }
+
+    #appLogsPageLoader {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: rgba(255, 255, 255, 0.65);
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+        #appLogsPageLoader.is-visible {
+            display: flex;
+        }
+
+        #appLogsPageLoader img {
+            width: 64px;
+            height: 64px;
+        }
+
+        #appLogsPageLoader .loader-text {
+            margin-top: 12px;
+            font-size: 14px;
+            color: #333;
+            font-weight: 600;
+        }
+
+    /* Override global .badge { width:22px } which clips multi-digit counts */
+    a.app-log-count-badge {
+        display: inline-block;
+        width: auto !important;
+        min-width: 28px;
+        height: auto !important;
+        line-height: 1.2 !important;
+        padding: 6px 10px !important;
+        font-size: 13px !important;
+        font-weight: 700;
+        border-radius: 12px;
+        color: #fff !important;
+        text-align: center;
+        text-decoration: none;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+        a.app-log-count-badge.badge-danger {
+            background-color: #e04b4a !important;
+        }
+
+        a.app-log-count-badge.badge-error {
+            background-color: #c0392b !important;
+        }
+
+        a.app-log-count-badge.badge-warning {
+            background-color: #f0ad4e !important;
+            color: #212529 !important;
+        }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div id="appLogsPageLoader" aria-live="polite" aria-busy="true">
+        <img src="~/Newassets/img/lazyload.gif" alt="Loading" />
+        <div class="loader-text">Loading logs…</div>
+    </div>
+    <div class="jumbotron">
+        <div class="pt30">
+            <div class="col-md-12 nopad" style="margin:0px;">
+                <div class="card-header bg-w clearfix">
+                    <div class="pull-left">
+                        <h4 class="card-title"></h4>
+                        <div class="mobile-view"><h4 class="card-title">Application Logs</h4></div>
+                    </div>
+                    <div class="pull-right">
+                        <form method="get" action="@Url.Action("Index", "ApplicationLogs")" id="logDateFilterForm" class="date-filter-group">
+                            <div class="form-group date-filter-item">
+                                <label for="startDate">Start Date</label>
+                                <input type="date" id="startDate" name="startDate" class="form-control date-input"
+                                       value="@ViewBag.StartDate" min="@minAllowedDate" max="@maxAllowedDate" />
+                            </div>
+                            <div class="form-group date-filter-item">
+                                <label for="endDate">End Date</label>
+                                <input type="date" id="endDate" name="endDate" class="form-control date-input"
+                                       value="@ViewBag.EndDate" min="@minAllowedDate" max="@maxAllowedDate" />
+                            </div>
+                            <div class="date-filter-buttons">
+                                <button type="submit" class="btn btn-primary btn-sm" id="btnApplyDateFilter">
+                                    <i class="fa fa-filter"></i> Apply
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-sm" id="btnClearDateFilter" style="background:#acb0b4;">
+                                    <i class="fa fa-times"></i> Clear
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content client">
+            <div class="row bl-bg">
+                <div class="col-md-12">
+                    <div class="mdc-card card bl-bg">
+                        <div class="mdc-card-wrapper__text-section" style="padding:20px;">
+                            <p class="text-muted" style="margin-bottom:12px;">
+                                Daily Exception / Error / Warning counts (UTC). Max @maxRangeDays-day range, last @maxLookbackDays days only, no future dates.
+                                Click a date or count to open logs.
+                            </p>
+
+                            @if (TempData["LogsError"] != null)
+                            {
+                                <div class="alert alert-danger" style="margin-bottom:16px;">@TempData["LogsError"]</div>
+                            }
+                            @if (ViewBag.DateRangeError != null)
+                            {
+                                <div class="alert alert-warning" style="margin-bottom:16px;">@ViewBag.DateRangeError</div>
+                            }
+                            <div id="dateFilterValidationMsg" class="text-danger small" style="display:none;margin-bottom:12px;"></div>
+
+                            <div style="overflow-x:auto;">
+                                <table class="table table-striped table-bordered" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Date (UTC)</th>
+                                            <th class="text-center">Exception</th>
+                                            <th class="text-center">Error</th>
+                                            <th class="text-center">Warning</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model != null && Model.Any())
+                                        {
+                                            foreach (var day in Model)
+                                            {
+                                                var dateParam = day.LogDate.ToString("yyyy-MM-dd");
+                                                var detailsUrl = Url.Action("Details", "ApplicationLogs", new { logDate = dateParam, logLevel = (int)LogLevelInfo.Exception });
+                                                <tr>
+                                                    <td>
+                                                        <a class="app-log-date-link" href="@detailsUrl">@day.LogDate.ToString("ddd, dd MMM yyyy")</a>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @if (day.ExceptionCount > 0)
+                                                        {
+                                                            <a class="badge badge-danger app-log-count-badge"
+                                                               href="@Url.Action("Details", "ApplicationLogs", new { logDate = dateParam, logLevel = (int)LogLevelInfo.Exception })">
+                                                                @day.ExceptionCount
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">0</span>
+                                                        }
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @if (day.ErrorCount > 0)
+                                                        {
+                                                            <a class="badge badge-error app-log-count-badge"
+                                                               href="@Url.Action("Details", "ApplicationLogs", new { logDate = dateParam, logLevel = (int)LogLevelInfo.Error })">
+                                                                @day.ErrorCount
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">0</span>
+                                                        }
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @if (day.WarningCount > 0)
+                                                        {
+                                                            <a class="badge badge-warning app-log-count-badge"
+                                                               href="@Url.Action("Details", "ApplicationLogs", new { logDate = dateParam, logLevel = (int)LogLevelInfo.Warning })">
+                                                                @day.WarningCount
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">0</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="4" class="text-center">No log days found for the selected range.</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var maxDays = @maxRangeDays;
+        var maxLookback = @maxLookbackDays;
+        var startInput = document.getElementById('startDate');
+        var endInput = document.getElementById('endDate');
+        var form = document.getElementById('logDateFilterForm');
+        var msg = document.getElementById('dateFilterValidationMsg');
+        var clearBtn = document.getElementById('btnClearDateFilter');
+
+        function toUtcDate(value) {
+            if (!value) return null;
+            var parts = value.split('-');
+            return new Date(Date.UTC(+parts[0], +parts[1] - 1, +parts[2]));
+        }
+
+        function formatUtc(d) {
+            var m = (d.getUTCMonth() + 1).toString().padStart(2, '0');
+            var day = d.getUTCDate().toString().padStart(2, '0');
+            return d.getUTCFullYear() + '-' + m + '-' + day;
+        }
+
+        function todayUtc() {
+            var now = new Date();
+            return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+        }
+
+        function earliestUtc() {
+            var t = todayUtc();
+            t.setUTCDate(t.getUTCDate() - (maxLookback - 1));
+            return t;
+        }
+
+        function daySpanInclusive(start, end) {
+            return Math.round((end - start) / 86400000) + 1;
+        }
+
+        function showError(text) {
+            msg.textContent = text || '';
+            msg.style.display = text ? 'block' : 'none';
+        }
+
+        function syncPickerBounds() {
+            var min = formatUtc(earliestUtc());
+            var max = formatUtc(todayUtc());
+            startInput.min = min;
+            startInput.max = max;
+            endInput.min = min;
+            endInput.max = max;
+        }
+
+        function validate() {
+            syncPickerBounds();
+            var start = toUtcDate(startInput.value);
+            var end = toUtcDate(endInput.value);
+            var today = todayUtc();
+            var earliest = earliestUtc();
+
+            if (!start || !end) {
+                showError('Please select both Start Date and End Date.');
+                return false;
+            }
+            if (start > today || end > today) {
+                showError('Future dates are not allowed.');
+                return false;
+            }
+            if (start < earliest || end < earliest) {
+                showError('Data older than ' + maxLookback + ' days is not available.');
+                return false;
+            }
+            if (start > end) {
+                showError('Start date must be less than or equal to end date.');
+                return false;
+            }
+            var span = daySpanInclusive(start, end);
+            if (span > maxDays) {
+                showError('Max ' + maxDays + ' days between Start and End (selected ' + span + ').');
+                return false;
+            }
+            showError('');
+            return true;
+        }
+
+        startInput.addEventListener('change', validate);
+        endInput.addEventListener('change', validate);
+
+        var pageLoader = document.getElementById('appLogsPageLoader');
+        function showPageLoader() {
+            if (pageLoader) pageLoader.classList.add('is-visible');
+        }
+
+        form.addEventListener('submit', function (e) {
+            if (!validate()) {
+                e.preventDefault();
+                return;
+            }
+            showPageLoader();
+        });
+        clearBtn.addEventListener('click', function () {
+            showPageLoader();
+            window.location.href = '@Url.Action("Index", "ApplicationLogs")';
+        });
+
+        syncPickerBounds();
+        validate();
+
+        document.querySelectorAll('a.app-log-date-link, a.app-log-count-badge').forEach(function (link) {
+            link.addEventListener('click', function () {
+                showPageLoader();
+            });
+        });
+    })();
+</script>

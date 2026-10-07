@@ -101,6 +101,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 
 //builder.Services.AddMvc();
 builder.Services.AddDistributedMemoryCache();
+builder.Services.AddMemoryCache();
 builder.Services.AddApplicationInsightsTelemetry();
 
 builder.Services.AddHsts(options =>
@@ -127,6 +128,7 @@ builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 builder.Services.AddScoped<INotificationHelper, NotificationHelper>();
 builder.Services.AddScoped<IAzureStorageHelper, AzureStorageHelper>();
+builder.Services.AddScoped<IApplicationLogDailyCountService, ApplicationLogDailyCountService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<ISkillService, SkillService>();
@@ -149,6 +151,9 @@ builder.Services.AddScoped<ICodeProjectQuestionRepository, CodeProjectQuestionRe
 builder.Services.AddScoped<ICodeProjectQuestionService, CodeProjectQuestionService>();
 builder.Services.AddSingleton<CodeProjectBackgroundQueue>();
 builder.Services.AddHostedService<CodeProjectBackgroundWorker>();
+builder.Services.AddScoped<AdvancedResumeScreeningService>();
+builder.Services.AddSingleton<ResumeScreeningBackgroundQueue>();
+builder.Services.AddHostedService<ResumeScreeningBackgroundWorker>();
 builder.Services.AddScoped<IQcInterviewAIMergeJobService, QcInterviewAIMergeJobService>();
 builder.Services.AddScoped<ITransInterviewerAuditRepository, TransInterviewerAuditRepository>();
 builder.Services.AddScoped<IDmIvAutoQcRemovalService, DmIvAutoQcRemovalService>();
@@ -159,6 +164,10 @@ builder.Services.AddScoped<IDmIvAutoQcBackfillService, DmIvAutoQcBackfillService
 builder.Services.AddScoped<IAutoQcRemovalMonitorService, AutoQcRemovalMonitorService>();
 builder.Services.AddScoped<ITrialFlagReviewRepository, TrialFlagReviewRepository>();
 builder.Services.AddScoped<ITrialFlagReviewService, TrialFlagReviewService>();
+builder.Services.AddScoped<IQCActivityDashboardRepository, QCActivityDashboardRepository>();
+builder.Services.AddScoped<IQCActivityDashboardService, QCActivityDashboardService>();
+builder.Services.AddScoped<IInterviewerCoachingRepository, InterviewerCoachingRepository>();
+builder.Services.AddScoped<IInterviewerCoachingService, InterviewerCoachingService>();
 builder.Services.AddScoped<ITrialJudgmentRepository, TrialJudgmentRepository>();
 builder.Services.AddScoped<ITrialJudgmentService, TrialJudgmentService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();

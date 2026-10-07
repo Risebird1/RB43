@@ -1,0 +1,24 @@
+---
+description: Vapi and Plivo voice/WhatsApp agent patterns
+globs: "**/*Plivo*,**/*Vapi*,**/*Voice*,Risebird.AzureTimerFunctions/*Interview*,Risebird.AzureTimerFunctions/Plivo*"
+alwaysApply: false
+---
+
+# Voice agents
+
+## Active channels
+Plivo CX (voice), Plivo WhatsApp, Vapi (legacy).
+
+## Eligibility
+`usp_GetEligibleCandidatesForPlivoCXCalls` / `Reschedule` — see `Docs/VoiceAgents.md`.
+
+## Code paths
+- Services: `PlivoCXService`, `PlivoWhatsAppService`, `VapiService`
+- Repos: `PlivoCXCallRepository`, etc.
+- Jobs: `Risebird.AzureTimerFunctions/PlivoCX*.cs`
+
+## Agent prompts
+Text files at repo root: `Plivo_*_Agent_Instructions.txt`
+
+## Webhooks
+Hangup callbacks update logs, disposition on `Candidate.PlivoCXDisposition`, booking via Schedule API.
