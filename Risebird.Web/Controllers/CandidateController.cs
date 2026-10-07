@@ -779,8 +779,9 @@ namespace Risebird.Web.Controllers
                         ViewBag.IRFName = irfName;
                         ViewBag.IRFId = id;
                         ViewBag.profile = profileName;
-                        var ClientRole = HttpContext.Session.GetString("ClientRole")?.Trim();
-                        ClientRole = ClientRole.Replace("\"", "");
+                        // Not every sign-in path writes ClientRole to the session; a missing value
+                        // means "not a client user", not an error.
+                        var ClientRole = HttpContext.Session.GetString("ClientRole")?.Trim()?.Replace("\"", "") ?? string.Empty;
                         ViewBag.ClientRole = ClientRole;
                         var meetings = (await _irfService.GetIRFInterviewMeetings(id, profileName, emailid))?.ToList();
                         var candidateList = (await _irfService.GetIRFCandidates(id, emailid))?.ToList();
