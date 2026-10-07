@@ -1,9 +1,7 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.MailRecipientActivityDetailsVM>
+@model Risebird.Entities.ViewModel.BounceDroppedPageSettingsVM
 @using Microsoft.AspNetCore.Http
-@using Newtonsoft.Json;
-@using Risebird.Entities.Data
 @using Risebird.Entities.ViewModel
-@inject IHttpContextAccessor HttpContextAccessor
+@using Risebird.Web.Helpers
 @{
     ViewData["Title"] = "Get Email Recipients";
     ViewBag.PageHeader = "Mail Recipients";
@@ -15,28 +13,54 @@
     {
         Layout = "~/Views/Shared/_Layout.cshtml";
     }
-    dynamic filter = null;
-    string strtDte = string.Empty;
-    string endDte = string.Empty;
-    string[] SkillChannel = new string[] { };
-    string[] Activity = new string[] { };
-    string[] SentBy = new string[] { };
-    string[] Recipient = new string[] { };
-}
-@if (HttpContextAccessor.HttpContext.Session.GetString("MailActivityFilters") != null)
-{
-    filter = JsonConvert.DeserializeObject<MailActivityFilter>(HttpContextAccessor.HttpContext.Session.GetString("MailActivityFilters"));
-    strtDte = filter.StartDate != null ? string.Format("{0:yyyy-MM-dd}", filter.StartDate) : string.Empty;
-    endDte = filter.EndDate != null ? string.Format("{0:yyyy-MM-dd}", filter.EndDate) : string.Empty;
-    SkillChannel = filter.SkillChannel != null ? filter.SkillChannel : new string[] { };
-    Activity = filter.Activity != null ? filter.Activity : new string[] { };
-    SentBy = filter.SentBy != null ? filter.SentBy : new string[] { };
-    Recipient = filter.Recipient != null ? filter.Recipient : new string[] { };
+    string profile = ViewBag.Profile as string ?? string.Empty;
+    bool isPublic = (ViewBag.pagetype as string) == "Public";
+    bool isCandidateTab = Model.RecipientType != "Interviewer";
+    bool isRisebirdUser = profile == "Admin" || profile == "SupportAdmin" || profile == "HR" || profile == "SeniorHR";
+    // Hiding a button is not access control: every action is re-checked on the server.
+    bool canAct = !isPublic && (isRisebirdUser || profile == "Client");
+    bool canUnreachable = !isPublic && isRisebirdUser;
+    bool canEditInterviewer = !isPublic && isRisebirdUser;
+    string notice = TempData["BounceDroppedNotice"] as string ?? Model.Notice;
+    string returnBack = Convert.ToString(ViewBag.ReturnBack);
+    string pagetype = ViewBag.pagetype as string ?? string.Empty;
+    var rangeOptions = new[] { new { Days = "2", Text = "Last 2 days" }, new { Days = "7", Text = "Last 7 days" }, new { Days = "15", Text = "Last 15 days" },
+                               new { Days = "30", Text = "Last 30 days" }, new { Days = "45", Text = "Last 45 days" } };
+    string selectedRange = Model.RangeDays.HasValue ? Model.RangeDays.Value.ToString() : "custom";
 }
 
 <link href="~/Newassets/css/interview.css?v=2024" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/hopscotch/0.2.5/css/hopscotch.min.css?v=2024" />
 <link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<style>
+    .bd-actions { white-space: nowrap; }
+    .bd-actions .bd-btn { top: 0; position: relative; cursor: pointer; width: 25px !important; height: 25px !important; color: #fff; padding: 0; border: 0; display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; margin: 1px; }
+    .bd-actions .bd-btn i { font-size: 13px; color: #fff; margin: 0; }
+    .bd-actions .bd-btn[disabled], .bd-actions .bd-btn.disabled { opacity: .45; cursor: not-allowed; }
+    .bd-fix { background: #f0ad4e !important; }
+    .bd-resend { background: #5cb85c !important; }
+    .bd-resolve { background: #2e7d32 !important; }
+    .bd-unreachable { background: #c62828 !important; }
+    .bd-open { background: #607d8b !important; }
+    .bd-call { background: #1e88e5 !important; }
+    .bd-invite { background: #4fb3e4 !important; }
+    .bd-editint { background: #8e24aa !important; }
+    .bd-nophone { font-size: 11px; color: #888; margin: 0 3px; }
+    .bd-status { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 10px; margin-left: 3px; background: #eceff1; color: #37474f; }
+    .bd-status.EmailCorrected { background: #fff3e0; color: #e65100; }
+    .bd-status.Resent, .bd-status.Resolved { background: #e8f5e9; color: #1b5e20; }
+    .bd-status.Unreachable { background: #ffebee; color: #b71c1c; }
+    .bd-range-label { font-size: 13px; color: #455a64; margin: 8px 0 4px; }
+    .bd-notice { font-size: 13px; color: #8a6d3b; background: #fcf8e3; border: 1px solid #faebcc; padding: 6px 10px; border-radius: 4px; margin: 6px 0; }
+    .bd-modal-error { color: #c62828; font-size: 13px; margin-top: 8px; }
+    .bd-readonly dt { font-weight: 600; font-size: 12px; color: #607d8b; }
+    .bd-readonly dd { margin-bottom: 6px; word-break: break-all; }
+    #bdToast { position: fixed; right: 20px; bottom: 20px; z-index: 20000; min-width: 220px; max-width: 420px; padding: 10px 16px; border-radius: 4px; color: #fff; display: none; box-shadow: 0 2px 8px rgba(0,0,0,.25); font-size: 14px; }
+    #bdToast.ok { background: #2e7d32; }
+    #bdToast.err { background: #c62828; }
+</style>
+
+<form id="__BounceAntiForgery" method="post" style="display:none">@Html.AntiForgeryToken()</form>
 
 <div class="main-panel" id="main-panel">
     <div>
@@ -49,18 +73,18 @@
                         <h4 class="card-title"></h4>
                         <div class="mobile-view"> <h4 class="card-title">Mail Recipients</h4></div>
                     </div>
-                    @if (ViewBag.pagetype != "Public")
+                    @if (!isPublic)
                     {
                         <div class="pull-left">
-                            @if (ViewBag.recipientType == "Interviewer")
+                            @if (!isCandidateTab)
                             {
-                                <div class="feedback-tab" onclick="Changeurldetails('Candidate','@ViewBag.ReturnBack','@ViewBag.pagetype')"><strong>Candidate</strong></div>
-                                <div class="feedback-tab-ac" onclick="Changeurldetails('Interviewer','@ViewBag.ReturnBack','@ViewBag.pagetype')"><strong>Interviewer</strong></div>
+                                <div class="feedback-tab" onclick="Changeurldetails('Candidate')"><strong>Candidate</strong></div>
+                                <div class="feedback-tab-ac" onclick="Changeurldetails('Interviewer')"><strong>Interviewer</strong></div>
                             }
-                            else if (ViewBag.recipientType == "Candidate")
+                            else
                             {
-                                <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate','@ViewBag.ReturnBack','@ViewBag.pagetype')"><strong>Candidate</strong></div>
-                                <div class="feedback-tab" onclick="Changeurldetails('Interviewer','@ViewBag.ReturnBack','@ViewBag.pagetype')"><strong>Interviewer</strong></div>
+                                <div class="feedback-tab-ac" onclick="Changeurldetails('Candidate')"><strong>Candidate</strong></div>
+                                <div class="feedback-tab" onclick="Changeurldetails('Interviewer')"><strong>Interviewer</strong></div>
                             }
                         </div>
                     }
@@ -72,7 +96,7 @@
                             </button>
                         </div>
                         <div class="pull-right client-ms">
-                            @if (ViewBag.pagetype != "Public")
+                            @if (!isPublic)
                             {
                                 @if (ViewBag.ReturnBack == 1)
                                 {
@@ -100,9 +124,6 @@
                 <div class="col-md-12">
                     <div class="mdc-card card bl-bg">
                         <div class="mdc-card-wrapper__text-section">
-                            <div class="loader text-center">
-                                <img src="~/Newassets/img/lazyload.gif" />
-                            </div>
 
                             <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
@@ -116,29 +137,60 @@
                                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
-                                        <form action="@Url.Action("GetEmailRecipientsBounceAndDropped","Dashboard", new { recipientType = ViewBag.recipientType,returnBack=ViewBag.ReturnBack,pagetype=ViewBag.pagetype})" method="post" id="form">
+                                        <form action="@Url.Action("GetEmailRecipientsBounceAndDropped","Dashboard", new { recipientType = Model.RecipientType, returnBack = ViewBag.ReturnBack, pagetype = ViewBag.pagetype })" method="post" id="form">
                                             <div class="modal-body">
                                                 <div class="row">
+                                                    <div class="col-md-12 col-sm-12">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="RangeDays">Date range</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="RangeDays" name="RangeDays" class="form-control">
+                                                                    @foreach (var opt in rangeOptions)
+                                                                    {
+                                                                        if (selectedRange == opt.Days)
+                                                                        {
+                                                                            <option value="@opt.Days" selected>@opt.Text</option>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <option value="@opt.Days">@opt.Text</option>
+                                                                        }
+                                                                    }
+                                                                    @if (selectedRange == "custom")
+                                                                    {
+                                                                        <option value="" selected>Custom</option>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <option value="">Custom</option>
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <div class="col-md-6 col-sm-6 border-rv">
                                                         <div class="form-group">
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
                                                                 Start Date
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                                <input id="StartDate" name="StartDate" type="date" class="form-control"
+                                                                       value="@Model.StartDate.ToString("yyyy-MM-dd")" min="@Model.MinDate.ToString("yyyy-MM-dd")" max="@Model.MaxDate.ToString("yyyy-MM-dd")">
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="EndDate">
                                                                 End Date
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
-                                                                <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                                <input id="EndDate" name="EndDate" type="date" class="form-control"
+                                                                       value="@Model.EndDate.ToString("yyyy-MM-dd")" min="@Model.MinDate.ToString("yyyy-MM-dd")" max="@Model.MaxDate.ToString("yyyy-MM-dd")">
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div class="col-md-12 col-sm-12"><div id="dateRangeError" class="bd-modal-error" style="display:none;margin:0 15px 8px;"></div></div>
                                                     <div class="col-md-6 col-sm-6 border-rv">
 
                                                         <div class="form-group">
@@ -147,26 +199,31 @@
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="SkillChannel" name="SkillChannel" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
-                                                                    @foreach (var item in Model.Select(x => x.SkillChannelName).Distinct().ToList())
+                                                                    @foreach (var item in Model.SkillChannelOptions)
                                                                     {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
+                                                                        <option value="@item">@item</option>
                                                                     }
                                                                 </select>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Latest Activity</label>
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Activity">Latest Activity</label>
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="Activity" name="Activity" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
-                                                                    @foreach (var item in Model.Select(x => x.latestEvent).Distinct().ToList())
+                                                                    @foreach (var item in Model.ActivityOptions)
                                                                     {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
+                                                                        <option value="@item">@item</option>
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="BounceReason">Bounce Reason</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="BounceReason" name="BounceReason" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
+                                                                    @foreach (var item in Model.BounceReasonOptions)
+                                                                    {
+                                                                        <option value="@item" title="@item">@(item.Length > 60 ? item.Substring(0, 60) + "…" : item)</option>
                                                                     }
                                                                 </select>
                                                             </div>
@@ -182,12 +239,9 @@
                                                             </label>
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="SentBy" name="SentBy" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
-                                                                    @foreach (var item in Model.Select(x => x.SentBy).Distinct().ToList())
+                                                                    @foreach (var item in Model.SentByOptions)
                                                                     {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
+                                                                        <option value="@item">@item</option>
                                                                     }
                                                                 </select>
                                                             </div>
@@ -196,20 +250,25 @@
                                                             <label class="control-label col-md-12 col-sm-12 desp-label" for="Recipient">Recipient</label>
                                                             <div class="col-md-12 col-sm-12">
                                                                 <select id="Recipient" name="Recipient" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
-                                                                    @foreach (var item in Model.Select(x => x.email).Distinct().ToList())
+                                                                    @foreach (var item in Model.RecipientOptions)
                                                                     {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
+                                                                        <option value="@item">@item</option>
                                                                     }
                                                                 </select>
                                                             </div>
                                                         </div>
+                                                        <div class="form-group">
+                                                            <div class="col-md-12 col-sm-12" style="padding-top:8px;">
+                                                                <label style="font-size:13px;cursor:pointer;">
+                                                                    <input type="checkbox" id="IncludeResolved" name="IncludeResolved" value="true" @(Model.IncludeResolved ? "checked" : "") />
+                                                                    Show resolved (Resolved, Unreachable, Resent)
+                                                                </label>
+                                                                <input type="hidden" name="IncludeResolved" value="false" />
+                                                            </div>
+                                                        </div>
 
                                                     </div>
-                                                    @*                                                    <input id="RecipientType" value="@ViewBag.recipientType" type="hidden"/>
-                                                    *@                                                    <div class="col-md-6 col-sm-6">
+                                                    <div class="col-md-12 col-sm-12">
 
                                                         <div class="form-group">
                                                             <div>
@@ -233,6 +292,11 @@
                                 </div>
                             </div>
 
+                            <div class="bd-range-label" id="rangeLabel">@Model.RangeLabel</div>
+                            @if (!string.IsNullOrEmpty(notice))
+                            {
+                                <div class="bd-notice">@notice</div>
+                            }
 
                             <div style="overflow-x:scroll" class="scrollbar">
 
@@ -241,15 +305,17 @@
                                         <thead>
                                             <tr>
                                                 <th>Recipient</th>
+                                                <th>Candidate Name</th>
                                                 <th style="width:20%">Mail Subject</th>
                                                 <th>Mail Content</th>
                                                 <th>Sent On</th>
                                                 <th>Sent By</th>
                                                 <th>Latest Activity/Status</th>
+                                                <th>Bounce Reason</th>
+                                                <th>Bounce Count</th>
                                                 <th>Activity/Status Date</th>
                                                 <th>Skill Channel Name</th>
                                                 <th>Interview Date</th>
-
                                                 <th>Channel Owner</th>
                                                 <th>Candidate Mobile</th>
                                                 <th>Candidate Resume</th>
@@ -259,128 +325,24 @@
                                         <tfoot>
                                             <tr>
                                                 <th>Recipient</th>
+                                                <th>Candidate Name</th>
                                                 <th style="width:20%">Mail Subject</th>
                                                 <th>Mail Content</th>
                                                 <th>Sent On</th>
                                                 <th>Sent By</th>
                                                 <th>Latest Activity/Status</th>
+                                                <th>Bounce Reason</th>
+                                                <th>Bounce Count</th>
                                                 <th>Activity/Status Date</th>
                                                 <th>Skill Channel Name</th>
                                                 <th>Interview Date</th>
-
                                                 <th>Channel Owner</th>
                                                 <th>Candidate Mobile</th>
                                                 <th>Candidate Resume</th>
                                                 <th style="text-align:center">Activity Details</th>
                                             </tr>
                                         </tfoot>
-                                        <tbody>
-                                            @if (Model != null && Model.Count() > 0)
-                                            {
-                                                int i = 1;
-                                                foreach (var item in Model)
-                                                {
-                                                    var jsonObj = JsonConvert.SerializeObject(item.MailBody);
-                                                    <tr>
-
-                                                        <td>@item.email</td>
-                                                        @*                                                        <td  style="white-space: break-spaces;word-break:break-word" title="@item.MailSubject">@item.MailSubject</td>
-                                                *@
-                                                        <td>
-                                                            @if (item.MailSubject != null && item.MailSubject != "")
-                                                            {
-                                                                @if (item.MailSubject.Length > 40)
-                                                                {
-                                                                    <div class="article">
-                                                                        <p style="margin-bottom:0px;">
-                                                                            @item.MailSubject.Substring(0, 40)
-                                                                        </p>
-                                                                        <p class="moretext_@i moretext">
-                                                                            @item.MailSubject.Substring(40, @item.MailSubject.Length - 40)
-                                                                        </p>
-                                                                    </div>
-                                                                    <a onclick="moreless('@i')" class="moreless-button" value="Readmore" id="read_@i" href="#">Read more</a>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <div class="article">
-                                                                        <p>
-                                                                            @item.MailSubject.Substring(0, @item.MailSubject.Length)
-                                                                        </p>
-                                                                    </div>
-                                                                }
-                                                            }
-                                                        </td>
-                                                        <td>
-                                                            <a onclick="OpenHtmlDocument(@jsonObj)" style="color:blue; cursor:pointer"><u>Content</u></a>
-                                                        </td>
-                                                        <td>@item.SentOn</td>
-                                                        <td>@item.SentBy</td>
-                                                        <td>@item.latestEvent</td>
-                                                        <td>@item.ActivityDate</td>
-                                                        <td>@item.SkillChannelName</td>
-                                                        <td>@item.interviewDate</td>
-
-                                                        <td>@item.ChannelOwner</td>
-                                                        <td style="padding:0px 7px;">
-                                                            <span class="call-area">
-                                                                @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                                {
-                                                                    <span data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CommonCallButtonClick('@item.candidateName', '@item.MobileNumber', '@item.candidateEmail','@item.InterviewId')" data-original-title="Tooltip on top"><img src="~/img/calling.png" width="20" /></span>
-                                                                }
-                                                            </span>
-                                                            @item.MobileNumber
-                                                        </td>
-                                                        @if (item.ResumeLink != null && item.ResumeLink != "")
-                                                        {
-                                                            <td>
-
-                                                                <a style="background:none!important;border:0px!important; text-decoration: underline; color: #039BE5!important;" id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink><img style="position:relative;left:-5px;" src="/img/resume-icon.png" width="21">Resume</a>
-                                                            </td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No Resume</td>
-                                                        }
-                                                        <td>
-
-                                                            <button class="btn shadow btn-xs sharp me-1  feedbackreportbtn" aria-label="Click here to view recipient activity upon recieving email." style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;background:#dca3a3;color:#fff;" data-toggle="ajax-modal-recipientActivity" data-target="#modalRecipientActivity" data-url="@Url.Action("GetRecipientMailActivitiesByMessageId", "Mail", new { recipientEmail = item.email, messageId = item.sg_message_id })">
-                                                                <span title="Click here to view recipient activity upon recieving email."><i style="font-size: 14px;color:#fff;margin-right: 0px;" class="fa fa-envelope-open"></i></span>
-                                                            </button>
-                                                            @* <button id="skill_14" class="mdc-fab app-fab--absolute item4" aria-label="Schedule Meeting">
-                                                    <span onclick="location.href='@Url.Action("ShowCalendly", "IRF", new { irfName = item.IRFId, calendlyLink = item.CalendlyLink })'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18"><path d="M13 9H9v4h4V9zm2-7h-1V1h-2v1H6V1H4v1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H4V6h10v8z" /></svg></span>
-                                                    </button> *@
-                                                            <span>
-                                                                <a target="_blank" class="btn shadow btn-xs sharp me-1 btn-schedule item4" href="@Url.Action("CandidateScheduleEvent", "InterviewScheduler", new { id = item.SchedulerUniqueid, CandidateEmail = item.candidateEmail })" title="Schedule Meeting" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;color:#fff;">
-                                                                    <span title="Schedule Meeting"><i class="fa fa-calendar" style="left:1px; top:-1px;font-size:13px; position: relative;"></i></span>
-                                                                </a>
-                                                            </span>
-                                                            @if (ViewBag.recipientType == "Candidate" && ViewBag.Pagetype != "Public")
-                                                            {
-                                                                @if (!string.IsNullOrEmpty(item.candidateEmail))
-                                                                {
-                                                                    <button id="getstatus_8" class="btn shadow btn-xs sharp me-1  mb-40" aria-label="Send Invite" style="top: 0px;position: relative;cursor: pointer; width:25px!important;height:25px!important;background: #4fb3e4;;color:#fff;">
-                                                                        <span onclick="location.href = '@Url.Action("SendInvite", "Candidate", new { IRFName =item.IRFId, irfId =item.InterviewId , emailId = item.candidateEmail, endDate = item.EndDate })'" title="Send Invite" class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
-                                                                        </span>
-                                                                    </button>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <button id="getstatus_8" class="mdc-fab app-fab--absolute mb-40" aria-label="Kindly enter Client HR's EmailId to send invite!">
-                                                                        <span title="Kindly enter Client HR's EmailId to send invite!" class="mdc-fab__icon material-icons">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
-                                                                        </span>
-                                                                    </button>
-                                                                }
-                                                            }
-                                                        </td>
-                                                    </tr>
-                                                    i = i + 1;
-                                                }
-                                            }
-
-                                        </tbody>
+                                        <tbody></tbody>
                                     </table>
                                 </div>
                             </div>
@@ -399,77 +361,551 @@
 
 <div id="modal_recipientActivity_placeholder"></div>
 
+@if (canAct)
+{
+    <!-- Fix Email -->
+    <div class="modal fade" id="fixEmailModal" tabindex="-1" role="dialog" aria-labelledby="fixEmailModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="fixEmailModalLabel">Fix Email</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="fixEmailForm" novalidate>
+                    <div class="modal-body">
+                        <dl class="bd-readonly">
+                            <dt>Candidate</dt><dd id="fixCandidateName"></dd>
+                            <dt>Current email</dt><dd id="fixCurrentEmail"></dd>
+                            <dt>Bounce reason</dt><dd id="fixBounceReason"></dd>
+                            <dt>Skill channel</dt><dd id="fixSkillChannel"></dd>
+                        </dl>
+                        <div class="form-group">
+                            <label for="fixNewEmail" class="desp-label">Correct email <span style="color:#c62828">*</span></label>
+                            <input type="email" id="fixNewEmail" class="form-control" maxlength="150" autocomplete="off" required />
+                        </div>
+                        <div class="form-group" style="margin-top:8px;">
+                            <label style="cursor:pointer;font-size:13px;">
+                                <input type="checkbox" id="fixResend" checked /> Resend this mail after saving
+                            </label>
+                        </div>
+                        <div id="fixEmailError" class="bd-modal-error" style="display:none"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="mdc-button mdc-button--outlined" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" id="fixEmailSave" class="mdc-button mdc-button--raised">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mark Resolved / Unreachable -->
+    <div class="modal fade" id="resolveModal" tabindex="-1" role="dialog" aria-labelledby="resolveModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resolveModalLabel">Mark Resolved</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="resolveForm" novalidate>
+                    <div class="modal-body">
+                        <p id="resolveIntro" style="font-size:13px;"></p>
+                        <div class="form-group">
+                            <label for="resolveNote" class="desp-label" id="resolveNoteLabel">Note (optional)</label>
+                            <textarea id="resolveNote" class="form-control" rows="3" maxlength="500"></textarea>
+                            <small class="text-muted"><span id="resolveNoteCount">0</span>/500</small>
+                        </div>
+                        <div id="resolveError" class="bd-modal-error" style="display:none"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="mdc-button mdc-button--outlined" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" id="resolveSave" class="mdc-button mdc-button--raised">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+<div id="bdToast" role="status" aria-live="polite"></div>
+
 <script src="~/js/ModalFormServerValidation.js?v=2024"></script>
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 <script src="~/js/TwilioCallMaker.js?v=2024"></script>
 <script type="text/javascript">
+    var bdConfig = {
+        recipientType: @Html.Raw(Json.Serialize(Model.RecipientType)),
+        returnBack: @Html.Raw(Json.Serialize(returnBack)),
+        pagetype: @Html.Raw(Json.Serialize(pagetype)),
+        isCandidateTab: @Json.Serialize(isCandidateTab),
+        isPublic: @Json.Serialize(isPublic),
+        canAct: @Json.Serialize(canAct),
+        canUnreachable: @Json.Serialize(canUnreachable),
+        canEditInterviewer: @Json.Serialize(canEditInterviewer),
+        minDate: @Html.Raw(Json.Serialize(Model.MinDate.ToString("yyyy-MM-dd"))),
+        maxDate: @Html.Raw(Json.Serialize(Model.MaxDate.ToString("yyyy-MM-dd"))),
+        selected: {
+            SkillChannel: @Html.Raw(Json.Serialize(Model.SelectedSkillChannels)),
+            Activity: @Html.Raw(Json.Serialize(Model.SelectedActivities)),
+            SentBy: @Html.Raw(Json.Serialize(Model.SelectedSentBy)),
+            Recipient: @Html.Raw(Json.Serialize(Model.SelectedRecipients)),
+            BounceReason: @Html.Raw(Json.Serialize(Model.SelectedBounceReasons))
+        },
+        urls: {
+            data: '@Url.Action("GetEmailRecipientsBounceAndDroppedData", "Dashboard")',
+            content: '@Url.Action("GetBounceMailContent", "Dashboard")',
+            fixEmail: '@Url.Action("UpdateBouncedCandidateEmail", "Dashboard")',
+            resend: '@Url.Action("ResendBouncedMail", "Dashboard")',
+            resolve: '@Url.Action("ResolveMailBounce", "Dashboard")',
+            reset: '@Url.Action("ResetRecipientActivityDetails", "Dashboard")',
+            page: '@Url.Action("GetEmailRecipientsBounceAndDropped", "Dashboard")'
+        }
+    };
+
+    // Rows of the page currently shown, by SendgridEventId (filled on every draw).
+    var bdRows = {};
+    var bdTable = null;
+
+    function bdToken() {
+        return $('#__BounceAntiForgery input[name="__RequestVerificationToken"]').val() || '';
+    }
+
+    function esc(value) {
+        if (value === null || value === undefined) return '';
+        return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function truncate(value, len) {
+        value = value || '';
+        return value.length > len ? value.substring(0, len) + '…' : value;
+    }
+
+    function bdToast(message, ok) {
+        var $t = $('#bdToast');
+        $t.removeClass('ok err').addClass(ok ? 'ok' : 'err').text(message).stop(true, true).fadeIn(150);
+        clearTimeout($t.data('timer'));
+        $t.data('timer', setTimeout(function () { $t.fadeOut(300); }, 4000));
+    }
+
+    function bdPost(url, data) {
+        return $.ajax({
+            url: url,
+            type: 'POST',
+            data: data,
+            headers: { 'RequestVerificationToken': bdToken() }
+        });
+    }
+
+    function bdModal(id) {
+        return bootstrap.Modal.getOrCreateInstance(document.getElementById(id));
+    }
+
+    function bdReload() {
+        if (bdTable) bdTable.ajax.reload(null, false);
+    }
 
     $(document).ready(function () {
         $("#ResetFilter").click(function () {
             ResetFilter();
-        })
-        if ('@filter' != "") {
-            ApplySessionFilter();
-        }
-
-    });
-    $(document).on('hidden.bs.modal', function (event) {
-        $('.modal').remove();
-        $('.modal-backdrop').remove();
-        $('body').removeClass("modal-open");
-    });
-    function ResetFilter() {
-        window.location.href = "/Dashboard/ResetRecipientActivityDetails?returnBack=" + @ViewBag.ReturnBack+"&pagetype="@ViewBag.Pagetype;
-    }
-
-    function ApplySessionFilter() {
-        var strtDte = '@strtDte';
-        var endDte = '@endDte';
-        var skillChannel = @Html.Raw(Json.Serialize(SkillChannel));
-        var activity = @Html.Raw(Json.Serialize(Activity));
-        var sentBy = @Html.Raw(Json.Serialize(SentBy));
-        var recipient = @Html.Raw(Json.Serialize(Recipient));
-
-        $('input[name=StartDate]').val(strtDte);
-        $('input[name=EndDate]').val(endDte);
-        $("#SkillChannel").val(skillChannel);
-        $("#Activity").val(activity);
-        $("#SentBy").val(sentBy);
-        $("#Recipient").val(recipient);
-
-    }
-
-</script>
-<script>
-
-    $(document).ready(function () {
+        });
+        ApplySessionFilter();
+        initDateRange();
         applyDataTable();
     });
 
+    // The recipient-activity popup is loaded into its placeholder; only that modal is removed on close
+    // (removing every .modal would also delete the filter, Fix Email and call modals).
+    $(document).on('hidden.bs.modal', '#modal_recipientActivity_placeholder .modal', function () {
+        $('#modal_recipientActivity_placeholder').empty();
+        $('.modal-backdrop').remove();
+        $('body').removeClass("modal-open");
+    });
+
+    function ResetFilter() {
+        window.location.href = bdConfig.urls.reset + "?returnBack=" + encodeURIComponent(bdConfig.returnBack)
+            + "&pagetype=" + encodeURIComponent(bdConfig.pagetype)
+            + "&recipientType=" + encodeURIComponent(bdConfig.recipientType);
+    }
+
+    function ApplySessionFilter() {
+        $("#SkillChannel").val(bdConfig.selected.SkillChannel);
+        $("#Activity").val(bdConfig.selected.Activity);
+        $("#SentBy").val(bdConfig.selected.SentBy);
+        $("#Recipient").val(bdConfig.selected.Recipient);
+        $("#BounceReason").val(bdConfig.selected.BounceReason);
+    }
+
+    function isoDate(d) {
+        var m = d.getMonth() + 1, day = d.getDate();
+        return d.getFullYear() + '-' + (m < 10 ? '0' : '') + m + '-' + (day < 10 ? '0' : '') + day;
+    }
+
+    // Preset fills Start/End and locks them; Custom unlocks. The server re-computes and clamps anyway.
+    function initDateRange() {
+        function apply() {
+            var days = $('#RangeDays').val();
+            if (days) {
+                var end = new Date(bdConfig.maxDate + 'T00:00:00');
+                var start = new Date(end);
+                start.setDate(start.getDate() - (parseInt(days, 10) - 1));
+                $('#StartDate').val(isoDate(start)).prop('readonly', true);
+                $('#EndDate').val(isoDate(end)).prop('readonly', true);
+            } else {
+                $('#StartDate, #EndDate').prop('readonly', false);
+            }
+            $('#dateRangeError').hide();
+        }
+        $('#RangeDays').on('change', apply);
+        apply();
+
+        $('#form').on('submit', function (e) {
+            if ($('#RangeDays').val()) return true;
+            var s = $('#StartDate').val(), en = $('#EndDate').val(), msg = '';
+            if (s && s < bdConfig.minDate) msg = 'Data is available for the last 45 days only.';
+            else if (en && en > bdConfig.maxDate) msg = 'End Date cannot be in the future.';
+            else if (s && en && en < s) msg = 'End Date must be on or after Start Date.';
+            if (msg) {
+                e.preventDefault();
+                $('#dateRangeError').text(msg).show();
+                return false;
+            }
+            return true;
+        });
+    }
+
+    function renderActions(row) {
+        var html = '<div class="bd-actions">';
+        if (row.resolutionStatus) {
+            html += '<span class="bd-status ' + esc(row.resolutionStatus) + '" title="Status">' + esc(row.resolutionStatus) + '</span><br/>';
+        }
+        html += '<button type="button" class="btn shadow btn-xs sharp me-1 bd-btn bd-activity" style="background:#dca3a3;" title="Click here to view recipient activity upon recieving email." aria-label="Recipient activity" data-url="' + esc(row.recipientActivityUrl) + '"><i class="fa fa-envelope-open"></i></button>';
+        html += '<a target="_blank" class="btn shadow btn-xs sharp me-1 btn-schedule item4 bd-btn" href="' + esc(row.scheduleUrl) + '" title="Schedule Meeting" aria-label="Schedule Meeting"><i class="fa fa-calendar"></i></a>';
+
+        if (!bdConfig.isPublic) {
+            if (row.mobileNumber) {
+                html += '<button type="button" class="btn shadow btn-xs sharp me-1 bd-btn bd-call" title="Click here to call the candidate." aria-label="Call" data-id="' + row.sendgridEventId + '"><i class="fa fa-phone"></i></button>';
+            } else {
+                html += '<span class="bd-nophone">No phone</span>';
+            }
+        }
+
+        if (bdConfig.isCandidateTab && bdConfig.canAct) {
+            var open = !row.isResolved;
+            if (open && row.candidateId) {
+                html += '<button type="button" class="btn shadow btn-xs sharp me-1 bd-btn bd-fix" title="Fix Email" aria-label="Fix Email" data-id="' + row.sendgridEventId + '"><i class="fa fa-edit"></i></button>';
+            }
+            if (open && row.emailCorrected && row.candidateId) {
+                html += '<button type="button" class="btn shadow btn-xs sharp me-1 bd-btn bd-resend" title="Resend Mail" aria-label="Resend Mail" data-id="' + row.sendgridEventId + '"><i class="fa fa-repeat"></i></button>';
+            }
+            if (open) {
+                html += '<button type="button" class="btn shadow btn-xs sharp me-1 bd-btn bd-resolve" title="Mark Resolved" aria-label="Mark Resolved" data-id="' + row.sendgridEventId + '"><i class="fa fa-check"></i></button>';
+                if (bdConfig.canUnreachable) {
+                    html += '<button type="button" class="btn shadow btn-xs sharp me-1 bd-btn bd-unreachable" title="Unreachable" aria-label="Unreachable" data-id="' + row.sendgridEventId + '"><i class="fa fa-ban"></i></button>';
+                }
+            }
+            if (row.openCandidateUrl) {
+                html += '<a target="_blank" class="btn shadow btn-xs sharp me-1 bd-btn bd-open" href="' + esc(row.openCandidateUrl) + '" title="Open Candidate" aria-label="Open Candidate"><i class="fa fa-user"></i></a>';
+            }
+            // Send Invite would go to the same bad address until the email is fixed.
+            if (row.emailCorrected && row.sendInviteUrl) {
+                html += '<a class="btn shadow btn-xs sharp me-1 bd-btn bd-invite" href="' + esc(row.sendInviteUrl) + '" title="Send Invite" aria-label="Send Invite"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="#fff"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg></a>';
+            } else {
+                html += '<span title="Fix the email first" style="display:inline-block"><button type="button" class="btn shadow btn-xs sharp me-1 bd-btn bd-invite" disabled aria-label="Send Invite (fix the email first)"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="#fff"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg></button></span>';
+            }
+        }
+
+        if (!bdConfig.isCandidateTab && bdConfig.canEditInterviewer && row.editInterviewerUrl) {
+            html += '<a target="_blank" class="btn shadow btn-xs sharp me-1 bd-btn bd-editint" href="' + esc(row.editInterviewerUrl) + '" title="Edit Interviewer" aria-label="Edit Interviewer"><i class="fa fa-edit"></i></a>';
+        }
+        html += '</div>';
+        return html;
+    }
+
     function applyDataTable() {
-        $('#recipientsTable').DataTable({
+        bdTable = $('#recipientsTable').DataTable({
             "pagingType": "full_numbers",
-            "lengthMenu": [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
-            ],
-            order: [],
+            "lengthMenu": [10, 25, 50, 100],
+            "pageLength": 10,
+            serverSide: true,
+            processing: true,
+            searchDelay: 500,
+            order: [[4, 'desc']],
             responsive: true,
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search records",
-            }
+                processing: '<img src="/Newassets/img/lazyload.gif" />'
+            },
+            ajax: {
+                url: bdConfig.urls.data + '?recipientType=' + encodeURIComponent(bdConfig.recipientType),
+                type: 'POST',
+                headers: { 'RequestVerificationToken': bdToken() },
+                dataSrc: function (json) {
+                    bdRows = {};
+                    (json.data || []).forEach(function (r) { bdRows[r.sendgridEventId] = r; });
+                    if (json.error) bdToast(json.error, false);
+                    return json.data || [];
+                },
+                error: function (xhr) {
+                    bdToast(xhr.status === 401 ? 'Your session has expired. Please sign in again.' : 'Could not load the list. Please try again.', false);
+                }
+            },
+            columns: [
+                { data: 'email', name: 'email', render: function (d) { return esc(d); } },
+                { data: 'candidateName', name: 'candidateName', render: function (d) { return esc(d); } },
+                { data: 'mailSubject', name: 'MailSubject', render: function (d) { return '<span title="' + esc(d) + '">' + esc(truncate(d, 60)) + '</span>'; } },
+                { data: null, orderable: false, render: function (d, t, row) { return '<a class="bd-content" data-id="' + row.sendgridEventId + '" style="color:blue; cursor:pointer"><u>Content</u></a>'; } },
+                { data: 'sentOn', name: 'SentOn', render: function (d) { return esc(d); } },
+                { data: 'sentBy', name: 'SentBy', render: function (d) { return esc(d); } },
+                { data: 'latestEvent', name: 'latestEvent', render: function (d) { return esc(d); } },
+                {
+                    data: 'bounceReason', name: 'BounceReason', render: function (d, t, row) {
+                        var full = (d || '') + (row.bounceStatus ? ' (' + row.bounceStatus + ')' : '');
+                        return '<span title="' + esc(full) + '">' + esc(truncate(full, 60)) + '</span>';
+                    }
+                },
+                { data: 'bounceCount', name: 'BounceCount', render: function (d) { return esc(d); } },
+                { data: 'activityDate', name: 'ActivityDate', render: function (d) { return esc(d); } },
+                { data: 'skillChannelName', name: 'SkillChannelName', render: function (d) { return esc(d); } },
+                { data: 'interviewDate', name: 'interviewDate', render: function (d) { return esc(d); } },
+                { data: 'channelOwner', name: 'ChannelOwner', render: function (d) { return esc(d); } },
+                { data: 'mobileNumber', name: 'MobileNumber', render: function (d) { return esc(d); } },
+                {
+                    data: 'resumeLink', orderable: false, render: function (d) {
+                        if (!d) return 'No Resume';
+                        return '<a style="background:none!important;border:0px!important; text-decoration: underline; color: #039BE5!important;" target="_blank" rel="noopener" title="Resume" href="' + esc(d) + '"><img style="position:relative;left:-5px;" src="/img/resume-icon.png" width="21">Resume</a>';
+                    }
+                },
+                { data: null, orderable: false, className: 'text-center', render: function (d, t, row) { return renderActions(row); } }
+            ]
         });
     }
-</script>
 
-<script>
-
-    function Changeurldetails(recipientType, returnBack, pagetype) {
-        window.location.href = "/Dashboard/GetEmailRecipientsBounceAndDropped?recipientType=" + recipientType + "&returnBack=" + returnBack + "&pagetype=" + pagetype;
+    function Changeurldetails(recipientType) {
+        window.location.href = bdConfig.urls.page + "?recipientType=" + encodeURIComponent(recipientType)
+            + "&returnBack=" + encodeURIComponent(bdConfig.returnBack) + "&pagetype=" + encodeURIComponent(bdConfig.pagetype);
     }
+
+    // ---- Row actions -------------------------------------------------------------------------
+
+    // Recipient activity popup (rows are drawn after page load, so bind by delegation).
+    $(document).on('click', '#recipientsTable .bd-activity', function () {
+        var url = $(this).data('url');
+        $.get(url).done(function (data) {
+            var $ph = $('#modal_recipientActivity_placeholder');
+            $ph.html(data);
+            $ph.find('.modal').modal('show');
+        });
+    });
+
+    // Mail body is loaded on click instead of being embedded in the page.
+    $(document).on('click', '#recipientsTable .bd-content', function () {
+        var row = bdRows[$(this).data('id')];
+        if (!row) return;
+        // Open the window inside the click so popup blockers allow it, then fill it.
+        var child = window.open('about:blank', 'mailContent');
+        if (child) child.document.write('<p style="font-family:sans-serif">Loading…</p>');
+        $.get(bdConfig.urls.content, { sendgridEventId: row.sendgridEventId, candidateId: row.candidateId || '' })
+            .done(function (r) {
+                if (!r.success) {
+                    if (child) child.close();
+                    bdToast(r.message, false);
+                    return;
+                }
+                if (child) {
+                    child.document.open();
+                    child.document.write(r.body);
+                    child.document.close();
+                } else {
+                    OpenHtmlDocument(r.body);
+                }
+            })
+            .fail(function () {
+                if (child) child.close();
+                bdToast('Could not load the mail. Please try again.', false);
+            });
+    });
+
+    // Call: values come from the row data, never from inline script, so names like D'Souza are safe.
+    var bdCallRowId = null;
+    $(document).on('click', '#recipientsTable .bd-call', function () {
+        var row = bdRows[$(this).data('id')];
+        if (!row) return;
+        bdCallRowId = (bdConfig.isCandidateTab && bdConfig.canAct && !row.isResolved && row.candidateId) ? row.sendgridEventId : null;
+        CommonCallButtonClick(row.candidateName || row.candidateEmail || '', row.mobileNumber, row.candidateEmail || '',
+            row.interviewId || null, row.irfId || null, 'Candidate');
+    });
+
+    // After the call window closes, offer to fix the email for the same row.
+    (function watchCallModal() {
+        var modal = document.getElementById('myCallModal');
+        if (!modal || !window.MutationObserver) return;
+        var wasOpen = false;
+        new MutationObserver(function () {
+            var open = modal.style.display === 'block';
+            if (wasOpen && !open && bdCallRowId !== null) {
+                var rowId = bdCallRowId;
+                bdCallRowId = null;
+                swal({
+                    title: "Got a new email?",
+                    text: "If the candidate gave you the correct address, fix it now.",
+                    type: "info",
+                    showCancelButton: true,
+                    confirmButtonText: "Fix Email",
+                    cancelButtonText: "Not now"
+                }, function (isConfirm) {
+                    if (isConfirm) setTimeout(function () { openFixEmail(rowId); }, 200);
+                });
+            }
+            wasOpen = open;
+        }).observe(modal, { attributes: true, attributeFilter: ['style'] });
+    })();
+
+    // Fix Email
+    var bdFixRowId = null;
+    function openFixEmail(rowId) {
+        var row = bdRows[rowId];
+        if (!row || !bdConfig.canAct) return;
+        bdFixRowId = rowId;
+        $('#fixCandidateName').text(row.candidateName || '-');
+        $('#fixCurrentEmail').text(row.candidateEmail || row.email || '-');
+        $('#fixBounceReason').text((row.bounceReason || '-') + (row.bounceStatus ? ' (' + row.bounceStatus + ')' : ''));
+        $('#fixSkillChannel').text(row.skillChannelName || '-');
+        $('#fixNewEmail').val('');
+        $('#fixResend').prop('checked', true);
+        $('#fixEmailError').hide().text('');
+        $('#fixEmailSave').prop('disabled', false);
+        bdModal('fixEmailModal').show();
+        setTimeout(function () { $('#fixNewEmail').trigger('focus'); }, 300);
+    }
+    $(document).on('click', '#recipientsTable .bd-fix', function () { openFixEmail($(this).data('id')); });
+
+    var bdEmailPattern = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+    $('#fixEmailForm').on('submit', function (e) {
+        e.preventDefault();
+        var row = bdRows[bdFixRowId];
+        if (!row) return;
+        var newEmail = ($('#fixNewEmail').val() || '').trim().toLowerCase();
+        var current = (row.candidateEmail || row.email || '').trim().toLowerCase();
+        var domain = newEmail.split('@@').pop();
+        var err = '';
+        if (!newEmail || !bdEmailPattern.test(newEmail)) err = 'Please enter a valid email address.';
+        else if (newEmail === current) err = 'The new email is the same as the current email.';
+        else if (domain === 'risebird.io' || (row.clientDomain && domain === row.clientDomain.toLowerCase())) err = 'Email domain is not allowed for a candidate.';
+        if (err) {
+            $('#fixEmailError').text(err).show();
+            return;
+        }
+        // Same rule as Candidate Edit; the server checks it again.
+        $('#fixEmailError').hide();
+        $('#fixEmailSave').prop('disabled', true);
+        bdPost(bdConfig.urls.fixEmail, {
+            candidateId: row.candidateId,
+            sendgridEventId: row.sendgridEventId,
+            newEmail: newEmail,
+            resend: $('#fixResend').is(':checked')
+        }).done(function (r) {
+            if (!r.success) {
+                $('#fixEmailError').text(r.message).show();
+                $('#fixEmailSave').prop('disabled', false);
+                return;
+            }
+            bdModal('fixEmailModal').hide();
+            bdToast(r.message, true);
+            if (r.resendMessage && !r.resent) {
+                setTimeout(function () { bdToast('Email updated, but the mail was not resent: ' + r.resendMessage, false); }, 1500);
+            }
+            bdReload();
+        }).fail(function () {
+            $('#fixEmailError').text('Could not update email. Please try again.').show();
+            $('#fixEmailSave').prop('disabled', false);
+        });
+    });
+
+    // Resend Mail
+    $(document).on('click', '#recipientsTable .bd-resend', function () {
+        var $btn = $(this);
+        var row = bdRows[$btn.data('id')];
+        if (!row) return;
+        swal({
+            title: "Resend this mail?",
+            text: "The original mail \"" + (row.mailSubject || '') + "\" will be sent again to " + (row.candidateEmail || '') + ".",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Resend",
+            closeOnConfirm: true
+        }, function (isConfirm) {
+            if (!isConfirm) return;
+            $btn.prop('disabled', true);
+            bdPost(bdConfig.urls.resend, { sendgridEventId: row.sendgridEventId, candidateId: row.candidateId })
+                .done(function (r) {
+                    bdToast(r.message, r.success);
+                    if (r.success) bdReload(); else $btn.prop('disabled', false);
+                })
+                .fail(function () {
+                    bdToast('Could not resend the mail. Please try again.', false);
+                    $btn.prop('disabled', false);
+                });
+        });
+    });
+
+    // Mark Resolved / Unreachable
+    var bdResolve = { rowId: null, status: null };
+    function openResolve(rowId, status) {
+        var row = bdRows[rowId];
+        if (!row) return;
+        bdResolve = { rowId: rowId, status: status };
+        var unreachable = status === 'Unreachable';
+        $('#resolveModalLabel').text(unreachable ? 'Mark Unreachable' : 'Mark Resolved');
+        $('#resolveIntro').text(unreachable
+            ? 'Mark ' + (row.candidateName || row.email) + ' as unreachable? The row will leave the default view.'
+            : 'Close this row for ' + (row.candidateName || row.email) + '? It will leave the default view.');
+        $('#resolveNoteLabel').html(unreachable ? 'Note <span style="color:#c62828">*</span>' : 'Note (optional)');
+        $('#resolveNote').val('').prop('required', unreachable);
+        $('#resolveNoteCount').text('0');
+        $('#resolveError').hide().text('');
+        $('#resolveSave').prop('disabled', false);
+        bdModal('resolveModal').show();
+    }
+    $(document).on('click', '#recipientsTable .bd-resolve', function () { openResolve($(this).data('id'), 'Resolved'); });
+    $(document).on('click', '#recipientsTable .bd-unreachable', function () { openResolve($(this).data('id'), 'Unreachable'); });
+    $('#resolveNote').on('input', function () { $('#resolveNoteCount').text(($(this).val() || '').length); });
+
+    $('#resolveForm').on('submit', function (e) {
+        e.preventDefault();
+        var row = bdRows[bdResolve.rowId];
+        if (!row) return;
+        var note = ($('#resolveNote').val() || '').trim();
+        if (bdResolve.status === 'Unreachable' && !note) {
+            $('#resolveError').text('Please add a note.').show();
+            return;
+        }
+        if (note.length > 500) {
+            $('#resolveError').text('Note must be 500 characters or less.').show();
+            return;
+        }
+        $('#resolveSave').prop('disabled', true);
+        bdPost(bdConfig.urls.resolve, {
+            sendgridEventId: row.sendgridEventId,
+            candidateId: row.candidateId || '',
+            status: bdResolve.status,
+            note: note
+        }).done(function (r) {
+            if (!r.success) {
+                $('#resolveError').text(r.message).show();
+                $('#resolveSave').prop('disabled', false);
+                return;
+            }
+            bdModal('resolveModal').hide();
+            bdToast(r.message, true);
+            bdReload();
+        }).fail(function () {
+            $('#resolveError').text('Could not save. Please try again.').show();
+            $('#resolveSave').prop('disabled', false);
+        });
+    });
 </script>
-@if (ViewBag.Pagetype == "Public")
+@if (isPublic)
 {
     <script>
         $(document).ready(function () {
@@ -478,5 +914,3 @@
     </script>
 }
 <script src="~/js/common.js?v=2024"></script>
-
-

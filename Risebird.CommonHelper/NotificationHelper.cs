@@ -104,6 +104,29 @@ namespace Risebird.CommonHelper
             }
         }
 
+        public async Task<string> ResendStoredMail(string toEmail, string subject, string htmlBody, int? irfId, int? interviewId)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(toEmail) || string.IsNullOrWhiteSpace(htmlBody))
+                {
+                    return "Failed to send mail.";
+                }
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = subject;
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(toEmail.Trim()));
+                // Stored HTML from our own templates: send as-is, never through string.Format.
+                msg.HtmlContent = htmlBody;
+                return await SendMail(msg, irfId, interviewId);
+            }
+            catch (Exception ex)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to send mail.";
+            }
+        }
+
         public async Task<string> SendHelpsupportMail(Mail model)
         {
             try

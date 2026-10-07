@@ -10,7 +10,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE [dbo].[usp_SaveSendGridEventDetails]    
-@email varchar(50),     
+@email varchar(150),   
 @timestamp varchar(50),  
 @event varchar(25),  
 @CreatedAt datetime,

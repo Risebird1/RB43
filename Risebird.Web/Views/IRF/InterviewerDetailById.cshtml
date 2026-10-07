@@ -153,6 +153,10 @@
                                                                     {
                                                                         <i class="fas fa-phone-alt"></i>
                                                                         @Model.MobileNumber
+                                                                        <button type="button" class="rb-call-icon ms-2" title="Call this interviewer"
+                                                                                onclick="CommonCallButtonClickEditable('@(Model.FirstName) @(Model.LastName)', '@Model.MobileNumber', '@(Model.EmailId ?? "")', null, null, 'Interviewer')">
+                                                                            <i class="fas fa-phone-alt"></i>
+                                                                        </button>
                                                                     }
                                                                 </p>
                                                                 <p>
@@ -354,3 +358,7 @@
 
 
 
+
+@* Manual click-to-call: shared provider modal + TwilioCallMaker.js (added for interviewer click-to-call). *@
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+<script src="~/js/TwilioCallMaker.js" asp-append-version="true"></script>

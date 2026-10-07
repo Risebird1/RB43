@@ -1060,6 +1060,86 @@ namespace Risebird.Business
             return null;
         }
 
+        #region Bounce & Dropped Mail page
+        public async Task<BounceDroppedPageVM> GetBounceDroppedPage(BounceDroppedQuery query)
+        {
+            try
+            {
+                return await _dashboardRespository.GetBounceDroppedPage(query);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<BounceDroppedFilterOption>> GetBounceDroppedFilterOptions(string recipientType, DateTime startDate, DateTime endDate, string emailId, bool includeResolved)
+        {
+            try
+            {
+                return await _dashboardRespository.GetBounceDroppedFilterOptions(recipientType, startDate, endDate, emailId, includeResolved);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<BounceDroppedRowContext> GetBounceDroppedRowForAction(int sendgridEventId, int? candidateId, string emailId)
+        {
+            try
+            {
+                return await _dashboardRespository.GetBounceDroppedRowForAction(sendgridEventId, candidateId, emailId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<string> UpdateBouncedCandidateEmail(int candidateId, int sendgridEventId, string newEmail, string actionBy)
+        {
+            try
+            {
+                return await _dashboardRespository.UpdateBouncedCandidateEmail(candidateId, sendgridEventId, newEmail, actionBy);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> ResolveMailBounce(int sendgridEventId, int? candidateId, string status, string note, string actionBy)
+        {
+            try
+            {
+                return await _dashboardRespository.ResolveMailBounce(sendgridEventId, candidateId, status, note, actionBy);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<BounceMailContent> GetSentMailForBounce(int sendgridEventId)
+        {
+            try
+            {
+                return await _dashboardRespository.GetSentMailForBounce(sendgridEventId);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        #endregion
+
         public async Task<List<MeetingVM>> GetDMApproveDetails(string EmailId)
         {
             try

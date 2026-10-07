@@ -80,6 +80,13 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<ProctoringScreenshotReportVM>> GetProctoringSessionScreenshots(int id);
         Task<IEnumerable<InterviewManagementVM>> GetInterviewManagementDetails(DateTime interviewstartdate, DateTime interviewenddate, string Emailid);
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetEmailRecipientsDetails(string recipientType, DateTime? startDate = null, DateTime? endDate = null, string emailid = null);
+        // Bounce & Dropped Mail page
+        Task<BounceDroppedPageVM> GetBounceDroppedPage(BounceDroppedQuery query);
+        Task<IEnumerable<BounceDroppedFilterOption>> GetBounceDroppedFilterOptions(string recipientType, DateTime startDate, DateTime endDate, string emailId, bool includeResolved);
+        Task<BounceDroppedRowContext> GetBounceDroppedRowForAction(int sendgridEventId, int? candidateId, string emailId);
+        Task<string> UpdateBouncedCandidateEmail(int candidateId, int sendgridEventId, string newEmail, string actionBy);
+        Task<bool> ResolveMailBounce(int sendgridEventId, int? candidateId, string status, string note, string actionBy);
+        Task<BounceMailContent> GetSentMailForBounce(int sendgridEventId);
         Task<List<MeetingVM>> GetDMApproveDetailsRepository(string EmailId);
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetOpenClickCampaignMailRepository(int campaignId);
         Task<List<PQIDetails>> GetInterviewerIRFDetails(string type, string uniqueid, string Email);

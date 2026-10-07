@@ -868,7 +868,13 @@
 
                                                                             @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty)
                                                                             {
-                                                                                <td style="text-align: center"> @item.InterviewerPhone</td>
+                                                                                <td style="text-align: center">
+                                                                                    @item.InterviewerPhone
+                                                                                    <span class="call rb-call-icon ms-1" role="button" title="Call this interviewer"
+                                                                                          onclick="CommonCallButtonClickEditable('@(item.InterviewerFirstName)', '@item.InterviewerPhone', '@(item.interviewer ?? "")', null, null, 'Interviewer')">
+                                                                                        <i class="fas fa-phone-alt"></i>
+                                                                                    </span>
+                                                                                </td>
 
 
                                                                             }

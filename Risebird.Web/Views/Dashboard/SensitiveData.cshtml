@@ -1175,8 +1175,8 @@
                                                                         @if (item.InterviewerMobileNumber != null && item.InterviewerMobileNumber != string.Empty)
                                                                         {
 
-                                                                            <span aria-label="Click here to call the candidate">
-                                                                                <span onclick="CommonCallButtonClick('@item.candidateName','@item.InterviewerMobileNumber', '@item.candidateEmail','@item.imid', null, 'Candidate')" data-original-title="Tooltip on top" title="Click here to call the candidate."><img src="/img/calling.png" style="width: 16px;margin: 7px 0px 7px 0px;"></span>
+                                                                            <span aria-label="Click here to call the interviewer">
+                                                                                <span onclick="CommonCallButtonClickEditable('@item.InterviewerName','@item.InterviewerMobileNumber', '@(item.interviewer ?? "")','@item.imid', null, 'Interviewer')" data-original-title="Tooltip on top" title="Click here to call the interviewer."><img src="/img/calling.png" style="width: 16px;margin: 7px 0px 7px 0px;"></span>
                                                                             </span>
 
                                                                             @item.InterviewerMobileNumber
