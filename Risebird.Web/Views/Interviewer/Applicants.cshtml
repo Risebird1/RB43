@@ -179,7 +179,16 @@
                                                             }
                                                             <td>@item.AcknowledgementStatus</td>
                                                             <td>@item.ReferredBy</td>
-                                                            <td>@item.Phone</td>
+                                                            <td>
+                                                                @item.Phone
+                                                                @if (!string.IsNullOrEmpty(item.Phone))
+                                                                {
+                                                                    <span class="call rb-call-icon ms-1" role="button" title="Call this applicant"
+                                                                          onclick="CommonCallButtonClickEditable('@(item.EmailId)', '@item.Phone', '@(item.EmailId ?? "")', null, null, 'Interviewer')">
+                                                                        <i class="fas fa-phone-alt"></i>
+                                                                    </span>
+                                                                }
+                                                            </td>
                                                             <td style="text-align:left;padding-left:20px;">
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Interviewer Profile" style="width:28px!important;height:28px!important;background:#d18fec94;border:#d18fec94;">
                                                                     <a href="@Url.Action("EditApplicant", "Interviewer", new { applicantId = item.id })" target="_blank">
@@ -458,3 +467,7 @@
 </script>
 
 
+
+@* Manual click-to-call: shared provider modal + TwilioCallMaker.js (added for interviewer click-to-call). *@
+@await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
+<script src="~/js/TwilioCallMaker.js" asp-append-version="true"></script>

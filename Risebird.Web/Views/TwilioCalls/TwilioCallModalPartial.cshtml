@@ -7,6 +7,24 @@
                           && !string.IsNullOrWhiteSpace(Configuration["PlivoSettings:APPLICATION_ID"])
                           && !string.IsNullOrWhiteSpace(Configuration["PlivoSettings:EndpointUsername"]);
 }
+<style>
+    /* Small round phone icon used by the interviewer click-to-call buttons. */
+    .rb-call-icon {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 19px; height: 19px; padding: 0; vertical-align: middle;
+        border-radius: 50%; border: 1px solid #bfe8d2; background: #a5cfb9; color: #1f9d6b;
+        font-size: 11px; line-height: 1; cursor: pointer;
+        transition: background-color .15s, color .15s, box-shadow .15s;
+    }
+    .rb-call-icon:hover, .rb-call-icon:focus { background: #1f9d6b; border-color: #1f9d6b; color: #fff; box-shadow: 0 1px 4px rgba(31, 157, 107, .35); outline: none; }
+    .rb-call-icon i { margin: 0; }
+    /* Edit-number step inside the call popup. */
+    #rbEditNumberRow .rb-pill { border-radius: 16px; padding: 3px 12px; font-size: 12px; }
+    #rbEditNumberRow .rb-pill-muted { background: #f1f5f9; border: 1px solid #e2e8f0; color: #334155; }
+    #rbEditNumberRow .rb-pill-muted:hover { background: #e2e8f0; }
+    #rbEditNumberRow .rb-pill-call { background: #1f9d6b; border: 1px solid #1f9d6b; color: #fff; }
+    #rbEditNumberRow .rb-pill-call:hover { background: #18805a; }
+</style>
 <div id="myCallModal" class="modal modal-wrap modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
@@ -30,6 +48,19 @@
                     <span style="margin-right:6px;">Call via:</span>
                     <button type="button" class="btn btn-sm rb-call-provider-btn" data-provider="plivo" onclick="setCallProvider('plivo')" style="margin:0 2px;" disabled="@(!plivoConfigured)" title="@(plivoConfigured ? "Call via Plivo" : "Plivo is not configured")">Plivo</button>
                     <button type="button" class="btn btn-sm rb-call-provider-btn" data-provider="twilio" onclick="setCallProvider('twilio')" style="margin:0 2px;">Twilio</button>
+                </div>
+                @* Edit-before-call: shown only when a call is started via CommonCallButtonClickEditable.
+                   Lets the agent fix a wrong number or a missing/extra 91 before dialling. *@
+                <div id="rbEditNumberRow" style="display:none;text-align:center;margin:10px auto 4px;">
+                    <label for="rbEditNumber" style="font-size:12px;color:#6b7280;display:block;margin-bottom:4px;">
+                        Check the number, then Call — add or remove <b>91</b> if needed
+                    </label>
+                    <input id="rbEditNumber" type="tel" class="form-control"
+                           style="max-width:220px;display:inline-block;text-align:center;" />
+                    <div style="margin-top:8px;">
+                        <button type="button" class="btn btn-sm rb-pill rb-pill-muted" style="margin:0 2px;" onclick="rbToggle91()">+91 / −91</button>
+                        <button type="button" class="btn btn-sm rb-pill rb-pill-call" style="margin:0 2px;" onclick="rbPlaceEditedCall()"><i class="fas fa-phone-alt" style="margin-right:4px;"></i>Call</button>
+                    </div>
                 </div>
                 <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
                        display: block;" class="btn btn-fill btn-danger" value="Hang Up">

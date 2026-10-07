@@ -908,10 +908,14 @@
         // Same tone rule the page uses, so the resume verdict is coloured identically in
         // both documents. It was rendering as plain grey here while the page showed it in
         // green or amber.
-        var resumeTone = (resumeVerdict ?? string.Empty).ToLowerInvariant().Contains("reject") ? "is-fail"
-            : (resumeVerdict ?? string.Empty).ToLowerInvariant().Contains("select")
-                || (resumeVerdict ?? string.Empty).ToLowerInvariant().Contains("shortlist")
-                || (resumeVerdict ?? string.Empty).ToLowerInvariant().Contains("proceed") ? "is-pass"
+        // "not recommended" / "recommended" are the advanced screener's scale; the negative form
+        // is tested first because it contains the positive one.
+        var resumeVerdictLower = (resumeVerdict ?? string.Empty).ToLowerInvariant();
+        var resumeTone = resumeVerdictLower.Contains("reject") || resumeVerdictLower.Contains("not recommend") ? "is-fail"
+            : resumeVerdictLower.Contains("select")
+                || resumeVerdictLower.Contains("shortlist")
+                || resumeVerdictLower.Contains("proceed")
+                || resumeVerdictLower.Contains("recommend") ? "is-pass"
             : "is-review";
     }
     @if (evalRan || mcqRan || wasScreened)

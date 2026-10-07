@@ -36,7 +36,9 @@ case when irf.AIInterviewType = 1 then 1 else 0 end as IsAdaptive, @biqvId as Ca
 -- Resume evaluation. The screener writes its full result to AIScreeningResultJsonV2 at
 -- the same moment it writes the two columns beside it; only the columns were being read
 -- back, so everything the screener found was invisible to the report.
-ca.AIResumeScreeningVerdict, ca.AIResumeScreeningScore, ca.AIScreeningResultJsonV2
+ca.AIResumeScreeningVerdict, ca.AIResumeScreeningScore, ca.AIScreeningResultJsonV2,
+-- The advanced (rubric-based) screening, when one has been run. Preferred over V2 by the report.
+ca.AIAdvancedScreeningResultJson
 from InterviewMeetings im
 left join InterviewComments ic on ic.InterviewId = im.id
 left join AadhaarDetails ad on (ad.email = im.candidateEmail and ad.reference_id = CAST(im.id AS varchar(50)))

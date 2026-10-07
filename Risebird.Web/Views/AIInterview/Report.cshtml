@@ -3412,10 +3412,14 @@
                 ? rbResume.Verdict
                 : Model.AIResumeScreeningVerdict;
             var rbScreened = rbResume != null || rbResumeScore != 0 || !string.IsNullOrWhiteSpace(rbResumeVerdict);
-            var rbResumeTone = (rbResumeVerdict ?? string.Empty).ToLowerInvariant().Contains("reject") ? "is-fail"
-                : (rbResumeVerdict ?? string.Empty).ToLowerInvariant().Contains("select")
-                    || (rbResumeVerdict ?? string.Empty).ToLowerInvariant().Contains("shortlist")
-                    || (rbResumeVerdict ?? string.Empty).ToLowerInvariant().Contains("proceed") ? "is-pass"
+            // "not recommended" / "recommended" are the advanced screener's scale; the negative
+            // form is tested first because it contains the positive one.
+            var rbResumeVerdictLower = (rbResumeVerdict ?? string.Empty).ToLowerInvariant();
+            var rbResumeTone = rbResumeVerdictLower.Contains("reject") || rbResumeVerdictLower.Contains("not recommend") ? "is-fail"
+                : rbResumeVerdictLower.Contains("select")
+                    || rbResumeVerdictLower.Contains("shortlist")
+                    || rbResumeVerdictLower.Contains("proceed")
+                    || rbResumeVerdictLower.Contains("recommend") ? "is-pass"
                 : "is-review";
         }
         @if (rbEvalRan || rbMcqRan || rbScreened)
