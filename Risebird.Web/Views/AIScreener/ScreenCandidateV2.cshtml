@@ -829,6 +829,17 @@
                                     <div class="col-lg-12">
                                         <!-- PDF Download Button -->
                                         <div class="pdf-hide" style="text-align: right; margin-bottom: 15px;">
+                                            @if (ViewBag.CanRescreenAdvanced == true)
+                                            {
+                                                @* This result predates rubric-based screening. Re-screening replaces it on
+                                                   the candidate list and the AI interview report; this record stays stored. *@
+                                                <a class="pdf-download-btn" style="text-decoration:none;margin-right:8px;"
+                                                   href="@Url.Action("AdvancedScreenCandidate", "AIScreener", new { emailId = ViewBag.CandidateEmail, irfId = ViewBag.IRFId, candidateMasterId = ViewBag.CandidateMasterId, accessType = ViewBag.AccessType, isRedo = true })"
+                                                   onclick="return confirm('Re-screen this resume against the skill channel\'s screening rubric?');"
+                                                   title="Screen this resume again against the skill channel's weighted screening rubric">
+                                                    Re-screen with rubric
+                                                </a>
+                                            }
                                             <button type="button" class="pdf-download-btn" onclick="getPDF()">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                                                     <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>

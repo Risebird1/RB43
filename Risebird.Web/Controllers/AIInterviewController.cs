@@ -3120,7 +3120,7 @@ namespace Risebird.Web.Controllers
                 reportModel.resumeLink = meetingDetails.resumeLink;
                 reportModel.AIResumeScreeningVerdict = meetingDetails.AIResumeScreeningVerdict;
                 reportModel.AIResumeScreeningScore = meetingDetails.AIResumeScreeningScore;
-                reportModel.ResumeEvaluation = ParseResumeEvaluation(meetingDetails.AIScreeningResultJsonV2);
+                reportModel.ResumeEvaluation = ParseResumeEvaluation(meetingDetails.AIAdvancedScreeningResultJson, meetingDetails.AIScreeningResultJsonV2);
                 if (reportModel.AIInterviewEvaluation != null)
                 {
                     reportModel.AIInterviewEvaluation.AadharVerificationId = meetingDetails.AadharVerificationId;
@@ -3543,9 +3543,20 @@ namespace Risebird.Web.Controllers
         /// to take a whole report down. A record that will not parse yields null, and the
         /// report simply renders no Resume Evaluation section; the score and verdict still
         /// show in the summary because they are read from their own columns.
+        ///
+        /// An advanced (rubric-based) screening is the latest one whenever it exists, so it wins,
+        /// mapped into the V2 shape this report renders. If it will not parse, the older V2 record
+        /// is not used in its place: the score and verdict columns already hold the advanced
+        /// result, and V2 detail beside them would describe a different screening.
         /// </summary>
-        private static CandidateResumeScreeningVM ParseResumeEvaluation(string screeningJson)
+        private static CandidateResumeScreeningVM ParseResumeEvaluation(string advancedScreeningJson, string screeningJson)
         {
+            if (!string.IsNullOrWhiteSpace(advancedScreeningJson))
+            {
+                return AdvancedResumeScreening.ToResumeEvaluation(
+                    AdvancedResumeScreening.ParseModelJson<AdvancedScreeningResponse>(advancedScreeningJson));
+            }
+
             if (string.IsNullOrWhiteSpace(screeningJson))
             {
                 return null;
@@ -3618,7 +3629,7 @@ namespace Risebird.Web.Controllers
                 // missing from the PDF — which is how it was before this change.
                 reportModel.AIResumeScreeningVerdict = meetingDetails?.AIResumeScreeningVerdict;
                 reportModel.AIResumeScreeningScore = meetingDetails?.AIResumeScreeningScore ?? 0;
-                reportModel.ResumeEvaluation = ParseResumeEvaluation(meetingDetails?.AIScreeningResultJsonV2);
+                reportModel.ResumeEvaluation = ParseResumeEvaluation(meetingDetails?.AIAdvancedScreeningResultJson, meetingDetails?.AIScreeningResultJsonV2);
 
                 // The Resume Screening link in the PDF is built from these, exactly as Report
                 // does it. Without them the view cannot form the URL, so the link would simply

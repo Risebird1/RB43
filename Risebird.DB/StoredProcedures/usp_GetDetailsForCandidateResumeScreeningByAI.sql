@@ -17,11 +17,14 @@ Create PROCEDURE [dbo].[usp_GetDetailsForCandidateResumeScreeningByAI]
 AS  
 Begin
 	select distinct irf.IRFId as IRFName, irf.JDTiltle, irf.JobLevel, irf.CompanyType, ca.ResumeLink,
-	ca.AIResumeScreeningVerdict, ca.AIScreeningResultJsonV2, ag.AssessmentGroup
+	ca.AIResumeScreeningVerdict, ca.AIScreeningResultJsonV2, ag.AssessmentGroup,
+	ca.AIResumeScreeningScore, ca.AIAdvancedScreeningResultJson
 	from Candidate ca join CandidatesMaster cm on ca.CandidateMasterId = cm.id
 	join UserList ul on ul.id = cm.UserId
 	join IRF on irf.id = ca.IRFId
-	join AssessmentGroup ag on ag.id = irf.AssessmentGroupId
+	-- Left join: advanced screening scores against the IRF's own rubric and does not need an
+	-- assessment group, so an IRF without one must still return its candidate.
+	left join AssessmentGroup ag on ag.id = irf.AssessmentGroupId
 	where ca.IRFId = @IRFId and ca.CandidateMasterId = @CandidateId
 
 

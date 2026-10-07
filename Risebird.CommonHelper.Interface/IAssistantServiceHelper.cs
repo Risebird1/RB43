@@ -17,6 +17,20 @@ namespace Risebird.CommonHelper.Interface
         Task<RunResult> GenerateTranscriptAnalysis(string transcriptData);
         Task<RunResult> GenerateQcAnalysisInterviewAIMerge(string userMessageContent, string assistantId, bool useJsonResponseFormat = true);
         Task<RunResult> GenerateCandidateScreening(string resumeStringData, string jobTitle, bool useResumeParserCopyPrompt = false);
+
+        /// <summary>
+        /// Advanced (rubric-based) resume screening: scores the resume against a skill channel's
+        /// three-section rubric (OpenAI:AdvancedScreenerPromptId). Null when not configured or on failure.
+        /// </summary>
+        Task<RunResult> GenerateAdvancedResumeAnalysis(string resumeStringData, string screeningCriteriaJson);
+
+        /// <summary>
+        /// Generates a skill channel's advanced screening rubric from its JD, the hiring manager
+        /// call and the recruiter's instructions (OpenAI:JdToScreeningPromptId). Null when not
+        /// configured or on failure.
+        /// </summary>
+        Task<RunResult> GenerateJDToScreeningCriteria(string hiringManagerCallData, string jdStringData,
+            string recruiterInstructions = null, string icpStringData = null);
         Task<RunResult> GenerateInterviewerScreening(string resumeStringData, string jobTitle);
         Task<RunResult> GenerateResumeAnalysis(string resumeStringData, string jobTitle);
         Task<RunResult> GenerateReportQCAnalysis(string reportStringData);

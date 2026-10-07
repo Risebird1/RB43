@@ -31,6 +31,8 @@ using Risebird.CommonHelper;
 using static SkiaSharp.HarfBuzz.SKShaper;
 using Newtonsoft.Json.Linq;
 using Risebird.Web.Helpers;
+using Risebird.Web.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace Risebird.Web.Controllers
 {
@@ -49,6 +51,9 @@ namespace Risebird.Web.Controllers
         private readonly IActivityTrackerService _activityTrackerService;
         private readonly IPdfReaderHelper _pdfReaderHelper;
         private readonly ITranscriptOptimizationHelper _transcriptOptimizationHelper;
+        private readonly AdvancedResumeScreeningService _advancedResumeScreeningService;
+        private readonly ResumeScreeningBackgroundQueue _resumeScreeningQueue;
+        private readonly IConfiguration _configuration;
 
         public AIScreenerController(IAssistantServiceHelper assistantServiceHelper,
             IApplicationErrorLogger applicationErrorLogger, ICandidateService candidateService,
@@ -56,8 +61,13 @@ namespace Risebird.Web.Controllers
             IAzureStorageHelper azureStorageHelper, IInterviewerService interviewerService,
             IIRFRepository irfRepository, IMeetingService meetingService,
             IActivityTrackerService activityTrackerService, IPdfReaderHelper pdfReaderHelper,
-            ITranscriptOptimizationHelper transcriptOptimizationHelper)
+            ITranscriptOptimizationHelper transcriptOptimizationHelper,
+            AdvancedResumeScreeningService advancedResumeScreeningService,
+            ResumeScreeningBackgroundQueue resumeScreeningQueue, IConfiguration configuration)
         {
+            _advancedResumeScreeningService = advancedResumeScreeningService;
+            _resumeScreeningQueue = resumeScreeningQueue;
+            _configuration = configuration;
             _assistantServiceHelper = assistantServiceHelper;
             _applicationErrorLogger = applicationErrorLogger;
             _candidateService = candidateService;
@@ -182,6 +192,26 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin" || (!string.IsNullOrEmpty(accessType) && accessType.ToLower() == "public" && profileName == ProfileNames.Client))
                     {
                         var details = await _candidateService.GetDetailsForCandidateResumeScreeningByAI(irfId, candidateMasterId);
+                        if (details == null)
+                        {
+                            // The advanced page reports a missing candidate; the V2 view has no empty state.
+                            return RedirectToAction(nameof(AdvancedScreenCandidate), new { emailId, irfId, candidateMasterId, accessType });
+                        }
+
+                        // Advanced (rubric-based) screening supersedes this one. Its result is shown
+                        // whenever there is one, and a candidate never screened goes straight to it.
+                        // A stored V2 result still renders here, with an option to re-screen on the
+                        // rubric. V2 screening only runs when the advanced screener is not configured.
+                        if (!string.IsNullOrEmpty(details.AIAdvancedScreeningResultJson)
+                            || (IsAdvancedScreeningConfigured() && string.IsNullOrEmpty(details.AIScreeningResultJsonV2)))
+                        {
+                            return RedirectToAction(nameof(AdvancedScreenCandidate), new { emailId, irfId, candidateMasterId, accessType });
+                        }
+                        ViewBag.CanRescreenAdvanced = IsAdvancedScreeningConfigured() && IsInternalScreeningProfile(profileName);
+                        ViewBag.IRFId = irfId;
+                        ViewBag.CandidateMasterId = candidateMasterId;
+                        ViewBag.AccessType = accessType;
+
                         //check if the candidate's screening is already done and saved in db(as json string)
 
                         //var candidate = await _candidateService.GetCandidateOpenAIScreeningResults(irfId, candidateMasterId);
@@ -386,6 +416,254 @@ namespace Risebird.Web.Controllers
             catch
             {
                 return null;
+            }
+        }
+
+        // ------------------------------------------------------------------------------------
+        // Advanced (rubric-based) resume screening, ported from screen.risebird.io. Each IRF
+        // carries a three-section rubric (skills, work experience, education) of weighted
+        // criteria; a resume is scored against it criterion by criterion, with a reason for each.
+        // ------------------------------------------------------------------------------------
+
+        private bool IsAdvancedScreeningConfigured()
+        {
+            return !string.IsNullOrWhiteSpace(_configuration["OpenAI:AdvancedScreenerPromptId"]);
+        }
+
+        /// <summary>The profiles that may run, re-run and configure screening - the same set ScreenCandidateV2 admits.</summary>
+        private static bool IsInternalScreeningProfile(string profileName)
+        {
+            return profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin";
+        }
+
+        private (string Email, string ProfileName) CurrentSessionUser()
+        {
+            var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            return (email, profileName);
+        }
+
+        /// <param name="isRedo">Ignore the stored result and screen again (internal profiles only).</param>
+        public async Task<IActionResult> AdvancedScreenCandidate(string emailId, int irfId, int candidateMasterId, string accessType = null, bool isRedo = false)
+        {
+            try
+            {
+                var (sessionEmail, profileName) = CurrentSessionUser();
+                if (sessionEmail == null || profileName == null)
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+                var isInternal = IsInternalScreeningProfile(profileName);
+                var isPublicClient = !string.IsNullOrEmpty(accessType) && accessType.ToLower() == "public" && profileName == ProfileNames.Client;
+                if (!isInternal && !isPublicClient)
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+                ViewBag.CandidateEmail = emailId;
+                ViewBag.IRFId = irfId;
+                ViewBag.CandidateMasterId = candidateMasterId;
+                ViewBag.AccessType = accessType;
+                ViewBag.CanRescreen = isInternal;
+                ViewBag.CanEditRubric = isInternal;
+
+                var details = await _candidateService.GetDetailsForCandidateResumeScreeningByAI(irfId, candidateMasterId);
+                if (details == null)
+                {
+                    ViewBag.ErrorMessage = "This candidate could not be found on the skill channel.";
+                    return View((string)null);
+                }
+
+                ViewBag.JobTitle = details.JDTiltle;
+                ViewBag.ResumeLink = details.ResumeLink;
+                ViewBag.IRFName = details.IRFName;
+                ViewBag.AIVerdict = details.AIResumeScreeningVerdict;
+                ViewBag.AIScreeningScore = details.AIResumeScreeningScore;
+
+                if (!string.IsNullOrEmpty(details.AIAdvancedScreeningResultJson) && !(isRedo && isInternal))
+                {
+                    return View((object)details.AIAdvancedScreeningResultJson);
+                }
+
+                var outcome = await _advancedResumeScreeningService.ScreenCandidateAsync(irfId, candidateMasterId, details.ResumeLink, sessionEmail);
+                if (!outcome.Success)
+                {
+                    ViewBag.ErrorMessage = outcome.Error;
+                    // A failed re-screen keeps showing the previous result rather than an empty page.
+                    return View((object)(outcome.ResultJson ?? details.AIAdvancedScreeningResultJson));
+                }
+
+                ViewBag.SaveOperationResult = "Evaluation saved successfully.";
+                ViewBag.AIVerdict = outcome.Verdict;
+                ViewBag.AIScreeningScore = outcome.FitmentPercentage;
+                return View((object)outcome.ResultJson);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                ViewBag.ErrorMessage = "Something went wrong screening this resume. Try again in a moment.";
+                return View((string)null);
+            }
+        }
+
+        /// <summary>
+        /// Queues advanced screening for every candidate on the IRF with a resume and no advanced
+        /// result yet. Returns at once; the work runs in ResumeScreeningBackgroundWorker.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> BulkAdvancedScreenCandidate(int irfId)
+        {
+            try
+            {
+                var (sessionEmail, profileName) = CurrentSessionUser();
+                if (sessionEmail == null || !IsInternalScreeningProfile(profileName))
+                {
+                    return Json(new { success = false, message = "You are not allowed to screen candidates on this skill channel." });
+                }
+                if (!IsAdvancedScreeningConfigured())
+                {
+                    return Json(new { success = false, message = "Advanced resume screening is not configured (OpenAI:AdvancedScreenerPromptId)." });
+                }
+
+                var pending = await _candidateService.GetCandidatesForAdvancedResumeScreening(irfId);
+                var count = pending?.Count() ?? 0;
+                if (count == 0)
+                {
+                    return Json(new { success = true, message = "Every candidate with a resume on this skill channel has already been screened." });
+                }
+
+                if (!_resumeScreeningQueue.TryEnqueue(new ResumeScreeningBackgroundQueue.BulkScreenIrf(irfId, sessionEmail)))
+                {
+                    return Json(new { success = true, message = "Resume screening is already running for this skill channel. Refresh the page in a few minutes to see the AI verdicts." });
+                }
+
+                return Json(new { success = true, message = $"Resume screening has started for {count} candidate(s). It takes some time - refresh the page in a few minutes to see the AI verdicts." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Failed to start resume screening. Try again after some time." });
+            }
+        }
+
+        /// <summary>
+        /// The review screen for an IRF's screening rubric. With no saved rubric - or with
+        /// regenerate - a fresh one is generated and shown as an unsaved draft; nothing is stored
+        /// until it is saved.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> ScreeningCriteria(int irfId, bool regenerate = false)
+        {
+            try
+            {
+                var (sessionEmail, profileName) = CurrentSessionUser();
+                if (sessionEmail == null || !IsInternalScreeningProfile(profileName))
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+                var model = await _candidateService.GetIRFResumeScreeningCriteria(irfId);
+                if (model == null)
+                {
+                    ViewBag.ErrorMessage = "This skill channel could not be found.";
+                    model = new ResumeScreeningCriteriaVM { IRFId = irfId };
+                }
+                else if (!model.HasCriteria || regenerate)
+                {
+                    var (generated, error) = await _advancedResumeScreeningService.GenerateCriteriaAsync(model);
+                    if (generated != null)
+                    {
+                        model = generated;
+                        ViewBag.IsUnsavedDraft = true;
+                    }
+                    else
+                    {
+                        ViewBag.ErrorMessage = error;
+                    }
+                }
+
+                ViewBag.Criteria = AdvancedResumeScreening.BuildCriteriaRows(model);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                ViewBag.ErrorMessage = "Something went wrong loading the screening rubric.";
+                var empty = new ResumeScreeningCriteriaVM { IRFId = irfId };
+                ViewBag.Criteria = AdvancedResumeScreening.BuildCriteriaRows(empty);
+                return View(empty);
+            }
+        }
+
+        /// <summary>
+        /// Saves the rubric. The posted form carries only the criteria, so the stored record is
+        /// re-read and the criteria overlaid, rather than trusting a posted copy of the IRF context.
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ScreeningCriteria(ResumeScreeningCriteriaVM model)
+        {
+            var (sessionEmail, profileName) = CurrentSessionUser();
+            if (sessionEmail == null || !IsInternalScreeningProfile(profileName))
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+
+            try
+            {
+                var stored = await _candidateService.GetIRFResumeScreeningCriteria(model.IRFId);
+                if (stored == null)
+                {
+                    ViewBag.ErrorMessage = "This skill channel could not be found.";
+                    ViewBag.Criteria = AdvancedResumeScreening.BuildCriteriaRows(model);
+                    return View(model);
+                }
+
+                var wasSaved = stored.HasCriteria;
+                AdvancedResumeScreening.OverlayEditedCriteria(model, stored);
+
+                // JD Title and Primary Skills are the two criteria the rubric cannot do without.
+                if (string.IsNullOrWhiteSpace(stored.Title) || stored.JDTitleMaxScore < 1)
+                {
+                    ModelState.AddModelError(string.Empty, "JD Title needs a description and at least 1 point.");
+                }
+                if (string.IsNullOrWhiteSpace(stored.PrimarySkill) || stored.PrimarySkillsMaxScore < 1)
+                {
+                    ModelState.AddModelError(string.Empty, "Primary Skills needs a description and at least 1 point.");
+                }
+                if (AdvancedResumeScreening.BuildCriteriaRows(stored).Any(r => r.Score < 0))
+                {
+                    ModelState.AddModelError(string.Empty, "Weights cannot be negative. Use 0 to switch a criterion off.");
+                }
+                foreach (var overlong in AdvancedResumeScreening.OverlongCriteria(stored))
+                {
+                    ModelState.AddModelError(string.Empty, $"Shorten {overlong}.");
+                }
+                if (!ModelState.IsValid)
+                {
+                    ViewBag.IsUnsavedDraft = !wasSaved;
+                    ViewBag.Criteria = AdvancedResumeScreening.BuildCriteriaRows(stored);
+                    return View(stored);
+                }
+
+                if (!await _candidateService.SaveIRFResumeScreeningCriteria(stored, isAutoGenerated: false, savedBy: sessionEmail))
+                {
+                    ViewBag.ErrorMessage = "The screening rubric could not be saved. Try again in a moment.";
+                    ViewBag.IsUnsavedDraft = !wasSaved;
+                    ViewBag.Criteria = AdvancedResumeScreening.BuildCriteriaRows(stored);
+                    return View(stored);
+                }
+
+                TempData["SuccessMessage"] = "Screening rubric saved. Candidates screened from now on are scored against it; re-screen a candidate to update an earlier result.";
+                return RedirectToAction(nameof(ScreeningCriteria), new { irfId = model.IRFId });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                ViewBag.ErrorMessage = "Something went wrong saving the screening rubric.";
+                ViewBag.Criteria = AdvancedResumeScreening.BuildCriteriaRows(model);
+                return View(model);
             }
         }
 

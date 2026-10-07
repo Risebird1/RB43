@@ -151,6 +151,9 @@ builder.Services.AddScoped<ICodeProjectQuestionRepository, CodeProjectQuestionRe
 builder.Services.AddScoped<ICodeProjectQuestionService, CodeProjectQuestionService>();
 builder.Services.AddSingleton<CodeProjectBackgroundQueue>();
 builder.Services.AddHostedService<CodeProjectBackgroundWorker>();
+builder.Services.AddScoped<AdvancedResumeScreeningService>();
+builder.Services.AddSingleton<ResumeScreeningBackgroundQueue>();
+builder.Services.AddHostedService<ResumeScreeningBackgroundWorker>();
 builder.Services.AddScoped<IQcInterviewAIMergeJobService, QcInterviewAIMergeJobService>();
 builder.Services.AddScoped<ITransInterviewerAuditRepository, TransInterviewerAuditRepository>();
 builder.Services.AddScoped<IDmIvAutoQcRemovalService, DmIvAutoQcRemovalService>();
