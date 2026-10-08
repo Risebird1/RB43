@@ -829,7 +829,8 @@
         $('#fixNewEmail').val('');
         $('#fixResend').prop('checked', true);
         $('#fixEmailError').hide().text('');
-        $('#fixRetrySame').hide();
+        // The modal is shared by every row: a previous successful Retry left this button disabled, so reset it here.
+        $('#fixRetrySame').hide().prop('disabled', false);
         $('#fixEmailSave').prop('disabled', false);
         bdModal('fixEmailModal').show();
         setTimeout(function () { $('#fixNewEmail').trigger('focus'); }, 300);
@@ -845,11 +846,18 @@
         var current = (row.candidateEmail || row.email || '').trim().toLowerCase();
         var domain = newEmail.split('@@').pop();
         var err = '';
-        $('#fixRetrySame').hide();
+        $('#fixRetrySame').hide().prop('disabled', false);
         if (!newEmail || !bdEmailPattern.test(newEmail)) err = 'Please enter a valid email address.';
         else if (newEmail === current) {
             // Same address: a temporary or blocked bounce can be retried as-is; a permanent one needs a different email.
             var reason = row.bounceReason || 'no reason given';
+            var retryable = (row.bounceKind === 'Temporary' || row.bounceKind === 'Blocked') && !row.emailCorrected;
+            if (retryable && $('#fixResend').is(':checked')) {
+                // Same address with "Resend" ticked: nothing to change, so Save simply retries this address.
+                $('#fixEmailError').hide();
+                bdRetrySame(bdFixRowId, $('#fixEmailSave'));
+                return;
+            }
             if (row.bounceKind === 'Temporary' && !row.emailCorrected) {
                 err = 'This address bounced temporarily (' + reason + '). Use Retry same address instead.';
                 $('#fixRetrySame').show();
