@@ -17,7 +17,9 @@ namespace Risebird.Business.Tests.Infrastructure
         /// </summary>
         private static readonly HashSet<string> Excluded = new(StringComparer.Ordinal)
         {
-            // (none today — every business service is auto-mockable)
+            // Data-only types that live in Risebird.Business but are not services. These expose
+            // no behaviour for the smoke suite to drive, so excluding them gives up no coverage.
+            "CodeProjectStack",
         };
 
         /// <summary>Every concrete, publicly constructible service in Risebird.Business.</summary>
