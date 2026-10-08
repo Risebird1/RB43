@@ -1,0 +1,123 @@
+# Production_Master
+#
+# Builds master - what dev2026 merges into - and produces the deployment artifact
+# consumed by the release pipeline.
+#
+# Differences from the previous NuGet/VSBuild definition, and why:
+#   * dotnet CLI instead of VSBuild@1 - every project in RisebirdPortal.sln is
+#     SDK-style and targets net10.0, which VSBuild 17.0 (VS 2022) cannot build.
+#   * dotnet restore instead of NuGetCommand@2 - package versions come from
+#     Directory.Packages.props (central package management).
+#   * vmImage is specified, which the old 'pool: name: Azure Pipelines' lacked.
+#   * The unit tests run, so a red build cannot produce a deployable artifact.
+#   * Each deployable project is zipped separately rather than relying on
+#     /p:DeployOnBuild=true /p:WebPublishMethod=Package, which is a Web
+#     Deploy / msbuild concept that does not apply to the dotnet CLI.
+#   * PublishBuildArtifacts runs on succeeded(), not succeededOrFailed(), so a
+#     failed build never leaves a deployable artifact behind.
+#   * The reference's TargetPath '\my\share\...' is dropped: it only applies
+#     when publishLocation is FilePath, and that share does not exist.
+
+name: $(Date:yyyyMMdd)$(Rev:.r)
+
+trigger:
+  branches:
+    include:
+      - master
+
+# Azure Repos Git ignores `pr:` triggers in YAML. PR gating for dev2026 is
+# handled by the Development_Pre_Commit pipeline's Build Validation policy.
+pr: none
+
+variables:
+  solution: 'RisebirdPortal.sln'
+  buildConfiguration: 'Release'
+  artifactName: 'drop'
+  dotnetSdkVersion: '10.0.x'
+  # Matches the Function App's existing win-x64 deployment.
+  functionsRuntimeIdentifier: 'win-x64'
+  DOTNET_NOLOGO: 'true'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
+
+pool:
+  vmImage: 'windows-latest'
+
+jobs:
+- job: build_test_package
+  displayName: Build, test and package
+  timeoutInMinutes: 90
+  steps:
+  - checkout: self
+    clean: true
+    fetchDepth: 1
+
+  - task: UseDotNet@2
+    displayName: Install .NET SDK $(dotnetSdkVersion)
+    inputs:
+      packageType: 'sdk'
+      version: '$(dotnetSdkVersion)'
+
+  - task: DotNetCoreCLI@2
+    displayName: Restore
+    inputs:
+      command: 'restore'
+      projects: '$(solution)'
+
+  - task: DotNetCoreCLI@2
+    displayName: Build solution
+    inputs:
+      command: 'build'
+      projects: '$(solution)'
+      arguments: '--configuration $(buildConfiguration) --no-restore'
+
+  - task: DotNetCoreCLI@2
+    displayName: Run unit tests
+    inputs:
+      command: 'test'
+      projects: '$(solution)'
+      arguments: '--configuration $(buildConfiguration) --no-build'
+      publishTestResults: true
+      testRunTitle: 'Unit tests ($(buildConfiguration))'
+
+  # Each project is published and zipped separately so the release pipeline can
+  # deploy them to their own App Service / Function App independently. Produces
+  # Risebird.Web.zip, Risebird.Services.zip and Risebird.AzureTimerFunctions.zip.
+  - task: DotNetCoreCLI@2
+    displayName: Publish Risebird.Web
+    inputs:
+      command: 'publish'
+      publishWebProjects: false
+      projects: 'Risebird.Web/Risebird.Web.csproj'
+      arguments: '--configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)'
+      zipAfterPublish: true
+      modifyOutputPath: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Publish Risebird.Services
+    inputs:
+      command: 'publish'
+      publishWebProjects: false
+      projects: 'Risebird.Services/Risebird.Services.csproj'
+      arguments: '--configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)'
+      zipAfterPublish: true
+      modifyOutputPath: true
+
+  # No --no-build here: the RID build produces different output from the
+  # RID-less solution build above, so this project is rebuilt for win-x64.
+  - task: DotNetCoreCLI@2
+    displayName: Publish Risebird.AzureTimerFunctions
+    inputs:
+      command: 'publish'
+      publishWebProjects: false
+      projects: 'Risebird.AzureTimerFunctions/Risebird.AzureTimerFunctions.csproj'
+      arguments: '--configuration $(buildConfiguration) --runtime $(functionsRuntimeIdentifier) --self-contained false --output $(Build.ArtifactStagingDirectory)'
+      zipAfterPublish: true
+      modifyOutputPath: true
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish artifact $(artifactName)
+    condition: succeeded()
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: '$(artifactName)'
+      publishLocation: 'Container'
