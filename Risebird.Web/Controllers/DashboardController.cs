@@ -6469,9 +6469,15 @@ NEVER:
                 }
 
                 var result = await _dashboardService.UpdateBouncedCandidateEmail(row.CandidateId.Value, sendgridEventId, newEmail, emailid);
+                // The address is refused only when it is already a candidate in THIS channel (DUPLICATE). If it belongs to
+                // a candidate in other channels, this channel's candidate is linked to that person (RELINKED).
+                var updatedMessage = "Email updated";
                 switch (result?.Result)
                 {
                     case "OK":
+                        break;
+                    case "RELINKED":
+                        updatedMessage = "Email updated (linked to the existing candidate profile of " + newEmail + ")";
                         break;
                     case "DUPLICATE":
                         return Json(new { success = false, message = DuplicateEmailMessage(result, profileName) });
@@ -6485,16 +6491,16 @@ NEVER:
 
                 if (!resend)
                 {
-                    return Json(new { success = true, message = "Email updated", resent = false });
+                    return Json(new { success = true, message = updatedMessage, resent = false });
                 }
 
                 var resendResult = await ResendBouncedMailCore(sendgridEventId, row.CandidateId, emailid);
                 return Json(new
                 {
                     success = true,
-                    message = resendResult.Success ? "Email updated and mail resent"
-                        : resendResult.Code == BounceInterviewOverCode ? "Email updated. Mail not resent: interview has passed."
-                        : "Email updated",
+                    message = resendResult.Success ? updatedMessage + " and mail resent"
+                        : resendResult.Code == BounceInterviewOverCode ? updatedMessage + ". Mail not resent: interview has passed."
+                        : updatedMessage,
                     resent = resendResult.Success,
                     resendMessage = resendResult.Message,
                     code = resendResult.Code
@@ -6514,15 +6520,28 @@ NEVER:
         private static object SameAddressResponse(BounceDroppedRowContext row)
         {
             var reason = string.IsNullOrWhiteSpace(row.BounceReason) ? "no reason given" : row.BounceReason.Trim();
-            var temporary = row.BounceKind == "Temporary";
+            string message;
+            switch (row.BounceKind)
+            {
+                case "Temporary":
+                    message = $"This address bounced temporarily ({reason}). Use Retry same address instead.";
+                    break;
+                case "Blocked":
+                    // The address is valid: the receiving server refused the message because of how it was sent
+                    // (e.g. DMARC / From-header alignment), not because the mailbox is wrong.
+                    message = $"This address is valid, but the candidate's mail server blocked the message ({reason}). "
+                              + "Use Retry same address. If it is blocked again, the sending setup (SPF / DKIM / DMARC) must be fixed first.";
+                    break;
+                default:
+                    message = $"This address does not exist ({reason}). Enter a different email or call the candidate.";
+                    break;
+            }
             return new
             {
                 success = false,
-                message = temporary
-                    ? $"This address bounced temporarily ({reason}). Use Retry same address instead."
-                    : $"This address does not exist ({reason}). Enter a different email or call the candidate.",
+                message,
                 bounceKind = row.BounceKind,
-                canRetry = temporary
+                canRetry = CanRetrySameAddress(row.BounceKind)
             };
         }
 
@@ -6532,12 +6551,13 @@ NEVER:
         /// </summary>
         private static string DuplicateEmailMessage(BounceEmailUpdateResult result, string profileName)
         {
-            var profile = string.IsNullOrWhiteSpace(result.OwnerProfile) ? "user" : result.OwnerProfile.Trim();
+            // DUPLICATE now means: that person is already a candidate in this channel (other channels are fine).
+            var profile = string.IsNullOrWhiteSpace(result.OwnerProfile) ? "candidate" : result.OwnerProfile.Trim();
             if (!BounceDroppedRisebirdProfiles.Contains(profileName) || string.IsNullOrWhiteSpace(result.OwnerName))
             {
-                return $"This email already belongs to another {profile}. Use a different email.";
+                return $"This email already belongs to another {profile} in this channel. Use a different email.";
             }
-            return $"This email already belongs to {result.OwnerName.Trim()} ({profile}). Use a different email.";
+            return $"This email already belongs to {result.OwnerName.Trim()} ({profile}), who is already in this channel. Use a different email.";
         }
 
         [Authorize]
@@ -6587,7 +6607,7 @@ NEVER:
                 {
                     return Json(new { success = false, message = "This row is already closed." });
                 }
-                if (row.BounceKind != "Temporary")
+                if (!CanRetrySameAddress(row.BounceKind))
                 {
                     return Json(new { success = false, message = "This address does not exist. Enter a different email." });
                 }
@@ -6816,6 +6836,13 @@ NEVER:
                 return Json(new { success = false, message = "Could not save. Please try again." });
             }
         }
+
+        /// <summary>
+        /// The same address can be tried again when the mailbox exists: a temporary bounce (mailbox full, 4.x.x) or a
+        /// Blocked one (refused because of the sender, e.g. DMARC alignment). Not for Permanent (address does not exist).
+        /// </summary>
+        private static bool CanRetrySameAddress(string bounceKind) =>
+            bounceKind == "Temporary" || bounceKind == "Blocked";
 
         private static bool IsClosedBounceStatus(string status) =>
             status == "Resolved" || status == "Unreachable" || status == "Resent" || status == "RetriedSameAddress";

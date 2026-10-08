@@ -64,6 +64,13 @@ SELECT ev.id AS SendgridEventId, smd.id AS SentMailDetailsId,
        CASE
          WHEN ev.[event] = 'bounce' AND LEFT(LTRIM(ISNULL(ev.[status], '')), 1) = '4' THEN 'Temporary'
          WHEN ev.reason LIKE '%mailbox full%' OR ev.reason LIKE '%quota%' OR ev.reason LIKE '%try again%' THEN 'Temporary'
+         -- Blocked: the address is valid but the receiving server refused the message because of the sender (5.7.x policy,
+         -- DMARC / SPF / DKIM, From-header alignment, spam or reputation filters). Not for dropped events (e.g. a recipient
+         -- who reported spam): those must not be retried.
+         WHEN ev.[event] = 'bounce' AND (LEFT(LTRIM(ISNULL(ev.[status], '')), 3) = '5.7' OR ev.reason LIKE '%5.7.%'
+               OR ev.reason LIKE '%DMARC%' OR ev.reason LIKE '%SPF%' OR ev.reason LIKE '%DKIM%' OR ev.reason LIKE '%RFC5322%'
+               OR ev.reason LIKE '%From: header%' OR ev.reason LIKE '%blocked%' OR ev.reason LIKE '%spam%'
+               OR ev.reason LIKE '%reputation%' OR ev.reason LIKE '%policy%') THEN 'Blocked'
          ELSE 'Permanent'
        END AS BounceKind,
        irf.IRFId AS SkillChannelName, im.interviewDate, uli.EmailId AS ChannelOwner,
@@ -82,13 +89,31 @@ FROM ev
 JOIN SentMailDetails smd ON smd.sg_message_id = ev.Split_Message_Id
 LEFT JOIN IRF irf ON irf.id = smd.IRFId
 LEFT JOIN InterviewMeetings im ON im.id = smd.InterviewId
--- Candidate tab: the recipient is the candidate. Interviewer tab: show the interview's candidate (bug #6:
--- no longer an inner join, so interviewer bounces without a candidate are not dropped).
+-- Interviewer tab: show the interview's candidate (bug #6: no longer an inner join, so interviewer bounces without a
+-- candidate are not dropped).
+-- Candidate tab: of the bounced address's own login and the logins it was corrected / re-linked to
+-- (CandidateEmailChangeLog), take the one that has a candidate in THIS mail's channel, own login first. After a
+-- Fix Email re-link the channel's candidate belongs to another login, and the row must still find it.
 OUTER APPLY (
-    SELECT TOP 1 u.id, u.EmailId, u.FirstName, u.LastName
-    FROM UserList u
-    WHERE (@recipientType = 'Candidate' AND u.id = ev.RecipientUserId)
-       OR (@recipientType <> 'Candidate' AND u.EmailId = im.candidateEmail)
+    SELECT TOP 1 z.id, z.EmailId, z.FirstName, z.LastName
+    FROM (
+        SELECT u.id, u.EmailId, u.FirstName, u.LastName, x.Pri, x.ChangedAt
+        FROM (
+            SELECT ev.RecipientUserId AS UserId, 1 AS Pri, CAST(NULL AS datetime) AS ChangedAt
+            UNION ALL
+            SELECT cl.UserId, 2, cl.ChangedAt FROM CandidateEmailChangeLog cl WHERE cl.OldEmail = ev.email
+        ) x
+        JOIN UserList u ON u.id = x.UserId
+        WHERE @recipientType = 'Candidate'
+          AND EXISTS (SELECT 1 FROM CandidatesMaster cmx JOIN Candidate cx ON cx.CandidateMasterId = cmx.id
+                      WHERE cmx.UserId = u.id AND cx.IRFId = irf.id)
+        UNION ALL
+        -- Interviewer tab: the interview's candidate.
+        SELECT u.id, u.EmailId, u.FirstName, u.LastName, 3, NULL
+        FROM UserList u
+        WHERE @recipientType <> 'Candidate' AND u.EmailId = im.candidateEmail
+    ) z
+    ORDER BY z.Pri, z.ChangedAt DESC
 ) ulc
 LEFT JOIN UserList uli ON uli.id = irf.RisebirdHr
 LEFT JOIN UserList ubo ON ubo.id = irf.BillingOwner
