@@ -66,7 +66,7 @@ SELECT r.SendgridEventId, r.SentMailDetailsId, r.MailSubject, r.InterviewId, r.I
        r.email, r.latestEvent, r.ActivityDate, r.[timestamp], r.[url], r.reason, r.[status], r.BounceReason, r.BounceCount,
        r.SkillChannelName, r.interviewDate, r.ChannelOwner, r.CandidateId, r.ResumeLink, r.MobileNumber, r.CalendlyLink,
        r.candidateEmail, r.candidateName, r.CandidateClientHR, r.EndDate, r.SchedulerUniqueid, r.InterviewerId,
-       r.ResolutionStatus, r.ClientDomain
+       r.ResolutionStatus, r.ClientDomain, r.BounceKind
 INTO #rows
 FROM dbo.fn_GetBounceDroppedRows(@recipientType, @start, @endExclusive, @EmailId, @Role, @ClientRoleId, @ClientId) r
 WHERE r.rn = 1

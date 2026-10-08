@@ -141,12 +141,12 @@
 
                                                                 @if (ViewBag.Type == "UnderReview")
                                                                 {
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Move to Reviewed" style="width:27px!important;height:27px!important;position:relative;top:0px;">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Move to Reviewed" style="width:24px!important;height:24px!important;position:relative;top:0px;">
                                                                         <span onclick="javascript:CommentDetails('@item.UserId','2');" title="Move to Reviewed" class="mdc-fab__icon material-icons">
                                                                             <img src="~/img/review.png" style="max-width:16px;position:relative;top:1px;" />
                                                                         </span>
                                                                     </button>
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Comments History" style="width:27px!important;height:27px!important;position:relative;top:-2px;">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Comments History" style="width:24px!important;height:24px!important;position:relative;top:-2px;">
                                                                         <span onclick="javascript:FetchCommentDetails('@item.UserId');" title="Comments History" class="mdc-fab__icon material-icons">
                                                                             <i class="fa fa-comment-lines" style="font-size: 15px;position: relative;left: 2px;"></i>
                                                                             <i class="fa fa-history" aria-hidden="true" style="font-size: 11px;position: relative;top: 4px;left: -2px;"></i>
@@ -155,7 +155,7 @@
                                                                 }
                                                                 @if (ViewBag.Type == "Reviewed" || ViewBag.Type == "Pending")
                                                                 {
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Move To Under Review" style="width:27px!important;height:27px!important;position:relative;top:6px;">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Move To Under Review" style="width:24px!important;height:24px!important;position:relative;top:6px;">
                                                                         <span onclick="javascript:CommentDetails('@item.UserId','1');" title="Move To Under Review" class="mdc-fab__icon material-icons">
                                                                             <img src="~/img/reviewed.png" style="position:relative;left: 3px;top: 2px;max-width: 33px;" />
                                                                         </span>
@@ -163,13 +163,13 @@
                                                                 }
                                                                 @if (ViewBag.Type != "Removed")
                                                                 {
-                                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Remove Interviewer" style="width:27px!important;height:27px!important">
+                                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Remove Interviewer" style="width:24px!important;height:24px!important">
                                                                         <span onclick="javascript:removeInterviewer('@item.UserId');" title="Remove Interviewer" class="mdc-fab__icon material-icons">
                                                                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg>
                                                                         </span>
                                                                     </button>
                                                                 }
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Block Interviewer" style="width:27px!important;height:27px!important">
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Block Interviewer" style="width:24px!important;height:24px!important">
                                                                     <span onclick="javascript:blockInterviewer('@item.UserId');" title="Block Interviewer" class="mdc-fab__icon material-icons">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="12" height="12" viewBox="0 0 48 48">
                                                                             <path fill="#d50000" d="M5.7 22H42.5V26H5.7z" transform="rotate(-45.001 24.036 24.037)"></path>
@@ -179,7 +179,7 @@
                                                                 </button>
                                                                 @if (ViewBag.Type == "Removed" && canReactivate)
                                                                 {
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Reactivate Interviewer" style="width:27px!important;height:27px!important;background:#28a745 !important;border-color:#28a745 !important;">
+                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Reactivate Interviewer" style="width:24px!important;height:24px!important;background:#28a745 !important;border-color:#28a745 !important;">
                                                                         <span onclick="javascript:reactivateInterviewer('@item.UserId');" title="Reactivate Interviewer" class="mdc-fab__icon material-icons">
                                                                             <i class="fa fa-undo" style="font-size:12px;color:#fff;"></i>
                                                                         </span>

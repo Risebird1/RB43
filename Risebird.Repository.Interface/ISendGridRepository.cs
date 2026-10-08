@@ -15,5 +15,11 @@ namespace Risebird.Repository.Interface
         /// inactive interviewer/user is never emailed, regardless of the calling code path.
         /// </summary>
         Task<HashSet<string>> GetInactiveRecipientEmailsAsync(IEnumerable<string> emails);
+
+        /// <summary>
+        /// Next calendar SEQUENCE for an interview's invite (usp_NextInterviewInviteSequence). Null when it cannot be
+        /// read (e.g. the procedure is not deployed yet); callers then keep the old one-off UID behaviour.
+        /// </summary>
+        Task<int?> NextInterviewInviteSequence(int interviewId);
     }
 }

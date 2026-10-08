@@ -42,8 +42,16 @@ SELECT TOP 1
        irf.IRFId AS SkillChannelName,
        ca.id AS CandidateId, cu.id AS CandidateUserId, cu.EmailId AS CandidateCurrentEmail,
        res.[Status] AS ResolutionStatus,
+       -- Resent and RetriedSameAddress both count for the 10-minute resend cooldown.
        (SELECT MAX(r.ActionAt) FROM MailBounceResolution r
-         WHERE r.SendgridEventId = sge.id AND r.[Status] = 'Resent') AS LastResentAt
+         WHERE r.SendgridEventId = sge.id AND r.[Status] IN ('Resent', 'RetriedSameAddress')) AS LastResentAt,
+       -- Same rule as dbo.fn_GetBounceDroppedRows: temporary bounces can be retried on the same address.
+       CASE
+         WHEN sge.[event] = 'bounce' AND LEFT(LTRIM(ISNULL(sge.[status], '')), 1) = '4' THEN 'Temporary'
+         WHEN sge.reason LIKE '%mailbox full%' OR sge.reason LIKE '%quota%' OR sge.reason LIKE '%try again%' THEN 'Temporary'
+         ELSE 'Permanent'
+       END AS BounceKind,
+       sge.reason AS BounceReason
 FROM SendgridEventData sge
 JOIN SentMailDetails smd ON smd.sg_message_id = sge.Split_Message_Id
 LEFT JOIN IRF irf ON irf.id = smd.IRFId

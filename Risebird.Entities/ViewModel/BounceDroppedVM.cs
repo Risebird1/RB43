@@ -54,6 +54,9 @@ namespace Risebird.Entities.ViewModel
         public string CandidateCurrentEmail { get; set; }
         public string ResolutionStatus { get; set; }
         public DateTime? LastResentAt { get; set; }
+        /// <summary>Temporary (4.x.x, mailbox full, quota, try again) or Permanent.</summary>
+        public string BounceKind { get; set; }
+        public string BounceReason { get; set; }
     }
 
     /// <summary>Stored mail behind a bounce row (usp_GetBounceMailContent).</summary>
@@ -64,6 +67,25 @@ namespace Risebird.Entities.ViewModel
         public string MailBody { get; set; }
         public int? IRFId { get; set; }
         public int? InterviewId { get; set; }
+        /// <summary>CC list of the original mail (comma or semicolon separated).</summary>
+        public string MailCc { get; set; }
+        public DateTime? InterviewDate { get; set; }
+        /// <summary>None | Missing | Cancelled | Past | Upcoming (usp_GetBounceMailContent).</summary>
+        public string InterviewState { get; set; }
+        public DateTime? InterviewStartUtc { get; set; }
+        public int InterviewDurationMinutes { get; set; }
+        public string ZoomLink { get; set; }
+        public string InterviewCandidateEmail { get; set; }
+    }
+
+    /// <summary>Result of usp_UpdateBouncedCandidateEmail.</summary>
+    public class BounceEmailUpdateResult
+    {
+        /// <summary>OK | DUPLICATE | NOT_FOUND | SAME; null when the call failed.</summary>
+        public string Result { get; set; }
+        /// <summary>On DUPLICATE: who already uses the address.</summary>
+        public string OwnerName { get; set; }
+        public string OwnerProfile { get; set; }
     }
 
     /// <summary>What the Bounce &amp; Dropped Mail page needs to render its shell (rows come from the data endpoint).</summary>

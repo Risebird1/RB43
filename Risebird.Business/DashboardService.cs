@@ -1100,7 +1100,7 @@ namespace Risebird.Business
             return null;
         }
 
-        public async Task<string> UpdateBouncedCandidateEmail(int candidateId, int sendgridEventId, string newEmail, string actionBy)
+        public async Task<BounceEmailUpdateResult> UpdateBouncedCandidateEmail(int candidateId, int sendgridEventId, string newEmail, string actionBy)
         {
             try
             {

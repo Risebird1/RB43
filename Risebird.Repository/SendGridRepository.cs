@@ -107,6 +107,32 @@ namespace Risebird.Repository
             return inactive;
         }
 
+        public async Task<int?> NextInterviewInviteSequence(int interviewId)
+        {
+            try
+            {
+                // Primary DB only (never the staging swap in SaveSentMailDetails).
+                using (SqlConnection con = new SqlConnection(_configuration["ConnectionString:DBConnectionString"]))
+                {
+                    return await con.QueryFirstOrDefaultAsync<int?>("usp_NextInterviewInviteSequence", new { InterviewId = interviewId },
+                        commandType: CommandType.StoredProcedure, commandTimeout: 30);
+                }
+            }
+            catch (SqlException ex)
+            {
+                // 2812 = procedure not deployed yet: expected until the DB scripts run; callers fall back silently.
+                if (ex.Number != 2812)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<bool> SaveSentMailDetails(SentMailDetails model, bool isStaging = false)
         {
             try

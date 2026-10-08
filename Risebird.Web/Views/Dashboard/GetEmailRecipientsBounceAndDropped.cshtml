@@ -45,12 +45,19 @@
     .bd-call { background: #1e88e5 !important; }
     .bd-invite { background: #4fb3e4 !important; }
     .bd-editint { background: #8e24aa !important; }
+    .bd-retry { background: #00897b !important; }
     .bd-nophone { font-size: 11px; color: #888; margin: 0 3px; }
     .bd-status { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 10px; margin-left: 3px; background: #eceff1; color: #37474f; }
     .bd-status.EmailCorrected { background: #fff3e0; color: #e65100; }
     .bd-status.Resent, .bd-status.Resolved { background: #e8f5e9; color: #1b5e20; }
     .bd-status.Unreachable { background: #ffebee; color: #b71c1c; }
     .bd-range-label { font-size: 13px; color: #455a64; margin: 8px 0 4px; }
+    /* Long subjects / bounce reasons wrap inside their own column instead of running over the next one. */
+    .bd-text { min-width: 180px; max-width: 260px; white-space: normal; word-break: break-word; overflow-wrap: anywhere; line-height: 1.4; }
+    .bd-text .bd-more-text { display: none; }
+    .bd-text.bd-expanded .bd-more-text { display: inline; }
+    .bd-text.bd-expanded .bd-ellipsis { display: none; }
+    .bd-text .bd-toggle { display: inline-block; margin-left: 4px; font-size: 12px; color: #039BE5; cursor: pointer; white-space: nowrap; }
     .bd-notice { font-size: 13px; color: #8a6d3b; background: #fcf8e3; border: 1px solid #faebcc; padding: 6px 10px; border-radius: 4px; margin: 6px 0; }
     .bd-modal-error { color: #c62828; font-size: 13px; margin-top: 8px; }
     .bd-readonly dt { font-weight: 600; font-size: 12px; color: #607d8b; }
@@ -389,6 +396,9 @@
                             </label>
                         </div>
                         <div id="fixEmailError" class="bd-modal-error" style="display:none"></div>
+                        <button type="button" id="fixRetrySame" class="mdc-button mdc-button--outlined" style="display:none;margin-top:8px;">
+                            <i class="fa fa-refresh"></i>&nbsp;Retry same address
+                        </button>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="mdc-button mdc-button--outlined" data-bs-dismiss="modal">Cancel</button>
@@ -456,6 +466,7 @@
             content: '@Url.Action("GetBounceMailContent", "Dashboard")',
             fixEmail: '@Url.Action("UpdateBouncedCandidateEmail", "Dashboard")',
             resend: '@Url.Action("ResendBouncedMail", "Dashboard")',
+            retry: '@Url.Action("RetrySameAddress", "Dashboard")',
             resolve: '@Url.Action("ResolveMailBounce", "Dashboard")',
             reset: '@Url.Action("ResetRecipientActivityDetails", "Dashboard")',
             page: '@Url.Action("GetEmailRecipientsBounceAndDropped", "Dashboard")'
@@ -479,6 +490,24 @@
         value = value || '';
         return value.length > len ? value.substring(0, len) + '…' : value;
     }
+
+    // Wrapping text block: the first `len` characters, with Read more / Read less for the rest.
+    function readMore(value, len) {
+        value = value || '';
+        if (value.length <= len) {
+            return '<div class="bd-text">' + esc(value) + '</div>';
+        }
+        return '<div class="bd-text">' + esc(value.substring(0, len))
+            + '<span class="bd-ellipsis">…</span><span class="bd-more-text">' + esc(value.substring(len)) + '</span>'
+            + '<a class="bd-toggle" role="button" tabindex="0">Read more</a></div>';
+    }
+
+    $(document).on('click keydown', '#recipientsTable .bd-toggle', function (e) {
+        if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        var $box = $(this).closest('.bd-text').toggleClass('bd-expanded');
+        $(this).text($box.hasClass('bd-expanded') ? 'Read less' : 'Read more');
+    });
 
     function bdToast(message, ok) {
         var $t = $('#bdToast');
@@ -594,8 +623,13 @@
             if (open && row.candidateId) {
                 html += '<button type="button" class="btn shadow btn-xs sharp me-1 bd-btn bd-fix" title="Fix Email" aria-label="Fix Email" data-id="' + row.sendgridEventId + '"><i class="fa fa-edit"></i></button>';
             }
-            if (open && row.emailCorrected && row.candidateId) {
+            // A row already Resent can be resent again after the cooldown; the calendar then updates the same event.
+            if ((open || row.resolutionStatus === 'Resent') && row.emailCorrected && row.candidateId) {
                 html += '<button type="button" class="btn shadow btn-xs sharp me-1 bd-btn bd-resend" title="Resend Mail" aria-label="Resend Mail" data-id="' + row.sendgridEventId + '"><i class="fa fa-repeat"></i></button>';
+            }
+            // Temporary bounce (mailbox full, 4.x.x): the same address can simply be tried again.
+            if (open && row.bounceKind === 'Temporary' && !row.emailCorrected && row.candidateId) {
+                html += '<button type="button" class="btn shadow btn-xs sharp me-1 bd-btn bd-retry" title="Retry same address" aria-label="Retry same address" data-id="' + row.sendgridEventId + '"><i class="fa fa-refresh"></i></button>';
             }
             if (open) {
                 html += '<button type="button" class="btn shadow btn-xs sharp me-1 bd-btn bd-resolve" title="Mark Resolved" aria-label="Mark Resolved" data-id="' + row.sendgridEventId + '"><i class="fa fa-check"></i></button>';
@@ -653,7 +687,7 @@
             columns: [
                 { data: 'email', name: 'email', render: function (d) { return esc(d); } },
                 { data: 'candidateName', name: 'candidateName', render: function (d) { return esc(d); } },
-                { data: 'mailSubject', name: 'MailSubject', render: function (d) { return '<span title="' + esc(d) + '">' + esc(truncate(d, 60)) + '</span>'; } },
+                { data: 'mailSubject', name: 'MailSubject', render: function (d) { return readMore(d, 60); } },
                 { data: null, orderable: false, render: function (d, t, row) { return '<a class="bd-content" data-id="' + row.sendgridEventId + '" style="color:blue; cursor:pointer"><u>Content</u></a>'; } },
                 { data: 'sentOn', name: 'SentOn', render: function (d) { return esc(d); } },
                 { data: 'sentBy', name: 'SentBy', render: function (d) { return esc(d); } },
@@ -661,7 +695,7 @@
                 {
                     data: 'bounceReason', name: 'BounceReason', render: function (d, t, row) {
                         var full = (d || '') + (row.bounceStatus ? ' (' + row.bounceStatus + ')' : '');
-                        return '<span title="' + esc(full) + '">' + esc(truncate(full, 60)) + '</span>';
+                        return readMore(full, 60);
                     }
                 },
                 { data: 'bounceCount', name: 'BounceCount', render: function (d) { return esc(d); } },
@@ -774,6 +808,7 @@
         $('#fixNewEmail').val('');
         $('#fixResend').prop('checked', true);
         $('#fixEmailError').hide().text('');
+        $('#fixRetrySame').hide();
         $('#fixEmailSave').prop('disabled', false);
         bdModal('fixEmailModal').show();
         setTimeout(function () { $('#fixNewEmail').trigger('focus'); }, 300);
@@ -789,8 +824,18 @@
         var current = (row.candidateEmail || row.email || '').trim().toLowerCase();
         var domain = newEmail.split('@@').pop();
         var err = '';
+        $('#fixRetrySame').hide();
         if (!newEmail || !bdEmailPattern.test(newEmail)) err = 'Please enter a valid email address.';
-        else if (newEmail === current) err = 'The new email is the same as the current email.';
+        else if (newEmail === current) {
+            // Same address: a temporary bounce can be retried as-is; a permanent one needs a different email.
+            var reason = row.bounceReason || 'no reason given';
+            if (row.bounceKind === 'Temporary' && !row.emailCorrected) {
+                err = 'This address bounced temporarily (' + reason + '). Use Retry same address instead.';
+                $('#fixRetrySame').show();
+            } else {
+                err = 'This address does not exist (' + reason + '). Enter a different email or call the candidate.';
+            }
+        }
         else if (domain === 'risebird.io' || (row.clientDomain && domain === row.clientDomain.toLowerCase())) err = 'Email domain is not allowed for a candidate.';
         if (err) {
             $('#fixEmailError').text(err).show();
@@ -807,13 +852,18 @@
         }).done(function (r) {
             if (!r.success) {
                 $('#fixEmailError').text(r.message).show();
+                if (r.canRetry) $('#fixRetrySame').show();
                 $('#fixEmailSave').prop('disabled', false);
                 return;
             }
             bdModal('fixEmailModal').hide();
-            bdToast(r.message, true);
-            if (r.resendMessage && !r.resent) {
-                setTimeout(function () { bdToast('Email updated, but the mail was not resent: ' + r.resendMessage, false); }, 1500);
+            if (r.code === 'InterviewOver') {
+                bdOfferSchedule(row, r.message);
+            } else {
+                bdToast(r.message, true);
+                if (r.resendMessage && !r.resent) {
+                    setTimeout(function () { bdToast('Email updated, but the mail was not resent: ' + r.resendMessage, false); }, 1500);
+                }
             }
             bdReload();
         }).fail(function () {
@@ -839,7 +889,7 @@
             $btn.prop('disabled', true);
             bdPost(bdConfig.urls.resend, { sendgridEventId: row.sendgridEventId, candidateId: row.candidateId })
                 .done(function (r) {
-                    bdToast(r.message, r.success);
+                    if (r.code === 'InterviewOver') bdOfferSchedule(row, r.message); else bdToast(r.message, r.success);
                     if (r.success) bdReload(); else $btn.prop('disabled', false);
                 })
                 .fail(function () {
@@ -848,6 +898,51 @@
                 });
         });
     });
+
+    // The interview behind the mail has passed or was cancelled: nothing was sent; offer to schedule a new one.
+    function bdOfferSchedule(row, message) {
+        setTimeout(function () {
+            swal({
+                title: "Mail not resent",
+                text: message,
+                type: "info",
+                showCancelButton: !!row.scheduleUrl,
+                confirmButtonText: row.scheduleUrl ? "Schedule Meeting" : "OK",
+                cancelButtonText: "Close"
+            }, function (isConfirm) {
+                if (isConfirm && row.scheduleUrl) window.open(row.scheduleUrl, '_blank');
+            });
+        }, 300);
+    }
+
+    // Retry same address (temporary bounce): from the row, or from the Fix Email modal.
+    function bdRetrySame(rowId, $btn) {
+        var row = bdRows[rowId];
+        if (!row) return;
+        swal({
+            title: "Retry the same address?",
+            text: "The original mail \"" + (row.mailSubject || '') + "\" will be sent again to " + (row.email || '') + ".",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Retry",
+            closeOnConfirm: true
+        }, function (isConfirm) {
+            if (!isConfirm) return;
+            if ($btn) $btn.prop('disabled', true);
+            bdPost(bdConfig.urls.retry, { sendgridEventId: row.sendgridEventId, candidateId: row.candidateId })
+                .done(function (r) {
+                    if (r.success && document.getElementById('fixEmailModal')) bdModal('fixEmailModal').hide();
+                    if (r.code === 'InterviewOver') bdOfferSchedule(row, r.message); else bdToast(r.message, r.success);
+                    if (r.success) bdReload(); else if ($btn) $btn.prop('disabled', false);
+                })
+                .fail(function () {
+                    bdToast('Could not resend the mail. Please try again.', false);
+                    if ($btn) $btn.prop('disabled', false);
+                });
+        });
+    }
+    $(document).on('click', '#recipientsTable .bd-retry', function () { bdRetrySame($(this).data('id'), $(this)); });
+    $('#fixRetrySame').on('click', function () { bdRetrySame(bdFixRowId, $(this)); });
 
     // Mark Resolved / Unreachable
     var bdResolve = { rowId: null, status: null };

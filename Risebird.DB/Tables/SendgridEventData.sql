@@ -33,43 +33,54 @@ Begin
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns
-    WHERE Name IN (N'SendgridEventData')
-      AND Object_ID = Object_ID(N'Split_Message_Id'))
+    WHERE Name IN (N'Split_Message_Id')
+      AND Object_ID = Object_ID(N'SendgridEventData'))
 BEGIN
     ALTER TABLE SendgridEventData
     Add [Split_Message_Id] varchar(50)
 END
 
-IF NOT EXISTS(
+IF EXISTS(
     SELECT *
     FROM sys.columns
-    WHERE Name IN (N'SendgridEventData')
-      AND Object_ID = Object_ID(N'sg_message_id'))
+    WHERE Name IN (N'sg_message_id')
+      AND Object_ID = Object_ID(N'SendgridEventData') AND max_length < 200)
 BEGIN
     ALTER TABLE SendgridEventData
-    Alter column [sg_message_id] varchar(200)
+    Alter column [sg_message_id] varchar(200) NULL
 END
 
-IF NOT EXISTS(
+IF EXISTS(
     SELECT *
     FROM sys.columns
-    WHERE Name IN (N'SendgridEventData')
-      AND Object_ID = Object_ID(N'sg_message_id'))
+    WHERE Name IN (N'sg_event_id')
+      AND Object_ID = Object_ID(N'SendgridEventData') AND max_length < 200)
 BEGIN
     ALTER TABLE SendgridEventData
-    Alter column [sg_event_id] varchar(200)
+    Alter column [sg_event_id] varchar(200) NULL
 END
+
+End
+GO
 
 -- Bounce & Dropped Mail page (bug #7): addresses longer than 50 chars were truncated.
+-- Widening a varchar is a metadata-only change, but it needs an exclusive lock on this busy table. Waiting for
+-- that lock would queue every SendGrid webhook insert behind it, so give up after 5 seconds instead; rerun later.
 IF EXISTS(
     SELECT *
     FROM sys.columns
     WHERE Object_ID = Object_ID(N'SendgridEventData')
       AND Name = N'email' AND max_length < 150)
 BEGIN
-    ALTER TABLE SendgridEventData
-    Alter column [email] varchar(150) NULL
+    SET LOCK_TIMEOUT 5000;
+    BEGIN TRY
+        ALTER TABLE SendgridEventData
+        Alter column [email] varchar(150) NULL
+        PRINT 'SendgridEventData.email widened to varchar(150).';
+    END TRY
+    BEGIN CATCH
+        PRINT 'SendgridEventData.email NOT widened: the table is busy (' + ERROR_MESSAGE() + '). Rerun this script in a quieter moment.';
+    END CATCH
+    SET LOCK_TIMEOUT -1;
 END
-
-End
 GO
