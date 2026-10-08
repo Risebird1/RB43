@@ -81,7 +81,7 @@ namespace Risebird.Entities.ViewModel
     /// <summary>Result of usp_UpdateBouncedCandidateEmail.</summary>
     public class BounceEmailUpdateResult
     {
-        /// <summary>OK | DUPLICATE | NOT_FOUND | SAME; null when the call failed.</summary>
+        /// <summary>OK | RELINKED (linked to the existing candidate of that email) | DUPLICATE (already in this channel) | NOT_FOUND | SAME; null when the call failed.</summary>
         public string Result { get; set; }
         /// <summary>On DUPLICATE: who already uses the address.</summary>
         public string OwnerName { get; set; }
