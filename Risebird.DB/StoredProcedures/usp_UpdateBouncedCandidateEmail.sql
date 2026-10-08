@@ -16,12 +16,16 @@ GO
 --
 -- Access is checked by the caller (usp_GetBounceDroppedRowForAction) before this runs.
 -- @Result: OK | DUPLICATE | NOT_FOUND | SAME
+-- On DUPLICATE, @OwnerName / @OwnerProfile name the account that already uses the address (an email is a login
+-- id, unique across all of UserList, not per channel), so the page can say who owns it.
 CREATE PROCEDURE [dbo].[usp_UpdateBouncedCandidateEmail]
 @CandidateId int,
 @SendgridEventId int,
 @NewEmail varchar(150),
 @ActionBy varchar(150),
-@Result varchar(50) OUTPUT
+@Result varchar(50) OUTPUT,
+@OwnerName varchar(300) = NULL OUTPUT,
+@OwnerProfile varchar(100) = NULL OUTPUT
 AS
 BEGIN
 SET NOCOUNT ON;
@@ -54,8 +58,30 @@ BEGIN
     RETURN;
 END
 
-IF EXISTS (SELECT 1 FROM UserList WITH (UPDLOCK, HOLDLOCK) WHERE EmailId = @NewEmail AND id <> @UserId)
+DECLARE @OwnerId int;
+
+-- Exact match first: an index seek, locked so nobody can take the address before we commit.
+SELECT TOP 1 @OwnerId = u.id
+FROM UserList u WITH (UPDLOCK, HOLDLOCK)
+WHERE u.EmailId = @NewEmail AND u.id <> @UserId;
+
+-- Also catch stored addresses with stray spaces or different case. This one cannot use an index, so it is read
+-- without locks: locking a full scan would block every UserList write for the duration of the transaction.
+IF (@OwnerId IS NULL)
 BEGIN
+    SELECT TOP 1 @OwnerId = u.id
+    FROM UserList u
+    WHERE LOWER(LTRIM(RTRIM(u.EmailId))) = @NewEmail AND u.id <> @UserId;
+END
+
+IF (@OwnerId IS NOT NULL)
+BEGIN
+    SELECT @OwnerName = LTRIM(RTRIM(ISNULL(u.FirstName, '') + ' ' + ISNULL(u.LastName, ''))),
+           @OwnerProfile = p.Name
+    FROM UserList u
+    LEFT JOIN Profile p ON p.id = u.idProfile
+    WHERE u.id = @OwnerId;
+
     ROLLBACK TRAN;
     SET @Result = 'DUPLICATE';
     RETURN;

@@ -8,7 +8,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
--- Records a Mark Resolved / Unreachable / Resent action on a Bounce & Dropped Mail row.
+-- Records a Mark Resolved / Unreachable / Resent / RetriedSameAddress action on a Bounce & Dropped Mail row.
 -- Access is checked by the caller (usp_GetBounceDroppedRowForAction) before this runs.
 -- Returns 1 when a row was inserted, 0 for an invalid @Status.
 CREATE PROCEDURE [dbo].[usp_ResolveMailBounce]
@@ -21,7 +21,8 @@ AS
 BEGIN
 SET NOCOUNT ON;
 
-IF (@Status NOT IN ('Resolved', 'Unreachable', 'Resent'))
+-- RetriedSameAddress (QA round 1, Q1): a temporary bounce was resent to the same address. Closed like Resent.
+IF (@Status NOT IN ('Resolved', 'Unreachable', 'Resent', 'RetriedSameAddress'))
 BEGIN
     SELECT CAST(0 AS bit) AS Success;
     RETURN;

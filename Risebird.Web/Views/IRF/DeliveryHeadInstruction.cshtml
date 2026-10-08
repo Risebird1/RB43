@@ -1589,7 +1589,8 @@
                                                                         <div class="dm-v4-iv-phone">
                                                                             @iv.MobileNumber
                                                                             <span class="call rb-call-icon ms-1" role="button" title="Call this interviewer"
-                                                                                  onclick="CommonCallButtonClickEditable('@(iv.NickName ?? "")', '@iv.MobileNumber', '@(iv.EmailId ?? "")', null, null, 'Interviewer')">
+                                                                                  data-name="@(iv.NickName ?? "")" data-mobile="@iv.MobileNumber" data-email="@(iv.EmailId ?? "")" data-type="Interviewer"
+                                                                                  onclick="CommonCallButtonClickFromData(this)">
                                                                                 <i class="fas fa-phone-alt"></i>
                                                                             </span>
                                                                         </div>
@@ -2638,7 +2639,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js?v=2024" defer></script>
 <script src="~/js/SkillChannelAddEdit.js?v=2024"></script>
 <script src="~/js/addeditskillchannelcommonmethods.js?v=20250602rubric"></script>
-<script src="~/js/FeedbackRecorder/Record.js?v=20250602"></script>
+<script src="~/js/FeedbackRecorder/Record.js?v=20261007callfix"></script>
 <script src="~/js/common.js?v=2024"></script>
 
 @if (ViewBag.Message != null)

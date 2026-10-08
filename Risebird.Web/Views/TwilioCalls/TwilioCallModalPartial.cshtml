@@ -38,7 +38,10 @@
                 </div>
                 <h5 class="modal-title pull-left" id = "idCallingTitle"> Call </h5>
             </div>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            @* The popup is shown by TwilioCallMaker.js (style.display), not by Bootstrap, so data-dismiss does nothing here:
+               close it the same way as the Hang Up button (ends any active call, then hides the popup). *@
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    onclick="if (typeof closeCallPopUp === 'function') { closeCallPopUp(); } else { document.getElementById('myCallModal').style.display = 'none'; }">
                 <span aria-hidden="true" id="callPopUp" style="cursor:pointer;">&times;</span>
             </button>
 

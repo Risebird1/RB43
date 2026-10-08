@@ -6138,7 +6138,6 @@ NEVER:
         private static readonly string[] BounceDroppedProfiles = { "Admin", "HR", "SeniorHR", "SupportAdmin", "Client" };
         private static readonly string[] BounceDroppedRisebirdProfiles = { "Admin", "HR", "SeniorHR", "SupportAdmin" };
         private const string BounceNoAccessMessage = "Candidate not found or you do not have access.";
-        private const string BounceDuplicateMessage = "This email is already used by another user.";
         private const string BounceDomainMessage = "Email domain is not allowed for a candidate.";
         private const string BounceUpdateFailedMessage = "Could not update email. Please try again.";
         private static readonly TimeSpan BounceResendCooldown = TimeSpan.FromMinutes(10);
@@ -6379,6 +6378,7 @@ NEVER:
                     resumeLink = r.ResumeLink,
                     resolutionStatus = r.ResolutionStatus,
                     clientDomain = r.ClientDomain,
+                    bounceKind = r.BounceKind,
                     emailCorrected = r.EmailCorrected,
                     isResolved = r.IsResolved,
                     recipientActivityUrl = Url.Action("GetRecipientMailActivitiesByMessageId", "Mail", new { recipientEmail = r.email, messageId = r.sg_message_id }),
@@ -6459,7 +6459,7 @@ NEVER:
                 }
                 if (string.Equals(row.CandidateCurrentEmail?.Trim(), newEmail, StringComparison.OrdinalIgnoreCase))
                 {
-                    return Json(new { success = false, message = "The new email is the same as the current email." });
+                    return Json(SameAddressResponse(row));
                 }
 
                 var billingOwner = row.IRFId.HasValue ? await _candidateService.FetchBillingownerById(row.IRFId.Value) : null;
@@ -6469,16 +6469,16 @@ NEVER:
                 }
 
                 var result = await _dashboardService.UpdateBouncedCandidateEmail(row.CandidateId.Value, sendgridEventId, newEmail, emailid);
-                switch (result)
+                switch (result?.Result)
                 {
                     case "OK":
                         break;
                     case "DUPLICATE":
-                        return Json(new { success = false, message = BounceDuplicateMessage });
+                        return Json(new { success = false, message = DuplicateEmailMessage(result, profileName) });
                     case "NOT_FOUND":
                         return Json(new { success = false, message = BounceNoAccessMessage });
                     case "SAME":
-                        return Json(new { success = false, message = "The new email is the same as the current email." });
+                        return Json(SameAddressResponse(row));
                     default:
                         return Json(new { success = false, message = BounceUpdateFailedMessage });
                 }
@@ -6492,9 +6492,12 @@ NEVER:
                 return Json(new
                 {
                     success = true,
-                    message = resendResult.Success ? "Email updated and mail resent" : "Email updated",
+                    message = resendResult.Success ? "Email updated and mail resent"
+                        : resendResult.Code == BounceInterviewOverCode ? "Email updated. Mail not resent: interview has passed."
+                        : "Email updated",
                     resent = resendResult.Success,
-                    resendMessage = resendResult.Message
+                    resendMessage = resendResult.Message,
+                    code = resendResult.Code
                 });
             }
             catch (Exception ex)
@@ -6502,6 +6505,39 @@ NEVER:
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false, message = BounceUpdateFailedMessage });
             }
+        }
+
+        /// <summary>
+        /// Fix Email with the address the row already has (QA round 1, Q1): a temporary bounce points to Retry same
+        /// address; a permanent one asks for a different email.
+        /// </summary>
+        private static object SameAddressResponse(BounceDroppedRowContext row)
+        {
+            var reason = string.IsNullOrWhiteSpace(row.BounceReason) ? "no reason given" : row.BounceReason.Trim();
+            var temporary = row.BounceKind == "Temporary";
+            return new
+            {
+                success = false,
+                message = temporary
+                    ? $"This address bounced temporarily ({reason}). Use Retry same address instead."
+                    : $"This address does not exist ({reason}). Enter a different email or call the candidate.",
+                bounceKind = row.BounceKind,
+                canRetry = temporary
+            };
+        }
+
+        /// <summary>
+        /// Email addresses are login ids, unique across all users (QA round 1, Q2). Name the owner for Risebird staff;
+        /// Client users only see the owner's profile.
+        /// </summary>
+        private static string DuplicateEmailMessage(BounceEmailUpdateResult result, string profileName)
+        {
+            var profile = string.IsNullOrWhiteSpace(result.OwnerProfile) ? "user" : result.OwnerProfile.Trim();
+            if (!BounceDroppedRisebirdProfiles.Contains(profileName) || string.IsNullOrWhiteSpace(result.OwnerName))
+            {
+                return $"This email already belongs to another {profile}. Use a different email.";
+            }
+            return $"This email already belongs to {result.OwnerName.Trim()} ({profile}). Use a different email.";
         }
 
         [Authorize]
@@ -6517,7 +6553,7 @@ NEVER:
                     return Json(new { success = false, message = BounceNoAccessMessage });
                 }
                 var result = await ResendBouncedMailCore(sendgridEventId, candidateId, emailid);
-                return Json(new { success = result.Success, message = result.Message });
+                return Json(new { success = result.Success, message = result.Message, code = result.Code });
             }
             catch (Exception ex)
             {
@@ -6527,43 +6563,206 @@ NEVER:
         }
 
         /// <summary>
-        /// Resends the stored SentMailDetails mail (original subject + HTML body, no CC/BCC) to the candidate's
-        /// current address and records MailBounceResolution(Status = 'Resent'). The body never comes from the client.
+        /// Temporary bounce (4.x.x, mailbox full, quota, try again): take the address off SendGrid's bounce list and send
+        /// the mail again to the same address (QA round 1, Q1). The interview rules of Resend still apply.
         /// </summary>
-        private async Task<(bool Success, string Message)> ResendBouncedMailCore(int sendgridEventId, int? candidateId, string actionBy)
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RetrySameAddress(int sendgridEventId, int? candidateId)
+        {
+            try
+            {
+                var (emailid, profileName) = GetBounceDroppedSessionUser();
+                if (emailid == null || !BounceDroppedProfiles.Contains(profileName))
+                {
+                    return Json(new { success = false, message = BounceNoAccessMessage });
+                }
+                var row = await _dashboardService.GetBounceDroppedRowForAction(sendgridEventId, candidateId, emailid);
+                if (row == null || !row.CandidateId.HasValue)
+                {
+                    return Json(new { success = false, message = BounceNoAccessMessage });
+                }
+                if (IsClosedBounceStatus(row.ResolutionStatus))
+                {
+                    return Json(new { success = false, message = "This row is already closed." });
+                }
+                if (row.BounceKind != "Temporary")
+                {
+                    return Json(new { success = false, message = "This address does not exist. Enter a different email." });
+                }
+                if (row.LastResentAt.HasValue && DateTime.Now - row.LastResentAt.Value < BounceResendCooldown)
+                {
+                    return Json(new { success = false, message = "This mail was resent less than 10 minutes ago. Please wait before resending." });
+                }
+
+                // Without this SendGrid drops the retry, because the address is on its bounce list.
+                await _notificationHelper.RemoveBounceSuppression(row.BouncedEmail);
+                var result = await ResendBouncedMailCore(sendgridEventId, row.CandidateId, emailid,
+                    allowSameAddress: true, resolutionStatus: "RetriedSameAddress");
+                return Json(new { success = result.Success, message = result.Message, code = result.Code });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not resend the mail. Please try again." });
+            }
+        }
+
+        private const string BounceInterviewOverCode = "InterviewOver";
+
+        /// <summary>
+        /// Resends the mail behind a bounce row to the candidate's current address and records the resolution.
+        /// The body never comes from the client.
+        ///   - Interview passed, cancelled or missing: nothing is sent (QA round 1, Q3).
+        ///   - Upcoming interview: the stored body with the old address replaced, plus a fresh calendar invite; the
+        ///     original CC list is told about the change (Q4).
+        ///   - No interview: the stored body with the old address replaced (Q4).
+        /// A row already Resent may be resent again (after the cooldown): the calendar then updates the same event.
+        /// </summary>
+        private async Task<(bool Success, string Message, string Code)> ResendBouncedMailCore(int sendgridEventId, int? candidateId, string actionBy,
+            bool allowSameAddress = false, string resolutionStatus = "Resent")
         {
             var row = await _dashboardService.GetBounceDroppedRowForAction(sendgridEventId, candidateId, actionBy);
             if (row == null || !row.CandidateId.HasValue || string.IsNullOrWhiteSpace(row.CandidateCurrentEmail))
             {
-                return (false, BounceNoAccessMessage);
+                return (false, BounceNoAccessMessage, null);
             }
-            if (IsClosedBounceStatus(row.ResolutionStatus))
+            if (IsClosedBounceStatus(row.ResolutionStatus) && row.ResolutionStatus != "Resent")
             {
-                return (false, "This row is already closed.");
+                return (false, "This row is already closed.", null);
             }
-            if (string.Equals(row.CandidateCurrentEmail.Trim(), row.BouncedEmail?.Trim(), StringComparison.OrdinalIgnoreCase))
+            var sameAddress = string.Equals(row.CandidateCurrentEmail.Trim(), row.BouncedEmail?.Trim(), StringComparison.OrdinalIgnoreCase);
+            if (sameAddress && !allowSameAddress)
             {
-                return (false, "Fix the email first.");
+                return (false, "Fix the email first.", null);
+            }
+            if (!sameAddress && allowSameAddress)
+            {
+                return (false, "The email has already been changed. Use Resend Mail instead.", null);
             }
             if (row.LastResentAt.HasValue && DateTime.Now - row.LastResentAt.Value < BounceResendCooldown)
             {
-                return (false, "This mail was resent less than 10 minutes ago. Please wait before resending.");
+                return (false, "This mail was resent less than 10 minutes ago. Please wait before resending.", null);
             }
 
             var mail = await _dashboardService.GetSentMailForBounce(sendgridEventId);
             if (mail == null || string.IsNullOrWhiteSpace(mail.MailBody))
             {
-                return (false, "The original mail could not be found.");
+                return (false, "The original mail could not be found.", null);
             }
 
-            var sendResult = await _notificationHelper.ResendStoredMail(row.CandidateCurrentEmail, mail.MailSubject, mail.MailBody, mail.IRFId, mail.InterviewId);
+            var newEmail = row.CandidateCurrentEmail.Trim();
+            var body = ReplaceEmailInBody(mail.MailBody, row.BouncedEmail, newEmail);
+            string notice = null;
+            switch (mail.InterviewState)
+            {
+                case "Past":
+                case "Cancelled":
+                case "Missing":
+                    return (false, "This interview has passed or was cancelled. Schedule a new interview instead.", BounceInterviewOverCode);
+                case "Upcoming":
+                    var invite = await ResendBouncedInterviewInvite(mail, row.BouncedEmail, newEmail, body);
+                    if (!invite.Success)
+                    {
+                        return (false, invite.Message, null);
+                    }
+                    notice = invite.Message;
+                    break;
+                default: // "None": not an interview mail
+                    var sendResult = await _notificationHelper.ResendStoredMail(newEmail, mail.MailSubject, body, mail.IRFId, mail.InterviewId);
+                    if (sendResult != "Mail sent successfully.")
+                    {
+                        return (false, "Could not resend the mail. Please try again.", null);
+                    }
+                    break;
+            }
+
+            var verb = resolutionStatus == "RetriedSameAddress" ? "Retried " : "Resent to ";
+            await _dashboardService.ResolveMailBounce(sendgridEventId, row.CandidateId, resolutionStatus, verb + newEmail, actionBy);
+            return (true, "Mail resent to " + newEmail + (notice == null ? string.Empty : ". " + notice), null);
+        }
+
+        /// <summary>
+        /// Upcoming interview (QA round 1, Q4): the stored invite has no calendar file and shows the old address, so send
+        /// the patched body with a fresh .ics built from InterviewMeetings (same UID as every invite of this interview,
+        /// next SEQUENCE). Then withdraw the old invite for the original CC list. No new Zoom meeting, no meeting change.
+        /// </summary>
+        private async Task<(bool Success, string Message)> ResendBouncedInterviewInvite(BounceMailContent mail, string oldEmail, string newEmail, string body)
+        {
+            if (!mail.InterviewId.HasValue || !mail.InterviewStartUtc.HasValue)
+            {
+                return (false, "The interview details could not be found.");
+            }
+            var interviewId = mail.InterviewId.Value;
+            var startUtc = DateTime.SpecifyKind(mail.InterviewStartUtc.Value, DateTimeKind.Utc);
+            var duration = mail.InterviewDurationMinutes > 0 ? mail.InterviewDurationMinutes : 60;
+
+            var nextSequence = await _notificationHelper.NextInterviewInviteSequence(interviewId);
+            var sequence = nextSequence ?? 0;
+            // Sequence 1 = nothing was sent with the stable UID before: the original invite (sent before this release)
+            // has a random UID that no calendar can match, so its recipients also get a plain notice.
+            var legacyInvite = !nextSequence.HasValue || nextSequence.Value <= 1;
+
+            var sendResult = await _notificationHelper.ResendInterviewInvite(newEmail, mail.MailSubject, body, interviewId, sequence,
+                startUtc, duration, mail.ZoomLink, mail.IRFId);
             if (sendResult != "Mail sent successfully.")
             {
                 return (false, "Could not resend the mail. Please try again.");
             }
 
-            await _dashboardService.ResolveMailBounce(sendgridEventId, row.CandidateId, "Resent", "Resent to " + row.CandidateCurrentEmail, actionBy);
-            return (true, "Mail resent to " + row.CandidateCurrentEmail);
+            if (string.Equals(oldEmail?.Trim(), newEmail, StringComparison.OrdinalIgnoreCase))
+            {
+                return (true, null); // same-address retry: nothing changed for the other recipients
+            }
+
+            var cc = (mail.MailCc ?? string.Empty)
+                .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .Where(x => x.Length > 0
+                            && !string.Equals(x, oldEmail?.Trim(), StringComparison.OrdinalIgnoreCase)
+                            && !string.Equals(x, newEmail, StringComparison.OrdinalIgnoreCase))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+            if (cc.Count == 0)
+            {
+                return (true, null);
+            }
+
+            var dateText = mail.InterviewDate.HasValue ? mail.InterviewDate.Value.ToString("dd MMM yyyy hh:mm tt") : "the scheduled date";
+            string noticeResult;
+            if (legacyInvite)
+            {
+                await _notificationHelper.SendInterviewInviteCancel(cc, interviewId, sequence, startUtc, duration, mail.MailSubject, mail.IRFId);
+                noticeResult = await _notificationHelper.SendCandidateEmailCorrectedNotice(cc, oldEmail, newEmail, dateText, interviewId, mail.IRFId);
+            }
+            else
+            {
+                // Their event already has the stable UID: update it in place rather than cancel it, so it stays on
+                // their calendars with the corrected candidate address.
+                var ics = _notificationHelper.BuildInterviewInviteIcs(interviewId, sequence, startUtc, duration, mail.ZoomLink, mail.MailSubject,
+                    new[] { newEmail }.Concat(cc));
+                noticeResult = await _notificationHelper.SendCandidateEmailCorrectedNotice(cc, oldEmail, newEmail, dateText, interviewId, mail.IRFId, ics);
+            }
+            return (true, noticeResult == "Mail sent successfully."
+                ? "The original recipients were told about the new address."
+                : "Could not notify the original recipients about the new address.");
+        }
+
+        /// <summary>Replaces the bounced address in a stored mail body (plain, HTML-escaped and URL-encoded forms).</summary>
+        private static string ReplaceEmailInBody(string body, string oldEmail, string newEmail)
+        {
+            if (string.IsNullOrEmpty(body) || string.IsNullOrWhiteSpace(oldEmail) || string.IsNullOrWhiteSpace(newEmail)
+                || string.Equals(oldEmail.Trim(), newEmail.Trim(), StringComparison.OrdinalIgnoreCase))
+            {
+                return body;
+            }
+            oldEmail = oldEmail.Trim();
+            newEmail = newEmail.Trim();
+            return body
+                .Replace(oldEmail, newEmail, StringComparison.OrdinalIgnoreCase)
+                .Replace(oldEmail.Replace("@", "&#64;"), newEmail.Replace("@", "&#64;"), StringComparison.OrdinalIgnoreCase)
+                .Replace(oldEmail.Replace("@", "%40"), newEmail.Replace("@", "%40"), StringComparison.OrdinalIgnoreCase);
         }
 
         [Authorize]
@@ -6619,7 +6818,7 @@ NEVER:
         }
 
         private static bool IsClosedBounceStatus(string status) =>
-            status == "Resolved" || status == "Unreachable" || status == "Resent";
+            status == "Resolved" || status == "Unreachable" || status == "Resent" || status == "RetriedSameAddress";
 
         private static bool IsValidBounceEmail(string email)
         {

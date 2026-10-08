@@ -2203,7 +2203,7 @@ Values
             return null;
         }
 
-        public async Task<string> UpdateBouncedCandidateEmail(int candidateId, int sendgridEventId, string newEmail, string actionBy)
+        public async Task<BounceEmailUpdateResult> UpdateBouncedCandidateEmail(int candidateId, int sendgridEventId, string newEmail, string actionBy)
         {
             try
             {
@@ -2213,11 +2213,18 @@ Values
                 parameters.Add("@NewEmail", newEmail);
                 parameters.Add("@ActionBy", actionBy);
                 parameters.Add("@Result", dbType: DbType.String, direction: ParameterDirection.Output, size: 50);
+                parameters.Add("@OwnerName", dbType: DbType.String, direction: ParameterDirection.Output, size: 300);
+                parameters.Add("@OwnerProfile", dbType: DbType.String, direction: ParameterDirection.Output, size: 100);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await con.ExecuteAsync("usp_UpdateBouncedCandidateEmail", parameters, commandTimeout: 120,
                         commandType: CommandType.StoredProcedure);
-                    return parameters.Get<string>("@Result");
+                    return new BounceEmailUpdateResult
+                    {
+                        Result = parameters.Get<string>("@Result"),
+                        OwnerName = parameters.Get<string>("@OwnerName"),
+                        OwnerProfile = parameters.Get<string>("@OwnerProfile"),
+                    };
                 }
             }
             catch (SqlException ex)

@@ -117,6 +117,23 @@ namespace Risebird.CommonHelper.Interface
         /// No CC/BCC. Logged to SentMailDetails through SendMail so SendGrid events track it.
         /// </summary>
         Task<string> ResendStoredMail(string toEmail, string subject, string htmlBody, int? irfId, int? interviewId);
+
+        // Bounce & Dropped Mail – QA round 1 (Q1, Q4)
+        /// <summary>Next calendar SEQUENCE of an interview's invite; null when it cannot be read.</summary>
+        Task<int?> NextInterviewInviteSequence(int interviewId);
+        /// <summary>Resends an interview mail with a fresh .ics (METHOD:REQUEST, UID interview-{id}@risebird.io).</summary>
+        Task<string> ResendInterviewInvite(string toEmail, string subject, string htmlBody, int interviewId, int sequence,
+            DateTime startUtc, int durationMinutes, string location, int? irfId);
+        /// <summary>Withdraws an interview's calendar event for the given recipients (METHOD:CANCEL, same UID).</summary>
+        Task<string> SendInterviewInviteCancel(List<string> to, int interviewId, int sequence, DateTime startUtc, int durationMinutes,
+            string subject, int? irfId);
+        /// <summary>Tells the original CC list that the candidate's email was corrected; optionally carries the updated invite.</summary>
+        Task<string> SendCandidateEmailCorrectedNotice(List<string> to, string oldEmail, string newEmail, string interviewDateText,
+            int interviewId, int? irfId, string updatedInviteIcs = null);
+        string BuildInterviewInviteIcs(int interviewId, int sequence, DateTime startUtc, int durationMinutes, string location, string subject,
+            IEnumerable<string> attendees);
+        /// <summary>Removes an address from SendGrid's bounce suppression list so a retry is delivered (204/404 = success).</summary>
+        Task<bool> RemoveBounceSuppression(string email);
         Task<string> SendClientRisebirdReview(Mail model, string Name, string reviewurl, string clientlogo);
         Task<string> SharedReminderTestLink(Mail model, string title, string timeduration, string Url, string ClientName, DateTime Expiretime);
         Task<string> SendInterviewerIntrest(Mail model, string Name, string reviewurl, string uniqueId);

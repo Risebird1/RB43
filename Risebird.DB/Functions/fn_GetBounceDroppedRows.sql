@@ -60,6 +60,12 @@ SELECT ev.id AS SendgridEventId, smd.id AS SentMailDetailsId,
        smd.MailSubject, smd.InterviewId, smd.IRFId, smd.CreatedAt AS SentOn, smd.SentBy, smd.sg_message_id,
        ev.email, ev.[event] AS latestEvent, ev.CreatedAt AS ActivityDate, ev.[timestamp], ev.[url],
        ev.reason, ev.[status], ev.reason AS BounceReason, ev.BounceCount, ev.rn,
+       -- Temporary bounces (4.x.x SMTP status, mailbox full, quota, try again) can be retried on the same address.
+       CASE
+         WHEN ev.[event] = 'bounce' AND LEFT(LTRIM(ISNULL(ev.[status], '')), 1) = '4' THEN 'Temporary'
+         WHEN ev.reason LIKE '%mailbox full%' OR ev.reason LIKE '%quota%' OR ev.reason LIKE '%try again%' THEN 'Temporary'
+         ELSE 'Permanent'
+       END AS BounceKind,
        irf.IRFId AS SkillChannelName, im.interviewDate, uli.EmailId AS ChannelOwner,
        ca.id AS CandidateId, ca.ResumeLink AS ResumeLink, ca.Phone AS MobileNumber, irf.CalendlyLink,
        ulc.EmailId AS candidateEmail,

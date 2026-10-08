@@ -1,0 +1,51 @@
+/*
+  Compact round action buttons (the blue "mdc-fab app-fab--absolute" buttons in Action / AI actions columns).
+  Loaded by every layout, after the page styles. Two-class selectors outrank the per-page ".mdc-fab { 30px !important }"
+  rules, so no page stylesheet has to change. Icon sizes override the inline 15px / 16px sizes in the views.
+*/
+.mdc-fab.app-fab--absolute {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
+    padding: 0 !important;
+}
+
+.mdc-fab.app-fab--absolute .mdc-fab__icon {
+    width: 12px !important;
+    height: 12px !important;
+    font-size: 12px !important;
+    line-height: 12px !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.mdc-fab.app-fab--absolute svg {
+    width: 12px !important;
+    height: 12px !important;
+}
+
+.mdc-fab.app-fab--absolute i,
+.mdc-fab.app-fab--absolute .fa,
+.mdc-fab.app-fab--absolute .fas,
+.mdc-fab.app-fab--absolute .far,
+.mdc-fab.app-fab--absolute .material-icons {
+    font-size: 11px !important;
+    line-height: 12px !important;
+}
+
+.mdc-fab.app-fab--absolute img {
+    width: 12px !important;
+    height: auto !important;
+}
+
+/*
+  Phone "click to call" icon (/img/calling.png). It is written with widths from 14px to 20px across the views and
+  in script-built rows; cap it at 16px everywhere. max-width overrides both the width attribute and inline widths,
+  and leaves the icons that are already 16px or smaller unchanged.
+*/
+img[src$="calling.png"] {
+    max-width: 16px !important;
+    height: auto !important;
+}

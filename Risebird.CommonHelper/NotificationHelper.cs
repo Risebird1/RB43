@@ -127,6 +127,208 @@ namespace Risebird.CommonHelper
             }
         }
 
+        #region Interview calendar (.ics) identity
+        /// <summary>Stable calendar UID of an interview's invite; a one-off UID when the mail has no interview.</summary>
+        private static string InterviewUid(int? interviewId) =>
+            interviewId.HasValue ? $"interview-{interviewId.Value}@risebird.io" : Guid.NewGuid().ToString();
+
+        /// <summary>
+        /// UID + next SEQUENCE for an interview's .ics. Falls back to the old behaviour (one-off UID, SEQUENCE 0) when the
+        /// sequence cannot be read, e.g. before usp_NextInterviewInviteSequence is deployed, so invites never break.
+        /// </summary>
+        private async Task<(string Uid, int Sequence)> GetInterviewCalendarIdentity(int? interviewId)
+        {
+            if (interviewId.HasValue && interviewId.Value > 0 && _sendGridRepository != null)
+            {
+                var sequence = await _sendGridRepository.NextInterviewInviteSequence(interviewId.Value);
+                if (sequence.HasValue)
+                {
+                    return (InterviewUid(interviewId), sequence.Value);
+                }
+            }
+            return (Guid.NewGuid().ToString(), 0);
+        }
+
+        public async Task<int?> NextInterviewInviteSequence(int interviewId)
+        {
+            return _sendGridRepository == null ? null : await _sendGridRepository.NextInterviewInviteSequence(interviewId);
+        }
+
+        private static string IcsText(string value) =>
+            (value ?? string.Empty).Replace("\\", "\\\\").Replace(";", "\\;").Replace(",", "\\,").Replace("\r", " ").Replace("\n", " ");
+
+        private static string BuildInterviewIcs(string method, int interviewId, int sequence, DateTime startUtc, int durationMinutes,
+            string location, string summary, IEnumerable<string> attendees)
+        {
+            var cancel = method == "CANCEL";
+            var str = new StringBuilder();
+            str.AppendLine("BEGIN:VCALENDAR");
+            str.AppendLine("PRODID:-//Schedule a Meeting");
+            str.AppendLine("VERSION:2.0");
+            str.AppendLine("METHOD:" + method);
+            str.AppendLine("BEGIN:VEVENT");
+            str.AppendLine(string.Format("DTSTART:{0:yyyyMMddTHHmmssZ}", startUtc));
+            str.AppendLine(string.Format("DTSTAMP:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
+            str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", startUtc.AddMinutes(durationMinutes > 0 ? durationMinutes : 60)));
+            if (!string.IsNullOrWhiteSpace(location))
+            {
+                str.AppendLine("LOCATION:" + IcsText(location));
+            }
+            str.AppendLine("UID:" + InterviewUid(interviewId));
+            str.AppendLine("SEQUENCE:" + sequence);
+            str.AppendLine("SUMMARY:" + IcsText(summary));
+            str.AppendLine(cancel ? "STATUS:CANCELLED" : "STATUS:CONFIRMED");
+            foreach (var attendee in attendees.Where(a => !string.IsNullOrWhiteSpace(a)))
+            {
+                str.AppendLine(string.Format("ATTENDEE;CN=\"{0}\";RSVP=TRUE:mailto:{0}", attendee.Trim()));
+            }
+            if (!cancel)
+            {
+                str.AppendLine("BEGIN:VALARM");
+                str.AppendLine("TRIGGER:-PT15M");
+                str.AppendLine("ACTION:DISPLAY");
+                str.AppendLine("DESCRIPTION:Reminder");
+                str.AppendLine("END:VALARM");
+            }
+            str.AppendLine("END:VEVENT");
+            str.AppendLine("END:VCALENDAR");
+            return str.ToString();
+        }
+
+        private static async Task AttachIcs(SendGridMessage msg, string fileName, string ics)
+        {
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(ics));
+            await msg.AddAttachmentAsync(fileName, stream);
+        }
+        #endregion
+
+        #region Bounce & Dropped Mail resend (QA round 1)
+        public async Task<string> ResendInterviewInvite(string toEmail, string subject, string htmlBody, int interviewId, int sequence,
+            DateTime startUtc, int durationMinutes, string location, int? irfId)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(toEmail) || string.IsNullOrWhiteSpace(htmlBody))
+                {
+                    return "Failed to send mail.";
+                }
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = subject;
+                msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(toEmail.Trim()));
+                // Stored HTML from our own templates (old address already replaced): send as-is, never through string.Format.
+                msg.HtmlContent = htmlBody;
+                var ics = BuildInterviewIcs("REQUEST", interviewId, sequence, startUtc, durationMinutes, location, subject, new[] { toEmail });
+                await AttachIcs(msg, "InterviewInvite.ics", ics);
+                return await SendMail(msg, irfId, interviewId);
+            }
+            catch (Exception ex)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to send mail.";
+            }
+        }
+
+        public async Task<string> SendInterviewInviteCancel(List<string> to, int interviewId, int sequence, DateTime startUtc, int durationMinutes,
+            string subject, int? irfId)
+        {
+            try
+            {
+                var recipients = (to ?? new List<string>()).Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+                if (recipients.Count == 0)
+                {
+                    return "Failed to send mail.";
+                }
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "Cancelled: " + subject;
+                foreach (var recipient in recipients)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(recipient));
+                }
+                msg.HtmlContent = "<p>The earlier calendar invite for this interview has been withdrawn because the candidate's email address was corrected. "
+                                  + "A new invite has been sent to the candidate.</p>";
+                var ics = BuildInterviewIcs("CANCEL", interviewId, sequence, startUtc, durationMinutes, null, subject, recipients);
+                await AttachIcs(msg, "cancel.ics", ics);
+                return await SendMail(msg, irfId, interviewId);
+            }
+            catch (Exception ex)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to send mail.";
+            }
+        }
+
+        public async Task<string> SendCandidateEmailCorrectedNotice(List<string> to, string oldEmail, string newEmail, string interviewDateText,
+            int interviewId, int? irfId, string updatedInviteIcs = null)
+        {
+            try
+            {
+                var recipients = (to ?? new List<string>()).Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+                if (recipients.Count == 0)
+                {
+                    return "Failed to send mail.";
+                }
+                var msg = new SendGridMessage();
+                msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Notification");
+                msg.Subject = "Candidate email corrected for the interview on " + interviewDateText;
+                foreach (var recipient in recipients)
+                {
+                    msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(recipient));
+                }
+                var line = "Candidate email corrected from " + WebUtility.HtmlEncode(oldEmail) + " to " + WebUtility.HtmlEncode(newEmail)
+                           + " for the interview on " + WebUtility.HtmlEncode(interviewDateText) + ".";
+                msg.HtmlContent = updatedInviteIcs == null
+                    ? "<p>" + line + " Please delete the earlier calendar invite; a new one has been sent.</p>"
+                    : "<p>" + line + " The attached calendar update replaces the earlier invite.</p>";
+                if (updatedInviteIcs != null)
+                {
+                    await AttachIcs(msg, "InterviewInvite.ics", updatedInviteIcs);
+                }
+                return await SendMail(msg, irfId, interviewId);
+            }
+            catch (Exception ex)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to send mail.";
+            }
+        }
+
+        public string BuildInterviewInviteIcs(int interviewId, int sequence, DateTime startUtc, int durationMinutes, string location, string subject,
+            IEnumerable<string> attendees) =>
+            BuildInterviewIcs("REQUEST", interviewId, sequence, startUtc, durationMinutes, location, subject, attendees);
+
+        public async Task<bool> RemoveBounceSuppression(string email)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(email))
+                {
+                    return false;
+                }
+                var client = new SendGridClient(_sendGridClientKey);
+                var response = await client.RequestAsync(BaseClient.Method.DELETE,
+                    urlPath: "suppression/bounces/" + Uri.EscapeDataString(email.Trim()));
+                // 204 = removed, 404 = was not on the list: both mean SendGrid will deliver the retry.
+                if (response.StatusCode == HttpStatusCode.NoContent || response.StatusCode == HttpStatusCode.NotFound
+                    || response.StatusCode == HttpStatusCode.OK)
+                {
+                    return true;
+                }
+                await _errorLogger.LogMessage(LogLevelInfo.Warning,
+                    $"SendGrid bounce suppression removal for {email} returned {(int)response.StatusCode}.");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        #endregion
+
         public async Task<string> SendHelpsupportMail(Mail model)
         {
             try
@@ -1095,7 +1297,9 @@ namespace Risebird.CommonHelper
                 str.AppendLine(string.Format("DTSTAMP:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
                 str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset).AddMinutes(60)));
                 str.AppendLine("LOCATION:" + meetingurl);
-                str.AppendLine(string.Format("UID:{0}", Guid.NewGuid()));
+                // Test-link invite: not tied to an interview row, so a one-off UID as before.
+                str.AppendLine("UID:" + InterviewUid(null));
+                str.AppendLine("SEQUENCE:0");
                 str.AppendLine(string.Format("SUMMARY:{0}", msg.Subject));
                 str.AppendLine(string.Format("ATTENDEE;CN=\"{0}\";RSVP=TRUE:mailto:{1}", toMails[0], toMails[0]));
                 str.AppendLine("BEGIN:VALARM");
@@ -2370,7 +2574,11 @@ namespace Risebird.CommonHelper
                     str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset).AddMinutes(60)));
                 }
                 str.AppendLine("LOCATION:" + join_url);
-                str.AppendLine(string.Format("UID:{0}", Guid.NewGuid()));
+                // Stable UID + growing SEQUENCE: a later invite, reschedule, bounce resend or cancel for this interview
+                // updates the same calendar event instead of adding another one.
+                var calendarId = await GetInterviewCalendarIdentity(interviewId);
+                str.AppendLine("UID:" + calendarId.Uid);
+                str.AppendLine("SEQUENCE:" + calendarId.Sequence);
                 str.AppendLine(string.Format("SUMMARY:{0}", msg.Subject));
                 str.AppendLine(string.Format("ATTENDEE;CN=\"{0}\";RSVP=TRUE:mailto:{1}", toMails[0], toMails[0]));
                 str.AppendLine("BEGIN:VALARM");
@@ -2625,7 +2833,9 @@ namespace Risebird.CommonHelper
                 str.AppendLine(string.Format("DTSTAMP:{0:yyyyMMddTHHmmssZ}", DateTime.UtcNow));
                 str.AppendLine(string.Format("DTEND:{0:yyyyMMddTHHmmssZ}", interviewdatetime.AddMinutes(offset + 60)));
                 str.AppendLine("LOCATION:" + meetingurl);
-                str.AppendLine(string.Format("UID:{0}", Guid.NewGuid()));
+                // Test-link invite: not tied to an interview row, so a one-off UID as before.
+                str.AppendLine("UID:" + InterviewUid(null));
+                str.AppendLine("SEQUENCE:0");
                 str.AppendLine(string.Format("SUMMARY:{0}", msg.Subject));
                 str.AppendLine(string.Format("ATTENDEE;CN=\"{0}\";RSVP=TRUE:mailto:{1}", toMails[0], toMails[0]));
                 str.AppendLine("BEGIN:VALARM");
