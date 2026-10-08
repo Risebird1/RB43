@@ -1,0 +1,80 @@
+# Development_Pre_Commit
+#
+# Validation pipeline for changes landing on dev2026. Build + unit tests only;
+# no deployment packaging (that belongs in the release pipeline).
+#
+# Differences from the previous NuGet/VSBuild definition, and why:
+#   * dotnet CLI instead of VSBuild@1 - every project in RisebirdPortal.sln is
+#     SDK-style and targets net10.0, which VSBuild 17.0 (VS 2022) cannot build.
+#   * dotnet restore instead of NuGetCommand@2 - package versions come from
+#     Directory.Packages.props (central package management).
+#   * vmImage is specified, which the old 'pool: name: Azure Pipelines' lacked.
+#   * THE UNIT TESTS ACTUALLY RUN, and any failing test fails the build.
+#     Coverage is collected and published for visibility, but is not gated.
+
+name: $(Date:yyyyMMdd)$(Rev:.r)
+
+trigger:
+  branches:
+    include:
+      - dev2026
+
+# Azure Repos Git ignores `pr:` triggers in YAML. To gate pull requests, add this
+# pipeline as a Build Validation policy:
+#   Project Settings > Repositories > Risebird > Policies > dev2026
+#     > Build Validation > + > select this pipeline
+pr: none
+
+variables:
+  solution: 'RisebirdPortal.sln'
+  buildConfiguration: 'Release'
+  dotnetSdkVersion: '10.0.x'
+  DOTNET_NOLOGO: 'true'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
+
+pool:
+  vmImage: 'windows-latest'
+
+jobs:
+- job: build_and_test
+  displayName: Build and test
+  timeoutInMinutes: 60
+  steps:
+  - checkout: self
+    fetchDepth: 1
+
+  - task: UseDotNet@2
+    displayName: Install .NET SDK $(dotnetSdkVersion)
+    inputs:
+      packageType: 'sdk'
+      version: '$(dotnetSdkVersion)'
+
+  - task: DotNetCoreCLI@2
+    displayName: Restore
+    inputs:
+      command: 'restore'
+      projects: '$(solution)'
+
+  - task: DotNetCoreCLI@2
+    displayName: Build solution
+    inputs:
+      command: 'build'
+      projects: '$(solution)'
+      arguments: '--configuration $(buildConfiguration) --no-restore'
+
+  # Runs all four *.Tests projects. A failing test fails the build.
+  - task: DotNetCoreCLI@2
+    displayName: Run unit tests
+    inputs:
+      command: 'test'
+      projects: '$(solution)'
+      arguments: '--configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage"'
+      publishTestResults: true
+      testRunTitle: 'Unit tests ($(buildConfiguration))'
+
+  - task: PublishCodeCoverageResults@2
+    displayName: Publish code coverage
+    condition: succeededOrFailed()
+    inputs:
+      summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+      failIfCoverageEmpty: false
