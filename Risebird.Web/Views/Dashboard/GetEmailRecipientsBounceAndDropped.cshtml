@@ -516,6 +516,26 @@
         $t.data('timer', setTimeout(function () { $t.fadeOut(300); }, 4000));
     }
 
+    // Confirmation dialog that works with either alert library. Every layout loads bootstrap-sweetalert (v1), then
+    // sweetalert2, which takes over the global "swal" and ignores a v1-style callback: swal({...}, fn) showed the
+    // dialog but fn never ran, so Resend / Retry never posted. sweetalert2 answers with a promise instead.
+    function bdConfirm(options, callback) {
+        if (window.Swal && typeof window.Swal.fire === 'function') {
+            window.Swal.fire({
+                title: options.title,
+                text: options.text,
+                type: options.type,
+                showCancelButton: !!options.showCancelButton,
+                confirmButtonText: options.confirmButtonText || 'OK',
+                cancelButtonText: options.cancelButtonText || 'Cancel'
+            }).then(function (result) {
+                if (callback) callback(!!(result && result.value));
+            });
+        } else {
+            swal(options, callback);
+        }
+    }
+
     function bdPost(url, data) {
         return $.ajax({
             url: url,
@@ -627,8 +647,9 @@
             if ((open || row.resolutionStatus === 'Resent') && row.emailCorrected && row.candidateId) {
                 html += '<button type="button" class="btn shadow btn-xs sharp me-1 bd-btn bd-resend" title="Resend Mail" aria-label="Resend Mail" data-id="' + row.sendgridEventId + '"><i class="fa fa-repeat"></i></button>';
             }
-            // Temporary bounce (mailbox full, 4.x.x): the same address can simply be tried again.
-            if (open && row.bounceKind === 'Temporary' && !row.emailCorrected && row.candidateId) {
+            // Temporary (mailbox full, 4.x.x) or Blocked (valid address refused for sender reasons, e.g. DMARC):
+            // the same address can be tried again.
+            if (open && (row.bounceKind === 'Temporary' || row.bounceKind === 'Blocked') && !row.emailCorrected && row.candidateId) {
                 html += '<button type="button" class="btn shadow btn-xs sharp me-1 bd-btn bd-retry" title="Retry same address" aria-label="Retry same address" data-id="' + row.sendgridEventId + '"><i class="fa fa-refresh"></i></button>';
             }
             if (open) {
@@ -780,7 +801,7 @@
             if (wasOpen && !open && bdCallRowId !== null) {
                 var rowId = bdCallRowId;
                 bdCallRowId = null;
-                swal({
+                bdConfirm({
                     title: "Got a new email?",
                     text: "If the candidate gave you the correct address, fix it now.",
                     type: "info",
@@ -827,10 +848,14 @@
         $('#fixRetrySame').hide();
         if (!newEmail || !bdEmailPattern.test(newEmail)) err = 'Please enter a valid email address.';
         else if (newEmail === current) {
-            // Same address: a temporary bounce can be retried as-is; a permanent one needs a different email.
+            // Same address: a temporary or blocked bounce can be retried as-is; a permanent one needs a different email.
             var reason = row.bounceReason || 'no reason given';
             if (row.bounceKind === 'Temporary' && !row.emailCorrected) {
                 err = 'This address bounced temporarily (' + reason + '). Use Retry same address instead.';
+                $('#fixRetrySame').show();
+            } else if (row.bounceKind === 'Blocked' && !row.emailCorrected) {
+                err = 'This address is valid, but the candidate\'s mail server blocked the message (' + reason + '). '
+                    + 'Use Retry same address. If it is blocked again, the sending setup (SPF / DKIM / DMARC) must be fixed first.';
                 $('#fixRetrySame').show();
             } else {
                 err = 'This address does not exist (' + reason + '). Enter a different email or call the candidate.';
@@ -877,7 +902,7 @@
         var $btn = $(this);
         var row = bdRows[$btn.data('id')];
         if (!row) return;
-        swal({
+        bdConfirm({
             title: "Resend this mail?",
             text: "The original mail \"" + (row.mailSubject || '') + "\" will be sent again to " + (row.candidateEmail || '') + ".",
             type: "warning",
@@ -902,7 +927,7 @@
     // The interview behind the mail has passed or was cancelled: nothing was sent; offer to schedule a new one.
     function bdOfferSchedule(row, message) {
         setTimeout(function () {
-            swal({
+            bdConfirm({
                 title: "Mail not resent",
                 text: message,
                 type: "info",
@@ -919,7 +944,7 @@
     function bdRetrySame(rowId, $btn) {
         var row = bdRows[rowId];
         if (!row) return;
-        swal({
+        bdConfirm({
             title: "Retry the same address?",
             text: "The original mail \"" + (row.mailSubject || '') + "\" will be sent again to " + (row.email || '') + ".",
             type: "warning",

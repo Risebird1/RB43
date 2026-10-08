@@ -309,17 +309,23 @@ namespace Risebird.CommonHelper
                     return false;
                 }
                 var client = new SendGridClient(_sendGridClientKey);
-                var response = await client.RequestAsync(BaseClient.Method.DELETE,
-                    urlPath: "suppression/bounces/" + Uri.EscapeDataString(email.Trim()));
-                // 204 = removed, 404 = was not on the list: both mean SendGrid will deliver the retry.
-                if (response.StatusCode == HttpStatusCode.NoContent || response.StatusCode == HttpStatusCode.NotFound
-                    || response.StatusCode == HttpStatusCode.OK)
+                var ok = true;
+                // Bounced addresses are on "bounces", addresses refused for sender reasons (e.g. DMARC) on "blocks".
+                foreach (var list in new[] { "bounces", "blocks" })
                 {
-                    return true;
+                    var response = await client.RequestAsync(BaseClient.Method.DELETE,
+                        urlPath: $"suppression/{list}/" + Uri.EscapeDataString(email.Trim()));
+                    // 204 = removed, 404 = was not on the list: both mean SendGrid will deliver the retry.
+                    if (response.StatusCode == HttpStatusCode.NoContent || response.StatusCode == HttpStatusCode.NotFound
+                        || response.StatusCode == HttpStatusCode.OK)
+                    {
+                        continue;
+                    }
+                    ok = false;
+                    await _errorLogger.LogMessage(LogLevelInfo.Warning,
+                        $"SendGrid {list} suppression removal for {email} returned {(int)response.StatusCode}.");
                 }
-                await _errorLogger.LogMessage(LogLevelInfo.Warning,
-                    $"SendGrid bounce suppression removal for {email} returned {(int)response.StatusCode}.");
-                return false;
+                return ok;
             }
             catch (Exception ex)
             {

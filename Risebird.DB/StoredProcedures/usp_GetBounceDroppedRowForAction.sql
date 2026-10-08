@@ -49,6 +49,13 @@ SELECT TOP 1
        CASE
          WHEN sge.[event] = 'bounce' AND LEFT(LTRIM(ISNULL(sge.[status], '')), 1) = '4' THEN 'Temporary'
          WHEN sge.reason LIKE '%mailbox full%' OR sge.reason LIKE '%quota%' OR sge.reason LIKE '%try again%' THEN 'Temporary'
+         -- Blocked: the address is valid but the receiving server refused the message because of the sender (5.7.x policy,
+         -- DMARC / SPF / DKIM, From-header alignment, spam or reputation filters). Not for dropped events (e.g. a recipient
+         -- who reported spam): those must not be retried.
+         WHEN sge.[event] = 'bounce' AND (LEFT(LTRIM(ISNULL(sge.[status], '')), 3) = '5.7' OR sge.reason LIKE '%5.7.%'
+               OR sge.reason LIKE '%DMARC%' OR sge.reason LIKE '%SPF%' OR sge.reason LIKE '%DKIM%' OR sge.reason LIKE '%RFC5322%'
+               OR sge.reason LIKE '%From: header%' OR sge.reason LIKE '%blocked%' OR sge.reason LIKE '%spam%'
+               OR sge.reason LIKE '%reputation%' OR sge.reason LIKE '%policy%') THEN 'Blocked'
          ELSE 'Permanent'
        END AS BounceKind,
        sge.reason AS BounceReason
