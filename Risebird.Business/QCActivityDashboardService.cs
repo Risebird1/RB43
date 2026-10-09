@@ -127,24 +127,39 @@ namespace Risebird.Business
             return result;
         }
 
-        public async Task<InterviewerQCListResultVM> GetInterviewerViewAsync(DateTime? fromIst, DateTime? toIst, string search = null)
+        /// <summary>Minimum completed interviews for the Interviewer QC View: default 3, clamped to 1..50.</summary>
+        public static int ClampMinInterviews(int? minInterviews)
+        {
+            var value = minInterviews ?? InterviewerQCViewLimits.DefaultMinInterviews;
+            if (value < InterviewerQCViewLimits.MinMinInterviews)
+                return InterviewerQCViewLimits.MinMinInterviews;
+            if (value > InterviewerQCViewLimits.MaxMinInterviews)
+                return InterviewerQCViewLimits.MaxMinInterviews;
+            return value;
+        }
+
+        public async Task<InterviewerQCListResultVM> GetInterviewerViewAsync(DateTime? fromIst, DateTime? toIst, string search = null,
+            int? minInterviews = null, bool includeOpenFlags = false)
         {
             var (from, to, capped) = NormalizeRange(fromIst, toIst, _todayIst());
             var term = string.IsNullOrWhiteSpace(search) ? null : search.Trim();
             if (term != null && term.Length > 150)
                 term = term.Substring(0, 150);
+            var min = ClampMinInterviews(minInterviews);
 
             var result = new InterviewerQCListResultVM
             {
                 FromIst = from.ToString(DateFormat),
                 ToIst = to.ToString(DateFormat),
                 Search = term,
+                MinInterviews = min,
+                IncludeOpenFlags = includeOpenFlags,
                 RangeWasCapped = capped
             };
 
             try
             {
-                var rows = await _repository.GetInterviewerViewAsync(from, to, term) ?? Array.Empty<InterviewerQCRowVM>();
+                var rows = await _repository.GetInterviewerViewAsync(from, to, term, null, min, includeOpenFlags) ?? Array.Empty<InterviewerQCRowVM>();
                 result.Rows = rows;
                 result.Totals = InterviewerQCTotalsVM.From(rows.ToList());
                 result.Truncated = rows.Count >= InterviewerQCViewLimits.MaxInterviewers;
@@ -185,6 +200,29 @@ namespace Risebird.Business
                 result.Irfs = irfs ?? Array.Empty<InterviewerQCIrfVM>();
                 result.Events = events ?? Array.Empty<InterviewerQCEventVM>();
                 result.Truncated = result.Events.Count >= InterviewerQCViewLimits.MaxTimelineEvents;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                result.Error = LoadErrorMessage;
+                result.ErrorDetail = ex.GetBaseException().Message;
+            }
+            return result;
+        }
+
+        public async Task<QCActivityDiagnosticsResultVM> GetDiagnosticsAsync(DateTime? fromIst, DateTime? toIst)
+        {
+            var (from, to, capped) = NormalizeRange(fromIst, toIst, _todayIst());
+            var result = new QCActivityDiagnosticsResultVM
+            {
+                FromIst = from.ToString(DateFormat),
+                ToIst = to.ToString(DateFormat),
+                RangeWasCapped = capped
+            };
+
+            try
+            {
+                result.Rows = await _repository.GetDiagnosticsAsync(from, to) ?? Array.Empty<QCActivityDiagnosticRowVM>();
             }
             catch (Exception ex)
             {

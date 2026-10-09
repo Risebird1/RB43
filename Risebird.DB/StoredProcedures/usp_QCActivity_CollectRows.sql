@@ -26,8 +26,10 @@ The caller must create the table first (exact shape):
     );
 
 Metric (atomic, one row each)       Source                                       Actor            Stored time
-  ReportReviewed  (Amount = %)      PaymentSLADetailsHistory, latest save per    CreatedBy        server clock (UTC)
-                                    interview per user
+  ReportReviewed  (Amount = %)      PaymentSLADetailsHistory + ClientComments-   CreatedBy        server clock (UTC)
+                                    ForReport (every rated save), latest save
+                                    per interview per user; Client profiles
+                                    excluded; Detail = recommendation + rating
   SlaApproved / SlaNotApproved      PaymentSLADetails IsApproved = 1 / 2         ModifiedBy       server clock (UTC)
   QCForm          (Amount = flags)  Trans_QCFormReport                           Userid -> email  server clock (UTC)
   TrialKept / TrialRemoved          TrialFlags ReviewStatus kept / removed       ReviewedBy       UTC
@@ -104,20 +106,28 @@ BEGIN
     /* ---------------------------------------------------------------
        1. Reports reviewed (Payment SLA saves). One row per interview per
           user: that user's latest save in the range. Amount = deduction %.
+          Two sources, because usp_AddorUpdatePaymentSLADetails writes
+          PaymentSLADetails (and so PaymentSLADetailsHistory) only when
+          @Rating < 5, but inserts ClientCommentsForReport on every rated
+          save:
+            - PaymentSLADetailsHistory  (human saves; exact deduction)
+            - ClientCommentsForReport   (every rated save; the deduction
+              comes from the current PaymentSLADetails row)
+          Clients also rate reports, so users whose profile is Client are
+          excluded, as are AISystem and System.
        --------------------------------------------------------------- */
     IF @WantReports = 1
     BEGIN
-        ;WITH Saves AS (
+        ;WITH Raw AS (
             SELECT
-                h.id,
+                h.id                        AS SrcId,
+                0                           AS SrcRank,     -- history wins a same-time tie: its deduction is exact
                 h.Interviewid,
-                LTRIM(RTRIM(h.CreatedBy)) AS Actor,
-                h.CreatedOn,
+                LTRIM(RTRIM(h.CreatedBy))   AS Actor,
+                h.CreatedOn                 AS SavedAt,
                 h.PaymentDeduction,
                 h.Recommendation,
-                ROW_NUMBER() OVER (
-                    PARTITION BY LTRIM(RTRIM(h.CreatedBy)), h.Interviewid
-                    ORDER BY h.CreatedOn DESC, h.id DESC) AS rn
+                CAST(NULL AS INT)           AS Rating
             FROM dbo.PaymentSLADetailsHistory h
             WHERE h.CreatedOn >= @FromUtc
               AND h.CreatedOn <  @ToUtc
@@ -125,20 +135,59 @@ BEGIN
               AND NULLIF(LTRIM(RTRIM(h.CreatedBy)), '') IS NOT NULL
               AND LTRIM(RTRIM(h.CreatedBy)) NOT IN ('AISystem', 'System')
               AND (@ActorEmail IS NULL OR LTRIM(RTRIM(h.CreatedBy)) = @ActorEmail)
-              AND (@InterviewerEmail IS NULL OR EXISTS (SELECT 1 FROM dbo.InterviewMeetings fm
-                                                        WHERE fm.id = h.Interviewid AND fm.interviewer = @InterviewerEmail))
+
+            UNION ALL
+
+            SELECT
+                c.id,
+                1,
+                c.InterviewId,
+                LTRIM(RTRIM(c.CreatedBy)),
+                c.CreatedAt,
+                ps.PaymentDeduction,
+                ps.Recommendation,
+                c.Rating
+            FROM dbo.ClientCommentsForReport c
+            OUTER APPLY (SELECT TOP 1 p.PaymentDeduction, p.Recommendation FROM dbo.PaymentSLADetails p
+                         WHERE p.Interviewid = c.InterviewId ORDER BY p.id DESC) ps
+            WHERE c.CreatedAt >= @FromUtc
+              AND c.CreatedAt <  @ToUtc
+              AND c.Rating IS NOT NULL
+              AND NULLIF(LTRIM(RTRIM(c.CreatedBy)), '') IS NOT NULL
+              AND LTRIM(RTRIM(c.CreatedBy)) NOT IN ('AISystem', 'System')
+              AND (@ActorEmail IS NULL OR LTRIM(RTRIM(c.CreatedBy)) = @ActorEmail)
+        ),
+        Saves AS (
+            SELECT
+                r.*,
+                -- The reviewer's latest rating on this interview in the range (NULL when only history rows exist).
+                FIRST_VALUE(r.Rating) OVER (
+                    PARTITION BY r.Actor, r.Interviewid
+                    ORDER BY CASE WHEN r.Rating IS NULL THEN 1 ELSE 0 END, r.SavedAt DESC, r.SrcId DESC
+                    ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS LatestRating,
+                ROW_NUMBER() OVER (
+                    PARTITION BY r.Actor, r.Interviewid
+                    ORDER BY r.SavedAt DESC, r.SrcRank, r.SrcId DESC) AS rn
+            FROM Raw r
+            WHERE (@InterviewerEmail IS NULL OR EXISTS (SELECT 1 FROM dbo.InterviewMeetings fm
+                                                        WHERE fm.id = r.Interviewid AND fm.interviewer = @InterviewerEmail))
+              AND NOT EXISTS (SELECT 1 FROM dbo.UserList cu
+                              INNER JOIN dbo.[Profile] cp ON cp.id = cu.idProfile
+                              WHERE cu.EmailId = r.Actor AND cp.[Name] = 'Client')
         )
         INSERT INTO #QCActivityRows (ActorEmail, Metric, ActionAtIst, InterviewId, IrfId, InterviewerEmail, Amount, Detail, SourceId)
         SELECT
             LEFT(s.Actor, 150),
             'ReportReviewed',
-            DATEADD(MINUTE, 330, s.CreatedOn),
+            DATEADD(MINUTE, 330, s.SavedAt),
             s.Interviewid,
             irf.id,
             im.interviewer,
             ISNULL(s.PaymentDeduction, 0),
-            s.Recommendation,
-            s.id
+            LEFT(NULLIF(LTRIM(RTRIM(ISNULL(s.Recommendation, '')
+                + CASE WHEN s.LatestRating IS NOT NULL
+                       THEN ' (rated ' + CAST(s.LatestRating AS VARCHAR(10)) + '/5)' ELSE '' END)), ''), 500),
+            s.SrcId
         FROM Saves s
         LEFT JOIN dbo.InterviewMeetings im ON im.id = s.Interviewid
         OUTER APPLY (SELECT TOP 1 i.id FROM dbo.IRF i WHERE i.IRFId = im.IRFId ORDER BY i.id DESC) irf

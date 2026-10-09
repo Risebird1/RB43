@@ -28,6 +28,8 @@ namespace Risebird.Web.Controllers
             "Admin", "SupportAdmin", "SeniorHR", "SeniorInterviewerManagement", "InterviewerManagement"
         };
 
+        private static readonly string[] DiagnosticsProfiles = { "Admin", "SupportAdmin" };
+
         private const string QualityControllerProfile = "Quality Controller";
 
         private readonly IQCActivityDashboardService _qcActivityDashboardService;
@@ -147,14 +149,35 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        // GET: /QCActivity/InterviewerList?from&to&search
+        // GET: /QCActivity/InterviewerList?from&to&search&minInterviews=3&includeOpenFlags=false
         [HttpGet]
-        public async Task<IActionResult> InterviewerList(DateTime? from = null, DateTime? to = null, string search = null)
+        public async Task<IActionResult> InterviewerList(DateTime? from = null, DateTime? to = null, string search = null,
+            int? minInterviews = null, bool includeOpenFlags = false)
         {
             var denied = DenyUnlessAllowed(out _);
             if (denied != null) return denied;
-            return await JsonOrErrorAsync(() => _qcActivityDashboardService.GetInterviewerViewAsync(from, to, search), d => d.ErrorDetail = null);
+            return await JsonOrErrorAsync(() => _qcActivityDashboardService.GetInterviewerViewAsync(
+                from, to, search, minInterviews, includeOpenFlags), d => d.ErrorDetail = null);
         }
+
+        // GET: /QCActivity/Diagnostics?from=yyyy-MM-dd&to=yyyy-MM-dd  (Admin and SupportAdmin only, read-only)
+        // For every source the dashboard reads: who the rows in the range are stored under, so a 0 on the page
+        // can be told apart from "no rows", "rows under a non-QC user" and "actor value is not an email".
+        [HttpGet]
+        public async Task<IActionResult> Diagnostics(DateTime? from = null, DateTime? to = null)
+        {
+            var (email, profileName) = GetSessionUser();
+            if (email == null || profileName == null)
+                return Unauthorized();
+            if (!CanSeeDiagnostics(profileName))
+                return StatusCode(StatusCodes.Status403Forbidden);
+
+            return await JsonOrErrorAsync(() => _qcActivityDashboardService.GetDiagnosticsAsync(from, to), d => d.ErrorDetail = null);
+        }
+
+        /// <summary>Profiles that may open /QCActivity/Diagnostics.</summary>
+        internal static bool CanSeeDiagnostics(string profileName) =>
+            !string.IsNullOrWhiteSpace(profileName) && DiagnosticsProfiles.Contains(profileName.Trim());
 
         // GET: /QCActivity/InterviewerTimeline?interviewer=<email>&from&to
         [HttpGet]

@@ -155,12 +155,13 @@ namespace Risebird.Business.Tests.QCActivityTests
         public async Task Interviewer_view_builds_tile_totals_and_coaching_coverage()
         {
             _repository
-                .Setup(r => r.GetInterviewerViewAsync(new DateTime(2026, 9, 25), TodayIst, "ayesha", null))
+                .Setup(r => r.GetInterviewerViewAsync(new DateTime(2026, 9, 25), TodayIst, "ayesha", null,
+                    InterviewerQCViewLimits.DefaultMinInterviews, false))
                 .ReturnsAsync(new List<InterviewerQCRowVM>
                 {
-                    new InterviewerQCRowVM { InterviewerEmail = "a@x.com", HasIssue = true, NeedsCall = true, Penalised = 2, OpenFlags = 1 },
+                    new InterviewerQCRowVM { InterviewerEmail = "a@x.com", HasIssue = true, NeedsCall = true, Penalised = 2, OpenFlags = 1, BadInterviews = 2 },
                     new InterviewerQCRowVM { InterviewerEmail = "b@x.com", HasIssue = true, Calls = 1, AiPenalised = 1, RemovedOrInactive = true },
-                    new InterviewerQCRowVM { InterviewerEmail = "c@x.com", HasIssue = true, CoachingSessions = 1 },
+                    new InterviewerQCRowVM { InterviewerEmail = "c@x.com", HasIssue = true, CoachingSessions = 1, BadInterviews = 1 },
                     new InterviewerQCRowVM { InterviewerEmail = "d@x.com" }
                 });
 
@@ -168,14 +169,86 @@ namespace Risebird.Business.Tests.QCActivityTests
 
             Assert.Null(result.Error);
             Assert.Equal("ayesha", result.Search);
+            Assert.Equal(InterviewerQCViewLimits.DefaultMinInterviews, result.MinInterviews);
+            Assert.False(result.IncludeOpenFlags);
             Assert.Equal(4, result.Totals.Interviewers);
             Assert.Equal(1, result.Totals.NeedsCall);
             Assert.Equal(1, result.Totals.OpenFlags);
             Assert.Equal(2, result.Totals.Penalised);
             Assert.Equal(1, result.Totals.RemovedOrInactive);
+            Assert.Equal(2, result.Totals.WithBadInterviews);
             Assert.Equal(3, result.Totals.WithIssue);
             Assert.Equal(2, result.Totals.WithIssueContacted);
             Assert.Equal(67, result.Totals.CoachingCoveragePercent);
+        }
+
+        [Theory]
+        [InlineData(null, 3)]
+        [InlineData(1, 1)]
+        [InlineData(10, 10)]
+        [InlineData(50, 50)]
+        public void Min_interviews_defaults_to_three_and_keeps_values_in_range(int? requested, int expected)
+        {
+            Assert.Equal(expected, QCActivityDashboardService.ClampMinInterviews(requested));
+        }
+
+        [Theory]
+        [InlineData(0, 1)]
+        [InlineData(-5, 1)]
+        [InlineData(51, 50)]
+        [InlineData(int.MaxValue, 50)]
+        public void Min_interviews_outside_one_to_fifty_is_clamped(int requested, int expected)
+        {
+            Assert.Equal(expected, QCActivityDashboardService.ClampMinInterviews(requested));
+        }
+
+        [Fact]
+        public async Task Interviewer_view_passes_the_clamped_minimum_and_the_open_flags_option_to_the_repository()
+        {
+            _repository
+                .Setup(r => r.GetInterviewerViewAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), null, null, 50, true))
+                .ReturnsAsync(new List<InterviewerQCRowVM> { new InterviewerQCRowVM { InterviewerEmail = "a@x.com" } });
+
+            var result = await CreateService().GetInterviewerViewAsync(null, null, null, minInterviews: 500, includeOpenFlags: true);
+
+            Assert.Null(result.Error);
+            Assert.Equal(50, result.MinInterviews);
+            Assert.True(result.IncludeOpenFlags);
+            Assert.Single(result.Rows);
+            _repository.Verify(r => r.GetInterviewerViewAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), null, null, 50, true), Times.Once);
+        }
+
+        [Fact]
+        public async Task Diagnostics_pass_the_normalised_range_and_return_the_rows()
+        {
+            _repository
+                .Setup(r => r.GetDiagnosticsAsync(new DateTime(2026, 9, 25), TodayIst))
+                .ReturnsAsync(new List<QCActivityDiagnosticRowVM>
+                {
+                    new QCActivityDiagnosticRowVM { Source = "ClientCommentsForReport.CreatedBy", ActorValue = "qc@risebird.io", ActorRows = 12, Status = "Quality Controller" },
+                    new QCActivityDiagnosticRowVM { Source = "TrialFlags.ReviewedBy", Status = "No rows" }
+                });
+
+            var result = await CreateService().GetDiagnosticsAsync(null, null);
+
+            Assert.Null(result.Error);
+            Assert.Equal("2026-09-25", result.FromIst);
+            Assert.Equal("2026-10-01", result.ToIst);
+            Assert.Equal(2, result.Rows.Count);
+        }
+
+        [Fact]
+        public async Task Diagnostics_failure_is_logged_and_returned_as_an_error_message()
+        {
+            _repository
+                .Setup(r => r.GetDiagnosticsAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .ThrowsAsync(new InvalidOperationException("boom"));
+
+            var result = await CreateService().GetDiagnosticsAsync(null, null);
+
+            Assert.NotNull(result.Error);
+            Assert.Empty(result.Rows);
+            _logger.Verify(l => l.LogMessage(LogLevelInfo.Exception, It.IsAny<Exception>(), It.IsAny<string>()), Times.Once);
         }
 
         [Fact]
@@ -188,7 +261,7 @@ namespace Risebird.Business.Tests.QCActivityTests
         public async Task Timeline_for_an_unknown_interviewer_returns_an_error_without_loading_events()
         {
             _repository
-                .Setup(r => r.GetInterviewerViewAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), null, "nobody@x.com"))
+                .Setup(r => r.GetInterviewerViewAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), null, "nobody@x.com", It.IsAny<int>(), It.IsAny<bool>()))
                 .ReturnsAsync(new List<InterviewerQCRowVM>());
 
             var result = await CreateService().GetInterviewerTimelineAsync("nobody@x.com", null, null);
@@ -201,7 +274,7 @@ namespace Risebird.Business.Tests.QCActivityTests
         public async Task Timeline_combines_the_headline_row_irfs_and_events()
         {
             _repository
-                .Setup(r => r.GetInterviewerViewAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), null, "a@x.com"))
+                .Setup(r => r.GetInterviewerViewAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), null, "a@x.com", It.IsAny<int>(), It.IsAny<bool>()))
                 .ReturnsAsync(new List<InterviewerQCRowVM> { new InterviewerQCRowVM { InterviewerEmail = "a@x.com", ActiveIrfs = 3 } });
             _repository
                 .Setup(r => r.GetInterviewerTimelineAsync("a@x.com", It.IsAny<DateTime>(), It.IsAny<DateTime>()))

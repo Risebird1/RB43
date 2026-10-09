@@ -50,7 +50,13 @@
     .iqc-alert--error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
     .iqc-alert--info { background: var(--c-blue-soft); border: 1px solid #bfdbfe; color: #1e3a8a; }
 
-    .iqc-tiles { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .iqc-check { display: flex; align-items: center; gap: 6px; height: 34px; margin: 0; font-weight: normal; font-size: 14px; cursor: pointer; white-space: nowrap; }
+    .iqc-check input { width: 16px; height: 16px; margin: 0; }
+    .iqv-hint { margin: 10px 0 0; color: var(--c-muted); font-size: 13px; line-height: 1.45; }
+    .iqc-sev { display: inline-block; border-radius: 4px; padding: 0 5px; font-size: 11px; font-weight: 700; margin-left: 4px; background: #f1f5f9; color: #475569; }
+    .iqc-sev.sev-0, .iqc-sev.sev-1 { background: var(--c-red-soft); color: var(--c-red); }
+    .iqc-sev.sev-2, .iqc-sev.sev-3 { background: var(--c-amber-soft); color: var(--c-amber); }
+    .iqc-tiles { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
     .iqc-tile { text-align: left; background: #fff; border: 1px solid var(--c-line); border-radius: 10px; padding: 12px 14px; cursor: pointer; font: inherit; color: inherit; min-width: 0; }
     .iqc-tile:hover { border-color: #93c5fd; }
     .iqc-tile.is-active { border: 2px solid var(--c-blue); padding: 11px 13px; }
@@ -149,6 +155,7 @@
     .iqc-preview__subject { color: #64748b; font-size: 13px; margin-bottom: 8px; }
     .iqc-msg { margin: 6px 0; font-size: 13px; }
 
+    @@media (max-width: 1600px) { .iqc-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
     @@media (max-width: 1280px) { .iqc-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } .iqc-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
     @@media (max-width: 900px) { .iqc-panel { width: 100vw; } }
     @@media (max-width: 768px) {
@@ -191,9 +198,9 @@
 
     <div class="iqc-title"><h2>Interviewer QC View</h2></div>
     <p class="iqc-intro">
-        Everything QC knows about each interviewer: reports reviewed and penalised, trial and IRF audit flags, red markers,
-        Total Interviews status, and every QC call they received. Interviewers appear if QC touched them in the range,
-        the AI penalised a report, or they have an open flag now. Click a row for the interviewer's full timeline. Dates are IST.
+        Everything QC knows about each interviewer: how their interviews went, reports reviewed and penalised, trial and IRF audit
+        flags, red markers, Total Interviews status, and every QC call they received. Click a row for the interviewer's full
+        timeline. Dates are IST.
     </p>
 
     <div class="iqc-card iqc-filters">
@@ -209,9 +216,25 @@
             <div class="iqc-field"><label class="iqc-label" for="iqcFrom">From (IST)</label><input type="date" id="iqcFrom" class="iqc-input" /></div>
             <div class="iqc-field"><label class="iqc-label" for="iqcTo">To (IST)</label><input type="date" id="iqcTo" class="iqc-input" /></div>
             <div class="iqc-field iqc-field--grow"><label class="iqc-label" for="iqcSearch">Interviewer</label><input type="search" id="iqcSearch" class="iqc-input iqc-search" placeholder="Name or email" maxlength="150" /></div>
+            <div class="iqc-field">
+                <label class="iqc-label" for="iqvMin">Min. interviews</label>
+                <select id="iqvMin" class="iqc-input" title="Completed interviews in the range needed to be listed for bad interviews or an AI penalty">
+                    <option value="1">1+</option>
+                    <option value="3" selected>3+</option>
+                    <option value="5">5+</option>
+                    <option value="10">10+</option>
+                </select>
+            </div>
+            <div class="iqc-field">
+                <span class="iqc-label">Flags</span>
+                <label class="iqc-check" for="iqvOpenFlags" title="Also list interviewers whose only signal is an older open flag (pending trial, auto-QC verdict, red markers under review)">
+                    <input type="checkbox" id="iqvOpenFlags" /> Include older open flags
+                </label>
+            </div>
             <button type="button" class="iqc-btn iqc-btn--primary" id="iqcApply">Apply</button>
             <button type="button" class="iqc-btn" id="iqcExport">Export CSV</button>
         </div>
+        <p class="iqv-hint" id="iqvHint"></p>
     </div>
 
     <div id="iqcAlert"></div>
@@ -222,7 +245,7 @@
             <thead>
                 <tr>
                     <th rowspan="2" class="iqc-user-h" data-sort="interviewerName">Interviewer</th>
-                    <th colspan="2" class="g">Work</th>
+                    <th colspan="4" class="g">Work</th>
                     <th colspan="4" class="g">Reports</th>
                     <th colspan="3" class="g">Trial</th>
                     <th colspan="3" class="g">IRF audit</th>
@@ -234,6 +257,8 @@
                 <tr>
                     <th class="g" data-sort="activeIrfs" title="Active skill channels now">IRFs</th>
                     <th data-sort="completedInterviews" title="Completed interviews in the range">Interviews</th>
+                    <th data-sort="badInterviews" title="Completed interviews in the range graded P0 to P5, with the worst severity">Bad</th>
+                    <th data-sort="badPct" title="Bad interviews as a share of completed interviews in the range">Bad %</th>
                     <th class="g" data-sort="qcReviewed">QC reviewed</th>
                     <th data-sort="penalised">Penalised</th>
                     <th data-sort="avgPenaltyPercent">Avg %</th>
@@ -255,7 +280,7 @@
                     <th data-sort="lastCallAtIst">Last call</th>
                 </tr>
             </thead>
-            <tbody id="iqcBody"><tr><td colspan="26" class="iqc-loading">Loading…</td></tr></tbody>
+            <tbody id="iqcBody"><tr><td colspan="28" class="iqc-loading">Loading…</td></tr></tbody>
         </table>
     </div>
 </div>
@@ -347,7 +372,9 @@
         };
         var token = $('input[name="__RequestVerificationToken"]').val();
 
-        var state = { from: '', to: '', search: '', rows: [], totals: {}, filter: 'all', sortKey: 'attentionScore', sortAsc: false,
+        var minOptions = [1, 3, 5, 10], defaultMin = 3;
+        var state = { from: '', to: '', search: '', minInterviews: defaultMin, includeOpenFlags: false,
+                      rows: [], totals: {}, filter: 'all', sortKey: 'attentionScore', sortAsc: false,
                       current: null, brief: null, eventFilter: 'all', events: [] };
 
         // ---------- helpers ----------
@@ -380,6 +407,21 @@
         function safeUrl(u) { return /^https?:\/\//i.test(u || '') ? u : null; }
         function fill(t, id, irf) { return t.replace('__INTERVIEW_ID__', encodeURIComponent(id)).replace('__IRF_ID__', encodeURIComponent(irf || 0)); }
         function n(v, cls) { var x = num(v); return x > 0 ? '<span class="' + (cls || '') + '">' + x + '</span>' : '<span class="iqc-zero">0</span>'; }
+        function sevChip(s) {
+            if (!s) return '';
+            var lvl = parseInt(String(s).slice(1), 10);
+            return '<span class="iqc-sev sev-' + (isNaN(lvl) ? 9 : lvl) + '">' + esc(s) + '</span>';
+        }
+        function fmtPct(v) { return v === null || v === undefined ? '<span class="iqc-zero">—</span>' : (Math.round(Number(v) * 10) / 10) + '%'; }
+        // Quality problem (same rule as usp_GetInterviewerQCView): enough interviews and 2+ bad or 25%+ bad,
+        // or any P0/P1, QC or AI penalty, or trial / IRF audit removal. Uses the server's flag when present.
+        function hasIssue(r) {
+            if (r.hasIssue !== undefined && r.hasIssue !== null) return !!r.hasIssue;
+            var volume = num(r.completedInterviews) >= state.minInterviews;
+            return (volume && (num(r.badInterviews) >= 2 || num(r.badPct) >= 25)) ||
+                num(r.severeInterviews) > 0 || num(r.penalised) > 0 || num(r.aiPenalised) > 0 ||
+                num(r.trialRemoved) + num(r.auditRemoved) > 0;
+        }
         function tiPill(s) {
             if (s === 1) return '<span class="iqc-badge iqc-badge--review">Under review</span>';
             if (s === 2) return '<span class="iqc-badge iqc-badge--reviewed">Reviewed</span>';
@@ -398,21 +440,38 @@
             if (re.test(q.get('from') || '')) state.from = q.get('from');
             if (re.test(q.get('to') || '')) state.to = q.get('to');
             if (q.get('search')) state.search = q.get('search').slice(0, 150);
+            var min = parseInt(q.get('minInterviews'), 10);
+            if (minOptions.indexOf(min) >= 0) state.minInterviews = min;
+            if (q.get('includeOpenFlags') === 'true' || q.get('includeOpenFlags') === '1') state.includeOpenFlags = true;
         }
         function writeQuery() {
             try {
                 var q = new URLSearchParams();
                 q.set('from', state.from); q.set('to', state.to);
                 if (state.search) q.set('search', state.search);
+                if (state.minInterviews !== defaultMin) q.set('minInterviews', state.minInterviews);
+                if (state.includeOpenFlags) q.set('includeOpenFlags', 'true');
                 if (state.current) q.set('interviewer', state.current);
                 history.replaceState(null, '', window.location.pathname + '?' + q.toString());
             } catch (e) { /* ignore */ }
         }
         function syncInputs() {
             $('#iqcFrom').val(state.from); $('#iqcTo').val(state.to); $('#iqcSearch').val(state.search);
+            $('#iqvMin').val(String(state.minInterviews)); $('#iqvOpenFlags').prop('checked', state.includeOpenFlags);
             $('#iqcFrom, #iqcTo').attr('max', istToday());
+            renderHint();
             var span = state.from && state.to ? daysBetween(state.from, state.to) + 1 : -1, isToday = state.to === istToday();
             $('[data-preset]').each(function () { $(this).toggleClass('is-active', isToday && span === parseInt($(this).attr('data-preset'), 10)); });
+        }
+
+        function renderHint() {
+            $('#iqvHint').html(
+                'Listed: interviewers a QC acted on in this range (a routine no-penalty review, approval or QC form with no red flags does not count), ' +
+                'and interviewers with <b>' + state.minInterviews + '+</b> completed interview' + (state.minInterviews === 1 ? '' : 's') +
+                ' and a bad interview (P0 to P5) or an AI penalty in the range. ' +
+                (state.includeOpenFlags
+                    ? 'Interviewers whose only signal is an older open flag are <b>included</b>.'
+                    : 'Older open flags (pending trial, auto-QC verdict, red markers under review) are shown on listed rows but do not list anyone on their own.'));
         }
 
         // ---------- list ----------
@@ -420,13 +479,15 @@
             syncInputs();
             $('#iqcApply').prop('disabled', true);
             $('#iqcAlert').empty();
-            $('#iqcBody').html('<tr><td colspan="26" class="iqc-loading">Loading…</td></tr>');
+            $('#iqcBody').html('<tr><td colspan="28" class="iqc-loading">Loading…</td></tr>');
             $.ajax({ url: '/QCActivity/InterviewerList', type: 'GET', cache: false,
-                     data: { from: state.from, to: state.to, search: state.search || null } })
+                     data: { from: state.from, to: state.to, search: state.search || null,
+                             minInterviews: state.minInterviews, includeOpenFlags: state.includeOpenFlags } })
                 .done(function (d) {
                     d = d || {};
                     state.rows = d.rows || []; state.totals = d.totals || {};
                     state.from = d.fromIst || state.from; state.to = d.toIst || state.to;
+                    if (minOptions.indexOf(d.minInterviews) >= 0) state.minInterviews = d.minInterviews;
                     syncInputs(); writeQuery();
                     if (d.rangeWasCapped) $('#iqcAlert').append('<div class="iqc-alert iqc-alert--info">The range was cut to the last ' + maxDays + ' days of the period you picked.</div>');
                     if (d.truncated) $('#iqcAlert').append('<div class="iqc-alert iqc-alert--info">Showing the ' + state.rows.length + ' interviewers with the highest attention score. Search or narrow the range to see others.</div>');
@@ -436,7 +497,7 @@
                 .fail(function (xhr) {
                     if (onAuthError(xhr)) return;
                     $('#iqcAlert').html('<div class="iqc-alert iqc-alert--error">Could not load interviewers (' + esc(xhr.status) + ').</div>');
-                    $('#iqcBody').html('<tr><td colspan="26" class="iqc-empty">No data.</td></tr>');
+                    $('#iqcBody').html('<tr><td colspan="28" class="iqc-empty">No data.</td></tr>');
                 })
                 .always(function () { $('#iqcApply').prop('disabled', false); });
         }
@@ -447,7 +508,9 @@
             openFlags: function (r) { return num(r.openFlags) > 0; },
             penalised: function (r) { return num(r.penalised) > 0 || num(r.aiPenalised) > 0; },
             removed: function (r) { return r.removedOrInactive; },
-            withIssue: function (r) { return r.hasIssue; }
+            bad: function (r) { return num(r.badInterviews) > 0; },
+            issue: function (r) { return hasIssue(r); },
+            withIssue: function (r) { return hasIssue(r); }
         };
 
         function renderTiles() {
@@ -458,12 +521,15 @@
                     '<div class="iqc-tile__label">' + label + '</div><div class="iqc-tile__value ' + (cls || '') + '">' + value + '</div><div class="iqc-tile__sub">' + sub + '</div></button>';
             }
             $('#iqcTiles').html(
-                tile('all', 'Interviewers', num(t.interviewers), 'touched by QC or flagged') +
-                tile('needsCall', 'Need a QC call', num(t.needsCall), 'issue in range, no call or coaching yet', 'is-red') +
+                tile('all', 'Interviewers', num(t.interviewers), 'QC acted on them, or ' + state.minInterviews + '+ interviews with a bad one' +
+                    (state.includeOpenFlags ? ', or an open flag' : '')) +
+                tile('issue', 'Quality problem', num(t.withIssue), 'repeated or severe bad interviews, a penalty or a removal', 'is-red') +
+                tile('needsCall', 'Need a QC call', num(t.needsCall), 'quality problem in range, no call or coaching yet', 'is-red') +
+                tile('bad', 'Bad interviews', num(t.withBadInterviews), 'at least one P0 to P5 interview in range', 'is-amber') +
                 tile('openFlags', 'Open flags now', num(t.openFlags), 'trial, audit, red marker or Total Interviews', 'is-amber') +
                 tile('penalised', 'Penalised', num(t.penalised), 'by a QC or the AI review') +
                 tile('removed', 'Removed or inactive', num(t.removedOrInactive), 'from an IRF, the channel or the system') +
-                tile('withIssue', 'Coaching coverage', cov, num(t.withIssueContacted) + ' of ' + num(t.withIssue) + ' with an issue got a call'));
+                tile('withIssue', 'Coaching coverage', cov, num(t.withIssueContacted) + ' of ' + num(t.withIssue) + ' with a quality problem got a call'));
         }
 
         function sortedRows() {
@@ -481,7 +547,7 @@
             $('#iqcTable th[data-sort]').removeClass('is-sorted is-asc');
             $('#iqcTable th[data-sort="' + state.sortKey + '"]').addClass('is-sorted' + (state.sortAsc ? ' is-asc' : ''));
             var rows = sortedRows();
-            if (!rows.length) { $('#iqcBody').html('<tr><td colspan="26" class="iqc-empty">No interviewers match.</td></tr>'); return; }
+            if (!rows.length) { $('#iqcBody').html('<tr><td colspan="28" class="iqc-empty">No interviewers match.</td></tr>'); return; }
             var maxScore = Math.max.apply(null, state.rows.map(function (r) { return num(r.attentionScore); }).concat([1]));
             var html = '';
             rows.forEach(function (r) {
@@ -494,6 +560,9 @@
                 html += '<tr data-email="' + esc(r.interviewerEmail) + '" tabindex="0">' +
                     '<td class="iqc-user"><div class="iqc-name">' + esc(r.interviewerName || r.interviewerEmail) + badges + '</div><div class="iqc-email">' + esc(r.interviewerEmail) + '</div></td>' +
                     '<td class="g">' + n(r.activeIrfs) + '</td><td>' + n(r.completedInterviews) + '</td>' +
+                    '<td>' + n(r.badInterviews, 'is-red') + sevChip(r.worstSeverity) + '</td>' +
+                    '<td>' + (num(r.badInterviews) > 0 ? '<span class="' + (num(r.badPct) >= 25 ? 'is-red' : '') + '">' + fmtPct(r.badPct) + '</span>'
+                                                       : (num(r.completedInterviews) > 0 ? '<span class="iqc-zero">0%</span>' : '<span class="iqc-zero">—</span>')) + '</td>' +
                     '<td class="g">' + n(r.qcReviewed) + '</td><td>' + n(r.penalised, 'is-red') + '</td><td>' + avg + '</td><td>' + n(r.aiPenalised, 'is-amber') + '</td>' +
                     '<td class="g">' + n(r.trialOpen, 'is-amber') + '</td><td>' + n(r.trialKept) + '</td><td>' + n(r.trialRemoved, 'is-red') + '</td>' +
                     '<td class="g">' + n(r.auditOpen, 'is-amber') + '</td><td>' + n(r.auditKept) + '</td><td>' + n(r.auditRemoved, 'is-red') + '</td>' +
@@ -541,6 +610,7 @@
             function stat(v, l) { return '<div class="iqc-stat"><b>' + v + '</b><span>' + l + '</span></div>'; }
             var html = '<div class="iqc-stats">' +
                 stat(num(s.activeIrfs), 'Active IRFs') + stat(num(s.completedInterviews), 'Interviews') +
+                stat(num(s.badInterviews) + (num(s.badInterviews) > 0 ? ' <small style="font-size:13px;font-weight:600">' + fmtPct(s.badPct) + '</small>' + sevChip(s.worstSeverity) : ''), 'Bad interviews') +
                 stat(num(s.penalised) + num(s.aiPenalised), 'Penalised reports') + stat(num(s.openFlags), 'Open flags') +
                 stat(num(s.redMarkers), 'Red markers') + stat(num(s.calls), 'QC calls') +
                 stat(fmtTalk(s.talkSeconds), 'Talk time') + stat(num(s.coachingSessions), 'Coaching sessions') + '</div>';
@@ -712,12 +782,14 @@
         }
         function exportCsv() {
             var cols = [['Name', 'interviewerName'], ['Email', 'interviewerEmail'], ['Active', 'isActive'], ['Active IRFs', 'activeIrfs'],
-                ['Completed interviews', 'completedInterviews'], ['QC reviewed', 'qcReviewed'], ['Penalised', 'penalised'], ['Avg penalty %', 'avgPenaltyPercent'],
+                ['Completed interviews', 'completedInterviews'], ['Bad interviews', 'badInterviews'], ['Severe (P0/P1)', 'severeInterviews'],
+                ['Worst severity', 'worstSeverity'], ['Bad %', 'badPct'], ['QC reviewed', 'qcReviewed'], ['Penalised', 'penalised'], ['Avg penalty %', 'avgPenaltyPercent'],
                 ['AI penalised', 'aiPenalised'], ['Trial open', 'trialOpen'], ['Trial kept', 'trialKept'], ['Trial removed', 'trialRemoved'],
                 ['Audit open', 'auditOpen'], ['Audit kept', 'auditKept'], ['Audit removed', 'auditRemoved'], ['Red markers', 'redMarkers'],
                 ['TRM under review', 'trmUnderReviewNow'], ['TRM removed', 'trmRemoved'], ['Total Interviews status', 'tiStatus'], ['Total Interviews removed', 'tiRemoved'],
                 ['QC calls', 'calls'], ['Talk seconds', 'talkSeconds'], ['Distinct callers', 'distinctCallers'], ['Last call (IST)', 'lastCallAtIst'],
-                ['Coaching sessions', 'coachingSessions'], ['Open flags', 'openFlags'], ['Needs call', 'needsCall'], ['Attention score', 'attentionScore']];
+                ['Coaching sessions', 'coachingSessions'], ['Open flags', 'openFlags'], ['Quality problem', 'hasIssue'], ['Needs call', 'needsCall'],
+                ['Attention score', 'attentionScore']];
             var tiNames = { 1: 'Under review', 2: 'Reviewed', 3: 'Removed' };
             var lines = [cols.map(function (c) { return csvCell(c[0]); }).join(',')];
             sortedRows().forEach(function (r) {
@@ -725,6 +797,7 @@
                     var v = r[c[1]];
                     if (c[1] === 'tiStatus') v = tiNames[v] || '';
                     if (c[1] === 'lastCallAtIst' && v) v = fmtIst(v);
+                    if (c[1] === 'hasIssue') v = hasIssue(r);
                     return csvCell(v);
                 }).join(','));
             });
@@ -743,8 +816,15 @@
             if (f && t && f > t) { var x = f; f = t; t = x; }
             if (f && t && daysBetween(f, t) + 1 > maxDays) f = addDays(t, -(maxDays - 1));
             state.from = f || state.from; state.to = t || state.to; state.search = ($('#iqcSearch').val() || '').trim();
+            readListOptions();
             load();
         });
+        function readListOptions() {
+            var min = parseInt($('#iqvMin').val(), 10);
+            state.minInterviews = minOptions.indexOf(min) >= 0 ? min : defaultMin;
+            state.includeOpenFlags = $('#iqvOpenFlags').is(':checked');
+        }
+        $('#iqvMin, #iqvOpenFlags').on('change', function () { readListOptions(); load(); });
         $('#iqcSearch').on('keydown', function (e) { if (e.key === 'Enter') $('#iqcApply').click(); });
         $('#iqcExport').on('click', exportCsv);
         $(document).on('click', '.iqc-tile', function () { state.filter = $(this).attr('data-filter'); renderTiles(); renderTable(); });
