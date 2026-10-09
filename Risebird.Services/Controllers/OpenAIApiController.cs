@@ -80,7 +80,7 @@ namespace Risebird.Services.Controllers
             try
             {
                 _assistantId = input.AssistantId;
-                if (UseAIInterviewerResponsesApi())
+                if (await UseAIInterviewerResponsesApiAsync())
                 {
                     var (primaryPromptId, _) = await ResolveSessionPromptIds(input.SessionId);
                     var (runResult, responseId) = await _assistantServiceHelper.GenerateAIInterviewerMessage(input.Message, promptId: primaryPromptId);
@@ -142,7 +142,7 @@ namespace Risebird.Services.Controllers
         [HttpPost("ask")]
         public async Task<IActionResult> Ask([FromBody] InterviewMessageVM input)
         {
-            if (UseAIInterviewerResponsesApi())
+            if (await UseAIInterviewerResponsesApiAsync())
             {
                 var previousResponseId = await _aiInterviewerRepository.GetThreadId(input.SessionId);
                 await _aiInterviewerRepository.LogTranscript(input.SessionId, "user", input.Message);
@@ -197,7 +197,7 @@ namespace Risebird.Services.Controllers
         [HttpPost("asksystem")]
         public async Task<IActionResult> AskSystem([FromBody] InterviewMessageVM input)
         {
-            if (UseAIInterviewerResponsesApi())
+            if (await UseAIInterviewerResponsesApiAsync())
             {
                 var previousResponseId = await _aiInterviewerRepository.GetThreadId(input.SessionId);
                 var (primaryPromptId, _) = await ResolveSessionPromptIds(input.SessionId);
@@ -240,7 +240,7 @@ namespace Risebird.Services.Controllers
         [HttpGet("transcript/{sessionId}")]
         public async Task<IActionResult> Transcript(Guid sessionId)
         {
-            if (UseAIInterviewerResponsesApi())
+            if (await UseAIInterviewerResponsesApiAsync())
             {
                 var dbMessages = await _aIInterviewerService.GetAIInterviewTranscriptBySessionId(sessionId);
                 return Ok(dbMessages);
@@ -367,16 +367,29 @@ namespace Risebird.Services.Controllers
 
                 var threadId = aiInterviewDetails?.ThreadId;
                 List<string> replies;
-                if (UseAIInterviewerResponsesApi())
+                // Hoisted out of the branch below so the diagnostics that run after the report is read
+                // can name the prompt that produced it. On the legacy path it stays null.
+                string reportPromptId = null;
+                if (await UseAIInterviewerResponsesApiAsync())
                 {
                     // Closing turn of an adaptive interview: the transcript is already chained onto
                     // threadId, and it is the Interview Evaluator Prompt ID that reads it and writes the
                     // report. With no evaluator configured, the Primary Prompt ID that conducted the
                     // interview reports on it too - the behaviour adaptive channels had before the split.
-                    var (_, reportPromptId) = ResolvePromptIds(aiInterviewDetails?.OpenAIPromptId, aiInterviewDetails?.OpenAIEvaluatorPromptId);
-                    var (runResult, responseId) = await _assistantServiceHelper.GenerateAIInterviewerMessage(input.Message, threadId, reportPromptId);
+                    (_, reportPromptId) = ResolvePromptIds(aiInterviewDetails?.OpenAIPromptId, aiInterviewDetails?.OpenAIEvaluatorPromptId);
+                    var (runResult, responseId) = await _assistantServiceHelper.GenerateAIInterviewerMessage(
+                        input.Message, threadId, reportPromptId, expectEvaluationReport: true);
                     if (runResult == null || string.IsNullOrWhiteSpace(responseId))
+                    {
+                        // Used to return here with no trace. The candidate has finished the interview at
+                        // this point, so a report that never arrives looks to everyone downstream like an
+                        // interview that was simply never evaluated.
+                        await _applicationErrorLogger.LogMessage(
+                            LogLevelInfo.Error,
+                            $"AI interview session {input.SessionId}: the evaluator returned nothing, so no " +
+                            $"report was stored. Evaluator prompt id used: {reportPromptId ?? "(none - fell back to the global prompt)"}.");
                         return Ok(new { input.SessionId, threadId, replies = (List<string>)null, isReportSavedToDb = false });
+                    }
 
                     await _aiInterviewerRepository.CreateSession(new InterviewSession
                     {
@@ -439,6 +452,32 @@ namespace Risebird.Services.Controllers
                                 interviewStatus = 3;
                             }
                             interviewerComment = aIInterviewEvaluation.FinalComment;
+
+                            // The report is stored either way, but a screening report scores its two
+                            // sections by matching rubric_score_summary entries to the channel's
+                            // parameters. With none present it renders as empty sections and reads as
+                            // "the interview was never evaluated" rather than "the evaluator drifted".
+                            if (aIInterviewEvaluation.RubricScoreSummary == null
+                                || aIInterviewEvaluation.RubricScoreSummary.Count == 0)
+                            {
+                                await _applicationErrorLogger.LogMessage(
+                                    LogLevelInfo.Error,
+                                    $"AI interview session {input.SessionId}: the evaluator returned a report " +
+                                    "with no rubric_score_summary, so no parameter can be scored and the " +
+                                    "report's section blocks will be empty. Check that the Interview " +
+                                    "Evaluator Prompt Id emits one entry per rubric parameter.");
+                            }
+                        }
+                        else
+                        {
+                            // Neither shape parsed. Nothing downstream can read this report, and until
+                            // now that happened without a word anywhere.
+                            await _applicationErrorLogger.LogMessage(
+                                LogLevelInfo.Error,
+                                $"AI interview session {input.SessionId}: the evaluator's reply is neither an " +
+                                "adaptive verdict block nor a parseable evaluation, so InterviewStatus and " +
+                                "the report's scores are both unset. The raw reply is stored on " +
+                                $"InterviewComments.ReportOfAIInterviewByAssistant. Evaluator prompt id used: {reportPromptId ?? "(none - fell back to the global prompt)"}.");
                         }
                     }
 
@@ -462,10 +501,49 @@ namespace Risebird.Services.Controllers
 
         }
 
-        private bool UseAIInterviewerResponsesApi()
+        // Logged once per reason per process. This is consulted on every turn of every interview,
+        // so logging unconditionally would bury the log; logging never at all is how an environment
+        // ends up silently running every adaptive interview on the deprecated assistants path with
+        // nobody aware the Responses path was switched off.
+        private static int _responsesApiDisabledLogged;
+        private static int _responsesApiNoGlobalPromptLogged;
+
+        /// <summary>
+        /// Whether the adaptive interview runs on the Responses API. Both conditions must hold, and
+        /// either one failing silently reroutes the whole environment onto the legacy assistants
+        /// path - so each reason is reported once rather than not at all.
+        /// </summary>
+        private async Task<bool> UseAIInterviewerResponsesApiAsync()
         {
-            return _config.GetValue("OpenAI:UseResponsesApi", false)
-                && !string.IsNullOrWhiteSpace(_config["OpenAI:AIInterviewerPromptId"]);
+            if (!_config.GetValue("OpenAI:UseResponsesApi", false))
+            {
+                if (Interlocked.Exchange(ref _responsesApiDisabledLogged, 1) == 0)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Warning,
+                        "AI interviewer is running on the legacy assistants path: OpenAI:UseResponsesApi " +
+                        "is false. Adaptive interviews and their reports will not use channel-level " +
+                        "Primary / Interview Evaluator Prompt Ids, so screening reports cannot produce " +
+                        "section scores. This is logged once per process.");
+                }
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(_config["OpenAI:AIInterviewerPromptId"]))
+            {
+                if (Interlocked.Exchange(ref _responsesApiNoGlobalPromptLogged, 1) == 0)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Warning,
+                        "AI interviewer is running on the legacy assistants path: OpenAI:UseResponsesApi " +
+                        "is true but OpenAI:AIInterviewerPromptId is empty, which switches the Responses " +
+                        "path off even for channels that carry their own prompt ids. This is logged once " +
+                        "per process.");
+                }
+                return false;
+            }
+
+            return true;
         }
 
         private static List<string> ExtractRunResultReplies(RunResult result)

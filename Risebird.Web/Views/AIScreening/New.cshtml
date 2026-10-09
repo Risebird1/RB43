@@ -126,6 +126,24 @@
             </div>
         </div>
 
+        @* Per-channel, because review costs the candidate time on the clock: a screening
+           conversation usually wants it, a tightly timed round may not. "Use the default" writes
+           NULL and the environment's AIInterview:CandidateTranscriptReview setting applies, which
+           is how every channel behaved before this was a channel-level choice. *@
+        <div class="ais-grid">
+            <div class="ais-field">
+                <label class="ais-label">Candidate reviews their transcript</label>
+                <select id="aisTranscriptReview" class="ais-select">
+                    <option value="">Use the environment default</option>
+                    <option value="true">Yes — candidate reads back and can correct it</option>
+                    <option value="false">No — submit what speech-to-text heard</option>
+                </select>
+                <div class="ais-hint">
+                    The candidate sees what was transcribed and can fix it before submitting. The timer keeps running while they do.
+                </div>
+            </div>
+        </div>
+
         <div class="ais-grid">
             <div class="ais-field">
                 <label class="ais-label">Client *</label>
@@ -585,7 +603,10 @@
             clientId: clientId,
             billingOwner: $("aisBillingOwner").value || 0,
             primaryPromptId: primaryPromptId,
-            evaluatorPromptId: $("aisEvaluatorPromptId").value.trim()
+            evaluatorPromptId: $("aisEvaluatorPromptId").value.trim(),
+            // || null drops it from the body entirely, so the channel stays undecided and the
+            // environment default applies. form() filters nulls.
+            candidateTranscriptReview: $("aisTranscriptReview").value || null
         }) + selected.map(function (id) { return "&clientUserIds=" + encodeURIComponent(id); }).join("");
 
         post("/AIScreening/CreateChannel", body)

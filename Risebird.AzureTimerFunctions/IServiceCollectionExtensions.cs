@@ -85,6 +85,9 @@ namespace Risebird.AzureFunctions
             services.AddScoped<IPlivoInterviewService, PlivoInterviewService>();
             services.AddScoped<IAzureStorageHelper, AzureStorageHelper>();
             services.AddScoped<IApplicationLogDailyCountService, ApplicationLogDailyCountService>();
+            // Retention for the AI screening intake's leftover uploads (AIScreeningBlobPurgeJob).
+            services.AddScoped<IAIScreeningRepository, AIScreeningRepository>();
+            services.AddScoped<IAIScreeningBlobPurgeService, AIScreeningBlobPurgeService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<ISkillService, SkillService>();

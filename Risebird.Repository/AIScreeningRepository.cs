@@ -27,6 +27,39 @@ namespace Risebird.Repository
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
 
+        /// <summary>
+        /// Every job-description url any channel still points at.
+        ///
+        /// Inline SQL rather than a stored procedure deliberately: this is read by a retention job
+        /// that deletes files, and a procedure that had not been deployed yet would return nothing,
+        /// which this caller cannot distinguish from "nothing is referenced". Returning null on
+        /// failure, instead of an empty list, is the same concern - the caller must be able to tell
+        /// "could not read" from "read, and found none".
+        ///
+        /// Not narrowed to screening channels. A url could have been copied onto any channel, and
+        /// the cost of reading a few extra rows in a nightly job is nothing against the cost of
+        /// deleting a job description that is still in use.
+        /// </summary>
+        public async Task<IReadOnlyCollection<string>> GetReferencedJdLinksAsync()
+        {
+            try
+            {
+                using (var con = new SqlConnection(connectionString))
+                {
+                    var links = await con.QueryAsync<string>(
+                        "SELECT JDLink FROM IRF WHERE JDLink IS NOT NULL AND LTRIM(RTRIM(JDLink)) <> ''",
+                        commandType: CommandType.Text);
+
+                    return links?.ToList() ?? new List<string>();
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(Risebird.Entities.Enum.LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public async Task<int> CreateAIAudioTemplate(
             string templateName,
             int assessmentGroupId,
@@ -98,7 +131,8 @@ namespace Risebird.Repository
             string openAIEvaluatorPromptId,
             string idealCandidateProfile,
             IList<TransSkill> rubric,
-            string jdTitleTwo = null)
+            string jdTitleTwo = null,
+            bool? candidateTranscriptReview = null)
         {
             try
             {
@@ -130,6 +164,13 @@ namespace Risebird.Repository
                     cmd.Parameters.Add(new SqlParameter("@JDTitleTwo", SqlDbType.VarChar, 150)
                     {
                         Value = string.IsNullOrWhiteSpace(jdTitleTwo) ? (object)DBNull.Value : jdTitleTwo.Trim()
+                    });
+                    // Null leaves the channel undecided, which falls back to the appsettings switch.
+                    cmd.Parameters.Add(new SqlParameter("@CandidateTranscriptReview", SqlDbType.Bit)
+                    {
+                        Value = candidateTranscriptReview.HasValue
+                            ? (object)candidateTranscriptReview.Value
+                            : DBNull.Value
                     });
                     cmd.Parameters.Add(new SqlParameter("@TechSkillBulkData", SqlDbType.Structured)
                     {

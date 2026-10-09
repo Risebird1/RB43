@@ -911,3 +911,24 @@ BEGIN
     Add IsAIAudioScreening bit NULL
 END
 GO
+
+-- Whether the candidate reviews and corrects the speech-to-text transcript before their answer is
+-- submitted, for this channel.
+--
+-- Was a single appsettings switch (AIInterview:CandidateTranscriptReview), which is all or nothing
+-- across every channel in the environment. Review costs the candidate time on the clock, so it
+-- suits a screening conversation and does not always suit a timed technical round - that is a
+-- per-channel decision, not a per-deployment one.
+--
+-- NULL means "not decided for this channel" and falls back to the appsettings switch, so existing
+-- channels keep exactly the behaviour they have today.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'CandidateTranscriptReview'
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add CandidateTranscriptReview bit NULL
+END
+GO

@@ -2072,6 +2072,67 @@
 {
     <link rel="stylesheet" href="~/css/ai-interview-dark-theme.css?v=24" />
 }
+@* An answer attempt was refused and the candidate has been returned to the same question to
+   record again, rather than being dropped out of the interview as they used to be.
+
+   Fixed to the viewport rather than placed in either layout: this page renders a desktop chat
+   layout and a phone audio layout from the same view, and the banner has to be visible in both.
+   The timer is unaffected and keeps its server-side value, so a retry costs time, not the
+   interview. *@
+@if (ViewBag.AnswerRetryMessage != null)
+{
+    <div class="rb-answer-retry" id="answerRetryBanner" role="alert" aria-live="assertive">
+        <div class="rb-answer-retry-body">
+            <i class="fa fa-exclamation-triangle rb-answer-retry-icon" aria-hidden="true"></i>
+            <div>
+                <div class="rb-answer-retry-title">@ViewBag.AnswerRetryTitle</div>
+                <div class="rb-answer-retry-text">@ViewBag.AnswerRetryMessage</div>
+            </div>
+        </div>
+        <button type="button" class="rb-answer-retry-close" aria-label="Dismiss"
+                onclick="var b=document.getElementById('answerRetryBanner'); if(b) b.style.display='none';">&times;</button>
+    </div>
+
+    <style>
+        .rb-answer-retry {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 2100; /* above the waiting overlay, which sits at 2000 */
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 16px;
+            background: #fff4e5;
+            color: #5c3c00;
+            border-bottom: 2px solid #e8a33d;
+            box-shadow: 0 2px 10px rgba(0,0,0,.12);
+            font-size: 15px;
+            line-height: 1.45;
+        }
+
+        .rb-answer-retry-body { display: flex; align-items: flex-start; gap: 12px; }
+        .rb-answer-retry-icon { margin-top: 3px; color: #c77700; font-size: 18px; }
+        .rb-answer-retry-title { font-weight: 600; margin-bottom: 2px; }
+        .rb-answer-retry-text { opacity: .95; }
+
+        .rb-answer-retry-close {
+            background: none;
+            border: 0;
+            color: #5c3c00;
+            font-size: 26px;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0 4px;
+        }
+
+        @@media (max-width: 600px) {
+            .rb-answer-retry { font-size: 14px; padding: 12px; }
+        }
+    </style>
+}
 <div class="rb-aiinterview-container @(useCodingSplitLayout ? "rb-aiinterview-container--coding" : "")">
     <!-- Header -->
     <div class="rb-header" style="@(useCodingSplitLayout ? "display:none;" : "")">
@@ -2305,6 +2366,12 @@
                            machine's version is kept beside the one they confirmed. *@
                         <input type="hidden" name="ConfirmedTranscript" id="confirmedTranscriptInput" />
                         <input type="hidden" name="RawTranscript" id="rawTranscriptInput" />
+
+                        @* How many times this question has been recorded for. The server increments it
+                           when it sends the candidate back to try again, so a retry is not filed as a
+                           fresh first answer. *@
+                        <input type="hidden" name="TranscriptTakeCount" id="transcriptTakeCountInput"
+                               value="@(Model.TranscriptTakeCount < 1 ? 1 : Model.TranscriptTakeCount)" />
 
                         <div id="transcriptReviewPanel" class="rb-tr-panel" style="display:none;">
                             <div class="rb-tr-head">

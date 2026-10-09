@@ -25,6 +25,14 @@ namespace Risebird.Entities.ViewModel
         /// tiebreaker on any dispute about what was said.
         /// </summary>
         public string RawTranscript { get; set; }
+
+        /// <summary>
+        /// How many times the candidate has recorded for the question currently on screen. The page
+        /// posts it back and increments it whenever a failed attempt sends them around again, so a
+        /// retry does not read as a fresh first answer.
+        /// </summary>
+        public int TranscriptTakeCount { get; set; }
+
         public string AIInterviewerAudioLink { get; set; }//points to a url that is the audio recieved from text to speech api, for the ai interviewer
         public IFormFile VideoFile { get; set; }
         public string SynthesizedVideoUrl { get; set; } //synthesised by synthesia, this will be the video of the AI Interviewer speaking
