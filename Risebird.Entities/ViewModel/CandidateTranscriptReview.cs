@@ -47,6 +47,22 @@ namespace Risebird.Entities.ViewModel
         }
 
         /// <summary>
+        /// How many recordings the candidate made before an answer was accepted. 1 is the normal
+        /// case - they recorded once and submitted.
+        ///
+        /// Anything higher means an attempt failed and they were sent back to try again, so it is
+        /// read as an equipment and environment signal rather than a candidate one: an answer that
+        /// took four goes says more about the microphone than about the candidate, and a channel
+        /// whose takes run high across many candidates has a problem of its own.
+        ///
+        /// It is tracked per answer rather than on this record because a retry happens whether or
+        /// not the channel has transcript review switched on - this record exists only when it does.
+        /// A count that is absent (an older page still open) or nonsense (a hand-edited form) still
+        /// describes an answer with one recording behind it.
+        /// </summary>
+        public static int NormalizeTakeCount(int takeCount) => takeCount < 1 ? 1 : takeCount;
+
+        /// <summary>
         /// Word-level difference between the two, 0-100, rounded up so any real edit reads as at
         /// least 1%.
         ///

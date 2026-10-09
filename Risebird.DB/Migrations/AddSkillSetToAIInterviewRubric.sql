@@ -1,53 +1,46 @@
 -- Makes the two screening sections visible to the AI interviewer.
 --
--- WHAT IS MISSING
--- Provisioning splits the rubric across SkillSet 1 (Role Fitment) and 2 (Motivation to Join
--- Fitment) correctly, but the rubric JSON handed to the assistant carries only LevelId, Weightage,
--- Concepts, Natureofquestion and SkillName. Without SkillSet the assistant cannot tell the two
--- sections apart and treats all ten parameters as one undifferentiated list.
---
--- The C# half is already done: AIInterviewerRepository adds obj.SkillSet to the rubric JSON when
--- the column is present in the result set. It is guarded on the column existing, so it is a no-op
--- until this change is applied, and it affects no other channel type afterwards.
---
 -- ============================================================================================
--- READ THIS BEFORE EDITING usp_GetAIInterviewSpecificDetails
+-- NO PROCEDURE CHANGE IS NEEDED. This file is kept only to record why, and to carry the
+-- verification queries. An earlier revision of it told you to edit
+-- usp_GetAIInterviewSpecificDetails - that was wrong on two counts and has been withdrawn.
 -- ============================================================================================
--- The copy of that procedure in StoredProcedures/usp_GetAIInterviewSpecificDetails.sql is STALE.
--- It returns ONE result set, while AIInterviewerRepository reads three:
 --
---   Tables[0]  channel + prompt ids   (the only one the repo's copy returns)
---   Tables[1]  the rubric             <-- SkillSet belongs here
+-- WHAT WAS ACTUALLY WRONG
+-- The rubric JSON handed to the assistant carried LevelId, Weightage, Concepts, Natureofquestion
+-- and SkillName, but not SkillSet, so Role Fitment and Motivation to Join Fitment arrived as one
+-- undifferentiated list. The gap was in C#, not in SQL: AIInterviewerRepository simply did not
+-- read the column.
+--
+-- WHERE THE RUBRIC COMES FROM
+-- usp_GetAIInterviewDetailsBySessionId - NOT usp_GetAIInterviewSpecificDetails. It returns three
+-- result sets, which AIInterviewerRepository.GetAIInterviewDetailsBySessionId reads in order:
+--
+--   Tables[0]  interview + meeting details
+--   Tables[1]  the rubric    -- "select * from TransTechSkill where IRFId = @irfId"
 --   Tables[2]  the question/answer set
 --
--- Deploying the repo's copy as-is would drop the rubric and the Q&A result sets and break every
--- AI interview. Do NOT run that file. Script the procedure out of the target database, add the
--- column to the rubric SELECT in that live definition, and deploy that.
+-- That rubric SELECT is "select *", so SkillSet has always been in the result set. Adding the
+-- read in AIInterviewerRepository was the whole fix, and it is already deployed with the code.
 --
--- The change itself is one column on the rubric SELECT:
---
---     SELECT  tts.LevelId
---           , tts.Weightage
---           , tts.Concepts
---           , tts.Natureofquestion
---           , tts.SkillName
---           , tts.SkillSet          -- <<< ADD THIS
---     FROM dbo.TransTechSkill tts
---     WHERE tts.IRFId = @irfIntId
---     ...
---
--- TransTechSkill.SkillSet already exists, and is NULL on every channel that is not an AI
--- screening channel, so adding it to the result set changes nothing for them.
+-- usp_GetAIInterviewSpecificDetails is a different, smaller procedure: one result set carrying
+-- the channel's prompt ids and thread id for the adaptive turn. It has no rubric in it, it is
+-- correct as it stands, and the copy in StoredProcedures/ matches production exactly.
 
 -- --------------------------------------------------------------------------------------------
--- Verification. Run after deploying the procedure change.
+-- Verification. Read-only. Run after the application build carrying the repository change.
 -- --------------------------------------------------------------------------------------------
 
--- 1. The rubric result set should now carry SkillSet. Replace the session id with a real one from
---    an AI screening interview.
--- EXEC dbo.usp_GetAIInterviewSpecificDetails @SessionId = '00000000-0000-0000-0000-000000000000';
+-- 1. Confirm the rubric SELECT is still "select *" (or still lists SkillSet). If someone narrows
+--    it to an explicit column list that omits SkillSet, the two sections silently merge again.
+SELECT OBJECT_DEFINITION(OBJECT_ID(N'dbo.usp_GetAIInterviewDetailsBySessionId')) AS LiveDefinition;
+GO
 
--- 2. Screening channels should have their parameters split across both sections, each totalling 100.
+-- 2. Screening channels should carry their parameters across both sections, each totalling 100.
+--
+--    SkillSet NULL with a total of 200 is the unsectioned shape: that channel kept the flat
+--    rubric the template copy produced and never received the sectioned one. See
+--    Repair_AIScreeningChannels_MissingProvisioning.sql.
 SELECT
     irf.IRFId          AS ChannelCode,
     tts.SkillSet,

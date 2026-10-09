@@ -42,6 +42,7 @@ namespace Risebird.Business.Tests.AIScreeningTests
             public string ProvisionedJdTitleTwo { get; private set; }
             public string ProvisionedPrimaryPromptId { get; private set; }
             public string ProvisionedEvaluatorPromptId { get; private set; }
+            public bool? ProvisionedTranscriptReview { get; private set; }
 
             /// <summary>Overrides the in-memory configuration this fixture builds.</summary>
             public Dictionary<string, string> Settings { get; } = new()
@@ -80,15 +81,17 @@ namespace Risebird.Business.Tests.AIScreeningTests
 
                 Repository.Setup(x => x.SaveAIScreeningProvisioning(
                         It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(),
-                        It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IList<TransSkill>>(), It.IsAny<string>()))
-                    .Callback<int, int, string, string, string, IList<TransSkill>, string>(
-                        (irfId, _, primaryPromptId, evaluatorPromptId, _, rubric, jdTitleTwo) =>
+                        It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IList<TransSkill>>(), It.IsAny<string>(),
+                        It.IsAny<bool?>()))
+                    .Callback<int, int, string, string, string, IList<TransSkill>, string, bool?>(
+                        (irfId, _, primaryPromptId, evaluatorPromptId, _, rubric, jdTitleTwo, transcriptReview) =>
                         {
                             ProvisionedIrfId = irfId;
                             ProvisionedRubric = rubric;
                             ProvisionedJdTitleTwo = jdTitleTwo;
                             ProvisionedPrimaryPromptId = primaryPromptId;
                             ProvisionedEvaluatorPromptId = evaluatorPromptId;
+                            ProvisionedTranscriptReview = transcriptReview;
                         })
                     .ReturnsAsync(true);
 
@@ -154,6 +157,42 @@ namespace Risebird.Business.Tests.AIScreeningTests
             BillingOwner = 34,
             ClientUserIds = new List<int> { 56 }
         };
+
+        /// <summary>
+        /// The intake form's third option is "use the environment default", which has to reach the
+        /// channel as NULL rather than as false - false would switch transcript review off for that
+        /// channel instead of leaving the appsettings switch in charge.
+        /// </summary>
+        [Fact]
+        public async Task Leaving_transcript_review_unset_keeps_the_channel_undecided()
+        {
+            var fixture = new Fixture();
+            var sut = fixture.CreateSut();
+            var draft = await ReadyDraft(sut);
+
+            await sut.CreateChannelAsync(
+                Request(draft.DraftId), "recruiter@risebird.io", "HR", _ => Task.FromResult("https://link"));
+
+            Assert.Null(fixture.ProvisionedTranscriptReview);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task A_transcript_review_choice_on_the_form_is_stamped_on_the_channel(bool chosen)
+        {
+            var fixture = new Fixture();
+            var sut = fixture.CreateSut();
+            var draft = await ReadyDraft(sut);
+
+            var request = Request(draft.DraftId);
+            request.CandidateTranscriptReview = chosen;
+
+            await sut.CreateChannelAsync(
+                request, "recruiter@risebird.io", "HR", _ => Task.FromResult("https://link"));
+
+            Assert.Equal(chosen, fixture.ProvisionedTranscriptReview);
+        }
 
         [Fact]
         public async Task Provisioning_targets_the_real_IRF_id_not_the_flat_rate()

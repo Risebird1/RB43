@@ -2040,7 +2040,12 @@ namespace Risebird.CommonHelper
         /// Prompt ID for the closing report turn - on the Responses API with optional previous_response_id
         /// chaining. Falls back to OpenAI:AIInterviewerPromptId when no per-channel prompt is configured.
         /// </summary>
-        public async Task<(RunResult Result, string ResponseId)> GenerateAIInterviewerMessage(string message, string previousResponseId = null, string promptId = null)
+        /// <param name="expectEvaluationReport">
+        /// True only for the closing turn that asks for the candidate's report. The interviewing turns
+        /// and the report share this method but not their output shape - a turn returns a question,
+        /// the report returns the full evaluation - so only the report can be held to a schema.
+        /// </param>
+        public async Task<(RunResult Result, string ResponseId)> GenerateAIInterviewerMessage(string message, string previousResponseId = null, string promptId = null, bool expectEvaluationReport = false)
         {
             try
             {
@@ -2082,9 +2087,11 @@ namespace Risebird.CommonHelper
                 var input = $"Generate an output in JSON format as per the instructions fed to the assistant. {message}";
                 return await _openAIResponsesHelper.CreateJsonResponseWithIdAsync(
                     input,
-                    operationType: "AIInterviewer",
+                    operationType: expectEvaluationReport ? "AIInterviewerReport" : "AIInterviewer",
                     promptId: resolvedPromptId,
-                    previousResponseId: previousResponseId);
+                    previousResponseId: previousResponseId,
+                    responseSchema: expectEvaluationReport ? OpenAIResponseSchemas.AIInterviewEvaluation() : null,
+                    schemaName: expectEvaluationReport ? "ai_interview_evaluation" : null);
             }
             catch (Exception ex)
             {

@@ -362,7 +362,7 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> CreateChannel(
             string draftId, int clientId, int billingOwner, List<int> clientUserIds,
-            string primaryPromptId, string evaluatorPromptId)
+            string primaryPromptId, string evaluatorPromptId, bool? candidateTranscriptReview = null)
         {
             if (!IsSignedIn()) return Json(Unauthorized_());
             if (!IsAllowed()) return Json(Forbidden_());
@@ -376,7 +376,10 @@ namespace Risebird.Web.Controllers
                     BillingOwner = billingOwner,
                     ClientUserIds = clientUserIds ?? new List<int>(),
                     PrimaryPromptId = primaryPromptId,
-                    EvaluatorPromptId = evaluatorPromptId
+                    EvaluatorPromptId = evaluatorPromptId,
+                    // Absent means the recruiter left it on "use the environment default", which
+                    // writes NULL and keeps the appsettings switch in charge for this channel.
+                    CandidateTranscriptReview = candidateTranscriptReview
                 };
 
                 var result = await _aiScreeningIntakeService.CreateChannelAsync(

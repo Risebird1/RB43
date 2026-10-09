@@ -187,5 +187,16 @@ namespace Risebird.Entities.ViewModel
         /// every other AI channel already behaves.
         /// </summary>
         public string EvaluatorPromptId { get; set; }
+
+        /// <summary>
+        /// Whether the candidate reads back and corrects the speech-to-text transcript before their
+        /// answer is submitted. Lands on IRF.CandidateTranscriptReview.
+        ///
+        /// Null leaves the channel undecided and the environment's
+        /// AIInterview:CandidateTranscriptReview setting applies, which is how every channel behaved
+        /// before this was a per-channel choice. Review costs the candidate time on the clock, so a
+        /// screening conversation usually wants it and a tightly timed round may not.
+        /// </summary>
+        public bool? CandidateTranscriptReview { get; set; }
     }
 }

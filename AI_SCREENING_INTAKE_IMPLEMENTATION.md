@@ -39,13 +39,14 @@ Run in this order. All are additive and guarded with the existing `IF NOT EXISTS
 | `Risebird.DB/StoredProcedures/usp_GetMAGsWithoutTemplates.sql` | excludes the catch-all |
 | `Risebird.DB/Tables/IRF.sql` | `+ IsAIAudioScreening bit NULL` |
 | `Risebird.DB/StoredProcedures/usp_GetReportOfAIInterviewByInterviewId.sql` | new |
-| `Risebird.DB/Migrations/AddSkillSetToAIInterviewRubric.sql` | **manual** — adds `SkillSet` to the rubric the assistant sees |
 
-> **Do not deploy `StoredProcedures/usp_GetAIInterviewSpecificDetails.sql`.** The copy in this repo
-> is stale: it returns one result set where `AIInterviewerRepository` reads three (channel, rubric,
-> Q&A). Running it would drop the rubric and Q&A sets and break every AI interview. The one column
-> that needs adding is described in `Migrations/AddSkillSetToAIInterviewRubric.sql`; apply it to the
-> live definition scripted out of the target database.
+> **No procedure change is needed for the two rubric sections.** The rubric reaches the assistant
+> from `usp_GetAIInterviewDetailsBySessionId`, whose rubric result set is
+> `select * from TransTechSkill` — so `SkillSet` was always in it. The gap was in C#:
+> `AIInterviewerRepository` did not read the column, and now does.
+> `Migrations/AddSkillSetToAIInterviewRubric.sql` carries the verification queries and the
+> explanation. `usp_GetAIInterviewSpecificDetails` is a different, smaller procedure (prompt ids
+> and thread id, one result set) and is correct as it stands.
 
 No existing query changes behaviour: nothing that reads these tables today selects the new columns,
 and the new `usp_UpdateIRFDetails` parameter defaults to null, which keeps the stored profile.
@@ -334,3 +335,249 @@ submitting the transcript unseen, without a deploy.
 
 Not built: re-record (one of two takes) and QC flagging on large divergence. The columns those would
 use are in place.
+
+## Making a bad report loud instead of empty
+
+Until an evaluator prompt exists, a screening report renders with empty section blocks. That is
+also exactly how it renders when an evaluator *does* exist but drifts — renames a rubric field,
+returns percentages, invents a fifth verdict. The two failures were indistinguishable and neither
+logged anything, so three things now separate them.
+
+**The kill switch reports itself.** `UseAIInterviewerResponsesApiAsync` in `OpenAIApiController`
+needs both `OpenAI:UseResponsesApi` and a non-empty `OpenAI:AIInterviewerPromptId`. Either one
+missing silently reroutes every adaptive interview in the environment onto the legacy assistants
+path, where channel-level prompt ids are not consulted at all and screening reports cannot produce
+section scores. Each reason is now logged once per process — once, because this is consulted on
+every turn of every interview and logging each time would bury it.
+
+**A report that cannot be read says so.** Three cases used to pass silently and now log at Error
+with the session id and the evaluator prompt id that produced them:
+
+- the evaluator returned nothing, so no report was stored at all;
+- the reply parsed as neither an adaptive verdict block nor an evaluation, so `InterviewStatus`
+  and the scores are both unset;
+- the reply parsed but carried no `rubric_score_summary`, so no parameter can be scored.
+
+These are on regardless of the schema switch below.
+
+**Optionally, the shape can be enforced.** `OpenAIResponseSchemas.AIInterviewEvaluation()` is the
+strict JSON schema for the evaluation payload, passed on the closing report turn only — the
+interviewing turns return a question, not an evaluation, so only the report can be held to a
+shape. `OpenAIResponseSchemas` and `AIInterviewEvaluation` describe the same payload from opposite
+sides, and `OpenAIResponseSchemasTests` fails if they drift apart.
+
+It is gated on **`OpenAI:UseStrictJsonSchema`, which defaults to false**, in
+`Risebird.Services/appsettings.json` — that is the copy that matters, since the report is generated
+there. Off by default because it constrains *every* AI interview report on the platform, not only
+screening ones: turn it on, run one interview end to end, confirm the report reads, then leave it
+on. One detail cannot be verified without a live call — the schema carries the field name
+`"overall_communication_score reasoning"`, with a space, because that is what the parser expects.
+If the API rejects a property name containing a space, that is the thing to look at first, and
+switching the flag back off restores the previous behaviour exactly.
+
+**No new column was added.** An `InterviewComments.EvaluatorReportJson` was considered and is
+redundant: in the structured-JSON path `rawReply` is never rewritten before being stored, so
+`ReportOfAIInterviewByAssistant` already holds the evaluator's verbatim output at `Replies[0]`.
+(The HTML path does rewrite it, stripping the verdict comment — but that path has no section
+scores to diagnose.) A malformed report is therefore already recoverable from the existing column.
+
+## A failed recording no longer ends the interview
+
+Every audio failure used to return `ExitModalPartial`, whose only control is a Close button bound
+to `window.close()`. Because the answer post is a full form submit, the page carrying the
+interview was already gone by then — so a candidate whose upload did not attach, whose recording
+was clipped, or whose transcription came back as noise had no way back in, even in principle.
+That is one microphone glitch costing a whole interview.
+
+Those paths now return the candidate to the same question with an explanation. Eleven call sites
+across all three answer branches moved from exit to retry:
+
+- nothing attached, and no typed answer either
+- recording under 500 bytes
+- speech-to-text threw
+- `IsTranscriptionValid` rejected the transcript
+- the pre-save checks for a missing answer or a video that had not finished uploading
+
+Four stayed terminal, because a retry cannot repair them: session expired, interview not found, no
+question on the post, no interview id.
+
+`RetryAnswerAsync` re-renders `Index` with the posted model. The clock keeps its **server-side**
+value, so a retry costs the candidate time rather than the interview. Only the answer is cleared —
+leaving a stale transcript in the form would let the failed attempt be resubmitted behind them.
+The chat log is rebuilt with just the current question: each branch builds its own log on the way
+to a *new* question, and this render is the same question again, so without that the candidate
+returns to a blank conversation and cannot see what they were asked.
+
+**`BotInterviewQuestionVideos.TranscriptTakeCount`** records how many recordings an answer took.
+It is passed as its own argument rather than on `CandidateTranscriptReview`, because a retry
+happens whether or not the channel has review switched on and that record only exists when it is.
+The counter resets after a successful save, or it would ride along on the model and every later
+question would inherit the takes of the one before it. Read it as an equipment signal: a channel
+whose takes run high across many candidates has a problem of its own.
+
+## Transcript review is now per channel
+
+`AIInterview:CandidateTranscriptReview` was one switch for every channel in the environment.
+Review costs the candidate time on the clock, which suits a screening conversation and does not
+always suit a tightly timed technical round — a per-channel decision.
+
+`IRF.CandidateTranscriptReview` holds it, and **NULL means "not decided"** and falls back to the
+appsettings switch, so every existing channel keeps exactly today's behaviour. The intake form's
+third option, "Use the environment default", writes NULL — it must not write `false`, which would
+switch review off for that channel instead of deferring.
+
+The flag is resolved from the channel on the server and never from the posted model. It decides
+whether the server trusts a client-supplied transcript instead of transcribing the recording
+itself, so a candidate who could post it could skip transcription altogether. `TranscribeAnswer`
+looks the channel up for the same reason.
+
+### SQL that must be deployed with this
+
+Code deployed ahead of SQL degrades safely — the repository reads the column through
+`Columns.Contains`, so until the procedure is updated every channel reads as "not decided" — but
+the feature does nothing until all four land:
+
+1. `Tables/BotInterviewQuestionVideos.sql` — adds `TranscriptTakeCount`.
+2. `Tables/IRF.sql` — adds `CandidateTranscriptReview`.
+3. `StoredProcedures/usp_SaveBotInterviewQuestionVideos.sql` — new `@TranscriptTakeCount`,
+   defaulted and ISNULL-guarded on the UPDATE.
+4. `StoredProcedures/usp_GetAIInterviewDetailsBySessionId.sql` — adds `irf.CandidateTranscriptReview`
+   to the first result set's column list. **This procedure serves every AI interview**, not only
+   screening ones; the change is one column added to a `select` list and touches nothing else.
+
+`usp_SaveAIScreeningProvisioning.sql` also gains `@CandidateTranscriptReview`, but that procedure
+is screening-only.
+
+### Not done: live interim transcript
+
+The punch list also asked for the transcript to appear as the candidate speaks. That needs a
+streaming speech-to-text session (the realtime API) rather than the single `TranscribeAsync` call
+on a finished recording that every answer path uses today — a different transport, a different
+failure model, and a rewrite of the recorder on a candidate-facing page. It is deliberately left
+out rather than half-built.
+
+## Partner API: a missing template no longer refuses the request
+
+`api/SkillChannel/CreateAndSchedule` is how a partner posts a job title and a candidate list.
+Risebird resolves the Assessment Group mapped to that job title, creates a skill channel from the
+Group's template, and schedules the candidates. When the Group had no template the request was
+refused with "Missing template" — a refusal the partner can do nothing about, since the mapping
+exists and the candidates are real; only the template is absent. The branch carried the comment
+"if template doesnt exist, call the openAI method to create a tech rubric and create the skill
+channel" and a `//temporary` error response underneath it.
+
+That method already existed. `CreateClonableSkillChannelFromMAG` generates a rubric through
+`GenerateTechRubric(assessmentGroupName)` and creates a template from it, and is what the bulk
+`CreateTemplatesForAllMAGsAsync` path uses. The stub now calls it, then re-reads the template
+through the same `usp_CheckExistenceofSkillChannelAgainstRequestId` the caller already trusted —
+that procedure picks the newest template on the Assessment Group, which is the one just made.
+
+The template-exists branch was not duplicated. It now reads from local `templateId` /
+`templateName` that are either what the lookup returned or what generation produced, so one code
+path creates the channel either way.
+
+**Deliberately a conventional template, not an AI Audio screening channel.** The screening intake
+could also fill this gap, but it would hand the partner a different product: a rubric auto-accepted
+with no recruiter review, no obvious source for `clientUserIds`, a `jdLink` that may be empty, and
+reports with no section scores until the evaluator prompt exists. The conventional path gives the
+partner exactly what they get today, minus the failure.
+
+### Switched off by default
+
+`SkillChannel:GenerateMissingTemplateFromAssessmentGroup` in `Risebird.Services/appsettings.json`,
+default `false`. With it off the endpoint behaves byte-for-byte as before. Two things to weigh
+before switching it on:
+
+- The generation is an OpenAI call made **inside the partner's HTTP request**, so that request gets
+  slower. Check it against the partner's client timeout.
+- Two requests arriving together for the same untemplated Assessment Group will each generate a
+  template. The newest wins for both — untidy rather than broken.
+
+`TryCreateMissingTemplateAsync` returns `(0, null)` whenever generation is off, fails, or produces
+nothing readable, and the caller then refuses the request exactly as it always did. Nothing in it
+throws: a generation failure must cost the request its template, not its error message. All three
+failure modes log with the Assessment Group and job title.
+
+### No automated test
+
+`Risebird.Services` has no test project, and this is controller orchestration over nine injected
+services, so there is nothing to assert against without building one. Verified by build and by
+checking the dependency closure instead: `SkillChannelController` is the **first** consumer of
+`IClonableSkillChannelTemplateService` in this app, so that registration had never been exercised.
+It resolves — its eight dependencies are registered in `Program.cs`, except
+`ITemplateListingSearchRepository`, which comes from `AddRisebirdAzureSearch` — and every one of
+those bottoms out at `IConfiguration`, `IApplicationErrorLogger` or a registered repository.
+
+## Retention: the intake stops leaking uploads
+
+An abandoned intake leaked two files for ever. The draft itself was always fine — it lives in the
+distributed cache under `AIScreening:DraftLifetimeHours` and expires on its own — but its uploads
+do not, so every intake somebody started and walked away from left a job description and a voice
+recording in storage with nothing pointing at them.
+
+`AIScreeningBlobPurgeJob` (Azure Functions, 02:40 UTC daily) clears them.
+
+### Why most of this is about what *not* to delete
+
+The two blob families are not equally safe:
+
+| | container | name | referenced afterwards? |
+|---|---|---|---|
+| Instruction recording | `audios` | `ai_screening_instruction_{draftId}{ext}` | never |
+| Job description | `resumes` | `{draftId}_{originalFileName}` | **`IRF.JDLink`, for ever** |
+
+The recording is unambiguous. The job description is not, for two independent reasons: a JD that
+became a channel is referenced permanently, and `resumes` also holds **real candidate resumes**,
+which `AccountController` uploads under whatever file name the candidate chose.
+
+So a job description is deleted only when **both** hold:
+
+1. its name matches `^d_[0-9a-fA-F]{5}_.+$` — the exact shape the intake generates, since a draft
+   id is `"d_"` plus five hex characters; and
+2. nothing in `IRF.JDLink` names that blob.
+
+Neither test is sufficient alone, and that is the point. The name test does not protect a
+referenced JD. The reference test does not protect a candidate resume — a resume was never in
+`IRF.JDLink` to begin with, so by that test alone every resume in the container looks disposable.
+A loose prefix of `d_` would have matched a resume called `d_final_v2.pdf`.
+
+Blobs are matched **by name, not by whole url**: `IRF.JDLink` is stored without a SAS token but
+handed around with one, and the host differs between environments, so comparing urls would miss a
+reference and delete a live JD.
+
+### Three refusals that are deliberate
+
+- **The reference list cannot be read** → the whole run aborts and logs an error.
+  `GetReferencedJdLinksAsync` returns `null` on failure rather than an empty list precisely so the
+  caller can tell "could not read" from "read, found none". A purge that cannot see what is in use
+  must do nothing.
+- **A blob's age is unknown** → kept.
+- **`RetentionDays` is zero or negative** → falls back to the 7-day default instead of being
+  honoured, which would otherwise delete an intake still open on someone's screen.
+
+The query is inline SQL, not a stored procedure, for the same reason: an undeployed procedure
+would return nothing, and "nothing is referenced" is the one wrong answer that causes deletion.
+It is also not narrowed to screening channels — reading a few extra rows nightly costs nothing
+against deleting a job description still in use.
+
+### Rollout
+
+`AIScreening:BlobPurge` in `Risebird.AzureTimerFunctions/appsettings.json`:
+
+- `Enabled` — **false** by default; nothing is examined or deleted.
+- `DryRun` — **true** by default. The job selects and logs candidates without deleting. Leave it
+  true for at least one night after enabling, read the candidate list, and only then set it false.
+- `RetentionDays` — 7. Must comfortably exceed `AIScreening:DraftLifetimeHours`.
+
+`IAIScreeningRepository` and `IAIScreeningBlobPurgeService` are newly registered in the functions
+host; neither was resolvable there before.
+
+### Tests
+
+36 tests in `AIScreeningBlobRetentionTests`, weighted towards what must survive. They found one
+real defect while being written: a container-root url such as `.../resumes/` returned `"resumes"`
+as a blob name, because the trailing slash was trimmed before the last segment was taken.
+
+Mutation-checked, each against the restored original: loosening the name pattern to a bare `d_`
+prefix fails 7, treating an unreadable reference list as empty fails 1, and honouring a zero
+retention literally fails 3.

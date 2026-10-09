@@ -27,6 +27,11 @@ namespace Risebird.CommonHelper
         private readonly string _responsesModel;
         private readonly int _maxOutputTokensCeiling;
 
+        // Off by default. A strict schema constrains every AI interview report on the platform, not
+        // just screening ones, so it is switched on deliberately after one verified interview rather
+        // than arriving with a deployment.
+        private readonly bool _useStrictJsonSchema;
+
         public OpenAIResponsesHelper(
             IConfiguration configuration,
             IApplicationErrorLogger applicationErrorLogger,
@@ -38,6 +43,8 @@ namespace Risebird.CommonHelper
             _apiKey = _configuration["OpenAI:ApiKey"];
             _baseUrl = _configuration["OpenAI:BaseUrl"];
             _responsesModel = _configuration["OpenAI:ResponsesModel"];
+
+            _useStrictJsonSchema = _configuration.GetValue("OpenAI:UseStrictJsonSchema", false);
 
             var configuredCeiling = _configuration.GetValue<int?>("OpenAI:ResponsesMaxOutputTokensCeiling");
             _maxOutputTokensCeiling = configuredCeiling.HasValue && configuredCeiling.Value > 0
@@ -86,9 +93,12 @@ namespace Risebird.CommonHelper
             string promptId,
             string previousResponseId = null,
             int? maxOutputTokens = null,
-            bool useStoredPromptModel = false)
+            bool useStoredPromptModel = false,
+            object responseSchema = null,
+            string schemaName = null)
         {
-            return CreateJsonResponseWithIdAsync((object)input, operationType, promptId, previousResponseId, maxOutputTokens, useStoredPromptModel);
+            return CreateJsonResponseWithIdAsync((object)input, operationType, promptId, previousResponseId,
+                maxOutputTokens, useStoredPromptModel, null, null, responseSchema, schemaName);
         }
 
         public async Task<(RunResult Result, string ResponseId)> CreateJsonResponseWithIdAsync(
@@ -99,7 +109,9 @@ namespace Risebird.CommonHelper
             int? maxOutputTokens = null,
             bool useStoredPromptModel = false,
             string promptVersion = null,
-            IDictionary<string, string> promptVariables = null)
+            IDictionary<string, string> promptVariables = null,
+            object responseSchema = null,
+            string schemaName = null)
         {
             try
             {
@@ -134,7 +146,7 @@ namespace Risebird.CommonHelper
                 {
                     var attempt = await SendJsonResponseAttemptAsync(
                         promptId, input, operationType, previousResponseId, tokenBudget, useStoredPromptModel,
-                        promptVersion, promptVariables);
+                        promptVersion, promptVariables, responseSchema, schemaName);
 
                     if (attempt.Succeeded)
                         return (ToRunResult(attempt.OutputText), attempt.ResponseId);
@@ -177,10 +189,12 @@ namespace Risebird.CommonHelper
             int? maxOutputTokens,
             bool useStoredPromptModel,
             string promptVersion = null,
-            IDictionary<string, string> promptVariables = null)
+            IDictionary<string, string> promptVariables = null,
+            object responseSchema = null,
+            string schemaName = null)
         {
             object requestBody = BuildJsonResponseRequestBody(promptId, input, previousResponseId, maxOutputTokens,
-                useStoredPromptModel, promptVersion, promptVariables);
+                useStoredPromptModel, promptVersion, promptVariables, responseSchema, schemaName);
 
             using var client = new HttpClient();
             client.Timeout = TimeSpan.FromMinutes(4);
@@ -469,10 +483,26 @@ namespace Risebird.CommonHelper
 
         private object BuildJsonResponseRequestBody(string promptId, object input, string previousResponseId,
             int? maxOutputTokens, bool useStoredPromptModel, string promptVersion = null,
-            IDictionary<string, string> promptVariables = null)
+            IDictionary<string, string> promptVariables = null, object responseSchema = null,
+            string schemaName = null)
         {
             var body = BuildBaseRequestBody(promptId, input, useStoredPromptModel, promptVersion, promptVariables);
-            body["text"] = new { format = new { type = "json_object" } };
+
+            // json_object asks only for syntactically valid JSON, so a prompt that renames a field or
+            // invents a verdict still returns 200 and the report silently renders empty. A schema
+            // makes that shape impossible at generation time rather than unnoticed at read time.
+            body["text"] = responseSchema != null && _useStrictJsonSchema
+                ? (object)new
+                {
+                    format = new
+                    {
+                        type = "json_schema",
+                        name = string.IsNullOrWhiteSpace(schemaName) ? "response" : schemaName,
+                        strict = true,
+                        schema = responseSchema
+                    }
+                }
+                : new { format = new { type = "json_object" } };
 
             if (!string.IsNullOrWhiteSpace(previousResponseId))
                 body["previous_response_id"] = previousResponseId;

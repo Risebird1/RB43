@@ -148,5 +148,24 @@ namespace Risebird.Business.Tests.AIScreeningTests
         }
 
         #endregion
+
+        #region Take count
+
+        /// <summary>
+        /// A take count below 1 still describes an answer with one recording behind it. The page
+        /// posts this value, so it can arrive absent (an older page still open on the question) or
+        /// hand-edited, and neither may make an answer look like it was never recorded.
+        /// </summary>
+        [Theory]
+        [InlineData(0, 1)]
+        [InlineData(-1, 1)]
+        [InlineData(int.MinValue, 1)]
+        [InlineData(1, 1)]
+        [InlineData(2, 2)]
+        [InlineData(97, 97)]
+        public void Take_count_is_never_below_one(int posted, int expected) =>
+            Assert.Equal(expected, CandidateTranscriptReview.NormalizeTakeCount(posted));
+
+        #endregion
     }
 }

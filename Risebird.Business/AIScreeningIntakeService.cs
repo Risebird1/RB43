@@ -574,7 +574,8 @@ namespace Risebird.Business
                     // Heading for section two on the report. Section one is headed by JDTiltle, which
                     // stays the job title — it is what the adaptive interviewer is told to interview for.
                     jdTitleTwo: AIScreeningIntakeHelper.GetSectionTitle(
-                        AIScreeningSectionEnum.MotivationToJoinFitment));
+                        AIScreeningSectionEnum.MotivationToJoinFitment),
+                    candidateTranscriptReview: request?.CandidateTranscriptReview);
 
                 if (usingSharedPrompt)
                 {
