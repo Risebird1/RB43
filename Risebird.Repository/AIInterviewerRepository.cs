@@ -128,7 +128,7 @@ namespace Risebird.Repository
                 // Silently fail to not block the interview flow
             }
         }
-        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false, string candidateAnswerAudioLink = null, bool allowMissingVideo = false, CandidateTranscriptReview transcriptReview = null)
+        public async Task<bool> UpdateBotInterviewVideoDetails(string VideoLink, string question, string SessionId, string botSynthesizedVideoLink, string candidateResponse, int secondsLeft, int interviewId, string BotAudioLink = null, int? deliveryHeadQuestionId = null, bool isTypingSpeedQuestion = false, bool isListeningComprehension = false, string candidateAnswerAudioLink = null, bool allowMissingVideo = false, CandidateTranscriptReview transcriptReview = null, int takeCount = 1)
         {
             try
             {
@@ -204,6 +204,9 @@ namespace Risebird.Repository
                     parameters.Add("@RawTranscript", NormalizeForDb(transcriptReview?.RawTranscript));
                     parameters.Add("@TranscriptEditedByCandidate", transcriptReview?.EditedByCandidate);
                     parameters.Add("@TranscriptDivergencePct", transcriptReview?.DivergencePct);
+                    // Recorded on every answer, not only reviewed ones: a retry happens whether or
+                    // not the channel has transcript review switched on.
+                    parameters.Add("@TranscriptTakeCount", CandidateTranscriptReview.NormalizeTakeCount(takeCount));
                     await SqlMapper.QueryAsync(con, "usp_SaveBotInterviewQuestionVideos", parameters,
                          commandType: CommandType.StoredProcedure);
                     //await SqlMapper.QueryAsync(con, "usp_SaveBotInterviewQuestionVideosTestVersion", parameters,
@@ -346,6 +349,13 @@ namespace Risebird.Repository
                             _resultVM.OpenAIEvaluatorPromptId = dt.Columns.Contains("OpenAIEvaluatorPromptId") && !string.IsNullOrEmpty(dt.Rows[0]["OpenAIEvaluatorPromptId"].ToString()) ? dt.Rows[0]["OpenAIEvaluatorPromptId"].ToString() : null;
                             _resultVM.showChatBox = !string.IsNullOrEmpty(dt.Rows[0]["showChatBox"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["showChatBox"]) : false;
                             _resultVM.isMultiLingual = !string.IsNullOrEmpty(dt.Rows[0]["isMultiLingual"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["isMultiLingual"]) : false;
+                            // Guarded with Columns.Contains so this code can deploy ahead of the
+                            // procedure change: until the column is in the result set every channel
+                            // reads as "not decided" and the appsettings switch keeps applying.
+                            _resultVM.CandidateTranscriptReview =
+                                dt.Columns.Contains("CandidateTranscriptReview") && !string.IsNullOrEmpty(dt.Rows[0]["CandidateTranscriptReview"].ToString())
+                                    ? Convert.ToBoolean(dt.Rows[0]["CandidateTranscriptReview"])
+                                    : (bool?)null;
                             _resultVM.IsProctoring = !dt.Columns.Contains("IsProctoring") || string.IsNullOrEmpty(dt.Rows[0]["IsProctoring"].ToString()) || Convert.ToBoolean(dt.Rows[0]["IsProctoring"]);
                             _resultVM.IsAadhaarVerificationRequired = dt.Columns.Contains("IsAadhaarVerificationRequired") && !string.IsNullOrEmpty(dt.Rows[0]["IsAadhaarVerificationRequired"].ToString()) && Convert.ToBoolean(dt.Rows[0]["IsAadhaarVerificationRequired"]);
                             _resultVM.AIResumeScreeningVerdict = !string.IsNullOrEmpty(dt.Rows[0]["AIResumeScreeningVerdict"].ToString()) ? dt.Rows[0]["AIResumeScreeningVerdict"].ToString() : null;
@@ -455,10 +465,13 @@ namespace Risebird.Repository
 
                                 // Which scored section this parameter belongs to. An AI screening channel
                                 // has two (1 = Role Fitment, 2 = Motivation to Join Fitment) and the
-                                // assistant cannot tell them apart without it. Guarded on the column being
-                                // present because usp_GetAIInterviewSpecificDetails has to start returning
-                                // SkillSet for this to carry anything; until it does, this is a no-op and
-                                // every other channel is unaffected.
+                                // assistant cannot tell them apart without it.
+                                //
+                                // usp_GetAIInterviewDetailsBySessionId reads this set with
+                                // "select * from TransTechSkill", so the column is already here and no
+                                // procedure change is needed. The guard is kept anyway: it costs nothing
+                                // and keeps this loop working if that SELECT is ever narrowed to a
+                                // column list that leaves SkillSet out.
                                 if (dt.Columns.Contains("SkillSet")
                                     && !string.IsNullOrEmpty(dt.Rows[i]["SkillSet"].ToString()))
                                 {

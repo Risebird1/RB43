@@ -27,6 +27,9 @@ ISNULL(ad.matchPercentage, 0) as MatchScorePercentage,
 ISNULL(ad.id, 0) as AadharVerificationId, ic.MeetingStatus, ic.InterviewStatus,
 case when (im.candidateName is not null and im.candidateName != '')  then im.candidateName else ulc.FirstName end as candidateName,
 irf.id as irfIntId, irf.IRFId, irf.AIInterviewType, IRF.IsAIInterview,  irf.OpenAIAssistantId, irf.OpenAIPromptId, irf.OpenAIEvaluatorPromptId, irf.showChatBox, irf.isMultiLingual,
+-- Per-channel transcript review. NULL means the channel has not decided and the appsettings
+-- switch applies, so channels created before this column existed keep today's behaviour.
+irf.CandidateTranscriptReview,
 -- MCQ assessment section. irf.IRFId above is the value MCQIRF.PortalIRFId holds on
 -- screen.risebird.io, so it doubles as the skillChannelId the MCQ API is addressed by.
 ISNULL(irf.HasMcqAssessmentSection, 0) as HasMcqAssessmentSection, irf.McqAssessmentSections, irf.McqAssessmentMinutes,

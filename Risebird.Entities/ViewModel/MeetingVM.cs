@@ -424,6 +424,13 @@ namespace Risebird.Entities.ViewModel
         public bool IsResumeParsingFailed { get; set; }
         public string ReasonBehindNotProcessed { get; set; }
         public bool isMultiLingual { get; set; }
+
+        /// <summary>
+        /// Whether this channel has the candidate review and correct the speech-to-text transcript
+        /// before submitting. Null means the channel has not decided, and the environment's
+        /// AIInterview:CandidateTranscriptReview setting applies instead.
+        /// </summary>
+        public bool? CandidateTranscriptReview { get; set; }
         public string AIResumeScreeningVerdict { get; set; }
         public int AIResumeScreeningScore { get; set; }
 

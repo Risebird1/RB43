@@ -29,11 +29,15 @@ namespace Risebird.Services.Controllers
         private readonly INotificationHelper _notificationHelper;
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
+        private readonly IClonableSkillChannelTemplateService _templateService;
+        private readonly IConfiguration _config;
         public SkillChannelController(IApplicationErrorLogger applicationErrorLogger,
             IClientService clientService, IIRFService irfService,
             IIRFRepository irfRepository, IInterviewSchedulerService interviewSchedulerservice,
             INotificationHelper notificationHelper,
-            HttpClientHelper factory)
+            HttpClientHelper factory,
+            IClonableSkillChannelTemplateService templateService,
+            IConfiguration config)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _clientService = clientService;
@@ -42,6 +46,71 @@ namespace Risebird.Services.Controllers
             _interviewSchedulerservice = interviewSchedulerservice;
             _notificationHelper = notificationHelper;
             _httpClient = factory.GetHttpClient();
+            _templateService = templateService;
+            _config = config;
+        }
+
+        /// <summary>
+        /// Generates the missing template for an Assessment Group so a partner request does not have
+        /// to be refused over it, and reads back the template the generation produced.
+        ///
+        /// Off unless SkillChannel:GenerateMissingTemplateFromAssessmentGroup is set, because this
+        /// changes what an external partner receives: today a request against an Assessment Group
+        /// with no template is refused and somebody builds the template by hand. With it on, the
+        /// request succeeds against a rubric nobody has reviewed.
+        ///
+        /// Returns (0, null) whenever generation is off, fails, or produces nothing, and the caller
+        /// then refuses the request exactly as it always did. Nothing here is allowed to throw: a
+        /// generation failure must cost the request its template, not its error message.
+        /// </summary>
+        private async Task<(int TemplateId, string TemplateName)> TryCreateMissingTemplateAsync(
+            int assessmentGroupId, string assessmentGroupName, string requestId, string jobTitle)
+        {
+            if (!_config.GetValue("SkillChannel:GenerateMissingTemplateFromAssessmentGroup", false))
+                return (0, null);
+
+            if (assessmentGroupId <= 0 || string.IsNullOrWhiteSpace(assessmentGroupName))
+                return (0, null);
+
+            try
+            {
+                await _applicationErrorLogger.LogMessage(
+                    LogLevelInfo.Info,
+                    $"Partner request for job title '{jobTitle}' found no template on Assessment Group " +
+                    $"{assessmentGroupId} ('{assessmentGroupName}'); generating one.");
+
+                var created = await _templateService.CreateClonableSkillChannelFromMAG(
+                    assessmentGroupId, assessmentGroupName, "api");
+
+                if (!created)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Error,
+                        $"Template generation reported failure for Assessment Group {assessmentGroupId} " +
+                        $"('{assessmentGroupName}'); the partner request for '{jobTitle}' was refused.");
+                    return (0, null);
+                }
+
+                // Read back rather than trusting the create: usp_CheckExistenceofSkillChannelAgainstRequestId
+                // picks the newest template on the Assessment Group, which is the one just made, and it
+                // is the same lookup the caller already trusted a moment ago.
+                var reread = await _irfRepository.CheckExistenceofSkillChannelAgainstRequestId(requestId, jobTitle);
+                if (reread == null || reread.TemplateId <= 0)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Error,
+                        $"Template generation for Assessment Group {assessmentGroupId} ('{assessmentGroupName}') " +
+                        $"reported success but no template could be read back; the partner request for '{jobTitle}' was refused.");
+                    return (0, null);
+                }
+
+                return (reread.TemplateId, reread.TemplateName);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return (0, null);
+            }
         }
         [HttpPost]
         [Route("CreateAndSchedule")]
@@ -128,7 +197,24 @@ namespace Risebird.Services.Controllers
                                 else
                                 {
                                     //if mag exists, check for template
-                                    if (isExistsObj.TemplateId > 0)
+                                    //
+                                    // A missing template used to end the request with "Missing template",
+                                    // which the partner can do nothing about: the Assessment Group is
+                                    // mapped and the candidates are real, only the template is absent.
+                                    // It is generated here instead, from the Assessment Group's name,
+                                    // and the request carries on down the same path a template would.
+                                    var templateId = isExistsObj.TemplateId;
+                                    var templateName = isExistsObj.TemplateName;
+
+                                    if (templateId <= 0)
+                                    {
+                                        var generated = await TryCreateMissingTemplateAsync(
+                                            assessmentGroupId, assessmentGroupName, reqData.requestId ?? reqData.jobId, reqData.jobTitle);
+                                        templateId = generated.TemplateId;
+                                        templateName = generated.TemplateName;
+                                    }
+
+                                    if (templateId > 0)
                                     {
                                         //if template exists...go ahead and create the skill channel...
                                         var irfModel = new IRFVm();
@@ -139,8 +225,8 @@ namespace Risebird.Services.Controllers
                                         irfModel.MeetingPlatform = MeetingPlatforms.Zoho;
                                         irfModel.JDTiltle = reqData.jobTitle;
                                         irfModel.ClientName = clientDetails?.Name;
-                                        irfModel.CreatedFromTemplateId = isExistsObj.TemplateId;
-                                        irfModel.TemplateName = isExistsObj.TemplateName;
+                                        irfModel.CreatedFromTemplateId = templateId;
+                                        irfModel.TemplateName = templateName;
                                         irfModel.JDLink = reqData.jdLink ?? string.Empty;
                                         irfModel.RequestId = reqData.requestId;
                                         //var clientDetails = await _clientService.GetClient(irfModel.ClientId);
@@ -169,10 +255,9 @@ namespace Risebird.Services.Controllers
                                     }
                                     else
                                     {
-                                        //if template doesnt exist, call the openAI method to create a tech rubric and create the skill channel
-
-
-                                        //temporary
+                                        // Either generation is switched off, or it was attempted and
+                                        // did not produce a template. Unchanged from before: the
+                                        // partner gets the same refusal it has always got.
                                         var detailsError = new Dictionary<string, string>();
 
                                         if (string.IsNullOrEmpty(reqData.requestId) && string.IsNullOrEmpty(reqData.jobId))

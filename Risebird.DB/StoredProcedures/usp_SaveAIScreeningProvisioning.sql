@@ -33,6 +33,9 @@ Create PROCEDURE [dbo].[usp_SaveAIScreeningProvisioning]
 -- JDTiltle is deliberately NOT overwritten with a section label: it is the channel's job title
 -- everywhere else, including the adaptive interviewer's "interview the candidate for {JDTiltle}".
 @JDTitleTwo varchar(150) = null,
+-- Whether the candidate reviews and corrects the speech-to-text transcript before submitting.
+-- NULL leaves the channel undecided, which falls back to AIInterview:CandidateTranscriptReview.
+@CandidateTranscriptReview bit = null,
 @TechSkillBulkData AS [dbo].[TransTechSkill_TableTypeV5] READONLY
 AS
 BEGIN
@@ -47,6 +50,7 @@ BEGIN
            ,[OpenAIEvaluatorPromptId] = @OpenAIEvaluatorPromptId
            ,[IdealCandidateProfile]   = @IdealCandidateProfile
            ,[JDTitleTwo]              = ISNULL(@JDTitleTwo, [JDTitleTwo])
+           ,[CandidateTranscriptReview] = @CandidateTranscriptReview
            -- The single predicate the report gates screening-only behaviour on.
            ,[IsAIAudioScreening]      = 1
         WHERE id = @IRFId;

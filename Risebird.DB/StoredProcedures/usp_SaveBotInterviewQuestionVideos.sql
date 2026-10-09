@@ -34,7 +34,8 @@ Create Procedure usp_SaveBotInterviewQuestionVideos
 -- Candidate transcript review. Defaulted so a caller that predates the feature leaves these alone.
 @RawTranscript nvarchar(max) = null,
 @TranscriptEditedByCandidate bit = null,
-@TranscriptDivergencePct int = null
+@TranscriptDivergencePct int = null,
+@TranscriptTakeCount int = null
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -65,15 +66,16 @@ BEGIN
                 -- ISNULL so a re-save that does not carry them keeps what was recorded the first time.
                 RawTranscript = ISNULL(@RawTranscript, RawTranscript),
                 TranscriptEditedByCandidate = ISNULL(@TranscriptEditedByCandidate, TranscriptEditedByCandidate),
-                TranscriptDivergencePct = ISNULL(@TranscriptDivergencePct, TranscriptDivergencePct)
+                TranscriptDivergencePct = ISNULL(@TranscriptDivergencePct, TranscriptDivergencePct),
+                TranscriptTakeCount = ISNULL(@TranscriptTakeCount, TranscriptTakeCount)
             WHERE SessionId = @SessionId
               AND DeliveryHeadQuestionId = @DeliveryHeadQuestionId;
         END
         ELSE
         BEGIN
             -- Insert new record
-            Insert into BotInterviewQuestionVideos (SessionId, VideoLink, question, CreatedAt, BotSynthesizedVideoLink, CandidateAnswer, BotAudioLink, DeliveryHeadQuestionId, CandidateAnswerAudioLink, RawTranscript, TranscriptEditedByCandidate, TranscriptDivergencePct)
-            values(@SessionId, @VideoLink, @question, @CreatedAt, @BotSynthesizedVideoLink, @CandidateResponse, @BotAudioLink, @DeliveryHeadQuestionId, @CandidateAnswerAudioLink, @RawTranscript, @TranscriptEditedByCandidate, @TranscriptDivergencePct)
+            Insert into BotInterviewQuestionVideos (SessionId, VideoLink, question, CreatedAt, BotSynthesizedVideoLink, CandidateAnswer, BotAudioLink, DeliveryHeadQuestionId, CandidateAnswerAudioLink, RawTranscript, TranscriptEditedByCandidate, TranscriptDivergencePct, TranscriptTakeCount)
+            values(@SessionId, @VideoLink, @question, @CreatedAt, @BotSynthesizedVideoLink, @CandidateResponse, @BotAudioLink, @DeliveryHeadQuestionId, @CandidateAnswerAudioLink, @RawTranscript, @TranscriptEditedByCandidate, @TranscriptDivergencePct, @TranscriptTakeCount)
         END
 
         update InterviewMeetings set TimeLeftInSeconds = @secondsLeft where id = @interviewId

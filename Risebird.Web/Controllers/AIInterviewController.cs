@@ -172,7 +172,7 @@ namespace Risebird.Web.Controllers
                         return AadhaarRequiredExitView(sid, meetingDetails);
 
                     await ApplyAiProctoringViewBagAsync(meetingDetails, sid);
-                    ViewBag.CandidateTranscriptReview = IsCandidateTranscriptReviewEnabled();
+                    ViewBag.CandidateTranscriptReview = IsCandidateTranscriptReviewEnabled(meetingDetails);
                     if (meetingDetails.AIInterviewType == (int)AIInterviewTypeEnum.Preset)
                     {
                         var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(sid);
@@ -1048,7 +1048,7 @@ namespace Risebird.Web.Controllers
                 try
                 {
                     await ApplyAiProctoringViewBagAsync(meetingDetails, model.SessionId);
-                    ViewBag.CandidateTranscriptReview = IsCandidateTranscriptReviewEnabled();
+                    ViewBag.CandidateTranscriptReview = IsCandidateTranscriptReviewEnabled(meetingDetails);
                 }
                 catch (Exception proctorEx)
                 {
@@ -1128,18 +1128,18 @@ namespace Risebird.Web.Controllers
                     {
                         if (model.AudioFile == null || model.AudioFile.Length == 0)
                         {
-                            return View("ExitModalPartial", CreateAnswerSubmitErrorView(
-                                model.SessionId,
+                            return await RetryAnswerAsync(
+                                model,
                                 "Missing audio",
-                                "Your recording was not attached. Please record again and wait until processing finishes before the page reloads."));
+                                "Your recording was not attached. Please record your answer again, and wait until processing finishes before submitting.");
                         }
 
                         if (model.AudioFile.Length < 500)
                         {
-                            return View("ExitModalPartial", CreateAnswerSubmitErrorView(
-                                model.SessionId,
+                            return await RetryAnswerAsync(
+                                model,
                                 "Recording too short",
-                                "Your recording was too short to transcribe. Please speak for at least a few seconds and try again."));
+                                "Your recording was too short to transcribe. Please speak for at least a few seconds and try again.");
                         }
 
                         if (model.AudioFile != null && model.AudioFile.Length > 0)
@@ -1147,7 +1147,7 @@ namespace Risebird.Web.Controllers
                             // The candidate has already read this transcript and corrected it if it
                             // was wrong, so it is not transcribed again - what they confirmed is the
                             // answer. TranscribeAnswer produced it from this same recording.
-                            var transcriptReview = BuildTranscriptReview(model);
+                            var transcriptReview = BuildTranscriptReview(model, meetingDetails);
 
                             if (transcriptReview != null)
                             {
@@ -1163,10 +1163,10 @@ namespace Risebird.Web.Controllers
                                 catch (Exception sttEx)
                                 {
                                     await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, sttEx);
-                                    return View("ExitModalPartial", CreateAnswerSubmitErrorView(
-                                        model.SessionId,
-                                        "Error with audio",
-                                        "Could not transcribe your recording. Please check your microphone and try again."));
+                                    return await RetryAnswerAsync(
+                                        model,
+                                        "Could not read your recording",
+                                        "We could not transcribe your recording. Please check your microphone and record your answer again.");
                                 }
                             }
 
@@ -1175,21 +1175,10 @@ namespace Risebird.Web.Controllers
                             // recording, which is exactly what the review step already let them fix.
                             if (transcriptReview == null && !IsTranscriptionValid(userMessage, model.isMultiLingual))//!model.isMultiLingual &&
                             {
-                                // Rewind the stream to re-run transcription
-                                var exitModel = new AIInterviewExitModalViewModel
-                                {
-                                    Title = "Error with audio!",
-                                    Message = "Please ensure your audio equipment is functioning correctly, and refrain from speaking in a whisper. Maintain an audible volume throughout the session.",
-                                    IconClass = "fa-exclamation-triangle",
-                                    IconColor = "#dc3545",
-                                    ButtonText = "Close",
-                                    ButtonClass = "btn-danger",
-                                    CandidateName = model.candidateName ?? "Candidate",
-                                    InterviewDate = DateTime.Now,
-                                    SessionId = model.SessionId.ToString(),
-                                    IsFromIndex = true
-                                };
-                                return View("ExitModalPartial", exitModel);
+                                return await RetryAnswerAsync(
+                                    model,
+                                    "We could not make out your answer",
+                                    "Please check that your microphone is working and speak at a normal volume rather than a whisper, then record your answer again.");
                             }
                         }
                     }
@@ -1199,10 +1188,10 @@ namespace Risebird.Web.Controllers
                         {
                             if (model.AudioFile.Length < 500)
                             {
-                                return View("ExitModalPartial", CreateAnswerSubmitErrorView(
-                                    model.SessionId,
+                                return await RetryAnswerAsync(
+                                    model,
                                     "Recording too short",
-                                    "Your recording was too short to transcribe. Please speak for at least a few seconds and try again."));
+                                    "Your recording was too short to transcribe. Please speak for at least a few seconds and try again.");
                             }
 
                             try
@@ -1213,10 +1202,10 @@ namespace Risebird.Web.Controllers
                             catch (Exception sttEx)
                             {
                                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, sttEx);
-                                return View("ExitModalPartial", CreateAnswerSubmitErrorView(
-                                    model.SessionId,
-                                    "Error with audio",
-                                    "Could not transcribe your recording. Please check your microphone and try again."));
+                                return await RetryAnswerAsync(
+                                    model,
+                                    "Could not read your recording",
+                                    "We could not transcribe your recording. Please check your microphone and record your answer again.");
                             }
 
                             //if (!IsTranscriptionValid(tranScribedResponse))
@@ -1247,21 +1236,10 @@ namespace Risebird.Web.Controllers
                                 userMessage = tranScribedResponse;
                                 if (!IsTranscriptionValid(userMessage, model.isMultiLingual)) //
                                 {
-                                    // Rewind the stream to re-run transcription
-                                    var exitModel = new AIInterviewExitModalViewModel
-                                    {
-                                        Title = "Error with audio!",
-                                        Message = "Please ensure your audio equipment is functioning correctly, and refrain from speaking in a whisper. Maintain an audible volume throughout the session.",
-                                        IconClass = "fa-exclamation-triangle",
-                                        IconColor = "#dc3545",
-                                        ButtonText = "Close",
-                                        ButtonClass = "btn-danger",
-                                        CandidateName = model.candidateName ?? "Candidate",
-                                        InterviewDate = DateTime.Now,
-                                        SessionId = model.SessionId.ToString(),
-                                        IsFromIndex = true
-                                    };
-                                    return View("ExitModalPartial", exitModel);
+                                    return await RetryAnswerAsync(
+                                        model,
+                                        "We could not make out your answer",
+                                        "Please check that your microphone is working and speak at a normal volume rather than a whisper, then record your answer again.");
                                 }
                             }
                         }
@@ -1273,10 +1251,10 @@ namespace Risebird.Web.Controllers
                     var assistantQuestionCount = CountAssistantQuestions(transcript);
                     if (assistantQuestionCount == 35)
                     {
-                        var payloadError = ValidatePresetAnswerPayloadBeforeSave(model, userMessage);
+                        var payloadError = await ValidatePresetAnswerPayloadBeforeSave(model, userMessage);
                         if (payloadError != null) return payloadError;
 
-                        bool iscandidateVideoSavedTodb = await UploadBotInterviewVideo(model, question, userMessage);
+                        bool iscandidateVideoSavedTodb = await UploadBotInterviewVideo(model, question, userMessage, meetingDetails);
                         var exitModel = new AIInterviewExitModalViewModel();
                         if (!iscandidateVideoSavedTodb)
                         {
@@ -1340,10 +1318,10 @@ namespace Risebird.Web.Controllers
                         //    }
                         //}
 
-                        var payloadError = ValidatePresetAnswerPayloadBeforeSave(model, userMessage);
+                        var payloadError = await ValidatePresetAnswerPayloadBeforeSave(model, userMessage);
                         if (payloadError != null) return payloadError;
 
-                        bool iscandidateVideoSavedTodb = await UploadBotInterviewVideo(model, question, userMessage);
+                        bool iscandidateVideoSavedTodb = await UploadBotInterviewVideo(model, question, userMessage, meetingDetails);
                         if (!iscandidateVideoSavedTodb)
                         {
                             var exitModel = new AIInterviewExitModalViewModel
@@ -1744,11 +1722,25 @@ namespace Risebird.Web.Controllers
                     string userMessage = model.Message;
                     CandidateTranscriptReview transcriptReview = null;
 
+                    // Nothing arrived at all - no recording and no typed answer. This used to fall
+                    // through to the transcription quality check, which told the candidate to sort
+                    // out their microphone volume when the real problem was that the upload never
+                    // attached. A typed answer with no audio is still a valid submission, so only
+                    // the case where both are missing is refused.
+                    if ((model.AudioFile == null || model.AudioFile.Length == 0)
+                        && string.IsNullOrWhiteSpace(userMessage))
+                    {
+                        return await RetryAnswerAsync(
+                            model,
+                            "Missing audio",
+                            "Your recording was not attached. Please record your answer again, and wait until processing finishes before submitting.");
+                    }
+
                     if (model.AudioFile != null && model.AudioFile.Length > 0)
                     {
                         // Already read and corrected by the candidate during review, so it is not
                         // transcribed again - what they confirmed is the answer.
-                        transcriptReview = BuildTranscriptReview(model);
+                        transcriptReview = BuildTranscriptReview(model, meetingDetails);
 
                         if (transcriptReview != null)
                         {
@@ -1756,8 +1748,33 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            using var stream = model.AudioFile.OpenReadStream();
-                            userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName, model.isMultiLingual);
+                            // A clip this short carries no speech. Sending it anyway returns a
+                            // hallucinated sentence that would be filed as the candidate's answer,
+                            // so it is refused here the way the preset branch refuses it.
+                            if (model.AudioFile.Length < 500)
+                            {
+                                return await RetryAnswerAsync(
+                                    model,
+                                    "Recording too short",
+                                    "Your recording was too short to transcribe. Please speak for at least a few seconds and try again.");
+                            }
+
+                            try
+                            {
+                                using var stream = model.AudioFile.OpenReadStream();
+                                userMessage = await _speechToTextService.TranscribeAsync(stream, model.AudioFile.FileName, model.isMultiLingual);
+                            }
+                            catch (Exception sttEx)
+                            {
+                                // Without this the exception escapes the action and the candidate
+                                // sees a raw error page mid-interview with no way back in. The
+                                // preset branch has caught this for a while; the adaptive one did not.
+                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, sttEx);
+                                return await RetryAnswerAsync(
+                                    model,
+                                    "Could not read your recording",
+                                    "We could not transcribe your recording. Please check your microphone and record your answer again.");
+                            }
                         }
                     }
 
@@ -1765,21 +1782,10 @@ namespace Risebird.Web.Controllers
                     // speech-to-text quality check; the review step already let them fix a bad one.
                     if (transcriptReview == null && !IsTranscriptionValid(userMessage, model.isMultiLingual))//!model.isMultiLingual &&
                     {
-                        // Rewind the stream to re-run transcription
-                        var exitModel = new AIInterviewExitModalViewModel
-                        {
-                            Title = "Error with audio!",
-                            Message = "Please ensure your audio equipment is functioning correctly, and refrain from speaking in a whisper. Maintain an audible volume throughout the session.",
-                            IconClass = "fa-exclamation-triangle",
-                            IconColor = "#dc3545",
-                            ButtonText = "Close",
-                            ButtonClass = "btn-danger",
-                            CandidateName = model.candidateName ?? "Candidate",
-                            InterviewDate = DateTime.Now,
-                            SessionId = model.SessionId.ToString(),
-                            IsFromIndex = true
-                        };
-                        return View("ExitModalPartial", exitModel);
+                        return await RetryAnswerAsync(
+                            model,
+                            "We could not make out your answer",
+                            "Please check that your microphone is working and speak at a normal volume rather than a whisper, then record your answer again.");
                     }
 
                     var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(model.SessionId)
@@ -1790,10 +1796,10 @@ namespace Risebird.Web.Controllers
                     // once the hard cap is reached so the interview can never run forever.
                     if (assistantQuestionCount >= AdaptiveMaxAssistantQuestions)
                     {
-                        var payloadError = ValidatePresetAnswerPayloadBeforeSave(model, userMessage);
+                        var payloadError = await ValidatePresetAnswerPayloadBeforeSave(model, userMessage);
                         if (payloadError != null) return payloadError;
 
-                        bool iscandidateVideoSavedTodb = await UploadBotInterviewVideo(model, question, userMessage);
+                        bool iscandidateVideoSavedTodb = await UploadBotInterviewVideo(model, question, userMessage, meetingDetails);
                         if (!iscandidateVideoSavedTodb)
                         {
                             var exitModel = new AIInterviewExitModalViewModel
@@ -1819,7 +1825,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        bool iscandidateVideoSavedTodb = await UploadBotInterviewVideo(model, question, userMessage);
+                        bool iscandidateVideoSavedTodb = await UploadBotInterviewVideo(model, question, userMessage, meetingDetails);
                         if (!iscandidateVideoSavedTodb)
                         {
                             var exitModel = new AIInterviewExitModalViewModel
@@ -1958,7 +1964,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 await ApplyAiProctoringViewBagAsync(meeting, model.SessionId);
-                ViewBag.CandidateTranscriptReview = IsCandidateTranscriptReviewEnabled();
+                ViewBag.CandidateTranscriptReview = IsCandidateTranscriptReviewEnabled(meeting);
             }
             catch (Exception proctorEx)
             {
@@ -2070,7 +2076,13 @@ namespace Risebird.Web.Controllers
             return DateTime.TryParse(value, out var parsed) ? parsed : null;
         }
 
-        private IActionResult ValidatePresetAnswerPayloadBeforeSave(ChatMessageViewModel model, string userMessage)
+        /// <summary>
+        /// Refuses a submission that cannot be saved. Two of the four cases are the candidate's
+        /// recording not having arrived, which they can fix by recording again, so those return
+        /// them to the question. The other two - no question on the post, no interview id - mean
+        /// the page itself is in a state a retry cannot repair, and still end the attempt.
+        /// </summary>
+        private async Task<IActionResult> ValidatePresetAnswerPayloadBeforeSave(ChatMessageViewModel model, string userMessage)
         {
             if (string.IsNullOrWhiteSpace(model.CurrentQuestion))
             {
@@ -2087,10 +2099,10 @@ namespace Risebird.Web.Controllers
                 && !model.IsCodeProjectQuestion
                 && !model.IsMcqAssessmentQuestion)
             {
-                return View("ExitModalPartial", CreateAnswerSubmitErrorView(
-                    model.SessionId,
+                return await RetryAnswerAsync(
+                    model,
                     "Missing answer",
-                    "Your spoken answer was not captured. Please record again and wait for processing to finish."));
+                    "Your spoken answer was not captured. Please record your answer again and wait for processing to finish before submitting.");
             }
 
             // The MCQ assessment section is exempt from the video requirement for the same reason
@@ -2103,10 +2115,10 @@ namespace Risebird.Web.Controllers
                 && !model.IsMcqAssessmentQuestion
                 && (model.VideoFile == null || model.VideoFile.Length == 0))
             {
-                return View("ExitModalPartial", CreateAnswerSubmitErrorView(
-                    model.SessionId,
+                return await RetryAnswerAsync(
+                    model,
                     "Video not ready",
-                    "Your video answer was not attached yet. Please stop recording and wait a moment, then try again."));
+                    "Your video answer had not finished uploading. Please record your answer again, and wait a moment after stopping before you submit.");
             }
 
             if (model.InterviewId <= 0)
@@ -2580,7 +2592,11 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (!IsCandidateTranscriptReviewEnabled())
+                // Resolved from the channel, not from anything the page posted: this endpoint is
+                // what produces the transcript the candidate is then trusted to confirm, so a
+                // channel with review switched off must not be able to reach it.
+                var transcribeMeeting = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(sessionId);
+                if (!IsCandidateTranscriptReviewEnabled(transcribeMeeting))
                     return Json(new { success = false, message = "Transcript review is not enabled." });
 
                 var file = Request.Form.Files.FirstOrDefault();
@@ -2650,8 +2666,18 @@ namespace Risebird.Web.Controllers
         /// Whether candidates review their transcript before submitting. On by default; the switch
         /// exists so it can be turned off without a deploy if it misbehaves in a live interview.
         /// </summary>
-        private bool IsCandidateTranscriptReviewEnabled() =>
-            _configuration.GetValue("AIInterview:CandidateTranscriptReview", true);
+        /// <summary>
+        /// Whether the candidate reviews their transcript before submitting, for one channel.
+        ///
+        /// The channel decides when it has an opinion; otherwise the environment's setting applies.
+        /// Review costs the candidate time on the clock, which suits a screening conversation and
+        /// does not always suit a timed technical round, so this is a per-channel call - but every
+        /// channel that predates the column keeps exactly the behaviour it has today.
+        /// </summary>
+        private bool IsCandidateTranscriptReviewEnabled(MeetingVM meeting) =>
+            meeting?.CandidateTranscriptReview
+            ?? _configuration.GetValue("AIInterview:CandidateTranscriptReview", true);
+
 
         /// <summary>
         /// The reviewed transcript this submission carries, or null when the answer did not go
@@ -2660,14 +2686,69 @@ namespace Risebird.Web.Controllers
         /// Both halves have to be present: a confirmed transcript with no raw one beside it would
         /// mean the posted text was never checked against anything the candidate actually said.
         /// </summary>
-        private CandidateTranscriptReview BuildTranscriptReview(ChatMessageViewModel model)
+        private CandidateTranscriptReview BuildTranscriptReview(ChatMessageViewModel model, MeetingVM meeting)
         {
-            if (!IsCandidateTranscriptReviewEnabled()) return null;
+            if (!IsCandidateTranscriptReviewEnabled(meeting)) return null;
             if (model == null) return null;
             if (string.IsNullOrWhiteSpace(model.ConfirmedTranscript)) return null;
             if (model.RawTranscript == null) return null;
 
             return CandidateTranscriptReview.Build(model.RawTranscript, model.ConfirmedTranscript);
+        }
+
+        /// <summary>
+        /// Sends the candidate back to the question they were answering, with an explanation,
+        /// instead of ending their interview.
+        ///
+        /// Every audio failure used to return ExitModalPartial, whose only control is a Close
+        /// button bound to window.close(). A candidate whose upload never attached, whose recording
+        /// was clipped, or whose transcription came back as noise was removed from an interview
+        /// they could simply have repeated - and since the answer post is a full form submit, the
+        /// page carrying their interview was gone, so there was no way back even in principle.
+        ///
+        /// The question stays on screen and the clock keeps its server-side value, so a retry costs
+        /// the candidate time rather than the interview. Only the answer is cleared: leaving a
+        /// stale transcript in the form would let the failed attempt be resubmitted behind them.
+        /// </summary>
+        private async Task<IActionResult> RetryAnswerAsync(ChatMessageViewModel model, string title, string message)
+        {
+            await RefreshModelMeetingFieldsAsync(model);
+
+            model.Message = null;
+            model.RawTranscript = null;
+            model.ConfirmedTranscript = null;
+            model.TranscriptTakeCount = (model.TranscriptTakeCount < 1 ? 1 : model.TranscriptTakeCount) + 1;
+
+            // The posted model carries no chat log - each branch builds its own from the transcript
+            // on the way to a NEW question, and this render is the same question again. Without
+            // this the candidate is returned to a blank conversation and cannot see what they were
+            // asked. The earlier turns are not rebuilt; the question they have to answer is.
+            if ((model.ChatLog == null || model.ChatLog.Count == 0)
+                && !string.IsNullOrWhiteSpace(model.CurrentQuestion))
+            {
+                model.ChatLog = new List<ChatLine>
+                {
+                    new ChatLine
+                    {
+                        Role = "Bot",
+                        Message = CleanMessage(model.CurrentQuestion),
+                        sampleQuestionId = model.CurrentQuestionId
+                    }
+                };
+            }
+
+            ViewBag.AnswerRetryTitle = title;
+            ViewBag.AnswerRetryMessage = message;
+            ViewBag.AnswerRetryTakeCount = model.TranscriptTakeCount;
+
+            // Worth a log line even though the candidate recovers: a channel where this fires often
+            // has a microphone or encoding problem that no single candidate will ever report.
+            await _applicationErrorLogger.LogMessage(
+                LogLevelInfo.Info,
+                $"AI interview session {model.SessionId}: answer attempt {model.TranscriptTakeCount - 1} " +
+                $"was refused ({title}); the candidate was returned to the question to record again.");
+
+            return View("Index", model);
         }
 
         /// <summary>
@@ -2735,7 +2816,7 @@ namespace Risebird.Web.Controllers
 
         }
 
-        private async Task<bool> UploadBotInterviewVideo(ChatMessageViewModel model, string question, string candidateResponse)
+        private async Task<bool> UploadBotInterviewVideo(ChatMessageViewModel model, string question, string candidateResponse, MeetingVM meeting)
         {
             try
             {
@@ -2870,7 +2951,13 @@ namespace Risebird.Web.Controllers
                 // embedded test - so it is the one question type allowed to save without a video.
                 // What speech-to-text heard is stored beside what the candidate confirmed, so a
                 // dispute can be read back against the recording rather than argued from memory.
-                var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, deliveryHeadQuestionId, model.IsTypingSpeedQuestion, model.IsListeningComprehensionQuestion, candidateAnswerAudioLink, model.IsMcqAssessmentQuestion, BuildTranscriptReview(model));
+                var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, deliveryHeadQuestionId, model.IsTypingSpeedQuestion, model.IsListeningComprehensionQuestion, candidateAnswerAudioLink, model.IsMcqAssessmentQuestion, BuildTranscriptReview(model, meeting), model.TranscriptTakeCount);
+
+                // This question is answered, so the next one starts its own count. Without this the
+                // posted value rides along on the model and every later question inherits the takes
+                // of the one before it.
+                if (result) model.TranscriptTakeCount = 0;
+
                 return result;
             }
             catch (Exception ex)

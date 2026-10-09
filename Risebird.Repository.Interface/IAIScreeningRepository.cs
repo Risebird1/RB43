@@ -26,6 +26,13 @@ namespace Risebird.Repository.Interface
             bool isAadhaarVerificationRequired = false);
 
         /// <summary>
+        /// Every job-description url any channel still points at, for the retention job to keep clear
+        /// of. Returns null when the read failed, which the caller must treat as "cannot tell what is
+        /// in use" and delete nothing - distinct from an empty list, which means nothing is in use.
+        /// </summary>
+        Task<IReadOnlyCollection<string>> GetReferencedJdLinksAsync();
+
+        /// <summary>
         /// Stamps the fields usp_CreateSkillChannelFromTemplateV1 does not write: the two-section
         /// count, the stored-prompt ids, the ideal candidate profile, and the rubric with its
         /// SkillSet sections.
@@ -37,7 +44,8 @@ namespace Risebird.Repository.Interface
             string openAIEvaluatorPromptId,
             string idealCandidateProfile,
             IList<TransSkill> rubric,
-            string jdTitleTwo = null);
+            string jdTitleTwo = null,
+            bool? candidateTranscriptReview = null);
 
         /// <summary>True when a template already carries this name.</summary>
         Task<bool> IsTemplateNameTaken(string templateName);

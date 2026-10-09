@@ -52,7 +52,9 @@ namespace Risebird.CommonHelper.Interface
             string promptId,
             string previousResponseId = null,
             int? maxOutputTokens = null,
-            bool useStoredPromptModel = false);
+            bool useStoredPromptModel = false,
+            object responseSchema = null,
+            string schemaName = null);
 
         /// <summary>
         /// Responses API JSON call with inline instructions on OpenAI:ResponsesModel — no stored prompt or

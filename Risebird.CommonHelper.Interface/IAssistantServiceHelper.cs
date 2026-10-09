@@ -59,7 +59,7 @@ namespace Risebird.CommonHelper.Interface
         /// closing report turn - falling back to OpenAI:AIInterviewerPromptId when neither is configured.
         /// Returns the response id for multi-turn chaining (stored in InterviewSessions.ThreadId).
         /// </summary>
-        Task<(RunResult Result, string ResponseId)> GenerateAIInterviewerMessage(string message, string previousResponseId = null, string promptId = null);
+        Task<(RunResult Result, string ResponseId)> GenerateAIInterviewerMessage(string message, string previousResponseId = null, string promptId = null, bool expectEvaluationReport = false);
 
         Task<RunResult> GenerateTypingAssessment(string inputsJson);
         Task<(RunResult Result, string ResponseId)> GenerateListeningComprehensionAssessment(string inputsJson);

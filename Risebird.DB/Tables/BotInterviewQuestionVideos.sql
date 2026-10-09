@@ -174,3 +174,25 @@ BEGIN
     Add TranscriptDivergencePct int NULL
 END
 GO
+
+-- ---------------------------------------------------------------------------------------------
+-- TranscriptTakeCount
+--
+-- How many recordings the candidate made before this answer was accepted. 1 is the normal case.
+--
+-- Anything higher means an attempt failed - nothing attached, a clipped recording, speech-to-text
+-- erroring or returning noise - and the candidate was sent back to record again rather than being
+-- dropped out of the interview, which is what used to happen. Read it as an equipment and
+-- environment signal, not a candidate one: a channel with high takes across many candidates has a
+-- problem of its own.
+--
+-- NULL on every answer recorded before this existed.
+-- ---------------------------------------------------------------------------------------------
+IF NOT EXISTS(
+    SELECT * FROM sys.columns
+    WHERE Name = N'TranscriptTakeCount' AND Object_ID = Object_ID(N'BotInterviewQuestionVideos'))
+BEGIN
+    ALTER TABLE BotInterviewQuestionVideos
+    Add TranscriptTakeCount int NULL
+END
+GO
