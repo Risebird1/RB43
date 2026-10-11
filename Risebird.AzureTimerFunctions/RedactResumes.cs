@@ -78,7 +78,7 @@ namespace Risebird.AzureTimerFunctions
                                 }
                                 catch (Exception ex)
                                 {
-                                    _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                                     log.LogError($"Error while inserting coded resume blob  at: {DateTime.Now}, Message: {ex.Message}");
                                     return;
                                 }

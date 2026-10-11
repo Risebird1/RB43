@@ -1040,7 +1040,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return Json(new { success = false, message = "An unexpected error occurred while fetching payout status." });
             }
         }
