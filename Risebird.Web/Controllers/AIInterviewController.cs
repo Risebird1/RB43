@@ -76,6 +76,8 @@ namespace Risebird.Web.Controllers
         private readonly ICodeProjectQuestionService _codeProjectQuestionService;
         private readonly Risebird.Web.Services.CodeProjectBackgroundQueue _codeProjectQueue;
 
+        private readonly IHttpClientFactory _httpClientFactory;
+
         public AIInterviewController(IConfiguration configuration, IAzureStorageHelper azureStorageHelper,
             IApplicationErrorLogger applicationErrorLogger, IInterviewApiService api,
             IOpenAISpeechToTextService speechToTextService, IFileMimeTypeHelper fileMimeTypeHelper,
@@ -91,8 +93,9 @@ namespace Risebird.Web.Controllers
             ICodeExecutionService codeExecutionService,
             IMcqAssessmentService mcqAssessmentService,
             ICodeProjectQuestionService codeProjectQuestionService,
-            Risebird.Web.Services.CodeProjectBackgroundQueue codeProjectQueue)
+            Risebird.Web.Services.CodeProjectBackgroundQueue codeProjectQueue, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _codeProjectQuestionService = codeProjectQuestionService;
             _codeProjectQueue = codeProjectQueue;
             _configuration = configuration;
@@ -2864,7 +2867,7 @@ namespace Risebird.Web.Controllers
                     //    var aiVideoStorageName = _configuration["AIVideoStorageSettings:StorageName"];
                     //    var aiVideoStorageKey = _configuration["AIVideoStorageSettings:SecretKey"];
 
-                    //    HttpClient myWebClient = new HttpClient();
+                    //    HttpClient myWebClient = _httpClientFactory.CreateClient();
                     //    using (Stream myStream = myWebClient.GetStreamAsync(VideoLink).Result)
                     //    {
                     //        var fileName = $"aiVideo__{DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")}";

@@ -55,6 +55,8 @@ namespace Risebird.Web.Controllers
         private readonly ResumeScreeningBackgroundQueue _resumeScreeningQueue;
         private readonly IConfiguration _configuration;
 
+        private readonly IHttpClientFactory _httpClientFactory;
+
         public AIScreenerController(IAssistantServiceHelper assistantServiceHelper,
             IApplicationErrorLogger applicationErrorLogger, ICandidateService candidateService,
             IIRFService irfService, IFileMimeTypeHelper fileMimeTypeHelper,
@@ -63,8 +65,9 @@ namespace Risebird.Web.Controllers
             IActivityTrackerService activityTrackerService, IPdfReaderHelper pdfReaderHelper,
             ITranscriptOptimizationHelper transcriptOptimizationHelper,
             AdvancedResumeScreeningService advancedResumeScreeningService,
-            ResumeScreeningBackgroundQueue resumeScreeningQueue, IConfiguration configuration)
+            ResumeScreeningBackgroundQueue resumeScreeningQueue, IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _advancedResumeScreeningService = advancedResumeScreeningService;
             _resumeScreeningQueue = resumeScreeningQueue;
             _configuration = configuration;
@@ -148,7 +151,7 @@ namespace Risebird.Web.Controllers
 
                         return View(response);
                         //return Json(response);
-                        //HttpClient myWebClient = new HttpClient();
+                        //HttpClient myWebClient = _httpClientFactory.CreateClient();
                         //using (var reader = new StreamReader(myWebClient.GetStreamAsync(resumeLink).Result))//new StreamReader(resumeFile.OpenReadStream())
                         //{
                         //    var resume = await reader.ReadToEndAsync();
@@ -871,7 +874,7 @@ namespace Risebird.Web.Controllers
 
             try
             {
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = _httpClientFactory.CreateClient())
                 {
                     byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
 
@@ -1678,7 +1681,7 @@ namespace Risebird.Web.Controllers
                 }
 
                 string transcriptText;
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = _httpClientFactory.CreateClient())
                 {
                     transcriptText = await client.GetStringAsync(report.AudioTranscriptFileLink);
                 }

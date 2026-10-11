@@ -46,13 +46,16 @@ namespace Risebird.CommonHelper
         private readonly string LinkedInVerificationAssistantId;
 
         //private readonly List<string> candidateResumesVectorStoreId;
+        private readonly IHttpClientFactory _httpClientFactory;
+
         public AssistantServiceHelper(
             IApplicationErrorLogger applicationErrorLogger,
             IConfiguration configuration,
             IOpenAIApiLogger openAIApiLogger,
             IOpenAIResponsesHelper openAIResponsesHelper,
-            IPdfReaderHelper pdfReaderHelper)
+            IPdfReaderHelper pdfReaderHelper, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _openAIApiLogger = openAIApiLogger;
@@ -282,7 +285,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                HttpClient client = new HttpClient();
+                HttpClient client = _httpClientFactory.CreateClient();
                 string assistantId = string.Empty;
                 string operationType = "Unknown";
 
@@ -444,7 +447,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                HttpClient client = new HttpClient();
+                HttpClient client = _httpClientFactory.CreateClient();
 
                 var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/threads/{threadId}/runs/{runId}")
                 {
@@ -513,7 +516,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                HttpClient client = new HttpClient();
+                HttpClient client = _httpClientFactory.CreateClient();
 
                 var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/threads/{threadId}/runs/{runId}/steps")
                 {
@@ -573,7 +576,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                HttpClient client = new HttpClient();
+                HttpClient client = _httpClientFactory.CreateClient();
 
                 var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/threads/{threadId}/messages")
                 {
@@ -622,7 +625,7 @@ namespace Risebird.CommonHelper
 
             try
             {
-                using (HttpClient resumeClient = new HttpClient())
+                using (HttpClient resumeClient = _httpClientFactory.CreateClient())
                 {
                     var data = await resumeClient.GetByteArrayAsync(url);
                     var fileContent = new ByteArrayContent(data);
@@ -644,7 +647,7 @@ namespace Risebird.CommonHelper
                             { fileContent, "file", fcName }
                         };
 
-                        HttpClient client = new HttpClient();
+                        HttpClient client = _httpClientFactory.CreateClient();
                         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
 
                         var sw = System.Diagnostics.Stopwatch.StartNew();
@@ -698,7 +701,7 @@ namespace Risebird.CommonHelper
         //{
         //    try
         //    {
-        //        HttpClient client = new HttpClient();
+        //        HttpClient client = _httpClientFactory.CreateClient();
         //        var requestBody = new
         //        {
         //            file_id = fileId
@@ -745,7 +748,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                HttpClient client = new HttpClient();
+                HttpClient client = _httpClientFactory.CreateClient();
 
                 var request = new HttpRequestMessage(HttpMethod.Post, $"{baseUrl}/threads")
                 {
@@ -919,7 +922,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                HttpClient client = new HttpClient();
+                HttpClient client = _httpClientFactory.CreateClient();
 
                 var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/files")
                 {
@@ -987,7 +990,7 @@ namespace Risebird.CommonHelper
                     {
                         try
                         {
-                            HttpClient client = new HttpClient();
+                            HttpClient client = _httpClientFactory.CreateClient();
 
                             var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/files/{item.id}")
                             {
@@ -1053,7 +1056,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                HttpClient client = new HttpClient();
+                HttpClient client = _httpClientFactory.CreateClient();
 
                 var request = new HttpRequestMessage(HttpMethod.Get, $"{baseUrl}/vector_stores")
                 {
@@ -1108,7 +1111,7 @@ namespace Risebird.CommonHelper
                     Parallel.ForEach(vectorsList?.data, item =>
                     {
                         var sw = System.Diagnostics.Stopwatch.StartNew();
-                        HttpClient client = new HttpClient();
+                        HttpClient client = _httpClientFactory.CreateClient();
 
                         var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/vector_stores/{item.id}")
                         {
@@ -1148,7 +1151,7 @@ namespace Risebird.CommonHelper
                     );
                     //foreach (var item in vectorsList?.data)
                     //{
-                    //    HttpClient client = new HttpClient();
+                    //    HttpClient client = _httpClientFactory.CreateClient();
 
                     //    var request = new HttpRequestMessage(HttpMethod.Delete, $"{baseUrl}/vector_stores/{item.id}")
                     //    {
@@ -2383,7 +2386,7 @@ namespace Risebird.CommonHelper
             if (string.IsNullOrWhiteSpace(model))
                 model = "gpt-4.1";
 
-            using (var http = new HttpClient())
+            using (var http = _httpClientFactory.CreateClient())
             {
                 http.Timeout = TimeSpan.FromMinutes(5);
                 http.DefaultRequestHeaders.Clear();

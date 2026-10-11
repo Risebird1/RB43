@@ -31,8 +31,11 @@ namespace Risebird.Web
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly ISASUrlHelper _sasUrlHelper;
 
-        public MeetingInviteController(HttpClientHelper factory, IConfiguration configuration, INotificationHelper notificationHelper, IMeetingInviteService meetingInviteService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISASUrlHelper sasUrlHelper)
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public MeetingInviteController(HttpClientHelper factory, IConfiguration configuration, INotificationHelper notificationHelper, IMeetingInviteService meetingInviteService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISASUrlHelper sasUrlHelper, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _httpClient = factory.GetHttpClient();
             _configuration = configuration;
             _notificationHelper = notificationHelper;
@@ -239,7 +242,7 @@ namespace Risebird.Web
                 new KeyValuePair<string, string>("scope",  "https://graph.microsoft.com/.default"),
                 new KeyValuePair<string, string>("grant_type", "client_credentials")
             };
-            var client = new HttpClient();
+            var client = _httpClientFactory.CreateClient();
             var tenantId = "fb212e2c-ff2c-4f52-9a84-774d6f275cb4";
             var requestUrl = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token";
             var requestContent = new FormUrlEncodedContent(values);

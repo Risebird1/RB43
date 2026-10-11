@@ -70,6 +70,8 @@ namespace Risebird.Web.Controllers
         private readonly IAIInterviewerService _aiInterviewerService;
 
         //private static string Searchvalue;
+        private readonly IHttpClientFactory _httpClientFactory;
+
         public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService,
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService, ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository,
@@ -77,8 +79,9 @@ namespace Risebird.Web.Controllers
             IAadhaarService aadhaarService, IZoomHelper zoomHelper,
             IAffIndaResumeParserHelper affIndaResumeParserHelper,
             IInterviewSchedulerService interviewSchedulerservice, IWebHostEnvironment env,
-            IEncryptionHelper encryptionHelper, IZohoMeetingHelper zoho, IAIInterviewerService aiInterviewerService)
+            IEncryptionHelper encryptionHelper, IZohoMeetingHelper zoho, IAIInterviewerService aiInterviewerService, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
             _irfService = irfService;
@@ -5544,7 +5547,7 @@ namespace Risebird.Web.Controllers
                 {
                     var model = new Candidate();
 
-                    HttpClient myWebClient = new HttpClient();
+                    HttpClient myWebClient = _httpClientFactory.CreateClient();
                     string uploadedCodedResumeLink = string.Empty;
                     using (Stream myStream = await myWebClient.GetStreamAsync(redactedResumeLink))
                     {

@@ -39,8 +39,11 @@ namespace Risebird.CommonHelper
         private readonly string     _voiceAuthId;
         private readonly string     _voiceBasicAuth;
 
-        public PlivoCXService(IConfiguration configuration)
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public PlivoCXService(IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             var authId    = configuration["PlivoCX:ApiAuthId"]    ?? string.Empty;
             var authToken = configuration["PlivoCX:ApiAuthToken"]  ?? string.Empty;
             _triggerEndpointUrl           = configuration["PlivoCX:TriggerEndpointUrl"]           ?? string.Empty;
@@ -55,7 +58,7 @@ namespace Risebird.CommonHelper
             _voiceBasicAuth = Convert.ToBase64String(
                 Encoding.ASCII.GetBytes($"{_voiceAuthId}:{voiceToken}"));
 
-            _httpClient = new HttpClient();
+            _httpClient = _httpClientFactory.CreateClient();
             _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue(
                     "Basic",

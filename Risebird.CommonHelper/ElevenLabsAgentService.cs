@@ -39,8 +39,11 @@ namespace Risebird.CommonHelper
         private readonly string _templateLanguage;
         private readonly string _webhookSecret;
 
-        public ElevenLabsAgentService(IConfiguration configuration)
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public ElevenLabsAgentService(IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _apiKey = configuration["ElevenLabs:ApiKey"] ?? string.Empty;
             _baseUrl = (configuration["ElevenLabs:BaseUrl"] ?? "https://api.elevenlabs.io").TrimEnd('/');
             _whatsAppPhoneNumberId = configuration["ElevenLabs:WhatsAppPhoneNumberId"] ?? string.Empty;
@@ -49,7 +52,7 @@ namespace Risebird.CommonHelper
                 ? "en" : configuration["ElevenLabs:WhatsAppTemplateLanguage"];
             _webhookSecret = configuration["ElevenLabs:WebhookSecret"] ?? string.Empty;
 
-            _httpClient = new HttpClient();
+            _httpClient = _httpClientFactory.CreateClient();
             if (!string.IsNullOrEmpty(_apiKey))
                 _httpClient.DefaultRequestHeaders.Add("xi-api-key", _apiKey);
         }

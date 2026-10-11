@@ -20,10 +20,13 @@ public class InterviewApiService : IInterviewApiService
     private readonly IConfiguration _config;
     private readonly IApplicationErrorLogger _applicationErrorLogger;
 
-    public InterviewApiService(IConfiguration config, IApplicationErrorLogger applicationErrorLogger)//HttpClient http,
+    private readonly IHttpClientFactory _httpClientFactory;
+
+    public InterviewApiService(IConfiguration config, IApplicationErrorLogger applicationErrorLogger, IHttpClientFactory httpClientFactory)//HttpClient http,
     {
+        _httpClientFactory = httpClientFactory;
         //_http = http;
-        _http = new HttpClient();
+        _http = _httpClientFactory.CreateClient();
         _config = config;
         _http.BaseAddress = new Uri(_config["ApiLayer:ApiBaseUrl"]);
         _applicationErrorLogger = applicationErrorLogger;

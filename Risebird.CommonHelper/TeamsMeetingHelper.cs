@@ -18,8 +18,11 @@ namespace Risebird.CommonHelper
         private readonly ISASUrlHelper _sasUrlHelper;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
 
-        public TeamsMeetingHelper(IAzureStorageHelper azureStorageHelper, ISASUrlHelper sasUrlHelper, IApplicationErrorLogger applicationErrorLogger)
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public TeamsMeetingHelper(IAzureStorageHelper azureStorageHelper, ISASUrlHelper sasUrlHelper, IApplicationErrorLogger applicationErrorLogger, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _azureStorageHelper = azureStorageHelper;
             _sasUrlHelper = sasUrlHelper;
             _applicationErrorLogger = applicationErrorLogger;
@@ -33,7 +36,7 @@ namespace Risebird.CommonHelper
                 new KeyValuePair<string, string>("scope",  "https://graph.microsoft.com/.default"),
                 new KeyValuePair<string, string>("grant_type", "client_credentials")
             };
-            var client = new HttpClient();
+            var client = _httpClientFactory.CreateClient();
             var tenantId = "fb212e2c-ff2c-4f52-9a84-774d6f275cb4";
             var requestUrl = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token";
             var requestContent = new FormUrlEncodedContent(values);

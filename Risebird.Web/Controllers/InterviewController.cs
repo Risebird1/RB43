@@ -89,6 +89,8 @@ namespace Risebird.Web.Controllers
 
         private readonly HttpClient _httpClient;
         private readonly CancellationToken _cancellationToken;
+        private readonly IHttpClientFactory _httpClientFactory;
+
         public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
             ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService,
             INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration, HttpClientHelper factory,
@@ -101,8 +103,9 @@ namespace Risebird.Web.Controllers
             IConverter converter, IAssistantServiceHelper assistantServiceHelper, IEncryptionHelper encryptionHelper, IActivityTrackerService activityTrackerService,
             IReportQCOptimizationHelper reportQCOptimizationHelper, IDmIvChannelDeactivationService dmIvChannelDeactivationService,
             IAICodeInterviewService aiCodeInterviewService, IWebHostEnvironment env,
-            IAIScreeningRepository aiScreeningRepository, IAIInterviewerRepository aiInterviewerRepository)//IConverter converter,
+            IAIScreeningRepository aiScreeningRepository, IAIInterviewerRepository aiInterviewerRepository, IHttpClientFactory httpClientFactory)//IConverter converter,
         {
+            _httpClientFactory = httpClientFactory;
             _meetingService = meetingService;
 
             _aiScreeningRepository = aiScreeningRepository;
@@ -5148,7 +5151,7 @@ namespace Risebird.Web.Controllers
                         TempData["SuccessErrorMessageInterview"] = "Failed!";
 
                     }
-                    HttpClient httpClient = new HttpClient();
+                    HttpClient httpClient = _httpClientFactory.CreateClient();
                     httpClient.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
                     await httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
                     TempData["SuccessErrorMessageInterview"] = "Sentiment analysis has been started Successfully!";
@@ -5269,7 +5272,7 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public JsonResult FetchCandidateFeedback(int interviewid)
         {
-            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration, _httpClientFactory);
             var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
             var resultset = result.Where(x => x.interviewid == interviewid).FirstOrDefault();
             return Json(resultset);
@@ -5536,7 +5539,7 @@ namespace Risebird.Web.Controllers
                             var path = $"https://risebirdmicroservicededicated.azurewebsites.net/api/SpeechToTextService";
                             var functionKey = "VFkRiakLwh93q4fzZ9xx69AvKnTSbNVKQSzIaHswCMO/CgCiiOsNNQ==";
 
-                            HttpClient httpClient = new HttpClient();
+                            HttpClient httpClient = _httpClientFactory.CreateClient();
                             await httpClient.SendRequestAsync(HttpMethod.Post, path, model, functionKey, "", _cancellationToken);
                             TempData["SuccessErrorMessageInterview"] = "Audio has been uploaded Successfully!";
                             return RedirectToAction("Index");
@@ -7580,7 +7583,7 @@ namespace Risebird.Web.Controllers
         }
         public async Task<string> ImageUrlToBase64(string imageUrl)
         {
-            using var httClient = new HttpClient();
+            using var httClient = _httpClientFactory.CreateClient();
             var imageBytes = await httClient.GetByteArrayAsync(imageUrl);
             return Convert.ToBase64String(imageBytes);
         }
@@ -8313,7 +8316,7 @@ namespace Risebird.Web.Controllers
 
                     try
                     {
-                        using (HttpClient client = new HttpClient())
+                        using (HttpClient client = _httpClientFactory.CreateClient())
                         {
                             // Download the file content from the URL
                             HttpResponseMessage response = await client.GetAsync(transcriptUrl);
@@ -9795,7 +9798,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = _httpClientFactory.CreateClient())
                 {
                     byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
 
@@ -10622,7 +10625,7 @@ namespace Risebird.Web.Controllers
                 }
 
                 string transcriptString;
-                using (var client = new HttpClient())
+                using (var client = _httpClientFactory.CreateClient())
                 {
                     transcriptString = await client.GetStringAsync(item.AudioTranscriptFileLink);
                 }

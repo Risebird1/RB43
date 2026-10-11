@@ -18,8 +18,11 @@ namespace Risebird.CommonHelper
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         //private readonly IConfiguration _configuration;
         
-        public PdfReaderHelper(IApplicationErrorLogger applicationErrorLogger) //, IConfiguration configuration
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public PdfReaderHelper(IApplicationErrorLogger applicationErrorLogger, IHttpClientFactory httpClientFactory) //, IConfiguration configuration
         {
+            _httpClientFactory = httpClientFactory;
             //_configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
         }
@@ -29,7 +32,7 @@ namespace Risebird.CommonHelper
 
             try
             {
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = _httpClientFactory.CreateClient())
                 {
                     byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
 

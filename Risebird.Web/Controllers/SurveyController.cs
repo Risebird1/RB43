@@ -1,3 +1,4 @@
+using System.Net.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +28,11 @@ namespace Risebird.Web.Controllers
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IAadhaarService _aadhaarService;
         private readonly ISurveyService _surveyService;
-        public SurveyController(IConfiguration configuration, IMeetingService meetingService, INotificationHelper notificationHelper, IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger, IAadhaarService aadhaarService, ISurveyService surveyService)
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public SurveyController(IConfiguration configuration, IMeetingService meetingService, INotificationHelper notificationHelper, IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger, IAadhaarService aadhaarService, ISurveyService surveyService, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _meetingService = meetingService;
             _notificationHelper = notificationHelper;
@@ -217,7 +221,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.type = "Candidate";
                 //var modelData = new List<SurveyVM>();
                 var modelData = await _surveyService.GetCandidateRatingByIRFId(IRFId);
-                //AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                //AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration, _httpClientFactory);
                 //var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
                 //var _resultlist = (from data in result
                 //                   select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
@@ -281,7 +285,7 @@ namespace Risebird.Web.Controllers
                     //}
                     //var interviewerids = _meetingService.FetchAllInterviewidByClient(Clientid, emailid);
                     //var modelData = new List<SurveyVM>();
-                    //AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                    //AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration, _httpClientFactory);
                     //var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
                     //var _resultlist = (from data in result
                     //                   select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
@@ -426,7 +430,7 @@ namespace Risebird.Web.Controllers
             {
                 //var modelData = new List<SurveyVM>();
                 var modelData = await _surveyService.GetCandidateRatingByIRFId(IRFId);
-                //AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                //AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration, _httpClientFactory);
                 //var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
                 //var _resultlist = (from data in result
                 //                   select new SurveyDetails { Interviewerid = data.Interviewerid }).ToList();
@@ -539,7 +543,7 @@ namespace Risebird.Web.Controllers
                 //}
                 var modelData = await _surveyService.GetCandidateRating(emailid, profileName);
                 //var modelData = new List<SurveyVM>();
-                //AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                //AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration, _httpClientFactory);
                 //var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
                 //if (profileName == "Client")
                 //{
@@ -810,7 +814,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration, _httpClientFactory);
                 var result = _azureTableStorageService.GetLogEntities<LogData>("Risebirdlogs");
                 return View(result);
             }

@@ -1635,7 +1635,7 @@ namespace Risebird.Web.Controllers
             var credentials = Convert.ToBase64String(
                 System.Text.Encoding.ASCII.GetBytes($"{authId}:{authToken}"));
 
-            using var http = new HttpClient();
+            using var http = _httpClientFactory.CreateClient();
             http.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", credentials);
             http.Timeout = TimeSpan.FromSeconds(15);
@@ -1945,7 +1945,7 @@ NEVER:
         private async Task<string> DownloadTranscriptStringAsync(string url, string accessToken)
         {
 
-            using var myWebClient = new HttpClient();
+            using var myWebClient = _httpClientFactory.CreateClient();
 
             myWebClient.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Zoho-oauthtoken", accessToken);
@@ -1962,7 +1962,7 @@ NEVER:
         private async Task<string> DownloadTranscriptStringFromBlobUrl(string url)
         {
 
-            using var client = new HttpClient();
+            using var client = _httpClientFactory.CreateClient();
             using var stream = await client.GetStreamAsync(url);
             using var reader = new StreamReader(stream);
 
@@ -4175,7 +4175,7 @@ NEVER:
                         var modelList = new List<MeetingVM>();
                         if (actiontype == 1 && actionstatus == RibbonActionType.UnAssignedCoordianter)
                         {
-                            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration, _httpClientFactory);
                             var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
 
                             var myInterview = _meetingService.GetHRAssignedInterviews(emailid);
@@ -4438,7 +4438,7 @@ NEVER:
                         var modelList = new List<MeetingVM>();
                         if (actiontype == 1 && actionstatus == RibbonActionType.UnAssignedCoordianter)
                         {
-                            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration, _httpClientFactory);
                             var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
                             string email = string.Empty;
                             if (HttpContext.Session.GetString("email") != null)
@@ -4820,7 +4820,7 @@ NEVER:
             if (section == 1)
             {
                 var modelData = new List<SurveyVM>();
-                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration, _httpClientFactory);
                 var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
                 string email = string.Empty;
                 if (HttpContext.Session.GetString("email") != null)
@@ -9893,7 +9893,7 @@ NEVER:
                     //ScreeningRequest requestMode
                     //var aiAnalysis = await _assistantServiceHelper.ScreenAsync(new ScreeningRequest { TranscriptLink = item.AudioTranscriptFileLink, Type = ProfileNames.TranscriptAnalysisAIAssistant });
                     string transcriptText;
-                    using (HttpClient client = new HttpClient())
+                    using (HttpClient client = _httpClientFactory.CreateClient())
                     {
                         transcriptText = await client.GetStringAsync(item.AudioTranscriptFileLink);
                     }
