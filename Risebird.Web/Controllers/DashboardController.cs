@@ -1929,13 +1929,13 @@ NEVER:
                         }
                         catch (Exception ex)
                         {
-                            _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                             return;
                         }
                     }
                     catch (Exception ex)
                     {
-                        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                         return;
                     }
                 }

@@ -1,3 +1,17 @@
+*** SUPERSEDED - DO NOT PASTE THIS FILE INTO OPENAI ***
+
+Risebird now generates both prompt texts per channel, from that channel's own parameters.
+Take them from the screen instead:
+
+  New channel      /AIScreening/New, step 4, "Prompt instructions to publish"
+  Existing channel Edit IRF, "Generate prompt instructions"
+
+Those carry this channel's job title, ideal candidate profile and the exact rubric
+parameter names - which this static file cannot, and which the report depends on matching.
+Kept only as a record of the wording the generator was built from.
+
+===============================================================================================
+
 AI AUDIO ADAPTIVE HR SCREENING — PRIMARY PROMPT (DRAFT)
 
 Create this as a stored prompt in the OpenAI account, then put its pmpt_... id in
