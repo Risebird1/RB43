@@ -100,7 +100,7 @@ namespace Risebird.Repository.Interface
         Task<bool> IsSmeAssignedToIrfAsync(string loggedInUser, int irfId);
         Task<List<ClientIRFsFeedbackVM>> FetchClientIRFFeedbackList();
         Task<InterviewerProfileVM> GetInterviewerFlagDetails(string intervieweremailid);
-        Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsInterviewerAccess, bool? IsBlocked);
+        Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsInterviewerAccess, bool? IsBlocked, string modifiedBy = null);
         //Task<bool> UpdateInterviewerFlag(string Emailid, bool? Verified, bool? IsApproved);
         Task<IEnumerable<InterviewerStatsVM>> GetInterviewerStatsAndRatings(int? irfId = null, string clientEmailId = null);
         Task<bool> DeactivateSkillChannelInterviewer(int irfId, string interviewerEmail, string removedBy = null, string logType = null);

@@ -90,7 +90,7 @@ namespace Risebird.Business.Tests.Fixtures
             Repository.Setup(x => x.DeleteInterviewerProfile(It.IsAny<int>())).ReturnsAsync(true);
             Repository.Setup(x => x.GetInterviewers()).ReturnsAsync(new List<InterviewerProfileVM>());
             Repository.Setup(x => x.UpdateInterviewerFlag(
-                    It.IsAny<string>(), It.IsAny<bool?>(), It.IsAny<bool?>(), It.IsAny<bool?>(), It.IsAny<bool?>()))
+                    It.IsAny<string>(), It.IsAny<bool?>(), It.IsAny<bool?>(), It.IsAny<bool?>(), It.IsAny<bool?>(), It.IsAny<string>()))
                 .ReturnsAsync(true);
             Repository.Setup(x => x.GetInterviewerFlagDetails(It.IsAny<string>()))
                 .ReturnsAsync(new InterviewerProfileVM { id = 55, UserId = 9, EmailId = "iv@test.com" });

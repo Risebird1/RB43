@@ -695,8 +695,22 @@
             TrialKept: 'Trial: Kept', TrialRemoved: 'Trial: Removed', AuditKept: 'IRF audit: Kept', AuditRemoved: 'IRF audit: Removed',
             TrmUnderReview: 'Red markers: Moved to Under review', TrmReviewed: 'Red markers: Moved to Reviewed', TrmRemoved: 'Red markers: Removed',
             TiUnderReview: 'Total Interviews: Moved to Under review', TiReviewed: 'Total Interviews: Moved to Reviewed', TiRemoved: 'Total Interviews: Removed',
-            TrialFlagged: 'Trial flag raised', AutoQcFlag: 'Auto-QC flag', AutoQcRemoval: 'Auto-QC removal'
+            TrialFlagged: 'Trial flag raised', AutoQcFlag: 'Auto-QC flag', AutoQcRemoval: 'Auto-QC removal',
+            ReportEdited: 'Report edited', Suspicious: 'Status: Marked suspicious', SuspiciousUndone: 'Status: Suspicious mark undone',
+            Blocked: 'Status: Blocked', Unblocked: 'Status: Unblocked', AccessRevoked: 'Status: Portal access turned off',
+            AccessRestored: 'Status: Portal access turned on', Inactivated: 'Status: Made inactive', Reactivated: 'Status: Made active',
+            PaymentHold: 'Status: Payment put on hold', PaymentHoldReleased: 'Status: Payment hold released'
         };
+        // Status changes and report edits carry their action label in status (already the title).
+        var evLabelInStatus = ['ReportEdited', 'Suspicious', 'SuspiciousUndone', 'Blocked', 'Unblocked', 'AccessRevoked',
+            'AccessRestored', 'Inactivated', 'Reactivated', 'PaymentHold', 'PaymentHoldReleased'];
+        // Report text is stored HTML-encoded; a textarea decodes it without running markup (esc() still applies).
+        function decodeHtml(v) {
+            if (v === null || v === undefined || v === '') return '';
+            var t = document.createElement('textarea');
+            t.innerHTML = String(v);
+            return t.value;
+        }
         function evTitle(e) {
             var amt = e.amount === null || e.amount === undefined ? null : Number(e.amount);
             if (e.metric === 'ReportReviewed') return 'Report review: ' + (amt > 0 ? 'Penalty ' + amt + '%' : 'No penalty');
@@ -715,7 +729,8 @@
                 var detail = e.detail || '';
                 if (e.metric === 'QCForm') detail = 'Red flags: ' + num(e.amount);
                 if (e.metric === 'Coaching') detail = detail.replace(/^(\w+)/, function (k) { return outcomeLabel(k); });
-                var sub = [e.actorEmail, e.irfName, detail, (e.metric === 'PlivoCall' || e.metric === 'Coaching' ? '' : e.status)].filter(Boolean).map(esc).join(' · ');
+                if (e.metric === 'ReportEdited') detail = (e.status ? e.status + ': ' : '') + decodeHtml(detail);
+                var sub = [e.actorEmail, e.irfName, detail, (e.metric === 'PlivoCall' || e.metric === 'Coaching' || evLabelInStatus.indexOf(e.metric) >= 0 ? '' : e.status)].filter(Boolean).map(esc).join(' · ');
                 if (e.metric === 'PlivoCall' && e.status) sub += (sub ? ' · ' : '') + esc(e.status);
                 var links = '';
                 if (e.interviewId) {

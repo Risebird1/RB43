@@ -30,5 +30,8 @@ namespace Risebird.Repository.Interface
         /// <summary>usp_GetInterviewerQCTimeline: the interviewer's IRFs and dated events (top 1000).</summary>
         Task<(IReadOnlyList<InterviewerQCIrfVM> Irfs, IReadOnlyList<InterviewerQCEventVM> Events)> GetInterviewerTimelineAsync(
             string interviewerEmail, DateTime fromIst, DateTime toIst);
+
+        /// <summary>usp_GetReportEdit: one ReportEditLog row with the full text before and after; null when not found.</summary>
+        Task<ReportEditVM> GetReportEditAsync(int id);
     }
 }

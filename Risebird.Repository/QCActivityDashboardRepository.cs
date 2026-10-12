@@ -129,5 +129,18 @@ namespace Risebird.Repository
                 : (await multi.ReadAsync<InterviewerQCEventVM>()).ToList();
             return (irfs, events);
         }
+
+        public async Task<ReportEditVM> GetReportEditAsync(int id)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", id, DbType.Int32);
+
+            using var con = new SqlConnection(_connectionString);
+            return await con.QueryFirstOrDefaultAsync<ReportEditVM>(
+                "dbo.usp_GetReportEdit",
+                parameters,
+                commandTimeout: CommandTimeoutSeconds,
+                commandType: CommandType.StoredProcedure);
+        }
     }
 }

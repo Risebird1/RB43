@@ -10,8 +10,11 @@ Who is listed (top 3000 by attention score):
   1. interviewers a QC acted on in the range: a review with a penalty, a
      Payment SLA "not approved", a QC form with red flags, a trial / IRF audit
      decision, a Total Red Marker / Total Interviews move, a QC call or a
-     coaching session. A routine no-penalty review, an approval or a QC form
-     with no red flags does not list anyone on its own.
+     coaching session, a suspicious mark, a block, portal access turned off,
+     an inactivation or a payment hold. A routine no-penalty review, an
+     approval, a QC form with no red flags, a report edit or an undo
+     (SuspiciousUndone, Unblocked, AccessRestored, Reactivated,
+     PaymentHoldReleased) does not list anyone on its own.
   2. interviewers with at least @MinInterviews completed interviews in the
      range (InterviewComments.MeetingStatus 4, 6, 7, 8) and a bad interview
      (RiskCategory P0 to P5) or an AI review penalty in the range.
@@ -79,7 +82,8 @@ BEGIN
         [Status]          VARCHAR(150)  NULL,
         Phone             VARCHAR(30)   NULL,
         RecordingUrl      VARCHAR(1000) NULL,
-        SourceId          INT           NULL
+        SourceId          INT           NULL,
+        RefId             INT           NULL
     );
 
     -- One interviewer (side panel headline): collect only their rows instead of everyone's.
@@ -238,13 +242,15 @@ BEGIN
     END
     ELSE
     BEGIN
-        -- 1. A QC acted on them (routine no-penalty reviews, approvals and clean QC forms do not count).
+        -- 1. A QC acted on them (routine no-penalty reviews, approvals and clean QC forms do not count;
+        --    nor do report edits or undos: unmarking, unblocking, restoring access, reactivating, releasing a hold).
         INSERT INTO #P (UserId)
         SELECT DISTINCT r.UserId
         FROM #R r
         WHERE NOT (r.Metric = 'ReportReviewed' AND ISNULL(r.Amount, 0) = 0)
           AND r.Metric <> 'SlaApproved'
-          AND NOT (r.Metric = 'QCForm' AND ISNULL(r.Amount, 0) = 0);
+          AND NOT (r.Metric = 'QCForm' AND ISNULL(r.Amount, 0) = 0)
+          AND r.Metric NOT IN ('ReportEdited', 'SuspiciousUndone', 'Unblocked', 'AccessRestored', 'Reactivated', 'PaymentHoldReleased');
 
         -- 2. Enough completed interviews, and a bad interview or an AI penalty in the range.
         INSERT INTO #P (UserId)

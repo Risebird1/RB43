@@ -14,8 +14,9 @@ actors per source by rows), with the source total, the first and last time
   - or the rows are under a QC (Status 'Quality Controller': the dashboard
     should count them).
 Actors the collector skips are reported, not hidden: 'System actor (excluded)'
-for AISystem / System, 'Client (excluded)' for the Client profile on report
-ratings.
+for AISystem / System (and the legacy 'Admin' on InterviewerActionLog),
+'Client (excluded)' for the Client profile on report ratings.
+InterviewerActionLog is reported per action type.
 
 Filters per source match the collector (event types, statuses, Plivo call
 shape), except that excluded actors are kept so they show up here. Optional
@@ -60,7 +61,19 @@ BEGIN
         (9,  'RedMarkerStatusDetails.CreatedBy (IRF)',      'Total Red Marker',                        1),
         (10, 'RedMarkerStatusDetails.CreatedBy (TotalInterview)', 'Total Interviews',                  1),
         (11, 'CallRecordingData.Caller (Plivo)',            'Plivo calls',                             1),
-        (12, 'InterviewerCoachingSession.CoachEmail',       'Coaching',                                CASE WHEN OBJECT_ID(N'dbo.InterviewerCoachingSession', N'U') IS NOT NULL THEN 1 ELSE 0 END);
+        (12, 'InterviewerCoachingSession.CoachEmail',       'Coaching',                                CASE WHEN OBJECT_ID(N'dbo.InterviewerCoachingSession', N'U') IS NOT NULL THEN 1 ELSE 0 END),
+        (13, 'SuspiciousInterviewer.CreatedBy',             'Interviewer status: Suspicious',          CASE WHEN OBJECT_ID(N'dbo.SuspiciousInterviewer', N'U') IS NOT NULL THEN 1 ELSE 0 END),
+        (14, 'InterviewerActionLog.ActedBy (SuspiciousUndone)', 'Interviewer status: Suspicious undone', CASE WHEN OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL THEN 1 ELSE 0 END),
+        (15, 'InterviewerActionLog.ActedBy (Blocked)',      'Interviewer status: Blocked',             CASE WHEN OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL THEN 1 ELSE 0 END),
+        (16, 'InterviewerActionLog.ActedBy (Unblocked)',    'Interviewer status: Unblocked',           CASE WHEN OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL THEN 1 ELSE 0 END),
+        (17, 'InterviewerActionLog.ActedBy (AccessRevoked)', 'Interviewer status: Access off',         CASE WHEN OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL THEN 1 ELSE 0 END),
+        (18, 'InterviewerActionLog.ActedBy (AccessRestored)', 'Interviewer status: Access on',         CASE WHEN OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL THEN 1 ELSE 0 END),
+        (19, 'InterviewerActionLog.ActedBy (Inactivated)',  'Interviewer status: Inactive',            CASE WHEN OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL THEN 1 ELSE 0 END),
+        (20, 'InterviewerActionLog.ActedBy (Reactivated)',  'Interviewer status: Reactivated',         CASE WHEN OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL THEN 1 ELSE 0 END),
+        (21, 'InterviewerActionLog.ActedBy (PaymentHold)',  'Interviewer status: Pay hold',            CASE WHEN OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL THEN 1 ELSE 0 END),
+        (22, 'InterviewerActionLog.ActedBy (PaymentHoldReleased)', 'Interviewer status: Pay hold released', CASE WHEN OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL THEN 1 ELSE 0 END),
+        (23, 'ReportEditLog.EditedBy',                      'Reports edited',                          CASE WHEN OBJECT_ID(N'dbo.ReportEditLog', N'U') IS NOT NULL THEN 1 ELSE 0 END),
+        (24, 'InterviewCommentsHistory.PerformedBy (comment changed)', 'Reports edited (before ReportEditLog)', CASE WHEN OBJECT_ID(N'dbo.InterviewCommentsHistory', N'U') IS NOT NULL THEN 1 ELSE 0 END);
 
     /* Per source and actor: rows, first and last time (IST). */
     CREATE TABLE #A (
@@ -194,6 +207,59 @@ BEGIN
         EXEC sp_executesql @Sql, @Params, @FromUtc = @FromUtc, @ToUtc = @ToUtc;
     END
 
+    -- SuspiciousInterviewer.Createddate is the app server clock, treated as UTC (as the collector does).
+    IF OBJECT_ID(N'dbo.SuspiciousInterviewer', N'U') IS NOT NULL
+        INSERT INTO #A ([Source], Actor, ActorRows, FirstAtIst, LastAtIst)
+        SELECT 'SuspiciousInterviewer.CreatedBy', LTRIM(RTRIM(s.CreatedBy)), COUNT(*),
+               DATEADD(MINUTE, 330, MIN(s.Createddate)), DATEADD(MINUTE, 330, MAX(s.Createddate))
+        FROM dbo.SuspiciousInterviewer s
+        WHERE s.Createddate >= @FromUtc AND s.Createddate < @ToUtc
+        GROUP BY LTRIM(RTRIM(s.CreatedBy));
+
+    IF OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL
+    BEGIN
+        SET @Sql = N'
+        INSERT INTO #A ([Source], Actor, ActorRows, FirstAtIst, LastAtIst)
+        SELECT ''InterviewerActionLog.ActedBy ('' + l.ActionType + '')'', LTRIM(RTRIM(l.ActedBy)), COUNT(*),
+               DATEADD(MINUTE, 330, MIN(l.ActedAtUtc)), DATEADD(MINUTE, 330, MAX(l.ActedAtUtc))
+        FROM dbo.InterviewerActionLog l
+        WHERE l.ActedAtUtc >= @FromUtc AND l.ActedAtUtc < @ToUtc
+          AND l.ActionType IN (''SuspiciousUndone'', ''Blocked'', ''Unblocked'', ''AccessRevoked'', ''AccessRestored'',
+                               ''Inactivated'', ''Reactivated'', ''PaymentHold'', ''PaymentHoldReleased'')
+        GROUP BY l.ActionType, LTRIM(RTRIM(l.ActedBy));';
+        EXEC sp_executesql @Sql, @Params, @FromUtc = @FromUtc, @ToUtc = @ToUtc;
+    END
+
+    IF OBJECT_ID(N'dbo.ReportEditLog', N'U') IS NOT NULL
+    BEGIN
+        SET @Sql = N'
+        INSERT INTO #A ([Source], Actor, ActorRows, FirstAtIst, LastAtIst)
+        SELECT ''ReportEditLog.EditedBy'', LTRIM(RTRIM(l.EditedBy)), COUNT(*),
+               DATEADD(MINUTE, 330, MIN(l.EditedAtUtc)), DATEADD(MINUTE, 330, MAX(l.EditedAtUtc))
+        FROM dbo.ReportEditLog l
+        WHERE l.EditedAtUtc >= @FromUtc AND l.EditedAtUtc < @ToUtc
+        GROUP BY LTRIM(RTRIM(l.EditedBy));';
+        EXEC sp_executesql @Sql, @Params, @FromUtc = @FromUtc, @ToUtc = @ToUtc;
+    END
+
+    -- InterviewCommentsHistory.PerformedAt is IST. Snapshots whose interviewer comment differs from the
+    -- previous non-empty snapshot, in the whole range (the collector reads only the part before the first
+    -- ReportEditLog row; the interviewer's own saves are kept here so they show up).
+    IF OBJECT_ID(N'dbo.InterviewCommentsHistory', N'U') IS NOT NULL
+        INSERT INTO #A ([Source], Actor, ActorRows, FirstAtIst, LastAtIst)
+        SELECT 'InterviewCommentsHistory.PerformedBy (comment changed)', LTRIM(RTRIM(h.PerformedBy)), COUNT(*),
+               MIN(h.PerformedAt), MAX(h.PerformedAt)
+        FROM dbo.InterviewCommentsHistory h
+        CROSS APPLY (SELECT TOP 1 p.InterviewerComment FROM dbo.InterviewCommentsHistory p
+                     WHERE p.InterviewId = h.InterviewId AND p.PerformedAt < h.PerformedAt
+                     ORDER BY p.PerformedAt DESC) prev
+        WHERE h.PerformedAt >= @FromIstDt AND h.PerformedAt < @ToIstDt
+          AND NULLIF(LTRIM(RTRIM(prev.InterviewerComment)), '') IS NOT NULL
+          AND (h.InterviewerComment IS NULL
+               OR DATALENGTH(h.InterviewerComment) <> DATALENGTH(prev.InterviewerComment)
+               OR h.InterviewerComment COLLATE Latin1_General_BIN2 <> prev.InterviewerComment COLLATE Latin1_General_BIN2)
+        GROUP BY LTRIM(RTRIM(h.PerformedBy));
+
     ;WITH Totals AS (
         SELECT a.[Source], SUM(a.ActorRows) AS SourceTotalRows, COUNT(*) AS SourceActors,
                MIN(a.FirstAtIst) AS SourceFirstAtIst, MAX(a.LastAtIst) AS SourceLastAtIst
@@ -221,6 +287,7 @@ BEGIN
             WHEN r.[Source] IS NULL                                        THEN 'No rows'
             WHEN NULLIF(r.Actor, '') IS NULL                               THEN 'Actor is empty'
             WHEN r.Actor IN ('AISystem', 'System')                         THEN 'System actor (excluded)'
+            WHEN r.Actor = 'Admin' AND s.[Source] LIKE 'InterviewerActionLog.%' THEN 'System actor (excluded)'
             WHEN r.Actor NOT LIKE '%_@_%._%' OR r.Actor LIKE '% %'         THEN 'Actor is not an email'
             WHEN u.UserId IS NULL                                          THEN 'Not a portal user'
             WHEN u.ProfileName = 'Quality Controller'                      THEN 'Quality Controller'

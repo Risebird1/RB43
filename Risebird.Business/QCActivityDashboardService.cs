@@ -233,6 +233,22 @@ namespace Risebird.Business
             return result;
         }
 
+        public async Task<ReportEditVM> GetReportEditAsync(int id)
+        {
+            if (id <= 0)
+                return null;
+
+            try
+            {
+                return await _repository.GetReportEditAsync(id);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                throw;
+            }
+        }
+
         private static string NormalizeEmail(string email)
         {
             if (string.IsNullOrWhiteSpace(email))

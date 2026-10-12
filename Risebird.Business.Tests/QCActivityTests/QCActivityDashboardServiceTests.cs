@@ -297,11 +297,106 @@ namespace Risebird.Business.Tests.QCActivityTests
             {
                 "ReportReviewed", "PenaltyApplied", "SlaApproved", "SlaNotApproved", "QCForm", "TrialKept", "TrialRemoved", "Trial",
                 "AuditBackfill", "AuditKept", "AuditRemoved", "AuditActions", "TrmUnderReview", "TrmReviewed", "TrmRemoved", "Trm",
-                "TiUnderReview", "TiReviewed", "TiRemoved", "Ti", "PlivoCall", "Coaching", "All"
+                "TiUnderReview", "TiReviewed", "TiRemoved", "Ti", "PlivoCall", "Coaching", "All",
+                "ReportEdited", "Suspicious", "SuspiciousUndone", "Blocked", "Unblocked", "AccessRevoked", "AccessRestored",
+                "Inactivated", "Reactivated", "PaymentHold", "PaymentHoldReleased",
+                "StatusActions", "SuspiciousAll", "BlockedAll", "AccessAll", "ActiveAll", "PaymentHoldAll"
             };
 
             Assert.Equal(expected.OrderBy(k => k), QCActivityMetrics.Keys.OrderBy(k => k));
             Assert.All(expected, k => Assert.Equal(k, QCActivityMetrics.Normalize(k.ToLowerInvariant())));
+        }
+
+        [Theory]
+        [InlineData("ReportEdited")]
+        [InlineData("Suspicious")]
+        [InlineData("SuspiciousUndone")]
+        [InlineData("Blocked")]
+        [InlineData("Unblocked")]
+        [InlineData("AccessRevoked")]
+        [InlineData("AccessRestored")]
+        [InlineData("Inactivated")]
+        [InlineData("Reactivated")]
+        [InlineData("PaymentHold")]
+        [InlineData("PaymentHoldReleased")]
+        [InlineData("StatusActions")]
+        [InlineData("SuspiciousAll")]
+        [InlineData("BlockedAll")]
+        [InlineData("AccessAll")]
+        [InlineData("ActiveAll")]
+        [InlineData("PaymentHoldAll")]
+        public async Task Status_and_report_edit_metric_keys_are_accepted_and_passed_as_the_canonical_key(string metric)
+        {
+            _repository
+                .Setup(r => r.GetDetailsAsync("qc@risebird.io", metric, It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+                .ReturnsAsync(new List<QCActivityDetailRowVM> { new QCActivityDetailRowVM { Metric = metric, RefId = 7 } });
+
+            var result = await CreateService().GetDetailsAsync("qc@risebird.io", metric.ToLowerInvariant(), null, null);
+
+            Assert.Null(result.Error);
+            Assert.Equal(metric, result.Metric);
+            Assert.NotEqual(metric, result.MetricLabel);
+            Assert.Equal(7, Assert.Single(result.Rows).RefId);
+        }
+
+        [Fact]
+        public void Totals_sum_report_edits_and_status_changes_with_their_undos()
+        {
+            var rows = new[]
+            {
+                new QCActivitySummaryRowVM { ReportsEdited = 2, MarkedSuspicious = 1, Blocked = 1, AccessRevoked = 1, Inactivated = 1, PaymentHolds = 1, Unblocked = 1 },
+                new QCActivitySummaryRowVM { ReportsEdited = 1, SuspiciousUndone = 1, AccessRestored = 1, Reactivated = 1, PaymentHoldsReleased = 1 }
+            };
+
+            var totals = QCActivityTotalsVM.From(rows);
+
+            Assert.Equal(3, totals.ReportsEdited);
+            Assert.Equal(5, totals.StatusChanges);
+            Assert.Equal(5, totals.StatusUndos);
+            Assert.Equal(5, rows[0].StatusChanges);
+            Assert.Equal(1, rows[0].StatusUndos);
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-3)]
+        public async Task Report_edit_with_an_id_of_zero_or_less_returns_null_without_querying(int id)
+        {
+            var result = await CreateService().GetReportEditAsync(id);
+
+            Assert.Null(result);
+            _repository.Verify(r => r.GetReportEditAsync(It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Report_edit_is_loaded_from_the_repository()
+        {
+            _repository
+                .Setup(r => r.GetReportEditAsync(42))
+                .ReturnsAsync(new ReportEditVM { Id = 42, InterviewId = 9, OldValue = "before", NewValue = "after", EditedBy = "qc@risebird.io" });
+
+            var result = await CreateService().GetReportEditAsync(42);
+
+            Assert.Equal(42, result.Id);
+            Assert.Equal("before", result.OldValue);
+            Assert.Equal("after", result.NewValue);
+        }
+
+        [Fact]
+        public async Task Report_edit_that_does_not_exist_returns_null()
+        {
+            _repository.Setup(r => r.GetReportEditAsync(5)).ReturnsAsync((ReportEditVM)null);
+
+            Assert.Null(await CreateService().GetReportEditAsync(5));
+        }
+
+        [Fact]
+        public async Task Report_edit_failure_is_logged_and_rethrown()
+        {
+            _repository.Setup(r => r.GetReportEditAsync(It.IsAny<int>())).ThrowsAsync(new InvalidOperationException("boom"));
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => CreateService().GetReportEditAsync(1));
+            _logger.Verify(l => l.LogMessage(LogLevelInfo.Exception, It.IsAny<Exception>(), It.IsAny<string>()), Times.Once);
         }
     }
 }

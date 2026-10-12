@@ -38,5 +38,17 @@ BEGIN
 
     INSERT INTO RedMarkerStatusDetails (InterviewerUserid, IRFId, Comment, Type, CreatedOn, CreatedBy, Status)
     VALUES (@UserId, 0, 'Reactivated by admin', 'TotalInterview', GETDATE(), @ReactivatedBy, 0)
+
+    -- QC Activity: who reactivated the interviewer (skipped while the log table is missing).
+    IF OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL
+    BEGIN
+        INSERT INTO dbo.InterviewerActionLog (InterviewerUserId, InterviewerEmail, ActionType, Reason, ActedBy, Source)
+        SELECT @UserId,
+               (SELECT TOP 1 ul.EmailId FROM UserList ul WHERE ul.id = @UserId),
+               'Reactivated',
+               NULL,
+               NULLIF(LTRIM(RTRIM(@ReactivatedBy)), ''),
+               'usp_ReactivateInterviewer'
+    END
 END
 GO

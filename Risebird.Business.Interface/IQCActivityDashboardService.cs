@@ -34,5 +34,11 @@ namespace Risebird.Business.Interface
 
         /// <summary>Side panel for one interviewer: headline numbers, IRFs and the dated timeline.</summary>
         Task<InterviewerQCTimelineVM> GetInterviewerTimelineAsync(string interviewerEmail, DateTime? fromIst, DateTime? toIst);
+
+        /// <summary>
+        /// One report edit with the full text before and after (ReportEditLog). Returns null for an id of 0 or less
+        /// (without querying) and when the edit does not exist; logs and rethrows on failure. Access checks are the caller's.
+        /// </summary>
+        Task<ReportEditVM> GetReportEditAsync(int id);
     }
 }
