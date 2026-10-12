@@ -126,6 +126,44 @@
             </div>
         </div>
 
+        @* Generated from this channel's own parameters - job title, ideal candidate profile, the
+           two sections and their weights. Composed fresh every time this step is opened, so a
+           revision made at step 3 is already in the text. Nobody writes prompt text by hand, and
+           the rubric inside the prompt cannot drift away from the rubric in the database. *@
+        <div class="ais-prompts" id="aisPromptBlock">
+            <div class="ais-prompts-head">
+                <div>
+                    <div class="ais-prompts-title">Prompt instructions to publish</div>
+                    <div class="ais-hint">
+                        Copy each one into a new stored prompt in OpenAI, publish it, then paste the
+                        <code>pmpt_…</code> id it gives you into the matching field above.
+                        <span id="aisPromptFingerprint" class="ais-fp"></span>
+                    </div>
+                </div>
+                <button type="button" class="ais-btn-ghost" id="aisPromptRefresh">Regenerate</button>
+            </div>
+
+            <div id="aisPromptError" class="ais-prompt-error" style="display:none;"></div>
+
+            <div class="ais-prompt-card">
+                <div class="ais-prompt-card-head">
+                    <span>1 — Interviewer prompt → <strong>Primary Prompt Id</strong></span>
+                    <button type="button" class="ais-copy" data-copy="aisPrimaryPromptText">Copy</button>
+                </div>
+                <textarea id="aisPrimaryPromptText" class="ais-prompt-text" rows="14" readonly
+                          spellcheck="false" aria-label="Interviewer prompt instructions"></textarea>
+            </div>
+
+            <div class="ais-prompt-card">
+                <div class="ais-prompt-card-head">
+                    <span>2 — Evaluator prompt → <strong>Interview Evaluator Prompt Id</strong></span>
+                    <button type="button" class="ais-copy" data-copy="aisEvaluatorPromptText">Copy</button>
+                </div>
+                <textarea id="aisEvaluatorPromptText" class="ais-prompt-text" rows="14" readonly
+                          spellcheck="false" aria-label="Evaluator prompt instructions"></textarea>
+            </div>
+        </div>
+
         @* Per-channel, because review costs the candidate time on the clock: a screening
            conversation usually wants it, a tightly timed round may not. "Use the default" writes
            NULL and the environment's AIInterview:CandidateTranscriptReview setting applies, which
@@ -206,6 +244,41 @@
     .ais-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
     .ais-spacer { flex: 1 1 auto; }
     .ais-hint { color: #6b7684; font-size: 12px; margin-top: 8px; }
+
+    /* Generated prompt instructions. Explicit colours on the textarea for the same reason the
+       candidate transcript box needed them: a later rule elsewhere can win the background and
+       leave pale text on white. */
+    .ais-prompts { margin-top: 26px; border-top: 1px solid #e6ebf1; padding-top: 20px; }
+    .ais-prompts-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .ais-prompts-title { font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: #39424e; }
+    .ais-fp { display: inline-block; margin-left: 6px; color: #8893a0; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11px; }
+    .ais-btn-ghost { border: 1px solid #dde3ea; background: #fff; color: #39424e; border-radius: 6px; padding: 7px 13px; font: inherit; font-size: 12px; cursor: pointer; white-space: nowrap; }
+    .ais-btn-ghost:hover { background: #f5f8fb; }
+    .ais-prompt-card { margin-top: 14px; border: 1px solid #dde3ea; border-radius: 8px; overflow: hidden; }
+    .ais-prompt-card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 12px; background: #f5f8fb; border-bottom: 1px solid #e6ebf1; font-size: 12px; color: #39424e; }
+    .ais-copy { border: 1px solid #c8d2dd; background: #fff; color: #1f6feb; border-radius: 5px; padding: 5px 12px; font: inherit; font-size: 12px; cursor: pointer; }
+    .ais-copy:hover { background: #eef4ff; }
+    .ais-copy.is-done { color: #1a7f45; border-color: #9fd3b4; background: #f0faf4; }
+
+    .ais-prompts textarea.ais-prompt-text {
+        width: 100%;
+        border: 0;
+        border-radius: 0;
+        padding: 12px;
+        background: #ffffff !important;
+        color: #12161c !important;
+        -webkit-text-fill-color: #12161c;
+        opacity: 1;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 12px;
+        line-height: 1.5;
+        white-space: pre;
+        overflow-wrap: normal;
+        overflow-x: auto;
+        resize: vertical;
+    }
+
+    .ais-prompt-error { margin-top: 12px; padding: 10px 12px; border: 1px solid #e8a33d; border-radius: 6px; background: #fff4e5; color: #5c3c00; font-size: 13px; }
     .ais-check { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: #6b7684; margin: 0; }
     .ais-audio { height: 32px; max-width: 240px; }
     .ais-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
@@ -554,7 +627,82 @@
             .catch(function () { busy(button, false); alertBox("Could not apply the revision.", "error"); });
     });
 
-    $("aisToStep4").addEventListener("click", function () { showStep(4); });
+    $("aisToStep4").addEventListener("click", function () {
+        showStep(4);
+        // Loaded on arrival rather than up front, so a plan revised at step 3 is reflected in the
+        // text the operator is about to paste.
+        loadPrompts();
+    });
+
+    // ---- generated prompt instructions -------------------------------------------------------
+
+    function loadPrompts() {
+        var error = $("aisPromptError");
+        var primary = $("aisPrimaryPromptText");
+        var evaluator = $("aisEvaluatorPromptText");
+        var fingerprint = $("aisPromptFingerprint");
+        if (!primary || !evaluator) return;
+
+        error.style.display = "none";
+        primary.value = "Building…";
+        evaluator.value = "Building…";
+        fingerprint.textContent = "";
+
+        fetch("/AIScreening/Prompts?draftId=" + encodeURIComponent(draftId), { credentials: "same-origin" })
+            .then(function (r) { return r.json(); })
+            .then(function (res) {
+                if (!res.success) {
+                    primary.value = "";
+                    evaluator.value = "";
+                    error.textContent = res.message || "Could not build the prompt text.";
+                    error.style.display = "";
+                    return;
+                }
+
+                primary.value = res.primary || "";
+                evaluator.value = res.evaluator || "";
+                fingerprint.textContent = res.fingerprint ? "parameters v" + res.fingerprint : "";
+            })
+            .catch(function () {
+                primary.value = "";
+                evaluator.value = "";
+                error.textContent = "Could not build the prompt text. Check your connection and use Regenerate.";
+                error.style.display = "";
+            });
+    }
+
+    $("aisPromptRefresh").addEventListener("click", loadPrompts);
+
+    Array.prototype.forEach.call(document.querySelectorAll(".ais-copy"), function (button) {
+        button.addEventListener("click", function () {
+            var target = $(button.getAttribute("data-copy"));
+            if (!target || !target.value) return;
+
+            function done() {
+                var original = button.textContent;
+                button.textContent = "Copied";
+                button.classList.add("is-done");
+                window.setTimeout(function () {
+                    button.textContent = original;
+                    button.classList.remove("is-done");
+                }, 1600);
+            }
+
+            // navigator.clipboard needs a secure context and is not there on every browser the ops
+            // team uses; select-and-execCommand is the fallback that always works, and selecting
+            // the text at least leaves them able to copy it by hand if even that fails.
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(target.value).then(done).catch(function () {
+                    target.select();
+                    try { document.execCommand("copy"); done(); } catch (e) { /* left selected */ }
+                });
+                return;
+            }
+
+            target.select();
+            try { document.execCommand("copy"); done(); } catch (e) { /* left selected */ }
+        });
+    });
 
     // ---------- step 4 ----------
 
