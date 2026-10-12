@@ -581,3 +581,67 @@ as a blob name, because the trailing slash was trimmed before the last segment w
 Mutation-checked, each against the restored original: loosening the name pattern to a bare `d_`
 prefix fails 7, treating an unreadable reference list as empty fails 1, and honouring a zero
 retention literally fails 3.
+
+## Prompt text is generated per channel, not written by hand
+
+Operations used to write the two prompt texts themselves and paste them into OpenAI. Two things
+went wrong with that. Every channel got whatever wording the person remembered, and the rubric
+written into the prompt drifted away from the rubric in the database — which matters more than it
+sounds, because `AIScreeningReportMapper` matches the evaluator's `rubric_item` strings to
+`TransTechSkill.SkillName`, and a parameter the prompt never mentioned scores zero.
+
+`AIScreeningPromptComposer` now builds both texts from the channel's own parameters: job title,
+ideal candidate profile, the recruiter's instruction, duration, and both sections with their
+parameter names, weights, expected levels, mandatory flags and concepts.
+
+**The publishing loop is unchanged and still manual.** OpenAI has no API that creates a stored
+prompt and returns a `pmpt_…` id — that is what the earlier prompt-composer work got wrong and why
+it was reverted. This composes text only. A person still pastes it, publishes it, and brings the id
+back to the form. What it removes is the hand-authoring, not the human.
+
+### Where it appears
+
+| | Surface | Behaviour |
+|---|---|---|
+| New channel | `/AIScreening/New` step 4 | Composed on arrival at the step, so a plan revised at step 3 is already in the text. A **Regenerate** button recomposes. |
+| Existing channel | Edit IRF | Behind a **Generate prompt instructions** button. |
+
+Edit IRF is opt-in rather than always rendered because that form serves every channel type and
+only screening channels have the two sections these prompts are built from. `IsAIAudioScreening`
+is not on `IRFVm` and adding it would have meant another read path; a non-screening channel that
+clicks the button is told plainly that its rubric carries no section, which is the honest answer.
+
+The endpoints are `GET /AIScreening/Prompts?draftId=` and `GET /AIScreening/PromptsForChannel?irfIntId=`.
+Both compose on every call and persist nothing — there is no stored copy to go stale.
+
+`PromptsForChannel` reads through `GetEditIRF`, because `GetSkillChannelDetailsForUpdate`
+underneath it is the read that populates `IdealCandidateProfile`; the lighter lookups do not carry
+it. It leaves `Instruction` empty rather than inventing one: the spoken instruction lived on the
+draft, which expired long ago, and putting words in the recruiter's mouth would be worse than
+omitting them.
+
+### The parameters version stamp
+
+Each text carries `# Parameters version: <8 hex>`, a hash of everything it was built from. It
+travels into OpenAI with the prompt, so an operator can compare what is published against what the
+form shows and see whether the channel has been edited since. Changing the job title, profile,
+instruction, duration, any weight or any parameter name moves it.
+
+This is a visual aid, not enforcement. Nothing stores the fingerprint against the channel, so
+nothing *blocks* a stale prompt — adding a column for that is a reasonable next step if the stamp
+turns out not to be enough in practice.
+
+### Tests
+
+23 in `AIScreeningPromptComposerTests`, weighted towards what silently breaks the report: every
+rubric parameter appearing in the evaluator text, names reproduced character for character
+(including `C++ / .NET interop (legacy)`), the 1-5 rule, the spaced
+`"overall_communication_score reasoning"` field, the four canonical verdicts round-tripping
+through `AIInterviewVerdict.Normalize`, and RULE 1 preceding the rubric in the interviewer prompt.
+Plus: the interviewer text never contains the report schema, concepts reach the interviewer and
+not the evaluator, an undrafted rubric says so rather than emitting an empty one, and no prose line
+overruns the wrap column even with a 120-character job title.
+
+Mutation-checked: dropping the rubric list from the evaluator fails 5, renaming the spaced schema
+field fails 1, folding unsectioned rows into section one fails 1, and removing weights from the
+fingerprint fails 1.

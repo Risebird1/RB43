@@ -356,6 +356,61 @@
                                                             @Html.ValidationMessageFor(model => model.OpenAIEvaluatorPromptId, "", new { @class = "text-danger" })
                                                             <small class="text-muted">Responses API prompt ID that generates the candidate's report. Optional — leave it blank and the primary prompt above generates the report too.</small>
                                                         </div>
+
+                                                        @* Prompt instructions for an AI screening channel, built from the parameters this
+                                                           channel carries right now. Changing the rubric, job title or ideal candidate
+                                                           profile changes the text, so the prompts have to be republished and their new
+                                                           ids pasted into the two fields above.
+
+                                                           Opt-in behind a button rather than rendered for everyone: this form serves every
+                                                           channel type, and only screening channels have the two sections these prompts are
+                                                           built from. A channel without them gets told so plainly instead of silently
+                                                           receiving an empty rubric. *@
+                                                        <div class="form-group" id="aisPromptWrap" data-irf-id="@Model.id">
+                                                            <button type="button" class="btn btn-default btn-sm" id="aisPromptShow">
+                                                                Generate prompt instructions
+                                                            </button>
+                                                            <small class="text-muted" style="display:block;margin-top:6px;">
+                                                                For AI screening channels. Builds the text to paste into OpenAI from this
+                                                                channel's current parameters — republish and update the ids above whenever
+                                                                the rubric or profile changes.
+                                                            </small>
+
+                                                            <div id="aisPromptPanel" style="display:none;margin-top:12px;">
+                                                                <div id="aisPromptNote" class="alert alert-warning" style="display:none;padding:8px 12px;"></div>
+
+                                                                <div style="margin-bottom:6px;">
+                                                                    <strong style="font-size:12px;">Interviewer prompt → Primary Prompt Id</strong>
+                                                                    <button type="button" class="btn btn-xs btn-link ais-copy-irf" data-copy="aisPrimaryPromptText">Copy</button>
+                                                                    <span id="aisPromptFp" class="text-muted" style="font-size:11px;"></span>
+                                                                </div>
+                                                                <textarea id="aisPrimaryPromptText" class="form-control ais-prompt-text" rows="12" readonly spellcheck="false"></textarea>
+
+                                                                <div style="margin:12px 0 6px;">
+                                                                    <strong style="font-size:12px;">Evaluator prompt → Interview Evaluator Prompt Id</strong>
+                                                                    <button type="button" class="btn btn-xs btn-link ais-copy-irf" data-copy="aisEvaluatorPromptText">Copy</button>
+                                                                </div>
+                                                                <textarea id="aisEvaluatorPromptText" class="form-control ais-prompt-text" rows="12" readonly spellcheck="false"></textarea>
+                                                            </div>
+                                                        </div>
+
+                                                        <style>
+                                                            /* Explicit colours: a later rule on this page can otherwise win the background
+                                                               and leave the text unreadable, which is exactly what happened on the
+                                                               candidate transcript box. */
+                                                            #aisPromptPanel textarea.ais-prompt-text {
+                                                                background: #ffffff !important;
+                                                                color: #12161c !important;
+                                                                -webkit-text-fill-color: #12161c;
+                                                                opacity: 1;
+                                                                font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+                                                                font-size: 12px;
+                                                                line-height: 1.5;
+                                                                white-space: pre;
+                                                                overflow-wrap: normal;
+                                                                overflow-x: auto;
+                                                            }
+                                                        </style>
                                                         @* Set by the AI screening intake (/AIScreening/New) without a human touching this form.
                                                            It stays visible and editable, which is how a channel gets corrected without rebuilding it. *@
                                                         <div class="form-group">
@@ -5453,5 +5508,79 @@
         }
     }
 
+    // ---- AI screening: prompt instructions to paste into OpenAI -----------------------------
+    // Built on demand from this channel's saved parameters. Nothing is stored and no OpenAI call
+    // is made here; publishing the prompt and bringing its pmpt_ id back is still a human step,
+    // because OpenAI has no API that creates a stored prompt.
+    (function () {
+        var wrap = document.getElementById("aisPromptWrap");
+        if (!wrap) return;
+
+        var showButton = document.getElementById("aisPromptShow");
+        var panel = document.getElementById("aisPromptPanel");
+        var note = document.getElementById("aisPromptNote");
+        var primary = document.getElementById("aisPrimaryPromptText");
+        var evaluator = document.getElementById("aisEvaluatorPromptText");
+        var fingerprint = document.getElementById("aisPromptFp");
+
+        function fail(message) {
+            note.textContent = message;
+            note.style.display = "";
+            primary.value = "";
+            evaluator.value = "";
+        }
+
+        showButton.addEventListener("click", function () {
+            panel.style.display = "";
+            showButton.textContent = "Regenerate prompt instructions";
+            note.style.display = "none";
+            primary.value = "Building…";
+            evaluator.value = "Building…";
+            fingerprint.textContent = "";
+
+            var irfId = wrap.getAttribute("data-irf-id");
+
+            fetch("/AIScreening/PromptsForChannel?irfIntId=" + encodeURIComponent(irfId), { credentials: "same-origin" })
+                .then(function (r) { return r.json(); })
+                .then(function (res) {
+                    if (!res.success) { fail(res.message || "Could not build the prompt text."); return; }
+
+                    primary.value = res.primary || "";
+                    evaluator.value = res.evaluator || "";
+                    fingerprint.textContent = res.fingerprint ? "parameters v" + res.fingerprint : "";
+
+                    if (res.warning) { note.textContent = res.warning; note.style.display = ""; }
+                })
+                .catch(function () {
+                    fail("Could not build the prompt text. Check your connection and try again.");
+                });
+        });
+
+        Array.prototype.forEach.call(document.querySelectorAll(".ais-copy-irf"), function (button) {
+            button.addEventListener("click", function () {
+                var target = document.getElementById(button.getAttribute("data-copy"));
+                if (!target || !target.value) return;
+
+                function done() {
+                    var original = button.textContent;
+                    button.textContent = "Copied";
+                    window.setTimeout(function () { button.textContent = original; }, 1600);
+                }
+
+                // clipboard API needs a secure context and is not on every browser the ops team
+                // uses; the fallback at least leaves the text selected to copy by hand.
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(target.value).then(done).catch(function () {
+                        target.select();
+                        try { document.execCommand("copy"); done(); } catch (e) { /* left selected */ }
+                    });
+                    return;
+                }
+
+                target.select();
+                try { document.execCommand("copy"); done(); } catch (e) { /* left selected */ }
+            });
+        });
+    })();
 
 </script>

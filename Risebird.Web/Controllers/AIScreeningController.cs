@@ -252,6 +252,112 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// The two prompt texts for the draft as it currently stands, for an operator to paste into
+        /// the OpenAI account.
+        ///
+        /// Composed on every call rather than stored, so a revision made at step 3 is already in the
+        /// text by the time step 4 is shown. There is no OpenAI call here and nothing is persisted -
+        /// the account has no API that creates a stored prompt, so publishing stays manual and this
+        /// only removes the part that was going wrong: prompt text written by hand per channel, and
+        /// a rubric inside the prompt that drifted away from the rubric in the database.
+        /// </summary>
+        [HttpGet]
+        public async Task<JsonResult> Prompts(string draftId)
+        {
+            if (!IsSignedIn()) return Json(Unauthorized_());
+            if (!IsAllowed()) return Json(Forbidden_());
+
+            try
+            {
+                var draft = await _aiScreeningIntakeService.GetDraftAsync(draftId);
+                if (draft == null)
+                    return Json(new { success = false, message = "This draft has expired. Start again." });
+
+                return Json(PromptPayload(AIScreeningPromptComposer.Compose(
+                    AIScreeningPromptInputs.FromDraft(draft))));
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not build the prompt text: " + ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// The same two prompt texts for a channel that already exists, read from what is saved
+        /// rather than from a draft. This is what Edit IRF calls: once a channel's rubric, job title
+        /// or ideal-candidate profile is changed, the prompts built from them are out of date, and
+        /// the operator needs the new text to republish.
+        /// </summary>
+        [HttpGet]
+        public async Task<JsonResult> PromptsForChannel(int irfIntId)
+        {
+            if (!IsSignedIn()) return Json(Unauthorized_());
+            if (!IsAllowed()) return Json(Forbidden_());
+
+            if (irfIntId <= 0)
+                return Json(new { success = false, message = "No channel was supplied." });
+
+            try
+            {
+                // GetEditIRF, because GetSkillChannelDetailsForUpdate underneath it is the read that
+                // populates IdealCandidateProfile - the lighter lookups do not carry it.
+                var irf = await _irfService.GetEditIRF(irfIntId, null);
+                if (irf == null)
+                    return Json(new { success = false, message = "That channel could not be found." });
+
+                var rubric = await _irfService.GetTechSkillswithWeightage(irfIntId);
+
+                var inputs = new AIScreeningPromptInputs
+                {
+                    ChannelCode = irf.IRFId,
+                    JobTitle = irf.JDTiltle,
+                    IdealCandidateProfile = irf.IdealCandidateProfile,
+                    // A saved channel keeps no record of the spoken instruction the recruiter gave
+                    // during intake - it lived on the draft, which has long expired. Leaving it out
+                    // is correct: inventing one would put words in the recruiter's mouth.
+                    Instruction = null,
+                    DurationMinutes = 0,
+                    Sections = AIScreeningPromptInputs.SectionsFrom(rubric)
+                };
+
+                var payload = PromptPayload(AIScreeningPromptComposer.Compose(inputs));
+
+                // An unsectioned rubric is the damaged shape the repair migration exists for. The
+                // composer drops those rows rather than guess a section, so the prompt would quietly
+                // come out with no parameters in it. Say so instead.
+                var sectioned = (rubric ?? Enumerable.Empty<TransSkill>())
+                    .Count(r => r != null && (r.SkillSet == (int)AIScreeningSectionEnum.RoleFitment
+                                              || r.SkillSet == (int)AIScreeningSectionEnum.MotivationToJoinFitment));
+
+                return Json(new
+                {
+                    payload.success,
+                    payload.primary,
+                    payload.evaluator,
+                    payload.fingerprint,
+                    warning = sectioned == 0
+                        ? "This channel's rubric carries no section, so the prompts have no parameters in them. "
+                          + "Repair the channel before publishing these."
+                        : null
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not build the prompt text: " + ex.Message });
+            }
+        }
+
+        private static dynamic PromptPayload(AIScreeningPromptPair pair) => new
+        {
+            success = true,
+            primary = pair.PrimaryInstructions,
+            evaluator = pair.EvaluatorInstructions,
+            fingerprint = pair.Fingerprint
+        };
+
         /// <summary>Pin 5: applies a spoken or typed revision and returns the diff.</summary>
         [HttpPost]
         public async Task<JsonResult> RevisePlan(string draftId, string transcript)
