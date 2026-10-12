@@ -62,6 +62,18 @@ BEGIN
        
   --Add Remove Comment for interviewer    
   Insert into RedMarkerStatusDetails (InterviewerUserid,IRFId,Comment,Type,CreatedOn,CreatedBy,Status)    
-  values (@InterviewerId,0,@comment,'TotalInterview',@modifiedOn,@modifiedBy,3)    
-END    
+  values (@InterviewerId,0,@comment,'TotalInterview',@modifiedOn,@modifiedBy,3)
+
+  -- QC Activity: who blocked / inactivated the interviewer (skipped while the log table is missing).
+  IF OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL
+  BEGIN
+      INSERT INTO dbo.InterviewerActionLog (InterviewerUserId, InterviewerEmail, ActionType, Reason, ActedBy, Source)
+      VALUES (@InterviewerId,
+              @EmailId,
+              CASE WHEN @blockinterviewer = 1 THEN 'Blocked' ELSE 'Inactivated' END,
+              LEFT(@ResolvedType + ISNULL(': ' + NULLIF(LTRIM(RTRIM(@comment)), ''), ''), 500),
+              NULLIF(LTRIM(RTRIM(@modifiedBy)), ''),
+              'usp_InactivateInterviewer')
+  END
+END
 GO 

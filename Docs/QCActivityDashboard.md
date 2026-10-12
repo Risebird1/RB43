@@ -17,6 +17,7 @@ Entry points: **Stats → QC Activity** in the top bar (Admin / SeniorHR / Suppo
 - `GET /QCActivity`: the page
 - `GET /QCActivity/Summary?from=yyyy-MM-dd&to=yyyy-MM-dd&onlyQc=true`: per-user rows, backlog and totals (JSON, camelCase)
 - `GET /QCActivity/Details?actor=<email>&metric=<key>&from&to`: the drill-down, at most 2000 rows
+- `GET /QCActivity/Diagnostics?from&to`: data check, **Admin and SupportAdmin only**, read-only (see [Diagnostics](#diagnostics))
 
 The range defaults to the last 7 days, is capped at 92 days and never ends after today (IST).
 Accepted metric keys are listed in `QCActivityMetrics` (`Risebird.Entities/ViewModel/QCActivityDashboardVM.cs`). Any other key returns no rows and runs no query.
@@ -27,7 +28,7 @@ All numbers come from `usp_QCActivity_CollectRows`, which writes one row per hum
 
 | Column | Source | Actor | Stored time |
 |---|---|---|---|
-| Reports reviewed / penalised / avg % | `PaymentSLADetailsHistory`, counted once per interview per user (that user's latest save). Penalised means the latest deduction is above 0 | `CreatedBy` | server clock (assumed UTC) |
+| Reports reviewed / penalised / avg % | `PaymentSLADetailsHistory` (human saves) **and** `ClientCommentsForReport` (every rated save), counted once per interview per user (that user's latest save). For a comment row the deduction comes from the current `PaymentSLADetails` row. Penalised means the latest deduction is above 0. Users whose profile is Client are excluded (clients also rate reports). The drill-down detail shows the rating, e.g. "Shortlist (rated 5/5)" | `CreatedBy` | server clock (assumed UTC) |
 | Approved / Not approved | `PaymentSLADetails.IsApproved` = 1 / 2 | `ModifiedBy` | server clock |
 | QC forms (red flags) | `Trans_QCFormReport` | `Userid` → `UserList.EmailId` | server clock |
 | Trial kept / removed | `TrialFlags.ReviewStatus` | `ReviewedBy` | UTC |
@@ -39,6 +40,26 @@ All numbers come from `usp_QCActivity_CollectRows`, which writes one row per hum
 | Open right now | Pending `PaymentSLADetails`, pending `TrialFlags`, active `TransInterviewer` rows with an `AutoQcVerdict`, `TransInterviewerRedMarker.RedMarkerStatus = 1` | | not date-filtered |
 
 The procedures read optional tables and columns (`TrialFlags`, both backfill tables, `TransInterviewerAuditLog`, `CallRecordingData.RecipientKind` / `HangupCause`) through `sp_executesql` behind `OBJECT_ID` / `COL_LENGTH` checks. If one is missing, its numbers are 0.
+
+**Why reviews need two sources.** `usp_AddorUpdatePaymentSLADetails` writes `PaymentSLADetails` (and so, through `tr_PaymentSLADetails`, `PaymentSLADetailsHistory`) only when `@Rating < 5`. Every rated save (`@Rating > 0`) inserts `ClientCommentsForReport` (`CreatedBy`, `CreatedAt`, `Rating`). Counting history alone showed 0 reviews for QCs who mostly save with rating 5.
+
+## Diagnostics
+
+`usp_QCActivity_Diagnostics(@FromIst, @ToIst)`, exposed as `GET /QCActivity/Diagnostics?from&to` for Admin and SupportAdmin. Read-only.
+
+For every source the dashboard reads it returns, per stored actor value (top 15 per source by rows): the rows in the range, the source total and number of actors, the first and last time (IST), the actor's portal profile and name, and a `status`:
+
+| Status | Meaning |
+|---|---|
+| Quality Controller | Rows are under a QC: the dashboard should count them |
+| Not a QC user | Rows are under a portal user with another profile (hidden while "Quality Controllers only" is on) |
+| Actor is not an email | The stored value is a name, an id or similar, so it never matches a user |
+| Not a portal user | Looks like an email but no `UserList` row has it (e.g. truncated) |
+| System actor (excluded) / Client (excluded) | Skipped by the collector on purpose |
+| No rows | The source has nothing in the range: a 0 on the page is real |
+| Table missing | Optional table not deployed |
+
+Use it whenever a column shows 0 and you expect activity.
 
 ## New data capture (from this deploy onwards)
 
@@ -58,7 +79,7 @@ Each script is idempotent:
 5. `StoredProcedures/usp_QCActivity_CollectRows.sql`
 6. `StoredProcedures/usp_GetQCActivityDashboardSummary.sql`
 7. `StoredProcedures/usp_GetQCActivityDashboardDetails.sql`
-8. `StoredProcedures/usp_GetInterviewerQCView.sql` and `StoredProcedures/usp_GetInterviewerQCTimeline.sql`
+8. `StoredProcedures/usp_GetInterviewerQCView.sql`, `StoredProcedures/usp_GetInterviewerQCTimeline.sql`, `StoredProcedures/usp_QCActivity_Diagnostics.sql` and `StoredProcedures/usp_GetInterviewerRiskOverview.sql`
 9. `StoredProcedures/usp_GetInterviewerExposure.sql` and `StoredProcedures/usp_SaveInterviewerCoachingSession.sql`: the save procedure needs the step 2 table
 10. `Risebird.DB/Indexes/QCActivityPerformanceIndexes.sql`: recommended. It adds date indexes on the source tables, plus the caller and CallSid indexes on `CallRecordingData`, so 30–90 day ranges don't scan whole tables. On Azure SQL the indexes are built online. Run it at a quiet time.
 11. Deploy `Risebird.Web`. No new app settings are needed, and nothing changes in the Plivo console.
@@ -67,24 +88,42 @@ The collector, the view and the exposure procedures skip optional tables that ar
 
 **Rollback:** redeploy the previous web build. The old build calls `usp_DeactivateSkillChannelInterviewer` with two parameters, which the new version still accepts. The new procedures, columns and indexes can stay in place.
 
+### Live-review fixes (Oct 2026 delta)
+
+No tables or columns change, so no migration. Run, in this order, then deploy `Risebird.Web`:
+
+1. `usp_QCActivity_CollectRows.sql`: reviews also read `ClientCommentsForReport`
+2. `usp_GetInterviewerQCView.sql`: it calls the collector; new `@MinInterviews` / `@IncludeOpenFlags`
+3. `usp_QCActivity_Diagnostics.sql`: new
+4. `usp_GetInterviewerRiskOverview.sql`: 3-interview minimum in the default High-Risk filter
+
+Each fix rolls back on its own by restoring the previous procedure. The exception is the Interviewer QC View: the web build passes `@MinInterviews` and `@IncludeOpenFlags`, which the old procedure does not accept, so roll back that procedure and the web build together.
+
 ## Interviewer QC View (`/QCActivity/Interviewers`)
 
 The same QC data turned around: one row per interviewer, so a manager can see everything QC did about an interviewer and who still needs a call. Every allowed viewer, including a Quality Controller, sees all interviewers, because QCs need this view to coach.
 
 - **Entry points:** Stats → Interviewer QC View, the switch at the top of `/QCActivity`, the **Exposure** link on each row of the IRF Audit High-Risk Interviewers tab, and the deep link `/QCActivity/Interviewers?interviewer=<email>`.
+- **Controls:** period, interviewer search, **Min. interviews** (1+, 3+ default, 5+, 10+; the server clamps any value to 1–50) and **Include older open flags** (off by default). A hint line under the filters says who is listed. Both options are kept in the URL (`minInterviews`, `includeOpenFlags`).
 - **Who is listed:** the top 3,000 by attention score among:
-  - interviewers a QC action, call or coaching session touched in the range
-  - interviewers the AI review (`PaymentSLADetailsHistory.CreatedBy = 'AISystem'`) penalised in the range
-  - anyone with an open flag now: a pending trial, an auto-QC verdict on an active channel, unreviewed red markers on an active channel, or Total Interviews under review
-- **Attention score:** penalised × 2 + AI penalised + open flags × 3 + red markers + (trial + audit removals) × 2, plus 5 when the interviewer needs a call. **Needs call** means there was an issue in the range or an open flag, and no QC call or coaching session in the range.
-- **Tiles double as filters:** Interviewers, Need a QC call, Open flags now, Penalised, Removed or inactive, and Coaching coverage (the share of interviewers with an issue who got a call or session). Every column header sorts.
+  1. interviewers a QC acted on in the range. A routine no-penalty review, a Payment SLA approval or a QC form with no red flags does not list anyone on its own; a penalty, "not approved", a red-flagged QC form, a trial / IRF audit decision, a Total Red Marker / Total Interviews move, a QC call or a coaching session does.
+  2. interviewers with at least *Min. interviews* completed interviews in the range (`InterviewComments.MeetingStatus` 4, 6, 7, 8) **and** a bad interview (`RiskCategory` P0 to P5) or an AI review penalty (`PaymentSLADetailsHistory.CreatedBy = 'AISystem'`) in the range.
+  3. only with **Include older open flags**: anyone with an open flag now (a pending trial, an auto-QC verdict on an active channel, unreviewed red markers on an active channel, or Total Interviews under review). Open flags are still shown on every listed row.
+- **Work columns:** IRFs, Interviews, **Bad** (P0–P5 completed interviews, with the worst severity) and **Bad %**. Bad and Bad % use the same rule as the IRF Audit High-Risk tab (RiskCategory P0 to P5 on completed interviews). Meetings that store the interviewer's coded name (`InterviewerProfile.NickName`) are mapped to the interviewer.
+- **Quality problem (`HasIssue`):** (at least *Min. interviews* completed and 2+ bad or at least 25% bad), or any P0/P1 interview, QC penalty or AI penalty, or a trial / IRF audit removal in the range. **Needs call** = a quality problem and no QC call or coaching session in the range.
+- **Attention score:** P0/P1 × 5 + bad × 2 + bad % ÷ 10 (only with enough volume) + penalised × 2 + AI penalised + (trial + audit removals) × 2 + open flags (at most 5), plus 5 when the interviewer needs a call. Lifetime red markers are shown but no longer scored, so old flags no longer outrank current problems.
+- **Tiles double as filters:** Interviewers, Quality problem, Need a QC call, Bad interviews, Open flags now, Penalised, Removed or inactive, and Coaching coverage (the share of interviewers with a quality problem who got a call or session). Every column header sorts. The CSV includes Bad interviews, Severe (P0/P1), Worst severity, Bad % and Quality problem.
 - **Side panel:**
-  - the headline numbers
+  - the headline numbers, including bad interviews, bad % and worst severity
   - the coaching brief
   - a per-IRF table: channel owner, on IRF, red markers, TRM status, auto-QC verdict, trial status
   - a dated timeline that merges human QC actions, calls and coaching sessions with system events (AI review penalty, trial flag raised, auto-QC flag or removal), filterable, with recordings and report links inline
 
-Procedures: `usp_GetInterviewerQCView(@FromIst, @ToIst, @Search, @InterviewerEmail)` and `usp_GetInterviewerQCTimeline(@InterviewerEmail, @FromIst, @ToIst)`. Both read `usp_QCActivity_CollectRows`, so their numbers match the QC Activity page.
+Procedures: `usp_GetInterviewerQCView(@FromIst, @ToIst, @Search, @InterviewerEmail, @MinInterviews = 3, @IncludeOpenFlags = 0)` and `usp_GetInterviewerQCTimeline(@InterviewerEmail, @FromIst, @ToIst)`. Both read `usp_QCActivity_CollectRows`, so their numbers match the QC Activity page.
+
+## IRF Audit: High-Risk Interviewers tab
+
+`usp_GetInterviewerRiskOverview`'s default filter (when `@MinRiskRatio` is not NULL) needs at least `@MinVolume` (3, matching `DmIvAutoQcAuditConstants.IrfAuditMinVolume`) completed interviews in the window **and** (pooled bad ratio ≥ `@MinRiskRatio` or any P0). One bad interview out of one is no longer listed as 100% risk. **Show all** passes `@MinRiskRatio = NULL` and lifts every filter. The summary counts and the Excel export use the same procedure, so they follow.
 
 ## Coaching: one call with everything
 
@@ -123,7 +162,10 @@ Endpoints on `QCActivityController`:
 - Only answered Plivo calls are logged (`onCallAnswered` → `/User/makecall`).
 - Plivo webhooks are anonymous and not signature-validated. A forged post can only update a row whose CallUUID it already knows.
 - The Interviewer QC View and the exposure brief compare `InterviewMeetings.interviewDate` as IST, as the Total Red Marker pages do.
-- The Interviewer QC View list builds the whole range in one call. Time it on staging for a 90-day range; an index on `InterviewMeetings (interviewer, interviewDate)` helps if it is slow.
+- The Interviewer QC View list builds the whole range in one call (the completed-interview set is built once, set-based). Time it on staging for a 90-day range; an index on `InterviewMeetings (interviewDate) INCLUDE (interviewer)` helps if it is slow.
+- The High-Risk tab converts `interviewDate` with +330 minutes and counts only active channels, while the Interviewer QC View compares it as IST and counts every channel. Bad / Bad % can therefore differ for interviews within 5.5 hours of the range edges or on inactive channels.
+- `InterviewComments.ReportAcceptedBy` is not counted: it has no timestamp, so it cannot be date-filtered.
+- `ClientCommentsForReport.CreatedBy` is `varchar(50)`. A reviewer email longer than 50 characters is stored truncated and does not match the user; Diagnostics shows it as "Not a portal user".
 - `usp_DeactivateSkillChannelInterviewer` sets `@IRF = @IRFId` (the integer parameter) instead of `IRF.IRFId`, so the "unassign future meetings" step never matches. This branch leaves that unchanged on purpose. Fixing it changes behaviour and needs product sign-off.
 
 ## Verification SQL
@@ -140,4 +182,12 @@ WHERE CreatedBy = @who AND CreatedOn >= @fromUtc AND CreatedOn < @toUtc;
 
 EXEC usp_GetQCActivityDashboardSummary @FromIst = @from, @ToIst = @to, @OnlyQualityController = 1;
 EXEC usp_GetQCActivityDashboardDetails @ActorEmail = @who, @Metric = 'PlivoCall', @FromIst = @from, @ToIst = @to;
+
+-- Rated saves per reviewer (the second review source)
+SELECT CreatedBy, COUNT(DISTINCT InterviewId) AS Interviews, MIN(Rating) AS MinRating, MAX(Rating) AS MaxRating
+FROM ClientCommentsForReport WHERE CreatedAt >= @fromUtc AND CreatedAt < @toUtc
+GROUP BY CreatedBy ORDER BY Interviews DESC;
+
+EXEC usp_QCActivity_Diagnostics @FromIst = @from, @ToIst = @to;
+EXEC usp_GetInterviewerQCView @FromIst = @from, @ToIst = @to, @MinInterviews = 3, @IncludeOpenFlags = 0;
 ```

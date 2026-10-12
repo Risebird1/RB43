@@ -9,6 +9,11 @@ Thresholds MUST stay in sync with usp_GetIrfAuditInterviewerRiskBreakdown
 (@MinVolume / @RemoveRatio / @HighSevRatio_Rem / @WatchRatio) and
 DmIvAutoQcAuditConstants.IrfAudit* in C#.
 
+Default filter (@MinRiskRatio not NULL): at least @MinVolume (3) completed
+interviews in the window AND (pooled ratio >= @MinRiskRatio OR any P0), so a
+single bad interview out of one is not listed as 100% risk. @MinRiskRatio =
+NULL ("Show all") lifts every filter.
+
 Result set 1: page of interviewer rows (+ TotalRows on each row).
 Result set 2: summary header (InterviewersAboveThreshold, ChannelsAffected, PendingReviewInterviewers).
 ================================================================================
@@ -329,12 +334,19 @@ BEGIN
     FROM #ChannelReview cr
     LEFT JOIN #CoveringBackfill cb ON cb.IrfId = cr.IrfId
     GROUP BY cr.UserId
+    -- Default filter: enough volume (@MinVolume completed, as the per-channel InsufficientData rule)
+    -- AND (pooled ratio >= @MinRiskRatio OR any P0). "Show all" passes @MinRiskRatio = NULL and lifts both.
     HAVING (
             @MinRiskRatio IS NULL
-         OR CAST(CASE WHEN SUM(cr.Completed) = 0 THEN 0
-                      ELSE CAST(SUM(cr.Bad) AS DECIMAL(18,4)) / NULLIF(SUM(cr.Completed), 0)
-                 END AS DECIMAL(10,4)) >= @MinRiskRatio
-         OR SUM(cr.P0Count) > 0
+         OR (
+                SUM(cr.Completed) >= @MinVolume
+            AND (
+                    CAST(CASE WHEN SUM(cr.Completed) = 0 THEN 0
+                              ELSE CAST(SUM(cr.Bad) AS DECIMAL(18,4)) / NULLIF(SUM(cr.Completed), 0)
+                         END AS DECIMAL(10,4)) >= @MinRiskRatio
+                 OR SUM(cr.P0Count) > 0
+                )
+            )
           )
        AND (
             @PendingReviewOnly = 0

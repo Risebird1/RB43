@@ -94,7 +94,7 @@ namespace Risebird.Business.Interface
         Task<bool> IsSmeAssignedToIrfAsync(string loggedInUser, int irfId);
         Task<List<ClientIRFsFeedbackVM>> FetchClientIRFFeedbackList();
         Task<InterviewerProfileVM> GetInterviewerFlagDetails(string intervieweremailid);
-        Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsInterviewerAccess, bool? IsBlocked);
+        Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsInterviewerAccess, bool? IsBlocked, string modifiedBy = null);
         Task<IEnumerable<InterviewerStatsVM>> GetInterviewerStatsAndRatings(int? irfId = null, string clientEmailId = null);
         Task<bool> DeactivateSkillChannelInterviewer(int irfId, string interviewerEmail, string removedBy = null, string logType = null);
         Task<IEnumerable<StatsDetailsVM>> GetInterviewerStatsAndRatingsDetails(int interviewerUserId, string type, int? irfId = null, string clientEmailId = null, DateTime? fromIst = null, DateTime? toIst = null);
