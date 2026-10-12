@@ -46,8 +46,29 @@ namespace Risebird.Entities.ViewModel
 
         public int CoachingSessions { get; set; }
 
+        /// <summary>Report edits (ReportEditLog, plus older edits rebuilt from InterviewCommentsHistory).</summary>
+        public int ReportsEdited { get; set; }
+
+        // Interviewer status changes (SuspiciousInterviewer and InterviewerActionLog); each action with its undo.
+        public int MarkedSuspicious { get; set; }
+        public int SuspiciousUndone { get; set; }
+        public int Blocked { get; set; }
+        public int Unblocked { get; set; }
+        public int AccessRevoked { get; set; }
+        public int AccessRestored { get; set; }
+        public int Inactivated { get; set; }
+        public int Reactivated { get; set; }
+        public int PaymentHolds { get; set; }
+        public int PaymentHoldsReleased { get; set; }
+
         public int TotalActions { get; set; }
         public DateTime? LastActionAtIst { get; set; }
+
+        /// <summary>Suspicious marks, blocks, access off, inactivations and payment holds.</summary>
+        public int StatusChanges => MarkedSuspicious + Blocked + AccessRevoked + Inactivated + PaymentHolds;
+
+        /// <summary>The undos of <see cref="StatusChanges"/>.</summary>
+        public int StatusUndos => SuspiciousUndone + Unblocked + AccessRestored + Reactivated + PaymentHoldsReleased;
 
         public int? PlivoAvgCallSeconds =>
             PlivoCallsWithDuration > 0 ? (int)Math.Round((double)PlivoTalkSeconds / PlivoCallsWithDuration) : (int?)null;
@@ -76,6 +97,9 @@ namespace Risebird.Entities.ViewModel
         public int PlivoCalls { get; set; }
         public int PlivoInterviewers { get; set; }
         public int PlivoTalkSeconds { get; set; }
+        public int ReportsEdited { get; set; }
+        public int StatusChanges { get; set; }
+        public int StatusUndos { get; set; }
         public int UsersListed { get; set; }
         public int UsersWithNoActivity { get; set; }
 
@@ -84,6 +108,9 @@ namespace Risebird.Entities.ViewModel
             rows ??= Array.Empty<QCActivitySummaryRowVM>();
             return new QCActivityTotalsVM
             {
+                ReportsEdited = rows.Sum(r => r.ReportsEdited),
+                StatusChanges = rows.Sum(r => r.StatusChanges),
+                StatusUndos = rows.Sum(r => r.StatusUndos),
                 ReportsReviewed = rows.Sum(r => r.ReportsReviewed),
                 PenaltiesApplied = rows.Sum(r => r.PenaltiesApplied),
                 TrialKept = rows.Sum(r => r.TrialKept),
@@ -135,6 +162,29 @@ namespace Risebird.Entities.ViewModel
         public string Status { get; set; }
         public string RecordingUrl { get; set; }
         public int? SourceId { get; set; }
+        /// <summary>ReportEditLog.Id for log-based ReportEdited rows (the "View change" link); null otherwise.</summary>
+        public int? RefId { get; set; }
+    }
+
+    /// <summary>One report edit with the full text before and after (usp_GetReportEdit, GET /QCActivity/ReportEdit).</summary>
+    public class ReportEditVM
+    {
+        public int Id { get; set; }
+        public int InterviewId { get; set; }
+        public string FieldName { get; set; }
+        /// <summary>Text before the edit, HTML-encoded as the app saves it.</summary>
+        public string OldValue { get; set; }
+        /// <summary>Text after the edit, HTML-encoded as the app saves it.</summary>
+        public string NewValue { get; set; }
+        public string EditedBy { get; set; }
+        public string EditorName { get; set; }
+        public DateTime? EditedAtIst { get; set; }
+        public string InterviewerEmail { get; set; }
+        public string InterviewerName { get; set; }
+        public int? IrfId { get; set; }
+        public string IrfName { get; set; }
+        /// <summary>Set (and every other field empty) when the edit cannot be shown.</summary>
+        public string Error { get; set; }
     }
 
     /// <summary>JSON payload of GET /QCActivity/Details.</summary>
@@ -182,6 +232,24 @@ namespace Risebird.Entities.ViewModel
         public const string Ti = "Ti";
         public const string PlivoCall = "PlivoCall";
         public const string Coaching = "Coaching";
+        public const string ReportEdited = "ReportEdited";
+        public const string Suspicious = "Suspicious";
+        public const string SuspiciousUndone = "SuspiciousUndone";
+        public const string Blocked = "Blocked";
+        public const string Unblocked = "Unblocked";
+        public const string AccessRevoked = "AccessRevoked";
+        public const string AccessRestored = "AccessRestored";
+        public const string Inactivated = "Inactivated";
+        public const string Reactivated = "Reactivated";
+        public const string PaymentHold = "PaymentHold";
+        public const string PaymentHoldReleased = "PaymentHoldReleased";
+        /// <summary>Group keys: an action together with its undo (StatusActions = all ten).</summary>
+        public const string StatusActions = "StatusActions";
+        public const string SuspiciousAll = "SuspiciousAll";
+        public const string BlockedAll = "BlockedAll";
+        public const string AccessAll = "AccessAll";
+        public const string ActiveAll = "ActiveAll";
+        public const string PaymentHoldAll = "PaymentHoldAll";
         public const string All = "All";
 
         private static readonly IReadOnlyDictionary<string, string> Labels =
@@ -209,6 +277,23 @@ namespace Risebird.Entities.ViewModel
                 [Ti] = "Total Interviews actions",
                 [PlivoCall] = "Plivo calls to interviewers",
                 [Coaching] = "Coaching sessions",
+                [ReportEdited] = "Reports edited",
+                [Suspicious] = "Interviewers marked suspicious",
+                [SuspiciousUndone] = "Suspicious marks undone",
+                [Blocked] = "Interviewers blocked",
+                [Unblocked] = "Interviewers unblocked",
+                [AccessRevoked] = "Portal access turned off",
+                [AccessRestored] = "Portal access turned on",
+                [Inactivated] = "Interviewers made inactive",
+                [Reactivated] = "Interviewers made active",
+                [PaymentHold] = "Payments put on hold",
+                [PaymentHoldReleased] = "Payment holds released",
+                [StatusActions] = "Interviewer status changes",
+                [SuspiciousAll] = "Suspicious: marked and undone",
+                [BlockedAll] = "Blocked and unblocked",
+                [AccessAll] = "Portal access: off and on",
+                [ActiveAll] = "Made inactive and active",
+                [PaymentHoldAll] = "Payment hold: put on and released",
                 [All] = "All actions"
             };
 

@@ -71,17 +71,36 @@ namespace Risebird.Repository
         }
 
         public async Task<IReadOnlyList<InterviewerQCRowVM>> GetInterviewerViewAsync(
-            DateTime fromIst, DateTime toIst, string search = null, string interviewerEmail = null)
+            DateTime fromIst, DateTime toIst, string search = null, string interviewerEmail = null,
+            int minInterviews = InterviewerQCViewLimits.DefaultMinInterviews, bool includeOpenFlags = false)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@FromIst", fromIst.Date, DbType.Date);
             parameters.Add("@ToIst", toIst.Date, DbType.Date);
             parameters.Add("@Search", string.IsNullOrWhiteSpace(search) ? null : search.Trim(), DbType.String, size: 150);
             parameters.Add("@InterviewerEmail", string.IsNullOrWhiteSpace(interviewerEmail) ? null : interviewerEmail.Trim(), DbType.AnsiString, size: 150);
+            parameters.Add("@MinInterviews", minInterviews, DbType.Int32);
+            parameters.Add("@IncludeOpenFlags", includeOpenFlags, DbType.Boolean);
 
             using var con = new SqlConnection(_connectionString);
             var rows = await con.QueryAsync<InterviewerQCRowVM>(
                 "dbo.usp_GetInterviewerQCView",
+                parameters,
+                commandTimeout: CommandTimeoutSeconds,
+                commandType: CommandType.StoredProcedure);
+
+            return rows.ToList();
+        }
+
+        public async Task<IReadOnlyList<QCActivityDiagnosticRowVM>> GetDiagnosticsAsync(DateTime fromIst, DateTime toIst)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@FromIst", fromIst.Date, DbType.Date);
+            parameters.Add("@ToIst", toIst.Date, DbType.Date);
+
+            using var con = new SqlConnection(_connectionString);
+            var rows = await con.QueryAsync<QCActivityDiagnosticRowVM>(
+                "dbo.usp_QCActivity_Diagnostics",
                 parameters,
                 commandTimeout: CommandTimeoutSeconds,
                 commandType: CommandType.StoredProcedure);
@@ -109,6 +128,19 @@ namespace Risebird.Repository
                 ? new List<InterviewerQCEventVM>()
                 : (await multi.ReadAsync<InterviewerQCEventVM>()).ToList();
             return (irfs, events);
+        }
+
+        public async Task<ReportEditVM> GetReportEditAsync(int id)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", id, DbType.Int32);
+
+            using var con = new SqlConnection(_connectionString);
+            return await con.QueryFirstOrDefaultAsync<ReportEditVM>(
+                "dbo.usp_GetReportEdit",
+                parameters,
+                commandTimeout: CommandTimeoutSeconds,
+                commandType: CommandType.StoredProcedure);
         }
     }
 }

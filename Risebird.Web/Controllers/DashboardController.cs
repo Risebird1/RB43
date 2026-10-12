@@ -5405,7 +5405,7 @@ NEVER:
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
                 // int interviewerProfileid = InterviewerProfileId;
-                var data = await _dashboardService.UndoSuspiciousInterviewerService(UserId);
+                var data = await _dashboardService.UndoSuspiciousInterviewerService(UserId, emailId);
                 if (data == true)
                 {
                     return Json("Undo suspicious interviewer marked Successfully");

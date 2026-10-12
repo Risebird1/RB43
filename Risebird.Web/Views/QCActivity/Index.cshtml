@@ -56,7 +56,7 @@
     .qca-pill:hover { color: var(--qca-amber); text-decoration: none; filter: brightness(.97); }
     .qca-pill b { font-weight: 700; }
 
-    .qca-tiles { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .qca-tiles { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
     .qca-tile { background: var(--qca-card); border: 1px solid var(--qca-line); border-radius: 10px; padding: 12px 14px; min-width: 0; }
     .qca-tile__label { font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--qca-muted); line-height: 1.3; }
     .qca-tile__value { font-size: 26px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
@@ -100,7 +100,21 @@
     .qca-ok { color: var(--qca-green); font-weight: 600; }
     .qca-dt audio { height: 32px; max-width: 260px; vertical-align: middle; }
     .qca-detail-text { max-width: 420px; white-space: normal; word-break: break-word; }
+    .qca-undo { color: var(--qca-muted); font-size: 12px; margin-left: 3px; text-decoration: none; display: inline-block; }
+    .qca-edit-link { font-size: 13px; margin-top: 2px; }
 
+    .qca-modal--top { z-index: 2010; }
+    .qca-modal__box--narrow { width: min(1100px, 100%); }
+    .qca-edit-body { padding: 14px 18px 18px; }
+    .qca-edit-body h4 { font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--qca-muted); margin: 14px 0 6px; }
+    .qca-edit-body h4:first-child { margin-top: 0; }
+    .qca-edit-actions a { color: var(--qca-blue); }
+    .qca-edit-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .qca-diff { white-space: pre-wrap; word-break: break-word; line-height: 1.6; background: var(--qca-bg); border: 1px solid var(--qca-line); border-radius: 8px; padding: 10px 12px; max-height: 40vh; overflow: auto; }
+    .qca-del { background: var(--qca-red-soft); color: var(--qca-red); text-decoration: line-through; }
+    .qca-ins { background: #dcfce7; color: var(--qca-green); text-decoration: none; }
+
+    @@media (max-width: 1600px) { .qca-tiles { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
     @@media (max-width: 1280px) { .qca-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
     @@media (max-width: 768px) {
         .qca { padding: 12px 16px; }
@@ -111,6 +125,7 @@
         .qca-table td.qca-user { min-width: 170px; }
         .qca-modal { padding: 0; }
         .qca-modal__box { max-height: 100vh; height: 100vh; border-radius: 0; }
+        .qca-edit-cols { grid-template-columns: minmax(0, 1fr); }
     }
 </style>
 
@@ -149,7 +164,8 @@
     </div>
     <p class="qca-intro">
         What each Quality Controller actually did: interview reports reviewed and penalties applied (Payment SLA / QC Reject / QC Select),
-        trial interviewers kept or removed, IRF audits, Total Red Marker and Total Interview actions, and Plivo calls to interviewers.
+        reports edited, trial interviewers kept or removed, IRF audits, Total Red Marker and Total Interview actions, interviewer status
+        changes (suspicious, blocked, portal access, inactive, payment hold; &#8634; counts undos) and Plivo calls to interviewers.
         Click any number to see the records behind it. Dates are IST.
     </p>
 
@@ -202,11 +218,12 @@
             <thead>
                 <tr>
                     <th rowspan="2" class="qca-user-h">Quality Controller</th>
-                    <th colspan="6" class="qca-group">Interview reports &amp; penalties</th>
+                    <th colspan="7" class="qca-group">Interview reports &amp; penalties</th>
                     <th colspan="2" class="qca-group">Trial interviews</th>
                     <th colspan="4" class="qca-group">IRF audit</th>
                     <th colspan="3" class="qca-group">Total Red Marker</th>
                     <th colspan="3" class="qca-group">Total Interviews</th>
+                    <th colspan="5" class="qca-group">Interviewer status</th>
                     <th colspan="4" class="qca-group">Plivo calls</th>
                     <th rowspan="2" class="qca-group" style="vertical-align:middle" title="Coaching sessions logged or emailed (Interviewer QC View)">Coaching</th>
                     <th rowspan="2" class="qca-group" style="vertical-align:middle">Last action</th>
@@ -218,6 +235,7 @@
                     <th title="Payment SLA marked Approved">Approved</th>
                     <th title="Payment SLA marked Not approved">Not appr.</th>
                     <th title="QC forms filled (red flags in brackets)">QC forms</th>
+                    <th title="Submitted reports whose interviewer comment the user changed">Edited</th>
                     <th class="qca-group">Kept</th>
                     <th>Removed</th>
                     <th class="qca-group" title="Distinct IRFs backfilled or decided">IRFs</th>
@@ -230,6 +248,11 @@
                     <th class="qca-group">Under rev.</th>
                     <th>Reviewed</th>
                     <th>Removed</th>
+                    <th class="qca-group" title="Interviewers marked suspicious (&#8634; = marks undone)">Suspicious</th>
+                    <th title="Interviewers blocked (&#8634; = unblocked)">Blocked</th>
+                    <th title="Portal access turned off (&#8634; = turned back on)">Access off</th>
+                    <th title="Interviewers made inactive (&#8634; = made active again)">Inactive</th>
+                    <th title="Payments put on hold (&#8634; = holds released)">Pay hold</th>
                     <th class="qca-group">Calls</th>
                     <th>Interviewers</th>
                     <th>Talk time</th>
@@ -237,7 +260,7 @@
                 </tr>
             </thead>
             <tbody id="qcaBody">
-                <tr><td colspan="26" class="qca-loading">Loading…</td></tr>
+                <tr><td colspan="31" class="qca-loading">Loading…</td></tr>
             </tbody>
         </table>
     </div>
@@ -258,6 +281,19 @@
             <button type="button" class="qca-btn" id="qcaModalClose">Close</button>
         </div>
         <div class="qca-modal__body" id="qcaModalBody"></div>
+    </div>
+</div>
+
+<div class="qca-modal qca-modal--top" id="qcaEditModal" role="dialog" aria-modal="true" aria-labelledby="qcaEditTitle">
+    <div class="qca-modal__box qca-modal__box--narrow">
+        <div class="qca-modal__head">
+            <div>
+                <h3 id="qcaEditTitle">Report edit</h3>
+                <div class="qca-modal__sub" id="qcaEditSub"></div>
+            </div>
+            <button type="button" class="qca-btn" id="qcaEditClose">Close</button>
+        </div>
+        <div class="qca-modal__body qca-edit-body" id="qcaEditBody"></div>
     </div>
 </div>
 
@@ -332,6 +368,16 @@
             return '<td' + c + '><button type="button" class="qca-num" data-actor="' + esc(actor) + '" data-metric="' + esc(metric) + '">' + v + '</button></td>';
         }
 
+        // Interviewer status cell: the action count plus "↺ n" for its undos; opens the action-with-undo group.
+        function statusCell(count, undo, actor, metric, cls) {
+            var v = num(count), u = num(undo);
+            var c = cls ? ' class="' + cls + '"' : '';
+            if (v <= 0 && u <= 0) return '<td' + c + '><span class="qca-zero">0</span></td>';
+            var title = v + ' action' + (v === 1 ? '' : 's') + (u > 0 ? ', ' + u + ' undone' : '');
+            return '<td' + c + '><button type="button" class="qca-num" title="' + esc(title) + '" data-actor="' + esc(actor) + '" data-metric="' + esc(metric) + '">' + v +
+                (u > 0 ? '<span class="qca-undo">↺ ' + u + '</span>' : '') + '</button></td>';
+        }
+
         // ---------- filters ----------
         function readQuery() {
             var q = new URLSearchParams(window.location.search);
@@ -372,7 +418,7 @@
             syncInputs();
             $('#qcaApply').prop('disabled', true);
             $('#qcaAlert').empty();
-            $('#qcaBody').html('<tr><td colspan="26" class="qca-loading">Loading…</td></tr>');
+            $('#qcaBody').html('<tr><td colspan="31" class="qca-loading">Loading…</td></tr>');
             $.ajax({
                 url: '/QCActivity/Summary',
                 type: 'GET',
@@ -395,7 +441,7 @@
                 error: function (xhr) {
                     if (xhr.status === 401 || xhr.status === 403) { window.location.href = '/Session/SignOut'; return; }
                     $('#qcaAlert').html('<div class="qca-alert qca-alert--error">Could not load QC activity (' + esc(xhr.status) + '). Please try again.</div>');
-                    $('#qcaBody').html('<tr><td colspan="26" class="qca-empty">No data.</td></tr>');
+                    $('#qcaBody').html('<tr><td colspan="31" class="qca-empty">No data.</td></tr>');
                 },
                 complete: function () { $('#qcaApply').prop('disabled', false); }
             });
@@ -422,16 +468,18 @@
             }
             $('#qcaTiles').html(
                 tile('Reports reviewed', num(t.reportsReviewed), num(t.penaltiesApplied) + ' penalised') +
+                tile('Reports edited', num(t.reportsEdited), 'interviewer comments changed') +
                 tile('Trial interviewers removed', num(t.trialRemoved), num(t.trialKept) + ' kept') +
                 tile('IRFs audited', num(t.auditIrfs), num(t.auditRemoved) + ' interviewers removed') +
                 tile('Removed from Total Red Marker', num(t.trmRemoved), '') +
                 tile('Removed from Total Interviews', num(t.tiRemoved), '') +
+                tile('Interviewer status changes', num(t.statusChanges), '↺ ' + num(t.statusUndos) + ' undone') +
                 tile('Plivo calls', num(t.plivoCalls), num(t.plivoInterviewers) + ' interviewers · ' + fmtTalk(num(t.plivoTalkSeconds))) +
                 tile('Users with no activity', num(t.usersWithNoActivity), 'of ' + num(t.usersListed) + ' listed'));
 
             // Table, grouped by profile when more than one profile is listed.
             if (!rows.length) {
-                $('#qcaBody').html('<tr><td colspan="26" class="qca-empty">No Quality Controllers or actions in this range.</td></tr>');
+                $('#qcaBody').html('<tr><td colspan="31" class="qca-empty">No Quality Controllers or actions in this range.</td></tr>');
                 return;
             }
             var groups = [];
@@ -441,7 +489,7 @@
             });
             var html = '';
             groups.forEach(function (g) {
-                if (groups.length > 1) html += '<tr class="qca-section"><td colspan="26">' + esc(g) + '</td></tr>';
+                if (groups.length > 1) html += '<tr class="qca-section"><td colspan="31">' + esc(g) + '</td></tr>';
                 rows.filter(function (r) { return (r.profileName || 'Unknown') === g; }).forEach(function (r) {
                     var a = r.actorEmail;
                     var badge = num(r.totalActions) === 0 ? '<span class="qca-badge-none">No activity</span>' : '';
@@ -465,6 +513,7 @@
                         cell(r.slaApproved, a, 'SlaApproved') +
                         cell(r.slaNotApproved, a, 'SlaNotApproved') +
                         qcForms +
+                        cell(r.reportsEdited, a, 'ReportEdited') +
                         cell(r.trialKept, a, 'TrialKept', 'qca-group') +
                         cell(r.trialRemoved, a, 'TrialRemoved') +
                         irfs +
@@ -477,6 +526,11 @@
                         cell(r.tiUnderReview, a, 'TiUnderReview', 'qca-group') +
                         cell(r.tiReviewed, a, 'TiReviewed') +
                         cell(r.tiRemoved, a, 'TiRemoved') +
+                        statusCell(r.markedSuspicious, r.suspiciousUndone, a, 'SuspiciousAll', 'qca-group') +
+                        statusCell(r.blocked, r.unblocked, a, 'BlockedAll') +
+                        statusCell(r.accessRevoked, r.accessRestored, a, 'AccessAll') +
+                        statusCell(r.inactivated, r.reactivated, a, 'ActiveAll') +
+                        statusCell(r.paymentHolds, r.paymentHoldsReleased, a, 'PaymentHoldAll') +
                         cell(r.plivoCalls, a, 'PlivoCall', 'qca-group') +
                         '<td>' + (num(r.plivoInterviewers) > 0 ? num(r.plivoInterviewers) : '<span class="qca-zero">0</span>') + '</td>' +
                         talk + avgCall + cell(r.coachingSessions, a, 'Coaching', 'qca-group') + last +
@@ -487,14 +541,36 @@
         }
 
         // ---------- drill-down ----------
-        var reportMetrics = ['ReportReviewed', 'PenaltyApplied', 'SlaApproved', 'SlaNotApproved', 'QCForm'];
+        var reportMetrics = ['ReportReviewed', 'PenaltyApplied', 'SlaApproved', 'SlaNotApproved', 'QCForm', 'ReportEdited'];
+        // Interviewer status changes: the five actions, their undos, and the group keys that return both.
+        var statusActionMetrics = ['Suspicious', 'Blocked', 'AccessRevoked', 'Inactivated', 'PaymentHold'];
+        var statusUndoMetrics = ['SuspiciousUndone', 'Unblocked', 'AccessRestored', 'Reactivated', 'PaymentHoldReleased'];
+        var statusGroupMetrics = ['StatusActions', 'SuspiciousAll', 'BlockedAll', 'AccessAll', 'ActiveAll', 'PaymentHoldAll'];
+        function isStatusMetric(m) { return statusActionMetrics.indexOf(m) >= 0 || statusUndoMetrics.indexOf(m) >= 0; }
         var actionLabels = {
             ReportReviewed: 'Report reviewed', SlaApproved: 'SLA approved', SlaNotApproved: 'SLA not approved', QCForm: 'QC form',
             TrialKept: 'Trial kept', TrialRemoved: 'Trial removed', AuditBackfill: 'Audit backfill', AuditKept: 'Audit: kept',
             AuditRemoved: 'Audit: removed', TrmUnderReview: 'TRM: under review', TrmReviewed: 'TRM: reviewed', TrmRemoved: 'TRM: removed',
             TiUnderReview: 'Total Interviews: under review', TiReviewed: 'Total Interviews: reviewed', TiRemoved: 'Total Interviews: removed',
-            PlivoCall: 'Plivo call', Coaching: 'Coaching session'
+            PlivoCall: 'Plivo call', Coaching: 'Coaching session', ReportEdited: 'Report edited',
+            Suspicious: 'Marked suspicious', SuspiciousUndone: 'Suspicious mark undone', Blocked: 'Blocked', Unblocked: 'Unblocked',
+            AccessRevoked: 'Portal access turned off', AccessRestored: 'Portal access turned on', Inactivated: 'Made inactive',
+            Reactivated: 'Made active', PaymentHold: 'Payment put on hold', PaymentHoldReleased: 'Payment hold released'
         };
+
+        // Report text is stored HTML-encoded; decode it to plain text (a textarea never runs markup), then esc() it for the DOM.
+        function decodeHtml(v) {
+            if (v === null || v === undefined || v === '') return '';
+            var t = document.createElement('textarea');
+            t.innerHTML = String(v);
+            return t.value;
+        }
+        function detailText(r) {
+            return r.metric === 'ReportEdited' ? decodeHtml(r.detail) : (r.detail || '');
+        }
+        function editLink(r) {
+            return r.refId ? '<br/><button type="button" class="qca-num qca-edit-link" data-edit-id="' + esc(r.refId) + '">View change</button>' : '';
+        }
 
         function interviewerCell(r) {
             var name = r.interviewerName ? '<div>' + esc(r.interviewerName) + '</div>' : '';
@@ -522,6 +598,12 @@
                     return amt > 0 ? '<span class="qca-penalty">' + amt + ' red flag' + (amt === 1 ? '' : 's') + '</span>' : '<span class="qca-ok">No red flags</span>';
                 case 'TrialRemoved': case 'AuditRemoved': case 'TrmRemoved': case 'TiRemoved':
                     return '<span class="qca-penalty">' + esc(actionLabels[r.metric]) + '</span>';
+                case 'ReportEdited':
+                    return esc(r.status || actionLabels.ReportEdited) + editLink(r);
+                case 'Suspicious': case 'Blocked': case 'AccessRevoked': case 'Inactivated': case 'PaymentHold':
+                    return '<span class="qca-penalty">' + esc(actionLabels[r.metric]) + '</span>';
+                case 'SuspiciousUndone': case 'Unblocked': case 'AccessRestored': case 'Reactivated': case 'PaymentHoldReleased':
+                    return '<span class="qca-ok">↺ ' + esc(actionLabels[r.metric]) + '</span>';
                 default:
                     return esc(actionLabels[r.metric] || r.metric);
             }
@@ -532,7 +614,18 @@
             rows.forEach(function (r) {
                 h += '<tr><td>' + esc(fmtIst(r.actionAtIst)) + '</td>' + interviewerCell(r) +
                     '<td>' + esc(r.irfName || '—') + '</td><td>' + actionText(r) + '</td>' +
-                    '<td class="qca-detail-text">' + esc(r.detail || '—') + '</td>' + interviewLinks(r) + '</tr>';
+                    '<td class="qca-detail-text">' + esc(detailText(r) || '—') + '</td>' + interviewLinks(r) + '</tr>';
+            });
+            return h + '</tbody></table>';
+        }
+
+        // Status changes; the grouped keys (an action with its undo) also show the Type column.
+        function renderStatus(rows, grouped) {
+            var h = '<table class="qca-dt"><thead><tr><th>When (IST)</th>' + (grouped ? '<th>Type</th>' : '') +
+                '<th>Interviewer</th><th>Detail</th></tr></thead><tbody>';
+            rows.forEach(function (r) {
+                h += '<tr><td>' + esc(fmtIst(r.actionAtIst)) + '</td>' + (grouped ? '<td>' + actionText(r) + '</td>' : '') +
+                    interviewerCell(r) + '<td class="qca-detail-text">' + esc(detailText(r) || '—') + '</td></tr>';
             });
             return h + '</tbody></table>';
         }
@@ -555,8 +648,11 @@
         function renderGeneric(rows) {
             var h = '<table class="qca-dt"><thead><tr><th>When (IST)</th><th>Action</th><th>Interviewer</th><th>IRF</th><th>Detail</th><th>Interview / recording</th></tr></thead><tbody>';
             rows.forEach(function (r) {
-                var detail = r.detail || '';
-                if (r.status && r.metric !== 'PlivoCall') detail = detail ? detail + ' · ' + r.status : r.status;
+                var detail = detailText(r);
+                // Status changes and report edits carry their action label in status: already shown as the action.
+                if (r.status && r.metric !== 'PlivoCall' && r.metric !== 'ReportEdited' && !isStatusMetric(r.metric)) {
+                    detail = detail ? detail + ' · ' + r.status : r.status;
+                }
                 if (r.metric === 'PlivoCall') {
                     detail = 'Talk time ' + (r.amount === null || r.amount === undefined ? 'n/a' : fmtDuration(r.amount)) + (r.status ? ' · ' + r.status : '');
                 }
@@ -604,6 +700,8 @@
                     var m = res.metric || metric;
                     var html = reportMetrics.indexOf(m) >= 0 ? renderReports(rows)
                         : m === 'PlivoCall' ? renderCalls(rows)
+                        : statusGroupMetrics.indexOf(m) >= 0 ? renderStatus(rows, true)
+                        : isStatusMetric(m) ? renderStatus(rows, false)
                         : renderGeneric(rows);
                     $('#qcaModalBody').html(html);
                 },
@@ -611,6 +709,111 @@
                     if (xhr.status === 401 || xhr.status === 403) { window.location.href = '/Session/SignOut'; return; }
                     $('#qcaModalTitle').text('Details');
                     $('#qcaModalBody').html('<div class="qca-alert qca-alert--error" style="margin:12px">Could not load the records (' + esc(xhr.status) + ').</div>');
+                }
+            });
+        }
+
+        // ---------- report edit: before / after ----------
+        var maxDiffPairs = 4000000;
+
+        // Word-level diff (whitespace kept as its own token). Returns [{ k: '=' | '-' | '+', t: text }],
+        // or null when the changed middle is over maxDiffPairs word pairs (both texts are then shown as they are).
+        function wordDiff(a, b) {
+            var x = String(a || '').match(/\s+|[^\s]+/g) || [];
+            var y = String(b || '').match(/\s+|[^\s]+/g) || [];
+            var pre = 0;
+            while (pre < x.length && pre < y.length && x[pre] === y[pre]) pre++;
+            var suf = 0;
+            while (suf < x.length - pre && suf < y.length - pre && x[x.length - 1 - suf] === y[y.length - 1 - suf]) suf++;
+            var xs = x.slice(pre, x.length - suf), ys = y.slice(pre, y.length - suf);
+            var n = xs.length, m = ys.length;
+            if (n * m > maxDiffPairs) return null;
+
+            // lcs[i * w + j] = longest common subsequence of xs[i..] and ys[j..].
+            var w = m + 1, lcs = new Uint32Array((n + 1) * w), i, j;
+            for (i = n - 1; i >= 0; i--) {
+                for (j = m - 1; j >= 0; j--) {
+                    lcs[i * w + j] = xs[i] === ys[j] ? lcs[(i + 1) * w + j + 1] + 1 : Math.max(lcs[(i + 1) * w + j], lcs[i * w + j + 1]);
+                }
+            }
+
+            var out = [];
+            function push(k, t) {
+                if (out.length && out[out.length - 1].k === k) out[out.length - 1].t += t;
+                else out.push({ k: k, t: t });
+            }
+            for (i = 0; i < pre; i++) push('=', x[i]);
+            i = 0; j = 0;
+            while (i < n && j < m) {
+                if (xs[i] === ys[j]) { push('=', xs[i]); i++; j++; }
+                else if (lcs[(i + 1) * w + j] >= lcs[i * w + j + 1]) { push('-', xs[i]); i++; }
+                else { push('+', ys[j]); j++; }
+            }
+            while (i < n) push('-', xs[i++]);
+            while (j < m) push('+', ys[j++]);
+            for (i = x.length - suf; i < x.length; i++) push('=', x[i]);
+            return out;
+        }
+        function renderDiff(parts) {
+            return parts.map(function (p) {
+                if (p.k === '-') return '<del class="qca-del">' + esc(p.t) + '</del>';
+                if (p.k === '+') return '<ins class="qca-ins">' + esc(p.t) + '</ins>';
+                return esc(p.t);
+            }).join('');
+        }
+
+        function openEditModal() { $('#qcaEditModal').addClass('is-open'); $('body').css('overflow', 'hidden'); }
+        function closeEditModal() {
+            $('#qcaEditModal').removeClass('is-open');
+            if (!$('#qcaModal').hasClass('is-open')) $('body').css('overflow', '');
+        }
+
+        function openReportEdit(id) {
+            $('#qcaEditTitle').text('Loading…');
+            $('#qcaEditSub').text('');
+            $('#qcaEditBody').html('<div class="qca-loading">Loading…</div>');
+            openEditModal();
+            $.ajax({
+                url: '/QCActivity/ReportEdit',
+                type: 'GET',
+                cache: false,
+                data: { id: id },
+                success: function (e) {
+                    e = e || {};
+                    if (e.error) {
+                        $('#qcaEditTitle').text('Report edit');
+                        $('#qcaEditBody').html('<div class="qca-alert qca-alert--error">' + esc(e.error) + '</div>');
+                        return;
+                    }
+                    var before = decodeHtml(e.oldValue), after = decodeHtml(e.newValue);
+                    var field = e.fieldName === 'InterviewerComment' ? 'Interviewer comment' : (e.fieldName || 'Report');
+                    $('#qcaEditTitle').text(field + ' edited');
+                    $('#qcaEditSub').text([
+                        'By ' + (e.editorName ? e.editorName + ' (' + (e.editedBy || '') + ')' : (e.editedBy || 'unknown')),
+                        fmtIst(e.editedAtIst) + ' IST',
+                        e.interviewerName || e.interviewerEmail ? 'Interviewer ' + (e.interviewerName || e.interviewerEmail) : '',
+                        e.irfName ? 'IRF ' + e.irfName : '',
+                        e.interviewId ? 'Interview #' + e.interviewId : ''
+                    ].filter(Boolean).join(' · '));
+
+                    var parts = wordDiff(before, after);
+                    var diff = parts
+                        ? '<div class="qca-diff">' + (renderDiff(parts) || '<span class="qca-sub">(empty)</span>') + '</div>'
+                        : '<div class="qca-alert qca-alert--info">The texts are too long to compare word by word; both are shown in full below.</div>';
+                    var open = e.interviewId
+                        ? '<div class="qca-edit-actions"><a href="' + esc(fill(tpl.report, e.interviewId, e.irfId)) + '" target="_blank" rel="noopener">Open report</a></div>'
+                        : '';
+                    $('#qcaEditBody').html(open +
+                        '<h4>Changes <span class="qca-sub">(removed words in red, added words in green)</span></h4>' + diff +
+                        '<div class="qca-edit-cols">' +
+                        '<div><h4>Before (' + before.length + ' chars)</h4><div class="qca-diff">' + (before ? esc(before) : '<span class="qca-sub">(empty)</span>') + '</div></div>' +
+                        '<div><h4>After (' + after.length + ' chars)</h4><div class="qca-diff">' + (after ? esc(after) : '<span class="qca-sub">(empty)</span>') + '</div></div>' +
+                        '</div>');
+                },
+                error: function (xhr) {
+                    if (xhr.status === 401 || xhr.status === 403) { window.location.href = '/Session/SignOut'; return; }
+                    $('#qcaEditTitle').text('Report edit');
+                    $('#qcaEditBody').html('<div class="qca-alert qca-alert--error">Could not load the edit (' + esc(xhr.status) + ').</div>');
                 }
             });
         }
@@ -628,10 +831,16 @@
                 ['Name', 'actorName'], ['Email', 'actorEmail'], ['Profile', 'profileName'],
                 ['Reports reviewed', 'reportsReviewed'], ['Penalised', 'penaltiesApplied'], ['Avg penalty %', 'avgPenaltyPercent'],
                 ['SLA approved', 'slaApproved'], ['SLA not approved', 'slaNotApproved'], ['QC forms', 'qcForms'], ['QC form red flags', 'qcFormRedFlags'],
+                ['Reports edited', 'reportsEdited'],
                 ['Trial kept', 'trialKept'], ['Trial removed', 'trialRemoved'],
                 ['Audit IRFs', 'auditIrfs'], ['Audit backfills', 'auditBackfills'], ['Audit kept', 'auditKept'], ['Audit removed', 'auditRemoved'],
                 ['TRM under review', 'trmUnderReview'], ['TRM reviewed', 'trmReviewed'], ['TRM removed', 'trmRemoved'],
                 ['Total Interviews under review', 'tiUnderReview'], ['Total Interviews reviewed', 'tiReviewed'], ['Total Interviews removed', 'tiRemoved'],
+                ['Marked suspicious', 'markedSuspicious'], ['Suspicious undone', 'suspiciousUndone'],
+                ['Blocked', 'blocked'], ['Unblocked', 'unblocked'],
+                ['Access revoked', 'accessRevoked'], ['Access restored', 'accessRestored'],
+                ['Inactivated', 'inactivated'], ['Reactivated', 'reactivated'],
+                ['Payment holds', 'paymentHolds'], ['Payment holds released', 'paymentHoldsReleased'],
                 ['Plivo calls', 'plivoCalls'], ['Plivo interviewers', 'plivoInterviewers'], ['Plivo talk seconds', 'plivoTalkSeconds'], ['Plivo avg call seconds', 'plivoAvgCallSeconds'], ['Coaching sessions', 'coachingSessions'],
                 ['Total actions', 'totalActions'], ['Last action (IST)', 'lastActionAtIst']
             ];
@@ -673,9 +882,18 @@
         $(document).on('click', '#qcaTable .qca-num', function () {
             openDetails($(this).attr('data-actor'), $(this).attr('data-metric'));
         });
+        $(document).on('click', '#qcaModalBody .qca-edit-link', function () {
+            openReportEdit($(this).attr('data-edit-id'));
+        });
         $('#qcaModalClose').on('click', closeModal);
         $('#qcaModal').on('click', function (e) { if (e.target === this) closeModal(); });
-        $(document).on('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+        $('#qcaEditClose').on('click', closeEditModal);
+        $('#qcaEditModal').on('click', function (e) { if (e.target === this) closeEditModal(); });
+        // Escape closes the top-most dialog first.
+        $(document).on('keydown', function (e) {
+            if (e.key !== 'Escape') return;
+            if ($('#qcaEditModal').hasClass('is-open')) closeEditModal(); else closeModal();
+        });
 
         readQuery();
         if (!state.to) state.to = istToday();

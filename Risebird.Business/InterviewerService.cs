@@ -1722,11 +1722,11 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public async Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsInterviewerAccess, bool? IsBlocked)
+        public async Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsInterviewerAccess, bool? IsBlocked, string modifiedBy = null)
         {
             try
             {
-                var result = await _interviewerRepository.UpdateInterviewerFlag(Emailid, LeadInterviewer, IsApproved, IsInterviewerAccess, IsBlocked);
+                var result = await _interviewerRepository.UpdateInterviewerFlag(Emailid, LeadInterviewer, IsApproved, IsInterviewerAccess, IsBlocked, modifiedBy);
                 if (result)
                 {
                     var profile = await _interviewerRepository.GetInterviewerFlagDetails(Emailid);

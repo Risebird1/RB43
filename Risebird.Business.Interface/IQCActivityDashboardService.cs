@@ -21,10 +21,24 @@ namespace Risebird.Business.Interface
         Task<QCActivityDetailsResultVM> GetDetailsAsync(string actorEmail, string metric, DateTime? fromIst, DateTime? toIst,
             string restrictToActorEmail = null);
 
-        /// <summary>Interviewer QC View list: one row per interviewer (top 3000 by attention), with tile totals.</summary>
-        Task<InterviewerQCListResultVM> GetInterviewerViewAsync(DateTime? fromIst, DateTime? toIst, string search = null);
+        /// <summary>
+        /// Interviewer QC View list: one row per interviewer (top 3000 by attention), with tile totals.
+        /// <paramref name="minInterviews"/> defaults to 3 and is clamped to 1..50; <paramref name="includeOpenFlags"/>
+        /// also lists interviewers whose only signal is an older open flag.
+        /// </summary>
+        Task<InterviewerQCListResultVM> GetInterviewerViewAsync(DateTime? fromIst, DateTime? toIst, string search = null,
+            int? minInterviews = null, bool includeOpenFlags = false);
+
+        /// <summary>Data check for the QC Activity page: per source, who the rows in the range are stored under.</summary>
+        Task<QCActivityDiagnosticsResultVM> GetDiagnosticsAsync(DateTime? fromIst, DateTime? toIst);
 
         /// <summary>Side panel for one interviewer: headline numbers, IRFs and the dated timeline.</summary>
         Task<InterviewerQCTimelineVM> GetInterviewerTimelineAsync(string interviewerEmail, DateTime? fromIst, DateTime? toIst);
+
+        /// <summary>
+        /// One report edit with the full text before and after (ReportEditLog). Returns null for an id of 0 or less
+        /// (without querying) and when the edit does not exist; logs and rethrows on failure. Access checks are the caller's.
+        /// </summary>
+        Task<ReportEditVM> GetReportEditAsync(int id);
     }
 }
