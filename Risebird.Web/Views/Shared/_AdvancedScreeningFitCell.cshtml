@@ -1,0 +1,55 @@
+@model Risebird.Entities.ViewModel.Candidate
+@*
+    The candidate list's Fit Score cell (Advanced Resume Screening on). data-order carries the
+    percentage so DataTables ranks numerically; unscreened candidates sort last.
+    Badge bands: 80+ green, 60-79 blue, 40-59 amber, 20-39 orange, under 20 red.
+*@
+@{
+    var status = Model.AdvScreeningStatus;
+    var pct = Model.AdvScreeningPercentage;
+    var band = pct == null ? "state" : pct >= 80 ? "b80" : pct >= 60 ? "b60" : pct >= 40 ? "b40" : pct >= 20 ? "b20" : "b0";
+    var auth = Model.AdvAuthenticityRating;
+    var authClass = auth == "High risk" ? "high" : auth == "Review" ? "review" : "clean";
+    var order = pct.HasValue ? pct.Value.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) : "-1";
+}
+<td data-order="@order">
+    <div class="ars-cell">
+        @if (pct.HasValue)
+        {
+            <a href="@Url.Action("AdvancedScreenCandidate", "AIScreener", new { candidateId = Model.id })" target="_blank" style="text-decoration:none;">
+                <span class="ars-score @band">@pct.Value.ToString("0")%</span>
+            </a>
+            <span>@Model.AdvScreeningVerdict</span>
+            @if (Model.IsAdvScreeningStale)
+            {
+                <span class="ars-vold" title="Scored on an older rubric or older instructions">@("v" + (Model.AdvRubricVersion ?? 0))</span>
+            }
+            @if (!string.IsNullOrWhiteSpace(auth))
+            {
+                <span class="ars-auth @authClass" title="Authenticity - separate from the score">@auth</span>
+            }
+        }
+
+        @switch (status)
+        {
+            case "Pending":
+                <span class="ars-chip grey">Pending</span>
+                break;
+            case "Processing":
+                <span class="ars-chip info"><i class="fa fa-spinner fa-spin"></i> Screening</span>
+                break;
+            case "Failed":
+                <span class="ars-chip bad" title="@Model.AdvErrorMessage">! Failed · retry @(Model.AdvAttemptCount ?? 0)/3</span>
+                break;
+            case "Skipped":
+                <span class="ars-chip grey" title="@Model.AdvErrorMessage">&ndash; Skipped</span>
+                break;
+            case null:
+                if (!pct.HasValue)
+                {
+                    <span class="ars-muted">Not screened</span>
+                }
+                break;
+        }
+    </div>
+</td>

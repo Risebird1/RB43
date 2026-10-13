@@ -1,0 +1,111 @@
+@*
+    Styles for the Advanced Resume Screening screens (Screening Rubric page, rubric editor, Screen
+    All dialog, screening report, candidate-list Fit Score cell). Every rule is scoped to an ars-
+    class so it cannot leak into the portal pages that include it. Score badges differ in lightness
+    as well as hue, so the bands still read without colour.
+*@
+<style>
+    .ars-page { background: #f2f5f8; min-height: 100vh; padding: 16px 0 30px; font-size: 13px; color: #1f2937; }
+    .ars-card { background: #fff; border: 1px solid #e3e8ef; border-radius: 12px; box-shadow: 0 1px 6px rgba(15, 23, 42, .05); margin-bottom: 14px; }
+    .ars-card-b { padding: 16px 20px; }
+    .ars-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-left: 4px solid #1565c0; }
+    .ars-head h4 { margin: 0; font-size: 18px; font-weight: 700; }
+    .ars-head p { margin: 3px 0 0; color: #64748b; }
+    .ars-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .ars-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; color: #1f2937 !important; font-weight: 600; font-size: 12.5px; cursor: pointer; text-decoration: none !important; }
+    .ars-btn:hover { background: #f1f5f9; }
+    .ars-btn.primary { background: #1565c0; border-color: #1565c0; color: #fff !important; }
+    .ars-btn.primary:hover { background: #0d47a1; }
+    .ars-btn[disabled] { opacity: .55; cursor: not-allowed; }
+    .ars-btn.teal { background: #0f766e; border-color: #0f766e; color: #fff !important; }
+    .ars-muted { color: #64748b; }
+    .ars-new { font-size: 10px; font-weight: 700; color: #fff; background: #1565c0; border-radius: 999px; padding: 2px 8px; margin-left: 6px; }
+    .ars-alert { border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; font-weight: 500; }
+    .ars-alert.err { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+    .ars-alert.ok { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+    .ars-alert.warn { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+    .ars-chip { display: inline-block; border-radius: 999px; padding: 3px 10px; font-weight: 600; font-size: 11.5px; border: 1px solid transparent; white-space: nowrap; }
+    .ars-chip.ok { background: #dcfce7; color: #14532d; border-color: #86efac; }
+    .ars-chip.warn { background: #fef3c7; color: #78350f; border-color: #fcd34d; }
+    .ars-chip.bad { background: #fee2e2; color: #7f1d1d; border-color: #fca5a5; }
+    .ars-chip.info { background: #e0ecff; color: #1e3a8a; border-color: #a5c4f7; }
+    .ars-chip.grey { background: #eef2f6; color: #334155; border-color: #d5dde7; }
+    .ars-input { width: 100%; border: 1px solid #cfd8e3; border-radius: 8px; padding: 7px 10px; font-size: 13px; background: #fff; }
+    textarea.ars-input { resize: vertical; }
+    .ars-label { font-weight: 600; margin-bottom: 4px; display: block; }
+    .ars-quote { background: #f8fafc; border-left: 3px solid #94a3b8; padding: 8px 10px; border-radius: 6px; white-space: pre-wrap; }
+
+    /* rubric page */
+    .ars-instructions { border: 2px solid #3b82f6; }
+    .ars-instr-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .ars-instr-head h5 { margin: 0; font-weight: 700; font-size: 15px; }
+    .ars-insert { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+    .ars-pill { border-radius: 999px; padding: 4px 12px; font-weight: 600; font-size: 12px; background: #fff; cursor: pointer; border: 1px solid; }
+    .ars-pill.red { color: #b91c1c; border-color: #f2a3a3; }
+    .ars-pill.blue { color: #1d4ed8; border-color: #9db7f5; }
+    .ars-pill.green { color: #15803d; border-color: #94d3a8; }
+    .ars-pill.grey { color: #374151; border-color: #c4cbd4; }
+    .ars-instr-foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .ars-instr-foot label { margin: 0 0 0 12px; font-weight: 500; }
+    .ars-instr-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .ars-stale { margin-left: auto; background: #fffbeb; border: 1px solid #fde68a; color: #78350f; border-radius: 8px; padding: 6px 12px; }
+    .ars-stale a { font-weight: 700; text-decoration: underline; color: #1d4ed8; margin-left: 6px; }
+    .ars-jd summary { cursor: pointer; margin-bottom: 8px; }
+    .ars-budget { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+    .ars-ring { display: inline-flex; align-items: center; justify-content: center; min-width: 40px; height: 40px; border-radius: 50%; border: 2px solid #3b82f6; font-weight: 700; margin-right: 6px; padding: 0 4px; }
+    .ars-ring.over { border-color: #dc2626; color: #b91c1c; }
+    .ars-ring.exact { border-color: #16a34a; color: #15803d; }
+    .ars-section-label { font-size: 11px; font-weight: 700; letter-spacing: .06em; color: #1565c0; margin: 18px 0 8px; display: flex; justify-content: space-between; }
+    .ars-section-pts { color: #0f766e; }
+    .ars-table { width: 100%; border-collapse: collapse; }
+    .ars-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; padding: 10px 14px; border-bottom: 1px solid #e3e8ef; }
+    .ars-table td { padding: 10px 14px; border-bottom: 1px solid #f1f4f8; vertical-align: top; }
+    .ars-row.off td { opacity: .55; }
+    .ars-crit-name { font-weight: 600; }
+    .ars-crit-help { font-size: 11.5px; color: #64748b; }
+    .ars-empty { text-align: center; padding: 30px; }
+    .ars-foot { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .ars-foot > div { display: flex; gap: 8px; }
+
+    /* score badges: 80+ green, 60-79 blue, 40-59 amber, 20-39 orange, under 20 red */
+    .ars-score { display: inline-block; min-width: 50px; text-align: center; border-radius: 7px; padding: 3px 8px; font-weight: 700; }
+    .ars-score.b80 { background: #c9f0dc; color: #0b5132; }
+    .ars-score.b60 { background: #dbe7fb; color: #1e3a8a; }
+    .ars-score.b40 { background: #fbecc5; color: #6b4300; }
+    .ars-score.b20 { background: #f9d2b4; color: #7a3410; }
+    .ars-score.b0 { background: #f8c9c9; color: #7f1d1d; }
+    .ars-score.state { background: #e7edf3; color: #334155; }
+    .ars-vold { display: inline-block; background: #fef3c7; color: #78350f; border: 1px solid #fcd34d; border-radius: 5px; padding: 0 5px; font-size: 10.5px; font-weight: 700; margin-left: 4px; }
+    .ars-cell { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .ars-auth { font-size: 10.5px; font-weight: 700; border-radius: 5px; padding: 1px 6px; border: 1px solid; }
+    .ars-auth.clean { color: #14532d; border-color: #86efac; background: #f0fdf4; }
+    .ars-auth.review { color: #78350f; border-color: #fcd34d; background: #fffbeb; }
+    .ars-auth.high { color: #7f1d1d; border-color: #fca5a5; background: #fef2f2; }
+
+    /* modal */
+    .ars-modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, .45); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 16px; }
+    .ars-modal { background: #fff; border-radius: 14px; width: 100%; max-width: 640px; padding: 22px 26px; box-shadow: 0 20px 50px rgba(0, 0, 0, .25); max-height: 92vh; overflow-y: auto; }
+    .ars-modal h4 { margin: 0 0 10px; font-weight: 700; }
+    .ars-modal .ars-scope { display: block; margin: 8px 0; font-weight: 500; }
+
+    /* report */
+    .ars-report { display: grid; grid-template-columns: 330px 1fr; gap: 16px; align-items: start; }
+    @@media (max-width: 992px) { .ars-report { grid-template-columns: 1fr; } }
+    .ars-donut { width: 150px; height: 150px; margin: 6px auto 10px; position: relative; }
+    .ars-donut svg { transform: rotate(-90deg); }
+    .ars-donut .val { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .ars-donut .val b { font-size: 30px; }
+    .ars-bar { height: 8px; background: #e7edf3; border-radius: 99px; overflow: hidden; margin: 4px 0 12px; }
+    .ars-bar > span { display: block; height: 100%; background: #0f766e; }
+    .ars-bar.amber > span { background: #b7791f; }
+    .ars-list { padding-left: 18px; margin: 6px 0 12px; }
+    .ars-flag { border: 1px solid #e3e8ef; border-radius: 8px; padding: 8px 10px; margin-bottom: 8px; }
+    .ars-sev { font-size: 10.5px; font-weight: 700; border-radius: 5px; padding: 1px 6px; }
+    .ars-sev.High { background: #fee2e2; color: #7f1d1d; }
+    .ars-sev.Medium { background: #fef3c7; color: #78350f; }
+    .ars-sev.Low { background: #eef2f6; color: #334155; }
+    .ars-tag { font-size: 10.5px; font-weight: 700; border-radius: 999px; padding: 2px 9px; }
+    .ars-tag.match { background: #d6f3e4; color: #0b5132; }
+    .ars-tag.gap { background: #fde3cf; color: #7a3410; }
+    .ars-facts td { padding: 3px 8px 3px 0; }
+</style>

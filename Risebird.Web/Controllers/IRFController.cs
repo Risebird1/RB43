@@ -2309,8 +2309,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [Authorize]
-        [HttpPost]
         /// <summary>
         /// Makes sure the MCQ system has a skill channel linked to this one, creating it if not,
         /// and returns a sentence to append to the save confirmation.
@@ -2390,6 +2388,8 @@ namespace Risebird.Web.Controllers
             return rubricSkills.Count > 0 ? string.Join(", ", rubricSkills) : model.JDTiltle;
         }
 
+        [Authorize]
+        [HttpPost]
         public async Task<IActionResult> EditIRF(IRFVm model)
         {
             try

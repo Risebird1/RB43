@@ -1,246 +1,256 @@
-@model Risebird.Entities.ViewModel.ResumeScreeningCriteriaVM
-@using Risebird.CommonHelper
-@using Risebird.Entities.ViewModel
+@model Risebird.Entities.ViewModel.AdvancedScreening.IRFScreeningRubricVM
+@using Risebird.Entities.ViewModel.AdvancedScreening
 @{
     ViewData["Title"] = "Screening Rubric";
-    ViewBag.PageHeader = "Screening Rubric";
     Layout = "~/Views/Shared/_Layout.cshtml";
-
-    // Ported from screen.risebird.io's ScreeningProject/ScreeningCriteria. Rows come from
-    // AdvancedResumeScreening.BuildCriteriaRows and are named by ResumeScreeningCriteriaVM
-    // property, so the posted form binds straight back with no per-field markup.
-    var criteria = ViewBag.Criteria as List<ScreeningCriterionRow> ?? new List<ScreeningCriterionRow>();
-    var sections = new[] { AdvancedResumeScreening.SectionSkills, AdvancedResumeScreening.SectionWork, AdvancedResumeScreening.SectionEducation };
-    var budget = AdvancedResumeScreening.PointsBudget;
-    var allocated = criteria.Sum(c => c.Score);
-    var isUnsavedDraft = (ViewBag.IsUnsavedDraft as bool?) == true;
+    var counts = ViewBag.Counts as AdvancedScreeningCounts ?? new AdvancedScreeningCounts();
+    var statusClass = Model.Status == RubricStatus.Approved ? "ok" : Model.Status == RubricStatus.Failed ? "bad" : "warn";
+    var statusText = Model.Status == RubricStatus.Approved ? $"Approved · v{Model.RubricVersion}"
+        : Model.Status == RubricStatus.Generated ? "Generated · not approved"
+        : Model.Status == RubricStatus.Failed ? "Generation failed"
+        : Model.Status == RubricStatus.Generating ? "Generating…"
+        : Model.HasRubric && Model.Rubric != null ? "Draft · not approved" : "Not generated";
+    var instructionsLength = (Model.Instructions ?? string.Empty).Length;
 }
 <script>
-    var Header = "Screening Rubric";
-    $('#txtpageHeader').empty().html(Header);
+    var Header = "SCREENING RUBRIC FOR @Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode((Model.IRFName ?? string.Empty).ToUpperInvariant()))";
+    $('#txtpageHeader').empty().text(Header);
 </script>
 
-<style>
-    .rs-page { background: #f5f7fa; min-height: 100vh; padding: 18px 0 30px; font-size: 13px; color: #1f2937; }
-    .rs-page .rs-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 2px 10px rgba(15, 23, 42, .05); margin-bottom: 18px; }
-    .rs-page .rs-card-b { padding: 18px 22px; }
-    .rs-page .rs-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; border-left: 4px solid #42a5f5; }
-    .rs-page .rs-head h4 { margin: 0; font-size: 18px; font-weight: 700; }
-    .rs-page .rs-head p { margin: 4px 0 0; color: #6b7280; }
-    .rs-page .rs-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; color: #1f2937 !important; font-weight: 600; font-size: 12px; text-decoration: none !important; cursor: pointer; }
-    .rs-page .rs-btn:hover { background: #f1f5f9; }
-    .rs-page .rs-btn.primary { background: #42a5f5; border-color: #42a5f5; color: #fff !important; }
-    .rs-page .rs-btn.primary:hover { background: #1e88e5; }
-    .rs-page .rs-btn[disabled] { opacity: .7; cursor: default; }
-
-    .rs-page .rs-alert { border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; font-weight: 500; }
-    .rs-page .rs-alert.err { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
-    .rs-page .rs-alert.ok { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
-    .rs-page .rs-alert.warn { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
-    .rs-page .validation-summary-errors ul { margin: 0; padding-left: 18px; }
-    .rs-page .validation-summary-valid { display: none; }
-
-    .rs-page .rs-sources { display: flex; flex-wrap: wrap; gap: 8px 22px; color: #6b7280; }
-    .rs-page .rs-sources .yes { color: #166534; }
-    .rs-page .rs-sources .no { color: #9ca3af; }
-
-    .rs-page .rs-budget { display: flex; align-items: baseline; gap: 22px; flex-wrap: wrap; padding: 12px 16px; border-radius: 10px; background: #f8fafc; border: 1px solid #e5e7eb; margin-bottom: 8px; color: #6b7280; }
-    .rs-page .rs-budget .num { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 16px; color: #111827; }
-    .rs-page .rs-budget .num.over { color: #dc2626; }
-    .rs-page .rs-budget .num.exact { color: #16a34a; }
-
-    .rs-page .rs-section-label { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #1e88e5; margin: 22px 0 8px; }
-    .rs-page table.rs-table { width: 100%; border-collapse: collapse; }
-    .rs-page .rs-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #6b7280; padding: 8px 10px; border-bottom: 1px solid #e5e7eb; }
-    .rs-page .rs-table td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
-    .rs-page .rs-table td:first-child { font-weight: 600; padding-top: 14px; }
-    .rs-page .rs-table textarea, .rs-page .rs-table input { width: 100%; border: 1px solid #d1d5db; border-radius: 8px; padding: 7px 9px; font-size: 13px; }
-    .rs-page .rs-table textarea { resize: vertical; min-height: 38px; }
-    .rs-page .rs-table tr.off td { opacity: .55; }
-    .rs-page .rs-required { color: #dc2626; margin-left: 3px; }
-    .rs-page .rs-foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-</style>
+@await Html.PartialAsync("_AdvancedScreeningStyles")
 
 <div class="main-panel" id="main-panel">
-    <div class="content client candidate rs-page">
+    <div class="content client candidate ars-page">
         <div class="container-fluid">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="arsIrfId" value="@Model.IRFId" />
 
-            <div class="rs-card rs-card-b rs-head">
+            <div class="ars-card ars-card-b ars-head">
                 <div>
                     <h4>Screening Rubric &mdash; @Model.IRFName</h4>
                     <p>@Model.JDTiltle</p>
                 </div>
-                <div>
-                    @if (Model.IRFId > 0 && !string.IsNullOrWhiteSpace(Model.IRFName))
-                    {
-                        <a class="rs-btn" href="@Url.Action("GetCandidates", "Candidate", new { id = Model.IRFId, irfName = Model.IRFName })">
-                            <i class="fa fa-arrow-left"></i> Candidates
-                        </a>
-                    }
+                <div class="ars-actions">
+                    <span class="ars-chip @statusClass">@statusText</span>
+                    <a class="ars-btn" href="@Url.Action("GetCandidates", "Candidate", new { id = Model.IRFId, irfName = Model.IRFName })"><i class="fa fa-arrow-left"></i> Candidates</a>
                 </div>
             </div>
 
-            @if (TempData["SuccessMessage"] != null)
+            @if (TempData["AdvScreeningMessage"] != null)
             {
-                <div class="rs-alert ok"><i class="fa fa-check"></i> @TempData["SuccessMessage"]</div>
+                <div class="ars-alert ok"><i class="fa fa-check"></i> @TempData["AdvScreeningMessage"]</div>
             }
-            @if (!string.IsNullOrWhiteSpace(ViewBag.ErrorMessage as string))
+            @if (TempData["AdvScreeningError"] != null)
             {
-                <div class="rs-alert err"><i class="fa fa-exclamation-triangle"></i> @ViewBag.ErrorMessage</div>
+                <div class="ars-alert err"><i class="fa fa-exclamation-triangle"></i> @TempData["AdvScreeningError"]</div>
             }
-            @if (isUnsavedDraft)
+            @if (!Model.IsAdvancedResumeScreening)
             {
-                <div class="rs-alert warn">
+                <div class="ars-alert warn">
                     <i class="fa fa-info-circle"></i>
-                    Generated from this skill channel and <strong>not saved yet</strong>. Review the criteria and weights, then save.
-                    Nothing is scored against a draft.
-                </div>
-            }
-            else if (Model.HasCriteria && Model.IsAutoGenerated)
-            {
-                <div class="rs-alert warn">
-                    <i class="fa fa-info-circle"></i>
-                    Generated automatically when the first resume on this skill channel was screened
-                    @(Model.CreatedOn.HasValue ? "(" + Model.CreatedOn.Value.ToString("dd MMM yyyy") + ")" : "")
-                    and <strong>not reviewed yet</strong>. Saving it marks it reviewed.
-                </div>
-            }
-            else if (Model.HasCriteria && Model.UpdatedOn.HasValue)
-            {
-                <div class="rs-alert ok" style="font-weight:400;">
-                    Last saved @Model.UpdatedOn.Value.ToString("dd MMM yyyy HH:mm") UTC
-                    @(string.IsNullOrWhiteSpace(Model.UpdatedBy) ? "" : "by " + Model.UpdatedBy)
+                    Advanced Resume Screening is switched off for this skill channel. You can prepare and approve the rubric now; nobody is screened until it is switched on in
+                    <a href="@Url.Action("EditIRF", "IRF", new { id = Model.IRFId })" target="_blank">Edit IRF</a>.
                 </div>
             }
 
-            <form asp-action="ScreeningCriteria" asp-controller="AIScreener" method="post" id="criteriaForm">
-                @* The form tag helper adds the antiforgery token. *@
-                <input type="hidden" name="IRFId" value="@Model.IRFId" />
-
-                <div class="rs-card rs-card-b">
-                    <p style="margin-top:0;">
-                        Every resume on this skill channel is scored against these criteria, with a reason per criterion.
-                        Set a weight to zero to switch a criterion off &mdash; it then drops out of the denominator rather than
-                        counting against the candidate. A criterion left without a description is treated as off.
-                    </p>
-
-                    <div class="rs-sources" title="What the rubric generator reads from this skill channel">
-                        <span>Generated from:</span>
-                        <span class="@(string.IsNullOrWhiteSpace(Model.JDLink) ? "no" : "yes")"><i class="fa @(string.IsNullOrWhiteSpace(Model.JDLink) ? "fa-minus" : "fa-check")"></i> JD document</span>
-                        <span class="@(string.IsNullOrWhiteSpace(Model.CalibrationNotes) ? "no" : "yes")"><i class="fa @(string.IsNullOrWhiteSpace(Model.CalibrationNotes) ? "fa-minus" : "fa-check")"></i> Calibration meeting notes</span>
-                        <span class="@(string.IsNullOrWhiteSpace(Model.RecruiterInstructions) ? "no" : "yes")"><i class="fa @(string.IsNullOrWhiteSpace(Model.RecruiterInstructions) ? "fa-minus" : "fa-check")"></i> Recorded instructions</span>
-                    </div>
-
-                    <div asp-validation-summary="ModelOnly" class="rs-alert err" style="margin-top:14px;"></div>
-
-                    <div class="rs-budget" style="margin-top:14px;">
-                        <div>Allocated <span class="num" id="allocatedTotal">@allocated</span> of @budget points</div>
-                        <div>Criteria in use <span class="num" id="activeCount">0</span> of @criteria.Count</div>
-                        <div id="budgetHint"></div>
-                    </div>
-
-                    @foreach (var sec in sections)
-                    {
-                        var rows = criteria.Where(c => c.Section == sec).ToList();
-                        if (!rows.Any())
+            @* ---------------------------------------------------- recruiter instructions *@
+            <div class="ars-card ars-card-b ars-instructions">
+                <div class="ars-instr-head">
+                    <h5><i class="fa fa-align-left"></i> Recruiter instructions <span class="ars-new">NEW</span></h5>
+                    <span class="ars-muted" id="instrMeta">
+                        @if (Model.InstructionsVersion > 0)
                         {
-                            continue;
+                            @("v" + Model.InstructionsVersion + " · edited by " + Model.InstructionsUpdatedBy + " · " + Model.InstructionsUpdatedOn?.ToString("dd MMM yyyy, HH:mm") + " UTC")
                         }
+                        else
+                        {
+                            <text>No instructions saved yet</text>
+                        }
+                    </span>
+                </div>
+                <p class="ars-muted">Plain-English rules the AI follows for <strong>every</strong> candidate in this IRF, on top of the criteria below. Use them for dealbreakers, preferences and things to ignore. They override the JD and the ideal profile where they conflict.</p>
+                <div class="ars-insert">
+                    <span>Insert:</span>
+                    <button type="button" class="ars-pill red" data-insert="Dealbreaker: ">+ Dealbreaker</button>
+                    <button type="button" class="ars-pill blue" data-insert="Must have: ">+ Must have</button>
+                    <button type="button" class="ars-pill green" data-insert="Prefer: ">+ Prefer</button>
+                    <button type="button" class="ars-pill grey" data-insert="Ignore: ">+ Ignore</button>
+                </div>
+                <textarea id="arsInstructions" class="ars-input" rows="6" maxlength="2000" placeholder="Dealbreaker: no hands-on Vue.js (2 or 3) in the last 2 years.&#10;Must have: Vue 3 Composition API used in the current or previous project, not just listed.&#10;Prefer: product companies over IT services.&#10;Ignore: certifications and college tier for this role.">@Model.Instructions</textarea>
+                <div class="ars-instr-foot">
+                    <div>
+                        <span class="ars-muted">Apply to:</span>
+                        <label><input type="checkbox" id="applyToRubric" @(Model.ApplyInstructionsToRubric ? "checked" : "") /> Rubric generation</label>
+                        <label><input type="checkbox" id="applyToScoring" @(Model.ApplyInstructionsToScoring ? "checked" : "") /> Resume scoring</label>
+                    </div>
+                    <span class="ars-muted"><span id="instrCount">@instructionsLength</span> / 2000 characters</span>
+                </div>
+                <div class="ars-instr-actions">
+                    <button type="button" class="ars-btn" id="btnSaveInstructions">Save instructions</button>
+                    <button type="button" class="ars-btn primary" id="btnSaveAndRegenerate">Save &amp; regenerate criteria</button>
+                    <div id="staleBanner" class="ars-stale" style="@(counts.StaleInstructions > 0 ? "" : "display:none;")">
+                        <span id="staleText">@counts.StaleInstructions candidate(s) were scored on older instructions.</span>
+                        <a href="javascript:void(0)" class="js-open-screen-all">Re-screen</a>
+                    </div>
+                </div>
+            </div>
 
-                        <div class="rs-section-label">@sec &mdash; @rows.Count criteria</div>
-                        <div style="overflow-x:auto;">
-                            <table class="rs-table">
-                                <thead>
-                                    <tr>
-                                        <th style="width:230px;">Criterion</th>
-                                        <th>What the screener is told it means</th>
-                                        <th style="width:100px;">Weight</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var row in rows)
-                                    {
-                                        <tr>
-                                            <td>
-                                                @row.Label
-                                                @if (row.IsRequired)
-                                                {
-                                                    <span class="rs-required" title="Required, minimum 1 point">*</span>
-                                                }
-                                            </td>
-                                            <td>
-                                                <textarea name="@row.TextField" rows="2" maxlength="@row.MaxLength" class="rs-text">@row.Text</textarea>
-                                            </td>
-                                            <td>
-                                                <input name="@row.ScoreField" value="@row.Score" type="number" min="@(row.IsRequired ? 1 : 0)" max="@budget" step="1" class="rs-score" required />
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
+            @* -------------------------------------------------------------- JD text *@
+            <details class="ars-card ars-card-b ars-jd" @(string.IsNullOrWhiteSpace(Model.JDText) ? "open" : "")>
+                <summary><strong>Job description text</strong> <span class="ars-muted">&mdash; extracted from the JD file when the rubric is generated. Edit it if the extraction is wrong; it is saved with the rubric.</span></summary>
+                <textarea id="arsJdText" class="ars-input" rows="8" form="rubricForm" name="JDText" placeholder="@(string.IsNullOrWhiteSpace(Model.JDLink) ? "This IRF has no JD file. Paste the job description here, then generate." : "Filled in automatically from the JD file on first generation.")">@Model.JDText</textarea>
+                @if (!string.IsNullOrWhiteSpace(Model.JDLink))
+                {
+                    <a href="@Model.JDLink" target="_blank" class="ars-muted">Open the JD file</a>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.IdealCandidateProfile))
+                {
+                    <div style="margin-top:10px;"><strong>Ideal candidate profile</strong> <span class="ars-muted">(from Edit IRF)</span><div class="ars-quote">@Model.IdealCandidateProfile</div></div>
+                }
+            </details>
+
+            @* ------------------------------------------------------- points summary *@
+            <div class="ars-card ars-card-b ars-budget">
+                <div><span class="ars-ring" id="allocatedTotal">0</span> Allocated of 300 points</div>
+                <div><span class="ars-ring" id="activeCount">0</span> Criteria in use of 27</div>
+                <div id="budgetHint" class="ars-muted"></div>
+                <div class="ars-muted" id="sectionTotals"></div>
+            </div>
+
+            <form id="rubricForm" method="post" action="@Url.Action("SaveScreeningRubric", "AIScreener")">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="Approve" id="approveField" value="false" />
+                <div id="rubricEditorHost">
+                    @await Html.PartialAsync("_ScreeningRubricEditor", Model)
                 </div>
 
-                <div class="rs-card rs-card-b rs-foot">
-                    <a class="rs-btn" id="regenerate" href="@Url.Action("ScreeningCriteria", "AIScreener", new { irfId = Model.IRFId, regenerate = true })"
-                       title="Generate a fresh rubric from the skill channel. Nothing is saved until you save it.">
-                        <i class="fa fa-sync-alt"></i> Regenerate
-                    </a>
-                    <button type="submit" class="rs-btn primary" id="criteriaSubmit">
-                        <i class="fa fa-save"></i> Save rubric
-                    </button>
+                <div class="ars-card ars-card-b ars-foot">
+                    <button type="button" class="ars-btn js-generate" id="btnRegenerate"><i class="fa fa-sync-alt"></i> Regenerate</button>
+                    <div>
+                        <button type="submit" class="ars-btn" id="btnSaveDraft">Save draft</button>
+                        <button type="submit" class="ars-btn primary" id="btnApprove" disabled title="Approve stays disabled until the weights total exactly 300">Approve rubric</button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
+<div id="screenAllHost"></div>
+
 <script>
     $(function () {
-        var budget = @budget;
+        var irfId = $('#arsIrfId').val();
+        var token = function () { return $('input[name="__RequestVerificationToken"]').first().val(); };
 
-        // The budget is advisory, and honestly so: the screener scores against an effective
-        // maximum that excludes criteria left at zero, so the denominator is whatever is actually
-        // in use rather than a fixed total. Blocking on the total would imply a precision the
-        // scoring does not have.
+        // ---- points summary: advisory while editing, enforced on Approve
         function recalc() {
-            var total = 0, active = 0;
-            $('.rs-score').each(function () {
-                var v = parseInt($(this).val(), 10) || 0;
-                var text = $.trim($(this).closest('tr').find('.rs-text').val());
-                var on = v > 0 && text.length > 0;
-                total += v;
-                if (on) { active++; }
-                $(this).closest('tr').toggleClass('off', !on);
+            var total = 0, active = 0, sections = {};
+            $('#rubricEditor .ars-row').each(function () {
+                var w = parseInt($(this).find('.ars-weight').val(), 10) || 0;
+                var s = $(this).data('section');
+                total += w;
+                sections[s] = (sections[s] || 0) + w;
+                if (w > 0) { active++; }
+                $(this).toggleClass('off', w <= 0);
             });
-
-            var el = $('#allocatedTotal').text(total).removeClass('over exact');
-            if (total > budget) { el.addClass('over'); }
-            else if (total === budget) { el.addClass('exact'); }
-
+            $('#rubricEditor .ars-section-pts').each(function () {
+                $(this).text((sections[$(this).data('section')] || 0) + ' pts');
+            });
+            var hasRubric = $('#rubricEditor').data('has-rubric') == 1;
+            $('#allocatedTotal').text(total).toggleClass('over', total > 300).toggleClass('exact', total === 300);
             $('#activeCount').text(active);
-            $('#budgetHint').text(
-                total > budget ? 'Over budget by ' + (total - budget) + '.'
-                : total === budget ? ''
-                : (budget - total) + ' points unallocated.');
+            $('#budgetHint').text(!hasRubric ? '' : total > 300 ? 'Over budget by ' + (total - 300) + '.' : total === 300 ? 'Ready to approve.' : (300 - total) + ' points unallocated.');
+            $('#sectionTotals').text(hasRubric ? 'Skills ' + (sections['Skills'] || 0) + ' · Work ' + (sections['Work'] || 0) + ' · Education ' + (sections['Education'] || 0) : '');
+            $('#btnApprove').prop('disabled', !hasRubric || total !== 300);
+            $('#btnSaveDraft').prop('disabled', !hasRubric);
         }
-
-        $(document).on('input change', '.rs-score, .rs-text', recalc);
+        $(document).on('input change', '#rubricEditor .ars-weight', recalc);
         recalc();
 
-        $('#regenerate').on('click', function (e) {
-            if (!confirm('Generate a fresh rubric from this skill channel? Unsaved edits on this page are lost; the saved rubric is unchanged until you save.')) {
-                e.preventDefault();
+        $('#btnApprove').on('click', function () { $('#approveField').val('true'); });
+        $('#btnSaveDraft').on('click', function () { $('#approveField').val('false'); });
+
+        // ---- generation
+        function generate(button) {
+            var $b = $(button);
+            var label = $b.html();
+            $('.js-generate, #btnSaveAndRegenerate').prop('disabled', true);
+            $b.html('<i class="fa fa-spinner fa-spin"></i> Generating… (10–40 s)');
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GenerateScreeningRubric", "AIScreener")',
+                data: { irfId: irfId, jdText: $('#arsJdText').val(), __RequestVerificationToken: token() },
+                success: function (html) {
+                    if (typeof html === 'object' && html.message) { alert(html.message); return; }
+                    $('#rubricEditorHost').html(html);
+                    recalc();
+                },
+                error: function () { alert('Generation failed. Try again in a moment.'); },
+                complete: function () {
+                    $('.js-generate, #btnSaveAndRegenerate').prop('disabled', false);
+                    $b.html(label);
+                }
+            });
+        }
+        $(document).on('click', '.js-generate', function () {
+            if ($('#rubricEditor').data('has-rubric') == 1
+                && !confirm('Generate a fresh rubric? It replaces the current criteria and weights, and an approved rubric has to be approved again.')) {
                 return;
             }
-            $(this).css('pointer-events', 'none').html('<i class="fa fa-spinner fa-spin"></i> Generating&hellip;');
+            generate(this);
         });
 
-        $('#criteriaForm').on('submit', function () {
-            $('#criteriaSubmit').prop('disabled', true)
-                .html('<i class="fa fa-spinner fa-spin"></i> Saving&hellip;');
-            return true;
+        // ---- instructions
+        $('#arsInstructions').on('input', function () { $('#instrCount').text($(this).val().length); });
+        $('.ars-pill[data-insert]').on('click', function () {
+            var ta = document.getElementById('arsInstructions');
+            var text = $(this).data('insert');
+            var start = ta.selectionStart, value = ta.value;
+            var prefix = start > 0 && value.charAt(start - 1) !== '\n' ? '\n' : '';
+            ta.value = value.slice(0, start) + prefix + text + value.slice(ta.selectionEnd);
+            ta.focus();
+            ta.selectionStart = ta.selectionEnd = start + prefix.length + text.length;
+            $('#instrCount').text(ta.value.length);
+        });
+
+        function saveInstructions(done) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("SaveScreeningInstructions", "AIScreener")',
+                data: {
+                    irfId: irfId,
+                    instructions: $('#arsInstructions').val(),
+                    applyToRubric: $('#applyToRubric').is(':checked'),
+                    applyToScoring: $('#applyToScoring').is(':checked'),
+                    __RequestVerificationToken: token()
+                },
+                success: function (res) {
+                    if (!res.success) { alert(res.message || 'The instructions could not be saved.'); return; }
+                    $('#instrMeta').text('v' + res.instructionsVersion + ' · edited by ' + res.editedBy + ' · ' + res.editedOn);
+                    if (res.staleCount > 0) {
+                        $('#staleText').text(res.staleCount + ' candidate(s) were scored on older instructions.');
+                        $('#staleBanner').show();
+                    } else {
+                        $('#staleBanner').hide();
+                    }
+                    if (done) { done(); }
+                },
+                error: function () { alert('The instructions could not be saved.'); }
+            });
+        }
+        $('#btnSaveInstructions').on('click', function () { saveInstructions(); });
+        $('#btnSaveAndRegenerate').on('click', function () {
+            var btn = this;
+            saveInstructions(function () { generate(btn); });
+        });
+
+        // ---- Screen All dialog (also opened from the candidate list)
+        $(document).on('click', '.js-open-screen-all', function () {
+            $.get('@Url.Action("ScreenAllSummary", "AIScreener")', { irfId: irfId }, function (html) {
+                if (typeof html === 'object' && html.message) { alert(html.message); return; }
+                $('#screenAllHost').html(html);
+            });
         });
     });
 </script>

@@ -1341,6 +1341,7 @@
                                                                 <i style="margin-right:-4vw" title="Interviewer Video on at time of interview." class="fa fa-info-circle"></i>
                                                             </div>
                                                         </div>
+                                                        @await Html.PartialAsync("_AdvancedResumeScreeningOption", Model, new ViewDataDictionary(ViewData) { { "ShowIdealCandidateProfile", true } })
                                                         <div class="col-md-4 col-sm-4 pull-left">
                                                             <div class="mdc-form-field" style="margin-bottom: 10px;">
                                                                 <div class="mdc-checkbox">
