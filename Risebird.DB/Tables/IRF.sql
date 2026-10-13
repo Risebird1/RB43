@@ -932,3 +932,16 @@ BEGIN
     Add CandidateTranscriptReview bit NULL
 END
 GO
+
+-- Interview alignment: switches the pre-interview trial banner and onboarding modal on for this
+-- channel. NULL (every existing row) means off, so no channel changes behaviour until it is set.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'AITrialEnabled'
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add AITrialEnabled bit NULL
+END
+GO

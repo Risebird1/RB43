@@ -1,0 +1,273 @@
+@model Risebird.Entities.ViewModel.InterviewAlignmentViewModel
+@*
+    Interview alignment: the cue under the Join button, the trial banner, the "Ready to join" card and
+    the candidate card. Rendered by InterviewDetails.cshtml only when the alignment data loaded; the
+    behaviour lives in _AlignmentScripts.cshtml. Built from the page's own card pieces (.card,
+    .question header, .answer body, .num, green round ticks, blue link pills) so it reads as one page.
+
+    The wording is deliberate: it asks the interviewer to check the points below, not that they cannot
+    join. "Join without confirming" is always available and is recorded with what was outstanding.
+*@
+@{
+    var meeting = (Risebird.Entities.Data.Meeting)ViewData["Meeting"];
+    bool hasJoinButton = meeting != null && !string.IsNullOrEmpty(meeting.zoomLink);
+    int codingQuestionCount = Model.Sessions?.Count ?? 0;
+}
+<style>
+    /* Cue under the Join button. The resting frame carries the whole message (colour, icon, copy, progress);
+       motion only amplifies it, and stops entirely under prefers-reduced-motion. */
+    .ia-callout { position: relative; display: flex; align-items: center; gap: 12px; width: 340px; max-width: 100%;
+        margin: -8px auto 22px auto; padding: 10px 14px 11px 12px; text-align: left;
+        background: #fff; border: 1px solid #f3c77a; border-left: 4px solid #f0a020; border-radius: 6px;
+        box-shadow: 0 4px 14px rgba(240, 160, 32, .18), 0 1px 3px rgba(0, 0, 0, .06); }
+    /* Speech-bubble tail on the bottom edge, pointing down at the "Ready to join" card. */
+    .ia-callout:before, .ia-callout:after { content: ""; position: absolute; left: 50%; width: 0; height: 0;
+        border-left: 9px solid transparent; border-right: 9px solid transparent; }
+    .ia-callout:before { bottom: -10px; margin-left: -9px; border-top: 10px solid #f3c77a; }
+    .ia-callout:after { bottom: -8px; margin-left: -9px; border-top: 10px solid #fff; }
+    .ia-callout-icon { position: relative; flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%;
+        background: #fff3dc; color: #e08e00; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+    .ia-callout-icon .fa { padding: 0; line-height: 1; }
+    .ia-callout-body { flex: 1 1 auto; min-width: 0; }
+    .ia-callout-title { display: block; font-size: 14px; font-weight: 700; color: #6b4a00; line-height: 18px; }
+    .ia-callout-sub { display: block; margin-top: 2px; font-size: 12px; color: #8a7a62; line-height: 16px; }
+    .ia-progress { display: flex; gap: 4px; margin-top: 7px; }
+    .ia-seg { flex: 1 1 0; height: 5px; border-radius: 3px; background: #f1e3c8; transition: background-color .3s ease; }
+    .ia-seg.is-done { background: #66bb6a; }
+    .ia-caret { flex: 0 0 auto; color: #e08e00; font-size: 15px; }
+    /* Motion: a soft pulse ring on the icon and a gentle nudge of the arrow - never a full fade of the text. */
+    .ia-pulse:after { content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: 0 0 0 0 rgba(240, 160, 32, .55);
+        animation: iaPulse 1.8s ease-out infinite; }
+    .ia-nudge { animation: iaNudge 1.4s ease-in-out infinite; }
+    @@keyframes iaPulse { 0% { box-shadow: 0 0 0 0 rgba(240, 160, 32, .55); } 80%, 100% { box-shadow: 0 0 0 10px rgba(240, 160, 32, 0); } }
+    @@keyframes iaNudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
+    @@media (prefers-reduced-motion: reduce) { .ia-pulse:after, .ia-nudge { animation: none; } }
+
+    /* Card header in the page's style: icon + grey uppercase title, not clickable. */
+    .ia-head { padding: 5px !important; cursor: default !important; overflow: hidden; }
+    .ia-head .consent-label { cursor: default !important; }
+    .ia-count { display: inline-block; margin-left: 8px; padding: 1px 9px; font-size: 11.5px; font-weight: 600; text-transform: none; letter-spacing: 0;
+        border-radius: 10px; background: #fff6e5; color: #a35f00; border: 1px solid #f0a020; vertical-align: 1px; }
+    .ia-count.is-done { background: #e8f5e9; color: #2e7d32; border-color: #66bb6a; }
+
+    /* Requirement rows: the page's green round tick on the left, a blue pill action on the right. */
+    .ia-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 10px; margin: 0 0 6px 0;
+        background: #fff; border: 1px solid #ebe8e8; border-radius: 3px; font-size: 14.5px; color: #847878; }
+    .ia-row:last-of-type { margin-bottom: 0; }
+    .ia-row.is-outstanding { border-color: #f0a020; box-shadow: 0 0 0 1px #f0a020 inset; background: #fffbf3; }
+    .ia-row-text { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .ia-tick { position: relative; flex: 0 0 auto; width: 22px; height: 22px; border: 1px solid #ccc; border-radius: 50%; background: #fff; }
+    .ia-tick:after { content: ""; position: absolute; left: 6px; top: 6px; width: 10px; height: 5px; border: 2px solid #fff; border-top: 0; border-right: 0; transform: rotate(-45deg); opacity: 0; }
+    .ia-row.is-done .ia-tick { background: #66bb6a; border-color: #66bb6a; }
+    .ia-row.is-done .ia-tick:after { opacity: 1; }
+    .ia-row b { color: #5f5757; font-weight: 600; }
+    /* Small, sleek action pill: soft blue at rest, solid blue on hover. */
+    .ia-pill { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 11px;
+        background: #eaf4fe; color: #1f7fd0 !important; border: 1px solid #cfe4f8; border-radius: 12px;
+        font-size: 12px; font-weight: 600; line-height: 1; letter-spacing: .01em; text-decoration: none; cursor: pointer; white-space: nowrap;
+        transition: background-color .15s ease, color .15s ease, border-color .15s ease; }
+    .ia-pill:after { content: "\203A"; font-size: 14px; line-height: 1; margin-top: -1px; }
+    .ia-pill:hover, .ia-pill:focus-visible { background: #42a5f5; border-color: #42a5f5; color: #fff !important; outline: none; }
+    .ia-row.is-outstanding .ia-pill { background: #fff3dc; border-color: #f3c77a; color: #a35f00 !important; }
+    .ia-row.is-outstanding .ia-pill:hover { background: #f0a020; border-color: #f0a020; color: #fff !important; }
+    .ia-row.is-info { background: #f3f8fd; border-color: #cfe3f5; }
+    .ia-code-icon { flex: 0 0 auto; width: 22px; text-align: center; color: #42a5f5; font-size: 16px; }
+    .ia-tag { display: inline-block; margin-left: 8px; padding: 0 6px; font-size: 10.5px; font-weight: 600; letter-spacing: .05em; color: #607d8b; border: 1px solid #b0bec5; border-radius: 3px; white-space: nowrap; }
+    .ia-footnote { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-top: 10px; font-size: 13px; line-height: 19px; color: #979494; }
+    .ia-override { flex: 0 0 auto; background: #fff; color: #d43434; border: 1px solid #d43434; border-radius: 20px; padding: 5px 16px; font-size: 13px; cursor: pointer; white-space: nowrap; }
+    .ia-override:hover { background: #fdecec; }
+    .ia-gate-cleared .ia-callout, .ia-gate-cleared .ia-footnote .ia-override { display: none; }
+
+    /* Trial banner, in the tone of the page's other notices. */
+    .ia-banner { margin: 0 0 10px 0; padding: 10px 14px; background: #fff6e5; border: 1px solid #f3d29a; border-left: 4px solid #f0a020; border-radius: 3px; font-size: 14.5px; line-height: 22px; color: #847878; }
+    .ia-banner .fa { color: #f0a020; margin-right: 6px; }
+    .ia-banner b { color: #a35f00; }
+    .ia-banner a { color: #4c87b6; font-weight: 700; text-decoration: underline; }
+
+    /* Candidate card: identity on the left (initials avatar, coded name, role), details as chips on the right. */
+    .ia-cand { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap;
+        padding: 12px 14px; background: #fff; border: 1px solid #ebe8e8; border-radius: 6px; }
+    .ia-cand-id { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1 1 260px; }
+    .ia-avatar { flex: 0 0 auto; width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        background: linear-gradient(135deg, #42a5f5, #1e7fd0); color: #fff; font-size: 16px; font-weight: 700; letter-spacing: .03em;
+        box-shadow: 0 2px 6px rgba(30, 127, 208, .3); }
+    .ia-avatar .fa { font-size: 20px; padding: 0; }
+    .ia-cand-name { display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 700; color: #4a4343; line-height: 22px; }
+    .ia-cand-name.is-missing { font-size: 14px; font-weight: 600; color: #979494; }
+    .ia-coded-tag { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 10px; font-size: 10.5px; font-weight: 600;
+        color: #607d8b; background: #eef3f6; border: 1px solid #d5e1e8; letter-spacing: .02em; }
+    .ia-cand-role { display: block; margin-top: 2px; font-size: 13.5px; color: #847878; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ia-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .ia-chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 8px; border-radius: 8px; background: #f7f8fa; border: 1px solid #ebeef1; }
+    .ia-chip-icon { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #e9eef3; color: #78909c; font-size: 13px; }
+    .ia-chip-icon .fa { padding: 0; }
+    .ia-chip-label { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #9aa1a8; line-height: 13px; }
+    .ia-chip-value { display: block; font-size: 13.5px; font-weight: 600; color: #5f5757; line-height: 17px; }
+    .ia-chip.is-required { background: #fff8ec; border-color: #f6dcb0; }
+    .ia-chip.is-required .ia-chip-icon { background: #fde8c4; color: #d98a00; }
+    .ia-chip.is-required .ia-chip-value { color: #a35f00; }
+    .ia-chip.is-info .ia-chip-icon { background: #e3f0fc; color: #2f8fdc; }
+    .ia-chip.is-muted .ia-chip-value { color: #9aa1a8; font-weight: 500; }
+    .ia-muted { font-size: 12.2px; color: #929c9c; }
+</style>
+
+<div id="iaAlignment" data-interview-id="@Model.InterviewId" data-has-precheck="@(Model.HasCandidatePreCheck ? "1" : "0")"
+     data-interviewer="@meeting?.interviewer" data-irf-code="@Model.IRFCode">
+    @Html.AntiForgeryToken()
+
+    @if (hasJoinButton)
+    {
+        <div class="ia-callout" id="iaCallout" role="status" aria-live="polite">
+            <span class="ia-callout-icon ia-pulse" aria-hidden="true"><i class="fa fa-list-ul"></i></span>
+            <span class="ia-callout-body">
+                <span class="ia-callout-title">Check the 4 points below first</span>
+                <span class="ia-callout-sub" id="iaCalloutSub">0 of 4 done &middot; the Zoom link unlocks at 4 of 4</span>
+                <span class="ia-progress" aria-hidden="true">
+                    <span class="ia-seg"></span><span class="ia-seg"></span><span class="ia-seg"></span><span class="ia-seg"></span>
+                </span>
+            </span>
+            <i class="fa fa-chevron-down ia-caret ia-nudge" aria-hidden="true"></i>
+        </div>
+    }
+
+    @if (Model.IsTrialInterview)
+    {
+        <div class="ia-banner" id="iaTrialBanner">
+            <i class="fa fa-flag" aria-hidden="true"></i><b>This is a trial interview on this channel.</b>
+            It is your first interview here, so this session is reviewed in full before you are assigned more.
+            @if (!string.IsNullOrWhiteSpace(Model.TrialPolicyUrl))
+            {
+                <a href="@Model.TrialPolicyUrl" target="_blank" rel="noopener">Read the trial policy</a>
+            }
+            else
+            {
+                <a href="javascript:void(0)" onclick="iaOpenTrialOnboarding(true)">Read the trial policy</a>
+            }
+        </div>
+    }
+
+    <div class="card" id="iaGateCard" style="margin-bottom:10px;">
+        <div class="question ia-head">
+            <label class="consent-label">
+                <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                Ready to join <span class="ia-count" id="iaGateCount">0 of 4 confirmed</span>
+            </label>
+        </div>
+        <fieldset class="answer">
+            <div class="ia-row" data-req="rubric">
+                <span class="ia-row-text"><span class="ia-tick" aria-hidden="true"></span><span><b>Rubric reviewed</b> &mdash; skills and elimination skills for this channel</span></span>
+                <button type="button" class="ia-pill" onclick="iaGoTo('rubric')">View</button>
+            </div>
+            <div class="ia-row" data-req="questions">
+                <span class="ia-row-text"><span class="ia-tick" aria-hidden="true"></span><span><b>Questions reviewed</b> &mdash; the client's sample questions</span></span>
+                <button type="button" class="ia-pill" onclick="iaGoTo('questions')">View</button>
+            </div>
+            <div class="ia-row" data-req="precheck">
+                <span class="ia-row-text"><span class="ia-tick" aria-hidden="true"></span><span><b>Candidate pre-check seen</b> &mdash; @(Model.HasCandidatePreCheck ? "pre-interview screening report" : "candidate checks")</span></span>
+                <button type="button" class="ia-pill" onclick="iaGoTo('precheck')">Open</button>
+            </div>
+            <div class="ia-row" data-req="issues">
+                <span class="ia-row-text"><span class="ia-tick" aria-hidden="true"></span><span><b>Previous issues acknowledged</b> &mdash; on this channel</span></span>
+                <button type="button" class="ia-pill" onclick="iaGoTo('issues')">Check</button>
+            </div>
+
+            @* Informational only. A coding question can be written during the call, so a missing session never holds the Zoom link. *@
+            <div class="ia-row is-info" id="iaCodeStatusRow" style="@(Model.CodeSnippetRequired || codingQuestionCount > 0 ? "" : "display:none;")">
+                <span class="ia-row-text">
+                    <i class="fa fa-code ia-code-icon" aria-hidden="true"></i>
+                    <span>
+                        <span id="iaCodeStatusText">
+                            @if (codingQuestionCount > 0)
+                            {
+                                @:Code session ready &mdash; @codingQuestionCount created for this interview.
+                            }
+                            else
+                            {
+                                @:Code is required on this interview &mdash; no session yet. Create one now, or during the call.
+                            }
+                        </span>
+                        <span class="ia-tag">NOT BLOCKING</span>
+                    </span>
+                </span>
+                <button type="button" class="ia-pill" onclick="iaGoTo('code')">Create</button>
+            </div>
+
+            <div class="ia-footnote">
+                <span id="iaGateFootnote">
+                    @if (hasJoinButton)
+                    {
+                        @:The Zoom link above unlocks once all four are confirmed. The code row does not hold it. You can still join without confirming &mdash; the override is recorded with what was outstanding.
+                    }
+                    else
+                    {
+                        @:Confirm these before the call.
+                    }
+                </span>
+                @if (hasJoinButton)
+                {
+                    <button type="button" class="ia-override" id="iaOverride" onclick="iaJoinWithoutConfirming()">Join without confirming</button>
+                }
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="card" id="iaCandidateCard" style="margin-bottom:10px;">
+        <div class="question ia-head">
+            <label class="consent-label">
+                <i class="fa fa-user-circle-o" aria-hidden="true"></i>
+                Candidate
+            </label>
+        </div>
+        @{
+            var codedName = Model.CandidateCodedName?.Trim();
+            var hasCodedName = !string.IsNullOrEmpty(codedName);
+            // Initials of the coded name's two parts, e.g. AdLo1234 -> AL. Never the real name.
+            var initials = !hasCodedName ? null
+                : codedName.Length >= 3 ? (codedName.Substring(0, 1) + codedName.Substring(2, 1)).ToUpperInvariant()
+                : codedName.Substring(0, 1).ToUpperInvariant();
+            bool videoRequired = meeting != null && meeting.IsVideoRequired == true;
+            bool hasDuration = Model.DurationMinutes.HasValue && Model.DurationMinutes.Value > 0;
+        }
+        <fieldset class="answer">
+            <div class="ia-cand">
+                <div class="ia-cand-id">
+                    <span class="ia-avatar" aria-hidden="true">
+                        @if (hasCodedName)
+                        {
+                            @initials
+                        }
+                        else
+                        {
+                            <i class="fa fa-user"></i>
+                        }
+                    </span>
+                    <span style="min-width:0;">
+                        <span class="ia-cand-name @(hasCodedName ? "" : "is-missing")">
+                            @(hasCodedName ? codedName : "Coded name not assigned yet")
+                            <span class="ia-coded-tag"><i class="fa fa-lock" aria-hidden="true"></i> Coded identity</span>
+                        </span>
+                        <span class="ia-cand-role" title="@Model.RoleTitle">@(string.IsNullOrWhiteSpace(Model.RoleTitle) ? "Role not specified" : Model.RoleTitle)</span>
+                    </span>
+                </div>
+                <div class="ia-chips">
+                    <span class="ia-chip is-info">
+                        <span class="ia-chip-icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>
+                        <span><span class="ia-chip-label">Duration</span><span class="ia-chip-value">@(hasDuration ? Model.DurationMinutes.Value + " min" : "—")</span></span>
+                    </span>
+                    <span class="ia-chip @(videoRequired ? "is-required" : "is-muted")">
+                        <span class="ia-chip-icon"><i class="fa fa-video-camera" aria-hidden="true"></i></span>
+                        <span><span class="ia-chip-label">Video</span><span class="ia-chip-value">@(videoRequired ? "Required" : "Not required")</span></span>
+                    </span>
+                    <span class="ia-chip @(Model.CodeSnippetRequired ? "is-required" : "is-muted")">
+                        <span class="ia-chip-icon"><i class="fa fa-file-code-o" aria-hidden="true"></i></span>
+                        <span><span class="ia-chip-label">Code snippet</span><span class="ia-chip-value">@(Model.CodeSnippetRequired ? "Required" : "Not required")</span></span>
+                    </span>
+                    <span class="ia-chip is-info">
+                        <span class="ia-chip-icon"><i class="fa fa-code" aria-hidden="true"></i></span>
+                        <span><span class="ia-chip-label">Coding questions</span><span class="ia-chip-value" id="iaCodingQuestionCount">@codingQuestionCount</span></span>
+                    </span>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>

@@ -428,6 +428,13 @@
 
                                     </div>
 
+                                    @* Candidate code from per-question code sessions. Set only by SecureReport after its share check. *@
+                                    @{ int codeSessionInterviewId = (ViewBag.CodeSessionInterviewId as int?) ?? 0; }
+                                    @if (codeSessionInterviewId > 0)
+                                    {
+                                        @await Html.PartialAsync("~/Views/Shared/_InterviewCodeSessionsReport.cshtml", codeSessionInterviewId)
+                                    }
+
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">

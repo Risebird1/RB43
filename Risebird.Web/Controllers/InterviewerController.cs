@@ -5120,10 +5120,33 @@ namespace Risebird.Web.Controllers
         }
         #endregion
         #region Interviewer Insights
+        /// <summary>
+        /// The insights routes take the interviewer from the query string. An interviewer may only ever
+        /// read their own record: for them (and for a caller with no session) the email comes from
+        /// session and the parameter is ignored. Ops, QC, delivery and client roles open other
+        /// interviewers' insights from their dashboards and keep doing so unchanged.
+        /// Returns null when there is no one the caller may see.
+        /// </summary>
+        private string ResolveInsightsInterviewer(string requestedInterviewer)
+        {
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            var sessionEmail = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            if (string.IsNullOrWhiteSpace(profileName) || profileName == "Interviewer")
+            {
+                return string.IsNullOrWhiteSpace(sessionEmail) ? null : sessionEmail;
+            }
+            return requestedInterviewer;
+        }
+
         public async Task<IActionResult> InterviewerInsights(string interviewer, string IrfId, string type = null)
         {
             var profileName = HttpContext.Session.GetString("profileName")?.Trim();
             profileName = profileName?.Replace("\"", "");
+            interviewer = ResolveInsightsInterviewer(interviewer);
+            if (interviewer == null)
+            {
+                return PartialView(new InterviewerInsightsVM());
+            }
             ViewBag.RegularAccess = "";
             if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
             {
@@ -5151,14 +5174,124 @@ namespace Risebird.Web.Controllers
         }
         public async Task<IActionResult> ReliabilityScoreDetails(string interviewer, string IrfId)
         {
+            interviewer = ResolveInsightsInterviewer(interviewer);
+            if (interviewer == null)
+            {
+                return Content(string.Empty);
+            }
             var result = await _interviewerService.GetReliabilityScoreDetails(interviewer, IrfId);
             return PartialView(result);
         }
-        public async Task<IActionResult> InterviewerInsightsMarkersDetails(string interviewer, string type, string Irfid)
+        public async Task<IActionResult> InterviewerInsightsMarkersDetails(string interviewer, string type, string Irfid,
+            [FromServices] ICandidateService candidateService)
         {
             ViewBag.Type = type;
+            interviewer = ResolveInsightsInterviewer(interviewer);
+            if (interviewer == null)
+            {
+                return PartialView(new List<InterviewerInsightsMarkersDetailsVM>());
+            }
             var result = await _interviewerService.GetInterviewerInsightsMarkersDetails(interviewer, type, Irfid);
+
+            // "Candidate Rating Details" rows read "<date> : <candidate email>". An interviewer sees candidates by
+            // coded identity only, so for them the email is replaced with the candidate's pseudonym.
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            var interviewerScoped = string.IsNullOrWhiteSpace(profileName) || profileName == "Interviewer";
+            if (interviewerScoped && result != null && type != null && type.StartsWith("Candidate Rating", StringComparison.OrdinalIgnoreCase))
+            {
+                result = await MaskCandidateEmailsAsync(result.ToList(), candidateService);
+            }
             return PartialView(result);
+        }
+
+        private static readonly System.Text.RegularExpressions.Regex CandidateEmailPattern =
+            new System.Text.RegularExpressions.Regex(@"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}", System.Text.RegularExpressions.RegexOptions.Compiled);
+
+        private async Task<List<InterviewerInsightsMarkersDetailsVM>> MaskCandidateEmailsAsync(List<InterviewerInsightsMarkersDetailsVM> rows,
+            ICandidateService candidateService)
+        {
+            var emails = rows
+                .Where(r => !string.IsNullOrEmpty(r.Comments))
+                .SelectMany(r => CandidateEmailPattern.Matches(r.Comments).Select(m => m.Value))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+            IDictionary<string, string> pseudonyms = null;
+            try
+            {
+                pseudonyms = emails.Count > 0 ? await candidateService.EnsureCandidatePseudonymsAsync(emails) : null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            foreach (var row in rows.Where(r => !string.IsNullOrEmpty(r.Comments)))
+            {
+                row.Comments = CandidateEmailPattern.Replace(row.Comments, m =>
+                    pseudonyms != null && pseudonyms.TryGetValue(m.Value, out var nick) ? nick : "Candidate");
+            }
+            return rows;
+        }
+
+        /// <summary>
+        /// Sections 6 and 7 of the interview alignment page, inline: the signed-in interviewer's record and
+        /// flagged history on this channel. Reads the same usp_GetInterviewerInsights and
+        /// usp_GetInterviewerInsightsMarkersDetails the insights modal does - no new aggregate - and is
+        /// scoped to the interviewer's own email from session and to the interview's channel.
+        /// </summary>
+        [HttpGet]
+        public async Task<JsonResult> AlignmentInsights(int interviewId)
+        {
+            try
+            {
+                var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                if (string.IsNullOrWhiteSpace(email) || !await _meetingService.IsInterviewerForInterview(email, interviewId))
+                {
+                    return Json(new { success = false });
+                }
+
+                var meeting = await _meetingService.GetAudioCommentDetailsService(interviewId);
+                var irfCode = meeting?.IRFID;
+                if (string.IsNullOrWhiteSpace(irfCode))
+                {
+                    return Json(new { success = false });
+                }
+
+                var insights = await _interviewerService.GetInterviewerInsights(email, irfCode) ?? new InterviewerInsightsVM();
+                var redo = await _interviewerService.GetInterviewerInsightsMarkersDetails(email, "Redo Details", irfCode);
+                var clientRating = await _interviewerService.GetInterviewerInsightsMarkersDetails(email, "Client Rating Details", irfCode);
+
+                // Only flagged items: redo requests, and client ratings of 3 or below (the same threshold
+                // usp_GetInterviewerInsights counts). Candidate identities are never part of this list.
+                var flags = (redo ?? Enumerable.Empty<InterviewerInsightsMarkersDetailsVM>())
+                    .Select(r => new { kind = "Redo", comment = r.Comments, on = r.Createdon })
+                    .Concat((clientRating ?? Enumerable.Empty<InterviewerInsightsMarkersDetailsVM>())
+                        .Where(r => decimal.TryParse(r.MeetingStatus, out var rating) && rating <= 3)
+                        .Select(r => new { kind = "Client rating " + r.MeetingStatus, comment = r.Comments, on = r.Createdon }))
+                    .OrderByDescending(f => f.on)
+                    .Take(20)
+                    .Select(f => new { f.kind, f.comment, on = f.on?.ToString("dd MMM yyyy") })
+                    .ToList();
+
+                return Json(new
+                {
+                    success = true,
+                    completed = insights.CompletedInterviews,
+                    total = insights.TotalInterviews,
+                    candidateRatingFlags = insights.CandidateRating,
+                    clientRatingFlags = insights.CustomerRating,
+                    redFlags = insights.RedFlags,
+                    redo = insights.Redorequests,
+                    joinedLate = insights.JoinLateMeeting,
+                    penalties = insights.Penalty,
+                    reliability = insights.ReliabilityScore,
+                    flags
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false });
+            }
         }
         public async Task<JsonResult> AcknowledgeRedmarkers(string uniqueid)
         {

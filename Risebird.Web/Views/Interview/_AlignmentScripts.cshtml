@@ -1,0 +1,615 @@
+@*
+    Behaviour for the interview alignment additions on Interview/InterviewDetails. Included after the
+    page's own scripts (and after it reloads jQuery), so window.jQuery is resolved at call time.
+
+    The join gate: four confirmations, each tied to something the page can observe rather than a tick box.
+      rubric    - the rubric section has been on screen for a few seconds
+      questions - the sample-question section has been on screen for a few seconds
+      precheck  - the pre-interview screening report link was opened (or, without one, the candidate
+                  checks section has been on screen for a few seconds)
+      issues    - checklist item 9 ("Issues found in previous interviews") is accepted AND the interviewer
+                  looked at those issues (the inline section, or "Check details")
+    Time does not count while a modal covers the page or the tab is hidden. Confirmations are remembered
+    per interview in this browser so a reload does not send the interviewer back through the list.
+    The code-session row is informational and never holds the button.
+*@
+<script>
+    (function () {
+        var root = document.getElementById('iaAlignment');
+        if (!root) {
+            return;
+        }
+
+        var interviewId = root.getAttribute('data-interview-id');
+        var hasPrecheck = root.getAttribute('data-has-precheck') === '1';
+        var REQUIREMENTS = ['rubric', 'questions', 'precheck', 'issues'];
+        var LABELS = { rubric: 'Rubric', questions: 'Questions', precheck: 'Candidate pre-check', issues: 'Previous issues' };
+        var DWELL_MS = 3000;
+        var TICK_MS = 500;
+        var storeKey = 'ia-gate-' + interviewId;
+        var state = loadState();
+        var dwell = {};
+
+        function loadState() {
+            try {
+                var raw = window.localStorage.getItem(storeKey);
+                return raw ? (JSON.parse(raw) || {}) : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveState() {
+            try {
+                window.localStorage.setItem(storeKey, JSON.stringify(state));
+            } catch (e) {
+                // Private mode or storage blocked: the gate still works for this page view.
+            }
+        }
+
+        function antiForgeryToken() {
+            var input = root.querySelector('input[name="__RequestVerificationToken"]') ||
+                document.querySelector('input[name="__RequestVerificationToken"]');
+            return input ? input.value : '';
+        }
+
+        window.iaEscape = function (value) {
+            return String(value === null || value === undefined ? '' : value)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        };
+
+        function sectionFor(key) {
+            switch (key) {
+                case 'rubric': return document.getElementById('iaRubricSection');
+                case 'questions': return document.getElementById('iaSampleQuestionsSection');
+                case 'precheck': return hasPrecheck ? document.getElementById('iaPreReportSection') : document.getElementById('iaCandidateChecksSection');
+                case 'issues': return document.getElementById('iaInsights');
+                case 'code': return document.getElementById('iaCodeSessions');
+            }
+            return null;
+        }
+
+        function isDone(key) {
+            if (key === 'issues') {
+                return !!state.issuesAccepted && (!!state.issuesViewed || !!state.issuesDetailsOpened);
+            }
+            return !!state[key];
+        }
+
+        function pageCovered() {
+            var ids = ['InterviewerAlert', 'iaTrialOnboardingModal', 'InterviewerInsightsModel', 'PopupDetailsModal'];
+            for (var i = 0; i < ids.length; i++) {
+                var el = document.getElementById(ids[i]);
+                if (el && window.getComputedStyle(el).display !== 'none') {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function isOnScreen(el) {
+            if (!el) {
+                return false;
+            }
+            var rect = el.getBoundingClientRect();
+            if (rect.height <= 0 || rect.width <= 0) {
+                return false;
+            }
+            var viewport = window.innerHeight || document.documentElement.clientHeight;
+            var visible = Math.min(rect.bottom, viewport) - Math.max(rect.top, 0);
+            return visible >= Math.min(160, rect.height * 0.5);
+        }
+
+        function gateCleared() {
+            if (state.overridden) {
+                return true;
+            }
+            for (var i = 0; i < REQUIREMENTS.length; i++) {
+                if (!isDone(REQUIREMENTS[i])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function render() {
+            var done = 0;
+            for (var i = 0; i < REQUIREMENTS.length; i++) {
+                if (isDone(REQUIREMENTS[i])) {
+                    done++;
+                }
+            }
+            var allDone = done === REQUIREMENTS.length;
+            var cleared = gateCleared();
+
+            var rows = root.querySelectorAll('.ia-row[data-req]');
+            for (var r = 0; r < rows.length; r++) {
+                var key = rows[r].getAttribute('data-req');
+                var rowDone = isDone(key);
+                rows[r].classList.toggle('is-done', rowDone);
+                rows[r].classList.toggle('is-outstanding', !rowDone && !cleared);
+            }
+
+            var count = document.getElementById('iaGateCount');
+            if (count) {
+                count.textContent = done + ' of ' + REQUIREMENTS.length + ' confirmed';
+                count.classList.toggle('is-done', allDone);
+            }
+
+            root.classList.toggle('ia-gate-cleared', cleared);
+            var callout = document.getElementById('iaCallout');
+            if (callout) {
+                callout.style.display = cleared ? 'none' : '';
+                var segments = callout.querySelectorAll('.ia-seg');
+                for (var s = 0; s < segments.length; s++) {
+                    segments[s].classList.toggle('is-done', s < done);
+                }
+                var sub = document.getElementById('iaCalloutSub');
+                if (sub) {
+                    var left = REQUIREMENTS.length - done;
+                    sub.textContent = done + ' of ' + REQUIREMENTS.length + ' done · ' +
+                        (left === 1 ? 'one more to unlock Zoom' : 'the Zoom link unlocks at 4 of 4');
+                }
+            }
+
+            var footnote = document.getElementById('iaGateFootnote');
+            if (footnote && allDone) {
+                footnote.textContent = 'All four confirmed — the Zoom link above is live.';
+            } else if (footnote && state.overridden) {
+                footnote.textContent = 'You chose to join without confirming. This has been recorded.';
+            }
+
+            var join = document.getElementById('join-button');
+            if (join) {
+                join.classList.toggle('disable-link', !cleared);
+                join.setAttribute('aria-disabled', cleared ? 'false' : 'true');
+                join.setAttribute('title', cleared ? 'Meeting Link' : 'Confirm the 4 points below to unlock the meeting link');
+            }
+        }
+
+        function mark(key) {
+            if (!state[key]) {
+                state[key] = true;
+                saveState();
+                render();
+            }
+        }
+
+        // Dwell: a section counts as reviewed once it has been on screen for DWELL_MS.
+        setInterval(function () {
+            if (document.visibilityState && document.visibilityState !== 'visible') {
+                return;
+            }
+            if (pageCovered()) {
+                return;
+            }
+            var targets = { rubric: sectionFor('rubric'), questions: sectionFor('questions'), issuesViewed: sectionFor('issues') };
+            if (!hasPrecheck) {
+                targets.precheck = sectionFor('precheck');
+            }
+            for (var key in targets) {
+                if (!Object.prototype.hasOwnProperty.call(targets, key) || state[key]) {
+                    continue;
+                }
+                if (isOnScreen(targets[key])) {
+                    dwell[key] = (dwell[key] || 0) + TICK_MS;
+                    if (dwell[key] >= DWELL_MS) {
+                        mark(key);
+                    }
+                }
+            }
+        }, TICK_MS);
+
+        // Pre-interview report opened.
+        var preReportLink = document.querySelector('#PreInterviewReport a');
+        if (preReportLink) {
+            preReportLink.addEventListener('click', function () { mark('precheck'); });
+            preReportLink.addEventListener('auxclick', function () { mark('precheck'); });
+        }
+
+        // Checklist item 9 accepted, and its "Check details" opened.
+        var item9 = document.getElementById('checklist_9');
+        if (item9) {
+            item9.addEventListener('change', function () {
+                state.issuesAccepted = item9.checked;
+                saveState();
+                render();
+            });
+        }
+        var item9Details = document.querySelector('[data-ia="issues-details"]');
+        if (item9Details) {
+            item9Details.addEventListener('click', function () { mark('issuesDetailsOpened'); });
+        }
+
+        // While the gate is up the Join link must not open - by mouse (pointer-events) or keyboard.
+        var joinButton = document.getElementById('join-button');
+        if (joinButton) {
+            joinButton.addEventListener('click', function (e) {
+                if (!gateCleared()) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    var card = document.getElementById('iaGateCard');
+                    if (card) {
+                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            }, true);
+        }
+
+        window.iaGoTo = function (key) {
+            var el = sectionFor(key);
+            if (key === 'issues' && !el) {
+                window.iaOpenInsightsModal();
+                return;
+            }
+            if (!el) {
+                return;
+            }
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            if (key === 'code') {
+                var box = document.getElementById('iaNewQuestion');
+                if (box) {
+                    setTimeout(function () { box.focus(); }, 400);
+                }
+            }
+        };
+
+        window.iaJoinWithoutConfirming = function () {
+            var outstanding = [];
+            for (var i = 0; i < REQUIREMENTS.length; i++) {
+                if (!isDone(REQUIREMENTS[i])) {
+                    outstanding.push(REQUIREMENTS[i]);
+                }
+            }
+            var names = outstanding.map(function (k) { return LABELS[k]; }).join(', ');
+            var message = outstanding.length === 0
+                ? 'Join now?'
+                : 'Join without confirming? This is recorded with what is still outstanding: ' + names + '.';
+            if (!window.confirm(message)) {
+                return;
+            }
+
+            var unlock = function () {
+                state.overridden = true;
+                saveState();
+                render();
+            };
+            var $ = window.jQuery;
+            if (!$ || outstanding.length === 0) {
+                unlock();
+                return;
+            }
+            // Never leave the interviewer stuck: the button unlocks whether or not the record saves.
+            $.ajax({
+                type: 'POST',
+                url: '/InterviewAlignment/JoinGateOverride',
+                traditional: true,
+                headers: { 'RequestVerificationToken': antiForgeryToken() },
+                data: { interviewId: interviewId, outstanding: outstanding },
+                complete: unlock
+            });
+        };
+
+        // ---- Trial onboarding ------------------------------------------------------------------
+        window.iaOpenTrialOnboarding = function () {
+            var modal = document.getElementById('iaTrialOnboardingModal');
+            if (modal) {
+                modal.style.display = 'block';
+            }
+        };
+
+        window.iaAcknowledgeTrialOnboarding = function () {
+            var modal = document.getElementById('iaTrialOnboardingModal');
+            var close = function () {
+                if (modal) {
+                    modal.style.display = 'none';
+                    modal.setAttribute('data-auto-open', '0');
+                }
+            };
+            var $ = window.jQuery;
+            if (!$) {
+                close();
+                return;
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/InterviewAlignment/AcknowledgeTrialOnboarding',
+                headers: { 'RequestVerificationToken': antiForgeryToken() },
+                data: { interviewId: interviewId },
+                complete: close
+            });
+        };
+
+        // ---- Sections 6 and 7: own record and flagged history on this channel --------------------
+        window.iaOpenInsightsModal = function () {
+            mark('issuesDetailsOpened');
+            if (typeof window.InsightsDetails === 'function') {
+                window.InsightsDetails(root.getAttribute('data-interviewer') || '', root.getAttribute('data-irf-code') || '');
+            }
+        };
+
+        function stat(value, label, isFlag) {
+            var flagged = isFlag && Number(value) > 0;
+            return '<div class="ia-stat' + (flagged ? ' is-flag' : '') + '"><span class="ia-num">' + window.iaEscape(value) +
+                '</span><span class="ia-label">' + window.iaEscape(label) + '</span></div>';
+        }
+
+        function renderInsights(data) {
+            var record = document.getElementById('iaRecord');
+            var issues = document.getElementById('iaIssues');
+            if (!record || !issues) {
+                return;
+            }
+            if (!data || !data.success) {
+                record.innerHTML = '<div class="ia-empty">Your record could not be loaded. Use "open your insights" below for the full view.</div>';
+                issues.innerHTML = '';
+                return;
+            }
+            if (!data.completed) {
+                record.innerHTML = '<div class="ia-empty">This is your first interview on this channel, so there is nothing here yet. Your record across all channels is on your profile.</div>';
+                issues.innerHTML = '<div class="ia-empty">Nothing on this channel yet &mdash; not the same as &ldquo;no issues found&rdquo;.</div>';
+                return;
+            }
+            record.innerHTML = '<div class="ia-stats">' +
+                stat(data.completed, 'Completed') +
+                stat(data.candidateRatingFlags, 'Low candidate ratings', true) +
+                stat(data.clientRatingFlags, 'Low client ratings', true) +
+                stat(data.redFlags, 'Red flags', true) +
+                stat(data.redo, 'Redo requests', true) +
+                stat(data.joinedLate, 'Joined late', true) +
+                stat(data.reliability, 'Reliability') +
+                '</div>';
+            var flags = data.flags || [];
+            if (flags.length === 0) {
+                issues.innerHTML = '<div class="ia-empty">No issues recorded on this channel.</div>';
+                return;
+            }
+            var html = '<div class="table-responsive" style="clear:both;"><table class="table table-bordered mbn"><thead><tr>' +
+                '<th width="18%" class="table_heading">Flag</th><th class="table_heading">What the review said</th><th width="15%" class="table_heading">Date</th></tr></thead><tbody>';
+            for (var i = 0; i < flags.length; i++) {
+                html += '<tr><td><span class="ia-flag">' + window.iaEscape(flags[i].kind) + '</span></td>' +
+                    '<td>' + window.iaEscape(flags[i].comment || '—') + '</td>' +
+                    '<td>' + window.iaEscape(flags[i].on || '') + '</td></tr>';
+            }
+            issues.innerHTML = html + '</tbody></table></div>';
+        }
+
+        function loadInsights() {
+            var $ = window.jQuery;
+            if (!$ || !document.getElementById('iaInsights')) {
+                return;
+            }
+            $.ajax({
+                type: 'GET',
+                url: '/Interviewer/AlignmentInsights',
+                data: { interviewId: interviewId },
+                cache: false,
+                success: renderInsights,
+                error: function () { renderInsights(null); }
+            });
+        }
+
+        // ---- Code sessions -----------------------------------------------------------------------
+        var codeState = { questions: [], sessions: [] };
+        try {
+            var stateEl = document.getElementById('iaCodeState');
+            if (stateEl) {
+                codeState = JSON.parse(stateEl.textContent || '{}') || codeState;
+            }
+        } catch (e) {
+            codeState = { questions: [], sessions: [] };
+        }
+
+        function sessionState(item) {
+            if (item.submitted) {
+                return 'Submitted';
+            }
+            if (item.runCount > 0) {
+                return item.runCount + (item.runCount === 1 ? ' run' : ' runs');
+            }
+            return item.opened ? 'Opened' : 'Not opened yet';
+        }
+
+        function linkControls(link, item) {
+            return '<div class="ia-session"><input type="text" class="form-control ia-link" readonly value="' + window.iaEscape(link) + '" onclick="this.select()" aria-label="Candidate code session link" />' +
+                '<button type="button" class="ia-pill" onclick="iaCopyLink(this)" data-link="' + window.iaEscape(link) + '">Copy</button>' +
+                '<span class="ia-state">' + window.iaEscape(sessionState(item)) + '</span></div>';
+        }
+
+        function questionTable(rowsHtml) {
+            return '<div class="table-responsive"><table class="table table-bordered mbn"><thead><tr>' +
+                '<th width="52%" class="table_heading">Question</th><th width="48%" class="table_heading">Code session for the candidate</th>' +
+                '</tr></thead><tbody>' + rowsHtml + '</tbody></table></div>';
+        }
+
+        function renderCodeSessions() {
+            var list = document.getElementById('iaQuestionList');
+            var others = document.getElementById('iaOtherSessions');
+            if (!list) {
+                return;
+            }
+            var questions = codeState.questions || [];
+            var sessions = codeState.sessions || [];
+
+            if (questions.length === 0) {
+                list.innerHTML = '<div class="ia-empty">You have no questions for this channel yet. Type one below, or add them on your sample questions page.</div>';
+            } else {
+                var html = '';
+                for (var i = 0; i < questions.length; i++) {
+                    var q = questions[i];
+                    var limit = q.codingTimeLimitInMinutes || null;
+                    var badge = q.isCodingQuestion ? '<span class="ia-badge">CODE' + (limit ? ' &middot; ' + window.iaEscape(limit) + ' MIN' : '') + '</span>' : '';
+                    var side = q.hasSession && q.link
+                        ? linkControls(q.link, q)
+                        : '<button type="button" class="ia-pill" onclick="iaCreateCodeSession(' + Number(q.questionId) + ')">Create code session</button>';
+                    html += '<tr><td><span class="ia-q-text">' + window.iaEscape(q.comment) + '</span>' + badge + '</td><td>' + side + '</td></tr>';
+                }
+                list.innerHTML = questionTable(html);
+            }
+
+            // Sessions whose question row no longer exists in the list (edited away since) still work.
+            var known = {};
+            for (var j = 0; j < questions.length; j++) {
+                known[questions[j].questionId] = true;
+            }
+            var orphanHtml = '';
+            for (var k = 0; k < sessions.length; k++) {
+                if (!known[sessions[k].questionId]) {
+                    orphanHtml += '<tr><td><span class="ia-q-text">' + window.iaEscape(sessions[k].questionText) + '</span><span class="ia-badge">CODE</span></td><td>' +
+                        linkControls(sessions[k].link, sessions[k]) + '</td></tr>';
+                }
+            }
+            if (others) {
+                others.innerHTML = orphanHtml
+                    ? '<div class="answer-label" style="padding:10px 0 0 2px;"><span class="heading">Other code sessions on this interview</span></div>' + questionTable(orphanHtml)
+                    : '';
+            }
+
+            var countEl = document.getElementById('iaCodingQuestionCount');
+            if (countEl) {
+                countEl.textContent = sessions.length;
+            }
+            var statusRow = document.getElementById('iaCodeStatusRow');
+            var statusText = document.getElementById('iaCodeStatusText');
+            if (statusRow && statusText && sessions.length > 0) {
+                statusRow.style.display = '';
+                statusText.textContent = 'Code session ready — ' + sessions.length + ' created for this interview.';
+            }
+        }
+
+        function copyText(text, done) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(fallbackCopy(text)); });
+            } else {
+                done(fallbackCopy(text));
+            }
+        }
+
+        function fallbackCopy(text) {
+            var temp = document.createElement('textarea');
+            temp.value = text;
+            temp.setAttribute('readonly', '');
+            temp.style.position = 'absolute';
+            temp.style.left = '-9999px';
+            document.body.appendChild(temp);
+            temp.select();
+            var ok = false;
+            try {
+                ok = document.execCommand('copy');
+            } catch (e) {
+                ok = false;
+            }
+            document.body.removeChild(temp);
+            return ok;
+        }
+
+        window.iaCopyLink = function (button) {
+            var link = button.getAttribute('data-link');
+            copyText(link, function (ok) {
+                button.textContent = ok ? 'Copied' : 'Copy failed';
+                setTimeout(function () { button.textContent = 'Copy'; }, 2000);
+            });
+        };
+
+        function showCodeMessage(text, isError) {
+            var msg = document.getElementById('iaCodeMsg');
+            if (msg) {
+                msg.textContent = text || '';
+                msg.className = 'ia-msg ' + (isError ? 'is-error' : 'is-ok');
+            }
+        }
+
+        window.iaCreateCodeSession = function (questionId) {
+            var $ = window.jQuery;
+            if (!$) {
+                return;
+            }
+            questionId = Number(questionId) || 0;
+            var data = { InterviewId: interviewId, QuestionId: questionId };
+            var limitInput = document.getElementById('iaNewTimeLimit');
+            var limit = limitInput ? parseInt(limitInput.value, 10) : NaN;
+
+            if (questionId === 0) {
+                var box = document.getElementById('iaNewQuestion');
+                var text = box ? box.value.trim() : '';
+                if (!text) {
+                    showCodeMessage('Type the coding question first.', true);
+                    if (box) { box.focus(); }
+                    return;
+                }
+                if (isNaN(limit) || limit < 1 || limit > 180) {
+                    showCodeMessage('Time limit must be between 1 and 180 minutes.', true);
+                    return;
+                }
+                data.QuestionText = text;
+                data.TimeLimitInMinutes = limit;
+                var skill = document.getElementById('iaNewSkill');
+                if (skill && skill.value) {
+                    data.SkillName = skill.value;
+                }
+            } else {
+                for (var i = 0; i < (codeState.questions || []).length; i++) {
+                    if (codeState.questions[i].questionId === questionId && codeState.questions[i].codingTimeLimitInMinutes) {
+                        data.TimeLimitInMinutes = codeState.questions[i].codingTimeLimitInMinutes;
+                    }
+                }
+                if (!data.TimeLimitInMinutes && !isNaN(limit) && limit >= 1 && limit <= 180) {
+                    data.TimeLimitInMinutes = limit;
+                }
+            }
+
+            var addButton = document.getElementById('iaAddAndCreate');
+            if (addButton) { addButton.disabled = true; }
+            showCodeMessage('Creating the code session…', false);
+
+            $.ajax({
+                type: 'POST',
+                url: '/InterviewAlignment/CreateCodeSession',
+                headers: { 'RequestVerificationToken': antiForgeryToken() },
+                data: data,
+                success: function (result) {
+                    if (!result || !result.success) {
+                        showCodeMessage((result && result.message) || 'The code session could not be created. Please try again.', true);
+                        return;
+                    }
+                    codeState.questions = result.questions || [];
+                    codeState.sessions = result.sessions || [];
+                    renderCodeSessions();
+                    if (questionId === 0) {
+                        var box = document.getElementById('iaNewQuestion');
+                        if (box) { box.value = ''; }
+                    }
+                    copyText(result.link, function (ok) {
+                        showCodeMessage(ok
+                            ? 'Code session created — the link is copied, paste it into the Zoom chat.'
+                            : 'Code session created — copy the link next to the question and paste it into the Zoom chat.', false);
+                    });
+                },
+                error: function () {
+                    showCodeMessage('The code session could not be created. Please try again.', true);
+                },
+                complete: function () {
+                    if (addButton) { addButton.disabled = false; }
+                }
+            });
+        };
+
+        function start() {
+            state.issuesAccepted = state.issuesAccepted || (item9 ? item9.checked : false);
+            render();
+            renderCodeSessions();
+            loadInsights();
+            var onboarding = document.getElementById('iaTrialOnboardingModal');
+            if (onboarding && onboarding.getAttribute('data-auto-open') === '1') {
+                window.iaOpenTrialOnboarding();
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', start);
+        } else {
+            start();
+        }
+    })();
+</script>

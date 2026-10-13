@@ -543,3 +543,22 @@ BEGIN
 END
 
 End
+
+GO
+-- Interview alignment: one-time trial onboarding acknowledgement. The first acknowledgement
+-- timestamp is kept; a later acknowledgement never overwrites it.
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'TrialOnboardingAcknowledged' AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile Add TrialOnboardingAcknowledged bit null
+END
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'TrialOnboardingAcknowledgedOn' AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile Add TrialOnboardingAcknowledgedOn datetime null
+END
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'TrialOnboardingPolicyVersion' AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile Add TrialOnboardingPolicyVersion varchar(50) null
+END
+GO

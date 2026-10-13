@@ -7304,6 +7304,9 @@ namespace Risebird.Web.Controllers
                     ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
                     TempData.Remove("SuccessErrorMessageQCForm");
                 }
+                // Code sessions render only on this path, after the share check above has passed;
+                // AddSecureReport renders the same view for the sign-in step without it.
+                ViewBag.CodeSessionInterviewId = interviewId;
                 if (model.IsProctor)
                 {
                     return PartialView("SecureProctorReport", model);
@@ -8820,7 +8823,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        public async Task<IActionResult> InterviewDetails(int id, int interviewId)
+        public async Task<IActionResult> InterviewDetails(int id, int interviewId, [FromServices] IInterviewAlignmentService alignmentService)
         {
             ViewBag.id = id;
             ViewBag.InterviewId = interviewId;
@@ -8852,6 +8855,25 @@ namespace Risebird.Web.Controllers
             if (result == null)
                 result = new Risebird.Entities.Data.Meeting();
             result.AudioComment = _irfService.FetchIRFAudioLink(id);
+
+            // Interview alignment: join gate, coded candidate card, trial banner/onboarding and code
+            // sessions. Null on any failure, and the view then renders exactly as it did before.
+            try
+            {
+                ViewBag.Alignment = await alignmentService.BuildAlignmentAsync(interviewId, emailid, result,
+                    IRFController.DefaultCodingTimeLimitInMinutes, IRFController.MaxSampleQuestionLength);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                ViewBag.Alignment = null;
+            }
+
+            // The interviewer sees the candidate by coded identity only. The view never rendered these,
+            // and clearing them guarantees nothing on the page can.
+            result.candidateName = null;
+            result.candidateEmail = null;
+            result.MobileNumber = null;
             return View(result);
         }
         [HttpPost]
