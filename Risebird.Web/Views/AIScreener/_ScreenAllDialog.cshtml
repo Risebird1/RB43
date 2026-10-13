@@ -1,0 +1,106 @@
+@model Risebird.Entities.ViewModel.AdvancedScreening.ScreenAllDialogVM
+@using Risebird.Entities.ViewModel.AdvancedScreening
+@*
+    The Screen All Resumes dialog, loaded into a host element by ScreenAllSummary from the candidate
+    list toolbar or the Screening Rubric page. Starting it only queues the candidates
+    (ScreenAllResumes); the background worker and the timer job do the screening.
+*@
+@{
+    var c = Model.Counts ?? new AdvancedScreeningCounts();
+    var canStart = Model.IsAdvancedResumeScreening && Model.IsRubricApproved;
+    var defaultCount = c.CountFor(ScreenAllScope.UnscreenedAndStale);
+}
+<div class="ars-modal-backdrop" id="arsScreenAll">
+    <div class="ars-modal" role="dialog" aria-modal="true" aria-labelledby="arsScreenAllTitle">
+        @Html.AntiForgeryToken()
+        <h4 id="arsScreenAllTitle">Screen all resumes</h4>
+
+        @if (!canStart)
+        {
+            <div class="ars-alert warn">
+                @if (!Model.IsAdvancedResumeScreening)
+                {
+                    <text>Advanced Resume Screening is switched off for this skill channel. Turn it on in Edit IRF first.</text>
+                }
+                else
+                {
+                    <text>The screening rubric is not approved yet. Approve it on the Screening Rubric page first.</text>
+                }
+            </div>
+            <div style="text-align:right;">
+                <a class="ars-btn" href="@Url.Action("ScreeningCriteria", "AIScreener", new { irfId = Model.IRFId })">Open Screening Rubric</a>
+                <button type="button" class="ars-btn js-ars-close">Close</button>
+            </div>
+        }
+        else
+        {
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                <span class="ars-chip grey"><b>@c.Unscreened</b> not yet screened</span>
+                @if (c.StaleInstructions > 0)
+                {
+                    <span class="ars-chip warn"><b>@c.StaleInstructions</b> scored on older instructions</span>
+                }
+                @if (c.StaleRubric > 0)
+                {
+                    <span class="ars-chip warn"><b>@c.StaleRubric</b> scored on an older rubric</span>
+                }
+                @if (c.Pending + c.Processing > 0)
+                {
+                    <span class="ars-chip info"><b>@(c.Pending + c.Processing)</b> already in progress</span>
+                }
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:baseline;">
+                <strong>@("Recruiter instructions (v" + Model.InstructionsVersion + ")" + (Model.ApplyInstructionsToScoring ? "" : " — not applied to scoring"))</strong>
+                <a href="@Url.Action("ScreeningCriteria", "AIScreener", new { irfId = Model.IRFId })" target="_blank" style="text-decoration:underline;">Edit on Screening Rubric</a>
+            </div>
+            <div class="ars-quote" style="margin:6px 0 14px;">@(string.IsNullOrWhiteSpace(Model.Instructions) ? "No instructions - candidates are scored on the rubric alone." : Model.Instructions)</div>
+
+            <strong>Which candidates?</strong>
+            <label class="ars-scope"><input type="radio" name="arsScope" value="UnscreenedAndStale" data-count="@defaultCount" checked /> Not yet screened + older versions (@defaultCount)</label>
+            <label class="ars-scope"><input type="radio" name="arsScope" value="Unscreened" data-count="@c.CountFor(ScreenAllScope.Unscreened)" /> Not yet screened only (@c.CountFor(ScreenAllScope.Unscreened))</label>
+            <label class="ars-scope"><input type="radio" name="arsScope" value="All" data-count="@c.CountFor(ScreenAllScope.All)" /> Everyone, re-screen all (@c.CountFor(ScreenAllScope.All))</label>
+
+            <p class="ars-muted" style="margin-top:10px;">Runs in the background, a few minutes for a few dozen resumes. Results appear in the AI Verdict column as they finish.</p>
+
+            <div style="display:flex;justify-content:flex-end;gap:8px;">
+                <button type="button" class="ars-btn js-ars-close">Cancel</button>
+                <button type="button" class="ars-btn primary" id="arsStartScreening" @(defaultCount == 0 ? "disabled" : "")>Start screening (@defaultCount)</button>
+            </div>
+        }
+    </div>
+</div>
+<script>
+    (function () {
+        var root = $('#arsScreenAll');
+        function close() { root.remove(); }
+        root.on('click', '.js-ars-close', close);
+        root.on('click', function (e) { if (e.target === root[0]) { close(); } });
+
+        root.on('change', 'input[name="arsScope"]', function () {
+            var n = parseInt($(this).data('count'), 10) || 0;
+            $('#arsStartScreening').text('Start screening (' + n + ')').prop('disabled', n === 0);
+        });
+
+        root.on('click', '#arsStartScreening', function () {
+            var btn = $(this).prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Queuing…');
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("ScreenAllResumes", "AIScreener")',
+                data: {
+                    irfId: @Model.IRFId,
+                    scope: root.find('input[name="arsScope"]:checked').val(),
+                    __RequestVerificationToken: root.find('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (res) {
+                    alert(res.message || (res.success ? 'Screening started.' : 'Screening could not be started.'));
+                    if (res.success) { close(); location.reload(); } else { btn.prop('disabled', false).text('Start screening'); }
+                },
+                error: function () {
+                    alert('Screening could not be started. Try again in a moment.');
+                    btn.prop('disabled', false).text('Start screening');
+                }
+            });
+        });
+    })();
+</script>

@@ -171,7 +171,25 @@ namespace Risebird.Entities.ViewModel
         public string AIResumeScreeningVerdict { get; set; }
         public string AIScreeningResultJsonV2 { get; set; }
         public int? AIResumeScreeningScore { get; set; }
-        public string AIAdvancedScreeningResultJson { get; set; }
+
+        // Advanced Resume Screening (CandidateAdvancedScreening), read by usp_GetIRFCandidates.
+        public string AdvScreeningStatus { get; set; }
+        public decimal? AdvScreeningPercentage { get; set; }
+        public string AdvScreeningVerdict { get; set; }
+        public string AdvAuthenticityRating { get; set; }
+        public int? AdvRubricVersion { get; set; }
+        public int? AdvInstructionsVersion { get; set; }
+        public int? AdvAttemptCount { get; set; }
+        public string AdvErrorMessage { get; set; }
+        public bool IsAdvancedResumeScreening { get; set; }
+        public int? CurrentRubricVersion { get; set; }
+        public int? CurrentInstructionsVersion { get; set; }
+
+        /// <summary>Scored on an older rubric or older instructions than the IRF's current ones.</summary>
+        public bool IsAdvScreeningStale =>
+            AdvScreeningStatus == "Completed"
+            && ((AdvRubricVersion ?? 0) < (CurrentRubricVersion ?? 0)
+                || (AdvInstructionsVersion ?? 0) < (CurrentInstructionsVersion ?? 0));
         public string AssessmentGroup { get; set; }
         public bool IsAadhaarVerificationRequired { get; set; }
         public bool IsProctoring { get; set; }

@@ -88,6 +88,11 @@ namespace Risebird.AzureFunctions
             // Retention for the AI screening intake's leftover uploads (AIScreeningBlobPurgeJob).
             services.AddScoped<IAIScreeningRepository, AIScreeningRepository>();
             services.AddScoped<IAIScreeningBlobPurgeService, AIScreeningBlobPurgeService>();
+            // Advanced Resume Screening (AdvancedResumeScreeningJob). The registry client is a no-op
+            // until a company registry provider is chosen.
+            services.AddScoped<IAdvancedScreeningRepository, AdvancedScreeningRepository>();
+            services.AddScoped<IAdvancedScreeningService, Risebird.Business.AdvancedScreening.AdvancedScreeningService>();
+            services.AddSingleton<ICompanyRegistryClient, Risebird.Business.AdvancedScreening.NullCompanyRegistryClient>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<ISkillService, SkillService>();

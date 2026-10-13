@@ -956,6 +956,11 @@ WHERE si.SuspiciousStatus = 1",
                             _resultVM.HasMcqAssessmentSection = dt.Columns.Contains("HasMcqAssessmentSection")
                                 && !string.IsNullOrEmpty(dt.Rows[0]["HasMcqAssessmentSection"].ToString())
                                 && Convert.ToBoolean(dt.Rows[0]["HasMcqAssessmentSection"]);
+                            // Without this mapping Edit would always show the box unchecked, and a save
+                            // would then switch the feature off.
+                            _resultVM.IsAdvancedResumeScreening = dt.Columns.Contains("IsAdvancedResumeScreening")
+                                && !string.IsNullOrEmpty(dt.Rows[0]["IsAdvancedResumeScreening"].ToString())
+                                && Convert.ToBoolean(dt.Rows[0]["IsAdvancedResumeScreening"]);
                             _resultVM.McqAssessmentSections = dt.Columns.Contains("McqAssessmentSections")
                                 && !string.IsNullOrEmpty(dt.Rows[0]["McqAssessmentSections"].ToString())
                                 ? dt.Rows[0]["McqAssessmentSections"].ToString()
@@ -1935,6 +1940,13 @@ WHERE si.SuspiciousStatus = 1",
                     cmdCreateIRF.Parameters["@IsProctoring"].Value = DBNull.Value;
 
                     AddMcqAssessmentSectionParameters(cmdCreateIRF, irfDetails);
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@IsAdvancedResumeScreening", SqlDbType.Bit));
+                    cmdCreateIRF.Parameters["@IsAdvancedResumeScreening"].Value = irfDetails.IsAdvancedResumeScreening;
+
+                    cmdCreateIRF.Parameters.Add(new SqlParameter("@IdealCandidateProfile", SqlDbType.VarChar, -1));
+                    cmdCreateIRF.Parameters["@IdealCandidateProfile"].Value =
+                        string.IsNullOrWhiteSpace(irfDetails.IdealCandidateProfile) ? DBNull.Value : (object)irfDetails.IdealCandidateProfile.Trim();
 
                     var meetingPlatForm = irfDetails.MeetingPlatform ?? "Zoho";
                     if (irfDetails.IsAIInterview)
@@ -2982,6 +2994,11 @@ WHERE si.SuspiciousStatus = 1",
                     cmdUpdateIRF.Parameters["@IsProctoring"].Value = irfDetails.IsProctoring;
 
                     AddMcqAssessmentSectionParameters(cmdUpdateIRF, irfDetails);
+
+                    // Always sent: Edit IRF posts the field for every role (a HiddenFor where the
+                    // checkbox is not shown), so a save never turns the feature off by omission.
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAdvancedResumeScreening", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@IsAdvancedResumeScreening"].Value = irfDetails.IsAdvancedResumeScreening;
 
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;

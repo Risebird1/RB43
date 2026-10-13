@@ -1,0 +1,44 @@
+@using Risebird.Entities.ViewModel.AdvancedScreening
+@*
+    The candidate list's Advanced Resume Screening strip: rubric state and counts, plus a banner
+    when results were scored on an older rubric or older instructions. Shares the list's ViewData:
+    AdvScreeningOn, AdvCounts and AdvRubric are set by CandidateController.GetCandidates.
+*@
+@{
+    var on = (ViewBag.AdvScreeningOn as bool?) == true;
+    var counts = ViewBag.AdvCounts as AdvancedScreeningCounts;
+    var rubric = ViewBag.AdvRubric as IRFScreeningRubricVM;
+}
+@if (on && counts != null)
+{
+    <div class="ars-card ars-card-b" style="margin:10px 15px;padding:10px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        @if (rubric?.IsApproved == true)
+        {
+            <span class="ars-chip ok">@("Advanced screening on · Rubric v" + rubric.RubricVersion + " approved")</span>
+        }
+        else
+        {
+            <span class="ars-chip warn">Advanced screening on · rubric not approved &mdash; <a href="@Url.Action("ScreeningCriteria", "AIScreener", new { irfId = ViewBag.IRFId })">approve it</a> to start screening</span>
+        }
+        <span class="ars-chip grey">@counts.Screened screened</span>
+        @if (counts.Pending + counts.Processing > 0)
+        {
+            <span class="ars-chip info">@(counts.Pending + counts.Processing) pending</span>
+        }
+        @if (counts.Failed > 0)
+        {
+            <span class="ars-chip bad">@counts.Failed failed</span>
+        }
+        @if (counts.Skipped > 0)
+        {
+            <span class="ars-chip grey">@counts.Skipped skipped</span>
+        }
+    </div>
+    @if (counts.Stale > 0)
+    {
+        <div class="ars-alert warn" style="margin:0 15px 10px;display:flex;justify-content:space-between;align-items:center;">
+            <span>@(counts.Stale + " candidate(s) were scored on an older rubric or older instructions (marked with their version).")</span>
+            <a href="javascript:void(0)" class="js-open-screen-all" style="font-weight:700;text-decoration:underline;">@("Re-screen these " + counts.Stale)</a>
+        </div>
+    }
+}
