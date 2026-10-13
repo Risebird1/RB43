@@ -101,9 +101,14 @@ Begin
   -- Set flag to indicate UPDATE operation
   SET @IsInsertOperation = 0;
               
- Declare @v_ProfileId int;              
-              
-   Update [dbo].[UserList]              
+ Declare @v_ProfileId int;
+
+  -- Values before the edit, for InterviewerActionLog (QC Activity status changes).
+  Declare @OldIsActive bit, @OldIsInterviewerAccess bit, @OldIsHoldPayment bit;
+  select @OldIsActive = IsActive, @OldIsInterviewerAccess = IsInterviewerAccess from [dbo].[UserList] where Id = @UserId;
+  select top 1 @OldIsHoldPayment = IsHoldPayment from [dbo].[InterviewerProfile] where UserId = @UserId order by Id desc;
+
+   Update [dbo].[UserList]
    SET              
     [FirstName] = @FirstName,              
     [LastName] = @LastName,              
@@ -147,11 +152,33 @@ Begin
     --[IndiaProductRate] = @IndiaProductRate,    
     --[OutsideIndiaServiceRate] = @OutsideIndiaServiceRate,    
     --[OutsideIndiaProductRate] = @OutsideIndiaProductRate    
-  where userId = @UserId             
-        
-   
-   
-   select @v_ProfileId = id from [dbo].[InterviewerProfile] where UserId = @UserId;  
+  where userId = @UserId
+
+  -- QC Activity: one InterviewerActionLog row per status that actually changed in this edit
+  -- (Active, Interviewer access, Hold payment). Skipped while the log table is missing.
+  IF OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL
+  BEGIN
+   Declare @NewIsInterviewerAccess bit = ISNULL(@IsInterviewerAccess, @OldIsInterviewerAccess);
+   Declare @NewIsHoldPayment bit = ISNULL(@IsHoldPayment, @OldIsHoldPayment);
+
+   insert into dbo.InterviewerActionLog (InterviewerUserId, InterviewerEmail, ActionType, Reason, ActedBy, Source)
+   select @UserId, @EmailId, a.ActionType, a.Reason, NULLIF(LTRIM(RTRIM(@loggedInUser)), ''), 'usp_AddOrEditInterviewerProfile'
+   from (values
+        (CASE WHEN ISNULL(@OldIsActive, 0) = 1 AND ISNULL(@IsActive, 0) = 0 THEN 'Inactivated'
+              WHEN ISNULL(@OldIsActive, 0) = 0 AND ISNULL(@IsActive, 0) = 1 THEN 'Reactivated' END,
+         CAST(NULL AS nvarchar(500))),
+        (CASE WHEN ISNULL(@OldIsInterviewerAccess, 1) = 1 AND ISNULL(@NewIsInterviewerAccess, 1) = 0 THEN 'AccessRevoked'
+              WHEN ISNULL(@OldIsInterviewerAccess, 1) = 0 AND ISNULL(@NewIsInterviewerAccess, 1) = 1 THEN 'AccessRestored' END,
+         CAST(NULL AS nvarchar(500))),
+        (CASE WHEN ISNULL(@OldIsHoldPayment, 0) = 0 AND ISNULL(@NewIsHoldPayment, 0) = 1 THEN 'PaymentHold'
+              WHEN ISNULL(@OldIsHoldPayment, 0) = 1 AND ISNULL(@NewIsHoldPayment, 0) = 0 THEN 'PaymentHoldReleased' END,
+         CASE WHEN ISNULL(@OldIsHoldPayment, 0) = 0 AND ISNULL(@NewIsHoldPayment, 0) = 1
+              THEN CAST(NULLIF(LTRIM(RTRIM(@HoldPaymentReason)), '') AS nvarchar(500)) END)
+   ) a (ActionType, Reason)
+   where a.ActionType IS NOT NULL;
+  END
+
+   select @v_ProfileId = id from [dbo].[InterviewerProfile] where UserId = @UserId;
    
     select @outputUserId= @UserId 
 	select @uniqueid = uniqueid from [dbo].[UserList] where id = @UserId;

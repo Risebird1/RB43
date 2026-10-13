@@ -4631,7 +4631,10 @@ namespace Risebird.Web.Controllers
         }
         public async Task<JsonResult> InterviewerFlagUpdate(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsInterviewerAccess, bool? IsBlocked)
         {
-            var result = await _interviewerService.UpdateInterviewerFlag(Emailid, LeadInterviewer, IsApproved, IsInterviewerAccess, IsBlocked);
+            // Session email: recorded as the actor of the block / access change (QC Activity).
+            var modifiedBy = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "");
+            var result = await _interviewerService.UpdateInterviewerFlag(Emailid, LeadInterviewer, IsApproved, IsInterviewerAccess, IsBlocked,
+                string.IsNullOrWhiteSpace(modifiedBy) ? null : modifiedBy);
             return Json("success");
         }
         [Authorize]

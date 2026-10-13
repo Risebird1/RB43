@@ -1713,12 +1713,13 @@ Values
             }
         }
 
-        public async Task<bool> UndoSuspiciousInterviewer(int InterviewerProfileId)
+        public async Task<bool> UndoSuspiciousInterviewer(int InterviewerProfileId, string modifiedBy = null)
         {
             try
             {
                 DynamicParameters dynamicParam = new DynamicParameters();
                 dynamicParam.Add("@InterviewerProfileId", InterviewerProfileId);
+                dynamicParam.Add("@ModifiedBy", string.IsNullOrWhiteSpace(modifiedBy) ? null : modifiedBy.Trim());
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(conChange, "usp_undoSuspiciousInterviewer", dynamicParam,

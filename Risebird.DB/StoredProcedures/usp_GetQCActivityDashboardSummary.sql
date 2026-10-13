@@ -11,6 +11,11 @@ Result set 2: "Open right now" backlog (not date-filtered).
 @ActorEmail limits result set 1 to that single user (Quality Controller
 viewing their own row).
 
+Status changes and report edits: ReportsEdited, MarkedSuspicious /
+SuspiciousUndone, Blocked / Unblocked, AccessRevoked / AccessRestored,
+Inactivated / Reactivated, PaymentHolds / PaymentHoldsReleased. A removal
+from Total Interviews also counts as Inactivated or Blocked (by design).
+
 Deploy after usp_QCActivity_CollectRows.
 ================================================================================
 */
@@ -39,7 +44,8 @@ BEGIN
         [Status]          VARCHAR(150)  NULL,
         Phone             VARCHAR(30)   NULL,
         RecordingUrl      VARCHAR(1000) NULL,
-        SourceId          INT           NULL
+        SourceId          INT           NULL,
+        RefId             INT           NULL
     );
 
     EXEC dbo.usp_QCActivity_CollectRows
@@ -128,6 +134,18 @@ BEGIN
         SUM(CASE WHEN r.Metric = 'PlivoCall' THEN ISNULL(r.Amount, 0) ELSE 0 END)            AS PlivoTalkSeconds,
         SUM(CASE WHEN r.Metric = 'PlivoCall' AND r.Amount IS NOT NULL THEN 1 ELSE 0 END)     AS PlivoCallsWithDuration,
         SUM(CASE WHEN r.Metric = 'Coaching' THEN 1 ELSE 0 END)                               AS CoachingSessions,
+
+        SUM(CASE WHEN r.Metric = 'ReportEdited' THEN 1 ELSE 0 END)                           AS ReportsEdited,
+        SUM(CASE WHEN r.Metric = 'Suspicious' THEN 1 ELSE 0 END)                             AS MarkedSuspicious,
+        SUM(CASE WHEN r.Metric = 'SuspiciousUndone' THEN 1 ELSE 0 END)                       AS SuspiciousUndone,
+        SUM(CASE WHEN r.Metric = 'Blocked' THEN 1 ELSE 0 END)                                AS Blocked,
+        SUM(CASE WHEN r.Metric = 'Unblocked' THEN 1 ELSE 0 END)                              AS Unblocked,
+        SUM(CASE WHEN r.Metric = 'AccessRevoked' THEN 1 ELSE 0 END)                          AS AccessRevoked,
+        SUM(CASE WHEN r.Metric = 'AccessRestored' THEN 1 ELSE 0 END)                         AS AccessRestored,
+        SUM(CASE WHEN r.Metric = 'Inactivated' THEN 1 ELSE 0 END)                            AS Inactivated,
+        SUM(CASE WHEN r.Metric = 'Reactivated' THEN 1 ELSE 0 END)                            AS Reactivated,
+        SUM(CASE WHEN r.Metric = 'PaymentHold' THEN 1 ELSE 0 END)                            AS PaymentHolds,
+        SUM(CASE WHEN r.Metric = 'PaymentHoldReleased' THEN 1 ELSE 0 END)                    AS PaymentHoldsReleased,
 
         COUNT(r.Metric)                                                                      AS TotalActions,
         MAX(r.ActionAtIst)                                                                   AS LastActionAtIst

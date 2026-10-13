@@ -824,11 +824,11 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> UndoSuspiciousInterviewerService(int InterviewerProfileId)
+        public async Task<bool> UndoSuspiciousInterviewerService(int InterviewerProfileId, string modifiedBy = null)
         {
             try
             {
-                await _dashboardRespository.UndoSuspiciousInterviewer(InterviewerProfileId);
+                await _dashboardRespository.UndoSuspiciousInterviewer(InterviewerProfileId, modifiedBy);
                 return true;
             }
             catch (Exception e)

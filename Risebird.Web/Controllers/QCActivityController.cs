@@ -15,8 +15,8 @@ namespace Risebird.Web.Controllers
     /// <summary>
     /// QC Activity dashboard: what each Quality Controller did in an IST date range
     /// (reports reviewed / penalised, trial kept / removed, IRF audits, Total Red Marker and
-    /// Total Interviews actions, Plivo calls to interviewers). Every number drills down to
-    /// the records behind it.
+    /// Total Interviews actions, Plivo calls to interviewers, report edits and interviewer status
+    /// changes). Every number drills down to the records behind it.
     ///
     /// Access: managers see everyone; a Quality Controller sees only their own row and records
     /// (enforced here for Summary and Details); any other profile is signed out.
@@ -27,6 +27,8 @@ namespace Risebird.Web.Controllers
         {
             "Admin", "SupportAdmin", "SeniorHR", "SeniorInterviewerManagement", "InterviewerManagement"
         };
+
+        private static readonly string[] DiagnosticsProfiles = { "Admin", "SupportAdmin" };
 
         private const string QualityControllerProfile = "Quality Controller";
 
@@ -120,6 +122,42 @@ namespace Risebird.Web.Controllers
                 restrictToActorEmail: isManager ? null : email), d => d.ErrorDetail = null);
         }
 
+        // GET: /QCActivity/ReportEdit?id=<ReportEditLog.Id>
+        // Full text before and after one report edit ("View change"). Managers can open any edit; a Quality
+        // Controller only their own (EditedBy = session email). Anything else answers "Edit not found".
+        [HttpGet]
+        public async Task<IActionResult> ReportEdit(int id)
+        {
+            var (email, profileName) = GetSessionUser();
+            if (email == null || profileName == null)
+                return Unauthorized();
+
+            var isManager = IsManagerProfile(profileName);
+            if (!isManager && !IsQualityControllerProfile(profileName))
+                return StatusCode(StatusCodes.Status403Forbidden);
+
+            ReportEditVM edit;
+            try
+            {
+                edit = await _qcActivityDashboardService.GetReportEditAsync(id);
+            }
+            catch (Exception)
+            {
+                // Already logged by the service.
+                return Json(new ReportEditVM { Error = "Could not load the edit. Please try again." });
+            }
+
+            if (edit == null || edit.Id <= 0 || !CanSeeReportEdit(isManager, email, edit.EditedBy))
+                return Json(new ReportEditVM { Error = "Edit not found" });
+
+            return Json(edit);
+        }
+
+        /// <summary>Managers see every report edit; anyone else only the edits stored under their own email.</summary>
+        internal static bool CanSeeReportEdit(bool isManager, string sessionEmail, string editedBy) =>
+            isManager || (!string.IsNullOrWhiteSpace(sessionEmail)
+                          && string.Equals(sessionEmail.Trim(), editedBy?.Trim(), StringComparison.OrdinalIgnoreCase));
+
         // ---------------- Interviewer QC View ----------------
         // Every allowed viewer, including a Quality Controller, sees all interviewers: QCs need it to coach.
 
@@ -147,14 +185,35 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        // GET: /QCActivity/InterviewerList?from&to&search
+        // GET: /QCActivity/InterviewerList?from&to&search&minInterviews=3&includeOpenFlags=false
         [HttpGet]
-        public async Task<IActionResult> InterviewerList(DateTime? from = null, DateTime? to = null, string search = null)
+        public async Task<IActionResult> InterviewerList(DateTime? from = null, DateTime? to = null, string search = null,
+            int? minInterviews = null, bool includeOpenFlags = false)
         {
             var denied = DenyUnlessAllowed(out _);
             if (denied != null) return denied;
-            return await JsonOrErrorAsync(() => _qcActivityDashboardService.GetInterviewerViewAsync(from, to, search), d => d.ErrorDetail = null);
+            return await JsonOrErrorAsync(() => _qcActivityDashboardService.GetInterviewerViewAsync(
+                from, to, search, minInterviews, includeOpenFlags), d => d.ErrorDetail = null);
         }
+
+        // GET: /QCActivity/Diagnostics?from=yyyy-MM-dd&to=yyyy-MM-dd  (Admin and SupportAdmin only, read-only)
+        // For every source the dashboard reads: who the rows in the range are stored under, so a 0 on the page
+        // can be told apart from "no rows", "rows under a non-QC user" and "actor value is not an email".
+        [HttpGet]
+        public async Task<IActionResult> Diagnostics(DateTime? from = null, DateTime? to = null)
+        {
+            var (email, profileName) = GetSessionUser();
+            if (email == null || profileName == null)
+                return Unauthorized();
+            if (!CanSeeDiagnostics(profileName))
+                return StatusCode(StatusCodes.Status403Forbidden);
+
+            return await JsonOrErrorAsync(() => _qcActivityDashboardService.GetDiagnosticsAsync(from, to), d => d.ErrorDetail = null);
+        }
+
+        /// <summary>Profiles that may open /QCActivity/Diagnostics.</summary>
+        internal static bool CanSeeDiagnostics(string profileName) =>
+            !string.IsNullOrWhiteSpace(profileName) && DiagnosticsProfiles.Contains(profileName.Trim());
 
         // GET: /QCActivity/InterviewerTimeline?interviewer=<email>&from&to
         [HttpGet]

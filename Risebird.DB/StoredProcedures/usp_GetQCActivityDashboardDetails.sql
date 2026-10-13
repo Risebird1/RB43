@@ -9,8 +9,16 @@ one metric key, one IST date range. Reads the same rows as the summary
 Metric keys: ReportReviewed, PenaltyApplied, SlaApproved, SlaNotApproved,
 QCForm, TrialKept, TrialRemoved, Trial, AuditBackfill, AuditKept,
 AuditRemoved, AuditActions, TrmUnderReview, TrmReviewed, TrmRemoved, Trm,
-TiUnderReview, TiReviewed, TiRemoved, Ti, PlivoCall, Coaching, All.
+TiUnderReview, TiReviewed, TiRemoved, Ti, PlivoCall, Coaching, ReportEdited,
+Suspicious, SuspiciousUndone, Blocked, Unblocked, AccessRevoked,
+AccessRestored, Inactivated, Reactivated, PaymentHold, PaymentHoldReleased,
+All. Group keys return an action together with its undo: StatusActions (all
+ten status metrics), SuspiciousAll, BlockedAll, AccessAll, ActiveAll,
+PaymentHoldAll (the collector narrows the rows for these).
 The web layer whitelists them; an unknown key returns no rows.
+
+RefId is the ReportEditLog.Id for log-based ReportEdited rows (the page's
+"View change" link) and NULL otherwise.
 
 Deploy after usp_QCActivity_CollectRows.
 ================================================================================
@@ -40,7 +48,8 @@ BEGIN
         [Status]          VARCHAR(150)  NULL,
         Phone             VARCHAR(30)   NULL,
         RecordingUrl      VARCHAR(1000) NULL,
-        SourceId          INT           NULL
+        SourceId          INT           NULL,
+        RefId             INT           NULL
     );
 
     -- A drill-down is always for one user and one known metric.
@@ -67,7 +76,8 @@ BEGIN
         r.Detail,
         r.[Status],
         r.RecordingUrl,
-        r.SourceId
+        r.SourceId,
+        r.RefId
     FROM #QCActivityRows r
     LEFT JOIN dbo.IRF irf ON irf.id = r.IrfId
     OUTER APPLY (
@@ -88,7 +98,8 @@ BEGIN
           AND ul.EmailId = r.InterviewerEmail
         ORDER BY ul.id DESC
     ) byEmail
-    WHERE @Metric IN ('All', 'Trial', 'AuditActions', 'Trm', 'Ti')
+    WHERE @Metric IN ('All', 'Trial', 'AuditActions', 'Trm', 'Ti',
+                      'StatusActions', 'SuspiciousAll', 'BlockedAll', 'AccessAll', 'ActiveAll', 'PaymentHoldAll')
        OR r.Metric = @Metric
        OR (@Metric = 'PenaltyApplied' AND r.Metric = 'ReportReviewed' AND r.Amount > 0)
     ORDER BY r.ActionAtIst DESC, r.SourceId DESC;

@@ -414,7 +414,7 @@
         <div class="irf-audit-header__row">
 
             <p id="irfAuditChannelsBlurb">Active skill channels with completed interviews in the selected period. Use <strong>Backfill</strong> to grade every completed interview in the page window (P0–P5), then review interviewers with Keep / Remove. Channel owners (HR / SeniorHR) see only their IRFs.</p>
-            <p id="irfAuditInterviewersBlurb" style="display:none;">Interviewers with elevated risk across channels in the selected window. Expand a person to act per channel (same Keep/Remove as the channel view). Owners see only their channels.</p>
+            <p id="irfAuditInterviewersBlurb" style="display:none;">Interviewers with elevated risk across channels in the selected window: at least 3 completed interviews, and 25% or more bad or any P0. Tick <strong>Show all</strong> to include everyone, including interviewers with fewer than 3 interviews. Expand a person to act per channel (same Keep/Remove as the channel view). Owners see only their channels.</p>
 
             @if (rows.Any())
 
@@ -628,7 +628,7 @@
     <div id="irfAuditInterviewersPane" class="@(activeAuditView == "interviewers" ? "is-active" : "")">
         <div class="irf-ov-toolbar">
             <label style="font-size:12px;display:flex;align-items:center;gap:6px;">
-                <input type="checkbox" id="ovShowAll" /> Show all (lift default risk filter)
+                <input type="checkbox" id="ovShowAll" /> Show all (lift default risk filter and the 3-interview minimum)
             </label>
             <button type="button" class="irf-audit-btn irf-audit-btn--primary" id="ovRefreshBtn">Refresh</button>
             <a class="irf-audit-btn" id="ovExportBtn" href="#">Export to Excel</a>

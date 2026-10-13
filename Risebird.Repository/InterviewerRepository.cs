@@ -3207,7 +3207,7 @@ SELECT CAST(CASE WHEN EXISTS (
                 return null;
             }
         }
-        public async Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsInterviewerAccess, bool? IsBlocked)
+        public async Task<bool> UpdateInterviewerFlag(string Emailid, bool? LeadInterviewer, bool? IsApproved, bool? IsInterviewerAccess, bool? IsBlocked, string modifiedBy = null)
         {
             try
             {
@@ -3223,6 +3223,7 @@ SELECT CAST(CASE WHEN EXISTS (
                     parameters.Add("@IsApproved", IsApproved);
                     parameters.Add("@IsInterviewerAccess", IsInterviewerAccess);
                     parameters.Add("@IsBlocked", IsBlocked);
+                    parameters.Add("@ModifiedBy", string.IsNullOrWhiteSpace(modifiedBy) ? null : modifiedBy.Trim());
                     var results = await SqlMapper.QueryAsync(con, "usp_UpdateInterviewerFlags", parameters,
                            commandType: CommandType.StoredProcedure);
                     return true;
