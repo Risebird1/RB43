@@ -1,0 +1,91 @@
+@model Risebird.Entities.ViewModel.AdvancedScreening.IRFScreeningRubricVM
+@using Risebird.Entities.ViewModel.AdvancedScreening
+@*
+    The 27-criterion rubric editor. Rendered inside the Screening Rubric page's form, and on its own
+    by GenerateScreeningRubric, which swaps it in after a (re)generation.
+
+    Every catalog criterion is always rendered - in catalog order, with the catalog's label and
+    help text - whatever the stored rubric holds, so a criterion can never silently disappear from
+    the screen. Inputs are named Criteria[i].Key / .Expected / .Weight for ScreeningRubricForm.
+*@
+@{
+    var rubric = Model?.Rubric;
+    var byKey = (rubric?.Criteria ?? new List<RubricCriterion>())
+        .GroupBy(c => c.Key, StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+    var generationError = ViewBag.GenerationError as string;
+    if (string.IsNullOrWhiteSpace(generationError) && Model?.Status == RubricStatus.Failed)
+    {
+        generationError = Model.LastError;
+    }
+    var index = 0;
+}
+<div id="rubricEditor" data-status="@(Model?.Status)" data-has-rubric="@(rubric != null ? "1" : "0")">
+    @if (!string.IsNullOrWhiteSpace(generationError))
+    {
+        <div class="ars-alert err"><i class="fa fa-exclamation-triangle"></i> Generation failed: @generationError</div>
+    }
+
+    @if (rubric == null)
+    {
+        <div class="ars-card ars-empty">
+            <h4>No rubric yet</h4>
+            <p>Generate one from the JD, the ideal candidate profile and your instructions. It takes 10&ndash;40 seconds, and you can review and edit every criterion before approving.</p>
+            <button type="button" class="ars-btn primary js-generate"><i class="fa fa-magic"></i> Generate rubric</button>
+        </div>
+    }
+    else
+    {
+        <input type="hidden" name="IRFId" value="@Model.IRFId" />
+        <div class="ars-card ars-card-b" style="margin-bottom:14px;">
+            <label class="ars-label" for="JdTitle">JD title the rubric is written for</label>
+            <input type="text" class="ars-input" id="JdTitle" name="JdTitle" maxlength="200" value="@rubric.JdTitle" />
+        </div>
+
+        @foreach (var sec in RubricCriteria.Sections)
+        {
+            var defs = RubricCriteria.All.Where(d => d.Section == sec).ToList();
+            <div class="ars-section-label">@RubricCriteria.SectionTitle(sec).ToUpperInvariant() &mdash; @defs.Count CRITERIA
+                <span class="ars-section-pts" data-section="@sec"></span>
+            </div>
+            <div class="ars-card">
+                <table class="ars-table">
+                    <thead>
+                        <tr>
+                            <th style="width:250px;">Criterion</th>
+                            <th>Expected (what a strong match looks like)</th>
+                            <th style="width:110px;">Weight</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var def in defs)
+                        {
+                            byKey.TryGetValue(def.Key, out var c);
+                            var weight = c?.Weight ?? 0;
+                            <tr class="ars-row" data-section="@sec">
+                                <td>
+                                    <div class="ars-crit-name">@def.Label</div>
+                                    <div class="ars-crit-help">@def.Meaning</div>
+                                    <input type="hidden" name="Criteria[@index].Key" value="@def.Key" />
+                                </td>
+                                <td>
+                                    <textarea class="ars-input ars-expected" name="Criteria[@index].Expected" rows="2" maxlength="600">@(c?.Expected)</textarea>
+                                </td>
+                                <td>
+                                    <input type="number" class="ars-input ars-weight" name="Criteria[@index].Weight" value="@weight" min="0" max="300" step="1" required />
+                                </td>
+                            </tr>
+                            index++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        <div class="ars-section-label">DEALBREAKERS</div>
+        <div class="ars-card ars-card-b">
+            <p class="ars-muted" style="margin-top:0;">One per line. A candidate who fails any dealbreaker is &ldquo;Not a Fit&rdquo; whatever the score.</p>
+            <textarea class="ars-input" name="Dealbreakers" rows="3">@string.Join(Environment.NewLine, rubric.Dealbreakers ?? new List<string>())</textarea>
+        </div>
+    }
+</div>

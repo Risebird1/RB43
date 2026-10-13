@@ -295,6 +295,13 @@ namespace Risebird.Entities.ViewModel
         public bool HasMcqAssessmentSection { get; set; }
 
         /// <summary>
+        /// Opt-in for Advanced Resume Screening: candidates on this channel are scored against its
+        /// approved 27-criterion screening rubric (IRFScreeningRubric) by the background job.
+        /// </summary>
+        [DisplayName("Advanced Resume Screening")]
+        public bool IsAdvancedResumeScreening { get; set; }
+
+        /// <summary>
         /// Comma-separated MCQ section keys in the order they should be served, e.g.
         /// "domain-knowledge,data-interpretation,logical-reasoning". Blank lets the MCQ side use
         /// its own default set, so the section can be switched on without choosing sections.

@@ -932,3 +932,17 @@ BEGIN
     Add CandidateTranscriptReview bit NULL
 END
 GO
+
+-- Advanced Resume Screening opt-in. Off by default, so existing and cloned channels are unchanged;
+-- when on, candidates on this IRF are scored against its approved IRFScreeningRubric by the
+-- AdvancedResumeScreeningJob.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'IsAdvancedResumeScreening'
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    ADD IsAdvancedResumeScreening bit NOT NULL CONSTRAINT DF_IRF_IsAdvancedResumeScreening DEFAULT 0
+END
+GO

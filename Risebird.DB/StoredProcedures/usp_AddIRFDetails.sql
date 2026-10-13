@@ -76,6 +76,9 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @HasMcqAssessmentSection bit = null,
 @McqAssessmentSections varchar(500) = null,
 @McqAssessmentMinutes int = null,
+-- Advanced Resume Screening opt-in, and the ideal candidate profile it reads (Add had no profile).
+@IsAdvancedResumeScreening bit = null,
+@IdealCandidateProfile varchar(max) = null,
 @idIrf int output
               
 AS              
@@ -133,7 +136,9 @@ Begin
 	   ,[IsProctoring]
 	   ,[HasMcqAssessmentSection]
 	   ,[McqAssessmentSections]
-	   ,[McqAssessmentMinutes])
+	   ,[McqAssessmentMinutes]
+	   ,[IsAdvancedResumeScreening]
+	   ,[IdealCandidateProfile])
        --,[InterviewDuration]  
        --,[IsFixedInterviewduration]  
        --,[FixedAmount])              
@@ -185,7 +190,9 @@ Begin
 	   @IsProctoring,
 	   ISNULL(@HasMcqAssessmentSection, 0),
 	   NULLIF(LTRIM(RTRIM(@McqAssessmentSections)), ''),
-	   NULLIF(@McqAssessmentMinutes, 0))
+	   NULLIF(@McqAssessmentMinutes, 0),
+	   ISNULL(@IsAdvancedResumeScreening, 0),
+	   NULLIF(LTRIM(RTRIM(@IdealCandidateProfile)), ''))
        --@InterviewDuration,  
        --@IsFixedInterviewduration,  
        --@FixedAmount)        

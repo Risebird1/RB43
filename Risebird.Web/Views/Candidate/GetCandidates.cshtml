@@ -6,6 +6,9 @@
 @* @using X.PagedList.Mvc.Core; *@
 @{
     ViewData["Title"] = "Candidates";
+    // Advanced Resume Screening: the Fit Score column, toolbar and status strip show only when the IRF's flag is on.
+    bool advScreeningOn = (ViewBag.IsAdvancedResumeScreening as bool?) ?? (Model != null && Model.Any(m => m.IsAdvancedResumeScreening));
+    ViewBag.AdvScreeningOn = advScreeningOn;
     ViewBag.PageHeader = "";
     if (ViewBag.AccessType != null && ViewBag.AccessType == "Public")
     {
@@ -484,19 +487,16 @@
                             <button type="button" class="pcs-nav-pill" style="background:#e0f5f1;border-color:#9fe0d4;color:#128873;" title="AI Phone Screen — call &amp; screen candidates" onclick="location.href='@Url.Action("Outcomes", "PhoneScreener", new { id = ViewBag.IRFId, irfName = ViewBag.IRFName})'">
                                 <i class="fa fa-phone-alt" style="font-size:10px;"></i> AI Phone Screen
                             </button>
+                            @if (advScreeningOn)
+                            {
+                                <button type="button" class="pcs-nav-pill" title="The 27-criterion rubric every resume on this channel is scored against" onclick="location.href='@Url.Action("ScreeningCriteria", "AIScreener", new { irfId = ViewBag.IRFId })'">
+                                    <i class="fa fa-sliders-h" style="font-size:10px;"></i> Screening Rubric
+                                </button>
+                                <button type="button" class="pcs-nav-pill js-open-screen-all" title="Score resumes against the approved rubric">
+                                    <i class="fa fa-file-signature" style="font-size:10px;"></i> Screen All Resumes
+                                </button>
+                            }
                         }
-                    }
-
-                    @if (ViewBag.AccessType != "Public" && (ViewBag.profile == "Admin" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin"))
-                    {
-                        @* Advanced resume screening: the weighted rubric resumes on this channel are
-                           scored against, and a bulk run over every resume not yet screened on it. *@
-                        <button type="button" class="pcs-nav-pill" title="The weighted criteria every resume on this skill channel is scored against" onclick="window.open('@Url.Action("ScreeningCriteria", "AIScreener", new { irfId = ViewBag.IRFId })', '_blank')">
-                            <i class="fa fa-sliders-h" style="font-size:10px;"></i> Screening Rubric
-                        </button>
-                        <button type="button" class="pcs-nav-pill" id="btnBulkResumeScreen" title="Screen every resume on this skill channel that has not been screened against the rubric yet" onclick="BulkAdvancedResumeScreen('@ViewBag.IRFId')">
-                            <i class="fa fa-file-signature" style="font-size:10px;"></i> Screen All Resumes
-                        </button>
                     }
 
                     @if (ViewBag.AccessType != "Public")
@@ -508,6 +508,7 @@
                     }
                 </div>
             </div>
+            @await Html.PartialAsync("_AdvancedScreeningListStatus")
         </div>
     </div>
     <div id="PublicUrlShareModel" class="modal modal-bg">
@@ -608,7 +609,7 @@
                                                                 <th>Current Interview Status</th>
 
                                                             }
-                                                            <th>AI Verdict(Resume Screening)</th>
+                                                            <th class="ars-fit-col">@(advScreeningOn ? "Fit Score" : "AI Verdict(Resume Screening)")</th>
                                                             @*<th>Communications</th>*@
                                                             <th> Actions </th>
                                                             @if (ViewBag.profile != "Client")
@@ -643,7 +644,7 @@
                                                                 <th>Current Interview Status</th>
 
                                                             }
-                                                            <th>AI Verdict(Resume Screening)</th>
+                                                            <th class="ars-fit-col">@(advScreeningOn ? "Fit Score" : "AI Verdict(Resume Screening)")</th>
                                                             @* <th>Communications</th>*@
 
 
@@ -1026,15 +1027,13 @@
 
                                                             </td>*@
 
-                                                                @if (!string.IsNullOrEmpty(item.AIResumeScreeningVerdict))
+                                                                @if (advScreeningOn)
                                                                 {
-                                                                    <td>
-                                                                        @item.AIResumeScreeningVerdict
-                                                                        @if (item.AIResumeScreeningScore.HasValue && item.AIResumeScreeningScore.Value > 0)
-                                                                        {
-                                                                            <span style="color:#64748b;font-size:11px;" title="AI resume screening score">(@item.AIResumeScreeningScore)</span>
-                                                                        }
-                                                                    </td>
+                                                                    @await Html.PartialAsync("_AdvancedScreeningFitCell", item)
+                                                                }
+                                                                else if (!string.IsNullOrEmpty(item.AIResumeScreeningVerdict))
+                                                                {
+                                                                    <td>@item.AIResumeScreeningVerdict</td>
 
                                                                 }
                                                                 else
@@ -1106,7 +1105,20 @@
                                                                         }
                                                                     }
 
-                                                                    @if ((ViewBag.AccessType != null && ViewBag.AccessType == "Public") || (ViewBag.profile != null && (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")))
+                                                                    @if (advScreeningOn && (ViewBag.profile == "Admin" || ViewBag.profile == "HR" || ViewBag.profile == "SeniorHR" || ViewBag.profile == "SupportAdmin" || ViewBag.profile == "Client"))
+                                                                    {
+                                                                        @* Advanced Resume Screening: the report replaces the V2 screener here. *@
+                                                                        <a class="pcs-btn-act" target="_blank" href="@Url.Action("AdvancedScreenCandidate", "AIScreener", new { candidateId = item.id })" title="View screening report">
+                                                                            <i class="fa fa-clipboard-check"></i>
+                                                                        </a>
+                                                                        @if (!string.IsNullOrWhiteSpace(item.ResumeLink))
+                                                                        {
+                                                                            <button type="button" class="pcs-btn-act js-ars-rescreen" data-candidate-id="@item.id" title="Re-screen against the current rubric">
+                                                                                <i class="fa fa-redo"></i>
+                                                                            </button>
+                                                                        }
+                                                                    }
+                                                                    else if ((ViewBag.AccessType != null && ViewBag.AccessType == "Public") || (ViewBag.profile != null && (ViewBag.profile == "Admin" || ViewBag.profile == "SupportAdmin")))
                                                                     {
                                                                         string accessType = ViewBag.AccessType ?? "";
                                                                         <a class="pcs-btn-act" target="_blank" href="@Url.Action("ScreenCandidateV2", "AIScreener", new { emailId = item.EmailId, irfId = item.IRFId, candidateMasterId = item.CandidateMasterId, accessType = accessType })" title="Screen Resume">
@@ -1862,12 +1874,14 @@ else if (ViewBag.Message != null)
             applyDataTable();
         });
         function applyDataTable() {
+            // With Advanced Resume Screening on, rank by Fit Score (the cell's data-order is the percentage).
+            var fitCol = @(advScreeningOn ? "$('#candidateTableId thead th.ars-fit-col').index()" : "-1");
             var table = $('#candidateTableId').DataTable({
                 language: {
                     search: "_INPUT_",
                     searchPlaceholder: "Search records",
                 },
-                order: [[1, 'desc']]
+                order: fitCol >= 0 ? [[fitCol, 'desc']] : [[1, 'desc']]
             });
 
             // Move length selector into the toolbar so it shares the same row as the search box
@@ -2275,30 +2289,6 @@ else if (ViewBag.Message != null)
 
     const loop = setInterval(toggleHandler, 1000);
 </script>
-<script>
-    // Queues advanced (rubric-based) screening for every resume on the channel not yet screened
-    // against the rubric. The work runs in the background; the verdicts appear on refresh.
-    function BulkAdvancedResumeScreen(irfId) {
-        if (!confirm('Screen every resume on this skill channel that has not been screened against the rubric yet? This runs in the background and can take several minutes.')) {
-            return;
-        }
-        var btn = $('#btnBulkResumeScreen').prop('disabled', true);
-        $.ajax({
-            type: 'POST',
-            url: '@Url.Action("BulkAdvancedScreenCandidate", "AIScreener")',
-            data: { irfId: irfId },
-            success: function (res) {
-                alert(res && res.message ? res.message : 'Resume screening has started.');
-            },
-            error: function () {
-                alert('Failed to start resume screening. Try again after some time.');
-            },
-            complete: function () {
-                btn.prop('disabled', false);
-            }
-        });
-    }
-</script>
 <style>
     .primary-specialization .fa, .far, .fas{
         margin-right:5px;
@@ -2308,3 +2298,32 @@ else if (ViewBag.Message != null)
 
 
 
+
+@if (advScreeningOn)
+{
+    @* Advanced Resume Screening: Screen All dialog host, Re-screen buttons. *@
+    @await Html.PartialAsync("_AdvancedScreeningStyles")
+    <div id="screenAllHost"></div>
+    <form id="arsTokenForm" style="display:none;">@Html.AntiForgeryToken()</form>
+    <script>
+        $(function () {
+            var irfId = '@ViewBag.IRFId';
+            $(document).on('click', '.js-open-screen-all', function () {
+                $.get('@Url.Action("ScreenAllSummary", "AIScreener")', { irfId: irfId }, function (html) {
+                    if (typeof html === 'object' && html.message) { alert(html.message); return; }
+                    $('#screenAllHost').html(html);
+                });
+            });
+            $(document).on('click', '.js-ars-rescreen', function () {
+                if (!confirm('Re-screen this resume against the current rubric and instructions?')) { return; }
+                var btn = $(this).prop('disabled', true);
+                $.post('@Url.Action("RescreenCandidate", "AIScreener")',
+                    { candidateId: btn.data('candidate-id'), __RequestVerificationToken: $('#arsTokenForm input[name="__RequestVerificationToken"]').val() },
+                    function (res) {
+                        alert(res.message || (res.success ? 'Re-screening started.' : 'Re-screening could not be started.'));
+                        btn.prop('disabled', false);
+                    }).fail(function () { alert('Re-screening could not be started.'); btn.prop('disabled', false); });
+            });
+        });
+    </script>
+}
