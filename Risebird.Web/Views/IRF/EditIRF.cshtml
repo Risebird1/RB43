@@ -2200,6 +2200,7 @@
                                                                     <i style="margin-right:-4vw" title="Interviewer Video on at time of interview." class="fa fa-info-circle"></i>
                                                                 </div>
                                                             </div>
+                                                            @await Html.PartialAsync("_AdvancedResumeScreeningOption", Model, new ViewDataDictionary(ViewData) { { "ShowIdealCandidateProfile", false } })
                                                             <div class="col-md-4 col-sm-4 pull-left">
                                                                 <div class="mdc-form-field" style="margin-bottom: 10px;">
                                                                     <div class="mdc-checkbox">
@@ -2302,6 +2303,8 @@
                                             @Html.HiddenFor(model => model.IsMeetingAutoCancelled)
                                             @Html.HiddenFor(model => model.IsMeetingNotificationSend)
                                             @Html.HiddenFor(model => model.IsVideoRequired)
+                                            @* Without this a save by a role that cannot see the checkbox would switch the feature off. *@
+                                            @Html.HiddenFor(model => model.IsAdvancedResumeScreening)
                                             //@Html.HiddenFor(model=>model.InterviewDuration)
                                             @Html.HiddenFor(model => model.MeetingPlatform)
                                             @Html.HiddenFor(model => model.IsTechQC)

@@ -1,0 +1,75 @@
+@model Risebird.Entities.ViewModel.IRFVm
+@*
+    Advanced Resume Screening opt-in, shared by IRF Add and Edit.
+
+    ViewData["ShowIdealCandidateProfile"] = true renders the Ideal Candidate Profile textarea too:
+    Add has no other place for it, while Edit already carries one further up the form and a
+    second input for the same property would post the value twice.
+
+    The rubric is configured on its own page (/AIScreener/ScreeningCriteria), which needs the
+    IRF's id - so on Add, before the channel exists, the link is replaced by a note.
+*@
+@{
+    var showProfile = (ViewData["ShowIdealCandidateProfile"] as bool?) == true;
+    var irfDbId = Model?.id ?? 0;
+}
+<div class="col-md-12 col-sm-12 pull-left ars-option">
+    <style>
+        .ars-option .ars-box { border: 1px solid #b7e0d8; background: #effaf7; border-radius: 10px; padding: 10px 14px; margin: 4px 0 12px; }
+        .ars-option .ars-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .ars-option .ars-new { font-size: 10px; font-weight: 700; letter-spacing: .04em; color: #fff; background: #0f766e; border-radius: 999px; padding: 2px 8px; }
+        .ars-option .ars-desc { color: #475569; font-size: 12.5px; }
+        .ars-option .ars-config { margin-top: 10px; }
+        .ars-option .ars-link { font-weight: 600; color: #0f766e; text-decoration: underline; }
+    </style>
+    <div class="ars-box">
+        <div class="ars-head">
+            <div class="mdc-form-field">
+                <div class="mdc-checkbox">
+                    @Html.CheckBoxFor(m => m.IsAdvancedResumeScreening, new { @class = "mdc-checkbox__native-control", @id = "IsAdvancedResumeScreening" })
+                    <div class="mdc-checkbox__background">
+                        <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                            <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                        </svg>
+                        <div class="mdc-checkbox__mixedmark"></div>
+                    </div>
+                    <div class="mdc-checkbox__ripple"></div>
+                </div>
+                <label for="IsAdvancedResumeScreening" style="font-size:13px;font-weight:600;margin:0;">Advanced Resume Screening</label>
+            </div>
+            <span class="ars-new">NEW</span>
+            <i class="fa fa-info-circle" title="Score every candidate on this channel against a 27-criterion rubric (weights totalling 300) built from the JD, the ideal candidate profile and your instructions. You review and approve the rubric before anyone is scored."></i>
+            <span class="ars-desc">Score every candidate against a 27-parameter rubric built from the JD, ideal profile and your instructions.</span>
+        </div>
+
+        <div class="ars-config" id="arsConfig">
+            @if (showProfile)
+            {
+                <div class="form-group" style="margin-bottom:8px;">
+                    @Html.LabelFor(model => model.IdealCandidateProfile, htmlAttributes: new { @class = "desp-label", @style = "font-size:13px;" })
+                    @Html.TextAreaFor(model => model.IdealCandidateProfile, new { @class = "form-control", @rows = "3", @id = "IdealCandidateProfile", @placeholder = "Currently at a product fintech company. Has built high-throughput services and led a small team. Tier-1 engineering college preferred." })
+                    <small class="text-muted">What a strong hire looks like. The rubric generator reads it alongside the JD.</small>
+                </div>
+            }
+            @if (irfDbId > 0)
+            {
+                <a class="ars-link" href="@Url.Action("ScreeningCriteria", "AIScreener", new { irfId = irfDbId })" target="_blank">Configure screening rubric &rarr;</a>
+                <small class="text-muted" style="margin-left:8px;">Add recruiter instructions, generate the rubric and approve it. Nobody is scored until it is approved.</small>
+            }
+            else
+            {
+                <small class="text-muted">Save the IRF, then open <strong>Screening Rubric</strong> from its candidate list to add instructions, generate the rubric and approve it.</small>
+            }
+        </div>
+    </div>
+    <script>
+        (function () {
+            var toggle = document.getElementById('IsAdvancedResumeScreening');
+            var config = document.getElementById('arsConfig');
+            if (!toggle || !config) return;
+            function sync() { config.style.display = toggle.checked ? '' : 'none'; }
+            toggle.addEventListener('change', sync);
+            sync();
+        })();
+    </script>
+</div>

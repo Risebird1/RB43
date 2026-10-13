@@ -151,9 +151,6 @@ builder.Services.AddScoped<ICodeProjectQuestionRepository, CodeProjectQuestionRe
 builder.Services.AddScoped<ICodeProjectQuestionService, CodeProjectQuestionService>();
 builder.Services.AddSingleton<CodeProjectBackgroundQueue>();
 builder.Services.AddHostedService<CodeProjectBackgroundWorker>();
-builder.Services.AddScoped<AdvancedResumeScreeningService>();
-builder.Services.AddSingleton<ResumeScreeningBackgroundQueue>();
-builder.Services.AddHostedService<ResumeScreeningBackgroundWorker>();
 builder.Services.AddScoped<IQcInterviewAIMergeJobService, QcInterviewAIMergeJobService>();
 builder.Services.AddScoped<ITransInterviewerAuditRepository, TransInterviewerAuditRepository>();
 builder.Services.AddScoped<IDmIvAutoQcRemovalService, DmIvAutoQcRemovalService>();
@@ -278,6 +275,13 @@ builder.Services.AddScoped<IAIInterviewerService, AIInterviewerService>();
 // AI Audio Adaptive HR screening intake (/AIScreening/New).
 builder.Services.AddScoped<IAIScreeningRepository, AIScreeningRepository>();
 builder.Services.AddScoped<IAIScreeningIntakeService, AIScreeningIntakeService>();
+// Advanced Resume Screening (IRF-level rubric). The registry client is a no-op until a company
+// registry provider is chosen; swap the registration to enable company verification.
+builder.Services.AddScoped<IAdvancedScreeningRepository, AdvancedScreeningRepository>();
+builder.Services.AddScoped<IAdvancedScreeningService, Risebird.Business.AdvancedScreening.AdvancedScreeningService>();
+builder.Services.AddSingleton<ICompanyRegistryClient, Risebird.Business.AdvancedScreening.NullCompanyRegistryClient>();
+builder.Services.AddSingleton<AdvancedScreeningSignal>();
+builder.Services.AddHostedService<AdvancedScreeningWorker>();
 builder.Services.AddScoped<IAICodeInterviewRepository, AICodeInterviewRepository>();
 builder.Services.AddScoped<IAICodeInterviewService, AICodeInterviewService>();
 builder.Services.AddScoped<ISynthesiaTextToVideoService, SynthesiaTextToVideoService>();

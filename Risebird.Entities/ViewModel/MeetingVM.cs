@@ -442,12 +442,6 @@ namespace Risebird.Entities.ViewModel
         public string AIScreeningResultJsonV2 { get; set; }
 
         /// <summary>
-        /// The advanced (rubric-based) screening result, when one has been run. Raw JSON, parsed at
-        /// the point of use like AIScreeningResultJsonV2; preferred over it because it is newer.
-        /// </summary>
-        public string AIAdvancedScreeningResultJson { get; set; }
-
-        /// <summary>
         /// Skill-channel opt-in for the MCQ assessment section served from screen.risebird.io.
         /// The channel being mirrored on the MCQ side is not on its own consent to add a written
         /// test to the interview, so this is an explicit flag - see IRF.HasMcqAssessmentSection.

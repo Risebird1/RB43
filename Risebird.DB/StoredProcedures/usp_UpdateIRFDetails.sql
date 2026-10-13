@@ -83,7 +83,9 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
  -- them leaves the channel's current configuration alone rather than clearing it.
  @HasMcqAssessmentSection bit = null,
  @McqAssessmentSections varchar(500) = null,
- @McqAssessmentMinutes int = null
+ @McqAssessmentMinutes int = null,
+ -- Advanced Resume Screening opt-in. NULL leaves the stored flag unchanged.
+ @IsAdvancedResumeScreening bit = null
  --@FixedAmount int = null  
  --@idRecommendation int,  
  --@RecommendationStatus bit,  
@@ -166,6 +168,7 @@ BEGIN
                                ELSE NULLIF(LTRIM(RTRIM(@McqAssessmentSections)),'') END
  ,[McqAssessmentMinutes]=CASE WHEN @HasMcqAssessmentSection IS NULL THEN [McqAssessmentMinutes]
                               ELSE NULLIF(@McqAssessmentMinutes,0) END
+ ,[IsAdvancedResumeScreening]=ISNULL(@IsAdvancedResumeScreening,[IsAdvancedResumeScreening])
  --,[InterviewDuration]=@InterviewDuration  
  --,[IsFixedInterviewduration]=@IsFixedInterviewduration  
  --,[FixedAmount] = @FixedAmount  

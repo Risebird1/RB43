@@ -82,13 +82,21 @@ ca.IsResumeRedactFailed,
 --si.Uniqueid as SchedulerUniqueid,  
 SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid  
 ,ISNULL(CountTable.WhatsappCount, 0) as WhatsappCount, ISNULL(CountTable.CallsCount, 0) as CallsCount, ISNULL(CountTable.MailCount, 0) as MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue,IRF.JDTiltle,ulcho.EmailId as ChannelOwnerEmail,  
-cci.IsColdCandidate, ca.AIResumeScreeningVerdict, ca.AIResumeScreeningScore   
+cci.IsColdCandidate, ca.AIResumeScreeningVerdict, ca.AIResumeScreeningScore,
+-- Advanced Resume Screening: latest result, and what is needed for the stale (v-old) marker.
+cas.[Status] as AdvScreeningStatus, cas.OverallPercentage as AdvScreeningPercentage, cas.Verdict as AdvScreeningVerdict,
+cas.AuthenticityRating as AdvAuthenticityRating, cas.RubricVersion as AdvRubricVersion, cas.InstructionsVersion as AdvInstructionsVersion,
+cas.AttemptCount as AdvAttemptCount, cas.ErrorMessage as AdvErrorMessage,
+ISNULL(IRF.IsAdvancedResumeScreening, 0) as IsAdvancedResumeScreening, rsr.RubricVersion as CurrentRubricVersion,
+rsr.InstructionsVersion as CurrentInstructionsVersion   
 from Candidate ca join IRF on ca.IRFId=IRF.id      
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id        
 join UserList ul on ul.id = cm.UserId  
 join UserList ulcho on ulcho.id  = irf.RisebirdHr  
 left join @tblAttemptStatusCount tasc on tasc.CandidateId = cm.id  
-left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId  
+left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
+left join CandidateAdvancedScreening cas on cas.CandidateId = ca.id
+left join IRFScreeningRubric rsr on rsr.IRFId = IRF.id  
 left join @tblEmailInterviewStatus eis on eis.EmailId = ul.EmailId  
 left join @tblEmailDroppedBounced edb on edb.EmailId = ul.EmailId  
 --left join ScheduleInterviewEvent si on (si.SkillChannel=IRF.IRFId and SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) = si.Uniqueid)  
@@ -119,13 +127,21 @@ ca.IsResumeRedactFailed,
 --si.Uniqueid as SchedulerUniqueid,  
 SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid  
 ,ISNULL(CountTable.WhatsappCount, 0) as WhatsappCount, ISNULL(CountTable.CallsCount, 0) as CallsCount, ISNULL(CountTable.MailCount, 0) as MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue,IRF.JDTiltle,ulcho.EmailId as ChannelOwnerEmail,  
-cci.IsColdCandidate, ca.AIResumeScreeningVerdict, ca.AIResumeScreeningScore    
+cci.IsColdCandidate, ca.AIResumeScreeningVerdict, ca.AIResumeScreeningScore,
+-- Advanced Resume Screening: latest result, and what is needed for the stale (v-old) marker.
+cas.[Status] as AdvScreeningStatus, cas.OverallPercentage as AdvScreeningPercentage, cas.Verdict as AdvScreeningVerdict,
+cas.AuthenticityRating as AdvAuthenticityRating, cas.RubricVersion as AdvRubricVersion, cas.InstructionsVersion as AdvInstructionsVersion,
+cas.AttemptCount as AdvAttemptCount, cas.ErrorMessage as AdvErrorMessage,
+ISNULL(IRF.IsAdvancedResumeScreening, 0) as IsAdvancedResumeScreening, rsr.RubricVersion as CurrentRubricVersion,
+rsr.InstructionsVersion as CurrentInstructionsVersion    
 from Candidate ca join IRF on ca.IRFId=IRF.id      
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id        
 join UserList ul on ul.id = cm.UserId  
 join UserList ulcho on ulcho.id  = irf.RisebirdHr  
 left join @tblAttemptStatusCount tasc on tasc.CandidateId = cm.id  
-left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId  
+left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
+left join CandidateAdvancedScreening cas on cas.CandidateId = ca.id
+left join IRFScreeningRubric rsr on rsr.IRFId = IRF.id  
 left join @tblEmailInterviewStatus eis on eis.EmailId = ul.EmailId  
 left join @tblEmailDroppedBounced edb on edb.EmailId = ul.EmailId  
 --left join ScheduleInterviewEvent si on (si.SkillChannel=IRF.IRFId and SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) = si.Uniqueid)  
@@ -158,13 +174,21 @@ ca.IsResumeRedactFailed,
 SUBSTRING( IRF.CalendlyLink , LEN(IRF.CalendlyLink) -  CHARINDEX('=',REVERSE(IRF.CalendlyLink)) + 2  , LEN(IRF.CalendlyLink)) as SchedulerUniqueid  
 ,ISNULL(CountTable.WhatsappCount, 0) as WhatsappCount, ISNULL(CountTable.CallsCount, 0) as CallsCount, ISNULL(CountTable.MailCount, 0) as MailCount,LastCandidateStatus.LatestComment,LastCandidateStatus.StatusValue, IRF.JDTiltle,
 ulcho.EmailId as ChannelOwnerEmail  
-,cci.IsColdCandidate, ca.AIResumeScreeningVerdict, ca.AIResumeScreeningScore  
+,cci.IsColdCandidate, ca.AIResumeScreeningVerdict, ca.AIResumeScreeningScore,
+-- Advanced Resume Screening: latest result, and what is needed for the stale (v-old) marker.
+cas.[Status] as AdvScreeningStatus, cas.OverallPercentage as AdvScreeningPercentage, cas.Verdict as AdvScreeningVerdict,
+cas.AuthenticityRating as AdvAuthenticityRating, cas.RubricVersion as AdvRubricVersion, cas.InstructionsVersion as AdvInstructionsVersion,
+cas.AttemptCount as AdvAttemptCount, cas.ErrorMessage as AdvErrorMessage,
+ISNULL(IRF.IsAdvancedResumeScreening, 0) as IsAdvancedResumeScreening, rsr.RubricVersion as CurrentRubricVersion,
+rsr.InstructionsVersion as CurrentInstructionsVersion  
 from Candidate ca join IRF on ca.IRFId=IRF.id      
 join CandidatesMaster cm on ca.CandidateMasterId=cm.id        
 join UserList ul on ul.id = cm.UserId  
 join UserList ulcho on ulcho.id  = irf.RisebirdHr  
 left join @tblAttemptStatusCount tasc on tasc.CandidateId = cm.id   
-left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId  
+left join ColdCandidateInfos cci on ca.id=cci.FKCandidateId
+left join CandidateAdvancedScreening cas on cas.CandidateId = ca.id
+left join IRFScreeningRubric rsr on rsr.IRFId = IRF.id  
 left join @tblEmailInterviewStatus eis on eis.EmailId = ul.EmailId  
 left join @tblEmailDroppedBounced edb on edb.EmailId = ul.EmailId  
 --left join ScheduleInterviewEvent si on si.SkillChannel=IRF.IRFId  

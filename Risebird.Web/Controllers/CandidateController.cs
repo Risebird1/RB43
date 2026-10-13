@@ -70,6 +70,8 @@ namespace Risebird.Web.Controllers
         private readonly IAIInterviewerService _aiInterviewerService;
 
         //private static string Searchvalue;
+        private readonly IAdvancedScreeningService _advancedScreeningService;
+
         public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService,
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService, ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository,
@@ -77,8 +79,10 @@ namespace Risebird.Web.Controllers
             IAadhaarService aadhaarService, IZoomHelper zoomHelper,
             IAffIndaResumeParserHelper affIndaResumeParserHelper,
             IInterviewSchedulerService interviewSchedulerservice, IWebHostEnvironment env,
-            IEncryptionHelper encryptionHelper, IZohoMeetingHelper zoho, IAIInterviewerService aiInterviewerService)
+            IEncryptionHelper encryptionHelper, IZohoMeetingHelper zoho, IAIInterviewerService aiInterviewerService,
+            IAdvancedScreeningService advancedScreeningService)
         {
+            _advancedScreeningService = advancedScreeningService;
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
             _irfService = irfService;
@@ -861,6 +865,25 @@ namespace Risebird.Web.Controllers
                         //_candidateModelDetails = candidateList;
                         //return View(candidateList.ToPagedList(Page ?? 1, 10));
                         ViewBag.Skills = "Python,Data Science,DSA,ML";
+
+                        // Advanced Resume Screening: flag, rubric state and counts for the toolbar,
+                        // the status strip and the Fit Score column. A failure here must never
+                        // take the candidate list down, so it only hides those extras.
+                        try
+                        {
+                            var advRubric = await _advancedScreeningService.GetRubricAsync(id);
+                            ViewBag.IsAdvancedResumeScreening = advRubric?.IsAdvancedResumeScreening ?? false;
+                            if (advRubric?.IsAdvancedResumeScreening == true)
+                            {
+                                ViewBag.AdvRubric = advRubric;
+                                ViewBag.AdvCounts = await _advancedScreeningService.GetCountsAsync(id);
+                            }
+                        }
+                        catch (Exception advEx)
+                        {
+                            ViewBag.IsAdvancedResumeScreening = false;
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, advEx);
+                        }
                         return View(candidateList);
 
 
