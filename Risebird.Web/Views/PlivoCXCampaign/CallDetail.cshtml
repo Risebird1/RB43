@@ -1,0 +1,203 @@
+@model Risebird.Entities.Data.PlivoCXModels.PlivoCXCampaignCallDetailVM
+@using Newtonsoft.Json.Linq
+@using Risebird.Business.PlivoCX
+@using Risebird.Web.Controllers
+@{
+    var log = Model.CallLog;
+    var campaign = Model.Campaign;
+    ViewData["Title"] = (log.RecipientName ?? "Call") + " · Call detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var tz = PlivoCXCampaignRules.ResolveTimeZone(campaign?.TimeZone ?? PlivoCXCampaignRules.IndiaTimeZoneId);
+    var startedUtc = log.CallStartedAt ?? log.CreatedAt;
+    var started = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(startedUtc, DateTimeKind.Utc), tz);
+    string duration = log.DurationSeconds.HasValue && log.DurationSeconds > 0
+        ? (log.DurationSeconds.Value / 60 > 0 ? (log.DurationSeconds.Value / 60) + "m " : "") + (log.DurationSeconds.Value % 60) + "s"
+        : "—";
+
+    string purpose = string.IsNullOrWhiteSpace(log.CallPurpose) ? "schedule" : log.CallPurpose;
+    purpose = char.ToUpperInvariant(purpose[0]) + purpose.Substring(1);
+    string outcome = Model.CandidateState != null
+        ? PlivoCXCampaignController.StateLabel(Model.CandidateState)
+        : log.InterviewBooked || log.BookingApiSuccess ? "Booked" : (log.CallStatus ?? "—");
+    string outcomeClass = outcome == "Booked" ? "pcx-good" : outcome == "Not booked" ? "pcx-bad" : "";
+    string agentName = "PlivoCX · " + (Model.Agent?.Name ?? purpose);
+    bool collectsSlot = Model.Agent?.CollectsSlot ?? true;
+
+    string disposition = string.IsNullOrWhiteSpace(log.CandidateDisposition) ? "—"
+        : log.CandidateDisposition == "cant_say" ? "Can't say"
+        : char.ToUpperInvariant(log.CandidateDisposition[0]) + log.CandidateDisposition.Substring(1);
+    string bookedText = log.InterviewBooked
+        ? "Yes" + (PlivoCXCampaignRules.BookedSlotText(log) is string s && s.Length > 0 ? " · " + s : "")
+        : "No";
+
+    // Transcript: a JSON array of { speaker|role, text|content } turns, "Speaker: text" lines, or plain text.
+    var turns = new List<(string Who, string Text, bool IsAgent)>();
+    if (!string.IsNullOrWhiteSpace(log.CallTranscript))
+    {
+        var raw = log.CallTranscript.Trim();
+        if (raw.StartsWith("["))
+        {
+            try
+            {
+                foreach (var turn in JArray.Parse(raw))
+                {
+                    var who = (turn["speaker"] ?? turn["role"])?.ToString() ?? "";
+                    var text = (turn["text"] ?? turn["content"] ?? turn["message"])?.ToString() ?? "";
+                    var w = who.ToLowerInvariant();
+                    bool isAgent = w.Contains("ai") || w.Contains("agent") || w.Contains("assistant") || w.Contains("bot");
+                    if (text.Length > 0) turns.Add((isAgent ? "Agent" : (string.IsNullOrWhiteSpace(who) || w == "user" ? (log.RecipientName ?? "Candidate").Split(' ')[0] : who), text, isAgent));
+                }
+            }
+            catch { turns.Clear(); }
+        }
+        if (turns.Count == 0)
+        {
+            var lines = raw.Split('\n');
+            bool allSpeakerLines = lines.Length > 1;
+            foreach (var line in lines)
+            {
+                var l = line.Trim();
+                if (l.Length == 0) continue;
+                int colon = l.IndexOf(':');
+                if (colon <= 0 || colon > 20) { allSpeakerLines = false; break; }
+                var who = l.Substring(0, colon).Trim();
+                var w = who.ToLowerInvariant();
+                bool isAgent = w.Contains("ai") || w.Contains("agent") || w.Contains("assistant") || w.Contains("bot");
+                turns.Add((isAgent ? "Agent" : (w == "user" || w == "human" || w == "customer" ? (log.RecipientName ?? "Candidate").Split(' ')[0] : who), l.Substring(colon + 1).Trim(), isAgent));
+            }
+            if (!allSpeakerLines) turns.Clear();
+        }
+    }
+
+    var structured = new List<(string Label, string Value)>
+    {
+        ("Call purpose", log.CallPurpose),
+        ("Call status", log.CallStatus),
+        ("Hangup cause", log.HangupCause),
+        ("Candidate disposition", log.CandidateDisposition),
+        ("Interview date (raw)", log.BookedInterviewDate),
+        ("Interview time (raw)", log.BookedInterviewTime),
+        ("Interview date/time (parsed)", log.BookedInterviewDateTime?.ToString("dd MMM yyyy, h:mm tt")),
+        ("Interview booked", log.InterviewBooked ? "Yes" : "No"),
+        ("Booking API success", log.BookingApiSuccess ? "Yes" : "No"),
+        ("Plivo conversation id", log.PlivoCXConversationId),
+        ("Plivo call UUID", log.PlivoCallUuid),
+        ("Call log id", log.Id.ToString()),
+        ("Triggered by", log.TriggeredBy)
+    };
+}
+@await Html.PartialAsync("_CampaignStyles")
+
+<div class="pcx-page">
+    <div class="pcx-wrap" style="max-width:1000px;">
+        <div class="pcx-head" style="align-items:center;">
+            <a class="pcx-link pcx-small" href="@(campaign != null ? Url.Action("Detail", "PlivoCXCampaign", new { id = campaign.Id }) : Url.Action("Index", "PlivoCXCampaign"))">&larr; ALL CANDIDATES</a>
+            @if (campaign != null)
+            {
+                <a class="pcx-btn" href="@Url.Action("Detail", "PlivoCXCampaign", new { id = campaign.Id })">Open campaign</a>
+            }
+        </div>
+
+        <div class="pcx-card"><div class="pcx-card-b">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+                <h3 style="margin:0;font-size:22px;font-weight:700;">@(log.RecipientName ?? "Unknown recipient")</h3>
+                <span class="pcx-chip Completed">@(log.CallStatus == "initiated" || log.CallStatus == "triggered" ? "in progress" : "ended")</span>
+                @if (campaign != null)
+                {
+                    <span class="pcx-muted">@campaign.Name</span>
+                }
+            </div>
+
+            <div class="pcx-facts">
+                <div class="pcx-fact"><span class="pcx-label">Phone</span><div>@(log.RecipientPhone ?? "—")</div></div>
+                <div class="pcx-fact"><span class="pcx-label">Email</span><div>@(log.RecipientEmail ?? "—")</div></div>
+                <div class="pcx-fact"><span class="pcx-label">Agent</span><div>@agentName</div></div>
+                <div class="pcx-fact"><span class="pcx-label">Started</span><div>@started.ToString("dd MMM yyyy, HH:mm")</div></div>
+                <div class="pcx-fact"><span class="pcx-label">Duration</span><div>@duration</div></div>
+                <div class="pcx-fact"><span class="pcx-label">Purpose / outcome</span><div class="@outcomeClass">@(purpose + " · " + outcome)</div></div>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(log.RecordingUrl))
+            {
+                <div class="pcx-fact" style="margin-bottom:6px;">
+                    <span class="pcx-label">Recording</span>
+                    <audio controls preload="none" src="@log.RecordingUrl" style="width:100%;"></audio>
+                </div>
+            }
+            else
+            {
+                <p class="pcx-muted">@(string.IsNullOrWhiteSpace(log.PlivoCallUuid) ? "No recording yet." : "No recording yet — the recording backfill job picks it up shortly after the call ends.")</p>
+            }
+
+            <div class="pcx-tabs" role="tablist">
+                <button type="button" class="on" data-pane="analysis" role="tab">Analysis</button>
+                <button type="button" data-pane="structured" role="tab">Structured output</button>
+                <button type="button" data-pane="transcript" role="tab">Transcript</button>
+            </div>
+
+            <div class="pcx-pane on" id="pane-analysis">
+                <div class="pcx-facts">
+                    <div class="pcx-fact"><span class="pcx-label">Disposition</span><div class="@(log.CandidateDisposition == "interested" ? "pcx-good" : log.CandidateDisposition == "uninterested" ? "pcx-bad" : "")">@disposition</div></div>
+                    @if (collectsSlot)
+                    {
+                        <div class="pcx-fact"><span class="pcx-label">Interview booked</span><div>@bookedText</div></div>
+                        <div class="pcx-fact"><span class="pcx-label">Booking API</span><div class="@(log.BookingApiSuccess ? "pcx-good" : log.InterviewBooked ? "pcx-bad" : "")">@(log.BookingApiSuccess ? "Success" : string.IsNullOrWhiteSpace(log.BookingApiResponse) ? "Not called" : "Failed")</div></div>
+                    }
+                    else
+                    {
+                        <div class="pcx-fact"><span class="pcx-label">Attendance</span><div class="@(outcome == "Booked" ? "pcx-good" : "")">@(outcome == "Booked" ? "Confirmed" : "Not confirmed")</div></div>
+                        <div class="pcx-fact"><span class="pcx-label">Booking</span><div>Not applicable (confirm-only agent)</div></div>
+                    }
+                </div>
+                <div class="pcx-fact">
+                    <span class="pcx-label">Conversation summary</span>
+                    <div style="white-space:pre-wrap;">@(string.IsNullOrWhiteSpace(log.ConversationSummary) ? "No summary was returned for this call." : log.ConversationSummary)</div>
+                </div>
+            </div>
+
+            <div class="pcx-pane" id="pane-structured">
+                <table class="pcx-table">
+                    <tbody>
+                        @foreach (var row in structured)
+                        {
+                            <tr><td class="pcx-muted" style="width:260px;">@row.Label</td><td>@(string.IsNullOrWhiteSpace(row.Value) ? "—" : row.Value)</td></tr>
+                        }
+                    </tbody>
+                </table>
+                @if (!string.IsNullOrWhiteSpace(log.BookingApiResponse))
+                {
+                    <span class="pcx-label" style="margin-top:12px;">Booking API response</span>
+                    <div class="pcx-pre">@log.BookingApiResponse</div>
+                }
+            </div>
+
+            <div class="pcx-pane" id="pane-transcript">
+                @if (turns.Count > 0)
+                {
+                    foreach (var t in turns)
+                    {
+                        <div class="pcx-turn @(t.IsAgent ? "agent" : "")"><div class="who">@t.Who</div><div class="say">@t.Text</div></div>
+                    }
+                }
+                else if (!string.IsNullOrWhiteSpace(log.CallTranscript))
+                {
+                    <div class="pcx-pre">@log.CallTranscript</div>
+                }
+                else
+                {
+                    <p class="pcx-muted">No transcript yet. Plivo often sends the hangup before the transcript is ready; it is fetched by call UUID when available.</p>
+                }
+            </div>
+        </div></div>
+    </div>
+</div>
+
+<script>
+(function () {
+    $('.pcx-tabs').on('click', 'button', function () {
+        $('.pcx-tabs button').removeClass('on'); $(this).addClass('on');
+        $('.pcx-pane').removeClass('on'); $('#pane-' + $(this).data('pane')).addClass('on');
+    });
+})();
+</script>

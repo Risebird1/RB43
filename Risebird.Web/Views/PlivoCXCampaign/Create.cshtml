@@ -1,0 +1,257 @@
+@using Risebird.Entities.Data.PlivoCXModels
+@{
+    ViewData["Title"] = "Create PlivoCX Campaign";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var agents = ViewBag.Agents as List<PlivoCXAgent> ?? new List<PlivoCXAgent>();
+    var irfs = ViewBag.IRFs as List<PlivoCXCampaignIRFOption> ?? new List<PlivoCXCampaignIRFOption>();
+    var defaultName = "Campaign — " + DateTime.Now.ToString("d MMM");
+}
+@await Html.PartialAsync("_CampaignStyles")
+
+<div class="pcx-page">
+    <div class="pcx-wrap">
+        <div class="pcx-head">
+            <div>
+                <p class="pcx-eyebrow">AI scheduling · Campaigns</p>
+                <h3>Create campaign</h3>
+            </div>
+            <a class="pcx-btn" href="@Url.Action("Index", "PlivoCXCampaign")">All campaigns</a>
+        </div>
+
+        <div class="pcx-card"><div class="pcx-card-b">
+            @Html.AntiForgeryToken()
+            <div id="pcxError" class="pcx-alert err" style="display:none;"></div>
+
+            @if (agents.Count == 0)
+            {
+                <div class="pcx-alert warn">No candidate agent is configured. Set <code>PlivoCX:TriggerEndpointUrl</code> (and the reschedule / confirm URLs) in appsettings; the agents are created from them on first use.</div>
+            }
+
+            <div class="pcx-field">
+                <label class="pcx-label" for="pcxName">Campaign name</label>
+                <input class="pcx-input" id="pcxName" maxlength="200" value="@defaultName" />
+            </div>
+
+            <div class="pcx-field">
+                <label class="pcx-label" for="pcxAgent">Agent — what the AI does on the call</label>
+                <select class="pcx-select" id="pcxAgent">
+                    @foreach (var a in agents)
+                    {
+                        <option value="@a.Id" data-purpose="@a.Purpose" data-slot="@(a.CollectsSlot ? "1" : "0")">@a.Label</option>
+                    }
+                </select>
+            </div>
+
+            <div class="pcx-field">
+                <span class="pcx-label">Candidate source</span>
+                <div class="pcx-seg" id="pcxSource" role="tablist">
+                    <button type="button" data-source="IRF" class="on">By IRF</button>
+                    <button type="button" data-source="NotScheduled">Not-scheduled</button>
+                    <button type="button" data-source="Reschedule">Reschedule</button>
+                    <button type="button" data-source="Unconfirmed">Unconfirmed</button>
+                </div>
+                <div class="pcx-muted pcx-small" id="pcxSourceHint" style="margin-top:5px;"></div>
+            </div>
+
+            <div class="pcx-field">
+                <span class="pcx-label">IRF / list filter</span>
+                <div id="pcxFilterIRF" style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <input class="pcx-input" id="pcxIrfFilter" placeholder="Filter IRFs…" style="max-width:220px;" aria-label="Filter IRFs" />
+                    <select class="pcx-select" id="pcxIrf" style="flex:1;min-width:260px;" aria-label="IRF">
+                        <option value="">Choose an IRF…</option>
+                        @foreach (var i in irfs)
+                        {
+                            <option value="@i.Id">@(i.IRFId + " · " + i.JobTitle + " — " + i.ClientName)</option>
+                        }
+                    </select>
+                </div>
+                <div id="pcxFilterList" style="display:none;gap:8px;flex-wrap:wrap;align-items:center;">
+                    <input class="pcx-input" id="pcxListSearch" placeholder="Search name, email, IRF…" style="max-width:280px;" aria-label="Search the list" />
+                    <select class="pcx-select" id="pcxListClient" style="max-width:240px;" aria-label="Client"><option value="">All clients</option></select>
+                    <span id="pcxDates" style="display:none;gap:6px;align-items:center;">
+                        <span class="pcx-muted">Meetings from</span>
+                        <input class="pcx-input" type="date" id="pcxStart" style="width:150px;" value="@DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd")" />
+                        <span class="pcx-muted">to</span>
+                        <input class="pcx-input" type="date" id="pcxEnd" style="width:150px;" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        <button type="button" class="pcx-btn sm" id="pcxReload">Load</button>
+                    </span>
+                </div>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin:6px 0 8px;">
+                <label style="margin:0;font-weight:600;"><input type="checkbox" id="pcxAll" /> <span id="pcxCount">0 of 0 selected</span></label>
+                <span class="pcx-muted pcx-small">candidates without a valid number join as <b style="color:#b45309;">Cold</b></span>
+            </div>
+
+            <div class="pcx-table-wrap" style="max-height:520px;overflow-y:auto;border:1px solid #eef2f6;border-radius:8px;">
+                <table class="pcx-table">
+                    <thead>
+                        <tr><th style="width:34px;"></th><th>Candidate</th><th>Email</th><th>Phone</th><th>IRF</th><th style="text-align:right;">Eligibility</th></tr>
+                    </thead>
+                    <tbody id="pcxRows">
+                        <tr><td colspan="6" class="pcx-empty">Choose an IRF or a list to see candidates.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:14px;border-top:1px solid #eef2f6;padding-top:14px;">
+                <span class="pcx-muted">Starts as a <b>Draft</b>. Nothing is dialled until you set the policy, run a test call, and press <b>Call now</b>.</span>
+                <button type="button" class="pcx-btn primary" id="pcxCreate" @(agents.Count == 0 ? "disabled" : "")>Create campaign</button>
+            </div>
+        </div></div>
+    </div>
+</div>
+
+<script>
+(function () {
+    // Which candidate sources fit which agent purpose (handoff §3).
+    var SOURCES_FOR = {
+        schedule:   ['IRF', 'NotScheduled'],
+        reschedule: ['IRF', 'Reschedule'],
+        confirm:    ['IRF', 'Unconfirmed']
+    };
+    var URLS = {
+        IRF:          '@Url.Action("CandidatesForIRF", "PlivoCXCampaign")',
+        NotScheduled: '@Url.Action("CandidatesFromNotScheduled", "PlivoCXCampaign")',
+        Reschedule:   '@Url.Action("CandidatesFromReschedule", "PlivoCXCampaign")',
+        Unconfirmed:  '@Url.Action("CandidatesFromUnconfirmed", "PlivoCXCampaign")'
+    };
+    var LABELS = { 'eligible': 'eligible', 'has-meeting': 'has meeting', 'no-number': 'no number → Cold', 'not-eligible': 'not eligible', 'cold': 'cold' };
+
+    var source = 'IRF', rows = [], loadSeq = 0;
+
+    function esc(s) { return $('<div>').text(s == null ? '' : String(s)).html(); }
+    function purpose() { return ($('#pcxAgent option:selected').data('purpose') || 'schedule').toString().toLowerCase(); }
+    function showError(msg) { $('#pcxError').text(msg).toggle(!!msg); }
+
+    function syncSources() {
+        var allowed = SOURCES_FOR[purpose()] || ['IRF'];
+        $('#pcxSource button').each(function () {
+            var ok = allowed.indexOf($(this).data('source')) >= 0;
+            $(this).prop('disabled', !ok).attr('title', ok ? '' : 'Not used by this agent');
+        });
+        if (allowed.indexOf(source) < 0) setSource('IRF'); else load();
+        var slot = $('#pcxAgent option:selected').data('slot') == 1;
+        $('#pcxSourceHint').text(slot ? 'This agent collects a slot and books it.' : 'This agent only asks the candidate to confirm — no slot is booked.');
+    }
+
+    function setSource(s) {
+        source = s;
+        $('#pcxSource button').removeClass('on').filter('[data-source="' + s + '"]').addClass('on');
+        $('#pcxFilterIRF').toggle(s === 'IRF');
+        $('#pcxFilterList').css('display', s === 'IRF' ? 'none' : 'flex');
+        $('#pcxDates').css('display', s === 'Reschedule' ? 'inline-flex' : 'none');
+        load();
+    }
+
+    function load() {
+        rows = []; render();
+        var url = URLS[source], data = {};
+        if (source === 'IRF') {
+            var irf = $('#pcxIrf').val();
+            if (!irf) { $('#pcxRows').html('<tr><td colspan="6" class="pcx-empty">Choose an IRF to see its candidates.</td></tr>'); return; }
+            data = { irfId: irf, agentId: $('#pcxAgent').val() };
+        } else if (source === 'Reschedule') {
+            data = { startDate: $('#pcxStart').val(), endDate: $('#pcxEnd').val() };
+        }
+        var seq = ++loadSeq;
+        $('#pcxRows').html('<tr><td colspan="6" class="pcx-empty"><i class="fa fa-spinner fa-spin"></i> Loading candidates…</td></tr>');
+        $.get(url, data).done(function (res) {
+            if (seq !== loadSeq) return;
+            if (!res || !res.ok) { $('#pcxRows').html('<tr><td colspan="6" class="pcx-empty">' + esc(res && res.message || 'Could not load candidates.') + '</td></tr>'); return; }
+            rows = res.candidates || [];
+            var clients = {};
+            rows.forEach(function (r) { if (r.clientName) clients[r.clientName] = 1; });
+            var sel = $('#pcxListClient').empty().append('<option value="">All clients</option>');
+            Object.keys(clients).sort().forEach(function (c) { sel.append($('<option>').val(c).text(c)); });
+            render();
+        }).fail(function () {
+            if (seq === loadSeq) $('#pcxRows').html('<tr><td colspan="6" class="pcx-empty">Could not load candidates. Try again.</td></tr>');
+        });
+    }
+
+    function visible() {
+        if (source === 'IRF') return rows;
+        var q = ($('#pcxListSearch').val() || '').toLowerCase(), client = $('#pcxListClient').val();
+        return rows.filter(function (r) {
+            if (client && r.clientName !== client) return false;
+            if (!q) return true;
+            return [r.name, r.email, r.phone, r.irfName, r.jobTitle].join(' ').toLowerCase().indexOf(q) >= 0;
+        });
+    }
+
+    function render() {
+        var list = visible();
+        if (!rows.length) { updateCount(); return; }
+        if (!list.length) { $('#pcxRows').html('<tr><td colspan="6" class="pcx-empty">No candidate matches the filter.</td></tr>'); updateCount(); return; }
+        var html = list.map(function (r) {
+            var idx = rows.indexOf(r), callable = r.candidateId > 0;
+            return '<tr>' +
+                '<td><input type="checkbox" class="pcx-pick" data-i="' + idx + '"' + (r.selected ? ' checked' : '') + (callable ? '' : ' disabled') + ' aria-label="Include ' + esc(r.name) + '" /></td>' +
+                '<td>' + esc(r.name || '—') + '</td>' +
+                '<td>' + esc(r.email || '—') + '</td>' +
+                '<td style="white-space:nowrap;">' + esc(r.phone || '—') + '</td>' +
+                '<td><div>' + esc(r.irfName || '') + '</div><div class="pcx-muted pcx-small">' + esc(r.originalDate ? 'meeting ' + r.originalDate : (r.jobTitle || '')) + '</div></td>' +
+                '<td style="text-align:right;"><span class="pcx-chip ' + esc(r.eligibility) + '">' + esc(LABELS[r.eligibility] || r.eligibility) + '</span>' +
+                    (r.note ? '<div class="pcx-muted pcx-small">' + esc(r.note) + '</div>' : '') + '</td>' +
+                '</tr>';
+        }).join('');
+        $('#pcxRows').html(html);
+        updateCount();
+    }
+
+    function updateCount() {
+        var list = visible().filter(function (r) { return r.candidateId > 0; });
+        var picked = rows.filter(function (r) { return r.selected && r.candidateId > 0; }).length;
+        $('#pcxCount').text(picked + ' of ' + rows.length + ' selected');
+        var visPicked = list.filter(function (r) { return r.selected; }).length;
+        $('#pcxAll').prop('checked', list.length > 0 && visPicked === list.length).prop('indeterminate', visPicked > 0 && visPicked < list.length);
+    }
+
+    $('#pcxAgent').on('change', syncSources);
+    $('#pcxSource').on('click', 'button', function () { if (!this.disabled) setSource($(this).data('source')); });
+    $('#pcxIrf').on('change', load);
+    $('#pcxReload').on('click', load);
+    $('#pcxListSearch').on('input', render);
+    $('#pcxListClient').on('change', render);
+    $('#pcxIrfFilter').on('input', function () {
+        var q = this.value.toLowerCase();
+        $('#pcxIrf option').each(function () { if (this.value) $(this).toggle($(this).text().toLowerCase().indexOf(q) >= 0); });
+    });
+    $('#pcxRows').on('change', '.pcx-pick', function () { rows[$(this).data('i')].selected = this.checked; updateCount(); });
+    $('#pcxAll').on('change', function () {
+        var on = this.checked;
+        visible().forEach(function (r) { if (r.candidateId > 0) r.selected = on; });
+        render();
+    });
+
+    $('#pcxCreate').on('click', function () {
+        showError('');
+        var picked = rows.filter(function (r) { return r.selected && r.candidateId > 0; });
+        var name = $.trim($('#pcxName').val());
+        if (!name) { showError('Give the campaign a name.'); return; }
+        if (!picked.length) { showError('Tick at least one candidate.'); return; }
+        var btn = $(this).prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Creating…');
+        var payload = {
+            Name: name,
+            AgentId: parseInt($('#pcxAgent').val(), 10),
+            SourceType: source,
+            IRFId: source === 'IRF' ? parseInt($('#pcxIrf').val(), 10) : null,
+            Candidates: picked
+        };
+        $.post('@Url.Action("Create", "PlivoCXCampaign")', {
+            payload: JSON.stringify(payload),
+            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+        }).done(function (res) {
+            if (res && res.ok) { window.location = res.redirect; return; }
+            showError(res && res.message || 'The campaign could not be created.');
+            btn.prop('disabled', false).text('Create campaign');
+        }).fail(function () {
+            showError('The campaign could not be created. Try again.');
+            btn.prop('disabled', false).text('Create campaign');
+        });
+    });
+
+    syncSources();
+})();
+</script>
