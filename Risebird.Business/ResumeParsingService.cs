@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.AffIndaModels;
@@ -279,28 +280,8 @@ namespace Risebird.Business
             }
         }
 
-        private string CleanEmail(string email)
-        {
-            if (string.IsNullOrEmpty(email)) return email;
-
-            email = email.Trim()
-                .Replace(":", "")
-                .Replace("%20", "")
-                .Replace("?:", "")
-                .Replace(":%20", "")
-                .Replace("-%20", "");
-
-            if (email.StartsWith(":") || email.StartsWith("-"))
-                email = email.Substring(1);
-            if (email.StartsWith("%20"))
-                email = email.Substring(3);
-            if (email.StartsWith("?:"))
-                email = email.Substring(2);
-            if (email.StartsWith(":%20") || email.StartsWith("-%20"))
-                email = email.Substring(4);
-
-            return email;
-        }
+        // Null when no trustworthy address is in the parsed value; ValidateEmailAddress then reports "Parsed email is not valid".
+        private static string CleanEmail(string email) => CandidateEmailNormalizer.Normalize(email);
 
         private async Task UpdateResumeStatus(int resumeId, bool isParsed, bool isProcessed, bool parsingFailed, string reason, bool? isEmailMissing = null)
         {

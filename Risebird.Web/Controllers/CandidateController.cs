@@ -1139,11 +1139,21 @@ namespace Risebird.Web.Controllers
                 {
                     model.EmailId = model.EmailId.ToLower();
                 }
+                // Store the bare address ("|x@gmail.com " -> "x@gmail.com"); refuse what cannot be cleaned.
+                var cleanEmail = CandidateEmailNormalizer.Normalize(model.EmailId);
+                if (cleanEmail != null)
+                {
+                    model.EmailId = cleanEmail;
+                }
 
                 var ClientEmailid = await _candidateService.FetchBillingownerById(model.IRFId);
                 var ClientDomain = CandidateEmailDomainRule.GetClientDomain(ClientEmailid);
                 string result = string.Empty;
-                if (CandidateEmailDomainRule.IsBlocked(model.EmailId, ClientDomain)) //HttpContext.Session.GetString("IRFId")
+                if (cleanEmail == null)
+                {
+                    result = "Please enter a valid email address.";
+                }
+                else if (CandidateEmailDomainRule.IsBlocked(model.EmailId, ClientDomain)) //HttpContext.Session.GetString("IRFId")
                 {
                     result = CandidateEmailDomainRule.BlockedMessage(ClientDomain);
                 }
@@ -1273,6 +1283,13 @@ namespace Risebird.Web.Controllers
                         {
                             model.EmailId = model.EmailId.ToLower();
                         }
+                        var cleanEmail = CandidateEmailNormalizer.Normalize(model.EmailId);
+                        if (cleanEmail == null)
+                        {
+                            TempData["SuccessErrorMessageCandidateEdit"] = "Please enter a valid email address.";
+                            return RedirectToAction("Edit", new { id = model.id, irfName = model.IRFName, irfId = model.IRFId });
+                        }
+                        model.EmailId = cleanEmail;
 
                         var ClientEmailid = await _candidateService.FetchBillingownerById(model.IRFId);
                         var ClientDomain = CandidateEmailDomainRule.GetClientDomain(ClientEmailid);
