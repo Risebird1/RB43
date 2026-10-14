@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RestSharp;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.PlivoCXModels;
@@ -1258,9 +1259,8 @@ namespace Risebird.AzureTimerFunctions
 
         private static string ExtractEmail(string text)
         {
-            if (string.IsNullOrWhiteSpace(text)) return null;
-            var m = Regex.Match(text, @"[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}");
-            return m.Success ? m.Value.ToLower() : null;
+            // Resume text glues words together ("x@gmail.comlinkedin", "|x@gmail.com"); the normalizer cuts that off.
+            return CandidateEmailNormalizer.ExtractFirst(text);
         }
 
         private static string ExtractPhone(string text)
