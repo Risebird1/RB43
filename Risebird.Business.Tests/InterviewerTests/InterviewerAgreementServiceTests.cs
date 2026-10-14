@@ -49,6 +49,19 @@ namespace Risebird.Business.Tests.InterviewerTests
             _repository.Verify(r => r.SaveInterviewerAgreement(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task GetAgreementImage_returns_nothing_when_not_signed(bool proof)
+        {
+            _repository.Setup(r => r.GetInterviewerAgreement(7)).ReturnsAsync(new InterviewerAgreementVM { InterviewerProfileId = 7 });
+
+            var image = await CreateSut().GetAgreementImage(7, proof);
+
+            Assert.Null(image);
+            _storage.Verify(s => s.GetBlobDataAsBlob(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        }
+
         [Fact]
         public async Task SignAgreement_reports_a_missing_profile()
         {

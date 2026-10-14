@@ -59,6 +59,30 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<(byte[] Content, string ContentType)?> GetAgreementImage(int interviewerProfileId, bool proof)
+        {
+            try
+            {
+                var agreement = await _agreementRepository.GetInterviewerAgreement(interviewerProfileId);
+                var url = proof ? agreement?.AgreementProofUrl : agreement?.AgreementSignatureUrl;
+                if (string.IsNullOrEmpty(url))
+                    return null;
+
+                var fileName = Uri.UnescapeDataString(new Uri(url).Segments[^1]);
+                var blob = _azureStorageHelper.GetBlobDataAsBlob(_options.SignatureContainer, fileName);
+                if (blob == null || !await blob.ExistsAsync())
+                    return null;
+                using var ms = new System.IO.MemoryStream();
+                await blob.DownloadToStreamAsync(ms);
+                return (ms.ToArray(), proof ? "image/jpeg" : "image/png");
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
         // The proof screenshot is best effort: without it (or if its upload fails) the agreement is still saved.
         private async Task<string> UploadProof(string fileName, byte[] content)
         {
