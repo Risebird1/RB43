@@ -1,6 +1,7 @@
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -6420,6 +6421,29 @@ WHERE irf.IsDeleted = 0
                     {
                         foreach (var obj in candidateList)
                         {
+                            // Every parser, Excel import and API add lands here. Store the bare address ("|x@gmail.com",
+                            // "x@gmail.comlinkedin" -> "x@gmail.com"); refuse the row when no address can be trusted.
+                            // The returned table carries the cleaned address, which is what the invite mail is sent to.
+                            var email = CandidateEmailNormalizer.Normalize(obj.EmailId);
+                            if (email == null)
+                            {
+                                const string invalidEmail = "Email address is not valid";
+                                if (isResumeParser)
+                                {
+                                    dt.Rows.Add(obj.EmailId, invalidEmail, obj.CandidateResumeId);
+                                }
+                                else if (isApi)
+                                {
+                                    dt.Rows.Add(obj.EmailId, invalidEmail, 0, 0);
+                                }
+                                else
+                                {
+                                    dt.Rows.Add(obj.EmailId, invalidEmail);
+                                }
+                                continue;
+                            }
+                            obj.EmailId = email;
+
                             try
                             {
                                 DynamicParameters parameters = new DynamicParameters();
