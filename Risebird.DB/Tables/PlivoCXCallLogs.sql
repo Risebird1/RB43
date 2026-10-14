@@ -55,6 +55,10 @@ CREATE TABLE [dbo].[PlivoCXCallLogs] (
     [CallEndedAt]            DATETIME            NULL,
     [TriggeredBy]            NVARCHAR(255)       NULL,   -- "timer" or user email
 
+    -- PlivoCX campaign that dialled this call (NULL for timer-job and one-off calls).
+    -- Existing databases: Migrations/Add_PlivoCXCallLogs_CampaignId.sql
+    [CampaignId]             INT                 NULL,
+
     CONSTRAINT [PK_PlivoCXCallLogs] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 GO

@@ -1,0 +1,257 @@
+@model Risebird.Entities.Data.PlivoCXModels.PlivoCXCampaignDetailVM
+@using Risebird.Entities.Data.PlivoCXModels
+@using Risebird.Web.Controllers
+@{
+    var c = Model.Campaign;
+    ViewData["Title"] = c.Name + " · PlivoCX Campaign";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var tz = Model.TimeZone;
+    var nowUtc = DateTime.UtcNow;
+    Func<DateTime?, DateTime?> local = d => d.HasValue ? TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(d.Value, DateTimeKind.Utc), tz) : (DateTime?)null;
+
+    int booked = Model.Count(PlivoCXCampaignCandidateState.Booked);
+    int notBooked = Model.Count(PlivoCXCampaignCandidateState.NotBooked);
+    int cold = Model.Count(PlivoCXCampaignCandidateState.Cold);
+    int pending = Model.Count(PlivoCXCampaignCandidateState.Pending);
+    int total = Model.Candidates.Count;
+    Func<int, string> pct = n => total == 0 ? "0" : (n * 100.0 / total).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+
+    bool voiceConfigured = Model.Agent != null && !string.IsNullOrWhiteSpace(Model.Agent.TriggerUrl);
+    bool isRunning = c.Status == PlivoCXCampaignStatus.Running;
+    bool isPaused = c.Status == PlivoCXCampaignStatus.Paused;
+    string agentLabel = Model.Agent?.Label ?? "(agent missing)";
+    string created = local(c.CreatedAt)?.ToString("dd MMM yyyy");
+    string[] palette = { "#2563eb", "#059669", "#db2777", "#7c3aed", "#d97706", "#0891b2", "#64748b" };
+
+    Func<PlivoCXCampaignCandidate, string> nextAttempt = cc =>
+    {
+        if (cc.State != PlivoCXCampaignCandidateState.Pending || cc.Attempts >= c.TotalAttempts) return "—";
+        if (!cc.NextAttemptAt.HasValue || cc.NextAttemptAt.Value <= nowUtc) return "Now";
+        var wait = cc.NextAttemptAt.Value - nowUtc;
+        if (wait.TotalHours >= 24) return local(cc.NextAttemptAt)?.ToString("dd MMM HH:mm");
+        return wait.TotalHours >= 1 ? "In " + (int)wait.TotalHours + "h" + (wait.Minutes > 0 ? " " + wait.Minutes + "m" : "") : "In " + Math.Max(1, (int)Math.Ceiling(wait.TotalMinutes)) + "m";
+    };
+    Func<string, string> outcomeClass = d => d == "interested" ? "pcx-good" : (d == "uninterested" || d == "invalid-number") ? "pcx-bad" : "";
+    string sourceLine = c.IRFName + (string.IsNullOrWhiteSpace(c.ClientName) ? "" : " · " + c.ClientName);
+    string policyLine = "Calls " + c.WindowOpens.ToString(@"hh\:mm") + "–" + c.WindowCloses.ToString(@"hh\:mm") + " " + c.TimeZone
+        + " · " + c.AttemptsPerDay + "/day, " + c.TotalAttempts + " total, " + c.MinGapMinutes + " min apart, " + c.ConcurrentCalls + " at once"
+        + (c.StartsOn.HasValue || c.EndsOn.HasValue ? " · " + (c.StartsOn?.ToString("dd MMM") ?? "—") + " to " + (c.EndsOn?.ToString("dd MMM") ?? "—") : "");
+}
+@await Html.PartialAsync("_CampaignStyles")
+
+<div class="pcx-page">
+    <div class="pcx-wrap">
+        <div style="margin-bottom:8px;"><a class="pcx-link pcx-small" href="@Url.Action("Index", "PlivoCXCampaign")">&larr; ALL CAMPAIGNS</a></div>
+
+        <div class="pcx-card"><div class="pcx-card-b">
+            @Html.AntiForgeryToken()
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <h3 style="margin:0;font-size:22px;font-weight:700;">@c.Name</h3>
+                <span class="pcx-chip @c.Status" id="pcxStatus">@c.Status</span>
+            </div>
+            <p class="pcx-sub">Agent: <b>@agentLabel</b> · @sourceLine · Voice: @(voiceConfigured ? "configured" : "not configured") · @created</p>
+            <p class="pcx-sub">@policyLine</p>
+
+            <div class="pcx-actions" style="margin-top:12px;">
+                <button type="button" class="pcx-btn primary" id="pcxCallNow" @(isPaused || !voiceConfigured ? "disabled" : "") title="Dial the due pending candidates now, up to @c.ConcurrentCalls at once — ignores the calling window, keeps the attempt limits">&#9679; Call now</button>
+                <button type="button" class="pcx-btn violet js-status" data-action="StartAutomatic" @(isRunning || !voiceConfigured ? "disabled" : "") title="Hand the campaign to the scheduler: it dials inside the calling window every 2 minutes">Start automatic</button>
+                <button type="button" class="pcx-btn js-status" data-action="Pause" @(isRunning ? "" : "disabled") title="Stop new dials; calls already connecting finish">Pause</button>
+                @if (Model.CallStats.InFlightCalls > 0)
+                {
+                    <span class="pcx-muted">@Model.CallStats.InFlightCalls call(s) connecting…</span>
+                }
+            </div>
+            <div id="pcxMsg" class="pcx-alert" style="display:none;margin-top:12px;"></div>
+
+            <div class="pcx-tiles">
+                <div class="pcx-tile booked"><b>@booked</b><span>Booked</span></div>
+                <div class="pcx-tile notbooked"><b>@notBooked</b><span>Not booked</span></div>
+                <div class="pcx-tile cold"><b>@cold</b><span>Cold</span></div>
+                <div class="pcx-tile pending"><b>@pending</b><span>Pending</span></div>
+                <div class="pcx-tile"><b>@total</b><span>Candidates</span></div>
+                <div class="pcx-tile" title="@(Model.CallStats.AnsweredCalls + " answered of " + Model.CallStats.FinishedCalls + " finished calls")"><b>@(Model.CallStats.PickupPercent.HasValue ? Model.CallStats.PickupPercent + "%" : "—")</b><span>Pick-up</span></div>
+            </div>
+            <div class="pcx-bar" role="img" aria-label="@(booked + " booked, " + notBooked + " not booked, " + cold + " cold, " + pending + " pending")">
+                <span class="booked" style="width:@pct(booked)%"></span><span class="notbooked" style="width:@pct(notBooked)%"></span><span class="cold" style="width:@pct(cold)%"></span><span class="pending" style="width:@pct(pending)%"></span>
+            </div>
+            <div class="pcx-key"><span><i class="booked"></i>Booked</span><span><i class="notbooked"></i>Not booked</span><span><i class="cold"></i>Cold</span><span><i class="pending"></i>Pending</span></div>
+
+            <details class="pcx-details">
+                <summary>Test call (optional) — dial one number to hear the agent before launching</summary>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-top:10px;">
+                    <div><label class="pcx-label" for="pcxTestPhone">Phone</label><input class="pcx-input" id="pcxTestPhone" placeholder="+91 98xxx xxxxx" style="width:200px;" /></div>
+                    <div><label class="pcx-label" for="pcxTestName">Name</label><input class="pcx-input" id="pcxTestName" placeholder="Test Candidate" style="width:200px;" /></div>
+                    <div><label class="pcx-label" for="pcxTestEmail">Email (optional)</label><input class="pcx-input" id="pcxTestEmail" style="width:220px;" /></div>
+                    <button type="button" class="pcx-btn" id="pcxTestCall" @(voiceConfigured ? "" : "disabled")>Place test call</button>
+                </div>
+                <p class="pcx-muted pcx-small" style="margin:8px 0 0;">Uses this campaign's agent and IRF context; no candidate row changes. A schedule agent can still book a real slot if the person on the test call agrees to one.</p>
+            </details>
+
+            <div class="pcx-card" id="policy" style="background:#fbfcfe;margin-bottom:14px;"><div class="pcx-card-b">
+                <h5 style="margin:0;font-weight:700;">Calling policy</h5>
+                <p class="pcx-muted" style="margin:3px 0 12px;">Enforced on every call. Changes apply from the next dial; calls already connecting are unaffected.</p>
+                <form id="pcxPolicy">
+                    <div class="pcx-grid">
+                        <div><label class="pcx-label" for="pWindowOpens">Window opens</label><input class="pcx-input" type="time" id="pWindowOpens" name="windowOpens" value="@c.WindowOpens.ToString(@"hh\:mm")" required /></div>
+                        <div><label class="pcx-label" for="pWindowCloses">Window closes</label><input class="pcx-input" type="time" id="pWindowCloses" name="windowCloses" value="@c.WindowCloses.ToString(@"hh\:mm")" required /></div>
+                        <div><label class="pcx-label" for="pTimeZone">Time zone</label><input class="pcx-input" id="pTimeZone" name="timeZone" value="@c.TimeZone" list="pcxZones" /></div>
+                        <div><label class="pcx-label" for="pAttemptsPerDay">Attempts / day</label><input class="pcx-input" type="number" min="1" max="20" id="pAttemptsPerDay" name="attemptsPerDay" value="@c.AttemptsPerDay" /></div>
+                        <div><label class="pcx-label" for="pTotalAttempts">Total attempts</label><input class="pcx-input" type="number" min="1" max="50" id="pTotalAttempts" name="totalAttempts" value="@c.TotalAttempts" /></div>
+                        <div><label class="pcx-label" for="pMinGap">Minimum gap (min)</label><input class="pcx-input" type="number" min="0" max="10080" id="pMinGap" name="minGapMinutes" value="@c.MinGapMinutes" /></div>
+                        <div><label class="pcx-label" for="pConcurrent">Concurrent calls</label><input class="pcx-input" type="number" min="1" max="50" id="pConcurrent" name="concurrentCalls" value="@c.ConcurrentCalls" /></div>
+                        <div>
+                            <span class="pcx-label">Starts / ends on</span>
+                            <div style="display:flex;gap:6px;">
+                                <input class="pcx-input" type="date" name="startsOn" value="@(c.StartsOn?.ToString("yyyy-MM-dd"))" aria-label="Starts on" />
+                                <input class="pcx-input" type="date" name="endsOn" value="@(c.EndsOn?.ToString("yyyy-MM-dd"))" aria-label="Ends on" />
+                            </div>
+                        </div>
+                    </div>
+                    <datalist id="pcxZones"><option value="Asia/Kolkata"></option><option value="Asia/Dubai"></option><option value="Asia/Singapore"></option><option value="Europe/London"></option><option value="America/New_York"></option><option value="UTC"></option></datalist>
+                    <button type="submit" class="pcx-btn" style="margin-top:12px;">Save policy</button>
+                </form>
+            </div></div>
+
+            @if (!Model.WhatsAppConfigured)
+            {
+                <div class="pcx-alert warn">&#9888; WhatsApp agent not configured — set <code>PlivoCX:WhatsAppAgentId</code> to enable WhatsApp follow-up.</div>
+            }
+
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+                <input class="pcx-input" type="search" id="pcxSearch" placeholder="Search candidates…" style="max-width:360px;" aria-label="Search candidates" />
+                <span class="pcx-muted" id="pcxShown">@(total == 1 ? "1 candidate" : total + " candidates")</span>
+            </div>
+            <div class="pcx-table-wrap">
+                <table class="pcx-table" id="pcxTable">
+                    <thead>
+                        <tr><th>Candidate</th><th>State</th><th>Outcome</th><th class="num">Attempts</th><th>Next attempt</th><th>Last call</th><th>Booked slot</th><th>Rec.</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        @if (total == 0)
+                        {
+                            <tr><td colspan="9" class="pcx-empty">No candidates in this campaign.</td></tr>
+                        }
+                        @foreach (var cc in Model.Candidates)
+                        {
+                            var name = string.IsNullOrWhiteSpace(cc.CandidateName) ? "Candidate" : cc.CandidateName.Trim();
+                            var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                            var initials = (parts[0].Substring(0, 1) + (parts.Length > 1 ? parts[parts.Length - 1].Substring(0, 1) : "")).ToUpperInvariant();
+                            var color = palette[Math.Abs(cc.CandidateId) % palette.Length];
+                            <tr data-search="@((name + " " + cc.CandidatePhone + " " + cc.CandidateEmail + " " + cc.IRFName).ToLowerInvariant())">
+                                <td>
+                                    <div class="pcx-person">
+                                        <span class="pcx-avatar" style="background:@color;" aria-hidden="true">@initials</span>
+                                        <div>
+                                            <div class="strong">@name</div>
+                                            <div class="pcx-muted pcx-small">@(cc.CandidatePhone ?? "—")@(c.IRFId.HasValue || string.IsNullOrWhiteSpace(cc.IRFName) ? "" : " · " + cc.IRFName)</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="pcx-chip @cc.State">@PlivoCXCampaignController.StateLabel(cc.State)</span></td>
+                                <td class="@outcomeClass(cc.LastDisposition)">@(cc.LastDisposition ?? "—")</td>
+                                <td class="num">@cc.Attempts / @c.TotalAttempts</td>
+                                <td>@nextAttempt(cc)</td>
+                                <td style="white-space:nowrap;">@(local(cc.LastCallAt)?.ToString("dd MMM HH:mm") ?? "—")</td>
+                                <td>@(cc.BookedSlot ?? "—")</td>
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(cc.LastRecordingUrl))
+                                    {
+                                        <a class="pcx-link" href="@cc.LastRecordingUrl" target="_blank" rel="noopener" title="Play the latest recording" aria-label="Play recording">&#9654;</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="pcx-muted">—</span>
+                                    }
+                                </td>
+                                <td style="white-space:nowrap;">
+                                    @if (cc.LastCallLogId.HasValue)
+                                    {
+                                        <a class="pcx-link" href="@Url.Action("CallDetail", "PlivoCXCampaign", new { logId = cc.LastCallLogId })">Open</a>
+                                        <span class="pcx-muted">·</span>
+                                    }
+                                    <button type="button" class="pcx-link js-call" data-candidate="@cc.CandidateId" data-name="@name" @(voiceConfigured && !string.IsNullOrWhiteSpace(cc.CandidatePhone) ? "" : "disabled")>Call</button>
+                                    <span class="pcx-muted">·</span>
+                                    <span class="pcx-menu">
+                                        <button type="button" class="pcx-link js-menu" aria-haspopup="true">Mark…</button>
+                                        <span class="pcx-menu-list" role="menu">
+                                            <button type="button" class="js-mark" data-candidate="@cc.CandidateId" data-state="Booked" role="menuitem">Booked</button>
+                                            <button type="button" class="js-mark" data-candidate="@cc.CandidateId" data-state="NotBooked" role="menuitem">Not booked</button>
+                                            <button type="button" class="js-mark" data-candidate="@cc.CandidateId" data-state="Cold" role="menuitem">Cold</button>
+                                            <button type="button" class="js-mark" data-candidate="@cc.CandidateId" data-state="Pending" role="menuitem">Pending (call again)</button>
+                                        </span>
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div></div>
+    </div>
+</div>
+
+<script>
+(function () {
+    var id = @c.Id;
+    var token = function () { return $('input[name="__RequestVerificationToken"]').val(); };
+    var base = '@Url.Content("~/PlivoCXCampaign")';
+
+    function say(msg, kind) { $('#pcxMsg').removeClass('ok err warn').addClass(kind || 'ok').text(msg).show(); }
+    function post(url, data, btn, reloadAfter) {
+        var label = btn ? btn.html() : null;
+        if (btn) btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> ' + btn.text());
+        data = data || {};
+        data.__RequestVerificationToken = token();
+        return $.post(url, data).done(function (res) {
+            say(res && res.message || (res && res.ok ? 'Done.' : 'That did not work.'), res && res.ok ? 'ok' : 'err');
+            if (res && res.ok && reloadAfter) setTimeout(function () { location.reload(); }, 1600);
+        }).fail(function () {
+            say('The request failed. Try again.', 'err');
+        }).always(function () {
+            if (btn && !reloadAfter) btn.prop('disabled', false).html(label);
+        });
+    }
+
+    $('#pcxCallNow').on('click', function () {
+        say('Dialling — this takes a couple of seconds per call…', 'warn');
+        post(base + '/' + id + '/CallNow', {}, $(this), true);
+    });
+    $('.js-status').on('click', function () {
+        post(base + '/' + id + '/' + $(this).data('action'), {}, $(this), true);
+    });
+    $('#pcxTestCall').on('click', function () {
+        var phone = $.trim($('#pcxTestPhone').val());
+        if (!phone) { say('Enter a phone number for the test call.', 'err'); return; }
+        post(base + '/' + id + '/TestCall', { phone: phone, name: $('#pcxTestName').val(), email: $('#pcxTestEmail').val() }, $(this), false);
+    });
+    $('#pcxPolicy').on('submit', function (e) {
+        e.preventDefault();
+        var data = {};
+        $(this).serializeArray().forEach(function (f) { data[f.name] = f.value; });
+        post(base + '/' + id + '/SavePolicy', data, $(this).find('button[type=submit]'), true);
+    });
+    $('#pcxTable').on('click', '.js-call', function () {
+        if (!confirm('Call ' + $(this).data('name') + ' now?')) return;
+        post(base + '/CallCandidate', { campaignId: id, candidateId: $(this).data('candidate') }, $(this), true);
+    });
+    $('#pcxTable').on('click', '.js-menu', function (e) {
+        e.stopPropagation();
+        var m = $(this).closest('.pcx-menu');
+        $('.pcx-menu').not(m).removeClass('open');
+        m.toggleClass('open');
+    });
+    $(document).on('click', function () { $('.pcx-menu').removeClass('open'); });
+    $('#pcxTable').on('click', '.js-mark', function () {
+        post(base + '/MarkCandidate', { campaignId: id, candidateId: $(this).data('candidate'), state: $(this).data('state') }, null, true);
+    });
+    $('#pcxSearch').on('input', function () {
+        var q = this.value.toLowerCase(), n = 0;
+        $('#pcxTable tbody tr[data-search]').each(function () {
+            var hit = !q || ($(this).attr('data-search') || '').indexOf(q) >= 0;
+            $(this).toggle(hit); if (hit) n++;
+        });
+        $('#pcxShown').text(n + (n === 1 ? ' candidate' : ' candidates'));
+    });
+})();
+</script>

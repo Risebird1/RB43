@@ -332,14 +332,21 @@ namespace Risebird.Repository
 
         // ── Candidate helpers ─────────────────────────────────────────────────────
 
-        public async Task<List<VapiEligibleCandidateVM>> GetEligibleCandidatesForRescheduleAsync(int count = 10)
+        public async Task<List<VapiEligibleCandidateVM>> GetEligibleCandidatesForRescheduleAsync(
+            int count = 10, int? irfId = null, int? candidateId = null,
+            bool bypassCaps = false, bool excludeCampaignCandidates = false)
         {
             try
             {
                 using var conn = new SqlConnection(_connectionString);
                 var results = await conn.QueryAsync<VapiEligibleCandidateVM>(
                     "usp_GetEligibleCandidatesForPlivoCXReschedule",
-                    new { Count = count, NowIST = DateTime.Now },
+                    new
+                    {
+                        Count = count, NowIST = DateTime.Now,
+                        IRFId = irfId, CandidateId = candidateId,
+                        BypassCaps = bypassCaps, ExcludeCampaignCandidates = excludeCampaignCandidates
+                    },
                     commandType: CommandType.StoredProcedure);
                 return results.ToList();
             }
@@ -350,14 +357,21 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<List<VapiEligibleCandidateVM>> GetEligibleCandidatesForCallsAsync(int count = 10)
+        public async Task<List<VapiEligibleCandidateVM>> GetEligibleCandidatesForCallsAsync(
+            int count = 10, int? irfId = null, int? candidateId = null,
+            bool bypassCaps = false, bool excludeCampaignCandidates = false)
         {
             try
             {
                 using var conn = new SqlConnection(_connectionString);
                 var results = await conn.QueryAsync<VapiEligibleCandidateVM>(
                     "usp_GetEligibleCandidatesForPlivoCXCalls",
-                    new { Count = count, NowIST = DateTime.Now },
+                    new
+                    {
+                        Count = count, NowIST = DateTime.Now,
+                        IRFId = irfId, CandidateId = candidateId,
+                        BypassCaps = bypassCaps, ExcludeCampaignCandidates = excludeCampaignCandidates
+                    },
                     commandType: CommandType.StoredProcedure);
                 return results.ToList();
             }

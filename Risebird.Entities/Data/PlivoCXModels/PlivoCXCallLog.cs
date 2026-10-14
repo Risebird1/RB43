@@ -68,5 +68,8 @@ namespace Risebird.Entities.Data.PlivoCXModels
         public DateTime? CallStartedAt           { get; set; }
         public DateTime? CallEndedAt             { get; set; }
         public string    TriggeredBy             { get; set; }   // "timer" | user email
+
+        /// <summary>PlivoCX campaign that dialled this call (PlivoCXCampaign.Id); null for timer-job and one-off calls.</summary>
+        public int?      CampaignId              { get; set; }
     }
 }

@@ -60,7 +60,18 @@ GO
 
 CREATE PROCEDURE [dbo].[usp_GetEligibleCandidatesForPlivoCXCalls]
     @Count  INT      = 10,
-    @NowIST DATETIME = NULL   -- caller passes DateTime.Now (IST); falls back to GETDATE() if omitted
+    @NowIST DATETIME = NULL,  -- caller passes DateTime.Now (IST); falls back to GETDATE() if omitted
+    -- Campaign scoping (PlivoCX campaigns). All default to the timer jobs' behaviour.
+    --   @IRFId / @CandidateId : restrict to one IRF / one candidate, and return every match (not TOP @Count).
+    --   @BypassCaps           : skip the pacing caps (completed-call, daily, cooldown, retry window) -
+    --                           a campaign paces itself from its own calling policy. The "never call"
+    --                           rules (cold, uninterested, has a meeting, already booked) still apply.
+    --   @ExcludeCampaignCandidates : leave out candidates Pending in a Draft/Running/Paused campaign,
+    --                           so the timer jobs never double-dial a campaign's candidates.
+    @IRFId                     INT = NULL,
+    @CandidateId               INT = NULL,
+    @BypassCaps                BIT = 0,
+    @ExcludeCampaignCandidates BIT = 0
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -101,6 +112,13 @@ BEGIN
           AND  ISNULL(irf.IsDeleted, 0) = 0
           AND  ISNULL(irf.IsPaused, 0) = 0
           AND  CAST(irf.EndDate AS date) > @TodayIST
+          AND  (@IRFId IS NULL OR c.IRFId = @IRFId)
+          AND  (@CandidateId IS NULL OR c.id = @CandidateId)
+          AND  (@ExcludeCampaignCandidates = 0 OR NOT EXISTS (
+                   SELECT 1 FROM dbo.PlivoCXCampaignCandidate pcc
+                   INNER JOIN dbo.PlivoCXCampaign pc ON pc.Id = pcc.CampaignId
+                   WHERE pcc.CandidateId = c.id AND pcc.[State] = 'Pending'
+                     AND pc.[Status] IN ('Draft', 'Running', 'Paused')))
     ),
     -- Only log rows that can affect eligibility (completed, schedule-purpose, or active booking)
     RelevantCallLogs AS (
@@ -212,7 +230,7 @@ BEGIN
         FROM RelevantMeetings rm
         GROUP BY rm.EmailId, rm.IrfBusinessId
     )
-    SELECT TOP (@Count)
+    SELECT TOP (CASE WHEN @IRFId IS NULL AND @CandidateId IS NULL THEN @Count ELSE 100000 END)
         cp.CandidateId,
         cp.CandidateIrfIntId                                           AS IRFId,
         cp.IrfBusinessId                                               AS IRFName,
@@ -227,14 +245,13 @@ BEGIN
     FROM       CandidatePool cp
     LEFT JOIN  CallStats     cs ON cs.RecipientEmail = cp.EmailId
                                AND cs.IRFId          = cp.CandidateIrfIntId
-    WHERE  (
-               cp.PlivoCXDisposition IS NULL
-            OR ISNULL(cs.CompletedCallCount, 0) < 2
-           )
-      AND  ISNULL(cs.ScheduleCallsToday, 0) < 4
-      AND  ISNULL(cs.HasRecentScheduleCall, 0) = 0
+    WHERE  (@BypassCaps = 1 OR (
+               (cp.PlivoCXDisposition IS NULL OR ISNULL(cs.CompletedCallCount, 0) < 2)
+           AND ISNULL(cs.ScheduleCallsToday, 0) < 4
+           AND ISNULL(cs.HasRecentScheduleCall, 0) = 0
+           AND (cs.FirstScheduleCallAt IS NULL OR cs.FirstScheduleCallAt >= @WindowFrom)
+           ))
       AND  ISNULL(cs.HasFutureBooking, 0) = 0
-      AND  (cs.FirstScheduleCallAt IS NULL OR cs.FirstScheduleCallAt >= @WindowFrom)
       AND  NOT EXISTS (
                SELECT 1
                FROM MeetingBlocks mb
