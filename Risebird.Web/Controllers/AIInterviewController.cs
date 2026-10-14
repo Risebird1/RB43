@@ -1947,7 +1947,14 @@ namespace Risebird.Web.Controllers
         {
             model.InterviewId = meeting.InterviewId;
             model.IRFId = meeting.irfIntId;
-            model.TimeLeftInSeconds = meeting.TimeLeftInSeconds;
+            // The page only heartbeats the clock to the db once a minute, so the posted value is the
+            // fresher one. Taking the db value here handed back every second since the last
+            // heartbeat - and the full clock when each answer took under a minute - because the
+            // answer save then wrote that stale value back. A post may only spend time, never add it.
+            if (model.TimeLeftInSeconds <= 0)
+                model.TimeLeftInSeconds = meeting.TimeLeftInSeconds;
+            else if (meeting.TimeLeftInSeconds > 0)
+                model.TimeLeftInSeconds = Math.Min(model.TimeLeftInSeconds, meeting.TimeLeftInSeconds);
             model.candidateName = meeting.candidateName;
             model.AssistantId = meeting.AssistantId;
             model.AIInterviewType = meeting.AIInterviewType;

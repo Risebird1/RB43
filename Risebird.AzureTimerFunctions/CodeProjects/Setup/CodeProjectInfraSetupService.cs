@@ -24,7 +24,7 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
     ///   → StackImages rows → settings for both apps → deployed functions app (URL + key) → runner smoke test
     ///
     /// Every step is re-entrant: it looks at what exists, creates only what is missing, and reports
-    /// "waiting" while Azure provisions. A 30-second timer (and the Start call) advance the run; the
+    /// "waiting" while Azure provisions. A one-minute timer (and the Start call) advance the run; the
     /// state lives in CodeProjectInfraSetupRuns, so a restart resumes where it stopped.
     /// </summary>
     public class CodeProjectInfraSetupService
@@ -80,8 +80,15 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
         private sealed class Options
         {
             public string Location { get; set; }
+            /// <summary>
+            /// Everything billable lives in this one group, so deleting it removes the whole feature's
+            /// footprint (see README). ImagesResourceGroup only differs when explicitly configured.
+            /// </summary>
             public string ResourceGroup { get; set; } = "rg-rb-codeprojects";
-            public string ImagesResourceGroup { get; set; } = "rg-rb-codeprojects-images";
+            public string ImagesResourceGroup { get; set; }
+            /// <summary>Monthly cost budget for the resource group, in the billing currency. Unset = no budget alert.</summary>
+            public decimal? MonthlyBudget { get; set; }
+            public List<string> BudgetEmails { get; set; } = new List<string>();
             public string ImageBuilderLocation { get; set; }
             public List<CodeProjectStack> Stacks { get; set; }
             public List<string> PackageMirrorPrefixes { get; set; } = new List<string>();
@@ -101,7 +108,10 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
                     Location = (S("Location") ?? c["CodeProjects:Azure:Location"] ?? "centralindia").Replace(" ", "").ToLowerInvariant()
                 };
                 o.ResourceGroup = S("ResourceGroup") ?? o.ResourceGroup;
-                o.ImagesResourceGroup = S("ImagesResourceGroup") ?? o.ImagesResourceGroup;
+                o.ImagesResourceGroup = S("ImagesResourceGroup") ?? o.ResourceGroup;
+                if (decimal.TryParse(S("MonthlyBudget"), System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out var budget) && budget > 0)
+                    o.MonthlyBudget = budget;
+                o.BudgetEmails = S("BudgetEmails")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList() ?? o.BudgetEmails;
                 o.ImageBuilderLocation = (S("ImageBuilderLocation") ?? o.Location).ToLowerInvariant();
                 var codes = S("Stacks")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
                 o.Stacks = codes == null
@@ -157,9 +167,11 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
             new StepDef("database", "Database schema", Array.Empty<string>(), DatabaseAsync),
             new StepDef("preflight", "Azure access and storage", Array.Empty<string>(), PreflightAsync),
             new StepDef("providers", "Resource providers", new[] { "preflight" }, ProvidersAsync),
-            new StepDef("groups", "Resource groups", new[] { "providers" }, GroupsAsync),
+            new StepDef("groups", "Resource group", new[] { "providers" }, GroupsAsync),
+            new StepDef("budget", "Monthly cost budget alert", new[] { "groups" }, BudgetAsync),
             new StepDef("identities", "Managed identities", new[] { "groups" }, IdentitiesAsync),
-            new StepDef("access", "Role assignments", new[] { "identities" }, AccessAsync),
+            // Image Builder is granted rights on the gallery itself, so the gallery must exist first.
+            new StepDef("access", "Role assignments", new[] { "identities", "gallery" }, AccessAsync),
             new StepDef("network", "Network: VNet, NSGs, NAT gateway", new[] { "groups" }, NetworkAsync),
             new StepDef("bastion", "Azure Bastion (Standard, shareable links)", new[] { "network" }, BastionAsync),
             new StepDef("gallery", "Compute Gallery and image definitions", new[] { "groups" }, GalleryAsync),
@@ -191,6 +203,7 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
                 step.Attempts = 0;
                 step.Detail = "Retrying…";
             }
+            if (!string.IsNullOrWhiteSpace(startedBy)) state.Data["startedBy"] = startedBy;
             Log(state, $"Run {id} started or resumed by {startedBy ?? "unknown"}.");
             await _setup.Save(id, CodeProjectSetupStatus.Running, JsonConvert.SerializeObject(state));
 
@@ -441,13 +454,66 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
 
         private async Task<Outcome> GroupsAsync(CodeProjectSetupState s, CancellationToken ct)
         {
-            foreach (var rg in new[] { Rg, ImgRg })
+            foreach (var rg in new[] { Rg, ImgRg }.Distinct(StringComparer.OrdinalIgnoreCase))
             {
-                var r = await _arm.PutAsync($"resourcegroups/{rg}?{ResourcesApi}", new { location = _o.Location, tags = new { purpose = "rb-code-projects" } }, ct);
+                var r = await _arm.PutAsync($"resourcegroups/{rg}?{ResourcesApi}", new
+                {
+                    location = _o.Location,
+                    tags = new { purpose = "rb-code-projects", note = "Everything for AI-interview code project questions. Deleting this group removes it all." }
+                }, ct);
                 if (!r.IsSuccess)
                     return IsForbidden(r.Error) ? Outcome.Block(PermissionMessage("create resource groups")) : Outcome.Fail($"{rg}: {r.Error}");
             }
-            return Outcome.Done($"{Rg} (network, candidate machines, runners) and {ImgRg} (gallery, registry, identities) in {_o.Location}.");
+            return string.Equals(Rg, ImgRg, StringComparison.OrdinalIgnoreCase)
+                ? Outcome.Done($"{Rg} in {_o.Location} holds every billable resource for this feature.")
+                : Outcome.Done($"{Rg} (network, candidate machines, runners) and {ImgRg} (gallery, registry, identities) in {_o.Location}.");
+        }
+
+        // ---------------------------------------------------------------- 4b. budget
+
+        /// <summary>
+        /// Optional guardrail: a monthly Cost Management budget on the resource group that emails at 80%
+        /// of actual spend and at 100% of forecast. Amount is in the subscription's billing currency.
+        /// </summary>
+        private async Task<Outcome> BudgetAsync(CodeProjectSetupState s, CancellationToken ct)
+        {
+            if (_o.MonthlyBudget == null)
+                return Outcome.Skip("Set CodeProjects:Setup:MonthlyBudget (billing currency) and CodeProjects:Setup:BudgetEmails to get cost alerts for this resource group.");
+
+            var emails = _o.BudgetEmails.Count > 0 ? _o.BudgetEmails : new List<string>();
+            var startedBy = Get(s, "startedBy");
+            if (emails.Count == 0 && !string.IsNullOrWhiteSpace(startedBy) && startedBy.Contains('@')) emails.Add(startedBy);
+            if (emails.Count == 0)
+                return Outcome.Skip("A budget amount is set but there is no one to email: set CodeProjects:Setup:BudgetEmails.");
+
+            var path = $"resourceGroups/{Rg}/providers/Microsoft.Consumption/budgets/rb-code-projects-monthly?api-version=2023-05-01";
+            var existing = await _arm.GetAsync(path, ct);
+            if (existing.IsSuccess && existing.Body?["properties"]?["amount"]?.Value<decimal>() == _o.MonthlyBudget.Value)
+                return Outcome.Done($"{_o.MonthlyBudget} per month on {Rg} (already in place).");
+
+            // An existing budget keeps its original start date; updates must carry its eTag.
+            var monthStart = existing.Body?["properties"]?["timePeriod"]?["startDate"]?.ToString()
+                ?? new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc).ToString("yyyy-MM-ddTHH:mm:ssZ");
+            var r = await _arm.PutAsync(path, new
+            {
+                eTag = existing.IsSuccess ? existing.Body?["eTag"]?.ToString() : null,
+                properties = new
+                {
+                    category = "Cost",
+                    amount = _o.MonthlyBudget.Value,
+                    timeGrain = "Monthly",
+                    timePeriod = new { startDate = monthStart },
+                    notifications = new Dictionary<string, object>
+                    {
+                        ["actual80"] = new { enabled = true, @operator = "GreaterThan", threshold = 80, thresholdType = "Actual", contactEmails = emails },
+                        ["forecast100"] = new { enabled = true, @operator = "GreaterThan", threshold = 100, thresholdType = "Forecasted", contactEmails = emails }
+                    }
+                }
+            }, ct);
+            // Some offer types (e.g. certain sponsorships) have no budgets; that must not stop the setup.
+            return r.IsSuccess
+                ? Outcome.Done($"{_o.MonthlyBudget} per month on {Rg}; alerts to {string.Join(", ", emails)}.")
+                : Outcome.Skip("Budget could not be created (" + r.Error + "). Create one in Cost Management → Budgets instead.");
         }
 
         // ---------------------------------------------------------------- 5. identities
@@ -490,20 +556,22 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
 
             if (!canAssign)
                 return Outcome.Block(
-                    $"The service principal (object id {_arm.CallerObjectId()}) can create resources but not grant roles. Image Builder needs Contributor on {ImgRg} " +
+                    $"The service principal (object id {_arm.CallerObjectId()}) can create resources but not grant roles. Image Builder needs Contributor on the {GalleryName} gallery " +
                     $"and the runner jobs need AcrPull on the registry. Give the service principal 'User Access Administrator' (or Owner) on subscription " +
                     $"{s.Data.GetValueOrDefault("subscriptionName")} — portal: Subscriptions → Access control (IAM) → Add role assignment — then click Resume.");
 
             var assignments = new List<(string Scope, string Principal, string Role, string Label)>
             {
-                ($"resourceGroups/{ImgRg}", Get(s, $"identity.{BuilderIdentity}.principalId"), AzureArmRestClient.RoleContributor, "Image Builder → Contributor on images group")
+                // Scoped to the gallery, not the group: the group also holds the network and candidate machines.
+                (GalleryPath, Get(s, $"identity.{BuilderIdentity}.principalId"), AzureArmRestClient.RoleContributor, "Image Builder → Contributor on the gallery")
             };
             if (!canManage)
             {
                 var me = _arm.CallerObjectId();
                 assignments.Add(($"resourceGroups/{Rg}", me, AzureArmRestClient.RoleVirtualMachineContributor, "provisioner → Virtual Machine Contributor"));
                 assignments.Add(($"resourceGroups/{Rg}", me, AzureArmRestClient.RoleNetworkContributor, "provisioner → Network Contributor"));
-                assignments.Add(($"resourceGroups/{ImgRg}", me, AzureArmRestClient.RoleReader, "provisioner → Reader on gallery"));
+                if (!string.Equals(Rg, ImgRg, StringComparison.OrdinalIgnoreCase))
+                    assignments.Add(($"resourceGroups/{ImgRg}", me, AzureArmRestClient.RoleReader, "provisioner → Reader on gallery"));
             }
 
             foreach (var a in assignments)
@@ -926,6 +994,8 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
                 {
                     case "Succeeded":
                         s.Data[$"runnerImage.{stack.Code}"] = image;
+                        // The build context is only needed while ACR builds; don't keep paying to store it.
+                        await _blobStore.DeleteAsync(BuildContainer, $"{RegistryName}/{stack.Code}-{tag}.tar.gz", ct);
                         done++;
                         lines.Add($"{stack.Code}: built");
                         break;
