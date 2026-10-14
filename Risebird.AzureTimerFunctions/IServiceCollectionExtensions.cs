@@ -69,6 +69,8 @@ namespace Risebird.AzureFunctions
             services.AddScoped<IPlivoCallRepository, PlivoCallRepository>();
             services.AddScoped<IPlivoCXService, PlivoCXService>();
             services.AddScoped<IPlivoCXCallRepository, PlivoCXCallRepository>();
+            services.AddScoped<IPlivoCXCampaignRepository, PlivoCXCampaignRepository>();
+            services.AddScoped<IPlivoCXCampaignService, Risebird.Business.PlivoCX.PlivoCXCampaignService>();
             services.AddScoped<INaukriOnboardingRepository, NaukriOnboardingRepository>();
             services.AddScoped<IInterviewerEmailAvailabilityRepository, InterviewerEmailAvailabilityRepository>();
             services.AddScoped<ITransInterviewerAuditRepository, TransInterviewerAuditRepository>();
