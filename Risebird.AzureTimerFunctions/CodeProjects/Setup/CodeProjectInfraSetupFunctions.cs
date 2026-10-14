@@ -17,7 +17,7 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
     ///   GET  /api/codeprojects/setup/status  progress of the latest run
     ///
     /// The admin dashboard's "Set up code project infrastructure" button calls these. Long steps
-    /// (Bastion, VM image builds) are finished by the 30-second timer below, so keep the functions
+    /// (Bastion, VM image builds) are finished by the one-minute timer below, so keep the functions
     /// host running until the dashboard shows Completed (roughly 1.5–2.5 hours the first time).
     /// </summary>
     public class CodeProjectInfraSetupFunctions
@@ -68,7 +68,7 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
         }
 
         [Function("CodeProjectInfraSetupTick")]
-        public async Task Tick([TimerTrigger("*/30 * * * * *")] TimerInfo timer, CancellationToken ct)
+        public async Task Tick([TimerTrigger("0 */1 * * * *")] TimerInfo timer, CancellationToken ct)
         {
             try { await _setup.TickAsync(ct); }
             catch (Exception ex)

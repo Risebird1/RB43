@@ -287,6 +287,15 @@ namespace Risebird.Business
                         var workspace = CodeProjectQuestionHelper.BuildGradingWorkspace(starter, snapshot.Files,
                             ParseList(details.ReadOnlyPathsJson), secrets.HiddenTests);
                         var run = await _runner.RunAsync(RunRequest(details, workspace), ct);
+                        // The machine is released right after this, so a grade can never be redone. A runner
+                        // that did not complete (typically a cold image pull timing out) gets one more go;
+                        // the second execution usually lands on a node that already has the image.
+                        if (!run.Completed)
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                                new Exception($"Code project grading for session {sessionId}, question {questionId} retried: {run.Error}"));
+                            run = await _runner.RunAsync(RunRequest(details, workspace), ct);
+                        }
                         grade = CodeProjectQuestionHelper.Grade(Deserialize<List<CodeProjectRequirement>>(details.RequirementsJson), run);
                         grade.Commits = snapshot.Commits ?? new List<CodeProjectCommit>();
                         grade.BaselineSha = snapshot.BaselineSha;

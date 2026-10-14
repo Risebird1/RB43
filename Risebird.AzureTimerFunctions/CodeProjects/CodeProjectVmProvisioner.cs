@@ -27,7 +27,16 @@ namespace Risebird.AzureTimerFunctions.CodeProjects
         public string BastionName { get; set; }
         public string ComputeApiVersion { get; set; } = "2026-04-01";
         public string NetworkApiVersion { get; set; } = "2025-09-01";
-        public int MaxLifetimeMinutes { get; set; } = 120;
+        /// <summary>
+        /// Azure Hybrid Benefit: set to "Windows_Server" only if you own Windows Server licences with
+        /// Software Assurance. It removes the Windows licence part of the VM price (roughly 40%).
+        /// </summary>
+        public string LicenseType { get; set; }
+        /// <summary>
+        /// Hard ceiling on a machine's life. A machine is started one question early and the slot is
+        /// 15 minutes plus a grace period, so anything older than this was abandoned and is deleted.
+        /// </summary>
+        public int MaxLifetimeMinutes { get; set; } = 75;
         public string CollectContainer { get; set; } = "codeprojectcollect";
         public string WorkspacePath { get; set; } = @"C:\workspace";
 
@@ -264,6 +273,8 @@ namespace Risebird.AzureTimerFunctions.CodeProjects
                     }
                 };
             }
+            if (!string.IsNullOrWhiteSpace(_options.LicenseType))
+                properties["licenseType"] = _options.LicenseType;   // Azure Hybrid Benefit
             if (!string.Equals(_options.SecurityType, "Standard", StringComparison.OrdinalIgnoreCase))
             {
                 properties["securityProfile"] = new JObject
@@ -416,8 +427,10 @@ namespace Risebird.AzureTimerFunctions.CodeProjects
             }
             finally
             {
-                // Tidy the one-off run command; the VM itself goes on release.
+                // Tidy the one-off run command (the VM itself goes on release) and the output blob: the
+                // snapshot is stored in CodingAssessment, so the blob is only a copy of candidate code.
                 try { await _arm.DeleteAsync($"{VmPath(m)}/runCommands/{runName}?{Compute}", ct); } catch { }
+                try { await _blobStore.DeleteAsync(_options.CollectContainer, blobName, CancellationToken.None); } catch { }
             }
         }
 
