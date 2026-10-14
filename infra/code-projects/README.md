@@ -7,6 +7,39 @@
 > both apps read (`CodeProjectSettings` table). Code: `Risebird.AzureTimerFunctions/CodeProjects/Setup`.
 > The notes below remain as a reference for what it builds; `main.bicep` is an equivalent of the network part.
 
+## Cost and teardown
+
+Everything billable is created in **one resource group, `rg-rb-codeprojects`** (tag `purpose=rb-code-projects`).
+Deleting that group removes the feature's whole Azure footprint. Azure also creates two groups it manages
+itself; both disappear when their parent resource goes with `rg-rb-codeprojects`:
+
+| Group | Created by | Removed when |
+| --- | --- | --- |
+| `IT_rg-rb-codeprojects_rbcp-…` (one per image template) | Azure Image Builder | its image template is deleted |
+| `ME_rb-cp-runners_rg-rb-codeprojects_<region>` | Container Apps environment | the environment is deleted |
+
+Outside Azure resource groups, the feature also leaves (free or near-free) blob containers `codeprojects`,
+`codeprojectsecrets`, `codeprojectcollect`, `codeprojectruns`, `codeprojectbuild` in the app's existing
+storage account, and its tables in SQL. After deleting the group, set `StackImages.IsActive = 0` so authors
+can't generate questions for machines that no longer exist; running setup again recreates everything.
+
+Approximate always-on cost (pay-as-you-go list prices, check your region in the Azure pricing calculator):
+
+| Resource | Why it is needed | ≈ per month |
+| --- | --- | --- |
+| Bastion Standard | browser RDP via shareable links (Basic/Developer have no shareable links) | ~$210 |
+| NAT gateway + its public IP | explicit egress (default outbound access is retired) | ~$35 |
+| Bastion public IP | required by Bastion | ~$4 |
+| Container registry Basic | runner images | ~$5 |
+| Gallery image versions | one image per enabled stack | ~$2–3 per stack |
+| Container Apps (Consumption profile) | runner jobs; pay per second while a job runs | ~$0 idle |
+
+Per interview: one Windows D2s_v5 for ~25 minutes plus one or two short runner executions, roughly $0.10.
+
+Cost settings: `CodeProjects:Setup:Stacks` (build only the stacks you use), `CodeProjects:Setup:MonthlyBudget` +
+`BudgetEmails` (Cost Management alert at 80% actual / 100% forecast), `CodeProjects:Azure:LicenseType = Windows_Server`
+(Azure Hybrid Benefit, only with eligible licences), `CodeProjects:Azure:MaxLifetimeMinutes` (default 75).
+
 The provisioner lives in `Risebird.AzureTimerFunctions/CodeProjects`. The web app calls it at
 `CodeProjects:ProvisionerUrl`. Setup order:
 
