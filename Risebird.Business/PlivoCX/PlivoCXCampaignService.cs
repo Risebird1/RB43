@@ -22,6 +22,9 @@ namespace Risebird.Business.PlivoCX
         // The stagger between dials the legacy timer jobs use.
         private const int DialStaggerMs = 2000;
 
+        // How long a dial may hold a candidate before its lock expires (covers a crash mid-dial).
+        private const int DialLockSeconds = 120;
+
         private readonly IConfiguration             _configuration;
         private readonly IPlivoCXService            _plivoCX;
         private readonly IPlivoCXCallRepository     _callRepository;
@@ -118,6 +121,12 @@ namespace Risebird.Business.PlivoCX
                 return new PlivoCXDialResult { Error = "Already has a confirmed interview - marked Booked." };
             }
 
+            // Call now, a per-row Call and the scheduler can reach the same candidate at once; only
+            // the one that takes the lock dials. Once the call is logged it counts as in flight,
+            // which keeps it from being dialled again, so the bump below releases the lock.
+            if (!await _campaignRepository.TryClaimForDialAsync(cc.Id, DialLockSeconds))
+                return new PlivoCXDialResult { Error = "Another dial is already calling this candidate." };
+
             var callLog = new PlivoCXCallLog
             {
                 RecipientName   = cc.CandidateName,
@@ -133,9 +142,21 @@ namespace Risebird.Business.PlivoCX
                 TriggeredBy     = actor,
                 CampaignId      = campaign.Id
             };
-            int logId = await _callRepository.SaveCallLogAsync(callLog);
+            int logId;
+            try
+            {
+                logId = await _callRepository.SaveCallLogAsync(callLog);
+            }
+            catch
+            {
+                await _campaignRepository.ReleaseDialClaimAsync(cc.Id);
+                throw;
+            }
             if (logId <= 0)
+            {
+                await _campaignRepository.ReleaseDialClaimAsync(cc.Id);
                 return new PlivoCXDialResult { Error = "Could not save the call log." };
+            }
             callLog.Id = logId;
             await _campaignRepository.SetCallLogCampaignAsync(logId, campaign.Id);
 
@@ -383,6 +404,16 @@ namespace Risebird.Business.PlivoCX
                 cc.OriginalInterviewDate);
 
             await _campaignRepository.SetCampaignCandidateStateAsync(cc.Id, t.State, Truncate(t.Disposition, 30), Truncate(t.BookedSlot, 60), t.NextAttemptAt);
+
+            // A confirm-only agent got a yes: record it on the meeting the way the candidate's
+            // confirmation link does, so the meeting leaves the Unconfirmed list. A "no" is left
+            // for Ops - the call never cancels a meeting.
+            if (agent != null && !agent.CollectsSlot
+                && t.State == PlivoCXCampaignCandidateState.Booked
+                && cc.InterviewId.HasValue && !string.IsNullOrWhiteSpace(cc.CandidateEmail))
+            {
+                await _campaignRepository.MarkMeetingConfirmedByCandidateAsync(cc.InterviewId.Value, cc.CandidateEmail);
+            }
         }
 
         private static string Truncate(string s, int max) =>

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
@@ -40,6 +41,12 @@ namespace Risebird.Web.Controllers
         private readonly IMeetingService            _meetingService;
         private readonly IDashboardService          _dashboardService;
         private readonly IApplicationErrorLogger    _logger;
+        private readonly IMemoryCache               _cache;
+
+        // The centralized lists are slow (usp_GetClientNotScheduledMeetings runs with a 10-minute
+        // timeout across every channel), so each user's result is kept briefly and an in-flight
+        // load is shared rather than started twice.
+        private static readonly TimeSpan ListCacheFor = TimeSpan.FromMinutes(10);
 
         public PlivoCXCampaignController(
             IConfiguration             configuration,
@@ -48,7 +55,8 @@ namespace Risebird.Web.Controllers
             IPlivoCXCallRepository     callRepository,
             IMeetingService            meetingService,
             IDashboardService          dashboardService,
-            IApplicationErrorLogger    logger)
+            IApplicationErrorLogger    logger,
+            IMemoryCache               cache)
         {
             _configuration      = configuration;
             _campaignService    = campaignService;
@@ -57,6 +65,7 @@ namespace Risebird.Web.Controllers
             _meetingService     = meetingService;
             _dashboardService   = dashboardService;
             _logger             = logger;
+            _cache              = cache;
         }
 
         // ── Access ────────────────────────────────────────────────────────────────
@@ -94,6 +103,9 @@ namespace Risebird.Web.Controllers
             ViewBag.Agents = (await _campaignService.GetAgentsAsync())
                 .Where(a => string.Equals(a.TargetType, "Candidate", StringComparison.OrdinalIgnoreCase)).ToList();
             ViewBag.IRFs = await _campaignRepository.GetActiveIRFsAsync();
+            // The Not-scheduled and Reschedule lists scope HR users to their own skill channels,
+            // exactly as /Client/NotScheduledMeetings and /Client/ReScheduleMeetings do.
+            ViewBag.ChannelScoped = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "") == "HR";
             return View();
         }
 
@@ -167,15 +179,32 @@ namespace Risebird.Web.Controllers
 
         /// <summary>Not-scheduled list (/Client/NotScheduledMeetings), across clients for internal users.</summary>
         [HttpGet("CandidatesFromNotScheduled")]
-        public async Task<IActionResult> CandidatesFromNotScheduled()
+        public async Task<IActionResult> CandidatesFromNotScheduled(bool refresh = false)
         {
             var email = CurrentUser();
             if (email == null) return Denied(json: true);
             try
             {
-                var rows = await _meetingService.GetClientNotScheduledMeetingList(0, email) ?? new List<MeetingVM>();
-                var items = rows.Select(m => ToPickerItem(m, m.imid > 0 ? m.imid : m.irfIntId, null, null, m.ClientName));
-                return Json(new { ok = true, purpose = "schedule", candidates = Dedupe(items) });
+                var (items, loadedAt) = await CachedListAsync("NotScheduled|" + email, refresh, async () =>
+                {
+                    // Same list as /Client/NotScheduledMeetings, from a lean procedure: the page's own
+                    // query takes minutes across every channel.
+                    var rows = await _campaignRepository.GetNotScheduledAsync(email);
+                    return Dedupe(rows.Select(r => new PlivoCXCampaignPickerItem
+                    {
+                        CandidateId = r.CandidateId,
+                        Name        = r.CandidateName,
+                        Email       = r.CandidateEmail,
+                        Phone       = r.CandidatePhone,
+                        IrfId       = r.IRFId,
+                        IrfName     = r.IRFName,
+                        JobTitle    = r.JobTitle,
+                        ClientName  = r.ClientName,
+                        Eligibility = string.IsNullOrWhiteSpace(r.CandidatePhone) ? "no-number" : "eligible",
+                        Selected    = !string.IsNullOrWhiteSpace(r.CandidatePhone)
+                    }));
+                });
+                return Json(new { ok = true, purpose = "schedule", candidates = items, loadedAt = LoadedAtText(loadedAt) });
             }
             catch (Exception ex)
             {
@@ -186,7 +215,7 @@ namespace Risebird.Web.Controllers
 
         /// <summary>Reschedule list (/Client/ReScheduleMeetings) for a meeting-date range (default: the last month).</summary>
         [HttpGet("CandidatesFromReschedule")]
-        public async Task<IActionResult> CandidatesFromReschedule(DateTime? startDate = null, DateTime? endDate = null)
+        public async Task<IActionResult> CandidatesFromReschedule(DateTime? startDate = null, DateTime? endDate = null, bool refresh = false)
         {
             var email = CurrentUser();
             if (email == null) return Denied(json: true);
@@ -194,11 +223,14 @@ namespace Risebird.Web.Controllers
             {
                 var start = (startDate ?? DateTime.Now.AddMonths(-1)).Date;
                 var end = (endDate ?? DateTime.Now).Date.AddDays(1); // the list pages make the end date inclusive this way
-                var rows = await _meetingService.GetClientReScheduledMeetingList(0, email, start, end) ?? new List<MeetingVM>();
-                // dtCreatedOn is MAX(interviewDate) here - the meeting being rescheduled.
-                var items = rows.Select(m => ToPickerItem(m, m.imid > 0 ? m.imid : m.irfIntId, null,
-                    m.dtCreatedOn > DateTime.MinValue ? m.dtCreatedOn.ToString("dd MMM yyyy", CultureInfo.InvariantCulture) : null, m.ClientName));
-                return Json(new { ok = true, purpose = "reschedule", candidates = Dedupe(items) });
+                var (items, loadedAt) = await CachedListAsync($"Reschedule|{email}|{start:yyyyMMdd}|{end:yyyyMMdd}", refresh, async () =>
+                {
+                    var rows = await _meetingService.GetClientReScheduledMeetingList(0, email, start, end) ?? new List<MeetingVM>();
+                    // dtCreatedOn is MAX(interviewDate) here - the meeting being rescheduled.
+                    return Dedupe(rows.Select(m => ToPickerItem(m, m.imid > 0 ? m.imid : m.irfIntId, null,
+                        m.dtCreatedOn > DateTime.MinValue ? m.dtCreatedOn.ToString("dd MMM yyyy", CultureInfo.InvariantCulture) : null, m.ClientName)));
+                });
+                return Json(new { ok = true, purpose = "reschedule", candidates = items, loadedAt = LoadedAtText(loadedAt) });
             }
             catch (Exception ex)
             {
@@ -209,23 +241,59 @@ namespace Risebird.Web.Controllers
 
         /// <summary>Unconfirmed list (/Dashboard/UnconfirmedCandidates): Ops-wide, meetings in the next 7 days.</summary>
         [HttpGet("CandidatesFromUnconfirmed")]
-        public async Task<IActionResult> CandidatesFromUnconfirmed()
+        public async Task<IActionResult> CandidatesFromUnconfirmed(bool refresh = false)
         {
             if (CurrentUser() == null) return Denied(json: true);
             try
             {
-                var rows = await _dashboardService.GetCandidatesWhoHaventConfirmed() ?? Enumerable.Empty<MeetingVM>();
-                // Here imid is the InterviewMeetings id and irfIntId the IRF id.
-                var items = rows.Select(m => ToPickerItem(m, m.irfIntId, m.imid,
-                    m.interviewDate > DateTime.MinValue ? m.interviewDate.ToString("dd MMM yyyy, h:mm tt", CultureInfo.InvariantCulture) : null,
-                    m.ClientName ?? m.Client));
-                return Json(new { ok = true, purpose = "confirm", candidates = Dedupe(items) });
+                // Ops-wide, so one cached copy serves every user.
+                var (items, loadedAt) = await CachedListAsync("Unconfirmed", refresh, async () =>
+                {
+                    var rows = await _dashboardService.GetCandidatesWhoHaventConfirmed() ?? Enumerable.Empty<MeetingVM>();
+                    // Here imid is the InterviewMeetings id and irfIntId the IRF id.
+                    return Dedupe(rows.Select(m => ToPickerItem(m, m.irfIntId, m.imid,
+                        m.interviewDate > DateTime.MinValue ? m.interviewDate.ToString("dd MMM yyyy, h:mm tt", CultureInfo.InvariantCulture) : null,
+                        m.ClientName ?? m.Client)));
+                });
+                return Json(new { ok = true, purpose = "confirm", candidates = items, loadedAt = LoadedAtText(loadedAt) });
             }
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { ok = false, message = "Could not load the unconfirmed list." });
             }
+        }
+
+        /// <summary>
+        /// A list result from the cache, or from <paramref name="load"/> - shared by concurrent
+        /// callers while it runs. <paramref name="refresh"/> drops the cached copy first. A failed
+        /// load is not cached.
+        /// </summary>
+        private async Task<(List<PlivoCXCampaignPickerItem> Items, DateTime LoadedAtUtc)> CachedListAsync(
+            string key, bool refresh, Func<Task<List<PlivoCXCampaignPickerItem>>> load)
+        {
+            key = "PlivoCXCampaign:list:" + key;
+            if (refresh) _cache.Remove(key);
+            var entry = _cache.GetOrCreate(key, e =>
+            {
+                e.AbsoluteExpirationRelativeToNow = ListCacheFor;
+                return new Lazy<Task<(List<PlivoCXCampaignPickerItem>, DateTime)>>(async () => (await load(), DateTime.UtcNow));
+            });
+            try
+            {
+                return await entry.Value;
+            }
+            catch
+            {
+                _cache.Remove(key);
+                throw;
+            }
+        }
+
+        private static string LoadedAtText(DateTime loadedAtUtc)
+        {
+            var age = DateTime.UtcNow - loadedAtUtc;
+            return age.TotalSeconds < 30 ? "just now" : (int)Math.Max(1, Math.Round(age.TotalMinutes)) + " min ago";
         }
 
         /// <summary>MeetingVM -> picker row. No number = Cold; no candidate record = cannot be called.</summary>
