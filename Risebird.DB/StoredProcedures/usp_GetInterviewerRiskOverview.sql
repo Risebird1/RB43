@@ -14,8 +14,15 @@ interviews in the window AND (pooled ratio >= @MinRiskRatio OR any P0), so a
 single bad interview out of one is not listed as 100% risk. @MinRiskRatio =
 NULL ("Show all") lifts every filter.
 
-Result set 1: page of interviewer rows (+ TotalRows on each row).
-Result set 2: summary header (InterviewersAboveThreshold, ChannelsAffected, PendingReviewInterviewers).
+Result set 1: page of interviewer rows (+ TotalRows on each row), paged through #Page
+              (same sort as before). Profile, activity, lifetime (same definitions as
+              usp_GetInterviewerInsights) and window AI-penalty stats are computed for
+              the page rows only.
+Result set 2: summary header (InterviewersAboveThreshold, ChannelsAffected, PendingReviewInterviewers)
+              + AI penalties applied automatically (#AiPen) over every completed
+              interview in scope and window
+              + deduction review requests received in the window on in-scope channels:
+              received, decided, upheld (Reduced + Refunded), upheld %, refunded amount.
 ================================================================================
 */
 CREATE OR ALTER PROCEDURE [dbo].[usp_GetInterviewerRiskOverview]
@@ -25,7 +32,9 @@ CREATE OR ALTER PROCEDURE [dbo].[usp_GetInterviewerRiskOverview]
     @MinRiskRatio      DECIMAL(5,2) = 0.25,  -- NULL = show all (no ratio/P0 default filter)
     @PendingReviewOnly BIT = 0,
     @Offset            INT = 0,
-    @PageSize          INT = 25
+    @PageSize          INT = 25,
+    @IdsOnly           BIT = 0   -- 1: one result set with every listed interviewer (no paging, no extra stats).
+                                 -- Used by usp_QCActivity_HighRisk so QC Activity coverage uses this exact list.
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -355,6 +364,114 @@ BEGIN
 
     DECLARE @TotalRows INT = (SELECT COUNT(1) FROM #Filtered);
 
+    IF @IdsOnly = 1
+    BEGIN
+        SELECT
+            f.InterviewerId,
+            MAX(ISNULL(ip.NickName, '')) AS CodedId,
+            MAX(LTRIM(RTRIM(CONCAT(ISNULL(ul.FirstName, ''), N' ', ISNULL(ul.LastName, ''))))) AS InterviewerName,
+            MAX(ISNULL(ul.EmailId, '')) AS InterviewerEmail,
+            MAX(f.OverallRiskRatio) AS OverallRiskRatio,
+            MAX(f.WorstSeverity) AS WorstSeverity,
+            MAX(f.PriorityTier) AS PriorityTier,
+            MAX(f.TotalCompleted) AS TotalCompleted,
+            MAX(f.TotalBad) AS TotalBad
+        FROM #Filtered f
+        INNER JOIN dbo.UserList ul ON ul.id = f.InterviewerId
+        LEFT JOIN dbo.InterviewerProfile ip ON ip.UserId = f.InterviewerId
+        GROUP BY f.InterviewerId;
+
+        DROP TABLE IF EXISTS #Filtered;
+        DROP TABLE IF EXISTS #CoveringBackfill;
+        DROP TABLE IF EXISTS #ChannelReview;
+        DROP TABLE IF EXISTS #Mapped;
+        DROP TABLE IF EXISTS #Completed;
+        DROP TABLE IF EXISTS #ActiveTi;
+        DROP TABLE IF EXISTS #ScopedIrfs;
+        RETURN;
+    END
+
+    -- Page of rows (same joins and sort as before, so paging is unchanged). The extra
+    -- profile / activity / lifetime / AI stats below are computed for these rows only.
+    CREATE TABLE #Page (
+        SortOrder     BIGINT NOT NULL PRIMARY KEY,
+        InterviewerId INT NOT NULL,
+        ProfileId     INT NULL
+    );
+
+    INSERT INTO #Page (SortOrder, InterviewerId, ProfileId)
+    SELECT
+        ROW_NUMBER() OVER (ORDER BY
+            CASE f.WorstSeverity
+                WHEN 'P0' THEN 0 WHEN 'P1' THEN 1 WHEN 'P2' THEN 2
+                WHEN 'P3' THEN 3 WHEN 'P4' THEN 4 WHEN 'P5' THEN 5 ELSE 9
+            END ASC,
+            ISNULL(f.OverallRiskRatio, 0) DESC,
+            f.HighRiskChannels DESC,
+            f.InterviewerId,
+            ip.Id),
+        f.InterviewerId,
+        ip.Id
+    FROM #Filtered f
+    INNER JOIN dbo.UserList ul ON ul.id = f.InterviewerId
+    LEFT JOIN dbo.InterviewerProfile ip ON ip.UserId = f.InterviewerId
+    ORDER BY
+        CASE f.WorstSeverity
+            WHEN 'P0' THEN 0 WHEN 'P1' THEN 1 WHEN 'P2' THEN 2
+            WHEN 'P3' THEN 3 WHEN 'P4' THEN 4 WHEN 'P5' THEN 5 ELSE 9
+        END ASC,
+        ISNULL(f.OverallRiskRatio, 0) DESC,
+        f.HighRiskChannels DESC,
+        f.InterviewerId,
+        ip.Id
+    OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
+
+    -- AI penalties applied automatically: QcInterviewAIMergeJob writes PaymentSLADetails with
+    -- CreatedBy = 'AISystem'; AutoapprovePaymentSLA approves it. One row per completed interview in
+    -- scope and window that has an AISystem row with a deduction above 0.
+    --   IsHumanReviewed: ModifiedBy is a person, or a human PaymentSLADetailsHistory row exists
+    --   (the auto-approve timer overwrites ModifiedBy, so the history row is needed).
+    --   Amount: latest MoneyProtectionWallet.Points, which usp_AddorUpdatePaymentSLADetails already stores as
+    --   deduction % x client interview rate / 100 (Rate holds the rate; do not multiply again).
+    CREATE TABLE #AiPen (
+        InterviewId     INT NOT NULL PRIMARY KEY,
+        DeductionPct    INT NOT NULL,
+        IsApproved      BIT NOT NULL,
+        IsHumanReviewed BIT NOT NULL,
+        Amount          DECIMAL(18,2) NULL
+    );
+
+    INSERT INTO #AiPen (InterviewId, DeductionPct, IsApproved, IsHumanReviewed, Amount)
+    SELECT
+        c.InterviewId,
+        ps.MaxDeduction,
+        ps.AnyApproved,
+        CAST(CASE WHEN ps.HumanModified = 1 OR EXISTS (
+                SELECT 1 FROM dbo.PaymentSLADetailsHistory h
+                WHERE h.Interviewid = c.InterviewId
+                  AND NULLIF(LTRIM(RTRIM(h.CreatedBy)), '') IS NOT NULL
+                  AND LTRIM(RTRIM(h.CreatedBy)) NOT IN ('AISystem', 'System'))
+             THEN 1 ELSE 0 END AS BIT),
+        w.Amount
+    FROM #Completed c
+    CROSS APPLY (
+        SELECT
+            MAX(ISNULL(p.PaymentDeduction, 0)) AS MaxDeduction,
+            CAST(MAX(CASE WHEN ISNULL(p.IsApproved, 0) = 1 THEN 1 ELSE 0 END) AS BIT) AS AnyApproved,
+            MAX(CASE WHEN NULLIF(LTRIM(RTRIM(p.ModifiedBy)), '') IS NOT NULL
+                      AND LTRIM(RTRIM(p.ModifiedBy)) NOT IN ('AISystem', 'System') THEN 1 ELSE 0 END) AS HumanModified
+        FROM dbo.PaymentSLADetails p
+        WHERE p.Interviewid = c.InterviewId
+          AND LTRIM(RTRIM(ISNULL(p.CreatedBy, ''))) = 'AISystem'
+        HAVING MAX(ISNULL(p.PaymentDeduction, 0)) > 0
+    ) ps
+    OUTER APPLY (
+        SELECT TOP 1 CAST(ISNULL(mw.Points, 0) AS DECIMAL(18,2)) AS Amount
+        FROM dbo.MoneyProtectionWallet mw
+        WHERE mw.Interviewid = c.InterviewId
+        ORDER BY mw.id DESC
+    ) w;
+
     -- Result set 1
     SELECT
         f.InterviewerId,
@@ -372,21 +489,125 @@ BEGIN
         f.PendingReviewChannels,
         f.CoverageIncomplete,
         f.P0Count, f.P1Count, f.P2Count, f.P3Count, f.P4Count, f.P5Count,
-        @TotalRows AS TotalRows
-    FROM #Filtered f
+        @TotalRows AS TotalRows,
+        -- Profile
+        NULLIF(LTRIM(RTRIM(ip.ResumeLink)), '') AS ResumeLink,
+        COALESCE(NULLIF(LTRIM(RTRIM(ip.CompanyName)), ''), NULLIF(LTRIM(RTRIM(ip.EmploymentComment)), '')) AS CompanyName,
+        CAST(ISNULL(ip.IsEmployed, 0) AS BIT) AS IsEmployed,
+        CAST(CASE WHEN NULLIF(LTRIM(RTRIM(ip.VideoLink)), '') IS NOT NULL THEN 1 ELSE 0 END AS BIT) AS HasVideoKyc,
+        NULLIF(LTRIM(RTRIM(ip.VideoLink)), '') AS VideoLink,
+        CAST(ISNULL(ip.IsVideoApproved, 0) AS BIT) AS IsVideoApproved,
+        NULLIF(LTRIM(RTRIM(ip.AcknowledgementStatus)), '') AS AcknowledgementStatus,
+        ip.Isavailable AS IsAvailable,
+        ul.LastLogin,
+        CAST(ISNULL(ip.IsHoldPayment, 0) AS BIT) AS IsHoldPayment,
+        CAST(ISNULL(ul.IsInterviewerAccess, 0) AS BIT) AS HasPortalAccess,
+        -- Activity
+        lt.LastInterviewAt,
+        ISNULL(fut.FutureInterviews, 0) AS FutureInterviews,
+        CAST(CASE WHEN EXISTS (
+                SELECT 1 FROM dbo.SuspiciousInterviewer si
+                WHERE si.UserId = ul.id AND si.SuspiciousStatus = 1) THEN 1 ELSE 0 END AS BIT) AS ActiveSuspicious,
+        -- Lifetime (same definitions as usp_GetInterviewerInsights with no IRF)
+        ISNULL(lt.LifetimeInterviews, 0) AS LifetimeInterviews,
+        ISNULL(lt.LifetimeCompleted, 0) AS LifetimeCompleted,
+        ISNULL(lt.LifetimeSelected, 0) AS LifetimeSelected,
+        ISNULL(lt.LifetimeRejected, 0) AS LifetimeRejected,
+        ISNULL(lt.InterviewerNoShows, 0) AS InterviewerNoShows,
+        ISNULL(lt.CandidateNoShows, 0) AS CandidateNoShows,
+        ISNULL(lt.RedoRequests, 0) AS RedoRequests,
+        ISNULL(lt.AiTranscriptFlagged, 0) AS AiTranscriptFlagged,
+        ISNULL(lj.LateJoins, 0) AS LateJoins,
+        ISNULL(pen.Penalties, 0) AS Penalties,
+        ISNULL(rel.ReliabilityScore, 0) AS ReliabilityScore,
+        -- AI penalties, window (this interviewer's interviews on their active channels)
+        ISNULL(ai.AiPenalised, 0) AS AiPenalised,
+        ISNULL(ai.AiAutoApproved, 0) AS AiAutoApproved,
+        ISNULL(ai.AiHumanReviewed, 0) AS AiHumanReviewed,
+        ai.AiAvgPct,
+        ai.AiAmount
+    FROM #Page pg
+    INNER JOIN #Filtered f ON f.InterviewerId = pg.InterviewerId
     INNER JOIN dbo.UserList ul ON ul.id = f.InterviewerId
-    LEFT JOIN dbo.InterviewerProfile ip ON ip.UserId = f.InterviewerId
-    ORDER BY
-        CASE f.WorstSeverity
-            WHEN 'P0' THEN 0 WHEN 'P1' THEN 1 WHEN 'P2' THEN 2
-            WHEN 'P3' THEN 3 WHEN 'P4' THEN 4 WHEN 'P5' THEN 5 ELSE 9
-        END ASC,
-        ISNULL(f.OverallRiskRatio, 0) DESC,
-        f.HighRiskChannels DESC,
-        f.InterviewerId
-    OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
+    LEFT JOIN dbo.InterviewerProfile ip ON ip.Id = pg.ProfileId
+    OUTER APPLY (
+        SELECT
+            COUNT(DISTINCT im.id) AS LifetimeInterviews,
+            COUNT(DISTINCT CASE WHEN ic.MeetingStatus IN (4, 6, 7, 8) THEN im.id END) AS LifetimeCompleted,
+            COUNT(DISTINCT CASE WHEN ic.MeetingStatus IN (4, 6, 7, 8) AND ic.InterviewStatus IN (2, 4) THEN im.id END) AS LifetimeSelected,
+            COUNT(DISTINCT CASE WHEN ic.MeetingStatus IN (4, 6, 7, 8) AND ic.InterviewStatus IN (1, 3) THEN im.id END) AS LifetimeRejected,
+            COUNT(DISTINCT CASE WHEN ic.MeetingStatus IN (5, 9) THEN im.id END) AS InterviewerNoShows,
+            COUNT(DISTINCT CASE WHEN ic.MeetingStatus = 1 THEN im.id END) AS CandidateNoShows,
+            COUNT(DISTINCT CASE WHEN im.RedoInterview = 1 THEN im.id END) AS RedoRequests,
+            COUNT(DISTINCT CASE WHEN ic.AITranscriptVerdict = 'yes' THEN im.id END) AS AiTranscriptFlagged,
+            MAX(CASE WHEN ic.MeetingStatus IN (4, 6, 7, 8) THEN im.interviewDate END) AS LastInterviewAt
+        FROM dbo.InterviewMeetings im
+        INNER JOIN dbo.InterviewComments ic ON ic.InterviewId = im.id
+        WHERE im.confirmationStatus = 1
+          AND im.interviewer = ul.EmailId
+    ) lt
+    OUTER APPLY (
+        SELECT COUNT(im.id) AS FutureInterviews
+        FROM dbo.InterviewMeetings im
+        WHERE im.interviewer = ul.EmailId
+          AND im.interviewDate > DATEADD(MINUTE, 330, GETDATE())
+          AND ISNULL(im.IsDeleted, 0) = 0
+          AND ISNULL(im.isAutoCancelled, 0) = 0
+          AND CAST(im.confirmationStatus AS VARCHAR(20)) NOT IN ('2', 'Cancelled')
+    ) fut
+    OUTER APPLY (
+        SELECT COUNT(DISTINCT im.id) AS LateJoins
+        FROM dbo.InterviewMeetingsJoinTime imj
+        INNER JOIN dbo.InterviewMeetings im ON im.id = imj.interviewid
+        WHERE DATEDIFF(MINUTE, im.interviewDate, imj.Joinedon) > 5
+          AND im.interviewer = ul.EmailId
+    ) lj
+    OUTER APPLY (
+        SELECT COUNT(DISTINCT ipt.id) AS Penalties
+        FROM dbo.InterviewPoints ipt
+        INNER JOIN dbo.InterviewMeetings im ON im.id = ipt.Interviewid
+        WHERE (ipt.PenaltyAmount > 0 OR ipt.Comment LIKE '%Late Report%')
+          AND im.interviewer = ul.EmailId
+    ) pen
+    OUTER APPLY (
+        SELECT SUM(trs.Point) AS ReliabilityScore
+        FROM dbo.TransInterviewersReliabilityScores trs
+        INNER JOIN dbo.InterviewerProfile ip2 ON ip2.id = trs.InterviewerId
+        INNER JOIN dbo.UserList ul2 ON ul2.id = ip2.UserId
+        WHERE ul2.EmailId = ul.EmailId
+    ) rel
+    OUTER APPLY (
+        SELECT
+            COUNT(1) AS AiPenalised,
+            SUM(CASE WHEN ap.IsApproved = 1 AND ap.IsHumanReviewed = 0 THEN 1 ELSE 0 END) AS AiAutoApproved,
+            SUM(CASE WHEN ap.IsHumanReviewed = 1 THEN 1 ELSE 0 END) AS AiHumanReviewed,
+            CAST(AVG(CAST(ap.DeductionPct AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AiAvgPct,
+            SUM(ap.Amount) AS AiAmount
+        FROM (SELECT DISTINCT m.InterviewId FROM #Mapped m WHERE m.UserId = pg.InterviewerId) mi
+        INNER JOIN #AiPen ap ON ap.InterviewId = mi.InterviewId
+    ) ai
+    ORDER BY pg.SortOrder;
 
-    -- Result set 2: summary from same filtered set
+    -- Deduction review requests (phase 2), per window: received on in-scope channels with the
+    -- request date in the window; upheld = Reduced + Refunded among decided (Expired is not a decision).
+    DECLARE @RevReceived INT = 0, @RevDecided INT = 0, @RevUpheld INT = 0, @RevRefunded DECIMAL(18,2) = NULL;
+    IF OBJECT_ID(N'dbo.DeductionReviewRequest', N'U') IS NOT NULL
+        EXEC sp_executesql N'
+            SELECT
+                @Received = COUNT(1),
+                @Decided  = SUM(CASE WHEN r.Status IN (''Stands'', ''Reduced'', ''Refunded'') THEN 1 ELSE 0 END),
+                @Upheld   = SUM(CASE WHEN r.Status IN (''Reduced'', ''Refunded'') THEN 1 ELSE 0 END),
+                @Refunded = SUM(CASE WHEN r.Status IN (''Reduced'', ''Refunded'') THEN r.RefundedAmount END)
+            FROM dbo.DeductionReviewRequest r
+            INNER JOIN #ScopedIrfs si ON si.IrfId = r.IrfId
+            WHERE CAST(DATEADD(MINUTE, 330, r.RequestedAtUtc) AS DATE) >= @FromIst
+              AND CAST(DATEADD(MINUTE, 330, r.RequestedAtUtc) AS DATE) <= @ToIst;',
+            N'@FromIst DATE, @ToIst DATE, @Received INT OUTPUT, @Decided INT OUTPUT, @Upheld INT OUTPUT, @Refunded DECIMAL(18,2) OUTPUT',
+            @FromIst = @FromIst, @ToIst = @ToIst, @Received = @RevReceived OUTPUT, @Decided = @RevDecided OUTPUT,
+            @Upheld = @RevUpheld OUTPUT, @Refunded = @RevRefunded OUTPUT;
+
+    -- Result set 2: summary from same filtered set; AI totals cover every completed interview
+    -- in scope and window (all interviewers, not only the listed ones).
     SELECT
         @TotalRows AS InterviewersAboveThreshold,
         ISNULL((
@@ -396,8 +617,46 @@ BEGIN
         ), 0) AS ChannelsAffected,
         ISNULL((
             SELECT COUNT(1) FROM #Filtered WHERE PendingReviewChannels > 0
-        ), 0) AS PendingReviewInterviewers;
+        ), 0) AS PendingReviewInterviewers,
+        (SELECT COUNT(1) FROM #AiPen) AS AiPenalisedReports,
+        (SELECT COUNT(1) FROM #AiPen WHERE IsApproved = 1 AND IsHumanReviewed = 0) AS AiAutoApprovedReports,
+        (SELECT COUNT(1) FROM #AiPen WHERE IsHumanReviewed = 1) AS AiHumanReviewedReports,
+        (SELECT CAST(AVG(CAST(DeductionPct AS DECIMAL(10,2))) AS DECIMAL(10,2)) FROM #AiPen) AS AiAvgPct,
+        (SELECT SUM(Amount) FROM #AiPen) AS AiAmount,
+        ISNULL(@RevReceived, 0) AS ReviewRequestsReceived,
+        ISNULL(@RevDecided, 0) AS ReviewRequestsDecided,
+        ISNULL(@RevUpheld, 0) AS ReviewRequestsUpheld,
+        CAST(CASE WHEN ISNULL(@RevDecided, 0) = 0 THEN NULL
+                  ELSE ISNULL(@RevUpheld, 0) * 100.0 / @RevDecided END AS DECIMAL(10,2)) AS ReviewUpheldPct,
+        @RevRefunded AS ReviewRefundedAmount;
 
+    -- Result set 3: upheld rate per AI check for the same requests (in-scope channels, request date in the window).
+    -- Upheld = Reduced + Refunded; Expired is not a decision. Empty when the review table is not deployed.
+    IF OBJECT_ID(N'dbo.DeductionReviewRequest', N'U') IS NOT NULL
+        EXEC sp_executesql N'
+            SELECT
+                r.AiCheck,
+                COUNT(1) AS Requests,
+                SUM(CASE WHEN r.Status IN (''Stands'', ''Reduced'', ''Refunded'') THEN 1 ELSE 0 END) AS Decided,
+                SUM(CASE WHEN r.Status IN (''Reduced'', ''Refunded'') THEN 1 ELSE 0 END) AS Upheld,
+                SUM(CASE WHEN r.Status = ''Stands'' THEN 1 ELSE 0 END) AS Stands,
+                SUM(CASE WHEN r.Status = ''Open'' THEN 1 ELSE 0 END) AS [Open],
+                CAST(ISNULL(MAX(CAST(pol.ExcludeFromAutoApprove AS INT)), 0) AS BIT) AS ExcludeFromAutoApprove
+            FROM dbo.DeductionReviewRequest r
+            INNER JOIN #ScopedIrfs si ON si.IrfId = r.IrfId
+            LEFT JOIN dbo.DeductionReviewCheckPolicy pol ON pol.AiCheck = r.AiCheck
+            WHERE CAST(DATEADD(MINUTE, 330, r.RequestedAtUtc) AS DATE) >= @FromIst
+              AND CAST(DATEADD(MINUTE, 330, r.RequestedAtUtc) AS DATE) <= @ToIst
+            GROUP BY r.AiCheck
+            ORDER BY SUM(CASE WHEN r.Status IN (''Stands'', ''Reduced'', ''Refunded'') THEN 1 ELSE 0 END) DESC, r.AiCheck;',
+            N'@FromIst DATE, @ToIst DATE', @FromIst = @FromIst, @ToIst = @ToIst;
+    ELSE
+        SELECT CAST(NULL AS VARCHAR(30)) AS AiCheck, 0 AS Requests, 0 AS Decided, 0 AS Upheld, 0 AS Stands, 0 AS [Open],
+               CAST(0 AS BIT) AS ExcludeFromAutoApprove
+        WHERE 1 = 0;
+
+    DROP TABLE IF EXISTS #AiPen;
+    DROP TABLE IF EXISTS #Page;
     DROP TABLE IF EXISTS #Filtered;
     DROP TABLE IF EXISTS #CoveringBackfill;
     DROP TABLE IF EXISTS #ChannelReview;

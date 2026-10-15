@@ -4430,8 +4430,9 @@ SELECT CAST(CASE WHEN EXISTS (
                 dynamicParameters.Add("@InactivationType", string.IsNullOrWhiteSpace(inactivationType) ? null : inactivationType);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync(con, "usp_InactivateInterviewer", dynamicParameters, commandType: CommandType.StoredProcedure);
-                    return true;
+                    // RowsChanged = 0 when the interviewer id is unknown (nothing changed). NULL from an older procedure.
+                    var changed = await con.QueryFirstOrDefaultAsync<int?>("usp_InactivateInterviewer", dynamicParameters, commandType: CommandType.StoredProcedure);
+                    return changed == null || changed.Value > 0;
                 }
             }
             catch (SqlException ex)

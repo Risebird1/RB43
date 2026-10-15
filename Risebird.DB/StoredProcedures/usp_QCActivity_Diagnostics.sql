@@ -73,7 +73,8 @@ BEGIN
         (21, 'InterviewerActionLog.ActedBy (PaymentHold)',  'Interviewer status: Pay hold',            CASE WHEN OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL THEN 1 ELSE 0 END),
         (22, 'InterviewerActionLog.ActedBy (PaymentHoldReleased)', 'Interviewer status: Pay hold released', CASE WHEN OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL THEN 1 ELSE 0 END),
         (23, 'ReportEditLog.EditedBy',                      'Reports edited',                          CASE WHEN OBJECT_ID(N'dbo.ReportEditLog', N'U') IS NOT NULL THEN 1 ELSE 0 END),
-        (24, 'InterviewCommentsHistory.PerformedBy (comment changed)', 'Reports edited (before ReportEditLog)', CASE WHEN OBJECT_ID(N'dbo.InterviewCommentsHistory', N'U') IS NOT NULL THEN 1 ELSE 0 END);
+        (24, 'InterviewCommentsHistory.PerformedBy (comment changed)', 'Reports edited (before ReportEditLog)', CASE WHEN OBJECT_ID(N'dbo.InterviewCommentsHistory', N'U') IS NOT NULL THEN 1 ELSE 0 END),
+        (25, 'InterviewerActionLog.ActedBy (DeductionReview)', 'Deduction review decisions',          CASE WHEN OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL THEN 1 ELSE 0 END);
 
     /* Per source and actor: rows, first and last time (IST). */
     CREATE TABLE #A (
@@ -225,7 +226,8 @@ BEGIN
         FROM dbo.InterviewerActionLog l
         WHERE l.ActedAtUtc >= @FromUtc AND l.ActedAtUtc < @ToUtc
           AND l.ActionType IN (''SuspiciousUndone'', ''Blocked'', ''Unblocked'', ''AccessRevoked'', ''AccessRestored'',
-                               ''Inactivated'', ''Reactivated'', ''PaymentHold'', ''PaymentHoldReleased'')
+                               ''Inactivated'', ''Reactivated'', ''PaymentHold'', ''PaymentHoldReleased'',
+                               ''DeductionReview'')
         GROUP BY l.ActionType, LTRIM(RTRIM(l.ActedBy));';
         EXEC sp_executesql @Sql, @Params, @FromUtc = @FromUtc, @ToUtc = @ToUtc;
     END

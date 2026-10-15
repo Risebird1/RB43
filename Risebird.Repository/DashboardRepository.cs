@@ -1722,9 +1722,10 @@ Values
                 dynamicParam.Add("@ModifiedBy", string.IsNullOrWhiteSpace(modifiedBy) ? null : modifiedBy.Trim());
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync(conChange, "usp_undoSuspiciousInterviewer", dynamicParam,
+                    // RowsChanged = active marks cleared; NULL from an older procedure that returns nothing.
+                    var changed = await conChange.QueryFirstOrDefaultAsync<int?>("usp_undoSuspiciousInterviewer", dynamicParam,
                        commandType: CommandType.StoredProcedure);
-                    return true;
+                    return changed == null || changed.Value > 0;
                 }
             }
             catch (Exception ex)
@@ -3100,9 +3101,10 @@ Values
                     parameters.Add("@Type", type);
                     parameters.Add("@CreatedBy", CreatedBy);
                     parameters.Add("@source", source);
-                    var result = await SqlMapper.QueryAsync<ToalInterviewerInterviewDetails>(con, "usp_UpdateRedMarkeredInterviewerstatus", parameters,
+                    // RowsChanged = rows moved; 0 means nothing changed (unknown interviewer). NULL from an older procedure.
+                    var changed = await con.QueryFirstOrDefaultAsync<int?>("usp_UpdateRedMarkeredInterviewerstatus", parameters,
                         commandType: CommandType.StoredProcedure, commandTimeout: 600);
-                    return true;
+                    return changed == null || changed.Value > 0;
                 }
             }
             catch (SqlException e)

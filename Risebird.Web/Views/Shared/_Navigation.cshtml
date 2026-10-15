@@ -141,6 +141,17 @@
 
                                 </a>
                             </li>
+                            if ((HttpContextAccessor.HttpContext.Session.GetString("profileName") ?? "").Replace("\"", "").Trim() == "Interviewer")
+                            {
+                                <li id="myquality_menu" class="myquality">
+                                    <a href="/Interviewer/MyQuality">
+                                        <span class="sidemenu-icon">
+                                            <i class="fa fa-line-chart" aria-hidden="true"></i>
+                                        </span>
+                                        <p>My Quality</p>
+                                    </a>
+                                </li>
+                            }
                         }
 
                    
@@ -501,6 +512,17 @@
                                     <p>@m.functionName</p>
                                 </a>
                             </li>
+                            if ((HttpContextAccessor.HttpContext.Session.GetString("profileName") ?? "").Replace("\"", "").Trim() == "Interviewer")
+                            {
+                                <li id="myquality_menu" class="myquality">
+                                    <a href="/Interviewer/MyQuality">
+                                        <span class="sidemenu-icon">
+                                            <i class="fa fa-line-chart" aria-hidden="true"></i>
+                                        </span>
+                                        <p>My Quality</p>
+                                    </a>
+                                </li>
+                            }
                         }
                         else if (m.sUrl == "/Interview/OpenInterview")
                         {

@@ -48,6 +48,15 @@ namespace Risebird.Repository
                 ? new QCActivityBacklogVM()
                 : (await multi.ReadFirstOrDefaultAsync<QCActivityBacklogVM>()) ?? new QCActivityBacklogVM();
 
+            // Result sets 3 and 4 (high-risk coverage); absent on an older procedure.
+            if (!multi.IsConsumed)
+            {
+                var coverage = (await multi.ReadFirstOrDefaultAsync<QCActivityCoverageVM>()) ?? new QCActivityCoverageVM();
+                if (!multi.IsConsumed)
+                    coverage.Untouched = (await multi.ReadAsync<QCActivityUntouchedVM>()).ToList();
+                backlog.Coverage = coverage;
+            }
+
             return (rows, backlog);
         }
 
@@ -128,6 +137,57 @@ namespace Risebird.Repository
                 ? new List<InterviewerQCEventVM>()
                 : (await multi.ReadAsync<InterviewerQCEventVM>()).ToList();
             return (irfs, events);
+        }
+
+        public async Task<(IReadOnlyList<QCActivityFlagVM> Flags, IReadOnlyList<QCActivityFlagItemVM> Items, IReadOnlyList<QCActivitySettingRowVM> Settings)> GetFlagsAsync(
+            DateTime fromIst, DateTime toIst, string actorEmail = null)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@FromIst", fromIst.Date, DbType.Date);
+            parameters.Add("@ToIst", toIst.Date, DbType.Date);
+            parameters.Add("@ActorEmail", string.IsNullOrWhiteSpace(actorEmail) ? null : actorEmail.Trim(), DbType.AnsiString, size: 150);
+
+            using var con = new SqlConnection(_connectionString);
+            using var multi = await con.QueryMultipleAsync(
+                "dbo.usp_GetQCActivityFlags",
+                parameters,
+                commandTimeout: CommandTimeoutSeconds,
+                commandType: CommandType.StoredProcedure);
+
+            var flags = (await multi.ReadAsync<QCActivityFlagVM>()).ToList();
+            var items = multi.IsConsumed ? new List<QCActivityFlagItemVM>() : (await multi.ReadAsync<QCActivityFlagItemVM>()).ToList();
+            var settings = multi.IsConsumed ? new List<QCActivitySettingRowVM>() : (await multi.ReadAsync<QCActivitySettingRowVM>()).ToList();
+            return (flags, items, settings);
+        }
+
+        public async Task<QCActivityCoverageVM> GetCoverageAsync(DateTime fromIst, DateTime toIst)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@FromIst", fromIst.Date, DbType.Date);
+            parameters.Add("@ToIst", toIst.Date, DbType.Date);
+
+            using var con = new SqlConnection(_connectionString);
+            using var multi = await con.QueryMultipleAsync(
+                "dbo.usp_GetQCActivityCoverage",
+                parameters,
+                commandTimeout: CommandTimeoutSeconds,
+                commandType: CommandType.StoredProcedure);
+
+            var coverage = (await multi.ReadFirstOrDefaultAsync<QCActivityCoverageVM>()) ?? new QCActivityCoverageVM();
+            if (!multi.IsConsumed)
+                coverage.Untouched = (await multi.ReadAsync<QCActivityUntouchedVM>()).ToList();
+            return coverage;
+        }
+
+        public async Task<IReadOnlyList<QCActivitySettingRowVM>> GetSettingsAsync()
+        {
+            const string sql = @"
+                IF OBJECT_ID(N'dbo.QCActivitySetting', N'U') IS NOT NULL
+                    EXEC sp_executesql N'SELECT Name, Value FROM dbo.QCActivitySetting';
+                ELSE
+                    SELECT CAST(NULL AS VARCHAR(50)) AS Name, CAST(NULL AS NVARCHAR(1000)) AS Value WHERE 1 = 0;";
+            using var con = new SqlConnection(_connectionString);
+            return (await con.QueryAsync<QCActivitySettingRowVM>(sql, commandTimeout: CommandTimeoutSeconds)).ToList();
         }
 
         public async Task<ReportEditVM> GetReportEditAsync(int id)

@@ -16,7 +16,7 @@
                 <form method="post">
                     <input type="hidden" id="hdnInterviewerEmail">
                     <label style="font-size:14px;">Comment</label>
-                    <div class="box arrow-top">  <textarea name="Comment" id="Comment" class="form-control" style="height:80px;"></textarea></div>
+                    <div class="box arrow-top">  <textarea name="Comment" id="suspiciousComment" class="form-control" style="height:80px;"></textarea></div>
                 </form>
             </div>
             <div class="modal-footer" style="display:block;text-align:right">
@@ -36,9 +36,11 @@
         var modal = document.getElementById("SuspiciousTypeModal");
         modal.style.display = "block";
         $('#hdnInterviewerEmail').val(Emailid);
+        $('#SuspiciousTypeModal #suspiciousComment').val('');
     }
     function SaveSuspiciousInterViewer() {
-        var comment = $('#Comment').val().trim();
+        // Own id, read inside the modal only: host pages (Total Interviews, Total Red Marker, DM page) have their own #Comment box.
+        var comment = ($('#SuspiciousTypeModal #suspiciousComment').val() || '').trim();
         var emailId = $('#hdnInterviewerEmail').val();
         if (comment != '') {
             $.ajax({
