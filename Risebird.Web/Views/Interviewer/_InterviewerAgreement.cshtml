@@ -29,6 +29,32 @@
             <h4 class="info-text" style="text-align:left;">Service Agreement for Interviewer Onboarding</h4>
             <div id="agreementStatusBox"><p class="text-muted">Loading...</p></div>
 
+            @* Shown after signing (an agreement is signed only once): the agreement and the signature details, read-only. *@
+            <div id="agreementSignedSection" style="display:none;">
+                <div style="border:1px solid #dcdcdc; border-radius:4px;">
+                    <iframe id="agreementSignedDocument" title="Signed Service Agreement" style="width:100%; height:70vh; border:0; background:#fff;"></iframe>
+                </div>
+                <small><a href="@agreementDocumentUrl" target="_blank" rel="noopener">Open the agreement in a new tab</a></small>
+
+                <div style="margin-top:16px; padding:14px 16px; border:1px solid #c8e6c9; border-radius:4px; background:#f6fbf6;">
+                    <h5 style="margin-top:0;">Signature details</h5>
+                    <table class="table table-sm" style="margin-bottom:10px; background:transparent;">
+                        <tbody>
+                            <tr><th style="width:220px;">Interviewer Full Name</th><td id="signedName"></td></tr>
+                            <tr><th>Father's / Guardian's Name</th><td id="signedFatherName"></td></tr>
+                            <tr><th>Residential Address</th><td id="signedAddress"></td></tr>
+                            <tr><th>Agreement Version</th><td id="signedVersion"></td></tr>
+                            <tr><th>Signed On</th><td id="signedOn"></td></tr>
+                            <tr>
+                                <th>Signature</th>
+                                <td><img id="signedSignature" alt="Signature" style="display:none; max-width:260px; max-height:90px; background:#fff; border:1px solid #e0e0e0; padding:4px;" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <a id="signedProofLink" href="@Url.Action("Proof", "InterviewerAgreement")" target="_blank" rel="noopener" style="display:none;">View the screenshot taken when you signed</a>
+                </div>
+            </div>
+
             <div id="agreementSignSection" style="display:none;">
                 <p class="text-muted">Please read the agreement below, fill in your details and sign it.</p>
                 <div id="agreementDocumentBox">
@@ -135,6 +161,7 @@
         var statusUrl = '@Url.Action("Status", "InterviewerAgreement")';
         var signUrl = '@Url.Action("Sign", "InterviewerAgreement")';
         var documentUrl = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(agreementDocumentUrl));
+        var signatureImageUrl = '@Url.Action("Signature", "InterviewerAgreement")';
         var agreementVersion = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(AgreementOptions.Value.Version));
         var loaded = false;
 
@@ -142,9 +169,20 @@
 
         function render(a) {
             if (a && a.isSigned) {
+                // Signed once: no form any more, only the agreement and the signature details.
                 $('#agreementSignSection').hide();
-                $('#agreementStatusBox').html('<p class="text-success"><strong>Agreement signed</strong>'
-                    + (a.signerName ? ' by ' + esc(a.signerName) : '') + (a.signedOn ? ' on ' + esc(a.signedOn) + ' IST' : '') + '.</p>');
+                $('#agreementStatusBox').html('<p class="text-success"><strong>You have signed this agreement</strong>'
+                    + (a.signedOn ? ' on ' + esc(a.signedOn) + ' IST' : '') + '.</p>');
+                var $signedDoc = $('#agreementSignedDocument');
+                if (!$signedDoc.attr('src')) $signedDoc.attr('src', documentUrl);
+                $('#signedName').text(a.signerName || '');
+                $('#signedFatherName').text(a.fatherName || '');
+                $('#signedAddress').text(a.address || '');
+                $('#signedVersion').text(a.version || '');
+                $('#signedOn').text(a.signedOn ? a.signedOn + ' IST' : '');
+                if (a.hasSignature) $('#signedSignature').attr('src', signatureImageUrl + '?t=' + Date.now()).show();
+                $('#signedProofLink').toggle(!!a.hasProof);
+                $('#agreementSignedSection').show();
                 return;
             }
             $('#agreementStatusBox').html('<p class="text-warning">Agreement not signed yet.</p>');

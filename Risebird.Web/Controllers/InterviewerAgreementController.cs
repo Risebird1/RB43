@@ -116,6 +116,34 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>The signed-in interviewer's own signature image.</summary>
+        [HttpGet]
+        public Task<IActionResult> Signature() => AgreementImage(proof: false);
+
+        /// <summary>The signed-in interviewer's own proof screenshot of the signing page.</summary>
+        [HttpGet]
+        public Task<IActionResult> Proof() => AgreementImage(proof: true);
+
+        private async Task<IActionResult> AgreementImage(bool proof)
+        {
+            try
+            {
+                var profileId = await GetSessionInterviewerProfileId();
+                if (profileId == null)
+                    return Unauthorized();
+
+                var image = await _agreementService.GetAgreementImage(profileId.Value, proof);
+                if (image == null)
+                    return NotFound();
+                return File(image.Value.Content, image.Value.ContentType);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return NotFound();
+            }
+        }
+
         private static string CleanText(string value) => Regex.Replace(value ?? string.Empty, @"\s+", " ").Trim();
 
         private static bool IsValidText(string value, int min, int max) => value.Length >= min && value.Length <= max;
@@ -160,7 +188,12 @@ namespace Risebird.Web.Controllers
         {
             isSigned = agreement.IsAgreementSigned,
             signerName = agreement.AgreementSignerName,
-            signedOn = agreement.AgreementSignedOn?.ToString("dd MMM yyyy, hh:mm tt")
+            fatherName = agreement.AgreementFatherName,
+            address = agreement.AgreementAddress,
+            version = agreement.AgreementVersion,
+            signedOn = agreement.AgreementSignedOn?.ToString("dd MMM yyyy, hh:mm tt"),
+            hasSignature = !string.IsNullOrEmpty(agreement.AgreementSignatureUrl),
+            hasProof = !string.IsNullOrEmpty(agreement.AgreementProofUrl)
         };
     }
 }
