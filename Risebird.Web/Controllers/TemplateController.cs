@@ -23,9 +23,11 @@ namespace Risebird.Web.Controllers
         private readonly IIRFService _irfService;
         private readonly IClientService _clientService;
         private readonly IClonableSkillChannelTemplateService _clonableSkillChannelTemplateService;
+        private readonly IMeetingService _meetingService;
 
-        public TemplateController(ITemplateService templateService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IIRFService irfService, IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, IClientService clientService)
+        public TemplateController(ITemplateService templateService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IIRFService irfService, IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, IClientService clientService, IMeetingService meetingService)
         {
+            _meetingService = meetingService;
             _templateService = templateService;
             _applicationErrorLogger = applicationErrorLogger;
             _interviewerService = interviewerService;
@@ -34,6 +36,11 @@ namespace Risebird.Web.Controllers
             _clientService = clientService;
         }
 
+        /// <summary>Public template links are valid only for a client user whose UserList.uniqueid matches.</summary>
+        private async Task<bool> IsValidPublicClientLinkAsync(string emailId, string uniqueId) =>
+            await _meetingService.GetUniqueUserByEmailId(emailId.Trim(), uniqueId) > 0
+            && await _clientService.GetClientByEmailId(emailId.Trim()) > 0;
+
         [HttpGet]
         public async Task<IActionResult> Index(string emailId = null, string uniqueId = null, string type = null, string profile = null)
         {
@@ -41,6 +48,8 @@ namespace Risebird.Web.Controllers
             {
                 if (!string.IsNullOrEmpty(uniqueId) && !string.IsNullOrEmpty(emailId) && type == "pbc" && profile == "Client")
                 {
+                    if (!await IsValidPublicClientLinkAsync(emailId, uniqueId))
+                        return RedirectToAction("SignIn", "Session");
                     ClonableTemplateListVM model = new ClonableTemplateListVM();
                     model.AccessType = "Public";
                     //model.LoggedInUser = emailId;
@@ -1274,6 +1283,8 @@ namespace Risebird.Web.Controllers
             {
                 if (!string.IsNullOrEmpty(uniqueId) && !string.IsNullOrEmpty(emailId) && type == "pbc" && profile == "Client")
                 {
+                    if (!await IsValidPublicClientLinkAsync(emailId, uniqueId))
+                        return RedirectToAction("SignIn", "Session");
 
                     ClonableTemplateListVM model = new ClonableTemplateListVM();
                     model.Profile = "Client";

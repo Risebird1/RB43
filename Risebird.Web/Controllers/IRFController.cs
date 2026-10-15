@@ -8060,6 +8060,37 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Public (email + uniqueId) interview-link requests: the link must belong to a client user, and the
+        /// client and plan rate are resolved server-side so posted ClientId / RateComputedForClient are ignored.
+        /// </summary>
+        private async Task<bool> PreparePublicInterviewLinkModelAsync(IRFVm model, string emailId)
+        {
+            var clientId = await _clientService.GetClientByEmailId(emailId);
+            if (clientId <= 0 || await _meetingService.GetUniqueUserByEmailId(emailId, model.UniqueId) <= 0)
+                return false;
+            await ApplyClientAndPlanRateAsync(model, clientId);
+            return true;
+        }
+
+        /// <summary>Overwrites posted ClientId and RateComputedForClient with server-resolved values.</summary>
+        private async Task ApplyClientAndPlanRateAsync(IRFVm model, int clientId)
+        {
+            model.ClientId = clientId;
+            model.RateComputedForClient = 0;
+            if (clientId > 0 && model.MarketPlacePlanType > 0)
+            {
+                var rates = await _clientService.GenerateDynamicRateByCurrentTimeOfWeek(clientId);
+                model.RateComputedForClient = model.MarketPlacePlanType switch
+                {
+                    2 => rates?.StandardPlanRate ?? 0,
+                    4 => rates?.ProPlanRate ?? 0,
+                    5 => rates?.AdvancedPlanRate ?? 0,
+                    _ => 0
+                };
+            }
+        }
+
         //[Authorize]
         [ValidateAntiForgeryToken]
         [HttpPost]
@@ -8070,7 +8101,9 @@ namespace Risebird.Web.Controllers
             {
                 if (!string.IsNullOrEmpty(model.UniqueId) && !string.IsNullOrEmpty(model.PublicUserEmailId) && !string.IsNullOrEmpty(model.AccessType) && model.AccessType == "Public")
                 {
-                    emailId = model.PublicUserEmailId;
+                    emailId = model.PublicUserEmailId.Trim();
+                    if (!await PreparePublicInterviewLinkModelAsync(model, emailId))
+                        return RedirectToAction("SignIn", "Session");
                     string uploadedFileURL = string.Empty;
                     //if (model.ClientId == 0)
                     //    model.ClientId = await _clientService.GetClientByEmailId(emailId);
@@ -8170,8 +8203,10 @@ namespace Risebird.Web.Controllers
                     {
 
                         string uploadedFileURL = string.Empty;
-                        if (model.ClientId == 0)
+                        // Client users can only create for their own client; staff keep the selected client.
+                        if (profileName == "Client" || model.ClientId == 0)
                             model.ClientId = await _clientService.GetClientByEmailId(emailId);
+                        await ApplyClientAndPlanRateAsync(model, model.ClientId);
                         if (model.JDFile != null)
                         {
 
@@ -8349,7 +8384,9 @@ namespace Risebird.Web.Controllers
             {
                 if (!string.IsNullOrEmpty(model.UniqueId) && !string.IsNullOrEmpty(model.PublicUserEmailId) && !string.IsNullOrEmpty(model.AccessType) && model.AccessType == "Public")
                 {
-                    emailId = model.PublicUserEmailId;
+                    emailId = model.PublicUserEmailId.Trim();
+                    if (!await PreparePublicInterviewLinkModelAsync(model, emailId))
+                        return RedirectToAction("SignIn", "Session");
                     string uploadedFileURL = string.Empty;
                     //if (model.ClientId == 0)
                     //    model.ClientId = await _clientService.GetClientByEmailId(emailId);
@@ -8452,8 +8489,10 @@ namespace Risebird.Web.Controllers
                     {
 
                         string uploadedFileURL = string.Empty;
-                        if (model.ClientId == 0)
+                        // Client users can only create for their own client; staff keep the selected client.
+                        if (profileName == "Client" || model.ClientId == 0)
                             model.ClientId = await _clientService.GetClientByEmailId(emailId);
+                        await ApplyClientAndPlanRateAsync(model, model.ClientId);
                         if (model.JDFile != null)
                         {
 
@@ -9591,12 +9630,15 @@ namespace Risebird.Web.Controllers
             return View(model);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeliveryHeadInstruction(IRFVm model)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null || HttpContext.Session.GetString("profileName") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
+                    if (!await AuthorizeDhiMutatingAccessAsync(model?.id ?? 0))
+                        return StatusCode(403, "You do not have access to this skill channel.");
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     var existingSkills = (await _irfRepository.GetSkillsbyIRFid(model.id))?.ToList() ?? new List<TransSkill>();
@@ -9655,8 +9697,6 @@ namespace Risebird.Web.Controllers
             //HttpContext.Session.SetString("PublicUrlAccessor", JsonConvert.SerializeObject(Emailid));
             //var currentUrl = Request.Scheme + "://" + Request.Host.Value + Request.Path;
             //_trackPublicUrlAccessor.SendTelemetry(JsonConvert.SerializeObject(Emailid), currentUrl);
-            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailId));
-            HttpContext.Session.SetString("profileName", "Public");
             //bool result = await _clientService.VerifyClientAuthenticity(irfId, emailId);
             //var logovalue = await _clientService.Fetchlogoforclient(Emailid, id);
             //if (string.IsNullOrEmpty(logovalue))
@@ -9667,6 +9707,9 @@ namespace Risebird.Web.Controllers
             //    HttpContext.Session.SetString("Logo", logovalue);
             if (await _clientService.VerifyClientAuthenticity(irfId, emailId))
             {
+                // Only start a session once the email is verified for this IRF.
+                HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailId));
+                HttpContext.Session.SetString("profileName", "Public");
                 return Json("success");
             }
             else
