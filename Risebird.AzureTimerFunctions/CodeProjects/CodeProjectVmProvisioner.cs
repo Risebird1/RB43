@@ -163,7 +163,8 @@ namespace Risebird.AzureTimerFunctions.CodeProjects
                         Message = "Opening secure session…",
                         // Bastion shareable links carry no credentials; the candidate signs in with these.
                         Username = m.CandidateUserName,
-                        Password = await _encryption.DecryptData(m.CandidatePasswordProtected)
+                        Password = await _encryption.DecryptData(m.CandidatePasswordProtected),
+                        IntegrityFlags = ParseFlags(m.IntegrityFlagsJson)
                     };
                 case CodeProjectVmStep.Failed:
                 case CodeProjectVmStep.Released:
@@ -203,8 +204,12 @@ namespace Risebird.AzureTimerFunctions.CodeProjects
             }
         }
 
-        private Task Fail(CodeProjectVm m, string reason) =>
-            _repository.Update(m.Handle, CodeProjectVmStep.Failed, reason);
+        /// <summary>A candidate is waiting on this machine, so a failure is logged at Error level (alertable).</summary>
+        private async Task Fail(CodeProjectVm m, string reason)
+        {
+            await _repository.Update(m.Handle, CodeProjectVmStep.Failed, reason);
+            await _logger.LogMessage(LogLevelInfo.Error, new Exception($"Code project machine {m.VmName} (session {m.SessionId}, question {m.QuestionId}) failed: {reason}"));
+        }
 
         private async Task CreateNicAsync(CodeProjectVm m, CancellationToken ct)
         {
@@ -396,7 +401,12 @@ namespace Risebird.AzureTimerFunctions.CodeProjects
                 properties = new
                 {
                     source = new { script = CodeProjectVmScripts.Collect },
-                    parameters = new[] { new { name = "WorkspacePath", value = _options.WorkspacePath } },
+                    // The script locks the candidate account and logs it off before reading anything.
+                    parameters = new[]
+                    {
+                        new { name = "WorkspacePath", value = _options.WorkspacePath },
+                        new { name = "CandidateUser", value = m.CandidateUserName }
+                    },
                     outputBlobUri = outputUrl,
                     asyncExecution = false,
                     timeoutInSeconds = 180
@@ -422,8 +432,11 @@ namespace Risebird.AzureTimerFunctions.CodeProjects
                 if (state != "Succeeded")
                     return new CodeProjectWorkspaceSnapshot { Success = false, Error = $"Reading the workspace {state?.ToLowerInvariant() ?? "timed out"}: {Last(view?["error"]?.ToString(), 400)}" };
 
+                await _repository.UpdateMonitor(m.Handle, null, null, markLocked: true);
                 var output = Encoding.UTF8.GetString(await _blobStore.DownloadAsync(_options.CollectContainer, blobName, ct));
-                return CodeProjectVmHelper.ParseSnapshot(output);
+                var snapshot = CodeProjectVmHelper.ParseSnapshot(output);
+                snapshot.IntegrityFlags = ParseFlags((await _repository.Get(m.Handle))?.IntegrityFlagsJson);
+                return snapshot;
             }
             finally
             {
@@ -454,6 +467,7 @@ namespace Risebird.AzureTimerFunctions.CodeProjects
             {
                 // Keep the row so the janitor tries again rather than losing track of a running VM.
                 await _repository.Update(m.Handle, m.Step == CodeProjectVmStep.Failed ? m.Step : CodeProjectVmStep.Failed, "Release pending: " + del.Error);
+                await _logger.LogMessage(LogLevelInfo.Error, new Exception($"Could not delete code project machine {m.VmName}; it is still billing: {del.Error}"));
                 return;
             }
             if (del.IsNotFound)
@@ -467,6 +481,143 @@ namespace Risebird.AzureTimerFunctions.CodeProjects
                 }
             }
             await _repository.Update(m.Handle, CodeProjectVmStep.Released, "Released");
+        }
+
+        // ------------------------------------------------------------------ handover, session monitor, lock
+
+        /// <summary>
+        /// Called by the web app when it hands the machine over. The deadline is enforced here, on the
+        /// server, so it holds even if the candidate's page never submits.
+        /// </summary>
+        public Task HandoverAsync(string handle, DateTime deadlineUtc) => _repository.SetDeadline(handle, deadlineUtc);
+
+        /// <summary>
+        /// Every 30 seconds while any machine is in use: compares Bastion's active sessions with what is
+        /// allowed (see CodeProjectVmHelper.ReviewSessions), disconnects the rest, records integrity flags
+        /// for the reviewer and locks machines whose slot has ended.
+        /// </summary>
+        public async Task MonitorSessionsAsync(CancellationToken ct)
+        {
+            var ready = await _repository.GetReady();
+            if (ready.Count == 0 || string.IsNullOrWhiteSpace(_options.BastionName)) return;
+
+            var sessions = await GetActiveSessionsAsync(ct);
+            if (sessions == null) return;   // Bastion did not answer; try again next tick
+
+            foreach (var m in ready)
+            {
+                try
+                {
+                    var review = CodeProjectVmHelper.ReviewSessions(m.CandidateUserName, m.DeadlineUtc, m.LockedAtUtc,
+                        ParseList(m.SeenSessionIdsJson), ParseFlags(m.IntegrityFlagsJson),
+                        CodeProjectVmHelper.ParseSessions(sessions, VmResourceId(m)), DateTime.UtcNow);
+
+                    if (review.LockNow) await LockAsync(m, ct);
+                    if (review.Disconnect.Count > 0)
+                    {
+                        var r = await _arm.PostAsync($"{BastionPath}/disconnectActiveSessions?{Network}", new { sessionIds = review.Disconnect }, ct);
+                        if (!r.IsSuccess) await _logger.LogMessage(LogLevelInfo.Warning, new Exception($"Bastion disconnect for {m.VmName}: {r.Error}"));
+                    }
+                    foreach (var flag in review.NewFlags)
+                        await _logger.LogMessage(LogLevelInfo.Error, new Exception($"Code project integrity flag on {m.VmName} (session {m.SessionId}, question {m.QuestionId}): {flag.Code} — {flag.Detail}"));
+
+                    var flags = ParseFlags(m.IntegrityFlagsJson);
+                    flags.AddRange(review.NewFlags);
+                    var seenJson = Newtonsoft.Json.JsonConvert.SerializeObject(review.Seen.OrderBy(x => x));
+                    if (review.LockNow || review.NewFlags.Count > 0 || seenJson != (m.SeenSessionIdsJson ?? "[]"))
+                        await _repository.UpdateMonitor(m.Handle, seenJson, Newtonsoft.Json.JsonConvert.SerializeObject(flags), markLocked: review.LockNow);
+                }
+                catch (Exception ex)
+                {
+                    await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                }
+            }
+        }
+
+        /// <summary>getActiveSessions is a long-running POST: follow its Location for up to ~20 seconds.</summary>
+        private async Task<JObject> GetActiveSessionsAsync(CancellationToken ct)
+        {
+            var r = await _arm.PostAsync($"{BastionPath}/getActiveSessions?{Network}", null, ct);
+            if (!r.IsSuccess) { await _logger.LogMessage(LogLevelInfo.Warning, new Exception("Bastion getActiveSessions: " + r.Error)); return null; }
+            if (r.StatusCode == System.Net.HttpStatusCode.OK) return r.Body ?? new JObject();
+
+            var location = r.Location ?? r.AsyncOperation;
+            for (var i = 0; i < 10 && !string.IsNullOrEmpty(location); i++)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(2), ct);
+                var poll = await _arm.GetAsync(location, ct);
+                if (poll.StatusCode == System.Net.HttpStatusCode.OK && poll.Body?["value"] != null) return poll.Body;
+                if (!poll.IsSuccess) return null;
+            }
+            return null;
+        }
+
+        /// <summary>Disables the candidate account and logs it off, without waiting for the script to finish.</summary>
+        private async Task LockAsync(CodeProjectVm m, CancellationToken ct)
+        {
+            var r = await _arm.PutAsync($"{VmPath(m)}/runCommands/rb-lock?{Compute}", new
+            {
+                location = m.Location,
+                properties = new
+                {
+                    source = new { script = CodeProjectVmScripts.Lock },
+                    parameters = new[] { new { name = "CandidateUser", value = m.CandidateUserName } },
+                    asyncExecution = true,
+                    timeoutInSeconds = 120
+                }
+            }, ct);
+            if (!r.IsSuccess)
+                await _logger.LogMessage(LogLevelInfo.Error, new Exception($"Could not lock {m.VmName} at the end of the slot: {r.Error}"));
+        }
+
+        /// <summary>
+        /// Nightly: deletes any candidate machine or network interface in the resource group that the
+        /// database no longer tracks (a crash between creating and recording, a manual DB edit, …).
+        /// Only resources tagged purpose=rb-code-project are considered.
+        /// </summary>
+        public async Task SweepOrphansAsync(CancellationToken ct)
+        {
+            if (string.IsNullOrWhiteSpace(_options.ResourceGroup)) return;
+            var live = new HashSet<string>(await _repository.GetLiveHandles(), StringComparer.OrdinalIgnoreCase);
+            var deleted = new List<string>();
+
+            async Task SweepAsync(string listPath, Func<JToken, bool> deletable, string apiVersion)
+            {
+                var list = await _arm.GetAsync(listPath, ct);
+                foreach (var item in (list.Body?["value"] as JArray) ?? new JArray())
+                {
+                    var tags = item["tags"];
+                    if (tags?["purpose"]?.ToString() != "rb-code-project") continue;
+                    var handle = tags["rb-handle"]?.ToString();
+                    if (!string.IsNullOrEmpty(handle) && live.Contains(handle)) continue;
+                    if (!deletable(item)) continue;
+                    var id = item["id"]?.ToString();
+                    var del = await _arm.DeleteAsync($"https://management.azure.com{id}?{apiVersion}", ct);
+                    if (del.IsSuccess || del.IsNotFound) deleted.Add(item["name"]?.ToString());
+                }
+            }
+
+            await SweepAsync($"resourceGroups/{_options.ResourceGroup}/providers/Microsoft.Compute/virtualMachines?{Compute}", _ => true, "forceDeletion=true&" + Compute);
+            // NICs only once detached: an attached NIC goes with its VM (deleteOption).
+            await SweepAsync($"resourceGroups/{_options.ResourceGroup}/providers/Microsoft.Network/networkInterfaces?{Network}",
+                nic => nic["properties"]?["virtualMachine"] == null, Network);
+
+            if (deleted.Count > 0)
+                await _logger.LogMessage(LogLevelInfo.Error, new Exception($"Code project orphan sweep deleted {deleted.Count} resource(s): {string.Join(", ", deleted)}"));
+        }
+
+        private static List<CodeProjectIntegrityFlag> ParseFlags(string json)
+        {
+            if (string.IsNullOrWhiteSpace(json)) return new List<CodeProjectIntegrityFlag>();
+            try { return Newtonsoft.Json.JsonConvert.DeserializeObject<List<CodeProjectIntegrityFlag>>(json) ?? new List<CodeProjectIntegrityFlag>(); }
+            catch (Newtonsoft.Json.JsonException) { return new List<CodeProjectIntegrityFlag>(); }
+        }
+
+        private static List<string> ParseList(string json)
+        {
+            if (string.IsNullOrWhiteSpace(json)) return new List<string>();
+            try { return Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(json) ?? new List<string>(); }
+            catch (Newtonsoft.Json.JsonException) { return new List<string>(); }
         }
 
         // ------------------------------------------------------------------ timers

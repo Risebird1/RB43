@@ -83,7 +83,11 @@
             <div class="rb-cp">
                 <div class="rb-cp-head">
                     <h3>@(a.QuestionText?.Length > 90 ? a.QuestionText.Substring(0, 90) + "…" : a.QuestionText)</h3>
-                    @if (minutesUsed.HasValue)
+                    @if (grade.Excluded)
+                    {
+                        <span class="rb-cp-badge warn">Not scored · environment unavailable</span>
+                    }
+                    else if (minutesUsed.HasValue)
                     {
                         <span class="rb-cp-badge @(a.IsTimeExpired == true ? "warn" : "ok")">Submitted · @minutesUsed min of @a.TimeLimitInMinutes</span>
                     }
@@ -91,9 +95,22 @@
                     {
                         <span class="rb-cp-badge">Not started</span>
                     }
+                    @if (grade.IntegrityFlags?.Count > 0)
+                    {
+                        <span class="rb-cp-badge warn">@grade.IntegrityFlags.Count session note@(grade.IntegrityFlags.Count == 1 ? "" : "s") to review</span>
+                    }
                 </div>
                 <div class="rb-cp-sub" style="margin-bottom:12px;">Graded on the diff between the baseline commit and what the candidate pushed.</div>
 
+                @if (grade.Excluded)
+                {
+                    <div class="rb-cp-note" style="margin:0 0 16px;">
+                        <b>Not scored — environment unavailable.</b> @grade.ExclusionReason
+                        This was a platform problem, not the candidate's: treat the question as not attempted rather than as zero, and consider re-inviting the candidate.
+                    </div>
+                }
+                else
+                {
                 <div class="rb-cp-scores">
                     <div class="rb-cp-sc final">
                         <div class="lab">Correctness</div>
@@ -118,6 +135,29 @@
                         <div class="wt">see AI Analysis below</div>
                     </div>
                 </div>
+                }
+
+                @if (grade.IntegrityFlags?.Count > 0)
+                {
+                    <div class="rb-cp-panel" style="margin-bottom:16px;">
+                        <div class="ph"><h4>Session notes</h4><span class="r">for review · not proof of misconduct</span></div>
+                        <div class="pb">
+                            <ul class="rb-cp-tests">
+                                @foreach (var f in grade.IntegrityFlags)
+                                {
+                                    <li>
+                                        <span class="m f">!</span>
+                                        <span>
+                                            <span class="nm">@FlagTitle(f.Code)</span>
+                                            <span class="rq">@f.Detail</span>
+                                            <span class="rs">@Offset(a.TimeStarted, f.AtUtc) into the slot</span>
+                                        </span>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                }
 
                 <div class="rb-cp-panel">
                     <div class="ph">
@@ -234,6 +274,15 @@
 </div>
 
 @functions {
+    private static string FlagTitle(string code) => code switch
+    {
+        "concurrent-sessions" => "Two connections at once",
+        "many-reconnects" => "Many reconnects",
+        "unexpected-user" => "Sign-in with another account",
+        "session-after-lock" => "Connection after the slot ended",
+        _ => code
+    };
+
     private static string Short(string sha) => string.IsNullOrEmpty(sha) ? "" : sha.Length > 7 ? sha.Substring(0, 7) : sha;
 
     private static string Offset(DateTime? start, DateTime? at)

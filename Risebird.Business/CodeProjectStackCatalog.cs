@@ -457,7 +457,10 @@ Grant-Users 'C:\nuget'
 
         /// <summary>Image Builder templates cannot be changed after creation, so the name carries a content hash.</summary>
         public static string ImageTemplateName(CodeProjectStack stack) =>
-            $"rbcp-{stack.Code}-{Hash(string.Join("\n", WindowsInstallLines(stack)) + string.Join("\n", WindowsSeedLines(stack)) + WindowsSourceSku)}";
+            $"rbcp-{stack.Code}-{Hash(string.Join("\n", WindowsInstallLines(stack)) + string.Join("\n", WindowsSeedLines(stack)) + WindowsSourceSku + ImageRecipeVersion)}";
+
+        /// <summary>Bump when the template's fixed customizers change (e.g. the Windows Update step), so a new template is created.</summary>
+        public const string ImageRecipeVersion = "2-windows-update";
 
         private static string[] Lines(string script) =>
             script.Replace("\r\n", "\n").Split('\n').Where(l => l.Length > 0).ToArray();

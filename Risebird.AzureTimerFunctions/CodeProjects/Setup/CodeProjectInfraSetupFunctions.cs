@@ -79,6 +79,21 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
         }
 
         /// <summary>
+        /// 03:00 UTC on the 1st of each month: rebuilds the candidate images with the month's Windows
+        /// security updates (a build costs one D4s_v5 for about two hours per stack).
+        /// </summary>
+        [Function("CodeProjectImageRefresh")]
+        public async Task ImageRefresh([TimerTrigger("0 0 3 1 * *")] TimerInfo timer, CancellationToken ct)
+        {
+            try { _log.LogInformation("Code project image refresh: {Summary}", await _setup.RefreshImagesAsync(ct)); }
+            catch (Exception ex)
+            {
+                _log.LogError(ex, "Code project image refresh failed");
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        /// <summary>
         /// The container runner the web app calls for validation and grading
         /// (contract: HttpCodeProjectRunner in Risebird.CommonHelper).
         /// </summary>

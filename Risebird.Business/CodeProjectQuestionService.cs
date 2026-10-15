@@ -234,6 +234,20 @@ namespace Risebird.Business
                 await _repository.UpdateEnvironment(sessionId, questionId, CodeProjectEnvironmentState.HandedOver, message: "Connected");
                 env = await _repository.GetEnvironment(sessionId, questionId);
             }
+            if (env?.State == CodeProjectEnvironmentState.HandedOver && env.HandedOverAtUtc.HasValue && !string.IsNullOrEmpty(env.EnvironmentHandle))
+            {
+                // The provisioner locks the machine at this time even if the browser never submits.
+                // Only the first deadline sticks, so a relaunch cannot extend the slot.
+                var details = await _repository.GetCodeProjectDetails(questionId);
+                var timeLimit = details?.CodingTimeLimitInMinutes ?? CodeProjectQuestionHelper.DefaultTimeLimitMinutes;
+                try
+                {
+                    if (!await _provisioner.HandoverAsync(env.EnvironmentHandle, env.HandedOverAtUtc.Value.AddMinutes(timeLimit) + SubmitGrace, ct))
+                        await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                            new Exception($"Code project deadline not recorded for session {sessionId}, question {questionId}; the janitor's lifetime cap still applies."));
+                }
+                catch (Exception ex) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex); }
+            }
             return env;
         }
 
@@ -273,6 +287,12 @@ namespace Risebird.Business
                 if (env == null || string.IsNullOrEmpty(env.EnvironmentHandle) || env.HandedOverAtUtc == null)
                 {
                     grade = new CodeProjectGradeResult { Error = "The environment was never handed over, so there is no work to grade." };
+                    // A machine that failed or never became ready is our fault, not the candidate's. One
+                    // that was ready but never opened is the candidate's choice and is scored as such.
+                    if (env != null && (env.State == CodeProjectEnvironmentState.Failed || env.State == CodeProjectEnvironmentState.Provisioning))
+                        Exclude(grade, env.State == CodeProjectEnvironmentState.Failed
+                            ? "The candidate machine could not be started" + (string.IsNullOrEmpty(env.Message) ? "." : ": " + env.Message)
+                            : "The candidate machine was not ready in time.");
                 }
                 else
                 {
@@ -280,6 +300,7 @@ namespace Risebird.Business
                     if (snapshot == null || !snapshot.Success)
                     {
                         grade = new CodeProjectGradeResult { Error = snapshot?.Error ?? "Could not read the candidate's workspace." };
+                        Exclude(grade, "The candidate's work could not be read from the machine.");
                     }
                     else
                     {
@@ -297,17 +318,20 @@ namespace Risebird.Business
                             run = await _runner.RunAsync(RunRequest(details, workspace), ct);
                         }
                         grade = CodeProjectQuestionHelper.Grade(Deserialize<List<CodeProjectRequirement>>(details.RequirementsJson), run);
+                        if (!run.Completed) Exclude(grade, "The grading runner was unavailable: " + (run.Error ?? "no result."));
                         grade.Commits = snapshot.Commits ?? new List<CodeProjectCommit>();
                         grade.BaselineSha = snapshot.BaselineSha;
                         grade.HeadSha = snapshot.HeadSha;
                         assessment.SubmittedCode = snapshot.Diff;
                     }
+                    grade.IntegrityFlags = snapshot?.IntegrityFlags ?? new List<CodeProjectIntegrityFlag>();
                 }
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 grade = new CodeProjectGradeResult { Error = "Grading failed: " + ex.Message };
+                Exclude(grade, "Grading failed on our side.");
             }
 
             if (grade.Requirements.Count == 0)
@@ -338,6 +362,12 @@ namespace Risebird.Business
         {
             var sb = new StringBuilder();
             sb.AppendLine("Code Project Submission");
+            if (grade?.Excluded == true)
+            {
+                // Read by the AI evaluator: a platform failure must not count as a zero.
+                sb.AppendLine("NOT SCORED — environment unavailable. Exclude this question from the candidate's score; it is no reflection on the candidate.");
+                sb.AppendLine("Reason : " + grade.ExclusionReason);
+            }
             sb.AppendLine($"Requirements passed : {assessment?.RequirementsPassed ?? 0} / {assessment?.RequirementsTotal ?? 0} (correctness {grade?.CorrectnessScore ?? 0:0.#}/100)");
             foreach (var r in grade?.Requirements ?? new List<CodeProjectRequirementResult>())
                 sb.AppendLine($"- [{(r.Passed ? "PASS" : "FAIL")}] {r.Id}: {r.Text}{(r.Passed || string.IsNullOrEmpty(r.Message) ? "" : " — " + r.Message)}");
@@ -345,6 +375,12 @@ namespace Risebird.Business
                 sb.AppendLine("Note : " + grade.Error);
             if (grade?.Commits?.Count > 0)
                 sb.AppendLine($"Commits : {grade.Commits.Count}");
+            if (grade?.IntegrityFlags?.Count > 0)
+            {
+                sb.AppendLine("Session notes for a human reviewer (not proof of misconduct; do not adjust the score for these) :");
+                foreach (var f in grade.IntegrityFlags)
+                    sb.AppendLine($"- {f.Code}: {f.Detail}");
+            }
             if (!string.IsNullOrWhiteSpace(assessment?.SubmittedCode))
             {
                 var diff = assessment.SubmittedCode.Length > 12000 ? assessment.SubmittedCode.Substring(0, 12000) + "\n… (diff truncated)" : assessment.SubmittedCode;
@@ -352,6 +388,13 @@ namespace Risebird.Business
                 sb.AppendLine(diff);
             }
             return sb.ToString().TrimEnd();
+        }
+
+        /// <summary>Marks a grade as not attempted because our infrastructure failed, not the candidate.</summary>
+        private static void Exclude(CodeProjectGradeResult grade, string reason)
+        {
+            grade.Excluded = true;
+            grade.ExclusionReason = reason;
         }
 
         private async Task SaveFailure(int questionId, CodeProjectValidationReport report, string reason)

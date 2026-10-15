@@ -22,6 +22,7 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
     ///   → Compute Gallery + image definitions → candidate VM images (Azure Image Builder)
     ///   → container registry → runner images (ACR Tasks) → Container Apps environment → runner jobs
     ///   → StackImages rows → settings for both apps → deployed functions app (URL + key) → runner smoke test
+    ///   → candidate storage egress restriction (opt-in) → candidate machine smoke test
     ///
     /// Every step is re-entrant: it looks at what exists, creates only what is missing, and reports
     /// "waiting" while Azure provisions. A one-minute timer (and the Start call) advance the run; the
@@ -40,6 +41,7 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
         private const string ContainerAppsApi = "api-version=2025-07-01";
         private const string AuthorizationApi = "api-version=2022-04-01";
         private const string WebApi = "api-version=2024-04-01";
+        private const string StorageApi = "api-version=2023-05-01";
 
         private static readonly string[] Providers =
         {
@@ -59,11 +61,12 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
         private readonly IEncryptionHelper _encryption;
         private readonly IApplicationErrorLogger _logger;
         private readonly CodeProjectContainerRunner _runner;
+        private readonly CodeProjectVmProvisioner _provisioner;
         private readonly Options _o;
 
         public CodeProjectInfraSetupService(AzureArmRestClient arm, ICodeProjectSetupRepository setup, ICodeProjectSettingsRepository settingsRepository,
             ICodeProjectSettingsProvider settings, ICodeProjectBlobStore blobStore, IEncryptionHelper encryption, IApplicationErrorLogger logger,
-            CodeProjectContainerRunner runner, IConfiguration configuration)
+            CodeProjectContainerRunner runner, CodeProjectVmProvisioner provisioner, IConfiguration configuration)
         {
             _arm = arm;
             _setup = setup;
@@ -73,6 +76,7 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
             _encryption = encryption;
             _logger = logger;
             _runner = runner;
+            _provisioner = provisioner;
             _o = Options.From(configuration);
         }
 
@@ -99,6 +103,13 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
             public string CandidateSubnetPrefix { get; set; } = "10.240.0.0/20";
             public string RunnerSubnetPrefix { get; set; } = "10.240.16.0/24";
             public string BastionSubnetPrefix { get; set; } = "10.240.255.0/26";
+            /// <summary>
+            /// Limits candidate machines to the one storage account the feature uses (service endpoint
+            /// policy + regional Storage tag) instead of every Azure storage account. Off until tested.
+            /// </summary>
+            public bool RestrictCandidateStorage { get; set; }
+            /// <summary>Builds one real candidate machine end to end (about 15 minutes of one VM).</summary>
+            public bool VmSmokeTest { get; set; } = true;
 
             public static Options From(IConfiguration c)
             {
@@ -125,6 +136,8 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
                 o.CandidateSubnetPrefix = S("CandidateSubnetPrefix") ?? o.CandidateSubnetPrefix;
                 o.RunnerSubnetPrefix = S("RunnerSubnetPrefix") ?? o.RunnerSubnetPrefix;
                 o.BastionSubnetPrefix = S("BastionSubnetPrefix") ?? o.BastionSubnetPrefix;
+                if (bool.TryParse(S("RestrictCandidateStorage"), out var restrict)) o.RestrictCandidateStorage = restrict;
+                if (bool.TryParse(S("VmSmokeTest"), out var vmSmoke)) o.VmSmokeTest = vmSmoke;
                 return o;
             }
         }
@@ -183,7 +196,9 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
             new StepDef("stackImages", "StackImages rows", new[] { "images", "database" }, StackImagesAsync),
             new StepDef("settings", "Settings for the web and functions apps", new[] { "bastion", "runnerJobs", "database" }, SettingsAsync),
             new StepDef("functionsApp", "Deployed functions app URL and key", new[] { "settings" }, FunctionsAppAsync),
-            new StepDef("smokeTest", "Runner smoke test", new[] { "settings" }, SmokeTestAsync)
+            new StepDef("storageEgress", "Candidate storage egress restriction", new[] { "network", "preflight" }, StorageEgressAsync),
+            new StepDef("smokeTest", "Runner smoke test", new[] { "settings" }, SmokeTestAsync),
+            new StepDef("vmSmokeTest", "Candidate machine smoke test", new[] { "settings", "stackImages", "storageEgress" }, VmSmokeTestAsync)
         };
 
         // ---------------------------------------------------------------- run control
@@ -740,13 +755,17 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
             if (ip.Error != null) return Outcome.Fail("Bastion public IP: " + ip.Error);
             if (!ip.Ready) return Outcome.Wait("Creating Bastion public IP…");
 
-            var bastion = await EnsureAsync($"{net}/bastionHosts/{BastionName}?{NetworkApi}", () => new
+            var bastionPath = $"{net}/bastionHosts/{BastionName}?{NetworkApi}";
+            object Body() => new
             {
                 location = _o.Location,
-                sku = new { name = "Standard" },   // shareable links need Standard or higher
+                sku = new { name = "Standard" },   // shareable links and disabling copy/paste need Standard or higher
                 properties = new
                 {
                     enableShareableLink = true,
+                    // No clipboard between the candidate's own device and the machine: code written
+                    // elsewhere (or by an AI tool) cannot be pasted in. The VM's RDP policy backs this up.
+                    disableCopyPaste = true,
                     ipConfigurations = new[]
                     {
                         new
@@ -760,13 +779,21 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
                         }
                     }
                 }
-            }, ct);
+            };
+            var bastion = await EnsureAsync(bastionPath, Body, ct);
             if (bastion.Error != null) return Outcome.Fail("Bastion: " + bastion.Error);
-            if (!bastion.Ready) return Outcome.Wait("Creating Bastion (about 10 minutes)…");
+            if (!bastion.Ready) return Outcome.Wait("Creating or updating Bastion (about 10 minutes)…");
 
-            if (bastion.Resource.Body?["properties"]?["enableShareableLink"]?.Value<bool>() != true)
-                return Outcome.Fail($"{BastionName} exists without shareable links. Enable 'Shareable Link' under its Configuration, then Resume.");
-            return Outcome.Done($"{BastionName} (Standard, shareable links on).");
+            // A Bastion created earlier (or changed in the portal) is brought back to the required settings.
+            var props = bastion.Resource.Body?["properties"];
+            if (props?["enableShareableLink"]?.Value<bool>() != true || props?["disableCopyPaste"]?.Value<bool>() != true)
+            {
+                var update = await _arm.PutAsync(bastionPath, Body(), ct);
+                return update.IsSuccess
+                    ? Outcome.Wait("Turning on shareable links and turning off copy/paste on Bastion…")
+                    : Outcome.Fail("Bastion settings update: " + update.Error);
+            }
+            return Outcome.Done($"{BastionName} (Standard, shareable links on, copy/paste off).");
         }
 
         // ---------------------------------------------------------------- 9. gallery
@@ -843,7 +870,17 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
                         ["inline"] = new JArray(CodeProjectStackCatalog.WindowsSeedLines(stack)),
                         ["runElevated"] = true,
                         ["runAsSystem"] = true
-                    }
+                    },
+                    // Candidate machines never update themselves (no restart may land mid-interview), so
+                    // every build — including the monthly refresh — bakes in the latest security updates.
+                    new JObject
+                    {
+                        ["type"] = "WindowsUpdate",
+                        ["searchCriteria"] = "IsInstalled=0",
+                        ["filters"] = new JArray("exclude:$_.Title -like '*Preview*'", "include:$true"),
+                        ["updateLimit"] = 100
+                    },
+                    new JObject { ["type"] = "WindowsRestart", ["restartTimeout"] = "15m" }
                 },
                 ["distribute"] = new JArray
                 {
@@ -1250,6 +1287,214 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
             return remaining.Count == 1
                 ? Outcome.Done("Every runner job built and reported a test.")
                 : Outcome.Wait($"{stack.JobName} passed; {remaining.Count - 1} to go.");
+        }
+
+        // ---------------------------------------------------------------- 19. candidate storage egress
+
+        /// <summary>
+        /// The candidate NSG allows the Storage service tag, which is every storage account in Azure: a
+        /// candidate could upload the project to their own account, or download prepared code from it.
+        /// When enabled, a service endpoint policy limits the subnet to the feature's own account, and
+        /// the NSG rule narrows to this region's Storage tag (traffic to other regions bypasses
+        /// service endpoints, so it must be denied outright). Opt-in: the VM smoke test after it proves
+        /// that provisioning and Run Command output still work.
+        /// </summary>
+        private async Task<Outcome> StorageEgressAsync(CodeProjectSetupState s, CancellationToken ct)
+        {
+            if (!_o.RestrictCandidateStorage)
+                return Outcome.Skip("Off: candidate machines can reach any Azure storage account over HTTPS. " +
+                    "Set CodeProjects:Setup:RestrictCandidateStorage=true and click Resume to limit them to this feature's account.");
+
+            var accountName = _blobStore.AccountName;
+            JToken account = null;
+            string next = $"providers/Microsoft.Storage/storageAccounts?{StorageApi}";
+            for (var page = 0; next != null && account == null && page < 20; page++)
+            {
+                var list = await _arm.GetAsync(next, ct);
+                if (!list.IsSuccess) return Outcome.Fail("Could not list storage accounts: " + list.Error);
+                account = ((list.Body?["value"] as JArray) ?? new JArray())
+                    .FirstOrDefault(a => string.Equals(a["name"]?.ToString(), accountName, StringComparison.OrdinalIgnoreCase));
+                next = list.Body?["nextLink"]?.ToString();
+            }
+            if (account == null)
+                return Outcome.Block($"Storage account {accountName} (from the storage connection string) is not in subscription {_arm.SubscriptionId}, " +
+                    "so a service endpoint policy cannot name it. Use an account in this subscription, or turn RestrictCandidateStorage off.");
+            var accountRegion = account["location"]?.ToString()?.Replace(" ", "").ToLowerInvariant();
+            if (accountRegion != _o.Location)
+                return Outcome.Block($"Storage account {accountName} is in {accountRegion}, candidate machines in {_o.Location}. " +
+                    "Service endpoints only cover the VNet's own region; use an account in the same region, or turn RestrictCandidateStorage off.");
+
+            // The regional tag's exact name (e.g. Storage.CentralIndia) comes from the service tag list.
+            var tags = await _arm.GetAsync($"providers/Microsoft.Network/locations/{_o.Location}/serviceTags?{NetworkApi}", ct);
+            if (!tags.IsSuccess) return Outcome.Fail("Could not read service tags: " + tags.Error);
+            var storageTag = ((tags.Body?["values"] as JArray) ?? new JArray())
+                .FirstOrDefault(t => t["properties"]?["systemService"]?.ToString() == "AzureStorage"
+                    && string.Equals(t["properties"]?["region"]?.ToString(), _o.Location, StringComparison.OrdinalIgnoreCase))?["name"]?.ToString();
+            if (storageTag == null) return Outcome.Fail($"No regional Storage service tag found for {_o.Location}.");
+
+            var net = $"resourceGroups/{Rg}/providers/Microsoft.Network";
+            var policyPath = $"{net}/serviceEndpointPolicies/{Prefix}-candidate-storage";
+            var policyId = $"/subscriptions/{_arm.SubscriptionId}/{policyPath}";
+            var accountId = account["id"]?.ToString();
+            var policy = await EnsureAsync($"{policyPath}?{NetworkApi}", () => new
+            {
+                location = _o.Location,
+                properties = new
+                {
+                    serviceEndpointPolicyDefinitions = new[]
+                    {
+                        new { name = "codeprojects-storage", properties = new { service = "Microsoft.Storage", serviceResources = new[] { accountId } } }
+                    }
+                }
+            }, ct);
+            if (policy.Error != null) return Outcome.Fail("Service endpoint policy: " + policy.Error);
+            if (!policy.Ready) return Outcome.Wait("Creating service endpoint policy…");
+            var allowed = policy.Resource.Body?["properties"]?["serviceEndpointPolicyDefinitions"]?.SelectTokens("[*].properties.serviceResources[*]").Select(t => t.ToString());
+            if (allowed == null || !allowed.Contains(accountId, StringComparer.OrdinalIgnoreCase))
+                return Outcome.Block($"{Prefix}-candidate-storage exists but does not allow {accountName}. Delete the policy and click Resume.");
+
+            var candidateNsg = $"{net}/networkSecurityGroups/{Prefix}-candidate-nsg";
+            var rule = await _arm.GetAsync($"{candidateNsg}/securityRules/Allow-Storage-Out?{NetworkApi}", ct);
+            if (rule.Body?["properties"]?["destinationAddressPrefix"]?.ToString() != storageTag)
+            {
+                var put = await _arm.PutAsync($"{candidateNsg}/securityRules/Allow-Storage-Out?{NetworkApi}",
+                    Rule("Allow-Storage-Out", 100, "Outbound", "Allow", "Tcp", "*", storageTag, "443"), ct);
+                return put.IsSuccess ? Outcome.Wait($"Narrowing the candidate NSG to {storageTag}…") : Outcome.Fail("Candidate NSG rule: " + put.Error);
+            }
+
+            var subnetPath = $"{VnetPath}/subnets/candidates?{NetworkApi}";
+            var subnet = await _arm.GetAsync(subnetPath, ct);
+            if (!subnet.IsSuccess) return Outcome.Fail("Candidate subnet: " + subnet.Error);
+            var props = subnet.Body?["properties"];
+            if (props?["provisioningState"]?.ToString() is string ps && ps != "Succeeded") return Outcome.Wait("Updating candidate subnet…");
+            var hasEndpoint = (props?["serviceEndpoints"] as JArray)?.Any(e => e["service"]?.ToString() == "Microsoft.Storage") == true;
+            var hasPolicy = (props?["serviceEndpointPolicies"] as JArray)?.Any(p => string.Equals(p["id"]?.ToString(), policyId, StringComparison.OrdinalIgnoreCase)) == true;
+            if (!hasEndpoint || !hasPolicy)
+            {
+                // A subnet PUT replaces the subnet, so everything NetworkAsync set is restated.
+                var put = await _arm.PutAsync(subnetPath, new
+                {
+                    properties = new
+                    {
+                        addressPrefix = props?["addressPrefix"]?.ToString() ?? _o.CandidateSubnetPrefix,
+                        networkSecurityGroup = new { id = $"/subscriptions/{_arm.SubscriptionId}/{candidateNsg}" },
+                        natGateway = new { id = $"/subscriptions/{_arm.SubscriptionId}/{net}/natGateways/{Prefix}-nat" },
+                        defaultOutboundAccess = false,
+                        serviceEndpoints = new[] { new { service = "Microsoft.Storage", locations = new[] { _o.Location } } },
+                        serviceEndpointPolicies = new[] { new { id = policyId } }
+                    }
+                }, ct);
+                return put.IsSuccess ? Outcome.Wait("Attaching the storage policy to the candidate subnet…") : Outcome.Fail("Candidate subnet update: " + put.Error);
+            }
+
+            return Outcome.Done($"Candidate machines reach only {accountName} ({storageTag}, service endpoint policy {Prefix}-candidate-storage).");
+        }
+
+        // ---------------------------------------------------------------- 20. candidate machine smoke test
+
+        /// <summary>
+        /// Provisions one real candidate machine from the first stack's image through the same code the
+        /// interview uses (NIC, VM, setup script, Bastion link), reads the workspace back and deletes it.
+        /// Catches image, network, Bastion and storage-restriction problems before a candidate does.
+        /// </summary>
+        private async Task<Outcome> VmSmokeTestAsync(CodeProjectSetupState s, CancellationToken ct)
+        {
+            if (!_o.VmSmokeTest) return Outcome.Skip("Off (CodeProjects:Setup:VmSmokeTest=false).");
+            var stack = _o.Stacks.FirstOrDefault();
+            if (stack == null) return Outcome.Skip("No stacks configured.");
+            var smokeKey = $"{CodeProjectStackCatalog.ImageTemplateName(stack)}|{_o.RestrictCandidateStorage}";
+            if (Get(s, "vmSmoke.passed") == smokeKey) return Outcome.Done("A candidate machine was built, handed a link and read back.");
+
+            var handle = Get(s, "vmSmoke.handle");
+            if (handle == null)
+            {
+                using var zip = new MemoryStream();
+                using (var archive = new System.IO.Compression.ZipArchive(zip, System.IO.Compression.ZipArchiveMode.Create, leaveOpen: true))
+                using (var writer = new StreamWriter(archive.CreateEntry("README.md").Open()))
+                    await writer.WriteAsync("Risebird setup smoke test");
+                var blobName = $"setup-smoke/{Guid.NewGuid():N}.zip";
+                await _blobStore.UploadAsync(_blobStore.ProjectContainer, blobName, zip.ToArray(), "application/zip", ct);
+
+                var result = await _provisioner.ProvisionAsync(new CodeProjectProvisionRequest
+                {
+                    SessionId = "setup-smoke-" + DateTime.UtcNow.ToString("yyyyMMddHHmmss"),
+                    QuestionId = 0,
+                    StackImageCode = stack.Code,
+                    GalleryImageId = ImageDefinitionId(stack),
+                    OsType = "Windows",
+                    ProjectZipUrl = _blobStore.CreateReadUrl(_blobStore.ProjectContainer, blobName, TimeSpan.FromMinutes(60))
+                }, ct);
+                // Settings stored earlier in this tick are picked up by the next one.
+                if (!result.Accepted) return Outcome.Wait("Provisioner not ready: " + result.Error);
+                s.Data["vmSmoke.handle"] = result.Handle;
+                s.Data["vmSmoke.startedUtc"] = DateTime.UtcNow.ToString("o");
+                s.Data["vmSmoke.blob"] = blobName;
+                return Outcome.Wait($"Building a {stack.Code} candidate machine (about 10–15 minutes)…");
+            }
+
+            var status = await _provisioner.GetStatusAsync(handle, ct);
+            var started = DateTime.TryParse(Get(s, "vmSmoke.startedUtc"), null, System.Globalization.DateTimeStyles.RoundtripKind, out var t) ? t : DateTime.UtcNow;
+            string failure = null;
+            if (status.State == CodeProjectEnvironmentState.Ready)
+            {
+                var snapshot = await _provisioner.CollectAsync(handle, ct);
+                if (string.IsNullOrEmpty(status.ConnectUrl)) failure = "the machine became ready without a Bastion link";
+                else if (!snapshot.Success) failure = "reading the workspace failed: " + snapshot.Error;
+                else if (snapshot.Files.All(f => f.Path != "README.md")) failure = "the workspace did not contain the project files";
+            }
+            else if (status.State == CodeProjectEnvironmentState.Failed) failure = status.Message;
+            else if (DateTime.UtcNow - started > TimeSpan.FromMinutes(35)) failure = "the machine was not ready after 35 minutes (last: " + status.Message + ")";
+            else return Outcome.Wait($"Candidate machine: {status.Message}");
+
+            await _provisioner.ReleaseAsync(handle, ct);
+            if (Get(s, "vmSmoke.blob") is string blob) await _blobStore.DeleteAsync(_blobStore.ProjectContainer, blob, ct);
+            s.Data.Remove("vmSmoke.handle");
+            s.Data.Remove("vmSmoke.blob");
+            if (failure == null)
+            {
+                s.Data["vmSmoke.passed"] = smokeKey;
+                return Outcome.Done($"{stack.Code} machine built in {(int)(DateTime.UtcNow - started).TotalMinutes} min, Bastion link issued, workspace read back, machine deleted.");
+            }
+
+            var attempts = int.TryParse(Get(s, "vmSmoke.attempts"), out var a) ? a + 1 : 1;
+            s.Data["vmSmoke.attempts"] = attempts.ToString();
+            var hint = _o.RestrictCandidateStorage ? " If this started after turning on RestrictCandidateStorage, turn it off and report it." : "";
+            return attempts >= 2 ? Outcome.Fail($"Candidate machine smoke test: {failure}.{hint}") : Outcome.Wait($"Smoke test failed ({failure}); retrying once…");
+        }
+
+        // ---------------------------------------------------------------- monthly image refresh
+
+        /// <summary>
+        /// Rebuilds every stack image from the latest Windows release plus all security updates, and
+        /// keeps the two previous gallery versions next to the new one (new machines take the latest;
+        /// the others are fallbacks). Candidate machines never patch themselves, so this keeps them patched.
+        /// </summary>
+        public async Task<string> RefreshImagesAsync(CancellationToken ct)
+        {
+            var lines = new List<string>();
+            foreach (var stack in _o.Stacks)
+            {
+                var templatePath = $"resourceGroups/{ImgRg}/providers/Microsoft.VirtualMachineImages/imageTemplates/{CodeProjectStackCatalog.ImageTemplateName(stack)}";
+                var template = await _arm.GetAsync($"{templatePath}?{ImageBuilderApi}", ct);
+                if (template.IsNotFound) { lines.Add($"{stack.Code}: no template (run setup)"); continue; }
+                if (!template.IsSuccess) { lines.Add($"{stack.Code}: {template.Error}"); continue; }
+                if (template.Body?["properties"]?["lastRunStatus"]?["runState"]?.ToString() == "Running") { lines.Add($"{stack.Code}: already building"); continue; }
+
+                var versions = await _arm.GetAsync($"{GalleryPath}/images/{stack.Code}/versions?{GalleryApi}", ct);
+                var old = ((versions.Body?["value"] as JArray) ?? new JArray())
+                    .OrderByDescending(v => v["properties"]?["publishingProfile"]?["publishedDate"]?.Value<DateTime?>() ?? DateTime.MinValue)
+                    .Skip(2)
+                    .Select(v => v["name"]?.ToString())
+                    .Where(n => n != null)
+                    .ToList();
+                foreach (var name in old)
+                    await _arm.DeleteAsync($"{GalleryPath}/images/{stack.Code}/versions/{name}?{GalleryApi}", ct);
+
+                var run = await _arm.PostAsync($"{templatePath}/run?{ImageBuilderApi}", null, ct);
+                lines.Add($"{stack.Code}: {(run.IsSuccess || run.ErrorCode == "Conflict" ? "rebuild started" : "could not start: " + run.Error)}" +
+                    (old.Count > 0 ? $", pruned {string.Join(", ", old)}" : ""));
+            }
+            return string.Join(" · ", lines);
         }
     }
 }
