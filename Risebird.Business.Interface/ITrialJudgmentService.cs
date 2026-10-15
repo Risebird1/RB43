@@ -23,5 +23,8 @@ namespace Risebird.Business.Interface
         Task<TrialFlagBackfillResultVm> BackfillMissingTrialFlagsAsync(
             int? interviewId = null,
             CancellationToken cancellationToken = default);
+
+        /// <summary>Records who ran a backfill and its result (QC Activity counts it under Trial). Never throws.</summary>
+        Task RecordBackfillRunAsync(string executedBy, int? interviewId, TrialFlagBackfillResultVm result);
     }
 }

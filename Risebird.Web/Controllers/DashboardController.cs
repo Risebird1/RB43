@@ -5405,6 +5405,8 @@ NEVER:
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
                 // int interviewerProfileid = InterviewerProfileId;
+                if (UserId <= 0)
+                    return Json("Failed to mark whether undo suspicious interviewer.");
                 var data = await _dashboardService.UndoSuspiciousInterviewerService(UserId, emailId);
                 if (data == true)
                 {
@@ -9263,6 +9265,9 @@ NEVER:
                     return Json(new { ok = false, message = "Not authorized." });
 
                 var result = await _trialJudgmentService.BackfillMissingTrialFlagsAsync(interviewId);
+                // QC Activity: record who ran the backfill (TrialFlagBackfillRun -> metric TrialBackfill).
+                var runBy = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? profileName;
+                await _trialJudgmentService.RecordBackfillRunAsync(runBy, interviewId, result);
                 var details = result.Messages?.Take(30).ToList() ?? new List<string>();
                 var summary = result.Failed > 0 && result.Inserted == 0 && result.Skipped == 0
                     ? (details.FirstOrDefault() ?? $"Backfill failed ({result.Failed} error(s)).")

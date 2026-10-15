@@ -40,5 +40,15 @@ namespace Risebird.Business.Interface
         /// (without querying) and when the edit does not exist; logs and rethrows on failure. Access checks are the caller's.
         /// </summary>
         Task<ReportEditVM> GetReportEditAsync(int id);
+
+        /// <summary>
+        /// Flags panel (bursts, reviewed with no call, reversed by another QC, short calls, kept despite a P0,
+        /// actions without evidence). <paramref name="actorEmail"/> null = everyone; when
+        /// <paramref name="restrictToActorEmail"/> is set only that person's flags are returned.
+        /// </summary>
+        Task<QCActivityFlagsResultVM> GetFlagsAsync(string actorEmail, DateTime? fromIst, DateTime? toIst, string restrictToActorEmail = null);
+
+        /// <summary>High-Risk interviewers in the window, how many any QC person touched, and the untouched list (top 50).</summary>
+        Task<QCActivityCoverageVM> GetCoverageAsync(DateTime? fromIst, DateTime? toIst);
     }
 }

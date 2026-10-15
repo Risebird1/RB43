@@ -32,7 +32,9 @@ CREATE OR ALTER PROCEDURE [dbo].[usp_GetInterviewerRiskOverview]
     @MinRiskRatio      DECIMAL(5,2) = 0.25,  -- NULL = show all (no ratio/P0 default filter)
     @PendingReviewOnly BIT = 0,
     @Offset            INT = 0,
-    @PageSize          INT = 25
+    @PageSize          INT = 25,
+    @IdsOnly           BIT = 0   -- 1: one result set with every listed interviewer (no paging, no extra stats).
+                                 -- Used by usp_QCActivity_HighRisk so QC Activity coverage uses this exact list.
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -361,6 +363,33 @@ BEGIN
           );
 
     DECLARE @TotalRows INT = (SELECT COUNT(1) FROM #Filtered);
+
+    IF @IdsOnly = 1
+    BEGIN
+        SELECT
+            f.InterviewerId,
+            MAX(ISNULL(ip.NickName, '')) AS CodedId,
+            MAX(LTRIM(RTRIM(CONCAT(ISNULL(ul.FirstName, ''), N' ', ISNULL(ul.LastName, ''))))) AS InterviewerName,
+            MAX(ISNULL(ul.EmailId, '')) AS InterviewerEmail,
+            MAX(f.OverallRiskRatio) AS OverallRiskRatio,
+            MAX(f.WorstSeverity) AS WorstSeverity,
+            MAX(f.PriorityTier) AS PriorityTier,
+            MAX(f.TotalCompleted) AS TotalCompleted,
+            MAX(f.TotalBad) AS TotalBad
+        FROM #Filtered f
+        INNER JOIN dbo.UserList ul ON ul.id = f.InterviewerId
+        LEFT JOIN dbo.InterviewerProfile ip ON ip.UserId = f.InterviewerId
+        GROUP BY f.InterviewerId;
+
+        DROP TABLE IF EXISTS #Filtered;
+        DROP TABLE IF EXISTS #CoveringBackfill;
+        DROP TABLE IF EXISTS #ChannelReview;
+        DROP TABLE IF EXISTS #Mapped;
+        DROP TABLE IF EXISTS #Completed;
+        DROP TABLE IF EXISTS #ActiveTi;
+        DROP TABLE IF EXISTS #ScopedIrfs;
+        RETURN;
+    END
 
     -- Page of rows (same joins and sort as before, so paging is unchanged). The extra
     -- profile / activity / lifetime / AI stats below are computed for these rows only.

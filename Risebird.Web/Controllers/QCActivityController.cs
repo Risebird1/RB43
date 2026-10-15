@@ -122,6 +122,36 @@ namespace Risebird.Web.Controllers
                 restrictToActorEmail: isManager ? null : email), d => d.ErrorDetail = null);
         }
 
+        // GET: /QCActivity/Flags?actor=<email>&from=yyyy-MM-dd&to=yyyy-MM-dd
+        // Flags panel (bursts, reviewed with no call, reversed by another QC, short calls, kept despite a P0,
+        // actions without evidence). Managers: one person, or everyone when actor is empty. A Quality
+        // Controller only ever gets their own flags.
+        [HttpGet]
+        public async Task<IActionResult> Flags(string actor = null, DateTime? from = null, DateTime? to = null)
+        {
+            var (email, profileName) = GetSessionUser();
+            if (email == null || profileName == null)
+                return Unauthorized();
+
+            var isManager = IsManagerProfile(profileName);
+            if (!isManager && !IsQualityControllerProfile(profileName))
+                return StatusCode(StatusCodes.Status403Forbidden);
+
+            return await JsonOrErrorAsync(() => _qcActivityDashboardService.GetFlagsAsync(
+                actor, from, to,
+                restrictToActorEmail: isManager ? null : email), d => d.ErrorDetail = null);
+        }
+
+        // GET: /QCActivity/Coverage?from=yyyy-MM-dd&to=yyyy-MM-dd
+        // High-Risk interviewers in the window that any QC person called, coached or actioned, and the untouched list.
+        [HttpGet]
+        public async Task<IActionResult> Coverage(DateTime? from = null, DateTime? to = null)
+        {
+            var denied = DenyUnlessAllowed(out _);
+            if (denied != null) return denied;
+            return await JsonOrErrorAsync(() => _qcActivityDashboardService.GetCoverageAsync(from, to), d => d.ErrorDetail = null);
+        }
+
         // GET: /QCActivity/ReportEdit?id=<ReportEditLog.Id>
         // Full text before and after one report edit ("View change"). Managers can open any edit; a Quality
         // Controller only their own (EditedBy = session email). Anything else answers "Edit not found".

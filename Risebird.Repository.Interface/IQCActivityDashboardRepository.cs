@@ -33,5 +33,15 @@ namespace Risebird.Repository.Interface
 
         /// <summary>usp_GetReportEdit: one ReportEditLog row with the full text before and after; null when not found.</summary>
         Task<ReportEditVM> GetReportEditAsync(int id);
+
+        /// <summary>usp_GetQCActivityFlags: flags (one row per flag and person), the rows behind them, and the thresholds in force.</summary>
+        Task<(IReadOnlyList<QCActivityFlagVM> Flags, IReadOnlyList<QCActivityFlagItemVM> Items, IReadOnlyList<QCActivitySettingRowVM> Settings)> GetFlagsAsync(
+            DateTime fromIst, DateTime toIst, string actorEmail = null);
+
+        /// <summary>usp_GetQCActivityCoverage: High-Risk interviewers in the window, how many were touched, and the untouched list.</summary>
+        Task<QCActivityCoverageVM> GetCoverageAsync(DateTime fromIst, DateTime toIst);
+
+        /// <summary>dbo.QCActivitySetting rows (empty when the table is not deployed).</summary>
+        Task<IReadOnlyList<QCActivitySettingRowVM>> GetSettingsAsync();
     }
 }

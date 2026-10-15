@@ -1649,7 +1649,7 @@
             setTimeout(function () { $t.removeClass('is-show'); }, 6000);
         };
         window.SaveSuspiciousInterViewer = function () {
-            var comment = ($('#Comment').val() || '').trim();
+            var comment = ($('#SuspiciousTypeModal #suspiciousComment').val() || '').trim();
             var emailId = $('#hdnInterviewerEmail').val();
             if (!comment) {
                 showToast('Please enter a comment.', false);
