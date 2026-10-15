@@ -60,6 +60,8 @@ namespace Risebird.Entities.ViewModel
         public int Reactivated { get; set; }
         public int PaymentHolds { get; set; }
         public int PaymentHoldsReleased { get; set; }
+        /// <summary>Decisions on interviewers' deduction review requests (InterviewerActionLog DeductionReview).</summary>
+        public int DeductionReviews { get; set; }
 
         public int TotalActions { get; set; }
         public DateTime? LastActionAtIst { get; set; }
@@ -81,6 +83,8 @@ namespace Risebird.Entities.ViewModel
         public int PendingTrialFlags { get; set; }
         public int PendingAuditInterviewers { get; set; }
         public int TrmUnderReview { get; set; }
+        /// <summary>Deduction review requests waiting for a QC decision.</summary>
+        public int PendingDeductionReviews { get; set; }
     }
 
     /// <summary>Totals for the tiles, computed from the listed rows.</summary>
@@ -100,6 +104,7 @@ namespace Risebird.Entities.ViewModel
         public int ReportsEdited { get; set; }
         public int StatusChanges { get; set; }
         public int StatusUndos { get; set; }
+        public int DeductionReviews { get; set; }
         public int UsersListed { get; set; }
         public int UsersWithNoActivity { get; set; }
 
@@ -111,6 +116,7 @@ namespace Risebird.Entities.ViewModel
                 ReportsEdited = rows.Sum(r => r.ReportsEdited),
                 StatusChanges = rows.Sum(r => r.StatusChanges),
                 StatusUndos = rows.Sum(r => r.StatusUndos),
+                DeductionReviews = rows.Sum(r => r.DeductionReviews),
                 ReportsReviewed = rows.Sum(r => r.ReportsReviewed),
                 PenaltiesApplied = rows.Sum(r => r.PenaltiesApplied),
                 TrialKept = rows.Sum(r => r.TrialKept),
@@ -243,6 +249,7 @@ namespace Risebird.Entities.ViewModel
         public const string Reactivated = "Reactivated";
         public const string PaymentHold = "PaymentHold";
         public const string PaymentHoldReleased = "PaymentHoldReleased";
+        public const string DeductionReview = "DeductionReview";
         /// <summary>Group keys: an action together with its undo (StatusActions = all ten).</summary>
         public const string StatusActions = "StatusActions";
         public const string SuspiciousAll = "SuspiciousAll";
@@ -288,6 +295,7 @@ namespace Risebird.Entities.ViewModel
                 [Reactivated] = "Interviewers made active",
                 [PaymentHold] = "Payments put on hold",
                 [PaymentHoldReleased] = "Payment holds released",
+                [DeductionReview] = "Deduction review decisions",
                 [StatusActions] = "Interviewer status changes",
                 [SuspiciousAll] = "Suspicious: marked and undone",
                 [BlockedAll] = "Blocked and unblocked",

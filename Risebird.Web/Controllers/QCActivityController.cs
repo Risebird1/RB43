@@ -263,6 +263,55 @@ namespace Risebird.Web.Controllers
             return Json(await _interviewerCoachingService.LogSessionAsync(request ?? new LogCoachingSessionRequestVM(), coachEmail));
         }
 
+        // ---------------- Deduction review requests (My Quality phase 2) ----------------
+
+        // GET: /QCActivity/ReviewRequests — open requests (oldest first), recent decisions, AI accuracy by check.
+        public async Task<IActionResult> ReviewRequests([FromServices] IDeductionReviewService deductionReviewService)
+        {
+            try
+            {
+                var (email, profileName) = GetSessionUser();
+                if (email == null || profileName == null || !CanOpen(profileName))
+                    return RedirectToAction("SignOut", "Session");
+
+                ViewBag.Profile = profileName;
+                ViewBag.ProfileName = profileName;
+                ViewBag.Email = email;
+                var vm = await deductionReviewService.GetQueueAsync(IsManagerProfile(profileName));
+                return View(vm);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        // POST: /QCActivity/DecideReviewRequest  (form fields, anti-forgery header) — Stands / Reduce / Refund, final.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DecideReviewRequest(DeductionReviewDecisionInputVM input,
+            [FromServices] IDeductionReviewService deductionReviewService)
+        {
+            var denied = DenyUnlessAllowed(out var qcEmail);
+            if (denied != null) return denied;
+            return Json(await deductionReviewService.DecideAsync(qcEmail, input ?? new DeductionReviewDecisionInputVM()));
+        }
+
+        // POST: /QCActivity/SetReviewCheckPolicy  (managers only) — take an AI check out of auto-approval or put it back.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SetReviewCheckPolicy(string aiCheck, bool exclude,
+            [FromServices] IDeductionReviewService deductionReviewService)
+        {
+            var (email, profileName) = GetSessionUser();
+            if (email == null || profileName == null)
+                return Unauthorized();
+            if (!IsManagerProfile(profileName))
+                return StatusCode(StatusCodes.Status403Forbidden);
+            return Json(await deductionReviewService.SetCheckPolicyAsync(aiCheck, exclude, email));
+        }
+
         /// <summary>
         /// Runs a page-data load and always answers with JSON the page understands: the result, or an error object
         /// (never a bare 500). The underlying exception message is only included when running in Development.

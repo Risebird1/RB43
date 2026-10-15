@@ -146,6 +146,7 @@ BEGIN
         SUM(CASE WHEN r.Metric = 'Reactivated' THEN 1 ELSE 0 END)                            AS Reactivated,
         SUM(CASE WHEN r.Metric = 'PaymentHold' THEN 1 ELSE 0 END)                            AS PaymentHolds,
         SUM(CASE WHEN r.Metric = 'PaymentHoldReleased' THEN 1 ELSE 0 END)                    AS PaymentHoldsReleased,
+        SUM(CASE WHEN r.Metric = 'DeductionReview' THEN 1 ELSE 0 END)                        AS DeductionReviews,
 
         COUNT(r.Metric)                                                                      AS TotalActions,
         MAX(r.ActionAtIst)                                                                   AS LastActionAtIst
@@ -178,10 +179,17 @@ BEGIN
     DECLARE @TrmUnderReview INT = (
         SELECT COUNT(DISTINCT InterviewerId) FROM dbo.TransInterviewerRedMarker WHERE RedMarkerStatus = 1);
 
+    DECLARE @PendingDeductionReviews INT = 0;
+    IF OBJECT_ID(N'dbo.DeductionReviewRequest', N'U') IS NOT NULL
+        EXEC sp_executesql
+            N'SELECT @n = COUNT(*) FROM dbo.DeductionReviewRequest WHERE Status = ''Open''',
+            N'@n INT OUTPUT', @n = @PendingDeductionReviews OUTPUT;
+
     SELECT
         ISNULL(@PendingReports, 0)           AS PendingReports,
         ISNULL(@PendingTrialFlags, 0)        AS PendingTrialFlags,
         ISNULL(@PendingAuditInterviewers, 0) AS PendingAuditInterviewers,
-        ISNULL(@TrmUnderReview, 0)           AS TrmUnderReview;
+        ISNULL(@TrmUnderReview, 0)           AS TrmUnderReview,
+        ISNULL(@PendingDeductionReviews, 0)  AS PendingDeductionReviews;
 END
 GO

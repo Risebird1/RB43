@@ -9581,7 +9581,8 @@ NEVER:
             bool showAll = false,
             bool pendingReviewOnly = false,
             int offset = 0,
-            int pageSize = 25)
+            int pageSize = 25,
+            [FromServices] DeductionReviewSettings deductionReviewSettings = null)
         {
             try
             {
@@ -9599,6 +9600,10 @@ NEVER:
 
                 var page = await _autoQcBackfillService.GetInterviewerRiskOverviewAsync(
                     fromIst, toIst, ownerEmail, minRatio, pendingReviewOnly, offset, pageSize);
+                // Deduction review: upheld rate per AI check for the header (labels + "consider taking out" flag).
+                if (page.Summary?.ReviewChecks != null)
+                    page.Summary.ReviewChecks = Risebird.Business.DeductionReviewService
+                        .BuildCheckStats(page.Summary.ReviewChecks, deductionReviewSettings).ToList();
 
                 return Json(new
                 {
@@ -9733,7 +9738,18 @@ NEVER:
                 sheet1.Cells[1, 20].Value = "P5";
                 sheet1.Cells[1, 21].Value = "WindowFromIst";
                 sheet1.Cells[1, 22].Value = "WindowToIst";
-                sheet1.Cells["A1:V1"].Style.Font.Bold = true;
+                // AI penalties applied automatically (window), profile, lifetime (usp_GetInterviewerRiskOverview).
+                var extraHeaders = new[]
+                {
+                    "AiPenalties", "AiAutoApproved", "AiCheckedByQc", "AiAvgPct", "AiAmount",
+                    "Resume", "Company", "Acknowledgement", "VideoKyc", "PaymentOnHold", "PortalAccess", "ActiveSuspicious",
+                    "LifetimeInterviews", "LifetimeCompleted", "LifetimeSelected", "LifetimeRejected",
+                    "InterviewerNoShows", "CandidateNoShows", "RedoRequests", "AiTranscriptFlagged",
+                    "LateJoins", "Penalties", "ReliabilityScore"
+                };
+                for (var h = 0; h < extraHeaders.Length; h++)
+                    sheet1.Cells[1, 23 + h].Value = extraHeaders[h];
+                sheet1.Cells[1, 1, 1, 22 + extraHeaders.Length].Style.Font.Bold = true;
 
                 var r = 2;
                 foreach (var item in overviewRows)
@@ -9760,6 +9776,29 @@ NEVER:
                     sheet1.Cells[r, 20].Value = item.P5Count;
                     sheet1.Cells[r, 21].Value = fromIst.ToString("yyyy-MM-dd");
                     sheet1.Cells[r, 22].Value = toIst.ToString("yyyy-MM-dd");
+                    sheet1.Cells[r, 23].Value = item.AiPenalised;
+                    sheet1.Cells[r, 24].Value = item.AiAutoApproved;
+                    sheet1.Cells[r, 25].Value = item.AiHumanReviewed;
+                    sheet1.Cells[r, 26].Value = item.AiAvgPct;
+                    sheet1.Cells[r, 27].Value = item.AiAmount;
+                    sheet1.Cells[r, 28].Value = item.ResumeLink;
+                    sheet1.Cells[r, 29].Value = item.CompanyName;
+                    sheet1.Cells[r, 30].Value = item.AcknowledgementStatus;
+                    sheet1.Cells[r, 31].Value = item.IsVideoApproved ? "Verified" : (item.HasVideoKyc ? "Pending" : "Missing");
+                    sheet1.Cells[r, 32].Value = item.IsHoldPayment ? "Yes" : "No";
+                    sheet1.Cells[r, 33].Value = item.HasPortalAccess ? "Yes" : "No";
+                    sheet1.Cells[r, 34].Value = item.ActiveSuspicious ? "Yes" : "No";
+                    sheet1.Cells[r, 35].Value = item.LifetimeInterviews;
+                    sheet1.Cells[r, 36].Value = item.LifetimeCompleted;
+                    sheet1.Cells[r, 37].Value = item.LifetimeSelected;
+                    sheet1.Cells[r, 38].Value = item.LifetimeRejected;
+                    sheet1.Cells[r, 39].Value = item.InterviewerNoShows;
+                    sheet1.Cells[r, 40].Value = item.CandidateNoShows;
+                    sheet1.Cells[r, 41].Value = item.RedoRequests;
+                    sheet1.Cells[r, 42].Value = item.AiTranscriptFlagged;
+                    sheet1.Cells[r, 43].Value = item.LateJoins;
+                    sheet1.Cells[r, 44].Value = item.Penalties;
+                    sheet1.Cells[r, 45].Value = item.ReliabilityScore;
                     r++;
                 }
 

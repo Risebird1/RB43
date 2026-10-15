@@ -8,6 +8,11 @@ for the same interviewer + IRF + window (same thresholds + mapping rules).
 
 Thresholds MUST stay in sync with usp_GetIrfAuditInterviewerRiskBreakdown and
 DmIvAutoQcAuditConstants.IrfAudit* in C#.
+
+Extra per-channel columns (window): Selected / Rejected, ReportsPenalised and
+AvgPenaltyPct (OutcomeAgg), AiVerdict (TransInterviewer.AIVerdict), and AI
+penalties applied automatically (AiAgg over #AiPen, same definition as
+usp_GetInterviewerRiskOverview).
 ================================================================================
 */
 CREATE OR ALTER PROCEDURE [dbo].[usp_GetInterviewerRiskOverviewChannels]
@@ -46,7 +51,12 @@ BEGIN
             CAST(NULL AS INT) AS WorstSeverityInterviewId,
             CAST(NULL AS DATETIME) AS LastBackfillAtUtc,
             CAST(NULL AS DATE) AS LastBackfillFromIst, CAST(NULL AS DATE) AS LastBackfillToIst,
-            CAST(1 AS BIT) AS CoverageIncomplete
+            CAST(1 AS BIT) AS CoverageIncomplete,
+            CAST(0 AS INT) AS Selected, CAST(0 AS INT) AS Rejected,
+            CAST(0 AS INT) AS ReportsPenalised, CAST(NULL AS DECIMAL(10,2)) AS AvgPenaltyPct,
+            CAST(NULL AS VARCHAR(20)) AS AiVerdict,
+            CAST(0 AS INT) AS AiPenalised, CAST(0 AS INT) AS AiAutoApproved, CAST(0 AS INT) AS AiHumanReviewed,
+            CAST(NULL AS DECIMAL(10,2)) AS AiAvgPct, CAST(NULL AS DECIMAL(18,2)) AS AiAmount
         WHERE 1 = 0;
         RETURN;
     END
@@ -181,6 +191,47 @@ BEGIN
     WHERE ip.UserId IS NOT NULL
       AND NOT EXISTS (SELECT 1 FROM #Mapped x WHERE x.TransInterviewerId = a.TransInterviewerId AND x.InterviewId = c.InterviewId);
 
+    -- AI penalties applied automatically — same definition as usp_GetInterviewerRiskOverview (#AiPen),
+    -- here over this interviewer's mapped interviews only.
+    CREATE TABLE #AiPen (
+        InterviewId     INT NOT NULL PRIMARY KEY,
+        DeductionPct    INT NOT NULL,
+        IsApproved      BIT NOT NULL,
+        IsHumanReviewed BIT NOT NULL,
+        Amount          DECIMAL(18,2) NULL
+    );
+
+    INSERT INTO #AiPen (InterviewId, DeductionPct, IsApproved, IsHumanReviewed, Amount)
+    SELECT
+        mi.InterviewId,
+        ps.MaxDeduction,
+        ps.AnyApproved,
+        CAST(CASE WHEN ps.HumanModified = 1 OR EXISTS (
+                SELECT 1 FROM dbo.PaymentSLADetailsHistory h
+                WHERE h.Interviewid = mi.InterviewId
+                  AND NULLIF(LTRIM(RTRIM(h.CreatedBy)), '') IS NOT NULL
+                  AND LTRIM(RTRIM(h.CreatedBy)) NOT IN ('AISystem', 'System'))
+             THEN 1 ELSE 0 END AS BIT),
+        w.Amount
+    FROM (SELECT DISTINCT InterviewId FROM #Mapped) mi
+    CROSS APPLY (
+        SELECT
+            MAX(ISNULL(p.PaymentDeduction, 0)) AS MaxDeduction,
+            CAST(MAX(CASE WHEN ISNULL(p.IsApproved, 0) = 1 THEN 1 ELSE 0 END) AS BIT) AS AnyApproved,
+            MAX(CASE WHEN NULLIF(LTRIM(RTRIM(p.ModifiedBy)), '') IS NOT NULL
+                      AND LTRIM(RTRIM(p.ModifiedBy)) NOT IN ('AISystem', 'System') THEN 1 ELSE 0 END) AS HumanModified
+        FROM dbo.PaymentSLADetails p
+        WHERE p.Interviewid = mi.InterviewId
+          AND LTRIM(RTRIM(ISNULL(p.CreatedBy, ''))) = 'AISystem'
+        HAVING MAX(ISNULL(p.PaymentDeduction, 0)) > 0
+    ) ps
+    OUTER APPLY (
+        SELECT TOP 1 CAST(ISNULL(mw.Points, 0) AS DECIMAL(18,2)) AS Amount
+        FROM dbo.MoneyProtectionWallet mw
+        WHERE mw.Interviewid = mi.InterviewId
+        ORDER BY mw.id DESC
+    ) w;
+
     ;WITH InterviewAgg AS (
         SELECT
             m.TransInterviewerId,
@@ -251,6 +302,46 @@ BEGIN
             WHERE @HasRiskBackfillTable = 1
         ) x
         WHERE rn = 1
+    ),
+    -- Window outcomes over the same mapped interviews: Sel / Rej, and reports with a Payment SLA
+    -- deduction (max deduction per interview).
+    InterviewOutcome AS (
+        SELECT
+            m.TransInterviewerId,
+            m.InterviewId,
+            MAX(CASE WHEN ic.InterviewStatus IN (2, 4) THEN 1 ELSE 0 END) AS IsSelected,
+            MAX(CASE WHEN ic.InterviewStatus IN (1, 3, 5) THEN 1 ELSE 0 END) AS IsRejected,
+            pd.MaxDeduction
+        FROM #Mapped m
+        LEFT JOIN dbo.InterviewComments ic ON ic.InterviewId = m.InterviewId
+        OUTER APPLY (
+            SELECT MAX(ISNULL(p.PaymentDeduction, 0)) AS MaxDeduction
+            FROM dbo.PaymentSLADetails p
+            WHERE p.Interviewid = m.InterviewId
+        ) pd
+        GROUP BY m.TransInterviewerId, m.InterviewId, pd.MaxDeduction
+    ),
+    OutcomeAgg AS (
+        SELECT
+            o.TransInterviewerId,
+            SUM(o.IsSelected) AS Selected,
+            SUM(CASE WHEN o.IsSelected = 0 AND o.IsRejected = 1 THEN 1 ELSE 0 END) AS Rejected,
+            SUM(CASE WHEN ISNULL(o.MaxDeduction, 0) > 0 THEN 1 ELSE 0 END) AS ReportsPenalised,
+            CAST(AVG(CASE WHEN ISNULL(o.MaxDeduction, 0) > 0 THEN CAST(o.MaxDeduction AS DECIMAL(10,2)) END) AS DECIMAL(10,2)) AS AvgPenaltyPct
+        FROM InterviewOutcome o
+        GROUP BY o.TransInterviewerId
+    ),
+    AiAgg AS (
+        SELECT
+            m.TransInterviewerId,
+            COUNT(1) AS AiPenalised,
+            SUM(CASE WHEN ap.IsApproved = 1 AND ap.IsHumanReviewed = 0 THEN 1 ELSE 0 END) AS AiAutoApproved,
+            SUM(CASE WHEN ap.IsHumanReviewed = 1 THEN 1 ELSE 0 END) AS AiHumanReviewed,
+            CAST(AVG(CAST(ap.DeductionPct AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AiAvgPct,
+            SUM(ap.Amount) AS AiAmount
+        FROM #Mapped m
+        INNER JOIN #AiPen ap ON ap.InterviewId = m.InterviewId
+        GROUP BY m.TransInterviewerId
     )
     SELECT
         a.TransInterviewerId,
@@ -312,10 +403,23 @@ BEGIN
         CAST(CASE
             WHEN lb.IrfId IS NOT NULL AND lb.FromIst <= @FromIst AND lb.ToIst >= @ToIst THEN 0
             ELSE 1
-        END AS BIT) AS CoverageIncomplete
+        END AS BIT) AS CoverageIncomplete,
+        ISNULL(oa.Selected, 0) AS Selected,
+        ISNULL(oa.Rejected, 0) AS Rejected,
+        ISNULL(oa.ReportsPenalised, 0) AS ReportsPenalised,
+        oa.AvgPenaltyPct,
+        NULLIF(LTRIM(RTRIM(tiv.AIVerdict)), '') AS AiVerdict,
+        ISNULL(aa.AiPenalised, 0) AS AiPenalised,
+        ISNULL(aa.AiAutoApproved, 0) AS AiAutoApproved,
+        ISNULL(aa.AiHumanReviewed, 0) AS AiHumanReviewed,
+        aa.AiAvgPct,
+        aa.AiAmount
     FROM #ActiveTi a
     INNER JOIN #ScopedIrfs s ON s.IrfId = a.IrfId
     LEFT JOIN dbo.UserList ulco ON ulco.id = s.RisebirdHr
+    LEFT JOIN dbo.TransInterviewer tiv ON tiv.id = a.TransInterviewerId
+    LEFT JOIN OutcomeAgg oa ON oa.TransInterviewerId = a.TransInterviewerId
+    LEFT JOIN AiAgg aa ON aa.TransInterviewerId = a.TransInterviewerId
     LEFT JOIN InterviewAgg ia ON ia.TransInterviewerId = a.TransInterviewerId
     LEFT JOIN WorstInterview wi ON wi.TransInterviewerId = a.TransInterviewerId
     LEFT JOIN ReviewPick rp ON rp.TransInterviewerId = a.TransInterviewerId
@@ -338,6 +442,7 @@ BEGIN
         ISNULL(ia.Bad, 0) * 1.0 / NULLIF(ia.Completed, 0) DESC,
         a.IrfId;
 
+    DROP TABLE IF EXISTS #AiPen;
     DROP TABLE IF EXISTS #Mapped;
     DROP TABLE IF EXISTS #Completed;
     DROP TABLE IF EXISTS #ActiveTi;

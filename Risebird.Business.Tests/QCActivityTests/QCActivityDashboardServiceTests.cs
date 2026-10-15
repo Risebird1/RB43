@@ -299,7 +299,7 @@ namespace Risebird.Business.Tests.QCActivityTests
                 "AuditBackfill", "AuditKept", "AuditRemoved", "AuditActions", "TrmUnderReview", "TrmReviewed", "TrmRemoved", "Trm",
                 "TiUnderReview", "TiReviewed", "TiRemoved", "Ti", "PlivoCall", "Coaching", "All",
                 "ReportEdited", "Suspicious", "SuspiciousUndone", "Blocked", "Unblocked", "AccessRevoked", "AccessRestored",
-                "Inactivated", "Reactivated", "PaymentHold", "PaymentHoldReleased",
+                "Inactivated", "Reactivated", "PaymentHold", "PaymentHoldReleased", "DeductionReview",
                 "StatusActions", "SuspiciousAll", "BlockedAll", "AccessAll", "ActiveAll", "PaymentHoldAll"
             };
 

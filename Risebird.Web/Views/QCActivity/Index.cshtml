@@ -140,6 +140,7 @@
                 <div class="pull-right qca-head-actions">
                     <button type="button" class="qca-back" onclick="if (history.length > 1) { history.back(); } else { location.href='/Dashboard/EmergencyDashboard'; }">Back</button>
                     <a class="qca-back" href="@Url.Action("Interviewers", "QCActivity")">Interviewer QC View</a>
+                    <a class="qca-back" href="@Url.Action("ReviewRequests", "QCActivity")">Review requests</a>
                 </div>
             </div>
         </div>
@@ -165,7 +166,8 @@
     <p class="qca-intro">
         What each Quality Controller actually did: interview reports reviewed and penalties applied (Payment SLA / QC Reject / QC Select),
         reports edited, trial interviewers kept or removed, IRF audits, Total Red Marker and Total Interview actions, interviewer status
-        changes (suspicious, blocked, portal access, inactive, payment hold; &#8634; counts undos) and Plivo calls to interviewers.
+        changes (suspicious, blocked, portal access, inactive, payment hold; &#8634; counts undos), Plivo calls to interviewers and
+        decisions on interviewers' deduction review requests.
         Click any number to see the records behind it. Dates are IST.
     </p>
 
@@ -226,6 +228,7 @@
                     <th colspan="5" class="qca-group">Interviewer status</th>
                     <th colspan="4" class="qca-group">Plivo calls</th>
                     <th rowspan="2" class="qca-group" style="vertical-align:middle" title="Coaching sessions logged or emailed (Interviewer QC View)">Coaching</th>
+                    <th rowspan="2" class="qca-group" style="vertical-align:middle" title="Decisions on interviewers' deduction review requests (stands / reduced / refunded)">Review decisions</th>
                     <th rowspan="2" class="qca-group" style="vertical-align:middle">Last action</th>
                 </tr>
                 <tr>
@@ -260,7 +263,7 @@
                 </tr>
             </thead>
             <tbody id="qcaBody">
-                <tr><td colspan="31" class="qca-loading">Loading…</td></tr>
+                <tr><td colspan="32" class="qca-loading">Loading…</td></tr>
             </tbody>
         </table>
     </div>
@@ -418,7 +421,7 @@
             syncInputs();
             $('#qcaApply').prop('disabled', true);
             $('#qcaAlert').empty();
-            $('#qcaBody').html('<tr><td colspan="31" class="qca-loading">Loading…</td></tr>');
+            $('#qcaBody').html('<tr><td colspan="32" class="qca-loading">Loading…</td></tr>');
             $.ajax({
                 url: '/QCActivity/Summary',
                 type: 'GET',
@@ -441,7 +444,7 @@
                 error: function (xhr) {
                     if (xhr.status === 401 || xhr.status === 403) { window.location.href = '/Session/SignOut'; return; }
                     $('#qcaAlert').html('<div class="qca-alert qca-alert--error">Could not load QC activity (' + esc(xhr.status) + '). Please try again.</div>');
-                    $('#qcaBody').html('<tr><td colspan="31" class="qca-empty">No data.</td></tr>');
+                    $('#qcaBody').html('<tr><td colspan="32" class="qca-empty">No data.</td></tr>');
                 },
                 complete: function () { $('#qcaApply').prop('disabled', false); }
             });
@@ -459,7 +462,8 @@
                 '<a class="qca-pill" href="/Interview/PaymentSlaDetails" target="_blank" rel="noopener"><b>' + num(b.pendingReports) + '</b> reports awaiting QC (Payment SLA)</a>' +
                 '<a class="qca-pill" href="/Dashboard/TrialFlagReview" target="_blank" rel="noopener"><b>' + num(b.pendingTrialFlags) + '</b> trial flags pending</a>' +
                 '<a class="qca-pill" href="/Dashboard/AutoRemovalMonitor" target="_blank" rel="noopener"><b>' + num(b.pendingAuditInterviewers) + '</b> interviewers with pending audit flags</a>' +
-                '<a class="qca-pill" href="/Dashboard/TotalRedMarkeredInterviewers?type=UnderReview" target="_blank" rel="noopener"><b>' + num(b.trmUnderReview) + '</b> Total Red Marker under review</a>');
+                '<a class="qca-pill" href="/Dashboard/TotalRedMarkeredInterviewers?type=UnderReview" target="_blank" rel="noopener"><b>' + num(b.trmUnderReview) + '</b> Total Red Marker under review</a>' +
+                '<a class="qca-pill" href="/QCActivity/ReviewRequests" target="_blank" rel="noopener"><b>' + num(b.pendingDeductionReviews) + '</b> deduction review requests open</a>');
 
             // Tiles.
             function tile(label, value, sub) {
@@ -475,11 +479,12 @@
                 tile('Removed from Total Interviews', num(t.tiRemoved), '') +
                 tile('Interviewer status changes', num(t.statusChanges), '↺ ' + num(t.statusUndos) + ' undone') +
                 tile('Plivo calls', num(t.plivoCalls), num(t.plivoInterviewers) + ' interviewers · ' + fmtTalk(num(t.plivoTalkSeconds))) +
+                tile('Review decisions', num(t.deductionReviews), 'deduction review requests decided') +
                 tile('Users with no activity', num(t.usersWithNoActivity), 'of ' + num(t.usersListed) + ' listed'));
 
             // Table, grouped by profile when more than one profile is listed.
             if (!rows.length) {
-                $('#qcaBody').html('<tr><td colspan="31" class="qca-empty">No Quality Controllers or actions in this range.</td></tr>');
+                $('#qcaBody').html('<tr><td colspan="32" class="qca-empty">No Quality Controllers or actions in this range.</td></tr>');
                 return;
             }
             var groups = [];
@@ -489,7 +494,7 @@
             });
             var html = '';
             groups.forEach(function (g) {
-                if (groups.length > 1) html += '<tr class="qca-section"><td colspan="31">' + esc(g) + '</td></tr>';
+                if (groups.length > 1) html += '<tr class="qca-section"><td colspan="32">' + esc(g) + '</td></tr>';
                 rows.filter(function (r) { return (r.profileName || 'Unknown') === g; }).forEach(function (r) {
                     var a = r.actorEmail;
                     var badge = num(r.totalActions) === 0 ? '<span class="qca-badge-none">No activity</span>' : '';
@@ -533,7 +538,8 @@
                         statusCell(r.paymentHolds, r.paymentHoldsReleased, a, 'PaymentHoldAll') +
                         cell(r.plivoCalls, a, 'PlivoCall', 'qca-group') +
                         '<td>' + (num(r.plivoInterviewers) > 0 ? num(r.plivoInterviewers) : '<span class="qca-zero">0</span>') + '</td>' +
-                        talk + avgCall + cell(r.coachingSessions, a, 'Coaching', 'qca-group') + last +
+                        talk + avgCall + cell(r.coachingSessions, a, 'Coaching', 'qca-group') +
+                        cell(r.deductionReviews, a, 'DeductionReview', 'qca-group') + last +
                         '</tr>';
                 });
             });
@@ -555,7 +561,8 @@
             PlivoCall: 'Plivo call', Coaching: 'Coaching session', ReportEdited: 'Report edited',
             Suspicious: 'Marked suspicious', SuspiciousUndone: 'Suspicious mark undone', Blocked: 'Blocked', Unblocked: 'Unblocked',
             AccessRevoked: 'Portal access turned off', AccessRestored: 'Portal access turned on', Inactivated: 'Made inactive',
-            Reactivated: 'Made active', PaymentHold: 'Payment put on hold', PaymentHoldReleased: 'Payment hold released'
+            Reactivated: 'Made active', PaymentHold: 'Payment put on hold', PaymentHoldReleased: 'Payment hold released',
+            DeductionReview: 'Deduction review decided'
         };
 
         // Report text is stored HTML-encoded; decode it to plain text (a textarea never runs markup), then esc() it for the DOM.
@@ -842,6 +849,7 @@
                 ['Inactivated', 'inactivated'], ['Reactivated', 'reactivated'],
                 ['Payment holds', 'paymentHolds'], ['Payment holds released', 'paymentHoldsReleased'],
                 ['Plivo calls', 'plivoCalls'], ['Plivo interviewers', 'plivoInterviewers'], ['Plivo talk seconds', 'plivoTalkSeconds'], ['Plivo avg call seconds', 'plivoAvgCallSeconds'], ['Coaching sessions', 'coachingSessions'],
+                ['Deduction review decisions', 'deductionReviews'],
                 ['Total actions', 'totalActions'], ['Last action (IST)', 'lastActionAtIst']
             ];
             var lines = [cols.map(function (c) { return csvCell(c[0]); }).join(',')];

@@ -47,6 +47,9 @@ Metric (atomic, one row each)       Source                                      
     AccessRestored / Inactivated /
     Reactivated / PaymentHold /
     PaymentHoldReleased
+  DeductionReview                   InterviewerActionLog ActionType DeductionReview: ActedBy          UTC
+                                    a QC decision on an interviewer's deduction
+                                    review request (usp_DecideDeductionReviewRequest)
   ReportEdited                      ReportEditLog (RefId = log Id), and for the  EditedBy         UTC
                                     part of the range before the first log row,  PerformedBy      IST
                                     InterviewCommentsHistory (comment changed
@@ -110,7 +113,7 @@ BEGIN
     DECLARE @WantSuspicious BIT = CASE WHEN @Metric IS NULL OR @Metric IN ('Suspicious', 'SuspiciousAll', 'StatusActions') THEN 1 ELSE 0 END;
     DECLARE @WantActionLog BIT = CASE WHEN @Metric IS NULL OR @Metric IN (
         'SuspiciousUndone', 'Blocked', 'Unblocked', 'AccessRevoked', 'AccessRestored', 'Inactivated', 'Reactivated',
-        'PaymentHold', 'PaymentHoldReleased',
+        'PaymentHold', 'PaymentHoldReleased', 'DeductionReview',
         'StatusActions', 'SuspiciousAll', 'BlockedAll', 'AccessAll', 'ActiveAll', 'PaymentHoldAll') THEN 1 ELSE 0 END;
     DECLARE @WantReportEdit BIT = CASE WHEN @Metric IS NULL OR @Metric = 'ReportEdited' THEN 1 ELSE 0 END;
 
@@ -581,13 +584,15 @@ BEGIN
                 WHEN ''Reactivated''         THEN ''Made active''
                 WHEN ''PaymentHold''         THEN ''Payment put on hold''
                 WHEN ''PaymentHoldReleased'' THEN ''Payment hold released''
+                WHEN ''DeductionReview''     THEN ''Deduction review decided''
             END,
             l.Id
         FROM dbo.InterviewerActionLog l
         WHERE l.ActedAtUtc >= @FromUtc
           AND l.ActedAtUtc <  @ToUtc
           AND l.ActionType IN (''SuspiciousUndone'', ''Blocked'', ''Unblocked'', ''AccessRevoked'', ''AccessRestored'',
-                               ''Inactivated'', ''Reactivated'', ''PaymentHold'', ''PaymentHoldReleased'')
+                               ''Inactivated'', ''Reactivated'', ''PaymentHold'', ''PaymentHoldReleased'',
+                               ''DeductionReview'')
           AND NULLIF(LTRIM(RTRIM(l.ActedBy)), '''') IS NOT NULL
           AND LTRIM(RTRIM(l.ActedBy)) NOT IN (''Admin'', ''AISystem'', ''System'')
           AND (@ActorEmail IS NULL OR LTRIM(RTRIM(l.ActedBy)) = @ActorEmail)
@@ -595,8 +600,10 @@ BEGIN
                OR (l.InterviewerUserId IS NULL AND l.InterviewerEmail = @InterviewerEmail))';
 
         IF @Metric IN ('SuspiciousUndone', 'Blocked', 'Unblocked', 'AccessRevoked', 'AccessRestored',
-                       'Inactivated', 'Reactivated', 'PaymentHold', 'PaymentHoldReleased')
+                       'Inactivated', 'Reactivated', 'PaymentHold', 'PaymentHoldReleased', 'DeductionReview')
             SET @Sql += N' AND l.ActionType = @Metric';
+        ELSE IF @Metric = 'StatusActions'
+            SET @Sql += N' AND l.ActionType <> ''DeductionReview''';
         ELSE IF @Metric = 'SuspiciousAll'
             SET @Sql += N' AND l.ActionType = ''SuspiciousUndone''';
         ELSE IF @Metric = 'BlockedAll'

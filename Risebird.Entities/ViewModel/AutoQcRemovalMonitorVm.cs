@@ -254,6 +254,48 @@ namespace Risebird.Entities.ViewModel
         public int P4Count { get; set; }
         public int P5Count { get; set; }
         public int TotalRows { get; set; }
+
+        // ---- Profile (usp_GetInterviewerRiskOverview, page rows only) ----
+        public string ResumeLink { get; set; }
+        /// <summary>CompanyName, else EmploymentComment (same label as the Insights popup / DM page).</summary>
+        public string CompanyName { get; set; }
+        public bool IsEmployed { get; set; }
+        public bool HasVideoKyc { get; set; }
+        public string VideoLink { get; set; }
+        public bool IsVideoApproved { get; set; }
+        /// <summary>"yes" | "no" | null.</summary>
+        public string AcknowledgementStatus { get; set; }
+        /// <summary>InterviewerProfile.Isavailable: 1 yes, 2 not available, 3 need clarity, 4 drop my profile.</summary>
+        public int? IsAvailable { get; set; }
+        public DateTime? LastLogin { get; set; }
+        public bool IsHoldPayment { get; set; }
+        public bool HasPortalAccess { get; set; }
+
+        // ---- Activity ----
+        public DateTime? LastInterviewAt { get; set; }
+        public int FutureInterviews { get; set; }
+        public bool ActiveSuspicious { get; set; }
+
+        // ---- Lifetime (same definitions as usp_GetInterviewerInsights) ----
+        public int LifetimeInterviews { get; set; }
+        public int LifetimeCompleted { get; set; }
+        public int LifetimeSelected { get; set; }
+        public int LifetimeRejected { get; set; }
+        public int InterviewerNoShows { get; set; }
+        public int CandidateNoShows { get; set; }
+        public int RedoRequests { get; set; }
+        public int AiTranscriptFlagged { get; set; }
+        public int LateJoins { get; set; }
+        public int Penalties { get; set; }
+        public int ReliabilityScore { get; set; }
+
+        // ---- AI penalties applied automatically, window ----
+        public int AiPenalised { get; set; }
+        public int AiAutoApproved { get; set; }
+        public int AiHumanReviewed { get; set; }
+        public decimal? AiAvgPct { get; set; }
+        /// <summary>Deduction % x client interview rate / 100 (client-rate units).</summary>
+        public decimal? AiAmount { get; set; }
     }
 
     public class InterviewerRiskOverviewSummaryVm
@@ -261,6 +303,23 @@ namespace Risebird.Entities.ViewModel
         public int InterviewersAboveThreshold { get; set; }
         public int ChannelsAffected { get; set; }
         public int PendingReviewInterviewers { get; set; }
+
+        /// <summary>Every completed interview in scope and window (all interviewers) with an AISystem deduction above 0.</summary>
+        public int AiPenalisedReports { get; set; }
+        public int AiAutoApprovedReports { get; set; }
+        public int AiHumanReviewedReports { get; set; }
+        public decimal? AiAvgPct { get; set; }
+        public decimal? AiAmount { get; set; }
+
+        // ---- Deduction review requests in the window (My Quality phase 2) ----
+        public int ReviewRequestsReceived { get; set; }
+        public int ReviewRequestsDecided { get; set; }
+        /// <summary>Reduced + Refunded (the review agreed with the interviewer).</summary>
+        public int ReviewRequestsUpheld { get; set; }
+        public decimal? ReviewUpheldPct { get; set; }
+        public decimal? ReviewRefundedAmount { get; set; }
+        /// <summary>Upheld rate per AI check for the same requests (result set 3).</summary>
+        public List<DeductionReviewCheckStatVM> ReviewChecks { get; set; } = new List<DeductionReviewCheckStatVM>();
     }
 
     public class InterviewerRiskOverviewPageVm
@@ -299,5 +358,20 @@ namespace Risebird.Entities.ViewModel
         public DateTime? LastBackfillFromIst { get; set; }
         public DateTime? LastBackfillToIst { get; set; }
         public bool CoverageIncomplete { get; set; }
+
+        // ---- Window outcomes (OutcomeAgg) ----
+        public int Selected { get; set; }
+        public int Rejected { get; set; }
+        public int ReportsPenalised { get; set; }
+        public decimal? AvgPenaltyPct { get; set; }
+        /// <summary>TransInterviewer.AIVerdict for this interviewer on this channel.</summary>
+        public string AiVerdict { get; set; }
+
+        // ---- AI penalties applied automatically (AiAgg) ----
+        public int AiPenalised { get; set; }
+        public int AiAutoApproved { get; set; }
+        public int AiHumanReviewed { get; set; }
+        public decimal? AiAvgPct { get; set; }
+        public decimal? AiAmount { get; set; }
     }
 }
