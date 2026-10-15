@@ -100,6 +100,20 @@ namespace Risebird.Business
                 cancellationToken);
         }
 
+        public async Task RecordBackfillRunAsync(string executedBy, int? interviewId, TrialFlagBackfillResultVm result)
+        {
+            try
+            {
+                var summary = result?.Messages?.FirstOrDefault();
+                await _repository.RecordBackfillRunAsync(executedBy, interviewId,
+                    result?.Inserted ?? 0, result?.Skipped ?? 0, result?.Failed ?? 0, summary);
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex, "TrialJudgment backfill: could not record the run for {ExecutedBy}.", executedBy);
+            }
+        }
+
         public async Task<TrialFlagBackfillResultVm> BackfillMissingTrialFlagsAsync(
             int? interviewId = null,
             CancellationToken cancellationToken = default)

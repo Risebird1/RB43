@@ -1,0 +1,368 @@
+@model Risebird.Entities.ViewModel.DeductionReviewQueueVM
+@using Risebird.Entities.ViewModel
+@{
+    ViewData["Title"] = "Review requests";
+    var vm = Model ?? new DeductionReviewQueueVM();
+    var s = vm.Settings ?? new DeductionReviewSettings();
+
+    string Ist(DateTime? utc, string fmt = "d MMM yyyy, HH:mm") =>
+        utc.HasValue ? utc.Value.AddMinutes(330).ToString(fmt, System.Globalization.CultureInfo.InvariantCulture) : "—";
+    string Day(DateTime? ist) =>
+        ist.HasValue ? ist.Value.ToString("d MMM yyyy", System.Globalization.CultureInfo.InvariantCulture) : "—";
+    string Amount(decimal? v) =>
+        v.HasValue ? v.Value.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("en-IN")) : "—";
+    string ReportUrl(int interviewId, int? irfId) =>
+        Url.Action("ClientReport", "Interview", new { interviewId, irfId = irfId ?? 0 });
+
+    string Outcome(DeductionReviewQueueRowVM r) => r.Status switch
+    {
+        DeductionReviewConstants.StatusStands => "Deduction stands",
+        DeductionReviewConstants.StatusReduced => "Reduced to " + r.NewDeductionPct + "%",
+        DeductionReviewConstants.StatusRefunded => "Refunded",
+        DeductionReviewConstants.StatusExpired => "Expired · deduction stands",
+        _ => r.Status
+    };
+}
+
+<script>
+    $('#txtpageHeader').empty().html("<div>Deduction review requests</div>");
+</script>
+
+@Html.AntiForgeryToken()
+
+<style>
+    .drq { padding: 16px; color: #0f172a; font-size: 14px; }
+    .drq * { box-sizing: border-box; }
+    .drq-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
+    .drq-head h2 { font-size: 20px; margin: 0; }
+    .drq-nav { display: flex; gap: 6px; flex-wrap: wrap; }
+    .drq-nav a, .drq-nav span { border: 1px solid #e2e8f0; border-radius: 6px; padding: 5px 12px; font-size: 13px; color: #0f172a; text-decoration: none; background: #fff; }
+    .drq-nav span { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; font-weight: 600; }
+    .drq-intro { color: #64748b; font-size: 13px; margin: 0 0 14px; max-width: 980px; }
+    .drq-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-bottom: 16px; }
+    .drq-card h3 { font-size: 15px; margin: 0 0 10px; }
+    .drq-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .drq-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; border-bottom: 1px solid #e2e8f0; padding: 6px 8px; white-space: nowrap; }
+    .drq-table td { border-bottom: 1px solid #f1f5f9; padding: 8px; vertical-align: top; }
+    .drq-links a { display: inline-block; margin-right: 8px; font-size: 12px; }
+    .drq-note { white-space: pre-wrap; max-width: 320px; }
+    .drq-muted { color: #64748b; font-size: 12px; }
+    .drq-overdue { color: #b91c1c; font-weight: 600; }
+    .drq-actions { display: flex; flex-direction: column; gap: 6px; min-width: 240px; }
+    .drq-actions textarea { width: 100%; min-height: 54px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; }
+    .drq-actions .drq-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .drq-btn { border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; padding: 4px 10px; font-size: 12px; cursor: pointer; }
+    .drq-btn:disabled { opacity: .5; cursor: default; }
+    .drq-btn--stands { border-color: #94a3b8; }
+    .drq-btn--reduce { border-color: #f59e0b; color: #92400e; }
+    .drq-btn--refund { border-color: #16a34a; color: #15803d; }
+    .drq-pct { width: 64px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px 6px; font-size: 12px; }
+    .drq-pill { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .drq-pill--stands, .drq-pill--expired { background: #f1f5f9; color: #475569; }
+    .drq-pill--reduced { background: #fef3c7; color: #92400e; }
+    .drq-pill--refunded { background: #dcfce7; color: #166534; }
+    .drq-pill--warn { background: #fee2e2; color: #b91c1c; }
+    .drq-flag { font-size: 11px; color: #b91c1c; }
+    .drq-suggest { color: #b91c1c; font-weight: 600; font-size: 12px; }
+    .drq-alert { border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 13px; }
+    .drq-alert--error { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; }
+    .drq-alert--ok { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+    .drq-empty { color: #64748b; font-size: 13px; padding: 8px 0; }
+    .drq-wrap { overflow-x: auto; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="drq">
+        <div class="drq-head">
+            <h2>Deduction review requests</h2>
+            <div class="drq-nav" role="navigation" aria-label="QC views">
+                <a href="@Url.Action("Index", "QCActivity")">QC Activity by Quality Controller</a>
+                <a href="@Url.Action("Interviewers", "QCActivity")">By Interviewer</a>
+                <span aria-current="page">Review requests</span>
+            </div>
+        </div>
+        <p class="drq-intro">
+            Interviewers can ask for a review of a deduction of @s.MinDeductionPct% or more, within @s.WindowDays days, with a reason,
+            up to @s.MonthlyCap times a month and once per deduction. Decide each one once: <b>Stands</b>, <b>Reduce to n%</b> or
+            <b>Refund</b>, with a short reason the interviewer will see (your name is not shown to them). Requests not decided within
+            @s.ReplyWorkingDays working days close as "deduction stands" and are flagged to the QC lead. Each decision counts on the QC Activity dashboard.
+        </p>
+
+        <div id="drqAlert"></div>
+        @if (!string.IsNullOrEmpty(vm.Error))
+        {
+            <div class="drq-alert drq-alert--error">@vm.Error</div>
+        }
+
+        <div class="drq-card">
+            <h3>Open requests (@vm.Open.Count) · oldest first</h3>
+            @if (vm.Open.Count == 0)
+            {
+                <div class="drq-empty">No open requests.</div>
+            }
+            else
+            {
+                <div class="drq-wrap">
+                    <table class="drq-table">
+                        <thead>
+                            <tr>
+                                <th>Requested</th><th>Interviewer</th><th>Interview</th><th>Deduction</th>
+                                <th>AI check</th><th>Interviewer's reason</th><th>Decision</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var r in vm.Open)
+                            {
+                                <tr data-request-id="@r.Id">
+                                    <td style="white-space:nowrap;">
+                                        @Ist(r.RequestedAtUtc)
+                                        <div class="@(r.IsOverdue ? "drq-overdue" : "drq-muted")">Reply by @Ist(r.DueAtUtc, "d MMM")</div>
+                                    </td>
+                                    <td>
+                                        <div>@(r.InterviewerCodedId ?? r.InterviewerName ?? "—")</div>
+                                        <div class="drq-muted">@r.InterviewerName</div>
+                                        <div class="drq-muted">@r.InterviewerEmail</div>
+                                    </td>
+                                    <td>
+                                        <div>#@r.InterviewId · @(r.IrfName ?? "—")</div>
+                                        <div class="drq-muted">@Day(r.InterviewDate)</div>
+                                        <div class="drq-links">
+                                            <a href="@ReportUrl(r.InterviewId, r.IrfId)" target="_blank" rel="noopener">Report</a>
+                                            <a href="@TrialFlagDrillDownUrls.TranscriptQuality(r.InterviewId, r.IrfId ?? 0)" target="_blank" rel="noopener">Transcript</a>
+                                            <a href="@TrialFlagDrillDownUrls.QcMergedAiDetails(r.InterviewId)" target="_blank" rel="noopener">AI reasoning</a>
+                                            <a href="@TrialFlagDrillDownUrls.ContradictionReport(r.InterviewId)" target="_blank" rel="noopener">Contradiction</a>
+                                        </div>
+                                    </td>
+                                    <td style="white-space:nowrap;">
+                                        <b>@r.DeductionPct%</b>
+                                        <div class="drq-muted">amount @Amount(r.DeductionAmount)</div>
+                                        @if (!string.IsNullOrWhiteSpace(r.Recommendation))
+                                        {
+                                            <div class="drq-muted">Recommendation: @r.Recommendation</div>
+                                        }
+                                    </td>
+                                    <td>@r.AiCheckLabel</td>
+                                    <td>
+                                        <div><b>@r.ReasonLabel</b></div>
+                                        <div class="drq-note">@r.Note</div>
+                                    </td>
+                                    <td>
+                                        <div class="drq-actions">
+                                            <textarea class="drq-decision-note" maxlength="@DeductionReviewConstants.DecisionNoteMaxLength" placeholder="Short reason the interviewer will see"></textarea>
+                                            <div class="drq-row">
+                                                <button type="button" class="drq-btn drq-btn--stands" data-decision="Stands">Stands</button>
+                                                <button type="button" class="drq-btn drq-btn--refund" data-decision="Refund">Refund</button>
+                                            </div>
+                                            <div class="drq-row">
+                                                <span class="drq-muted">Reduce to</span>
+                                                <input type="number" class="drq-pct" min="1" max="@(Math.Max(1, r.DeductionPct - 1))" step="1" aria-label="New deduction %" />
+                                                <span class="drq-muted">%</span>
+                                                <button type="button" class="drq-btn drq-btn--reduce" data-decision="Reduce" @(r.DeductionPct <= 1 ? "disabled" : "")>Reduce</button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+
+        <div class="drq-card">
+            <h3>AI accuracy by check</h3>
+            <p class="drq-muted" style="margin-top:-4px;">
+                Upheld = the review agreed with the interviewer (reduced or refunded). A check with a high upheld rate is a likely AI error:
+                take it out of auto-approval until it is fixed, so a person approves those deductions. A check with a low rate stays automatic.
+                Flagged when at least @s.MinDecisionsForRate decisions are upheld @s.HighUpheldRatePct% of the time or more.
+            </p>
+            @if (vm.Checks.Count == 0)
+            {
+                <div class="drq-empty">No review requests yet.</div>
+            }
+            else
+            {
+                <div class="drq-wrap">
+                    <table class="drq-table">
+                        <thead>
+                            <tr>
+                                <th>AI check</th><th>Requests</th><th>Decided</th><th>Upheld</th><th>Stands</th><th>Open</th>
+                                <th>Upheld rate</th><th>Auto-approval</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in vm.Checks)
+                            {
+                                <tr>
+                                    <td>@c.AiCheckLabel</td>
+                                    <td>@c.Requests</td>
+                                    <td>@c.Decided</td>
+                                    <td>@c.Upheld</td>
+                                    <td>@c.Stands</td>
+                                    <td>@c.Open</td>
+                                    <td>
+                                        @(c.UpheldRatePct.HasValue ? c.UpheldRatePct + "%" : "—")
+                                        @if (c.SuggestExclude)
+                                        {
+                                            <div class="drq-suggest">High: consider taking it out of auto-approval</div>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (c.ExcludeFromAutoApprove)
+                                        {
+                                            <span class="drq-pill drq-pill--warn">Out of auto-approval</span>
+                                            @if (!string.IsNullOrEmpty(c.PolicyModifiedBy))
+                                            {
+                                                <div class="drq-muted">since @Ist(c.PolicyModifiedAtUtc, "d MMM yyyy") · @c.PolicyModifiedBy</div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="drq-pill drq-pill--stands">Automatic</span>
+                                        }
+                                        @if (vm.CanManagePolicy)
+                                        {
+                                            <div style="margin-top:4px;">
+                                                <button type="button" class="drq-btn drq-policy-btn" data-check="@c.AiCheck" data-exclude="@(c.ExcludeFromAutoApprove ? "false" : "true")">
+                                                    @(c.ExcludeFromAutoApprove ? "Put back in auto-approval" : "Take out of auto-approval")
+                                                </button>
+                                            </div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+
+        <div class="drq-card">
+            <h3>Decided in the last 30 days (@vm.RecentDecided.Count)</h3>
+            @if (vm.RecentDecided.Count == 0)
+            {
+                <div class="drq-empty">No decisions yet.</div>
+            }
+            else
+            {
+                <div class="drq-wrap">
+                    <table class="drq-table">
+                        <thead>
+                            <tr>
+                                <th>Decided</th><th>Interviewer</th><th>Interview</th><th>Deduction</th><th>AI check</th>
+                                <th>Outcome</th><th>Refunded</th><th>Decided by</th><th>Reason given</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var r in vm.RecentDecided)
+                            {
+                                var pill = r.Status == DeductionReviewConstants.StatusReduced ? "drq-pill--reduced"
+                                    : r.Status == DeductionReviewConstants.StatusRefunded ? "drq-pill--refunded"
+                                    : r.Status == DeductionReviewConstants.StatusExpired ? "drq-pill--expired" : "drq-pill--stands";
+                                <tr>
+                                    <td style="white-space:nowrap;">@Ist(r.DecidedAtUtc)</td>
+                                    <td>
+                                        <div>@(r.InterviewerCodedId ?? r.InterviewerName ?? "—")</div>
+                                        <div class="drq-muted">@r.InterviewerEmail</div>
+                                    </td>
+                                    <td>
+                                        #@r.InterviewId · @(r.IrfName ?? "—")
+                                        <div class="drq-links"><a href="@ReportUrl(r.InterviewId, r.IrfId)" target="_blank" rel="noopener">Report</a></div>
+                                    </td>
+                                    <td>@r.DeductionPct%</td>
+                                    <td>@r.AiCheckLabel</td>
+                                    <td>
+                                        <span class="drq-pill @pill">@Outcome(r)</span>
+                                        @if (r.Status == DeductionReviewConstants.StatusExpired)
+                                        {
+                                            <div class="drq-flag">@(r.LeadNotifiedAtUtc.HasValue ? "QC lead told " + Ist(r.LeadNotifiedAtUtc, "d MMM") : "Flagged to the QC lead")</div>
+                                        }
+                                        @if (r.PayoutAlreadyPaid && (r.Status == DeductionReviewConstants.StatusReduced || r.Status == DeductionReviewConstants.StatusRefunded))
+                                        {
+                                            <div class="drq-flag">Already paid: Finance to settle the difference</div>
+                                        }
+                                    </td>
+                                    <td>@Amount(r.RefundedAmount)</td>
+                                    <td class="drq-muted">@r.DecidedBy</td>
+                                    <td class="drq-note">@r.DecisionNote</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var decideUrl = '@Url.Action("DecideReviewRequest", "QCActivity")';
+        var policyUrl = '@Url.Action("SetReviewCheckPolicy", "QCActivity")';
+        var token = $('input[name="__RequestVerificationToken"]').first().val();
+
+        function alertBox(msg, ok) {
+            $('#drqAlert').html('<div class="drq-alert ' + (ok ? 'drq-alert--ok' : 'drq-alert--error') + '"></div>');
+            $('#drqAlert .drq-alert').text(msg);
+            try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); }
+        }
+        function okOf(res) { return res && (res.ok === true || res.Ok === true); }
+        function msgOf(res, fallback) { return (res && (res.message || res.Message)) || fallback; }
+
+        $(document).on('click', '.drq-btn[data-decision]', function () {
+            var $btn = $(this);
+            var $row = $btn.closest('tr');
+            var id = $row.data('request-id');
+            var decision = $btn.data('decision');
+            var note = $.trim($row.find('.drq-decision-note').val() || '');
+            var pct = $row.find('.drq-pct').val();
+            if (note.length < @DeductionReviewConstants.DecisionNoteMinLength) { alertBox('Add a short reason for the interviewer first.', false); return; }
+            if (decision === 'Reduce' && !pct) { alertBox('Enter the new deduction %.', false); return; }
+            var label = decision === 'Reduce' ? 'Reduce the deduction to ' + pct + '%' : (decision === 'Refund' ? 'Refund the deduction' : 'Keep the deduction (stands)');
+            if (!confirm(label + '? This decision is final.')) return;
+            $row.find('.drq-btn').prop('disabled', true);
+            $.ajax({
+                url: decideUrl,
+                type: 'POST',
+                headers: { 'RequestVerificationToken': token },
+                data: { RequestId: id, Decision: decision, NewDeductionPct: decision === 'Reduce' ? pct : null, Note: note }
+            }).done(function (res) {
+                if (okOf(res)) {
+                    alertBox(msgOf(res, 'Saved.'), true);
+                    setTimeout(function () { window.location.reload(); }, 1200);
+                } else {
+                    alertBox(msgOf(res, 'Could not save.'), false);
+                    $row.find('.drq-btn').prop('disabled', false);
+                }
+            }).fail(function (xhr) {
+                if (xhr.status === 401 || xhr.status === 403) { window.location.href = '/Session/SignOut'; return; }
+                alertBox('Could not save. Please try again.', false);
+                $row.find('.drq-btn').prop('disabled', false);
+            });
+        });
+
+        $(document).on('click', '.drq-policy-btn', function () {
+            var $btn = $(this);
+            var exclude = String($btn.data('exclude')) === 'true';
+            var q = exclude
+                ? 'Take this check out of auto-approval? Its deductions will wait for a person to approve.'
+                : 'Put this check back in auto-approval?';
+            if (!confirm(q)) return;
+            $btn.prop('disabled', true);
+            $.ajax({
+                url: policyUrl,
+                type: 'POST',
+                headers: { 'RequestVerificationToken': token },
+                data: { aiCheck: $btn.data('check'), exclude: exclude }
+            }).done(function (res) {
+                alertBox(msgOf(res, okOf(res) ? 'Saved.' : 'Could not save.'), okOf(res));
+                if (okOf(res)) setTimeout(function () { window.location.reload(); }, 1200);
+                else $btn.prop('disabled', false);
+            }).fail(function (xhr) {
+                if (xhr.status === 403) { alertBox('Only managers can change auto-approval.', false); }
+                else alertBox('Could not save. Please try again.', false);
+                $btn.prop('disabled', false);
+            });
+        });
+    })();
+</script>

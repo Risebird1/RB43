@@ -136,6 +136,32 @@ namespace Risebird.Business
         public static string ThemeTitle(string key) =>
             key != null && ThemesByKey.TryGetValue(key, out var t) ? t.Title : key;
 
+        /// <summary>
+        /// Theme for a RiskCategory check code. False for unknown codes and for checks that are not the
+        /// interviewer's doing (Candidate No Show). Used by the interviewer's My Quality page.
+        /// </summary>
+        public static bool TryGetRiskCheckTheme(string checkType, out string theme)
+        {
+            theme = null;
+            if (string.IsNullOrWhiteSpace(checkType)) return false;
+            var key = checkType.Trim();
+            if (IgnoredRiskChecks.Contains(key)) return false;
+            if (!RiskChecks.TryGetValue(key, out var map)) return false;
+            theme = map.Theme;
+            return true;
+        }
+
+        /// <summary>Distinct themes behind the reason columns of one Payment SLA row (same map as the coaching brief).</summary>
+        public static IReadOnlyList<string> PaymentReasonThemes(ExposurePaymentRowVM payment)
+        {
+            if (payment == null) return Array.Empty<string>();
+            return PaymentReasons
+                .Where(r => ReasonParts(r.Value(payment)) != null)
+                .Select(r => r.Theme)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+
         /// <summary>Translates a RiskCategory check code into plain words (unknown codes are returned as-is).</summary>
         public static string DescribeRiskCheck(string checkType) =>
             checkType != null && RiskChecks.TryGetValue(checkType.Trim(), out var m) ? m.Text : checkType?.Trim();

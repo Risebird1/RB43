@@ -600,6 +600,10 @@ END";
                     ?? new List<InterviewerRiskOverviewRowVm>();
                 var summary = await multi.ReadFirstOrDefaultAsync<InterviewerRiskOverviewSummaryVm>()
                     ?? new InterviewerRiskOverviewSummaryVm();
+                // Result set 3 (deduction review upheld rate per AI check); absent on an older procedure.
+                if (!multi.IsConsumed)
+                    summary.ReviewChecks = (await multi.ReadAsync<DeductionReviewCheckStatVM>())?.ToList()
+                        ?? new List<DeductionReviewCheckStatVM>();
                 sw.Stop();
                 await WarnIfSlowAsync(
                     "usp_GetInterviewerRiskOverview",

@@ -75,6 +75,45 @@
     </div>
     </nav>*@
     <!-- End Navbar -->
+    @* My Quality card: filled by /Interviewer/MyQualitySummary for the Interviewer profile; stays hidden otherwise. *@
+    <style>
+        #myQualityCard { display: none; position: relative; margin: 14px 15px 0; padding: 14px 18px 14px 22px; border: 1px solid #bbdefb;
+            border-radius: 12px; background: linear-gradient(100deg, #e3f2fd 0%, #f1f8fe 55%, #ffffff 100%); color: #0f172a;
+            text-decoration: none; box-shadow: 0 2px 10px rgba(66, 165, 245, .18); overflow: hidden; transition: box-shadow .15s, transform .15s; }
+        #myQualityCard.is-visible { display: block; }
+        #myQualityCard:hover, #myQualityCard:focus { box-shadow: 0 6px 18px rgba(66, 165, 245, .30); transform: translateY(-1px); text-decoration: none; color: #0f172a; }
+        #myQualityCard::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: #42a5f5; }
+        .mqc-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+        .mqc-icon { flex: 0 0 auto; width: 42px; height: 42px; border-radius: 50%; background: #42a5f5; color: #fff;
+            display: inline-flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 2px 6px rgba(66, 165, 245, .40); }
+        .mqc-main { flex: 1 1 260px; min-width: 0; }
+        .mqc-title { font-size: 15px; font-weight: 700; color: #312e81; display: flex; align-items: center; gap: 8px; }
+        .mqc-new { font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: #f97316;
+            border-radius: 10px; padding: 1px 7px; }
+        .mqc-sub { font-size: 12px; color: #475569; margin-top: 2px; }
+        .mqc-stats { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+        .mqc-pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 3px 11px; font-size: 12px; font-weight: 600; border: 1px solid; }
+        .mqc-pill b { font-size: 14px; }
+        .mqc-pill--focus { background: #fffbeb; border-color: #fcd34d; color: #92400e; }
+        .mqc-pill--ok { background: #f0fdf4; border-color: #86efac; color: #166534; }
+        .mqc-pill--bad { background: #fef2f2; border-color: #fca5a5; color: #b91c1c; }
+        .mqc-cta { flex: 0 0 auto; background: #42a5f5; color: #fff; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+        #myQualityCard:hover .mqc-cta { background: #1e88e5; }
+    </style>
+    <a id="myQualityCard" href="/Interviewer/MyQuality" aria-label="Open My Quality">
+        <div class="mqc-row">
+            <span class="mqc-icon" aria-hidden="true"><i class="fa fa-line-chart"></i></span>
+            <div class="mqc-main">
+                <div class="mqc-title">My Quality <span class="mqc-new">New</span></div>
+                <div class="mqc-sub">Your interview quality, what to improve and your deductions, in one place.</div>
+                <div class="mqc-stats">
+                    <span class="mqc-pill" id="myQualityFocusPill"></span>
+                    <span class="mqc-pill" id="myQualityDeductionPill"></span>
+                </div>
+            </div>
+            <span class="mqc-cta">View my quality &rsaquo;</span>
+        </div>
+    </a>
     <div class="pt30">
         <div class="col-md-12 nopad" style="margin:0px;">
             <div class="card-header bg-w clearfix">
@@ -2825,4 +2864,24 @@
         temp.remove();
         $('#special_text').text('Copied');
     }
+</script>
+<script>
+    (function () {
+        if (("@(HttpContextAccessor.HttpContext.Session.GetString("profileName") ?? "")").replace(/&quot;|"/g, "").trim() !== "Interviewer") return;
+        $.getJSON("/Interviewer/MyQualitySummary").done(function (res) {
+            if (!res || !(res.ok || res.Ok)) return;
+            var focus = Number(res.focusCount != null ? res.focusCount : res.FocusCount) || 0;
+            var ded = Number(res.monthDeductionCount != null ? res.monthDeductionCount : res.MonthDeductionCount) || 0;
+            var $focus = $("#myQualityFocusPill").empty();
+            if (focus > 0) {
+                $focus.addClass("mqc-pill--focus").append($("<b>").text(focus)).append(document.createTextNode(focus === 1 ? " thing to work on" : " things to work on"));
+            } else {
+                $focus.addClass("mqc-pill--ok").text("✓ Nothing stands out right now");
+            }
+            var $ded = $("#myQualityDeductionPill").empty();
+            $ded.addClass(ded > 0 ? "mqc-pill--bad" : "mqc-pill--ok")
+                .append($("<b>").text(ded)).append(document.createTextNode(ded === 1 ? " deduction this month" : " deductions this month"));
+            $("#myQualityCard").addClass("is-visible");
+        });
+    })();
 </script>
