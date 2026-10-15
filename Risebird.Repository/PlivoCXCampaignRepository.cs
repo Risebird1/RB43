@@ -298,6 +298,59 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> TryClaimForDialAsync(int campaignCandidateId, int seconds)
+        {
+            // Not wrapped in try/catch: if the claim cannot run, dialling must not go ahead unguarded.
+            using var conn = new SqlConnection(_connectionString);
+            int rows = await conn.ExecuteAsync(@"
+                UPDATE PlivoCXCampaignCandidate SET
+                    DialLockUntil = DATEADD(SECOND, @Seconds, GETUTCDATE())
+                WHERE Id = @Id
+                  AND State = 'Pending'
+                  AND (DialLockUntil IS NULL OR DialLockUntil < GETUTCDATE())",
+                new { Id = campaignCandidateId, Seconds = seconds });
+            return rows == 1;
+        }
+
+        public async Task ReleaseDialClaimAsync(int campaignCandidateId)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                await conn.ExecuteAsync(
+                    "UPDATE PlivoCXCampaignCandidate SET DialLockUntil = NULL WHERE Id = @Id",
+                    new { Id = campaignCandidateId });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        public async Task<bool> MarkMeetingConfirmedByCandidateAsync(int interviewId, string candidateEmail)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                int rows = await conn.ExecuteAsync(@"
+                    UPDATE im SET
+                        IsCandidateResponsed = 1,
+                        CandidateResponse    = 1
+                    FROM InterviewMeetings im
+                    WHERE im.id = @InterviewId
+                      AND LTRIM(RTRIM(im.candidateEmail)) = LTRIM(RTRIM(@CandidateEmail))
+                      AND ISNULL(im.IsDeleted, 0) = 0
+                      AND ISNULL(im.confirmationStatus, '') <> '2'",
+                    new { InterviewId = interviewId, CandidateEmail = candidateEmail });
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public async Task BumpCampaignCandidateAsync(int campaignCandidateId, int callLogId, int minGapMinutes)
         {
             try
@@ -309,6 +362,7 @@ namespace Risebird.Repository
                         LastCallAt    = GETUTCDATE(),
                         LastCallLogId = @CallLogId,
                         NextAttemptAt = DATEADD(MINUTE, @MinGapMinutes, GETUTCDATE()),
+                        DialLockUntil = NULL,
                         UpdatedAt     = GETUTCDATE()
                     WHERE Id = @Id";
                 await conn.ExecuteAsync(sql, new { Id = campaignCandidateId, CallLogId = callLogId > 0 ? callLogId : (int?)null, MinGapMinutes = minGapMinutes });
@@ -452,6 +506,16 @@ namespace Risebird.Repository
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return new List<PlivoCXCampaignIRFPickerRow>();
             }
+        }
+
+        public async Task<List<PlivoCXCampaignIRFPickerRow>> GetNotScheduledAsync(string email)
+        {
+            // Errors propagate so the picker shows "could not load" instead of an empty list.
+            using var conn = new SqlConnection(_connectionString);
+            var rows = await conn.QueryAsync<PlivoCXCampaignIRFPickerRow>(
+                "usp_GetPlivoCXCampaignNotScheduled", new { EmailId = email },
+                commandType: CommandType.StoredProcedure, commandTimeout: 120);
+            return rows.ToList();
         }
 
         public async Task SetCallLogCampaignAsync(int callLogId, int campaignId)

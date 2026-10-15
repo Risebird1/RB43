@@ -51,3 +51,12 @@ CREATE NONCLUSTERED INDEX [IX_PlivoCXCampaignCandidate_Candidate_State]
 	ON [dbo].[PlivoCXCampaignCandidate] ([CandidateId], [State]) INCLUDE ([CampaignId])
 END
 GO
+
+-- Dial lock: set atomically just before a call is placed and cleared once the call is logged, so
+-- Call now, a per-row Call and the scheduler can never dial the same candidate at the same time.
+-- A lock older than its expiry (a crash mid-dial) no longer blocks.
+IF COL_LENGTH('dbo.PlivoCXCampaignCandidate', 'DialLockUntil') IS NULL
+BEGIN
+	ALTER TABLE [dbo].[PlivoCXCampaignCandidate] ADD [DialLockUntil] [datetime] NULL;
+END
+GO
