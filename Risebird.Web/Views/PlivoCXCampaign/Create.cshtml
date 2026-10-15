@@ -51,6 +51,10 @@
                     <button type="button" data-source="Unconfirmed">Unconfirmed</button>
                 </div>
                 <div class="pcx-muted pcx-small" id="pcxSourceHint" style="margin-top:5px;"></div>
+                @if ((ViewBag.ChannelScoped as bool?) == true)
+                {
+                    <div class="pcx-muted pcx-small" style="margin-top:3px;">The Not-scheduled and Reschedule lists show only the skill channels assigned to you, as on those pages.</div>
+                }
             </div>
 
             <div class="pcx-field">
@@ -80,7 +84,7 @@
 
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin:6px 0 8px;">
                 <label style="margin:0;font-weight:600;"><input type="checkbox" id="pcxAll" /> <span id="pcxCount">0 of 0 selected</span></label>
-                <span class="pcx-muted pcx-small">candidates without a valid number join as <b style="color:#b45309;">Cold</b></span>
+                <span class="pcx-muted pcx-small"><span id="pcxLoadedAt"></span> · candidates without a valid number join as <b style="color:#b45309;">Cold</b></span>
             </div>
 
             <div class="pcx-table-wrap" style="max-height:520px;overflow-y:auto;border:1px solid #eef2f6;border-radius:8px;">
@@ -118,7 +122,7 @@
     };
     var LABELS = { 'eligible': 'eligible', 'has-meeting': 'has meeting', 'no-number': 'no number → Cold', 'not-eligible': 'not eligible', 'cold': 'cold' };
 
-    var source = 'IRF', rows = [], loadSeq = 0;
+    var source = 'IRF', rows = [], loadSeq = 0, loaded = false;
 
     function esc(s) { return $('<div>').text(s == null ? '' : String(s)).html(); }
     function purpose() { return ($('#pcxAgent option:selected').data('purpose') || 'schedule').toString().toLowerCase(); }
@@ -144,29 +148,47 @@
         load();
     }
 
-    function load() {
-        rows = []; render();
+    function message(html) { $('#pcxRows').html('<tr><td colspan="6" class="pcx-empty">' + html + '</td></tr>'); }
+
+    // The centralized lists run the same slow procedures as their pages (minutes across every
+    // channel), so the loading row counts up instead of looking frozen.
+    var timer = null;
+    function stopTimer() { if (timer) { clearInterval(timer); timer = null; } }
+
+    function load(refresh) {
+        rows = []; loaded = false; stopTimer(); $('#pcxLoadedAt').empty(); updateCount();
+        $('#pcxListClient').empty().append('<option value="">All clients</option>');
         var url = URLS[source], data = {};
         if (source === 'IRF') {
             var irf = $('#pcxIrf').val();
-            if (!irf) { $('#pcxRows').html('<tr><td colspan="6" class="pcx-empty">Choose an IRF to see its candidates.</td></tr>'); return; }
+            if (!irf) { message('Choose an IRF to see its candidates.'); return; }
             data = { irfId: irf, agentId: $('#pcxAgent').val() };
         } else if (source === 'Reschedule') {
             data = { startDate: $('#pcxStart').val(), endDate: $('#pcxEnd').val() };
         }
-        var seq = ++loadSeq;
-        $('#pcxRows').html('<tr><td colspan="6" class="pcx-empty"><i class="fa fa-spinner fa-spin"></i> Loading candidates…</td></tr>');
+        if (refresh) data.refresh = true;
+        var seq = ++loadSeq, started = Date.now();
+        var slowNote = source === 'IRF' ? '' : ' <span class="pcx-small">This list covers every skill channel you can see and can take a few minutes, as on its own page.</span>';
+        function tick() {
+            var s = Math.floor((Date.now() - started) / 1000);
+            message('<i class="fa fa-spinner fa-spin"></i> Loading candidates… ' + (s >= 5 ? Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2) : '') + (s >= 5 ? '<br/>' + slowNote : ''));
+        }
+        tick(); timer = setInterval(function () { if (seq === loadSeq) tick(); else stopTimer(); }, 1000);
         $.get(url, data).done(function (res) {
             if (seq !== loadSeq) return;
-            if (!res || !res.ok) { $('#pcxRows').html('<tr><td colspan="6" class="pcx-empty">' + esc(res && res.message || 'Could not load candidates.') + '</td></tr>'); return; }
-            rows = res.candidates || [];
+            stopTimer();
+            if (!res || !res.ok) { message(esc(res && res.message || 'Could not load candidates.')); return; }
+            rows = res.candidates || []; loaded = true;
             var clients = {};
             rows.forEach(function (r) { if (r.clientName) clients[r.clientName] = 1; });
             var sel = $('#pcxListClient').empty().append('<option value="">All clients</option>');
             Object.keys(clients).sort().forEach(function (c) { sel.append($('<option>').val(c).text(c)); });
+            if (res.loadedAt) $('#pcxLoadedAt').html('loaded ' + esc(res.loadedAt) + ' · <a href="#" class="pcx-link" id="pcxRefresh">Refresh</a>');
             render();
         }).fail(function () {
-            if (seq === loadSeq) $('#pcxRows').html('<tr><td colspan="6" class="pcx-empty">Could not load candidates. Try again.</td></tr>');
+            if (seq !== loadSeq) return;
+            stopTimer();
+            message('Could not load candidates. Try again.');
         });
     }
 
@@ -182,7 +204,11 @@
 
     function render() {
         var list = visible();
-        if (!rows.length) { updateCount(); return; }
+        if (!rows.length) {
+            if (loaded) message(source === 'IRF' ? 'This IRF has no candidates.' : 'Nobody is on this list right now.');
+            updateCount();
+            return;
+        }
         if (!list.length) { $('#pcxRows').html('<tr><td colspan="6" class="pcx-empty">No candidate matches the filter.</td></tr>'); updateCount(); return; }
         var html = list.map(function (r) {
             var idx = rows.indexOf(r), callable = r.candidateId > 0;
@@ -210,8 +236,9 @@
 
     $('#pcxAgent').on('change', syncSources);
     $('#pcxSource').on('click', 'button', function () { if (!this.disabled) setSource($(this).data('source')); });
-    $('#pcxIrf').on('change', load);
-    $('#pcxReload').on('click', load);
+    $('#pcxIrf').on('change', function () { load(false); });
+    $('#pcxReload').on('click', function () { load(false); });
+    $('#pcxLoadedAt').on('click', '#pcxRefresh', function (e) { e.preventDefault(); load(true); });
     $('#pcxListSearch').on('input', render);
     $('#pcxListClient').on('change', render);
     $('#pcxIrfFilter').on('input', function () {
