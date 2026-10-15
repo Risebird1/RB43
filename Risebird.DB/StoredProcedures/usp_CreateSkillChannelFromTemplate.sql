@@ -47,6 +47,7 @@ Create PROCEDURE [dbo].[usp_CreateSkillChannelFromTemplate]
 @IsMeetingNotificationSend bit,
 @IsNewSkillChannel bit = null,
 @RateComputedForClient int,
+@IsMarketPlaceChannel bit = null,
 @TechSkillBulkData AS [dbo].[TransTechSkill_TableType] READONLY,  
 --@InterviewerBulkData AS [dbo].[TransInterviewerSurcharge_TableType] READONLY,  
 @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,
@@ -106,7 +107,8 @@ begin try
   ,[IsMeetingNotificationSend]
   ,[IsNewSkillChannel]
   ,[FlatRate]
-  ,[RateComputedForClient])
+  ,[RateComputedForClient]
+  ,[IsMarketPlaceChannel])
   VALUES              
   (@IRFId,              
   @clientName,              
@@ -144,7 +146,8 @@ begin try
   @IsMeetingNotificationSend,
   @IsNewSkillChannel,
   @flatRate,
-  @RateComputedForClient)                                                                           
+  @RateComputedForClient,
+  @IsMarketPlaceChannel)                                                                         
          
       
   select @irfIntId = SCOPE_IDENTITY()      

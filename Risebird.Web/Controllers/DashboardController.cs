@@ -3185,6 +3185,13 @@ NEVER:
                     return Json(new { ok = false, clientId = 0, clientName = (string)null });
 
                 int clientId = await _clientService.GetClientByEmailId(email.Trim());
+                // Anonymous (public form) callers only learn yes/no, so the endpoint can't be used to map
+                // emails to client ids or company names. Staff sessions keep the full response.
+                var sessionProfile = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                var isStaff = HttpContext.Session.GetString("email") != null
+                    && Risebird.Web.Helpers.DeliveryHeadInstructionViewMode.IsOperationalProfile(sessionProfile);
+                if (clientId > 0 && !isStaff)
+                    return Json(new { ok = true, clientId = 0, clientName = (string)null });
                 if (clientId > 0)
                 {
                     var company = await _clientService.GetClientRoleAndCompanyNameByEmailId(email.Trim());

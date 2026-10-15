@@ -907,11 +907,30 @@ namespace Risebird.Web.Controllers
 
         }
 
+        private string GetSessionValue(string key) =>
+            HttpContext.Session.GetString(key)?.Trim().Replace("\"", "");
+
         [HttpGet]
         public async Task<IActionResult> GetPublicCandidates(int id, string irfName, string profileName, string emailid, int? Page, string searchValue)
         {
             try
             {
+                // Identity comes from the session, never from the query string.
+                var sessionEmail = GetSessionValue("email");
+                var sessionProfile = GetSessionValue("profileName");
+                if (string.IsNullOrEmpty(sessionEmail) || string.IsNullOrEmpty(sessionProfile))
+                    return RedirectToAction("SignIn", "Session");
+                if (DeliveryHeadInstructionViewMode.IsClientRoleProfile(sessionProfile))
+                {
+                    if (!await _clientService.VerifyClientAuthenticity(id, sessionEmail))
+                        return StatusCode(403, "You do not have access to this skill channel.");
+                    profileName = "Client";
+                    emailid = sessionEmail;
+                }
+                else if (!DeliveryHeadInstructionViewMode.IsOperationalProfile(sessionProfile))
+                {
+                    return StatusCode(403, "You do not have access to this skill channel.");
+                }
 
                 ViewBag.IRFName = irfName;
                 ViewBag.IRFId = id;
@@ -4743,14 +4762,33 @@ namespace Risebird.Web.Controllers
             var model = new List<SchedulingLinkVM>();
             try
             {
+                // A link logs the visitor in only when its id matches the client user's UserList.uniqueid.
+                // Otherwise fall back to the existing session; without either, send the visitor to sign in.
+                var linkEmail = emailid?.Trim();
+                var isValidLink = !string.IsNullOrWhiteSpace(linkEmail) && !string.IsNullOrWhiteSpace(id)
+                    && await _meetingService.GetUniqueUserByEmailId(linkEmail, id) > 0
+                    && await _clientService.GetClientByEmailId(linkEmail) > 0;
+                if (isValidLink)
+                {
+                    HttpContext.Session.SetString("email", JsonConvert.SerializeObject(linkEmail));
+                    HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
+                }
+                else
+                {
+                    var sessionEmail = GetSessionValue("email");
+                    var sessionProfile = GetSessionValue("profileName");
+                    if (string.IsNullOrEmpty(sessionEmail) || string.IsNullOrEmpty(sessionProfile))
+                        return RedirectToAction("SignIn", "Session");
+                    if (DeliveryHeadInstructionViewMode.IsClientRoleProfile(sessionProfile))
+                        emailid = sessionEmail;
+                    else if (!DeliveryHeadInstructionViewMode.IsOperationalProfile(sessionProfile))
+                        return StatusCode(403, "You do not have access to this page.");
+                    else if (string.IsNullOrWhiteSpace(emailid))
+                        emailid = sessionEmail;
+                }
                 ViewBag.id = id;
                 ViewBag.emailid = emailid;
                 ViewBag.IsClientLogin = isClientLogin;
-                if (!string.IsNullOrWhiteSpace(emailid))
-                {
-                    HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
-                    HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
-                }
                 if (string.IsNullOrWhiteSpace(type))
                 {
                     type = "SkillChannel";
