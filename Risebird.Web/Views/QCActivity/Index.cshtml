@@ -833,6 +833,27 @@
             Burst: 'Burst of actions', ReviewedNoCall: 'Reviewed with no call', ReversedByOther: 'Reversed by another QC',
             ShortCalls: 'Short calls', KeepDespiteP0: 'Kept despite a P0', NoEvidence: 'Actions without evidence'
         };
+        // Flags panel rows: why a row was flagged when the server sent no note, and what an empty IRF / interview means.
+        var flagNoteFallback = {
+            Burst: 'Part of a burst of actions of this type by the same person',
+            ReviewedNoCall: 'No connected call or coaching to this interviewer in the window',
+            ReversedByOther: 'Undone by another person',
+            ShortCalls: 'Short call',
+            KeepDespiteP0: 'Interviewer has a P0 graded interview in the window',
+            NoEvidence: 'No evidence for this interviewer in the window'
+        };
+        // Actions recorded against the interviewer only (Total Interviews, status changes, calls, coaching): no IRF, no single interview.
+        function isInterviewerLevel(m) {
+            return /^Ti/.test(m || '') || isStatusMetric(m) || m === 'PlivoCall' || m === 'Coaching';
+        }
+        function flagIrfCell(i) {
+            if (i.irfName || i.irfId) return '<td>' + esc(i.irfName || '#' + i.irfId) + '</td>';
+            return '<td><span class="qca-small">' + (isInterviewerLevel(i.metric) ? 'Not tied to an IRF' : 'No IRF recorded') + '</span></td>';
+        }
+        function noInterviewText(m) {
+            if (/^Trm/.test(m || '')) return 'Whole IRF (no single interview)';
+            return isInterviewerLevel(m) ? 'Interviewer-level action' : 'No interview recorded';
+        }
         function openFlagsModal() { $('#qcaFlagsModal').addClass('is-open'); $('body').css('overflow', 'hidden'); }
         function closeFlagsModal() { abortPending('flags'); $('#qcaFlagsModal').removeClass('is-open'); $('body').css('overflow', ''); }
 
@@ -876,9 +897,9 @@
                                 '<table class="qca-dt"><thead><tr><th>When (IST)</th><th>Action</th><th>Interviewer</th><th>IRF</th><th>Detail</th><th>Why flagged</th><th>Interview</th></tr></thead><tbody>';
                             items.slice(0, 300).forEach(function (i) {
                                 h += '<tr><td>' + esc(fmtIst(i.actionAtIst)) + '</td><td>' + esc(actionLabels[i.metric] || i.metric) + '</td>' + interviewerCell(i) +
-                                    '<td>' + esc(i.irfName || (i.irfId ? '#' + i.irfId : '—')) + '</td>' +
-                                    '<td class="qca-detail-text">' + esc(i.detail || '—') + '</td><td class="qca-detail-text">' + esc(i.note || '—') + '</td>' +
-                                    interviewLinks(i) + '</tr>';
+                                    flagIrfCell(i) +
+                                    '<td class="qca-detail-text">' + esc(i.detail || '—') + '</td><td class="qca-detail-text">' + esc(i.note || flagNoteFallback[f.flag] || '—') + '</td>' +
+                                    (i.interviewId ? interviewLinks(i) : '<td><span class="qca-small">' + esc(noInterviewText(i.metric)) + '</span></td>') + '</tr>';
                             });
                             h += '</tbody></table></details>';
                         }

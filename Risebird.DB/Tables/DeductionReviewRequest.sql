@@ -53,6 +53,12 @@ BEGIN
 END
 GO
 
+-- Tables created before PayoutAlreadyPaid existed.
+IF COL_LENGTH('dbo.DeductionReviewRequest', 'PayoutAlreadyPaid') IS NULL
+    ALTER TABLE dbo.DeductionReviewRequest
+        ADD PayoutAlreadyPaid BIT NOT NULL CONSTRAINT DF_DeductionReviewRequest_PayoutAlreadyPaid DEFAULT (0);
+GO
+
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_DeductionReviewRequest_Status_Requested'
                AND object_id = OBJECT_ID(N'dbo.DeductionReviewRequest'))
     CREATE NONCLUSTERED INDEX IX_DeductionReviewRequest_Status_Requested

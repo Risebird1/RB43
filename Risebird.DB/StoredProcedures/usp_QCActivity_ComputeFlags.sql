@@ -140,8 +140,15 @@ BEGIN
     GROUP BY a.ActorEmail, a.Metric;
 
     INSERT INTO #QCActivityFlagItems (Flag, ActorEmail, ActionAtIst, Metric, InterviewId, IrfId, InterviewerUserId, InterviewerEmail, Detail, SourceId, Note)
-    SELECT 'Burst', a.ActorEmail, a.ActionAtIst, a.Metric, a.InterviewId, a.IrfId, a.InterviewerUserId, a.InterviewerEmail, a.Detail, a.SourceId, NULL
-    FROM #A a INNER JOIN #BurstRows b ON b.RowId = a.RowId;
+    SELECT 'Burst', a.ActorEmail, a.ActionAtIst, a.Metric, a.InterviewId, a.IrfId, a.InterviewerUserId, a.InterviewerEmail, a.Detail, a.SourceId,
+           LEFT(N'One of ' + CAST(w.Cnt AS NVARCHAR(10)) + N' actions of this type by the same person within '
+                + CAST(@BurstMinutes AS NVARCHAR(10)) + N' minutes either side (burst limit '
+                + CAST(@BurstCount AS NVARCHAR(10)) + N' in ' + CAST(@BurstMinutes AS NVARCHAR(10)) + N' minutes)', 300)
+    FROM #A a INNER JOIN #BurstRows b ON b.RowId = a.RowId
+    CROSS APPLY (SELECT COUNT(1) AS Cnt FROM #A y
+                 WHERE y.ActorEmail = a.ActorEmail AND y.Metric = a.Metric
+                   AND y.ActionAtIst >= DATEADD(MINUTE, -@BurstMinutes, a.ActionAtIst)
+                   AND y.ActionAtIst <= DATEADD(MINUTE, @BurstMinutes, a.ActionAtIst)) w;
 
     /* ---- Reviewed with no call ---- */
     -- Interviewers reached by a connected call or coaching (connected calls only), by id and by email.
@@ -247,17 +254,20 @@ BEGIN
       AND EXISTS (SELECT 1 FROM #QCActivityFlags f WHERE f.Flag = 'ShortCalls' AND f.ActorEmail = a.ActorEmail);
 
     /* ---- Keep despite P0 ---- */
-    CREATE TABLE #P0 (RowId INT NOT NULL PRIMARY KEY);
-    INSERT INTO #P0 (RowId)
-    SELECT a.RowId
+    -- The latest P0 interview of the interviewer in the window is kept so the panel can link to it.
+    CREATE TABLE #P0 (RowId INT NOT NULL PRIMARY KEY, P0InterviewId INT NULL, P0At DATETIME NULL);
+    INSERT INTO #P0 (RowId, P0InterviewId, P0At)
+    SELECT a.RowId, p0.id, p0.interviewDate
     FROM #A a
+    CROSS APPLY (SELECT TOP 1 im.id, im.interviewDate
+                 FROM dbo.InterviewMeetings im
+                 INNER JOIN dbo.RiskCategory rc ON rc.InterviewId = im.id
+                 WHERE im.interviewer = a.InterviewerEmail
+                   AND im.interviewDate >= @FromIstDt AND im.interviewDate < @ToIstDt
+                   AND UPPER(LTRIM(RTRIM(ISNULL(rc.Severity, '')))) = 'P0'
+                 ORDER BY im.interviewDate DESC, im.id DESC) p0
     WHERE a.Metric IN ('AuditKept', 'TrialKept')
-      AND a.InterviewerEmail IS NOT NULL
-      AND EXISTS (SELECT 1 FROM dbo.InterviewMeetings im
-                  INNER JOIN dbo.RiskCategory rc ON rc.InterviewId = im.id
-                  WHERE im.interviewer = a.InterviewerEmail
-                    AND im.interviewDate >= @FromIstDt AND im.interviewDate < @ToIstDt
-                    AND UPPER(LTRIM(RTRIM(ISNULL(rc.Severity, '')))) = 'P0');
+      AND a.InterviewerEmail IS NOT NULL;
 
     INSERT INTO #QCActivityFlags (Flag, ActorEmail, [Count], FirstAt, LastAt, Detail, Metrics)
     SELECT 'KeepDespiteP0', a.ActorEmail, COUNT(1), MIN(a.ActionAtIst), MAX(a.ActionAtIst),
@@ -272,8 +282,9 @@ BEGIN
     FROM #QCActivityFlags f WHERE f.Flag = 'KeepDespiteP0';
 
     INSERT INTO #QCActivityFlagItems (Flag, ActorEmail, ActionAtIst, Metric, InterviewId, IrfId, InterviewerUserId, InterviewerEmail, Detail, SourceId, Note)
-    SELECT 'KeepDespiteP0', a.ActorEmail, a.ActionAtIst, a.Metric, a.InterviewId, a.IrfId, a.InterviewerUserId, a.InterviewerEmail, a.Detail, a.SourceId,
-           N'Interviewer has a P0 graded interview in the window'
+    SELECT 'KeepDespiteP0', a.ActorEmail, a.ActionAtIst, a.Metric, COALESCE(a.InterviewId, p.P0InterviewId), a.IrfId, a.InterviewerUserId, a.InterviewerEmail, a.Detail, a.SourceId,
+           LEFT(N'Interviewer has a P0 graded interview in the window: #' + CAST(p.P0InterviewId AS NVARCHAR(20))
+                + ISNULL(N' on ' + CONVERT(NVARCHAR(16), p.P0At, 120), N''), 300)
     FROM #A a INNER JOIN #P0 p ON p.RowId = a.RowId;
 
     /* ---- Actions without evidence ---- */
