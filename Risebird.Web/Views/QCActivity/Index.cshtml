@@ -83,6 +83,20 @@
     .qca-empty { padding: 28px; text-align: center; color: var(--qca-muted); }
     .qca-loading { padding: 28px; text-align: center; color: var(--qca-muted); }
 
+    /* Loading states: one panel above the data (never inside the scrolling table), spinners in dialogs. */
+    .qca-spinner { display: inline-block; flex: none; width: 20px; height: 20px; border: 3px solid #bfdbfe; border-top-color: var(--qca-blue); border-radius: 50%; animation: qca-spin .8s linear infinite; }
+    .qca-spinner--lg { width: 34px; height: 34px; border-width: 4px; }
+    @@keyframes qca-spin { to { transform: rotate(360deg); } }
+    @@keyframes qca-bar { 0% { left: -35%; } 100% { left: 100%; } }
+    .qca-loadpanel { display: none; position: relative; overflow: hidden; align-items: center; gap: 14px; background: var(--qca-blue-soft); border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px 18px 16px; margin-bottom: 14px; color: #1e3a8a; }
+    .qca-loadpanel.is-on { display: flex; }
+    .qca-loadpanel::after { content: ''; position: absolute; bottom: 0; left: -35%; width: 35%; height: 3px; background: var(--qca-blue); animation: qca-bar 1.3s ease-in-out infinite; }
+    .qca-loadpanel__title { font-weight: 700; font-size: 15px; }
+    .qca-loadpanel__sub { font-size: 13px; color: #1e40af; margin-top: 2px; }
+    .qca-busy { opacity: .35; pointer-events: none; transition: opacity .2s; }
+    .qca-spin-block { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 56px 16px; text-align: center; color: var(--qca-muted); font-size: 13px; }
+    .qca-spin-block__title { font-weight: 600; font-size: 15px; color: var(--qca-ink); }
+
     .qca-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, .55); z-index: 2000; display: none; align-items: flex-start; justify-content: center; padding: 3vh 12px; }
     .qca-modal.is-open { display: flex; }
     .qca-modal__box { background: #fff; border-radius: 10px; width: min(1500px, 100%); max-height: 94vh; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0, 0, 0, .3); }
@@ -127,6 +141,33 @@
         .qca-modal__box { max-height: 100vh; height: 100vh; border-radius: 0; }
         .qca-edit-cols { grid-template-columns: minmax(0, 1fr); }
     }
+
+    /* ---- Part 2: authentic QC work ---- */
+    .qca-view-switch { display: flex; gap: 6px; margin: 4px 0 12px; flex-wrap: wrap; align-items: center; }
+    .qca-view-switch .qca-btn.is-active { background: var(--qca-blue); border-color: var(--qca-blue); color: #fff; }
+    .qca-tiles.qca-tiles--auth { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .qca-tile__btn { background: none; border: 0; padding: 0; font: inherit; color: var(--qca-blue); text-decoration: underline; cursor: pointer; }
+    .qca-cov { background: var(--qca-card); border: 1px solid var(--qca-line); border-radius: 10px; padding: 12px 14px; margin-bottom: 16px; }
+    .qca-cov__head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .qca-cov__title { font-weight: 700; }
+    .qca-cov table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+    .qca-cov th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--qca-muted); border-bottom: 1px solid var(--qca-line); padding: 6px 8px; }
+    .qca-cov td { border-bottom: 1px solid #f1f5f9; padding: 6px 8px; vertical-align: top; }
+    .qca-score { font-weight: 700; }
+    .qca-score--good { color: var(--qca-green); }
+    .qca-score--mid { color: var(--qca-amber); }
+    .qca-score--bad { color: var(--qca-red); }
+    .qca-flag-btn { border: 1px solid #fecaca; background: var(--qca-red-soft); color: var(--qca-red); border-radius: 999px; padding: 1px 10px; font-weight: 700; cursor: pointer; }
+    .qca-flag-btn:hover { filter: brightness(.97); }
+    .qca-flag { border: 1px solid var(--qca-line); border-radius: 10px; padding: 10px 12px; margin: 10px 12px; background: #fff; }
+    .qca-flag__head { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    .qca-flag__title { font-weight: 700; color: var(--qca-red); }
+    .qca-flag__rule { font-size: 12px; color: var(--qca-muted); margin: 2px 0 6px; }
+    .qca-flag__links { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0; }
+    .qca-auth-yes { color: var(--qca-green); font-weight: 600; }
+    .qca-auth-no { color: var(--qca-amber); }
+    @@media (max-width: 1280px) { .qca-tiles.qca-tiles--auth { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @@media (max-width: 768px) { .qca-tiles.qca-tiles--auth { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -140,6 +181,7 @@
                 <div class="pull-right qca-head-actions">
                     <button type="button" class="qca-back" onclick="if (history.length > 1) { history.back(); } else { location.href='/Dashboard/EmergencyDashboard'; }">Back</button>
                     <a class="qca-back" href="@Url.Action("Interviewers", "QCActivity")">Interviewer QC View</a>
+                    <a class="qca-back" href="@Url.Action("ReviewRequests", "QCActivity")">Review requests</a>
                 </div>
             </div>
         </div>
@@ -165,7 +207,8 @@
     <p class="qca-intro">
         What each Quality Controller actually did: interview reports reviewed and penalties applied (Payment SLA / QC Reject / QC Select),
         reports edited, trial interviewers kept or removed, IRF audits, Total Red Marker and Total Interview actions, interviewer status
-        changes (suspicious, blocked, portal access, inactive, payment hold; &#8634; counts undos) and Plivo calls to interviewers.
+        changes (suspicious, blocked, portal access, inactive, payment hold; &#8634; counts undos), Plivo calls to interviewers and
+        decisions on interviewers' deduction review requests.
         Click any number to see the records behind it. Dates are IST.
     </p>
 
@@ -207,10 +250,63 @@
         </p>
     </div>
 
+    <div class="qca-loadpanel" id="qcaLoadPanel" role="status" aria-live="polite">
+        <span class="qca-spinner qca-spinner--lg" aria-hidden="true"></span>
+        <div>
+            <div class="qca-loadpanel__title" id="qcaLoadTitle">Loading QC activity…</div>
+            <div class="qca-loadpanel__sub" id="qcaLoadSub">Working…</div>
+        </div>
+    </div>
+
     <div id="qcaAlert"></div>
 
     <div class="qca-backlog" id="qcaBacklog" aria-live="polite"></div>
 
+    <div class="qca-view-switch" role="tablist" aria-label="QC Activity views">
+        <button type="button" class="qca-btn is-active" id="qcaViewAuth" role="tab">Authentic QC work</button>
+        <button type="button" class="qca-btn" id="qcaViewAll" role="tab">All counts</button>
+        <button type="button" class="qca-btn" id="qcaFlagsAll" title="Flags for everyone listed (managers) or for you">Flags panel</button>
+    </div>
+
+    <div id="qcaAuthView">
+        <div class="qca-tiles qca-tiles--auth" id="qcaTilesAuth"></div>
+        <div class="qca-cov" id="qcaCoverage"></div>
+        <div class="qca-table-wrap">
+            <table class="qca-table" id="qcaAuthTable">
+                <thead>
+                    <tr>
+                        <th rowspan="2" class="qca-user-h">Quality Controller</th>
+                        <th colspan="5" class="qca-group">Coaching calls</th>
+                        <th colspan="7" class="qca-group">Actions taken (by page)</th>
+                        <th colspan="3" class="qca-group">Authenticity</th>
+                        <th rowspan="2" class="qca-group" style="vertical-align:middle">Last activity</th>
+                    </tr>
+                    <tr>
+                        <th class="qca-group" title="Answered calls to interviewers lasting at least the minimum (QCActivitySetting MinCallSeconds)">Connected</th>
+                        <th title="Every logged call to an interviewer">Dialled</th>
+                        <th title="Talk time on connected calls">Talk time</th>
+                        <th title="Average connected call">Avg</th>
+                        <th title="Distinct interviewers reached by a connected call or a coaching session">Reached</th>
+                        <th class="qca-group">Total Int.</th>
+                        <th>TRM</th>
+                        <th>IRF audit</th>
+                        <th>Trial</th>
+                        <th>Suspicious</th>
+                        <th title="Reports, Payment SLA, QC forms, report edits, proxy forms, redo requests, deduction reviews">Reports &amp; SLA</th>
+                        <th>Total</th>
+                        <th class="qca-group" title="Authentic actions ÷ scored actions: a real comment (not a stock word) and evidence on the interviewer">Score</th>
+                        <th title="High-Risk interviewers this person actioned who were also called or coached (by anyone) in the window">Follow-through</th>
+                        <th title="Bursts, reviewed with no call, reversed by another QC, short calls, kept despite a P0, actions without evidence">Flags</th>
+                    </tr>
+                </thead>
+                <tbody id="qcaAuthBody">
+                </tbody>
+            </table>
+        </div>
+        <p class="qca-hint" id="qcaAuthRules"></p>
+    </div>
+
+    <div id="qcaAllView" style="display:none;">
     <div class="qca-tiles" id="qcaTiles"></div>
 
     <div class="qca-table-wrap">
@@ -226,6 +322,7 @@
                     <th colspan="5" class="qca-group">Interviewer status</th>
                     <th colspan="4" class="qca-group">Plivo calls</th>
                     <th rowspan="2" class="qca-group" style="vertical-align:middle" title="Coaching sessions logged or emailed (Interviewer QC View)">Coaching</th>
+                    <th rowspan="2" class="qca-group" style="vertical-align:middle" title="Decisions on interviewers' deduction review requests (stands / reduced / refunded)">Review decisions</th>
                     <th rowspan="2" class="qca-group" style="vertical-align:middle">Last action</th>
                 </tr>
                 <tr>
@@ -260,10 +357,10 @@
                 </tr>
             </thead>
             <tbody id="qcaBody">
-                <tr><td colspan="31" class="qca-loading">Loading…</td></tr>
             </tbody>
         </table>
     </div>
+    </div><!-- /#qcaAllView -->
 </div>
                 </div>
             </div>
@@ -281,6 +378,19 @@
             <button type="button" class="qca-btn" id="qcaModalClose">Close</button>
         </div>
         <div class="qca-modal__body" id="qcaModalBody"></div>
+    </div>
+</div>
+
+<div class="qca-modal" id="qcaFlagsModal" role="dialog" aria-modal="true" aria-labelledby="qcaFlagsTitle">
+    <div class="qca-modal__box">
+        <div class="qca-modal__head">
+            <div>
+                <h3 id="qcaFlagsTitle">Flags</h3>
+                <div class="qca-modal__sub" id="qcaFlagsSub"></div>
+            </div>
+            <button type="button" class="qca-btn" id="qcaFlagsClose">Close</button>
+        </div>
+        <div class="qca-modal__body" id="qcaFlagsBody"></div>
     </div>
 </div>
 
@@ -360,6 +470,56 @@
             return /^https?:\/\//i.test(u || '') ? u : null;
         }
 
+        // ---------- loading states ----------
+        // One request of each kind at a time: a newer one (or closing its dialog) aborts the older one.
+        var pending = { summary: null, details: null, flags: null, edit: null };
+        function isAbort(xhr) { return xhr && xhr.statusText === 'abort'; }
+        function abortPending(key) {
+            var x = pending[key];
+            pending[key] = null;
+            if (x && x.readyState !== 4) x.abort();
+        }
+        function rangeText() {
+            return state.from && state.to ? (state.from === state.to ? state.from : state.from + ' to ' + state.to) : 'the selected range';
+        }
+        function waitText(sec) {
+            if (sec < 3) return 'Working…';
+            if (sec < 15) return sec + 's · counting every QC action in the range';
+            if (sec < 45) return sec + 's · still working, a wide date range takes longer';
+            return sec + 's · still working; a shorter date range loads faster';
+        }
+        // A centred spinner for dialogs; its second line shows the elapsed time.
+        function spinBlock(title) {
+            return '<div class="qca-spin-block"><span class="qca-spinner qca-spinner--lg" aria-hidden="true"></span>' +
+                '<div class="qca-spin-block__title">' + esc(title) + '</div>' +
+                '<div data-qca-since="' + Date.now() + '">Working…</div></div>';
+        }
+        function setSummaryLoading(on) {
+            var panel = $('#qcaLoadPanel');
+            if (on) {
+                var since = Date.now();
+                $('#qcaLoadTitle').text('Loading QC activity for ' + rangeText() + '…');
+                $('#qcaLoadSub').attr('data-qca-since', since).text('Working…');
+                panel.addClass('is-on');
+                $('#qcaBacklog, #qcaAuthView, #qcaAllView').addClass('qca-busy').attr('aria-busy', 'true');
+                $('#qcaApply').prop('disabled', true);
+            } else {
+                $('#qcaLoadSub').removeAttr('data-qca-since');
+                panel.removeClass('is-on');
+                $('#qcaBacklog, #qcaAuthView, #qcaAllView').removeClass('qca-busy').removeAttr('aria-busy');
+                $('#qcaApply').prop('disabled', false);
+            }
+            tickLoading();
+        }
+        // Elapsed time on every visible loader.
+        function tickLoading() {
+            var now = Date.now();
+            $('[data-qca-since]').each(function () {
+                $(this).text(waitText(Math.floor((now - Number(this.getAttribute('data-qca-since'))) / 1000)));
+            });
+        }
+        setInterval(tickLoading, 1000);
+
         // A clickable number (opens the drill-down) or a grey zero.
         function cell(value, actor, metric, cls) {
             var v = num(value);
@@ -416,10 +576,11 @@
         // ---------- summary ----------
         function load() {
             syncInputs();
-            $('#qcaApply').prop('disabled', true);
+            abortPending('summary');
             $('#qcaAlert').empty();
-            $('#qcaBody').html('<tr><td colspan="31" class="qca-loading">Loading…</td></tr>');
-            $.ajax({
+            // The panel above the data shows the loading state; later loads keep the previous numbers, dimmed, until the new ones arrive.
+            setSummaryLoading(true);
+            var jq = pending.summary = $.ajax({
                 url: '/QCActivity/Summary',
                 type: 'GET',
                 cache: false,
@@ -439,15 +600,23 @@
                     render();
                 },
                 error: function (xhr) {
+                    if (isAbort(xhr)) return;
                     if (xhr.status === 401 || xhr.status === 403) { window.location.href = '/Session/SignOut'; return; }
                     $('#qcaAlert').html('<div class="qca-alert qca-alert--error">Could not load QC activity (' + esc(xhr.status) + '). Please try again.</div>');
-                    $('#qcaBody').html('<tr><td colspan="31" class="qca-empty">No data.</td></tr>');
+                    $('#qcaBody').html('<tr><td colspan="32" class="qca-empty">No data.</td></tr>');
+                    if (!state.data) $('#qcaAuthBody').html('<tr><td colspan="17" class="qca-empty">No data.</td></tr>');
                 },
-                complete: function () { $('#qcaApply').prop('disabled', false); }
+                complete: function () {
+                    // An aborted request was replaced by a newer one, which owns the loader now.
+                    if (pending.summary !== jq) return;
+                    pending.summary = null;
+                    setSummaryLoading(false);
+                }
             });
         }
 
         function render() {
+            renderAuth();
             var d = state.data || {};
             var rows = d.rows || [];
             var b = d.backlog || {};
@@ -459,7 +628,8 @@
                 '<a class="qca-pill" href="/Interview/PaymentSlaDetails" target="_blank" rel="noopener"><b>' + num(b.pendingReports) + '</b> reports awaiting QC (Payment SLA)</a>' +
                 '<a class="qca-pill" href="/Dashboard/TrialFlagReview" target="_blank" rel="noopener"><b>' + num(b.pendingTrialFlags) + '</b> trial flags pending</a>' +
                 '<a class="qca-pill" href="/Dashboard/AutoRemovalMonitor" target="_blank" rel="noopener"><b>' + num(b.pendingAuditInterviewers) + '</b> interviewers with pending audit flags</a>' +
-                '<a class="qca-pill" href="/Dashboard/TotalRedMarkeredInterviewers?type=UnderReview" target="_blank" rel="noopener"><b>' + num(b.trmUnderReview) + '</b> Total Red Marker under review</a>');
+                '<a class="qca-pill" href="/Dashboard/TotalRedMarkeredInterviewers?type=UnderReview" target="_blank" rel="noopener"><b>' + num(b.trmUnderReview) + '</b> Total Red Marker under review</a>' +
+                '<a class="qca-pill" href="/QCActivity/ReviewRequests" target="_blank" rel="noopener"><b>' + num(b.pendingDeductionReviews) + '</b> deduction review requests open</a>');
 
             // Tiles.
             function tile(label, value, sub) {
@@ -475,11 +645,12 @@
                 tile('Removed from Total Interviews', num(t.tiRemoved), '') +
                 tile('Interviewer status changes', num(t.statusChanges), '↺ ' + num(t.statusUndos) + ' undone') +
                 tile('Plivo calls', num(t.plivoCalls), num(t.plivoInterviewers) + ' interviewers · ' + fmtTalk(num(t.plivoTalkSeconds))) +
+                tile('Review decisions', num(t.deductionReviews), 'deduction review requests decided') +
                 tile('Users with no activity', num(t.usersWithNoActivity), 'of ' + num(t.usersListed) + ' listed'));
 
             // Table, grouped by profile when more than one profile is listed.
             if (!rows.length) {
-                $('#qcaBody').html('<tr><td colspan="31" class="qca-empty">No Quality Controllers or actions in this range.</td></tr>');
+                $('#qcaBody').html('<tr><td colspan="32" class="qca-empty">No Quality Controllers or actions in this range.</td></tr>');
                 return;
             }
             var groups = [];
@@ -489,7 +660,7 @@
             });
             var html = '';
             groups.forEach(function (g) {
-                if (groups.length > 1) html += '<tr class="qca-section"><td colspan="31">' + esc(g) + '</td></tr>';
+                if (groups.length > 1) html += '<tr class="qca-section"><td colspan="32">' + esc(g) + '</td></tr>';
                 rows.filter(function (r) { return (r.profileName || 'Unknown') === g; }).forEach(function (r) {
                     var a = r.actorEmail;
                     var badge = num(r.totalActions) === 0 ? '<span class="qca-badge-none">No activity</span>' : '';
@@ -533,11 +704,194 @@
                         statusCell(r.paymentHolds, r.paymentHoldsReleased, a, 'PaymentHoldAll') +
                         cell(r.plivoCalls, a, 'PlivoCall', 'qca-group') +
                         '<td>' + (num(r.plivoInterviewers) > 0 ? num(r.plivoInterviewers) : '<span class="qca-zero">0</span>') + '</td>' +
-                        talk + avgCall + cell(r.coachingSessions, a, 'Coaching', 'qca-group') + last +
+                        talk + avgCall + cell(r.coachingSessions, a, 'Coaching', 'qca-group') +
+                        cell(r.deductionReviews, a, 'DeductionReview', 'qca-group') + last +
                         '</tr>';
                 });
             });
             $('#qcaBody').html(html);
+        }
+
+        // ---------- Part 2: authentic QC work ----------
+        function pctClass(p) {
+            if (p === null || p === undefined) return '';
+            return p >= 70 ? 'qca-score--good' : (p >= 40 ? 'qca-score--mid' : 'qca-score--bad');
+        }
+        function pctText(p) { return p === null || p === undefined ? '—' : p + '%'; }
+
+        function renderAuth() {
+            var d = state.data || {};
+            var rows = d.rows || [];
+            var t = d.totals || {};
+            var c = d.coverage || {};
+
+            function tile(label, value, sub) {
+                return '<div class="qca-tile"><div class="qca-tile__label">' + label + '</div><div class="qca-tile__value">' + value + '</div>' +
+                    (sub ? '<div class="qca-tile__sub">' + sub + '</div>' : '') + '</div>';
+            }
+            var authPct = t.authenticPct === null || t.authenticPct === undefined ? null : t.authenticPct;
+            var covPct = c.coveragePct === null || c.coveragePct === undefined ? null : Math.round(c.coveragePct);
+            $('#qcaTilesAuth').html(
+                tile('Connected coaching calls', num(t.connectedCalls), fmtTalk(num(t.connectedTalkSeconds)) + ' talk · ' + num(t.dialledCalls) + ' dialled') +
+                tile('Interviewers reached', num(t.interviewersReached), 'connected call or coaching') +
+                tile('Actions taken', num(t.actionsTaken), num(t.scoredActions) + ' scored') +
+                tile('Authentic actions', '<span class="qca-score ' + pctClass(authPct) + '">' + pctText(authPct) + '</span>',
+                     num(t.authenticActions) + ' of ' + num(t.scoredActions) + ' with comment + evidence') +
+                tile('High-risk coverage', '<span class="qca-score ' + pctClass(covPct) + '">' + pctText(covPct) + '</span>',
+                     num(c.highRiskTouched) + ' of ' + num(c.highRiskTotal) + ' High-Risk touched') +
+                tile('Flags to review', num(t.flagCount) > 0 ? '<button type="button" class="qca-tile__btn" id="qcaFlagsTile">' + num(t.flagCount) + '</button>' : '0',
+                     'a prompt to look, not a verdict'));
+
+            renderCoverage(c);
+
+            if (!rows.length) {
+                $('#qcaAuthBody').html('<tr><td colspan="17" class="qca-empty">No Quality Controllers or actions in this range.</td></tr>');
+                return;
+            }
+            var html = '';
+            rows.forEach(function (r) {
+                var a = r.actorEmail;
+                var badge = num(r.totalActions) === 0 ? '<span class="qca-badge-none">No activity</span>' : '';
+                if (!r.isActive) badge += '<span class="qca-badge-inactive">Inactive</span>';
+                var score = num(r.scoredActions) > 0
+                    ? '<td class="qca-group"><button type="button" class="qca-num" data-actor="' + esc(a) + '" data-metric="NotAuthentic" title="Open the actions not counted as authentic">' +
+                      '<span class="qca-score ' + pctClass(r.authenticPct) + '">' + pctText(r.authenticPct) + '</span></button>' +
+                      ' <span class="qca-sub"><button type="button" class="qca-num" data-actor="' + esc(a) + '" data-metric="AuthenticActions">' + num(r.authenticActions) + '</button>/' +
+                      '<button type="button" class="qca-num" data-actor="' + esc(a) + '" data-metric="ScoredActions">' + num(r.scoredActions) + '</button></span></td>'
+                    : '<td class="qca-group"><span class="qca-zero">—</span></td>';
+                var follow = num(r.followThroughOf) > 0
+                    ? '<td><button type="button" class="qca-num" data-actor="' + esc(a) + '" data-metric="FollowThrough">' + num(r.followThroughDone) + '/' + num(r.followThroughOf) + '</button>' +
+                      ' <span class="qca-sub ' + pctClass(r.followThroughPct) + '">' + pctText(r.followThroughPct) + '</span></td>'
+                    : '<td><span class="qca-zero">—</span></td>';
+                var flags = num(r.flagCount) > 0
+                    ? '<td><button type="button" class="qca-flag-btn" data-flags-actor="' + esc(a) + '">' + num(r.flagCount) + '</button></td>'
+                    : '<td><span class="qca-zero">0</span></td>';
+                var last = r.lastActionAtIst
+                    ? '<td class="qca-group"><button type="button" class="qca-num" data-actor="' + esc(a) + '" data-metric="All">' + esc(fmtIst(r.lastActionAtIst)) + '</button></td>'
+                    : '<td class="qca-group"><span class="qca-zero">—</span></td>';
+                html += '<tr>' +
+                    '<td class="qca-user"><div class="qca-name">' + esc(r.actorName || a) + badge + '</div><div class="qca-email">' + esc(a) + '</div></td>' +
+                    cell(r.connectedCalls, a, 'ConnectedCall', 'qca-group') +
+                    cell(r.dialledCalls, a, 'PlivoCall') +
+                    '<td>' + (num(r.connectedCalls) > 0 ? fmtTalk(num(r.connectedTalkSeconds)) : '<span class="qca-zero">—</span>') + '</td>' +
+                    '<td>' + (r.connectedAvgCallSeconds !== null && r.connectedAvgCallSeconds !== undefined ? fmtDuration(r.connectedAvgCallSeconds) : '<span class="qca-zero">—</span>') + '</td>' +
+                    cell(r.interviewersReached, a, 'Reached') +
+                    cell(r.actionsTotalInterviews, a, 'PageTotalInterviews', 'qca-group') +
+                    cell(r.actionsTrm, a, 'PageTrm') +
+                    cell(r.actionsIrfAudit, a, 'PageIrfAudit') +
+                    cell(r.actionsTrial, a, 'PageTrial') +
+                    cell(r.actionsSuspicious, a, 'PageSuspicious') +
+                    cell(r.actionsReportsSla, a, 'PageReportsSla') +
+                    cell(r.actionsTaken, a, 'ActionsTaken') +
+                    score + follow + flags + last +
+                    '</tr>';
+            });
+            $('#qcaAuthBody').html(html);
+            $('#qcaAuthRules').text('Authentic action: a comment that is not a stock word ("ok", "done", ...) and long enough, AND evidence on the interviewer in the window ' +
+                '(a P0-P5 graded interview, an AI penalty, an open trial or audit flag, or a red marker). Connected call: answered, to an interviewer, long enough. ' +
+                'Thresholds are set by the QC lead (QCActivitySetting). Flags are prompts to look, not verdicts.');
+        }
+
+        function renderCoverage(c) {
+            c = c || {};
+            if (c.error) {
+                $('#qcaCoverage').html('<div class="qca-alert qca-alert--error">' + esc(c.error) + '</div>');
+                return;
+            }
+            var list = c.untouched || [];
+            var hrUrl = '/Dashboard/AutoRemovalMonitor?view=interviewers&from=' + encodeURIComponent(state.from) + '&to=' + encodeURIComponent(state.to);
+            var h = '<div class="qca-cov__head"><div><span class="qca-cov__title">High-risk nobody touched</span> ' +
+                '<span class="qca-sub">' + list.length + (list.length >= 50 ? '+' : '') + ' of ' + num(c.highRiskTotal) +
+                ' High-Risk interviewers had no call, coaching or action by any QC in the window</span></div>' +
+                '<a class="qca-back" href="' + esc(hrUrl) + '" target="_blank" rel="noopener">Open High-Risk list</a></div>';
+            if (!list.length) {
+                h += '<div class="qca-sub" style="margin-top:6px;">' + (num(c.highRiskTotal) > 0 ? 'Every High-Risk interviewer was touched.' : 'No High-Risk interviewers in this window.') + '</div>';
+            } else {
+                h += '<table><thead><tr><th>Interviewer</th><th>Worst</th><th>Risk</th><th>Completed / bad</th><th>Priority</th></tr></thead><tbody>';
+                list.forEach(function (u) {
+                    var risk = u.overallRiskRatio === null || u.overallRiskRatio === undefined ? '—' : Math.round(u.overallRiskRatio * 100) + '%';
+                    h += '<tr><td><div>' + esc(u.codedId || u.interviewerName || ('#' + u.interviewerId)) + '</div>' +
+                        '<div class="qca-small">' + esc(u.interviewerName || '') + (u.interviewerEmail ? ' · ' + esc(u.interviewerEmail) : '') + '</div></td>' +
+                        '<td>' + esc(u.worstSeverity || '—') + '</td><td>' + risk + '</td>' +
+                        '<td>' + num(u.totalCompleted) + ' / ' + num(u.totalBad) + '</td><td>' + esc(u.priorityTier || '—') + '</td></tr>';
+                });
+                h += '</tbody></table>';
+            }
+            $('#qcaCoverage').html(h);
+        }
+
+        function setView(view) {
+            var auth = view !== 'all';
+            $('#qcaAuthView').toggle(auth);
+            $('#qcaAllView').toggle(!auth);
+            $('#qcaViewAuth').toggleClass('is-active', auth);
+            $('#qcaViewAll').toggleClass('is-active', !auth);
+            try { localStorage.setItem('qcaView', auth ? 'auth' : 'all'); } catch (e) { }
+        }
+
+        var flagLabels = {
+            Burst: 'Burst of actions', ReviewedNoCall: 'Reviewed with no call', ReversedByOther: 'Reversed by another QC',
+            ShortCalls: 'Short calls', KeepDespiteP0: 'Kept despite a P0', NoEvidence: 'Actions without evidence'
+        };
+        function openFlagsModal() { $('#qcaFlagsModal').addClass('is-open'); $('body').css('overflow', 'hidden'); }
+        function closeFlagsModal() { abortPending('flags'); $('#qcaFlagsModal').removeClass('is-open'); $('body').css('overflow', ''); }
+
+        function openFlags(actor) {
+            $('#qcaFlagsTitle').text('Flags');
+            $('#qcaFlagsSub').text((actor || (isManager ? 'Everyone listed' : 'You')) + ' · ' + state.from + ' to ' + state.to + ' (IST)');
+            abortPending('flags');
+            $('#qcaFlagsBody').html(spinBlock('Checking flags for ' + rangeText() + '…'));
+            openFlagsModal();
+            pending.flags = $.ajax({
+                url: '/QCActivity/Flags',
+                type: 'GET',
+                cache: false,
+                data: { actor: actor || null, from: state.from, to: state.to },
+                success: function (res) {
+                    res = res || {};
+                    if (res.error) {
+                        $('#qcaFlagsBody').html('<div class="qca-alert qca-alert--error" style="margin:12px">' + esc(res.error) + '</div>');
+                        return;
+                    }
+                    var flags = res.flags || [];
+                    if (!flags.length) {
+                        $('#qcaFlagsBody').html('<div class="qca-empty">No flags in this range.</div>');
+                        return;
+                    }
+                    var h = '';
+                    flags.forEach(function (f, idx) {
+                        var items = f.items || [];
+                        var metrics = String(f.metrics || '').split(',').filter(function (m) { return m; });
+                        h += '<div class="qca-flag">' +
+                            '<div class="qca-flag__head"><div><span class="qca-flag__title">' + esc(f.title || flagLabels[f.flag] || f.flag) + '</span> · ' +
+                            '<b>' + num(f.count) + '</b> · <span class="qca-small">' + esc(f.actorEmail) + '</span></div>' +
+                            '<div class="qca-small">' + esc(fmtIst(f.firstAt)) + ' to ' + esc(fmtIst(f.lastAt)) + '</div></div>' +
+                            (f.rule ? '<div class="qca-flag__rule">Rule: ' + esc(f.rule) + '</div>' : '') +
+                            '<div>' + esc(f.detail || '') + '</div>' +
+                            (metrics.length ? '<div class="qca-flag__links">' + metrics.map(function (m) {
+                                return '<button type="button" class="qca-num qca-flag-drill" data-actor="' + esc(f.actorEmail) + '" data-metric="' + esc(m) + '">Open ' + esc(actionLabels[m] || m) + ' drill-down</button>';
+                            }).join('') + '</div>' : '');
+                        if (items.length) {
+                            h += '<details' + (idx === 0 ? ' open' : '') + '><summary class="qca-small">' + items.length + ' row' + (items.length === 1 ? '' : 's') + ' behind this flag</summary>' +
+                                '<table class="qca-dt"><thead><tr><th>When (IST)</th><th>Action</th><th>Interviewer</th><th>IRF</th><th>Detail</th><th>Why flagged</th><th>Interview</th></tr></thead><tbody>';
+                            items.slice(0, 300).forEach(function (i) {
+                                h += '<tr><td>' + esc(fmtIst(i.actionAtIst)) + '</td><td>' + esc(actionLabels[i.metric] || i.metric) + '</td>' + interviewerCell(i) +
+                                    '<td>' + esc(i.irfName || (i.irfId ? '#' + i.irfId : '—')) + '</td>' +
+                                    '<td class="qca-detail-text">' + esc(i.detail || '—') + '</td><td class="qca-detail-text">' + esc(i.note || '—') + '</td>' +
+                                    interviewLinks(i) + '</tr>';
+                            });
+                            h += '</tbody></table></details>';
+                        }
+                        h += '</div>';
+                    });
+                    $('#qcaFlagsBody').html(h);
+                },
+                error: function (xhr) {
+                    if (isAbort(xhr)) return;
+                    if (xhr.status === 401 || xhr.status === 403) { window.location.href = '/Session/SignOut'; return; }
+                    $('#qcaFlagsBody').html('<div class="qca-alert qca-alert--error" style="margin:12px">Could not load flags (' + esc(xhr.status) + ').</div>');
+                }
+            });
         }
 
         // ---------- drill-down ----------
@@ -555,7 +909,13 @@
             PlivoCall: 'Plivo call', Coaching: 'Coaching session', ReportEdited: 'Report edited',
             Suspicious: 'Marked suspicious', SuspiciousUndone: 'Suspicious mark undone', Blocked: 'Blocked', Unblocked: 'Unblocked',
             AccessRevoked: 'Portal access turned off', AccessRestored: 'Portal access turned on', Inactivated: 'Made inactive',
-            Reactivated: 'Made active', PaymentHold: 'Payment put on hold', PaymentHoldReleased: 'Payment hold released'
+            Reactivated: 'Made active', PaymentHold: 'Payment put on hold', PaymentHoldReleased: 'Payment hold released',
+            DeductionReview: 'Deduction review decided',
+            ProxyForm: 'Proxy form saved', RedoRequested: 'Redo requested', TrialBackfill: 'Trial-flag backfill run',
+            PageTotalInterviews: 'Total Interviews actions', PageTrm: 'Total Red Marker actions', PageIrfAudit: 'IRF audit actions',
+            PageTrial: 'Trial actions', PageSuspicious: 'Suspicious actions', PageReportsSla: 'Reports & SLA actions',
+            ActionsTaken: 'Actions taken', ScoredActions: 'Scored actions', AuthenticActions: 'Authentic actions', NotAuthentic: 'Not authentic',
+            NoEvidence: 'Without evidence', ConnectedCall: 'Connected call', Reached: 'Interviewers reached', FollowThrough: 'Follow-through'
         };
 
         // Report text is stored HTML-encoded; decode it to plain text (a textarea never runs markup), then esc() it for the DOM.
@@ -645,8 +1005,20 @@
             return h + '</tbody></table>';
         }
 
+        function authCell(r) {
+            var parts = [];
+            if (r.isAuthentic === true) parts.push('<span class="qca-auth-yes">Authentic</span>');
+            else if (r.isAuthentic === false) parts.push('<span class="qca-auth-no">Not authentic' + (r.notAuthenticReason ? ': ' + esc(r.notAuthenticReason) : '') + '</span>');
+            if (r.followedUp === true) parts.push('<span class="qca-auth-yes">Followed up</span>');
+            else if (r.followedUp === false) parts.push('<span class="qca-auth-no">No call or coaching yet</span>');
+            if (r.comment && r.metric !== 'PlivoCall' && r.comment !== r.detail) parts.push('<span class="qca-small">Comment: ' + esc(r.comment) + '</span>');
+            return '<td>' + (parts.length ? parts.join('<br/>') : '<span class="qca-small">—</span>') + '</td>';
+        }
+
         function renderGeneric(rows) {
-            var h = '<table class="qca-dt"><thead><tr><th>When (IST)</th><th>Action</th><th>Interviewer</th><th>IRF</th><th>Detail</th><th>Interview / recording</th></tr></thead><tbody>';
+            var showAuth = rows.some(function (r) { return (r.isAuthentic !== null && r.isAuthentic !== undefined) || (r.followedUp !== null && r.followedUp !== undefined); });
+            var h = '<table class="qca-dt"><thead><tr><th>When (IST)</th><th>Action</th><th>Interviewer</th><th>IRF</th><th>Detail</th><th>Interview / recording</th>' +
+                (showAuth ? '<th>Authenticity</th>' : '') + '</tr></thead><tbody>';
             rows.forEach(function (r) {
                 var detail = detailText(r);
                 // Status changes and report edits carry their action label in status: already shown as the action.
@@ -665,20 +1037,21 @@
                 }
                 h += '<tr><td>' + esc(fmtIst(r.actionAtIst)) + '</td><td>' + actionText(r) + '</td>' + interviewerCell(r) +
                     '<td>' + esc(r.irfName || (r.irfId ? '#' + r.irfId : '—')) + '</td>' +
-                    '<td class="qca-detail-text">' + esc(detail || '—') + '</td>' + last + '</tr>';
+                    '<td class="qca-detail-text">' + esc(detail || '—') + '</td>' + last + (showAuth ? authCell(r) : '') + '</tr>';
             });
             return h + '</tbody></table>';
         }
 
         function openModal() { $('#qcaModal').addClass('is-open'); $('body').css('overflow', 'hidden'); }
-        function closeModal() { $('#qcaModal').removeClass('is-open'); $('body').css('overflow', ''); }
+        function closeModal() { abortPending('details'); $('#qcaModal').removeClass('is-open'); $('body').css('overflow', ''); }
 
         function openDetails(actor, metric) {
-            $('#qcaModalTitle').text('Loading…');
+            abortPending('details');
+            $('#qcaModalTitle').text(actionLabels[metric] || metric || 'Details');
             $('#qcaModalSub').text(actor + ' · ' + state.from + ' to ' + state.to + ' (IST)');
-            $('#qcaModalBody').html('<div class="qca-loading">Loading…</div>');
+            $('#qcaModalBody').html(spinBlock('Loading the records behind this number…'));
             openModal();
-            $.ajax({
+            pending.details = $.ajax({
                 url: '/QCActivity/Details',
                 type: 'GET',
                 cache: false,
@@ -706,6 +1079,7 @@
                     $('#qcaModalBody').html(html);
                 },
                 error: function (xhr) {
+                    if (isAbort(xhr)) return;
                     if (xhr.status === 401 || xhr.status === 403) { window.location.href = '/Session/SignOut'; return; }
                     $('#qcaModalTitle').text('Details');
                     $('#qcaModalBody').html('<div class="qca-alert qca-alert--error" style="margin:12px">Could not load the records (' + esc(xhr.status) + ').</div>');
@@ -764,16 +1138,18 @@
 
         function openEditModal() { $('#qcaEditModal').addClass('is-open'); $('body').css('overflow', 'hidden'); }
         function closeEditModal() {
+            abortPending('edit');
             $('#qcaEditModal').removeClass('is-open');
             if (!$('#qcaModal').hasClass('is-open')) $('body').css('overflow', '');
         }
 
         function openReportEdit(id) {
-            $('#qcaEditTitle').text('Loading…');
+            abortPending('edit');
+            $('#qcaEditTitle').text('Report edit');
             $('#qcaEditSub').text('');
-            $('#qcaEditBody').html('<div class="qca-loading">Loading…</div>');
+            $('#qcaEditBody').html(spinBlock('Loading the text before and after the edit…'));
             openEditModal();
-            $.ajax({
+            pending.edit = $.ajax({
                 url: '/QCActivity/ReportEdit',
                 type: 'GET',
                 cache: false,
@@ -811,6 +1187,7 @@
                         '</div>');
                 },
                 error: function (xhr) {
+                    if (isAbort(xhr)) return;
                     if (xhr.status === 401 || xhr.status === 403) { window.location.href = '/Session/SignOut'; return; }
                     $('#qcaEditTitle').text('Report edit');
                     $('#qcaEditBody').html('<div class="qca-alert qca-alert--error">Could not load the edit (' + esc(xhr.status) + ').</div>');
@@ -842,6 +1219,15 @@
                 ['Inactivated', 'inactivated'], ['Reactivated', 'reactivated'],
                 ['Payment holds', 'paymentHolds'], ['Payment holds released', 'paymentHoldsReleased'],
                 ['Plivo calls', 'plivoCalls'], ['Plivo interviewers', 'plivoInterviewers'], ['Plivo talk seconds', 'plivoTalkSeconds'], ['Plivo avg call seconds', 'plivoAvgCallSeconds'], ['Coaching sessions', 'coachingSessions'],
+                ['Deduction review decisions', 'deductionReviews'],
+                ['Connected calls', 'connectedCalls'], ['Dialled calls', 'dialledCalls'], ['Connected talk seconds', 'connectedTalkSeconds'],
+                ['Connected avg call seconds', 'connectedAvgCallSeconds'], ['Interviewers reached', 'interviewersReached'],
+                ['Actions: Total Interviews', 'actionsTotalInterviews'], ['Actions: TRM', 'actionsTrm'], ['Actions: IRF audit', 'actionsIrfAudit'],
+                ['Actions: Trial', 'actionsTrial'], ['Actions: Suspicious', 'actionsSuspicious'], ['Actions: Reports & SLA', 'actionsReportsSla'],
+                ['Actions taken', 'actionsTaken'], ['Proxy forms', 'proxyForms'], ['Redo requests', 'redoRequests'], ['Trial backfills', 'trialBackfills'],
+                ['Scored actions', 'scoredActions'], ['Authentic actions', 'authenticActions'], ['Authentic %', 'authenticPct'],
+                ['Actions without evidence', 'noEvidenceActions'], ['Follow-through done', 'followThroughDone'], ['Follow-through of', 'followThroughOf'],
+                ['Follow-through %', 'followThroughPct'], ['Flags', 'flagCount'],
                 ['Total actions', 'totalActions'], ['Last action (IST)', 'lastActionAtIst']
             ];
             var lines = [cols.map(function (c) { return csvCell(c[0]); }).join(',')];
@@ -882,6 +1268,23 @@
         $(document).on('click', '#qcaTable .qca-num', function () {
             openDetails($(this).attr('data-actor'), $(this).attr('data-metric'));
         });
+        // Part 2: the new view's numbers use the same drill-down; Flags open the Flags panel.
+        $(document).on('click', '#qcaAuthTable .qca-num', function () {
+            openDetails($(this).attr('data-actor'), $(this).attr('data-metric'));
+        });
+        $(document).on('click', '#qcaAuthTable .qca-flag-btn', function () {
+            openFlags($(this).attr('data-flags-actor'));
+        });
+        $(document).on('click', '#qcaFlagsTile, #qcaFlagsAll', function () { openFlags(null); });
+        $(document).on('click', '#qcaFlagsBody .qca-flag-drill', function () {
+            closeFlagsModal();
+            openDetails($(this).attr('data-actor'), $(this).attr('data-metric'));
+        });
+        $('#qcaFlagsClose').on('click', closeFlagsModal);
+        $('#qcaFlagsModal').on('click', function (e) { if (e.target === this) closeFlagsModal(); });
+        $('#qcaViewAuth').on('click', function () { setView('auth'); });
+        $('#qcaViewAll').on('click', function () { setView('all'); });
+        try { if (localStorage.getItem('qcaView') === 'all') setView('all'); } catch (e) { }
         $(document).on('click', '#qcaModalBody .qca-edit-link', function () {
             openReportEdit($(this).attr('data-edit-id'));
         });
@@ -892,7 +1295,9 @@
         // Escape closes the top-most dialog first.
         $(document).on('keydown', function (e) {
             if (e.key !== 'Escape') return;
-            if ($('#qcaEditModal').hasClass('is-open')) closeEditModal(); else closeModal();
+            if ($('#qcaEditModal').hasClass('is-open')) closeEditModal();
+            else if ($('#qcaModal').hasClass('is-open')) closeModal();
+            else closeFlagsModal();
         });
 
         readQuery();

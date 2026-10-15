@@ -828,8 +828,8 @@ namespace Risebird.Business
         {
             try
             {
-                await _dashboardRespository.UndoSuspiciousInterviewer(InterviewerProfileId, modifiedBy);
-                return true;
+                // False when nothing changed (no active mark, unknown id) or the save failed.
+                return await _dashboardRespository.UndoSuspiciousInterviewer(InterviewerProfileId, modifiedBy);
             }
             catch (Exception e)
             {

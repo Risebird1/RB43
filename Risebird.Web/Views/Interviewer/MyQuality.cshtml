@@ -1,0 +1,434 @@
+@model Risebird.Entities.ViewModel.InterviewerMyQualityVM
+@using Risebird.Entities.ViewModel
+@{
+    ViewData["Title"] = "My Quality";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var vm = Model ?? new InterviewerMyQualityVM();
+
+    // Report links go through the existing report page with the candidate masked.
+    string ReportUrl(int interviewId, int? irfId) =>
+        Url.Action("ClientReport", "Interview", new { interviewId, irfId = irfId ?? 0, maskCandidate = "1" });
+
+    string Trend(string trend, bool upIsGood)
+    {
+        if (string.IsNullOrEmpty(trend) || trend == "Same") return "";
+        var good = (trend == "Up") == upIsGood;
+        return good ? "mq-trend mq-trend--good" : "mq-trend mq-trend--bad";
+    }
+
+    string Arrow(string trend) => trend == "Up" ? "▲" : trend == "Down" ? "▼" : "";
+
+    string Amount(decimal? v) =>
+        v.HasValue ? v.Value.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("en-IN")) : "—";
+}
+
+<script>
+    var Header = "<div>My Quality</div>";
+    $('#txtpageHeader').empty().html(Header);
+</script>
+
+<style>
+    .mq-page { padding: 24px 16px 40px; color: #0f172a; font-size: 14px; }
+    .mq-sub { color: #64748b; font-size: 12px; margin: 0 0 16px; }
+    .mq-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 18px; }
+    .mq-tile { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; }
+    .mq-tile__label { font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: #64748b; }
+    .mq-tile__value { font-size: 22px; font-weight: 700; margin-top: 4px; }
+    .mq-tile__detail { font-size: 12px; color: #475569; margin-top: 2px; }
+    .mq-trend { font-size: 12px; font-weight: 600; margin-left: 6px; }
+    .mq-trend--good { color: #15803d; }
+    .mq-trend--bad { color: #b45309; }
+    .mq-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; }
+    .mq-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+    .mq-card h3 { font-size: 15px; font-weight: 700; margin: 0 0 4px; }
+    .mq-attr { font-size: 11px; color: #94a3b8; margin-bottom: 12px; }
+    .mq-focus { border-top: 1px solid #f1f5f9; padding: 12px 0; }
+    .mq-focus:first-of-type { border-top: none; padding-top: 0; }
+    .mq-focus__title { font-weight: 700; }
+    .mq-focus__count { display: inline-block; margin-left: 6px; padding: 0 8px; border-radius: 10px; background: #fef3c7; color: #92400e; font-size: 11px; font-weight: 700; }
+    .mq-focus__todo { margin: 4px 0 6px; color: #334155; }
+    .mq-focus__links { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 12px; }
+    .mq-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .mq-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; border-bottom: 1px solid #e2e8f0; padding: 6px 8px; }
+    .mq-table td { border-bottom: 1px solid #f1f5f9; padding: 8px; vertical-align: top; }
+    .mq-num { text-align: right; white-space: nowrap; }
+    .mq-status { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .mq-status--applied { background: #fef2f2; color: #b91c1c; }
+    .mq-status--checking { background: #f1f5f9; color: #475569; }
+    .mq-status--notapplied { background: #f0fdf4; color: #166534; }
+    .mq-empty { color: #64748b; font-size: 13px; }
+    .mq-bar { height: 6px; background: #f1f5f9; border-radius: 3px; overflow: hidden; margin-top: 4px; }
+    .mq-bar > span { display: block; height: 100%; background: #22c55e; }
+    .mq-pill { font-size: 11px; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 0 6px; margin-left: 6px; }
+    .mq-ack-btn { border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; padding: 2px 10px; font-size: 12px; cursor: pointer; }
+    .mq-ack-btn:hover { border-color: #2563eb; color: #2563eb; }
+    .mq-ack-done { font-size: 12px; color: #15803d; font-weight: 600; }
+    .mq-record { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; font-size: 13px; }
+    .mq-error { background: #fff7ed; border: 1px solid #fdba74; color: #9a3412; border-radius: 8px; padding: 10px 12px; margin-bottom: 16px; }
+    .mq-note { font-size: 12px; color: #64748b; margin-top: 8px; }
+    .mq-review-btn { border: 1px solid #2563eb; color: #2563eb; background: #fff; border-radius: 6px; padding: 2px 10px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+    .mq-review-btn:hover { background: #eff6ff; }
+    .mq-review-grey { font-size: 12px; color: #94a3b8; white-space: nowrap; }
+    .mq-review-state { font-size: 12px; font-weight: 600; color: #334155; }
+    .mq-review-state--open { color: #92400e; }
+    .mq-review-state--good { color: #15803d; }
+    .mq-review-note { font-size: 11px; color: #64748b; margin-top: 2px; max-width: 220px; }
+    .mq-modal { display: none; position: fixed; inset: 0; background: rgba(15,23,42,.45); z-index: 1050; align-items: center; justify-content: center; padding: 16px; }
+    .mq-modal.is-open { display: flex; }
+    .mq-modal__box { background: #fff; border-radius: 12px; width: 100%; max-width: 520px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,.2); }
+    .mq-modal__box h4 { margin: 0 0 4px; font-size: 16px; }
+    .mq-modal__box label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin: 12px 0 4px; }
+    .mq-modal__box select, .mq-modal__box textarea { width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 8px; font-size: 13px; }
+    .mq-modal__box textarea { min-height: 110px; }
+    .mq-modal__foot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+    .mq-modal__err { color: #b91c1c; font-size: 12px; margin-top: 6px; min-height: 16px; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="mq-page">
+        <p class="mq-sub">Your own interviews only. @InterviewerMyQualityVM.Attribution.</p>
+
+        @if (!string.IsNullOrEmpty(vm.Error))
+        {
+            <div class="mq-error">@vm.Error</div>
+        }
+
+        <div class="mq-tiles">
+            <div class="mq-tile">
+                <div class="mq-tile__label">Interviews without issues</div>
+                <div class="mq-tile__value">
+                    @(vm.IssueFree.Percent.HasValue ? vm.IssueFree.Percent + "%" : "—")
+                    @if (vm.IssueFree.PreviousPercent.HasValue && !string.IsNullOrEmpty(Trend(vm.IssueFree.Trend, true)))
+                    {
+                        <span class="@Trend(vm.IssueFree.Trend, true)">@Arrow(vm.IssueFree.Trend) from @(vm.IssueFree.PreviousPercent)%</span>
+                    }
+                </div>
+                <div class="mq-tile__detail">@vm.IssueFree.Count of @vm.IssueFree.Total in the last 30 days</div>
+            </div>
+            <div class="mq-tile">
+                <div class="mq-tile__label">Joined on time</div>
+                <div class="mq-tile__value">
+                    @(vm.OnTime.Percent.HasValue ? vm.OnTime.Percent + "%" : "—")
+                    @if (vm.OnTime.PreviousPercent.HasValue && !string.IsNullOrEmpty(Trend(vm.OnTime.Trend, true)))
+                    {
+                        <span class="@Trend(vm.OnTime.Trend, true)">@Arrow(vm.OnTime.Trend) from @(vm.OnTime.PreviousPercent)%</span>
+                    }
+                </div>
+                <div class="mq-tile__detail">@vm.OnTime.Count of @vm.OnTime.Total in the last 30 days</div>
+            </div>
+            <div class="mq-tile">
+                <div class="mq-tile__label">Deductions this month</div>
+                <div class="mq-tile__value">
+                    @vm.MonthDeductionCount
+                    @if (!string.IsNullOrEmpty(Trend(vm.DeductionTrend, false)))
+                    {
+                        <span class="@Trend(vm.DeductionTrend, false)">@Arrow(vm.DeductionTrend) vs last month</span>
+                    }
+                </div>
+                <div class="mq-tile__detail">
+                    @if (vm.MonthDeductionCount > 0)
+                    {
+                        <text>Average @(vm.MonthDeductionAvgPct?.ToString("0.#"))% · amount @Amount(vm.MonthDeductionAmount)</text>
+                    }
+                    else
+                    {
+                        <text>None applied this month</text>
+                    }
+                </div>
+            </div>
+            <div class="mq-tile">
+                <div class="mq-tile__label">Channel standing</div>
+                <div class="mq-tile__value">@vm.ActiveChannels active</div>
+                <div class="mq-tile__detail">@(vm.PausedChannels > 0 ? vm.PausedChannels + " paused — your coach will tell you more" : "None paused")</div>
+            </div>
+        </div>
+
+        <div class="mq-grid">
+            <div>
+                <div class="mq-card">
+                    <h3>Top things to work on</h3>
+                    <div class="mq-attr">@InterviewerMyQualityVM.Attribution · last 30 days · for improvement only</div>
+                    @if (vm.TopFocus == null || vm.TopFocus.Count == 0)
+                    {
+                        <div class="mq-empty">Nothing stands out in the last 30 days. Keep it up.</div>
+                    }
+                    else
+                    {
+                        foreach (var f in vm.TopFocus)
+                        {
+                            <div class="mq-focus">
+                                <div><span class="mq-focus__title">@f.Title</span><span class="mq-focus__count">@f.Count interview@(f.Count == 1 ? "" : "s")</span></div>
+                                <div class="mq-focus__todo">What to do: @f.WhatToDo</div>
+                                <div class="mq-focus__links">
+                                    @foreach (var e in f.Evidence)
+                                    {
+                                        <a href="@ReportUrl(e.InterviewId, e.IrfId)" target="_blank" rel="noopener">#@e.InterviewId · @e.DateIst@(string.IsNullOrEmpty(e.IrfName) ? "" : " · " + e.IrfName)</a>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+
+                <div class="mq-card">
+                    <h3>Deductions</h3>
+                    <div class="mq-attr">@InterviewerMyQualityVM.Attribution · last 60 days</div>
+                    @if (vm.Deductions == null || vm.Deductions.Count == 0)
+                    {
+                        <div class="mq-empty">No deductions in the last 60 days.</div>
+                    }
+                    else
+                    {
+                        <div style="overflow-x:auto;">
+                            <table class="mq-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th><th>Interview</th><th>Channel</th>
+                                        <th class="mq-num">%</th><th class="mq-num">Amount</th>
+                                        <th>Reason</th><th>Status</th><th>Review</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var d in vm.Deductions)
+                                    {
+                                        var statusClass = d.Status == "Applied" ? "mq-status--applied" : d.Status == "Not applied" ? "mq-status--notapplied" : "mq-status--checking";
+                                        <tr>
+                                            <td style="white-space:nowrap;">@d.DateIst</td>
+                                            <td><a href="@ReportUrl(d.InterviewId, d.IrfId)" target="_blank" rel="noopener">#@d.InterviewId</a></td>
+                                            <td>@(d.IrfName ?? "—")</td>
+                                            <td class="mq-num">@d.Percent%</td>
+                                            <td class="mq-num">@Amount(d.Amount)</td>
+                                            <td>@d.Reason</td>
+                                            <td><span class="mq-status @statusClass">@d.Status</span></td>
+                                            <td data-review-cell="@d.InterviewId">
+                                                @if (!string.IsNullOrEmpty(d.ReviewLabel))
+                                                {
+                                                    var tone = d.ReviewStatus == DeductionReviewConstants.StatusOpen ? "mq-review-state--open"
+                                                        : (d.ReviewStatus == DeductionReviewConstants.StatusReduced || d.ReviewStatus == DeductionReviewConstants.StatusRefunded) ? "mq-review-state--good" : "";
+                                                    <div class="mq-review-state @tone">@d.ReviewLabel</div>
+                                                    if (!string.IsNullOrEmpty(d.ReviewDecisionNote))
+                                                    {
+                                                        <div class="mq-review-note">@d.ReviewDecisionNote</div>
+                                                    }
+                                                }
+                                                else if (d.CanRequestReview)
+                                                {
+                                                    <button type="button" class="mq-review-btn" data-interview-id="@d.InterviewId" data-pct="@d.Percent" data-date="@d.DateIst">Request review</button>
+                                                }
+                                                else if (!string.IsNullOrEmpty(d.ReviewBlockedReason))
+                                                {
+                                                    <span class="mq-review-grey">@d.ReviewBlockedReason</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="mq-review-grey">—</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mq-note">Amount is the deduction % of the interview rate, applied once the review is approved.</div>
+                        <div class="mq-note">
+                            You can ask for a review of a deduction of @(vm.ReviewSettings.MinDeductionPct)% or more within @vm.ReviewSettings.WindowDays days,
+                            once per deduction, up to @vm.ReviewSettings.MonthlyCap times a month (@vm.ReviewRequestsLeft left this month).
+                            The review decision is final. Feedback on how you run interviews is for improvement only and is not reviewed.
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div>
+                <div class="mq-card">
+                    <h3>Coaching received</h3>
+                    <div class="mq-attr">@InterviewerMyQualityVM.Attribution</div>
+                    @if (vm.Coaching == null || vm.Coaching.Count == 0)
+                    {
+                        <div class="mq-empty">No coaching sessions yet.</div>
+                    }
+                    else
+                    {
+                        @Html.AntiForgeryToken()
+                        <table class="mq-table">
+                            <tbody>
+                                @foreach (var c in vm.Coaching)
+                                {
+                                    <tr>
+                                        <td style="white-space:nowrap;">@c.DateIst<div style="font-size:11px;color:#64748b;">@c.Channel</div></td>
+                                        <td>@(c.Topics.Count > 0 ? string.Join(", ", c.Topics) : "General review")</td>
+                                        <td class="mq-num" data-ack-cell="@c.SessionId">
+                                            @if (c.Acknowledged)
+                                            {
+                                                <span class="mq-ack-done">Read ✓</span>
+                                            }
+                                            else
+                                            {
+                                                <button type="button" class="mq-ack-btn" data-session-id="@c.SessionId">I've read this</button>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+
+                <div class="mq-card">
+                    <h3>Your channels</h3>
+                    <div class="mq-attr">Interviews without issues, last 30 days</div>
+                    @if (vm.Channels == null || vm.Channels.Count == 0)
+                    {
+                        <div class="mq-empty">No completed interviews in the last 30 days.</div>
+                    }
+                    else
+                    {
+                        foreach (var ch in vm.Channels)
+                        {
+                            <div style="margin-bottom:10px;">
+                                <div style="display:flex;justify-content:space-between;font-size:13px;">
+                                    <span>@(ch.IrfName ?? "—")@if (ch.Standing == "Paused") {<span class="mq-pill">paused</span>}</span>
+                                    <span>@ch.IssueFree of @ch.Completed (@(ch.Percent.HasValue ? ch.Percent + "%" : "—"))</span>
+                                </div>
+                                <div class="mq-bar"><span style="width:@(ch.Percent ?? 0)%;"></span></div>
+                            </div>
+                        }
+                    }
+                </div>
+
+                <div class="mq-card">
+                    <h3>Your record</h3>
+                    <div class="mq-attr">All time</div>
+                    @if (vm.Record == null)
+                    {
+                        <div class="mq-empty">Not available right now.</div>
+                    }
+                    else
+                    {
+                        <div class="mq-record">
+                            <span>Completed interviews</span><strong>@vm.Record.Completed</strong>
+                            <span>Selected</span><strong>@(vm.Record.SelectPercent.HasValue ? vm.Record.SelectPercent + "%" : "—")</strong>
+                            <span>Rejected</span><strong>@(vm.Record.RejectPercent.HasValue ? vm.Record.RejectPercent + "%" : "—")</strong>
+                            <span>Interviews you missed</span><strong>@vm.Record.NoShows</strong>
+                            <span>Late joins</span><strong>@vm.Record.LateJoins</strong>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (vm.Deductions != null && vm.Deductions.Any(x => x.CanRequestReview))
+{
+    @* Anti-forgery token for Request review when no coaching table rendered one. *@
+    if (vm.Coaching == null || vm.Coaching.Count == 0)
+    {
+        @Html.AntiForgeryToken()
+    }
+}
+
+<div class="mq-modal" id="mqReviewModal" role="dialog" aria-modal="true" aria-labelledby="mqReviewTitle">
+    <div class="mq-modal__box">
+        <h4 id="mqReviewTitle">Request a review</h4>
+        <div class="mq-sub" id="mqReviewSub" style="margin:0;"></div>
+        <input type="hidden" id="mqReviewInterviewId" />
+        <label for="mqReviewReason">Reason</label>
+        <select id="mqReviewReason">
+            <option value="">Pick one…</option>
+            @foreach (var kv in DeductionReviewConstants.ReasonCategories)
+            {
+                <option value="@kv.Key">@kv.Value</option>
+            }
+        </select>
+        <label for="mqReviewNote">What happened? (@vm.ReviewSettings.NoteMinLength–@vm.ReviewSettings.NoteMaxLength characters)</label>
+        <textarea id="mqReviewNote" maxlength="@vm.ReviewSettings.NoteMaxLength"></textarea>
+        <div class="mq-note" style="margin-top:2px;"><span id="mqReviewCount">0</span> / @vm.ReviewSettings.NoteMaxLength</div>
+        <div class="mq-modal__err" id="mqReviewErr"></div>
+        <div class="mq-modal__foot">
+            <button type="button" class="mq-ack-btn" id="mqReviewCancel">Cancel</button>
+            <button type="button" class="mq-review-btn" id="mqReviewSend">Send for review</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var reviewUrl = '@Url.Action("RequestDeductionReview", "Interviewer")';
+        var noteMin = @vm.ReviewSettings.NoteMinLength, noteMax = @vm.ReviewSettings.NoteMaxLength;
+        function tokenVal() { return $('input[name="__RequestVerificationToken"]').first().val(); }
+        function closeReview() { $('#mqReviewModal').removeClass('is-open'); }
+
+        $(document).on('click', '.mq-review-btn[data-interview-id]', function () {
+            var $b = $(this);
+            $('#mqReviewInterviewId').val($b.data('interview-id'));
+            $('#mqReviewSub').text('Interview #' + $b.data('interview-id') + ' · ' + $b.data('date') + ' · ' + $b.data('pct') + '% deduction');
+            $('#mqReviewReason').val('');
+            $('#mqReviewNote').val('');
+            $('#mqReviewCount').text('0');
+            $('#mqReviewErr').text('');
+            $('#mqReviewSend').prop('disabled', false);
+            $('#mqReviewModal').addClass('is-open');
+        });
+        $('#mqReviewCancel').on('click', closeReview);
+        $('#mqReviewModal').on('click', function (e) { if (e.target === this) closeReview(); });
+        $('#mqReviewNote').on('input', function () { $('#mqReviewCount').text(($(this).val() || '').length); });
+
+        $('#mqReviewSend').on('click', function () {
+            var id = $('#mqReviewInterviewId').val();
+            var reason = $('#mqReviewReason').val();
+            var note = $.trim($('#mqReviewNote').val() || '');
+            if (!reason) { $('#mqReviewErr').text('Pick a reason.'); return; }
+            if (note.length < noteMin || note.length > noteMax) {
+                $('#mqReviewErr').text('The note must be ' + noteMin + ' to ' + noteMax + ' characters.');
+                return;
+            }
+            var $send = $(this).prop('disabled', true);
+            $.post(reviewUrl, { interviewId: id, reasonCategory: reason, note: note, __RequestVerificationToken: tokenVal() })
+                .done(function (res) {
+                    var ok = res && (res.ok === true || res.Ok === true);
+                    var msg = (res && (res.message || res.Message)) || (ok ? 'Review requested.' : 'Could not save. Please try again.');
+                    if (ok) {
+                        closeReview();
+                        var $cell = $('[data-review-cell="' + id + '"]');
+                        $cell.html('<div class="mq-review-state mq-review-state--open"></div>');
+                        $cell.find('div').text(msg);
+                        setTimeout(function () { window.location.reload(); }, 1500);
+                    } else {
+                        $('#mqReviewErr').text(msg);
+                        $send.prop('disabled', false);
+                    }
+                })
+                .fail(function () {
+                    $('#mqReviewErr').text('Could not save. Please try again.');
+                    $send.prop('disabled', false);
+                });
+        });
+    })();
+</script>
+
+<script>
+    (function () {
+        var ackUrl = '@Url.Action("AcknowledgeCoaching", "Interviewer")';
+        $(document).on('click', '.mq-ack-btn', function () {
+            var $btn = $(this);
+            var id = $btn.data('session-id');
+            var token = $('input[name="__RequestVerificationToken"]').first().val();
+            $btn.prop('disabled', true);
+            $.post(ackUrl, { sessionId: id, __RequestVerificationToken: token })
+                .done(function (res) {
+                    var ok = res && (res.ok === true || res.Ok === true);
+                    if (ok) {
+                        $('[data-ack-cell="' + id + '"]').html('<span class="mq-ack-done">Read ✓</span>');
+                    } else {
+                        $btn.prop('disabled', false);
+                        alert((res && (res.message || res.Message)) || 'Could not save. Please try again.');
+                    }
+                })
+                .fail(function () {
+                    $btn.prop('disabled', false);
+                    alert('Could not save. Please try again.');
+                });
+        });
+    })();
+</script>

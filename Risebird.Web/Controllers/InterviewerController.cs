@@ -5149,6 +5149,101 @@ namespace Risebird.Web.Controllers
             ViewBag.type = type;
             return PartialView(result);
         }
+        #region My Quality (interviewer's own read-only quality page)
+
+        /// <summary>Session email and profile; the interviewer id is never taken from the request.</summary>
+        private (string Email, string Profile) MyQualitySession()
+        {
+            var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            var profile = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            return (string.IsNullOrWhiteSpace(email) ? null : email, profile);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> MyQuality([FromServices] IInterviewerMyQualityService myQualityService)
+        {
+            try
+            {
+                var (email, profile) = MyQualitySession();
+                if (email == null || profile == null)
+                    return RedirectToAction("SignOut", "Session");
+                if (!string.Equals(profile, "Interviewer", StringComparison.Ordinal))
+                    return RedirectToAction("SignOut", "Session");
+
+                InterviewerInsightsVM lifetime = null;
+                try
+                {
+                    lifetime = await _interviewerService.GetInterviewerInsights(email, "");
+                }
+                catch (Exception insightsEx)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, insightsEx);
+                }
+
+                var vm = await myQualityService.GetAsync(email, lifetime);
+                return View(vm);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        /// <summary>Small card on My Interviews: "3 things to work on · 6 deductions this month".</summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<JsonResult> MyQualitySummary([FromServices] IInterviewerMyQualityService myQualityService)
+        {
+            var (email, profile) = MyQualitySession();
+            if (email == null || !string.Equals(profile, "Interviewer", StringComparison.Ordinal))
+                return Json(new InterviewerMyQualitySummaryVM { Ok = false });
+            var vm = await myQualityService.GetAsync(email, null);
+            if (!string.IsNullOrEmpty(vm.Error))
+                return Json(new InterviewerMyQualitySummaryVM { Ok = false });
+            return Json(new InterviewerMyQualitySummaryVM
+            {
+                Ok = true,
+                FocusCount = vm.TopFocus?.Count ?? 0,
+                MonthDeductionCount = vm.MonthDeductionCount
+            });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> AcknowledgeCoaching(int sessionId, [FromServices] IInterviewerMyQualityService myQualityService)
+        {
+            var (email, profile) = MyQualitySession();
+            if (email == null || !string.Equals(profile, "Interviewer", StringComparison.Ordinal))
+                return Json(new CoachingActionResultVM { Ok = false, Message = "Not authorized." });
+            return Json(await myQualityService.AcknowledgeCoachingAsync(sessionId, email));
+        }
+
+        /// <summary>
+        /// "Request review" on one deduction (phase 2). Only the caller's own, applied deductions within the rules
+        /// (minimum %, window, monthly cap, once per deduction) are accepted; usp_SaveDeductionReviewRequest re-checks all of them.
+        /// </summary>
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> RequestDeductionReview(int interviewId, string reasonCategory, string note,
+            [FromServices] IDeductionReviewService deductionReviewService)
+        {
+            var (email, profile) = MyQualitySession();
+            if (email == null || !string.Equals(profile, "Interviewer", StringComparison.Ordinal))
+                return Json(new CoachingActionResultVM { Ok = false, Message = "Not authorized." });
+            return Json(await deductionReviewService.RequestReviewAsync(email, new DeductionReviewRequestInputVM
+            {
+                InterviewId = interviewId,
+                ReasonCategory = reasonCategory,
+                Note = note
+            }));
+        }
+
+        #endregion
+
         public async Task<IActionResult> ReliabilityScoreDetails(string interviewer, string IrfId)
         {
             var result = await _interviewerService.GetReliabilityScoreDetails(interviewer, IrfId);

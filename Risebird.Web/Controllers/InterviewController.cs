@@ -9126,11 +9126,12 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> PublicMyInterviewInvite(string id, string Emailid)
         {
-            HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
-            HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Interviewer"));
             var role = await _meetingService.GetUniqueUserByEmailId(Emailid, id);
             if (role > 0)
             {
+                // Only start a session once the email and unique id match.
+                HttpContext.Session.SetString("email", JsonConvert.SerializeObject(Emailid));
+                HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Interviewer"));
                 return Json("success");
             }
             else

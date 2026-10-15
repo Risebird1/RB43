@@ -35,6 +35,8 @@ BEGIN
             InactivatedBy = @ModifiedBy,
             InactivatedAt = @modifiedOn
         WHERE id = @InterviewerId    
+        -- RowsChanged (returned at the end): 0 = unknown interviewer, nothing was changed.
+        DECLARE @RowsChanged int = @@ROWCOUNT
     
         -- Update InterviewerProfile flags    
         UPDATE ip    
@@ -60,12 +62,13 @@ BEGIN
             IsAvailable = 0    
         WHERE UserId = @InterviewerId    
        
-  --Add Remove Comment for interviewer    
+  --Add Remove Comment for interviewer (CreatedOn in IST, like every other RedMarkerStatusDetails writer)
+  IF @RowsChanged > 0
   Insert into RedMarkerStatusDetails (InterviewerUserid,IRFId,Comment,Type,CreatedOn,CreatedBy,Status)    
-  values (@InterviewerId,0,@comment,'TotalInterview',@modifiedOn,@modifiedBy,3)
+  values (@InterviewerId,0,LEFT(@comment, 300),'TotalInterview',DATEADD(MINUTE, 330, GETUTCDATE()),@modifiedBy,3)
 
   -- QC Activity: who blocked / inactivated the interviewer (skipped while the log table is missing).
-  IF OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL
+  IF @RowsChanged > 0 AND OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL
   BEGIN
       INSERT INTO dbo.InterviewerActionLog (InterviewerUserId, InterviewerEmail, ActionType, Reason, ActedBy, Source)
       VALUES (@InterviewerId,
@@ -75,5 +78,7 @@ BEGIN
               NULLIF(LTRIM(RTRIM(@modifiedBy)), ''),
               'usp_InactivateInterviewer')
   END
+
+  SELECT @RowsChanged AS RowsChanged
 END
 GO 
