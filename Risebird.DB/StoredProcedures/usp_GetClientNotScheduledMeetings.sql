@@ -143,26 +143,56 @@ Declare @Role int
 Select @Role=idProfile from Userlist where Emailid=@Emailid                
 if(@Role=1 or @Role=31 or @Role=32)                
 Begin                
-;with CTE (Emailid,IRFId,candidateName,JDTiltle,MobileNumber, irfIntId, ChannelOwner ) as (Select distinct ul.EmailId,IRF.IRFId,(ISNULL(ul.FirstName,'')+' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,ul.MobileNumber, irf.id as irfIntId, ulir.EmailId as ChannelOwner  From Candidate c join CandidatesMaster cm on cm.id=c.CandidateMasterId                 
-join UserList ul on ul.id=cm.UserId join irf on irf.id=c.IRFId left join Userlist ulir on ulir.id=irf.RisebirdHr where irf.EndDate>=GetDate() and IsNull(IsPaused,0)=0                     
-Union All Select distinct im.candidateEmail,irf.IRFId ,(ISNULL(ul.FirstName,'')+' '+ISNULL(ul.LastName,'')) as candidateName,IRF.JDTiltle,ul.MobileNumber, irf.id as irfIntId, ulir.EmailId as ChannelOwner from InterviewMeetings im join irf on irf.IRFId=im.IRFId join Userlist ul on ul.EmailId=im.candidateEmail left join Userlist ulir on ulir.id=irf.RisebirdHr where irf.EndDate>=GetDate() and IsNull(IsPaused,0)=0)                        
-Select Cd.imid,Cd.candidateEmail,Cd.IRFId,Cd.candidateName,Cd.JDTiltle,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact,Max(dtCreatedOn) as dtCreatedOn,CalendlyLink,ClientName,JobCountry, CandidateMasterId, Cd.ChannelOwner,Cd.StatusValue,Cd.CandidateId from           
-(Select IRF.id as imid,CTE.Emailid as candidateEmail,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,    
-c.ClientHRAttemptContact as ClientHrContact,DateAdd(minute,330,cs.Date) as dtCreatedOn,IRF.CalendlyLink,cl.Name as ClientName,    
-IRF.JobCountry, cm.id as CandidateMasterId, ulir.EmailId as ChannelOwner,CandidateStatus.StatusValue,c.id as CandidateId     
-from CTE join IRF on CTE.IRFID=IRF.IRFId left join Userlist ul on ul.EmailId=CTE.Emailid left join CandidatesMaster cm on cm.UserId=ul.id                       
-left join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id                      
-left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=c.IRFId and cs.Status=12                      
-join Client cl on cl.id=IRF.ClientId  
-left join Userlist ulir on ulir.id=irf.RisebirdHr
-left join ColdCandidateInfos cci on c.id=cci.FKCandidateId
-outer apply(select top 1 csom.StatusValue From CandidateStatus cs join CandidateStatusOptionsMst csom on cs.[Status]=csom.id  where cs.IRFId=CTE.irfIntId and CandidateId = CandidateMasterId order by cs.Date desc) as CandidateStatus
-Where cs.Date is not Null AND ISNULL(cci.IsColdCandidate,0) !=1                   
-group by IRF.id,CTE.Emailid,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact,DateAdd(minute,330,cs.Date),    
-IRF.CalendlyLink,cl.Name,IRF.JobCountry, cm.id, ulir.EmailId,CandidateStatus.StatusValue,c.id  having Count(*)=1) as Cd               
-group by Cd.imid,Cd.candidateEmail,Cd.IRFId,Cd.candidateName,Cd.JDTiltle,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact,CalendlyLink,    
-ClientName,JobCountry, Cd.CandidateMasterId, Cd.ChannelOwner,Cd.StatusValue,cd.CandidateId          
-order by dtCreatedOn desc                     
+-- Rewritten 2026-10-16: the old body UNIONed every candidate with every meeting on every active
+-- channel and grouped the lot (HAVING COUNT(*) = 1) to find candidates with no meeting. It ran
+-- for minutes and the page hit the App Service request timeout. Same rule, same columns, same
+-- order - each candidate checked directly with NOT EXISTS:
+--   active channel (EndDate >= now, not paused); added to it (CandidateStatus 12, dtCreatedOn is
+--   the latest such date + 330 min); not cold; no InterviewMeetings row for the email on it.
+-- As before, a candidate with duplicate Candidate rows on the same channel is left out.
+SELECT
+    irf.id                                                  AS imid,
+    ul.EmailId                                              AS candidateEmail,
+    irf.IRFId,
+    (ISNULL(ul.FirstName,'') + ' ' + ISNULL(ul.LastName,'')) AS candidateName,
+    irf.JDTiltle,
+    ul.MobileNumber,
+    c.resumeLink,
+    c.ClientHRAttemptContact                                AS ClientHrContact,
+    st12.dtCreatedOn,
+    irf.CalendlyLink,
+    cl.Name                                                 AS ClientName,
+    irf.JobCountry,
+    cm.id                                                   AS CandidateMasterId,
+    ulir.EmailId                                            AS ChannelOwner,
+    CandidateStatus.StatusValue,
+    c.id                                                    AS CandidateId
+FROM       dbo.IRF              irf
+INNER JOIN dbo.Client           cl   ON cl.id   = irf.ClientId
+INNER JOIN dbo.Candidate        c    ON c.IRFId = irf.id
+INNER JOIN dbo.CandidatesMaster cm   ON cm.id   = c.CandidateMasterId
+INNER JOIN dbo.UserList         ul   ON ul.id   = cm.UserId
+LEFT  JOIN dbo.UserList         ulir ON ulir.id = irf.RisebirdHr
+CROSS APPLY (
+    SELECT MAX(DATEADD(minute, 330, cs.Date)) AS dtCreatedOn
+    FROM dbo.CandidateStatus cs
+    WHERE cs.CandidateId = cm.id AND cs.IRFId = irf.id AND cs.Status = 12 AND cs.Date IS NOT NULL
+) st12
+OUTER APPLY (
+    SELECT TOP 1 csom.StatusValue
+    FROM dbo.CandidateStatus cs
+    JOIN dbo.CandidateStatusOptionsMst csom ON cs.[Status] = csom.id
+    WHERE cs.IRFId = irf.id AND cs.CandidateId = cm.id
+    ORDER BY cs.Date DESC
+) CandidateStatus
+WHERE irf.EndDate >= GETDATE()
+  AND ISNULL(irf.IsPaused, 0) = 0
+  AND ul.EmailId IS NOT NULL
+  AND st12.dtCreatedOn IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM dbo.ColdCandidateInfos cci WHERE cci.FKCandidateId = c.id AND cci.IsColdCandidate = 1)
+  AND NOT EXISTS (SELECT 1 FROM dbo.InterviewMeetings im WHERE im.IRFId = irf.IRFId AND im.candidateEmail = ul.EmailId)
+  AND NOT EXISTS (SELECT 1 FROM dbo.Candidate c2 WHERE c2.IRFId = c.IRFId AND c2.CandidateMasterId = c.CandidateMasterId AND c2.id <> c.id)
+ORDER BY st12.dtCreatedOn DESC
 END         
 --Else if(@Role=31)                
 --Begin                
