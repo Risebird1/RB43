@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository
@@ -28,7 +29,8 @@ namespace Risebird.Repository
         }
 
         public async Task<(IReadOnlyList<QCActivitySummaryRowVM> Rows, QCActivityBacklogVM Backlog)> GetSummaryAsync(
-            DateTime fromIst, DateTime toIst, bool onlyQualityController, string actorEmail = null)
+            DateTime fromIst, DateTime toIst, bool onlyQualityController, string actorEmail = null,
+            CancellationToken cancellationToken = default)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@FromIst", fromIst.Date, DbType.Date);
@@ -37,11 +39,14 @@ namespace Risebird.Repository
             parameters.Add("@ActorEmail", string.IsNullOrWhiteSpace(actorEmail) ? null : actorEmail.Trim(), DbType.AnsiString, size: 150);
 
             using var con = new SqlConnection(_connectionString);
-            using var multi = await con.QueryMultipleAsync(
+            // The token cancels the SQL command too: a request the page abandoned (a newer Apply, or the tab
+            // closed) stops using the database instead of running on and slowing down the next load.
+            using var multi = await con.QueryMultipleAsync(new CommandDefinition(
                 "dbo.usp_GetQCActivityDashboardSummary",
                 parameters,
                 commandTimeout: CommandTimeoutSeconds,
-                commandType: CommandType.StoredProcedure);
+                commandType: CommandType.StoredProcedure,
+                cancellationToken: cancellationToken));
 
             var rows = (await multi.ReadAsync<QCActivitySummaryRowVM>()).ToList();
             var backlog = multi.IsConsumed
