@@ -2026,11 +2026,15 @@ namespace Risebird.CommonHelper
                 }
 
                 var input = $"Generate an output in JSON format as per the instructions fed to the assistant. {message}";
+                // Interviewer prompts are authored per skill channel and may enable reasoning, which only
+                // runs on the model saved with the prompt; overriding it with OpenAI:ResponsesModel is
+                // rejected outright ("reasoning.mode is not supported with this model").
                 return await _openAIResponsesHelper.CreateJsonResponseWithIdAsync(
                     input,
                     operationType: expectEvaluationReport ? "AIInterviewerReport" : "AIInterviewer",
                     promptId: resolvedPromptId,
                     previousResponseId: previousResponseId,
+                    useStoredPromptModel: true,
                     responseSchema: expectEvaluationReport ? OpenAIResponseSchemas.AIInterviewEvaluation() : null,
                     schemaName: expectEvaluationReport ? "ai_interview_evaluation" : null);
             }
