@@ -175,7 +175,7 @@ namespace Risebird.Business.Tests.QCActivityTests
                 Untouched = new[] { new QCActivityUntouchedVM { InterviewerId = 5, WorstSeverity = "P0" } }
             };
             _repository
-                .Setup(r => r.GetSummaryAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), true, null))
+                .Setup(r => r.GetSummaryAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), true, null, It.IsAny<CancellationToken>()))
                 .ReturnsAsync((new List<QCActivitySummaryRowVM>
                 {
                     new QCActivitySummaryRowVM { ActorEmail = "a@risebird.io", ScoredActions = 8, AuthenticActions = 6, ActionsTrm = 5, ActionsTotalInterviews = 3,

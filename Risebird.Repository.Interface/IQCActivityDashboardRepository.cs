@@ -1,15 +1,20 @@
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Risebird.Repository.Interface
 {
     public interface IQCActivityDashboardRepository
     {
-        /// <summary>usp_GetQCActivityDashboardSummary: per-user rows + "open right now" backlog.</summary>
+        /// <summary>
+        /// usp_GetQCActivityDashboardSummary: per-user rows + "open right now" backlog.
+        /// <paramref name="cancellationToken"/> stops the query when the page abandons the request.
+        /// </summary>
         Task<(IReadOnlyList<QCActivitySummaryRowVM> Rows, QCActivityBacklogVM Backlog)> GetSummaryAsync(
-            DateTime fromIst, DateTime toIst, bool onlyQualityController, string actorEmail = null);
+            DateTime fromIst, DateTime toIst, bool onlyQualityController, string actorEmail = null,
+            CancellationToken cancellationToken = default);
 
         /// <summary>usp_GetQCActivityDashboardDetails: records behind one user's number for one metric (top 2000).</summary>
         Task<IReadOnlyList<QCActivityDetailRowVM>> GetDetailsAsync(

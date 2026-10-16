@@ -22,12 +22,12 @@ Result sets:
   3 Issues      RiskCategory rows on completed interviews in the current 30 days
                 (check codes are mapped to themes in C#; Trial / Audit / RedMarker /
                 auto-QC suspicious standing is never read here).
-  4 Deductions  Payment SLA deductions above 0 in the last 60 days: %, wallet amount,
+  4 Deductions  Payment SLA deductions above 0 in the last 60 days: %, payout amount,
                 recommendation, approval state and the reason columns.
   5 Coaching    coaching sessions (latest 20): date, channel, themes, acknowledged at.
   6 Wording     active InterviewerFeedbackText rows (empty when the table is missing).
 
-Amount = latest MoneyProtectionWallet.Points (already deduction % x client interview rate / 100).
+Amount = InterviewPoints.Points x PaymentSLA / 100 on the interviewer's 'Interview' row (same as Finance/RBPayment).
 Applied date = first wallet row (starts the 7-day review window).
 Review state (phase 2) comes from DeductionReviewRequest when that table is deployed.
 Optional objects are read behind OBJECT_ID / COL_LENGTH checks.
@@ -159,11 +159,15 @@ BEGIN
             OR EXISTS (SELECT 1 FROM #Rev rv WHERE rv.InterviewId = iv.InterviewId)
     ) ps
     OUTER APPLY (
-        -- Current amount: latest wallet row. Points already holds deduction % x client interview rate / 100.
-        SELECT TOP 1 CAST(ISNULL(mw.Points, 0) AS DECIMAL(18,2)) AS Amount
-        FROM dbo.MoneyProtectionWallet mw
-        WHERE mw.Interviewid = iv.InterviewId
-        ORDER BY mw.id DESC
+        -- Amount taken from the interviewer's payout, as Finance/RBPayment shows it (Usp_FetchInterviewPayDetails):
+        -- InterviewPoints.Points x PaymentSLA % / 100 on the interviewer's Type = 'Interview' row. Not the
+        -- MoneyProtectionWallet row, which is credited to the client at the client interview rate.
+        SELECT TOP 1 CAST(ip.Points * ISNULL(ip.PaymentSLA, 0) / 100 AS DECIMAL(18,2)) AS Amount
+        FROM dbo.InterviewPoints ip
+        WHERE ip.Interviewid = iv.InterviewId
+          AND ip.userid = @UserId
+          AND ip.[Type] = 'Interview'
+        ORDER BY ip.id DESC
     ) w
     OUTER APPLY (
         -- Applied date: the first wallet row, written on approval (starts the 7-day review window).

@@ -64,7 +64,7 @@ namespace Risebird.Business.Tests.QCActivityTests
         public async Task Summary_passes_the_normalised_range_and_builds_totals()
         {
             _repository
-                .Setup(r => r.GetSummaryAsync(new DateTime(2026, 9, 25), TodayIst, true, null))
+                .Setup(r => r.GetSummaryAsync(new DateTime(2026, 9, 25), TodayIst, true, null, It.IsAny<CancellationToken>()))
                 .ReturnsAsync((new List<QCActivitySummaryRowVM> { Row("a@risebird.io", 5, 5), Row("b@risebird.io") },
                                new QCActivityBacklogVM { PendingReports = 12 }));
 
@@ -84,7 +84,7 @@ namespace Risebird.Business.Tests.QCActivityTests
         public async Task Restricted_viewer_only_gets_their_own_row_even_if_the_repository_returns_more()
         {
             _repository
-                .Setup(r => r.GetSummaryAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), true, "qc@risebird.io"))
+                .Setup(r => r.GetSummaryAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), true, "qc@risebird.io", It.IsAny<CancellationToken>()))
                 .ReturnsAsync((new List<QCActivitySummaryRowVM> { Row("qc@risebird.io", 3, 3), Row("other@risebird.io", 9, 9) },
                                new QCActivityBacklogVM()));
 
@@ -99,7 +99,7 @@ namespace Risebird.Business.Tests.QCActivityTests
         public async Task Summary_failure_is_logged_and_returned_as_an_error_message()
         {
             _repository
-                .Setup(r => r.GetSummaryAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<bool>(), It.IsAny<string>()))
+                .Setup(r => r.GetSummaryAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new InvalidOperationException("boom"));
 
             var result = await CreateService().GetSummaryAsync(null, null, true);
