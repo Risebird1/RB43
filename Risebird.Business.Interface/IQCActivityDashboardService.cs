@@ -1,5 +1,6 @@
 using Risebird.Entities.ViewModel;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Risebird.Business.Interface
@@ -10,9 +11,10 @@ namespace Risebird.Business.Interface
         /// Per-user QC activity for an inclusive IST date range (default last 7 days, max 92).
         /// When <paramref name="restrictToActorEmail"/> is set only that user's row is returned
         /// (a Quality Controller viewing their own activity).
+        /// A cancelled <paramref name="cancellationToken"/> stops the query and is not logged as a load error.
         /// </summary>
         Task<QCActivityDashboardDataVM> GetSummaryAsync(DateTime? fromIst, DateTime? toIst, bool onlyQualityController,
-            string restrictToActorEmail = null);
+            string restrictToActorEmail = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Records behind one number. Unknown metric keys return an empty list without querying.

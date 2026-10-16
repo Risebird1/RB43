@@ -101,7 +101,8 @@ namespace Risebird.Web.Controllers
             return await JsonOrErrorAsync(() => _qcActivityDashboardService.GetSummaryAsync(
                 from, to,
                 onlyQualityController: !isManager || onlyQc,
-                restrictToActorEmail: isManager ? null : email), d => d.ErrorDetail = null);
+                restrictToActorEmail: isManager ? null : email,
+                cancellationToken: HttpContext.RequestAborted), d => d.ErrorDetail = null);
         }
 
         // GET: /QCActivity/Details?actor=<email>&metric=<key>&from=yyyy-MM-dd&to=yyyy-MM-dd

@@ -68,17 +68,21 @@ BEGIN
     ORDER BY ISNULL(p.PaymentDeduction, 0) DESC, p.id DESC;
 
     -- The deduction is applied when the first wallet row is written (usp_AddorUpdatePaymentSLADetails).
-    -- Points already holds the amount (deduction % x client interview rate / 100); the latest row is current.
-    DECLARE @WalletAt DATETIME, @WalletPoints INT;
+    DECLARE @WalletAt DATETIME;
     SELECT TOP 1 @WalletAt = mw.AddedOn
     FROM dbo.MoneyProtectionWallet mw
     WHERE mw.Interviewid = @InterviewId
     ORDER BY mw.id ASC;
-    SELECT TOP 1 @WalletPoints = mw.Points
-    FROM dbo.MoneyProtectionWallet mw
-    WHERE mw.Interviewid = @InterviewId
-    ORDER BY mw.id DESC;
     SET @AppliedAt = COALESCE(@WalletAt, @AppliedAt);
+
+    -- Amount taken from the interviewer's payout, as Finance/RBPayment and My Quality show it:
+    -- InterviewPoints.Points x PaymentSLA % / 100 on the interviewer's Type = 'Interview' row. Not the
+    -- MoneyProtectionWallet row, which is the client's credit at the client interview rate.
+    DECLARE @PayoutDeduction INT;
+    SELECT TOP 1 @PayoutDeduction = ip.Points * ISNULL(ip.PaymentSLA, 0) / 100
+    FROM dbo.InterviewPoints ip
+    WHERE ip.Interviewid = @InterviewId AND ip.userid = @UserId AND ip.[Type] = 'Interview'
+    ORDER BY ip.id DESC;
 
     IF @Pct IS NULL OR @Pct <= 0
     BEGIN
@@ -131,7 +135,7 @@ BEGIN
          ReasonCategory, Note, AiCheck, RequestedAtUtc, DueAtUtc, Status)
     VALUES
         (@InterviewId, @UserId, @Email, @IrfId, @Pct,
-         CAST(@WalletPoints AS DECIMAL(18,2)),
+         CAST(@PayoutDeduction AS DECIMAL(18,2)),
          @ReasonCategory, LEFT(@Note, 500), dbo.fn_DeductionAiCheck(@InterviewId), GETUTCDATE(), @DueAtUtc, 'Open');
 
     DECLARE @NewId INT = SCOPE_IDENTITY();

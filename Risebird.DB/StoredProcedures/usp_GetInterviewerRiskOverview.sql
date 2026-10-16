@@ -54,6 +54,10 @@ BEGIN
     IF DATEDIFF(DAY, @FromIst, @ToIst) > 90
         SET @FromIst = DATEADD(DAY, -90, @ToIst);
 
+    -- interviewDate bounds for the IST window (IST = interviewDate + 330 minutes).
+    DECLARE @CompletedFromUtc DATETIME = DATEADD(MINUTE, -330, CAST(@FromIst AS DATETIME));
+    DECLARE @CompletedToUtc   DATETIME = DATEADD(MINUTE, -330, CAST(DATEADD(DAY, 1, @ToIst) AS DATETIME));
+
     IF @Offset IS NULL OR @Offset < 0 SET @Offset = 0;
     IF @PageSize IS NULL OR @PageSize < 1 SET @PageSize = 25;
     IF @PageSize > 200 SET @PageSize = 200;
@@ -135,8 +139,10 @@ BEGIN
     INNER JOIN dbo.InterviewComments ic ON ic.InterviewId = im.id
     INNER JOIN #ScopedIrfs s ON s.IrfName = im.IRFId
     WHERE ic.MeetingStatus IN (4, 6, 7, 8)
-      AND CAST(DATEADD(MINUTE, 330, im.interviewDate) AS DATE) >= @FromIst
-      AND CAST(DATEADD(MINUTE, 330, im.interviewDate) AS DATE) <= @ToIst
+      -- Same IST days as CAST(DATEADD(MINUTE, 330, interviewDate) AS DATE) BETWEEN @FromIst AND @ToIst,
+      -- written as a bare range on interviewDate so the index on it is used instead of scanning every meeting.
+      AND im.interviewDate >= @CompletedFromUtc
+      AND im.interviewDate <  @CompletedToUtc
       AND NULLIF(LTRIM(RTRIM(im.interviewer)), '') IS NOT NULL;
 
     CREATE INDEX IX_Completed_Raw ON #Completed(InterviewerRaw);
