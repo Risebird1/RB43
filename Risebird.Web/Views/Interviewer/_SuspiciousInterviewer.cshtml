@@ -16,7 +16,7 @@
                 <form method="post">
                     <input type="hidden" id="hdnInterviewerEmail">
                     <label style="font-size:14px;">Comment</label>
-                    <div class="box arrow-top">  <textarea name="Comment" id="suspiciousComment" class="form-control" style="height:80px;"></textarea></div>
+                    <div class="box arrow-top">  <textarea name="Comment" id="suspiciousComment" class="form-control" maxlength="500" style="height:80px;"></textarea></div>
                 </form>
             </div>
             <div class="modal-footer" style="display:block;text-align:right">
@@ -45,11 +45,15 @@
         if (comment != '') {
             $.ajax({
                 url: '/Interviewer/AddSuspiciousTypeComment',
-                data: { 'Email': emailId, 'Comment': comment },
+                // Page of origin for QC Activity: each host page sets window.rbSuspiciousSource (e.g. 'TRM').
+                data: { 'Email': emailId, 'Comment': comment, 'SourcePage': (window.rbSuspiciousSource || '') },
                 type: "POST",
                 success: function (data) {
-                    alert(data);
+                    alert(data || 'Fail to marked Suspicious Interviewer, Try again after sometime.');
                     closeSuspiciousTypeModal();
+                },
+                error: function () {
+                    alert('Fail to marked Suspicious Interviewer, Try again after sometime.');
                 }
             });
         }

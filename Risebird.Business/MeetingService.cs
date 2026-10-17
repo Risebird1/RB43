@@ -4830,6 +4830,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> RemoveOrShortlistInterviewerFromIRFWithAudit(int irfid, string interviewer, string action, string actedBy, string comment)
+        {
+            try
+            {
+                return await _meetingRespository.RemoveOrShortlistInterviewerFromIRFWithAudit(irfid, interviewer, action, actedBy, comment);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
         public async Task<bool> UpdateInterviewReport(int interviewid, string comment, string emailid)
         {
             try

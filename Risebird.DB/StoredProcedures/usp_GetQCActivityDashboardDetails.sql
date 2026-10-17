@@ -28,6 +28,12 @@ Reached (connected calls + coaching), FollowThrough (actions on High-Risk
 interviewers; FollowedUp = called or coached by anyone in the window).
 Every row also returns Comment, HasEvidence, IsAuthentic and PageGroup.
 
+QC Tracking: atomic keys PrUnderReview, PrReviewed, PrRemoved, HrUnderReview,
+HrReviewed, HrRemoved, PliUnderReview, PliReviewed, PliRemoved,
+MonitoringRemoved, MonitoringShortlisted; group keys Pr, Hr, Pli, Monitoring
+(the collector narrows the rows), PagePotentialRisk, PageHighRisk,
+PageMonitoring (actions from that page). ActionsTaken includes the three pages.
+
 Deploy after usp_QCActivity_CollectRows.
 ================================================================================
 */
@@ -152,7 +158,7 @@ BEGIN
           AND ul.EmailId = r.InterviewerEmail
         ORDER BY ul.id DESC
     ) byEmail
-    WHERE @Metric IN ('All', 'Trial', 'AuditActions', 'Trm', 'Ti',
+    WHERE @Metric IN ('All', 'Trial', 'AuditActions', 'Trm', 'Ti', 'Pr', 'Hr', 'Pli', 'Monitoring',
                       'StatusActions', 'SuspiciousAll', 'BlockedAll', 'AccessAll', 'ActiveAll', 'PaymentHoldAll')
        OR r.Metric = @Metric
        OR (@Metric = 'PenaltyApplied' AND r.Metric = 'ReportReviewed' AND r.Amount > 0)
@@ -163,7 +169,11 @@ BEGIN
        OR (@Metric = 'PageTrial'           AND r.PageGroup = 'Trial')
        OR (@Metric = 'PageSuspicious'      AND r.PageGroup = 'Suspicious')
        OR (@Metric = 'PageReportsSla'      AND r.PageGroup = 'ReportsSla')
-       OR (@Metric = 'ActionsTaken'        AND r.PageGroup IN ('TotalInterviews', 'TRM', 'IrfAudit', 'Trial', 'Suspicious', 'ReportsSla'))
+       OR (@Metric = 'PagePotentialRisk'   AND r.PageGroup = 'PotentialRisk')
+       OR (@Metric = 'PageHighRisk'        AND r.PageGroup = 'HighRisk')
+       OR (@Metric = 'PageMonitoring'      AND r.PageGroup = 'Monitoring')
+       OR (@Metric = 'ActionsTaken'        AND r.PageGroup IN ('TotalInterviews', 'TRM', 'IrfAudit', 'Trial', 'Suspicious', 'ReportsSla',
+                                                               'PotentialRisk', 'HighRisk', 'Monitoring'))
        OR (@Metric = 'ScoredActions'       AND r.Metric <> 'PlivoCall' AND r.IsAuthentic IS NOT NULL)
        OR (@Metric = 'AuthenticActions'    AND r.Metric <> 'PlivoCall' AND r.IsAuthentic = 1)
        OR (@Metric = 'NotAuthentic'        AND r.Metric <> 'PlivoCall' AND r.IsAuthentic = 0)

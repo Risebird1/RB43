@@ -349,7 +349,9 @@
                                                     <a href='@Url.Action("Stats", "Client")'>Client Stats</a>
                                                     <a href='@Url.Action("QCOwnerDashboard", "Dashboard")'>QC Stats</a>
                                                     <a href='@Url.Action("Index", "QCActivity")'>QC Activity</a>
-                                                    <a href='@Url.Action("Interviewers", "QCActivity")'>Interviewer QC View</a>
+                                                    @* QC Tracking Delta 6: the Interviewer QC View is folded into High-Risk Interviewers ("Needs a call").
+                                                       /QCActivity/Interviewers stays reachable for one release, then retires. *@
+                                                    <a href='@Url.Action("AutoRemovalMonitor", "Dashboard", new { view = "interviewers", needsCall = 1 })'>Interviewer QC View</a>
                                                 </div>
                                             </div>
                                             <span class="divider-lm"> | </span>

@@ -303,7 +303,11 @@ namespace Risebird.Business.Tests.QCActivityTests
                 "ProxyForm", "RedoRequested", "TrialBackfill", "PageTotalInterviews", "PageTrm", "PageIrfAudit", "PageTrial",
                 "PageSuspicious", "PageReportsSla", "ScoredActions", "AuthenticActions", "NotAuthentic", "NoEvidence",
                 "ConnectedCall", "Reached", "FollowThrough", "ActionsTaken",
-                "StatusActions", "SuspiciousAll", "BlockedAll", "AccessAll", "ActiveAll", "PaymentHoldAll"
+                "StatusActions", "SuspiciousAll", "BlockedAll", "AccessAll", "ActiveAll", "PaymentHoldAll",
+                // QC Tracking: page-level capture
+                "PrUnderReview", "PrReviewed", "PrRemoved", "Pr", "HrUnderReview", "HrReviewed", "HrRemoved", "Hr",
+                "PliUnderReview", "PliReviewed", "PliRemoved", "Pli", "MonitoringRemoved", "MonitoringShortlisted", "Monitoring",
+                "PagePotentialRisk", "PageHighRisk", "PageMonitoring"
             };
 
             Assert.Equal(expected.OrderBy(k => k), QCActivityMetrics.Keys.OrderBy(k => k));

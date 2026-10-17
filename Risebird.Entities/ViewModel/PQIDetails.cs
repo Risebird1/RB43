@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -42,6 +44,51 @@ namespace Risebird.Entities.ViewModel
         public int VideoConfirmation { get; set; }
         public int RedMarkerStatus { get; set; }
         public string RedMarkerReviewComment { get; set; }
+
+        // ---- PLI QC decision on this interviewer and channel (usp_GetQcPageStatus Type PLI; QC Tracking Delta 5) ----
+        /// <summary>1 Under review, 2 Reviewed, 3 Removed; null = no decision.</summary>
+        public int? PliStatus { get; set; }
+        public string PliStatusBy { get; set; }
+        public DateTime? PliStatusOn { get; set; }
+        public string PliStatusComment { get; set; }
+    }
+
+    /// <summary>Latest QC decision of one interviewer (and channel; IRFId 0 = all channels) on a QC page.</summary>
+    public class QcPageStatusVM
+    {
+        public int UserId { get; set; }
+        public int IRFId { get; set; }
+        public int Status { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public string Comment { get; set; }
+
+        /// <summary>
+        /// Puts the PLI decision on each row: the later of the channel's own decision (UserId, IRF.id) and an
+        /// interviewer-wide one (IRFId 0, a Remove). Rows without a decision keep PliStatus null.
+        /// </summary>
+        public static void ApplyPli(IEnumerable<PQIDetails> rows, IEnumerable<QcPageStatusVM> statuses)
+        {
+            if (rows == null || statuses == null) return;
+            var byKey = statuses
+                .Where(s => s != null)
+                .GroupBy(s => (s.UserId, s.IRFId))
+                .ToDictionary(g => g.Key, g => g.OrderByDescending(x => x.CreatedOn ?? DateTime.MinValue).First());
+            foreach (var row in rows)
+            {
+                if (row == null || row.UserId <= 0) continue;
+                byKey.TryGetValue((row.UserId, row.id), out var own);
+                byKey.TryGetValue((row.UserId, 0), out var all);
+                var pick = own == null ? all
+                    : all == null ? own
+                    : ((all.CreatedOn ?? DateTime.MinValue) > (own.CreatedOn ?? DateTime.MinValue) ? all : own);
+                if (pick == null) continue;
+                row.PliStatus = pick.Status;
+                row.PliStatusBy = pick.CreatedBy;
+                row.PliStatusOn = pick.CreatedOn;
+                row.PliStatusComment = pick.Comment;
+            }
+        }
     }
     public class ToalInterviewerInterviewDetails
     {
