@@ -3364,6 +3364,7 @@ SELECT CAST(CASE WHEN EXISTS (
                 dynamicParam.Add("@Comment", model.Comment);
                 dynamicParam.Add("@CreatedDate", model.Createddate);
                 dynamicParam.Add("@CreatedBy", model.CreatedBy);
+                dynamicParam.Add("@SourcePage", string.IsNullOrWhiteSpace(model.SourcePage) ? null : model.SourcePage.Trim());
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync(conChange, "usp_InsertInterviewerSuspicious", dynamicParam,
@@ -4417,7 +4418,10 @@ SELECT CAST(CASE WHEN EXISTS (
                 return null;
             }
         }
-        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment, bool blockinterviewer, string inactivationType = null)
+        public Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment, bool blockinterviewer, string inactivationType = null)
+            => InactivateInterviewer(interviewerId, modifiedBy, comment, blockinterviewer, inactivationType, null);
+
+        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment, bool blockinterviewer, string inactivationType, string statusSource)
         {
             try
             {
@@ -4428,6 +4432,9 @@ SELECT CAST(CASE WHEN EXISTS (
                 dynamicParameters.Add("@comment", comment);
                 dynamicParameters.Add("@blockinterviewer", blockinterviewer);
                 dynamicParameters.Add("@InactivationType", string.IsNullOrWhiteSpace(inactivationType) ? null : inactivationType);
+                // Only sent when set, so the call still works against a procedure deployed before @StatusSource.
+                if (!string.IsNullOrWhiteSpace(statusSource))
+                    dynamicParameters.Add("@StatusSource", statusSource);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     // RowsChanged = 0 when the interviewer id is unknown (nothing changed). NULL from an older procedure.

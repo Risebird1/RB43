@@ -17,9 +17,13 @@ Create Procedure usp_AddRedoInterviewDetails
 @HandsOfCoding varchar(20),
 @Comments varchar(500),
 @ModifiedBy varchar(200),
-@ModifiedOn datetime
+@ModifiedOn datetime,
+@SourcePage varchar(30) = NULL   -- QC page the redo came from (PotentialRisk | HighRisk); NULL = legacy pages
 AS
 BEGIN
+-- Page suffix on the InterviewerActionLog Source, read by usp_QCActivity_CollectRows (QC Activity page column).
+SET @SourcePage = NULLIF(LTRIM(RTRIM(@SourcePage)), '')
+IF @SourcePage NOT IN ('PotentialRisk', 'HighRisk') SET @SourcePage = NULL
 IF EXISTS(select * from RedoInterviews where interviewid=@interviewid)
 BEGIN
 Update RedoInterviews set  interviewid=@interviewid,CandidateFace=@CandidateFace,Inappropriate=@Inappropriate,RequiredDuration=@RequiredDuration,
@@ -46,7 +50,7 @@ BEGIN
            'RedoRequested',
            LEFT(N'Interview #' + CAST(@interviewid AS NVARCHAR(20)) + N': ' + ISNULL(NULLIF(LTRIM(RTRIM(@Comments)), ''), N'redo requested'), 500),
            LEFT(LTRIM(RTRIM(@ModifiedBy)), 200),
-           'usp_AddRedoInterviewDetails'
+           'usp_AddRedoInterviewDetails' + ISNULL(':' + @SourcePage, '')
 END
 END
 Go

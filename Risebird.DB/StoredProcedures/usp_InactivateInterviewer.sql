@@ -14,10 +14,14 @@ CREATE PROCEDURE usp_InactivateInterviewer
     @modifiedOn datetime,    
     @comment varchar(500),
 	@blockinterviewer bit,
-    @InactivationType varchar(50) = NULL   -- when NULL, falls back to ManualBlock/ManualRemove (legacy behaviour)
+    @InactivationType varchar(50) = NULL,  -- when NULL, falls back to ManualBlock/ManualRemove (legacy behaviour)
+    @StatusSource varchar(30) = NULL       -- QC page the removal came from (PotentialRisk | HighRisk | PLI); NULL = Total Interviews (legacy)
 AS    
 BEGIN    
         DECLARE @EmailId varchar(200)    
+        -- Page of the removal: RedMarkerStatusDetails.Type and the InterviewerActionLog Source suffix (QC Activity column).
+        SET @StatusSource = NULLIF(LTRIM(RTRIM(@StatusSource)), '')
+        IF @StatusSource NOT IN ('PotentialRisk', 'HighRisk', 'PLI') SET @StatusSource = NULL
             
         -- Get the interviewer's email    
         SELECT @EmailId = EmailId     
@@ -65,7 +69,7 @@ BEGIN
   --Add Remove Comment for interviewer (CreatedOn in IST, like every other RedMarkerStatusDetails writer)
   IF @RowsChanged > 0
   Insert into RedMarkerStatusDetails (InterviewerUserid,IRFId,Comment,Type,CreatedOn,CreatedBy,Status)    
-  values (@InterviewerId,0,LEFT(@comment, 300),'TotalInterview',DATEADD(MINUTE, 330, GETUTCDATE()),@modifiedBy,3)
+  values (@InterviewerId,0,LEFT(@comment, 300),ISNULL(@StatusSource,'TotalInterview'),DATEADD(MINUTE, 330, GETUTCDATE()),@modifiedBy,3)
 
   -- QC Activity: who blocked / inactivated the interviewer (skipped while the log table is missing).
   IF @RowsChanged > 0 AND OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL
@@ -76,7 +80,7 @@ BEGIN
               CASE WHEN @blockinterviewer = 1 THEN 'Blocked' ELSE 'Inactivated' END,
               LEFT(@ResolvedType + ISNULL(': ' + NULLIF(LTRIM(RTRIM(@comment)), ''), ''), 500),
               NULLIF(LTRIM(RTRIM(@modifiedBy)), ''),
-              'usp_InactivateInterviewer')
+              'usp_InactivateInterviewer' + ISNULL(':' + @StatusSource, ''))
   END
 
   SELECT @RowsChanged AS RowsChanged

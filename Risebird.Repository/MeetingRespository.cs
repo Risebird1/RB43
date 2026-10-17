@@ -6605,6 +6605,9 @@ namespace Risebird.Repository
                     parameters.Add("@VideoEnable", model.VideoEnable);
                     parameters.Add("@Payment", model.Payment);
                     parameters.Add("@QCReward", model.QCReward);
+                    // QC Activity: a form filled from the High-Risk Reports tab counts under High-Risk.
+                    if (string.Equals(model.Type, "HighRisk", StringComparison.OrdinalIgnoreCase))
+                        parameters.Add("@SourcePage", "HighRisk");
                     var result = await SqlMapper.QueryAsync(con, "usp_AddorUpdateQCFormReport", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);
                     return true;
@@ -7185,6 +7188,7 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
                 dynamicParameters.Add("@Comments", model.Comments);
                 dynamicParameters.Add("@ModifiedBy", model.ModifiedBy);
                 dynamicParameters.Add("@ModifiedOn", DateTime.Now);
+                dynamicParameters.Add("@SourcePage", string.IsNullOrWhiteSpace(model.SourcePage) ? null : model.SourcePage);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync(con, "usp_AddRedoInterviewDetails", dynamicParameters,
@@ -7818,6 +7822,8 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
                     parameters.Add("@FeedBackComment", model.FeedBackComment);
                     parameters.Add("@AttendanceJoinCompliance", model.AttendanceJoinCompliance);
                     parameters.Add("@AIContradictionScore", model.AIContradictionScore);
+                    // QC Activity: reviews saved from Potential Risk by Candidate / the High-Risk Reports tab are logged per page.
+                    parameters.Add("@SourcePage", PaymentSLAVM.QcSourcePageFor(model.Pagetype));
 
                     var result = await SqlMapper.QueryAsync(con, "usp_AddorUpdatePaymentSLADetails", parameters, commandTimeout: 600,
                          commandType: CommandType.StoredProcedure);
@@ -7989,7 +7995,10 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
                 return false;
             }
         }
-        public async Task<bool> RemoveOrShortlistInterviewerFromIRF(int irfid, string interviewer, string action = null)
+        public Task<bool> RemoveOrShortlistInterviewerFromIRF(int irfid, string interviewer, string action = null)
+            => RemoveOrShortlistInterviewerFromIRFWithAudit(irfid, interviewer, action, null, null);
+
+        public async Task<bool> RemoveOrShortlistInterviewerFromIRFWithAudit(int irfid, string interviewer, string action, string actedBy, string comment)
         {
             try
             {
@@ -7998,6 +8007,13 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
                 dynamicParameters.Add("@Interviewer", interviewer);
                 dynamicParameters.Add("@action", action);
                 dynamicParameters.Add("@timeNow", DateTime.Now);
+                // Interviewer Monitoring: actor + comment are logged (TransInterviewerAuditLog / InterviewerActionLog).
+                // Sent only when set, so the other callers work against the procedure before or after this change.
+                if (!string.IsNullOrWhiteSpace(actedBy))
+                {
+                    dynamicParameters.Add("@ActedBy", actedBy.Trim());
+                    dynamicParameters.Add("@Comment", string.IsNullOrWhiteSpace(comment) ? null : comment.Trim());
+                }
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync(con, "usp_updateInterviewerIRFStatusByIRFid", dynamicParameters,

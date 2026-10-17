@@ -48,14 +48,28 @@ namespace Risebird.Repository.Interface
         /// <summary>Window quality strip (TotalCompleted/BadInterviews/BadRatio/P0..P5) for the IRF Audit drill-down.</summary>
         Task<IrfAuditWindowQualityVm> GetIrfAuditWindowQualityAsync(int irfId, DateTime fromIst, DateTime toIst);
 
+        /// <param name="sortBy">null / "Impact" (default) or "Ratio" (worst severity, then ratio).</param>
+        /// <param name="needsCall">Only interviewers with no connected call in the window ("Needs a call").</param>
         Task<InterviewerRiskOverviewPageVm> GetInterviewerRiskOverviewAsync(
             DateTime fromIst, DateTime toIst, string ownerEmail, decimal? minRiskRatio,
-            bool pendingReviewOnly, int offset, int pageSize);
+            bool pendingReviewOnly, int offset, int pageSize, string sortBy = null, bool needsCall = false);
 
         Task<IReadOnlyList<InterviewerRiskOverviewChannelRowVm>> GetInterviewerRiskOverviewChannelsAsync(
             int interviewerId, DateTime fromIst, DateTime toIst, string ownerEmail);
 
         Task<IReadOnlyList<InterviewerRiskOverviewRowVm>> GetInterviewerRiskOverviewExportRowsAsync(
-            DateTime fromIst, DateTime toIst, string ownerEmail, decimal? minRiskRatio, bool pendingReviewOnly);
+            DateTime fromIst, DateTime toIst, string ownerEmail, decimal? minRiskRatio, bool pendingReviewOnly,
+            string sortBy = null, bool needsCall = false);
+
+        /// <summary>QC coverage per interviewer (usp_GetInterviewerQcCoverage, at most 200 ids); null when not deployed.</summary>
+        Task<IReadOnlyList<InterviewerQcCoverageRowVm>> GetInterviewerQcCoverageAsync(IReadOnlyCollection<int> userIds, int days = 90);
+
+        /// <summary>High-Risk Reports tab (usp_GetHighRiskReports).</summary>
+        Task<HighRiskReportsPageVm> GetHighRiskReportsAsync(
+            DateTime fromIst, DateTime toIst, string ownerEmail, string filter, int? interviewerId, int? irfId, int offset, int pageSize);
+
+        /// <summary>PLI / PQI signals per interviewer and channel (usp_GetInterviewerProcessSignals).</summary>
+        Task<InterviewerProcessSignalsResultVm> GetInterviewerProcessSignalsAsync(
+            IReadOnlyCollection<int> userIds, DateTime fromIst, DateTime toIst, string ownerEmail);
     }
 }

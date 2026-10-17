@@ -9,6 +9,7 @@ GO
 -- Returns one row: RowsChanged = rows moved (0 = unknown interviewer, nothing changed and no
 -- history row written), so the page shows an error instead of a false "Moved Successfully".
 -- RedMarkerStatusDetails.CreatedOn is IST: DATEADD(MINUTE, 330, GETUTCDATE()), as the other writers.
+-- @source PotentialRisk | HighRisk | PLI (QC Tracking): history row only, Type = @source.
 CREATE Procedure usp_UpdateRedMarkeredInterviewerstatus        
 @interviewid int,      
 @IRFid int,      
@@ -20,7 +21,16 @@ CREATE Procedure usp_UpdateRedMarkeredInterviewerstatus
 AS        
 BEGIN        
 Declare @RowsChanged int = 0
-if(@source='TotalInterview')   
+-- QC page decisions (Under review 1 / Reviewed 2 / Removed 3) on Potential Risk by Candidate, High-Risk
+-- Interviewers and PLI: the decision lives only in RedMarkerStatusDetails (Type = @source); the latest row
+-- per interviewer (and IRF for PLI) is the current status. Nothing else is updated.
+if(@source IN ('PotentialRisk','HighRisk','PLI'))
+begin
+	IF EXISTS (SELECT 1 FROM UserList WHERE id=@interviewid)
+		Set @RowsChanged = 1
+	Set @Type = @source
+end
+else if(@source='TotalInterview')
 begin
 	Update InterviewerProfile set RedMarkerStatus=@status where Userid=@interviewid
 	Set @RowsChanged = @@ROWCOUNT

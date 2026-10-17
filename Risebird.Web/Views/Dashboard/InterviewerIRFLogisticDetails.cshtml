@@ -197,6 +197,32 @@
                                                                     <span title="Interviewer Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /><a target="_blank" href="@Url.Action("InterviewerStatsAndRatings", "Interviewer", new {irfId = item.id, irfName = item.IRFId})"></a></svg></span>
                                                                 </a>
                                                             </button>
+                                                            @* PLI QC decision (QC Tracking Delta 5): same moves as Potential Risk, recorded with source PLI. *@
+                                                            @{
+                                                                var pliText = item.PliStatus == 1 ? "Under Review" : item.PliStatus == 2 ? "Reviewed" : item.PliStatus == 3 ? "Removed" : "Pending";
+                                                                var pliCss = item.PliStatus == 1 ? "underreview" : item.PliStatus == 2 ? "reviewed" : item.PliStatus == 3 ? "removed" : "pending";
+                                                            }
+                                                            <div class="pli-qc">
+                                                                <span class="pli-badge pli-badge--@pliCss" title="@item.PliStatusComment">@pliText</span>
+                                                                @if (item.PliStatus.HasValue && !string.IsNullOrWhiteSpace(item.PliStatusBy))
+                                                                {
+                                                                    <span class="pli-badge-meta">@(item.PliStatusBy + (item.PliStatusOn.HasValue ? " · " + item.PliStatusOn.Value.ToString("dd MMM yyyy HH:mm") : ""))</span>
+                                                                }
+                                                                @if (item.UserId > 0 && item.PliStatus != 3)
+                                                                {
+                                                                    <div>
+                                                                        @if (item.PliStatus != 1)
+                                                                        {
+                                                                            <button type="button" class="pli-qc-btn" data-user-id="@item.UserId" data-irf-id="@item.id" data-status="1" data-name="@item.interviewer">@(item.PliStatus == 2 ? "Under review again" : "Under review")</button>
+                                                                        }
+                                                                        @if (item.PliStatus != 2)
+                                                                        {
+                                                                            <button type="button" class="pli-qc-btn" data-user-id="@item.UserId" data-irf-id="@item.id" data-status="2" data-name="@item.interviewer">Reviewed</button>
+                                                                        }
+                                                                        <button type="button" class="pli-qc-btn pli-qc-btn--remove" data-user-id="@item.UserId" data-remove="1" data-name="@item.interviewer">Remove</button>
+                                                                    </div>
+                                                                }
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 }
@@ -215,6 +241,63 @@
 @await Html.PartialAsync("~/Views/Interviewer/_SuspiciousInterviewer.cshtml")
 @await Html.PartialAsync("~/Views/Common/_InterviewerInsights.cshtml")
 <script src="~/js/common.js?v=2024"></script>
+<style>
+    /* PLI QC decision on each row (QC Tracking Delta 5) */
+    .pli-qc { margin-top: 6px; white-space: normal; text-align: left; }
+    .pli-badge { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; line-height: 18px; }
+    .pli-badge--pending { background: #eef2f7; color: #4a5568; }
+    .pli-badge--underreview { background: #fff4e0; color: #9a5b00; }
+    .pli-badge--reviewed { background: #e6f6ec; color: #1e7b45; }
+    .pli-badge--removed { background: #fdecec; color: #b42318; }
+    .pli-badge-meta { display: block; font-size: 11px; color: #6b7280; margin-top: 2px; }
+    .pli-qc-btn { font-size: 11px; padding: 1px 7px; margin: 3px 3px 0 0; border-radius: 4px; border: 1px solid #54a5f6; background: #fff; color: #1f6fc5; cursor: pointer; }
+    .pli-qc-btn--remove { border-color: #e5484d; color: #b42318; }
+</style>
+<script>
+    // ---- PLI: Under review / Reviewed / Remove (source = PLI, QC Tracking Delta 5) ----
+    $(document).on('click', '.pli-qc-btn', function (e) {
+        e.preventDefault();
+        var $b = $(this);
+        var userId = parseInt($b.data('user-id'), 10);
+        var name = ($b.data('name') || '').toString();
+        if (!userId) return;
+        var isRemove = !!$b.data('remove');
+        var status = parseInt($b.data('status'), 10);
+        var title = isRemove ? 'Remove Interviewer' : (status === 1 ? 'Move to Under Review' : 'Mark as Reviewed');
+        swal.fire({
+            title: title,
+            text: (isRemove ? 'Remove ' + (name || 'this interviewer') + ' from the system? They are made inactive and their upcoming interviews are unassigned. ' : (name ? name + '. ' : ''))
+                + 'Please enter a comment.',
+            type: isRemove ? 'warning' : 'question',
+            input: 'textarea',
+            inputAttributes: { maxlength: 300 },
+            inputValidator: function (value) {
+                return new Promise(function (resolve) { resolve(value && value.trim() ? undefined : 'Please enter a comment'); });
+            },
+            showCancelButton: true,
+            confirmButtonText: isRemove ? 'Yes, remove' : 'Save'
+        }).then(function (result) {
+            if (!result || !result.value) return;
+            var comment = result.value.trim();
+            var req = isRemove
+                ? { url: '/Dashboard/InactivateInterviewer', data: { interviewerId: userId, comment: comment, blockinterviewer: false, source: 'PLI' } }
+                : { url: '/Dashboard/UpdateQcInterviewerStatus', data: { interviewerUserId: userId, irfId: parseInt($b.data('irf-id'), 10) || 0, status: status, comment: comment, source: 'PLI' } };
+            $.ajax({
+                url: req.url,
+                type: 'POST',
+                data: req.data,
+                success: function (res) {
+                    if (res && res.success) {
+                        swal.fire({ title: 'Saved', text: res.message, type: 'success' }).then(function () { location.reload(true); });
+                    } else {
+                        swal.fire('Error', (res && res.message) || 'Could not save.', 'error');
+                    }
+                },
+                error: function () { swal.fire('Error', 'An error occurred while saving.', 'error'); }
+            });
+        });
+    });
+</script>
 <script>
     function searchResult() {
         $('#meeting').DataTable();
