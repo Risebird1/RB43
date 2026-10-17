@@ -567,7 +567,7 @@ END";
 
         public async Task<InterviewerRiskOverviewPageVm> GetInterviewerRiskOverviewAsync(
             DateTime fromIst, DateTime toIst, string ownerEmail, decimal? minRiskRatio,
-            bool pendingReviewOnly, int offset, int pageSize)
+            bool pendingReviewOnly, int offset, int pageSize, string sortBy = null, bool needsCall = false)
         {
             var page = new InterviewerRiskOverviewPageVm { Offset = offset, PageSize = pageSize };
             try
@@ -582,18 +582,24 @@ END";
                 }
 
                 var sw = System.Diagnostics.Stopwatch.StartNew();
+                var parameters = new DynamicParameters(new
+                {
+                    FromIst = fromIst.Date,
+                    ToIst = toIst.Date,
+                    OwnerEmail = string.IsNullOrWhiteSpace(ownerEmail) ? null : ownerEmail.Trim(),
+                    MinRiskRatio = minRiskRatio,
+                    PendingReviewOnly = pendingReviewOnly,
+                    Offset = Math.Max(0, offset),
+                    PageSize = pageSize <= 0 ? 25 : Math.Min(pageSize, 200)
+                });
+                // QC Tracking parameters are sent only when used, so the default call matches the earlier procedure.
+                if (string.Equals(sortBy, "Ratio", StringComparison.OrdinalIgnoreCase))
+                    parameters.Add("SortBy", "Ratio");
+                if (needsCall)
+                    parameters.Add("NeedsCall", true);
                 using var multi = await con.QueryMultipleAsync(
                     "usp_GetInterviewerRiskOverview",
-                    new
-                    {
-                        FromIst = fromIst.Date,
-                        ToIst = toIst.Date,
-                        OwnerEmail = string.IsNullOrWhiteSpace(ownerEmail) ? null : ownerEmail.Trim(),
-                        MinRiskRatio = minRiskRatio,
-                        PendingReviewOnly = pendingReviewOnly,
-                        Offset = Math.Max(0, offset),
-                        PageSize = pageSize <= 0 ? 25 : Math.Min(pageSize, 200)
-                    },
+                    parameters,
                     commandType: CommandType.StoredProcedure,
                     commandTimeout: 120);
                 var rows = (await multi.ReadAsync<InterviewerRiskOverviewRowVm>())?.ToList()
@@ -665,12 +671,124 @@ END";
         }
 
         public async Task<IReadOnlyList<InterviewerRiskOverviewRowVm>> GetInterviewerRiskOverviewExportRowsAsync(
-            DateTime fromIst, DateTime toIst, string ownerEmail, decimal? minRiskRatio, bool pendingReviewOnly)
+            DateTime fromIst, DateTime toIst, string ownerEmail, decimal? minRiskRatio, bool pendingReviewOnly,
+            string sortBy = null, bool needsCall = false)
         {
             // Cap export at 2000 interviewers (pageSize max for a single fetch).
             var page = await GetInterviewerRiskOverviewAsync(
-                fromIst, toIst, ownerEmail, minRiskRatio, pendingReviewOnly, 0, 2000);
+                fromIst, toIst, ownerEmail, minRiskRatio, pendingReviewOnly, 0, 2000, sortBy, needsCall);
             return page.Rows;
+        }
+
+        private async Task<bool> ProcedureExistsAsync(SqlConnection con, string name) =>
+            await con.ExecuteScalarAsync<int>(
+                "SELECT CASE WHEN OBJECT_ID(@Name, N'P') IS NOT NULL THEN 1 ELSE 0 END", new { Name = "dbo." + name }) == 1;
+
+        /// <summary>QC coverage per interviewer (usp_GetInterviewerQcCoverage); null when the procedure is not deployed.</summary>
+        public async Task<IReadOnlyList<InterviewerQcCoverageRowVm>> GetInterviewerQcCoverageAsync(IReadOnlyCollection<int> userIds, int days = 90)
+        {
+            var ids = (userIds ?? Array.Empty<int>()).Where(i => i > 0).Distinct().Take(200).ToList();
+            if (ids.Count == 0) return new List<InterviewerQcCoverageRowVm>();
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                if (!await ProcedureExistsAsync(con, "usp_GetInterviewerQcCoverage"))
+                    return null;
+                var rows = await con.QueryAsync<InterviewerQcCoverageRowVm>(
+                    "usp_GetInterviewerQcCoverage",
+                    new { UserIds = string.Join(",", ids), Days = days <= 0 ? 90 : days },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 60);
+                return rows?.ToList() ?? new List<InterviewerQcCoverageRowVm>();
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                throw;
+            }
+        }
+
+        /// <summary>High-Risk Reports tab (usp_GetHighRiskReports); Available = false when the procedure is not deployed.</summary>
+        public async Task<HighRiskReportsPageVm> GetHighRiskReportsAsync(
+            DateTime fromIst, DateTime toIst, string ownerEmail, string filter, int? interviewerId, int? irfId, int offset, int pageSize)
+        {
+            var page = new HighRiskReportsPageVm { Offset = Math.Max(0, offset), PageSize = pageSize <= 0 ? 50 : Math.Min(pageSize, 200) };
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                if (!await ProcedureExistsAsync(con, "usp_GetHighRiskReports"))
+                {
+                    page.Available = false;
+                    return page;
+                }
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+                var rows = (await con.QueryAsync<HighRiskReportRowVm>(
+                    "usp_GetHighRiskReports",
+                    new
+                    {
+                        FromIst = fromIst.Date,
+                        ToIst = toIst.Date,
+                        OwnerEmail = string.IsNullOrWhiteSpace(ownerEmail) ? null : ownerEmail.Trim(),
+                        Filter = HighRiskReportFilters.Normalize(filter),
+                        InterviewerId = interviewerId.GetValueOrDefault() > 0 ? interviewerId : null,
+                        IrfId = irfId.GetValueOrDefault() > 0 ? irfId : null,
+                        Offset = page.Offset,
+                        PageSize = page.PageSize
+                    },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 120))?.ToList() ?? new List<HighRiskReportRowVm>();
+                sw.Stop();
+                await WarnIfSlowAsync("usp_GetHighRiskReports", sw.Elapsed, SlowQueryWarnSecondsOverview,
+                    $"from={fromIst:yyyy-MM-dd} to={toIst:yyyy-MM-dd} filter={filter} offset={offset}");
+                page.Rows = rows;
+                page.TotalRows = rows.Count > 0 ? rows[0].TotalRows : 0;
+                return page;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                throw;
+            }
+        }
+
+        /// <summary>PLI / PQI signals per interviewer and channel (usp_GetInterviewerProcessSignals); Available = false when missing.</summary>
+        public async Task<InterviewerProcessSignalsResultVm> GetInterviewerProcessSignalsAsync(
+            IReadOnlyCollection<int> userIds, DateTime fromIst, DateTime toIst, string ownerEmail)
+        {
+            var result = new InterviewerProcessSignalsResultVm();
+            var ids = (userIds ?? Array.Empty<int>()).Where(i => i > 0).Distinct().Take(200).ToList();
+            if (ids.Count == 0) return result;
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                if (!await ProcedureExistsAsync(con, "usp_GetInterviewerProcessSignals"))
+                {
+                    result.Available = false;
+                    return result;
+                }
+                using var multi = await con.QueryMultipleAsync(
+                    "usp_GetInterviewerProcessSignals",
+                    new
+                    {
+                        FromIst = fromIst.Date,
+                        ToIst = toIst.Date,
+                        UserIds = string.Join(",", ids),
+                        OwnerEmail = string.IsNullOrWhiteSpace(ownerEmail) ? null : ownerEmail.Trim()
+                    },
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 120);
+                await multi.ReadAsync(); // result set 1: per interview (the Reports tab reads flags itself)
+                result.Channels = (await multi.ReadAsync<InterviewerProcessSignalChannelVm>())?.ToList()
+                    ?? new List<InterviewerProcessSignalChannelVm>();
+                result.Interviewers = (await multi.ReadAsync<InterviewerProcessSignalVm>())?.ToList()
+                    ?? new List<InterviewerProcessSignalVm>();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                throw;
+            }
         }
     }
 }

@@ -5003,7 +5003,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> AddSuspiciousTypeComment(string Email, string Comment)
+        public async Task<JsonResult> AddSuspiciousTypeComment(string Email, string Comment, string SourcePage = null)
         {
             try
             {
@@ -5014,6 +5014,7 @@ namespace Risebird.Web.Controllers
                 model.Comment = Comment;
                 model.Createddate = DateTime.Now;
                 model.CreatedBy = emailId;
+                model.SourcePage = NormalizeSuspiciousSourcePage(SourcePage);
                 var data = await _interviewerService.AddSuspiciousTypeService(model);
                 if (data == true)
                 {
@@ -5035,6 +5036,24 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Page a suspicious mark came from (window.rbSuspiciousSource on each page): letters, digits and
+        /// ":" / "-" / "_" only (e.g. "TRM", "PotentialRiskCandidate", "911:UnassignedInterviews"), at most 60
+        /// characters; anything else is stored as NULL (no page).
+        /// </summary>
+        internal static string NormalizeSuspiciousSourcePage(string sourcePage)
+        {
+            if (string.IsNullOrWhiteSpace(sourcePage)) return null;
+            var s = sourcePage.Trim();
+            if (s.Length > 60) s = s.Substring(0, 60);
+            foreach (var ch in s)
+            {
+                if (!(char.IsLetterOrDigit(ch) || ch == ':' || ch == '-' || ch == '_'))
+                    return null;
+            }
+            return s;
         }
         #region Open Interview Notification: Public URL
         [HttpPost]

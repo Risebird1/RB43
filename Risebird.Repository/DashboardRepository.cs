@@ -2354,6 +2354,30 @@ Values
                 return null;
             }
         }
+        /// <summary>Latest QC decision per interviewer (and channel) on a QC page (usp_GetQcPageStatus); empty when missing.</summary>
+        public async Task<List<QcPageStatusVM>> GetQcPageStatus(string type, IEnumerable<int> userIds)
+        {
+            var ids = (userIds ?? Enumerable.Empty<int>()).Where(i => i > 0).Distinct().ToList();
+            if (ids.Count == 0) return new List<QcPageStatusVM>();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var exists = await con.ExecuteScalarAsync<int>(
+                        "SELECT CASE WHEN OBJECT_ID(N'dbo.usp_GetQcPageStatus', N'P') IS NOT NULL THEN 1 ELSE 0 END");
+                    if (exists == 0) return new List<QcPageStatusVM>();
+                    var result = await SqlMapper.QueryAsync<QcPageStatusVM>(con, "usp_GetQcPageStatus",
+                        new { Type = type, UserIds = string.Join(",", ids) }, commandType: CommandType.StoredProcedure);
+                    return result?.ToList() ?? new List<QcPageStatusVM>();
+                }
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new List<QcPageStatusVM>();
+            }
+        }
+
         public async Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type, string EmailId)
         {
             try

@@ -17,6 +17,10 @@ ActionsSuspicious, ActionsReportsSla), ProxyForms, RedoRequests, TrialBackfills,
 ScoredActions, AuthenticActions, NoEvidenceActions, FollowThroughDone /
 FollowThroughOf (High-Risk interviewers the person actioned who were also called or
 coached by anyone in the window), FlagCount (usp_QCActivity_ComputeFlags).
+QC Tracking (appended at the end of result set 1): ActionsPotentialRisk,
+ActionsHighRisk, PrUnderReview / PrReviewed / PrRemoved, HrUnderReview /
+HrReviewed / HrRemoved, ActionsMonitoring, PliUnderReview / PliReviewed /
+PliRemoved, MonitoringRemoved / MonitoringShortlisted.
 The rows are collected for everyone first (follow-through and the flags need other
 people's calls); @ActorEmail then narrows them before the existing aggregation.
 
@@ -145,6 +149,9 @@ BEGIN
         SUM(CASE WHEN k.PageGroup = 'Trial' THEN 1 ELSE 0 END)                                         AS ActionsTrial,
         SUM(CASE WHEN k.PageGroup = 'Suspicious' THEN 1 ELSE 0 END)                                    AS ActionsSuspicious,
         SUM(CASE WHEN k.PageGroup = 'ReportsSla' THEN 1 ELSE 0 END)                                    AS ActionsReportsSla,
+        SUM(CASE WHEN k.PageGroup = 'PotentialRisk' THEN 1 ELSE 0 END)                                 AS ActionsPotentialRisk,
+        SUM(CASE WHEN k.PageGroup = 'HighRisk' THEN 1 ELSE 0 END)                                      AS ActionsHighRisk,
+        SUM(CASE WHEN k.PageGroup = 'Monitoring' THEN 1 ELSE 0 END)                                    AS ActionsMonitoring,
         SUM(CASE WHEN k.Metric = 'ProxyForm' THEN 1 ELSE 0 END)                                        AS ProxyForms,
         SUM(CASE WHEN k.Metric = 'RedoRequested' THEN 1 ELSE 0 END)                                    AS RedoRequests,
         SUM(CASE WHEN k.Metric = 'TrialBackfill' THEN 1 ELSE 0 END)                                    AS TrialBackfills,
@@ -292,7 +299,24 @@ BEGIN
         ISNULL(MAX(px.NoEvidenceActions), 0)       AS NoEvidenceActions,
         ISNULL(MAX(ft.FollowThroughDone), 0)       AS FollowThroughDone,
         ISNULL(MAX(ft.FollowThroughOf), 0)         AS FollowThroughOf,
-        ISNULL(MAX(fc.FlagCount), 0)               AS FlagCount
+        ISNULL(MAX(fc.FlagCount), 0)               AS FlagCount,
+
+        -- QC Tracking (appended): actions on Potential Risk by Candidate, High-Risk Interviewers and
+        -- Interviewer Monitoring / PLI, and the status moves behind them.
+        ISNULL(MAX(px.ActionsPotentialRisk), 0)    AS ActionsPotentialRisk,
+        ISNULL(MAX(px.ActionsHighRisk), 0)         AS ActionsHighRisk,
+        SUM(CASE WHEN r.Metric = 'PrUnderReview' THEN 1 ELSE 0 END)                          AS PrUnderReview,
+        SUM(CASE WHEN r.Metric = 'PrReviewed' THEN 1 ELSE 0 END)                             AS PrReviewed,
+        SUM(CASE WHEN r.Metric = 'PrRemoved' THEN 1 ELSE 0 END)                              AS PrRemoved,
+        SUM(CASE WHEN r.Metric = 'HrUnderReview' THEN 1 ELSE 0 END)                          AS HrUnderReview,
+        SUM(CASE WHEN r.Metric = 'HrReviewed' THEN 1 ELSE 0 END)                             AS HrReviewed,
+        SUM(CASE WHEN r.Metric = 'HrRemoved' THEN 1 ELSE 0 END)                              AS HrRemoved,
+        ISNULL(MAX(px.ActionsMonitoring), 0)       AS ActionsMonitoring,
+        SUM(CASE WHEN r.Metric = 'PliUnderReview' THEN 1 ELSE 0 END)                         AS PliUnderReview,
+        SUM(CASE WHEN r.Metric = 'PliReviewed' THEN 1 ELSE 0 END)                            AS PliReviewed,
+        SUM(CASE WHEN r.Metric = 'PliRemoved' THEN 1 ELSE 0 END)                             AS PliRemoved,
+        SUM(CASE WHEN r.Metric = 'MonitoringRemoved' THEN 1 ELSE 0 END)                      AS MonitoringRemoved,
+        SUM(CASE WHEN r.Metric = 'MonitoringShortlisted' THEN 1 ELSE 0 END)                  AS MonitoringShortlisted
     FROM #Users u
     LEFT JOIN #QCActivityRows r ON r.ActorEmail = u.Email
     LEFT JOIN #PX px ON px.Email = u.Email

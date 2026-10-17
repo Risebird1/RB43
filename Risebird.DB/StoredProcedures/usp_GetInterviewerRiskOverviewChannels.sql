@@ -13,6 +13,20 @@ Extra per-channel columns (window): Selected / Rejected, ReportsPenalised and
 AvgPenaltyPct (OutcomeAgg), AiVerdict (TransInterviewer.AIVerdict), and AI
 penalties applied automatically (AiAgg over #AiPen, same definition as
 usp_GetInterviewerRiskOverview).
+
+Fix 4A: the window is a range on interviewDate (index-friendly), #AiPen is
+set-based, and MoneyProtectionWallet is no longer read (AiAmount removed).
+
+QC Tracking Delta 4 (appended columns, IRF level):
+  ProcessLapses (+ ShortSelectComments, ShortRejectComments, FewQuestions,
+  ShortCalls, LateJoins)  PLI signals on this channel in the window
+                          (usp_InterviewerProcessSignals_Collect; 0 when missing)
+  NegativeRatings, HighSelection, HighRejection   PQI outcome skew
+  ShareOfBad / InterviewerBadTotal   this channel's bad reports of the
+                          interviewer's bad reports on the listed channels ("4 of 5")
+  PendingSince / PendingDays   first bad report since the last Keep (or in the
+                          window when never reviewed); the page shows it for rows in
+                          PendingReview / NeedsReReview / Watch / Remove, red after 7 days
 ================================================================================
 */
 CREATE OR ALTER PROCEDURE [dbo].[usp_GetInterviewerRiskOverviewChannels]
@@ -56,7 +70,12 @@ BEGIN
             CAST(0 AS INT) AS ReportsPenalised, CAST(NULL AS DECIMAL(10,2)) AS AvgPenaltyPct,
             CAST(NULL AS VARCHAR(20)) AS AiVerdict,
             CAST(0 AS INT) AS AiPenalised, CAST(0 AS INT) AS AiAutoApproved, CAST(0 AS INT) AS AiHumanReviewed,
-            CAST(NULL AS DECIMAL(10,2)) AS AiAvgPct, CAST(NULL AS DECIMAL(18,2)) AS AiAmount
+            CAST(NULL AS DECIMAL(10,2)) AS AiAvgPct,
+            CAST(0 AS INT) AS ProcessLapses, CAST(0 AS INT) AS ShortSelectComments, CAST(0 AS INT) AS ShortRejectComments,
+            CAST(0 AS INT) AS FewQuestions, CAST(0 AS INT) AS ShortCalls, CAST(0 AS INT) AS LateJoins,
+            CAST(0 AS INT) AS NegativeRatings, CAST(0 AS BIT) AS HighSelection, CAST(0 AS BIT) AS HighRejection,
+            CAST(0 AS INT) AS ShareOfBad, CAST(0 AS INT) AS InterviewerBadTotal,
+            CAST(NULL AS DATETIME) AS PendingSince, CAST(NULL AS INT) AS PendingDays
         WHERE 1 = 0;
         RETURN;
     END
@@ -146,10 +165,12 @@ BEGIN
     INNER JOIN #ScopedIrfs s ON s.IrfName = im.IRFId
     INNER JOIN #ActiveTi a ON a.IrfId = s.IrfId
     WHERE ic.MeetingStatus IN (4, 6, 7, 8)
-      AND CAST(DATEADD(MINUTE, 330, im.interviewDate) AS DATE) >= @FromIst
-      AND CAST(DATEADD(MINUTE, 330, im.interviewDate) AS DATE) <= @ToIst
+      -- Same IST window as before, as a range on the column (index-friendly; Fix 4A).
+      AND im.interviewDate >= DATEADD(MINUTE, -330, CAST(@FromIst AS DATETIME))
+      AND im.interviewDate <  DATEADD(MINUTE, -330, DATEADD(DAY, 1, CAST(@ToIst AS DATETIME)))
       AND NULLIF(LTRIM(RTRIM(im.interviewer)), '') IS NOT NULL
-    GROUP BY im.id, s.IrfId, LTRIM(RTRIM(im.interviewer)), im.interviewDate;
+    GROUP BY im.id, s.IrfId, LTRIM(RTRIM(im.interviewer)), im.interviewDate
+    OPTION (RECOMPILE);
 
     CREATE TABLE #Mapped (
         TransInterviewerId INT NOT NULL,
@@ -193,44 +214,79 @@ BEGIN
 
     -- AI penalties applied automatically — same definition as usp_GetInterviewerRiskOverview (#AiPen),
     -- here over this interviewer's mapped interviews only.
+    -- Set-based (Fix 4A); the wallet amount is no longer read.
     CREATE TABLE #AiPen (
         InterviewId     INT NOT NULL PRIMARY KEY,
         DeductionPct    INT NOT NULL,
         IsApproved      BIT NOT NULL,
-        IsHumanReviewed BIT NOT NULL,
-        Amount          DECIMAL(18,2) NULL
+        IsHumanReviewed BIT NOT NULL
     );
 
-    INSERT INTO #AiPen (InterviewId, DeductionPct, IsApproved, IsHumanReviewed, Amount)
+    INSERT INTO #AiPen (InterviewId, DeductionPct, IsApproved, IsHumanReviewed)
     SELECT
-        mi.InterviewId,
-        ps.MaxDeduction,
-        ps.AnyApproved,
-        CAST(CASE WHEN ps.HumanModified = 1 OR EXISTS (
-                SELECT 1 FROM dbo.PaymentSLADetailsHistory h
-                WHERE h.Interviewid = mi.InterviewId
-                  AND NULLIF(LTRIM(RTRIM(h.CreatedBy)), '') IS NOT NULL
-                  AND LTRIM(RTRIM(h.CreatedBy)) NOT IN ('AISystem', 'System'))
-             THEN 1 ELSE 0 END AS BIT),
-        w.Amount
+        p.Interviewid,
+        MAX(ISNULL(p.PaymentDeduction, 0)),
+        CAST(MAX(CASE WHEN ISNULL(p.IsApproved, 0) = 1 THEN 1 ELSE 0 END) AS BIT),
+        CAST(MAX(CASE WHEN NULLIF(LTRIM(RTRIM(p.ModifiedBy)), '') IS NOT NULL
+                       AND LTRIM(RTRIM(p.ModifiedBy)) NOT IN ('AISystem', 'System') THEN 1 ELSE 0 END) AS BIT)
     FROM (SELECT DISTINCT InterviewId FROM #Mapped) mi
-    CROSS APPLY (
-        SELECT
-            MAX(ISNULL(p.PaymentDeduction, 0)) AS MaxDeduction,
-            CAST(MAX(CASE WHEN ISNULL(p.IsApproved, 0) = 1 THEN 1 ELSE 0 END) AS BIT) AS AnyApproved,
-            MAX(CASE WHEN NULLIF(LTRIM(RTRIM(p.ModifiedBy)), '') IS NOT NULL
-                      AND LTRIM(RTRIM(p.ModifiedBy)) NOT IN ('AISystem', 'System') THEN 1 ELSE 0 END) AS HumanModified
-        FROM dbo.PaymentSLADetails p
-        WHERE p.Interviewid = mi.InterviewId
-          AND LTRIM(RTRIM(ISNULL(p.CreatedBy, ''))) = 'AISystem'
-        HAVING MAX(ISNULL(p.PaymentDeduction, 0)) > 0
-    ) ps
-    OUTER APPLY (
-        SELECT TOP 1 CAST(ISNULL(mw.Points, 0) AS DECIMAL(18,2)) AS Amount
-        FROM dbo.MoneyProtectionWallet mw
-        WHERE mw.Interviewid = mi.InterviewId
-        ORDER BY mw.id DESC
-    ) w;
+    INNER JOIN dbo.PaymentSLADetails p ON p.Interviewid = mi.InterviewId
+    WHERE LTRIM(RTRIM(ISNULL(p.CreatedBy, ''))) = 'AISystem'
+    GROUP BY p.Interviewid
+    HAVING MAX(ISNULL(p.PaymentDeduction, 0)) > 0;
+
+    UPDATE ap SET IsHumanReviewed = 1
+    FROM #AiPen ap
+    WHERE ap.IsHumanReviewed = 0
+      AND EXISTS (
+            SELECT 1 FROM dbo.PaymentSLADetailsHistory h
+            WHERE h.Interviewid = ap.InterviewId
+              AND NULLIF(LTRIM(RTRIM(h.CreatedBy)), '') IS NOT NULL
+              AND LTRIM(RTRIM(h.CreatedBy)) NOT IN ('AISystem', 'System'));
+
+    -- PLI / PQI signals for this interviewer in the window (Delta 4, IRF level). Optional: zero when the
+    -- signals procedure is not deployed or fails, so the channel rows always load.
+    CREATE TABLE #ProcessSignalRows (
+        InterviewId       INT           NOT NULL PRIMARY KEY,
+        InterviewerUserId INT           NULL,
+        InterviewerEmail  VARCHAR(200)  NULL,
+        IrfIntId          INT           NULL,
+        IRFId             VARCHAR(100)  NULL,
+        InterviewDateIst  DATETIME      NULL,
+        Outcome           VARCHAR(20)   NULL,
+        CommentChars      INT           NULL,
+        QuestionCount     INT           NULL,
+        VideoMinutes      INT           NULL,
+        PlannedMinutes    INT           NULL,
+        LateJoinMinutes   INT           NULL,
+        CandidateRating   INT           NULL,
+        ShortComment      BIT           NOT NULL DEFAULT 0,
+        FewQuestions      BIT           NOT NULL DEFAULT 0,
+        ShortCall         BIT           NOT NULL DEFAULT 0,
+        LateJoin          BIT           NOT NULL DEFAULT 0,
+        NegativeRating    BIT           NOT NULL DEFAULT 0
+    );
+    IF OBJECT_ID(N'dbo.usp_InterviewerProcessSignals_Collect', N'P') IS NOT NULL
+    BEGIN
+        DECLARE @SignalIds NVARCHAR(20) = CAST(@InterviewerId AS NVARCHAR(20));
+        BEGIN TRY
+            EXEC dbo.usp_InterviewerProcessSignals_Collect
+                @FromIst = @FromIst, @ToIst = @ToIst, @UserIds = @SignalIds, @OwnerEmail = @OwnerEmail;
+        END TRY
+        BEGIN CATCH
+            DELETE FROM #ProcessSignalRows;
+        END CATCH
+    END
+
+    DECLARE @PqiSelectPct INT = 40, @PqiRejectPct INT = 80, @PqiMinInterviews INT = 5;
+    IF OBJECT_ID(N'dbo.QCActivitySetting', N'U') IS NOT NULL
+        EXEC sp_executesql N'
+            SELECT @Sel = ISNULL(MAX(CASE WHEN Name = ''PqiSelectPct''     THEN TRY_CAST(Value AS INT) END), @Sel),
+                   @Rej = ISNULL(MAX(CASE WHEN Name = ''PqiRejectPct''     THEN TRY_CAST(Value AS INT) END), @Rej),
+                   @Min = ISNULL(MAX(CASE WHEN Name = ''PqiMinInterviews'' THEN TRY_CAST(Value AS INT) END), @Min)
+            FROM dbo.QCActivitySetting',
+            N'@Sel INT OUTPUT, @Rej INT OUTPUT, @Min INT OUTPUT',
+            @Sel = @PqiSelectPct OUTPUT, @Rej = @PqiRejectPct OUTPUT, @Min = @PqiMinInterviews OUTPUT;
 
     ;WITH InterviewAgg AS (
         SELECT
@@ -337,10 +393,34 @@ BEGIN
             COUNT(1) AS AiPenalised,
             SUM(CASE WHEN ap.IsApproved = 1 AND ap.IsHumanReviewed = 0 THEN 1 ELSE 0 END) AS AiAutoApproved,
             SUM(CASE WHEN ap.IsHumanReviewed = 1 THEN 1 ELSE 0 END) AS AiHumanReviewed,
-            CAST(AVG(CAST(ap.DeductionPct AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AiAvgPct,
-            SUM(ap.Amount) AS AiAmount
+            CAST(AVG(CAST(ap.DeductionPct AS DECIMAL(10,2))) AS DECIMAL(10,2)) AS AiAvgPct
         FROM #Mapped m
         INNER JOIN #AiPen ap ON ap.InterviewId = m.InterviewId
+        GROUP BY m.TransInterviewerId
+    ),
+    -- PLI / PQI signals per channel (Delta 4): the five PLI kinds and negative candidate ratings.
+    SignalAgg AS (
+        SELECT
+            m.TransInterviewerId,
+            SUM(CASE WHEN p.ShortComment = 1 AND p.Outcome = 'Selected' THEN 1 ELSE 0 END) AS ShortSelectComments,
+            SUM(CASE WHEN p.ShortComment = 1 AND p.Outcome = 'Rejected' THEN 1 ELSE 0 END) AS ShortRejectComments,
+            SUM(CAST(p.FewQuestions AS INT)) AS FewQuestions,
+            SUM(CAST(p.ShortCall AS INT)) AS ShortCalls,
+            SUM(CAST(p.LateJoin AS INT)) AS LateJoins,
+            SUM(CAST(p.NegativeRating AS INT)) AS NegativeRatings
+        FROM #Mapped m
+        INNER JOIN #ProcessSignalRows p ON p.InterviewId = m.InterviewId
+        GROUP BY m.TransInterviewerId
+    ),
+    -- Pending for: the first bad report since the last Keep, or in the window when the channel was never reviewed.
+    PendingStart AS (
+        SELECT m.TransInterviewerId, MIN(c.InterviewDateUtc) AS PendingSince
+        FROM #Mapped m
+        INNER JOIN #Completed c ON c.InterviewId = m.InterviewId
+        INNER JOIN dbo.RiskCategory rc ON rc.InterviewId = m.InterviewId
+        LEFT JOIN ReviewPick rp ON rp.TransInterviewerId = m.TransInterviewerId
+        WHERE UPPER(LTRIM(RTRIM(ISNULL(rc.Severity, '')))) LIKE 'P[0-5]'
+          AND (rp.TransInterviewerId IS NULL OR (rp.EventType = 'RiskAuditKept' AND c.InterviewDateUtc > rp.ChangedAt))
         GROUP BY m.TransInterviewerId
     )
     SELECT
@@ -413,7 +493,23 @@ BEGIN
         ISNULL(aa.AiAutoApproved, 0) AS AiAutoApproved,
         ISNULL(aa.AiHumanReviewed, 0) AS AiHumanReviewed,
         aa.AiAvgPct,
-        aa.AiAmount
+        -- QC Tracking Delta 4 (appended)
+        ISNULL(sg.ShortSelectComments, 0) + ISNULL(sg.ShortRejectComments, 0) + ISNULL(sg.FewQuestions, 0)
+            + ISNULL(sg.ShortCalls, 0) + ISNULL(sg.LateJoins, 0) AS ProcessLapses,
+        ISNULL(sg.ShortSelectComments, 0) AS ShortSelectComments,
+        ISNULL(sg.ShortRejectComments, 0) AS ShortRejectComments,
+        ISNULL(sg.FewQuestions, 0) AS FewQuestions,
+        ISNULL(sg.ShortCalls, 0) AS ShortCalls,
+        ISNULL(sg.LateJoins, 0) AS LateJoins,
+        ISNULL(sg.NegativeRatings, 0) AS NegativeRatings,
+        CAST(CASE WHEN ISNULL(ia.Completed, 0) >= @PqiMinInterviews
+                   AND ISNULL(oa.Selected, 0) * 100.0 / NULLIF(ia.Completed, 0) >= @PqiSelectPct THEN 1 ELSE 0 END AS BIT) AS HighSelection,
+        CAST(CASE WHEN ISNULL(ia.Completed, 0) >= @PqiMinInterviews
+                   AND ISNULL(oa.Rejected, 0) * 100.0 / NULLIF(ia.Completed, 0) >= @PqiRejectPct THEN 1 ELSE 0 END AS BIT) AS HighRejection,
+        ISNULL(ia.Bad, 0) AS ShareOfBad,
+        SUM(ISNULL(ia.Bad, 0)) OVER () AS InterviewerBadTotal,
+        ps.PendingSince,
+        DATEDIFF(DAY, ps.PendingSince, GETUTCDATE()) AS PendingDays
     FROM #ActiveTi a
     INNER JOIN #ScopedIrfs s ON s.IrfId = a.IrfId
     LEFT JOIN dbo.UserList ulco ON ulco.id = s.RisebirdHr
@@ -425,6 +521,8 @@ BEGIN
     LEFT JOIN ReviewPick rp ON rp.TransInterviewerId = a.TransInterviewerId
     LEFT JOIN BadAfterKeep bak ON bak.TransInterviewerId = a.TransInterviewerId
     LEFT JOIN LastBackfill lb ON lb.IrfId = a.IrfId
+    LEFT JOIN SignalAgg sg ON sg.TransInterviewerId = a.TransInterviewerId
+    LEFT JOIN PendingStart ps ON ps.TransInterviewerId = a.TransInterviewerId
     WHERE ISNULL(ia.Completed, 0) > 0 OR a.IsActive = 1
     ORDER BY
         CASE
@@ -442,6 +540,7 @@ BEGIN
         ISNULL(ia.Bad, 0) * 1.0 / NULLIF(ia.Completed, 0) DESC,
         a.IrfId;
 
+    DROP TABLE IF EXISTS #ProcessSignalRows;
     DROP TABLE IF EXISTS #AiPen;
     DROP TABLE IF EXISTS #Mapped;
     DROP TABLE IF EXISTS #Completed;

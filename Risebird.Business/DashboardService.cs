@@ -1189,6 +1189,18 @@ namespace Risebird.Business
             }
             return null;
         }
+        public async Task<List<QcPageStatusVM>> GetQcPageStatus(string type, IEnumerable<int> userIds)
+        {
+            try
+            {
+                return await _dashboardRespository.GetQcPageStatus(type, userIds) ?? new List<QcPageStatusVM>();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<QcPageStatusVM>();
+            }
+        }
         public async Task<List<MeetingVM>> FetchTechQCDetails(string EmailId)
         {
             try

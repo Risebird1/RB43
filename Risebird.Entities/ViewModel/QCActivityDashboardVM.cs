@@ -103,8 +103,28 @@ namespace Risebird.Entities.ViewModel
         public int FollowThroughOf { get; set; }
         public int FlagCount { get; set; }
 
-        /// <summary>Actions taken on the six pages and Reports &amp; SLA (calls and coaching excluded).</summary>
-        public int ActionsTaken => ActionsTotalInterviews + ActionsTrm + ActionsIrfAudit + ActionsTrial + ActionsSuspicious + ActionsReportsSla;
+        // ---- QC Tracking: page-level capture (appended to usp_GetQCActivityDashboardSummary result set 1) ----
+        /// <summary>Actions on Potential Risk by Candidate (status moves, Remove, Redo, Payment SLA reviews, suspicious marks).</summary>
+        public int ActionsPotentialRisk { get; set; }
+        /// <summary>Actions on High-Risk Interviewers (status moves, channel Keep / Remove, report actions, suspicious marks).</summary>
+        public int ActionsHighRisk { get; set; }
+        public int PrUnderReview { get; set; }
+        public int PrReviewed { get; set; }
+        public int PrRemoved { get; set; }
+        public int HrUnderReview { get; set; }
+        public int HrReviewed { get; set; }
+        public int HrRemoved { get; set; }
+        /// <summary>Actions on Interviewer Monitoring (PQI) and PLI: channel Remove / Shortlist and PLI status moves.</summary>
+        public int ActionsMonitoring { get; set; }
+        public int PliUnderReview { get; set; }
+        public int PliReviewed { get; set; }
+        public int PliRemoved { get; set; }
+        public int MonitoringRemoved { get; set; }
+        public int MonitoringShortlisted { get; set; }
+
+        /// <summary>Actions taken on every page column and Reports &amp; SLA (calls and coaching excluded).</summary>
+        public int ActionsTaken => ActionsTotalInterviews + ActionsTrm + ActionsIrfAudit + ActionsTrial + ActionsSuspicious + ActionsReportsSla
+            + ActionsPotentialRisk + ActionsHighRisk + ActionsMonitoring;
 
         /// <summary>Authenticity score: authentic ÷ scored actions, whole percent; null with no scored action.</summary>
         public int? AuthenticPct => ScoredActions > 0 ? (int)Math.Round(AuthenticActions * 100.0 / ScoredActions, MidpointRounding.AwayFromZero) : (int?)null;
@@ -502,6 +522,25 @@ namespace Risebird.Entities.ViewModel
         public const string Reached = "Reached";
         public const string FollowThrough = "FollowThrough";
         public const string ActionsTaken = "ActionsTaken";
+        // QC Tracking: page-level capture
+        public const string PrUnderReview = "PrUnderReview";
+        public const string PrReviewed = "PrReviewed";
+        public const string PrRemoved = "PrRemoved";
+        public const string Pr = "Pr";
+        public const string HrUnderReview = "HrUnderReview";
+        public const string HrReviewed = "HrReviewed";
+        public const string HrRemoved = "HrRemoved";
+        public const string Hr = "Hr";
+        public const string PliUnderReview = "PliUnderReview";
+        public const string PliReviewed = "PliReviewed";
+        public const string PliRemoved = "PliRemoved";
+        public const string Pli = "Pli";
+        public const string MonitoringRemoved = "MonitoringRemoved";
+        public const string MonitoringShortlisted = "MonitoringShortlisted";
+        public const string Monitoring = "Monitoring";
+        public const string PagePotentialRisk = "PagePotentialRisk";
+        public const string PageHighRisk = "PageHighRisk";
+        public const string PageMonitoring = "PageMonitoring";
         /// <summary>Group keys: an action together with its undo (StatusActions = all ten).</summary>
         public const string StatusActions = "StatusActions";
         public const string SuspiciousAll = "SuspiciousAll";
@@ -565,6 +604,24 @@ namespace Risebird.Entities.ViewModel
                 [Reached] = "Interviewers reached (connected calls + coaching)",
                 [FollowThrough] = "Actions on High-Risk interviewers (follow-through)",
                 [ActionsTaken] = "Actions taken (all pages)",
+                [PrUnderReview] = "Potential Risk: moved to under review",
+                [PrReviewed] = "Potential Risk: marked reviewed",
+                [PrRemoved] = "Potential Risk: removed",
+                [Pr] = "Potential Risk status actions",
+                [HrUnderReview] = "High-Risk: moved to under review",
+                [HrReviewed] = "High-Risk: marked reviewed",
+                [HrRemoved] = "High-Risk: removed",
+                [Hr] = "High-Risk status actions",
+                [PliUnderReview] = "PLI: moved to under review",
+                [PliReviewed] = "PLI: marked reviewed",
+                [PliRemoved] = "PLI: removed",
+                [Pli] = "PLI status actions",
+                [MonitoringRemoved] = "Interviewer Monitoring: removed from channel",
+                [MonitoringShortlisted] = "Interviewer Monitoring: shortlisted on channel",
+                [Monitoring] = "Interviewer Monitoring: Remove / Shortlist",
+                [PagePotentialRisk] = "Actions on Potential Risk by Candidate",
+                [PageHighRisk] = "Actions on High-Risk Interviewers",
+                [PageMonitoring] = "Actions on Interviewer Monitoring and PLI",
                 [StatusActions] = "Interviewer status changes",
                 [SuspiciousAll] = "Suspicious: marked and undone",
                 [BlockedAll] = "Blocked and unblocked",

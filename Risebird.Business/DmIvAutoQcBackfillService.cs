@@ -64,18 +64,30 @@ namespace Risebird.Business
 
         public Task<InterviewerRiskOverviewPageVm> GetInterviewerRiskOverviewAsync(
             DateTime fromIst, DateTime toIst, string ownerEmail, decimal? minRiskRatio,
-            bool pendingReviewOnly, int offset, int pageSize) =>
+            bool pendingReviewOnly, int offset, int pageSize, string sortBy = null, bool needsCall = false) =>
             _monitorRepository.GetInterviewerRiskOverviewAsync(
-                fromIst, toIst, ownerEmail, minRiskRatio, pendingReviewOnly, offset, pageSize);
+                fromIst, toIst, ownerEmail, minRiskRatio, pendingReviewOnly, offset, pageSize, sortBy, needsCall);
 
         public Task<IReadOnlyList<InterviewerRiskOverviewChannelRowVm>> GetInterviewerRiskOverviewChannelsAsync(
             int interviewerId, DateTime fromIst, DateTime toIst, string ownerEmail) =>
             _monitorRepository.GetInterviewerRiskOverviewChannelsAsync(interviewerId, fromIst, toIst, ownerEmail);
 
         public Task<IReadOnlyList<InterviewerRiskOverviewRowVm>> GetInterviewerRiskOverviewExportRowsAsync(
-            DateTime fromIst, DateTime toIst, string ownerEmail, decimal? minRiskRatio, bool pendingReviewOnly) =>
+            DateTime fromIst, DateTime toIst, string ownerEmail, decimal? minRiskRatio, bool pendingReviewOnly,
+            string sortBy = null, bool needsCall = false) =>
             _monitorRepository.GetInterviewerRiskOverviewExportRowsAsync(
-                fromIst, toIst, ownerEmail, minRiskRatio, pendingReviewOnly);
+                fromIst, toIst, ownerEmail, minRiskRatio, pendingReviewOnly, sortBy, needsCall);
+
+        public Task<IReadOnlyList<InterviewerQcCoverageRowVm>> GetInterviewerQcCoverageAsync(IReadOnlyCollection<int> userIds, int days = 90) =>
+            _monitorRepository.GetInterviewerQcCoverageAsync(userIds, days);
+
+        public Task<HighRiskReportsPageVm> GetHighRiskReportsAsync(
+            DateTime fromIst, DateTime toIst, string ownerEmail, string filter, int? interviewerId, int? irfId, int offset, int pageSize) =>
+            _monitorRepository.GetHighRiskReportsAsync(fromIst, toIst, ownerEmail, filter, interviewerId, irfId, offset, pageSize);
+
+        public Task<InterviewerProcessSignalsResultVm> GetInterviewerProcessSignalsAsync(
+            IReadOnlyCollection<int> userIds, DateTime fromIst, DateTime toIst, string ownerEmail) =>
+            _monitorRepository.GetInterviewerProcessSignalsAsync(userIds, fromIst, toIst, ownerEmail);
 
         public async Task<IrfAuditRiskBackfillResultVm> BackfillRiskCategoryForIrfAsync(int irfId, DateTime fromIst, DateTime toIst,
             bool ignoreMassFireGuard = false,

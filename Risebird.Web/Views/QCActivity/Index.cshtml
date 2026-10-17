@@ -287,7 +287,7 @@
                     <tr>
                         <th rowspan="2" class="qca-user-h">Quality Controller</th>
                         <th colspan="5" class="qca-group">Coaching calls</th>
-                        <th colspan="7" class="qca-group">Actions taken (by page)</th>
+                        <th colspan="10" class="qca-group">Actions taken (by page)</th>
                         <th colspan="3" class="qca-group">Authenticity</th>
                         <th rowspan="2" class="qca-group" style="vertical-align:middle">Last activity</th>
                     </tr>
@@ -303,6 +303,9 @@
                         <th>Trial</th>
                         <th>Suspicious</th>
                         <th title="Reports, Payment SLA, QC forms, report edits, proxy forms, redo requests, deduction reviews">Reports &amp; SLA</th>
+                        <th title="Potential Risk by Candidate: Under review / Reviewed / Remove, Redo, Payment SLA reviews and suspicious marks made on that page">Potential risk</th>
+                        <th title="High-Risk Interviewers: Under review / Reviewed / Remove, channel Keep / Remove from the View expansion, Reports-tab actions and suspicious marks made on that page">High-Risk</th>
+                        <th title="Interviewer Monitoring (PQI) Remove / Shortlist on a channel, and PLI Under review / Reviewed / Remove">Monitoring</th>
                         <th>Total</th>
                         <th class="qca-group" title="Authentic actions ÷ scored actions: a real comment (not a stock word) and evidence on the interviewer">Score</th>
                         <th title="High-Risk interviewers this person actioned who were also called or coached (by anyone) in the window">Follow-through</th>
@@ -329,6 +332,9 @@
                     <th colspan="4" class="qca-group">IRF audit</th>
                     <th colspan="3" class="qca-group">Total Red Marker</th>
                     <th colspan="3" class="qca-group">Total Interviews</th>
+                    <th colspan="3" class="qca-group" title="Potential Risk by Candidate">Potential Risk</th>
+                    <th colspan="3" class="qca-group" title="High-Risk Interviewers (interviewer rows)">High-Risk</th>
+                    <th colspan="3" class="qca-group" title="Interviewer Monitoring (PQI) and PLI">Monitoring / PLI</th>
                     <th colspan="5" class="qca-group">Interviewer status</th>
                     <th colspan="4" class="qca-group">Plivo calls</th>
                     <th rowspan="2" class="qca-group" style="vertical-align:middle" title="Coaching sessions logged or emailed (Interviewer QC View)">Coaching</th>
@@ -355,6 +361,15 @@
                     <th class="qca-group">Under rev.</th>
                     <th>Reviewed</th>
                     <th>Removed</th>
+                    <th class="qca-group">Under rev.</th>
+                    <th>Reviewed</th>
+                    <th title="Removed from Potential Risk by Candidate (the interviewer is made inactive; also counted under Interviewer status: Inactive)">Removed</th>
+                    <th class="qca-group">Under rev.</th>
+                    <th>Reviewed</th>
+                    <th title="Removed from High-Risk Interviewers (also counted under Interviewer status: Inactive)">Removed</th>
+                    <th class="qca-group" title="Removed from a channel on Interviewer Monitoring">Removed</th>
+                    <th title="Shortlisted on a channel on Interviewer Monitoring">Shortlisted</th>
+                    <th title="PLI: Under review / Reviewed / Remove">PLI moves</th>
                     <th class="qca-group" title="Interviewers marked suspicious (&#8634; = marks undone)">Suspicious</th>
                     <th title="Interviewers blocked (&#8634; = unblocked)">Blocked</th>
                     <th title="Portal access turned off (&#8634; = turned back on)">Access off</th>
@@ -665,8 +680,8 @@
                     if (xhr.status === 401 || xhr.status === 403) { window.location.href = '/Session/SignOut'; return; }
                     state.loaded = false;
                     $('#qcaAlert').html('<div class="qca-alert qca-alert--error">Could not load QC activity (' + esc(xhr.status) + '). Please try again.</div>');
-                    $('#qcaBody').html('<tr><td colspan="32" class="qca-empty">No data.</td></tr>');
-                    if (!state.data) $('#qcaAuthBody').html('<tr><td colspan="17" class="qca-empty">No data.</td></tr>');
+                    $('#qcaBody').html('<tr><td colspan="41" class="qca-empty">No data.</td></tr>');
+                    if (!state.data) $('#qcaAuthBody').html('<tr><td colspan="20" class="qca-empty">No data.</td></tr>');
                 },
                 complete: function () {
                     // An aborted request was replaced by a newer one, which owns the loader now.
@@ -714,7 +729,7 @@
 
             // Table, grouped by profile when more than one profile is listed.
             if (!rows.length) {
-                $('#qcaBody').html('<tr><td colspan="32" class="qca-empty">No Quality Controllers or actions in this range.</td></tr>');
+                $('#qcaBody').html('<tr><td colspan="41" class="qca-empty">No Quality Controllers or actions in this range.</td></tr>');
                 return;
             }
             var groups = [];
@@ -724,7 +739,7 @@
             });
             var html = '';
             groups.forEach(function (g) {
-                if (groups.length > 1) html += '<tr class="qca-section"><td colspan="32">' + esc(g) + '</td></tr>';
+                if (groups.length > 1) html += '<tr class="qca-section"><td colspan="41">' + esc(g) + '</td></tr>';
                 rows.filter(function (r) { return (r.profileName || 'Unknown') === g; }).forEach(function (r) {
                     var a = r.actorEmail;
                     var badge = num(r.totalActions) === 0 ? '<span class="qca-badge-none">No activity</span>' : '';
@@ -761,6 +776,15 @@
                         cell(r.tiUnderReview, a, 'TiUnderReview', 'qca-group') +
                         cell(r.tiReviewed, a, 'TiReviewed') +
                         cell(r.tiRemoved, a, 'TiRemoved') +
+                        cell(r.prUnderReview, a, 'PrUnderReview', 'qca-group') +
+                        cell(r.prReviewed, a, 'PrReviewed') +
+                        cell(r.prRemoved, a, 'PrRemoved') +
+                        cell(r.hrUnderReview, a, 'HrUnderReview', 'qca-group') +
+                        cell(r.hrReviewed, a, 'HrReviewed') +
+                        cell(r.hrRemoved, a, 'HrRemoved') +
+                        cell(r.monitoringRemoved, a, 'MonitoringRemoved', 'qca-group') +
+                        cell(r.monitoringShortlisted, a, 'MonitoringShortlisted') +
+                        cell(num(r.pliUnderReview) + num(r.pliReviewed) + num(r.pliRemoved), a, 'Pli') +
                         statusCell(r.markedSuspicious, r.suspiciousUndone, a, 'SuspiciousAll', 'qca-group') +
                         statusCell(r.blocked, r.unblocked, a, 'BlockedAll') +
                         statusCell(r.accessRevoked, r.accessRestored, a, 'AccessAll') +
@@ -809,7 +833,7 @@
             renderCoverage(c);
 
             if (!rows.length) {
-                $('#qcaAuthBody').html('<tr><td colspan="17" class="qca-empty">No Quality Controllers or actions in this range.</td></tr>');
+                $('#qcaAuthBody').html('<tr><td colspan="20" class="qca-empty">No Quality Controllers or actions in this range.</td></tr>');
                 return;
             }
             var html = '';
@@ -846,6 +870,9 @@
                     cell(r.actionsTrial, a, 'PageTrial') +
                     cell(r.actionsSuspicious, a, 'PageSuspicious') +
                     cell(r.actionsReportsSla, a, 'PageReportsSla') +
+                    cell(r.actionsPotentialRisk, a, 'PagePotentialRisk') +
+                    cell(r.actionsHighRisk, a, 'PageHighRisk') +
+                    cell(r.actionsMonitoring, a, 'PageMonitoring') +
                     cell(r.actionsTaken, a, 'ActionsTaken') +
                     score + follow + flags + last +
                     '</tr>';
@@ -978,6 +1005,11 @@
             ProxyForm: 'Proxy form saved', RedoRequested: 'Redo requested', TrialBackfill: 'Trial-flag backfill run',
             PageTotalInterviews: 'Total Interviews actions', PageTrm: 'Total Red Marker actions', PageIrfAudit: 'IRF audit actions',
             PageTrial: 'Trial actions', PageSuspicious: 'Suspicious actions', PageReportsSla: 'Reports & SLA actions',
+            PrUnderReview: 'Potential Risk: under review', PrReviewed: 'Potential Risk: reviewed', PrRemoved: 'Potential Risk: removed',
+            HrUnderReview: 'High-Risk: under review', HrReviewed: 'High-Risk: reviewed', HrRemoved: 'High-Risk: removed',
+            PliUnderReview: 'PLI: under review', PliReviewed: 'PLI: reviewed', PliRemoved: 'PLI: removed',
+            MonitoringRemoved: 'Monitoring: removed from channel', MonitoringShortlisted: 'Monitoring: shortlisted on channel',
+            PagePotentialRisk: 'Potential risk actions', PageHighRisk: 'High-Risk actions', PageMonitoring: 'Monitoring / PLI actions',
             ActionsTaken: 'Actions taken', ScoredActions: 'Scored actions', AuthenticActions: 'Authentic actions', NotAuthentic: 'Not authentic',
             NoEvidence: 'Without evidence', ConnectedCall: 'Connected call', Reached: 'Interviewers reached', FollowThrough: 'Follow-through'
         };
@@ -1021,10 +1053,14 @@
                 case 'QCForm':
                     return amt > 0 ? '<span class="qca-penalty">' + amt + ' red flag' + (amt === 1 ? '' : 's') + '</span>' : '<span class="qca-ok">No red flags</span>';
                 case 'TrialRemoved': case 'AuditRemoved': case 'TrmRemoved': case 'TiRemoved':
+                case 'PrRemoved': case 'HrRemoved': case 'PliRemoved': case 'MonitoringRemoved':
                     return '<span class="qca-penalty">' + esc(actionLabels[r.metric]) + '</span>';
                 case 'ReportEdited':
                     return esc(r.status || actionLabels.ReportEdited) + editLink(r);
-                case 'Suspicious': case 'Blocked': case 'AccessRevoked': case 'Inactivated': case 'PaymentHold':
+                case 'Suspicious':
+                    // [Status] names the page the mark came from, e.g. "Marked suspicious · TRM".
+                    return '<span class="qca-penalty">' + esc(r.status || actionLabels.Suspicious) + '</span>';
+                case 'Blocked': case 'AccessRevoked': case 'Inactivated': case 'PaymentHold':
                     return '<span class="qca-penalty">' + esc(actionLabels[r.metric]) + '</span>';
                 case 'SuspiciousUndone': case 'Unblocked': case 'AccessRestored': case 'Reactivated': case 'PaymentHoldReleased':
                     return '<span class="qca-ok">↺ ' + esc(actionLabels[r.metric]) + '</span>';
@@ -1049,7 +1085,9 @@
                 '<th>Interviewer</th><th>Detail</th></tr></thead><tbody>';
             rows.forEach(function (r) {
                 h += '<tr><td>' + esc(fmtIst(r.actionAtIst)) + '</td>' + (grouped ? '<td>' + actionText(r) + '</td>' : '') +
-                    interviewerCell(r) + '<td class="qca-detail-text">' + esc(detailText(r) || '—') + '</td></tr>';
+                    interviewerCell(r) + '<td class="qca-detail-text">' +
+                    // A suspicious mark shows the page it came from ("Marked suspicious · TRM") before its comment.
+                    esc(((!grouped && r.metric === 'Suspicious' && r.status) ? r.status + ' — ' : '') + (detailText(r) || '—')) + '</td></tr>';
             });
             return h + '</tbody></table>';
         }
@@ -1288,6 +1326,11 @@
                 ['Connected avg call seconds', 'connectedAvgCallSeconds'], ['Interviewers reached', 'interviewersReached'],
                 ['Actions: Total Interviews', 'actionsTotalInterviews'], ['Actions: TRM', 'actionsTrm'], ['Actions: IRF audit', 'actionsIrfAudit'],
                 ['Actions: Trial', 'actionsTrial'], ['Actions: Suspicious', 'actionsSuspicious'], ['Actions: Reports & SLA', 'actionsReportsSla'],
+                ['Actions: Potential risk', 'actionsPotentialRisk'], ['Actions: High-Risk', 'actionsHighRisk'], ['Actions: Monitoring', 'actionsMonitoring'],
+                ['Potential Risk under review', 'prUnderReview'], ['Potential Risk reviewed', 'prReviewed'], ['Potential Risk removed', 'prRemoved'],
+                ['High-Risk under review', 'hrUnderReview'], ['High-Risk reviewed', 'hrReviewed'], ['High-Risk removed', 'hrRemoved'],
+                ['PLI under review', 'pliUnderReview'], ['PLI reviewed', 'pliReviewed'], ['PLI removed', 'pliRemoved'],
+                ['Monitoring removed', 'monitoringRemoved'], ['Monitoring shortlisted', 'monitoringShortlisted'],
                 ['Actions taken', 'actionsTaken'], ['Proxy forms', 'proxyForms'], ['Redo requests', 'redoRequests'], ['Trial backfills', 'trialBackfills'],
                 ['Scored actions', 'scoredActions'], ['Authentic actions', 'authenticActions'], ['Authentic %', 'authenticPct'],
                 ['Actions without evidence', 'noEvidenceActions'], ['Follow-through done', 'followThroughDone'], ['Follow-through of', 'followThroughOf'],
