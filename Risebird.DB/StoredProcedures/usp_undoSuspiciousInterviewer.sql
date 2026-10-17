@@ -13,6 +13,8 @@ GO
 -- @ModifiedBy is the session email of the user undoing the mark (QC Activity: SuspiciousUndone).
 -- When an active mark existed, the mark is stamped with ModifyBy / ModifyDate (UTC) and one
 -- InterviewerActionLog row is written (skipped while that table is missing).
+-- Returns one row: RowsChanged = active marks cleared (0 when the interviewer had no active
+-- mark or the id is unknown), so the page can show an error instead of a false success.
 Create Procedure usp_undoSuspiciousInterviewer
 @InterviewerProfileId int,
 @ModifiedBy varchar(200) = NULL
@@ -21,6 +23,7 @@ BEGIN
 SET NOCOUNT ON;
 
 DECLARE @HadActiveMark bit = 0;
+DECLARE @ActiveMarks int = (SELECT COUNT(1) FROM SuspiciousInterviewer WHERE UserId = @InterviewerProfileId AND SuspiciousStatus = 1);
 DECLARE @MarkComment varchar(100) = NULL;
 SELECT TOP 1 @HadActiveMark = 1, @MarkComment = Comment
 FROM SuspiciousInterviewer
@@ -43,5 +46,7 @@ BEGIN
            NULLIF(LTRIM(RTRIM(@ModifiedBy)), ''),
            'usp_undoSuspiciousInterviewer';
 END
+
+SELECT ISNULL(@ActiveMarks, 0) AS RowsChanged;
 END
 GO

@@ -338,14 +338,14 @@
             @if (Model.PaymentSLA > 0 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
-                    <div class="tbhead">Payment Deduction</div>
+                    <div class="tbhead" title="Reports with a Payment SLA review row (any deduction)">Payment SLA Reports</div>
                     <div class="tbtd"><span style="width:150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.PaymentSLA</span></div>
                 </div>
             }
             @if (Model.Penalty > 0 || ViewBag.RegularAccess == "1")
             {
                 <div class="col-md-2 pull-left">
-                    <div class="tbhead">Late Report Count</div>
+                    <div class="tbhead" title="Penalty entries (late report or any penalty amount)">Penalties</div>
                     <div class="tbtd"><span style="width:150px !important;height: 30px !important;display: inline-block;border-radius: 100%;line-height: 32px;font-size:12px;text-align:center">@Model.Penalty</span></div>
                 </div>
             }
@@ -580,8 +580,8 @@
                 <thead>
                     <tr>
                         <th class="text-center">Reliability Score</th>
-                        <th class="text-center">Payment Deduction</th>
-                        <th class="text-center">Late Report Count</th>
+                        <th class="text-center" title="Reports with a Payment SLA review row (any deduction)">Payment SLA Reports</th>
+                        <th class="text-center" title="Penalty entries (late report or any penalty amount)">Penalties</th>
                         <th class="text-center">Candidate Rating</th>
                         <th class="text-center">Client  Rating</th>
                         <th class="text-center">Redo requests</th>

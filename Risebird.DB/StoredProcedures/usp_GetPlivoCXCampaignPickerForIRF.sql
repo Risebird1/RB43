@@ -8,7 +8,7 @@
 --   @NowIST : current IST time (InterviewMeetings.interviewDate is IST)
 --
 -- HasMeeting           : a future meeting that is not cancelled (confirmationStatus <> '2')
--- UpcomingInterviewId / UpcomingInterviewDate : the next such meeting (for confirm agents)
+-- UpcomingInterviewId / UpcomingInterviewDate : the next such meeting (for confirm agents), with its time
 -- LastInterviewDate    : the latest past meeting (context for reschedule agents)
 -- IsCold               : Candidate.Status = 9
 -- ActiveCampaignName   : a Draft / Running / Paused campaign the candidate is Pending in
@@ -46,7 +46,7 @@ BEGIN
         CAST(CASE WHEN c.Status = 9 THEN 1 ELSE 0 END AS BIT) AS IsCold,
         CAST(CASE WHEN nextMeeting.id IS NOT NULL THEN 1 ELSE 0 END AS BIT) AS HasMeeting,
         nextMeeting.id      AS UpcomingInterviewId,
-        CONVERT(NVARCHAR(50), nextMeeting.interviewDate, 106) AS UpcomingInterviewDate,
+        FORMAT(nextMeeting.interviewDate, 'dd MMM yyyy, h:mm tt', 'en-US') AS UpcomingInterviewDate,
         CONVERT(NVARCHAR(50), lastMeeting.interviewDate, 106) AS LastInterviewDate,
         activeCampaign.Name AS ActiveCampaignName
     FROM       dbo.Candidate        c

@@ -1878,8 +1878,8 @@ namespace Risebird.Business
         {
             try
             {
-                await _interviewerRepository.AddSuspiciousType(model);
-                return true;
+                // The repository's real result: a failed insert (unknown email, too long) is not reported as saved.
+                return await _interviewerRepository.AddSuspiciousType(model);
             }
             catch (Exception e)
             {
@@ -2393,11 +2393,16 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment,bool blockinterviewer, string inactivationType = null)
+        public Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment,bool blockinterviewer, string inactivationType = null)
+            => InactivateInterviewer(interviewerId, modifiedBy, comment, blockinterviewer, inactivationType, null);
+
+        public async Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment, bool blockinterviewer, string inactivationType, string statusSource)
         {
             try
             {
-                var flagUpdateResult = await _interviewerRepository.InactivateInterviewer(interviewerId, modifiedBy, comment, blockinterviewer, inactivationType);
+                var flagUpdateResult = string.IsNullOrWhiteSpace(statusSource)
+                    ? await _interviewerRepository.InactivateInterviewer(interviewerId, modifiedBy, comment, blockinterviewer, inactivationType)
+                    : await _interviewerRepository.InactivateInterviewer(interviewerId, modifiedBy, comment, blockinterviewer, inactivationType, statusSource);
                 if (flagUpdateResult)
                     await TrySyncInterviewerListingSearchByUserIdAsync(interviewerId);
                 return flagUpdateResult;

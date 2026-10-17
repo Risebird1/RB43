@@ -7,6 +7,22 @@ Result set 1: one row per user (Quality Controllers, plus anyone else who
               usp_QCActivity_CollectRows. Active Quality Controllers with no
               activity are listed too (TotalActions = 0).
 Result set 2: "Open right now" backlog (not date-filtered).
+Result set 3: high-risk coverage totals (HighRiskTotal, HighRiskTouched, CoveragePct).
+Result set 4: High-Risk interviewers nobody touched in the window (top 50).
+
+Part 2 (authentic QC work) per-person columns: ConnectedCalls, DialledCalls,
+ConnectedTalkSeconds, InterviewersReached (connected calls + coaching), actions per
+page (ActionsTotalInterviews, ActionsTrm, ActionsIrfAudit, ActionsTrial,
+ActionsSuspicious, ActionsReportsSla), ProxyForms, RedoRequests, TrialBackfills,
+ScoredActions, AuthenticActions, NoEvidenceActions, FollowThroughDone /
+FollowThroughOf (High-Risk interviewers the person actioned who were also called or
+coached by anyone in the window), FlagCount (usp_QCActivity_ComputeFlags).
+QC Tracking (appended at the end of result set 1): ActionsPotentialRisk,
+ActionsHighRisk, PrUnderReview / PrReviewed / PrRemoved, HrUnderReview /
+HrReviewed / HrRemoved, ActionsMonitoring, PliUnderReview / PliReviewed /
+PliRemoved, MonitoringRemoved / MonitoringShortlisted.
+The rows are collected for everyone first (follow-through and the flags need other
+people's calls); @ActorEmail then narrows them before the existing aggregation.
 
 @ActorEmail limits result set 1 to that single user (Quality Controller
 viewing their own row).
@@ -45,14 +61,127 @@ BEGIN
         Phone             VARCHAR(30)   NULL,
         RecordingUrl      VARCHAR(1000) NULL,
         SourceId          INT           NULL,
-        RefId             INT           NULL
+        RefId             INT           NULL,
+        Comment           NVARCHAR(500) NULL,
+        HasEvidence       BIT           NULL,
+        IsAuthentic       BIT           NULL,
+        PageGroup         VARCHAR(30)   NULL
     );
 
+    -- Everyone's rows: follow-through and the flags count calls / reversals by other people.
     EXEC dbo.usp_QCActivity_CollectRows
         @FromIst    = @FromIst,
         @ToIst      = @ToIst,
-        @ActorEmail = @ActorEmail,
+        @ActorEmail = NULL,
         @Metric     = NULL;
+
+    /* ---- Part 2: flags, High-Risk list, per-person authenticity ---- */
+    CREATE TABLE #QCActivityFlags (
+        Flag        VARCHAR(30)   NOT NULL,
+        ActorEmail  VARCHAR(150)  NOT NULL,
+        [Count]     INT           NOT NULL,
+        FirstAt     DATETIME      NULL,
+        LastAt      DATETIME      NULL,
+        Detail      NVARCHAR(500) NULL,
+        Metrics     VARCHAR(200)  NULL
+    );
+    CREATE TABLE #QCActivityFlagItems (
+        Flag              VARCHAR(30)   NOT NULL,
+        ActorEmail        VARCHAR(150)  NOT NULL,
+        ActionAtIst       DATETIME      NULL,
+        Metric            VARCHAR(30)   NOT NULL,
+        InterviewId       INT           NULL,
+        IrfId             INT           NULL,
+        InterviewerUserId INT           NULL,
+        InterviewerEmail  VARCHAR(200)  NULL,
+        Detail            NVARCHAR(500) NULL,
+        SourceId          INT           NULL,
+        Note              NVARCHAR(300) NULL
+    );
+    -- Part 2 extras never block the counts: on any error they are left empty (flags 0, no coverage).
+    BEGIN TRY
+        IF OBJECT_ID(N'dbo.usp_QCActivity_ComputeFlags', N'P') IS NOT NULL
+            EXEC dbo.usp_QCActivity_ComputeFlags @FromIst = @FromIst, @ToIst = @ToIst;
+    END TRY
+    BEGIN CATCH
+        DELETE FROM #QCActivityFlagItems;
+        DELETE FROM #QCActivityFlags;
+    END CATCH
+
+    CREATE TABLE #QCHighRisk (
+        InterviewerId    INT           NOT NULL PRIMARY KEY,
+        CodedId          NVARCHAR(200) NULL,
+        InterviewerName  NVARCHAR(310) NULL,
+        InterviewerEmail VARCHAR(200)  NULL,
+        OverallRiskRatio DECIMAL(10,4) NULL,
+        WorstSeverity    VARCHAR(4)    NULL,
+        PriorityTier     VARCHAR(20)   NULL,
+        TotalCompleted   INT           NULL,
+        TotalBad         INT           NULL,
+        Touched          BIT           NOT NULL DEFAULT 0
+    );
+    BEGIN TRY
+        IF OBJECT_ID(N'dbo.usp_QCActivity_HighRisk', N'P') IS NOT NULL
+            EXEC dbo.usp_QCActivity_HighRisk @FromIst = @FromIst, @ToIst = @ToIst;
+    END TRY
+    BEGIN CATCH
+        DELETE FROM #QCHighRisk;
+    END CATCH
+
+    -- Interviewer key per row (UserList.id), used for reach and follow-through.
+    SELECT r.ActorEmail, r.Metric, r.IsAuthentic, r.HasEvidence, r.PageGroup, r.Amount,
+           COALESCE(r.InterviewerUserId, u.id) AS IvUserId
+    INTO #QCK
+    FROM #QCActivityRows r
+    OUTER APPLY (SELECT TOP 1 x.id FROM dbo.UserList x
+                 WHERE r.InterviewerUserId IS NULL AND x.EmailId = LTRIM(RTRIM(r.InterviewerEmail)) ORDER BY x.id DESC) u;
+
+    SELECT
+        k.ActorEmail AS Email,
+        SUM(CASE WHEN k.Metric = 'PlivoCall' THEN 1 ELSE 0 END)                                         AS DialledCalls,
+        SUM(CASE WHEN k.Metric = 'PlivoCall' AND k.IsAuthentic = 1 THEN 1 ELSE 0 END)                   AS ConnectedCalls,
+        SUM(CASE WHEN k.Metric = 'PlivoCall' AND k.IsAuthentic = 1 THEN ISNULL(k.Amount, 0) ELSE 0 END) AS ConnectedTalkSeconds,
+        COUNT(DISTINCT CASE WHEN (k.Metric = 'PlivoCall' AND k.IsAuthentic = 1) OR k.Metric = 'Coaching'
+                            THEN k.IvUserId END)                                                     AS InterviewersReached,
+        SUM(CASE WHEN k.PageGroup = 'TotalInterviews' THEN 1 ELSE 0 END)                               AS ActionsTotalInterviews,
+        SUM(CASE WHEN k.PageGroup = 'TRM' THEN 1 ELSE 0 END)                                           AS ActionsTrm,
+        SUM(CASE WHEN k.PageGroup = 'IrfAudit' THEN 1 ELSE 0 END)                                      AS ActionsIrfAudit,
+        SUM(CASE WHEN k.PageGroup = 'Trial' THEN 1 ELSE 0 END)                                         AS ActionsTrial,
+        SUM(CASE WHEN k.PageGroup = 'Suspicious' THEN 1 ELSE 0 END)                                    AS ActionsSuspicious,
+        SUM(CASE WHEN k.PageGroup = 'ReportsSla' THEN 1 ELSE 0 END)                                    AS ActionsReportsSla,
+        SUM(CASE WHEN k.PageGroup = 'PotentialRisk' THEN 1 ELSE 0 END)                                 AS ActionsPotentialRisk,
+        SUM(CASE WHEN k.PageGroup = 'HighRisk' THEN 1 ELSE 0 END)                                      AS ActionsHighRisk,
+        SUM(CASE WHEN k.PageGroup = 'Monitoring' THEN 1 ELSE 0 END)                                    AS ActionsMonitoring,
+        SUM(CASE WHEN k.Metric = 'ProxyForm' THEN 1 ELSE 0 END)                                        AS ProxyForms,
+        SUM(CASE WHEN k.Metric = 'RedoRequested' THEN 1 ELSE 0 END)                                    AS RedoRequests,
+        SUM(CASE WHEN k.Metric = 'TrialBackfill' THEN 1 ELSE 0 END)                                    AS TrialBackfills,
+        SUM(CASE WHEN k.Metric <> 'PlivoCall' AND k.IsAuthentic IS NOT NULL THEN 1 ELSE 0 END)         AS ScoredActions,
+        SUM(CASE WHEN k.Metric <> 'PlivoCall' AND k.IsAuthentic = 1 THEN 1 ELSE 0 END)                 AS AuthenticActions,
+        SUM(CASE WHEN k.Metric <> 'PlivoCall' AND k.IsAuthentic IS NOT NULL AND ISNULL(k.HasEvidence, 0) = 0
+                  AND k.IvUserId IS NOT NULL THEN 1 ELSE 0 END)                                          AS NoEvidenceActions
+    INTO #PX
+    FROM #QCK k
+    GROUP BY k.ActorEmail;
+
+    -- Follow-through: High-Risk interviewers this person actioned, and of those, how many were
+    -- called (connected) or coached by anyone in the window.
+    SELECT a.ActorEmail AS Email,
+           COUNT(DISTINCT a.IvUserId) AS FollowThroughOf,
+           COUNT(DISTINCT CASE WHEN c.IvUserId IS NOT NULL THEN a.IvUserId END) AS FollowThroughDone
+    INTO #FT
+    FROM #QCK a
+    INNER JOIN #QCHighRisk hr ON hr.InterviewerId = a.IvUserId
+    LEFT JOIN (SELECT DISTINCT IvUserId FROM #QCK
+               WHERE IvUserId IS NOT NULL AND (Metric = 'Coaching' OR (Metric = 'PlivoCall' AND IsAuthentic = 1))) c
+           ON c.IvUserId = a.IvUserId
+    WHERE a.IsAuthentic IS NOT NULL AND a.Metric <> 'PlivoCall'
+    GROUP BY a.ActorEmail;
+
+    SELECT ActorEmail AS Email, COUNT(1) AS FlagCount INTO #FC FROM #QCActivityFlags GROUP BY ActorEmail;
+
+    -- A Quality Controller viewing their own row: narrow to their rows before the existing aggregation.
+    IF @ActorEmail IS NOT NULL
+        DELETE FROM #QCActivityRows WHERE ActorEmail <> @ActorEmail;
 
     CREATE TABLE #Users (
         Email       VARCHAR(150) NOT NULL PRIMARY KEY,
@@ -146,11 +275,53 @@ BEGIN
         SUM(CASE WHEN r.Metric = 'Reactivated' THEN 1 ELSE 0 END)                            AS Reactivated,
         SUM(CASE WHEN r.Metric = 'PaymentHold' THEN 1 ELSE 0 END)                            AS PaymentHolds,
         SUM(CASE WHEN r.Metric = 'PaymentHoldReleased' THEN 1 ELSE 0 END)                    AS PaymentHoldsReleased,
+        SUM(CASE WHEN r.Metric = 'DeductionReview' THEN 1 ELSE 0 END)                        AS DeductionReviews,
 
         COUNT(r.Metric)                                                                      AS TotalActions,
-        MAX(r.ActionAtIst)                                                                   AS LastActionAtIst
+        MAX(r.ActionAtIst)                                                                   AS LastActionAtIst,
+
+        -- Part 2: authentic QC work
+        ISNULL(MAX(px.ConnectedCalls), 0)          AS ConnectedCalls,
+        ISNULL(MAX(px.DialledCalls), 0)            AS DialledCalls,
+        ISNULL(MAX(px.ConnectedTalkSeconds), 0)    AS ConnectedTalkSeconds,
+        ISNULL(MAX(px.InterviewersReached), 0)     AS InterviewersReached,
+        ISNULL(MAX(px.ActionsTotalInterviews), 0)  AS ActionsTotalInterviews,
+        ISNULL(MAX(px.ActionsTrm), 0)              AS ActionsTrm,
+        ISNULL(MAX(px.ActionsIrfAudit), 0)         AS ActionsIrfAudit,
+        ISNULL(MAX(px.ActionsTrial), 0)            AS ActionsTrial,
+        ISNULL(MAX(px.ActionsSuspicious), 0)       AS ActionsSuspicious,
+        ISNULL(MAX(px.ActionsReportsSla), 0)       AS ActionsReportsSla,
+        ISNULL(MAX(px.ProxyForms), 0)              AS ProxyForms,
+        ISNULL(MAX(px.RedoRequests), 0)            AS RedoRequests,
+        ISNULL(MAX(px.TrialBackfills), 0)          AS TrialBackfills,
+        ISNULL(MAX(px.ScoredActions), 0)           AS ScoredActions,
+        ISNULL(MAX(px.AuthenticActions), 0)        AS AuthenticActions,
+        ISNULL(MAX(px.NoEvidenceActions), 0)       AS NoEvidenceActions,
+        ISNULL(MAX(ft.FollowThroughDone), 0)       AS FollowThroughDone,
+        ISNULL(MAX(ft.FollowThroughOf), 0)         AS FollowThroughOf,
+        ISNULL(MAX(fc.FlagCount), 0)               AS FlagCount,
+
+        -- QC Tracking (appended): actions on Potential Risk by Candidate, High-Risk Interviewers and
+        -- Interviewer Monitoring / PLI, and the status moves behind them.
+        ISNULL(MAX(px.ActionsPotentialRisk), 0)    AS ActionsPotentialRisk,
+        ISNULL(MAX(px.ActionsHighRisk), 0)         AS ActionsHighRisk,
+        SUM(CASE WHEN r.Metric = 'PrUnderReview' THEN 1 ELSE 0 END)                          AS PrUnderReview,
+        SUM(CASE WHEN r.Metric = 'PrReviewed' THEN 1 ELSE 0 END)                             AS PrReviewed,
+        SUM(CASE WHEN r.Metric = 'PrRemoved' THEN 1 ELSE 0 END)                              AS PrRemoved,
+        SUM(CASE WHEN r.Metric = 'HrUnderReview' THEN 1 ELSE 0 END)                          AS HrUnderReview,
+        SUM(CASE WHEN r.Metric = 'HrReviewed' THEN 1 ELSE 0 END)                             AS HrReviewed,
+        SUM(CASE WHEN r.Metric = 'HrRemoved' THEN 1 ELSE 0 END)                              AS HrRemoved,
+        ISNULL(MAX(px.ActionsMonitoring), 0)       AS ActionsMonitoring,
+        SUM(CASE WHEN r.Metric = 'PliUnderReview' THEN 1 ELSE 0 END)                         AS PliUnderReview,
+        SUM(CASE WHEN r.Metric = 'PliReviewed' THEN 1 ELSE 0 END)                            AS PliReviewed,
+        SUM(CASE WHEN r.Metric = 'PliRemoved' THEN 1 ELSE 0 END)                             AS PliRemoved,
+        SUM(CASE WHEN r.Metric = 'MonitoringRemoved' THEN 1 ELSE 0 END)                      AS MonitoringRemoved,
+        SUM(CASE WHEN r.Metric = 'MonitoringShortlisted' THEN 1 ELSE 0 END)                  AS MonitoringShortlisted
     FROM #Users u
     LEFT JOIN #QCActivityRows r ON r.ActorEmail = u.Email
+    LEFT JOIN #PX px ON px.Email = u.Email
+    LEFT JOIN #FT ft ON ft.Email = u.Email
+    LEFT JOIN #FC fc ON fc.Email = u.Email
     GROUP BY u.Email, u.FullName, u.ProfileName, u.IsActive
     ORDER BY
         CASE WHEN u.ProfileName = 'Quality Controller' THEN 0 ELSE 1 END,
@@ -178,10 +349,35 @@ BEGIN
     DECLARE @TrmUnderReview INT = (
         SELECT COUNT(DISTINCT InterviewerId) FROM dbo.TransInterviewerRedMarker WHERE RedMarkerStatus = 1);
 
+    DECLARE @PendingDeductionReviews INT = 0;
+    IF OBJECT_ID(N'dbo.DeductionReviewRequest', N'U') IS NOT NULL
+        EXEC sp_executesql
+            N'SELECT @n = COUNT(*) FROM dbo.DeductionReviewRequest WHERE Status = ''Open''',
+            N'@n INT OUTPUT', @n = @PendingDeductionReviews OUTPUT;
+
     SELECT
         ISNULL(@PendingReports, 0)           AS PendingReports,
         ISNULL(@PendingTrialFlags, 0)        AS PendingTrialFlags,
         ISNULL(@PendingAuditInterviewers, 0) AS PendingAuditInterviewers,
-        ISNULL(@TrmUnderReview, 0)           AS TrmUnderReview;
+        ISNULL(@TrmUnderReview, 0)           AS TrmUnderReview,
+        ISNULL(@PendingDeductionReviews, 0)  AS PendingDeductionReviews;
+
+    /* Result set 3: high-risk coverage (page level, everyone, the window) */
+    SELECT
+        (SELECT COUNT(1) FROM #QCHighRisk) AS HighRiskTotal,
+        (SELECT COUNT(1) FROM #QCHighRisk WHERE Touched = 1) AS HighRiskTouched,
+        CAST(CASE WHEN (SELECT COUNT(1) FROM #QCHighRisk) = 0 THEN NULL
+                  ELSE 100.0 * (SELECT COUNT(1) FROM #QCHighRisk WHERE Touched = 1) / (SELECT COUNT(1) FROM #QCHighRisk) END
+             AS DECIMAL(6,1)) AS CoveragePct;
+
+    /* Result set 4: High-Risk interviewers nobody touched (top 50, worst first) */
+    SELECT TOP (50)
+        h.InterviewerId, h.CodedId, h.InterviewerName, h.InterviewerEmail, h.OverallRiskRatio,
+        h.WorstSeverity, h.PriorityTier, h.TotalCompleted, h.TotalBad
+    FROM #QCHighRisk h
+    WHERE h.Touched = 0
+    ORDER BY CASE h.WorstSeverity WHEN 'P0' THEN 0 WHEN 'P1' THEN 1 WHEN 'P2' THEN 2 WHEN 'P3' THEN 3
+                                  WHEN 'P4' THEN 4 WHEN 'P5' THEN 5 ELSE 9 END,
+             ISNULL(h.OverallRiskRatio, 0) DESC, h.InterviewerId;
 END
 GO

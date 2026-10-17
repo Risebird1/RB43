@@ -37,10 +37,12 @@ Create Procedure usp_AddorUpdatePaymentSLADetails
 @CorrectInterview varchar(15),  
 @FeedBackComment varchar(max),
 @AttendanceJoinCompliance varchar(250),
-@AIContradictionScore varchar(250)
+@AIContradictionScore varchar(250),
+@SourcePage varchar(30) = NULL   -- the page's hidden Pagetype: PotentialRisk | HighRisk log a review row (QC Activity); others ignored
 AS      
 BEGIN      
 Declare @Userid int           
+Declare @PaymentDeductionPct int = @PaymentDeduction   -- @PaymentDeduction is turned into an amount below
 Declare @isQcDonecheck bit   
 Declare @isApprovedCheck bit   
 Declare @isTechQcDonecheck bit      
@@ -120,5 +122,26 @@ begin
  where interviewid=@interviewid and ISNULL(Approved,0)=0 and Type='Tech QC'  
  END  
 end  
+
+-- QC Activity: a review saved from Potential Risk by Candidate / the High-Risk Reports tab is logged as
+-- PotentialRiskReview / HighRiskReview (Reason "Interview #<id>: ..."). usp_QCActivity_CollectRows moves the
+-- matching ReportReviewed row to that page's column; the log row itself is not counted again.
+SET @SourcePage = NULLIF(LTRIM(RTRIM(@SourcePage)), '')
+IF @SourcePage IN ('PotentialRisk', 'HighRisk')
+   AND OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL
+   AND NULLIF(LTRIM(RTRIM(@Emailid)), '') IS NOT NULL
+BEGIN
+    Declare @RvIvEmail varchar(200) = (Select TOP 1 LTRIM(RTRIM(interviewer)) From InterviewMeetings where id=@Interviewid)
+    INSERT INTO dbo.InterviewerActionLog (InterviewerUserId, InterviewerEmail, ActionType, Reason, ActedBy, Source)
+    SELECT (Select TOP 1 ul.id From UserList ul where ul.EmailId=@RvIvEmail ORDER BY ul.id DESC),
+           @RvIvEmail,
+           @SourcePage + 'Review',
+           LEFT(N'Interview #' + CAST(@Interviewid AS NVARCHAR(20)) + N': '
+                + ISNULL(NULLIF(LTRIM(RTRIM(@RecommendationComments)), ''), N'report reviewed')
+                + CASE WHEN @Rating > 0 THEN N' (rated ' + CAST(@Rating AS NVARCHAR(10)) + N'/5)' ELSE N'' END
+                + N'; deduction ' + CAST(ISNULL(@PaymentDeductionPct, 0) AS NVARCHAR(10)) + N'%', 500),
+           LEFT(LTRIM(RTRIM(@Emailid)), 200),
+           'usp_AddorUpdatePaymentSLADetails:' + @SourcePage
+END
 END      
 GO

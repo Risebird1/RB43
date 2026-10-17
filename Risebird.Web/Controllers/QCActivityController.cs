@@ -101,7 +101,8 @@ namespace Risebird.Web.Controllers
             return await JsonOrErrorAsync(() => _qcActivityDashboardService.GetSummaryAsync(
                 from, to,
                 onlyQualityController: !isManager || onlyQc,
-                restrictToActorEmail: isManager ? null : email), d => d.ErrorDetail = null);
+                restrictToActorEmail: isManager ? null : email,
+                cancellationToken: HttpContext.RequestAborted), d => d.ErrorDetail = null);
         }
 
         // GET: /QCActivity/Details?actor=<email>&metric=<key>&from=yyyy-MM-dd&to=yyyy-MM-dd
@@ -120,6 +121,36 @@ namespace Risebird.Web.Controllers
             return await JsonOrErrorAsync(() => _qcActivityDashboardService.GetDetailsAsync(
                 actor, metric, from, to,
                 restrictToActorEmail: isManager ? null : email), d => d.ErrorDetail = null);
+        }
+
+        // GET: /QCActivity/Flags?actor=<email>&from=yyyy-MM-dd&to=yyyy-MM-dd
+        // Flags panel (bursts, reviewed with no call, reversed by another QC, short calls, kept despite a P0,
+        // actions without evidence). Managers: one person, or everyone when actor is empty. A Quality
+        // Controller only ever gets their own flags.
+        [HttpGet]
+        public async Task<IActionResult> Flags(string actor = null, DateTime? from = null, DateTime? to = null)
+        {
+            var (email, profileName) = GetSessionUser();
+            if (email == null || profileName == null)
+                return Unauthorized();
+
+            var isManager = IsManagerProfile(profileName);
+            if (!isManager && !IsQualityControllerProfile(profileName))
+                return StatusCode(StatusCodes.Status403Forbidden);
+
+            return await JsonOrErrorAsync(() => _qcActivityDashboardService.GetFlagsAsync(
+                actor, from, to,
+                restrictToActorEmail: isManager ? null : email), d => d.ErrorDetail = null);
+        }
+
+        // GET: /QCActivity/Coverage?from=yyyy-MM-dd&to=yyyy-MM-dd
+        // High-Risk interviewers in the window that any QC person called, coached or actioned, and the untouched list.
+        [HttpGet]
+        public async Task<IActionResult> Coverage(DateTime? from = null, DateTime? to = null)
+        {
+            var denied = DenyUnlessAllowed(out _);
+            if (denied != null) return denied;
+            return await JsonOrErrorAsync(() => _qcActivityDashboardService.GetCoverageAsync(from, to), d => d.ErrorDetail = null);
         }
 
         // GET: /QCActivity/ReportEdit?id=<ReportEditLog.Id>
@@ -261,6 +292,55 @@ namespace Risebird.Web.Controllers
             var denied = DenyUnlessAllowed(out var coachEmail);
             if (denied != null) return denied;
             return Json(await _interviewerCoachingService.LogSessionAsync(request ?? new LogCoachingSessionRequestVM(), coachEmail));
+        }
+
+        // ---------------- Deduction review requests (My Quality phase 2) ----------------
+
+        // GET: /QCActivity/ReviewRequests — open requests (oldest first), recent decisions, AI accuracy by check.
+        public async Task<IActionResult> ReviewRequests([FromServices] IDeductionReviewService deductionReviewService)
+        {
+            try
+            {
+                var (email, profileName) = GetSessionUser();
+                if (email == null || profileName == null || !CanOpen(profileName))
+                    return RedirectToAction("SignOut", "Session");
+
+                ViewBag.Profile = profileName;
+                ViewBag.ProfileName = profileName;
+                ViewBag.Email = email;
+                var vm = await deductionReviewService.GetQueueAsync(IsManagerProfile(profileName));
+                return View(vm);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        // POST: /QCActivity/DecideReviewRequest  (form fields, anti-forgery header) — Stands / Reduce / Refund, final.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DecideReviewRequest(DeductionReviewDecisionInputVM input,
+            [FromServices] IDeductionReviewService deductionReviewService)
+        {
+            var denied = DenyUnlessAllowed(out var qcEmail);
+            if (denied != null) return denied;
+            return Json(await deductionReviewService.DecideAsync(qcEmail, input ?? new DeductionReviewDecisionInputVM()));
+        }
+
+        // POST: /QCActivity/SetReviewCheckPolicy  (managers only) — take an AI check out of auto-approval or put it back.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SetReviewCheckPolicy(string aiCheck, bool exclude,
+            [FromServices] IDeductionReviewService deductionReviewService)
+        {
+            var (email, profileName) = GetSessionUser();
+            if (email == null || profileName == null)
+                return Unauthorized();
+            if (!IsManagerProfile(profileName))
+                return StatusCode(StatusCodes.Status403Forbidden);
+            return Json(await deductionReviewService.SetCheckPolicyAsync(aiCheck, exclude, email));
         }
 
         /// <summary>

@@ -11,6 +11,7 @@
 --   AND NextAttemptAt is unset or has passed (Min gap)
 --   AND Attempts < TotalAttempts
 --   AND calls to the candidate from this campaign since @DayStartUtc < AttemptsPerDay
+--   AND no other dial holds the candidate (DialLockUntil unset or expired)
 --   AND no call to the candidate is still connecting (initiated / triggered in the last 30
 --       minutes - older ones never got a webhook and no longer block).
 -- The calling window is checked by the scheduler, not here: Call now ignores it.
@@ -71,6 +72,7 @@ BEGIN
               AND l.CandidateId = cc.CandidateId
               AND l.CreatedAt  >= @DayStartUtc
           ) < pc.AttemptsPerDay
+      AND (cc.DialLockUntil IS NULL OR cc.DialLockUntil < @NowUtc)
       AND NOT EXISTS (
             SELECT 1
             FROM dbo.PlivoCXCallLogs l

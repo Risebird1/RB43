@@ -38,7 +38,24 @@ namespace Risebird.Repository.Interface
         /// </summary>
         Task<List<PlivoCXCampaignCandidate>> GetDueCandidatesAsync(int campaignId, int take, DateTime nowUtc, DateTime dayStartUtc);
 
-        /// <summary>A call was placed: Attempts + 1, LastCallAt = now, LastCallLogId, NextAttemptAt = now + gap.</summary>
+        /// <summary>
+        /// Atomically takes the dial lock on a Pending candidate for <paramref name="seconds"/>.
+        /// False when another dial (Call now, a per-row Call or the scheduler) already holds it.
+        /// </summary>
+        Task<bool> TryClaimForDialAsync(int campaignCandidateId, int seconds);
+
+        /// <summary>Drops the dial lock without recording a call (the dial gave up before logging one).</summary>
+        Task ReleaseDialClaimAsync(int campaignCandidateId);
+
+        /// <summary>
+        /// The candidate confirmed attendance on a call: marks the meeting as candidate-confirmed
+        /// (IsCandidateResponsed = 1, CandidateResponse = 1), as the confirmation email link does,
+        /// which takes it off the Unconfirmed list. Only for a live, uncancelled meeting of that
+        /// candidate. Returns whether a meeting was updated.
+        /// </summary>
+        Task<bool> MarkMeetingConfirmedByCandidateAsync(int interviewId, string candidateEmail);
+
+        /// <summary>A call was placed: Attempts + 1, LastCallAt = now, LastCallLogId, NextAttemptAt = now + gap; releases the dial lock.</summary>
         Task BumpCampaignCandidateAsync(int campaignCandidateId, int callLogId, int minGapMinutes);
 
         Task SetCampaignCandidateStateAsync(int campaignCandidateId, string state, string disposition, string bookedSlot, DateTime? nextAttemptAtUtc);
@@ -53,6 +70,12 @@ namespace Risebird.Repository.Interface
         // ── Create-screen sources ────────────────────────────────────────────────
         Task<List<PlivoCXCampaignIRFOption>>    GetActiveIRFsAsync();
         Task<List<PlivoCXCampaignIRFPickerRow>> GetPickerRowsForIRFAsync(int irfId);
+
+        /// <summary>
+        /// The Not-scheduled source (usp_GetPlivoCXCampaignNotScheduled): the same candidates as
+        /// /Client/NotScheduledMeetings for <paramref name="email"/>, without that page's slow query.
+        /// </summary>
+        Task<List<PlivoCXCampaignIRFPickerRow>> GetNotScheduledAsync(string email);
 
         /// <summary>Writes PlivoCXCallLogs.CampaignId (a separate statement so a database without the column still logs calls).</summary>
         Task SetCallLogCampaignAsync(int callLogId, int campaignId);

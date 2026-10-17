@@ -4774,12 +4774,35 @@ namespace Risebird.Web.Controllers
             return PartialView(model);
         }
         #endregion
-        //[Authorize]
+        private async Task<bool> CanReadClientRatesAsync(int clientId, string emailId, string uniqueId)
+        {
+            if (clientId <= 0) return false;
+            var sessionEmail = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            var sessionProfile = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            if (!string.IsNullOrEmpty(sessionEmail) && !string.IsNullOrEmpty(sessionProfile))
+            {
+                if (Risebird.Web.Helpers.DeliveryHeadInstructionViewMode.IsOperationalProfile(sessionProfile))
+                    return true;
+                if (Risebird.Web.Helpers.DeliveryHeadInstructionViewMode.IsClientRoleProfile(sessionProfile)
+                    && await _clientService.GetClientByEmailId(sessionEmail) == clientId)
+                    return true;
+            }
+            if (string.IsNullOrWhiteSpace(emailId) || string.IsNullOrWhiteSpace(uniqueId))
+                return false;
+            emailId = emailId.Trim();
+            return await _clientService.GetClientByEmailId(emailId) == clientId
+                && await _meetingService.GetUniqueUserByEmailId(emailId, uniqueId) > 0;
+        }
+
+        // Reachable from the public template page, so access is checked here instead of [Authorize]:
+        // staff session, a client session for the same client, or a valid public link (email + uniqueId).
         [HttpGet]
-        public async Task<IActionResult> GenerateDynamicRateByCurrentTimeOfWeek(int clientId)
+        public async Task<IActionResult> GenerateDynamicRateByCurrentTimeOfWeek(int clientId, string emailId = null, string uniqueId = null)
         {
             try
             {
+                if (!await CanReadClientRatesAsync(clientId, emailId, uniqueId))
+                    return StatusCode(403);
                 var data = new DynamicRatesDTO();
                 data = await _clientService.GenerateDynamicRateByCurrentTimeOfWeek(clientId);
                 return Json(data);

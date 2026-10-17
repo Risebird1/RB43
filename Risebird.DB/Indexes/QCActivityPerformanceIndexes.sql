@@ -12,6 +12,14 @@ same column. On editions that support it (Azure SQL Database, Managed
 Instance, Enterprise) the build is ONLINE, so the table stays usable;
 elsewhere it is a normal build. Run at a quiet time.
 Idempotent: safe to re-run. Optional — the dashboards work without it, slower.
+
+QC Tracking additions: IX_RedMarkerStatusDetails_Interviewer_Type (QC status per
+interviewer and page); for the High-Risk Interviewers overview (Fix 4A)
+IX_PaymentSLADetailsHistory_Interviewid, IX_InterviewPoints_Interviewid and
+IX_TransInterviewersReliabilityScores_InterviewerId — safe to run on production
+before any code deploy, they also help the unfixed procedure; for the PLI / PQI
+signals (Delta 5) IX_QuestionsDiscussed_InterviewId,
+IX_InterviewMeetingsJoinTime_interviewid and IX_CandidateFeedbackDetails_InterviewId.
 ================================================================================
 */
 SET NOCOUNT ON;
@@ -30,7 +38,17 @@ INSERT INTO @Ix VALUES
     (5, N'TrialFlags',               N'ReviewedAtUtc', N'ReviewedAtUtc',          N'IX_TrialFlags_ReviewedAtUtc',             N'ReviewStatus, ReviewedBy, InterviewerId, IrfId'),
     (6, N'TransInterviewerAuditLog', N'ChangedAt',     N'ChangedAt',              N'IX_TransInterviewerAuditLog_ChangedAt',   N'EventType, ChangedBy, TransInterviewerId'),
     (7, N'CallRecordingData',        N'Caller',        N'Caller, DateCreated',    N'IX_CallRecordingData_Caller_DateCreated', N'CallSid, CallRecipient, RecipientProfileType, RecordingSid, Duration, [Status]'),
-    (8, N'CallRecordingData',        N'CallSid',       N'CallSid',                N'IX_CallRecordingData_CallSid',            NULL);
+    (8, N'CallRecordingData',        N'CallSid',       N'CallSid',                N'IX_CallRecordingData_CallSid',            NULL),
+    -- QC Tracking, Delta 1: current QC status per interviewer and page (Potential Risk, High-Risk, PLI badges / tabs).
+    (9, N'RedMarkerStatusDetails',   N'InterviewerUserid', N'InterviewerUserid, [Type]', N'IX_RedMarkerStatusDetails_Interviewer_Type', N'[Status], CreatedOn, CreatedBy, IRFId'),
+    -- Fix 4A (High-Risk overview timeout): AI penalties (was a human involved), penalties and reliability per interviewer.
+    (10, N'PaymentSLADetailsHistory', N'Interviewid',  N'Interviewid',            N'IX_PaymentSLADetailsHistory_Interviewid', N'CreatedBy'),
+    (11, N'InterviewPoints',          N'Interviewid',  N'Interviewid',            N'IX_InterviewPoints_Interviewid',          N'PenaltyAmount, Comment'),
+    (12, N'TransInterviewersReliabilityScores', N'InterviewerId', N'InterviewerId', N'IX_TransInterviewersReliabilityScores_InterviewerId', N'Point'),
+    -- QC Tracking, Delta 5 (PLI / PQI signals): questions, join times and candidate ratings per interview.
+    (13, N'QuestionsDiscussed',       N'InterviewId',  N'InterviewId',            N'IX_QuestionsDiscussed_InterviewId',       NULL),
+    (14, N'InterviewMeetingsJoinTime', N'interviewid', N'interviewid',            N'IX_InterviewMeetingsJoinTime_interviewid', N'interviewer, Joinedon'),
+    (15, N'CandidateFeedbackDetails', N'InterviewId',  N'InterviewId',            N'IX_CandidateFeedbackDetails_InterviewId', N'Rating');
 
 DECLARE @Seq INT = 1, @Max INT = (SELECT MAX(Seq) FROM @Ix),
         @Table SYSNAME, @Lead SYSNAME, @Keys NVARCHAR(200), @Name SYSNAME, @Include NVARCHAR(400), @Sql NVARCHAR(MAX);

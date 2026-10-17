@@ -6,6 +6,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
@@ -58,7 +59,7 @@ namespace Risebird.Business
         }
 
         public async Task<QCActivityDashboardDataVM> GetSummaryAsync(DateTime? fromIst, DateTime? toIst, bool onlyQualityController,
-            string restrictToActorEmail = null)
+            string restrictToActorEmail = null, CancellationToken cancellationToken = default)
         {
             var (from, to, capped) = NormalizeRange(fromIst, toIst, _todayIst());
             var restrict = NormalizeEmail(restrictToActorEmail);
@@ -72,7 +73,7 @@ namespace Risebird.Business
 
             try
             {
-                var (rows, backlog) = await _repository.GetSummaryAsync(from, to, onlyQualityController, restrict);
+                var (rows, backlog) = await _repository.GetSummaryAsync(from, to, onlyQualityController, restrict, cancellationToken);
                 IReadOnlyList<QCActivitySummaryRowVM> list = rows ?? Array.Empty<QCActivitySummaryRowVM>();
 
                 // Defence in depth: a restricted viewer only ever gets their own row.
@@ -84,6 +85,13 @@ namespace Risebird.Business
                 result.Rows = list;
                 result.Backlog = backlog ?? new QCActivityBacklogVM();
                 result.Totals = QCActivityTotalsVM.From(list.ToList());
+                // Page-level high-risk coverage (summary result sets 3 and 4).
+                result.Coverage = result.Backlog.Coverage ?? new QCActivityCoverageVM();
+            }
+            catch (Exception) when (cancellationToken.IsCancellationRequested)
+            {
+                // The page abandoned this request (a newer Apply, or the tab closed); nobody reads the answer.
+                result.Error = LoadErrorMessage;
             }
             catch (Exception ex)
             {
@@ -117,6 +125,14 @@ namespace Risebird.Business
                 var rows = await _repository.GetDetailsAsync(actor, key, from, to) ?? Array.Empty<QCActivityDetailRowVM>();
                 result.Rows = rows;
                 result.Truncated = rows.Count >= QCActivityMetrics.MaxDetailRows;
+
+                // Part 2: say why a scored action is not authentic, with the thresholds in force.
+                if (rows.Any(r => r.IsAuthentic == false && r.Metric != QCActivityMetrics.PlivoCall))
+                {
+                    var settings = await LoadSettingsAsync();
+                    foreach (var r in rows.Where(r => r.IsAuthentic == false && r.Metric != QCActivityMetrics.PlivoCall))
+                        r.NotAuthenticReason = settings.NotAuthenticReason(r.Comment, r.HasEvidence == true);
+                }
             }
             catch (Exception ex)
             {
@@ -125,6 +141,115 @@ namespace Risebird.Business
                 result.ErrorDetail = ex.GetBaseException().Message;
             }
             return result;
+        }
+
+        /// <summary>
+        /// Flags panel: one row per flag per person with the rows behind it and the rule (thresholds read from
+        /// QCActivitySetting). <paramref name="actorEmail"/> null = everyone (managers); a restricted viewer only ever
+        /// gets their own flags.
+        /// </summary>
+        public async Task<QCActivityFlagsResultVM> GetFlagsAsync(string actorEmail, DateTime? fromIst, DateTime? toIst,
+            string restrictToActorEmail = null)
+        {
+            var (from, to, _) = NormalizeRange(fromIst, toIst, _todayIst());
+            var restrict = NormalizeEmail(restrictToActorEmail);
+            var actor = restrict ?? NormalizeEmail(actorEmail);
+            var result = new QCActivityFlagsResultVM
+            {
+                ActorEmail = actor,
+                FromIst = from.ToString(DateFormat),
+                ToIst = to.ToString(DateFormat)
+            };
+
+            try
+            {
+                var (flags, items, settingRows) = await _repository.GetFlagsAsync(from, to, actor);
+                result.Settings = QCActivitySettingsVM.From(settingRows);
+                result.Flags = BuildFlags(flags, items, result.Settings, restrict);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                result.Error = LoadErrorMessage;
+                result.ErrorDetail = ex.GetBaseException().Message;
+            }
+            return result;
+        }
+
+        /// <summary>High-Risk interviewers in the window and how many any QC person touched (page level).</summary>
+        public async Task<QCActivityCoverageVM> GetCoverageAsync(DateTime? fromIst, DateTime? toIst)
+        {
+            var (from, to, _) = NormalizeRange(fromIst, toIst, _todayIst());
+            try
+            {
+                return await _repository.GetCoverageAsync(from, to) ?? new QCActivityCoverageVM();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new QCActivityCoverageVM { Error = LoadErrorMessage, ErrorDetail = ex.GetBaseException().Message };
+            }
+        }
+
+        /// <summary>Flag titles and rules with the thresholds in force; items grouped under their flag; restricted to one person when set.</summary>
+        public static IReadOnlyList<QCActivityFlagVM> BuildFlags(IEnumerable<QCActivityFlagVM> flags, IEnumerable<QCActivityFlagItemVM> items,
+            QCActivitySettingsVM settings, string restrictToActorEmail = null)
+        {
+            settings ??= new QCActivitySettingsVM();
+            var restrict = NormalizeEmail(restrictToActorEmail);
+            var itemList = (items ?? Enumerable.Empty<QCActivityFlagItemVM>()).Where(i => i != null).ToList();
+            return (flags ?? Enumerable.Empty<QCActivityFlagVM>())
+                .Where(f => f != null && (restrict == null || string.Equals(f.ActorEmail?.Trim(), restrict, StringComparison.OrdinalIgnoreCase)))
+                .Select(f =>
+                {
+                    var (title, rule) = DescribeFlag(f.Flag, settings);
+                    f.Title = title;
+                    f.Rule = rule;
+                    f.Items = itemList
+                        .Where(i => string.Equals(i.Flag, f.Flag, StringComparison.OrdinalIgnoreCase)
+                                    && string.Equals(i.ActorEmail?.Trim(), f.ActorEmail?.Trim(), StringComparison.OrdinalIgnoreCase)
+                                    && (f.Flag != "Burst" || string.IsNullOrEmpty(f.Metrics) || string.Equals(i.Metric, f.Metrics, StringComparison.OrdinalIgnoreCase)))
+                        .OrderByDescending(i => i.ActionAtIst)
+                        .ToList();
+                    return f;
+                })
+                .ToList();
+        }
+
+        /// <summary>Readable title and rule for a flag key, using the thresholds in force.</summary>
+        public static (string Title, string Rule) DescribeFlag(string flag, QCActivitySettingsVM s)
+        {
+            s ??= new QCActivitySettingsVM();
+            switch (flag)
+            {
+                case "Burst":
+                    return ("Burst of actions", $"{s.BurstCount} or more actions of the same type within {s.BurstMinutes} minutes");
+                case "ReviewedNoCall":
+                    return ("Reviewed with no call", "Moved to Reviewed (Total Interviews or Total Red Marker) with no connected call or coaching to that interviewer in the window");
+                case "ReversedByOther":
+                    return ("Reversed by another QC", $"Reviewed, Blocked, Suspicious or Inactivated undone by a different person within {s.ReversalDays} days");
+                case "ShortCalls":
+                    return ("Short calls", $"More than {s.ShortCallPct}% of dialled calls lasted under {s.ShortCallSeconds} seconds");
+                case "KeepDespiteP0":
+                    return ("Kept despite a P0", "IRF audit or trial Keep on an interviewer with a P0 graded interview in the same window");
+                case "NoEvidence":
+                    return ("Actions without evidence", "No graded issue, AI penalty, open trial or audit flag, or red marker on the interviewer in the window");
+                default:
+                    return (flag, null);
+            }
+        }
+
+        private async Task<QCActivitySettingsVM> LoadSettingsAsync()
+        {
+            try
+            {
+                return QCActivitySettingsVM.From(await _repository.GetSettingsAsync());
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new QCActivitySettingsVM();
+            }
         }
 
         /// <summary>Minimum completed interviews for the Interviewer QC View: default 3, clamped to 1..50.</summary>

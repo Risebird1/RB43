@@ -1,3 +1,18 @@
+-- Deduction review (phase 2): the policy table read below. Created here too so this script
+-- can be deployed on its own; the full definition is Tables/DeductionReviewCheckPolicy.sql.
+IF OBJECT_ID(N'dbo.DeductionReviewCheckPolicy', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.DeductionReviewCheckPolicy
+    (
+        AiCheck                VARCHAR(30)   NOT NULL,
+        ExcludeFromAutoApprove BIT           NOT NULL CONSTRAINT DF_DeductionReviewCheckPolicy_Exclude DEFAULT (0),
+        ModifiedBy             VARCHAR(150)  NULL,
+        ModifiedAtUtc          DATETIME      NOT NULL CONSTRAINT DF_DeductionReviewCheckPolicy_ModifiedAt DEFAULT (GETUTCDATE()),
+        CONSTRAINT PK_DeductionReviewCheckPolicy PRIMARY KEY CLUSTERED (AiCheck ASC)
+    );
+END
+GO
+
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_AutoApprovePaymentSlaDetails'))
 BEGIN
     DROP PROCEDURE dbo.usp_AutoApprovePaymentSlaDetails
@@ -54,4 +69,4 @@ when imj.Joinedon is null then 'Interviewer No Show' when imc.PerformedOn is nul
 from InterviewMeetings im  join InterviewComments ic on ic.InterviewId=im.id                  
 outer apply(Select max(Joinedon) Joinedon from  InterviewMeetingsJoinTime where Interviewid=im.id) imj            
 outer apply(Select max(PerformedOn) PerformedOn From PageClickDetails where ButtonAction='JoinMeeting' and Interviewid=im.id and ProfileType='Candidate') imc            
-where DateDiff(Day,im.interviewDate,Getdate())<30 and im.confirmationStatus=1 and im.ZoomMeetingId in(Select distinct Meetingid from ZoomMeetingTransmission) and (imj.Joinedon is null or imc.PerformedOn is null) and ic.MeetingStatus!=5 and ic.MeetingStatus!=1 and ic.MeetingStatus!=9 and ic.MeetingStatus!=2 and ic.MeetingStatus!=3)x GROUP BY InterviewId) d ON d.InterviewId = im.idouter apply(Select Min(Joinedon) Joinedon from InterviewMeetingsJoinTime where interviewid=im.id) as imjouter apply(Select Count(id) as TotalPaymentComplianceCount  From PaymentSLADetailsHistory where Interviewid=ps.Interviewid) as pshwhere ISNull(ps.IsApproved,0)=0 and (ic.InterviewStatus=4 or ic.InterviewStatus=2 or ic.InterviewStatus=1 or ic.InterviewStatus=3  or ic.InterviewStatus=5))Select * From CTE where (Riskcategory is null and (InterviewStatus=2 or InterviewStatus=4) and PriorityLevel not in(2,3)) or((Riskcategory IS NULL or Riskcategory not in('Fake Report','Under Review')) and (InterviewStatus=1 or InterviewStatus=3 or InterviewStatus=5))ENDGO
+where DateDiff(Day,im.interviewDate,Getdate())<30 and im.confirmationStatus=1 and im.ZoomMeetingId in(Select distinct Meetingid from ZoomMeetingTransmission) and (imj.Joinedon is null or imc.PerformedOn is null) and ic.MeetingStatus!=5 and ic.MeetingStatus!=1 and ic.MeetingStatus!=9 and ic.MeetingStatus!=2 and ic.MeetingStatus!=3)x GROUP BY InterviewId) d ON d.InterviewId = im.idouter apply(Select Min(Joinedon) Joinedon from InterviewMeetingsJoinTime where interviewid=im.id) as imjouter apply(Select Count(id) as TotalPaymentComplianceCount  From PaymentSLADetailsHistory where Interviewid=ps.Interviewid) as pshwhere ISNull(ps.IsApproved,0)=0 and (ic.InterviewStatus=4 or ic.InterviewStatus=2 or ic.InterviewStatus=1 or ic.InterviewStatus=3  or ic.InterviewStatus=5))Select * From CTE where ((Riskcategory is null and (InterviewStatus=2 or InterviewStatus=4) and PriorityLevel not in(2,3)) or((Riskcategory IS NULL or Riskcategory not in('Fake Report','Under Review')) and (InterviewStatus=1 or InterviewStatus=3 or InterviewStatus=5)))-- Deduction review (phase 2): checks QC took out of auto-approval because reviews keep upholding-- interviewers' requests on them stay for a person to approve (dbo.DeductionReviewCheckPolicy).and not exists (Select 1 From dbo.DeductionReviewCheckPolicy pol where pol.ExcludeFromAutoApprove=1 and pol.AiCheck=dbo.fn_DeductionAiCheck(CTE.Interviewid))ENDGO

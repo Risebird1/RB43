@@ -65,17 +65,17 @@
             <div id="pcxMsg" class="pcx-alert" style="display:none;margin-top:12px;"></div>
 
             <div class="pcx-tiles">
-                <div class="pcx-tile booked"><b>@booked</b><span>Booked</span></div>
-                <div class="pcx-tile notbooked"><b>@notBooked</b><span>Not booked</span></div>
-                <div class="pcx-tile cold"><b>@cold</b><span>Cold</span></div>
-                <div class="pcx-tile pending"><b>@pending</b><span>Pending</span></div>
+                <div class="pcx-tile pcx-st-booked"><b>@booked</b><span>Booked</span></div>
+                <div class="pcx-tile pcx-st-notbooked"><b>@notBooked</b><span>Not booked</span></div>
+                <div class="pcx-tile pcx-st-cold"><b>@cold</b><span>Cold</span></div>
+                <div class="pcx-tile pcx-st-pending"><b>@pending</b><span>Pending</span></div>
                 <div class="pcx-tile"><b>@total</b><span>Candidates</span></div>
                 <div class="pcx-tile" title="@(Model.CallStats.AnsweredCalls + " answered of " + Model.CallStats.FinishedCalls + " finished calls")"><b>@(Model.CallStats.PickupPercent.HasValue ? Model.CallStats.PickupPercent + "%" : "—")</b><span>Pick-up</span></div>
             </div>
             <div class="pcx-bar" role="img" aria-label="@(booked + " booked, " + notBooked + " not booked, " + cold + " cold, " + pending + " pending")">
-                <span class="booked" style="width:@pct(booked)%"></span><span class="notbooked" style="width:@pct(notBooked)%"></span><span class="cold" style="width:@pct(cold)%"></span><span class="pending" style="width:@pct(pending)%"></span>
+                <span class="pcx-st-booked" style="width:@pct(booked)%"></span><span class="pcx-st-notbooked" style="width:@pct(notBooked)%"></span><span class="pcx-st-cold" style="width:@pct(cold)%"></span><span class="pcx-st-pending" style="width:@pct(pending)%"></span>
             </div>
-            <div class="pcx-key"><span><i class="booked"></i>Booked</span><span><i class="notbooked"></i>Not booked</span><span><i class="cold"></i>Cold</span><span><i class="pending"></i>Pending</span></div>
+            <div class="pcx-key"><span><i class="pcx-st-booked"></i>Booked</span><span><i class="pcx-st-notbooked"></i>Not booked</span><span><i class="pcx-st-cold"></i>Cold</span><span><i class="pcx-st-pending"></i>Pending</span></div>
 
             <details class="pcx-details">
                 <summary>Test call (optional) — dial one number to hear the agent before launching</summary>
@@ -125,7 +125,7 @@
             <div class="pcx-table-wrap">
                 <table class="pcx-table" id="pcxTable">
                     <thead>
-                        <tr><th>Candidate</th><th>State</th><th>Outcome</th><th class="num">Attempts</th><th>Next attempt</th><th>Last call</th><th>Booked slot</th><th>Rec.</th><th></th></tr>
+                        <tr><th>Candidate</th><th>State</th><th>Outcome</th><th class="pcx-num">Attempts</th><th>Next attempt</th><th>Last call</th><th>Booked slot</th><th>Rec.</th><th></th></tr>
                     </thead>
                     <tbody>
                         @if (total == 0)
@@ -150,7 +150,7 @@
                                 </td>
                                 <td><span class="pcx-chip @cc.State">@PlivoCXCampaignController.StateLabel(cc.State)</span></td>
                                 <td class="@outcomeClass(cc.LastDisposition)">@(cc.LastDisposition ?? "—")</td>
-                                <td class="num">@cc.Attempts / @c.TotalAttempts</td>
+                                <td class="pcx-num">@cc.Attempts / @c.TotalAttempts</td>
                                 <td>@nextAttempt(cc)</td>
                                 <td style="white-space:nowrap;">@(local(cc.LastCallAt)?.ToString("dd MMM HH:mm") ?? "—")</td>
                                 <td>@(cc.BookedSlot ?? "—")</td>

@@ -95,6 +95,8 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> GetColdCandidatesList(int ColdCandidateValue, string EmailId);
         Task<List<InterviewUsersDetails>> MarkedColdCandidate(int CandidateId, string Email, int InterviewId, int type);
         Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type, string EmailId);
+        /// <summary>Latest QC decision per interviewer (and channel) on a QC page: PLI | PotentialRisk | HighRisk.</summary>
+        Task<List<QcPageStatusVM>> GetQcPageStatus(string type, IEnumerable<int> userIds);
         Task<List<MeetingVM>> FetchTechQCDetails(string EmailId);
         Task<List<InterviewUsersDetails>> GetFutureDateInterviewSchedule(string IRFId, string CandidateEmail);
         Task<List<MeetingVM>> PotentialPausedDetails(string EmailId);
