@@ -46,6 +46,15 @@
     .qca-check { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; margin: 0 0 6px; cursor: pointer; }
     .qca-check input { width: 16px; height: 16px; margin: 0; }
     .qca-hint { margin: 10px 0 0; font-size: 13px; color: var(--qca-faint); }
+    /* Selected vs loaded range: blue = what the numbers below show, amber = picked but not applied yet. */
+    .qca-date.is-set { border-color: var(--qca-blue); background: var(--qca-blue-soft); color: #1e3a8a; font-weight: 600; }
+    .qca-date.is-dirty { border-color: #f59e0b; background: var(--qca-amber-soft); color: var(--qca-amber); box-shadow: 0 0 0 2px rgba(245, 158, 11, .25); }
+    .qca-btn--primary.is-pending { box-shadow: 0 0 0 3px rgba(37, 99, 235, .3); }
+    .qca-range { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; font-size: 13px; }
+    .qca-range__chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 4px 12px; border: 1px solid transparent; }
+    .qca-range__chip b { font-weight: 700; }
+    .qca-range__chip--applied { background: var(--qca-blue-soft); border-color: #bfdbfe; color: #1e3a8a; }
+    .qca-range__chip--pending { background: var(--qca-amber-soft); border-color: var(--qca-amber-line); color: var(--qca-amber); }
 
     .qca-alert { padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; font-size: 13px; }
     .qca-alert--error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
@@ -237,6 +246,7 @@
                 <label class="qca-check"><input type="checkbox" id="qcaOnlyQc" checked /> Quality Controllers only</label>
             }
         </div>
+        <div class="qca-range" id="qcaRange" aria-live="polite"></div>
         <p class="qca-hint">
             Range is capped at @maxRangeDays days.
             @if (isManager)
@@ -437,7 +447,9 @@
             qcmerge: root.getAttribute('data-tpl-qcmerge')
         };
 
-        var state = { from: '', to: '', onlyQc: true, data: null };
+        // from / to / onlyQc are the APPLIED filters (what the numbers and drill-downs use); the inputs hold the
+        // selection, which only takes effect on Apply. loaded = the applied range's data is on the page.
+        var state = { from: '', to: '', onlyQc: true, data: null, loaded: false };
 
         // ---------- helpers ----------
         function esc(v) {
@@ -570,22 +582,70 @@
                 history.replaceState(null, '', window.location.pathname + '?' + q.toString());
             } catch (e) { /* ignore */ }
         }
+        // Puts the applied filters back into the inputs (on open, and after the server normalised the range).
         function syncInputs() {
             $('#qcaFrom').val(state.from);
             $('#qcaTo').val(state.to);
             $('#qcaFrom, #qcaTo').attr('max', istToday());
             if (isManager) $('#qcaOnlyQc').prop('checked', state.onlyQc);
-            var span = state.from && state.to ? daysBetween(state.from, state.to) + 1 : -1;
-            var isToday = state.to === istToday();
+            refreshRange();
+        }
+        // The selection in the inputs, ordered and capped the way Apply will send it.
+        function selection() {
+            var f = $('#qcaFrom').val() || '', t = $('#qcaTo').val() || '', capped = false;
+            if (f && t && f > t) { var x = f; f = t; t = x; }
+            if (f && t && daysBetween(f, t) + 1 > maxDays) { f = addDays(t, -(maxDays - 1)); capped = true; }
+            return { from: f, to: t, onlyQc: isManager ? $('#qcaOnlyQc').is(':checked') : true, capped: capped };
+        }
+        function fmtDay(ymd) {
+            var p = (ymd || '').split('-');
+            if (p.length !== 3) return ymd || '';
+            var m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+p[1] - 1];
+            return +p[2] + ' ' + m + ' ' + p[0];
+        }
+        function rangeLabel(f, t, onlyQc) {
+            var n = daysBetween(f, t) + 1;
+            return '<b>' + esc(f === t ? fmtDay(f) : fmtDay(f) + ' – ' + fmtDay(t)) + '</b> · ' + n + ' day' + (n === 1 ? '' : 's') +
+                (isManager ? ' · ' + (onlyQc ? 'Quality Controllers only' : 'everyone') : '');
+        }
+        // Highlights the picked dates and says which range is loaded and whether the selection still needs Apply.
+        function refreshRange() {
+            var sel = selection();
+            var busy = !!pending.summary;
+            var dirty = !state.loaded || sel.from !== state.from || sel.to !== state.to || sel.onlyQc !== state.onlyQc;
+            $('#qcaFrom').toggleClass('is-set', !!$('#qcaFrom').val())
+                .toggleClass('is-dirty', !busy && (!state.loaded || ($('#qcaFrom').val() || '') !== state.from));
+            $('#qcaTo').toggleClass('is-set', !!$('#qcaTo').val())
+                .toggleClass('is-dirty', !busy && (!state.loaded || ($('#qcaTo').val() || '') !== state.to));
+            $('#qcaApply').toggleClass('is-pending', !busy && dirty);
+
+            var span = sel.from && sel.to ? daysBetween(sel.from, sel.to) + 1 : -1;
+            var endsToday = sel.to === istToday();
             $('.qca-presets .qca-btn').each(function () {
                 var p = parseInt($(this).attr('data-preset'), 10);
-                $(this).toggleClass('is-active', isToday && span === p);
+                $(this).toggleClass('is-active', endsToday && span === p);
             });
+
+            var html = '';
+            if (busy) {
+                html = '<span class="qca-range__chip qca-range__chip--applied">Loading ' + rangeLabel(state.from, state.to, state.onlyQc) + '…</span>';
+            } else {
+                if (state.loaded)
+                    html += '<span class="qca-range__chip qca-range__chip--applied">Showing ' + rangeLabel(state.from, state.to, state.onlyQc) + '</span>';
+                if (!sel.from || !sel.to)
+                    html += '<span class="qca-range__chip qca-range__chip--pending">Pick both a From and a To date, then click Apply</span>';
+                else if (dirty)
+                    html += '<span class="qca-range__chip qca-range__chip--pending">Selected ' + rangeLabel(sel.from, sel.to, sel.onlyQc) +
+                        (sel.capped ? ' (cut to the last ' + maxDays + ' days)' : '') +
+                        ' — click Apply to ' + (state.loaded ? 'update' : 'load') + '</span>';
+            }
+            $('#qcaRange').html(html);
         }
         function setPreset(days) {
-            state.to = istToday();
-            state.from = addDays(state.to, -(days - 1));
-            load();
+            var to = istToday();
+            $('#qcaFrom').val(addDays(to, -(days - 1)));
+            $('#qcaTo').val(to);
+            refreshRange();
         }
 
         // ---------- summary ----------
@@ -604,6 +664,7 @@
                     state.data = data || {};
                     state.from = state.data.fromIst || state.from;
                     state.to = state.data.toIst || state.to;
+                    state.loaded = !state.data.error;
                     syncInputs();
                     writeQuery();
                     if (state.data.rangeWasCapped) {
@@ -617,6 +678,7 @@
                 error: function (xhr) {
                     if (isAbort(xhr)) return;
                     if (xhr.status === 401 || xhr.status === 403) { window.location.href = '/Session/SignOut'; return; }
+                    state.loaded = false;
                     $('#qcaAlert').html('<div class="qca-alert qca-alert--error">Could not load QC activity (' + esc(xhr.status) + '). Please try again.</div>');
                     $('#qcaBody').html('<tr><td colspan="41" class="qca-empty">No data.</td></tr>');
                     if (!state.data) $('#qcaAuthBody').html('<tr><td colspan="20" class="qca-empty">No data.</td></tr>');
@@ -626,8 +688,10 @@
                     if (pending.summary !== jq) return;
                     pending.summary = null;
                     setSummaryLoading(false);
+                    refreshRange();
                 }
             });
+            refreshRange();
         }
 
         function render() {
@@ -1294,19 +1358,17 @@
         $(document).on('click', '.qca-presets .qca-btn', function () {
             setPreset(parseInt($(this).attr('data-preset'), 10) || defaultDays);
         });
+        // Only Apply loads: presets, the date inputs and "Quality Controllers only" just change the selection.
         $('#qcaApply').on('click', function () {
-            var f = $('#qcaFrom').val(), t = $('#qcaTo').val();
-            if (f && t && f > t) { var x = f; f = t; t = x; }
-            if (f && t && daysBetween(f, t) + 1 > maxDays) f = addDays(t, -(maxDays - 1));
-            state.from = f || '';
-            state.to = t || '';
-            if (isManager) state.onlyQc = $('#qcaOnlyQc').is(':checked');
+            var sel = selection();
+            if (!sel.from || !sel.to) { refreshRange(); return; }
+            state.from = sel.from;
+            state.to = sel.to;
+            state.onlyQc = sel.onlyQc;
             load();
         });
-        $('#qcaOnlyQc').on('change', function () {
-            state.onlyQc = $(this).is(':checked');
-            load();
-        });
+        $('#qcaFrom, #qcaTo').on('input change', refreshRange);
+        $('#qcaOnlyQc').on('change', refreshRange);
         $('#qcaExport').on('click', exportCsv);
         $(document).on('click', '#qcaTable .qca-num', function () {
             openDetails($(this).attr('data-actor'), $(this).attr('data-metric'));
@@ -1343,9 +1405,13 @@
             else closeFlagsModal();
         });
 
+        // Opening the page pre-fills the range (from the link, or the default) but loads nothing until Apply.
         readQuery();
         if (!state.to) state.to = istToday();
         if (!state.from) state.from = addDays(state.to, -(defaultDays - 1));
-        load();
+        syncInputs();
+        var pickFirst = '<tr><td colspan="%n" class="qca-empty">Pick a date range above and click <b>Apply</b> to load QC activity.</td></tr>';
+        $('#qcaBody').html(pickFirst.replace('%n', '32'));
+        $('#qcaAuthBody').html(pickFirst.replace('%n', '17'));
     })();
 </script>

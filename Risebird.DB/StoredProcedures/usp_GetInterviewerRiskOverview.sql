@@ -76,6 +76,10 @@ BEGIN
     IF DATEDIFF(DAY, @FromIst, @ToIst) > 90
         SET @FromIst = DATEADD(DAY, -90, @ToIst);
 
+    -- interviewDate bounds for the IST window (IST = interviewDate + 330 minutes).
+    DECLARE @CompletedFromUtc DATETIME = DATEADD(MINUTE, -330, CAST(@FromIst AS DATETIME));
+    DECLARE @CompletedToUtc   DATETIME = DATEADD(MINUTE, -330, CAST(DATEADD(DAY, 1, @ToIst) AS DATETIME));
+
     IF @Offset IS NULL OR @Offset < 0 SET @Offset = 0;
     IF @PageSize IS NULL OR @PageSize < 1 SET @PageSize = 25;
     IF @PageSize > 200 SET @PageSize = 200;

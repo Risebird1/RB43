@@ -19,6 +19,8 @@ What a Reduce / Refund writes (in one transaction):
      (Points = new % x Rate / 100), so both the per-client SUM readers
      (usp_GetMoneyProtectionList) and the latest-row readers stay correct. No new row.
 A Stands decision changes no money.
+RefundedAmount = InterviewPoints.Points x (old % - new %) / 100 on the interviewer's 'Interview' row,
+the payout amount Finance/RBPayment shows (not the wallet credit, which uses the client rate).
 
 Every decision is logged in dbo.InterviewerActionLog (ActionType = 'DeductionReview'),
 which usp_QCActivity_CollectRows counts on the QC Activity dashboard.
@@ -117,6 +119,17 @@ BEGIN
               AND LTRIM(RTRIM(ISNULL(ip.Status, ''))) = 'Paid')
             SET @PayoutPaid = 1;
 
+        -- Refunded = what goes back to the interviewer's payout, priced the way Finance/RBPayment prices the
+        -- deduction (InterviewPoints.Points x % / 100), not the client's wallet credit (client rate). Worked
+        -- out from the same row even when it is already Paid, so Finance sees what to settle by hand.
+        DECLARE @PayPoints INT;
+        SELECT TOP 1 @PayPoints = ISNULL(ip.Points, 0)
+        FROM dbo.InterviewPoints ip
+        WHERE ip.Interviewid = @InterviewId AND ip.Userid = @UserId AND ip.Type = 'Interview'
+        ORDER BY ip.id DESC;
+        IF @PayPoints IS NOT NULL
+            SET @Refunded = CAST(@PayPoints * @CurrentPct / 100 - @PayPoints * @FinalPct / 100 AS DECIMAL(18,2));
+
         UPDATE dbo.InterviewPoints
         SET PaymentSLA = @FinalPct
         WHERE Interviewid = @InterviewId AND Userid = @UserId AND Type = 'Interview'
@@ -137,7 +150,6 @@ BEGIN
                 Comment = LEFT(CONCAT('Deduction review #', @RequestId, ': ', @NewStatus,
                                       ' (', @CurrentPct, '% -> ', @FinalPct, '%)'), 200)
             WHERE id = @WalletId;
-            SET @Refunded = CAST(@OldPoints - @NewPoints AS DECIMAL(18,2));
         END
     END
 

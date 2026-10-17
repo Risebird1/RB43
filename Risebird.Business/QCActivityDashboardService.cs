@@ -6,6 +6,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Risebird.Business
@@ -58,7 +59,7 @@ namespace Risebird.Business
         }
 
         public async Task<QCActivityDashboardDataVM> GetSummaryAsync(DateTime? fromIst, DateTime? toIst, bool onlyQualityController,
-            string restrictToActorEmail = null)
+            string restrictToActorEmail = null, CancellationToken cancellationToken = default)
         {
             var (from, to, capped) = NormalizeRange(fromIst, toIst, _todayIst());
             var restrict = NormalizeEmail(restrictToActorEmail);
@@ -72,7 +73,7 @@ namespace Risebird.Business
 
             try
             {
-                var (rows, backlog) = await _repository.GetSummaryAsync(from, to, onlyQualityController, restrict);
+                var (rows, backlog) = await _repository.GetSummaryAsync(from, to, onlyQualityController, restrict, cancellationToken);
                 IReadOnlyList<QCActivitySummaryRowVM> list = rows ?? Array.Empty<QCActivitySummaryRowVM>();
 
                 // Defence in depth: a restricted viewer only ever gets their own row.
@@ -86,6 +87,11 @@ namespace Risebird.Business
                 result.Totals = QCActivityTotalsVM.From(list.ToList());
                 // Page-level high-risk coverage (summary result sets 3 and 4).
                 result.Coverage = result.Backlog.Coverage ?? new QCActivityCoverageVM();
+            }
+            catch (Exception) when (cancellationToken.IsCancellationRequested)
+            {
+                // The page abandoned this request (a newer Apply, or the tab closed); nobody reads the answer.
+                result.Error = LoadErrorMessage;
             }
             catch (Exception ex)
             {
