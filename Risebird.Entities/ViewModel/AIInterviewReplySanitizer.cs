@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -73,7 +75,35 @@ namespace Risebird.Entities.ViewModel
         public static string StripOrFallback(string reply, out bool stripped)
         {
             var cleaned = Strip(reply, out stripped);
-            return string.IsNullOrWhiteSpace(cleaned) && stripped ? FallbackReply : cleaned;
+            if (string.IsNullOrWhiteSpace(cleaned) && stripped) return FallbackReply;
+            return UnwrapSpokenJson(cleaned);
+        }
+
+        /// <summary>
+        /// Interviewer turns are requested as json_object, so a prompt may return its turn as
+        /// <c>{"greeting":"...","question":"..."}</c> rather than as prose. Shown as-is, the candidate
+        /// sees and hears the raw JSON. A flat object whose values are all strings is joined, in
+        /// order, into the line to speak; anything else (nested, numeric, not JSON) is left alone.
+        /// </summary>
+        public static string UnwrapSpokenJson(string reply)
+        {
+            if (string.IsNullOrWhiteSpace(reply)) return reply;
+
+            var trimmed = reply.Trim();
+            if (!trimmed.StartsWith("{") || !trimmed.EndsWith("}")) return reply;
+
+            JObject obj;
+            try { obj = JObject.Parse(trimmed); }
+            catch (JsonReaderException) { return reply; }
+
+            var props = obj.Properties().ToList();
+            if (props.Count == 0 || props.Any(p => p.Value.Type != JTokenType.String)) return reply;
+
+            var spoken = string.Join(" ", props
+                .Select(p => ((string)p.Value)?.Trim())
+                .Where(v => !string.IsNullOrEmpty(v)));
+
+            return string.IsNullOrWhiteSpace(spoken) ? reply : spoken;
         }
 
         private static int FindMatchingBrace(string text, int start)
