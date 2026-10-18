@@ -120,6 +120,29 @@ namespace Risebird.Business.Tests.AIScreeningTests
         }
 
         [Fact]
+        public void A_turn_returned_as_flat_json_is_spoken_as_prose()
+        {
+            // What the customer success executive prompt returned on gpt-6-astra.
+            const string reply =
+                "{\"greeting\":\"Hello Nandini, this is a short screening call.\"," +
+                "\"question\":\"Could you walk me through your most recent customer support experience?\"}";
+
+            var result = AIInterviewReplySanitizer.StripOrFallback(reply, out var stripped);
+
+            Assert.False(stripped);
+            Assert.Equal("Hello Nandini, this is a short screening call. " +
+                "Could you walk me through your most recent customer support experience?", result);
+        }
+
+        [Fact]
+        public void Json_with_non_string_values_is_not_unwrapped()
+        {
+            const string reply = "{ \"timeout\": 30, \"note\": \"retry\" }";
+
+            Assert.Equal(reply, AIInterviewReplySanitizer.UnwrapSpokenJson(reply));
+        }
+
+        [Fact]
         public void Report_shaped_json_without_evaluation_keys_is_left_alone()
         {
             // Only evaluation-only keys trigger this. Anything else is none of its business.
