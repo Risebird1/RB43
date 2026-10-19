@@ -8089,6 +8089,9 @@ namespace Risebird.Web.Controllers
                     _ => 0
                 };
             }
+            // A client channel created with a plan price is a marketplace channel. Requires the updated
+            // usp_CreateSkillChannelFromTemplate (declaring @IsMarketPlaceChannel) on the database.
+            model.IsMarketPlaceChannel = model.RateComputedForClient > 0;
         }
 
         //[Authorize]
