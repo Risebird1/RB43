@@ -7432,8 +7432,14 @@ WHERE irf.IsDeleted = 0
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RateComputedForClient", SqlDbType.Int));
                     cmdUpdateIRF.Parameters["@RateComputedForClient"].Value = irfDetails.RateComputedForClient;
 
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMarketPlaceChannel", SqlDbType.Bit));
-                    cmdUpdateIRF.Parameters["@IsMarketPlaceChannel"].Value = irfDetails.RateComputedForClient > 0 ? irfDetails.IsMarketPlaceChannel : null;
+                    // Only send @IsMarketPlaceChannel when it is set: databases still on the older
+                    // usp_CreateSkillChannelFromTemplate don't declare it and would reject the call
+                    // ("too many arguments"), failing every plan-based channel creation.
+                    if (irfDetails.IsMarketPlaceChannel)
+                    {
+                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMarketPlaceChannel", SqlDbType.Bit));
+                        cmdUpdateIRF.Parameters["@IsMarketPlaceChannel"].Value = true;
+                    }
 
                     SqlParameter flatRateParam = new SqlParameter();
                     flatRateParam.ParameterName = "@flatRate";
