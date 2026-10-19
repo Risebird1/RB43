@@ -506,20 +506,20 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 		if (@actiontype = 0)
 		begin			
 				select distinct (ul.FirstName +' '+ ul.LastName) as SuspiciousName,ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewAddedOn,ip.CreatedBy,
-				ip.ResumeLink as ResumeLink,si.Comment as SuspiciousComment,
+				ip.ResumeLink as ResumeLink,si.Comment as SuspiciousComment,ul.id as InterviewerUserId,
 				si.CreatedBy as SuspiciousAddedBy,ul.MobileNumber as SuspiciousMobileNumber,si.Createddate as SuspiciousAddOn,ip.RedMarker,ul.IsActive from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId
 				where si.SuspiciousStatus=1 and ISNULL(ip.Isdeleted,0)=0
 		end
 		else
 		begin
 			select distinct (ul.FirstName +' '+ ul.LastName) as SuspiciousName,ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewAddedOn,ip.CreatedBy,
-			ip.ResumeLink as ResumeLink,si.Comment as SuspiciousComment,si.CreatedBy as SuspiciousAddedBy,ul.MobileNumber as SuspiciousMobileNumber,si.Createddate as SuspiciousAddOn,ip.RedMarker,ul.IsActive 
+			ip.ResumeLink as ResumeLink,si.Comment as SuspiciousComment,ul.id as InterviewerUserId,si.CreatedBy as SuspiciousAddedBy,ul.MobileNumber as SuspiciousMobileNumber,si.Createddate as SuspiciousAddOn,ip.RedMarker,ul.IsActive 
 			from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId
 				join SeniorHr sh on ul.id=sh.Userid
 				where si.CreatedBy=@Emailid and si.SuspiciousStatus=1 and ISNULL(ip.Isdeleted,0)=0
 			union 
 			select distinct (ul.FirstName +' '+ ul.LastName) as SuspiciousName,ul.EmailId as SuspiciousEmail,ip.CreatedOn as InterviewAddedOn,ip.CreatedBy,ip.ResumeLink as ResumeLink,
-			si.Comment as SuspiciousComment,si.CreatedBy as SuspiciousAddedBy,ul.MobileNumber as SuspiciousMobileNumber,si.Createddate as SuspiciousAddOn,ip.RedMarker,ul.IsActive from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId
+			si.Comment as SuspiciousComment,ul.id as InterviewerUserId,si.CreatedBy as SuspiciousAddedBy,ul.MobileNumber as SuspiciousMobileNumber,si.Createddate as SuspiciousAddOn,ip.RedMarker,ul.IsActive from SuspiciousInterviewer si Join UserList ul on si.UserId=ul.id join InterviewerProfile ip on ul.id=ip.UserId
 				join SeniorHr sh on ul.id=sh.Userid
 				where si.CreatedBy=@Emailid and si.SuspiciousStatus=1 and ISNULL(ip.Isdeleted,0)=0
 				end

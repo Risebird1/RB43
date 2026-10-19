@@ -5412,6 +5412,8 @@ NEVER:
                 var emailId = HttpContext.Session.GetString("email")?.Trim();
                 emailId = emailId.Replace("\"", "");
                 // int interviewerProfileid = InterviewerProfileId;
+                if (UserId <= 0)
+                    return Json("Failed to mark whether undo suspicious interviewer.");
                 var data = await _dashboardService.UndoSuspiciousInterviewerService(UserId, emailId);
                 if (data == true)
                 {
@@ -5578,7 +5580,7 @@ NEVER:
         }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> PotentialRiskByCandidate(int returnBack)
+        public async Task<IActionResult> PotentialRiskByCandidate(int returnBack, string tab = PotentialRiskTabs.All)
         {
             try
             {
@@ -5592,7 +5594,7 @@ NEVER:
                     ViewBag.ReturnBack = returnBack;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
                     {
-                        var model = await _dashboardService.GetPotentialRiskByCandidateService(emailid);
+                        var model = await _dashboardService.GetPotentialRiskByCandidateService(emailid) ?? Enumerable.Empty<MeetingVM>();
                         foreach (var item in model)
                         {
                             if (item.InterviewStatus.HasValue)
@@ -5600,7 +5602,13 @@ NEVER:
                                 item.intervieweStatusStatDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
                             }
                         }
-                        return View(model);
+                        // Status tabs (All · Pending · Under Review · Reviewed · Removed): counts over the whole list,
+                        // then the list narrowed to the tab. An unknown tab falls back to All.
+                        var all = model.ToList();
+                        var activeTab = PotentialRiskTabs.Normalize(tab);
+                        ViewBag.PrTab = activeTab;
+                        ViewBag.PrTabCounts = PotentialRiskTabs.Counts(all);
+                        return View(PotentialRiskTabs.Filter(all, activeTab).ToList());
                     }
                     else
                     {
@@ -5620,7 +5628,7 @@ NEVER:
         }
         [Authorize]
         [HttpGet]
-        public async Task<FileContentResult> ExportPotentialRiskByCandidate()
+        public async Task<FileContentResult> ExportPotentialRiskByCandidate(string tab = PotentialRiskTabs.All)
         {
             ExcelPackage Ep = new ExcelPackage();
             ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Potential Risk By Candidate");
@@ -5629,7 +5637,9 @@ NEVER:
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                var modelList = await _dashboardService.GetPotentialRiskByCandidateService(emailid);
+                // Same tab as the page (All when missing or unknown).
+                var modelList = PotentialRiskTabs.Filter(
+                    await _dashboardService.GetPotentialRiskByCandidateService(emailid), tab).ToList();
                 foreach (var item in modelList)
                 {
 
@@ -5659,6 +5669,9 @@ NEVER:
                 Sheet.Cells[1, 11].Value = "Rating";
                 Sheet.Cells[1, 12].Value = "Rated On";
                 Sheet.Cells[1, 13].Value = "Payment SLA Status";
+                Sheet.Cells[1, 14].Value = "QC status";
+                Sheet.Column(13).Width = 30;
+                Sheet.Column(14).Width = 30;
 
                 int i = 2;
                 if (modelList.Count() > 0)
@@ -5686,6 +5699,11 @@ NEVER:
                         {
                             Sheet.Cells[i, 13].Value = "Not Approved";
                         }
+                        // QC status of the interviewer (Pending / Under Review / Reviewed / Removed), plus who and when.
+                        Sheet.Cells[i, 14].Value = PotentialRiskTabs.StatusText(item)
+                            + (item.PotentialRiskStatus.HasValue && !string.IsNullOrWhiteSpace(item.PotentialRiskStatusBy)
+                                ? " - " + item.PotentialRiskStatusBy + (item.PotentialRiskStatusOn.HasValue ? " on " + item.PotentialRiskStatusOn.Value.ToString("dd MMM yyyy HH:mm") : "")
+                                : "");
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -7153,6 +7171,12 @@ NEVER:
                             ViewBag.Type = "Latejoin";
                         }
                         var model = await _dashboardService.InterviewerIRFLogisticDetails(type, emailid);
+                        // PLI decision per row (Under review / Reviewed / Removed; QC Tracking Delta 5).
+                        if (model != null && model.Count > 0)
+                        {
+                            var pliStatuses = await _dashboardService.GetQcPageStatus("PLI", model.Select(m => m.UserId));
+                            QcPageStatusVM.ApplyPli(model, pliStatuses);
+                        }
                         return View(model);
                     }
                     else
@@ -8765,8 +8789,69 @@ NEVER:
             }
             return Json("Fail to Move the Interviewer, Please try again.");
         }
+        /// <summary>
+        /// QC page of a status decision: "PotentialRisk" (Potential Risk by Candidate), "HighRisk" (High-Risk Interviewers)
+        /// or "PLI" (Process Lapse Indicators); case-insensitive. Anything else returns null (not a QC status page).
+        /// </summary>
+        internal static string NormalizeQcStatusSource(string source)
+        {
+            if (string.IsNullOrWhiteSpace(source)) return null;
+            var s = source.Trim();
+            if (string.Equals(s, "PotentialRisk", StringComparison.OrdinalIgnoreCase)) return "PotentialRisk";
+            if (string.Equals(s, "HighRisk", StringComparison.OrdinalIgnoreCase)) return "HighRisk";
+            if (string.Equals(s, "PLI", StringComparison.OrdinalIgnoreCase)) return "PLI";
+            return null;
+        }
+
+        /// <summary>
+        /// Under review (1) / Reviewed (2) on an interviewer from Potential Risk by Candidate, High-Risk Interviewers or
+        /// PLI. Stored as a RedMarkerStatusDetails row (Type = source) with the comment and the session user, counted on
+        /// QC Activity under that page. Remove (3) goes through InactivateInterviewer with the same source.
+        /// </summary>
+        [Authorize]
         [HttpPost]
-        public async Task<JsonResult> InactivateInterviewer(int interviewerId, string comment, bool blockinterviewer)
+        public async Task<JsonResult> UpdateQcInterviewerStatus(int interviewerUserId, int irfId, int status, string comment, string source)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { success = false, message = "Your session has expired. Please sign in again." });
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsQcStatusProfile(profileName))
+                    return Json(new { success = false, message = "Not authorized." });
+
+                var normalizedSource = NormalizeQcStatusSource(source);
+                if (normalizedSource == null)
+                    return Json(new { success = false, message = "Unknown page." });
+                if (interviewerUserId <= 0)
+                    return Json(new { success = false, message = "Invalid interviewer." });
+                if (status != 1 && status != 2)
+                    return Json(new { success = false, message = "Invalid status." });
+                if (string.IsNullOrWhiteSpace(comment))
+                    return Json(new { success = false, message = "Please enter a comment." });
+
+                var emailId = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? "";
+                var trimmed = comment.Trim();
+                if (trimmed.Length > 300) trimmed = trimmed.Substring(0, 300);
+                var result = await _dashboardService.UpdateRedMarkeredInterviewerstatus(
+                    interviewerUserId, Math.Max(0, irfId), status, trimmed, emailId, normalizedSource, normalizedSource);
+                if (result)
+                    return Json(new { success = true, message = status == 1 ? "Moved to Under Review." : "Marked as Reviewed." });
+                return Json(new { success = false, message = "Fail to Move the Interviewer, Please try again." });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "An error occurred while saving the status." });
+            }
+        }
+
+        /// <summary>Profiles that may move interviewers on the QC status pages (Potential Risk, High-Risk, PLI).</summary>
+        private static bool IsQcStatusProfile(string profileName) =>
+            IsAutoQcOpsProfile(profileName);
+
+        [HttpPost]
+        public async Task<JsonResult> InactivateInterviewer(int interviewerId, string comment, bool blockinterviewer, string source = null)
         {
             try
             {
@@ -8777,7 +8862,8 @@ NEVER:
                     emailId = emailId.Replace("\"", "");
                 }
 
-                var result = await _interviewerService.InactivateInterviewer(interviewerId, emailId, comment, blockinterviewer);
+                // source (PotentialRisk | HighRisk | PLI): the removal is recorded for that page on QC Activity.
+                var result = await _interviewerService.InactivateInterviewer(interviewerId, emailId, comment, blockinterviewer, null, NormalizeQcStatusSource(source));
                 if (result)
                 {
                     return Json(new { success = true, message = "Interviewer inactivated successfully." });
@@ -8982,7 +9068,7 @@ NEVER:
         /// </summary>
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> AutoRemovalMonitor(DateTime? from = null, DateTime? to = null, string preset = null, int? expandIrfId = null, string view = null)
+        public async Task<IActionResult> AutoRemovalMonitor(DateTime? from = null, DateTime? to = null, string preset = null, int? expandIrfId = null, string view = null, int needsCall = 0)
         {
             try
             {
@@ -9016,9 +9102,14 @@ NEVER:
                 ViewBag.DirectoryToIst = toIst.ToString("yyyy-MM-dd");
                 ViewBag.DirectoryPreset = activePreset;
                 ViewBag.ExpandIrfId = expandIrfId.GetValueOrDefault() > 0 ? expandIrfId : null;
+                // Three levels (QC Tracking Delta 4): Channels (IRF), High-Risk Interviewers (overall), Reports (report).
                 ViewBag.ActiveAuditView = string.Equals(view, "interviewers", StringComparison.OrdinalIgnoreCase)
                     ? "interviewers"
-                    : "channels";
+                    : string.Equals(view, "reports", StringComparison.OrdinalIgnoreCase)
+                        ? "reports"
+                        : "channels";
+                // "Needs a call" filter on the Interviewers tab (Delta 6; the Interviewer QC View menu link lands here).
+                ViewBag.NeedsCall = needsCall == 1;
                 return View(directory);
             }
             catch (Exception ex)
@@ -9270,6 +9361,9 @@ NEVER:
                     return Json(new { ok = false, message = "Not authorized." });
 
                 var result = await _trialJudgmentService.BackfillMissingTrialFlagsAsync(interviewId);
+                // QC Activity: record who ran the backfill (TrialFlagBackfillRun -> metric TrialBackfill).
+                var runBy = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? profileName;
+                await _trialJudgmentService.RecordBackfillRunAsync(runBy, interviewId, result);
                 var details = result.Messages?.Take(30).ToList() ?? new List<string>();
                 var summary = result.Failed > 0 && result.Inserted == 0 && result.Skipped == 0
                     ? (details.FirstOrDefault() ?? $"Backfill failed ({result.Failed} error(s)).")
@@ -9499,6 +9593,22 @@ NEVER:
             }
         }
 
+        /// <summary>Prefix that marks an IRF audit Keep / Remove made from High-Risk Interviewers (read by usp_QCActivity_CollectRows).</summary>
+        internal const string HighRiskReasonPrefix = "[High-Risk]";
+
+        /// <summary>
+        /// fromPage = HighRisk: "[High-Risk] " + the risk summary (or the default reason). Any other page: unchanged.
+        /// </summary>
+        internal static string TagRiskAuditReasonForPage(string riskSummary, string fromPage, string defaultReason)
+        {
+            if (!string.Equals(fromPage?.Trim(), "HighRisk", StringComparison.OrdinalIgnoreCase))
+                return riskSummary;
+            var reason = string.IsNullOrWhiteSpace(riskSummary) ? defaultReason : riskSummary.Trim();
+            if (reason.StartsWith(HighRiskReasonPrefix, StringComparison.Ordinal))
+                return reason;
+            return HighRiskReasonPrefix + " " + reason;
+        }
+
         [Authorize]
         [HttpPost]
         [IgnoreAntiforgeryToken]
@@ -9507,7 +9617,8 @@ NEVER:
             int irfId,
             string comment = null,
             string riskSummary = null,
-            int? worstSeverityInterviewId = null)
+            int? worstSeverityInterviewId = null,
+            string fromPage = null)
         {
             try
             {
@@ -9522,6 +9633,9 @@ NEVER:
                 if (!await CanActOnIrfAsync(irfId, email, profileName))
                     return Json(new { ok = false, message = "You are not the Channel Owner for this IRF." });
 
+                // From the High-Risk page (View expansion): the reason starts with [High-Risk] so QC Activity counts it
+                // under High-Risk; the IRF Audit tab keeps the plain reason (IRF audit column).
+                riskSummary = TagRiskAuditReasonForPage(riskSummary, fromPage, "Risk audit removal");
                 var result = await _autoQcRemovalService.RemoveForRiskAuditAsync(
                     transInterviewerId,
                     irfId,
@@ -9546,7 +9660,8 @@ NEVER:
             int irfId,
             string comment = null,
             string riskSummary = null,
-            int? worstSeverityInterviewId = null)
+            int? worstSeverityInterviewId = null,
+            string fromPage = null)
         {
             try
             {
@@ -9561,6 +9676,9 @@ NEVER:
                 if (!await CanActOnIrfAsync(irfId, email, profileName))
                     return Json(new { ok = false, message = "You are not the Channel Owner for this IRF." });
 
+                // From the High-Risk page (View expansion): the reason starts with [High-Risk] so QC Activity counts it
+                // under High-Risk; the IRF Audit tab keeps the plain reason (IRF audit column).
+                riskSummary = TagRiskAuditReasonForPage(riskSummary, fromPage, "Risk audit keep");
                 var result = await _autoQcRemovalService.KeepForRiskAuditAsync(
                     transInterviewerId,
                     irfId,
@@ -9588,7 +9706,10 @@ NEVER:
             bool showAll = false,
             bool pendingReviewOnly = false,
             int offset = 0,
-            int pageSize = 25)
+            int pageSize = 25,
+            [FromServices] DeductionReviewSettings deductionReviewSettings = null,
+            string sortBy = null,
+            bool needsCall = false)
         {
             try
             {
@@ -9604,8 +9725,13 @@ NEVER:
                 var ownerEmail = IsIrfAuditOwnerProfile(profileName) ? sessionEmail : null;
                 decimal? minRatio = showAll ? (decimal?)null : DmIvAutoQcAuditConstants.IrfAuditOverviewDefaultMinRiskRatio;
 
+                // sortBy: Impact (default, decision D1) or Ratio; needsCall: High-Risk interviewers with no connected call.
                 var page = await _autoQcBackfillService.GetInterviewerRiskOverviewAsync(
-                    fromIst, toIst, ownerEmail, minRatio, pendingReviewOnly, offset, pageSize);
+                    fromIst, toIst, ownerEmail, minRatio, pendingReviewOnly, offset, pageSize, sortBy, needsCall);
+                // Deduction review: upheld rate per AI check for the header (labels + "consider taking out" flag).
+                if (page.Summary?.ReviewChecks != null)
+                    page.Summary.ReviewChecks = Risebird.Business.DeductionReviewService
+                        .BuildCheckStats(page.Summary.ReviewChecks, deductionReviewSettings).ToList();
 
                 return Json(new
                 {
@@ -9631,6 +9757,147 @@ NEVER:
                     message = "Could not load interviewer risk overview. " + detail
                         + " — Deploy Risebird.DB/StoredProcedures/usp_GetInterviewerRiskOverview.sql."
                 });
+            }
+        }
+
+        /// <summary>Parses "1,2,3" into distinct positive ids (at most <paramref name="max"/>).</summary>
+        internal static List<int> ParseIdList(string ids, int max = 200) =>
+            (ids ?? "")
+                .Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => int.TryParse(x.Trim(), out var n) ? n : 0)
+                .Where(n => n > 0)
+                .Distinct()
+                .Take(max)
+                .ToList();
+
+        /// <summary>
+        /// QC coverage block on each High-Risk interviewer row (QC Tracking Delta 2): last QC touch, last connected
+        /// call, touches in 30 days and open items, for up to 200 interviewers (usp_GetInterviewerQcCoverage, 90 days).
+        /// The list never waits for this call; available = false when the procedure is missing (the block stays hidden).
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InterviewerRiskCoverage(string ids)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { ok = false, message = "Unauthorized" });
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsAutoQcOpsProfile(profileName))
+                    return Json(new { ok = false, message = "Not authorized." });
+
+                var idList = ParseIdList(ids);
+                if (idList.Count == 0)
+                    return Json(new { ok = true, available = true, rows = Array.Empty<InterviewerQcCoverageRowVm>() });
+
+                var rows = await _autoQcBackfillService.GetInterviewerQcCoverageAsync(idList, 90);
+                if (rows == null)
+                    return Json(new { ok = true, available = false, rows = Array.Empty<InterviewerQcCoverageRowVm>() });
+                return Json(new { ok = true, available = true, lookbackDays = 90, rows });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, available = false, message = "Could not load QC coverage." });
+            }
+        }
+
+        /// <summary>
+        /// High-Risk Interviewers, Reports tab (QC Tracking Delta 4): one row per graded report (P0-P5) in the window,
+        /// paged at 50 server-side; worst and unreviewed first. Filters: see <see cref="HighRiskReportFilters"/>.
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> HighRiskReports(
+            DateTime? from = null,
+            DateTime? to = null,
+            string filter = null,
+            int? interviewerId = null,
+            int? irfId = null,
+            int offset = 0,
+            int pageSize = 50)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { ok = false, message = "Unauthorized" });
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsAutoQcOpsProfile(profileName))
+                    return Json(new { ok = false, message = "Not authorized." });
+
+                var (fromIst, toIst, _) = NormalizeDirectoryIstDateRange(from, to, null);
+                var sessionEmail = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? "";
+                var ownerEmail = IsIrfAuditOwnerProfile(profileName) ? sessionEmail : null;
+
+                var page = await _autoQcBackfillService.GetHighRiskReportsAsync(
+                    fromIst, toIst, ownerEmail, filter, interviewerId, irfId, offset, pageSize);
+                foreach (var row in page.Rows)
+                {
+                    if (row.InterviewStatus.HasValue && Enum.IsDefined(typeof(InterviewStatus), row.InterviewStatus.Value))
+                        row.InterviewStatusText = ((InterviewStatus)row.InterviewStatus.Value).GetDescription();
+                }
+                return Json(new
+                {
+                    ok = true,
+                    available = page.Available,
+                    from = fromIst.ToString("yyyy-MM-dd"),
+                    to = toIst.ToString("yyyy-MM-dd"),
+                    filter = HighRiskReportFilters.Normalize(filter),
+                    offset = page.Offset,
+                    pageSize = page.PageSize,
+                    totalRows = page.TotalRows,
+                    rows = page.Rows,
+                    canQcForm = profileName == "Quality Controller" || profileName == "Admin" || profileName == "SupportAdmin"
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                var detail = ex.GetBaseException()?.Message ?? ex.Message;
+                return Json(new
+                {
+                    ok = false,
+                    message = "Could not load reports. " + detail + " — Deploy Risebird.DB/StoredProcedures/usp_GetHighRiskReports.sql."
+                });
+            }
+        }
+
+        /// <summary>
+        /// PLI / PQI signals for the listed interviewers in the window (QC Tracking Delta 4 / 5): per interviewer (the
+        /// Process line on the Interviewers tab, rates recomputed from totals) and per channel.
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> InterviewerProcessSignals(string ids, DateTime? from = null, DateTime? to = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                    return Json(new { ok = false, message = "Unauthorized" });
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "") ?? "";
+                if (!IsAutoQcOpsProfile(profileName))
+                    return Json(new { ok = false, message = "Not authorized." });
+
+                var (fromIst, toIst, _) = NormalizeDirectoryIstDateRange(from, to, null);
+                var sessionEmail = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "") ?? "";
+                var ownerEmail = IsIrfAuditOwnerProfile(profileName) ? sessionEmail : null;
+
+                var result = await _autoQcBackfillService.GetInterviewerProcessSignalsAsync(ParseIdList(ids), fromIst, toIst, ownerEmail);
+                return Json(new
+                {
+                    ok = true,
+                    available = result.Available,
+                    from = fromIst.ToString("yyyy-MM-dd"),
+                    to = toIst.ToString("yyyy-MM-dd"),
+                    interviewers = result.Interviewers,
+                    channels = result.Channels
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { ok = false, available = false, message = "Could not load process signals." });
             }
         }
 
@@ -9688,7 +9955,9 @@ NEVER:
             DateTime? from = null,
             DateTime? to = null,
             bool showAll = false,
-            bool pendingReviewOnly = false)
+            bool pendingReviewOnly = false,
+            string sortBy = null,
+            bool needsCall = false)
         {
             try
             {
@@ -9705,7 +9974,7 @@ NEVER:
                 decimal? minRatio = showAll ? (decimal?)null : DmIvAutoQcAuditConstants.IrfAuditOverviewDefaultMinRiskRatio;
 
                 var overviewRows = await _autoQcBackfillService.GetInterviewerRiskOverviewExportRowsAsync(
-                    fromIst, toIst, ownerEmail, minRatio, pendingReviewOnly);
+                    fromIst, toIst, ownerEmail, minRatio, pendingReviewOnly, sortBy, needsCall);
 
                 var channelExport = new List<(InterviewerRiskOverviewRowVm Iv, InterviewerRiskOverviewChannelRowVm Ch)>();
                 foreach (var iv in overviewRows)
@@ -9740,7 +10009,21 @@ NEVER:
                 sheet1.Cells[1, 20].Value = "P5";
                 sheet1.Cells[1, 21].Value = "WindowFromIst";
                 sheet1.Cells[1, 22].Value = "WindowToIst";
-                sheet1.Cells["A1:V1"].Style.Font.Bold = true;
+                // AI penalties applied automatically (window), profile, lifetime (usp_GetInterviewerRiskOverview).
+                var extraHeaders = new[]
+                {
+                    "AiPenalties", "AiAutoApproved", "AiCheckedByQc", "AiAvgPct",
+                    "Resume", "Company", "Acknowledgement", "VideoKyc", "PaymentOnHold", "PortalAccess", "ActiveSuspicious",
+                    "LifetimeInterviews", "LifetimeCompleted", "LifetimeSelected", "LifetimeRejected",
+                    "InterviewerNoShows", "CandidateNoShows", "RedoRequests", "AiTranscriptFlagged",
+                    "LateJoins", "Penalties", "ReliabilityScore",
+                    // QC Tracking (appended): Impact, Removed-from, Trend, High-Risk decision
+                    "Impact", "ChannelsRemoved", "ChannelsTotal", "BadPct", "PrevBadPct", "Trend",
+                    "HighRiskStatus", "HighRiskStatusBy", "HighRiskStatusOn"
+                };
+                for (var h = 0; h < extraHeaders.Length; h++)
+                    sheet1.Cells[1, 23 + h].Value = extraHeaders[h];
+                sheet1.Cells[1, 1, 1, 22 + extraHeaders.Length].Style.Font.Bold = true;
 
                 var r = 2;
                 foreach (var item in overviewRows)
@@ -9767,6 +10050,37 @@ NEVER:
                     sheet1.Cells[r, 20].Value = item.P5Count;
                     sheet1.Cells[r, 21].Value = fromIst.ToString("yyyy-MM-dd");
                     sheet1.Cells[r, 22].Value = toIst.ToString("yyyy-MM-dd");
+                    sheet1.Cells[r, 23].Value = item.AiPenalised;
+                    sheet1.Cells[r, 24].Value = item.AiAutoApproved;
+                    sheet1.Cells[r, 25].Value = item.AiHumanReviewed;
+                    sheet1.Cells[r, 26].Value = item.AiAvgPct;
+                    sheet1.Cells[r, 27].Value = item.ResumeLink;
+                    sheet1.Cells[r, 28].Value = item.CompanyName;
+                    sheet1.Cells[r, 29].Value = item.AcknowledgementStatus;
+                    sheet1.Cells[r, 30].Value = item.IsVideoApproved ? "Verified" : (item.HasVideoKyc ? "Pending" : "Missing");
+                    sheet1.Cells[r, 31].Value = item.IsHoldPayment ? "Yes" : "No";
+                    sheet1.Cells[r, 32].Value = item.HasPortalAccess ? "Yes" : "No";
+                    sheet1.Cells[r, 33].Value = item.ActiveSuspicious ? "Yes" : "No";
+                    sheet1.Cells[r, 34].Value = item.LifetimeInterviews;
+                    sheet1.Cells[r, 35].Value = item.LifetimeCompleted;
+                    sheet1.Cells[r, 36].Value = item.LifetimeSelected;
+                    sheet1.Cells[r, 37].Value = item.LifetimeRejected;
+                    sheet1.Cells[r, 38].Value = item.InterviewerNoShows;
+                    sheet1.Cells[r, 39].Value = item.CandidateNoShows;
+                    sheet1.Cells[r, 40].Value = item.RedoRequests;
+                    sheet1.Cells[r, 41].Value = item.AiTranscriptFlagged;
+                    sheet1.Cells[r, 42].Value = item.LateJoins;
+                    sheet1.Cells[r, 43].Value = item.Penalties;
+                    sheet1.Cells[r, 44].Value = item.ReliabilityScore;
+                    sheet1.Cells[r, 45].Value = item.Impact;
+                    sheet1.Cells[r, 46].Value = item.ChannelsRemoved;
+                    sheet1.Cells[r, 47].Value = item.ChannelsTotal;
+                    sheet1.Cells[r, 48].Value = item.BadPct;
+                    sheet1.Cells[r, 49].Value = item.PrevBadPct;
+                    sheet1.Cells[r, 50].Value = item.Trend;
+                    sheet1.Cells[r, 51].Value = item.HighRiskStatus == 1 ? "Under review" : item.HighRiskStatus == 2 ? "Reviewed" : item.HighRiskStatus == 3 ? "Removed" : "";
+                    sheet1.Cells[r, 52].Value = item.HighRiskStatusBy;
+                    sheet1.Cells[r, 53].Value = item.HighRiskStatusOn?.ToString("yyyy-MM-dd HH:mm");
                     r++;
                 }
 

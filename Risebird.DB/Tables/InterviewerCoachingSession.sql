@@ -48,6 +48,13 @@ BEGIN
 END
 GO
 
+-- "I've read this" on the interviewer's My Quality page (usp_AcknowledgeInterviewerCoachingSession).
+IF COL_LENGTH('dbo.InterviewerCoachingSession', 'AcknowledgedAtUtc') IS NULL
+BEGIN
+    ALTER TABLE dbo.InterviewerCoachingSession ADD AcknowledgedAtUtc DATETIME NULL;
+END
+GO
+
 IF NOT EXISTS (
     SELECT 1 FROM sys.indexes
     WHERE name = N'IX_InterviewerCoachingSession_Coach_Created'

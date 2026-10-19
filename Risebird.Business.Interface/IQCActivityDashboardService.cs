@@ -1,5 +1,6 @@
 using Risebird.Entities.ViewModel;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Risebird.Business.Interface
@@ -10,9 +11,10 @@ namespace Risebird.Business.Interface
         /// Per-user QC activity for an inclusive IST date range (default last 7 days, max 92).
         /// When <paramref name="restrictToActorEmail"/> is set only that user's row is returned
         /// (a Quality Controller viewing their own activity).
+        /// A cancelled <paramref name="cancellationToken"/> stops the query and is not logged as a load error.
         /// </summary>
         Task<QCActivityDashboardDataVM> GetSummaryAsync(DateTime? fromIst, DateTime? toIst, bool onlyQualityController,
-            string restrictToActorEmail = null);
+            string restrictToActorEmail = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Records behind one number. Unknown metric keys return an empty list without querying.
@@ -40,5 +42,15 @@ namespace Risebird.Business.Interface
         /// (without querying) and when the edit does not exist; logs and rethrows on failure. Access checks are the caller's.
         /// </summary>
         Task<ReportEditVM> GetReportEditAsync(int id);
+
+        /// <summary>
+        /// Flags panel (bursts, reviewed with no call, reversed by another QC, short calls, kept despite a P0,
+        /// actions without evidence). <paramref name="actorEmail"/> null = everyone; when
+        /// <paramref name="restrictToActorEmail"/> is set only that person's flags are returned.
+        /// </summary>
+        Task<QCActivityFlagsResultVM> GetFlagsAsync(string actorEmail, DateTime? fromIst, DateTime? toIst, string restrictToActorEmail = null);
+
+        /// <summary>High-Risk interviewers in the window, how many any QC person touched, and the untouched list (top 50).</summary>
+        Task<QCActivityCoverageVM> GetCoverageAsync(DateTime? fromIst, DateTime? toIst);
     }
 }

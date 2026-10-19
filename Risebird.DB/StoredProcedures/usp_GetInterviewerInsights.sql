@@ -65,7 +65,8 @@ Select @PaymentSLA=Count(distinct ps.id) from PaymentSLADetails ps join Intervie
             
 Select @Penalty=Count(distinct ip.id) from InterviewPoints ip join Interviewmeetings im on im.id=ip.Interviewid where (PenaltyAmount>0 or Comment like '%Late Report%') and im.interviewer=@Emailid and (@IrfId is null or im.IRFId=@IrfId)           
             
-Select @CandidateRating=Count(distinct cfd.Rating) From CandidateFeedbackDetails cfd join Interviewmeetings im on im.id=cfd.Interviewid where im.interviewer=@Emailid and cfd.Rating<=3 and (@IrfId is null or im.IRFId=@IrfId)          
+-- Interviews rated 3 or below (COUNT(DISTINCT Rating) counted rating values and could never exceed 3).
+Select @CandidateRating=Count(distinct cfd.Interviewid) From CandidateFeedbackDetails cfd join Interviewmeetings im on im.id=cfd.Interviewid where im.interviewer=@Emailid and cfd.Rating<=3 and (@IrfId is null or im.IRFId=@IrfId)          
             
 Select @CustomerRating=Count(Rating) From ClientCommentsForReport cr join Interviewmeetings im on im.id=cr.Interviewid where im.interviewer=@Emailid and cr.Rating<=3 and (@IrfId is null or im.IRFId=@IrfId)           
             
@@ -101,7 +102,13 @@ Select @ReliabilityScore=Sum(tq.Point) from TransInterviewersReliabilityScores t
 left join InterviewerProfile ip on tq.InterviewerId=ip.id  join UserList ul on ul.id=ip.Userid             
 where ul.EmailId=@Emailid and (@IrfId is null or im.IRFId=@IrfId)            
 
-Select @AIVerdict=Isnull(AIVerdict,'') from TransInterviewer where IRFId=(Select id from IRF where IRFId=@IrfId)
+-- This interviewer's verdict on the channel (filtering by IRF alone could return another interviewer's).
+if(@IrfId is not null)
+begin
+Select top 1 @AIVerdict=Isnull(ti.AIVerdict,'') from TransInterviewer ti join UserList ulv on ulv.id=ti.UserId
+where ti.IRFId=(Select top 1 id from IRF where IRFId=@IrfId order by id desc) and ulv.EmailId=@Emailid
+order by Isnull(ti.IsActive,0) desc, ti.id desc
+end
 
 --Select ul.id as Userid,ul.Emailid,ip.CompanyName,ip.IsEmployed,ul.MobileNumber,ul.LastLogin,ip.VideoConfirmation,ip.Isavailable,ip.EmploymentComment,Sum(ti.Point) as ReliabilityScore,ip.ResumeLink as ResumeLink,          
 --@TotalInterviews as TotalInterviews,@CompletedInterviews as CompletedInterviews,@SelectedInterviews as SelectedInterviews,@RejectedInterviews as RejectedInterviews,            

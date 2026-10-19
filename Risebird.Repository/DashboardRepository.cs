@@ -1722,9 +1722,10 @@ Values
                 dynamicParam.Add("@ModifiedBy", string.IsNullOrWhiteSpace(modifiedBy) ? null : modifiedBy.Trim());
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync(conChange, "usp_undoSuspiciousInterviewer", dynamicParam,
+                    // RowsChanged = active marks cleared; NULL from an older procedure that returns nothing.
+                    var changed = await conChange.QueryFirstOrDefaultAsync<int?>("usp_undoSuspiciousInterviewer", dynamicParam,
                        commandType: CommandType.StoredProcedure);
-                    return true;
+                    return changed == null || changed.Value > 0;
                 }
             }
             catch (Exception ex)
@@ -2353,6 +2354,30 @@ Values
                 return null;
             }
         }
+        /// <summary>Latest QC decision per interviewer (and channel) on a QC page (usp_GetQcPageStatus); empty when missing.</summary>
+        public async Task<List<QcPageStatusVM>> GetQcPageStatus(string type, IEnumerable<int> userIds)
+        {
+            var ids = (userIds ?? Enumerable.Empty<int>()).Where(i => i > 0).Distinct().ToList();
+            if (ids.Count == 0) return new List<QcPageStatusVM>();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var exists = await con.ExecuteScalarAsync<int>(
+                        "SELECT CASE WHEN OBJECT_ID(N'dbo.usp_GetQcPageStatus', N'P') IS NOT NULL THEN 1 ELSE 0 END");
+                    if (exists == 0) return new List<QcPageStatusVM>();
+                    var result = await SqlMapper.QueryAsync<QcPageStatusVM>(con, "usp_GetQcPageStatus",
+                        new { Type = type, UserIds = string.Join(",", ids) }, commandType: CommandType.StoredProcedure);
+                    return result?.ToList() ?? new List<QcPageStatusVM>();
+                }
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new List<QcPageStatusVM>();
+            }
+        }
+
         public async Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type, string EmailId)
         {
             try
@@ -3100,9 +3125,10 @@ Values
                     parameters.Add("@Type", type);
                     parameters.Add("@CreatedBy", CreatedBy);
                     parameters.Add("@source", source);
-                    var result = await SqlMapper.QueryAsync<ToalInterviewerInterviewDetails>(con, "usp_UpdateRedMarkeredInterviewerstatus", parameters,
+                    // RowsChanged = rows moved; 0 means nothing changed (unknown interviewer). NULL from an older procedure.
+                    var changed = await con.QueryFirstOrDefaultAsync<int?>("usp_UpdateRedMarkeredInterviewerstatus", parameters,
                         commandType: CommandType.StoredProcedure, commandTimeout: 600);
-                    return true;
+                    return changed == null || changed.Value > 0;
                 }
             }
             catch (SqlException e)

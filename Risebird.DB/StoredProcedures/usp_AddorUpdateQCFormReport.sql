@@ -36,9 +36,10 @@ CREATE PROCEDURE usp_AddorUpdateQCFormReport
 @IsReportBlocked bit,
 @Payment int,
 @VideoEnable bit,
-@QCReward bit
-AS      
-BEGIN      
+@QCReward bit,
+@SourcePage varchar(30) = NULL   -- QC Tracking: 'HighRisk' from the High-Risk Reports tab; stored on the first save only
+AS
+BEGIN
 Declare @Userid int       
 Select @Userid=id From UserList where Emailid=@Emailid      
 IF EXISTS(Select 1 from Trans_QCFormReport where Interviewid=@Interviewid)      
@@ -62,7 +63,12 @@ IsBackgroundnoise,IsPoorinterviewerinfrastructure,IsPoorhandlingcandidatequery,I
 IsSuspiciousappfound,IsLipsyncissue,Addedon,Redflags,ModifiedOn,ModifiedBy,InterviewerAction,IsReportBlocked,VideoEnable,Payment,QCReward) values(@Interviewid,@Userid,@IsCodingPresent,@IsVideoClearQuality,@IsInterviewerCommunicationClear,@IsSufficientVideoDuration,      
 @IsInterviewStructured,@IsScoringrubriccorrect,@IsQuestionswithtime,@IsCommentfilled,@IsMeetingStatusfilled,@IsRelevancequestions,@IsDelayresuminginterview,      
 @IsBackgroundnoise,@IsPoorinterviewerinfrastructure,@IsPoorhandlingcandidatequery,@IsPersonalquestions,@IsAugmenting,@IsBiasedView,@IsLettingcandidatespeak,      
-@IsSuspiciousappfound,@IsLipsyncissue,GetDate(),@Redflags,GetDate(),@Userid,0,@IsReportBlocked,@VideoEnable,@Payment,@QCReward)      
-end      
-END         
+@IsSuspiciousappfound,@IsLipsyncissue,GetDate(),@Redflags,GetDate(),@Userid,0,@IsReportBlocked,@VideoEnable,@Payment,@QCReward)
+-- Page of the first save (QC Activity counts the form under that page); skipped while the column is missing.
+Declare @NewQcFormId int = SCOPE_IDENTITY()
+IF NULLIF(LTRIM(RTRIM(@SourcePage)), '') IS NOT NULL AND COL_LENGTH(N'dbo.Trans_QCFormReport', N'SourcePage') IS NOT NULL
+    EXEC sp_executesql N'UPDATE dbo.Trans_QCFormReport SET SourcePage = @Page WHERE id = @Id',
+        N'@Page varchar(30), @Id int', @Page = @SourcePage, @Id = @NewQcFormId
+end
+END
 GO

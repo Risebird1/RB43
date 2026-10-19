@@ -165,6 +165,12 @@ builder.Services.AddScoped<IQCActivityDashboardRepository, QCActivityDashboardRe
 builder.Services.AddScoped<IQCActivityDashboardService, QCActivityDashboardService>();
 builder.Services.AddScoped<IInterviewerCoachingRepository, InterviewerCoachingRepository>();
 builder.Services.AddScoped<IInterviewerCoachingService, InterviewerCoachingService>();
+builder.Services.AddScoped<IInterviewerMyQualityRepository, InterviewerMyQualityRepository>();
+builder.Services.AddScoped<IInterviewerMyQualityService, InterviewerMyQualityService>();
+// Deduction review (My Quality phase 2). Rules default to the spec values; override under "DeductionReview" in appsettings.
+builder.Services.AddSingleton(builder.Configuration.GetSection("DeductionReview").Get<Risebird.Entities.ViewModel.DeductionReviewSettings>() ?? new Risebird.Entities.ViewModel.DeductionReviewSettings());
+builder.Services.AddScoped<IDeductionReviewRepository, DeductionReviewRepository>();
+builder.Services.AddScoped<IDeductionReviewService, DeductionReviewService>();
 builder.Services.AddScoped<ITrialJudgmentRepository, TrialJudgmentRepository>();
 builder.Services.AddScoped<ITrialJudgmentService, TrialJudgmentService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();

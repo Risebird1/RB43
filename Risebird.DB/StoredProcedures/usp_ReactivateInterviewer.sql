@@ -37,7 +37,7 @@ BEGIN
     -- channel) memberships are left as-is and must be re-enabled deliberately if required.
 
     INSERT INTO RedMarkerStatusDetails (InterviewerUserid, IRFId, Comment, Type, CreatedOn, CreatedBy, Status)
-    VALUES (@UserId, 0, 'Reactivated by admin', 'TotalInterview', GETDATE(), @ReactivatedBy, 0)
+    VALUES (@UserId, 0, 'Reactivated by admin', 'TotalInterview', DATEADD(MINUTE, 330, GETUTCDATE()), @ReactivatedBy, 0)   -- IST, like the other writers
 
     -- QC Activity: who reactivated the interviewer (skipped while the log table is missing).
     IF OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL

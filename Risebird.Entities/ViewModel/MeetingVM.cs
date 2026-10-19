@@ -258,6 +258,8 @@ namespace Risebird.Entities.ViewModel
         public string ProfileType { get; set; }
         public string CompentencyLevel { get; set; }
         public int InterviewerProfileId { get; set; }
+        /// <summary>UserList.id of the interviewer (Suspicious list: Undo suspicious sends this).</summary>
+        public int InterviewerUserId { get; set; }
         public string NickName { get; set; }
         public string Name { get; set; }
         public string CompanyType { get; set; }
@@ -468,6 +470,15 @@ namespace Risebird.Entities.ViewModel
         public string Riskcategory { get; set; }
         public string NonAIreasoning { get; set; }
 
+        // ---- Potential Risk by Candidate: QC decision on the interviewer (usp_PotentialRiskByCandidate, appended) ----
+        /// <summary>Interviewer active (UserList.IsActive); null when not loaded (treated as active).</summary>
+        public bool? InterviewerIsActive { get; set; }
+        /// <summary>Latest Potential Risk decision: 1 Under review, 2 Reviewed, 3 Removed; null = pending.</summary>
+        public int? PotentialRiskStatus { get; set; }
+        public string PotentialRiskStatusBy { get; set; }
+        public DateTime? PotentialRiskStatusOn { get; set; }
+        public string PotentialRiskStatusComment { get; set; }
+
     }
 
     public class VedioComments
@@ -534,7 +545,7 @@ namespace Risebird.Entities.ViewModel
         public string PrimarySkill { get; set; }
         public string sCreatedBy { get; set; }
         public bool IsEditable { get; set; }
-      
+
 
     }
     public class ZoomMeetingHistoryDetails

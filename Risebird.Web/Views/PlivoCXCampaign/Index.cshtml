@@ -34,11 +34,11 @@
                             <th>Source</th>
                             <th>Agent</th>
                             <th>Status</th>
-                            <th class="num">Cand.</th>
-                            <th class="num">Booked</th>
-                            <th class="num">Not booked</th>
-                            <th class="num">Cold</th>
-                            <th class="num">Pending</th>
+                            <th class="pcx-num">Cand.</th>
+                            <th class="pcx-num">Booked</th>
+                            <th class="pcx-num">Not booked</th>
+                            <th class="pcx-num">Cold</th>
+                            <th class="pcx-num">Pending</th>
                             <th>Created</th>
                             <th></th>
                         </tr>
@@ -59,11 +59,11 @@
                                 </td>
                                 <td>@(c.AgentName ?? "—")</td>
                                 <td><span class="pcx-chip @c.Status">@c.Status</span></td>
-                                <td class="num">@c.Candidates</td>
-                                <td class="num">@c.Booked</td>
-                                <td class="num">@c.NotBooked</td>
-                                <td class="num">@c.Cold</td>
-                                <td class="num">@c.Pending</td>
+                                <td class="pcx-num">@c.Candidates</td>
+                                <td class="pcx-num">@c.Booked</td>
+                                <td class="pcx-num">@c.NotBooked</td>
+                                <td class="pcx-num">@c.Cold</td>
+                                <td class="pcx-num">@c.Pending</td>
                                 <td>
                                     <div>@created.ToString("dd MMM")</div>
                                     <div class="pcx-muted pcx-small">@c.CreatedBy</div>

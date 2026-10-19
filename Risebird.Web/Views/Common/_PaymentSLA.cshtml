@@ -25,7 +25,8 @@
     function PaymentSLADetails(interviewid,candidateName, interviewer, isapproved, pagetype, isqcDone, techqc,revertSLA ) {
         $.ajax({
             url: '/Interview/GetPaymentSlaDetails',
-            data: { 'interviewid': interviewid, 'candidateName': candidateName, 'interviewer': interviewer, 'isapproved': isapproved, 'pagetype': pagetype, 'isQcDone': isqcDone, 'techqc': techqc,'revertSLA':revertSLA },
+            // returnTab: pages with tabs (Potential Risk by Candidate, High-Risk Reports) set window.rbReturnTab so the save comes back to the same tab.
+            data: { 'interviewid': interviewid, 'candidateName': candidateName, 'interviewer': interviewer, 'isapproved': isapproved, 'pagetype': pagetype, 'isQcDone': isqcDone, 'techqc': techqc,'revertSLA':revertSLA, 'returnTab': (window.rbReturnTab || '') },
             type: "GET",
             success: function (data) {
                 openPaymentSLAModel();

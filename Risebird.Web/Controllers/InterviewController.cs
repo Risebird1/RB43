@@ -6454,6 +6454,11 @@ namespace Risebird.Web.Controllers
                         {
                             return RedirectToAction("SecureReport", "Interview", new { interviewId = model.Interviewid, irfId = model.IRFId, emailid = model.Emailid, id = model.uniqueid });
                         }
+                        else if (model.Type == "HighRisk")
+                        {
+                            // High-Risk Interviewers, Reports tab (QC Tracking Delta 4).
+                            return RedirectToAction("AutoRemovalMonitor", "Dashboard", new { view = "reports" });
+                        }
                         else
                         {
                             return RedirectToAction("ResolvedRedFlagsInterviews");
@@ -6892,7 +6897,7 @@ namespace Risebird.Web.Controllers
         }
         #region Redo Interviews
         [HttpGet]
-        public async Task<IActionResult> RedoInterviewDetails(int interviewid, string interviewstatus, string type, string uniqueid)
+        public async Task<IActionResult> RedoInterviewDetails(int interviewid, string interviewstatus, string type, string uniqueid, string returnTab = null)
         {
             var model = new RedoInterviewVM();
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -6906,7 +6911,7 @@ namespace Risebird.Web.Controllers
                 model.type = type;
                 model.ModifiedBy = emailId;
                 model.uniqueid = uniqueid;
-                if (interviewstatus.ToLower() == "Selected")
+                if (string.Equals(interviewstatus?.Trim(), "Selected", StringComparison.OrdinalIgnoreCase))
                 {
                     model.Inappropriate = "Selection";
                 }
@@ -6917,6 +6922,11 @@ namespace Risebird.Web.Controllers
                 var _interview = await _meetingService.GetRedoInterviewDetailsById(interviewid);
                 if (_interview != null)
                 {
+                    // Reopening an interview that already has a redo: keep the page, session and actor of this request,
+                    // so the save returns to the page it came from (and is attributed to it) instead of Completed Interviews.
+                    _interview.type = type;
+                    _interview.uniqueid = uniqueid;
+                    _interview.ModifiedBy = emailId;
                     model = _interview;
                 }
                 else
@@ -6925,6 +6935,7 @@ namespace Risebird.Web.Controllers
                     model.HandsOfCoding = "Notasperrequirement";
                 }
                 model.IRFId = interviewdetails.IRFId;
+                model.ReturnTab = returnTab;
             }
             return PartialView(model);
         }
@@ -6938,6 +6949,8 @@ namespace Risebird.Web.Controllers
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
                 model.ModifiedBy = emailId;
+                // QC Activity page: Potential Risk by Candidate / High-Risk Reports tab (InterviewerActionLog Source suffix).
+                model.SourcePage = RedoInterviewVM.QcSourcePageFor(model.type);
                 var result = await _meetingService.SaveRedoInterviewDetails(model);
 
                 if (result)
@@ -6999,7 +7012,13 @@ namespace Risebird.Web.Controllers
             }
             else if (model.type == "PotentialRiskRCandidate")
             {
+                if (!string.IsNullOrWhiteSpace(model.ReturnTab))
+                    return RedirectToAction("PotentialRiskByCandidate", "Dashboard", new { tab = model.ReturnTab });
                 return RedirectToAction("PotentialRiskByCandidate", "Dashboard");
+            }
+            else if (model.type == "HighRisk")
+            {
+                return RedirectToAction("AutoRemovalMonitor", "Dashboard", new { view = "reports" });
             }
             else if (model.type == "PublicFeedbackCandidate")
             {
@@ -8413,7 +8432,7 @@ namespace Risebird.Web.Controllers
         }
         #region Payment SLA
         [HttpGet]
-        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string candidateName, string interviewer, bool isapproved, string pagetype, string type, bool isQcDone, bool techqc, bool revertSLA)
+        public async Task<IActionResult> GetPaymentSlaDetails(int interviewid, string candidateName, string interviewer, bool isapproved, string pagetype, string type, bool isQcDone, bool techqc, bool revertSLA, string returnTab = null)
         {
             try
             {
@@ -8439,6 +8458,7 @@ namespace Risebird.Web.Controllers
                         model.Recommendation = "Shortlist";
                 }
                 model.Pagetype = pagetype;
+                model.ReturnTab = returnTab;
                 //await SetPaymentSLADropDown(model);
                 await SetInitialValue(model);
                 return PartialView(model);
@@ -8495,7 +8515,14 @@ namespace Risebird.Web.Controllers
                     }
                     else if (model.Pagetype == "PotentailRiskCandidate")
                     {
+                        if (!string.IsNullOrWhiteSpace(model.ReturnTab))
+                            return RedirectToAction("PotentialRiskByCandidate", "DashBoard", new { tab = model.ReturnTab });
                         return RedirectToAction("PotentialRiskByCandidate", "DashBoard");
+                    }
+                    else if (model.Pagetype == "HighRisk")
+                    {
+                        // High-Risk Interviewers, Reports tab (QC Tracking Delta 4).
+                        return RedirectToAction("AutoRemovalMonitor", "Dashboard", new { view = "reports" });
                     }
                     else if (model.Pagetype == "PotentailRiskClient")
                     {
@@ -8938,9 +8965,12 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> RemoveOrShortlistInterviewerFromIRF(int irfid, string interviewer, string action = null)
+        public async Task<JsonResult> RemoveOrShortlistInterviewerFromIRF(int irfid, string interviewer, string action = null, string comment = null)
         {
-            var result = await _meetingService.RemoveOrShortlistInterviewerFromIRF(irfid, interviewer, action);
+            // Interviewer Monitoring (QC Tracking Delta 5): the session user and the dialog's comment are recorded, so
+            // "who removed whom" can be answered (TransInterviewerAuditLog MonitoringRemoved / MonitoringShortlisted).
+            var actedBy = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "");
+            await _meetingService.RemoveOrShortlistInterviewerFromIRFWithAudit(irfid, interviewer, action, actedBy, comment);
             return Json("success");
         }
         [HttpPost]

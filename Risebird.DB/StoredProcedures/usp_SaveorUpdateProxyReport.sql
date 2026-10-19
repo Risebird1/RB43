@@ -32,6 +32,10 @@ if(@IsQCdone=1)
 begin
 set @Qcdoneby=@emailId
 end
+-- QC Activity (ProxyForm): an update overwrites Qcdoneby and keeps the first CreatedBy, so every
+-- save is also logged in InterviewerActionLog (Reason starts "Interview #<id>:", read by
+-- usp_QCActivity_CollectRows). Skipped while the log table is missing.
+Declare @ProxyIsUpdate bit = CASE WHEN EXISTS (Select 1 From ProxyReport where interviewid=@InterviewId) THEN 1 ELSE 0 END
 
 IF EXISTS (Select 1 FRom ProxyReport where interviewid=@InterviewId)  
 begin
@@ -46,5 +50,20 @@ VoiceImpostering,SusipicousDevices,SuspiciousVoice,SuspiciousEnvironment,Created
 values(@interviewid,@isProxyCandidate,@EyeMovement,@LipsMovement,@CandidateDesktop,@LinkedinPhoto,@HeadMovement,@LatencyCheck,
 @VoiceImpostering,@SusipicousDevices,@SuspiciousVoice,@SuspiciousEnvironment,@emailId,@CreatedOn,@IsQCdone,@Qcdoneby,@ProxyvotingCount)
 end
+
+IF OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL AND NULLIF(LTRIM(RTRIM(@emailId)), '') IS NOT NULL
+BEGIN
+    Declare @ProxyIvEmail varchar(200) = (Select TOP 1 LTRIM(RTRIM(interviewer)) From InterviewMeetings where id=@InterviewId)
+    INSERT INTO dbo.InterviewerActionLog (InterviewerUserId, InterviewerEmail, ActionType, Reason, ActedBy, Source)
+    SELECT (Select TOP 1 ul.id From UserList ul where ul.EmailId=@ProxyIvEmail ORDER BY ul.id DESC),
+           @ProxyIvEmail,
+           'ProxyForm',
+           LEFT(N'Interview #' + CAST(@InterviewId AS NVARCHAR(20)) + N': proxy form '
+                + CASE WHEN @ProxyIsUpdate = 1 THEN N'updated' ELSE N'filled' END
+                + N'; proxy candidate: ' + CASE WHEN @isProxyCandidate = 1 THEN N'yes' ELSE N'no' END
+                + CASE WHEN @IsQCdone = 1 THEN N'; QC done' ELSE N'' END, 500),
+           LEFT(LTRIM(RTRIM(@emailId)), 200),
+           'usp_SaveorUpdateProxyReport'
+END
 END
 GO
