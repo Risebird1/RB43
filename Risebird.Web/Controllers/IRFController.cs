@@ -8089,9 +8089,9 @@ namespace Risebird.Web.Controllers
                     _ => 0
                 };
             }
-            // A client channel created with a plan price is a marketplace channel. Requires the updated
-            // usp_CreateSkillChannelFromTemplate (declaring @IsMarketPlaceChannel) on the database.
-            model.IsMarketPlaceChannel = model.RateComputedForClient > 0;
+            // Marketplace channel only when created from Template/Marketplace (its popup posts IsMarketPlaceChannel)
+            // and a plan price applies; Template/Index creates normal channels.
+            model.IsMarketPlaceChannel = model.IsMarketPlaceChannel && model.RateComputedForClient > 0;
         }
 
         //[Authorize]
@@ -8100,6 +8100,9 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> CreateInterviewLink(IRFVm model)
         {
             string emailId = string.Empty;
+            // The popup posts the template name as JDTiltle; use it in messages. Failures return to the page used.
+            if (string.IsNullOrEmpty(model.TemplateName)) model.TemplateName = model.JDTiltle;
+            var templatePage = model.IsMarketPlaceChannel ? "Marketplace" : "Index";
             try
             {
                 if (!string.IsNullOrEmpty(model.UniqueId) && !string.IsNullOrEmpty(model.PublicUserEmailId) && !string.IsNullOrEmpty(model.AccessType) && model.AccessType == "Public")
@@ -8145,7 +8148,7 @@ namespace Risebird.Web.Controllers
                             if (virusScanResult > 0)
                             {
                                 TempData["SuccessErrorCloneTemplateMessage"] = $"File upload failed. Virus Detected! Failed to create Skills Channel from {model.TemplateName}!";
-                                return RedirectToAction("Index", "Template");
+                                return RedirectToAction(templatePage, "Template");
                             }
 
                         }
@@ -8247,7 +8250,7 @@ namespace Risebird.Web.Controllers
                                     if (virusScanResult > 0)
                                     {
                                         TempData["SuccessErrorCloneTemplateMessage"] = $"File upload failed. Virus Detected! Failed to create Skills Channel from {model.TemplateName}!";
-                                        return RedirectToAction("Index", "Template");
+                                        return RedirectToAction(templatePage, "Template");
                                     }
 
                                 }
@@ -8293,7 +8296,7 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             TempData["SuccessErrorCloneTemplateMessage"] = $"Failed to create Skills Channel from {model.TemplateName}!";
-                            return RedirectToAction("Index", "Template");
+                            return RedirectToAction(templatePage, "Template");
                         }
                     }
                     else
@@ -8311,7 +8314,7 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {model.TemplateName}; userEmailId : {emailId}");
                 //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorCloneTemplateMessage"] = "Failed to create Skills Channel!";
-                return RedirectToAction("Index", "Template");
+                return RedirectToAction(templatePage, "Template");
             }
         }
         public string GenerateRandomstring()

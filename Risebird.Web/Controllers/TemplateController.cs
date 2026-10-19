@@ -506,7 +506,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client" || profileName == "SeniorInterviewerManagement")
                     {
                         if (filter != null)
                         {
@@ -529,6 +529,28 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+
+        /// <summary>
+        /// Marketplace: the same template list and "Create interview link" popup as Index, but channels created
+        /// from here are marketplace channels (the popup posts IsMarketPlaceChannel = true).
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> Marketplace(string emailId = null, string uniqueId = null, string type = null, string profile = null)
+        {
+            ViewBag.IsMarketplace = true;
+            var result = await Index(emailId, uniqueId, type, profile);
+            if (result is ViewResult view) view.ViewName = "Index";
+            return result;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Marketplace(ClonableTemplatesFilter filter)
+        {
+            var result = await Index(filter);
+            if (result is RedirectToActionResult redirect && redirect.ActionName == "Index" && redirect.ControllerName == null)
+                redirect.ActionName = "Marketplace";
+            return result;
         }
 
 
