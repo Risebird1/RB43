@@ -41,12 +41,15 @@ public class PaymentTicketAIReviewJob
     private readonly ISupportService _supportService;
     private readonly IAssistantServiceHelper _assistantServiceHelper;
 
+    private readonly IHttpClientFactory _httpClientFactory;
+
     public PaymentTicketAIReviewJob(
         ILoggerFactory loggerFactory,
         IApplicationErrorLogger applicationErrorLogger,
         ISupportService supportService,
-        IAssistantServiceHelper assistantServiceHelper)
+        IAssistantServiceHelper assistantServiceHelper, IHttpClientFactory httpClientFactory)
     {
+        _httpClientFactory = httpClientFactory;
         _logger = loggerFactory.CreateLogger<PaymentTicketAIReviewJob>();
         _applicationErrorLogger = applicationErrorLogger;
         _supportService = supportService;
@@ -81,7 +84,7 @@ public class PaymentTicketAIReviewJob
                     {
                         try
                         {
-                            using var http = new HttpClient();
+                            using var http = _httpClientFactory.CreateClient();
                             rawTranscript = await http.GetStringAsync(ticket.RawTranscriptUrl);
                         }
                         catch (Exception ex)

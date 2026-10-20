@@ -27,7 +27,6 @@
     <PackageReference Include="ExcelDataReader" />
     <PackageReference Include="HtmlToPdfConverter.Core" />
     <PackageReference Include="iTextSharp" />
-    <PackageReference Include="MediaToolkit" />
     <PackageReference Include="Microsoft.ApplicationInsights" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
@@ -38,13 +37,11 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
     <PackageReference Include="OfficeOpenXml.Core.ExcelPackage" />
-    <PackageReference Include="OfficeOpenXml.Extends" />
     <PackageReference Include="PdfPig" />
     <PackageReference Include="RestClient" />
     <PackageReference Include="Twilio" />
     <PackageReference Include="Twilio.AspNet.Core" />
     <PackageReference Include="VirusTotalNet" />
-    <PackageReference Include="X.PagedList.Mvc" />
     <PackageReference Include="X.PagedList.Mvc.Core" />
   </ItemGroup>
 

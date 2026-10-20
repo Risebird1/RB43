@@ -1,3 +1,4 @@
+using System.Net.Http;
 using System;
 using System.Text;
 using Microsoft.Azure.Functions.Worker;
@@ -16,10 +17,13 @@ namespace Risebird.AzureTimerFunctions
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly ICandidateRepository _candidateRepository;
         private readonly ILogger log;
+        private readonly IHttpClientFactory _httpClientFactory;
+
         public CandidateStatusUpdateWebhookNotifierStaging(ILoggerFactory loggerFactory, IConfiguration configuration,
             IApplicationErrorLogger applicationErrorLogger,
-            ICandidateRepository candidateRepository)
+            ICandidateRepository candidateRepository, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _candidateRepository = candidateRepository;
@@ -44,7 +48,7 @@ namespace Risebird.AzureTimerFunctions
 
                         try
                         {
-                            using (HttpClient client = new HttpClient())
+                            using (HttpClient client = _httpClientFactory.CreateClient())
                             {
 
                                 var requestBody = new
@@ -92,7 +96,7 @@ namespace Risebird.AzureTimerFunctions
 
                         try
                         {
-                            using (HttpClient client = new HttpClient())
+                            using (HttpClient client = _httpClientFactory.CreateClient())
                             {
                                 if (string.IsNullOrWhiteSpace(data.Cancellationreason))
                                 {

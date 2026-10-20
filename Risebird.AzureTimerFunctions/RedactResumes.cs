@@ -26,11 +26,14 @@ namespace Risebird.AzureTimerFunctions
         private readonly IInterviewerListingSearchRepository _interviewerListingSearchRepository;
         private readonly ILogger log;
 
+        private readonly IHttpClientFactory _httpClientFactory;
+
         public RedactResumes(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
             IInterviewerRepository interviewerRepository,
             ISASUrlHelper sasUrlHelper, IAffIndaResumeParserHelper affIndaResumeParserHelper,
-            IInterviewerListingSearchRepository interviewerListingSearchRepository)
+            IInterviewerListingSearchRepository interviewerListingSearchRepository, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
@@ -64,7 +67,7 @@ namespace Risebird.AzureTimerFunctions
                         {
                             var interviewer = new InterviewerProfileVM();
 
-                            HttpClient myWebClient = new HttpClient();
+                            HttpClient myWebClient = _httpClientFactory.CreateClient();
                             string uploadedCodedResumeLink = string.Empty;
                             using (Stream myStream = myWebClient.GetStreamAsync(redactedResumeLink).Result)
                             {

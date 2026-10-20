@@ -1,3 +1,4 @@
+using Azure.Storage.Blobs.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace Risebird.Web.Services.Proctoring
             {
                 var container = azureStorageHelper.GetCloudBlobContainer(containerName).Client;
                 var prefix = $"{interviewId}/";
-                await foreach (var item in container.GetBlobsAsync(prefix: prefix).ConfigureAwait(false))
+                await foreach (var item in container.GetBlobsAsync(BlobTraits.None, BlobStates.None, prefix, default).ConfigureAwait(false))
                 {
                     // Length is often unset when listing; only skip known-empty blobs.
                     if (item.Properties?.ContentLength != null && item.Properties.ContentLength == 0)
