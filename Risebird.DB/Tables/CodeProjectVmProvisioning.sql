@@ -34,3 +34,17 @@ BEGIN
     ) ON [PRIMARY];
 END
 GO
+
+-- Session integrity: deadline lock and Bastion session monitoring
+IF COL_LENGTH('dbo.CodeProjectVmProvisioning', 'DeadlineUtc') IS NULL
+    ALTER TABLE CodeProjectVmProvisioning ADD DeadlineUtc datetime2 NULL;
+GO
+IF COL_LENGTH('dbo.CodeProjectVmProvisioning', 'LockedAtUtc') IS NULL
+    ALTER TABLE CodeProjectVmProvisioning ADD LockedAtUtc datetime2 NULL;
+GO
+IF COL_LENGTH('dbo.CodeProjectVmProvisioning', 'SeenSessionIdsJson') IS NULL
+    ALTER TABLE CodeProjectVmProvisioning ADD SeenSessionIdsJson nvarchar(max) NULL;
+GO
+IF COL_LENGTH('dbo.CodeProjectVmProvisioning', 'IntegrityFlagsJson') IS NULL
+    ALTER TABLE CodeProjectVmProvisioning ADD IntegrityFlagsJson nvarchar(max) NULL;
+GO

@@ -30,6 +30,20 @@ namespace Risebird.Entities.ViewModel
         public DateTime UpdatedAtUtc { get; set; }
         public DateTime? ReadyAtUtc { get; set; }
         public DateTime? ReleasedAtUtc { get; set; }
+        /// <summary>End of the slot plus grace, set once at handover. The account is locked after it.</summary>
+        public DateTime? DeadlineUtc { get; set; }
+        public DateTime? LockedAtUtc { get; set; }
+        public string SeenSessionIdsJson { get; set; }
+        public string IntegrityFlagsJson { get; set; }
+    }
+
+    /// <summary>Something a reviewer should know about how the session went (shown on the report, never decided automatically).</summary>
+    public class CodeProjectIntegrityFlag
+    {
+        public DateTime AtUtc { get; set; }
+        /// <summary>concurrent-sessions | many-reconnects | unexpected-user | session-after-lock</summary>
+        public string Code { get; set; }
+        public string Detail { get; set; }
     }
 
     /// <summary>

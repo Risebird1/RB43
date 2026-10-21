@@ -29,11 +29,14 @@ namespace Risebird.CommonHelper
         private readonly IApplicationErrorLogger _logger;
         private readonly HttpClient _http;
 
-        public McqAssessmentService(IConfiguration configuration, IApplicationErrorLogger logger)
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public McqAssessmentService(IConfiguration configuration, IApplicationErrorLogger logger, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _logger = logger;
-            _http = new HttpClient();
+            _http = _httpClientFactory.CreateClient();
         }
 
         private string BaseUrl => _configuration["McqAssessment:BaseUrl"]?.TrimEnd('/');

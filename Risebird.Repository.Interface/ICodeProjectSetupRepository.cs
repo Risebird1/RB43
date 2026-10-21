@@ -27,6 +27,9 @@ namespace Risebird.Repository.Interface
         /// <summary>Runs a migration script, splitting it on GO lines. Scripts are idempotent.</summary>
         Task ApplySqlScript(string script);
 
+        /// <summary>True when the newest objects of the code project migrations already exist.</summary>
+        Task<bool> CodeProjectSchemaPresent();
+
         Task UpsertStackImage(string code, string displayName, string toolchain, string galleryImageId, string osType);
 
         /// <summary>"server / database" of the connection, shown before anything is changed.</summary>

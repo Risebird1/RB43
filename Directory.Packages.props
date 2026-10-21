@@ -5,30 +5,30 @@
   </PropertyGroup>
 
   <ItemGroup Label="Testing">
-    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-    <PackageVersion Include="Moq" Version="4.20.72" />
+    <PackageVersion Include="coverlet.collector" Version="10.1.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+    <PackageVersion Include="Moq" Version="4.21.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
   </ItemGroup>
 
   <ItemGroup Label="Microsoft - ASP.NET Core 10">
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="10.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.13" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="10.0.13" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.13" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.13" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.13" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.13" />
     <PackageVersion Include="Microsoft.Extensions.Azure" Version="1.10.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
-    <PackageVersion Include="Swashbuckle.AspNetCore" Version="7.3.1" />
-    <PackageVersion Include="Twilio.AspNet.Core" Version="8.1.1" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.3.1" />
+    <PackageVersion Include="Twilio.AspNet.Core" Version="8.1.2" />
   </ItemGroup>
 
   <ItemGroup Label="Microsoft - Identity">
-    <PackageVersion Include="Microsoft.Identity.Client" Version="4.83.1" />
-    <PackageVersion Include="Microsoft.Identity.Web" Version="3.15.1" />
-    <PackageVersion Include="Microsoft.IdentityModel.Tokens" Version="8.15.0" />
+    <PackageVersion Include="Microsoft.Identity.Client" Version="4.91.1" />
+    <PackageVersion Include="Microsoft.Identity.Web" Version="4.16.1" />
+    <PackageVersion Include="Microsoft.IdentityModel.Tokens" Version="8.23.0" />
   </ItemGroup>
 
   <ItemGroup Label="Microsoft - Application Insights">
@@ -44,7 +44,7 @@
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Core" Version="2.52.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Abstractions" Version="1.3.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.3.0" />
-    <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="2.1.0" />
+    <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="2.1.1" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Storage.Blobs" Version="6.8.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.1" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Grpc" Version="2.52.0" />
@@ -55,82 +55,80 @@
   </ItemGroup>
 
   <ItemGroup Label="Microsoft - Azure SDK">
-    <PackageVersion Include="Azure.Communication.Email" Version="1.0.1" />
-    <PackageVersion Include="Azure.Identity" Version="1.17.0" />
-    <PackageVersion Include="Azure.Monitor.Query" Version="1.5.0" />
-    <PackageVersion Include="Azure.Search.Documents" Version="11.6.1" />
-    <PackageVersion Include="Azure.Storage.Blobs" Version="12.24.0" />
+    <PackageVersion Include="Azure.Communication.Email" Version="1.1.0" />
+    <PackageVersion Include="Azure.Identity" Version="1.21.0" />
+    <PackageVersion Include="Azure.Monitor.Query" Version="1.7.1" />
+    <PackageVersion Include="Azure.Search.Documents" Version="12.0.0" />
+    <PackageVersion Include="Azure.Storage.Blobs" Version="12.30.1" />
     <PackageVersion Include="Azure.Storage.Files.Shares" Version="12.22.0" />
     <PackageVersion Include="Azure.Storage.Queues" Version="12.22.0" />
     <PackageVersion Include="Microsoft.Azure.Management.DataFactory" Version="9.3.0" />
     <PackageVersion Include="Microsoft.Azure.CognitiveServices.Vision.Face" Version="2.2.0-preview" />
-    <PackageVersion Include="Microsoft.CognitiveServices.Speech" Version="1.43.0" />
-    <PackageVersion Include="Microsoft.CognitiveServices.Speech.Remoteconversation" Version="1.43.0" />
-    <PackageVersion Include="Microsoft.Graph" Version="5.105.0" />
+    <PackageVersion Include="Microsoft.CognitiveServices.Speech" Version="1.52.0" />
+    <PackageVersion Include="Microsoft.CognitiveServices.Speech.Remoteconversation" Version="1.52.0" />
+    <PackageVersion Include="Microsoft.Graph" Version="6.8.0" />
     <PackageVersion Include="Microsoft.Rest.ClientRuntime.Azure.Authentication" Version="2.4.1" />
   </ItemGroup>
 
   <ItemGroup Label="Microsoft - System">
-    <PackageVersion Include="System.Configuration.ConfigurationManager" Version="10.0.0" />
-    <PackageVersion Include="System.Data.SqlClient" Version="4.8.6" />
-    <PackageVersion Include="System.Runtime.Caching" Version="10.0.0" />
+    <PackageVersion Include="System.Configuration.ConfigurationManager" Version="10.0.13" />
+    <PackageVersion Include="System.Data.SqlClient" Version="4.9.1" />
+    <PackageVersion Include="System.Runtime.Caching" Version="10.0.13" />
     <PackageVersion Include="System.Drawing.Common" Version="10.0.10" />
   </ItemGroup>
 
   <ItemGroup Label="AWS">
-    <PackageVersion Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.3.8" />
-    <PackageVersion Include="AWSSDK.Rekognition" Version="4.0.3.8" />
-    <PackageVersion Include="AWSSDK.S3" Version="4.0.101.6" />
+    <PackageVersion Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.102.5" />
+    <PackageVersion Include="AWSSDK.Rekognition" Version="4.0.101.6" />
+    <PackageVersion Include="AWSSDK.S3" Version="4.0.104.5" />
   </ItemGroup>
 
   <ItemGroup Label="Google">
-    <PackageVersion Include="Google.Apis.Calendar.v3" Version="1.68.0.3557" />
-    <PackageVersion Include="Google.Apis.Drive.v3" Version="1.68.0.3574" />
-    <PackageVersion Include="Google.Cloud.Storage.V1" Version="4.10.0" />
+    <PackageVersion Include="Google.Apis.Calendar.v3" Version="1.77.0.4285" />
+    <PackageVersion Include="Google.Apis.Drive.v3" Version="1.77.0.4301" />
+    <PackageVersion Include="Google.Cloud.Storage.V1" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup Label="Data access">
-    <PackageVersion Include="Dapper" Version="2.1.66" />
-    <PackageVersion Include="Dapper.FluentMap" Version="2.0.0" />
+    <PackageVersion Include="Dapper" Version="2.1.89" />
+    <PackageVersion Include="Dapper.FluentMap" Version="3.6.0" />
   </ItemGroup>
 
   <ItemGroup Label="Communication">
     <PackageVersion Include="SendGrid" Version="9.29.3" />
-    <PackageVersion Include="Twilio" Version="7.8.0" />
+    <PackageVersion Include="Twilio" Version="8.1.0" />
   </ItemGroup>
 
   <ItemGroup Label="Documents and media">
-    <PackageVersion Include="Aspose.HTML" Version="25.5.0" />
+    <PackageVersion Include="Aspose.HTML" Version="26.9.0" />
     <PackageVersion Include="DinkToPdf" Version="1.0.8" />
+    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
     <PackageVersion Include="EPPlus" Version="7.6.0" />
-    <PackageVersion Include="ExcelDataReader" Version="3.7.0" />
+    <PackageVersion Include="ExcelDataReader" Version="3.9.0" />
     <PackageVersion Include="HtmlToPdfConverter.Core" Version="2.0.0" />
-    <PackageVersion Include="iTextSharp" Version="5.5.13.4" />
-    <PackageVersion Include="MediaToolkit" Version="1.1.0.1" />
-    <PackageVersion Include="PdfPig" Version="0.1.10" />
-    <PackageVersion Include="Syncfusion.DocIORenderer.Net.Core" Version="27.1.58" />
+    <PackageVersion Include="iTextSharp" Version="5.5.13.6" />
+    <PackageVersion Include="PdfPig" Version="0.1.16" />
+    <PackageVersion Include="Syncfusion.DocIORenderer.Net.Core" Version="35.1.41" />
     <PackageVersion Include="GleamTech.VideoUltimate" Version="3.6.0" />
-    <PackageVersion Include="FileTypeInterrogator" Version="1.1.0" />
+    <PackageVersion Include="FileTypeInterrogator" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup Label="Third party">
-    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageVersion Include="RestSharp" Version="112.1.0" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageVersion Include="RestSharp" Version="114.0.0" />
     <PackageVersion Include="RestClient" Version="3.1024.23771" />
     <PackageVersion Include="VoiceIt" Version="2.8.0" />
     <PackageVersion Include="VirusTotalNet" Version="2.2.0" />
-    <PackageVersion Include="Azure.Data.Tables" Version="12.11.0" />
+    <PackageVersion Include="Azure.Data.Tables" Version="12.13.0" />
     <PackageVersion Include="OfficeOpenXml.Core.ExcelPackage" Version="1.0.0" />
-    <PackageVersion Include="OfficeOpenXml.Extends" Version="1.0.6" />
-    <PackageVersion Include="X.PagedList.Mvc" Version="8.0.7" />
-    <PackageVersion Include="X.PagedList.Mvc.Core" Version="10.5.7" />
+    <PackageVersion Include="X.PagedList.Mvc.Core" Version="10.6.0" />
   </ItemGroup>
 
   <ItemGroup Label="Transitive security pins">
-    <PackageVersion Include="AWSSDK.Core" Version="4.0.100.9" />
-    <PackageVersion Include="Microsoft.Identity.Abstractions" Version="9.3.0" />
-    <PackageVersion Include="Microsoft.Kiota.Abstractions" Version="1.22.2" />
-    <PackageVersion Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.83.1" />
+    <PackageVersion Include="AWSSDK.Core" Version="4.0.102.12" />
+    <PackageVersion Include="Microsoft.Identity.Abstractions" Version="12.7.0" />
+    <PackageVersion Include="Microsoft.Kiota.Abstractions" Version="2.0.0" />
+    <PackageVersion Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.90.0" />
     <PackageVersion Include="Microsoft.Rest.ClientRuntime" Version="2.3.24" />
     <PackageVersion Include="NuGet.Packaging" Version="6.14.3" />
     <PackageVersion Include="NuGet.Protocol" Version="6.14.3" />
