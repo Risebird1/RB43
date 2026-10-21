@@ -4000,7 +4000,8 @@ namespace Risebird.CommonHelper
             decimal pendingAmount,
             DateTime lapseDate,
             string portalLink,
-            int reminderIndex)
+            int reminderIndex,
+            string ccEmail)
         {
             try
             {
@@ -4008,6 +4009,8 @@ namespace Risebird.CommonHelper
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Payments");
                 msg.Subject = $"Action Required: Complete KYC to receive ₹{pendingAmount:N0}";
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(toEmail, interviewerName));
+                if (!string.IsNullOrWhiteSpace(ccEmail))
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccEmail, null));
 
                 string risebirdLogoLink = _configuration["RisebirdDetails:RisebirdLogo"];
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "PaymentLapseKYC.html");
@@ -4029,7 +4032,8 @@ namespace Risebird.CommonHelper
             string interviewerName,
             decimal lapsedAmount,
             string month,
-            string portalLink)
+            string portalLink,
+            string ccEmail)
         {
             try
             {
@@ -4037,6 +4041,8 @@ namespace Risebird.CommonHelper
                 msg.From = new SendGrid.Helpers.Mail.EmailAddress(mailFrom, "Risebird Payments");
                 msg.Subject = $"Your Risebird payment of ₹{lapsedAmount:N0} for {month} has lapsed";
                 msg.AddTo(new SendGrid.Helpers.Mail.EmailAddress(toEmail, interviewerName));
+                if (!string.IsNullOrWhiteSpace(ccEmail))
+                    msg.AddCc(new SendGrid.Helpers.Mail.EmailAddress(ccEmail, null));
 
                 string risebirdLogoLink = _configuration["RisebirdDetails:RisebirdLogo"];
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "PaymentLapsed.html");
