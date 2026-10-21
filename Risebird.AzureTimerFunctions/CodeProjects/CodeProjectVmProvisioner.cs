@@ -117,6 +117,13 @@ namespace Risebird.AzureTimerFunctions.CodeProjects
             if (!string.IsNullOrWhiteSpace(request.OsType) && !request.OsType.StartsWith("win", StringComparison.OrdinalIgnoreCase))
                 return new CodeProjectProvisionResult { Accepted = false, Error = $"Only Windows stack images are supported (got {request.OsType})." };
 
+            // EncryptData returns "" instead of throwing when EncryptionDetails:GenericKey is missing,
+            // which would store unusable passwords and fail much later with a confusing Azure error.
+            var candidatePassword = await _encryption.EncryptData(CodeProjectVmHelper.NewPassword(16));
+            var adminPassword = await _encryption.EncryptData(CodeProjectVmHelper.NewPassword(24));
+            if (string.IsNullOrEmpty(candidatePassword) || string.IsNullOrEmpty(adminPassword))
+                return new CodeProjectProvisionResult { Accepted = false, Error = "Encryption is not configured in the functions app (EncryptionDetails:GenericKey; it must match the web app's)." };
+
             var handle = Guid.NewGuid().ToString("N");
             var names = CodeProjectVmHelper.Names(handle);
             var row = new CodeProjectVm
@@ -135,8 +142,8 @@ namespace Risebird.AzureTimerFunctions.CodeProjects
                 ReadOnlyPathsJson = Newtonsoft.Json.JsonConvert.SerializeObject(request.ReadOnlyPaths ?? new List<string>()),
                 CandidateUserName = CandidateUserName,
                 // Both generated once and persisted, so a retried VM PUT is byte-identical.
-                CandidatePasswordProtected = await _encryption.EncryptData(CodeProjectVmHelper.NewPassword(16)),
-                AdminPasswordProtected = await _encryption.EncryptData(CodeProjectVmHelper.NewPassword(24))
+                CandidatePasswordProtected = candidatePassword,
+                AdminPasswordProtected = adminPassword
             };
 
             var stored = await _repository.Add(row);   // an existing (session, question) returns its own handle
@@ -285,7 +292,7 @@ namespace Risebird.AzureTimerFunctions.CodeProjects
                 properties["securityProfile"] = new JObject
                 {
                     ["securityType"] = _options.SecurityType,
-                    ["uefiSettings"] = new JObject { ["secureBoot"] = true, ["vTPM"] = true }
+                    ["uefiSettings"] = new JObject { ["secureBootEnabled"] = true, ["vTpmEnabled"] = true }
                 };
             }
 

@@ -98,6 +98,8 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
             public List<string> PackageMirrorPrefixes { get; set; } = new List<string>();
             public bool ApplyDatabaseMigrations { get; set; } = true;
             public string ImageBuildVmSize { get; set; } = "Standard_D4s_v5";
+            /// <summary>Candidate machine size (CodeProjects:Azure:VmSize, as the provisioner uses); checked against quota before the VM smoke test.</summary>
+            public string CandidateVmSize { get; set; } = "Standard_D2s_v5";
             public int MaxParallelImageBuilds { get; set; } = 2;
             public string VnetPrefix { get; set; } = "10.240.0.0/16";
             public string CandidateSubnetPrefix { get; set; } = "10.240.0.0/20";
@@ -116,7 +118,10 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
                 string S(string k) => string.IsNullOrWhiteSpace(c["CodeProjects:Setup:" + k]) ? null : c["CodeProjects:Setup:" + k].Trim();
                 var o = new Options
                 {
-                    Location = (S("Location") ?? c["CodeProjects:Azure:Location"] ?? "centralindia").Replace(" ", "").ToLowerInvariant()
+                    // Blank values (appsettings.json ships "Location": "") fall through to the default.
+                    Location = (S("Location")
+                        ?? (string.IsNullOrWhiteSpace(c["CodeProjects:Azure:Location"]) ? null : c["CodeProjects:Azure:Location"])
+                        ?? "centralindia").Replace(" ", "").ToLowerInvariant()
                 };
                 o.ResourceGroup = S("ResourceGroup") ?? o.ResourceGroup;
                 o.ImagesResourceGroup = S("ImagesResourceGroup") ?? o.ResourceGroup;
@@ -131,6 +136,7 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
                 o.PackageMirrorPrefixes = S("PackageMirrorPrefixes")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList() ?? o.PackageMirrorPrefixes;
                 if (bool.TryParse(S("ApplyDatabaseMigrations"), out var apply)) o.ApplyDatabaseMigrations = apply;
                 o.ImageBuildVmSize = S("ImageBuildVmSize") ?? o.ImageBuildVmSize;
+                o.CandidateVmSize = string.IsNullOrWhiteSpace(c["CodeProjects:Azure:VmSize"]) ? o.CandidateVmSize : c["CodeProjects:Azure:VmSize"].Trim();
                 if (int.TryParse(S("MaxParallelImageBuilds"), out var parallel) && parallel > 0) o.MaxParallelImageBuilds = parallel;
                 o.VnetPrefix = S("VnetPrefix") ?? o.VnetPrefix;
                 o.CandidateSubnetPrefix = S("CandidateSubnetPrefix") ?? o.CandidateSubnetPrefix;
@@ -218,8 +224,20 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
                 step.Attempts = 0;
                 step.Detail = "Retrying…";
             }
+            // Resume means "try again": retry and attempt counters from earlier failures start over.
+            foreach (var key in state.Data.Keys.Where(k => k.Contains("etries", StringComparison.Ordinal) || k.Contains("ttempts", StringComparison.Ordinal)).ToList())
+                state.Data.Remove(key);
             if (!string.IsNullOrWhiteSpace(startedBy)) state.Data["startedBy"] = startedBy;
-            Log(state, $"Run {id} started or resumed by {startedBy ?? "unknown"}.");
+            state.Data["host"] = HostId;
+            // A function key stored while encryption was misconfigured reads back empty: store it again.
+            _settings.Invalidate();
+            var functionsStep = state.Steps.FirstOrDefault(s => s.Key == "functionsApp");
+            if (functionsStep?.Status == CodeProjectSetupStepStatus.Done && string.IsNullOrEmpty(_settings.Get(CodeProjectSettingNames.FunctionsKey)))
+            {
+                functionsStep.Status = CodeProjectSetupStepStatus.Pending;
+                functionsStep.Detail = "Storing the function key again…";
+            }
+            Log(state, $"Run {id} started or resumed by {startedBy ?? "unknown"} on {HostId}; only this host advances it.");
             await _setup.Save(id, CodeProjectSetupStatus.Running, JsonConvert.SerializeObject(state));
 
             await TickAsync(ct);
@@ -249,9 +267,13 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
         {
             var run = await _setup.GetLatest();
             if (run == null || run.Status != CodeProjectSetupStatus.Running) return;
+            var state = Deserialize(run.StateJson);
+            // The local functions host and the deployed app share the database and both run this
+            // timer. Only the host that started (or last resumed) the run advances it, so a host with
+            // different configuration or older code never works on someone else's run.
+            if (state.Data.TryGetValue("host", out var owner) && !string.Equals(owner, HostId, StringComparison.OrdinalIgnoreCase)) return;
             if (!await _setup.TryLease(run.Id, leaseSeconds: 420)) return;
 
-            var state = Deserialize(run.StateJson);
             var defs = Steps();
             EnsureSteps(state, defs);
             var clock = Stopwatch.StartNew();
@@ -357,6 +379,10 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
             if (state.Log.Count > 200) state.Log.RemoveRange(0, state.Log.Count - 200);
         }
 
+        /// <summary>The deployed app's site name in Azure; "local:{machine}" for a functions host on a developer machine.</summary>
+        private static string HostId =>
+            Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME") is string site && site.Length > 0 ? "azure:" + site : "local:" + Environment.MachineName;
+
         private static string Get(CodeProjectSetupState s, string key) => s.Data.TryGetValue(key, out var v) ? v : null;
 
         // ---------------------------------------------------------------- ARM helpers
@@ -410,6 +436,11 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
         {
             if (!_o.ApplyDatabaseMigrations)
                 return Outcome.Skip("CodeProjects:Setup:ApplyDatabaseMigrations is false; apply the three AddCodeProject*.sql migrations yourself.");
+            // The scripts also redefine shared procedures (question selection, VM lists). Re-running
+            // them later would overwrite any change made to those procedures since, so they are
+            // applied only to a database that does not have the code project schema yet.
+            if (await _setup.CodeProjectSchemaPresent())
+                return Outcome.Done($"Code project schema already present in {_setup.DescribeDatabase()}; migrations not re-applied, existing objects left untouched.");
             foreach (var file in new[] { "AddCodeProjectQuestionSupport.sql", "AddCodeProjectVmProvisioning.sql", "AddCodeProjectInfraSetup.sql" })
                 await _setup.ApplySqlScript(ReadMigration(file));
             return Outcome.Done($"Migrations applied to {_setup.DescribeDatabase()}.");
@@ -896,7 +927,9 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
                     }
                 },
                 ["vmProfile"] = new JObject { ["vmSize"] = _o.ImageBuildVmSize, ["osDiskSizeGB"] = 128 },
-                ["errorHandling"] = new JObject { ["onCustomizerError"] = "abort", ["onValidationError"] = "cleanup" }
+                // "cleanup": a failed build deletes its build VM and container instead of keeping them for
+                // debugging, so a failure never leaves cores held (quota) or a D4s_v5 running (cost).
+                ["errorHandling"] = new JObject { ["onCustomizerError"] = "cleanup", ["onValidationError"] = "cleanup" }
             }
         };
 
@@ -905,8 +938,10 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
             var identityId = Get(s, $"identity.{BuilderIdentity}.id");
             var lines = new List<string>();
             var done = 0;
-            var building = _o.Stacks.Count(st => Get(s, $"image.{st.Code}.state") == "building");
+            var now = DateTime.UtcNow;
 
+            // First pass: make sure every template exists and read what Azure says about each build.
+            var templates = new List<(CodeProjectStack Stack, string Name, string Path, JToken Last)>();
             foreach (var stack in _o.Stacks)
             {
                 var name = CodeProjectStackCatalog.ImageTemplateName(stack);
@@ -918,10 +953,22 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
                     return Outcome.Fail($"{stack.Code} template: {provisioningError ?? template.Error}");
                 }
                 if (!template.Ready) { lines.Add($"{stack.Code}: validating template"); continue; }
+                templates.Add((stack, name, path, template.Resource.Body?["properties"]?["lastRunStatus"]));
+            }
 
-                var last = template.Resource.Body?["properties"]?["lastRunStatus"];
+            // Build slots are counted from Azure's own run states, plus builds started in the last few
+            // minutes that Azure may not report as Running yet.
+            bool JustStarted(CodeProjectStack st) =>
+                DateTime.TryParse(Get(s, $"image.{st.Code}.startedUtc"), null, System.Globalization.DateTimeStyles.RoundtripKind, out var at) && now - at < TimeSpan.FromMinutes(4);
+            var building = templates.Count(t => t.Last?["runState"]?.ToString() == "Running" || JustStarted(t.Stack));
+            var startedNow = 0;
+
+            foreach (var (stack, name, path, last) in templates)
+            {
                 var runState = last?["runState"]?.ToString();
                 var subState = last?["runSubState"]?.ToString();
+                // A run we just started can still show the previous run's result for a short while.
+                if (runState != "Running" && JustStarted(stack)) { lines.Add($"{stack.Code}: starting"); continue; }
                 switch (runState)
                 {
                     case "Succeeded":
@@ -936,24 +983,50 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
                         break;
                     case "Failed":
                     case "Canceled":
-                        var retries = int.TryParse(Get(s, $"image.{stack.Code}.retries"), out var r) ? r : 0;
-                        if (retries >= 1)
-                            return Outcome.Fail($"{stack.Code} image build {runState.ToLowerInvariant()}: {last?["message"]}. " +
-                                $"The customization log is in the IT_{ImgRg}_{name}* resource group's storage account (packerlogs).");
-                        s.Data[$"image.{stack.Code}.retries"] = (retries + 1).ToString();
+                        s.Data[$"image.{stack.Code}.state"] = "failed";
+                        var message = last?["message"]?.ToString() ?? "";
+                        // Each build runs a ~3.8-core Container Instances container; regional quota is
+                        // often 10 cores. Hitting it is a capacity problem, not a broken image: wait for
+                        // a free slot, at least 10 minutes apart, without spending the one real retry.
+                        var quota = message.IndexOf("Quota", StringComparison.OrdinalIgnoreCase) >= 0;
+                        var retryKey = $"image.{stack.Code}.{(quota ? "quotaRetries" : "retries")}";
+                        var retries = int.TryParse(Get(s, retryKey), out var r) ? r : 0;
+                        if (!quota && retries >= 1 && await PackerErrorTailAsync(message, ct) is string tail)
+                            return Outcome.Fail($"{stack.Code} image build {runState.ToLowerInvariant()}. From its customization.log: {tail} " +
+                                "Failed builds clean up after themselves; once the cause is fixed, click Resume.");
+                        if (retries >= (quota ? 6 : 1))
+                            return Outcome.Fail(quota
+                                ? $"{stack.Code} image build keeps hitting a quota even with a free build slot: {message}. Something else holds those cores — " +
+                                  "in the portal, open 'Container instances' and delete any vmimagebuilder-build-container in Central India whose image template is not Running, " +
+                                  "or raise the quota it names (Subscriptions → Usage + quotas → Container Instances), then click Resume."
+                                : $"{stack.Code} image build {runState.ToLowerInvariant()}: {message}. " +
+                                  "The message names the failing customizer; failed builds clean up after themselves, so fix the recipe and click Resume.");
+                        var lastRetry = DateTime.TryParse(Get(s, $"image.{stack.Code}.startedUtc"), null, System.Globalization.DateTimeStyles.RoundtripKind, out var lr) ? lr : DateTime.MinValue;
+                        if (building >= _o.MaxParallelImageBuilds || (quota && now - lastRetry < TimeSpan.FromMinutes(10)))
+                        {
+                            lines.Add($"{stack.Code}: {(quota ? $"hit quota ({retries}/6)" : "failed")}, waiting for a free build slot to retry");
+                            break;
+                        }
+                        var retryQuotaProblem = await VmQuotaProblemAsync(s, _o.ImageBuildVmSize, "An image build VM", templates.Count(t => JustStarted(t.Stack)) + startedNow, ct);
+                        if (retryQuotaProblem != null) return Outcome.Block(retryQuotaProblem);
+                        s.Data[retryKey] = (retries + 1).ToString();
                         await StartImageBuildAsync(s, stack, path, ct);
-                        lines.Add($"{stack.Code}: retrying build");
+                        startedNow++;
+                        building++;
+                        lines.Add($"{stack.Code}: retrying build{(quota ? " (quota)" : "")}");
                         break;
                     default:
-                        // Never run. Starting builds a few at a time keeps within regional vCPU quota.
-                        var requested = Get(s, $"image.{stack.Code}.state") == "building";
-                        if (!requested && building < _o.MaxParallelImageBuilds)
+                        // Never run. Starting builds a few at a time keeps within regional quotas.
+                        if (building < _o.MaxParallelImageBuilds)
                         {
+                            var quotaProblem = await VmQuotaProblemAsync(s, _o.ImageBuildVmSize, "An image build VM", templates.Count(t => JustStarted(t.Stack)) + startedNow, ct);
+                            if (quotaProblem != null) return Outcome.Block(quotaProblem);
                             await StartImageBuildAsync(s, stack, path, ct);
+                            startedNow++;
                             building++;
                             lines.Add($"{stack.Code}: build started");
                         }
-                        else lines.Add($"{stack.Code}: {(requested ? "starting" : "queued")}");
+                        else lines.Add($"{stack.Code}: queued");
                         break;
                 }
             }
@@ -962,12 +1035,95 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
             return done == _o.Stacks.Count ? Outcome.Done(summary) : Outcome.Wait(summary + " (each build takes 60–120 minutes)");
         }
 
+        /// <summary>
+        /// Checks that one more VM of this size fits the subscription's regional quotas (its family and
+        /// "Total Regional vCPUs"), counting VMs already committed but not yet visible in usage. A new
+        /// subscription often has 0 for a family; Azure then fails deep inside the image build with a
+        /// generic message, so this turns it into a clear Blocked step. Null when it fits or cannot be told.
+        /// </summary>
+        private async Task<string> VmQuotaProblemAsync(CodeProjectSetupState s, string vmSize, string purpose, int alreadyCommitted, CancellationToken ct)
+        {
+            var family = Get(s, $"vmSize.{vmSize}.family");
+            if (family == null || !int.TryParse(Get(s, $"vmSize.{vmSize}.vcpus"), out _))
+            {
+                var skus = await _arm.GetAsync($"providers/Microsoft.Compute/skus?api-version=2021-07-01&$filter=location%20eq%20%27{_o.Location}%27", ct);
+                if (!skus.IsSuccess) return null;
+                var sku = ((skus.Body?["value"] as JArray) ?? new JArray()).FirstOrDefault(x =>
+                    x["resourceType"]?.ToString() == "virtualMachines" && string.Equals(x["name"]?.ToString(), vmSize, StringComparison.OrdinalIgnoreCase));
+                if (sku == null)
+                    return $"VM size {vmSize} ({purpose}) is not offered in {_o.Location}. Choose another size (CodeProjects:Setup:ImageBuildVmSize or CodeProjects:Azure:VmSize), then click Resume.";
+                if ((sku["restrictions"] as JArray)?.Any(r => r["type"]?.ToString() == "Location") == true)
+                    return $"VM size {vmSize} ({purpose}) is not available to this subscription in {_o.Location}. Choose another size, or ask Azure support to enable it, then click Resume.";
+                family = sku["family"]?.ToString();
+                var cpus = (sku["capabilities"] as JArray)?.FirstOrDefault(c => c["name"]?.ToString() == "vCPUs")?["value"]?.ToString();
+                if (family == null || !int.TryParse(cpus, out _)) return null;
+                s.Data[$"vmSize.{vmSize}.family"] = family;
+                s.Data[$"vmSize.{vmSize}.vcpus"] = cpus;
+            }
+            var vcpus = int.Parse(Get(s, $"vmSize.{vmSize}.vcpus"));
+            var needed = vcpus * (1 + alreadyCommitted);
+
+            var usages = await _arm.GetAsync($"providers/Microsoft.Compute/locations/{_o.Location}/usages?api-version=2023-09-01", ct);
+            if (!usages.IsSuccess) return null;
+            foreach (var quotaName in new[] { family, "cores" })
+            {
+                var u = ((usages.Body?["value"] as JArray) ?? new JArray())
+                    .FirstOrDefault(x => string.Equals(x["name"]?["value"]?.ToString(), quotaName, StringComparison.OrdinalIgnoreCase));
+                if (u == null) continue;
+                var limit = u["limit"]?.Value<long>() ?? 0;
+                var used = u["currentValue"]?.Value<long>() ?? 0;
+                if (limit - used >= needed) continue;
+                var label = u["name"]?["localizedValue"]?.ToString() ?? quotaName;
+                return $"{purpose} needs {needed} vCPUs of '{label}' in {_o.Location}, but the quota is {limit} with {used} in use. " +
+                    $"Request at least {used + needed} (more if you expect many candidates at once: 2 vCPUs each for {_o.CandidateVmSize}, plus 4 per image build) — " +
+                    $"portal: Subscriptions → {s.Data.GetValueOrDefault("subscriptionName")} → Usage + quotas → Compute, region {_o.Location}, '{label}' → New quota request. Then click Resume.";
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Image Builder's failure message only points at customization.log in its staging storage
+        /// account. This reads that log (keys via ARM, so no extra permissions) and returns its last
+        /// error lines, so the dashboard shows what actually failed. Null when it cannot be read.
+        /// </summary>
+        private async Task<string> PackerErrorTailAsync(string message, CancellationToken ct)
+        {
+            var m = System.Text.RegularExpressions.Regex.Match(message ?? "",
+                @"(?<account>/subscriptions/[^\s]+?/providers/Microsoft\.Storage/storageAccounts/(?<name>[a-z0-9]+))/blobServices/default/containers/(?<container>[^/\s]+)/(?<blob>[^\s]+?\.log)");
+            if (!m.Success) return null;
+            try
+            {
+                var keys = await _arm.PostAsync($"https://management.azure.com{m.Groups["account"].Value}/listKeys?{StorageApi}", null, ct);
+                var key = (keys.Body?["keys"] as JArray)?.FirstOrDefault()?["value"]?.ToString();
+                if (string.IsNullOrEmpty(key)) return null;
+                var name = m.Groups["name"].Value;
+                var blob = new Azure.Storage.Blobs.BlobClient(new Uri($"https://{name}.blob.core.windows.net/{m.Groups["container"].Value}/{m.Groups["blob"].Value}"),
+                    new Azure.Storage.StorageSharedKeyCredential(name, key));
+                var text = (await blob.DownloadContentAsync(ct)).Value.Content.ToString();
+                var prefix = new System.Text.RegularExpressions.Regex(@"^\[[0-9a-f-]+\]\s+PACKER\s+(\d{4}/\d\d/\d\d \d\d:\d\d:\d\d\s+)?(ui( error)?:\s*)?");
+                var errors = text.Replace("\r", "").Split('\n')
+                    .Where(l => l.IndexOf("error", StringComparison.OrdinalIgnoreCase) >= 0 || l.IndexOf("failed", StringComparison.OrdinalIgnoreCase) >= 0 || l.Contains("Exception"))
+                    .Where(l => l.IndexOf("ErrorAction", StringComparison.OrdinalIgnoreCase) < 0 && !l.Contains("On error:") && !l.Contains("error-count"))
+                    .Select(l => prefix.Replace(l.Trim(), ""))
+                    .Select(l => l.Length > 400 ? l.Substring(0, 400) + "…" : l)
+                    .Distinct()
+                    .TakeLast(8)
+                    .ToList();
+                return errors.Count == 0 ? null : string.Join(" ⏎ ", errors);
+            }
+            catch (Exception ex) when (ex is Azure.RequestFailedException || ex is HttpRequestException || ex is UriFormatException)
+            {
+                return null;
+            }
+        }
+
         private async Task StartImageBuildAsync(CodeProjectSetupState s, CodeProjectStack stack, string templatePath, CancellationToken ct)
         {
             var run = await _arm.PostAsync($"{templatePath}/run?{ImageBuilderApi}", null, ct);
             if (!run.IsSuccess && run.ErrorCode != "Conflict")
                 throw new InvalidOperationException($"{stack.Code}: could not start the image build: {run.Error}");
             s.Data[$"image.{stack.Code}.state"] = "building";
+            s.Data[$"image.{stack.Code}.startedUtc"] = DateTime.UtcNow.ToString("o");
         }
 
         // ---------------------------------------------------------------- 11. registry
@@ -1243,7 +1399,10 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
                     return Outcome.Skip($"Found {site["name"]} but could not read its host name or a function key.");
 
                 await _settingsRepository.Set(CodeProjectSettingNames.FunctionsBaseUrl, $"https://{host}/api");
-                await _settingsRepository.Set(CodeProjectSettingNames.FunctionsKey, await _encryption.EncryptData(value), isSecret: true);
+                var protectedKey = await _encryption.EncryptData(value);
+                if (string.IsNullOrEmpty(protectedKey))
+                    return Outcome.Block("Could not encrypt the function key: set EncryptionDetails:GenericKey in the functions app to the same value as the web app's, then click Resume.");
+                await _settingsRepository.Set(CodeProjectSettingNames.FunctionsKey, protectedKey, isSecret: true);
                 _settings.Invalidate();
                 return Outcome.Done($"Web app will call https://{host}/api (key 'codeprojects-web').");
             }
@@ -1408,6 +1567,8 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
             var handle = Get(s, "vmSmoke.handle");
             if (handle == null)
             {
+                var quotaProblem = await VmQuotaProblemAsync(s, _o.CandidateVmSize, "A candidate machine", 0, ct);
+                if (quotaProblem != null) return Outcome.Block(quotaProblem);
                 using var zip = new MemoryStream();
                 using (var archive = new System.IO.Compression.ZipArchive(zip, System.IO.Compression.ZipArchiveMode.Create, leaveOpen: true))
                 using (var writer = new StreamWriter(archive.CreateEntry("README.md").Open()))
