@@ -55,7 +55,7 @@ namespace Risebird.AzureTimerFunctions
         }
 
         [Function("PhoneScreenCampaignScheduler")]
-        public async Task Run([TimerTrigger("0 */30 * * * *")] TimerInfo myTimer)
+        public async Task Run([TimerTrigger("0 */15 * * * *")] TimerInfo myTimer)
         {
             var baseUrl = _configuration["PhoneScreenScheduler:BaseUrl"]?.Trim().TrimEnd('/');
             var apiKey = _configuration["PhoneScreenScheduler:ApiKey"]?.Trim();
