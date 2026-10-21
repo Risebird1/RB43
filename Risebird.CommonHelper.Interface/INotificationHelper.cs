@@ -186,7 +186,8 @@ namespace Risebird.CommonHelper.Interface
             decimal pendingAmount,
             DateTime lapseDate,
             string portalLink,
-            int reminderIndex);
+            int reminderIndex,
+            string ccEmail);
 
         /// <summary>
         /// Informs an interviewer that their pending InterviewPoints for the given month have
@@ -199,6 +200,7 @@ namespace Risebird.CommonHelper.Interface
             string interviewerName,
             decimal lapsedAmount,
             string month,
-            string portalLink);
+            string portalLink,
+            string ccEmail);
     }
 }
