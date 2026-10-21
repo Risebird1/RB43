@@ -22,6 +22,7 @@ namespace Risebird.AzureTimerFunctions
         // Reminder cadence (day 0, 5, 10, 15, 20) and the hard 5-reminder cap both live on
         // KycPayoutLapseService; this job just enforces the cap defensively before sending.
         private const int LapseAfterDays = 21;
+        private const string FinanceCcEmail = "finance@risebird.io";
 
         public KycPayoutLapseReminderJob(
             ILoggerFactory           loggerFactory,
@@ -81,7 +82,8 @@ namespace Risebird.AzureTimerFunctions
                                 lapsedName,
                                 target.PendingAmount,
                                 target.Month,
-                                portalLink);
+                                portalLink,
+                                FinanceCcEmail);
 
                             continue;
                         }
@@ -102,7 +104,8 @@ namespace Risebird.AzureTimerFunctions
                             target.PendingAmount,
                             lapseDate,
                             portalLink,
-                            dueIndex);
+                            dueIndex,
+                            FinanceCcEmail);
 
                         await _kycLapseService.MarkReminderSentAsync(target.Id, dueIndex + 1);
 
