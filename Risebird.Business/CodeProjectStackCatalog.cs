@@ -109,13 +109,26 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor 3072
 Set-ExecutionPolicy Bypass -Scope Process -Force
-if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
-    Invoke-Expression ((New-Object Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+function Wait-Retry([int]$attempt) { Start-Sleep -Seconds ([Math]::Min(300, 20 * [Math]::Pow(2, $attempt))) }
+# The community feed rate-limits and has outages (503s), so everything that touches it retries with backoff.
+for ($attempt = 1; -not (Get-Command choco -ErrorAction SilentlyContinue); $attempt++) {
+    try { Invoke-Expression ((New-Object Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')) }
+    catch { if ($attempt -ge 6) { throw } ; Write-Host "Chocolatey install attempt $attempt failed: $_" ; Wait-Retry $attempt }
+    $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine')
 }
 $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine')
+# choco can exit 0 when the feed fails and nothing was installed, so success means "now listed as installed".
 function Invoke-Choco([string[]]$packageArgs) {
-    & choco install @packageArgs -y --no-progress
-    if ($LASTEXITCODE -ne 0 -and $LASTEXITCODE -ne 3010) { throw "choco install $($packageArgs -join ' ') failed ($LASTEXITCODE)" }
+    $id = $packageArgs[0]
+    for ($attempt = 1; $attempt -le 6; $attempt++) {
+        & choco install @packageArgs -y --no-progress
+        $code = $LASTEXITCODE
+        $installed = @(& choco list --limit-output --exact $id) -match ('^' + [regex]::Escape($id) + '\|')
+        if (($code -eq 0 -or $code -eq 3010) -and $installed) { return }
+        Write-Host "choco install $id attempt $attempt failed (exit $code, installed: $([bool]$installed))"
+        if ($attempt -lt 6) { Wait-Retry $attempt }
+    }
+    throw "choco install $($packageArgs -join ' ') failed after 6 attempts"
 }
 Invoke-Choco @('git')
 Invoke-Choco @('vscode')
@@ -436,12 +449,13 @@ Grant-Users 'C:\nuget'
 
         /// <summary>First customizer: tools. A restart follows so the machine PATH is complete.</summary>
         public static string[] WindowsInstallLines(CodeProjectStack stack) =>
-            Lines(WindowsCommonInstall + stack.WindowsInstallScript);
+            // Raw string literals do not end with a newline, so blocks are joined with one explicitly.
+            Lines(WindowsCommonInstall + "\n" + stack.WindowsInstallScript);
 
         /// <summary>Second customizer: writes the seed project and pre-downloads its dependencies machine-wide.</summary>
         public static string[] WindowsSeedLines(CodeProjectStack stack)
         {
-            var sb = new StringBuilder(WindowsCommonSeedHeader);
+            var sb = new StringBuilder(WindowsCommonSeedHeader).Append('\n');
             foreach (var f in stack.SeedFiles.OrderBy(f => f.Key, StringComparer.Ordinal))
             {
                 var path = @"C:\rb-seed\" + f.Key.Replace('/', '\\');
@@ -450,14 +464,17 @@ Grant-Users 'C:\nuget'
                 sb.Append($"New-Item -ItemType Directory -Path '{Path.GetDirectoryName(path)}' -Force | Out-Null\n");
                 sb.Append($"[IO.File]::WriteAllBytes('{path}', [Convert]::FromBase64String('{b64}'))\n");
             }
-            sb.Append(stack.WindowsSeedScript);
+            sb.Append(stack.WindowsSeedScript).Append('\n');
             sb.Append("Remove-Item 'C:\\rb-seed' -Recurse -Force -ErrorAction SilentlyContinue\n");
             return Lines(sb.ToString());
         }
 
         /// <summary>Image Builder templates cannot be changed after creation, so the name carries a content hash.</summary>
         public static string ImageTemplateName(CodeProjectStack stack) =>
-            $"rbcp-{stack.Code}-{Hash(string.Join("\n", WindowsInstallLines(stack)) + string.Join("\n", WindowsSeedLines(stack)) + WindowsSourceSku)}";
+            $"rbcp-{stack.Code}-{Hash(string.Join("\n", WindowsInstallLines(stack)) + string.Join("\n", WindowsSeedLines(stack)) + WindowsSourceSku + ImageRecipeVersion)}";
+
+        /// <summary>Bump when the template's fixed customizers change (e.g. the Windows Update step), so a new template is created.</summary>
+        public const string ImageRecipeVersion = "3-line-breaks-cleanup-on-error";
 
         private static string[] Lines(string script) =>
             script.Replace("\r\n", "\n").Split('\n').Where(l => l.Length > 0).ToArray();

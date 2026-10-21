@@ -82,7 +82,17 @@ Set-Content -Path '" + BaselineFile + @"' -Value $baseline -Encoding ASCII
 icacls $dir /inheritance:r /grant:r '*S-1-5-18:(OI)(CI)F' '*S-1-5-32-544:(OI)(CI)F' | Out-Null
 icacls $WorkspacePath /grant ($CandidateUser + ':(OI)(CI)M') /T /Q | Out-Null
 
-# 5. A shortcut so the candidate lands in the project.
+# 5. Remote Desktop policy: one session per user (a second sign-in replaces the first instead of
+#    running alongside it), and no clipboard or drive redirection. This backs up Bastion's own
+#    copy/paste setting, so code written elsewhere cannot be pasted in even if that setting drifts.
+$ts = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services'
+New-Item -Path $ts -Force | Out-Null
+Set-ItemProperty -Path $ts -Name 'fSingleSessionPerUser' -Value 1 -Type DWord
+Set-ItemProperty -Path $ts -Name 'fDisableClip' -Value 1 -Type DWord
+Set-ItemProperty -Path $ts -Name 'fDisableCdm' -Value 1 -Type DWord
+Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server' -Name 'fSingleSessionPerUser' -Value 1 -Type DWord
+
+# 6. A shortcut so the candidate lands in the project.
 $lnk = (New-Object -ComObject WScript.Shell).CreateShortcut('C:\Users\Public\Desktop\workspace.lnk')
 $lnk.TargetPath = $WorkspacePath
 $lnk.Save()
@@ -91,12 +101,38 @@ Write-Output ('RB-SETUP-OK ' + $baseline)
 ";
 
         /// <summary>
+        /// Disables the candidate account and logs off every session it has. Used at the slot deadline
+        /// (server-side, whether or not the page submitted) and before collecting, so nothing can change
+        /// after the work is read. Never fails the caller: a missing account or session is fine.
+        /// </summary>
+        private const string LockBlock = @"
+$ErrorActionPreference = 'Continue'
+Disable-LocalUser -Name $CandidateUser -ErrorAction SilentlyContinue
+# quser lines: USERNAME SESSIONNAME ID STATE ... (SESSIONNAME is blank for disconnected sessions,
+# so the session id is taken as the first purely numeric column).
+foreach ($line in ((quser 2>$null) | Select-Object -Skip 1)) {
+    $parts = ($line.Trim() -replace '^>', '') -split '\s+'
+    if ($parts.Count -gt 0 -and $parts[0] -ieq $CandidateUser) {
+        $id = $parts | Where-Object { $_ -match '^\d+$' } | Select-Object -First 1
+        if ($id) { logoff $id }
+    }
+}
+";
+
+        public const string Lock = @"
+param([string]$CandidateUser = 'candidate')
+" + LockBlock + @"
+Write-Output 'RB-LOCKED'
+";
+
+        /// <summary>
         /// Emits one line "RBJSON:{...}" with the baseline and head commits, the commit log with
         /// shortstats, the unified diff and a zip of the tree at HEAD (base64). Only committed work
         /// counts — the candidate is told so on screen.
         /// </summary>
         public const string Collect = @"
-param([string]$WorkspacePath = 'C:\workspace')
+param([string]$WorkspacePath = 'C:\workspace', [string]$CandidateUser = 'candidate')
+" + LockBlock + @"
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [Text.Encoding]::UTF8
 $git = (Get-Command git -ErrorAction Stop).Source

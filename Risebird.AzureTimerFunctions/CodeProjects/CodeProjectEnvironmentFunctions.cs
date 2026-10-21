@@ -114,9 +114,51 @@ namespace Risebird.AzureTimerFunctions.CodeProjects
             catch (Exception ex) { await _errorLogger.LogMessage(LogLevelInfo.Exception, ex); }
         }
 
+        /// <summary>The web app hands the machine over; the deadline is enforced from here on, server-side.</summary>
+        [Function("CodeProjectHandover")]
+        public async Task<HttpResponseData> Handover(
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "codeprojects/handover")] HttpRequestData req)
+        {
+            var body = await ReadAsync<HandoverBody>(req);
+            if (body == null || string.IsNullOrWhiteSpace(body.Handle) || body.DeadlineUtc == default)
+                return await JsonAsync(req, new { accepted = false, error = "handle and deadlineUtc are required." }, HttpStatusCode.BadRequest);
+            try
+            {
+                await _provisioner.HandoverAsync(body.Handle, DateTime.SpecifyKind(body.DeadlineUtc, DateTimeKind.Utc));
+                return await JsonAsync(req, new { accepted = true });
+            }
+            catch (Exception ex)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return await JsonAsync(req, new { accepted = false, error = "Could not record the deadline." });
+            }
+        }
+
+        /// <summary>Disconnects sessions that should not exist, flags them for reviewers, locks machines at their deadline.</summary>
+        [Function("CodeProjectSessionMonitor")]
+        public async Task SessionMonitor([TimerTrigger("*/30 * * * * *")] TimerInfo timer, CancellationToken ct)
+        {
+            try { await _provisioner.MonitorSessionsAsync(ct); }
+            catch (Exception ex) { await _errorLogger.LogMessage(LogLevelInfo.Exception, ex); }
+        }
+
+        /// <summary>Nightly: deletes tagged candidate machines and NICs the database no longer tracks.</summary>
+        [Function("CodeProjectOrphanSweep")]
+        public async Task OrphanSweep([TimerTrigger("0 30 2 * * *")] TimerInfo timer, CancellationToken ct)
+        {
+            try { await _provisioner.SweepOrphansAsync(ct); }
+            catch (Exception ex) { await _errorLogger.LogMessage(LogLevelInfo.Exception, ex); }
+        }
+
         private sealed class HandleBody
         {
             public string Handle { get; set; }
+        }
+
+        private sealed class HandoverBody
+        {
+            public string Handle { get; set; }
+            public DateTime DeadlineUtc { get; set; }
         }
 
         private static async Task<T> ReadAsync<T>(HttpRequestData req) where T : class

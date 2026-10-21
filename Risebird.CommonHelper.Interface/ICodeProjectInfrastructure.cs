@@ -26,6 +26,9 @@ namespace Risebird.CommonHelper.Interface
         /// <summary>Hidden tests + reference solution. Nothing in here is ever SAS-linked to a candidate machine.</summary>
         string SecretsContainer { get; }
 
+        /// <summary>The storage account behind the connection string (setup limits candidate egress to it).</summary>
+        string AccountName { get; }
+
         Task<string> UploadAsync(string container, string blobName, byte[] content, string contentType, CancellationToken ct = default);
 
         Task<byte[]> DownloadAsync(string container, string blobName, CancellationToken ct = default);
@@ -71,5 +74,11 @@ namespace Risebird.CommonHelper.Interface
         Task<CodeProjectWorkspaceSnapshot> CollectAsync(string handle, CancellationToken ct = default);
 
         Task ReleaseAsync(string handle, CancellationToken ct = default);
+
+        /// <summary>
+        /// Tells the provisioner when the candidate's slot ends. From then on it locks the account and
+        /// disconnects sessions on its own, so the limit holds even if the browser never submits.
+        /// </summary>
+        Task<bool> HandoverAsync(string handle, DateTime deadlineUtc, CancellationToken ct = default);
     }
 }
