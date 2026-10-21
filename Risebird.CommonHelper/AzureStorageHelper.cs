@@ -29,8 +29,11 @@ namespace Risebird.CommonHelper
 
         private readonly IConfiguration _configuration;
 
-        public AzureStorageHelper(IConfiguration configuration)
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public AzureStorageHelper(IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             accountName = _configuration["StorageSettings:StorageName"];
             accountKey = _configuration["StorageSettings:SecretKey"];
@@ -530,7 +533,7 @@ namespace Risebird.CommonHelper
             try
             {
                 string localPath = string.Empty;
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = _httpClientFactory.CreateClient())
                 {
                     var response = await client.GetAsync(url);
                     if (response.IsSuccessStatusCode)

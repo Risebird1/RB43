@@ -171,7 +171,7 @@ namespace Risebird.Web.Services.Proctoring
             var list = new List<BlobItem>();
             var container = _azureStorageHelper.GetCloudBlobContainer(ScreenshotContainer).Client;
             var prefix = $"{interviewId}/";
-            await foreach (var item in container.GetBlobsAsync(prefix: prefix).ConfigureAwait(false))
+            await foreach (var item in container.GetBlobsAsync(BlobTraits.None, BlobStates.None, prefix, default).ConfigureAwait(false))
             {
                 if (!IsImageBlob(item.Name))
                     continue;

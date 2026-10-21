@@ -61,6 +61,8 @@ namespace Risebird.Web.Controllers
         private readonly ICashfreePayoutService _cashfreePayoutService;
         private readonly INaukriOnboardingRepository _naukriOnboardingRepository;
 
+        private readonly IHttpClientFactory _httpClientFactory;
+
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
         ISkillService skillService, IProfileService profileService,
         IInterviewerRepository interviewerRepository, IMeetingService meetingService,
@@ -71,9 +73,10 @@ namespace Risebird.Web.Controllers
         IAffIndaResumeParserHelper affIndaResumeParserHelper, IEncryptionHelper encryptionHelper,
         IAssistantServiceHelper assistantServiceHelper, IPdfReaderHelper pdfReaderHelper,
         ICashfreePayoutService cashfreePayoutService,
-        INaukriOnboardingRepository naukriOnboardingRepository)
+        INaukriOnboardingRepository naukriOnboardingRepository, IHttpClientFactory httpClientFactory)
 
         {
+            _httpClientFactory = httpClientFactory;
             _interviewerService = interviewerService;
             _clientService = clientService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -4548,7 +4551,7 @@ namespace Risebird.Web.Controllers
                 {
                     var model = new InterviewerProfileVM();
 
-                    HttpClient myWebClient = new HttpClient();
+                    HttpClient myWebClient = _httpClientFactory.CreateClient();
                     string uploadedCodedResumeLink = string.Empty;
                     using (Stream myStream = await myWebClient.GetStreamAsync(redactedResumeLink))
                     {

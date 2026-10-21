@@ -101,6 +101,8 @@ namespace Risebird.Web.Controllers
         private readonly IOpenAIResponsesHelper _openAIResponsesHelper;
 
 
+        private readonly IHttpClientFactory _httpClientFactory;
+
         public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService, IUserService userService, ISkillService skillService, IConfiguration configuration, ICandidateService candidateService, IInterviewerSkillsService iInterviewerSkillsService, IInterviewerService interviewerService, INotificationHelper notificationHelper, ITemplateService templateService, IClientService clientService, IFileMimeTypeHelper fileMimeTypeHelper, IInterviewSchedulerService interviewSchedulerservice,
             IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, ICalendlyHelper calendlyHelper,
             IMCQService mCQService, IEncryptionHelper encryptionHelper, IWhatsAppHelper whatsAppHelper,
@@ -115,8 +117,9 @@ namespace Risebird.Web.Controllers
             IServiceScopeFactory scopeFactory,
             ICodeProjectQuestionService codeProjectQuestionService,
             Risebird.Web.Services.CodeProjectBackgroundQueue codeProjectQueue,
-            IOpenAIResponsesHelper openAIResponsesHelper)
+            IOpenAIResponsesHelper openAIResponsesHelper, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _scopeFactory = scopeFactory;
             _codeProjectQuestionService = codeProjectQuestionService;
             _codeProjectQueue = codeProjectQueue;
@@ -6544,7 +6547,7 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> SendEmailForCandidateFeedbackByIRF(string IRFId)
         {
             var modelData = new List<SurveyVM>();
-            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+            AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration, _httpClientFactory);
             var result = _azureTableStorageService.GetAllEntities<SurveyVM>("RisebirdSurvey");
             var interviewerids = await _meetingService.FetchAllInterviewidfromIrf(IRFId);
             if (interviewerids != null)
@@ -7616,7 +7619,7 @@ namespace Risebird.Web.Controllers
                 if (string.IsNullOrWhiteSpace(audioUrl))
                     return Json(new { success = false, message = "No voice recording found. Record and upload audio first." });
 
-                using var downloadClient = new HttpClient();
+                using var downloadClient = _httpClientFactory.CreateClient();
                 await using var remoteStream = await downloadClient.GetStreamAsync(audioUrl);
                 using var audioBuffer = new MemoryStream();
                 await remoteStream.CopyToAsync(audioBuffer);
@@ -8089,6 +8092,9 @@ namespace Risebird.Web.Controllers
                     _ => 0
                 };
             }
+            // Marketplace channel only when created from Template/Marketplace (its popup posts IsMarketPlaceChannel)
+            // and a plan price applies; Template/Index creates normal channels.
+            model.IsMarketPlaceChannel = model.IsMarketPlaceChannel && model.RateComputedForClient > 0;
         }
 
         //[Authorize]
@@ -8097,6 +8103,9 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> CreateInterviewLink(IRFVm model)
         {
             string emailId = string.Empty;
+            // The popup posts the template name as JDTiltle; use it in messages. Failures return to the page used.
+            if (string.IsNullOrEmpty(model.TemplateName)) model.TemplateName = model.JDTiltle;
+            var templatePage = model.IsMarketPlaceChannel ? "Marketplace" : "Index";
             try
             {
                 if (!string.IsNullOrEmpty(model.UniqueId) && !string.IsNullOrEmpty(model.PublicUserEmailId) && !string.IsNullOrEmpty(model.AccessType) && model.AccessType == "Public")
@@ -8142,7 +8151,7 @@ namespace Risebird.Web.Controllers
                             if (virusScanResult > 0)
                             {
                                 TempData["SuccessErrorCloneTemplateMessage"] = $"File upload failed. Virus Detected! Failed to create Skills Channel from {model.TemplateName}!";
-                                return RedirectToAction("Index", "Template");
+                                return RedirectToAction(templatePage, "Template");
                             }
 
                         }
@@ -8244,7 +8253,7 @@ namespace Risebird.Web.Controllers
                                     if (virusScanResult > 0)
                                     {
                                         TempData["SuccessErrorCloneTemplateMessage"] = $"File upload failed. Virus Detected! Failed to create Skills Channel from {model.TemplateName}!";
-                                        return RedirectToAction("Index", "Template");
+                                        return RedirectToAction(templatePage, "Template");
                                     }
 
                                 }
@@ -8290,7 +8299,7 @@ namespace Risebird.Web.Controllers
                         else
                         {
                             TempData["SuccessErrorCloneTemplateMessage"] = $"Failed to create Skills Channel from {model.TemplateName}!";
-                            return RedirectToAction("Index", "Template");
+                            return RedirectToAction(templatePage, "Template");
                         }
                     }
                     else
@@ -8308,7 +8317,7 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, $"Message : {ex.Message}; StackTrace : {ex.StackTrace};  Source : {ex.Source}; TemplateName : {model.TemplateName}; userEmailId : {emailId}");
                 //await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorCloneTemplateMessage"] = "Failed to create Skills Channel!";
-                return RedirectToAction("Index", "Template");
+                return RedirectToAction(templatePage, "Template");
             }
         }
         public string GenerateRandomstring()
@@ -11685,7 +11694,7 @@ namespace Risebird.Web.Controllers
             if (string.IsNullOrWhiteSpace(model.Notes))
             {
                 string transcriptText;
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = _httpClientFactory.CreateClient())
                 {
                     transcriptText = await client.GetStringAsync(model.TranscriptLink);
                 }
@@ -14263,7 +14272,7 @@ namespace Risebird.Web.Controllers
                 return result?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value;
             }
 
-            using (var http = new HttpClient())
+            using (var http = _httpClientFactory.CreateClient())
             {
                 http.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
                 http.DefaultRequestHeaders.Add("OpenAI-Beta", "assistants=v2");

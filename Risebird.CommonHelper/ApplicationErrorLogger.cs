@@ -1,3 +1,4 @@
+using System.Net.Http;
 ﻿using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
@@ -12,8 +13,11 @@ namespace Risebird.CommonHelper
     public class ApplicationErrorLogger : IApplicationErrorLogger
     {
         private readonly IConfiguration _configuration;
-        public ApplicationErrorLogger(IConfiguration configuration)
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public ApplicationErrorLogger(IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
         }
 
@@ -30,7 +34,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration, _httpClientFactory);
 
                 var st = new StackTrace(ex, true); // create the stack trace
                 var frames = st.GetFrames();
@@ -71,7 +75,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration, _httpClientFactory);
 
 
                 var date = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
@@ -95,7 +99,7 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration);
+                AzureStorageHelper _azureTableStorageService = new AzureStorageHelper(_configuration, _httpClientFactory);
 
                 var st = new StackTrace(ex, true); // create the stack trace
                 var query = st.GetFrames()         // get the frames

@@ -54,6 +54,7 @@ namespace Risebird.Web.Controllers
         private readonly IAdvancedScreeningService _advancedScreeningService;
         private readonly AdvancedScreeningSignal _advancedScreeningSignal;
         private readonly IUserRepository _userRepository;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         public AIScreenerController(IAssistantServiceHelper assistantServiceHelper,
             IApplicationErrorLogger applicationErrorLogger, ICandidateService candidateService,
@@ -63,8 +64,9 @@ namespace Risebird.Web.Controllers
             IActivityTrackerService activityTrackerService, IPdfReaderHelper pdfReaderHelper,
             ITranscriptOptimizationHelper transcriptOptimizationHelper,
             IAdvancedScreeningService advancedScreeningService, AdvancedScreeningSignal advancedScreeningSignal,
-            IUserRepository userRepository)
+            IUserRepository userRepository, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _advancedScreeningService = advancedScreeningService;
             _advancedScreeningSignal = advancedScreeningSignal;
             _userRepository = userRepository;
@@ -613,7 +615,7 @@ namespace Risebird.Web.Controllers
 
             try
             {
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = _httpClientFactory.CreateClient())
                 {
                     byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
 
@@ -1420,7 +1422,7 @@ namespace Risebird.Web.Controllers
                 }
 
                 string transcriptText;
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = _httpClientFactory.CreateClient())
                 {
                     transcriptText = await client.GetStringAsync(report.AudioTranscriptFileLink);
                 }

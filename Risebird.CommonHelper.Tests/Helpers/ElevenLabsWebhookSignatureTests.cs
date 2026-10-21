@@ -1,3 +1,5 @@
+using System.Net.Http;
+using Moq;
 using System.Security.Cryptography;
 using System.Text;
 using Risebird.CommonHelper.Tests.Infrastructure;
@@ -16,7 +18,7 @@ namespace Risebird.CommonHelper.Tests.Helpers
         private const string Body = "{\"event\":\"post_call\",\"conversation_id\":\"conv-1\"}";
 
         private static ElevenLabsAgentService Sut(string secret = Secret) =>
-            new(TestConfiguration.From(("ElevenLabs:WebhookSecret", secret)));
+            new(TestConfiguration.From(("ElevenLabs:WebhookSecret", secret)), Mock.Of<IHttpClientFactory>());
 
         private static string Hex(string secret, string timestamp, string body)
         {
@@ -240,7 +242,7 @@ namespace Risebird.CommonHelper.Tests.Helpers
         [Fact]
         public void With_no_secret_key_present_in_configuration_at_all_requests_are_accepted()
         {
-            var sut = new ElevenLabsAgentService(TestConfiguration.Empty());
+            var sut = new ElevenLabsAgentService(TestConfiguration.Empty(), Mock.Of<IHttpClientFactory>());
 
             Assert.True(sut.VerifyWebhookSignature(Body, "t=1,v0=deadbeef"));
         }

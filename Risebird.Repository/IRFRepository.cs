@@ -7432,8 +7432,9 @@ WHERE irf.IsDeleted = 0
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RateComputedForClient", SqlDbType.Int));
                     cmdUpdateIRF.Parameters["@RateComputedForClient"].Value = irfDetails.RateComputedForClient;
 
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMarketPlaceChannel", SqlDbType.Bit));
-                    cmdUpdateIRF.Parameters["@IsMarketPlaceChannel"].Value = irfDetails.RateComputedForClient > 0 ? irfDetails.IsMarketPlaceChannel : null;
+                    // @IsMarketPlaceChannel is not passed to the procedure: databases still on the older
+                    // usp_CreateSkillChannelFromTemplate don't declare it and reject the whole call
+                    // ("too many arguments"). The flag is set by an UPDATE after the insert instead.
 
                     SqlParameter flatRateParam = new SqlParameter();
                     flatRateParam.ParameterName = "@flatRate";
@@ -7540,6 +7541,11 @@ WHERE irf.IsDeleted = 0
                     }
 
                     flatRate = Convert.ToInt16(cmdUpdateIRF?.Parameters["@flatRate"]?.Value);
+
+                    if (irfDetails.IsMarketPlaceChannel)
+                    {
+                        await con.ExecuteAsync("update IRF set IsMarketPlaceChannel = 1 where IRFId = @IRFId", new { irfDetails.IRFId });
+                    }
 
                     return new Tuple<bool, int>(true, flatRate);
                 }
