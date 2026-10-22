@@ -1866,6 +1866,17 @@ namespace Risebird.Web.Controllers
                             return await CompleteAdaptiveInterviewAsync(model);
                         }
 
+                        // Some prompts leave the marker out and just say goodbye again each time the
+                        // candidate replies; a repeated closing statement means the interview is over.
+                        var previousAssistantTurn = transcript
+                            .FirstOrDefault(x => string.Equals(x.Role, "assistant", StringComparison.OrdinalIgnoreCase))?.Message;
+                        if (AIInterviewCompletionDetector.RepeatsClosingTurn(CleanMessage(replies?.FirstOrDefault()), CleanMessage(previousAssistantTurn)))
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                                $"AI interview session {model.SessionId}: the assistant repeated its closing message without the completion marker; completing the interview.");
+                            return await CompleteAdaptiveInterviewAsync(model);
+                        }
+
                         model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
 
                         if (replies != null)
@@ -1991,7 +2002,7 @@ namespace Risebird.Web.Controllers
         /// Internal token the adaptive assistant appends when it ends the interview.
         /// Stripped in CleanMessage so it is never shown/spoken to the candidate.
         /// </summary>
-        private const string AdaptiveInterviewCompletionMarker = "[[ADAPTIVE_INTERVIEW_COMPLETE]]";
+        private const string AdaptiveInterviewCompletionMarker = AIInterviewCompletionDetector.Marker;
 
         /// <summary>
         /// Appended to the start-of-interview prompt so the assistant flags completion for auto-exit.
@@ -2034,8 +2045,7 @@ namespace Risebird.Web.Controllers
 
         private static bool MessageSignalsInterviewCompletion(string message)
         {
-            return !string.IsNullOrWhiteSpace(message)
-                && message.IndexOf(AdaptiveInterviewCompletionMarker, StringComparison.OrdinalIgnoreCase) >= 0;
+            return AIInterviewCompletionDetector.SignalsCompletion(message);
         }
 
         private static bool RepliesSignalInterviewCompletion(IEnumerable<string> replies)
@@ -3023,6 +3033,25 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> ExitModalPartial(Guid seId)
         {
             var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(seId);
+
+            // Exit Interview on an adaptive interview ends it: without this the page said "closed" while
+            // the meeting stayed Pending and no report was generated. Guarded on status so a second
+            // load of this modal does not regenerate the report.
+            if (meetingDetails != null
+                && meetingDetails.AIInterviewType == (int)AIInterviewTypeEnum.Adaptive
+                && meetingDetails.MeetingStatus != (int)MeetingStatus.Completed)
+            {
+                try
+                {
+                    await _aiinterviewerService.UpdateMeetingCompletedStatusForAIInterview(seId.ToString());
+                    await _api.GenerateReport(seId, AdaptiveReportGenerationPrompt, (int)AIInterviewTypeEnum.Adaptive, isExit: true);
+                }
+                catch (Exception ex)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    await _aiinterviewerService.LogAIInterviewException(seId.ToString(), "GET Exit", ex);
+                }
+            }
 
             var exitModel = new AIInterviewExitModalViewModel
             {
