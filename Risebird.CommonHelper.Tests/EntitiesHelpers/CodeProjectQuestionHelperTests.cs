@@ -226,6 +226,22 @@ namespace Risebird.CommonHelper.Tests.EntitiesHelpers
         }
 
         [Fact]
+        public void Strips_a_hidden_test_from_the_candidate_project_so_it_passes_scope()
+        {
+            var g = Valid();
+            g.HiddenTests.Add(new() { Path = "src/test/SmokeTest.java", Content = "secret" });
+            g.ReadOnlyPaths.Add("src\\test\\SmokeTest.java");
+
+            var removed = CodeProjectQuestionHelper.StripHiddenTestsFromProject(g);
+
+            Assert.Equal(new[] { "src/test/SmokeTest.java" }, removed);
+            Assert.DoesNotContain(g.ProjectFiles, f => f.Path == "src/test/SmokeTest.java");
+            Assert.DoesNotContain(g.ReadOnlyPaths, p => p.Contains("SmokeTest"));
+            Assert.Contains(g.HiddenTests, t => t.Path == "src/test/SmokeTest.java");
+            Assert.DoesNotContain(CodeProjectQuestionHelper.ValidateScope(g, 15), e => e.Contains("also appears in project_files"));
+        }
+
+        [Fact]
         public void Requires_hidden_tests_and_a_reference_solution()
         {
             var g = Valid();

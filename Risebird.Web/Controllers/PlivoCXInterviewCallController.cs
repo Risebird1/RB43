@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RestSharp;
 using Risebird.Business.Interface;
+using Risebird.Business.PlivoCX;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.PlivoCXModels;
@@ -607,7 +608,7 @@ namespace Risebird.Web.Controllers
                 }
                 callLog.BookedInterviewDate   = ResolveRelativeDate(payload.InterviewDate);
                 callLog.BookedInterviewTime   = payload.InterviewTime;
-                callLog.CandidateDisposition  = NormaliseDisposition(payload.CandidateDisposition);
+                callLog.CandidateDisposition  = PlivoCXOutcomeParser.NormaliseDisposition(payload.CandidateDisposition);
                 callLog.CallEndedAt           = DateTime.UtcNow;
                 callLog.UpdatedAt             = DateTime.UtcNow;
 
@@ -620,9 +621,8 @@ namespace Risebird.Web.Controllers
                     callLog.DurationSeconds = dur;
 
                 // ── Step 7: Attempt booking if candidate confirmed ────────────────────
-                bool candidateConfirmed = string.Equals(
-                    payload.CandidateConfirmed, "true",
-                    StringComparison.OrdinalIgnoreCase);
+                // The agent's LLM writes this value: accept "true", "\"true\"", "Yes", "true." etc.
+                bool candidateConfirmed = PlivoCXOutcomeParser.IsConfirmed(payload.CandidateConfirmed);
 
                 // A campaign running a confirm-only agent (CollectsSlot = false) records the
                 // confirmation but never books a slot.
@@ -740,26 +740,6 @@ namespace Risebird.Web.Controllers
             }
 
             return null;
-        }
-
-        /// <summary>
-        /// Normalises the AI-returned disposition string to one of the three
-        /// accepted values: "interested" | "uninterested" | "cant_say".
-        /// Any unrecognised value defaults to "cant_say".
-        /// </summary>
-        private static string NormaliseDisposition(string raw)
-        {
-            if (string.IsNullOrWhiteSpace(raw)) return null;
-            return raw.ToLowerInvariant().Trim() switch
-            {
-                "interested"                         => "interested",
-                "uninterested" or "not interested"
-                    or "disinterested"               => "uninterested",
-                "cant_say" or "cant say"
-                    or "can't say" or "unsure"
-                    or "unclear" or "unknown"        => "cant_say",
-                _                                    => "cant_say"
-            };
         }
 
         /// <summary>
