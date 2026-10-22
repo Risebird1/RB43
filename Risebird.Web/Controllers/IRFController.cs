@@ -10335,11 +10335,13 @@ namespace Risebird.Web.Controllers
                 CodeProjectGeneration generation = null;
                 string matchedSkill = null;
                 List<string> errors = null;
-                for (var attempt = 0; attempt < 2; attempt++)
+                for (var attempt = 0; attempt < 3; attempt++)
                 {
                     var raw = await _openAIResponsesHelper.CreateJsonWithInstructionsAsync(
                         CodeProjectQuestionHelper.GeneratorInstructions, input, "GenerateCodeProjectQuestion");
                     generation = CodeProjectQuestionHelper.Parse(raw, out var parseError);
+                    // A hidden test also listed as a project file would leak the answer key; drop the visible copy.
+                    CodeProjectQuestionHelper.StripHiddenTestsFromProject(generation);
                     errors = generation == null
                         ? new List<string> { parseError }
                         : CheckCodeProjectGeneration(generation, validSkillNames, validStackCodes, requestedStack, preferredSkill, timeLimitMinutes, out matchedSkill);
