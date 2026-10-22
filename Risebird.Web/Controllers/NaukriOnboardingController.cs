@@ -2939,9 +2939,8 @@ namespace Risebird.Web.Controllers
 
         private static string ExtractEmail(string text)
         {
-            if (string.IsNullOrWhiteSpace(text)) return null;
-            var match = Regex.Match(text, @"[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}");
-            return match.Success ? match.Value.ToLower() : null;
+            // Resume text glues words together ("x@gmail.comlinkedin", "|x@gmail.com"); the normalizer cuts that off.
+            return CandidateEmailNormalizer.ExtractFirst(text);
         }
 
         private static string ExtractPhone(string text)

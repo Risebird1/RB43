@@ -145,6 +145,8 @@ namespace Risebird.Business.Interface
         /// <param name="comment">Reason for inactivating the interviewer</param>
         /// <returns>True if successful, false otherwise</returns>
         Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment,bool blockinterviewer, string inactivationType = null);
+        /// <summary>Same as above; statusSource (PotentialRisk | HighRisk | PLI) records the removal for that QC page.</summary>
+        Task<bool> InactivateInterviewer(int interviewerId, string modifiedBy, string comment, bool blockinterviewer, string inactivationType, string statusSource);
         Task<bool> ReactivateInterviewer(int userId, string reactivatedBy);
         Task<bool> SaveApplicantErrorMessage(int id, string errorMessage);
         Task<bool> SaveExternalApplicantResume(int id, string resumeLink = null);

@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Risebird.CommonHelper.Interface;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -145,7 +146,15 @@ namespace Risebird.CommonHelper
                     if (!result.IsSuccess)
                     {
                         result.ErrorCode ??= result.Body?["error"]?["code"]?.ToString() ?? ((int)resp.StatusCode).ToString();
-                        result.ErrorMessage = result.Body?["error"]?["message"]?.ToString() ?? result.ErrorMessage;
+                        result.ErrorMessage = result.Body?["error"]?["message"]?.ToString() ?? result.Body?["message"]?.ToString() ?? result.ErrorMessage;
+                        // Generic top-level errors ("The request message is invalid") name the actual
+                        // problem only in details / innererror, so those are kept too.
+                        var details = (result.Body?["error"]?["details"] as JArray)?
+                            .Select(d => $"{d["code"]}: {d["message"]}{(d["target"] != null ? $" (target: {d["target"]})" : "")}")
+                            .ToList() ?? new List<string>();
+                        var inner = result.Body?["error"]?["innererror"]?.ToString(Formatting.None);
+                        if (!string.IsNullOrEmpty(inner)) details.Add("innererror: " + (inner.Length > 600 ? inner.Substring(0, 600) + "…" : inner));
+                        if (details.Count > 0) result.ErrorMessage += " — " + string.Join(" | ", details);
                     }
                     return result;
                 }

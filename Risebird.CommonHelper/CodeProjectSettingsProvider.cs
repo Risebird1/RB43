@@ -39,11 +39,17 @@ namespace Risebird.CommonHelper
 
         public string FunctionsBaseUrl()
         {
-            var url = Get(CodeProjectSettingNames.FunctionsBaseUrl);
-            if (!string.IsNullOrWhiteSpace(url)) return url.TrimEnd('/');
-            // Running locally with nothing configured: the functions host (func start) is on 7071.
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
-            return string.Equals(environment, "Development", StringComparison.OrdinalIgnoreCase) ? CodeProjectSettingNames.LocalFunctionsBaseUrl : null;
+            if (string.Equals(environment, "Development", StringComparison.OrdinalIgnoreCase))
+            {
+                // A developer machine talks to its own functions host (func start, port 7071). The URL
+                // the setup stores in the database is the deployed app's, which may run older code;
+                // only an explicit configuration value sends a local web app there.
+                var configured = _configuration[CodeProjectSettingNames.FunctionsBaseUrl];
+                return string.IsNullOrWhiteSpace(configured) ? CodeProjectSettingNames.LocalFunctionsBaseUrl : configured.TrimEnd('/');
+            }
+            var url = Get(CodeProjectSettingNames.FunctionsBaseUrl);
+            return string.IsNullOrWhiteSpace(url) ? null : url.TrimEnd('/');
         }
 
         public void Invalidate()

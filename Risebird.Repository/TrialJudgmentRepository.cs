@@ -24,6 +24,49 @@ namespace Risebird.Repository
             _logger = logger;
         }
 
+        private const string EnsureTrialFlagBackfillRunSql = @"
+IF OBJECT_ID(N'dbo.TrialFlagBackfillRun', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.TrialFlagBackfillRun (
+        Id            INT IDENTITY(1,1) NOT NULL,
+        ExecutedAtUtc DATETIME      NOT NULL CONSTRAINT DF_TrialFlagBackfillRun_ExecutedAtUtc DEFAULT (GETUTCDATE()),
+        ExecutedBy    VARCHAR(150)  NOT NULL,
+        InterviewId   INT           NULL,
+        Inserted      INT           NOT NULL CONSTRAINT DF_TrialFlagBackfillRun_Inserted DEFAULT (0),
+        Skipped       INT           NOT NULL CONSTRAINT DF_TrialFlagBackfillRun_Skipped DEFAULT (0),
+        Failed        INT           NOT NULL CONSTRAINT DF_TrialFlagBackfillRun_Failed DEFAULT (0),
+        Message       VARCHAR(500)  NULL,
+        CONSTRAINT PK_TrialFlagBackfillRun PRIMARY KEY CLUSTERED (Id ASC)
+    );
+    CREATE NONCLUSTERED INDEX IX_TrialFlagBackfillRun_ExecutedBy_At ON dbo.TrialFlagBackfillRun (ExecutedBy, ExecutedAtUtc);
+END";
+
+        public async Task RecordBackfillRunAsync(string executedBy, int? interviewId, int inserted, int skipped, int failed, string message)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                await con.ExecuteAsync(EnsureTrialFlagBackfillRunSql, commandTimeout: 30);
+                await con.ExecuteAsync(
+                    @"INSERT INTO dbo.TrialFlagBackfillRun (ExecutedAtUtc, ExecutedBy, InterviewId, Inserted, Skipped, Failed, Message)
+                      VALUES (GETUTCDATE(), @ExecutedBy, @InterviewId, @Inserted, @Skipped, @Failed, @Message)",
+                    new
+                    {
+                        ExecutedBy = string.IsNullOrWhiteSpace(executedBy) ? "System" : (executedBy.Trim().Length > 150 ? executedBy.Trim().Substring(0, 150) : executedBy.Trim()),
+                        InterviewId = interviewId.HasValue && interviewId.Value > 0 ? interviewId : null,
+                        Inserted = inserted,
+                        Skipped = skipped,
+                        Failed = failed,
+                        Message = string.IsNullOrWhiteSpace(message) ? null : (message.Length > 500 ? message.Substring(0, 500) : message)
+                    },
+                    commandTimeout: 30);
+            }
+            catch (System.Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
         public async Task<TrialJudgmentContextVm> GetContextAsync(int interviewId)
         {
             try

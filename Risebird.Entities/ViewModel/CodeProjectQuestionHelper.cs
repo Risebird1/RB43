@@ -34,6 +34,11 @@ namespace Risebird.Entities.ViewModel
             "- Shape: one focused defect to fix, or one small feature to add. Never \"explore this codebase\".",
             "- The starter project must build, and the hidden tests must mostly FAIL against it. The reference solution must make every hidden test pass.",
             "- hidden_tests, reference_solution and seeded_defects are server-side only. Do not copy their content into project_files.",
+            "- Every hidden test file has its own path that does NOT appear in project_files (for example under tests/hidden/). Visible tests, if any, use different file names.",
+            "- project_files is a complete project that builds on its own with build_command: for .NET include every .csproj (and a test project referencing the code under test), " +
+                "for Java the pom.xml, for Node the package.json, for Python any package __init__.py files.",
+            "- SQL tasks: the only database available is SQLite through Python's built-in sqlite3 module (window functions supported) on the Python stack. " +
+                "No other stack has a database or SQL driver, so do not attempt SQL on them.",
             "- Builds run OFFLINE. Use only the dependencies, versions and exact build_command/test_command listed for the chosen stack image.",
             "- test_command must write machine-readable results: Maven Surefire reports, pytest --junitxml=test-results/junit.xml, " +
                 "vitest --reporter=junit --outputFile=test-results/junit.xml, or dotnet test --logger trx --results-directory TestResults.",
@@ -121,6 +126,25 @@ namespace Risebird.Entities.ViewModel
             if (list.Count == 0 && !string.IsNullOrWhiteSpace(g?.EntryPointFile))
                 list.Add(NormalizePath(g.EntryPointFile));
             return list;
+        }
+
+        /// <summary>
+        /// The model sometimes lists a hidden test in project_files too, which would hand the candidate
+        /// the answer key. The hidden copy is overlaid at grading time anyway, so the candidate-facing
+        /// copy is simply removed (from editable and read-only lists as well). Returns the removed paths.
+        /// </summary>
+        public static List<string> StripHiddenTestsFromProject(CodeProjectGeneration g)
+        {
+            if (g == null) return new List<string>();
+            var hidden = new HashSet<string>(g.HiddenTests.Where(t => !string.IsNullOrWhiteSpace(t?.Path)).Select(t => NormalizePath(t.Path)),
+                StringComparer.OrdinalIgnoreCase);
+            var removed = g.ProjectFiles.Where(f => !string.IsNullOrWhiteSpace(f?.Path) && hidden.Contains(NormalizePath(f.Path)))
+                .Select(f => NormalizePath(f.Path)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            if (removed.Count == 0) return removed;
+            g.ProjectFiles = g.ProjectFiles.Where(f => f == null || string.IsNullOrWhiteSpace(f.Path) || !hidden.Contains(NormalizePath(f.Path))).ToList();
+            g.EditableFiles = (g.EditableFiles ?? new List<string>()).Where(p => p == null || !hidden.Contains(NormalizePath(p))).ToList();
+            g.ReadOnlyPaths = (g.ReadOnlyPaths ?? new List<string>()).Where(p => p == null || !hidden.Contains(NormalizePath(p))).ToList();
+            return removed;
         }
 
         /// <summary>

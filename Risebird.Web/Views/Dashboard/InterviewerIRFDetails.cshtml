@@ -446,21 +446,30 @@
             successHtmlText = '<p>The Interviewer has been shortlisted.</p>';
         }
 
+        // QC Tracking Delta 5: a comment is required; the server records it with the signed-in user.
         swal.fire({
             title: 'Are you sure?',
             text: bodyText,
             type: 'warning',
+            input: 'textarea',
+            inputPlaceholder: 'Comment (required): why this interviewer is ' + (action == 'Rejected' ? 'removed' : 'shortlisted'),
+            inputAttributes: { maxlength: 500 },
+            inputValidator: function (value) {
+                return new Promise(function (resolve) {
+                    resolve(value && value.trim() ? undefined : 'Please enter a comment');
+                });
+            },
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: confirmationButtonText,
-            preConfirm: function () {
+            preConfirm: function (comment) {
                 return new Promise(function (resolve, reject) {
                     //captureclick('Interviewer Status', action, irfid);
                     $.ajax({
                         type: "POST",
                         url: "/Interview/RemoveOrShortlistInterviewerFromIRF",
-                        data: { 'irfid': irfid,'interviewer':interviewer, 'action': action },
+                        data: { 'irfid': irfid, 'interviewer': interviewer, 'action': action, 'comment': (comment || '').trim() },
                         success: function (result) {
                             resolve(result);
                         }

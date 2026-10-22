@@ -1,0 +1,83 @@
+@model List<Risebird.Entities.Data.PlivoCXModels.PlivoCXCampaignVM>
+@using Risebird.Business.PlivoCX
+@{
+    ViewData["Title"] = "PlivoCX Campaigns";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var ist = PlivoCXCampaignRules.ResolveTimeZone(PlivoCXCampaignRules.IndiaTimeZoneId);
+    string search = ViewBag.Search as string;
+}
+@await Html.PartialAsync("_CampaignStyles")
+
+<div class="pcx-page">
+    <div class="pcx-wrap">
+        <div class="pcx-head">
+            <div>
+                <p class="pcx-eyebrow">AI scheduling</p>
+                <h3>Campaigns</h3>
+                <p class="pcx-sub">PlivoCX calling campaigns for scheduling, rescheduling and attendance confirmation. <a href="@Url.Action("Index", "PlivoCXInterviewCall")">All PlivoCX call logs &rarr;</a></p>
+            </div>
+            <a class="pcx-btn primary" href="@Url.Action("Create", "PlivoCXCampaign")">+ Create campaign</a>
+        </div>
+
+        <div class="pcx-card">
+            <div class="pcx-card-b" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                <form method="get" action="@Url.Action("Index", "PlivoCXCampaign")" style="flex:1;max-width:440px;">
+                    <input class="pcx-input" type="search" name="search" value="@search" placeholder="Search campaigns…" aria-label="Search campaigns" />
+                </form>
+                <span class="pcx-muted">@(Model.Count == 1 ? "1 campaign" : Model.Count + " campaigns")</span>
+            </div>
+            <div class="pcx-table-wrap">
+                <table class="pcx-table">
+                    <thead>
+                        <tr>
+                            <th>Campaign</th>
+                            <th>Source</th>
+                            <th>Agent</th>
+                            <th>Status</th>
+                            <th class="pcx-num">Cand.</th>
+                            <th class="pcx-num">Booked</th>
+                            <th class="pcx-num">Not booked</th>
+                            <th class="pcx-num">Cold</th>
+                            <th class="pcx-num">Pending</th>
+                            <th>Created</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Count == 0)
+                        {
+                            <tr><td colspan="11" class="pcx-empty">@(string.IsNullOrWhiteSpace(search) ? "No campaigns yet. Create one to start calling." : "No campaign matches \"" + search + "\".")</td></tr>
+                        }
+                        @foreach (var c in Model)
+                        {
+                            var created = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(c.CreatedAt, DateTimeKind.Utc), ist);
+                            <tr>
+                                <td class="strong"><a href="@Url.Action("Detail", "PlivoCXCampaign", new { id = c.Id })" style="color:inherit;">@c.Name</a></td>
+                                <td>
+                                    <div>@c.IRFName</div>
+                                    <div class="pcx-muted pcx-small">@c.ClientName</div>
+                                </td>
+                                <td>@(c.AgentName ?? "—")</td>
+                                <td><span class="pcx-chip @c.Status">@c.Status</span></td>
+                                <td class="pcx-num">@c.Candidates</td>
+                                <td class="pcx-num">@c.Booked</td>
+                                <td class="pcx-num">@c.NotBooked</td>
+                                <td class="pcx-num">@c.Cold</td>
+                                <td class="pcx-num">@c.Pending</td>
+                                <td>
+                                    <div>@created.ToString("dd MMM")</div>
+                                    <div class="pcx-muted pcx-small">@c.CreatedBy</div>
+                                </td>
+                                <td style="white-space:nowrap;">
+                                    <a class="pcx-link" href="@Url.Action("Detail", "PlivoCXCampaign", new { id = c.Id })">Open</a>
+                                    <span class="pcx-muted">·</span>
+                                    <a class="pcx-link" href="@(Url.Action("Detail", "PlivoCXCampaign", new { id = c.Id }) + "#policy")">Edit</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

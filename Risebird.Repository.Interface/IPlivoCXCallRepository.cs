@@ -40,8 +40,16 @@ namespace Risebird.Repository.Interface
         Task<List<PlivoCXWebhookCheckpoint>>   GetRecentCheckpointsAsync(int count = 100);
 
         // ── Candidate helpers ─────────────────────────────────────────────────────
-        Task<List<VapiEligibleCandidateVM>> GetEligibleCandidatesForCallsAsync(int count = 10);
-        Task<List<VapiEligibleCandidateVM>> GetEligibleCandidatesForRescheduleAsync(int count = 10);
+        // Eligibility (usp_GetEligibleCandidatesForPlivoCX*). The defaults are the timer jobs' behaviour.
+        //   irfId / candidateId       : restrict to one IRF / candidate and return every match (not TOP count)
+        //   bypassCaps                : skip the pacing caps (a campaign paces itself from its own policy)
+        //   excludeCampaignCandidates : leave out candidates Pending in an open PlivoCX campaign
+        Task<List<VapiEligibleCandidateVM>> GetEligibleCandidatesForCallsAsync(
+            int count = 10, int? irfId = null, int? candidateId = null,
+            bool bypassCaps = false, bool excludeCampaignCandidates = false);
+        Task<List<VapiEligibleCandidateVM>> GetEligibleCandidatesForRescheduleAsync(
+            int count = 10, int? irfId = null, int? candidateId = null,
+            bool bypassCaps = false, bool excludeCampaignCandidates = false);
         Task IncrementCallAttemptsAsync(int candidateId);
         Task<bool> HasConfirmedInterviewAsync(string candidateEmail, int irfId);
         Task<CandidateDetailsForSchdeule> GetCandidateDetailsForScheduleAsync(int irfId, string candidateEmail);

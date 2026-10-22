@@ -1,0 +1,115 @@
+@*
+    Styles for the PlivoCX campaign screens (list, create, detail, call detail). Every rule is
+    scoped to a pcx- class so nothing leaks into the portal layout. State and status chips differ
+    in lightness as well as hue, and always carry their text, so they read without colour.
+*@
+<style>
+    .pcx-page { background: #f2f5f8; min-height: 100vh; padding: 16px 0 30px; font-size: 13px; color: #1f2937; }
+    .pcx-wrap { max-width: 1280px; margin: 0 auto; padding: 0 15px; }
+    .pcx-card { background: #fff; border: 1px solid #e3e8ef; border-radius: 12px; box-shadow: 0 1px 6px rgba(15, 23, 42, .05); margin-bottom: 14px; }
+    .pcx-card-b { padding: 16px 20px; }
+    .pcx-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .08em; color: #1565c0; text-transform: uppercase; margin: 0 0 2px; }
+    .pcx-head { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
+    .pcx-head h3 { margin: 0; font-size: 22px; font-weight: 700; }
+    .pcx-sub { color: #64748b; margin: 3px 0 0; }
+    .pcx-sub b { color: #334155; }
+    .pcx-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .pcx-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; color: #1f2937 !important; font-weight: 600; font-size: 12.5px; cursor: pointer; text-decoration: none !important; white-space: nowrap; }
+    .pcx-btn:hover { background: #f1f5f9; }
+    .pcx-btn.primary { background: #1565c0; border-color: #1565c0; color: #fff !important; }
+    .pcx-btn.primary:hover { background: #0d47a1; }
+    .pcx-btn.violet { background: #6d28d9; border-color: #6d28d9; color: #fff !important; }
+    .pcx-btn.violet:hover { background: #5b21b6; }
+    .pcx-btn.sm { padding: 4px 9px; font-size: 11.5px; }
+    .pcx-btn[disabled] { opacity: .55; cursor: not-allowed; }
+    .pcx-link { color: #1d4ed8; font-weight: 600; text-decoration: none; cursor: pointer; background: none; border: 0; padding: 0; }
+    .pcx-link:hover { text-decoration: underline; }
+    .pcx-muted { color: #64748b; }
+    .pcx-small { font-size: 11.5px; }
+    .pcx-input, .pcx-select { width: 100%; border: 1px solid #cfd8e3; border-radius: 8px; padding: 7px 10px; font-size: 13px; background: #fff; color: #1f2937; }
+    .pcx-label { font-size: 11px; font-weight: 700; letter-spacing: .05em; color: #64748b; text-transform: uppercase; margin: 0 0 5px; display: block; }
+    .pcx-field { margin-bottom: 14px; }
+    .pcx-alert { border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; font-weight: 500; }
+    .pcx-alert.err { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+    .pcx-alert.ok { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+    .pcx-alert.warn { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+    .pcx-alert code { background: rgba(0,0,0,.06); padding: 1px 5px; border-radius: 4px; }
+
+    /* chips: campaign status, candidate state, eligibility */
+    .pcx-chip { display: inline-block; border-radius: 999px; padding: 2px 10px; font-weight: 700; font-size: 11px; border: 1px solid transparent; white-space: nowrap; }
+    .pcx-chip.Draft, .pcx-chip.grey { background: #eef2f6; color: #334155; border-color: #d5dde7; }
+    .pcx-chip.Running, .pcx-chip.Booked, .pcx-chip.eligible { background: #dcfce7; color: #14532d; border-color: #86efac; }
+    .pcx-chip.Paused, .pcx-chip.Pending, .pcx-chip.no-number { background: #fef3c7; color: #78350f; border-color: #fcd34d; }
+    .pcx-chip.Completed, .pcx-chip.has-meeting { background: #e0ecff; color: #1e3a8a; border-color: #a5c4f7; }
+    .pcx-chip.NotBooked, .pcx-chip.cold, .pcx-chip.not-eligible { background: #fee2e2; color: #7f1d1d; border-color: #fca5a5; }
+    .pcx-chip.Cold { background: #e2e8f0; color: #1e293b; border-color: #94a3b8; }
+
+    /* segmented control */
+    .pcx-seg { display: inline-flex; border: 1px solid #cfd8e3; border-radius: 9px; overflow: hidden; background: #fff; flex-wrap: wrap; }
+    .pcx-seg button { border: 0; background: transparent; padding: 7px 14px; font-weight: 600; font-size: 12.5px; color: #475569; cursor: pointer; }
+    .pcx-seg button + button { border-left: 1px solid #e3e8ef; }
+    .pcx-seg button.on { background: #1565c0; color: #fff; }
+    .pcx-seg button[disabled] { color: #b8c2cf; cursor: not-allowed; }
+
+    /* tables */
+    .pcx-table-wrap { overflow-x: auto; }
+    .pcx-table { width: 100%; border-collapse: collapse; }
+    .pcx-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #64748b; padding: 10px 12px; border-bottom: 1px solid #e3e8ef; white-space: nowrap; }
+    .pcx-table td { padding: 10px 12px; border-bottom: 1px solid #f1f4f8; vertical-align: middle; }
+    .pcx-table tr:hover td { background: #fafcff; }
+    .pcx-table .pcx-num { text-align: right; font-variant-numeric: tabular-nums; }
+    .pcx-table .strong { font-weight: 700; }
+    .pcx-empty { text-align: center; padding: 34px; color: #64748b; }
+    .pcx-avatar { display: inline-flex; width: 30px; height: 30px; border-radius: 50%; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 11px; margin-right: 9px; flex: none; }
+    .pcx-person { display: flex; align-items: center; }
+
+    /* tiles + stacked bar */
+    .pcx-tiles { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin: 14px 0 8px; }
+    @@media (max-width: 900px) { .pcx-tiles { grid-template-columns: repeat(3, 1fr); } }
+    .pcx-tile { border: 1px solid #e3e8ef; border-radius: 10px; padding: 12px; text-align: center; background: #fff; }
+    .pcx-tile b { display: block; font-size: 24px; line-height: 1.2; }
+    .pcx-tile span { font-size: 10.5px; letter-spacing: .06em; color: #64748b; text-transform: uppercase; }
+    .pcx-tile.pcx-st-booked b { color: #15803d; } .pcx-tile.pcx-st-notbooked b { color: #dc2626; }
+    .pcx-tile.pcx-st-cold b { color: #64748b; } .pcx-tile.pcx-st-pending b { color: #b45309; }
+    .pcx-bar { display: flex; height: 8px; border-radius: 99px; overflow: hidden; background: #eef2f6; }
+    .pcx-bar span { display: block; height: 100%; }
+    .pcx-bar .pcx-st-booked, .pcx-key .pcx-st-booked { background: #22c55e; }
+    .pcx-bar .pcx-st-notbooked, .pcx-key .pcx-st-notbooked { background: #f87171; }
+    .pcx-bar .pcx-st-cold, .pcx-key .pcx-st-cold { background: #94a3b8; }
+    .pcx-bar .pcx-st-pending, .pcx-key .pcx-st-pending { background: #fcd34d; }
+    .pcx-key { display: flex; gap: 14px; margin: 6px 0 14px; color: #64748b; font-size: 11.5px; flex-wrap: wrap; }
+    .pcx-key i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 5px; }
+
+    /* policy grid */
+    .pcx-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    @@media (max-width: 900px) { .pcx-grid { grid-template-columns: repeat(2, 1fr); } }
+    .pcx-details { border: 1px solid #e3e8ef; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; }
+    .pcx-details summary { cursor: pointer; font-weight: 600; color: #334155; }
+
+    /* menu */
+    .pcx-menu { position: relative; display: inline-block; }
+    .pcx-menu-list { position: absolute; right: 0; top: 100%; z-index: 30; background: #fff; border: 1px solid #e3e8ef; border-radius: 8px; box-shadow: 0 8px 24px rgba(15,23,42,.12); min-width: 140px; padding: 4px 0; display: none; }
+    .pcx-menu.open .pcx-menu-list { display: block; }
+    .pcx-menu-list button { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 7px 12px; font-size: 12.5px; cursor: pointer; }
+    .pcx-menu-list button:hover { background: #f1f5f9; }
+
+    /* call detail */
+    .pcx-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
+    @@media (max-width: 760px) { .pcx-facts { grid-template-columns: 1fr; } }
+    .pcx-fact { border: 1px solid #e3e8ef; border-radius: 10px; padding: 10px 14px; background: #fff; }
+    .pcx-fact .pcx-label { margin-bottom: 3px; }
+    .pcx-fact div { font-size: 14px; word-break: break-word; }
+    .pcx-good { color: #15803d; font-weight: 600; } .pcx-bad { color: #b91c1c; font-weight: 600; }
+    .pcx-tabs { display: flex; gap: 18px; border-bottom: 1px solid #e3e8ef; margin: 14px 0 12px; }
+    .pcx-tabs button { border: 0; background: none; padding: 8px 2px; font-weight: 600; color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+    .pcx-tabs button.on { color: #0f172a; border-bottom-color: #1565c0; }
+    .pcx-pane { display: none; } .pcx-pane.on { display: block; }
+    .pcx-turn { display: flex; gap: 12px; margin-bottom: 10px; }
+    .pcx-turn .who { width: 80px; flex: none; text-align: right; font-weight: 700; font-size: 12px; color: #64748b; padding-top: 8px; }
+    .pcx-turn.agent .who { color: #1565c0; }
+    .pcx-turn .say { border: 1px solid #e3e8ef; border-radius: 10px; padding: 8px 12px; background: #fff; max-width: 760px; white-space: pre-wrap; }
+    .pcx-turn.agent .say { background: #f5f9ff; }
+    .pcx-pre { background: #f8fafc; border: 1px solid #e3e8ef; border-radius: 8px; padding: 10px 12px; white-space: pre-wrap; font-size: 12px; max-height: 420px; overflow: auto; }
+
+    .pcx-toast { position: fixed; right: 18px; bottom: 18px; z-index: 3000; max-width: 380px; }
+</style>

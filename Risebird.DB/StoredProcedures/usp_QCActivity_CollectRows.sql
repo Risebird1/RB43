@@ -23,7 +23,12 @@ The caller must create the table first (exact shape):
         Phone             VARCHAR(30)   NULL,
         RecordingUrl      VARCHAR(1000) NULL,
         SourceId          INT           NULL,
-        RefId             INT           NULL    -- optional column; filled only when the caller has it
+        RefId             INT           NULL,   -- optional column; filled only when the caller has it
+        -- optional authenticity columns (part 2); section 16 fills them when present:
+        Comment           NVARCHAR(500) NULL,
+        HasEvidence       BIT           NULL,
+        IsAuthentic       BIT           NULL,
+        PageGroup         VARCHAR(30)   NULL
     );
 
 Metric (atomic, one row each)       Source                                       Actor            Stored time
@@ -39,6 +44,12 @@ Metric (atomic, one row each)       Source                                      
                                     RiskAuditRemoval
   TrmUnderReview/TrmReviewed/TrmRemoved RedMarkerStatusDetails Type IRF 1/2/3    CreatedBy        IST
   TiUnderReview/TiReviewed/TiRemoved    RedMarkerStatusDetails Type TotalInterview CreatedBy      IST
+  PrUnderReview/PrReviewed/PrRemoved    RedMarkerStatusDetails Type PotentialRisk  CreatedBy      IST
+  HrUnderReview/HrReviewed/HrRemoved    RedMarkerStatusDetails Type HighRisk       CreatedBy      IST
+  PliUnderReview/PliReviewed/PliRemoved RedMarkerStatusDetails Type PLI            CreatedBy      IST
+  MonitoringRemoved / MonitoringShortlisted  TransInterviewerAuditLog EventType   ChangedBy        UTC
+                                    MonitoringRemoved / MonitoringShortlisted
+                                    (Interviewer Monitoring Remove / Shortlist)
   PlivoCall       (Amount = seconds) CallRecordingData to interviewers, Plivo    Caller           server clock (UTC)
   Coaching        (Amount = linked call seconds) InterviewerCoachingSession CoachEmail      UTC
   Suspicious                        SuspiciousInterviewer (one row per mark)     CreatedBy        app server clock (UTC)
@@ -47,10 +58,25 @@ Metric (atomic, one row each)       Source                                      
     AccessRestored / Inactivated /
     Reactivated / PaymentHold /
     PaymentHoldReleased
+  DeductionReview                   InterviewerActionLog ActionType DeductionReview: ActedBy          UTC
+                                    a QC decision on an interviewer's deduction
+                                    review request (usp_DecideDeductionReviewRequest)
   ReportEdited                      ReportEditLog (RefId = log Id), and for the  EditedBy         UTC
                                     part of the range before the first log row,  PerformedBy      IST
                                     InterviewCommentsHistory (comment changed
                                     by someone other than the interviewer)
+
+  ProxyForm                         InterviewerActionLog ProxyForm (every save),  ActedBy /        UTC
+                                    else ProxyReport first save                  CreatedBy
+  RedoRequested                     InterviewerActionLog RedoRequested (every     ActedBy /        UTC
+                                    save), else RedoInterviews first save        CreatedBy
+  TrialBackfill   (Amount = flags)  TrialFlagBackfillRun (one row per run)       ExecutedBy       UTC
+
+Part 2 group keys (collect every source, the readers filter): PageTotalInterviews,
+PageTrm, PageIrfAudit, PageTrial, PageSuspicious, PageReportsSla, PagePotentialRisk,
+PageHighRisk, PageMonitoring, ScoredActions,
+AuthenticActions, NotAuthentic, NoEvidence, FollowThrough, Reached; ConnectedCall
+collects calls only. Section 16 explains PageGroup / Comment / HasEvidence / IsAuthentic.
 
 Status-change and report-edit rows carry a readable action label in [Status]
 ("Payment put on hold", "Edited interviewer comment (n to m chars)") and the
@@ -91,6 +117,15 @@ BEGIN
     IF @Metric = 'All'
         SET @Metric = NULL;
 
+    -- Part 2 group keys. Page and authenticity keys read every source; the readers filter on
+    -- PageGroup / IsAuthentic / HasEvidence (filled in section 16). ConnectedCall only needs calls.
+    IF @Metric IN ('PageTotalInterviews', 'PageTrm', 'PageIrfAudit', 'PageTrial', 'PageSuspicious', 'PageReportsSla',
+                   'PagePotentialRisk', 'PageHighRisk', 'PageMonitoring',
+                   'ScoredActions', 'AuthenticActions', 'NotAuthentic', 'NoEvidence', 'FollowThrough', 'Reached', 'ActionsTaken')
+        SET @Metric = NULL;
+    ELSE IF @Metric = 'ConnectedCall'
+        SET @Metric = 'PlivoCall';
+
     -- Inclusive IST calendar dates -> half-open IST window -> same window in UTC.
     DECLARE @FromIstDt DATETIME = CAST(@FromIst AS DATETIME);
     DECLARE @ToIstDt   DATETIME = DATEADD(DAY, 1, CAST(@ToIst AS DATETIME));
@@ -105,14 +140,22 @@ BEGIN
     DECLARE @WantAuditLog BIT = CASE WHEN @Metric IS NULL OR @Metric IN ('AuditKept', 'AuditRemoved', 'AuditActions') THEN 1 ELSE 0 END;
     DECLARE @WantTrm     BIT = CASE WHEN @Metric IS NULL OR @Metric IN ('TrmUnderReview', 'TrmReviewed', 'TrmRemoved', 'Trm') THEN 1 ELSE 0 END;
     DECLARE @WantTi      BIT = CASE WHEN @Metric IS NULL OR @Metric IN ('TiUnderReview', 'TiReviewed', 'TiRemoved', 'Ti') THEN 1 ELSE 0 END;
+    -- QC page decisions (RedMarkerStatusDetails Type PotentialRisk / HighRisk / PLI)
+    DECLARE @WantPr      BIT = CASE WHEN @Metric IS NULL OR @Metric IN ('PrUnderReview', 'PrReviewed', 'PrRemoved', 'Pr') THEN 1 ELSE 0 END;
+    DECLARE @WantHr      BIT = CASE WHEN @Metric IS NULL OR @Metric IN ('HrUnderReview', 'HrReviewed', 'HrRemoved', 'Hr') THEN 1 ELSE 0 END;
+    DECLARE @WantPli     BIT = CASE WHEN @Metric IS NULL OR @Metric IN ('PliUnderReview', 'PliReviewed', 'PliRemoved', 'Pli') THEN 1 ELSE 0 END;
+    DECLARE @WantMonitoring BIT = CASE WHEN @Metric IS NULL OR @Metric IN ('MonitoringRemoved', 'MonitoringShortlisted', 'Monitoring') THEN 1 ELSE 0 END;
     DECLARE @WantPlivo   BIT = CASE WHEN @Metric IS NULL OR @Metric = 'PlivoCall' THEN 1 ELSE 0 END;
     DECLARE @WantCoaching BIT = CASE WHEN @Metric IS NULL OR @Metric = 'Coaching' THEN 1 ELSE 0 END;
     DECLARE @WantSuspicious BIT = CASE WHEN @Metric IS NULL OR @Metric IN ('Suspicious', 'SuspiciousAll', 'StatusActions') THEN 1 ELSE 0 END;
     DECLARE @WantActionLog BIT = CASE WHEN @Metric IS NULL OR @Metric IN (
         'SuspiciousUndone', 'Blocked', 'Unblocked', 'AccessRevoked', 'AccessRestored', 'Inactivated', 'Reactivated',
-        'PaymentHold', 'PaymentHoldReleased',
+        'PaymentHold', 'PaymentHoldReleased', 'DeductionReview',
         'StatusActions', 'SuspiciousAll', 'BlockedAll', 'AccessAll', 'ActiveAll', 'PaymentHoldAll') THEN 1 ELSE 0 END;
     DECLARE @WantReportEdit BIT = CASE WHEN @Metric IS NULL OR @Metric = 'ReportEdited' THEN 1 ELSE 0 END;
+    DECLARE @WantProxy   BIT = CASE WHEN @Metric IS NULL OR @Metric = 'ProxyForm' THEN 1 ELSE 0 END;
+    DECLARE @WantRedo    BIT = CASE WHEN @Metric IS NULL OR @Metric = 'RedoRequested' THEN 1 ELSE 0 END;
+    DECLARE @WantTrialBackfill BIT = CASE WHEN @Metric IS NULL OR @Metric IN ('TrialBackfill', 'Trial') THEN 1 ELSE 0 END;
 
     -- Interviewer filter: rows keyed by interviewer email use @InterviewerEmail, rows keyed by UserList.id use @IvUserId.
     -- An unknown email leaves @IvUserId NULL, so the id-keyed sources return nothing for it.
@@ -122,6 +165,7 @@ BEGIN
     BEGIN
         SET @IvUserId = (SELECT TOP 1 id FROM dbo.UserList WHERE EmailId = @InterviewerEmail ORDER BY id DESC);
         SET @WantBackfill = 0; -- backfill runs are per IRF, never about one interviewer
+        SET @WantTrialBackfill = 0;
     END
 
     DECLARE @Sql NVARCHAR(MAX);
@@ -219,9 +263,86 @@ BEGIN
     END
 
     /* ---------------------------------------------------------------
-       2. Payment SLA approved / not approved (current state, ModifiedBy).
+       2. Payment SLA approved / not approved.
+          With PaymentSLADetailsHistory.IsApproved (tr_PaymentSLADetails copies it on every
+          save): one row per save that moved the report to Approved (1) / Not approved (2),
+          by the person who saved it, so a later save cannot erase an approval. Interviews
+          with no history carrying IsApproved (saved before that column existed) fall back to
+          the current state (ModifiedBy), as before.
        --------------------------------------------------------------- */
-    IF @WantSla = 1
+    IF @WantSla = 1 AND COL_LENGTH('dbo.PaymentSLADetailsHistory', 'IsApproved') IS NOT NULL
+    BEGIN
+        SET @Sql = N'
+        ;WITH H AS (
+            SELECT h.id, h.Interviewid, h.CreatedBy, h.CreatedOn, h.IsApproved, h.PaymentDeduction, h.Recommendation,
+                   LAG(h.IsApproved) OVER (PARTITION BY h.Interviewid ORDER BY h.id) AS PrevApproved
+            FROM dbo.PaymentSLADetailsHistory h
+            WHERE h.Interviewid IS NOT NULL
+              AND h.Interviewid IN (SELECT x.Interviewid FROM dbo.PaymentSLADetailsHistory x
+                                    WHERE x.CreatedOn >= @FromUtc AND x.CreatedOn < @ToUtc AND x.IsApproved IN (1, 2))
+        )
+        INSERT INTO #QCActivityRows (ActorEmail, Metric, ActionAtIst, InterviewId, IrfId, InterviewerEmail, Amount, Detail, SourceId)
+        SELECT
+            LEFT(LTRIM(RTRIM(h.CreatedBy)), 150),
+            CASE h.IsApproved WHEN 1 THEN ''SlaApproved'' ELSE ''SlaNotApproved'' END,
+            DATEADD(MINUTE, 330, h.CreatedOn),
+            h.Interviewid,
+            irf.id,
+            im.interviewer,
+            ISNULL(h.PaymentDeduction, 0),
+            h.Recommendation,
+            h.id
+        FROM H h
+        LEFT JOIN dbo.InterviewMeetings im ON im.id = h.Interviewid
+        OUTER APPLY (SELECT TOP 1 i.id FROM dbo.IRF i WHERE i.IRFId = im.IRFId ORDER BY i.id DESC) irf
+        WHERE h.IsApproved IN (1, 2)
+          AND ISNULL(h.PrevApproved, -1) <> h.IsApproved
+          AND h.CreatedOn >= @FromUtc
+          AND h.CreatedOn <  @ToUtc
+          AND NULLIF(LTRIM(RTRIM(h.CreatedBy)), '''') IS NOT NULL
+          AND LTRIM(RTRIM(h.CreatedBy)) NOT IN (''AISystem'', ''System'')
+          AND (@ActorEmail IS NULL OR LTRIM(RTRIM(h.CreatedBy)) = @ActorEmail)
+          AND (@InterviewerEmail IS NULL OR im.interviewer = @InterviewerEmail)';
+        IF @Metric = 'SlaApproved'
+            SET @Sql += N' AND h.IsApproved = 1';
+        ELSE IF @Metric = 'SlaNotApproved'
+            SET @Sql += N' AND h.IsApproved = 2';
+        EXEC sp_executesql @Sql, @Params, @FromUtc = @FromUtc, @ToUtc = @ToUtc, @ActorEmail = @ActorEmail,
+            @InterviewerEmail = @InterviewerEmail, @IvUserId = @IvUserId;
+
+        -- Legacy: interviews with no history row carrying IsApproved keep the current-state rule.
+        SET @Sql = N'
+        INSERT INTO #QCActivityRows (ActorEmail, Metric, ActionAtIst, InterviewId, IrfId, InterviewerEmail, Amount, Detail, SourceId)
+        SELECT
+            LEFT(LTRIM(RTRIM(ps.ModifiedBy)), 150),
+            CASE ps.IsApproved WHEN 1 THEN ''SlaApproved'' ELSE ''SlaNotApproved'' END,
+            DATEADD(MINUTE, 330, ps.ModifiedOn),
+            ps.Interviewid,
+            irf.id,
+            im.interviewer,
+            ISNULL(ps.PaymentDeduction, 0),
+            ps.Recommendation,
+            ps.id
+        FROM dbo.PaymentSLADetails ps
+        LEFT JOIN dbo.InterviewMeetings im ON im.id = ps.Interviewid
+        OUTER APPLY (SELECT TOP 1 i.id FROM dbo.IRF i WHERE i.IRFId = im.IRFId ORDER BY i.id DESC) irf
+        WHERE ps.IsApproved IN (1, 2)
+          AND ps.ModifiedOn >= @FromUtc
+          AND ps.ModifiedOn <  @ToUtc
+          AND NULLIF(LTRIM(RTRIM(ps.ModifiedBy)), '''') IS NOT NULL
+          AND LTRIM(RTRIM(ps.ModifiedBy)) NOT IN (''AISystem'', ''System'')
+          AND (@ActorEmail IS NULL OR LTRIM(RTRIM(ps.ModifiedBy)) = @ActorEmail)
+          AND (@InterviewerEmail IS NULL OR im.interviewer = @InterviewerEmail)
+          AND NOT EXISTS (SELECT 1 FROM dbo.PaymentSLADetailsHistory hx
+                          WHERE hx.Interviewid = ps.Interviewid AND hx.IsApproved IS NOT NULL)';
+        IF @Metric = 'SlaApproved'
+            SET @Sql += N' AND ps.IsApproved = 1';
+        ELSE IF @Metric = 'SlaNotApproved'
+            SET @Sql += N' AND ps.IsApproved = 2';
+        EXEC sp_executesql @Sql, @Params, @FromUtc = @FromUtc, @ToUtc = @ToUtc, @ActorEmail = @ActorEmail,
+            @InterviewerEmail = @InterviewerEmail, @IvUserId = @IvUserId;
+    END
+    ELSE IF @WantSla = 1
     BEGIN
         INSERT INTO #QCActivityRows (ActorEmail, Metric, ActionAtIst, InterviewId, IrfId, InterviewerEmail, Amount, Detail, SourceId)
         SELECT
@@ -399,13 +520,52 @@ BEGIN
     END
 
     /* ---------------------------------------------------------------
+       6b. Interviewer Monitoring (PQI) Remove / Shortlist on a channel
+           (TransInterviewerAuditLog EventType MonitoringRemoved /
+           MonitoringShortlisted, written by usp_updateInterviewerIRFStatusByIRFid
+           with the actor and the required comment). Detail = the comment.
+       --------------------------------------------------------------- */
+    IF @WantMonitoring = 1 AND OBJECT_ID(N'dbo.TransInterviewerAuditLog', N'U') IS NOT NULL
+    BEGIN
+        SET @Sql = N'
+        INSERT INTO #QCActivityRows (ActorEmail, Metric, ActionAtIst, IrfId, InterviewerUserId, Detail, [Status], SourceId)
+        SELECT
+            LEFT(LTRIM(RTRIM(l.ChangedBy)), 150),
+            l.EventType,
+            DATEADD(MINUTE, 330, l.ChangedAt),
+            t.IRFId,
+            t.UserId,
+            LEFT(l.ReasonCategory, 500),
+            CASE l.EventType WHEN ''MonitoringRemoved'' THEN ''Removed from channel · Monitoring''
+                             ELSE ''Shortlisted on channel · Monitoring'' END,
+            l.Id
+        FROM dbo.TransInterviewerAuditLog l
+        INNER JOIN dbo.TransInterviewer t ON t.id = l.TransInterviewerId
+        WHERE l.EventType IN (''MonitoringRemoved'', ''MonitoringShortlisted'')
+          AND l.ChangedAt >= @FromUtc
+          AND l.ChangedAt <  @ToUtc
+          AND NULLIF(LTRIM(RTRIM(l.ChangedBy)), '''') IS NOT NULL
+          AND LTRIM(RTRIM(l.ChangedBy)) NOT IN (''AISystem'', ''System'')
+          AND (@ActorEmail IS NULL OR LTRIM(RTRIM(l.ChangedBy)) = @ActorEmail)
+          AND (@InterviewerEmail IS NULL OR t.UserId = @IvUserId)';
+
+        IF @Metric IN ('MonitoringRemoved', 'MonitoringShortlisted')
+            SET @Sql += N' AND l.EventType = ''' + @Metric + N'''';
+
+        EXEC sp_executesql @Sql, @Params, @FromUtc = @FromUtc, @ToUtc = @ToUtc, @ActorEmail = @ActorEmail,
+            @InterviewerEmail = @InterviewerEmail, @IvUserId = @IvUserId;
+    END
+
+    /* ---------------------------------------------------------------
        7. Total Red Marker (Type IRF) and Total Interviews (Type
-          TotalInterview) status moves. CreatedOn is stored in IST.
+          TotalInterview) status moves, and the QC page decisions on
+          Potential Risk by Candidate (Type PotentialRisk), High-Risk
+          Interviewers (Type HighRisk) and PLI (Type PLI). CreatedOn is IST.
           A removal (Status 3) counts once per user, interviewer, IRF and type:
           moving a row to Removed and then pressing Delete on the Total Red
           Marker page both log Status 3; only the latest is kept.
        --------------------------------------------------------------- */
-    IF @WantTrm = 1 OR @WantTi = 1
+    IF @WantTrm = 1 OR @WantTi = 1 OR @WantPr = 1 OR @WantHr = 1 OR @WantPli = 1
     BEGIN
         ;WITH Moves AS (
         SELECT
@@ -415,7 +575,7 @@ BEGIN
                              CASE WHEN r.[Status] = 3 THEN -1 ELSE r.id END
                 ORDER BY r.CreatedOn DESC, r.id DESC) AS rn
         FROM dbo.RedMarkerStatusDetails r
-        WHERE r.[Type] IN ('IRF', 'TotalInterview')
+        WHERE r.[Type] IN ('IRF', 'TotalInterview', 'PotentialRisk', 'HighRisk', 'PLI')
           AND r.[Status] IN (1, 2, 3)
           AND r.CreatedOn >= @FromIstDt
           AND r.CreatedOn <  @ToIstDt
@@ -423,16 +583,18 @@ BEGIN
           AND LTRIM(RTRIM(r.CreatedBy)) NOT IN ('AISystem', 'System')
           AND (@ActorEmail IS NULL OR LTRIM(RTRIM(r.CreatedBy)) = @ActorEmail)
           AND (@InterviewerEmail IS NULL OR r.InterviewerUserid = @IvUserId)
-          AND ((@WantTrm = 1 AND r.[Type] = 'IRF') OR (@WantTi = 1 AND r.[Type] = 'TotalInterview'))
-          AND (@Metric IS NULL OR @Metric IN ('Trm', 'Ti')
-               OR (@Metric IN ('TrmUnderReview', 'TiUnderReview') AND r.[Status] = 1)
-               OR (@Metric IN ('TrmReviewed', 'TiReviewed')       AND r.[Status] = 2)
-               OR (@Metric IN ('TrmRemoved', 'TiRemoved')         AND r.[Status] = 3))
+          AND ((@WantTrm = 1 AND r.[Type] = 'IRF') OR (@WantTi = 1 AND r.[Type] = 'TotalInterview')
+               OR (@WantPr = 1 AND r.[Type] = 'PotentialRisk') OR (@WantHr = 1 AND r.[Type] = 'HighRisk')
+               OR (@WantPli = 1 AND r.[Type] = 'PLI'))
+          AND (@Metric IS NULL OR @Metric IN ('Trm', 'Ti', 'Pr', 'Hr', 'Pli')
+               OR (@Metric IN ('TrmUnderReview', 'TiUnderReview', 'PrUnderReview', 'HrUnderReview', 'PliUnderReview') AND r.[Status] = 1)
+               OR (@Metric IN ('TrmReviewed', 'TiReviewed', 'PrReviewed', 'HrReviewed', 'PliReviewed')            AND r.[Status] = 2)
+               OR (@Metric IN ('TrmRemoved', 'TiRemoved', 'PrRemoved', 'HrRemoved', 'PliRemoved')                 AND r.[Status] = 3))
         )
         INSERT INTO #QCActivityRows (ActorEmail, Metric, ActionAtIst, IrfId, InterviewerUserId, Detail, SourceId)
         SELECT
             LEFT(LTRIM(RTRIM(m.CreatedBy)), 150),
-            CASE WHEN m.[Type] = 'IRF' THEN 'Trm' ELSE 'Ti' END
+            CASE m.[Type] WHEN 'IRF' THEN 'Trm' WHEN 'PotentialRisk' THEN 'Pr' WHEN 'HighRisk' THEN 'Hr' WHEN 'PLI' THEN 'Pli' ELSE 'Ti' END
                 + CASE m.[Status] WHEN 1 THEN 'UnderReview' WHEN 2 THEN 'Reviewed' ELSE 'Removed' END,
             m.CreatedOn,
             NULLIF(m.IRFId, 0),
@@ -534,24 +696,41 @@ BEGIN
        --------------------------------------------------------------- */
     IF @WantSuspicious = 1 AND OBJECT_ID(N'dbo.SuspiciousInterviewer', N'U') IS NOT NULL
     BEGIN
+        -- [Status] names the page the mark came from (SuspiciousInterviewer.SourcePage, optional column),
+        -- e.g. "Marked suspicious · TRM"; marks from before the column existed show no page.
+        DECLARE @SusPage NVARCHAR(MAX) = CASE WHEN COL_LENGTH('dbo.SuspiciousInterviewer', 'SourcePage') IS NOT NULL THEN N'
+                + ISNULL('' · '' + CASE
+                    WHEN s.SourcePage = ''TotalInterviews''        THEN ''Total Interviews''
+                    WHEN s.SourcePage = ''TRM''                    THEN ''TRM''
+                    WHEN s.SourcePage = ''PotentialRiskCandidate'' THEN ''Potential Risk''
+                    WHEN s.SourcePage = ''TrialFlagReview''        THEN ''Trial Flag Review''
+                    WHEN s.SourcePage = ''PaymentSla''             THEN ''Payment SLA''
+                    WHEN s.SourcePage = ''HighRisk''               THEN ''High-Risk''
+                    WHEN s.SourcePage LIKE ''911:%''               THEN ''911 dashboard ('' + SUBSTRING(s.SourcePage, 5, 50) + '')''
+                    ELSE NULLIF(LTRIM(RTRIM(s.SourcePage)), '''') END, '''')' ELSE N'' END;
+
+        SET @Sql = N'
         INSERT INTO #QCActivityRows (ActorEmail, Metric, ActionAtIst, InterviewerUserId, InterviewerEmail, Detail, [Status], SourceId)
         SELECT
             LEFT(LTRIM(RTRIM(s.CreatedBy)), 150),
-            'Suspicious',
+            ''Suspicious'',
             DATEADD(MINUTE, 330, s.Createddate),
             s.UserId,
             u.EmailId,
-            LEFT(NULLIF(LTRIM(RTRIM(s.Comment)), ''), 500),
-            'Marked suspicious',
+            LEFT(NULLIF(LTRIM(RTRIM(s.Comment)), ''''), 500),
+            LEFT(''Marked suspicious''' + @SusPage + N', 150),
             s.Id
         FROM dbo.SuspiciousInterviewer s
         OUTER APPLY (SELECT TOP 1 ul.EmailId FROM dbo.UserList ul WHERE ul.id = s.UserId) u
         WHERE s.Createddate >= @FromUtc
           AND s.Createddate <  @ToUtc
-          AND NULLIF(LTRIM(RTRIM(s.CreatedBy)), '') IS NOT NULL
-          AND LTRIM(RTRIM(s.CreatedBy)) NOT IN ('AISystem', 'System')
+          AND NULLIF(LTRIM(RTRIM(s.CreatedBy)), '''') IS NOT NULL
+          AND LTRIM(RTRIM(s.CreatedBy)) NOT IN (''AISystem'', ''System'')
           AND (@ActorEmail IS NULL OR LTRIM(RTRIM(s.CreatedBy)) = @ActorEmail)
-          AND (@InterviewerEmail IS NULL OR s.UserId = @IvUserId);
+          AND (@InterviewerEmail IS NULL OR s.UserId = @IvUserId);';
+
+        EXEC sp_executesql @Sql, @Params, @FromUtc = @FromUtc, @ToUtc = @ToUtc, @ActorEmail = @ActorEmail,
+            @InterviewerEmail = @InterviewerEmail, @IvUserId = @IvUserId;
     END
 
     /* ---------------------------------------------------------------
@@ -581,13 +760,15 @@ BEGIN
                 WHEN ''Reactivated''         THEN ''Made active''
                 WHEN ''PaymentHold''         THEN ''Payment put on hold''
                 WHEN ''PaymentHoldReleased'' THEN ''Payment hold released''
+                WHEN ''DeductionReview''     THEN ''Deduction review decided''
             END,
             l.Id
         FROM dbo.InterviewerActionLog l
         WHERE l.ActedAtUtc >= @FromUtc
           AND l.ActedAtUtc <  @ToUtc
           AND l.ActionType IN (''SuspiciousUndone'', ''Blocked'', ''Unblocked'', ''AccessRevoked'', ''AccessRestored'',
-                               ''Inactivated'', ''Reactivated'', ''PaymentHold'', ''PaymentHoldReleased'')
+                               ''Inactivated'', ''Reactivated'', ''PaymentHold'', ''PaymentHoldReleased'',
+                               ''DeductionReview'')
           AND NULLIF(LTRIM(RTRIM(l.ActedBy)), '''') IS NOT NULL
           AND LTRIM(RTRIM(l.ActedBy)) NOT IN (''Admin'', ''AISystem'', ''System'')
           AND (@ActorEmail IS NULL OR LTRIM(RTRIM(l.ActedBy)) = @ActorEmail)
@@ -595,8 +776,10 @@ BEGIN
                OR (l.InterviewerUserId IS NULL AND l.InterviewerEmail = @InterviewerEmail))';
 
         IF @Metric IN ('SuspiciousUndone', 'Blocked', 'Unblocked', 'AccessRevoked', 'AccessRestored',
-                       'Inactivated', 'Reactivated', 'PaymentHold', 'PaymentHoldReleased')
+                       'Inactivated', 'Reactivated', 'PaymentHold', 'PaymentHoldReleased', 'DeductionReview')
             SET @Sql += N' AND l.ActionType = @Metric';
+        ELSE IF @Metric = 'StatusActions'
+            SET @Sql += N' AND l.ActionType <> ''DeductionReview''';
         ELSE IF @Metric = 'SuspiciousAll'
             SET @Sql += N' AND l.ActionType = ''SuspiciousUndone''';
         ELSE IF @Metric = 'BlockedAll'
@@ -722,6 +905,482 @@ BEGIN
                                 AND LTRIM(RTRIM(ip.NickName)) = LTRIM(RTRIM(im.interviewer)))
               AND (@InterviewerEmail IS NULL OR im.interviewer = @InterviewerEmail);
         END
+    END
+
+    /* ---------------------------------------------------------------
+       14. Proxy forms (ProxyForm) and redo requests (RedoRequested).
+           usp_SaveorUpdateProxyReport / usp_AddRedoInterviewDetails log
+           every save in InterviewerActionLog (Reason "Interview #<id>: ...");
+           an update of the proxy form overwrites Qcdoneby, so the log is the
+           only record of who edited it. Saves from before the log existed
+           come from ProxyReport.CreatedBy / RedoInterviews.CreatedBy (first
+           save only); such a row is skipped when the log already has the
+           same interview and person within 5 minutes (either clock).
+       --------------------------------------------------------------- */
+    IF @WantProxy = 1 OR @WantRedo = 1
+    BEGIN
+        DECLARE @HasActionLog BIT = CASE WHEN OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL THEN 1 ELSE 0 END;
+
+        IF @HasActionLog = 1
+        BEGIN
+            SET @Sql = N'
+            INSERT INTO #QCActivityRows (ActorEmail, Metric, ActionAtIst, InterviewId, IrfId, InterviewerUserId, InterviewerEmail, Detail, [Status], SourceId)
+            SELECT
+                LEFT(LTRIM(RTRIM(l.ActedBy)), 150),
+                l.ActionType,
+                DATEADD(MINUTE, 330, l.ActedAtUtc),
+                x.InterviewId,
+                irf.id,
+                l.InterviewerUserId,
+                l.InterviewerEmail,
+                LEFT(NULLIF(LTRIM(RTRIM(l.Reason)), N''''), 500),
+                CASE l.ActionType WHEN ''ProxyForm'' THEN ''Proxy form saved'' ELSE ''Redo requested'' END,
+                l.Id
+            FROM dbo.InterviewerActionLog l
+            CROSS APPLY (SELECT CASE WHEN l.Reason LIKE N''Interview #%''
+                                     THEN TRY_CAST(SUBSTRING(l.Reason, 12, CHARINDEX(N'':'', l.Reason + N'':'', 12) - 12) AS INT) END AS InterviewId) x
+            LEFT JOIN dbo.InterviewMeetings im ON im.id = x.InterviewId
+            OUTER APPLY (SELECT TOP 1 i.id FROM dbo.IRF i WHERE i.IRFId = im.IRFId ORDER BY i.id DESC) irf
+            WHERE l.ActionType IN (''ProxyForm'', ''RedoRequested'')
+              AND l.ActedAtUtc >= @FromUtc
+              AND l.ActedAtUtc <  @ToUtc
+              AND NULLIF(LTRIM(RTRIM(l.ActedBy)), '''') IS NOT NULL
+              AND LTRIM(RTRIM(l.ActedBy)) NOT IN (''Admin'', ''AISystem'', ''System'')
+              AND (@ActorEmail IS NULL OR LTRIM(RTRIM(l.ActedBy)) = @ActorEmail)
+              AND (@InterviewerEmail IS NULL OR l.InterviewerUserId = @IvUserId
+                   OR (l.InterviewerUserId IS NULL AND l.InterviewerEmail = @InterviewerEmail))';
+            IF @WantProxy = 0 SET @Sql += N' AND l.ActionType = ''RedoRequested''';
+            IF @WantRedo = 0  SET @Sql += N' AND l.ActionType = ''ProxyForm''';
+
+            EXEC sp_executesql @Sql, @Params, @FromUtc = @FromUtc, @ToUtc = @ToUtc, @ActorEmail = @ActorEmail,
+                @InterviewerEmail = @InterviewerEmail, @IvUserId = @IvUserId;
+        END
+
+        -- First saves recorded only in the form tables (before the log, or while it is missing).
+        DECLARE @NotLogged NVARCHAR(MAX) = CASE WHEN @HasActionLog = 1 THEN N'
+              AND NOT EXISTS (SELECT 1 FROM dbo.InterviewerActionLog l
+                              WHERE l.ActionType = @LogType
+                                AND LTRIM(RTRIM(l.ActedBy)) = LTRIM(RTRIM(t.CreatedBy))
+                                AND l.Reason LIKE N''Interview #'' + CAST(t.interviewid AS NVARCHAR(20)) + N'':%''
+                                AND (ABS(DATEDIFF(MINUTE, l.ActedAtUtc, t.CreatedOn)) <= 5
+                                     OR ABS(DATEDIFF(MINUTE, l.ActedAtUtc, t.CreatedOn) + 330) <= 5))' ELSE N'' END;
+
+        IF @WantProxy = 1 AND OBJECT_ID(N'dbo.ProxyReport', N'U') IS NOT NULL
+        BEGIN
+            SET @Sql = N'
+            INSERT INTO #QCActivityRows (ActorEmail, Metric, ActionAtIst, InterviewId, IrfId, InterviewerEmail, Detail, [Status], SourceId)
+            SELECT
+                LEFT(LTRIM(RTRIM(t.CreatedBy)), 150),
+                ''ProxyForm'',
+                DATEADD(MINUTE, 330, t.CreatedOn),
+                t.interviewid,
+                irf.id,
+                LTRIM(RTRIM(im.interviewer)),
+                LEFT(N''Interview #'' + CAST(t.interviewid AS NVARCHAR(20)) + N'': proxy form filled; proxy candidate: ''
+                     + CASE WHEN t.isProxyCandidate = 1 THEN N''yes'' ELSE N''no'' END, 500),
+                ''Proxy form saved'',
+                t.id
+            FROM dbo.ProxyReport t
+            LEFT JOIN dbo.InterviewMeetings im ON im.id = t.interviewid
+            OUTER APPLY (SELECT TOP 1 i.id FROM dbo.IRF i WHERE i.IRFId = im.IRFId ORDER BY i.id DESC) irf
+            WHERE t.CreatedOn >= @FromUtc
+              AND t.CreatedOn <  @ToUtc
+              AND NULLIF(LTRIM(RTRIM(t.CreatedBy)), '''') IS NOT NULL
+              AND LTRIM(RTRIM(t.CreatedBy)) NOT IN (''Admin'', ''AISystem'', ''System'')
+              AND (@ActorEmail IS NULL OR LTRIM(RTRIM(t.CreatedBy)) = @ActorEmail)
+              AND (@InterviewerEmail IS NULL OR LTRIM(RTRIM(im.interviewer)) = @InterviewerEmail)' + @NotLogged;
+
+            EXEC sp_executesql @Sql, N'@FromUtc DATETIME, @ToUtc DATETIME, @ActorEmail VARCHAR(150), @InterviewerEmail VARCHAR(150), @LogType VARCHAR(40)',
+                @FromUtc = @FromUtc, @ToUtc = @ToUtc, @ActorEmail = @ActorEmail, @InterviewerEmail = @InterviewerEmail, @LogType = 'ProxyForm';
+        END
+
+        IF @WantRedo = 1 AND OBJECT_ID(N'dbo.RedoInterviews', N'U') IS NOT NULL
+        BEGIN
+            SET @Sql = N'
+            INSERT INTO #QCActivityRows (ActorEmail, Metric, ActionAtIst, InterviewId, IrfId, InterviewerEmail, Detail, [Status], SourceId)
+            SELECT
+                LEFT(LTRIM(RTRIM(t.CreatedBy)), 150),
+                ''RedoRequested'',
+                DATEADD(MINUTE, 330, t.CreatedOn),
+                t.interviewid,
+                irf.id,
+                LTRIM(RTRIM(im.interviewer)),
+                LEFT(N''Interview #'' + CAST(t.interviewid AS NVARCHAR(20)) + N'': ''
+                     + ISNULL(NULLIF(LTRIM(RTRIM(t.Comments)), ''''), N''redo requested''), 500),
+                ''Redo requested'',
+                t.id
+            FROM (SELECT r.id, r.interviewid, r.CreatedBy, r.Createdon AS CreatedOn, r.Comments FROM dbo.RedoInterviews r) t
+            LEFT JOIN dbo.InterviewMeetings im ON im.id = t.interviewid
+            OUTER APPLY (SELECT TOP 1 i.id FROM dbo.IRF i WHERE i.IRFId = im.IRFId ORDER BY i.id DESC) irf
+            WHERE t.CreatedOn >= @FromUtc
+              AND t.CreatedOn <  @ToUtc
+              AND NULLIF(LTRIM(RTRIM(t.CreatedBy)), '''') IS NOT NULL
+              AND LTRIM(RTRIM(t.CreatedBy)) NOT IN (''Admin'', ''AISystem'', ''System'')
+              AND (@ActorEmail IS NULL OR LTRIM(RTRIM(t.CreatedBy)) = @ActorEmail)
+              AND (@InterviewerEmail IS NULL OR LTRIM(RTRIM(im.interviewer)) = @InterviewerEmail)' + @NotLogged;
+
+            EXEC sp_executesql @Sql, N'@FromUtc DATETIME, @ToUtc DATETIME, @ActorEmail VARCHAR(150), @InterviewerEmail VARCHAR(150), @LogType VARCHAR(40)',
+                @FromUtc = @FromUtc, @ToUtc = @ToUtc, @ActorEmail = @ActorEmail, @InterviewerEmail = @InterviewerEmail, @LogType = 'RedoRequested';
+        END
+    END
+
+    /* ---------------------------------------------------------------
+       15. Trial-flag backfill runs (TrialFlagBackfillRun, optional table),
+           one row per run with who ran it. Amount = flags inserted.
+       --------------------------------------------------------------- */
+    IF @WantTrialBackfill = 1 AND OBJECT_ID(N'dbo.TrialFlagBackfillRun', N'U') IS NOT NULL
+    BEGIN
+        SET @Sql = N'
+        INSERT INTO #QCActivityRows (ActorEmail, Metric, ActionAtIst, InterviewId, Amount, Detail, [Status], SourceId)
+        SELECT
+            LEFT(LTRIM(RTRIM(r.ExecutedBy)), 150),
+            ''TrialBackfill'',
+            DATEADD(MINUTE, 330, r.ExecutedAtUtc),
+            r.InterviewId,
+            r.Inserted,
+            LEFT(NULLIF(LTRIM(RTRIM(r.Message)), ''''), 500),
+            LEFT(''Inserted '' + CAST(r.Inserted AS VARCHAR(10)) + '', skipped '' + CAST(r.Skipped AS VARCHAR(10))
+                 + '', failed '' + CAST(r.Failed AS VARCHAR(10)), 150),
+            r.Id
+        FROM dbo.TrialFlagBackfillRun r
+        WHERE r.ExecutedAtUtc >= @FromUtc
+          AND r.ExecutedAtUtc <  @ToUtc
+          AND NULLIF(LTRIM(RTRIM(r.ExecutedBy)), '''') IS NOT NULL
+          AND LTRIM(RTRIM(r.ExecutedBy)) NOT IN (''AISystem'', ''System'')
+          AND (@ActorEmail IS NULL OR LTRIM(RTRIM(r.ExecutedBy)) = @ActorEmail)';
+
+        EXEC sp_executesql @Sql, @Params, @FromUtc = @FromUtc, @ToUtc = @ToUtc, @ActorEmail = @ActorEmail,
+            @InterviewerEmail = @InterviewerEmail, @IvUserId = @IvUserId;
+    END
+
+    /* ---------------------------------------------------------------
+       16. Authenticity (part 2). Runs only when the caller's #QCActivityRows
+           has the columns PageGroup, Comment, HasEvidence and IsAuthentic
+           (dynamic SQL, so older callers without them still work).
+
+           PageGroup   TotalInterviews | TRM | IrfAudit | Trial | Suspicious |
+                       ReportsSla | Calls | Coaching | PotentialRisk | HighRisk |
+                       Monitoring. The page an action came from wins:
+                         - Pr* / Hr* / Pli* moves, Monitoring Remove / Shortlist;
+                         - InterviewerActionLog rows whose Source ends in
+                           :PotentialRisk / :HighRisk / :PLI (Remove, Redo);
+                         - suspicious marks by SuspiciousInterviewer.SourcePage
+                           (PotentialRiskCandidate, HighRisk);
+                         - IRF audit Keep / Remove whose reason starts [High-Risk];
+                         - a Payment SLA review (ReportReviewed) with a matching
+                           PotentialRiskReview / HighRiskReview log row (same
+                           person, interview, within 5 minutes): no extra row;
+                         - QC forms with Trans_QCFormReport.SourcePage = HighRisk.
+           Comment     the action's own comment: red-marker moves and
+                       suspicious use their Comment; IRF audit the comment in
+                       TransInterviewerAuditLog.ExtraMetadata ("comment=..."),
+                       else its ReasonCategory; trial ReviewerComment; status
+                       actions the log Reason (inactivation type prefix
+                       removed); Payment SLA rows RecommendationComments.
+           HasEvidence the interviewer has, in the window: a P0-P5 graded
+                       interview, an AI penalty (PaymentSLADetails AISystem
+                       > 0), an open trial flag, an auto-QC verdict, a red
+                       marker (same sources as usp_GetInterviewerQCView), or a
+                       PLI / PQI process signal on a completed interview in the
+                       window (usp_InterviewerProcessSignals_Collect, when deployed).
+           IsAuthentic calls: answered, to an interviewer, Amount >=
+                       MinCallSeconds. Scored actions (everything except
+                       calls, coaching and backfill runs): comment of at
+                       least MinCommentChars that is not a stock word, AND
+                       evidence. NULL for rows that are not scored.
+           Thresholds come from dbo.QCActivitySetting (defaults below).
+       --------------------------------------------------------------- */
+    IF COL_LENGTH('tempdb..#QCActivityRows', 'PageGroup') IS NOT NULL
+       AND COL_LENGTH('tempdb..#QCActivityRows', 'Comment') IS NOT NULL
+       AND COL_LENGTH('tempdb..#QCActivityRows', 'HasEvidence') IS NOT NULL
+       AND COL_LENGTH('tempdb..#QCActivityRows', 'IsAuthentic') IS NOT NULL
+    BEGIN
+        DECLARE @MinCallSeconds INT = 120, @MinCommentChars INT = 20,
+                @StockComments NVARCHAR(1000) = N'ok,okay,done,fine,checked,check,na,n/a,nil,none,reviewed,good,noted,yes,no,-,.';
+        IF OBJECT_ID(N'dbo.QCActivitySetting', N'U') IS NOT NULL
+            EXEC sp_executesql N'
+                SELECT @MinCall  = ISNULL(MAX(CASE WHEN Name = ''MinCallSeconds''  THEN TRY_CAST(Value AS INT) END), @MinCall),
+                       @MinChars = ISNULL(MAX(CASE WHEN Name = ''MinCommentChars'' THEN TRY_CAST(Value AS INT) END), @MinChars),
+                       @Stock    = ISNULL(MAX(CASE WHEN Name = ''StockComments''   THEN Value END), @Stock)
+                FROM dbo.QCActivitySetting',
+                N'@MinCall INT OUTPUT, @MinChars INT OUTPUT, @Stock NVARCHAR(1000) OUTPUT',
+                @MinCall = @MinCallSeconds OUTPUT, @MinChars = @MinCommentChars OUTPUT, @Stock = @StockComments OUTPUT;
+
+        CREATE TABLE #QCStock (Word NVARCHAR(100) NOT NULL PRIMARY KEY);
+        INSERT INTO #QCStock (Word)
+        SELECT DISTINCT LOWER(LTRIM(RTRIM(value))) FROM STRING_SPLIT(ISNULL(@StockComments, N''), ',')
+        WHERE LTRIM(RTRIM(value)) <> N'';
+
+        /* Interviewers the rows are about, and which of them have evidence in the window. */
+        CREATE TABLE #QCIv (UserId INT NULL, Email VARCHAR(200) NULL);
+        CREATE TABLE #QCIvEvidence (UserId INT NOT NULL PRIMARY KEY);
+        -- Per-row lookups below (by email and by id) seek instead of scanning #QCIv for every row.
+        CREATE INDEX IX_QCIv_Email ON #QCIv (Email) INCLUDE (UserId);
+        CREATE INDEX IX_QCIv_UserId ON #QCIv (UserId);
+
+        SET @Sql = N'
+        INSERT INTO #QCIv (UserId, Email)
+        SELECT DISTINCT r.InterviewerUserId, ul.EmailId
+        FROM #QCActivityRows r
+        OUTER APPLY (SELECT TOP 1 LTRIM(RTRIM(u.EmailId)) AS EmailId FROM dbo.UserList u WHERE u.id = r.InterviewerUserId) ul
+        WHERE r.InterviewerUserId IS NOT NULL;
+
+        INSERT INTO #QCIv (UserId, Email)
+        SELECT DISTINCT u.id, r.InterviewerEmail
+        FROM (SELECT DISTINCT LTRIM(RTRIM(InterviewerEmail)) AS InterviewerEmail FROM #QCActivityRows
+              WHERE InterviewerUserId IS NULL AND NULLIF(LTRIM(RTRIM(InterviewerEmail)), '''') IS NOT NULL) r
+        OUTER APPLY (SELECT TOP 1 x.id FROM dbo.UserList x WHERE x.EmailId = r.InterviewerEmail ORDER BY x.id DESC) u
+        WHERE u.id IS NOT NULL
+          AND NOT EXISTS (SELECT 1 FROM #QCIv v WHERE v.UserId = u.id);
+
+        -- P0-P5 graded interview in the window (interviewDate is IST)
+        INSERT INTO #QCIvEvidence (UserId)
+        SELECT DISTINCT v.UserId
+        FROM #QCIv v
+        WHERE v.UserId IS NOT NULL AND v.Email IS NOT NULL
+          AND EXISTS (SELECT 1 FROM dbo.InterviewMeetings im
+                      INNER JOIN dbo.RiskCategory rc ON rc.InterviewId = im.id
+                      WHERE im.interviewer = v.Email
+                        AND im.interviewDate >= @FromIstDt AND im.interviewDate < @ToIstDt
+                        AND UPPER(LTRIM(RTRIM(ISNULL(rc.Severity, '''')))) LIKE ''P[0-5]'');
+
+        -- AI penalty on an interview in the window
+        INSERT INTO #QCIvEvidence (UserId)
+        SELECT DISTINCT v.UserId
+        FROM #QCIv v
+        WHERE v.UserId IS NOT NULL AND v.Email IS NOT NULL
+          AND NOT EXISTS (SELECT 1 FROM #QCIvEvidence e WHERE e.UserId = v.UserId)
+          AND EXISTS (SELECT 1 FROM dbo.InterviewMeetings im
+                      INNER JOIN dbo.PaymentSLADetails ps ON ps.Interviewid = im.id
+                      WHERE im.interviewer = v.Email
+                        AND im.interviewDate >= @FromIstDt AND im.interviewDate < @ToIstDt
+                        AND LTRIM(RTRIM(ISNULL(ps.CreatedBy, ''''))) = ''AISystem''
+                        AND ISNULL(ps.PaymentDeduction, 0) > 0);
+
+        -- Red markers
+        INSERT INTO #QCIvEvidence (UserId)
+        SELECT DISTINCT v.UserId
+        FROM #QCIv v
+        WHERE v.UserId IS NOT NULL
+          AND NOT EXISTS (SELECT 1 FROM #QCIvEvidence e WHERE e.UserId = v.UserId)
+          AND EXISTS (SELECT 1 FROM dbo.TransInterviewerRedMarker trm
+                      INNER JOIN dbo.InterviewerProfile ip ON ip.Id = trm.InterviewerId
+                      WHERE ip.UserId = v.UserId AND trm.RedMarker > 0);';
+        EXEC sp_executesql @Sql, N'@FromIstDt DATETIME, @ToIstDt DATETIME', @FromIstDt = @FromIstDt, @ToIstDt = @ToIstDt;
+
+        -- Open trial flag
+        IF OBJECT_ID(N'dbo.TrialFlags', N'U') IS NOT NULL
+            EXEC sp_executesql N'
+                INSERT INTO #QCIvEvidence (UserId)
+                SELECT DISTINCT v.UserId
+                FROM #QCIv v
+                WHERE v.UserId IS NOT NULL
+                  AND NOT EXISTS (SELECT 1 FROM #QCIvEvidence e WHERE e.UserId = v.UserId)
+                  AND EXISTS (SELECT 1 FROM dbo.TrialFlags tf
+                              INNER JOIN dbo.Interviewer iv ON iv.id = tf.InterviewerId
+                              WHERE iv.UserId = v.UserId AND LOWER(LTRIM(RTRIM(tf.ReviewStatus))) = ''pending'')';
+
+        -- Auto-QC verdict on an active channel
+        IF COL_LENGTH('dbo.TransInterviewer', 'AutoQcVerdict') IS NOT NULL
+            EXEC sp_executesql N'
+                INSERT INTO #QCIvEvidence (UserId)
+                SELECT DISTINCT v.UserId
+                FROM #QCIv v
+                WHERE v.UserId IS NOT NULL
+                  AND NOT EXISTS (SELECT 1 FROM #QCIvEvidence e WHERE e.UserId = v.UserId)
+                  AND EXISTS (SELECT 1 FROM dbo.TransInterviewer t
+                              WHERE t.UserId = v.UserId AND t.IsActive = 1
+                                AND NULLIF(LTRIM(RTRIM(ISNULL(t.AutoQcVerdict, ''''))), '''') IS NOT NULL)';
+
+        -- PLI / PQI process signal on a completed interview in the window (short comment, fewer than N questions,
+        -- short call, late join, negative candidate rating), so acting on a PLI / PQI-flagged interviewer can score
+        -- as authentic. Optional: skipped when the signals procedure is not deployed; never blocks the rows.
+        IF OBJECT_ID(N'dbo.usp_InterviewerProcessSignals_Collect', N'P') IS NOT NULL
+        BEGIN
+            DECLARE @NoEvidenceIds NVARCHAR(MAX) = NULL;
+            SELECT @NoEvidenceIds = STRING_AGG(CAST(x.UserId AS NVARCHAR(MAX)), N',')
+            FROM (SELECT DISTINCT v.UserId FROM #QCIv v
+                  WHERE v.UserId IS NOT NULL
+                    AND NOT EXISTS (SELECT 1 FROM #QCIvEvidence e WHERE e.UserId = v.UserId)) x;
+
+            IF @NoEvidenceIds IS NOT NULL
+            BEGIN
+            BEGIN TRY
+                CREATE TABLE #ProcessSignalRows (
+                    InterviewId       INT           NOT NULL PRIMARY KEY,
+                    InterviewerUserId INT           NULL,
+                    InterviewerEmail  VARCHAR(200)  NULL,
+                    IrfIntId          INT           NULL,
+                    IRFId             VARCHAR(100)  NULL,
+                    InterviewDateIst  DATETIME      NULL,
+                    Outcome           VARCHAR(20)   NULL,
+                    CommentChars      INT           NULL,
+                    QuestionCount     INT           NULL,
+                    VideoMinutes      INT           NULL,
+                    PlannedMinutes    INT           NULL,
+                    LateJoinMinutes   INT           NULL,
+                    CandidateRating   INT           NULL,
+                    ShortComment      BIT           NOT NULL DEFAULT 0,
+                    FewQuestions      BIT           NOT NULL DEFAULT 0,
+                    ShortCall         BIT           NOT NULL DEFAULT 0,
+                    LateJoin          BIT           NOT NULL DEFAULT 0,
+                    NegativeRating    BIT           NOT NULL DEFAULT 0
+                );
+                EXEC dbo.usp_InterviewerProcessSignals_Collect @FromIst = @FromIst, @ToIst = @ToIst, @UserIds = @NoEvidenceIds;
+
+                INSERT INTO #QCIvEvidence (UserId)
+                SELECT DISTINCT p.InterviewerUserId
+                FROM #ProcessSignalRows p
+                WHERE p.InterviewerUserId IS NOT NULL
+                  AND (p.ShortComment = 1 OR p.FewQuestions = 1 OR p.ShortCall = 1 OR p.LateJoin = 1 OR p.NegativeRating = 1)
+                  AND NOT EXISTS (SELECT 1 FROM #QCIvEvidence e WHERE e.UserId = p.InterviewerUserId);
+
+                DROP TABLE #ProcessSignalRows;
+            END TRY
+            BEGIN CATCH
+                DROP TABLE IF EXISTS #ProcessSignalRows;
+            END CATCH
+            END
+        END
+
+        /* Page group, comment, evidence, authenticity */
+        SET @Sql = N'
+        UPDATE #QCActivityRows SET PageGroup = CASE
+            WHEN Metric IN (''TiUnderReview'', ''TiReviewed'', ''TiRemoved'', ''Blocked'', ''Unblocked'', ''Inactivated'', ''Reactivated'',
+                            ''AccessRevoked'', ''AccessRestored'', ''PaymentHold'', ''PaymentHoldReleased'') THEN ''TotalInterviews''
+            WHEN Metric IN (''TrmUnderReview'', ''TrmReviewed'', ''TrmRemoved'') THEN ''TRM''
+            WHEN Metric IN (''AuditKept'', ''AuditRemoved'', ''AuditBackfill'') THEN ''IrfAudit''
+            WHEN Metric IN (''TrialKept'', ''TrialRemoved'', ''TrialBackfill'') THEN ''Trial''
+            WHEN Metric IN (''Suspicious'', ''SuspiciousUndone'') THEN ''Suspicious''
+            WHEN Metric = ''PlivoCall'' THEN ''Calls''
+            WHEN Metric = ''Coaching'' THEN ''Coaching''
+            WHEN Metric IN (''PrUnderReview'', ''PrReviewed'', ''PrRemoved'') THEN ''PotentialRisk''
+            WHEN Metric IN (''HrUnderReview'', ''HrReviewed'', ''HrRemoved'') THEN ''HighRisk''
+            WHEN Metric IN (''PliUnderReview'', ''PliReviewed'', ''PliRemoved'', ''MonitoringRemoved'', ''MonitoringShortlisted'') THEN ''Monitoring''
+            ELSE ''ReportsSla'' END;
+
+        -- IRF audit Keep / Remove made from High-Risk Interviewers (reason starts [High-Risk]).
+        UPDATE #QCActivityRows SET PageGroup = ''HighRisk''
+        WHERE Metric IN (''AuditKept'', ''AuditRemoved'') AND LEFT(LTRIM(ISNULL(Detail, N'''')), 11) = N''[High-Risk]'';
+
+        UPDATE #QCActivityRows
+        SET Comment = LEFT(NULLIF(LTRIM(RTRIM(
+                CASE
+                    WHEN Metric IN (''Blocked'', ''Inactivated'') AND CHARINDEX(N'': '', ISNULL(Detail, N'''')) > 0
+                        THEN SUBSTRING(Detail, CHARINDEX(N'': '', Detail) + 2, 500)
+                    WHEN Metric IN (''Blocked'', ''Inactivated'') THEN NULL
+                    WHEN Metric IN (''RedoRequested'', ''DeductionReview'') AND Detail LIKE N''Interview #%: %''
+                        THEN SUBSTRING(Detail, CHARINDEX(N'': '', Detail) + 2, 500)
+                    WHEN Metric = ''ProxyForm'' THEN NULL
+                    ELSE Detail
+                END)), N''''), 500)
+        WHERE Metric NOT IN (''PlivoCall'', ''Coaching'', ''AuditBackfill'', ''TrialBackfill'');
+
+        -- Payment SLA rows: the QC''s recommendation comment when there is one
+        UPDATE r SET Comment = LEFT(ps.RecommendationComments, 500)
+        FROM #QCActivityRows r
+        CROSS APPLY (SELECT TOP 1 NULLIF(LTRIM(RTRIM(p.RecommendationComments)), '''') AS RecommendationComments
+                     FROM dbo.PaymentSLADetails p WHERE p.Interviewid = r.InterviewId ORDER BY p.id DESC) ps
+        WHERE r.Metric IN (''ReportReviewed'', ''SlaApproved'', ''SlaNotApproved'')
+          AND r.InterviewId IS NOT NULL
+          AND ps.RecommendationComments IS NOT NULL;
+
+        UPDATE r SET HasEvidence = CASE WHEN EXISTS (
+                SELECT 1 FROM #QCIvEvidence e
+                WHERE e.UserId = COALESCE(r.InterviewerUserId,
+                                          (SELECT TOP 1 v.UserId FROM #QCIv v
+                                           WHERE r.InterviewerUserId IS NULL AND v.Email = LTRIM(RTRIM(r.InterviewerEmail))))
+            ) THEN 1 ELSE 0 END
+        FROM #QCActivityRows r;
+
+        UPDATE #QCActivityRows SET IsAuthentic = CASE
+            WHEN Metric = ''PlivoCall'' THEN
+                CASE WHEN ISNULL(Amount, 0) >= @MinCall
+                          AND ISNULL([Status], '''') NOT LIKE ''%busy%''
+                          AND ISNULL([Status], '''') NOT LIKE ''%no-answer%''
+                          AND ISNULL([Status], '''') NOT LIKE ''%NO_ANSWER%''
+                          AND ISNULL([Status], '''') NOT LIKE ''%fail%''
+                          AND ISNULL([Status], '''') NOT LIKE ''%cancel%''
+                     THEN 1 ELSE 0 END
+            WHEN Metric IN (''Coaching'', ''AuditBackfill'', ''TrialBackfill'') THEN NULL
+            WHEN HasEvidence = 1
+                 AND LEN(LTRIM(RTRIM(ISNULL(Comment, N'''')))) >= @MinChars
+                 AND NOT EXISTS (SELECT 1 FROM #QCStock s
+                                 WHERE s.Word = LOWER(LTRIM(RTRIM(REPLACE(REPLACE(ISNULL(Comment, N''''), N''.'', N''''), N''!'', N'''')))))
+                THEN 1
+            ELSE 0 END;';
+        EXEC sp_executesql @Sql, N'@MinCall INT, @MinChars INT', @MinCall = @MinCallSeconds, @MinChars = @MinCommentChars;
+
+        -- Page of origin from InterviewerActionLog.Source ("<procedure>:PotentialRisk | :HighRisk | :PLI"):
+        -- Remove (Inactivated / Blocked) and Redo from those pages. The row must be the log row itself (same id,
+        -- type, person and time), so rows rebuilt from RedoInterviews / ProxyReport are never matched.
+        IF OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL
+            EXEC sp_executesql N'
+                UPDATE r SET PageGroup = CASE
+                        WHEN l.Source LIKE ''%:PotentialRisk'' THEN ''PotentialRisk''
+                        WHEN l.Source LIKE ''%:HighRisk''      THEN ''HighRisk''
+                        ELSE ''Monitoring'' END
+                FROM #QCActivityRows r
+                INNER JOIN dbo.InterviewerActionLog l
+                        ON l.Id = r.SourceId
+                       AND l.ActionType = r.Metric
+                       AND LTRIM(RTRIM(l.ActedBy)) = r.ActorEmail
+                       AND DATEADD(MINUTE, 330, l.ActedAtUtc) = r.ActionAtIst
+                WHERE (l.Source LIKE ''%:PotentialRisk'' OR l.Source LIKE ''%:HighRisk'' OR l.Source LIKE ''%:PLI'');
+
+                -- A Payment SLA review saved from Potential Risk by Candidate / the High-Risk Reports tab: the
+                -- ReportReviewed row moves to that page (the PotentialRiskReview / HighRiskReview log row is not counted).
+                UPDATE r SET PageGroup = CASE WHEN x.ActionType = ''HighRiskReview'' THEN ''HighRisk'' ELSE ''PotentialRisk'' END
+                FROM #QCActivityRows r
+                CROSS APPLY (SELECT TOP 1 l.ActionType FROM dbo.InterviewerActionLog l
+                             WHERE l.ActionType IN (''PotentialRiskReview'', ''HighRiskReview'')
+                               AND LTRIM(RTRIM(l.ActedBy)) = r.ActorEmail
+                               AND l.Reason LIKE N''Interview #'' + CAST(r.InterviewId AS NVARCHAR(20)) + N'':%''
+                               AND (ABS(DATEDIFF(MINUTE, DATEADD(MINUTE, 330, l.ActedAtUtc), r.ActionAtIst)) <= 5
+                                    OR ABS(DATEDIFF(MINUTE, l.ActedAtUtc, r.ActionAtIst)) <= 5)
+                             ORDER BY l.ActedAtUtc DESC) x
+                WHERE r.Metric = ''ReportReviewed'' AND r.InterviewId IS NOT NULL;';
+
+        -- Suspicious marks made on Potential Risk by Candidate / High-Risk count under that page.
+        IF COL_LENGTH('dbo.SuspiciousInterviewer', 'SourcePage') IS NOT NULL
+            EXEC sp_executesql N'
+                UPDATE r SET PageGroup = CASE s.SourcePage WHEN ''PotentialRiskCandidate'' THEN ''PotentialRisk'' ELSE ''HighRisk'' END
+                FROM #QCActivityRows r
+                INNER JOIN dbo.SuspiciousInterviewer s ON s.Id = r.SourceId
+                WHERE r.Metric = ''Suspicious'' AND s.SourcePage IN (''PotentialRiskCandidate'', ''HighRisk'');';
+
+        -- QC forms filled from the High-Risk Reports tab (Trans_QCFormReport.SourcePage, optional column).
+        IF COL_LENGTH('dbo.Trans_QCFormReport', 'SourcePage') IS NOT NULL
+            EXEC sp_executesql N'
+                UPDATE r SET PageGroup = ''HighRisk''
+                FROM #QCActivityRows r
+                INNER JOIN dbo.Trans_QCFormReport q ON q.id = r.SourceId
+                WHERE r.Metric = ''QCForm'' AND q.SourcePage = ''HighRisk'';';
+
+        -- IRF audit: the person's own comment from ExtraMetadata ("...; comment=<text>"), else ReasonCategory (Detail).
+        IF COL_LENGTH('dbo.TransInterviewerAuditLog', 'ExtraMetadata') IS NOT NULL
+        BEGIN
+            EXEC sp_executesql N'
+                UPDATE r SET Comment = LEFT(NULLIF(LTRIM(RTRIM(
+                        CASE WHEN CHARINDEX(N''comment='', l.ExtraMetadata) > 0
+                             THEN SUBSTRING(l.ExtraMetadata, CHARINDEX(N''comment='', l.ExtraMetadata) + 8, 500) END)), N''''), 500)
+                FROM #QCActivityRows r
+                INNER JOIN dbo.TransInterviewerAuditLog l ON l.Id = r.SourceId
+                WHERE r.Metric IN (''AuditKept'', ''AuditRemoved'', ''MonitoringRemoved'', ''MonitoringShortlisted'');
+
+                UPDATE #QCActivityRows SET IsAuthentic = CASE
+                    WHEN HasEvidence = 1
+                         AND LEN(LTRIM(RTRIM(ISNULL(Comment, N'''')))) >= @MinChars
+                         AND NOT EXISTS (SELECT 1 FROM #QCStock s
+                                         WHERE s.Word = LOWER(LTRIM(RTRIM(REPLACE(REPLACE(ISNULL(Comment, N''''), N''.'', N''''), N''!'', N'''')))))
+                    THEN 1 ELSE 0 END
+                WHERE Metric IN (''AuditKept'', ''AuditRemoved'', ''MonitoringRemoved'', ''MonitoringShortlisted'');',
+                N'@MinChars INT', @MinChars = @MinCommentChars;
+        END
+
+        DROP TABLE IF EXISTS #QCIvEvidence;
+        DROP TABLE IF EXISTS #QCIv;
+        DROP TABLE IF EXISTS #QCStock;
     END
 END
 GO

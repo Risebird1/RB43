@@ -72,6 +72,8 @@ namespace Risebird.Web.Controllers
         //private static string Searchvalue;
         private readonly IAdvancedScreeningService _advancedScreeningService;
 
+        private readonly IHttpClientFactory _httpClientFactory;
+
         public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService,
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService, ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository,
@@ -80,8 +82,9 @@ namespace Risebird.Web.Controllers
             IAffIndaResumeParserHelper affIndaResumeParserHelper,
             IInterviewSchedulerService interviewSchedulerservice, IWebHostEnvironment env,
             IEncryptionHelper encryptionHelper, IZohoMeetingHelper zoho, IAIInterviewerService aiInterviewerService,
-            IAdvancedScreeningService advancedScreeningService)
+            IAdvancedScreeningService advancedScreeningService, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _advancedScreeningService = advancedScreeningService;
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -907,11 +910,30 @@ namespace Risebird.Web.Controllers
 
         }
 
+        private string GetSessionValue(string key) =>
+            HttpContext.Session.GetString(key)?.Trim().Replace("\"", "");
+
         [HttpGet]
         public async Task<IActionResult> GetPublicCandidates(int id, string irfName, string profileName, string emailid, int? Page, string searchValue)
         {
             try
             {
+                // Identity comes from the session, never from the query string.
+                var sessionEmail = GetSessionValue("email");
+                var sessionProfile = GetSessionValue("profileName");
+                if (string.IsNullOrEmpty(sessionEmail) || string.IsNullOrEmpty(sessionProfile))
+                    return RedirectToAction("SignIn", "Session");
+                if (DeliveryHeadInstructionViewMode.IsClientRoleProfile(sessionProfile))
+                {
+                    if (!await _clientService.VerifyClientAuthenticity(id, sessionEmail))
+                        return StatusCode(403, "You do not have access to this skill channel.");
+                    profileName = "Client";
+                    emailid = sessionEmail;
+                }
+                else if (!DeliveryHeadInstructionViewMode.IsOperationalProfile(sessionProfile))
+                {
+                    return StatusCode(403, "You do not have access to this skill channel.");
+                }
 
                 ViewBag.IRFName = irfName;
                 ViewBag.IRFId = id;
@@ -1139,11 +1161,21 @@ namespace Risebird.Web.Controllers
                 {
                     model.EmailId = model.EmailId.ToLower();
                 }
+                // Store the bare address ("|x@gmail.com " -> "x@gmail.com"); refuse what cannot be cleaned.
+                var cleanEmail = CandidateEmailNormalizer.Normalize(model.EmailId);
+                if (cleanEmail != null)
+                {
+                    model.EmailId = cleanEmail;
+                }
 
                 var ClientEmailid = await _candidateService.FetchBillingownerById(model.IRFId);
                 var ClientDomain = CandidateEmailDomainRule.GetClientDomain(ClientEmailid);
                 string result = string.Empty;
-                if (CandidateEmailDomainRule.IsBlocked(model.EmailId, ClientDomain)) //HttpContext.Session.GetString("IRFId")
+                if (cleanEmail == null)
+                {
+                    result = "Please enter a valid email address.";
+                }
+                else if (CandidateEmailDomainRule.IsBlocked(model.EmailId, ClientDomain)) //HttpContext.Session.GetString("IRFId")
                 {
                     result = CandidateEmailDomainRule.BlockedMessage(ClientDomain);
                 }
@@ -1273,6 +1305,13 @@ namespace Risebird.Web.Controllers
                         {
                             model.EmailId = model.EmailId.ToLower();
                         }
+                        var cleanEmail = CandidateEmailNormalizer.Normalize(model.EmailId);
+                        if (cleanEmail == null)
+                        {
+                            TempData["SuccessErrorMessageCandidateEdit"] = "Please enter a valid email address.";
+                            return RedirectToAction("Edit", new { id = model.id, irfName = model.IRFName, irfId = model.IRFId });
+                        }
+                        model.EmailId = cleanEmail;
 
                         var ClientEmailid = await _candidateService.FetchBillingownerById(model.IRFId);
                         var ClientDomain = CandidateEmailDomainRule.GetClientDomain(ClientEmailid);
@@ -4726,14 +4765,33 @@ namespace Risebird.Web.Controllers
             var model = new List<SchedulingLinkVM>();
             try
             {
+                // A link logs the visitor in only when its id matches the client user's UserList.uniqueid.
+                // Otherwise fall back to the existing session; without either, send the visitor to sign in.
+                var linkEmail = emailid?.Trim();
+                var isValidLink = !string.IsNullOrWhiteSpace(linkEmail) && !string.IsNullOrWhiteSpace(id)
+                    && await _meetingService.GetUniqueUserByEmailId(linkEmail, id) > 0
+                    && await _clientService.GetClientByEmailId(linkEmail) > 0;
+                if (isValidLink)
+                {
+                    HttpContext.Session.SetString("email", JsonConvert.SerializeObject(linkEmail));
+                    HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
+                }
+                else
+                {
+                    var sessionEmail = GetSessionValue("email");
+                    var sessionProfile = GetSessionValue("profileName");
+                    if (string.IsNullOrEmpty(sessionEmail) || string.IsNullOrEmpty(sessionProfile))
+                        return RedirectToAction("SignIn", "Session");
+                    if (DeliveryHeadInstructionViewMode.IsClientRoleProfile(sessionProfile))
+                        emailid = sessionEmail;
+                    else if (!DeliveryHeadInstructionViewMode.IsOperationalProfile(sessionProfile))
+                        return StatusCode(403, "You do not have access to this page.");
+                    else if (string.IsNullOrWhiteSpace(emailid))
+                        emailid = sessionEmail;
+                }
                 ViewBag.id = id;
                 ViewBag.emailid = emailid;
                 ViewBag.IsClientLogin = isClientLogin;
-                if (!string.IsNullOrWhiteSpace(emailid))
-                {
-                    HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailid));
-                    HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject("Client"));
-                }
                 if (string.IsNullOrWhiteSpace(type))
                 {
                     type = "SkillChannel";
@@ -5567,7 +5625,7 @@ namespace Risebird.Web.Controllers
                 {
                     var model = new Candidate();
 
-                    HttpClient myWebClient = new HttpClient();
+                    HttpClient myWebClient = _httpClientFactory.CreateClient();
                     string uploadedCodedResumeLink = string.Empty;
                     using (Stream myStream = await myWebClient.GetStreamAsync(redactedResumeLink))
                     {

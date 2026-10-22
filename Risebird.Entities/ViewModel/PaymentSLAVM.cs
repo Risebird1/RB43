@@ -34,6 +34,19 @@ namespace Risebird.Entities.ViewModel
         public DateTime CreatedOn { get; set; }
         public DateTime Joinedon { get; set; }
         public string Pagetype { get; set; }
+        /// <summary>Tab to return to after the save (Potential Risk by Candidate tabs, High-Risk Reports tab); optional.</summary>
+        public string ReturnTab { get; set; }
+
+        /// <summary>
+        /// QC Activity page for usp_AddorUpdatePaymentSLADetails @SourcePage: "PotentialRisk" for Potential Risk by
+        /// Candidate (Pagetype "PotentailRiskCandidate"), "HighRisk" for the High-Risk Reports tab; null otherwise.
+        /// </summary>
+        public static string QcSourcePageFor(string pagetype)
+        {
+            if (string.Equals(pagetype, "PotentailRiskCandidate", StringComparison.OrdinalIgnoreCase)) return "PotentialRisk";
+            if (string.Equals(pagetype, "HighRisk", StringComparison.OrdinalIgnoreCase)) return "HighRisk";
+            return null;
+        }
 
         [Display(Name = "Payment Deduction")]
         public int PaymentDeduction { get; set; }

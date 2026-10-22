@@ -57,6 +57,14 @@ namespace Risebird.AzureTimerFunctions
 
             try
             {
+                // PlivoCX:LegacyTimerJobsEnabled = false hands all calling to PlivoCX campaigns
+                // (PlivoCXCampaignScheduler). Defaults to on; campaign candidates are excluded either way.
+                if (!_configuration.GetValue("PlivoCX:LegacyTimerJobsEnabled", true))
+                {
+                    _log.LogInformation("[PlivoCX] Legacy timer job disabled (PlivoCX:LegacyTimerJobsEnabled = false)");
+                    return;
+                }
+
                 // Only run between 9 AM and 9 PM IST
                 if (currentTime.Hour < 9 || currentTime.Hour >= 22)
                 {
@@ -64,7 +72,7 @@ namespace Risebird.AzureTimerFunctions
                     return;
                 }
 
-                var candidates = await _repository.GetEligibleCandidatesForCallsAsync(2);
+                var candidates = await _repository.GetEligibleCandidatesForCallsAsync(2, excludeCampaignCandidates: true);
                 if (candidates == null || !candidates.Any())
                 {
                     _log.LogInformation("[PlivoCX] No eligible candidates for calling");

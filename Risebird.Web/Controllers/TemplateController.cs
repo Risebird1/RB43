@@ -23,9 +23,11 @@ namespace Risebird.Web.Controllers
         private readonly IIRFService _irfService;
         private readonly IClientService _clientService;
         private readonly IClonableSkillChannelTemplateService _clonableSkillChannelTemplateService;
+        private readonly IMeetingService _meetingService;
 
-        public TemplateController(ITemplateService templateService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IIRFService irfService, IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, IClientService clientService)
+        public TemplateController(ITemplateService templateService, IApplicationErrorLogger applicationErrorLogger, IInterviewerService interviewerService, IIRFService irfService, IClonableSkillChannelTemplateService clonableSkillChannelTemplateService, IClientService clientService, IMeetingService meetingService)
         {
+            _meetingService = meetingService;
             _templateService = templateService;
             _applicationErrorLogger = applicationErrorLogger;
             _interviewerService = interviewerService;
@@ -34,6 +36,11 @@ namespace Risebird.Web.Controllers
             _clientService = clientService;
         }
 
+        /// <summary>Public template links are valid only for a client user whose UserList.uniqueid matches.</summary>
+        private async Task<bool> IsValidPublicClientLinkAsync(string emailId, string uniqueId) =>
+            await _meetingService.GetUniqueUserByEmailId(emailId.Trim(), uniqueId) > 0
+            && await _clientService.GetClientByEmailId(emailId.Trim()) > 0;
+
         [HttpGet]
         public async Task<IActionResult> Index(string emailId = null, string uniqueId = null, string type = null, string profile = null)
         {
@@ -41,6 +48,8 @@ namespace Risebird.Web.Controllers
             {
                 if (!string.IsNullOrEmpty(uniqueId) && !string.IsNullOrEmpty(emailId) && type == "pbc" && profile == "Client")
                 {
+                    if (!await IsValidPublicClientLinkAsync(emailId, uniqueId))
+                        return RedirectToAction("SignIn", "Session");
                     ClonableTemplateListVM model = new ClonableTemplateListVM();
                     model.AccessType = "Public";
                     //model.LoggedInUser = emailId;
@@ -497,7 +506,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Client" || profileName == "SeniorInterviewerManagement")
                     {
                         if (filter != null)
                         {
@@ -520,6 +529,28 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+
+        /// <summary>
+        /// Marketplace: the same template list and "Create interview link" popup as Index, but channels created
+        /// from here are marketplace channels (the popup posts IsMarketPlaceChannel = true).
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> Marketplace(string emailId = null, string uniqueId = null, string type = null, string profile = null)
+        {
+            ViewBag.IsMarketplace = true;
+            var result = await Index(emailId, uniqueId, type, profile);
+            if (result is ViewResult view) view.ViewName = "Index";
+            return result;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Marketplace(ClonableTemplatesFilter filter)
+        {
+            var result = await Index(filter);
+            if (result is RedirectToActionResult redirect && redirect.ActionName == "Index" && redirect.ControllerName == null)
+                redirect.ActionName = "Marketplace";
+            return result;
         }
 
 
@@ -1274,6 +1305,8 @@ namespace Risebird.Web.Controllers
             {
                 if (!string.IsNullOrEmpty(uniqueId) && !string.IsNullOrEmpty(emailId) && type == "pbc" && profile == "Client")
                 {
+                    if (!await IsValidPublicClientLinkAsync(emailId, uniqueId))
+                        return RedirectToAction("SignIn", "Session");
 
                     ClonableTemplateListVM model = new ClonableTemplateListVM();
                     model.Profile = "Client";

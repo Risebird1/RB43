@@ -16,8 +16,11 @@ namespace Risebird.CommonHelper
         private readonly IApplicationErrorLogger _applicationErrorLogger;
 
 
-        public AffIndaResumeParserHelper(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public AffIndaResumeParserHelper(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
         }
@@ -30,7 +33,7 @@ namespace Risebird.CommonHelper
                 var collectionId = _configuration["AffIndaResumeParser:collectionId"];
                 string result = string.Empty;
                 string identifier = string.Empty;
-                var client = new HttpClient();
+                var client = _httpClientFactory.CreateClient();
                 var request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Post,
@@ -137,7 +140,7 @@ namespace Risebird.CommonHelper
                 var collectionId = _configuration["AffIndaResumeParser:redactorCollectionId"];
                 string result = string.Empty;
 
-                var client = new HttpClient();
+                var client = _httpClientFactory.CreateClient();
                 var request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Post,
@@ -278,7 +281,7 @@ namespace Risebird.CommonHelper
                 var apiKey = _configuration["AffIndaResumeParser:apiKey"];
                 string result = string.Empty;
 
-                var client = new HttpClient();
+                var client = _httpClientFactory.CreateClient();
                 var request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Post,
@@ -326,7 +329,7 @@ namespace Risebird.CommonHelper
                 string result = string.Empty;
 
                 var requestUri = $"https://api.affinda.com/v3/index/{indexName}/documents";
-                var client = new HttpClient();
+                var client = _httpClientFactory.CreateClient();
                 var request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Post,

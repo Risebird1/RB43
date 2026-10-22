@@ -188,6 +188,22 @@ Expected: 400</Message></ErrorInfo></Output>
             Assert.All(CodeProjectStackCatalog.WindowsInstallLines(s).Concat(lines), l => Assert.True(l.All(c => c < 128), $"non-ASCII in: {l}"));
         }
 
+        [Theory]
+        [MemberData(nameof(Stacks))]
+        public void Windows_script_blocks_are_not_glued_onto_one_line(string code)
+        {
+            // Raw string literals end without a newline; a missing separator once produced
+            // "Invoke-Choco @('vscode')Invoke-Choco @('nodejs', ...)", which PowerShell rejects.
+            var s = CodeProjectStackCatalog.Find(code);
+            var install = CodeProjectStackCatalog.WindowsInstallLines(s);
+            var seed = CodeProjectStackCatalog.WindowsSeedLines(s);
+            Assert.Contains("Invoke-Choco @('vscode')", install);
+            Assert.Contains("}", seed);
+            Assert.Equal("Remove-Item 'C:\\rb-seed' -Recurse -Force -ErrorAction SilentlyContinue", seed.Last());
+            var glued = new Regex(@"[)}']\s*(Invoke-Choco|Invoke-Native|New-Item|Remove-Item|Grant-Users|Push-Location|Pop-Location)\b");
+            Assert.All(install.Concat(seed), l => Assert.False(glued.IsMatch(l), $"two commands on one line: {l}"));
+        }
+
         [Fact]
         public void Image_tags_and_template_names_are_stable_and_distinct()
         {

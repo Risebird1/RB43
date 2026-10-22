@@ -18,8 +18,11 @@ namespace Risebird.CommonHelper
         private readonly string subUserId;
         private readonly string resumeParserServiceUrl;
 
-        public ResumeParserHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration)
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public ResumeParserHelper(IApplicationErrorLogger applicationErrorLogger, IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             userKey = _configuration["ResumeParserCredentials:userKey"];
@@ -91,7 +94,7 @@ namespace Risebird.CommonHelper
             //string jsonData = streamReader.ReadToEnd();
             //return jsonData;
 
-            var client = new HttpClient();
+            var client = _httpClientFactory.CreateClient();
             var request = new HttpRequestMessage(HttpMethod.Post, $"https://{resumeParserServiceUrl}/Rchilli/parseResumeBinary");
             string formattedContent = string.Format("{\n\t\"filedata\":\"{0}\",\n\t\"filename\":\"{1}\",\n\t\"userkey\":\"{2}\",\n\t\"version\":\"{3}\",\n\t\"subuserid\":\"{4}\"\n}", base64string, fileName, userKey, version, subUserId);
             //var content = new StringContent("{\n\t\"filedata\":\"{{base64data}}\",\n\t\"filename\":\"{{filename}}\",\n\t\"userkey\":\"{{userkey}}\",\n\t\"version\":\"8.0.0\",\n\t\"subuserid\":\"{{subuserid}}\"\n}", null, "application/json");

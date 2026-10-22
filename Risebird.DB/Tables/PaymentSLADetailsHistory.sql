@@ -25,6 +25,7 @@ CREATE TABLE [dbo].[PaymentSLADetailsHistory](
 	[InterviewerVideo] [varchar](250) NULL,
 	[AttendanceJoinCompliance] [varchar](250) NULL,
     [AIContradictionScore] [varchar](250) NULL,
+    [IsApproved] [int] NULL,
  CONSTRAINT [PK_PaymentSLADetailsHistory] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -77,6 +78,17 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE PaymentSLADetails
     Add AIContradictionScore varchar(250)
+END
+-- QC Activity: approval state at each save, so an approval by a person is counted even after a
+-- later save overwrites PaymentSLADetails.ModifiedBy (copied by tr_PaymentSLADetails).
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsApproved')
+      AND Object_ID = Object_ID(N'PaymentSLADetailsHistory'))
+BEGIN
+    ALTER TABLE PaymentSLADetailsHistory
+    Add IsApproved int NULL
 END
 END
 GO

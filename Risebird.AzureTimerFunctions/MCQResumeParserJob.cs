@@ -140,24 +140,7 @@ namespace Risebird.AzureTimerFunctions
                                     }
                                     if (documentData.data.emails != null && documentData.data.emails.Count() > 0)
                                     {
-                                        candidate.EmailId = documentData.data.emails[0].Trim();
-                                        candidate.EmailId.Replace(":", "").Replace("-", "").Replace("%20", "").Replace("?:", "").Replace(":%20", "").Replace("-%20", "");
-                                        if (candidate.EmailId.StartsWith(":") || candidate.EmailId.StartsWith("-"))
-                                        {
-                                            candidate.EmailId = candidate.EmailId.Substring(1); // Remove the first character (colon)
-                                        }
-                                        if (candidate.EmailId.StartsWith("%20"))
-                                        {
-                                            candidate.EmailId = candidate.EmailId.Substring(3); // Remove the first three characters 
-                                        }
-                                        if (candidate.EmailId.StartsWith("?:"))
-                                        {
-                                            candidate.EmailId = candidate.EmailId.Substring(3); // Remove the first three characters 
-                                        }
-                                        if (candidate.EmailId.StartsWith(":%20") || candidate.EmailId.StartsWith("-%20"))
-                                        {
-                                            candidate.EmailId = candidate.EmailId.Substring(4); // Remove the first four characters 
-                                        }
+                                        candidate.EmailId = CandidateEmailNormalizer.Normalize(documentData.data.emails[0]); // null when no trustworthy address: reported as not valid below
                                         if (!_validationHelper.ValidateEmailAddress(candidate.EmailId))
                                         {
                                             //mark it as cant be processed in the database
@@ -198,30 +181,7 @@ namespace Risebird.AzureTimerFunctions
 
                                 if (!string.IsNullOrEmpty(candidateParsedData.emailId))
                                 {
-                                    candidate.EmailId = candidateParsedData.emailId.Trim();
-                                    candidate.EmailId.Replace(":", "").Replace("-", "").Replace("%20", "").Replace("?:", "").Replace(":%20", "").Replace("-%20", "");
-
-                                    if (candidate.EmailId.StartsWith(":") || candidate.EmailId.StartsWith("-"))
-                                    {
-                                        candidate.EmailId = candidate.EmailId.Substring(1); // Remove the first character (colon)
-                                    }
-                                    if (candidate.EmailId.StartsWith("%20"))
-                                    {
-                                        candidate.EmailId = candidate.EmailId.Substring(3); // Remove the first three characters 
-                                                                                            //candidate.EmailId.Replace("%20", "");
-
-                                    }
-                                    if (candidate.EmailId.StartsWith("?:"))
-                                    {
-                                        candidate.EmailId = candidate.EmailId.Substring(3); // Remove the first three characters 
-                                                                                            //candidate.EmailId.Replace("?:", "");
-
-                                    }
-                                    if (candidate.EmailId.StartsWith(":%20") || candidate.EmailId.StartsWith("-%20"))
-                                    {
-                                        candidate.EmailId = candidate.EmailId.Substring(4); // Remove the first four characters 
-                                                                                            //candidate.EmailId.Replace(":%20", "").Replace("-%20", "");
-                                    }
+                                    candidate.EmailId = CandidateEmailNormalizer.Normalize(candidateParsedData.emailId); // null when no trustworthy address: reported as not valid below
                                     if (!_validationHelper.ValidateEmailAddress(candidate.EmailId))
                                     {
                                         //mark it as cant be processed in the database

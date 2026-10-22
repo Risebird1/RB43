@@ -1,3 +1,4 @@
+using System.Net.Http;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -21,8 +22,11 @@ namespace Risebird.AzureTimerFunctions
         private readonly ILogger log;
         private readonly IZohoMeetingHelper _zoho;
 
-        public FetchMeetingVideoService(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository, ISASUrlHelper sasUrlHelper, IZohoMeetingHelper zoho)
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public FetchMeetingVideoService(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository, ISASUrlHelper sasUrlHelper, IZohoMeetingHelper zoho, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
@@ -102,7 +106,7 @@ namespace Risebird.AzureTimerFunctions
                     //get the download url from the response
                     if (downloadUrl != null)
                     {
-                        HttpClient myWebClient = new HttpClient();
+                        HttpClient myWebClient = _httpClientFactory.CreateClient();
                         string uploadedVideoUrl = string.Empty;
                         var accessToken = accesstoken;
                         myWebClient.DefaultRequestHeaders.Authorization =
@@ -141,7 +145,7 @@ namespace Risebird.AzureTimerFunctions
                     var transcriptionDownloadUrl = _recordingupload.transcriptionDownloadUrl;
                     if (transcriptionDownloadUrl != null)
                     {
-                        HttpClient myWebClient = new HttpClient();
+                        HttpClient myWebClient = _httpClientFactory.CreateClient();
                         string uploadedTranscriptUrl = string.Empty;
                         var accessToken = accesstoken;
                         myWebClient.DefaultRequestHeaders.Authorization =

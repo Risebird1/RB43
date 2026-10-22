@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -73,7 +75,51 @@ namespace Risebird.Entities.ViewModel
         public static string StripOrFallback(string reply, out bool stripped)
         {
             var cleaned = Strip(reply, out stripped);
-            return string.IsNullOrWhiteSpace(cleaned) && stripped ? FallbackReply : cleaned;
+            if (string.IsNullOrWhiteSpace(cleaned) && stripped) return FallbackReply;
+
+            // A JSON completion flag is lost once the object is unwrapped to prose, so carry it on as
+            // the marker the interview page already acts on.
+            var signalsCompletion = AIInterviewCompletionDetector.SignalsCompletion(cleaned);
+            var spoken = UnwrapSpokenJson(cleaned);
+            if (signalsCompletion && spoken != cleaned
+                && spoken.IndexOf(AIInterviewCompletionDetector.Marker, StringComparison.OrdinalIgnoreCase) < 0)
+                spoken += " " + AIInterviewCompletionDetector.Marker;
+            return spoken;
+        }
+
+        private static readonly string[] NonSpokenKeys = { "status", "state", "stage", "phase" };
+
+        /// <summary>
+        /// Interviewer turns are requested as json_object, so a prompt may return its turn as
+        /// <c>{"greeting":"...","question":"..."}</c> rather than as prose. Shown as-is, the candidate
+        /// sees and hears the raw JSON. A flat object of strings (and boolean flags) is joined, in
+        /// order, into the line to speak; flags, status fields and "true"/"false" strings are not
+        /// spoken. Anything else (nested, numeric, not JSON) is left alone.
+        /// </summary>
+        public static string UnwrapSpokenJson(string reply)
+        {
+            if (string.IsNullOrWhiteSpace(reply)) return reply;
+
+            var trimmed = reply.Trim();
+            if (!trimmed.StartsWith("{") || !trimmed.EndsWith("}")) return reply;
+
+            JObject obj;
+            try { obj = JObject.Parse(trimmed); }
+            catch (JsonReaderException) { return reply; }
+
+            var props = obj.Properties().ToList();
+            if (props.Count == 0 || props.Any(p => p.Value.Type != JTokenType.String && p.Value.Type != JTokenType.Boolean))
+                return reply;
+
+            var spoken = string.Join(" ", props
+                .Where(p => p.Value.Type == JTokenType.String
+                    && !NonSpokenKeys.Contains(p.Name.Trim().ToLowerInvariant()))
+                .Select(p => ((string)p.Value)?.Trim())
+                .Where(v => !string.IsNullOrEmpty(v)
+                    && !v.Equals("true", StringComparison.OrdinalIgnoreCase)
+                    && !v.Equals("false", StringComparison.OrdinalIgnoreCase)));
+
+            return string.IsNullOrWhiteSpace(spoken) ? reply : spoken;
         }
 
         private static int FindMatchingBrace(string text, int start)

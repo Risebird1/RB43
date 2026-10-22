@@ -259,6 +259,8 @@ namespace Risebird.Business.Interface
         Task<Meeting> GetAudioCommentDetailsService(int interviewId);
         Task<bool> RemoveOrShortlistInterviewer(int interviewid, string action = null);
         Task<bool> RemoveOrShortlistInterviewerFromIRF(int irfid, string interviewer, string action = null);
+        /// <summary>Interviewer Monitoring Remove / Shortlist with the actor and comment logged (QC Tracking Delta 5).</summary>
+        Task<bool> RemoveOrShortlistInterviewerFromIRFWithAudit(int irfid, string interviewer, string action, string actedBy, string comment);
         Task<bool> UpdateInterviewReport(int interviewid, string comment, string emailid);
         Task<bool> SaveProctoringReport(ProctoringReport model, string emailId);
         Task<ProctoringReport> GetProctoringReport(int interviewid);

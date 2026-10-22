@@ -1,6 +1,7 @@
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -6420,6 +6421,29 @@ WHERE irf.IsDeleted = 0
                     {
                         foreach (var obj in candidateList)
                         {
+                            // Every parser, Excel import and API add lands here. Store the bare address ("|x@gmail.com",
+                            // "x@gmail.comlinkedin" -> "x@gmail.com"); refuse the row when no address can be trusted.
+                            // The returned table carries the cleaned address, which is what the invite mail is sent to.
+                            var email = CandidateEmailNormalizer.Normalize(obj.EmailId);
+                            if (email == null)
+                            {
+                                const string invalidEmail = "Email address is not valid";
+                                if (isResumeParser)
+                                {
+                                    dt.Rows.Add(obj.EmailId, invalidEmail, obj.CandidateResumeId);
+                                }
+                                else if (isApi)
+                                {
+                                    dt.Rows.Add(obj.EmailId, invalidEmail, 0, 0);
+                                }
+                                else
+                                {
+                                    dt.Rows.Add(obj.EmailId, invalidEmail);
+                                }
+                                continue;
+                            }
+                            obj.EmailId = email;
+
                             try
                             {
                                 DynamicParameters parameters = new DynamicParameters();
@@ -7408,8 +7432,9 @@ WHERE irf.IsDeleted = 0
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@RateComputedForClient", SqlDbType.Int));
                     cmdUpdateIRF.Parameters["@RateComputedForClient"].Value = irfDetails.RateComputedForClient;
 
-                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsMarketPlaceChannel", SqlDbType.Bit));
-                    cmdUpdateIRF.Parameters["@IsMarketPlaceChannel"].Value = irfDetails.RateComputedForClient > 0 ? irfDetails.IsMarketPlaceChannel : null;
+                    // @IsMarketPlaceChannel is not passed to the procedure: databases still on the older
+                    // usp_CreateSkillChannelFromTemplate don't declare it and reject the whole call
+                    // ("too many arguments"). The flag is set by an UPDATE after the insert instead.
 
                     SqlParameter flatRateParam = new SqlParameter();
                     flatRateParam.ParameterName = "@flatRate";
@@ -7516,6 +7541,11 @@ WHERE irf.IsDeleted = 0
                     }
 
                     flatRate = Convert.ToInt16(cmdUpdateIRF?.Parameters["@flatRate"]?.Value);
+
+                    if (irfDetails.IsMarketPlaceChannel)
+                    {
+                        await con.ExecuteAsync("update IRF set IsMarketPlaceChannel = 1 where IRFId = @IRFId", new { irfDetails.IRFId });
+                    }
 
                     return new Tuple<bool, int>(true, flatRate);
                 }

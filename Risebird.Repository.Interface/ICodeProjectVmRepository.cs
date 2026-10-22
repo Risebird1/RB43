@@ -22,6 +22,17 @@ namespace Risebird.Repository.Interface
 
         Task<List<string>> GetExpired(int maxLifetimeMinutes, int failedGraceMinutes);
 
+        /// <summary>Set once at handover; later calls (reconnects) do not extend it.</summary>
+        Task SetDeadline(string handle, System.DateTime deadlineUtc);
+
+        /// <summary>Machines in the 'ready' step, for the session monitor and deadline lock.</summary>
+        Task<List<CodeProjectVm>> GetReady();
+
+        Task UpdateMonitor(string handle, string seenSessionIdsJson, string integrityFlagsJson, bool markLocked);
+
+        /// <summary>Handles not yet released, for the nightly orphan sweep.</summary>
+        Task<List<string>> GetLiveHandles();
+
         /// <summary>VMProperties row (Purpose = 'CodeProject') that CodingAssessment.VMPropertyId points at.</summary>
         Task<int> AddVMProperty(string name, string resourceGroupName, string osType, string location, string userName);
     }

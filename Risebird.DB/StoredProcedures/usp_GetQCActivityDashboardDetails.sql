@@ -20,6 +20,20 @@ The web layer whitelists them; an unknown key returns no rows.
 RefId is the ReportEditLog.Id for log-based ReportEdited rows (the page's
 "View change" link) and NULL otherwise.
 
+Part 2 (authentic QC work): atomic keys ProxyForm, RedoRequested, TrialBackfill;
+group keys PageTotalInterviews, PageTrm, PageIrfAudit, PageTrial, PageSuspicious,
+PageReportsSla (actions from that page), ScoredActions, AuthenticActions,
+NotAuthentic, NoEvidence, ConnectedCall (answered calls of MinCallSeconds+),
+Reached (connected calls + coaching), FollowThrough (actions on High-Risk
+interviewers; FollowedUp = called or coached by anyone in the window).
+Every row also returns Comment, HasEvidence, IsAuthentic and PageGroup.
+
+QC Tracking: atomic keys PrUnderReview, PrReviewed, PrRemoved, HrUnderReview,
+HrReviewed, HrRemoved, PliUnderReview, PliReviewed, PliRemoved,
+MonitoringRemoved, MonitoringShortlisted; group keys Pr, Hr, Pli, Monitoring
+(the collector narrows the rows), PagePotentialRisk, PageHighRisk,
+PageMonitoring (actions from that page). ActionsTaken includes the three pages.
+
 Deploy after usp_QCActivity_CollectRows.
 ================================================================================
 */
@@ -49,8 +63,28 @@ BEGIN
         Phone             VARCHAR(30)   NULL,
         RecordingUrl      VARCHAR(1000) NULL,
         SourceId          INT           NULL,
-        RefId             INT           NULL
+        RefId             INT           NULL,
+        Comment           NVARCHAR(500) NULL,
+        HasEvidence       BIT           NULL,
+        IsAuthentic       BIT           NULL,
+        PageGroup         VARCHAR(30)   NULL
     );
+
+    -- FollowThrough needs the High-Risk list and calls / coaching by anyone.
+    CREATE TABLE #QCHighRisk (
+        InterviewerId    INT           NOT NULL PRIMARY KEY,
+        CodedId          NVARCHAR(200) NULL,
+        InterviewerName  NVARCHAR(310) NULL,
+        InterviewerEmail VARCHAR(200)  NULL,
+        OverallRiskRatio DECIMAL(10,4) NULL,
+        WorstSeverity    VARCHAR(4)    NULL,
+        PriorityTier     VARCHAR(20)   NULL,
+        TotalCompleted   INT           NULL,
+        TotalBad         INT           NULL,
+        Touched          BIT           NOT NULL DEFAULT 0
+    );
+    IF @Metric = 'FollowThrough' AND OBJECT_ID(N'dbo.usp_QCActivity_HighRisk', N'P') IS NOT NULL
+        EXEC dbo.usp_QCActivity_HighRisk @FromIst = @FromIst, @ToIst = @ToIst;
 
     -- A drill-down is always for one user and one known metric.
     IF @ActorEmail IS NOT NULL AND @Metric IS NOT NULL
@@ -59,6 +93,17 @@ BEGIN
             @ToIst      = @ToIst,
             @ActorEmail = @ActorEmail,
             @Metric     = @Metric;
+
+    CREATE TABLE #Coached (Email VARCHAR(200) NOT NULL PRIMARY KEY);
+    IF @Metric = 'FollowThrough' AND OBJECT_ID(N'dbo.InterviewerCoachingSession', N'U') IS NOT NULL
+        EXEC sp_executesql N'
+            INSERT INTO #Coached (Email)
+            SELECT DISTINCT LTRIM(RTRIM(s.InterviewerEmail))
+            FROM dbo.InterviewerCoachingSession s
+            WHERE NULLIF(LTRIM(RTRIM(s.InterviewerEmail)), '''') IS NOT NULL
+              AND s.CreatedAtUtc >= DATEADD(MINUTE, -330, CAST(@FromIst AS DATETIME))
+              AND s.CreatedAtUtc <  DATEADD(MINUTE, -330, DATEADD(DAY, 1, CAST(@ToIst AS DATETIME)))',
+            N'@FromIst DATE, @ToIst DATE', @FromIst = @FromIst, @ToIst = @ToIst;
 
     SELECT TOP (2000)
         r.Metric,
@@ -77,7 +122,21 @@ BEGIN
         r.[Status],
         r.RecordingUrl,
         r.SourceId,
-        r.RefId
+        r.RefId,
+        r.Comment,
+        r.HasEvidence,
+        r.IsAuthentic,
+        r.PageGroup,
+        CAST(CASE WHEN @Metric <> 'FollowThrough' THEN NULL
+                  WHEN EXISTS (SELECT 1 FROM dbo.CallRecordingData c
+                               WHERE c.CallRecipient = COALESCE(byId.EmailId, r.InterviewerEmail)
+                                 AND c.DateCreated >= DATEADD(MINUTE, -330, CAST(@FromIst AS DATETIME))
+                                 AND c.DateCreated <  DATEADD(MINUTE, -330, DATEADD(DAY, 1, CAST(@ToIst AS DATETIME))))
+                    THEN 1
+                  WHEN OBJECT_ID(N'dbo.InterviewerCoachingSession', N'U') IS NOT NULL
+                       AND EXISTS (SELECT 1 FROM #Coached cs WHERE cs.Email = COALESCE(byId.EmailId, r.InterviewerEmail))
+                    THEN 1
+                  ELSE 0 END AS BIT) AS FollowedUp
     FROM #QCActivityRows r
     LEFT JOIN dbo.IRF irf ON irf.id = r.IrfId
     OUTER APPLY (
@@ -90,6 +149,7 @@ BEGIN
     ) byId
     OUTER APPLY (
         SELECT TOP 1
+            ul.id AS UserId,
             ul.MobileNumber,
             NULLIF(LTRIM(RTRIM(ISNULL(ul.FirstName, '') + ' ' + ISNULL(ul.LastName, ''))), '') AS FullName
         FROM dbo.UserList ul
@@ -98,10 +158,32 @@ BEGIN
           AND ul.EmailId = r.InterviewerEmail
         ORDER BY ul.id DESC
     ) byEmail
-    WHERE @Metric IN ('All', 'Trial', 'AuditActions', 'Trm', 'Ti',
+    WHERE @Metric IN ('All', 'Trial', 'AuditActions', 'Trm', 'Ti', 'Pr', 'Hr', 'Pli', 'Monitoring',
                       'StatusActions', 'SuspiciousAll', 'BlockedAll', 'AccessAll', 'ActiveAll', 'PaymentHoldAll')
        OR r.Metric = @Metric
        OR (@Metric = 'PenaltyApplied' AND r.Metric = 'ReportReviewed' AND r.Amount > 0)
+       -- Part 2 group keys
+       OR (@Metric = 'PageTotalInterviews' AND r.PageGroup = 'TotalInterviews')
+       OR (@Metric = 'PageTrm'             AND r.PageGroup = 'TRM')
+       OR (@Metric = 'PageIrfAudit'        AND r.PageGroup = 'IrfAudit')
+       OR (@Metric = 'PageTrial'           AND r.PageGroup = 'Trial')
+       OR (@Metric = 'PageSuspicious'      AND r.PageGroup = 'Suspicious')
+       OR (@Metric = 'PageReportsSla'      AND r.PageGroup = 'ReportsSla')
+       OR (@Metric = 'PagePotentialRisk'   AND r.PageGroup = 'PotentialRisk')
+       OR (@Metric = 'PageHighRisk'        AND r.PageGroup = 'HighRisk')
+       OR (@Metric = 'PageMonitoring'      AND r.PageGroup = 'Monitoring')
+       OR (@Metric = 'ActionsTaken'        AND r.PageGroup IN ('TotalInterviews', 'TRM', 'IrfAudit', 'Trial', 'Suspicious', 'ReportsSla',
+                                                               'PotentialRisk', 'HighRisk', 'Monitoring'))
+       OR (@Metric = 'ScoredActions'       AND r.Metric <> 'PlivoCall' AND r.IsAuthentic IS NOT NULL)
+       OR (@Metric = 'AuthenticActions'    AND r.Metric <> 'PlivoCall' AND r.IsAuthentic = 1)
+       OR (@Metric = 'NotAuthentic'        AND r.Metric <> 'PlivoCall' AND r.IsAuthentic = 0)
+       OR (@Metric = 'NoEvidence'          AND r.Metric <> 'PlivoCall' AND r.IsAuthentic IS NOT NULL AND ISNULL(r.HasEvidence, 0) = 0
+                                           AND (r.InterviewerUserId IS NOT NULL OR r.InterviewerEmail IS NOT NULL))
+       OR (@Metric = 'ConnectedCall'       AND r.Metric = 'PlivoCall' AND r.IsAuthentic = 1)
+       OR (@Metric = 'Reached'             AND ((r.Metric = 'PlivoCall' AND r.IsAuthentic = 1) OR r.Metric = 'Coaching'))
+       OR (@Metric = 'FollowThrough'       AND r.Metric <> 'PlivoCall' AND r.IsAuthentic IS NOT NULL
+                                           AND EXISTS (SELECT 1 FROM #QCHighRisk hr
+                                                       WHERE hr.InterviewerId = COALESCE(r.InterviewerUserId, byEmail.UserId)))
     ORDER BY r.ActionAtIst DESC, r.SourceId DESC;
 END
 GO

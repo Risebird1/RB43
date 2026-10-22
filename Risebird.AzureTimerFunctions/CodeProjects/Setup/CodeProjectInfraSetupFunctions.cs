@@ -17,7 +17,7 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
     ///   GET  /api/codeprojects/setup/status  progress of the latest run
     ///
     /// The admin dashboard's "Set up code project infrastructure" button calls these. Long steps
-    /// (Bastion, VM image builds) are finished by the 30-second timer below, so keep the functions
+    /// (Bastion, VM image builds) are finished by the one-minute timer below, so keep the functions
     /// host running until the dashboard shows Completed (roughly 1.5–2.5 hours the first time).
     /// </summary>
     public class CodeProjectInfraSetupFunctions
@@ -68,12 +68,27 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
         }
 
         [Function("CodeProjectInfraSetupTick")]
-        public async Task Tick([TimerTrigger("*/30 * * * * *")] TimerInfo timer, CancellationToken ct)
+        public async Task Tick([TimerTrigger("0 */1 * * * *")] TimerInfo timer, CancellationToken ct)
         {
             try { await _setup.TickAsync(ct); }
             catch (Exception ex)
             {
                 _log.LogError(ex, "Code project setup tick failed");
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        /// <summary>
+        /// 03:00 UTC on the 1st of each month: rebuilds the candidate images with the month's Windows
+        /// security updates (a build costs one D4s_v5 for about two hours per stack).
+        /// </summary>
+        [Function("CodeProjectImageRefresh")]
+        public async Task ImageRefresh([TimerTrigger("0 0 3 1 * *")] TimerInfo timer, CancellationToken ct)
+        {
+            try { _log.LogInformation("Code project image refresh: {Summary}", await _setup.RefreshImagesAsync(ct)); }
+            catch (Exception ex)
+            {
+                _log.LogError(ex, "Code project image refresh failed");
                 await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }

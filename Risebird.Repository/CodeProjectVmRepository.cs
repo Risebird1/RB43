@@ -104,6 +104,32 @@ namespace Risebird.Repository
                     new { MaxLifetimeMinutes = maxLifetimeMinutes, FailedGraceMinutes = failedGraceMinutes })).ToList();
         }
 
+        public async Task SetDeadline(string handle, System.DateTime deadlineUtc)
+        {
+            using (var con = new SqlConnection(_connectionString))
+                await con.ExecuteAsync("usp_SetCodeProjectVmDeadline", new { Handle = handle, DeadlineUtc = deadlineUtc }, commandType: CommandType.StoredProcedure);
+        }
+
+        public async Task<List<CodeProjectVm>> GetReady()
+        {
+            using (var con = new SqlConnection(_connectionString))
+                return (await DapperStoredProcedureHelper.QueryAsync<CodeProjectVm>(con, "usp_GetReadyCodeProjectVms")).ToList();
+        }
+
+        public async Task UpdateMonitor(string handle, string seenSessionIdsJson, string integrityFlagsJson, bool markLocked)
+        {
+            using (var con = new SqlConnection(_connectionString))
+                await con.ExecuteAsync("usp_UpdateCodeProjectVmMonitor",
+                    new { Handle = handle, SeenSessionIdsJson = seenSessionIdsJson, IntegrityFlagsJson = integrityFlagsJson, MarkLocked = markLocked },
+                    commandType: CommandType.StoredProcedure);
+        }
+
+        public async Task<List<string>> GetLiveHandles()
+        {
+            using (var con = new SqlConnection(_connectionString))
+                return (await DapperStoredProcedureHelper.QueryAsync<string>(con, "usp_GetLiveCodeProjectVmHandles")).ToList();
+        }
+
         public async Task<int> AddVMProperty(string name, string resourceGroupName, string osType, string location, string userName)
         {
             using (var con = new SqlConnection(_connectionString))

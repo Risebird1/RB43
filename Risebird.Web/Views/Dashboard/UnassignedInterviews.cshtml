@@ -827,7 +827,7 @@
 
                                                                 <span>
                                                                     <button class="mdc-fab app-fab--absolute " aria-label="Undo Suspicious Interviewer">
-                                                                        <span onclick="undoSuspiciousInterviewer('@item.InterviewerProfileId');" title="Undo Suspicious Interviewer" class="mdc-fab__icon touch"><svg width="20" height="20" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M5 7V9.5V12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" /> <path d="M7.875 9.5H14.875C20.375 9.5 20.375 18 14.875 18C11.875 18 4.875 18 4.875 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11.375 13L7.875 9.5L11.375 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" /> </svg></span>
+                                                                        <span onclick="undoSuspiciousInterviewer('@item.InterviewerUserId');" title="Undo Suspicious Interviewer" class="mdc-fab__icon touch"><svg width="20" height="20" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M5 7V9.5V12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" /> <path d="M7.875 9.5H14.875C20.375 9.5 20.375 18 14.875 18C11.875 18 4.875 18 4.875 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" /> <path d="M11.375 13L7.875 9.5L11.375 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" /> </svg></span>
                                                                     </button>
                                                                 </span>
 
@@ -3319,3 +3319,5 @@
 </script>
 <script src="~/js/twiliocallmaker.js?v=2024"></script>
 @*<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>*@
+@* Page of origin for suspicious marks (QC Activity), sent by the shared _SuspiciousInterviewer modal. *@
+<script>window.rbSuspiciousSource = '911:@(ViewBag.actionstatus)';</script>

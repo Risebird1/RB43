@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using RestSharp;
+using Risebird.Business.Interface;
+using Risebird.Business.PlivoCX;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Data.PlivoCXModels;
@@ -45,17 +47,20 @@ namespace Risebird.Web.Controllers
         private readonly IPlivoCXService       _plivoCXService;
         private readonly IPlivoCXCallRepository _repository;
         private readonly IApplicationErrorLogger _logger;
+        private readonly IPlivoCXCampaignService _campaignService;
 
         public PlivoCXInterviewCallController(
             IConfiguration           configuration,
             IPlivoCXService          plivoCXService,
             IPlivoCXCallRepository   repository,
-            IApplicationErrorLogger  applicationErrorLogger)
+            IApplicationErrorLogger  applicationErrorLogger,
+            IPlivoCXCampaignService  campaignService)
         {
-            _configuration  = configuration;
-            _plivoCXService = plivoCXService;
-            _repository     = repository;
-            _logger         = applicationErrorLogger;
+            _configuration   = configuration;
+            _plivoCXService  = plivoCXService;
+            _repository      = repository;
+            _logger          = applicationErrorLogger;
+            _campaignService = campaignService;
         }
 
         // ─── Dashboard ───────────────────────────────────────────────────────────
@@ -603,7 +608,7 @@ namespace Risebird.Web.Controllers
                 }
                 callLog.BookedInterviewDate   = ResolveRelativeDate(payload.InterviewDate);
                 callLog.BookedInterviewTime   = payload.InterviewTime;
-                callLog.CandidateDisposition  = NormaliseDisposition(payload.CandidateDisposition);
+                callLog.CandidateDisposition  = PlivoCXOutcomeParser.NormaliseDisposition(payload.CandidateDisposition);
                 callLog.CallEndedAt           = DateTime.UtcNow;
                 callLog.UpdatedAt             = DateTime.UtcNow;
 
@@ -616,11 +621,16 @@ namespace Risebird.Web.Controllers
                     callLog.DurationSeconds = dur;
 
                 // ── Step 7: Attempt booking if candidate confirmed ────────────────────
-                bool candidateConfirmed = string.Equals(
-                    payload.CandidateConfirmed, "true",
-                    StringComparison.OrdinalIgnoreCase);
+                // The agent's LLM writes this value: accept "true", "\"true\"", "Yes", "true." etc.
+                bool candidateConfirmed = PlivoCXOutcomeParser.IsConfirmed(payload.CandidateConfirmed);
 
-                if (candidateConfirmed &&
+                // A campaign running a confirm-only agent (CollectsSlot = false) records the
+                // confirmation but never books a slot.
+                bool agentCollectsSlot = true;
+                try { agentCollectsSlot = await _campaignService.ShouldBookAsync(callLog); }
+                catch (Exception campEx) { await _logger.LogMessage(LogLevelInfo.Exception, campEx); }
+
+                if (candidateConfirmed && agentCollectsSlot &&
                     !string.IsNullOrWhiteSpace(payload.InterviewDate) &&
                     !string.IsNullOrWhiteSpace(payload.InterviewTime))
                 {
@@ -676,6 +686,22 @@ namespace Risebird.Web.Controllers
                         convId: payload.ConversationId, callLogId: callLog.Id);
                 }
 
+                // PlivoCX campaign: advance the campaign candidate (Booked / NotBooked / retry / Cold).
+                if (callLog.CampaignId.HasValue)
+                {
+                    try
+                    {
+                        await _campaignService.ApplyCallOutcomeAsync(callLog, candidateConfirmed);
+                        await SaveCpAsync("campaign_state_applied",
+                            $"Campaign #{callLog.CampaignId} candidate #{callLog.CandidateId} updated from call #{callLog.Id}",
+                            convId: payload.ConversationId, callLogId: callLog.Id);
+                    }
+                    catch (Exception campEx)
+                    {
+                        await _logger.LogMessage(LogLevelInfo.Exception, campEx);
+                    }
+                }
+
                 await SaveCpAsync(CheckpointNames.HangupComplete,
                     $"Call log #{callLog.Id} updated — final status: {callLog.CallStatus}, disposition: {callLog.CandidateDisposition}",
                     convId: payload.ConversationId, callLogId: callLog.Id);
@@ -714,26 +740,6 @@ namespace Risebird.Web.Controllers
             }
 
             return null;
-        }
-
-        /// <summary>
-        /// Normalises the AI-returned disposition string to one of the three
-        /// accepted values: "interested" | "uninterested" | "cant_say".
-        /// Any unrecognised value defaults to "cant_say".
-        /// </summary>
-        private static string NormaliseDisposition(string raw)
-        {
-            if (string.IsNullOrWhiteSpace(raw)) return null;
-            return raw.ToLowerInvariant().Trim() switch
-            {
-                "interested"                         => "interested",
-                "uninterested" or "not interested"
-                    or "disinterested"               => "uninterested",
-                "cant_say" or "cant say"
-                    or "can't say" or "unsure"
-                    or "unclear" or "unknown"        => "cant_say",
-                _                                    => "cant_say"
-            };
         }
 
         /// <summary>

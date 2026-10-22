@@ -42,7 +42,18 @@ GO
 
 CREATE PROCEDURE [dbo].[usp_GetEligibleCandidatesForPlivoCXReschedule]
     @Count  INT      = 10,
-    @NowIST DATETIME = NULL   -- caller passes DateTime.Now (IST); falls back to GETDATE() if omitted
+    @NowIST DATETIME = NULL,  -- caller passes DateTime.Now (IST); falls back to GETDATE() if omitted
+    -- Campaign scoping (PlivoCX campaigns). All default to the timer jobs' behaviour.
+    --   @IRFId / @CandidateId : restrict to one IRF / one candidate, and return every match (not TOP @Count).
+    --   @BypassCaps           : skip the pacing caps (completed-call, daily, cooldown, retry window) -
+    --                           a campaign paces itself from its own calling policy. The "never call"
+    --                           rules (cold, uninterested, has a meeting, already booked) still apply.
+    --   @ExcludeCampaignCandidates : leave out candidates Pending in a Draft/Running/Paused campaign,
+    --                           so the timer jobs never double-dial a campaign's candidates.
+    @IRFId                     INT = NULL,
+    @CandidateId               INT = NULL,
+    @BypassCaps                BIT = 0,
+    @ExcludeCampaignCandidates BIT = 0
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -51,7 +62,7 @@ BEGIN
     -- @NowIST is supplied by the repository as DateTime.Now so no timezone math is needed here.
     SET @NowIST = ISNULL(@NowIST, GETDATE());
 
-    SELECT TOP (@Count)
+    SELECT TOP (CASE WHEN @IRFId IS NULL AND @CandidateId IS NULL THEN @Count ELSE 100000 END)
         c.id                                                         AS CandidateId,
         c.IRFId,
         irf.IRFId                                                    AS IRFName,
@@ -118,6 +129,13 @@ BEGIN
         AND irf.EndDate              >= GETDATE()
         AND ISNULL(irf.IsPaused, 0)  = 0
         AND ISNULL(irf.IsDeleted, 0) = 0
+        AND (@IRFId IS NULL OR c.IRFId = @IRFId)
+        AND (@CandidateId IS NULL OR c.id = @CandidateId)
+        AND (@ExcludeCampaignCandidates = 0 OR NOT EXISTS (
+                   SELECT 1 FROM dbo.PlivoCXCampaignCandidate pcc
+                   INNER JOIN dbo.PlivoCXCampaign pc ON pc.Id = pcc.CampaignId
+                   WHERE pcc.CandidateId = c.id AND pcc.[State] = 'Pending'
+                     AND pc.[Status] IN ('Draft', 'Running', 'Paused')))
 
         -- 5. Has at least one *recent* interview meeting that requires rescheduling
         --    (last 15 days IST). Aligns with schedule SP so old history does not
@@ -165,6 +183,8 @@ BEGIN
               AND  pcl2.BookedInterviewDateTime  > GETDATE()
         )
 
+        -- 7-10 are pacing caps, skipped when a campaign dials (@BypassCaps = 1).
+        AND (@BypassCaps = 1 OR (1 = 1
         -- 7. Stop after 2 completed reschedule calls (unless disposition is NULL,
         --    meaning we have never had a conclusive conversation yet)
         AND (
@@ -220,6 +240,7 @@ BEGIN
                   AND  pcl.CallPurpose    = 'reschedule'
             ) >= DATEADD(DAY, -4, GETUTCDATE())
         )
+        ))
 
     ORDER BY
         -- Never-reached candidates first

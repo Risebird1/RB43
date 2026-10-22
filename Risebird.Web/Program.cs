@@ -176,6 +176,12 @@ builder.Services.AddScoped<IQCActivityDashboardRepository, QCActivityDashboardRe
 builder.Services.AddScoped<IQCActivityDashboardService, QCActivityDashboardService>();
 builder.Services.AddScoped<IInterviewerCoachingRepository, InterviewerCoachingRepository>();
 builder.Services.AddScoped<IInterviewerCoachingService, InterviewerCoachingService>();
+builder.Services.AddScoped<IInterviewerMyQualityRepository, InterviewerMyQualityRepository>();
+builder.Services.AddScoped<IInterviewerMyQualityService, InterviewerMyQualityService>();
+// Deduction review (My Quality phase 2). Rules default to the spec values; override under "DeductionReview" in appsettings.
+builder.Services.AddSingleton(builder.Configuration.GetSection("DeductionReview").Get<Risebird.Entities.ViewModel.DeductionReviewSettings>() ?? new Risebird.Entities.ViewModel.DeductionReviewSettings());
+builder.Services.AddScoped<IDeductionReviewRepository, DeductionReviewRepository>();
+builder.Services.AddScoped<IDeductionReviewService, DeductionReviewService>();
 builder.Services.AddScoped<ITrialJudgmentRepository, TrialJudgmentRepository>();
 builder.Services.AddScoped<ITrialJudgmentService, TrialJudgmentService>();
 // Interview alignment page + per-question code sessions for human-led interviews.
@@ -333,6 +339,8 @@ builder.Services.AddScoped<IPlivoCallRepository, PlivoCallRepository>();
 builder.Services.AddScoped<IPlivoInterviewService, PlivoInterviewService>();
 builder.Services.AddScoped<IPlivoCXService, PlivoCXService>();
 builder.Services.AddScoped<IPlivoCXCallRepository, PlivoCXCallRepository>();
+builder.Services.AddScoped<IPlivoCXCampaignRepository, PlivoCXCampaignRepository>();
+builder.Services.AddScoped<IPlivoCXCampaignService, Risebird.Business.PlivoCX.PlivoCXCampaignService>();
 builder.Services.AddScoped<IPlivoWhatsAppService, PlivoWhatsAppService>();
 builder.Services.AddScoped<IPlivoWhatsAppRepository, PlivoWhatsAppRepository>();
 builder.Services.AddScoped<IElevenLabsAgentService, ElevenLabsAgentService>();

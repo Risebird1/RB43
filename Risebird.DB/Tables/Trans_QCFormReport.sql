@@ -99,5 +99,12 @@ BEGIN
 END
 END
 GO
+-- Page the form was first filled from (QC Tracking Delta 4): 'HighRisk' = High-Risk Reports tab. Run before usp_AddorUpdateQCFormReport.
+IF OBJECT_ID(N'dbo.Trans_QCFormReport', N'U') IS NOT NULL
+   AND COL_LENGTH(N'dbo.Trans_QCFormReport', N'SourcePage') IS NULL
+BEGIN
+    ALTER TABLE dbo.Trans_QCFormReport ADD SourcePage VARCHAR(30) NULL
+END
+GO
 
 

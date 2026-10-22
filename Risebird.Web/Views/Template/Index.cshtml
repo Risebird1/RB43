@@ -7,8 +7,9 @@
 @inject IHttpContextAccessor HttpContextAccessor
 
 @{
-    ViewData["Title"] = "Templates";
-    ViewBag.PageHeader = "Templates";
+    bool isMarketplace = ViewBag.IsMarketplace == true; // Template/Marketplace renders this view too
+    ViewData["Title"] = isMarketplace ? "Marketplace" : "Templates";
+    ViewBag.PageHeader = isMarketplace ? "Marketplace" : "Templates";
     if(Model.AccessType == "Public")
     {
         Layout = "~/Views/Shared/_PublicLayout2.cshtml";
@@ -106,7 +107,7 @@
 
 
 
-                                            <form action="@Url.Action("Index","Template", new { emailId = Model.PublicUserEmailId, uniqueId = Model.UniqueId, type = "pbc", profile = "Client" })" method="post" id="formFilter">
+                                            <form action="@Url.Action(isMarketplace ? "Marketplace" : "Index","Template", new { emailId = Model.PublicUserEmailId, uniqueId = Model.UniqueId, type = "pbc", profile = "Client" })" method="post" id="formFilter">
 
                                                 <div class="modal-body">
                                                     <div class="row">
@@ -520,6 +521,10 @@
                         <input type="hidden" for="AccessType" name="AccessType" id="AccessType" />
                         <input type="hidden" for="PublicUserEmailId" name="PublicUserEmailId" id="PublicUserEmailId" />
                         <input type="hidden" for="UniqueId" name="UniqueId" id="UniqueId" />
+                        @if (isMarketplace)
+                        {
+                            <input type="hidden" name="IsMarketPlaceChannel" value="true" />
+                        }
 
                         <button type="submit" class="btn btn-primary" style="margin:0px auto;display:block;border-radius:5px;padding:8px 10px;background:#53a5f5">Generate Interview Link</button>
                     </form>
@@ -824,7 +829,7 @@
         $.ajax({
             type: "GET",
             url: "/Client/GenerateDynamicRateByCurrentTimeOfWeek",
-            data: { 'clientId': clientId},
+            data: { 'clientId': clientId, 'emailId': '@Model.PublicUserEmailId', 'uniqueId': '@Model.UniqueId' },
             async: true,
             success: function (data) {
                 if (data != null && data != '') {

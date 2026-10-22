@@ -27,10 +27,13 @@ namespace Risebird.CommonHelper
         private readonly string _openAiKey;
         //private readonly string _assistantId;
 
-        public OpenAIInterviewerAssistantHelper(IConfiguration config, IOpenAIApiLogger openAIApiLogger)//HttpClient http, 
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public OpenAIInterviewerAssistantHelper(IConfiguration config, IOpenAIApiLogger openAIApiLogger, IHttpClientFactory httpClientFactory)//HttpClient http, 
         {
+            _httpClientFactory = httpClientFactory;
             //_http = http;
-            _http = new HttpClient();
+            _http = _httpClientFactory.CreateClient();
             _config = config;
             _openAIApiLogger = openAIApiLogger;
             _openAiKey = _config["OpenAI:ApiKey"];

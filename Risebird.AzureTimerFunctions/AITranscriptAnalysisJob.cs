@@ -1,3 +1,4 @@
+using System.Net.Http;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -28,12 +29,15 @@ namespace Risebird.AzureTimerFunctions
         private readonly ITranscriptOptimizationHelper _transcriptOptimizationHelper;
         private readonly ILogger log;
 
+        private readonly IHttpClientFactory _httpClientFactory;
+
         public AITranscriptAnalysisJob(ILoggerFactory loggerFactory,
             IApplicationErrorLogger applicationErrorLogger, IDashboarRepository dashboardRepository,
             IConfiguration configuration, IAssistantServiceHelper assistantServiceHelper,
             IMeetingService meetingService,
-            ITranscriptOptimizationHelper transcriptOptimizationHelper)
+            ITranscriptOptimizationHelper transcriptOptimizationHelper, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _applicationErrorLogger = applicationErrorLogger;
             _dashboardRepository = dashboardRepository;
             _configuration = configuration;
@@ -68,7 +72,7 @@ namespace Risebird.AzureTimerFunctions
                             //ScreeningRequest requestMode
                             //var aiAnalysis = await _assistantServiceHelper.ScreenAsync(new ScreeningRequest { TranscriptLink = item.AudioTranscriptFileLink, Type = ProfileNames.TranscriptAnalysisAIAssistant });
                             string transcriptText;
-                            using (HttpClient client = new HttpClient())
+                            using (HttpClient client = _httpClientFactory.CreateClient())
                             {
                                 transcriptText = await client.GetStringAsync(item.AudioTranscriptFileLink);
                             }

@@ -234,6 +234,71 @@ BEGIN
 END
 GO
 
+-- ---------------------------------------------------------------------
+-- 4. Session integrity: deadline lock and Bastion session monitoring
+-- ---------------------------------------------------------------------
+IF COL_LENGTH('dbo.CodeProjectVmProvisioning', 'DeadlineUtc') IS NULL
+    ALTER TABLE CodeProjectVmProvisioning ADD DeadlineUtc datetime2 NULL;          -- end of slot + grace, set at handover
+GO
+IF COL_LENGTH('dbo.CodeProjectVmProvisioning', 'LockedAtUtc') IS NULL
+    ALTER TABLE CodeProjectVmProvisioning ADD LockedAtUtc datetime2 NULL;          -- candidate account disabled and logged off
+GO
+IF COL_LENGTH('dbo.CodeProjectVmProvisioning', 'SeenSessionIdsJson') IS NULL
+    ALTER TABLE CodeProjectVmProvisioning ADD SeenSessionIdsJson nvarchar(max) NULL;   -- every Bastion session id seen for this machine
+GO
+IF COL_LENGTH('dbo.CodeProjectVmProvisioning', 'IntegrityFlagsJson') IS NULL
+    ALTER TABLE CodeProjectVmProvisioning ADD IntegrityFlagsJson nvarchar(max) NULL;   -- [{atUtc, code, detail}] shown to reviewers
+GO
+
+CREATE OR ALTER PROCEDURE usp_SetCodeProjectVmDeadline
+    @Handle varchar(64),
+    @DeadlineUtc datetime2
+AS
+BEGIN
+    SET NOCOUNT ON;
+    -- Set once: a second handover call (reconnect) must not extend the slot.
+    UPDATE CodeProjectVmProvisioning SET DeadlineUtc = @DeadlineUtc, UpdatedAtUtc = SYSUTCDATETIME()
+    WHERE Handle = @Handle AND DeadlineUtc IS NULL;
+END
+GO
+
+-- Machines a candidate may be connected to right now, for the session monitor.
+CREATE OR ALTER PROCEDURE usp_GetReadyCodeProjectVms
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT Handle, VmName, ResourceGroupName, CandidateUserName, DeadlineUtc, LockedAtUtc, SeenSessionIdsJson, IntegrityFlagsJson
+    FROM CodeProjectVmProvisioning
+    WHERE Step = 'ready';
+END
+GO
+
+CREATE OR ALTER PROCEDURE usp_UpdateCodeProjectVmMonitor
+    @Handle varchar(64),
+    @SeenSessionIdsJson nvarchar(max) = NULL,
+    @IntegrityFlagsJson nvarchar(max) = NULL,
+    @MarkLocked bit = 0
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE CodeProjectVmProvisioning
+    SET SeenSessionIdsJson = ISNULL(@SeenSessionIdsJson, SeenSessionIdsJson),
+        IntegrityFlagsJson = ISNULL(@IntegrityFlagsJson, IntegrityFlagsJson),
+        LockedAtUtc = CASE WHEN @MarkLocked = 1 AND LockedAtUtc IS NULL THEN SYSUTCDATETIME() ELSE LockedAtUtc END,
+        UpdatedAtUtc = SYSUTCDATETIME()
+    WHERE Handle = @Handle;
+END
+GO
+
+-- Handles still tracked (not released), for the nightly orphan sweep.
+CREATE OR ALTER PROCEDURE usp_GetLiveCodeProjectVmHandles
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT Handle FROM CodeProjectVmProvisioning WHERE Step <> 'released';
+END
+GO
+
 /* Verification */
 SELECT 'VMProperties.Purpose' AS [Object],
        CASE WHEN COL_LENGTH('dbo.VMProperties', 'Purpose') IS NOT NULL THEN 'OK' ELSE 'MISSING' END AS Status

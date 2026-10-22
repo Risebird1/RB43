@@ -33,6 +33,8 @@ namespace Risebird.CommonHelper
         public string ProjectContainer { get; }
         public string SecretsContainer { get; }
 
+        public string AccountName => new BlobServiceClient(_connectionString).AccountName;
+
         private static string Setting(IConfiguration configuration, string key)
         {
             var value = configuration[key];
@@ -213,6 +215,18 @@ namespace Risebird.CommonHelper
         {
             if (!IsConfigured || string.IsNullOrEmpty(handle)) return;
             await SendAsync<object>(HttpMethod.Post, "/release", new { handle }, ct);
+        }
+
+        public async Task<bool> HandoverAsync(string handle, DateTime deadlineUtc, CancellationToken ct = default)
+        {
+            if (!IsConfigured || string.IsNullOrEmpty(handle)) return false;
+            var result = await SendAsync<HandoverResult>(HttpMethod.Post, "/handover", new { handle, deadlineUtc = DateTime.SpecifyKind(deadlineUtc, DateTimeKind.Utc) }, ct);
+            return result?.Accepted == true;
+        }
+
+        private sealed class HandoverResult
+        {
+            public bool Accepted { get; set; }
         }
 
         private async Task<T> SendAsync<T>(HttpMethod method, string path, object body, CancellationToken ct) where T : class

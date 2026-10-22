@@ -6517,6 +6517,7 @@
         .rb-cp-copy { background: none; border: 1px solid #3A4A66; color: #C6D2E4; border-radius: 3px; font-size: 11px; padding: 3px 9px; cursor: pointer; }
         .rb-cp-copy:hover { border-color: #7FB3F5; color: #fff; }
         .rb-cp-err { color: #DC3545; font-size: 12.5px; }
+        .rb-cp-warn { background: #FCF3E6; color: #8A5212 !important; border-radius: 4px; padding: 9px 12px; font-size: 12.5px !important; max-width: 52ch !important; text-align: left; }
     </style>
 
     <div class="rb-cp-overlay" id="codeProjectOverlay" role="dialog" aria-modal="true" aria-labelledby="cpTitle">
@@ -6557,6 +6558,7 @@ git commit -m "implement the requirements"</div>
                         <div class="rb-cp-idle" id="cpIdle">
                             <div class="ic" aria-hidden="true">▣</div>
                             <p id="cpIdleText">A private machine with the project and its tools already installed.</p>
+                            <p class="rb-cp-warn" id="cpDeviceWarn" style="display:none">This task needs a laptop or desktop with a keyboard and a screen at least 1024 pixels wide. On a phone or tablet the remote machine will be very hard to use — if you can, switch device before launching. The timer starts at launch.</p>
                             <button type="button" class="rb-cp-btn" id="cpLaunchBtn">Launch environment</button>
                             <p class="rb-cp-err" id="cpIdleErr" style="display:none;margin-top:12px"></p>
                         </div>
@@ -6580,7 +6582,7 @@ git commit -m "implement the requirements"</div>
                                     <p>Your machine is ready. It opens in a new tab over a secure connection — no RDP port is exposed. Sign in there with:</p>
                                     <div class="rb-cp-cred" id="cpCred" style="display:none">
                                         <div><span>Username</span><code id="cpUser"></code><button type="button" class="rb-cp-copy" data-copy="cpUser">Copy</button></div>
-                                        <div><span>Password</span><code id="cpPass"></code><button type="button" class="rb-cp-copy" data-copy="cpPass">Copy</button></div>
+                                        <div><span>Password</span><code id="cpPass" aria-label="Password, hidden"></code><span style="display:flex;gap:6px"><button type="button" class="rb-cp-copy" id="cpPassToggle" aria-pressed="false">Show</button><button type="button" class="rb-cp-copy" data-copy="cpPass">Copy</button></span></div>
                                     </div>
                                     <div><a class="rb-cp-btn" id="cpOpenLink" href="#" target="_blank" rel="noopener">Open my machine ↗</a></div>
                                     <p>The project is in <code>C:\workspace</code>. Files in blue are the ones to change.</p>
@@ -6680,6 +6682,23 @@ git commit -m "implement the requirements"</div>
                 clockTimer = setInterval(tick, 1000);
             }
 
+            // Masked by default: the overlay may be on a shared screen or a screen share.
+            var cpPassword = '', cpPasswordShown = false;
+            function renderPassword() {
+                $('cpPass').textContent = cpPasswordShown ? cpPassword : '•'.repeat(Math.max(cpPassword.length, 8));
+                $('cpPass').setAttribute('aria-label', cpPasswordShown ? 'Password' : 'Password, hidden');
+                $('cpPassToggle').textContent = cpPasswordShown ? 'Hide' : 'Show';
+                $('cpPassToggle').setAttribute('aria-pressed', cpPasswordShown ? 'true' : 'false');
+            }
+            $('cpPassToggle').addEventListener('click', function () { cpPasswordShown = !cpPasswordShown; renderPassword(); });
+
+            // The remote desktop needs a real keyboard and room for a desktop; warn before the timer starts.
+            (function () {
+                var narrow = Math.min(window.screen.width || window.innerWidth, window.innerWidth) < 1024;
+                var touchOnly = window.matchMedia && window.matchMedia('(pointer: coarse)').matches && !window.matchMedia('(any-pointer: fine)').matches;
+                if (narrow || touchOnly) show('cpDeviceWarn', true);
+            })();
+
             function renderEnv(env) {
                 if (!env) return;
                 var state = env.state;
@@ -6694,7 +6713,8 @@ git commit -m "implement the requirements"</div>
                     // The Bastion page asks for these; the link itself carries no credentials.
                     if (env.username && env.password) {
                         $('cpUser').textContent = env.username;
-                        $('cpPass').textContent = env.password;
+                        cpPassword = env.password;
+                        renderPassword();
                         show('cpCred', true);
                     }
                     if (typeof env.secondsRemaining === 'number' && deadline === null) startClock(env.secondsRemaining);
@@ -6749,7 +6769,8 @@ git commit -m "implement the requirements"</div>
 
             document.querySelectorAll('.rb-cp-copy').forEach(function (b) {
                 b.addEventListener('click', function () {
-                    var text = ($(b.getAttribute('data-copy')) || {}).textContent || '';
+                    var id = b.getAttribute('data-copy');
+                    var text = id === 'cpPass' ? cpPassword : (($(id) || {}).textContent || '');
                     if (navigator.clipboard) navigator.clipboard.writeText(text).then(function () {
                         b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 1500);
                     });

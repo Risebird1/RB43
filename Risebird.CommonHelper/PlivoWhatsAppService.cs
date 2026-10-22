@@ -30,14 +30,17 @@ namespace Risebird.CommonHelper
         private readonly string     _scheduleTriggerUrl;
         private readonly string     _rescheduleTriggerUrl;
 
-        public PlivoWhatsAppService(IConfiguration configuration)
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public PlivoWhatsAppService(IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             var authId    = configuration["PlivoWhatsApp:ApiAuthId"]    ?? string.Empty;
             var authToken = configuration["PlivoWhatsApp:ApiAuthToken"]  ?? string.Empty;
             _scheduleTriggerUrl   = configuration["PlivoWhatsApp:ScheduleTriggerEndpointUrl"]   ?? string.Empty;
             _rescheduleTriggerUrl = configuration["PlivoWhatsApp:RescheduleTriggerEndpointUrl"] ?? string.Empty;
 
-            _httpClient = new HttpClient();
+            _httpClient = _httpClientFactory.CreateClient();
             _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue(
                     "Basic",

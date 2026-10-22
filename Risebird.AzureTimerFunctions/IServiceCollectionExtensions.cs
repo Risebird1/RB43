@@ -69,6 +69,8 @@ namespace Risebird.AzureFunctions
             services.AddScoped<IPlivoCallRepository, PlivoCallRepository>();
             services.AddScoped<IPlivoCXService, PlivoCXService>();
             services.AddScoped<IPlivoCXCallRepository, PlivoCXCallRepository>();
+            services.AddScoped<IPlivoCXCampaignRepository, PlivoCXCampaignRepository>();
+            services.AddScoped<IPlivoCXCampaignService, Risebird.Business.PlivoCX.PlivoCXCampaignService>();
             services.AddScoped<INaukriOnboardingRepository, NaukriOnboardingRepository>();
             services.AddScoped<IInterviewerEmailAvailabilityRepository, InterviewerEmailAvailabilityRepository>();
             services.AddScoped<ITransInterviewerAuditRepository, TransInterviewerAuditRepository>();
@@ -244,6 +246,13 @@ namespace Risebird.AzureFunctions
 
             services.AddScoped<IInterviewerEmailAvailabilityRepository, InterviewerEmailAvailabilityRepository>();
             services.AddScoped<IPlivoCXService, PlivoCXService>();
+
+            // Deduction review (My Quality phase 2): expiry of unanswered requests + QC lead email.
+            services.AddSingleton(sp =>
+                sp.GetRequiredService<IConfiguration>().GetSection("DeductionReview").Get<Risebird.Entities.ViewModel.DeductionReviewSettings>()
+                ?? new Risebird.Entities.ViewModel.DeductionReviewSettings());
+            services.AddScoped<IDeductionReviewRepository, DeductionReviewRepository>();
+            services.AddScoped<IDeductionReviewService, DeductionReviewService>();
             return services;
         }
     }

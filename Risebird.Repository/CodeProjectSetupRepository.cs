@@ -116,6 +116,24 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> CodeProjectSchemaPresent()
+        {
+            // The last object each migration adds; all present means every script has run.
+            const string sql = @"SELECT CASE WHEN
+                    COL_LENGTH('dbo.SkillChannelSampleQuestions', 'IsCodeProjectQuestion') IS NOT NULL
+                AND OBJECT_ID('dbo.usp_GetAIQuestionPoolForSets', 'P') IS NOT NULL
+                AND COL_LENGTH('dbo.CodeProjectVmProvisioning', 'IntegrityFlagsJson') IS NOT NULL
+                AND OBJECT_ID('dbo.usp_GetLiveCodeProjectVmHandles', 'P') IS NOT NULL
+                AND OBJECT_ID('dbo.usp_UpsertStackImage', 'P') IS NOT NULL
+                THEN 1 ELSE 0 END";
+            using (var con = new SqlConnection(_connectionString))
+            using (var cmd = new SqlCommand(sql, con))
+            {
+                await con.OpenAsync();
+                return Convert.ToInt32(await cmd.ExecuteScalarAsync()) == 1;
+            }
+        }
+
         private static bool IsOnlyComments(string batch)
         {
             var withoutBlock = Regex.Replace(batch, @"/\*.*?\*/", "", RegexOptions.Singleline);

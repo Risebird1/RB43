@@ -32,11 +32,14 @@ namespace Risebird.CommonHelper
         // than arriving with a deployment.
         private readonly bool _useStrictJsonSchema;
 
+        private readonly IHttpClientFactory _httpClientFactory;
+
         public OpenAIResponsesHelper(
             IConfiguration configuration,
             IApplicationErrorLogger applicationErrorLogger,
-            IOpenAIApiLogger openAIApiLogger)
+            IOpenAIApiLogger openAIApiLogger, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _openAIApiLogger = openAIApiLogger;
@@ -196,7 +199,7 @@ namespace Risebird.CommonHelper
             object requestBody = BuildJsonResponseRequestBody(promptId, input, previousResponseId, maxOutputTokens,
                 useStoredPromptModel, promptVersion, promptVariables, responseSchema, schemaName);
 
-            using var client = new HttpClient();
+            using var client = _httpClientFactory.CreateClient();
             client.Timeout = TimeSpan.FromMinutes(4);
             var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/responses")
             {
@@ -316,6 +319,9 @@ namespace Risebird.CommonHelper
                     throw new InvalidOperationException("OpenAI:ResponsesModel is not configured.");
                 if (string.IsNullOrWhiteSpace(input))
                     throw new InvalidOperationException($"OpenAI Responses input is required for operation {operationType}.");
+                // json_object output is refused (400) unless the *input* mentions JSON; the instructions do not count.
+                if (input.IndexOf("json", StringComparison.OrdinalIgnoreCase) < 0)
+                    input += "\n\nRespond with a single JSON object.";
 
                 // Inline instructions instead of a stored prompt: the caller owns the whole prompt in code.
                 var body = new Dictionary<string, object>
@@ -418,7 +424,7 @@ namespace Risebird.CommonHelper
 
                 var requestBody = BuildBaseRequestBody(promptId, input, useStoredPromptModel);
 
-                using var client = new HttpClient();
+                using var client = _httpClientFactory.CreateClient();
                 client.Timeout = TimeSpan.FromMinutes(4);
                 var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/responses")
                 {
