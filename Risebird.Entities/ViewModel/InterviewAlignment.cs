@@ -14,6 +14,7 @@ namespace Risebird.Entities.ViewModel
         public string RoleTitle { get; set; }
         public int? DurationMinutes { get; set; }
         public bool CodeSnippetRequired { get; set; }
+        public bool IsInterviewerAlignmentRequired { get; set; }
         public bool AITrialEnabled { get; set; }
 
         /// <summary>
@@ -71,11 +72,46 @@ namespace Risebird.Entities.ViewModel
         public DateTime? InterviewDate { get; set; }
         public int? InterviewDurationMinutes { get; set; }
 
+        /// <summary>Only filled by the by-token lookup: the rollout switch on the interview's own channel.</summary>
+        public bool IsInterviewerAlignmentRequired { get; set; }
+
         /// <summary>Minutes between the candidate opening the link and submitting, when both are known.</summary>
         public int? MinutesUsed =>
             OpenedOn.HasValue && SubmittedOn.HasValue && SubmittedOn.Value >= OpenedOn.Value
                 ? (int)Math.Ceiling((SubmittedOn.Value - OpenedOn.Value).TotalMinutes)
                 : (int?)null;
+    }
+
+    /// <summary>
+    /// The requirements the alignment page's "Ready to join" card can hold the Zoom link on. Two are the
+    /// rubric and sample-question panels; the rest are the existing InterviewCheckshow checklist items, by
+    /// their element ids, so the gate is built from the boxes that already exist rather than new labels.
+    /// Which of them render depends on the channel (four to nine checklist items), and the total is derived
+    /// from what rendered. The override endpoint stores only keys from this list.
+    /// </summary>
+    public static class JoinGateRequirementKeys
+    {
+        public const string Rubric = "rubric";
+        public const string Questions = "questions";
+
+        /// <summary>Before you join: the page watched it happen.</summary>
+        public const string PreviousIssues = "checklist_9";
+        public const string QualitySla = "checklist_6";
+        public const string FlowVideo = "checklist_7";
+        public const string FlowDocument = "checklist_8";
+
+        /// <summary>During the interview: the interviewer confirms they will do it.</summary>
+        public const string OwnQuestions = "checklist_5";
+        public const string IdVerification = "checklist_2";
+        public const string JobConsent = "checklist_1";
+        public const string CandidateCode = "checklist_3";
+        public const string ProxyAlert = "checklist_4";
+
+        public static readonly IReadOnlyList<string> All = new[]
+        {
+            Rubric, Questions, PreviousIssues, QualitySla, FlowVideo, FlowDocument,
+            OwnQuestions, IdVerification, JobConsent, CandidateCode, ProxyAlert
+        };
     }
 
     /// <summary>Result of usp_CreateInterviewCodeSession.</summary>
@@ -87,10 +123,11 @@ namespace Risebird.Entities.ViewModel
     }
 
     /// <summary>
-    /// Everything the alignment additions to Interview/InterviewDetails render: the join gate, the
-    /// candidate card (coded identity only), the trial banner and one-time onboarding modal, and the
-    /// interviewer's own questions with their code sessions. Null on the page when anything failed to
-    /// load, in which case the page renders exactly as it did before.
+    /// Everything the interview alignment page (InterviewAlignment.cshtml) renders beyond the Meeting: the
+    /// join gate, the candidate card (coded identity only), the trial banner and one-time onboarding modal,
+    /// and the interviewer's own questions with their code sessions. Built only for channels with
+    /// IRF.IsInterviewerAlignmentRequired on; when it cannot be built the interviewer gets today's
+    /// InterviewDetails.cshtml instead.
     /// </summary>
     public class InterviewAlignmentViewModel
     {

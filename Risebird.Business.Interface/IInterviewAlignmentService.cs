@@ -7,15 +7,23 @@ using System.Threading.Tasks;
 namespace Risebird.Business.Interface
 {
     /// <summary>
-    /// Interview alignment (the interviewer's pre-call page, Interview/InterviewDetails) and the
-    /// per-question code sessions minted from it. Callers are responsible for the ownership check
-    /// (IMeetingService.IsInterviewerForInterview); the stored procedures re-check it for writes.
+    /// Interview alignment (the interviewer's pre-call page, switched on per channel by
+    /// IRF.IsInterviewerAlignmentRequired) and the per-question code sessions minted from it. Callers are
+    /// responsible for the ownership check (IMeetingService.IsInterviewerForInterview) and the rollout
+    /// check (IsAlignmentRequiredAsync); the stored procedures re-check ownership for writes.
     /// </summary>
     public interface IInterviewAlignmentService
     {
         /// <summary>
-        /// Builds the alignment additions for the page. Returns null if anything needed is unavailable
-        /// (for example the database objects are not deployed yet) so the page renders as it did before.
+        /// The rollout switch for one interview, read server-side from that interview's own channel - never
+        /// from anything the caller supplies. False when off, NULL, or unreadable.
+        /// </summary>
+        Task<bool> IsAlignmentRequiredAsync(int interviewId);
+
+        /// <summary>
+        /// Builds the alignment page model. Returns null if anything needed is unavailable (for example the
+        /// database objects are not deployed yet, or the channel's switch is off), and the interviewer then
+        /// gets today's Interview Details.
         /// </summary>
         Task<InterviewAlignmentViewModel> BuildAlignmentAsync(int interviewId, string interviewerEmail, Meeting meeting,
             int defaultCodingTimeLimitInMinutes, int maxQuestionLength);

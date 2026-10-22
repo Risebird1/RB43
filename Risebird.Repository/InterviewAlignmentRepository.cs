@@ -24,6 +24,24 @@ namespace Risebird.Repository
             _logger = logger;
         }
 
+        public async Task<bool> IsAlignmentRequiredAsync(int interviewId)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                return await con.QueryFirstOrDefaultAsync<bool?>(
+                    "usp_GetInterviewAlignmentRequired",
+                    new { InterviewId = interviewId },
+                    commandType: CommandType.StoredProcedure) == true;
+            }
+            catch (SqlException ex)
+            {
+                // Not deployed yet, or unreachable: treat as off, so nothing answers for the channel.
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
         public async Task<InterviewAlignmentContext> GetAlignmentContextAsync(int interviewId, string interviewerEmail)
         {
             try

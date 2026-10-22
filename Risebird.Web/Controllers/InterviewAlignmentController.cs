@@ -12,12 +12,15 @@ using System.Threading.Tasks;
 namespace Risebird.Web.Controllers
 {
     /// <summary>
-    /// AJAX endpoints for the interview alignment additions to Interview/InterviewDetails: the trial
+    /// AJAX endpoints for the interview alignment page (Interview/InterviewAlignment): the trial
     /// onboarding acknowledgement, the recorded "join without confirming" override, and minting
     /// per-question code sessions.
     ///
-    /// The page itself is gated by IsInterviewerForInterview, but that does not protect a new route, so
-    /// every action here resolves the interviewer from session and calls it again.
+    /// The page is gated by IsInterviewerForInterview and by the channel's rollout switch, but a page gate
+    /// does not protect a route. So every action here resolves the interviewer from session, calls
+    /// IsInterviewerForInterview again, and re-reads IRF.IsInterviewerAlignmentRequired for that interview
+    /// server-side: a channel without the switch has no endpoint that will answer for it, even for the
+    /// correct interviewer.
     /// </summary>
     public class InterviewAlignmentController : Controller
     {
@@ -64,7 +67,7 @@ namespace Risebird.Web.Controllers
                 var email = await GetAuthorizedInterviewerAsync(interviewId);
                 if (email == null)
                 {
-                    return Json(new { success = false });
+                    return Json(new { success = false, message = "This interview is not available on this page." });
                 }
 
                 var saved = await _alignmentService.SaveJoinGateOverrideAsync(interviewId, email, outstanding);
@@ -196,7 +199,13 @@ namespace Risebird.Web.Controllers
                 return null;
             }
 
-            return await _meetingService.IsInterviewerForInterview(email, interviewId) ? email : null;
+            if (!await _meetingService.IsInterviewerForInterview(email, interviewId))
+            {
+                return null;
+            }
+
+            // The rollout switch, from the interview's own channel - never from the request.
+            return await _alignmentService.IsAlignmentRequiredAsync(interviewId) ? email : null;
         }
 
         private string CandidateLink(Guid token) =>

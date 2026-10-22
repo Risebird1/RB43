@@ -1,22 +1,26 @@
 -- =====================================================================================================
 -- Interview alignment + per-question code sessions (RB38 handoff) - COMPLETE DEPLOYMENT SCRIPT
 -- Run this one file on the database (SSMS / sqlcmd). Every part is idempotent: safe to run again.
+-- Confirm which branch deploys (dev2026 vs master) before running it against a shared database.
 --
 -- Contents, in the order they must run (columns before the procedures that read them):
---    1. Schema: 6 columns (IRF x1, InterviewerProfile x3, TechSkillComments x2) + 2 new tables
---    2. fn_InterviewerCompletedInterviewsOnIrf          NEW function (shared trial predicate)
---    3. usp_GetTrialJudgmentContext                     CHANGED (reads the shared function; same results)
---    4. usp_GetInterviewAlignmentContext                NEW
---    5. usp_AcknowledgeTrialOnboarding                  NEW
---    6. usp_SaveJoinGateOverride                        NEW
---    7. usp_GetInterviewerCodeQuestions                 NEW
---    8. usp_CreateInterviewCodeSession                  NEW
---    9. usp_GetInterviewCodeSessions                    NEW
---   10. usp_GetInterviewCodeSessionByToken              NEW
---   11. usp_MarkInterviewCodeSessionOpened              NEW
---   12. usp_SaveInterviewCodeSessionRun                 NEW
---   13. usp_SubmitInterviewCodeSession                  NEW
---   14. usp_AddTechSkillComments                        CHANGED (keeps the coding flag across saves)
+--    1. Schema: 7 columns (IRF x2, InterviewerProfile x3, TechSkillComments x2) + 2 new tables
+--    2. fn_InterviewerCompletedInterviewsOnIrf        NEW function (shared trial predicate)
+--    3. usp_GetTrialJudgmentContext                   CHANGED (reads the shared function; same results)
+--    4. usp_FetchAudioComment                         CHANGED (also returns IRF.IsInterviewerAlignmentRequired)
+--    5. usp_UpdateIRFDetails                          CHANGED (saves IsInterviewerAlignmentRequired; NULL keeps it)
+--    6. usp_GetInterviewAlignmentRequired             NEW (the rollout switch for one interview)
+--    7. usp_GetInterviewAlignmentContext              NEW
+--    8. usp_AcknowledgeTrialOnboarding                NEW
+--    9. usp_SaveJoinGateOverride                      NEW
+--   10. usp_GetInterviewerCodeQuestions               NEW
+--   11. usp_CreateInterviewCodeSession                NEW
+--   12. usp_GetInterviewCodeSessions                  NEW
+--   13. usp_GetInterviewCodeSessionByToken            NEW
+--   14. usp_MarkInterviewCodeSessionOpened            NEW
+--   15. usp_SaveInterviewCodeSessionRun               NEW
+--   16. usp_SubmitInterviewCodeSession                NEW
+--   17. usp_AddTechSkillComments                      CHANGED (keeps the coding flag across saves)
 --
 -- Generated from the individual files in Risebird.DB; those remain the source of truth.
 -- =====================================================================================================
@@ -29,6 +33,7 @@ GO
 -- Idempotent: every change is guarded, so running this twice is a no-op.
 --
 -- Adds:
+--   IRF.IsInterviewerAlignmentRequired             bit NULL   (the rollout switch; NULL = today's page on every channel)
 --   IRF.AITrialEnabled                             bit NULL   (NULL = trial banner off: every existing row)
 --   InterviewerProfile.TrialOnboardingAcknowledged bit NULL
 --   InterviewerProfile.TrialOnboardingAcknowledgedOn datetime NULL
@@ -45,7 +50,10 @@ GO
 --      Tables/InterviewCodeSessions.sql, Tables/InterviewJoinGateOverrides.sql)
 --   2. Functions/fn_InterviewerCompletedInterviewsOnIrf.sql
 --   3. StoredProcedures/usp_GetTrialJudgmentContext.sql      (now reads the shared function)
---   4. StoredProcedures/usp_GetInterviewAlignmentContext.sql
+--   4. StoredProcedures/usp_FetchAudioComment.sql             (now also returns IsInterviewerAlignmentRequired)
+--      StoredProcedures/usp_UpdateIRFDetails.sql             (now saves IsInterviewerAlignmentRequired from Edit IRF)
+--      StoredProcedures/usp_GetInterviewAlignmentRequired.sql
+--      StoredProcedures/usp_GetInterviewAlignmentContext.sql
 --      StoredProcedures/usp_AcknowledgeTrialOnboarding.sql
 --      StoredProcedures/usp_SaveJoinGateOverride.sql
 --      StoredProcedures/usp_GetInterviewerCodeQuestions.sql
@@ -57,8 +65,15 @@ GO
 --      StoredProcedures/usp_SubmitInterviewCodeSession.sql
 --   5. StoredProcedures/usp_AddTechSkillComments.sql         (now keeps the coding flag across saves)
 -- The web code degrades to today's page if any of these objects are missing, so it can ship first.
+-- Confirm which branch deploys (dev2026 vs master) before running this against a shared database.
 
 -- Part one --------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'IsInterviewerAlignmentRequired' AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF ADD IsInterviewerAlignmentRequired bit NULL
+END
+GO
+
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'AITrialEnabled' AND Object_ID = Object_ID(N'IRF'))
 BEGIN
     ALTER TABLE IRF ADD AITrialEnabled bit NULL
@@ -409,7 +424,584 @@ GO
 GO
 
 -- -----------------------------------------------------------------------------------------------------
--- 4. StoredProcedures/usp_GetInterviewAlignmentContext.sql
+-- 4. StoredProcedures/usp_FetchAudioComment.sql
+-- -----------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_FetchAudioComment'))
+BEGIN
+    DROP PROCEDURE dbo.usp_FetchAudioComment
+END
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+Create Procedure usp_FetchAudioComment
+@interviewId int
+as 
+begin
+Select irf.AudioComment,irf.CompanyDetails,im.zoomLink,im.interviewDate,irf.JDLink,irf.JobLevel,im.candidateEmail,im.MobileNumber,im.id,im.candidateName,irf.IRFID,cf.FormURL as ConsentFormUrl,ca.PreReportLink,ca.PreReportUsername,ca.PreReportPassword,IRF.Heuristicsscore,IRF.IsVideoRequired,cl.IsCandidateVerification,
+IRF.CandidateIdverification,IRF.CodeSnippetRequired,IRF.CandidateVideo,
+-- Interview alignment rollout switch, read in the same round trip as the rest of Interview Details.
+IRF.IsInterviewerAlignmentRequired
+from InterviewMeetings im                   
+ join IRF  irf on im.IRFId=irf.IRFId Left join ConsentForms cf on cf.IRFId=IRF.id
+ join Client cl on cl.id=IRF.ClientId
+ join UserList ul on ul.EmailId=im.candidateEmail
+ join CandidatesMaster cm on cm.Userid=ul.id
+ join Candidate ca on ca.CandidateMasterId=cm.id and ca.IRFId=IRF.id
+ where im.id=@interviewId
+ End
+GO
+GO
+
+-- -----------------------------------------------------------------------------------------------------
+-- 5. StoredProcedures/usp_UpdateIRFDetails.sql
+-- -----------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_UpdateIRFDetails'))
+BEGIN
+    DROP PROCEDURE dbo.usp_UpdateIRFDetails
+END
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+Create PROCEDURE [dbo].[usp_UpdateIRFDetails]      
+(      
+ @IRFId nvarchar(200),          
+ @id int,          
+ @ClientName varchar(200),          
+ @JDTiltle nvarchar(200),          
+ @CompanyType varchar(200),          
+ @ClientId int,          
+ @JobCountry varchar(50),          
+ @StartDate datetime,          
+ @EndDate datetime,          
+ @JDLink varchar(1000)=null,          
+ @NoOfPosition int,          
+ @NoOfIntterview int,          
+ @RisebirdHr int,          
+ @JobLevel int,          
+ @PerMintuteRate real,          
+ @CalendlyLink varchar(500),          
+ @TotalBudget int,          
+ @IsBiometricEnabled bit,          
+ @PriorityLevel int,          
+ @CompanyDetails varchar(1000),          
+ @Type varchar(5),       
+ @Heuristicsscore int,      
+ @PrimarySkillInvite varchar(100),    
+ @BillingOwner int,    
+ @AssessmentGroupId varchar(100),  
+ @SkillSetsevaluate int,  
+ @JDTitleTwo varchar(150),  
+ @MeetingPlatform varchar(100),  
+ --@IsQCRequired bit,  
+ @IsJoinabilitySelectabilityRequired bit,  
+ @IsGeneralSkillRequired bit,  
+ @IsAadhaarVerificationRequired bit,  
+ @IsCandidateavailability bit,  
+ @IsMeetingAutoCancelled bit,  
+ @IsMeetingNotificationSend bit,  
+ --@SkillChannelSME int = null,  
+ @ModifiedBy varchar(100) = null,  
+ @timeNow datetime,  
+ --@isSMEChanged bit output,  
+ @IsLocked bit,  
+ @IsAIInterview bit,
+ @showChatBox bit,
+ @generateTranscriptSummary bit,
+ @AIInterviewType int,
+ --@InterviewDuration int,  
+ --@IsFixedInterviewduration bit,  
+ @JoinabilityBulkData AS [dbo].[TransJoinability_TableType] READONLY ,  
+ @SelectabilityBulkData AS [dbo].[TransSelectability_TableType] READONLY,  
+ @SkillGeneralBulkData AS [dbo].[TransSkillGeneral_TableType] READONLY,  
+ @TechSkillBulkData AS [dbo].[TransTechSkill_TableTypeV5] READONLY,--TransTechSkill2_TableType, TransTechSkill_TableTypeV3, TransTechSkill_TableTypeV4  
+ @InterviewerBulkData AS [dbo].[TransInterviewer_TableTypeV3] READONLY,--[dbo].[TransInterviewer_TableType]  
+ @InterviewerSurchargeBulkData AS [dbo].[TransInterviewerSurcharge_TableTypeV3] READONLY, --[dbo].[TransInterviewerSurcharge_TableType]  
+ @EmergencyInterviewerBulkData AS [dbo].[TransEmergencyInterviewer_TableType] READONLY,  
+ @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY,  
+ --@QCBulkData AS [dbo].[TransQualityController_TableType] READONLY,  
+ @HRBulkData AS [dbo].[TransHR_TableType] READONLY,  
+ @SMEBulkData AS [dbo].[CommonId_TableType] READONLY,  
+ @IsNewSkillChannel bit = null,  
+ @TechRubricType varchar(20) = null,  
+ @OpenAIAssistantId varchar(60) = null,
+ @OpenAIPromptId varchar(100) = null,
+ @OpenAIEvaluatorPromptId varchar(100) = null,
+ -- Ideal Candidate Profile, set by the AI screening intake and editable afterwards on this form.
+ -- Defaulted so a caller that does not send it leaves the stored profile alone; the Edit IRF form
+ -- always posts the field, so clearing it there sends '' and does clear the column.
+ @IdealCandidateProfile varchar(max) = null,
+ @IsVideoRequired bit,
+ @IsTechQC bit,
+ @IsProctoring bit = null,
+ -- MCQ assessment section (screen.risebird.io). Defaulted so an older caller that does not send
+ -- them leaves the channel's current configuration alone rather than clearing it.
+ @HasMcqAssessmentSection bit = null,
+ @McqAssessmentSections varchar(500) = null,
+ @McqAssessmentMinutes int = null,
+ -- Advanced Resume Screening opt-in. NULL leaves the stored flag unchanged.
+ @IsAdvancedResumeScreening bit = null,
+ -- Interview alignment rollout switch. NULL (a caller or form that never sent it) leaves it unchanged,
+ -- so a save can never switch a channel on or off by omission.
+ @IsInterviewerAlignmentRequired bit = null
+ --@FixedAmount int = null  
+ --@idRecommendation int,  
+ --@RecommendationStatus bit,  
+ --@RecommendationCategoryId int,  
+ --@RecommendationCompetencyLevelId int,  
+ --@RecommendationSeniorityLevelId int,  
+ --@RecommendationCountryType int,  
+ --@RecommendationModifiedOn datetime  
+  
+)      
+AS      
+BEGIN      
+    
+    
+ begin try    
+  begin tran    
+     
+   declare @oldCalendlyLink varchar(500), @isCalendlyChanged bit   
+ set @isCalendlyChanged=0  
+ select @oldCalendlyLink = CalendlyLink from IRF where id =@id  
+  
+ if(@oldCalendlyLink != @CalendlyLink)  
+ begin  
+  set @isCalendlyChanged = 1  
+ end  
+  
+ update IRF           
+ set          
+ [ClientName]=@ClientName          
+ ,[JDTiltle]=@JDTiltle          
+ ,[CompanyType]=@CompanyType               
+ ,[JobCountry]=@JobCountry          
+ ,[StartDate]=@StartDate          
+ ,[EndDate]=@EndDate                     
+ ,[JDLink]=@JDLink          
+ ,[NoOfPosition]=@NoOfPosition          
+ ,[NoOfIntterview]=@NoOfIntterview          
+ ,[RisebirdHr]=@RisebirdHr          
+ ,[JobLevel]=@JobLevel          
+ ,[PerMintuteRate]=@PerMintuteRate          
+ ,[CalendlyLink] =@CalendlyLink          
+ ,[TotalBudget]=@TotalBudget          
+ ,[IsBiometricEnabled]=@IsBiometricEnabled          
+ ,[PriorityLevel]=@PriorityLevel          
+ ,[CompanyDetails]=@CompanyDetails      
+ ,[BussinessType]=@Type       
+ ,[Heuristicsscore]=@Heuristicsscore      
+ ,[PrimarySkillInvite]=@PrimarySkillInvite      
+ ,[BillingOwner]=@BillingOwner  
+ ,[AssessmentGroupId]=@AssessmentGroupId  
+ ,[MeetingPlatform]=@MeetingPlatform  
+ --,[IsQCRequired] = @IsQCRequired  
+ ,[IsJoinabilitySelectabilityRequired] = @IsJoinabilitySelectabilityRequired  
+ ,[IsGeneralSkillRequired] = @IsGeneralSkillRequired  
+ ,[IsAadhaarVerificationRequired]=@IsAadhaarVerificationRequired  
+ ,[IsCandidateavailability]=@IsCandidateavailability  
+ ,[IsMeetingAutoCancelled]=@IsMeetingAutoCancelled  
+ ,[IsMeetingNotificationSend]=@IsMeetingNotificationSend  
+ ,[IsLocked]=@IsLocked  
+ ,[JDTitleTwo]=@JDTitleTwo  
+ ,[IsVideoRequired]=@IsVideoRequired  
+ ,[TechRubricType] =@TechRubricType
+ ,[IsAIInterview]=@IsAIInterview
+ ,[showChatBox]=@showChatBox
+ ,[generateTranscriptSummary]=@generateTranscriptSummary
+ ,[AIInterviewType]=@AIInterviewType
+ ,[OpenAIAssistantId] = @OpenAIAssistantId
+ ,[OpenAIPromptId] = @OpenAIPromptId
+ ,[OpenAIEvaluatorPromptId] = @OpenAIEvaluatorPromptId
+ ,[IdealCandidateProfile] = ISNULL(@IdealCandidateProfile,[IdealCandidateProfile])
+ ,[IsTechQC]=@IsTechQC
+ ,[IsProctoring]=ISNULL(@IsProctoring,[IsProctoring])
+ -- MCQ assessment section. @HasMcqAssessmentSection doubles as "did the caller participate in
+ -- this feature at all": when it is NULL all three columns are left as they are, so a build
+ -- deployed before the updated repository cannot silently wipe a channel's configuration. Once
+ -- it is supplied, the sections list and duration are taken verbatim - including blank, which is
+ -- how a recruiter clears them back to the MCQ side's defaults.
+ ,[HasMcqAssessmentSection]=ISNULL(@HasMcqAssessmentSection,[HasMcqAssessmentSection])
+ ,[McqAssessmentSections]=CASE WHEN @HasMcqAssessmentSection IS NULL THEN [McqAssessmentSections]
+                               ELSE NULLIF(LTRIM(RTRIM(@McqAssessmentSections)),'') END
+ ,[McqAssessmentMinutes]=CASE WHEN @HasMcqAssessmentSection IS NULL THEN [McqAssessmentMinutes]
+                              ELSE NULLIF(@McqAssessmentMinutes,0) END
+ ,[IsAdvancedResumeScreening]=ISNULL(@IsAdvancedResumeScreening,[IsAdvancedResumeScreening])
+ ,[IsInterviewerAlignmentRequired]=ISNULL(@IsInterviewerAlignmentRequired,[IsInterviewerAlignmentRequired])
+ --,[InterviewDuration]=@InterviewDuration  
+ --,[IsFixedInterviewduration]=@IsFixedInterviewduration  
+ --,[FixedAmount] = @FixedAmount  
+ Where id =@id          
+      
+   
+ if(@isCalendlyChanged =1)  
+ begin  
+  if not exists(select id from TransCalendlyLinkAddedUpdated where IRFId =@id)  
+  begin  
+   insert into TransCalendlyLinkAddedUpdated values (@id, GETDATE())  
+  end  
+ end  
+  
+ --joinability  
+ delete from TransJoinability where IRFId=@id  
+  
+ INSERT INTO [dbo].[TransJoinability](    
+ [IRFId] ,    
+ [LevelId],    
+ [Type],    
+ [Value],    
+ [Weightage])    
+    
+ SELECT * FROM @JoinabilityBulkData   
+  
+ --selectability  
+ delete from TransSelectability where IRFId=@id  
+  
+ INSERT INTO [dbo].[TransSelectability](    
+ [IRFId] ,    
+ [LevelId],    
+ [Type],    
+ [Value],    
+ [Weightage])    
+    
+ SELECT * FROM @SelectabilityBulkData    
+  
+ --general skills  
+ delete from TransSkillGeneral where IRFId=@id   
+  
+ INSERT INTO [dbo].[TransSkillGeneral](    
+ [IRFId] ,    
+ [LevelId],    
+ [Type],    
+ [Value],    
+ [Weightage])    
+    
+ SELECT * FROM @SkillGeneralBulkData  
+  
+ --tech skills    
+
+ -- TransTechSkill is the editable score-rubric TEMPLATE for the channel. Completed interview
+ -- evaluations are snapshotted separately into TechSkillReport (which keeps its own SkillName,
+ -- SkillSet, WeightageRequired/WeightageActual and level columns), so refreshing the rubric here
+ -- never rewrites historical reports. A previous revision wrapped this refresh in an
+ -- "only if no TechSkillReport exists yet" guard; that silently discarded rubric edits on any
+ -- channel that already had a filled report while the overall save still committed (the user saw a
+ -- "saved" confirmation but the rubric never changed). Always refresh the rubric, matching the DM
+ -- save path (usp_TechSkillBulkInsert), which has no such guard.
+ delete from TransTechSkill where IRFId=@id    
+   
+	INSERT INTO [dbo].[TransTechSkill](        
+	[IRFId] ,        
+	[LevelId],        
+	[SkillId],        
+	[Weightage],[Concepts],[Natureofquestion],[Timelimit],[isEliminationskill],[SkillSet], [SkillName])        
+        
+	SELECT * FROM @TechSkillBulkData   
+  
+ --interviewers  
+  
+ --Start :Upsert interviewers
+ -- NOTE: This section used to DELETE + re-INSERT all MAG interviewers on every save. That approach
+ -- (a) failed once TransInterviewerAuditLog started referencing TransInterviewer.id via
+ --     FK_TransInterviewerAuditLog_TransInterviewer (the delete was blocked and the whole save
+ --     rolled back), and
+ -- (b) discarded audit history + any in-place edits to existing interviewers.
+ -- It is now an upsert that NEVER hard-deletes a TransInterviewer row: existing rows are updated in
+ -- place (id preserved, audit log intact), genuinely-new interviewers are inserted, and interviewers
+ -- removed from the panel are SOFT-removed (IsActive = 0). We must never physically delete a row,
+ -- because interview history and several open-interview / Auto-QC / payout / reporting queries
+ -- INNER JOIN TransInterviewer; deleting a row would make that interviewer's past interviews for this
+ -- channel disappear from those fetches.
+ Declare @Assessmentid int    
+  Select @Assessmentid=AssessmentGroupid From IRF where id=@id   
+  Declare @temptable Table(Userid int)    
+  Insert into @temptable Select Userid from InterviewerProfile cross apply string_split(AssessmentGroupid,',') where value=@Assessmentid    
+
+ -- Interviewers submitted with this save (from whichever bulk TVP is populated for this channel type)
+ Declare @incomingInterviewers Table(UserId int)
+ if(@IsNewSkillChannel is not null and @IsNewSkillChannel = 1)
+  Insert into @incomingInterviewers(UserId) Select UserId from @InterviewerSurchargeBulkData
+ else
+  Insert into @incomingInterviewers(UserId) Select UserId from @InterviewerBulkData
+
+ -- Interviewers currently attached to this IRF but NOT resubmitted => removed from the panel in the
+ -- UI. Soft-remove them (deactivate) instead of deleting. Guarded so an empty/absent bulk TVP (e.g.
+ -- when the app skips building it) can never mass-deactivate an existing panel.
+ IF EXISTS (SELECT 1 FROM @incomingInterviewers)
+ BEGIN
+  UPDATE b SET b.IsActive = 0, b.IsAvailable = 0, b.ModifiedBy = @ModifiedBy, b.ModifiedAt = @timeNow
+  FROM TransInterviewer b
+  WHERE b.IRFId=@id
+    AND ISNULL(b.IsActive, 0) = 1
+    AND NOT EXISTS (SELECT 1 FROM @incomingInterviewers i WHERE i.UserId = b.UserId)
+ END
+ --END: Soft-remove interviewers  
+  
+ if(@IsNewSkillChannel is not null and @IsNewSkillChannel = 1)  
+ Begin  
+ INSERT INTO [dbo].[TransInterviewer](    
+ [IRFId] ,    
+ [UserId],    
+ [PerSuccessRate],   
+ [Surcharge],  
+ [IsActive],  
+ [IsAvailable],  
+ [InterviewerId],  
+ [Source],  
+ [ModifiedBy],  
+ [IsSurchargeApprove],  
+ [IsCampaignActivity],  
+ [CampaignId],  
+ [OpenAIScreeningResponse],  
+ [AIVerdict])    
+      
+ SELECT distinct ibd.IRFId, ibd.UserId, ibd.PerSuccessRate, ibd.Surcharge,
+ -- An interviewer may only be ACTIVE on a channel while they belong to the channel's MAG. If the
+ -- interviewer is not (or no longer) in the MAG, force IsActive = 0 regardless of what was submitted.
+ CASE WHEN EXISTS (SELECT 1 FROM @temptable t WHERE t.Userid = ibd.UserId) THEN ibd.IsActive ELSE 0 END,
+ ibd.IsAvailable, InterviewerProfile.id, ibd.[Source],  
+ @ModifiedBy, NULL as IsSurchargeApprove, ibd.IsCampaignActivity, ibd.CampaignId, ibd.OpenAIScreeningResponse, ibd.AIVerdict  
+ FROM @InterviewerSurchargeBulkData ibd join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId    
+ WHERE   
+ NOT EXISTS (  
+  SELECT 1  
+  FROM [dbo].[TransInterviewer] ti  
+  WHERE ti.UserId = ibd.UserId AND ti.IRFId = ibd.IRFId  
+ );  
+
+ -- Update interviewers that already exist for this IRF (preserves id -> keeps audit log FK valid).
+ -- IsActive is forced to 0 when the interviewer no longer belongs to the channel's MAG, so an
+ -- interviewer removed from the MAG cannot be (re)activated on this channel.
+ UPDATE ti SET
+    ti.PerSuccessRate = ibd.PerSuccessRate,
+    ti.Surcharge = ibd.Surcharge,
+    ti.IsActive = CASE WHEN EXISTS (SELECT 1 FROM @temptable t WHERE t.Userid = ti.UserId) THEN ibd.IsActive ELSE 0 END,
+    ti.IsAvailable = ibd.IsAvailable,
+    ti.[Source] = ibd.[Source],
+    ti.ModifiedBy = @ModifiedBy,
+    ti.IsCampaignActivity = ibd.IsCampaignActivity,
+    ti.CampaignId = ibd.CampaignId,
+    ti.OpenAIScreeningResponse = ibd.OpenAIScreeningResponse,
+    ti.AIVerdict = ibd.AIVerdict
+ FROM [dbo].[TransInterviewer] ti
+ JOIN @InterviewerSurchargeBulkData ibd ON ibd.UserId = ti.UserId AND ibd.IRFId = ti.IRFId;
+  
+ Insert into SurchargeActivityTracker(InterviewId,Surcharge,SurchargeComment,RequestBy,RequestAt,RequestType,IRFId,UserId)  
+ SELECT   
+    0 AS InterviewId,  
+    ibd.Surcharge,  
+    NULL AS SurchargeComment,  
+    @ModifiedBy,  
+    @timeNow,  
+    'Raised' AS RequestType,  
+    ibd.IRFId AS IRFId,  
+ ibd.UserId  
+FROM   
+    @InterviewerSurchargeBulkData ibd where ISNULL(ibd.Surcharge,0)<>0;  
+  
+     --emergency interviewers  
+ End  
+ else  
+ Begin  
+ INSERT INTO [dbo].[TransInterviewer](    
+ [IRFId] ,    
+ [UserId],    
+ [PerSuccessRate],   
+ [IsActive],  
+ [IsAvailable],  
+ [InterviewerId],  
+ [Source],  
+ [ModifiedBy],  
+ [IsCampaignActivity],  
+ [CampaignId],  
+ [OpenAIScreeningResponse],  
+ [AIVerdict],  
+ [IsSurchargeApprove])    
+      
+ SELECT distinct ibd.IRFId, ibd.UserId, ibd.PerSuccessRate,
+ -- An interviewer may only be ACTIVE on a channel while they belong to the channel's MAG. If the
+ -- interviewer is not (or no longer) in the MAG, force IsActive = 0 regardless of what was submitted.
+ CASE WHEN EXISTS (SELECT 1 FROM @temptable t WHERE t.Userid = ibd.UserId) THEN ibd.IsActive ELSE 0 END,
+ ibd.IsAvailable, InterviewerProfile.id as InterviewerId,  
+ ibd.[Source], @ModifiedBy, ibd.IsCampaignActivity, ibd.CampaignId, ibd.OpenAIScreeningResponse, ibd.AIVerdict, ibd.IsSurchargeApprove  
+ FROM @InterviewerBulkData ibd join InterviewerProfile on ibd.UserId = InterviewerProfile.UserId    
+ WHERE   
+ NOT EXISTS (  
+  SELECT 1  
+  FROM [dbo].[TransInterviewer] ti  
+  WHERE ti.UserId = ibd.UserId AND ti.IRFId = ibd.IRFId  
+ );  
+
+ -- Update interviewers that already exist for this IRF (preserves id -> keeps audit log FK valid).
+ -- IsActive is forced to 0 when the interviewer no longer belongs to the channel's MAG, so an
+ -- interviewer removed from the MAG cannot be (re)activated on this channel.
+ UPDATE ti SET
+    ti.PerSuccessRate = ibd.PerSuccessRate,
+    ti.IsActive = CASE WHEN EXISTS (SELECT 1 FROM @temptable t WHERE t.Userid = ti.UserId) THEN ibd.IsActive ELSE 0 END,
+    ti.IsAvailable = ibd.IsAvailable,
+    ti.[Source] = ibd.[Source],
+    ti.ModifiedBy = @ModifiedBy,
+    ti.IsCampaignActivity = ibd.IsCampaignActivity,
+    ti.CampaignId = ibd.CampaignId,
+    ti.OpenAIScreeningResponse = ibd.OpenAIScreeningResponse,
+    ti.AIVerdict = ibd.AIVerdict,
+    ti.IsSurchargeApprove = ibd.IsSurchargeApprove
+ FROM [dbo].[TransInterviewer] ti
+ JOIN @InterviewerBulkData ibd ON ibd.UserId = ti.UserId AND ibd.IRFId = ti.IRFId;
+ End  
+   
+    --emergency interviewers  
+    delete from TransEmergencyInterviewer where IRFId=@id   
+  
+ INSERT INTO [dbo].[TransEmergencyInterviewer](    
+ [IRFId] ,    
+ [UserId],    
+ [PerSuccessRate],   
+ [IsActive],  
+ [InterviewerId])    
+     
+   SELECT eibd.*, InterviewerProfile.id as InterviewerId FROM @EmergencyInterviewerBulkData eibd left join InterviewerProfile on eibd.UserId = InterviewerProfile.UserId    
+    
+ --client users  
+ delete from TransClientUser where IRFId=@id   
+  
+ INSERT INTO [dbo].[TransClientUser](    
+ [IRFId] ,    
+ [ClientUserId],    
+ [ClientRoleId])    
+     
+    
+ SELECT cubd.*, ClientUser.RoleId as ClientRoleId FROM @ClientUserBulkData cubd left join ClientUser on cubd.ClientUserId= ClientUser.UserId    
+   
+     
+    --HRs  
+ delete from TransHR where IRFId=@id   
+   
+ INSERT INTO [dbo].[TransHR](    
+ [IRFId] ,    
+ [HRId])    
+     
+ SELECT hrbd.IRFId, HR.id as HRId FROM @HRBulkData hrbd left join HR on hrbd.UserId = HR.UserId    
+   
+     
+ --set @isSMEChanged = 0  
+ delete from SkillChannelSMEs where IRFId =@id  
+  
+ insert into SkillChannelSMEs (IRFId, InterviewerProfileId, AddedBy, PerformedAt)   
+ select @id, id, @ModifiedBy, @timeNow from @SMEBulkData  
+ --if(@SkillChannelSME is not null and @SkillChannelSME > 0)  
+ --Begin  
+ -- if not exists(select top 1 id from SkillChannelSMEs where IRFId = @id)  
+ -- Begin  
+ --  insert into SkillChannelSMEs (IRFId, InterviewerProfileId, AddedBy, PerformedAt)   
+ --  values (@id, @SkillChannelSME, @ModifiedBy, @timeNow)  
+  
+ --  set @isSMEChanged = 1  
+  
+ -- End  
+ -- Else  
+ -- Begin  
+  
+ --  update SkillChannelSMEs set IsDeleted = 1, DeletedBy = @ModifiedBy, @isSMEChanged = 1 where IRFId = @id and InterviewerProfileId != @SkillChannelSME  
+  
+  
+ --  if exists (select top 1 id from SkillChannelSMEs where irfid = @id and InterviewerProfileId = @SkillChannelSME and (IsDeleted is null or IsDeleted = 0))  
+ --  Begin  
+ --   set @isSMEChanged = 0  
+  
+ --  End  
+ --  else  
+ --  Begin  
+  
+ --   insert into SkillChannelSMEs (IRFId, InterviewerProfileId, AddedBy, PerformedAt)   
+ --   values (@id, @SkillChannelSME, @ModifiedBy, @timeNow)  
+  
+ --  End  
+  
+ -- End  
+    
+   
+   
+ --End  
+  
+ Declare @imid TABLE    
+(    
+   Id int   
+)   
+Insert into @imid   
+     select distinct im.id from TransInterviewer ti  
+join UserList ul on ti.UserId=ul.id  
+join IRF on ti.IRFId=IRF.id  
+join InterviewMeetings im on ul.EmailId=im.interviewer and IRF.IRFId=im.IRFId  
+where ti.IsActive=0 and ti.IRFId=@id and interviewDate>@timeNow  
+     IF EXISTS( select * from @imid)  
+     begin   
+     update InterviewMeetings set interviewer=null where id in(select id from @imid)  
+     end  
+  commit tran    
+ end try    
+ begin catch    
+    
+  rollback transaction    
+    
+  DECLARE @Message varchar(MAX) = ERROR_MESSAGE(),    
+   @Severity int = ERROR_SEVERITY(),    
+   @State smallint = ERROR_STATE()    
+     
+  RAISERROR (@Message, @Severity, @State)    
+     
+ end catch    
+    
+END 
+GO
+
+
+
+GO
+
+-- -----------------------------------------------------------------------------------------------------
+-- 6. StoredProcedures/usp_GetInterviewAlignmentRequired.sql
+-- -----------------------------------------------------------------------------------------------------
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_GetInterviewAlignmentRequired'))
+BEGIN
+    DROP PROCEDURE dbo.usp_GetInterviewAlignmentRequired
+END
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- The interview alignment rollout switch for one interview, read from that interview's own channel.
+--
+-- Every alignment endpoint (trial acknowledgement, join-gate override, code-session questions and
+-- minting, the inline insights, and the candidate's code-session page) calls this alongside
+-- IsInterviewerForInterview. A page gate does not protect a route, and the flag must never come from
+-- anything the caller supplies - so it is resolved here from InterviewMeetings -> IRF, nowhere else.
+-- NULL (every channel on day one) and 0 both mean off.
+CREATE PROCEDURE [dbo].[usp_GetInterviewAlignmentRequired]
+    @InterviewId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT CAST(ISNULL(MAX(CAST(irf.IsInterviewerAlignmentRequired AS INT)), 0) AS BIT) AS IsInterviewerAlignmentRequired
+    FROM dbo.InterviewMeetings im
+    INNER JOIN dbo.IRF irf ON irf.IRFId = im.IRFId
+    WHERE im.id = @InterviewId;
+END
+GO
+
+GO
+
+-- -----------------------------------------------------------------------------------------------------
+-- 7. StoredProcedures/usp_GetInterviewAlignmentContext.sql
 -- -----------------------------------------------------------------------------------------------------
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_GetInterviewAlignmentContext'))
 BEGIN
@@ -480,6 +1072,7 @@ BEGIN
         irf.JDTiltle                                              AS RoleTitle,
         pt.DurationSelectedMin                                    AS DurationMinutes,
         CAST(ISNULL(irf.CodeSnippetRequired, 0) AS BIT)           AS CodeSnippetRequired,
+        CAST(ISNULL(irf.IsInterviewerAlignmentRequired, 0) AS BIT) AS IsInterviewerAlignmentRequired,
         CAST(ISNULL(irf.AITrialEnabled, 0) AS BIT)                AS AITrialEnabled,
         CAST(CASE WHEN ISNULL(irf.AITrialEnabled, 0) = 1 AND @CompletedBefore = 0
                   THEN 1 ELSE 0 END AS BIT)                       AS IsTrialInterview,
@@ -503,7 +1096,7 @@ GO
 GO
 
 -- -----------------------------------------------------------------------------------------------------
--- 5. StoredProcedures/usp_AcknowledgeTrialOnboarding.sql
+-- 8. StoredProcedures/usp_AcknowledgeTrialOnboarding.sql
 -- -----------------------------------------------------------------------------------------------------
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_AcknowledgeTrialOnboarding'))
 BEGIN
@@ -546,7 +1139,7 @@ GO
 GO
 
 -- -----------------------------------------------------------------------------------------------------
--- 6. StoredProcedures/usp_SaveJoinGateOverride.sql
+-- 9. StoredProcedures/usp_SaveJoinGateOverride.sql
 -- -----------------------------------------------------------------------------------------------------
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_SaveJoinGateOverride'))
 BEGIN
@@ -581,7 +1174,7 @@ GO
 GO
 
 -- -----------------------------------------------------------------------------------------------------
--- 7. StoredProcedures/usp_GetInterviewerCodeQuestions.sql
+-- 10. StoredProcedures/usp_GetInterviewerCodeQuestions.sql
 -- -----------------------------------------------------------------------------------------------------
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_GetInterviewerCodeQuestions'))
 BEGIN
@@ -643,7 +1236,7 @@ GO
 GO
 
 -- -----------------------------------------------------------------------------------------------------
--- 8. StoredProcedures/usp_CreateInterviewCodeSession.sql
+-- 11. StoredProcedures/usp_CreateInterviewCodeSession.sql
 -- -----------------------------------------------------------------------------------------------------
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_CreateInterviewCodeSession'))
 BEGIN
@@ -760,7 +1353,7 @@ GO
 GO
 
 -- -----------------------------------------------------------------------------------------------------
--- 9. StoredProcedures/usp_GetInterviewCodeSessions.sql
+-- 12. StoredProcedures/usp_GetInterviewCodeSessions.sql
 -- -----------------------------------------------------------------------------------------------------
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_GetInterviewCodeSessions'))
 BEGIN
@@ -795,7 +1388,7 @@ GO
 GO
 
 -- -----------------------------------------------------------------------------------------------------
--- 10. StoredProcedures/usp_GetInterviewCodeSessionByToken.sql
+-- 13. StoredProcedures/usp_GetInterviewCodeSessionByToken.sql
 -- -----------------------------------------------------------------------------------------------------
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_GetInterviewCodeSessionByToken'))
 BEGIN
@@ -822,7 +1415,10 @@ BEGIN
            ics.SubmittedSource, ics.LastRunSource, ics.LastRunOutput, ics.LastRunStatus, ics.RunCount,
            ics.CodingTimeLimitInMinutes, ics.CreatedBy, ics.CreatedOn, ics.OpenedOn, ics.SubmittedOn,
            im.interviewDate AS InterviewDate,
-           pt.DurationSelectedMin AS InterviewDurationMinutes
+           pt.DurationSelectedMin AS InterviewDurationMinutes,
+           -- The rollout switch, from the interview's own channel: a session on a channel that has been
+           -- switched off answers nothing, like every other alignment endpoint.
+           CAST(ISNULL(irf.IsInterviewerAlignmentRequired, 0) AS BIT) AS IsInterviewerAlignmentRequired
     FROM dbo.InterviewCodeSessions ics
     INNER JOIN dbo.InterviewMeetings im ON im.id = ics.InterviewId
     LEFT JOIN dbo.IRF irf ON irf.IRFId = im.IRFId
@@ -837,7 +1433,7 @@ GO
 GO
 
 -- -----------------------------------------------------------------------------------------------------
--- 11. StoredProcedures/usp_MarkInterviewCodeSessionOpened.sql
+-- 14. StoredProcedures/usp_MarkInterviewCodeSessionOpened.sql
 -- -----------------------------------------------------------------------------------------------------
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_MarkInterviewCodeSessionOpened'))
 BEGIN
@@ -870,7 +1466,7 @@ GO
 GO
 
 -- -----------------------------------------------------------------------------------------------------
--- 12. StoredProcedures/usp_SaveInterviewCodeSessionRun.sql
+-- 15. StoredProcedures/usp_SaveInterviewCodeSessionRun.sql
 -- -----------------------------------------------------------------------------------------------------
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_SaveInterviewCodeSessionRun'))
 BEGIN
@@ -913,7 +1509,7 @@ GO
 GO
 
 -- -----------------------------------------------------------------------------------------------------
--- 13. StoredProcedures/usp_SubmitInterviewCodeSession.sql
+-- 16. StoredProcedures/usp_SubmitInterviewCodeSession.sql
 -- -----------------------------------------------------------------------------------------------------
  IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('dbo.usp_SubmitInterviewCodeSession'))
 BEGIN
@@ -951,7 +1547,7 @@ GO
 GO
 
 -- -----------------------------------------------------------------------------------------------------
--- 14. StoredProcedures/usp_AddTechSkillComments.sql
+-- 17. StoredProcedures/usp_AddTechSkillComments.sql
 -- -----------------------------------------------------------------------------------------------------
 /****** Object:  StoredProcedure [dbo].[usp_AddTechSkillComments]    Script Date: 12/22/2021 5:45:42 AM ******/
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_AddTechSkillComments'))

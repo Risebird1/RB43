@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 namespace Risebird.Repository.Interface
 {
     /// <summary>
-    /// Interview alignment page (Interview/InterviewDetails) and the per-question code sessions minted
-    /// from it. Every read returns null / empty on failure so the page falls back to how it rendered before.
+    /// Interview alignment page (Interview/InterviewAlignment, behind IRF.IsInterviewerAlignmentRequired) and
+    /// the per-question code sessions minted from it. Every read returns null / empty on failure so the
+    /// interviewer falls back to today's Interview Details.
     /// </summary>
     public interface IInterviewAlignmentRepository
     {
+        /// <summary>IRF.IsInterviewerAlignmentRequired for the interview's own channel; false when off, NULL or unknown.</summary>
+        Task<bool> IsAlignmentRequiredAsync(int interviewId);
+
         Task<InterviewAlignmentContext> GetAlignmentContextAsync(int interviewId, string interviewerEmail);
 
         Task<bool> AcknowledgeTrialOnboardingAsync(string interviewerEmail, string policyVersion, DateTime now);

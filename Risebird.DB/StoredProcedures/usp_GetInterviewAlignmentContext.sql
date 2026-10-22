@@ -67,6 +67,7 @@ BEGIN
         irf.JDTiltle                                              AS RoleTitle,
         pt.DurationSelectedMin                                    AS DurationMinutes,
         CAST(ISNULL(irf.CodeSnippetRequired, 0) AS BIT)           AS CodeSnippetRequired,
+        CAST(ISNULL(irf.IsInterviewerAlignmentRequired, 0) AS BIT) AS IsInterviewerAlignmentRequired,
         CAST(ISNULL(irf.AITrialEnabled, 0) AS BIT)                AS AITrialEnabled,
         CAST(CASE WHEN ISNULL(irf.AITrialEnabled, 0) = 1 AND @CompletedBefore = 0
                   THEN 1 ELSE 0 END AS BIT)                       AS IsTrialInterview,

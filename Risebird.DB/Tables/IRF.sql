@@ -947,6 +947,24 @@ BEGIN
 END
 GO
 
+-- Interview alignment rollout switch. On: interviewers on this channel get the alignment page and the
+-- gated Zoom link. Off or NULL - every existing row, on day one - Interview/InterviewDetails renders
+-- exactly as it always has, with no new queries. Switched on one channel at a time from Edit IRF.
+-- Naming follows the house convention on this table: IsQCRequired, IsProctoring,
+-- IsJoinabilitySelectabilityRequired, CodeSnippetRequired.
+-- Retirement: once every active channel has this on and nobody has asked to turn one back off, delete
+-- the pre-alignment branch from InterviewController.InterviewDetails and this column with it.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'IsInterviewerAlignmentRequired'
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add IsInterviewerAlignmentRequired bit NULL
+END
+GO
+
 -- Interview alignment: switches the pre-interview trial banner and onboarding modal on for this
 -- channel. NULL (every existing row) means off, so no channel changes behaviour until it is set.
 IF NOT EXISTS(

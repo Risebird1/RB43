@@ -23,7 +23,10 @@ BEGIN
            ics.SubmittedSource, ics.LastRunSource, ics.LastRunOutput, ics.LastRunStatus, ics.RunCount,
            ics.CodingTimeLimitInMinutes, ics.CreatedBy, ics.CreatedOn, ics.OpenedOn, ics.SubmittedOn,
            im.interviewDate AS InterviewDate,
-           pt.DurationSelectedMin AS InterviewDurationMinutes
+           pt.DurationSelectedMin AS InterviewDurationMinutes,
+           -- The rollout switch, from the interview's own channel: a session on a channel that has been
+           -- switched off answers nothing, like every other alignment endpoint.
+           CAST(ISNULL(irf.IsInterviewerAlignmentRequired, 0) AS BIT) AS IsInterviewerAlignmentRequired
     FROM dbo.InterviewCodeSessions ics
     INNER JOIN dbo.InterviewMeetings im ON im.id = ics.InterviewId
     LEFT JOIN dbo.IRF irf ON irf.IRFId = im.IRFId

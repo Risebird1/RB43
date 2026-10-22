@@ -29,8 +29,6 @@ namespace Risebird.Business
         private const int MaxSourceCharacters = 100000;
         private const int MaxStdinCharacters = 10000;
 
-        private static readonly string[] JoinGateRequirements = { "rubric", "questions", "precheck", "issues" };
-
         private readonly IInterviewAlignmentRepository _repository;
         private readonly ICandidateService _candidateService;
         private readonly IIRFService _irfService;
@@ -55,13 +53,24 @@ namespace Risebird.Business
                 ? DefaultTrialPolicyVersion
                 : _configuration[$"{SettingsSection}:TrialPolicyVersion"].Trim();
 
+        public async Task<bool> IsAlignmentRequiredAsync(int interviewId)
+        {
+            if (interviewId <= 0)
+            {
+                return false;
+            }
+
+            return await _repository.IsAlignmentRequiredAsync(interviewId);
+        }
+
         public async Task<InterviewAlignmentViewModel> BuildAlignmentAsync(int interviewId, string interviewerEmail, Meeting meeting,
             int defaultCodingTimeLimitInMinutes, int maxQuestionLength)
         {
             try
             {
                 var context = await _repository.GetAlignmentContextAsync(interviewId, interviewerEmail);
-                if (context == null)
+                // The switch is re-read with the rest of the context: switched off mid-flight means today's page.
+                if (context == null || !context.IsInterviewerAlignmentRequired)
                 {
                     return null;
                 }
@@ -133,13 +142,12 @@ namespace Risebird.Business
 
         public async Task<bool> SaveJoinGateOverrideAsync(int interviewId, string interviewerEmail, IEnumerable<string> outstandingRequirements)
         {
-            // Only the four known requirement keys are stored, whatever the browser sent.
-            var outstanding = (outstandingRequirements ?? Enumerable.Empty<string>())
-                .Where(r => !string.IsNullOrWhiteSpace(r))
-                .Select(r => r.Trim().ToLowerInvariant())
-                .Where(r => JoinGateRequirements.Contains(r))
-                .Distinct()
-                .ToList();
+            // Only known requirement keys are stored, whatever the browser sent, in the gate's own order.
+            var sent = new HashSet<string>(
+                (outstandingRequirements ?? Enumerable.Empty<string>())
+                    .Where(r => !string.IsNullOrWhiteSpace(r))
+                    .Select(r => r.Trim().ToLowerInvariant()));
+            var outstanding = JoinGateRequirementKeys.All.Where(sent.Contains).ToList();
 
             return await _repository.SaveJoinGateOverrideAsync(interviewId, interviewerEmail.Trim(), string.Join(",", outstanding), DateTime.Now);
         }
@@ -173,7 +181,7 @@ namespace Risebird.Business
             }
 
             var now = DateTime.Now;
-            var live = IsSessionLive(session, now);
+            var live = IsSessionUsable(session, now);
             if (live && !session.OpenedOn.HasValue)
             {
                 session.OpenedOn = await _repository.MarkCodeSessionOpenedAsync(token, now) ?? now;
@@ -220,7 +228,7 @@ namespace Risebird.Business
             }
 
             var session = await _repository.GetCodeSessionByTokenAsync(request.Token);
-            if (session == null || !IsSessionLive(session, DateTime.Now))
+            if (!IsSessionUsable(session, DateTime.Now))
             {
                 return (false, "This code session has ended or the link is not valid.", null);
             }
@@ -253,7 +261,7 @@ namespace Risebird.Business
 
             var language = CodeLanguageCatalog.Find(request.Language);
             var session = await _repository.GetCodeSessionByTokenAsync(request.Token);
-            if (session == null || !IsSessionLive(session, DateTime.Now))
+            if (!IsSessionUsable(session, DateTime.Now))
             {
                 return (false, "This code session has ended or the link is not valid.", null);
             }
@@ -274,6 +282,13 @@ namespace Risebird.Business
 
             return await _repository.GetCodeSessionsAsync(interviewId) ?? new List<InterviewCodeSession>();
         }
+
+        /// <summary>
+        /// A token answers only while its interview is live and its channel still has the alignment switch on:
+        /// like every other alignment endpoint, nothing answers for a channel that has been switched off.
+        /// </summary>
+        private bool IsSessionUsable(InterviewCodeSession session, DateTime now) =>
+            session != null && session.IsInterviewerAlignmentRequired && IsSessionLive(session, now);
 
         public bool IsSessionLive(InterviewCodeSession session, DateTime now)
         {

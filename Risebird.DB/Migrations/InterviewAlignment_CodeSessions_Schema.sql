@@ -2,6 +2,7 @@
 -- Idempotent: every change is guarded, so running this twice is a no-op.
 --
 -- Adds:
+--   IRF.IsInterviewerAlignmentRequired             bit NULL   (the rollout switch; NULL = today's page on every channel)
 --   IRF.AITrialEnabled                             bit NULL   (NULL = trial banner off: every existing row)
 --   InterviewerProfile.TrialOnboardingAcknowledged bit NULL
 --   InterviewerProfile.TrialOnboardingAcknowledgedOn datetime NULL
@@ -18,7 +19,10 @@
 --      Tables/InterviewCodeSessions.sql, Tables/InterviewJoinGateOverrides.sql)
 --   2. Functions/fn_InterviewerCompletedInterviewsOnIrf.sql
 --   3. StoredProcedures/usp_GetTrialJudgmentContext.sql      (now reads the shared function)
---   4. StoredProcedures/usp_GetInterviewAlignmentContext.sql
+--   4. StoredProcedures/usp_FetchAudioComment.sql             (now also returns IsInterviewerAlignmentRequired)
+--      StoredProcedures/usp_UpdateIRFDetails.sql             (now saves IsInterviewerAlignmentRequired from Edit IRF)
+--      StoredProcedures/usp_GetInterviewAlignmentRequired.sql
+--      StoredProcedures/usp_GetInterviewAlignmentContext.sql
 --      StoredProcedures/usp_AcknowledgeTrialOnboarding.sql
 --      StoredProcedures/usp_SaveJoinGateOverride.sql
 --      StoredProcedures/usp_GetInterviewerCodeQuestions.sql
@@ -30,8 +34,15 @@
 --      StoredProcedures/usp_SubmitInterviewCodeSession.sql
 --   5. StoredProcedures/usp_AddTechSkillComments.sql         (now keeps the coding flag across saves)
 -- The web code degrades to today's page if any of these objects are missing, so it can ship first.
+-- Confirm which branch deploys (dev2026 vs master) before running this against a shared database.
 
 -- Part one --------------------------------------------------------------------------------------
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'IsInterviewerAlignmentRequired' AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF ADD IsInterviewerAlignmentRequired bit NULL
+END
+GO
+
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE Name = N'AITrialEnabled' AND Object_ID = Object_ID(N'IRF'))
 BEGIN
     ALTER TABLE IRF ADD AITrialEnabled bit NULL

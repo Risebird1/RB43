@@ -1,17 +1,18 @@
 @*
-    Behaviour for the interview alignment additions on Interview/InterviewDetails. Included after the
-    page's own scripts (and after it reloads jQuery), so window.jQuery is resolved at call time.
+    Behaviour for the interview alignment page (InterviewAlignment.cshtml). Included after the page's own
+    scripts (and after it reloads jQuery), so window.jQuery is resolved at call time.
 
-    The join gate: four confirmations, each tied to something the page can observe rather than a tick box.
-      rubric    - the rubric section has been on screen for a few seconds
-      questions - the sample-question section has been on screen for a few seconds
-      precheck  - the pre-interview screening report link was opened (or, without one, the candidate
-                  checks section has been on screen for a few seconds)
-      issues    - checklist item 9 ("Issues found in previous interviews") is accepted AND the interviewer
-                  looked at those issues (the inline section, or "Check details")
-    Time does not count while a modal covers the page or the tab is hidden. Confirmations are remembered
-    per interview in this browser so a reload does not send the interviewer back through the list.
-    The code-session row is informational and never holds the button.
+    The join gate counts the real InterviewCheckshow boxes and derives the total from them - the shape of the
+    old CheckAcceptPopupAck, never a hard-coded number - and only this script ticks them:
+      watch   - rubric, sample questions, previous issues: ticks on close once the panel was open long enough to read
+      link    - quality SLA, flow document: ticks on close once the document was opened from the panel
+      video   - flow video: ticks on close once the video was played
+      confirm - during-the-interview items: ticks when the interviewer confirms, which also closes the panel
+    Opening a panel and dismissing it straight away never counts. Every requirement opens in one overlay over the
+    page - the page's own section is moved into it and back, so nothing is duplicated and nothing scrolls. The
+    candidate-code row is an acknowledgement: a missing code session never holds the Zoom link.
+    Confirmations are remembered per interview in this browser so a reload does not send the interviewer back
+    through the list.
 *@
 <script>
     (function () {
@@ -21,14 +22,10 @@
         }
 
         var interviewId = root.getAttribute('data-interview-id');
-        var hasPrecheck = root.getAttribute('data-has-precheck') === '1';
-        var REQUIREMENTS = ['rubric', 'questions', 'precheck', 'issues'];
-        var LABELS = { rubric: 'Rubric', questions: 'Questions', precheck: 'Candidate pre-check', issues: 'Previous issues' };
-        var DWELL_MS = 3000;
-        var TICK_MS = 500;
+        var MIN_REVIEW_MS = 3000;
         var storeKey = 'ia-gate-' + interviewId;
         var state = loadState();
-        var dwell = {};
+        var overlay = null;
 
         function loadState() {
             try {
@@ -59,210 +56,122 @@
                 .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         };
 
-        function sectionFor(key) {
-            switch (key) {
-                case 'rubric': return document.getElementById('iaRubricSection');
-                case 'questions': return document.getElementById('iaSampleQuestionsSection');
-                case 'precheck': return hasPrecheck ? document.getElementById('iaPreReportSection') : document.getElementById('iaCandidateChecksSection');
-                case 'issues': return document.getElementById('iaInsights');
-                case 'code': return document.getElementById('iaCodeSessions');
-            }
-            return null;
+        // ---- The gate -----------------------------------------------------------------------------
+        function rowFor(key) {
+            return root.querySelector('.ia-row[data-req="' + key + '"]');
         }
 
-        function isDone(key) {
-            if (key === 'issues') {
-                return !!state.issuesAccepted && (!!state.issuesViewed || !!state.issuesDetailsOpened);
-            }
-            return !!state[key];
+        function boxOf(row) {
+            return row ? row.querySelector('input[name="InterviewCheckshow"]') : null;
         }
 
-        function pageCovered() {
-            var ids = ['InterviewerAlert', 'iaTrialOnboardingModal', 'InterviewerInsightsModel', 'PopupDetailsModal'];
-            for (var i = 0; i < ids.length; i++) {
-                var el = document.getElementById(ids[i]);
-                if (el && window.getComputedStyle(el).display !== 'none') {
-                    return true;
-                }
-            }
-            return false;
+        function gateRows() {
+            return root.querySelectorAll('.ia-row[data-req]');
         }
 
-        function isOnScreen(el) {
-            if (!el) {
-                return false;
-            }
-            var rect = el.getBoundingClientRect();
-            if (rect.height <= 0 || rect.width <= 0) {
-                return false;
-            }
-            var viewport = window.innerHeight || document.documentElement.clientHeight;
-            var visible = Math.min(rect.bottom, viewport) - Math.max(rect.top, 0);
-            return visible >= Math.min(160, rect.height * 0.5);
+        function counts() {
+            var boxes = root.querySelectorAll('input[name="InterviewCheckshow"]');
+            var checked = root.querySelectorAll('input[name="InterviewCheckshow"]:checked');
+            return { done: checked.length, total: boxes.length };
         }
 
         function gateCleared() {
-            if (state.overridden) {
-                return true;
-            }
-            for (var i = 0; i < REQUIREMENTS.length; i++) {
-                if (!isDone(REQUIREMENTS[i])) {
-                    return false;
+            var c = counts();
+            return !!state.overridden || c.done === c.total;
+        }
+
+        function outstandingKeys() {
+            var keys = [];
+            var rows = gateRows();
+            for (var i = 0; i < rows.length; i++) {
+                var box = boxOf(rows[i]);
+                if (box && !box.checked) {
+                    keys.push(rows[i].getAttribute('data-req'));
                 }
             }
-            return true;
+            return keys;
         }
 
         function render() {
-            var done = 0;
-            for (var i = 0; i < REQUIREMENTS.length; i++) {
-                if (isDone(REQUIREMENTS[i])) {
-                    done++;
-                }
-            }
-            var allDone = done === REQUIREMENTS.length;
+            var c = counts();
+            var allDone = c.done === c.total;
             var cleared = gateCleared();
 
-            var rows = root.querySelectorAll('.ia-row[data-req]');
+            var rows = gateRows();
             for (var r = 0; r < rows.length; r++) {
-                var key = rows[r].getAttribute('data-req');
-                var rowDone = isDone(key);
+                var box = boxOf(rows[r]);
+                var rowDone = !!(box && box.checked);
                 rows[r].classList.toggle('is-done', rowDone);
                 rows[r].classList.toggle('is-outstanding', !rowDone && !cleared);
             }
 
-            var count = document.getElementById('iaGateCount');
-            if (count) {
-                count.textContent = done + ' of ' + REQUIREMENTS.length + ' confirmed';
-                count.classList.toggle('is-done', allDone);
+            var countEl = document.getElementById('iaGateCount');
+            if (countEl) {
+                countEl.textContent = c.done + ' of ' + c.total + ' confirmed';
+                countEl.classList.toggle('is-done', allDone || cleared);
+            }
+
+            var progress = document.getElementById('iaOverlayProgress');
+            if (progress) {
+                progress.textContent = 'Ready to join · ' + c.done + ' of ' + c.total + ' confirmed';
+                progress.classList.toggle('is-done', allDone);
             }
 
             root.classList.toggle('ia-gate-cleared', cleared);
             var callout = document.getElementById('iaCallout');
             if (callout) {
                 callout.style.display = cleared ? 'none' : '';
-                var segments = callout.querySelectorAll('.ia-seg');
-                for (var s = 0; s < segments.length; s++) {
-                    segments[s].classList.toggle('is-done', s < done);
-                }
-                var sub = document.getElementById('iaCalloutSub');
-                if (sub) {
-                    var left = REQUIREMENTS.length - done;
-                    sub.textContent = done + ' of ' + REQUIREMENTS.length + ' done · ' +
-                        (left === 1 ? 'one more to unlock Zoom' : 'the Zoom link unlocks at 4 of 4');
-                }
             }
 
             var footnote = document.getElementById('iaGateFootnote');
             if (footnote && allDone) {
-                footnote.textContent = 'All four confirmed — the Zoom link above is live.';
+                footnote.textContent = 'All ' + c.total + ' confirmed — the Zoom link above is live.';
             } else if (footnote && state.overridden) {
-                footnote.textContent = 'You chose to join without confirming. This has been recorded.';
+                footnote.textContent = 'You chose to join without confirming. This has been recorded with what was outstanding.';
             }
 
             var join = document.getElementById('join-button');
             if (join) {
                 join.classList.toggle('disable-link', !cleared);
                 join.setAttribute('aria-disabled', cleared ? 'false' : 'true');
-                join.setAttribute('title', cleared ? 'Meeting Link' : 'Confirm the 4 points below to unlock the meeting link');
+                join.setAttribute('title', cleared ? 'Meeting Link' : 'Check the points below first');
             }
         }
 
         function mark(key) {
-            if (!state[key]) {
-                state[key] = true;
-                saveState();
-                render();
+            var box = boxOf(rowFor(key));
+            state[key] = true;
+            saveState();
+            if (box) {
+                box.checked = true;
             }
+            render();
         }
 
-        // Dwell: a section counts as reviewed once it has been on screen for DWELL_MS.
-        setInterval(function () {
-            if (document.visibilityState && document.visibilityState !== 'visible') {
-                return;
-            }
-            if (pageCovered()) {
-                return;
-            }
-            var targets = { rubric: sectionFor('rubric'), questions: sectionFor('questions'), issuesViewed: sectionFor('issues') };
-            if (!hasPrecheck) {
-                targets.precheck = sectionFor('precheck');
-            }
-            for (var key in targets) {
-                if (!Object.prototype.hasOwnProperty.call(targets, key) || state[key]) {
-                    continue;
-                }
-                if (isOnScreen(targets[key])) {
-                    dwell[key] = (dwell[key] || 0) + TICK_MS;
-                    if (dwell[key] >= DWELL_MS) {
-                        mark(key);
-                    }
-                }
-            }
-        }, TICK_MS);
-
-        // Pre-interview report opened.
-        var preReportLink = document.querySelector('#PreInterviewReport a');
-        if (preReportLink) {
-            preReportLink.addEventListener('click', function () { mark('precheck'); });
-            preReportLink.addEventListener('auxclick', function () { mark('precheck'); });
-        }
-
-        // Checklist item 9 accepted, and its "Check details" opened.
-        var item9 = document.getElementById('checklist_9');
-        if (item9) {
-            item9.addEventListener('change', function () {
-                state.issuesAccepted = item9.checked;
-                saveState();
-                render();
-            });
-        }
-        var item9Details = document.querySelector('[data-ia="issues-details"]');
-        if (item9Details) {
-            item9Details.addEventListener('click', function () { mark('issuesDetailsOpened'); });
-        }
-
-        // While the gate is up the Join link must not open - by mouse (pointer-events) or keyboard.
+        // While the gate is up the Join link must not open: pointer-events are off via disable-link, and this
+        // catches the keyboard. Nothing scrolls - the callout under the button shakes instead.
         var joinButton = document.getElementById('join-button');
         if (joinButton) {
             joinButton.addEventListener('click', function (e) {
                 if (!gateCleared()) {
                     e.preventDefault();
                     e.stopImmediatePropagation();
-                    var card = document.getElementById('iaGateCard');
-                    if (card) {
-                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    var callout = document.getElementById('iaCallout');
+                    if (callout) {
+                        callout.classList.remove('is-attention');
+                        void callout.offsetWidth;
+                        callout.classList.add('is-attention');
                     }
                 }
             }, true);
         }
 
-        window.iaGoTo = function (key) {
-            var el = sectionFor(key);
-            if (key === 'issues' && !el) {
-                window.iaOpenInsightsModal();
-                return;
-            }
-            if (!el) {
-                return;
-            }
-            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            if (key === 'code') {
-                var box = document.getElementById('iaNewQuestion');
-                if (box) {
-                    setTimeout(function () { box.focus(); }, 400);
-                }
-            }
-        };
-
         window.iaJoinWithoutConfirming = function () {
-            var outstanding = [];
-            for (var i = 0; i < REQUIREMENTS.length; i++) {
-                if (!isDone(REQUIREMENTS[i])) {
-                    outstanding.push(REQUIREMENTS[i]);
-                }
-            }
-            var names = outstanding.map(function (k) { return LABELS[k]; }).join(', ');
+            var outstanding = outstandingKeys();
+            var names = outstanding.map(function (k) {
+                var row = rowFor(k);
+                return row ? row.getAttribute('data-title') : k;
+            }).join(', ');
             var message = outstanding.length === 0
                 ? 'Join now?'
                 : 'Join without confirming? This is recorded with what is still outstanding: ' + names + '.';
@@ -291,7 +200,224 @@
             });
         };
 
-        // ---- Trial onboarding ------------------------------------------------------------------
+        // ---- The overlay --------------------------------------------------------------------------
+        var NOTES = {
+            watch: { pending: 'Take a moment to read it — closing straight away does not count.', ready: 'Closing this marks it as reviewed — Esc or click outside.' },
+            link: { pending: 'Open the document to mark this as read. Closing without opening it does not count.', ready: 'Opened — closing this marks it as read.' },
+            video: { pending: 'Play the video to mark this as watched.', ready: 'Played — closing this marks it as watched.' },
+            confirm: { pending: 'This is an acknowledgement: confirm it, and what you do in the call is checked after it.', ready: '' },
+            panel: { pending: 'Esc or click outside to close.', ready: 'Esc or click outside to close.' }
+        };
+
+        function overlayEl() {
+            return document.getElementById('iaOverlay');
+        }
+
+        function setNote() {
+            var note = document.getElementById('iaOverlayNote');
+            if (!note || !overlay) {
+                return;
+            }
+            var done = overlay.key && state[overlay.key];
+            var ready = isReady();
+            note.textContent = done && overlay.kind !== 'panel'
+                ? 'Already confirmed.'
+                : (ready ? NOTES[overlay.kind].ready : NOTES[overlay.kind].pending) || NOTES[overlay.kind].pending;
+            note.classList.toggle('is-ready', !!(done || (ready && overlay.kind !== 'confirm')));
+        }
+
+        function isReady() {
+            if (!overlay) {
+                return false;
+            }
+            switch (overlay.kind) {
+                case 'watch': return Date.now() - overlay.openedAt >= MIN_REVIEW_MS;
+                case 'link':
+                case 'video': return !!state['evidence_' + overlay.key];
+                default: return false;
+            }
+        }
+
+        function openOverlay(opts) {
+            if (overlay) {
+                closeOverlay(false);
+            }
+            var source = document.getElementById(opts.sourceId);
+            var shell = overlayEl();
+            if (!source || !shell) {
+                return;
+            }
+
+            var scrollX = window.pageXOffset, scrollY = window.pageYOffset;
+            // The section leaves a placeholder of its own height, so nothing on the page moves.
+            var placeholder = document.createElement('div');
+            placeholder.className = 'ia-placeholder';
+            placeholder.style.height = source.offsetHeight + 'px';
+            if (!source.offsetHeight) {
+                placeholder.style.border = '0';
+            }
+            source.parentNode.insertBefore(placeholder, source);
+
+            overlay = {
+                key: opts.key || null,
+                kind: opts.kind,
+                opener: opts.opener || null,
+                source: source,
+                placeholder: placeholder,
+                previousDisplay: source.style.display,
+                openedAt: Date.now(),
+                scrollX: scrollX,
+                scrollY: scrollY,
+                timer: null
+            };
+
+            var body = document.getElementById('iaOverlayBody');
+            body.appendChild(source);
+            source.style.display = 'block';
+            body.scrollTop = 0;
+
+            document.getElementById('iaOverlayTitle').textContent = opts.title || '';
+            var confirm = document.getElementById('iaOverlayConfirm');
+            var close = document.getElementById('iaOverlayClose');
+            if (opts.kind === 'confirm' && !state[opts.key]) {
+                confirm.textContent = opts.confirmLabel || 'Confirm';
+                confirm.style.display = '';
+                close.textContent = 'Close';
+            } else {
+                confirm.style.display = 'none';
+                close.textContent = 'Done';
+            }
+
+            shell.style.display = 'block';
+            window.scrollTo(scrollX, scrollY);
+            var content = document.getElementById('iaOverlayContent');
+            if (content) {
+                content.focus();
+            }
+
+            render();
+            setNote();
+            if (opts.kind === 'watch') {
+                overlay.timer = setTimeout(setNote, MIN_REVIEW_MS);
+            }
+        }
+
+        function closeOverlay(confirmed) {
+            if (!overlay) {
+                return;
+            }
+            var current = overlay;
+            overlay = null;
+            if (current.timer) {
+                clearTimeout(current.timer);
+            }
+
+            var videos = current.source.getElementsByTagName('video');
+            for (var v = 0; v < videos.length; v++) {
+                try { videos[v].pause(); } catch (e) { }
+            }
+
+            // Ticking happens on close, never on open.
+            var tick = false;
+            if (current.key && !state[current.key]) {
+                if (current.kind === 'confirm') {
+                    tick = confirmed === true;
+                } else if (current.kind === 'watch') {
+                    tick = Date.now() - current.openedAt >= MIN_REVIEW_MS;
+                } else if (current.kind === 'link' || current.kind === 'video') {
+                    tick = !!state['evidence_' + current.key];
+                }
+            }
+
+            current.placeholder.parentNode.insertBefore(current.source, current.placeholder);
+            current.placeholder.parentNode.removeChild(current.placeholder);
+            current.source.style.display = current.previousDisplay;
+
+            overlayEl().style.display = 'none';
+            window.scrollTo(current.scrollX, current.scrollY);
+            if (tick) {
+                mark(current.key);
+            }
+            if (current.opener && typeof current.opener.focus === 'function') {
+                current.opener.focus();
+            }
+        }
+
+        window.iaCloseOverlay = function () {
+            closeOverlay(false);
+        };
+
+        window.iaConfirmOverlay = function () {
+            closeOverlay(true);
+        };
+
+        window.iaOpenRequirement = function (key, opener) {
+            var row = rowFor(key);
+            if (!row) {
+                return;
+            }
+            openOverlay({
+                key: key,
+                kind: row.getAttribute('data-kind'),
+                sourceId: row.getAttribute('data-source'),
+                title: row.getAttribute('data-title'),
+                confirmLabel: row.getAttribute('data-confirm'),
+                opener: opener || row.querySelector('.ia-pill')
+            });
+            if (key === 'checklist_3') {
+                var box = document.getElementById('iaNewQuestion');
+                if (box) {
+                    setTimeout(function () { box.focus(); }, 50);
+                }
+            }
+        };
+
+        // Panels that are not requirements (the candidate pre-check) open in the same shell and tick nothing.
+        window.iaOpenPanel = function (name, opener) {
+            if (name === 'precheck') {
+                openOverlay({ kind: 'panel', sourceId: 'hidden_fields_eight', title: 'Candidate Pre-Interview Screening Report', opener: opener });
+            }
+        };
+
+        // Esc and a click on the backdrop close the overlay.
+        document.addEventListener('keydown', function (e) {
+            if (overlay && (e.key === 'Escape' || e.key === 'Esc')) {
+                closeOverlay(false);
+            }
+        });
+        var shellEl = overlayEl();
+        if (shellEl) {
+            shellEl.addEventListener('click', function (e) {
+                if (e.target === shellEl || (e.target.classList && e.target.classList.contains('modal-dialog'))) {
+                    closeOverlay(false);
+                }
+            });
+        }
+
+        // Evidence the page can observe: a document opened from its panel, a video played.
+        function noteEvidence(key) {
+            if (!state['evidence_' + key]) {
+                state['evidence_' + key] = true;
+                saveState();
+            }
+            if (overlay && overlay.key === key) {
+                setNote();
+            }
+        }
+        var evidence = root.querySelectorAll('[data-ia-evidence]');
+        for (var ev = 0; ev < evidence.length; ev++) {
+            (function (el) {
+                var key = el.getAttribute('data-ia-evidence');
+                if (el.tagName === 'VIDEO') {
+                    el.addEventListener('play', function () { noteEvidence(key); });
+                } else {
+                    el.addEventListener('click', function () { noteEvidence(key); });
+                    el.addEventListener('auxclick', function () { noteEvidence(key); });
+                }
+            })(evidence[ev]);
+        }
+
+        // ---- Trial onboarding ---------------------------------------------------------------------
         window.iaOpenTrialOnboarding = function () {
             var modal = document.getElementById('iaTrialOnboardingModal');
             if (modal) {
@@ -323,7 +449,6 @@
 
         // ---- Sections 6 and 7: own record and flagged history on this channel --------------------
         window.iaOpenInsightsModal = function () {
-            mark('issuesDetailsOpened');
             if (typeof window.InsightsDetails === 'function') {
                 window.InsightsDetails(root.getAttribute('data-interviewer') || '', root.getAttribute('data-irf-code') || '');
             }
@@ -342,7 +467,7 @@
                 return;
             }
             if (!data || !data.success) {
-                record.innerHTML = '<div class="ia-empty">Your record could not be loaded. Use "open your insights" below for the full view.</div>';
+                record.innerHTML = '<div class="ia-empty">Your record could not be loaded. Use &ldquo;Open your full insights&rdquo; below for the full view.</div>';
                 issues.innerHTML = '';
                 return;
             }
@@ -466,15 +591,18 @@
                     : '';
             }
 
-            var countEl = document.getElementById('iaCodingQuestionCount');
-            if (countEl) {
-                countEl.textContent = sessions.length;
+            // The server-side fact the candidate-code row shows; informational, it never holds the Zoom link.
+            var ids = ['iaCodingQuestionCount', 'iaCodeCreatedCount'];
+            for (var n = 0; n < ids.length; n++) {
+                var countEl = document.getElementById(ids[n]);
+                if (countEl) {
+                    countEl.textContent = sessions.length;
+                }
             }
-            var statusRow = document.getElementById('iaCodeStatusRow');
-            var statusText = document.getElementById('iaCodeStatusText');
-            if (statusRow && statusText && sessions.length > 0) {
-                statusRow.style.display = '';
-                statusText.textContent = 'Code session ready — ' + sessions.length + ' created for this interview.';
+            var codeRow = rowFor('checklist_3');
+            var codePill = codeRow ? codeRow.querySelector('.ia-pill') : null;
+            if (codePill) {
+                codePill.textContent = sessions.length > 0 ? 'Open' : 'Create now';
             }
         }
 
@@ -490,7 +618,8 @@
             var temp = document.createElement('textarea');
             temp.value = text;
             temp.setAttribute('readonly', '');
-            temp.style.position = 'absolute';
+            temp.style.position = 'fixed';
+            temp.style.top = '0';
             temp.style.left = '-9999px';
             document.body.appendChild(temp);
             temp.select();
@@ -596,7 +725,13 @@
         };
 
         function start() {
-            state.issuesAccepted = state.issuesAccepted || (item9 ? item9.checked : false);
+            var rows = gateRows();
+            for (var i = 0; i < rows.length; i++) {
+                var box = boxOf(rows[i]);
+                if (box) {
+                    box.checked = !!state[rows[i].getAttribute('data-req')];
+                }
+            }
             render();
             renderCodeSessions();
             loadInsights();

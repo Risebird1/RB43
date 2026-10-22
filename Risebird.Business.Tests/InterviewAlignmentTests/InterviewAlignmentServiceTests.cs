@@ -39,7 +39,8 @@ namespace Risebird.Business.Tests.InterviewAlignmentTests
             CodingTimeLimitInMinutes = 25,
             CreatedOn = DateTime.Now.AddMinutes(-30),
             InterviewDate = DateTime.Now.AddMinutes(-10),
-            InterviewDurationMinutes = 75
+            InterviewDurationMinutes = 75,
+            IsInterviewerAlignmentRequired = true
         };
     }
 
@@ -217,9 +218,64 @@ namespace Risebird.Business.Tests.InterviewAlignmentTests
                 .ReturnsAsync(true);
             var sut = fixture.CreateSut();
 
-            await sut.SaveJoinGateOverrideAsync(48210, " rash@example.com ", new[] { "Rubric", "issues", "<script>", "rubric", "" });
+            await sut.SaveJoinGateOverrideAsync(48210, " rash@example.com ",
+                new[] { "checklist_3", "Rubric", "issues", "<script>", "rubric", "", "CHECKLIST_9", "checklist_99" });
 
-            fixture.Repository.Verify(x => x.SaveJoinGateOverrideAsync(48210, "rash@example.com", "rubric,issues", It.IsAny<DateTime>()), Times.Once);
+            // Only the gate's own keys, de-duplicated, in the gate's order.
+            fixture.Repository.Verify(x => x.SaveJoinGateOverrideAsync(48210, "rash@example.com", "rubric,checklist_9,checklist_3", It.IsAny<DateTime>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task IsAlignmentRequired_ReadsTheInterviewsOwnChannel()
+        {
+            var fixture = new InterviewAlignmentFixture();
+            fixture.Repository.Setup(x => x.IsAlignmentRequiredAsync(48210)).ReturnsAsync(true);
+            fixture.Repository.Setup(x => x.IsAlignmentRequiredAsync(48211)).ReturnsAsync(false);
+            var sut = fixture.CreateSut();
+
+            Assert.True(await sut.IsAlignmentRequiredAsync(48210));
+            Assert.False(await sut.IsAlignmentRequiredAsync(48211));
+            Assert.False(await sut.IsAlignmentRequiredAsync(0));
+            fixture.Repository.Verify(x => x.IsAlignmentRequiredAsync(0), Times.Never);
+        }
+
+        [Fact]
+        public async Task BuildAlignment_WhenTheChannelSwitchIsOff_ReturnsNullSoTodaysPageRenders()
+        {
+            var fixture = new InterviewAlignmentFixture();
+            fixture.Repository.Setup(x => x.GetAlignmentContextAsync(It.IsAny<int>(), It.IsAny<string>()))
+                .ReturnsAsync(new InterviewAlignmentContext { IsInterviewerAlignmentRequired = false, IRFIntId = 10482 });
+            var sut = fixture.CreateSut();
+
+            var model = await sut.BuildAlignmentAsync(48210, "rash@example.com", new Meeting { candidateEmail = "ada.lovelace@example.com" }, 15, 5000);
+
+            Assert.Null(model);
+            // Nothing else is queried for a channel that is switched off.
+            fixture.CandidateService.Verify(x => x.EnsureCandidatePseudonymsAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<string>()), Times.Never);
+            fixture.Repository.Verify(x => x.GetInterviewerCodeQuestionsAsync(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task CodeSession_WhenTheChannelIsSwitchedOff_AnswersNothing()
+        {
+            var fixture = new InterviewAlignmentFixture();
+            var token = Guid.NewGuid();
+            var session = InterviewAlignmentFixture.LiveSession(token);
+            session.IsInterviewerAlignmentRequired = false;
+            fixture.CodeExecution.SetupGet(x => x.IsEnabled).Returns(true);
+            fixture.Repository.Setup(x => x.GetCodeSessionByTokenAsync(token)).ReturnsAsync(session);
+            var sut = fixture.CreateSut();
+
+            var page = await sut.GetCandidatePageAsync(token);
+            var (ran, _, _) = await sut.RunAsync(new CodeSessionRunRequestVM { Token = token, Language = "python", Code = "print(1)" });
+            var (submitted, _, _) = await sut.SubmitAsync(new CodeSessionSubmitRequestVM { Token = token, Language = "python", Code = "print(1)" });
+
+            Assert.True(page.IsExpired);
+            Assert.False(ran);
+            Assert.False(submitted);
+            fixture.Repository.Verify(x => x.MarkCodeSessionOpenedAsync(It.IsAny<Guid>(), It.IsAny<DateTime>()), Times.Never);
+            fixture.CodeExecution.Verify(x => x.ExecuteAsync(It.IsAny<CodeExecutionRequest>()), Times.Never);
+            fixture.Repository.Verify(x => x.SubmitCodeSessionAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
         }
 
         [Fact]
@@ -270,6 +326,7 @@ namespace Risebird.Business.Tests.InterviewAlignmentTests
             {
                 IRFIntId = 10482,
                 IRFCode = "IRF10482",
+                IsInterviewerAlignmentRequired = true,
                 IsTrialInterview = isTrial,
                 AITrialEnabled = isTrial,
                 TrialOnboardingAcknowledged = acknowledged
@@ -287,7 +344,7 @@ namespace Risebird.Business.Tests.InterviewAlignmentTests
         {
             var fixture = new InterviewAlignmentFixture();
             fixture.Repository.Setup(x => x.GetAlignmentContextAsync(It.IsAny<int>(), It.IsAny<string>()))
-                .ReturnsAsync(new InterviewAlignmentContext { IRFIntId = 10482, RoleTitle = " Senior Backend Engineer ", DurationMinutes = 75 });
+                .ReturnsAsync(new InterviewAlignmentContext { IsInterviewerAlignmentRequired = true, IRFIntId = 10482, RoleTitle = " Senior Backend Engineer ", DurationMinutes = 75 });
             fixture.CandidateService.Setup(x => x.EnsureCandidatePseudonymsAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<string>()))
                 .ReturnsAsync(new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["ada.lovelace@example.com"] = "AdLo1234" });
             var sut = fixture.CreateSut();
@@ -307,7 +364,7 @@ namespace Risebird.Business.Tests.InterviewAlignmentTests
         {
             var fixture = new InterviewAlignmentFixture();
             fixture.Repository.Setup(x => x.GetAlignmentContextAsync(It.IsAny<int>(), It.IsAny<string>()))
-                .ReturnsAsync(new InterviewAlignmentContext { IRFIntId = 10482, CandidateEmail = " mary.curie@example.com " });
+                .ReturnsAsync(new InterviewAlignmentContext { IsInterviewerAlignmentRequired = true, IRFIntId = 10482, CandidateEmail = " mary.curie@example.com " });
             fixture.CandidateService.Setup(x => x.EnsureCandidatePseudonymsAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<string>()))
                 .ReturnsAsync(new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["mary.curie@example.com"] = "MaCu5106" });
             var sut = fixture.CreateSut();

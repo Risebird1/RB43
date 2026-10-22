@@ -5353,15 +5353,17 @@ namespace Risebird.Web.Controllers
         /// Sections 6 and 7 of the interview alignment page, inline: the signed-in interviewer's record and
         /// flagged history on this channel. Reads the same usp_GetInterviewerInsights and
         /// usp_GetInterviewerInsightsMarkersDetails the insights modal does - no new aggregate - and is
-        /// scoped to the interviewer's own email from session and to the interview's channel.
+        /// scoped to the interviewer's own email from session and to the interview's channel. Like every
+        /// alignment endpoint it answers only when the interview's channel has the rollout switch on.
         /// </summary>
         [HttpGet]
-        public async Task<JsonResult> AlignmentInsights(int interviewId)
+        public async Task<JsonResult> AlignmentInsights(int interviewId, [FromServices] IInterviewAlignmentService alignmentService)
         {
             try
             {
                 var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
-                if (string.IsNullOrWhiteSpace(email) || !await _meetingService.IsInterviewerForInterview(email, interviewId))
+                if (string.IsNullOrWhiteSpace(email) || !await _meetingService.IsInterviewerForInterview(email, interviewId)
+                    || !await alignmentService.IsAlignmentRequiredAsync(interviewId))
                 {
                     return Json(new { success = false });
                 }
