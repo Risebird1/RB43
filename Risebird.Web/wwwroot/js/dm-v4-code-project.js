@@ -52,8 +52,12 @@
             '<div class="dm-cp-split">' +
             // Brief
             '<div class="dm-cp-panel dm-cp-brief"><div class="ph"><h3>Question brief</h3></div><div class="dm-cp-pb">' +
-            '<div class="dm-cp-fld"><label for="dmCpBrief">What should the candidate build or fix?</label>' +
-            '<textarea id="dmCpBrief" maxlength="4000" placeholder="e.g. A small Spring Boot inventory service. Persistence and routing are provided. The candidate implements validation: reject negative quantities, enforce unique SKU, return 404 with a problem-detail body for unknown ids."></textarea>' +
+            '<div class="dm-cp-fld"><div class="dm-cp-brief-head"><label for="dmCpBrief">What should the candidate build or fix?</label>' +
+            '<button type="button" class="dm-cp-link" id="dmCpSuggest" title="Suggest a different brief for this stack, skill and difficulty">&#8635; Suggest another</button></div>' +
+            '<textarea id="dmCpBrief" maxlength="4000" placeholder="A brief is suggested from the stack, rubric skill and difficulty you pick. Edit it freely."></textarea>' +
+            '<div class="dm-cp-suggest-status" id="dmCpSuggestStatus" aria-live="polite"></div>' +
+            '<div class="dm-cp-suggest-stale" id="dmCpSuggestStale" hidden>The stack, skill or difficulty changed since you edited this brief. ' +
+            '<button type="button" class="dm-cp-link" id="dmCpSuggestReplace">Suggest a new brief</button></div>' +
             '<div class="dm-cp-hint">Keep it to one focused defect or one small feature — the candidate has a short slot.</div></div>' +
             '<div class="dm-cp-row2">' +
             '<div class="dm-cp-fld"><label for="dmCpStack">Stack image</label><select id="dmCpStack"><option value="">Loading…</option></select></div>' +
@@ -90,7 +94,72 @@
             $modal.find('#dmCpBrief').trigger('focus');
         });
         $(document).on('keydown.dmCp', function (e) { if (e.key === 'Escape' && $modal && !$modal.prop('hidden') && !generating) close(); });
+
+        // Brief suggestions follow the stack / skill / difficulty, but never overwrite what the author typed.
+        $modal.on('input', '#dmCpBrief', function () { briefEdited = true; });
+        $modal.on('change', '#dmCpStack, #dmCpSkill, #dmCpLevel', function () {
+            if (currentQuestionId) return;
+            if (briefEdited && $.trim($modal.find('#dmCpBrief').val())) { $modal.find('#dmCpSuggestStale').prop('hidden', false); return; }
+            scheduleSuggestion(false);
+        });
+        $modal.on('click', '#dmCpSuggest', function () { scheduleSuggestion(true, 0); });
+        $modal.on('click', '#dmCpSuggestReplace', function () { scheduleSuggestion(true, 0); });
         return $modal;
+    }
+
+    // ------------------------------------------------------------------ brief suggestions
+
+    var briefEdited = false;
+    var suggestSeq = 0;
+    var suggestTimer = null;
+
+    function setSuggestStatus(text, busy) {
+        $modal.find('#dmCpSuggestStatus').text(text || '').toggleClass('is-busy', !!busy);
+    }
+
+    /** Debounced, so quickly flicking through the dropdowns asks for one suggestion, not five. */
+    function scheduleSuggestion(different, delayMs) {
+        if (suggestTimer) clearTimeout(suggestTimer);
+        suggestTimer = setTimeout(function () { suggestBrief(different); }, delayMs == null ? 450 : delayMs);
+    }
+
+    function suggestBrief(different) {
+        var stack = $modal.find('#dmCpStack').val();
+        if (!stack || generating) return;
+        var seq = ++suggestSeq;   // a later request supersedes this one
+        var $brief = $modal.find('#dmCpBrief');
+        var previous = different ? $.trim($brief.val()) : '';
+        $modal.find('#dmCpSuggestStale').prop('hidden', true);
+        $modal.find('#dmCpSuggest').prop('disabled', true);
+        $brief.prop('readonly', true).addClass('is-suggesting');
+        setSuggestStatus('Suggesting a brief for ' + stack + '…', true);
+
+        $.ajax({
+            url: '/IRF/SuggestCodeProjectBrief',
+            type: 'POST',
+            data: requestData({
+                stackImageCode: stack,
+                skillName: $modal.find('#dmCpSkill').val() || null,
+                difficulty: $modal.find('#dmCpLevel').val(),
+                previousBrief: previous || null
+            }),
+            timeout: 90000
+        }).done(function (res) {
+            if (seq !== suggestSeq) return;
+            if (!res || !res.success || !res.brief) { setSuggestStatus((res && res.message) || 'Could not suggest a brief. Write one, or try again.'); return; }
+            $brief.val(res.brief);
+            briefEdited = false;
+            // An AI-chosen skill is selected so Generate uses the same one; set quietly (no change event).
+            var $skill = $modal.find('#dmCpSkill');
+            if (res.skill && !$skill.val() && $skill.find('option').filter(function () { return this.value === res.skill; }).length) $skill.val(res.skill);
+            setSuggestStatus('Suggested for ' + res.stack + (res.skill ? ' · ' + res.skill : '') + '. Edit it freely, or ask for another.');
+        }).fail(function () {
+            if (seq === suggestSeq) setSuggestStatus('Could not suggest a brief. Write one, or try again.');
+        }).always(function () {
+            if (seq !== suggestSeq) return;
+            $brief.prop('readonly', false).removeClass('is-suggesting');
+            $modal.find('#dmCpSuggest').prop('disabled', false);
+        });
     }
 
     function loadStackImages() {
@@ -270,7 +339,15 @@
         $modal.find('#dmCpTitle').text(questionId ? 'Code project question' : 'New code project question');
         $modal.prop('hidden', false);
         $('body').css('overflow', 'hidden');
-        loadStackImages();
+        if (!questionId) {
+            // A new question starts from a fresh suggestion for the default stack/skill/difficulty.
+            suggestSeq++;
+            briefEdited = false;
+            $modal.find('#dmCpBrief').val('').prop('readonly', false).removeClass('is-suggesting');
+            $modal.find('#dmCpSuggestStale').prop('hidden', true);
+            setSuggestStatus('');
+        }
+        loadStackImages().then(function () { if (!questionId && stackImages.length) scheduleSuggestion(false, 0); });
         if (questionId) poll();
         else $modal.find('#dmCpBrief').trigger('focus');
     }

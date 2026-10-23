@@ -456,4 +456,99 @@ namespace Risebird.CommonHelper.Tests.EntitiesHelpers
             Assert.Null(CodeProjectQuestionHelper.FindTest(tests, "r1"));
         }
     }
+
+    public class CodeProjectDotnetSolutionTests
+    {
+        private static CodeProjectGeneration TwoProjects() => new CodeProjectGeneration
+        {
+            BuildCommand = "dotnet build -nologo",
+            ProjectFiles = new List<CodeProjectFile>
+            {
+                new() { Path = "UppercaseApi/UppercaseApi.csproj", Content = "<Project/>" },
+                new() { Path = "UppercaseApi/Program.cs", Content = "" },
+                new() { Path = "UppercaseApi.Tests/UppercaseApi.Tests.csproj", Content = "<Project/>" }
+            }
+        };
+
+        [Fact]
+        public void Adds_a_root_solution_listing_every_project_when_none_exists()
+        {
+            var g = TwoProjects();
+            Assert.Equal("Workspace.sln", CodeProjectQuestionHelper.EnsureDotnetSolution(g));
+            var sln = g.ProjectFiles.Single(f => f.Path == "Workspace.sln").Content;
+            Assert.Contains(@"""UppercaseApi"", ""UppercaseApi\UppercaseApi.csproj""", sln);
+            Assert.Contains(@"""UppercaseApi.Tests"", ""UppercaseApi.Tests\UppercaseApi.Tests.csproj""", sln);
+            Assert.Contains("Workspace.sln", g.ReadOnlyPaths);
+            // Deterministic: regenerating the same project gives the same file.
+            var again = TwoProjects();
+            CodeProjectQuestionHelper.EnsureDotnetSolution(again);
+            Assert.Equal(sln, again.ProjectFiles.Single(f => f.Path == "Workspace.sln").Content);
+        }
+
+        [Theory]
+        [InlineData("App.sln")]
+        [InlineData("App.csproj")]
+        public void Leaves_projects_that_already_build_from_the_root(string rootFile)
+        {
+            var g = TwoProjects();
+            g.ProjectFiles.Add(new() { Path = rootFile, Content = "" });
+            Assert.Null(CodeProjectQuestionHelper.EnsureDotnetSolution(g));
+        }
+
+        [Fact]
+        public void Ignores_other_stacks()
+        {
+            var g = TwoProjects();
+            g.BuildCommand = "mvn -o -q package";
+            Assert.Null(CodeProjectQuestionHelper.EnsureDotnetSolution(g));
+        }
+
+        [Fact]
+        public void Dotnet_workspaces_restore_offline_only()
+        {
+            var g = TwoProjects();
+            var added = CodeProjectQuestionHelper.EnsureDotnetOffline(g);
+            Assert.Equal(new[] { "NuGet.Config", "Directory.Build.props" }, added);
+            Assert.Contains("<clear />", g.ProjectFiles.Single(f => f.Path == "NuGet.Config").Content);
+            Assert.Contains("<NuGetAudit>false</NuGetAudit>", g.ProjectFiles.Single(f => f.Path == "Directory.Build.props").Content);
+            Assert.Contains("NuGet.Config", g.ReadOnlyPaths);
+            // Running it again, or on a project that already has its own files, adds nothing.
+            Assert.Empty(CodeProjectQuestionHelper.EnsureDotnetOffline(g));
+            var other = TwoProjects();
+            other.BuildCommand = "npm install --offline";
+            Assert.Empty(CodeProjectQuestionHelper.EnsureDotnetOffline(other));
+        }
+
+        [Fact]
+        public void Makes_a_minimal_api_Program_visible_to_WebApplicationFactory_tests()
+        {
+            var g = TwoProjects();
+            g.ProjectFiles.Single(f => f.Path == "UppercaseApi/Program.cs").Content = "var app = WebApplication.Create(args);\napp.Run();";
+            g.ReferenceSolution.Add(new() { Path = "UppercaseApi/Program.cs", Content = "var app = WebApplication.Create(args);\napp.Run();" });
+            g.HiddenTests.Add(new() { Path = "UppercaseApi.Tests/Hidden/T.cs", Content = "class T : IClassFixture<WebApplicationFactory<Program>> { }" });
+
+            var changed = CodeProjectQuestionHelper.EnsureProgramVisibleToTests(g);
+
+            Assert.Equal(2, changed.Count);
+            Assert.EndsWith("public partial class Program { }\n", g.ProjectFiles.Single(f => f.Path == "UppercaseApi/Program.cs").Content);
+            Assert.EndsWith("public partial class Program { }\n", g.ReferenceSolution.Single().Content);
+            Assert.Empty(CodeProjectQuestionHelper.EnsureProgramVisibleToTests(g));   // already declared now
+        }
+
+        [Fact]
+        public void Leaves_Program_alone_when_no_test_uses_WebApplicationFactory()
+        {
+            var g = TwoProjects();
+            g.ProjectFiles.Single(f => f.Path == "UppercaseApi/Program.cs").Content = "var app = WebApplication.Create(args);";
+            Assert.Empty(CodeProjectQuestionHelper.EnsureProgramVisibleToTests(g));
+        }
+
+        [Fact]
+        public void Build_failures_show_the_error_lines()
+        {
+            var excerpt = CodeProjectQuestionHelper.BuildErrorExcerpt("Welcome\nMSBUILD : error MSB1003: Specify a project or solution file.\n");
+            Assert.Contains("MSB1003", excerpt);
+            Assert.Equal("", CodeProjectQuestionHelper.BuildErrorExcerpt(null));
+        }
+    }
 }

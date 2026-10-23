@@ -10282,6 +10282,81 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>
+        /// Suggests the author brief from the chosen stack, rubric skill and difficulty, so the author can
+        /// start from a feasible idea instead of a blank box. Inline instructions on the Responses API
+        /// (CodeProjectQuestionHelper.BriefSuggestionInstructions): no stored OpenAI prompt is needed.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> SuggestCodeProjectBrief(int irfId, string stackImageCode, string skillName = null,
+            string difficulty = null, string previousBrief = null, string Type = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                    return Json(new { success = false, message = "Forbidden" });
+                if (string.IsNullOrEmpty(_configuration["OpenAI:ApiKey"]) || string.IsNullOrEmpty(_configuration["OpenAI:ResponsesModel"]))
+                    return Json(new { success = false, message = "OpenAI:ApiKey and OpenAI:ResponsesModel must be configured." });
+
+                var irfVm = await _irfService.GetEditIRF(irfId, 0, false);
+                if (irfVm == null || irfVm.SkillCollection == null || !irfVm.SkillCollection.Any())
+                    return Json(new { success = false, message = "No rubric skills found for this channel." });
+
+                var images = await _codeProjectQuestionService.GetActiveStackImages();
+                var validStackCodes = DmIvQuestionRubricHelper.BuildValidStackImageSet(images);
+                if (!DmIvQuestionRubricHelper.TryMatchStackImage(stackImageCode, validStackCodes, out var stack))
+                    return Json(new { success = false, message = "Choose one of the listed stack images." });
+                var image = images.First(i => string.Equals(i.Code, stack, StringComparison.OrdinalIgnoreCase));
+
+                var validSkillNames = DmIvQuestionRubricHelper.BuildValidSkillNameSet(irfVm.SkillCollection);
+                string preferredSkill = null;
+                if (!string.IsNullOrWhiteSpace(skillName) && !DmIvQuestionRubricHelper.TryMatchSkill(skillName, validSkillNames, out preferredSkill))
+                    return Json(new { success = false, message = "The skill must be one of this channel's rubric skills." });
+
+                var input = new StringBuilder();
+                input.AppendLine("Interview: technical, code project question (the candidate works on a real machine with an IDE).");
+                input.AppendLine($"Chosen stack: {image.Code} ({image.DisplayName}). Toolchain and the ONLY available dependencies: {image.Toolchain}");
+                input.AppendLine($"Difficulty: {(string.IsNullOrWhiteSpace(difficulty) ? "Medium" : difficulty.Trim())}");
+                input.AppendLine(preferredSkill != null ? $"Rubric skill to exercise: {preferredSkill}" : "Rubric skill: choose the one that best fits the chosen stack.");
+                if (!string.IsNullOrWhiteSpace(previousBrief))
+                    input.AppendLine("Previous brief (suggest something different): " + (previousBrief.Length > 1000 ? previousBrief.Substring(0, 1000) : previousBrief.Trim()));
+                input.AppendLine();
+                input.AppendLine(DmIvQuestionRubricHelper.BuildRubricPromptSection(irfVm.SkillCollection));
+                input.AppendLine("Answer in JSON.");
+
+                var raw = await _openAIResponsesHelper.CreateJsonWithInstructionsAsync(
+                    CodeProjectQuestionHelper.BriefSuggestionInstructions, input.ToString(), "SuggestCodeProjectBrief", maxOutputTokens: 600);
+                if (string.IsNullOrWhiteSpace(raw))
+                    return Json(new { success = false, message = "Could not suggest a brief right now. Write one, or try again." });
+
+                string brief = null, suggestedSkill = null;
+                try
+                {
+                    var json = Newtonsoft.Json.Linq.JObject.Parse(raw.Substring(Math.Max(0, raw.IndexOf('{'))));
+                    brief = json["brief"]?.ToString()?.Trim();
+                    suggestedSkill = json["skill"]?.ToString();
+                }
+                catch (Newtonsoft.Json.JsonException) { }
+                if (string.IsNullOrWhiteSpace(brief))
+                    return Json(new { success = false, message = "Could not suggest a brief right now. Write one, or try again." });
+                if (brief.Length > CodeProjectQuestionHelper.MaxSuggestedBriefLength)
+                    brief = brief.Substring(0, CodeProjectQuestionHelper.MaxSuggestedBriefLength).TrimEnd() + "…";
+
+                // The skill is shown to the author and sent back with Generate, so only an exact rubric skill is returned.
+                var skill = preferredSkill;
+                if (skill == null && DmIvQuestionRubricHelper.TryMatchSkill(suggestedSkill, validSkillNames, out var matched)) skill = matched;
+
+                return Json(new { success = true, brief, skill, stack = image.Code });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not suggest a brief right now. Write one, or try again." });
+            }
+        }
+
+        /// <summary>
         /// Generates a code project question from the rubric. Mirrors GenerateQuestionsFromRubric with
         /// one structural difference: building and test-running the project takes minutes, so this
         /// persists the question as 'validating', enqueues the validation job and returns at once.
@@ -10354,6 +10429,11 @@ namespace Risebird.Web.Controllers
                 if (errors.Count > 0)
                     return Json(new { success = false, message = "The generated project did not meet the rules.", errors });
 
+                // dotnet build/test in the workspace root need a solution there; add one when the projects sit in sub-folders.
+                CodeProjectQuestionHelper.EnsureDotnetSolution(generation);
+                // No internet in the runner or on the candidate's machine: restore must use only pre-loaded packages.
+                CodeProjectQuestionHelper.EnsureDotnetOffline(generation);
+                CodeProjectQuestionHelper.EnsureProgramVisibleToTests(generation);
                 generation.TimeLimitMinutes = timeLimitMinutes;
                 generation.Language = string.IsNullOrWhiteSpace(generation.Language) ? (language ?? requestedStack) : generation.Language;
                 generation.QuestionGist = DmIvQuestionRubricHelper.BuildSpokenQuestionGist(generation.QuestionText, generation.QuestionGist);
