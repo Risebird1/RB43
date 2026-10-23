@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
@@ -35,6 +37,8 @@ namespace Risebird.Entities.ViewModel
             "- The starter project must build, and the hidden tests must mostly FAIL against it. The reference solution must make every hidden test pass.",
             "- hidden_tests, reference_solution and seeded_defects are server-side only. Do not copy their content into project_files.",
             "- Every hidden test file has its own path that does NOT appear in project_files (for example under tests/hidden/). Visible tests, if any, use different file names.",
+            "- build_command and test_command run in the workspace root. For .NET put a .sln at the root listing every .csproj (or a single .csproj at the root).",
+            "- .NET minimal APIs tested with WebApplicationFactory<Program>: end Program.cs with `public partial class Program { }` (otherwise Program is internal and the tests do not compile).",
             "- project_files is a complete project that builds on its own with build_command: for .NET include every .csproj (and a test project referencing the code under test), " +
                 "for Java the pom.xml, for Node the package.json, for Python any package __init__.py files.",
             "- SQL tasks: the only database available is SQLite through Python's built-in sqlite3 module (window functions supported) on the Python stack. " +
@@ -44,6 +48,176 @@ namespace Risebird.Entities.ViewModel
                 "vitest --reporter=junit --outputFile=test-results/junit.xml, or dotnet test --logger trx --results-directory TestResults.",
             "- Each requirement's test_name is the test method/function name exactly as the framework reports it (no class prefix, no parentheses)."
         });
+
+        /// <summary>
+        /// Inline instructions for suggesting an author brief from the chosen stack, rubric skill and
+        /// difficulty (no stored OpenAI prompt). The brief is what an author would type: the generator
+        /// turns it into the actual project, so it must be feasible on that stack's offline toolchain.
+        /// </summary>
+        public static string BriefSuggestionInstructions => string.Join("\n", new[]
+        {
+            "You suggest the brief for a timed code project interview question. An author would normally write it; you write it for them.",
+            $"- 2 to 4 plain-English sentences, at most 600 characters, written as an instruction to the question generator (\"A small ... The candidate ...\").",
+            $"- One focused defect to fix or one small feature to add, doable in {DefaultTimeLimitMinutes} minutes by a competent candidate at the given difficulty.",
+            "- Name the concrete behaviour to implement or fix and what correct output looks like, so it can be checked by automated tests.",
+            "- It must be buildable with ONLY the chosen stack's listed language, framework and dependencies, offline. Never require anything not listed (no external services, databases, cloud APIs or extra packages).",
+            "- SQL tasks are only possible on the Python stack, using SQLite through the built-in sqlite3 module (window functions supported). On other stacks, do not suggest SQL work.",
+            "- It must exercise the given rubric skill. If no skill is given, choose the single rubric skill that best fits the chosen stack.",
+            "- Never include the solution, hints about the fix, or test code.",
+            "- If a previous brief is given, suggest a clearly different scenario.",
+            "Return one JSON object: {\"brief\": \"...\", \"skill\": \"<the rubric skill, copied exactly from the list>\"}."
+        });
+
+        public const int MaxSuggestedBriefLength = 800;
+
+        // ------------------------------------------------------------------ automatic repair
+
+        /// <summary>How many times a project that failed validation is sent back to the AI with its build/test output.</summary>
+        public const int MaxRepairRounds = 2;
+
+        /// <summary>
+        /// Inline instructions for repairing a generated project. Only file contents may change: the
+        /// question, requirements, test names and commands are stored with the question and stay fixed.
+        /// </summary>
+        public static string RepairInstructions => string.Join("\n\n", new[]
+        {
+            "You repair a generated code project for a timed technical interview. It failed automated validation in an offline build container. " +
+            "You get every file, the failing step and the real build/test output. Return corrected files so that: the starter project builds; " +
+            "the starter fails most hidden tests (the candidate's task is still to do); the starter plus the reference solution passes EVERY hidden test.",
+            "Do NOT change the question, the requirements, their test names or weights, build_command, test_command, editable_files or read_only_paths. " +
+            "Each requirement's test_name must be the exact name of a test method in hidden_tests. Fix the code, the project files and the tests instead.",
+            ScopeRulesInstruction,
+            "Return one JSON object: {\"project_files\": [{\"path\", \"content\"}], \"hidden_tests\": [{\"path\", \"content\"}], " +
+            "\"reference_solution\": [{\"path\", \"content\"}], \"notes\": \"one sentence on what you fixed\"}. Each list is the COMPLETE new set for that tier, " +
+            "with full file contents. The reference_solution lists only the files that differ from the starter (normally the editable files)."
+        });
+
+        /// <summary>Failures the project itself can be repaired from: compile errors, unsolvable or mismatched tests, a pre-solved starter.</summary>
+        public static bool IsRepairable(CodeProjectValidationReport report, CodeProjectRunResult starterRun, CodeProjectRunResult referenceRun)
+        {
+            if (report?.FailureReason == null || starterRun == null || !starterRun.Completed) return false;
+            if (referenceRun != null && !referenceRun.Completed) return false;   // infrastructure, not the project
+            var failed = report.Steps.FirstOrDefault(s => s.State == "failed")?.Key;
+            return failed == "build" || failed == "reference" || failed == "starter";
+        }
+
+        /// <summary>The repair request: fixed fields, every file of every tier, and what went wrong.</summary>
+        public static string BuildRepairInput(CodeProjectGeneration g, IEnumerable<string> editableFiles, CodeProjectValidationReport report,
+            CodeProjectRunResult starterRun, CodeProjectRunResult referenceRun)
+        {
+            var failed = report.Steps.FirstOrDefault(s => s.State == "failed");
+            var run = failed?.Key == "build" || failed?.Key == "starter" ? starterRun : referenceRun ?? starterRun;
+            var sb = new StringBuilder();
+            sb.AppendLine("Repair this project. Answer in JSON.");
+            sb.AppendLine();
+            sb.AppendLine($"Failing step: {failed?.Title} — {report.FailureReason}");
+            sb.AppendLine($"Run of: {(run == starterRun ? "starter project + hidden tests" : "starter + reference solution + hidden tests")}");
+            sb.AppendLine($"Build exit code: {run?.BuildExitCode}; test exit code: {run?.TestExitCode?.ToString() ?? "not run"}");
+            sb.AppendLine("Build output (end):"); sb.AppendLine(Truncate(run?.BuildOutput, 6000) ?? "(none)");
+            sb.AppendLine("Test output (end):"); sb.AppendLine(Truncate(run?.TestOutput, 6000) ?? "(none)");
+            if (run?.Tests?.Count > 0)
+                sb.AppendLine("Tests reported by the framework: " + string.Join(", ", run.Tests.Select(t => $"{t.Name}={(t.Passed ? "pass" : "fail")}")));
+            sb.AppendLine();
+            sb.AppendLine("Fixed (do not change):");
+            sb.AppendLine(JsonSerializer.Serialize(new
+            {
+                question_text = g.QuestionText,
+                stack_image_code = g.StackImageCode,
+                build_command = g.BuildCommand,
+                test_command = g.TestCommand,
+                editable_files = editableFiles,
+                read_only_paths = g.ReadOnlyPaths,
+                requirements = g.Requirements.Select(r => new { id = r.Id, text = r.Text, test_name = r.TestName, weight = r.Weight })
+            }));
+            sb.AppendLine();
+            sb.AppendLine("Current files:");
+            sb.AppendLine(JsonSerializer.Serialize(new
+            {
+                project_files = g.ProjectFiles.Select(f => new { path = f.Path, content = f.Content }),
+                hidden_tests = g.HiddenTests.Select(f => new { path = f.Path, content = f.Content }),
+                reference_solution = g.ReferenceSolution.Select(f => new { path = f.Path, content = f.Content })
+            }));
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Applies the AI's corrected files to a copy of the project, re-applies the automatic fixes and
+        /// re-checks the static rules. Null with an error when the answer is unusable.
+        /// </summary>
+        public static CodeProjectGeneration ApplyRepair(CodeProjectGeneration original, string raw, int timeLimitMinutes, out string error, out string notes)
+        {
+            error = null; notes = null;
+            if (string.IsNullOrWhiteSpace(raw)) { error = "The AI returned no repair."; return null; }
+            JsonElement root;
+            try
+            {
+                var start = raw.IndexOf('{');
+                var end = raw.LastIndexOf('}');
+                if (start < 0 || end <= start) { error = "The repair was not a JSON object."; return null; }
+                root = JsonDocument.Parse(raw.Substring(start, end - start + 1)).RootElement.Clone();
+            }
+            catch (JsonException) { error = "The repair was not valid JSON."; return null; }
+
+            static List<CodeProjectFile> Files(JsonElement r, string name) =>
+                r.TryGetProperty(name, out var arr) && arr.ValueKind == JsonValueKind.Array
+                    ? arr.EnumerateArray()
+                        .Where(e => e.ValueKind == JsonValueKind.Object && e.TryGetProperty("path", out var p) && p.ValueKind == JsonValueKind.String)
+                        .Select(e => new CodeProjectFile
+                        {
+                            Path = NormalizePath(e.GetProperty("path").GetString()),
+                            Content = e.TryGetProperty("content", out var c) && c.ValueKind == JsonValueKind.String ? c.GetString() : ""
+                        }).ToList()
+                    : null;
+
+            var project = Files(root, "project_files");
+            var hidden = Files(root, "hidden_tests");
+            var reference = Files(root, "reference_solution");
+            if (project == null || project.Count == 0 || hidden == null || hidden.Count == 0 || reference == null || reference.Count == 0)
+            {
+                error = "The repair did not return all three file sets.";
+                return null;
+            }
+            notes = root.TryGetProperty("notes", out var n) && n.ValueKind == JsonValueKind.String ? n.GetString() : null;
+
+            // Everything except the files is kept from the original, so the stored question stays consistent.
+            var g = new CodeProjectGeneration
+            {
+                SkillOrCompetency = original.SkillOrCompetency,
+                SecondarySkills = original.SecondarySkills,
+                QuestionText = original.QuestionText,
+                QuestionGist = original.QuestionGist,
+                ExpectedAnswer = original.ExpectedAnswer,
+                TimeLimitMinutes = original.TimeLimitMinutes,
+                Language = original.Language,
+                Framework = original.Framework,
+                StackImageCode = original.StackImageCode,
+                EntryPointFile = original.EntryPointFile,
+                EditableFiles = original.EditableFiles,
+                ReadOnlyPaths = (original.ReadOnlyPaths ?? new List<string>()).ToList(),
+                BuildCommand = original.BuildCommand,
+                RunCommand = original.RunCommand,
+                TestCommand = original.TestCommand,
+                HasWebserver = original.HasWebserver,
+                Ports = original.Ports,
+                Requirements = original.Requirements,
+                EstimatedMinutes = original.EstimatedMinutes,
+                SeededDefects = original.SeededDefects,
+                ProjectFiles = project,
+                HiddenTests = hidden,
+                ReferenceSolution = reference
+            };
+            StripHiddenTestsFromProject(g);
+            EnsureDotnetSolution(g);
+            EnsureDotnetOffline(g);
+            EnsureProgramVisibleToTests(g);
+
+            var problems = ValidateScope(g, timeLimitMinutes)
+                // The automatic .NET files may push the count past the limit; they are not the AI's files.
+                .Where(p => !p.StartsWith("Project has ", StringComparison.Ordinal) || !p.Contains(" files;"))
+                .ToList();
+            if (problems.Count > 0) { error = "The repaired project broke the rules: " + string.Join(" ", problems); return null; }
+            return g;
+        }
 
         /// <summary>System instructions for the Responses API call; the request input carries the brief, rubric and allowlists.</summary>
         public static string GeneratorInstructions => string.Join("\n\n", new[]
@@ -306,14 +480,14 @@ namespace Risebird.Entities.ViewModel
             }
             if (starterRun.BuildExitCode != 0)
             {
-                Fail("build", "Build in container", $"{g.BuildCommand} → exit {starterRun.BuildExitCode}. The starter project must compile.", starterRun.WallSeconds);
+                Fail("build", "Build in container", $"{g.BuildCommand} → exit {starterRun.BuildExitCode}. The starter project must compile.{BuildErrorExcerpt(starterRun.BuildOutput)}", starterRun.WallSeconds);
                 return Finish(report);
             }
             report.Steps.Add(Step("build", "Build in container", "ok", $"{g.BuildCommand} → exit 0", starterRun.WallSeconds));
 
             if (referenceRun == null || !referenceRun.Completed || referenceRun.BuildExitCode != 0)
             {
-                Fail("reference", "Reference solution", referenceRun?.Error ?? $"Reference solution did not build (exit {referenceRun?.BuildExitCode}).", referenceRun?.WallSeconds);
+                Fail("reference", "Reference solution", referenceRun?.Error ?? $"Reference solution did not build (exit {referenceRun?.BuildExitCode}).{BuildErrorExcerpt(referenceRun?.BuildOutput)}", referenceRun?.WallSeconds);
                 return Finish(report);
             }
             var missing = g.Requirements.Where(r => FindTest(referenceRun.Tests, r.TestName) == null).Select(r => r.TestName).ToList();
@@ -413,6 +587,124 @@ namespace Risebird.Entities.ViewModel
                 ? Math.Round(passedWeight / totalWeight * 100m, 1)
                 : reqs.Count == 0 ? 0 : Math.Round(100m * result.Requirements.Count(r => r.Passed) / reqs.Count, 1);
             return result;
+        }
+
+        /// <summary>
+        /// The lines of a build log that say what broke (compiler/MSBuild/npm/pip errors), so the author
+        /// sees the cause rather than just an exit code. Empty when nothing recognisable is found.
+        /// </summary>
+        public static string BuildErrorExcerpt(string buildOutput)
+        {
+            if (string.IsNullOrWhiteSpace(buildOutput)) return "";
+            var lines = buildOutput.Replace("\r", "").Split('\n').Select(l => l.Trim()).Where(l => l.Length > 0).ToList();
+            var errors = lines.Where(l => l.IndexOf("error", StringComparison.OrdinalIgnoreCase) >= 0
+                    || l.StartsWith("ERR!", StringComparison.Ordinal) || l.Contains("Exception") || l.StartsWith("E ", StringComparison.Ordinal))
+                .Distinct().Take(4).ToList();
+            var picked = errors.Count > 0 ? errors : lines.Skip(Math.Max(0, lines.Count - 3)).ToList();
+            var text = string.Join(" ⏎ ", picked.Select(l => l.Length > 300 ? l.Substring(0, 300) + "…" : l));
+            return " Output: " + text;
+        }
+
+        /// <summary>
+        /// `dotnet build` / `dotnet test` in the workspace root need a solution or project file there. The
+        /// generator often puts the app and test projects in sub-folders with no root solution, which fails
+        /// at once (MSB1003) in the runner and on the candidate's machine. Adds a classic .sln listing every
+        /// .csproj (readable by the .NET 8 SDK), marked read-only. Returns the added path, or null.
+        /// </summary>
+        public static string EnsureDotnetSolution(CodeProjectGeneration g)
+        {
+            if (g == null || !(g.BuildCommand ?? "").TrimStart().StartsWith("dotnet", StringComparison.OrdinalIgnoreCase)) return null;
+            var paths = g.ProjectFiles.Where(f => !string.IsNullOrWhiteSpace(f?.Path)).Select(f => NormalizePath(f.Path)).ToList();
+            if (paths.Any(p => !p.Contains('/') && (p.EndsWith(".sln", StringComparison.OrdinalIgnoreCase)
+                || p.EndsWith(".slnx", StringComparison.OrdinalIgnoreCase) || p.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase))))
+                return null;
+            var projects = paths.Where(p => p.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase)).OrderBy(p => p, StringComparer.Ordinal).ToList();
+            if (projects.Count == 0) return null;
+
+            static string SlnGuid(string seed)
+            {
+                var hash = System.Security.Cryptography.MD5.HashData(Encoding.UTF8.GetBytes(seed));
+                return new System.Guid(hash).ToString("B").ToUpperInvariant();
+            }
+            const string csharpProjectType = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}";
+            var sb = new StringBuilder();
+            sb.Append("\r\nMicrosoft Visual Studio Solution File, Format Version 12.00\r\n# Visual Studio Version 17\r\n");
+            sb.Append("VisualStudioVersion = 17.0.31903.59\r\nMinimumVisualStudioVersion = 10.0.40219.1\r\n");
+            foreach (var p in projects)
+            {
+                var name = Path.GetFileNameWithoutExtension(p);
+                sb.Append($"Project(\"{csharpProjectType}\") = \"{name}\", \"{p.Replace('/', '\\')}\", \"{SlnGuid(p)}\"\r\nEndProject\r\n");
+            }
+            sb.Append("Global\r\n\tGlobalSection(SolutionConfigurationPlatforms) = preSolution\r\n\t\tDebug|Any CPU = Debug|Any CPU\r\n\t\tRelease|Any CPU = Release|Any CPU\r\n\tEndGlobalSection\r\n");
+            sb.Append("\tGlobalSection(ProjectConfigurationPlatforms) = postSolution\r\n");
+            foreach (var p in projects)
+            {
+                var id = SlnGuid(p);
+                foreach (var cfg in new[] { "Debug", "Release" })
+                    sb.Append($"\t\t{id}.{cfg}|Any CPU.ActiveCfg = {cfg}|Any CPU\r\n\t\t{id}.{cfg}|Any CPU.Build.0 = {cfg}|Any CPU\r\n");
+            }
+            sb.Append("\tEndGlobalSection\r\nEndGlobal\r\n");
+
+            const string slnPath = "Workspace.sln";
+            g.ProjectFiles.Add(new CodeProjectFile { Path = slnPath, Content = sb.ToString() });
+            g.ReadOnlyPaths ??= new List<string>();
+            if (!g.ReadOnlyPaths.Contains(slnPath, StringComparer.OrdinalIgnoreCase)) g.ReadOnlyPaths.Add(slnPath);
+            return slnPath;
+        }
+
+        public const string DotnetOfflineNuGetConfig =
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<configuration>\r\n  <!-- Offline: only the packages pre-loaded on the machine. -->\r\n" +
+            "  <packageSources>\r\n    <clear />\r\n  </packageSources>\r\n</configuration>\r\n";
+
+        public const string DotnetOfflineBuildProps =
+            "<Project>\r\n  <PropertyGroup>\r\n    <!-- The vulnerability audit downloads data from nuget.org; there is no internet here. -->\r\n" +
+            "    <NuGetAudit>false</NuGetAudit>\r\n  </PropertyGroup>\r\n</Project>\r\n";
+
+        /// <summary>
+        /// The runner and the candidate's machine have no internet. Since .NET 8, every restore of a
+        /// project with packages runs a NuGet vulnerability audit that contacts nuget.org, which hangs
+        /// until the build times out. A root NuGet.Config with no sources and a Directory.Build.props
+        /// turning the audit off keep restore to the pre-loaded packages. Existing files are left alone.
+        /// Returns the paths added.
+        /// </summary>
+        public static List<string> EnsureDotnetOffline(CodeProjectGeneration g)
+        {
+            var added = new List<string>();
+            if (g == null || !(g.BuildCommand ?? "").TrimStart().StartsWith("dotnet", StringComparison.OrdinalIgnoreCase)) return added;
+            var paths = new HashSet<string>(g.ProjectFiles.Where(f => !string.IsNullOrWhiteSpace(f?.Path)).Select(f => NormalizePath(f.Path)), StringComparer.OrdinalIgnoreCase);
+            g.ReadOnlyPaths ??= new List<string>();
+            foreach (var (path, content) in new[] { ("NuGet.Config", DotnetOfflineNuGetConfig), ("Directory.Build.props", DotnetOfflineBuildProps) })
+            {
+                if (paths.Contains(path)) continue;
+                g.ProjectFiles.Add(new CodeProjectFile { Path = path, Content = content });
+                if (!g.ReadOnlyPaths.Contains(path, StringComparer.OrdinalIgnoreCase)) g.ReadOnlyPaths.Add(path);
+                added.Add(path);
+            }
+            return added;
+        }
+
+        /// <summary>
+        /// Integration tests use WebApplicationFactory&lt;Program&gt;, but a minimal-API Program.cs (top-level
+        /// statements) compiles Program as internal, so the test project fails with CS0122. Microsoft's
+        /// documented fix is "public partial class Program { }" at the end of Program.cs; it is added to
+        /// the starter and reference copies that do not declare the class themselves. Returns the paths changed.
+        /// </summary>
+        public static List<string> EnsureProgramVisibleToTests(CodeProjectGeneration g)
+        {
+            var changed = new List<string>();
+            if (g == null || !(g.BuildCommand ?? "").TrimStart().StartsWith("dotnet", StringComparison.OrdinalIgnoreCase)) return changed;
+            var all = g.ProjectFiles.Concat(g.HiddenTests).Concat(g.ReferenceSolution).Where(f => f?.Content != null);
+            if (!all.Any(f => Regex.IsMatch(f.Content, @"WebApplicationFactory\s*<\s*Program\s*>"))) return changed;
+
+            foreach (var f in g.ProjectFiles.Concat(g.ReferenceSolution))
+            {
+                if (f?.Path == null || f.Content == null) continue;
+                if (!string.Equals(Path.GetFileName(NormalizePath(f.Path)), "Program.cs", StringComparison.OrdinalIgnoreCase)) continue;
+                if (Regex.IsMatch(f.Content, @"\bclass\s+Program\b")) continue;   // declares the class itself
+                f.Content = f.Content.TrimEnd() + "\n\n// Lets the integration tests' WebApplicationFactory<Program> see the app.\npublic partial class Program { }\n";
+                changed.Add(NormalizePath(f.Path));
+            }
+            return changed;
         }
 
         private static string Truncate(string s, int max) => s == null || s.Length <= max ? s : s.Substring(s.Length - max);
