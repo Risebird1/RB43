@@ -122,7 +122,7 @@
                     <i class="fa fa-cogs" aria-hidden="true"></i>
 
 
-                    Score Rubric Details
+                    What to evaluate against <span style="font-size:11.5px;text-transform:none;font-weight:400;color:#9aa1a8;">score rubric with elimination skills</span>
                     @if (Model.Heuristicsscore == 6)
                     {
                         <span id="techskills-note-txt"><label style="font-size:12.2px;color:#929c9c;text-transform: none;margin:0px; padding: 0px;font-weight: 400;">(This is a muktistack interview where <b style="color:#dd1f1f;">50-60 mins</b> have to be allocated to evaluate primary stack skills and remaining <b style="color:#dd1f1f;">30-40 mins</b> have to be allocated to evaluate secondary stack skills)</label></span>
@@ -339,7 +339,7 @@
             <label class="question" for="checkbox_nine" style="padding:5px;">
                 <label for="checkbox_nine" class="consent-label">
                     <i class="fa fa-question-circle-o" aria-hidden="true" style="font-size:24px;position:relative;top:1px;"></i>
-                    Interview flow and Sample Questions:@* <label style="font-size:12.2px;color:#929c9c;text-transform: none;margin:0px; padding: 0px;font-weight: 400;">Treat below questions as sample to understand client expectations, actual questions should be asked as per the difficulty level set</label> *@
+                    What to ask <span style="font-size:11.5px;text-transform:none;font-weight:400;color:#9aa1a8;">interview flow and the client's sample questions</span>@* <label style="font-size:12.2px;color:#929c9c;text-transform: none;margin:0px; padding: 0px;font-weight: 400;">Treat below questions as sample to understand client expectations, actual questions should be asked as per the difficulty level set</label> *@
                 </label>
                 <span class="round">
                     <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_nine" name="question1" data-trigger="hidden_fields_nine" />
@@ -671,6 +671,7 @@
         </div>
     </div>
 
+    @await Html.PartialAsync("_AlignmentWhatWentWrong", alignment)
     @await Html.PartialAsync("_AlignmentInsights", alignment)
 
 
@@ -1046,34 +1047,26 @@
         // Setup an event listener for each trigger checkbox that
         // fires when the state of the checkbox changes.
         $('.trigger').change(function () {
-            // Get the ID of the hidden area from the data-trigger
-            // attribute.
+            // Get the ID of the section from the data-trigger attribute, then toggle it on what is actually on
+            // screen rather than on the checkbox: sections marked show-default start open through a
+            // "display: block !important" rule (dashboard-new.css), which an inline hide() can never beat, so the
+            // old checked/unchecked logic could not close them. Closing one therefore drops that class.
             var hiddenId = $(this).attr("data-trigger");
-
-            // Check to see if the checkbox is checked.
-            // If it is, show the fields and populate the input.
-            // If not, hide the fields.
-            if ($(this).is(':checked')) {
-                // Show the hidden fields.
-                $("#" + hiddenId).show();
+            var $panel = $("#" + hiddenId);
+            if (!$panel.is(':visible')) {
+                // Show the section.
+                $panel.show();
                 $("#" + hiddenId + "_1").prop('checked', true);
                 $("[data-panel='" + hiddenId + "_1'].collapsible-panel").show();
                 $("[data-panel='" + hiddenId + "_1'].expand-panel").hide();
             } else {
-                // Make sure that the hidden fields are indeed
-                // hidden.
-                $("#" + hiddenId).hide();
+                // Collapse the section.
+                $panel.removeClass('show-default').hide();
                 $("[data-panel='" + hiddenId + "_1'].collapsible-panel").hide();
                 $("[data-panel='" + hiddenId + "_1'].expand-panel").show();
-                // You may also want to clear the value of the
-                // hidden fields here. Just in case somebody
-                // shows the fields, enters data to them and then
-                // unticks the checkbox.
-                //
-                // This would do the job:
-                //
-                // $("#hidden_field").val("");
             }
+            // Keep the hidden trigger checkbox in step with what is on screen.
+            $(this).prop('checked', $panel.is(':visible'));
         });
     });
 </script>
@@ -1147,39 +1140,68 @@
             .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
+    // "What to ask": the client's sample questions grouped by skill, as on the earlier alignment page - question,
+    // "Looking for:" (expected answer), coding time limit and question video. The first 8 show; "See all N questions"
+    // reveals the rest without another request. Same POST /IRF/GetSkillChannelSampleQuestions response, same
+    // #divquestionslist container (the "Sample questions reviewed" row opens it), nothing else fetched.
+    var SAMPLE_QUESTIONS_VISIBLE = 8;
     function bindquestionsData(data) {
         data = data || [];
-        var badge = 'display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.06em;border-radius:3px;padding:1px 6px;margin:4px 4px 0 0;';
-        var html = '';
-        html += ' <div class="table-responsive scrollbar style-2" style="overflow-x:scroll"><table class="table table-bordered mbn" id="SkillTable" cellpadding="0" cellspacing="0">';
-        html += '  <thead>';
-        html += '  <tr>';
-        html += '  <th width="18%" class="table_heading">Skill Name<span class="red">*</span></th>';
-        html += '  <th width="47%" class="table_heading">Sample Question<span class="red">*</span></th>';
-        html += '  <th width="35%" class="table_heading">Expected Answer</th>';
-        html += '  </tr>';
-        html += '  </thead>';
-        html += '  <tbody>';
-        for (var i = 0; i < data.length; i++) {
-            var q = data[i];
-            var badges = '';
-            if (q.isCodingQuestion) {
-                badges += '<span style="' + badge + 'color:#0b6e4f;background:#e6f4ee;border:1px solid #9fd3bf;">CODE' +
-                    (q.codingTimeLimitInMinutes ? ' &middot; ' + sampleQuestionEscape(q.codingTimeLimitInMinutes) + ' MIN' : '') + '</span>';
-            }
-            if (q.aiQuestionVideoLink) {
-                badges += '<a target="_blank" rel="noopener" href="' + sampleQuestionEscape(q.aiQuestionVideoLink) + '" style="' + badge + 'color:#1f6fb2;background:#eaf2fb;border:1px solid #b6d0ea;text-decoration:none;">VIDEO</a>';
-            }
-            var gist = q.questionGist ? '<div style="font-weight:600;color:#3b3f45;margin-bottom:3px;">' + sampleQuestionEscape(q.questionGist) + '</div>' : '';
-            html += '   <tr>';
-            html += '  <td>' + sampleQuestionEscape(q.skillName) + (badges ? '<div>' + badges + '</div>' : '') + '</td>';
-            html += '  <td style="white-space:pre-wrap;word-break:break-word;">' + gist + sampleQuestionEscape(q.comment) + '</td>';
-            html += '  <td style="white-space:pre-wrap;word-break:break-word;color:#555;">' + (q.expectedAnswer ? sampleQuestionEscape(q.expectedAnswer) : '<span style="color:#9aa0a6;">&mdash;</span>') + '</td>';
-            html += '  </tr>';
+        var html = '<style>' +
+            '#divquestionslist .ia-qgroup{margin:6px 0 10px 0;}' +
+            '#divquestionslist .ia-qgroup-h{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7480;margin:0 0 6px 2px;}' +
+            '#divquestionslist .ia-q{background:#fff;border:1px solid #ebe8e8;border-radius:4px;padding:8px 11px;margin-bottom:6px;}' +
+            '#divquestionslist .ia-q-gist{font-weight:600;color:#3b3f45;margin-bottom:3px;}' +
+            '#divquestionslist .ia-q-text{font-size:14px;color:#4a4343;white-space:pre-wrap;word-break:break-word;}' +
+            '#divquestionslist .ia-q-ans{margin-top:5px;font-size:13px;color:#5f5757;white-space:pre-wrap;word-break:break-word;}' +
+            '#divquestionslist .ia-q-ans b{color:#2e7d32;}' +
+            '#divquestionslist .ia-q-tags{margin-top:5px;}' +
+            '#divquestionslist .ia-q-tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.06em;border-radius:3px;padding:1px 6px;margin:0 4px 0 0;}' +
+            '#divquestionslist .ia-q-overflow{display:none;}' +
+            '#divquestionslist.ia-q-all .ia-q-overflow{display:block;}' +
+            '#divquestionslist .ia-q-more{background:none;border:0;padding:2px 0;color:#1f7fd0;font-size:13px;font-weight:600;cursor:pointer;text-decoration:underline;}' +
+            '#divquestionslist .ia-q-empty{font-size:14px;color:#979494;padding:6px 2px;}' +
+            '</style>';
+        if (data.length === 0) {
+            html += '<div class="ia-q-empty">No sample questions are configured for this skill channel yet.</div>';
+            $("#divquestionslist").removeClass('ia-q-all').empty().html(html);
+            return;
         }
-        html += '</tbody>';
-        html += ' </table></div>';
-        $("#divquestionslist").empty().html(html);
+        // Group by skill, keeping the order in which skills first appear.
+        var order = [], groups = {};
+        for (var i = 0; i < data.length; i++) {
+            var key = (data[i].skillName && String(data[i].skillName).trim()) ? String(data[i].skillName).trim() : 'Other';
+            if (!groups[key]) { groups[key] = []; order.push(key); }
+            groups[key].push(data[i]);
+        }
+        var rendered = 0;
+        for (var g = 0; g < order.length; g++) {
+            html += '<div class="ia-qgroup"><div class="ia-qgroup-h">' + sampleQuestionEscape(order[g]) + '</div>';
+            for (var j = 0; j < groups[order[g]].length; j++) {
+                var q = groups[order[g]][j];
+                var overflow = rendered >= SAMPLE_QUESTIONS_VISIBLE;
+                rendered++;
+                var tags = '';
+                if (q.isCodingQuestion) {
+                    tags += '<span class="ia-q-tag" style="color:#0b6e4f;background:#e6f4ee;border:1px solid #9fd3bf;">CODE' +
+                        (q.codingTimeLimitInMinutes ? ' &middot; ' + sampleQuestionEscape(q.codingTimeLimitInMinutes) + ' MIN' : '') + '</span>';
+                }
+                if (q.aiQuestionVideoLink) {
+                    tags += '<a class="ia-q-tag" target="_blank" rel="noopener" href="' + sampleQuestionEscape(q.aiQuestionVideoLink) + '" style="color:#1f6fb2;background:#eaf2fb;border:1px solid #b6d0ea;text-decoration:none;">&#9654; Play question video</a>';
+                }
+                html += '<div class="ia-q' + (overflow ? ' ia-q-overflow' : '') + '">' +
+                    (q.questionGist ? '<div class="ia-q-gist">' + sampleQuestionEscape(q.questionGist) + '</div>' : '') +
+                    '<div class="ia-q-text">' + sampleQuestionEscape(q.comment) + '</div>' +
+                    (q.expectedAnswer ? '<div class="ia-q-ans"><b>Looking for:</b> ' + sampleQuestionEscape(q.expectedAnswer) + '</div>' : '') +
+                    (tags ? '<div class="ia-q-tags">' + tags + '</div>' : '') +
+                    '</div>';
+            }
+            html += '</div>';
+        }
+        if (data.length > SAMPLE_QUESTIONS_VISIBLE) {
+            html += '<button type="button" class="ia-q-more" onclick="var l=document.getElementById(\'divquestionslist\');l.classList.add(\'ia-q-all\');this.style.display=\'none\';">See all ' + data.length + ' questions</button>';
+        }
+        $("#divquestionslist").removeClass('ia-q-all').empty().html(html);
     }
 </script>
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")

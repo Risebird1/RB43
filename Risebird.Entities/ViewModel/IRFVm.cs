@@ -282,8 +282,9 @@ namespace Risebird.Entities.ViewModel
 
         /// <summary>
         /// Interview alignment rollout switch (IRF.IsInterviewerAlignmentRequired). On: interviewers on this
-        /// channel get the alignment page and the gated Zoom link. Nullable end to end: a form that does not
-        /// post it binds null, and usp_UpdateIRFDetails then leaves the stored value as it is.
+        /// channel get the alignment page and the gated Zoom link. Read-only on this model: Edit IRF displays it, but
+        /// it is saved on its own by IRF/UpdateInterviewerAlignmentRequired, never by the Edit IRF save, because that
+        /// save re-applies the interviewer panel and toggling this switch must not change interviewers or assignments.
         /// </summary>
         [Display(Name = "Interviewer alignment required")]
         public bool? IsInterviewerAlignmentRequired { get; set; }

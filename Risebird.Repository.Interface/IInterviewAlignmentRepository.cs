@@ -15,7 +15,20 @@ namespace Risebird.Repository.Interface
         /// <summary>IRF.IsInterviewerAlignmentRequired for the interview's own channel; false when off, NULL or unknown.</summary>
         Task<bool> IsAlignmentRequiredAsync(int interviewId);
 
+        /// <summary>
+        /// Writes IRF.IsInterviewerAlignmentRequired for one channel and nothing else (usp_SetInterviewerAlignmentRequired).
+        /// True when the channel row was updated, false when no channel has that id, null when the database call failed
+        /// (for example usp_SetInterviewerAlignmentRequired is not deployed yet).
+        /// </summary>
+        Task<bool?> SetAlignmentRequiredAsync(int irfId, bool isRequired);
+
         Task<InterviewAlignmentContext> GetAlignmentContextAsync(int interviewId, string interviewerEmail);
+
+        /// <summary>
+        /// The interviewer's own flagged past interviews on this interview's channel (read-only,
+        /// usp_GetInterviewAlignmentFlaggedInterviews). Null when the database call failed.
+        /// </summary>
+        Task<IList<AlignmentFlaggedInterview>> GetFlaggedInterviewsAsync(int interviewId, string interviewerEmail);
 
         Task<bool> AcknowledgeTrialOnboardingAsync(string interviewerEmail, string policyVersion, DateTime now);
 

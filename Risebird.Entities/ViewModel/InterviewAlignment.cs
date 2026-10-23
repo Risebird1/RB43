@@ -33,6 +33,51 @@ namespace Risebird.Entities.ViewModel
         public string CandidateEmail { get; set; }
     }
 
+    /// <summary>
+    /// One of the interviewer's own past interviews on this channel where a quality signal fired, from
+    /// usp_GetInterviewAlignmentFlaggedInterviews. Shown in "What went wrong before" on the alignment page.
+    /// </summary>
+    public class AlignmentFlaggedInterview
+    {
+        public int InterviewId { get; set; }
+        public DateTime InterviewDate { get; set; }
+
+        /// <summary>Server-side only: the key for the candidate's coded name. Cleared before the page renders.</summary>
+        public string CandidateEmail { get; set; }
+
+        /// <summary>CandidatePseudonym nickname, e.g. AdLo1234. Never the real name.</summary>
+        public string CandidateCodedName { get; set; }
+        public int SignalCount { get; set; }
+
+        /// <summary>High (3+ signals), Medium (2) or Low (1).</summary>
+        public string RiskCategory { get; set; }
+        public bool IsSuspiciousQC { get; set; }
+        public bool IsRedo { get; set; }
+        public bool IsLowCandidateRating { get; set; }
+        public bool IsNegativeAIReportVerdict { get; set; }
+        public bool IsNegativeAITranscriptVerdict { get; set; }
+        public int? CandidateRating { get; set; }
+        public int? AIReportQCAnalysisScore { get; set; }
+        public int? AITranscriptAnalysisScore { get; set; }
+        public string AIReasoning { get; set; }
+        public string QCComment { get; set; }
+
+        /// <summary>The signals that fired, in plain words.</summary>
+        public IList<string> Issues
+        {
+            get
+            {
+                var issues = new List<string>();
+                if (IsSuspiciousQC) issues.Add("QC found a suspicious application or red flags");
+                if (IsRedo) issues.Add("The interview was redone");
+                if (IsLowCandidateRating) issues.Add("Low candidate rating" + (CandidateRating.HasValue ? $" ({CandidateRating.Value}/5)" : ""));
+                if (IsNegativeAIReportVerdict) issues.Add("AI review of the report was negative" + (AIReportQCAnalysisScore.HasValue ? $" (score {AIReportQCAnalysisScore.Value})" : ""));
+                if (IsNegativeAITranscriptVerdict) issues.Add("AI review of the transcript was negative" + (AITranscriptAnalysisScore.HasValue ? $" (score {AITranscriptAnalysisScore.Value})" : ""));
+                return issues;
+            }
+        }
+    }
+
     /// <summary>One of the interviewer's own questions (TechSkillComments) with this interview's code session, if minted.</summary>
     public class InterviewerCodeQuestion
     {
@@ -156,6 +201,12 @@ namespace Risebird.Entities.ViewModel
         public IList<string> Skills { get; set; } = new List<string>();
         public IList<InterviewerCodeQuestion> Questions { get; set; } = new List<InterviewerCodeQuestion>();
         public IList<InterviewCodeSession> Sessions { get; set; } = new List<InterviewCodeSession>();
+
+        /// <summary>"What went wrong before": the interviewer's flagged past interviews on this channel.</summary>
+        public IList<AlignmentFlaggedInterview> FlaggedInterviews { get; set; } = new List<AlignmentFlaggedInterview>();
+
+        /// <summary>False when the flagged interviews could not be loaded (the card then says so); the page still works.</summary>
+        public bool FlaggedInterviewsLoaded { get; set; }
     }
 
     /// <summary>The candidate's code session page, opened by token without signing in.</summary>
