@@ -85,7 +85,10 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
  @McqAssessmentSections varchar(500) = null,
  @McqAssessmentMinutes int = null,
  -- Advanced Resume Screening opt-in. NULL leaves the stored flag unchanged.
- @IsAdvancedResumeScreening bit = null
+ @IsAdvancedResumeScreening bit = null,
+ -- Interview alignment rollout switch. NULL (a caller or form that never sent it) leaves it unchanged,
+ -- so a save can never switch a channel on or off by omission.
+ @IsInterviewerAlignmentRequired bit = null
  --@FixedAmount int = null  
  --@idRecommendation int,  
  --@RecommendationStatus bit,  
@@ -169,6 +172,7 @@ BEGIN
  ,[McqAssessmentMinutes]=CASE WHEN @HasMcqAssessmentSection IS NULL THEN [McqAssessmentMinutes]
                               ELSE NULLIF(@McqAssessmentMinutes,0) END
  ,[IsAdvancedResumeScreening]=ISNULL(@IsAdvancedResumeScreening,[IsAdvancedResumeScreening])
+ ,[IsInterviewerAlignmentRequired]=ISNULL(@IsInterviewerAlignmentRequired,[IsInterviewerAlignmentRequired])
  --,[InterviewDuration]=@InterviewDuration  
  --,[IsFixedInterviewduration]=@IsFixedInterviewduration  
  --,[FixedAmount] = @FixedAmount  

@@ -951,6 +951,12 @@ WHERE si.SuspiciousStatus = 1",
                             _resultVM.showChatBox = !string.IsNullOrEmpty(dt.Rows[0]["showChatBox"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["showChatBox"]) : false;
                             _resultVM.generateTranscriptSummary = !string.IsNullOrEmpty(dt.Rows[0]["generateTranscriptSummary"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["generateTranscriptSummary"]) : false;
                             _resultVM.IsProctoring = !dt.Columns.Contains("IsProctoring") || string.IsNullOrEmpty(dt.Rows[0]["IsProctoring"].ToString()) || Convert.ToBoolean(dt.Rows[0]["IsProctoring"]);
+                            // Interview alignment rollout switch. NULL on every channel until someone ticks it;
+                            // guarded so Edit IRF still loads where Tables\IRF.sql has not been applied yet.
+                            _resultVM.IsInterviewerAlignmentRequired = dt.Columns.Contains("IsInterviewerAlignmentRequired")
+                                && !string.IsNullOrEmpty(dt.Rows[0]["IsInterviewerAlignmentRequired"].ToString())
+                                ? Convert.ToBoolean(dt.Rows[0]["IsInterviewerAlignmentRequired"])
+                                : (bool?)null;
                             // MCQ assessment section. Columns.Contains-guarded so the edit screen
                             // still loads if this build reaches an environment where Tables\IRF.sql
                             // has not been applied yet.
@@ -3000,6 +3006,15 @@ WHERE si.SuspiciousStatus = 1",
                     // checkbox is not shown), so a save never turns the feature off by omission.
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAdvancedResumeScreening", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsAdvancedResumeScreening"].Value = irfDetails.IsAdvancedResumeScreening;
+
+                    // Null when the form did not post the field (a role that does not see it): the parameter is
+                    // then not sent and the proc keeps the stored switch, so a save never turns a channel's
+                    // alignment page on or off by omission.
+                    if (irfDetails.IsInterviewerAlignmentRequired.HasValue)
+                    {
+                        cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsInterviewerAlignmentRequired", SqlDbType.Bit));
+                        cmdUpdateIRF.Parameters["@IsInterviewerAlignmentRequired"].Value = irfDetails.IsInterviewerAlignmentRequired.Value;
+                    }
 
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;

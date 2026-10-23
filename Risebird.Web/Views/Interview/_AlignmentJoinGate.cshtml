@@ -1,0 +1,433 @@
+@model Risebird.Entities.ViewModel.InterviewAlignmentViewModel
+@using Risebird.Entities.ViewModel
+@*
+    Interview alignment: the cue under the Join button, the trial banner, the "Ready to join" card, the
+    candidate card and the shared overlay every requirement opens in. Rendered only by
+    InterviewAlignment.cshtml (channels with IRF.IsInterviewerAlignmentRequired on); behaviour lives in
+    _AlignmentScripts.cshtml.
+
+    The gate is built from the checklist that already existed, not from new labels: every row carries a real
+    <input name="InterviewCheckshow"> with the existing checklist_N id, plus two rows for the rubric and the
+    sample questions. Which checklist items render depends on the channel (the same conditions the old
+    "Mandatory Interview Instructions" modal used), and the total is derived from what rendered - never
+    hard-coded. Two tiers, because they are not the same kind of thing:
+      Before you join       - the page watched it happen (panel read, video played, document opened).
+      During the interview  - the interviewer confirms they will do it; enforcement is after the call.
+
+    Every requirement opens as an overlay over the page and ticks on close, never on open. The page never
+    scrolls. The wording asks the interviewer to check the points, not that they cannot join:
+    "Join without confirming" is always there and is recorded with what was outstanding.
+*@
+@{
+    var meeting = (Risebird.Entities.Data.Meeting)ViewData["Meeting"];
+    bool hasJoinButton = meeting != null && !string.IsNullOrEmpty(meeting.zoomLink);
+    int sessionCount = Model.Sessions?.Count ?? 0;
+    bool hasVideo = meeting != null && !string.IsNullOrEmpty(meeting.AudioComment);
+    bool hasDocument = meeting != null && !string.IsNullOrEmpty(meeting.CompanyDetails);
+    bool hasConsent = meeting != null && !string.IsNullOrWhiteSpace(meeting.ConsentFormUrl);
+    bool hasIdVerification = meeting != null && meeting.CandidateIdverification;
+    bool hasPreCheck = meeting != null && !string.IsNullOrWhiteSpace(meeting.PreReportLink);
+
+    // Kind: watch (ticks on close once open long enough to read), link (ticks on close once the document was
+    // opened), video (ticks on close once the video played), confirm (ticks when the interviewer confirms).
+    // Source: the element the overlay shows - the page's own section, moved in and back, so nothing is duplicated.
+    var before = new List<(string Key, string Title, string Detail, string Action, string Kind, string Source)>
+    {
+        (JoinGateRequirementKeys.Rubric, "Rubric reviewed", "skills and elimination skills for this channel", "View", "watch", "hidden_fields_two"),
+        (JoinGateRequirementKeys.Questions, "Sample questions reviewed", "the client's samples for this channel", "View", "watch", "hidden_fields_nine"),
+        (JoinGateRequirementKeys.PreviousIssues, "Issues in your previous interviews", "on this channel", "Check", "watch", "iaInsights"),
+        (JoinGateRequirementKeys.QualitySla, "Interviewer Quality SLA read", "compliance", "Open", "link", "iaSrc-checklist_6")
+    };
+    if (hasVideo)
+    {
+        before.Add((JoinGateRequirementKeys.FlowVideo, "Suggested interview flow watched", "video", "Play", "video", "iaSrc-checklist_7"));
+    }
+    if (hasDocument)
+    {
+        before.Add((JoinGateRequirementKeys.FlowDocument, "Suggested interview flow read", "document", "Open", "link", "iaSrc-checklist_8"));
+    }
+
+    var during = new List<(string Key, string Title, string Detail, string Action, string Kind, string Source)>
+    {
+        (JoinGateRequirementKeys.OwnQuestions, "I have my own questions ready", "Bring Your Own Questions", "View", "confirm", "iaSrc-checklist_5")
+    };
+    if (hasIdVerification)
+    {
+        during.Add((JoinGateRequirementKeys.IdVerification, "Candidate ID verification", "at the start of the call", "View", "confirm", "iaSrc-checklist_2"));
+    }
+    if (hasConsent)
+    {
+        during.Add((JoinGateRequirementKeys.JobConsent, "Candidate job consent", "share during the call", "View", "confirm", "iaSrc-checklist_1"));
+    }
+    if (Model.CodeSnippetRequired)
+    {
+        during.Add((JoinGateRequirementKeys.CandidateCode, "Candidate code", "I will run a code session", sessionCount > 0 ? "Open" : "Create now", "confirm", "iaCodeSessions"));
+    }
+    during.Add((JoinGateRequirementKeys.ProxyAlert, "Candidate proxy alert", "mark a suspicious candidate", "View", "confirm", "iaSrc-checklist_4"));
+
+    int total = before.Count + during.Count;
+
+    // What the confirm button says, per during-the-interview requirement.
+    var confirmLabels = new Dictionary<string, string>
+    {
+        [JoinGateRequirementKeys.OwnQuestions] = "I have my own questions ready",
+        [JoinGateRequirementKeys.IdVerification] = "I will verify the candidate's ID",
+        [JoinGateRequirementKeys.JobConsent] = "I will share the job consent",
+        [JoinGateRequirementKeys.CandidateCode] = "I will run a code session",
+        [JoinGateRequirementKeys.ProxyAlert] = "I will mark a suspicious candidate"
+    };
+}
+<style>
+    /* Cue under the Join button. The resting frame carries the whole message (colour, border, copy, count); the
+       blink only amplifies it and nothing is ever invisible between pulses, so a screenshot, a paused tab or a
+       throttled browser still reads correctly. Under prefers-reduced-motion the cue stays and the motion stops. */
+    .ia-callout { position: relative; display: flex; align-items: center; gap: 10px; width: 330px; max-width: 100%;
+        margin: -8px auto 22px auto; padding: 9px 14px 10px 14px; text-align: left;
+        background: #fffaf0; border: 1px solid #f0a020; border-radius: 6px;
+        box-shadow: 0 4px 14px rgba(240, 160, 32, .18); }
+    /* Tail on the bottom edge, pointing down at the list of what is missing. */
+    .ia-callout:before, .ia-callout:after { content: ""; position: absolute; left: 50%; width: 0; height: 0;
+        border-left: 9px solid transparent; border-right: 9px solid transparent; }
+    .ia-callout:before { bottom: -10px; margin-left: -9px; border-top: 10px solid #f0a020; }
+    .ia-callout:after { bottom: -8px; margin-left: -9px; border-top: 10px solid #fffaf0; }
+    .ia-dot { flex: 0 0 auto; width: 10px; height: 10px; border-radius: 50%; background: #f0a020; }
+    .ia-callout-title { flex: 1 1 auto; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #8a5300; line-height: 18px; }
+    .ia-caret { flex: 0 0 auto; color: #e08e00; font-size: 15px; }
+    .ia-blink { animation: iaBlink 1.2s ease-in-out infinite; }
+    .ia-nudge { animation: iaNudge 1.2s ease-in-out infinite; }
+    .ia-callout.is-attention { animation: iaAttention .5s ease-in-out 2; }
+    @@keyframes iaBlink { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+    @@keyframes iaNudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
+    @@keyframes iaAttention { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+    @@media (prefers-reduced-motion: reduce) { .ia-blink, .ia-nudge, .ia-callout.is-attention { animation: none; } }
+
+    /* Card header in the page's style: icon + grey uppercase title, not clickable. */
+    .ia-head { padding: 5px !important; cursor: default !important; overflow: hidden; }
+    .ia-head .consent-label { cursor: default !important; }
+    .ia-count { display: inline-block; margin-left: 8px; padding: 1px 9px; font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em;
+        border-radius: 10px; background: #fff6e5; color: #a35f00; border: 1px solid #f0a020; vertical-align: 1px; }
+    .ia-count.is-done { background: #e8f5e9; color: #2e7d32; border-color: #66bb6a; }
+    .ia-mandate { display: block; padding: 0 6px 8px 6px; font-size: 12.5px; line-height: 18px; color: #979494; }
+    .ia-tier { display: flex; align-items: baseline; gap: 8px; margin: 4px 0 6px 2px; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #6b7480; }
+    .ia-tier small { font-size: 12px; font-weight: 400; letter-spacing: 0; text-transform: none; color: #9aa1a8; }
+    .ia-tier + .ia-row { margin-top: 0; }
+    .ia-group { margin-bottom: 12px; }
+
+    /* Requirement rows: the page's green round tick on the left, a pill action on the right. */
+    .ia-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 10px; margin: 0 0 6px 0;
+        background: #fff; border: 1px solid #ebe8e8; border-radius: 3px; font-size: 14.5px; color: #847878; }
+    .ia-row.is-outstanding { border-color: #f0a020; box-shadow: 0 0 0 1px #f0a020 inset; background: #fffbf3; }
+    .ia-row-text { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .ia-box { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+    .ia-tick { position: relative; flex: 0 0 auto; width: 22px; height: 22px; border: 1px solid #ccc; border-radius: 50%; background: #fff; }
+    .ia-tick:after { content: ""; position: absolute; left: 6px; top: 6px; width: 10px; height: 5px; border: 2px solid #fff; border-top: 0; border-right: 0; transform: rotate(-45deg); opacity: 0; }
+    .ia-row.is-done .ia-tick { background: #66bb6a; border-color: #66bb6a; }
+    .ia-row.is-done .ia-tick:after { opacity: 1; }
+    .ia-row b { color: #5f5757; font-weight: 600; }
+    .ia-key { margin-left: 6px; font-size: 11px; color: #b0b6bc; white-space: nowrap; }
+    .ia-pill { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 11px;
+        background: #eaf4fe; color: #1f7fd0 !important; border: 1px solid #cfe4f8; border-radius: 12px;
+        font-size: 12px; font-weight: 600; line-height: 1; letter-spacing: .01em; text-decoration: none; cursor: pointer; white-space: nowrap;
+        transition: background-color .15s ease, color .15s ease, border-color .15s ease; }
+    .ia-pill:hover, .ia-pill:focus-visible { background: #42a5f5; border-color: #42a5f5; color: #fff !important; outline: none; }
+    .ia-row.is-outstanding .ia-pill { background: #fff3dc; border-color: #f3c77a; color: #a35f00 !important; }
+    .ia-row.is-outstanding .ia-pill:hover { background: #f0a020; border-color: #f0a020; color: #fff !important; }
+    .ia-footnote { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-top: 6px; font-size: 13px; line-height: 19px; color: #979494; }
+    .ia-override { flex: 0 0 auto; background: #fff; color: #d43434; border: 1px solid #d43434; border-radius: 20px; padding: 5px 16px; font-size: 13px; cursor: pointer; white-space: nowrap; }
+    .ia-override:hover { background: #fdecec; }
+    /* Gate cleared: no cue, no caret, no ring, no amber - the button simply goes live, looking as it does today. */
+    .ia-gate-cleared .ia-callout, .ia-gate-cleared .ia-override { display: none; }
+
+    /* Trial banner, in the tone of the page's other notices. */
+    .ia-banner { margin: 0 0 10px 0; padding: 10px 14px; background: #fff6e5; border: 1px solid #f3d29a; border-left: 4px solid #f0a020; border-radius: 3px; font-size: 14.5px; line-height: 22px; color: #847878; }
+    .ia-banner .fa { color: #f0a020; margin-right: 6px; }
+    .ia-banner b { color: #a35f00; }
+    .ia-banner .ia-link-btn { background: none; border: 0; padding: 0; color: #4c87b6; font-weight: 700; text-decoration: underline; cursor: pointer; }
+
+    /* Candidate card: coded identity on the left, details as chips on the right. */
+    .ia-cand { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap;
+        padding: 12px 14px; background: #fff; border: 1px solid #ebe8e8; border-radius: 6px; }
+    .ia-cand-id { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1 1 260px; }
+    .ia-avatar { flex: 0 0 auto; width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        background: linear-gradient(135deg, #42a5f5, #1e7fd0); color: #fff; font-size: 16px; font-weight: 700; letter-spacing: .03em;
+        box-shadow: 0 2px 6px rgba(30, 127, 208, .3); }
+    .ia-avatar .fa { font-size: 20px; padding: 0; }
+    .ia-cand-name { display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 700; color: #4a4343; line-height: 22px; }
+    .ia-cand-name.is-missing { font-size: 14px; font-weight: 600; color: #979494; }
+    .ia-coded-tag { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 10px; font-size: 10.5px; font-weight: 600;
+        color: #607d8b; background: #eef3f6; border: 1px solid #d5e1e8; letter-spacing: .02em; }
+    .ia-cand-role { display: block; margin-top: 2px; font-size: 13.5px; color: #847878; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ia-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .ia-chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 8px; border-radius: 8px; background: #f7f8fa; border: 1px solid #ebeef1; }
+    .ia-chip-icon { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #e9eef3; color: #78909c; font-size: 13px; }
+    .ia-chip-icon .fa { padding: 0; }
+    .ia-chip-label { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #9aa1a8; line-height: 13px; }
+    .ia-chip-value { display: block; font-size: 13.5px; font-weight: 600; color: #5f5757; line-height: 17px; }
+    .ia-chip.is-required { background: #fff8ec; border-color: #f6dcb0; }
+    .ia-chip.is-required .ia-chip-icon { background: #fde8c4; color: #d98a00; }
+    .ia-chip.is-required .ia-chip-value { color: #a35f00; }
+    .ia-chip.is-info .ia-chip-icon { background: #e3f0fc; color: #2f8fdc; }
+    .ia-chip.is-muted .ia-chip-value { color: #9aa1a8; font-weight: 500; }
+
+    /* The one overlay shell every requirement opens in (the page's own modal modal-bg). Below the insights
+       modals (z-index 3+), so "open your full insights" from inside it stacks on top. */
+    #iaOverlay { z-index: 2; }
+    #iaOverlay .modal-dialog { max-width: 920px !important; top: 10px; }
+    #iaOverlay .ia-ov-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    #iaOverlay .ia-ov-progress { font-size: 12px; color: #8a5300; white-space: nowrap; padding: 0 44px 0 0; }
+    #iaOverlay .ia-ov-progress.is-done { color: #2e7d32; }
+    #iaOverlay .ia-ov-body { max-height: 62vh; overflow-y: auto; padding: 6px 15px 4px 15px; }
+    #iaOverlay .ia-ov-body > fieldset, #iaOverlay .ia-ov-body > .card { display: block !important; float: none; width: 100%; }
+    #iaOverlay .ia-ov-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 10px 15px 14px 15px; border-top: 1px solid #eee; }
+    #iaOverlay .ia-ov-note { flex: 1 1 260px; font-size: 13px; line-height: 19px; color: #979494; }
+    #iaOverlay .ia-ov-note.is-ready { color: #2e7d32; }
+    #iaOverlay .ia-ov-actions { display: flex; gap: 8px; }
+    #iaOverlay .ia-btn { border-radius: 20px; padding: 7px 18px; font-size: 13.5px; cursor: pointer; border: 1px solid #42a5f5; background: #fff; color: #1f7fd0; }
+    #iaOverlay .ia-btn.is-primary { background: #42a5f5; color: #fff; }
+    #iaOverlay .ia-btn.is-primary:hover { background: #1f7fd0; border-color: #1f7fd0; }
+    .ia-placeholder { border: 1px dashed #e0dcdc; border-radius: 3px; background: #fafafa; }
+    .ia-src-text { font-size: 14.8px; line-height: 24px; color: #847878; }
+    .ia-src-text b { color: green; padding-right: 6px; }
+    .ia-src-text ul { padding: 0 10px 0 20px; }
+    .ia-src-text li { list-style: square; line-height: 22px; margin-bottom: 5px; }
+    .ia-src-link { display: inline-block; margin-top: 10px; background: #42a5f5; color: #fff !important; padding: 4px 12px; border-radius: 3px; text-decoration: none !important; }
+</style>
+
+<div id="iaAlignment" data-interview-id="@Model.InterviewId" data-interviewer="@meeting?.interviewer" data-irf-code="@Model.IRFCode">
+    @Html.AntiForgeryToken()
+
+    @if (hasJoinButton)
+    {
+        <div class="ia-callout" id="iaCallout" role="status" aria-live="polite">
+            <span class="ia-dot ia-blink" aria-hidden="true"></span>
+            <span class="ia-callout-title">Check the @total points below first</span>
+            <i class="fa fa-chevron-down ia-caret ia-blink ia-nudge" aria-hidden="true"></i>
+        </div>
+    }
+
+    @if (Model.IsTrialInterview)
+    {
+        <div class="ia-banner" id="iaTrialBanner">
+            <i class="fa fa-flag" aria-hidden="true"></i><b>This is a trial interview on this channel.</b>
+            It is your first interview here, so this session is reviewed in full before you are assigned more.
+            @if (!string.IsNullOrWhiteSpace(Model.TrialPolicyUrl))
+            {
+                <a href="@Model.TrialPolicyUrl" target="_blank" rel="noopener" style="color:#4c87b6;font-weight:700;text-decoration:underline;">Read the trial policy</a>
+            }
+            else
+            {
+                <button type="button" class="ia-link-btn" onclick="iaOpenTrialOnboarding()">Read the trial policy</button>
+            }
+        </div>
+    }
+
+    <div class="card" id="iaGateCard" style="margin-bottom:10px;">
+        <div class="question ia-head">
+            <label class="consent-label">
+                <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                Ready to join <span class="ia-count" id="iaGateCount">0 of @total confirmed</span>
+            </label>
+        </div>
+        <fieldset class="answer">
+            <span class="ia-mandate">Mandatory interview instructions for this channel. Failure to comply may result in up to 100% payment deduction.</span>
+
+            <div class="ia-group">
+                <div class="ia-tier">Before you join <small>the page checks these</small></div>
+                @foreach (var r in before)
+                {
+                    <div class="ia-row" data-req="@r.Key" data-kind="@r.Kind" data-source="@r.Source" data-title="@r.Title">
+                        <span class="ia-row-text">
+                            <input type="checkbox" class="ia-box" id="@(r.Key.StartsWith("checklist_") ? r.Key : "checklist_" + r.Key)" name="InterviewCheckshow" tabindex="-1" aria-hidden="true" onclick="return false;" />
+                            <span class="ia-tick" aria-hidden="true"></span>
+                            <span><b>@r.Title</b> &mdash; @r.Detail</span>
+                        </span>
+                        <button type="button" class="ia-pill" onclick="iaOpenRequirement('@r.Key', this)">@r.Action</button>
+                    </div>
+                }
+            </div>
+
+            <div class="ia-group">
+                <div class="ia-tier">During the interview <small>you are confirming you will do these</small></div>
+                @foreach (var r in during)
+                {
+                    <div class="ia-row" data-req="@r.Key" data-kind="@r.Kind" data-source="@r.Source" data-title="@r.Title" data-confirm="@confirmLabels[r.Key]">
+                        <span class="ia-row-text">
+                            <input type="checkbox" class="ia-box" id="@r.Key" name="InterviewCheckshow" tabindex="-1" aria-hidden="true" onclick="return false;" />
+                            <span class="ia-tick" aria-hidden="true"></span>
+                            <span>
+                                <b>@r.Title</b> &mdash; @r.Detail
+                                @if (r.Key == JoinGateRequirementKeys.CandidateCode)
+                                {
+                                    @:&mdash; <span id="iaCodeCreatedCount">@sessionCount</span> created
+                                }
+                            </span>
+                        </span>
+                        <button type="button" class="ia-pill" onclick="iaOpenRequirement('@r.Key', this)">@r.Action</button>
+                    </div>
+                }
+            </div>
+
+            <div class="ia-footnote">
+                <span id="iaGateFootnote">
+                    @if (hasJoinButton)
+                    {
+                        @:The Zoom link above unlocks once all @total are confirmed. Each opens in place &mdash; the page never scrolls. You can still join without confirming; the override is recorded with what was outstanding.
+                    }
+                    else
+                    {
+                        @:Confirm these before the call. Each opens in place &mdash; the page never scrolls.
+                    }
+                </span>
+                @if (hasJoinButton)
+                {
+                    <button type="button" class="ia-override" id="iaOverride" onclick="iaJoinWithoutConfirming()">Join without confirming</button>
+                }
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="card" id="iaCandidateCard" style="margin-bottom:10px;">
+        <div class="question ia-head">
+            <label class="consent-label">
+                <i class="fa fa-user-circle-o" aria-hidden="true"></i>
+                Candidate <span style="font-size:11.5px;text-transform:none;font-weight:400;color:#9aa1a8;">coded identity only</span>
+            </label>
+        </div>
+        @{
+            var codedName = Model.CandidateCodedName?.Trim();
+            var hasCodedName = !string.IsNullOrEmpty(codedName);
+            // Initials of the coded name's two parts, e.g. AdLo1234 -> AL. Never the real name.
+            var initials = !hasCodedName ? null
+                : codedName.Length >= 3 ? (codedName.Substring(0, 1) + codedName.Substring(2, 1)).ToUpperInvariant()
+                : codedName.Substring(0, 1).ToUpperInvariant();
+            bool videoRequired = meeting != null && meeting.IsVideoRequired;
+            bool hasDuration = Model.DurationMinutes.HasValue && Model.DurationMinutes.Value > 0;
+        }
+        <fieldset class="answer">
+            <div class="ia-cand">
+                <div class="ia-cand-id">
+                    <span class="ia-avatar" aria-hidden="true">
+                        @if (hasCodedName)
+                        {
+                            @initials
+                        }
+                        else
+                        {
+                            <i class="fa fa-user"></i>
+                        }
+                    </span>
+                    <span style="min-width:0;">
+                        <span class="ia-cand-name @(hasCodedName ? "" : "is-missing")">
+                            @(hasCodedName ? codedName : "Coded name not assigned yet")
+                            <span class="ia-coded-tag"><i class="fa fa-lock" aria-hidden="true"></i> Coded identity</span>
+                        </span>
+                        <span class="ia-cand-role" title="@Model.RoleTitle">@(string.IsNullOrWhiteSpace(Model.RoleTitle) ? "Role not specified" : Model.RoleTitle)</span>
+                    </span>
+                </div>
+                <div class="ia-chips">
+                    <span class="ia-chip is-info">
+                        <span class="ia-chip-icon"><i class="fa fa-clock-o" aria-hidden="true"></i></span>
+                        <span><span class="ia-chip-label">Duration</span><span class="ia-chip-value">@(hasDuration ? Model.DurationMinutes.Value + " minutes" : "—")</span></span>
+                    </span>
+                    <span class="ia-chip @(videoRequired ? "is-required" : "is-muted")">
+                        <span class="ia-chip-icon"><i class="fa fa-video-camera" aria-hidden="true"></i></span>
+                        <span><span class="ia-chip-label">Video</span><span class="ia-chip-value">@(videoRequired ? "Required" : "Not required")</span></span>
+                    </span>
+                    <span class="ia-chip @(Model.CodeSnippetRequired ? "is-required" : "is-muted")">
+                        <span class="ia-chip-icon"><i class="fa fa-file-code-o" aria-hidden="true"></i></span>
+                        <span><span class="ia-chip-label">Code snippet</span><span class="ia-chip-value">@(Model.CodeSnippetRequired ? "Required" : "Not required")</span></span>
+                    </span>
+                    <span class="ia-chip is-info">
+                        <span class="ia-chip-icon"><i class="fa fa-code" aria-hidden="true"></i></span>
+                        <span><span class="ia-chip-label">Coding questions</span><span class="ia-chip-value" id="iaCodingQuestionCount">@sessionCount</span></span>
+                    </span>
+                    @if (hasPreCheck)
+                    {
+                        <span class="ia-chip is-info">
+                            <span class="ia-chip-icon"><i class="fa fa-file-text-o" aria-hidden="true"></i></span>
+                            <span><span class="ia-chip-label">Pre-check</span><button type="button" class="ia-pill" style="margin-top:2px;" onclick="iaOpenPanel('precheck', this)">Open</button></span>
+                        </span>
+                    }
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    @* Sources for the requirements that have no section of their own on the page: the wording of the old
+       "Mandatory Interview Instructions" checklist items, shown in the overlay. Hidden until moved into it. *@
+    <div id="iaSources" style="display:none;">
+        <div id="iaSrc-checklist_6" class="ia-src-text">
+            <b>General Interviewer Quality SLA:</b> the quality standard every interview on Risebird is reviewed against.
+            Open the compliance document and read it before the call.
+            <div><a class="ia-src-link" data-ia-evidence="checklist_6" target="_blank" rel="noopener" href="https://drive.google.com/file/d/1sWUn7iG9DMISTG600F8LY8hjP9aUG3qn/view?usp=sharing">Open the Interviewer Compliance document</a></div>
+        </div>
+        @if (hasVideo)
+        {
+            <div id="iaSrc-checklist_7" class="ia-src-text">
+                <b>Suggested Interview Flow &mdash; Video:</b> the client's explanation of how this interview should run.
+                <video id="vidvideoinstruction" data-ia-evidence="checklist_7" style="width:100%;height:300px;margin-top:8px;background:#000;" controls preload="metadata"><source src="@meeting.AudioComment"></video>
+            </div>
+        }
+        @if (hasDocument)
+        {
+            <div id="iaSrc-checklist_8" class="ia-src-text">
+                <b>Suggested Interview Flow &mdash; Document:</b> the client's written explanation of how this interview should run.
+                <div><a class="ia-src-link" id="companylinkId" data-ia-evidence="checklist_8" target="_blank" rel="noopener" title="Company Instructions" href="@meeting.CompanyDetails.Replace(" ", "%20")">Open the instruction document</a></div>
+            </div>
+        }
+        <div id="iaSrc-checklist_5" class="ia-src-text">
+            <b>Bring Your Own Questions:</b>
+            <ul>
+                <li>Interviewers are expected to have their own personal questions inventory as per the suggested format. Suggested interview format and questions are for your reference only.</li>
+                <li>Using suggested questions as they are would result in up to 100% payment deduction.</li>
+            </ul>
+            Your own questions for this channel are listed under &ldquo;Your questions &amp; code sessions&rdquo; on this page, and on
+            <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFIntId })" target="_blank" rel="noopener" style="color:#4c87b6;text-decoration:underline;">your sample questions</a>.
+        </div>
+        @if (hasIdVerification)
+        {
+            <div id="iaSrc-checklist_2" class="ia-src-text">
+                <b>Candidate ID verification:</b> is mandatory for this interview's authenticity and payment. Ask the candidate to show any <b style="padding:0;">ID card</b> at the start of the interview.
+            </div>
+        }
+        @if (hasConsent)
+        {
+            <div id="iaSrc-checklist_1" class="ia-src-text">
+                <b>Candidate Job Consent Acknowledgement:</b> share the job consent with the candidate during the interview and ask them to go through it and acknowledge it on video.
+                <div><a class="ia-src-link" target="_blank" rel="noopener" href="@meeting.ConsentFormUrl">Consent form link</a></div>
+            </div>
+        }
+        <div id="iaSrc-checklist_4" class="ia-src-text">
+            <b>Candidate Proxy Alert:</b> mark a suspicious candidate as proxy.
+            <div><a class="ia-src-link" target="_blank" rel="noopener" href="https://risebirdportal.blob.core.windows.net/doc/PROXY DETECTION FORM.docx">Proxy alert details</a></div>
+        </div>
+    </div>
+</div>
+
+@* The one overlay shell. Esc or a click on the backdrop closes it, and focus returns to the row that opened it. *@
+<div id="iaOverlay" class="modal modal-bg" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="iaOverlayTitle">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" tabindex="-1" id="iaOverlayContent">
+            <div class="filheader ia-ov-head" style="padding-bottom:0px;">
+                <div style="display:flex;align-items:center;">
+                    <div class="filavatar" style="width:37px;height:37px;">
+                        <span class="mdc-fab__icon material-icons"><i class="fa fa-check-square-o" style="color:white;font-size:17px;padding:10px 0 0 10px;" aria-hidden="true"></i></span>
+                    </div>
+                    <h5 class="modal-title pull-left" id="iaOverlayTitle" style="padding-top:0px;"></h5>
+                </div>
+                <span class="ia-ov-progress" id="iaOverlayProgress"></span>
+            </div>
+            <button type="button" class="close" aria-label="Close" onclick="iaCloseOverlay()">
+                <span aria-hidden="true" style="cursor:pointer;">&times;</span>
+            </button>
+            <div class="ia-ov-body" id="iaOverlayBody"></div>
+            <div class="ia-ov-foot">
+                <span class="ia-ov-note" id="iaOverlayNote"></span>
+                <span class="ia-ov-actions">
+                    <button type="button" class="ia-btn" id="iaOverlayClose" onclick="iaCloseOverlay()">Done</button>
+                    <button type="button" class="ia-btn is-primary" id="iaOverlayConfirm" style="display:none;" onclick="iaConfirmOverlay()"></button>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

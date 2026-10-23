@@ -2200,6 +2200,27 @@
                                                                     <i style="margin-right:-4vw" title="Interviewer Video on at time of interview." class="fa fa-info-circle"></i>
                                                                 </div>
                                                             </div>
+                                                            @* Interview alignment rollout switch, one channel at a time. Hand-written rather than CheckBoxFor
+                                                               because the property is bool?: a role that never sees this box posts nothing, binds null, and
+                                                               usp_UpdateIRFDetails keeps the stored value. NULL on every channel until someone ticks it. *@
+                                                            <div class="col-md-4 col-sm-4 pull-left">
+                                                                <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                                    <div class="mdc-checkbox">
+                                                                        <input type="checkbox" class="mdc-checkbox__native-control" id="IsInterviewerAlignmentRequired" name="IsInterviewerAlignmentRequired" value="true" @(Model.IsInterviewerAlignmentRequired == true ? "checked" : "") />
+                                                                        <div class="mdc-checkbox__background">
+                                                                            <svg class="mdc-checkbox__checkmark"
+                                                                                 viewBox="0 0 24 24">
+                                                                                <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                            </svg>
+                                                                            <div class="mdc-checkbox__mixedmark"></div>
+                                                                        </div>
+                                                                        <div class="mdc-checkbox__ripple"></div>
+                                                                    </div>
+                                                                    <input type="hidden" name="IsInterviewerAlignmentRequired" value="false" />
+                                                                    @Html.LabelFor(model => model.IsInterviewerAlignmentRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
+                                                                    <i style="margin-right:-4vw" title="On: interviewers on this channel get the alignment page - a checklist before the Zoom link unlocks (with a recorded override), their own record on this channel, and per-question code sessions. Off: Interview Details exactly as today." class="fa fa-info-circle"></i>
+                                                                </div>
+                                                            </div>
                                                             @await Html.PartialAsync("_AdvancedResumeScreeningOption", Model, new ViewDataDictionary(ViewData) { { "ShowIdealCandidateProfile", false } })
                                                             <div class="col-md-4 col-sm-4 pull-left">
                                                                 <div class="mdc-form-field" style="margin-bottom: 10px;">

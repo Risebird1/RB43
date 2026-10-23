@@ -85,6 +85,17 @@ builder.Services.AddRateLimiter(options =>
                 Window = TimeSpan.FromMinutes(1),
                 QueueLimit = 0
             }));
+    // Candidate code sessions are opened without signing in (the token is the credential), and every
+    // run calls the external code runner, so run/submit are capped per caller.
+    options.AddPolicy("CodeSession", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 30,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            }));
 });
 
 //Configure session state
@@ -173,6 +184,9 @@ builder.Services.AddScoped<IDeductionReviewRepository, DeductionReviewRepository
 builder.Services.AddScoped<IDeductionReviewService, DeductionReviewService>();
 builder.Services.AddScoped<ITrialJudgmentRepository, TrialJudgmentRepository>();
 builder.Services.AddScoped<ITrialJudgmentService, TrialJudgmentService>();
+// Interview alignment page + per-question code sessions for human-led interviews.
+builder.Services.AddScoped<IInterviewAlignmentRepository, InterviewAlignmentRepository>();
+builder.Services.AddScoped<IInterviewAlignmentService, InterviewAlignmentService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IGeneralSkillMatrixService, GeneralSkillMatrixService>();
 builder.Services.AddScoped<IJoinabilityMatrixService, JoinabilityMatrixService>();
