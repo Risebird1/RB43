@@ -1,0 +1,94 @@
+@model Risebird.Entities.ViewModel.InterviewAlignmentViewModel
+@*
+    "What went wrong before": the signed-in interviewer's own past interviews on this channel where a quality signal
+    fired (QC red flags, redo, low candidate rating, negative AI report or transcript verdict), with the risk level and
+    what the review said. From usp_GetInterviewAlignmentFlaggedInterviews (read-only), loaded with the rest of the
+    alignment page. Candidates appear by coded identity only, and all text is HTML-encoded.
+
+    There are deliberately no "view details" links: the transcript analysis page signs an interviewer out (it is for
+    Admin / HR / QC), and linking the AI client report by id would let an interviewer open any interview's report.
+*@
+@{
+    var flagged = Model.FlaggedInterviews ?? new List<Risebird.Entities.ViewModel.AlignmentFlaggedInterview>();
+}
+<style>
+    #iaWhatWentWrong .ia-head { padding: 5px !important; cursor: default !important; overflow: hidden; }
+    #iaWhatWentWrong .ia-head .consent-label { cursor: default !important; }
+    #iaWhatWentWrong .ia-ww-count { display: inline-block; margin-left: 8px; padding: 1px 9px; font-size: 11.5px; font-weight: 600; text-transform: none;
+        border-radius: 10px; background: #fdecec; color: #c62828; border: 1px solid #f5b7b1; vertical-align: 1px; }
+    #iaWhatWentWrong .ia-ww-count.is-none { background: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }
+    #iaWhatWentWrong .ia-ww-list { clear: both; padding: 0 10px 10px 10px; }
+    #iaWhatWentWrong .ia-ww-item { background: #fff; border: 1px solid #ebe8e8; border-radius: 4px; padding: 9px 12px; margin-bottom: 8px; }
+    #iaWhatWentWrong .ia-ww-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    #iaWhatWentWrong .ia-ww-meta { font-size: 14px; color: #5f5757; }
+    #iaWhatWentWrong .ia-ww-meta b { color: #4a4343; }
+    #iaWhatWentWrong .ia-ww-pill { display: inline-block; padding: 1px 10px; border-radius: 10px; font-size: 11.5px; font-weight: 700; letter-spacing: .03em; }
+    #iaWhatWentWrong .ia-ww-pill.is-High { background: #fdecec; color: #c62828; border: 1px solid #f5b7b1; }
+    #iaWhatWentWrong .ia-ww-pill.is-Medium { background: #fff3dc; color: #a35f00; border: 1px solid #f3c77a; }
+    #iaWhatWentWrong .ia-ww-pill.is-Low { background: #eef3f6; color: #546e7a; border: 1px solid #cfd8dc; }
+    #iaWhatWentWrong .ia-ww-issues { margin: 6px 0 0 0; padding-left: 18px; font-size: 13.5px; color: #847878; }
+    #iaWhatWentWrong .ia-ww-issues li { list-style: square; margin-bottom: 2px; }
+    #iaWhatWentWrong .ia-ww-reason { margin-top: 6px; padding: 6px 9px; background: #f7f8fa; border-left: 3px solid #cfd8dc; font-size: 13px; line-height: 19px; color: #5f5757; white-space: pre-wrap; word-break: break-word; }
+    #iaWhatWentWrong .ia-ww-reason b { color: #607d8b; font-weight: 600; }
+    #iaWhatWentWrong .ia-empty { clear: both; font-size: 14px; color: #979494; padding: 6px 12px 12px 12px; }
+    #iaWhatWentWrong .ia-empty .fa { color: #66bb6a; margin-right: 5px; }
+</style>
+<div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+    <div class="card" id="iaWhatWentWrong" style="margin-bottom:10px;">
+        <div class="question ia-head">
+            <label class="consent-label">
+                <i class="fa fa-flag-o" aria-hidden="true"></i>
+                What went wrong before
+                @if (Model.FlaggedInterviewsLoaded)
+                {
+                    <span class="ia-ww-count @(flagged.Count == 0 ? "is-none" : "")">@flagged.Count flagged</span>
+                }
+            </label>
+        </div>
+        <fieldset class="answer">
+            @if (!Model.FlaggedInterviewsLoaded)
+            {
+                <div class="ia-empty">Your previous interviews on this IRF could not be loaded right now. The rest of this page is not affected.</div>
+            }
+            else if (flagged.Count == 0)
+            {
+                <div class="ia-empty"><i class="fa fa-check-circle" aria-hidden="true"></i>No issues flagged on your previous interviews on this IRF. Keep up the good work.</div>
+            }
+            else
+            {
+                <div class="ia-ww-list">
+                    @foreach (var item in flagged)
+                    {
+                        var risk = item.RiskCategory == "High" || item.RiskCategory == "Medium" ? item.RiskCategory : "Low";
+                        <div class="ia-ww-item">
+                            <div class="ia-ww-top">
+                                <span class="ia-ww-meta">
+                                    <b>@(string.IsNullOrWhiteSpace(item.CandidateCodedName) ? "Candidate" : item.CandidateCodedName)</b>
+                                    &middot; @item.InterviewDate.ToString("dd MMM yyyy")
+                                </span>
+                                <span class="ia-ww-pill is-@risk">@risk</span>
+                            </div>
+                            @if (item.Issues.Count > 0)
+                            {
+                                <ul class="ia-ww-issues">
+                                    @foreach (var issue in item.Issues)
+                                    {
+                                        <li>@issue</li>
+                                    }
+                                </ul>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(item.AIReasoning))
+                            {
+                                <div class="ia-ww-reason"><b>AI review:</b> @item.AIReasoning</div>
+                            }
+                            else if (!string.IsNullOrWhiteSpace(item.QCComment))
+                            {
+                                <div class="ia-ww-reason"><b>QC comment:</b> @item.QCComment</div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </fieldset>
+    </div>
+</div>

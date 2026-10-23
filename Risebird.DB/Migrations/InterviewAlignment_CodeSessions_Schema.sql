@@ -20,9 +20,10 @@
 --   2. Functions/fn_InterviewerCompletedInterviewsOnIrf.sql
 --   3. StoredProcedures/usp_GetTrialJudgmentContext.sql      (now reads the shared function)
 --   4. StoredProcedures/usp_FetchAudioComment.sql             (now also returns IsInterviewerAlignmentRequired)
---      StoredProcedures/usp_UpdateIRFDetails.sql             (now saves IsInterviewerAlignmentRequired from Edit IRF)
+--      StoredProcedures/usp_SetInterviewerAlignmentRequired.sql (the Edit IRF switch; writes only that column)
 --      StoredProcedures/usp_GetInterviewAlignmentRequired.sql
 --      StoredProcedures/usp_GetInterviewAlignmentContext.sql
+--      StoredProcedures/usp_GetInterviewAlignmentFlaggedInterviews.sql  (read-only: "What went wrong before")
 --      StoredProcedures/usp_AcknowledgeTrialOnboarding.sql
 --      StoredProcedures/usp_SaveJoinGateOverride.sql
 --      StoredProcedures/usp_GetInterviewerCodeQuestions.sql

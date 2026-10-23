@@ -119,7 +119,9 @@
     .ia-row.is-outstanding { border-color: #f0a020; box-shadow: 0 0 0 1px #f0a020 inset; background: #fffbf3; }
     .ia-row-text { display: flex; align-items: center; gap: 10px; min-width: 0; }
     .ia-box { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
-    .ia-tick { position: relative; flex: 0 0 auto; width: 22px; height: 22px; border: 1px solid #ccc; border-radius: 50%; background: #fff; }
+    .ia-tick { position: relative; flex: 0 0 auto; width: 22px; height: 22px; padding: 0; border: 1px solid #ccc; border-radius: 50%; background: #fff; cursor: pointer; }
+    .ia-tick:hover, .ia-tick:focus-visible { border-color: #42a5f5; box-shadow: 0 0 0 2px rgba(66, 165, 245, .25); outline: none; }
+    .ia-row.is-done .ia-tick:hover { background: #4f9f53; border-color: #4f9f53; }
     .ia-tick:after { content: ""; position: absolute; left: 6px; top: 6px; width: 10px; height: 5px; border: 2px solid #fff; border-top: 0; border-right: 0; transform: rotate(-45deg); opacity: 0; }
     .ia-row.is-done .ia-tick { background: #66bb6a; border-color: #66bb6a; }
     .ia-row.is-done .ia-tick:after { opacity: 1; }
@@ -238,7 +240,7 @@
                     <div class="ia-row" data-req="@r.Key" data-kind="@r.Kind" data-source="@r.Source" data-title="@r.Title">
                         <span class="ia-row-text">
                             <input type="checkbox" class="ia-box" id="@(r.Key.StartsWith("checklist_") ? r.Key : "checklist_" + r.Key)" name="InterviewCheckshow" tabindex="-1" aria-hidden="true" onclick="return false;" />
-                            <span class="ia-tick" aria-hidden="true"></span>
+                            <button type="button" class="ia-tick" title="Not confirmed yet - click to open"></button>
                             <span><b>@r.Title</b> &mdash; @r.Detail</span>
                         </span>
                         <button type="button" class="ia-pill" onclick="iaOpenRequirement('@r.Key', this)">@r.Action</button>
@@ -253,7 +255,7 @@
                     <div class="ia-row" data-req="@r.Key" data-kind="@r.Kind" data-source="@r.Source" data-title="@r.Title" data-confirm="@confirmLabels[r.Key]">
                         <span class="ia-row-text">
                             <input type="checkbox" class="ia-box" id="@r.Key" name="InterviewCheckshow" tabindex="-1" aria-hidden="true" onclick="return false;" />
-                            <span class="ia-tick" aria-hidden="true"></span>
+                            <button type="button" class="ia-tick" title="Not confirmed yet - click to open"></button>
                             <span>
                                 <b>@r.Title</b> &mdash; @r.Detail
                                 @if (r.Key == JoinGateRequirementKeys.CandidateCode)
@@ -290,7 +292,7 @@
         <div class="question ia-head">
             <label class="consent-label">
                 <i class="fa fa-user-circle-o" aria-hidden="true"></i>
-                Candidate <span style="font-size:11.5px;text-transform:none;font-weight:400;color:#9aa1a8;">coded identity only</span>
+                Who you are interviewing <span style="font-size:11.5px;text-transform:none;font-weight:400;color:#9aa1a8;">coded identity only</span>
             </label>
         </div>
         @{
@@ -424,6 +426,7 @@
             <div class="ia-ov-foot">
                 <span class="ia-ov-note" id="iaOverlayNote"></span>
                 <span class="ia-ov-actions">
+                    <button type="button" class="ia-btn" id="iaOverlayUncheck" style="display:none;color:#d43434;border-color:#d43434;" onclick="iaUncheckOverlay()">Uncheck</button>
                     <button type="button" class="ia-btn" id="iaOverlayClose" onclick="iaCloseOverlay()">Done</button>
                     <button type="button" class="ia-btn is-primary" id="iaOverlayConfirm" style="display:none;" onclick="iaConfirmOverlay()"></button>
                 </span>

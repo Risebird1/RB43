@@ -63,6 +63,16 @@ namespace Risebird.Business
             return await _repository.IsAlignmentRequiredAsync(interviewId);
         }
 
+        public async Task<bool?> SetAlignmentRequiredAsync(int irfId, bool isRequired)
+        {
+            if (irfId <= 0)
+            {
+                return false;
+            }
+
+            return await _repository.SetAlignmentRequiredAsync(irfId, isRequired);
+        }
+
         public async Task<InterviewAlignmentViewModel> BuildAlignmentAsync(int interviewId, string interviewerEmail, Meeting meeting,
             int defaultCodingTimeLimitInMinutes, int maxQuestionLength)
         {
@@ -101,15 +111,29 @@ namespace Risebird.Business
                 if (!string.IsNullOrWhiteSpace(candidateEmail))
                 {
                     var pseudonyms = await _candidateService.EnsureCandidatePseudonymsAsync(new[] { candidateEmail }, "InterviewAlignment");
-                    if (pseudonyms != null && pseudonyms.TryGetValue(candidateEmail, out var nickName))
+                    if (pseudonyms != null && pseudonyms.TryGetValue(candidateEmail, out var nickName) && !string.IsNullOrWhiteSpace(nickName))
                     {
                         model.CandidateCodedName = nickName;
                     }
                 }
 
+                // The card then says "Coded name not assigned yet". Say why in the log - by interview id only, never
+                // the candidate's email. The pseudonym lookup logs its own exception just before this, if it threw.
+                if (string.IsNullOrWhiteSpace(model.CandidateCodedName))
+                {
+                    await _logger.LogMessage(LogLevelInfo.Warning, string.IsNullOrWhiteSpace(candidateEmail)
+                        ? $"InterviewAlignment: interview {interviewId} has no candidate email, so no coded name can be assigned."
+                        : $"InterviewAlignment: no coded name came back from CandidatePseudonym for interview {interviewId}; see the preceding exception, if any.",
+                        interviewerEmail);
+                }
+
                 var (questions, sessions) = await GetCodeQuestionsAsync(interviewId, interviewerEmail);
                 model.Questions = questions;
                 model.Sessions = sessions;
+
+                // "What went wrong before". Loaded on its own so that if it fails the card says so and everything
+                // else on the page still renders.
+                await LoadFlaggedInterviewsAsync(model, interviewId, interviewerEmail);
 
                 if (context.IRFIntId > 0)
                 {
@@ -128,6 +152,70 @@ namespace Risebird.Business
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+
+        private static readonly System.Text.RegularExpressions.Regex EmailPattern =
+            new System.Text.RegularExpressions.Regex(@"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}", System.Text.RegularExpressions.RegexOptions.Compiled);
+
+        private const int MaxReasoningCharacters = 400;
+
+        private async Task LoadFlaggedInterviewsAsync(InterviewAlignmentViewModel model, int interviewId, string interviewerEmail)
+        {
+            try
+            {
+                var rows = await _repository.GetFlaggedInterviewsAsync(interviewId, interviewerEmail);
+                if (rows == null)
+                {
+                    model.FlaggedInterviewsLoaded = false;
+                    return;
+                }
+
+                var flagged = rows.Where(r => r != null && r.InterviewId > 0).ToList();
+
+                // Coded identity only: the same CandidatePseudonym names as everywhere else, then the emails are cleared.
+                var emails = flagged.Select(r => r.CandidateEmail?.Trim()).Where(e => !string.IsNullOrWhiteSpace(e))
+                    .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+                IDictionary<string, string> pseudonyms = null;
+                if (emails.Count > 0)
+                {
+                    pseudonyms = await _candidateService.EnsureCandidatePseudonymsAsync(emails, "InterviewAlignment");
+                }
+
+                foreach (var row in flagged)
+                {
+                    var email = row.CandidateEmail?.Trim();
+                    row.CandidateCodedName = !string.IsNullOrEmpty(email) && pseudonyms != null && pseudonyms.TryGetValue(email, out var nick) ? nick : null;
+                    row.CandidateEmail = null;
+                    row.AIReasoning = CleanReviewText(row.AIReasoning);
+                    row.QCComment = CleanReviewText(row.QCComment);
+                }
+
+                model.FlaggedInterviews = flagged;
+                model.FlaggedInterviewsLoaded = true;
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                model.FlaggedInterviews = new List<AlignmentFlaggedInterview>();
+                model.FlaggedInterviewsLoaded = false;
+            }
+        }
+
+        /// <summary>
+        /// Review text as plain, short text: markdown bold markers removed, any email address masked (the interviewer
+        /// sees candidates by coded identity only), whitespace collapsed and cut to a readable length.
+        /// The view HTML-encodes it as well.
+        /// </summary>
+        internal static string CleanReviewText(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return null;
+            }
+
+            var cleaned = EmailPattern.Replace(text.Replace("**", ""), "[email]");
+            cleaned = System.Text.RegularExpressions.Regex.Replace(cleaned, @"\s+", " ").Trim();
+            return cleaned.Length > MaxReasoningCharacters ? cleaned.Substring(0, MaxReasoningCharacters).TrimEnd() + "…" : cleaned;
         }
 
         public async Task<bool> AcknowledgeTrialOnboardingAsync(string interviewerEmail)

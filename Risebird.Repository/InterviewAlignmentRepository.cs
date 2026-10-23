@@ -42,6 +42,24 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool?> SetAlignmentRequiredAsync(int irfId, bool isRequired)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var updated = await con.QueryFirstOrDefaultAsync<int?>(
+                    "usp_SetInterviewerAlignmentRequired",
+                    new { IrfId = irfId, IsRequired = isRequired },
+                    commandType: CommandType.StoredProcedure);
+                return updated.GetValueOrDefault() > 0;
+            }
+            catch (SqlException ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public async Task<InterviewAlignmentContext> GetAlignmentContextAsync(int interviewId, string interviewerEmail)
         {
             try
@@ -51,6 +69,24 @@ namespace Risebird.Repository
                     "usp_GetInterviewAlignmentContext",
                     new { InterviewId = interviewId, InterviewerEmail = interviewerEmail },
                     commandType: CommandType.StoredProcedure);
+            }
+            catch (SqlException ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<IList<AlignmentFlaggedInterview>> GetFlaggedInterviewsAsync(int interviewId, string interviewerEmail)
+        {
+            try
+            {
+                using var con = new SqlConnection(_connectionString);
+                var rows = await con.QueryAsync<AlignmentFlaggedInterview>(
+                    "usp_GetInterviewAlignmentFlaggedInterviews",
+                    new { InterviewId = interviewId, InterviewerEmail = interviewerEmail },
+                    commandType: CommandType.StoredProcedure);
+                return rows.ToList();
             }
             catch (SqlException ex)
             {

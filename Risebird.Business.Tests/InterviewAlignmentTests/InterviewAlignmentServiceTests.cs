@@ -239,6 +239,44 @@ namespace Risebird.Business.Tests.InterviewAlignmentTests
             fixture.Repository.Verify(x => x.IsAlignmentRequiredAsync(0), Times.Never);
         }
 
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task SetAlignmentRequired_WritesOnlyTheSwitch(bool isRequired)
+        {
+            var fixture = new InterviewAlignmentFixture();
+            fixture.Repository.Setup(x => x.SetAlignmentRequiredAsync(10482, isRequired)).ReturnsAsync(true);
+            var sut = fixture.CreateSut();
+
+            Assert.True(await sut.SetAlignmentRequiredAsync(10482, isRequired));
+
+            fixture.Repository.Verify(x => x.SetAlignmentRequiredAsync(10482, isRequired), Times.Once);
+            // Toggling the switch must not touch the channel's interviewers or anything else on the alignment side.
+            fixture.IrfService.VerifyNoOtherCalls();
+            fixture.Repository.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task SetAlignmentRequired_WhenTheDatabaseCallFails_ReportsNullNotFalse()
+        {
+            var fixture = new InterviewAlignmentFixture();
+            fixture.Repository.Setup(x => x.SetAlignmentRequiredAsync(10482, false)).ReturnsAsync((bool?)null);
+            var sut = fixture.CreateSut();
+
+            // Null lets the endpoint say the database is not ready, rather than "channel not found".
+            Assert.Null(await sut.SetAlignmentRequiredAsync(10482, false));
+        }
+
+        [Fact]
+        public async Task SetAlignmentRequired_WithoutAChannel_DoesNothing()
+        {
+            var fixture = new InterviewAlignmentFixture();
+            var sut = fixture.CreateSut();
+
+            Assert.False(await sut.SetAlignmentRequiredAsync(0, true));
+            fixture.Repository.Verify(x => x.SetAlignmentRequiredAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never);
+        }
+
         [Fact]
         public async Task BuildAlignment_WhenTheChannelSwitchIsOff_ReturnsNullSoTodaysPageRenders()
         {
@@ -357,6 +395,65 @@ namespace Risebird.Business.Tests.InterviewAlignmentTests
             Assert.Equal(75, model.DurationMinutes);
             fixture.CandidateService.Verify(x => x.EnsureCandidatePseudonymsAsync(
                 It.Is<IEnumerable<string>>(e => e.Single() == "ada.lovelace@example.com"), It.IsAny<string>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task BuildAlignment_WhatWentWrongBefore_UsesCodedNamesAndCleansTheReviewText()
+        {
+            var fixture = new InterviewAlignmentFixture();
+            fixture.Repository.Setup(x => x.GetAlignmentContextAsync(It.IsAny<int>(), It.IsAny<string>()))
+                .ReturnsAsync(new InterviewAlignmentContext { IsInterviewerAlignmentRequired = true, IRFIntId = 10482 });
+            fixture.Repository.Setup(x => x.GetFlaggedInterviewsAsync(48210, "rash@example.com")).ReturnsAsync(new List<AlignmentFlaggedInterview>
+            {
+                new() { InterviewId = 44118, InterviewDate = new DateTime(2026, 9, 2), CandidateEmail = " ada.lovelace@example.com ",
+                        SignalCount = 2, RiskCategory = "Medium", IsRedo = true, IsLowCandidateRating = true, CandidateRating = 2,
+                        AIReasoning = "**Verdict:** candidate ada.lovelace@example.com was not probed\n\non the elimination skill." }
+            });
+            fixture.CandidateService.Setup(x => x.EnsureCandidatePseudonymsAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<string>()))
+                .ReturnsAsync(new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["ada.lovelace@example.com"] = "AdLo1234" });
+            var sut = fixture.CreateSut();
+
+            var model = await sut.BuildAlignmentAsync(48210, "rash@example.com", new Meeting(), 15, 5000);
+
+            Assert.True(model.FlaggedInterviewsLoaded);
+            var row = Assert.Single(model.FlaggedInterviews);
+            Assert.Equal("AdLo1234", row.CandidateCodedName);
+            Assert.Null(row.CandidateEmail);                                      // never reaches the page
+            Assert.Equal("Verdict: candidate [email] was not probed on the elimination skill.", row.AIReasoning);
+            Assert.Equal(new[] { "The interview was redone", "Low candidate rating (2/5)" }, row.Issues);
+        }
+
+        [Fact]
+        public async Task BuildAlignment_WhenWhatWentWrongBeforeFails_ThePageStillBuilds()
+        {
+            var fixture = new InterviewAlignmentFixture();
+            fixture.Repository.Setup(x => x.GetAlignmentContextAsync(It.IsAny<int>(), It.IsAny<string>()))
+                .ReturnsAsync(new InterviewAlignmentContext { IsInterviewerAlignmentRequired = true, IRFIntId = 10482 });
+            fixture.Repository.Setup(x => x.GetFlaggedInterviewsAsync(It.IsAny<int>(), It.IsAny<string>()))
+                .ReturnsAsync((IList<AlignmentFlaggedInterview>)null);     // e.g. the procedure is not deployed yet
+            var sut = fixture.CreateSut();
+
+            var model = await sut.BuildAlignmentAsync(48210, "rash@example.com", new Meeting(), 15, 5000);
+
+            Assert.NotNull(model);
+            Assert.False(model.FlaggedInterviewsLoaded);
+            Assert.Empty(model.FlaggedInterviews);
+        }
+
+        [Fact]
+        public async Task BuildAlignment_WithoutACodedName_LogsWhyByInterviewIdOnly()
+        {
+            var fixture = new InterviewAlignmentFixture();
+            fixture.Repository.Setup(x => x.GetAlignmentContextAsync(It.IsAny<int>(), It.IsAny<string>()))
+                .ReturnsAsync(new InterviewAlignmentContext { IsInterviewerAlignmentRequired = true, IRFIntId = 10482, CandidateEmail = null });
+            fixture.Logger.Setup(x => x.LogMessage(It.IsAny<LogLevelInfo>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
+            var sut = fixture.CreateSut();
+
+            var model = await sut.BuildAlignmentAsync(48210, "rash@example.com", new Meeting(), 15, 5000);
+
+            Assert.Null(model.CandidateCodedName);
+            fixture.Logger.Verify(x => x.LogMessage(LogLevelInfo.Warning,
+                It.Is<string>(m => m.Contains("48210") && m.Contains("no candidate email")), It.IsAny<string>()), Times.Once);
         }
 
         [Fact]
