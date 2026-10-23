@@ -53,8 +53,9 @@ namespace Risebird.Web.Controllers
 
     public class IRFController : Controller
     {
-        private const int MaxSampleQuestionLength = 5000;
-        private const int DefaultCodingTimeLimitInMinutes = 15;
+        // internal so the interview alignment code sessions (InterviewAlignmentController) apply the same limits.
+        internal const int MaxSampleQuestionLength = 5000;
+        internal const int DefaultCodingTimeLimitInMinutes = 15;
 
         private readonly IIRFRepository _irfRepository;
         private readonly IUserService _userService;

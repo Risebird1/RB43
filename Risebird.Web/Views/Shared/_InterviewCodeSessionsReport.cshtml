@@ -1,0 +1,101 @@
+@model int
+@inject Risebird.Business.Interface.IInterviewAlignmentService AlignmentService
+@*
+    Candidate code from per-question code sessions, rendered inside the client report under the question
+    it answers, with the compile/run output next to the code. The model is the interview id; this partial
+    is only included by report views after their own access check, so it adds no new route and inherits
+    exactly the report's access control. Renders nothing when the interview has no code sessions or the
+    data cannot be loaded.
+*@
+@{
+    IList<Risebird.Entities.ViewModel.InterviewCodeSession> codeSessions = null;
+    if (Model > 0)
+    {
+        try
+        {
+            codeSessions = await AlignmentService.GetSessionsForReportAsync(Model);
+        }
+        catch
+        {
+            codeSessions = null;
+        }
+    }
+}
+@if (codeSessions != null && codeSessions.Count > 0)
+{
+    <style>
+        .rb-code-report { margin: 10px 0 18px 0; }
+        .rb-code-q { border: 1px solid #e3e6ea; border-radius: 6px; margin: 0 0 12px 0; background: #fff; }
+        .rb-code-q-head { padding: 9px 12px; border-bottom: 1px solid #eef0f2; font-size: 14px; color: #2f3337; }
+        .rb-code-q-head .rb-code-q-text { font-weight: 600; white-space: pre-wrap; word-break: break-word; }
+        .rb-code-q-meta { display: block; font-size: 12px; color: #7a7f85; margin-top: 3px; }
+        .rb-code-q-body { display: flex; flex-wrap: wrap; }
+        .rb-code-col { flex: 1 1 340px; min-width: 0; padding: 10px 12px; }
+        .rb-code-col + .rb-code-col { border-left: 1px solid #eef0f2; }
+        .rb-code-label { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; color: #8d949b; text-transform: uppercase; margin-bottom: 6px; }
+        .rb-code-pre { margin: 0; max-height: 360px; overflow: auto; padding: 8px 10px; background: #f7f8fa; border: 1px solid #e6e9ec; border-radius: 4px;
+            font-family: Consolas, Menlo, Monaco, monospace; font-size: 12.5px; line-height: 1.45; color: #23272b; white-space: pre-wrap; word-break: break-all; }
+        .rb-code-note { font-size: 12px; color: #8a5300; margin-bottom: 6px; }
+        .rb-code-empty { font-size: 13px; color: #8d949b; }
+    </style>
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="multiple_row">
+                <h3 class="mb-0"><span>Candidate Code</span></h3>
+            </div>
+        </div>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 rb-code-report">
+            @for (int i = 0; i < codeSessions.Count; i++)
+            {
+                var s = codeSessions[i];
+                var language = Risebird.Entities.ViewModel.CodeLanguageCatalog.Find(s.LanguageId);
+                var code = !string.IsNullOrEmpty(s.SubmittedSource) ? s.SubmittedSource : s.LastRunSource;
+                var meta = new List<string> { "interviewer's question" };
+                if (language != null) { meta.Add(language.Label); }
+                if (s.CodingTimeLimitInMinutes.HasValue) { meta.Add(s.CodingTimeLimitInMinutes.Value + " min allowed"); }
+                if (s.MinutesUsed.HasValue) { meta.Add(s.MinutesUsed.Value + " min used"); }
+                <div class="rb-code-q">
+                    <div class="rb-code-q-head">
+                        <span>@("Q" + (i + 1)) &middot; </span><span class="rb-code-q-text">@s.QuestionText</span>
+                        <span class="rb-code-q-meta">@string.Join(" · ", meta)</span>
+                    </div>
+                    <div class="rb-code-q-body">
+                        <div class="rb-code-col">
+                            <div class="rb-code-label">Code</div>
+                            @if (string.IsNullOrEmpty(code))
+                            {
+                                <div class="rb-code-empty">@(s.OpenedOn.HasValue ? "The candidate opened the session but did not run or submit any code." : "The candidate did not open this code session.")</div>
+                            }
+                            else
+                            {
+                                if (string.IsNullOrEmpty(s.SubmittedSource))
+                                {
+                                    <div class="rb-code-note">Not submitted &mdash; this is the code from the last run.</div>
+                                }
+                                <pre class="rb-code-pre">@code</pre>
+                            }
+                        </div>
+                        <div class="rb-code-col">
+                            <div class="rb-code-label">Compile and run</div>
+                            @if (s.RunCount > 0)
+                            {
+                                <div style="font-size:12.5px;color:#555;margin-bottom:6px;">
+                                    Last run (@s.RunCount @(s.RunCount == 1 ? "run" : "runs") in total)@(string.IsNullOrEmpty(s.LastRunStatus) ? "" : " · " + s.LastRunStatus)
+                                </div>
+                                <pre class="rb-code-pre">@(string.IsNullOrEmpty(s.LastRunOutput) ? "(no output)" : s.LastRunOutput)</pre>
+                            }
+                            else
+                            {
+                                <div class="rb-code-empty">The code was not run.</div>
+                            }
+                            @if (s.SubmittedOn.HasValue)
+                            {
+                                <div style="font-size:12px;color:#2e7d32;margin-top:6px;">Submitted @s.SubmittedOn.Value.ToString("dd MMM yyyy, HH:mm")</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

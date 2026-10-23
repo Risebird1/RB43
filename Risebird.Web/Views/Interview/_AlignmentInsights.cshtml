@@ -1,0 +1,52 @@
+@model Risebird.Entities.ViewModel.InterviewAlignmentViewModel
+@*
+    Sections 6 and 7 of the alignment page, inline rather than behind the insights modal: the signed-in
+    interviewer's own record and flagged history on this channel. Filled by _AlignmentScripts.cshtml from
+    /Interviewer/AlignmentInsights, which reads usp_GetInterviewerInsights and
+    usp_GetInterviewerInsightsMarkersDetails for the session's own email, scoped to this channel.
+    Laid out like the page's other cards (header, numbered sub-sections, bordered table).
+*@
+<style>
+    #iaInsights .ia-head { padding: 5px !important; cursor: default !important; overflow: hidden; }
+    #iaInsights .ia-head .consent-label { cursor: default !important; }
+    #iaInsights .ia-section { clear: both; padding: 0 10px 10px 10px; margin-bottom: 10px; }
+    #iaInsights .ia-section .subheading-txt { border: 0; margin: 0; }
+    #iaInsights .ia-stats { clear: both; display: flex; flex-wrap: wrap; gap: 10px; padding-top: 4px; }
+    #iaInsights .ia-stat { min-width: 112px; padding: 8px 12px; background: #fff; border: 1px solid #ebe8e8; border-radius: 3px; text-align: center; }
+    #iaInsights .ia-stat .ia-num { display: block; font-size: 22px; font-weight: 700; line-height: 26px; color: #5f5757; }
+    #iaInsights .ia-stat .ia-label { display: block; font-size: 11.5px; font-weight: 600; color: #949191; text-transform: uppercase; }
+    #iaInsights .ia-stat.is-flag .ia-num { color: #e12f2f; }
+    #iaInsights table { margin-top: 4px; background: #fff; }
+    #iaInsights td { font-size: 14px; color: #5f5757; vertical-align: top; white-space: pre-wrap; word-break: break-word; }
+    #iaInsights .ia-flag { display: inline-block; padding: 0 6px; font-size: 11px; font-weight: 700; color: #e12f2f; background: #fdecec; border: 1px solid #f5b7b1; border-radius: 3px; white-space: nowrap; }
+    #iaInsights .ia-empty { clear: both; font-size: 14px; color: #979494; padding: 6px 2px; }
+</style>
+<div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+    <div class="card" id="iaInsights" style="margin-bottom:10px;">
+        <div class="question ia-head">
+            <label class="consent-label">
+                <i class="fa fa-line-chart" aria-hidden="true"></i>
+                Your record on this channel
+            </label>
+        </div>
+        <fieldset class="answer">
+            <div class="card ia-section" style="padding-top:0;">
+                <div class="subheading-txt">
+                    <span class="num">1</span>
+                    <h2>Your record</h2>
+                </div>
+                <div id="iaRecord"><div class="ia-empty">Loading&hellip;</div></div>
+            </div>
+            <div class="card ia-section" style="padding-top:0;margin-bottom:0;">
+                <div class="subheading-txt">
+                    <span class="num">2</span>
+                    <h2 id="iaIssuesHeading">Issues found in previous interviews</h2>
+                </div>
+                <div id="iaIssues"><div class="ia-empty">Loading&hellip;</div></div>
+                <div style="clear:both;padding-top:8px;">
+                    <a href="javascript:void(0)" onclick="iaOpenInsightsModal()"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;">Open your full insights</span></a>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>

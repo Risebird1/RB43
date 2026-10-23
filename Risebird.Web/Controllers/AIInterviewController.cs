@@ -4526,7 +4526,8 @@ namespace Risebird.Web.Controllers
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
                 var email = HttpContext.Session.GetString("email")?.Trim();
-                email = profileName.Replace("\"", "");
+                // Attribute the edit to the person, not the role (this used to overwrite email with profileName).
+                email = email?.Replace("\"", "");
                 if (profileName == "Admin" || profileName == ProfileNames.QualityController)
                 {
                     var model = await _aiinterviewerService.UpdateCandidateAnswerById(questionId, candidateAnswer, email);

@@ -279,6 +279,14 @@ namespace Risebird.Entities.ViewModel
         public bool showChatBox { get; set; }
         [Display(Name = "Proctoring Required")]
         public bool IsProctoring { get; set; } = true;
+
+        /// <summary>
+        /// Interview alignment rollout switch (IRF.IsInterviewerAlignmentRequired). On: interviewers on this
+        /// channel get the alignment page and the gated Zoom link. Nullable end to end: a form that does not
+        /// post it binds null, and usp_UpdateIRFDetails then leaves the stored value as it is.
+        /// </summary>
+        [Display(Name = "Interviewer alignment required")]
+        public bool? IsInterviewerAlignmentRequired { get; set; }
         public bool generateTranscriptSummary { get; set; }
         public int AIInterviewType { get; set; }
         public IList<SkillComment> DeliveryHeadSampleQuestions { get; set; }
