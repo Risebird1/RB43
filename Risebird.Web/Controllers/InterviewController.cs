@@ -8853,7 +8853,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        public async Task<IActionResult> InterviewDetails(int id, int interviewId, [FromServices] IInterviewAlignmentService alignmentService)
+        public async Task<IActionResult> InterviewDetails(int id, int interviewId)
         {
             ViewBag.id = id;
             ViewBag.InterviewId = interviewId;
@@ -8888,23 +8888,19 @@ namespace Risebird.Web.Controllers
 
             // Interview alignment rollout: the one decision point. The switch is IRF.IsInterviewerAlignmentRequired
             // on the interview's own channel, read by usp_FetchAudioComment in the same round trip as the rest of
-            // this page - never from the query string. Off or NULL (every channel on day one): nothing below runs,
-            // no new query is made, and this page renders exactly as it always has.
-            // Retirement: once every active channel has the switch on and nobody has asked to turn one back off,
-            // delete the pre-alignment fallback below (the plain View(result)) and the old InterviewDetails.cshtml.
+            // this page - never from the query string. On: this page shows an "Open interview alignment briefing"
+            // link to the alignment page (Interview/Alignment), which re-checks everything itself. Off or NULL
+            // (every channel on day one): no link, no new query, and this page renders exactly as it always has.
             if (result.IsInterviewerAlignmentRequired == true)
             {
-                var alignmentView = await AlignmentViewAsync(id, interviewId, emailid, result, alignmentService);
-                if (alignmentView != null)
-                {
-                    return alignmentView;
-                }
+                ViewBag.AlignmentBriefingUrl = Url.Action(nameof(Alignment), new { interviewId, id });
             }
             return View(result);
         }
 
         /// <summary>
-        /// The interview alignment page on its own route. It does not trust how it was reached: it re-checks the
+        /// The interview alignment page, opened from the "Open interview alignment briefing" link on Interview Details.
+        /// It does not trust how it was reached: it re-checks the
         /// session interviewer, IsInterviewerForInterview and the channel's rollout switch itself. Whenever any of
         /// that fails - including the switch being turned off mid-flight - it redirects to Interview Details
         /// rather than refusing, because the interviewer still has a call to join.
@@ -8930,8 +8926,8 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>
-        /// Renders the alignment page, or returns null - and the caller falls back to today's Interview Details -
-        /// when it cannot be built (switch off, database objects not deployed, any failure).
+        /// Renders the alignment page, or returns null - and Alignment redirects to Interview Details - when it cannot
+        /// be built (switch off, database objects not deployed, any failure).
         /// </summary>
         private async Task<IActionResult> AlignmentViewAsync(int id, int interviewId, string emailid, Risebird.Entities.Data.Meeting meeting,
             IInterviewAlignmentService alignmentService)

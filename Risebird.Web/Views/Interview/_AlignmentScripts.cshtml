@@ -103,6 +103,13 @@
                 var rowDone = !!(box && box.checked);
                 rows[r].classList.toggle('is-done', rowDone);
                 rows[r].classList.toggle('is-outstanding', !rowDone && !cleared);
+                var tickEl = rows[r].querySelector('.ia-tick');
+                if (tickEl) {
+                    var label = rowDone ? 'Confirmed - click to uncheck' : 'Not confirmed yet - click to open';
+                    tickEl.setAttribute('title', label);
+                    tickEl.setAttribute('aria-label', (rows[r].getAttribute('data-title') || '') + ': ' + label);
+                    tickEl.setAttribute('aria-pressed', rowDone ? 'true' : 'false');
+                }
             }
 
             var countEl = document.getElementById('iaGateCount');
@@ -146,6 +153,44 @@
                 box.checked = true;
             }
             render();
+        }
+
+        // The interviewer can take back any confirmation at any time. The row goes back to outstanding (and the
+        // Zoom link locks again unless they already chose "Join without confirming"); to tick it again they go
+        // through it again, so the evidence that ticked it is cleared too.
+        function unmark(key) {
+            var box = boxOf(rowFor(key));
+            delete state[key];
+            delete state['evidence_' + key];
+            saveState();
+            if (box) {
+                box.checked = false;
+            }
+            render();
+        }
+
+        window.iaUncheckRequirement = function (key) {
+            if (key) {
+                unmark(key);
+            }
+        };
+
+        // The round tick on each row: on a confirmed row it unchecks it; on an outstanding row it opens the
+        // requirement, the same as the row's action button.
+        var ticks = root.querySelectorAll('.ia-row[data-req] .ia-tick');
+        for (var t = 0; t < ticks.length; t++) {
+            ticks[t].addEventListener('click', function () {
+                var row = this.closest('.ia-row');
+                var key = row ? row.getAttribute('data-req') : null;
+                if (!key) {
+                    return;
+                }
+                if (state[key]) {
+                    unmark(key);
+                } else {
+                    window.iaOpenRequirement(key, this);
+                }
+            });
         }
 
         // While the gate is up the Join link must not open: pointer-events are off via disable-link, and this
@@ -203,8 +248,9 @@
         // ---- The overlay --------------------------------------------------------------------------
         var NOTES = {
             watch: { pending: 'Take a moment to read it — closing straight away does not count.', ready: 'Closing this marks it as reviewed — Esc or click outside.' },
-            link: { pending: 'Open the document to mark this as read. Closing without opening it does not count.', ready: 'Opened — closing this marks it as read.' },
-            video: { pending: 'Play the video to mark this as watched.', ready: 'Played — closing this marks it as watched.' },
+            link: { pending: 'Open the document above, or take a moment to read this — closing straight away does not count.', ready: 'Closing this marks it as read — Esc or click outside.' },
+            video: { pending: 'Press play to watch the video, then close this.', ready: 'Played — closing this marks it as watched.' },
+            videoFailed: { pending: 'The video could not be loaded here. Take a moment, then close this to mark it as seen.', ready: 'Closing this marks it as seen — Esc or click outside.' },
             confirm: { pending: 'This is an acknowledgement: confirm it, and what you do in the call is checked after it.', ready: '' },
             panel: { pending: 'Esc or click outside to close.', ready: 'Esc or click outside to close.' }
         };
@@ -220,10 +266,23 @@
             }
             var done = overlay.key && state[overlay.key];
             var ready = isReady();
+            var notes = overlay.kind === 'video' && videoFailed[overlay.key] ? NOTES.videoFailed : NOTES[overlay.kind];
             note.textContent = done && overlay.kind !== 'panel'
-                ? 'Already confirmed.'
-                : (ready ? NOTES[overlay.kind].ready : NOTES[overlay.kind].pending) || NOTES[overlay.kind].pending;
+                ? 'Already confirmed. Use "Uncheck" if you want to undo it.'
+                : (ready ? notes.ready : notes.pending) || notes.pending;
             note.classList.toggle('is-ready', !!(done || (ready && overlay.kind !== 'confirm')));
+            var uncheck = document.getElementById('iaOverlayUncheck');
+            if (uncheck) {
+                uncheck.style.display = done && overlay.kind !== 'panel' ? '' : 'none';
+            }
+        }
+
+        // Videos that cannot be loaded at all (missing file, unsupported format): they can never fire "play", so
+        // without this the row could never be ticked. For those, a few seconds with the panel open counts.
+        var videoFailed = {};
+
+        function dwelled(current) {
+            return Date.now() - current.openedAt >= MIN_REVIEW_MS;
         }
 
         function isReady() {
@@ -231,9 +290,11 @@
                 return false;
             }
             switch (overlay.kind) {
-                case 'watch': return Date.now() - overlay.openedAt >= MIN_REVIEW_MS;
-                case 'link':
-                case 'video': return !!state['evidence_' + overlay.key];
+                case 'watch': return dwelled(overlay);
+                // A document: opened from the panel, or the panel was read for a few seconds.
+                case 'link': return !!state['evidence_' + overlay.key] || dwelled(overlay);
+                // A video: played, or it cannot be played here and the panel was open for a few seconds.
+                case 'video': return !!state['evidence_' + overlay.key] || (!!videoFailed[overlay.key] && dwelled(overlay));
                 default: return false;
             }
         }
@@ -297,7 +358,7 @@
 
             render();
             setNote();
-            if (opts.kind === 'watch') {
+            if (opts.kind === 'watch' || opts.kind === 'link' || opts.kind === 'video') {
                 overlay.timer = setTimeout(setNote, MIN_REVIEW_MS);
             }
         }
@@ -317,15 +378,17 @@
                 try { videos[v].pause(); } catch (e) { }
             }
 
-            // Ticking happens on close, never on open.
+            // Ticking happens on close, never on open - and never when the panel was dismissed straight away.
             var tick = false;
             if (current.key && !state[current.key]) {
                 if (current.kind === 'confirm') {
                     tick = confirmed === true;
                 } else if (current.kind === 'watch') {
-                    tick = Date.now() - current.openedAt >= MIN_REVIEW_MS;
-                } else if (current.kind === 'link' || current.kind === 'video') {
-                    tick = !!state['evidence_' + current.key];
+                    tick = dwelled(current);
+                } else if (current.kind === 'link') {
+                    tick = !!state['evidence_' + current.key] || dwelled(current);
+                } else if (current.kind === 'video') {
+                    tick = !!state['evidence_' + current.key] || (!!videoFailed[current.key] && dwelled(current));
                 }
             }
 
@@ -349,6 +412,15 @@
 
         window.iaConfirmOverlay = function () {
             closeOverlay(true);
+        };
+
+        // "Uncheck" inside the panel of a confirmed requirement: takes the confirmation back and closes the panel.
+        window.iaUncheckOverlay = function () {
+            var key = overlay ? overlay.key : null;
+            closeOverlay(false);
+            if (key) {
+                unmark(key);
+            }
         };
 
         window.iaOpenRequirement = function (key, opener) {
@@ -410,6 +482,26 @@
                 var key = el.getAttribute('data-ia-evidence');
                 if (el.tagName === 'VIDEO') {
                     el.addEventListener('play', function () { noteEvidence(key); });
+                    el.addEventListener('playing', function () { noteEvidence(key); });
+                    // A <video> with <source> children reports a missing/unsupported file on the source element.
+                    var markFailed = function () {
+                        videoFailed[key] = true;
+                        if (overlay && overlay.key === key) {
+                            setNote();
+                        }
+                    };
+                    el.addEventListener('error', markFailed);
+                    var sources = el.getElementsByTagName('source');
+                    if (sources.length) {
+                        sources[sources.length - 1].addEventListener('error', markFailed);
+                    }
+                    // In case the file failed before these listeners were attached: NETWORK_NO_SOURCE (3) with no data
+                    // loaded, checked a little later because the browser passes through that state while it starts.
+                    setTimeout(function () {
+                        if (el.error || (el.networkState === 3 && el.readyState === 0)) {
+                            markFailed();
+                        }
+                    }, 2500);
                 } else {
                     el.addEventListener('click', function () { noteEvidence(key); });
                     el.addEventListener('auxclick', function () { noteEvidence(key); });

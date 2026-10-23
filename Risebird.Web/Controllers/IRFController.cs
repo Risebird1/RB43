@@ -14102,6 +14102,46 @@ namespace Risebird.Web.Controllers
             var result = await _irfService.UpdateCandidateChecks(irfid, CandidateCheckvalue, CandidateCheckName);
             return Json("Successfully");
         }
+        /// <summary>
+        /// The "Interviewer alignment required" checkbox on Edit IRF, saved the moment it is toggled. It is not part
+        /// of the Edit IRF form save on purpose: that save (usp_UpdateIRFDetails) re-applies the channel's whole
+        /// interviewer panel, deactivating interviewers outside the MAG and unassigning their future interviews, and
+        /// switching the alignment page on or off must never change who is active or which interviews are assigned.
+        /// This writes IRF.IsInterviewerAlignmentRequired and nothing else. Same roles that see the checkbox.
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> UpdateInterviewerAlignmentRequired(int irfId, bool isRequired,
+            [FromServices] IInterviewAlignmentService alignmentService)
+        {
+            try
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                var allowed = profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement";
+                if (!allowed || irfId <= 0)
+                {
+                    return Json(new { success = false, message = "You are not allowed to change this setting." });
+                }
+
+                var saved = await alignmentService.SetAlignmentRequiredAsync(irfId, isRequired);
+                return Json(new
+                {
+                    success = saved == true,
+                    isRequired,
+                    message = saved == true ? null
+                        : saved == false ? "This skill channel was not found, so the setting was not saved."
+                        // The write failed in the database - in practice usp_SetInterviewerAlignmentRequired (or the
+                        // IRF.IsInterviewerAlignmentRequired column) has not been deployed to this environment yet.
+                        : "The setting could not be saved: the database is not ready for it yet (run the interview alignment database script)."
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "The setting could not be saved. Please try again." });
+            }
+        }
+
         [HttpPost]
         public async Task<JsonResult> SaveNewPriority(int irfid, int PriorityLevel)
         {

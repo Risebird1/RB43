@@ -21,6 +21,13 @@ namespace Risebird.Business.Interface
         Task<bool> IsAlignmentRequiredAsync(int interviewId);
 
         /// <summary>
+        /// Switches the alignment page on or off for one channel. Writes only IRF.IsInterviewerAlignmentRequired:
+        /// it never re-saves the channel, so interviewers' active status and interview assignments are untouched.
+        /// True when saved, false when there is no such channel, null when the database call failed.
+        /// </summary>
+        Task<bool?> SetAlignmentRequiredAsync(int irfId, bool isRequired);
+
+        /// <summary>
         /// Builds the alignment page model. Returns null if anything needed is unavailable (for example the
         /// database objects are not deployed yet, or the channel's switch is off), and the interviewer then
         /// gets today's Interview Details.

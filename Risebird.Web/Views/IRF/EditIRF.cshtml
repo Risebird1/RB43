@@ -2200,25 +2200,38 @@
                                                                     <i style="margin-right:-4vw" title="Interviewer Video on at time of interview." class="fa fa-info-circle"></i>
                                                                 </div>
                                                             </div>
-                                                            @* Interview alignment rollout switch, one channel at a time. Hand-written rather than CheckBoxFor
-                                                               because the property is bool?: a role that never sees this box posts nothing, binds null, and
-                                                               usp_UpdateIRFDetails keeps the stored value. NULL on every channel until someone ticks it. *@
+                                                            @* Interview alignment rollout switch, one channel at a time. It is saved on its own the moment it
+                                                               is toggled (IRF/UpdateInterviewerAlignmentRequired) and has no name, so the Edit IRF form never
+                                                               posts it: the form save re-applies the interviewer panel (MAG check, unassigning inactive
+                                                               interviewers' interviews), and this switch must never change who is active or what is assigned.
+                                                               Cloning creates a new channel, which starts with the switch off. *@
                                                             <div class="col-md-4 col-sm-4 pull-left">
                                                                 <div class="mdc-form-field" style="margin-bottom: 10px;">
-                                                                    <div class="mdc-checkbox">
-                                                                        <input type="checkbox" class="mdc-checkbox__native-control" id="IsInterviewerAlignmentRequired" name="IsInterviewerAlignmentRequired" value="true" @(Model.IsInterviewerAlignmentRequired == true ? "checked" : "") />
-                                                                        <div class="mdc-checkbox__background">
-                                                                            <svg class="mdc-checkbox__checkmark"
-                                                                                 viewBox="0 0 24 24">
-                                                                                <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                                            </svg>
-                                                                            <div class="mdc-checkbox__mixedmark"></div>
+                                                                    @if (!Model.IsClone && Model.id > 0)
+                                                                    {
+                                                                        @* Its own anti-forgery token: this form has a hand-written action="/IRF/EditIRF", and the
+                                                                           form tag helper adds no token to such a form, so there is none to borrow from it. *@
+                                                                        <span id="IsInterviewerAlignmentRequiredToken">@Html.AntiForgeryToken()</span>
+                                                                        <div class="mdc-checkbox">
+                                                                            <input type="checkbox" class="mdc-checkbox__native-control" id="IsInterviewerAlignmentRequired" data-irf-id="@Model.id" onchange="UpdateInterviewerAlignmentRequired(this)" @(Model.IsInterviewerAlignmentRequired == true ? "checked" : "") />
+                                                                            <div class="mdc-checkbox__background">
+                                                                                <svg class="mdc-checkbox__checkmark"
+                                                                                     viewBox="0 0 24 24">
+                                                                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                                </svg>
+                                                                                <div class="mdc-checkbox__mixedmark"></div>
+                                                                            </div>
+                                                                            <div class="mdc-checkbox__ripple"></div>
                                                                         </div>
-                                                                        <div class="mdc-checkbox__ripple"></div>
-                                                                    </div>
-                                                                    <input type="hidden" name="IsInterviewerAlignmentRequired" value="false" />
-                                                                    @Html.LabelFor(model => model.IsInterviewerAlignmentRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
-                                                                    <i style="margin-right:-4vw" title="On: interviewers on this channel get the alignment page - a checklist before the Zoom link unlocks (with a recorded override), their own record on this channel, and per-question code sessions. Off: Interview Details exactly as today." class="fa fa-info-circle"></i>
+                                                                        @Html.LabelFor(model => model.IsInterviewerAlignmentRequired, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label tab-checkbox", @style = "font-size: 13px; " })
+                                                                        <i style="margin-right:-4vw" title="Saved as soon as you tick or untick it; it does not change interviewers or interview assignments. On: interviewers on this channel get the alignment page - a checklist before the Zoom link unlocks (with a recorded override), their own record on this channel, and per-question code sessions. Off: Interview Details exactly as today." class="fa fa-info-circle"></i>
+                                                                        <span id="IsInterviewerAlignmentRequiredStatus" role="status" style="display:block;clear:both;font-size:11.5px;color:#929c9c;padding-left:2px;"></span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span class="control-label desp-label" style="font-size: 13px;">Interviewer alignment required</span>
+                                                                        <span style="display:block;clear:both;font-size:11.5px;color:#929c9c;">Can be switched on after this channel is saved.</span>
+                                                                    }
                                                                 </div>
                                                             </div>
                                                             @await Html.PartialAsync("_AdvancedResumeScreeningOption", Model, new ViewDataDictionary(ViewData) { { "ShowIdealCandidateProfile", false } })
@@ -2712,6 +2725,46 @@
             return false;
         }
         return true;
+    }
+
+    // "Interviewer alignment required" is saved on its own, immediately, and only that one setting: it never goes
+    // through the Edit IRF save, so it cannot change interviewers' active status or interview assignments.
+    function UpdateInterviewerAlignmentRequired(chk) {
+        var status = document.getElementById('IsInterviewerAlignmentRequiredStatus');
+        var isRequired = chk.checked;
+        var tokenInput = document.querySelector('#IsInterviewerAlignmentRequiredToken input[name="__RequestVerificationToken"]');
+        var setStatus = function (text, color) {
+            if (status) {
+                status.textContent = text;
+                status.style.color = color;
+            }
+        };
+        chk.disabled = true;
+        setStatus('Saving…', '#929c9c');
+        $.ajax({
+            type: 'POST',
+            url: '/IRF/UpdateInterviewerAlignmentRequired',
+            headers: { 'RequestVerificationToken': tokenInput ? tokenInput.value : '' },
+            data: { irfId: chk.getAttribute('data-irf-id'), isRequired: isRequired },
+            success: function (result) {
+                if (result && result.success) {
+                    setStatus(isRequired ? 'Saved - alignment page is on for this channel.' : 'Saved - alignment page is off for this channel.', '#2e7d32');
+                } else {
+                    chk.checked = !isRequired;
+                    setStatus((result && result.message) || 'The setting could not be saved. Please try again.', '#e12f2f');
+                }
+            },
+            error: function (xhr) {
+                chk.checked = !isRequired;
+                var why = xhr && xhr.status === 400 ? 'Your page has expired. Reload the page and try again.'
+                    : xhr && xhr.status === 404 ? 'This setting is not available on this server yet (the latest web build is not deployed).'
+                    : 'The setting could not be saved. Please try again.';
+                setStatus(why, '#e12f2f');
+            },
+            complete: function () {
+                chk.disabled = false;
+            }
+        });
     }
 
 </script>
