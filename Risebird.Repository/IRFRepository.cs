@@ -3254,12 +3254,14 @@ WHERE si.SuspiciousStatus = 1",
 
             catch (SqlException e)
             {
+                irfDetails.SaveFailureReason = e.Message;
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return new Tuple<bool, bool>(false, false);
             }
 
             catch (Exception e)
             {
+                irfDetails.SaveFailureReason = e.Message;
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return new Tuple<bool, bool>(false, false);
             }

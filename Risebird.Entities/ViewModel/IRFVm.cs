@@ -288,6 +288,13 @@ namespace Risebird.Entities.ViewModel
         /// </summary>
         [Display(Name = "Interviewer alignment required")]
         public bool? IsInterviewerAlignmentRequired { get; set; }
+
+        /// <summary>
+        /// Set by IRFRepository.UpdateIRFDetails when the save throws: the underlying error (usually the SQL error that
+        /// usp_UpdateIRFDetails re-raises), so Edit IRF can say why "edits were not saved" instead of only that they
+        /// were not. Not a form field: IRFController.EditIRF clears it before saving.
+        /// </summary>
+        public string SaveFailureReason { get; set; }
         public bool generateTranscriptSummary { get; set; }
         public int AIInterviewType { get; set; }
         public IList<SkillComment> DeliveryHeadSampleQuestions { get; set; }
