@@ -2391,6 +2391,27 @@ namespace Risebird.Web.Controllers
             return rubricSkills.Count > 0 ? string.Join(", ", rubricSkills) : model.JDTiltle;
         }
 
+        /// <summary>
+        /// " Reason: ..." for the "edits were not saved" message, from the error the save logged. The IRF list shows this
+        /// message inside a single-quoted JavaScript string, so it is kept to one line, without quote characters or
+        /// backslashes, and short enough to read.
+        /// </summary>
+        private static string SaveFailureSuffix(string reason)
+        {
+            if (string.IsNullOrWhiteSpace(reason))
+            {
+                return string.Empty;
+            }
+
+            var cleaned = System.Text.RegularExpressions.Regex.Replace(reason, @"\s+", " ")
+                .Replace("'", "").Replace("\"", "").Replace("\\", "/").Replace("<", "").Replace(">", "").Trim();
+            if (cleaned.Length > 300)
+            {
+                cleaned = cleaned.Substring(0, 300).TrimEnd() + "...";
+            }
+            return " Reason: " + cleaned;
+        }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> EditIRF(IRFVm model)
@@ -2586,6 +2607,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
+                            model.SaveFailureReason = null;
                             if (await _irfService.UpdateIRF(model, emailId))
                             {
                                 await _phoneScreenRepository.SetIRFPlivoAssistantUrlAsync(model.id, model.IRFId, model.PlivoAssistantUrl);
@@ -2597,12 +2619,12 @@ namespace Risebird.Web.Controllers
                             }
                             else if (model.IRFId != null)
                             {
-                                TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " edits were not saved.";
+                                TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " edits were not saved." + SaveFailureSuffix(model.SaveFailureReason);
                                 return RedirectToAction("Index");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessage"] = "Skills Channel edits were not saved.";
+                                TempData["SuccessErrorMessage"] = "Skills Channel edits were not saved." + SaveFailureSuffix(model.SaveFailureReason);
                                 return RedirectToAction("Index");
                             }
                         }
