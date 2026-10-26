@@ -21,8 +21,12 @@ BEGIN
 
     SELECT ics.Id, ics.InterviewId, ics.QuestionId, ics.QuestionText, ics.Token, ics.LanguageId,
            ics.SubmittedSource, ics.LastRunSource, ics.LastRunOutput, ics.LastRunStatus, ics.RunCount,
-           ics.CodingTimeLimitInMinutes, ics.CreatedBy, ics.CreatedOn, ics.OpenedOn, ics.SubmittedOn
+           ics.CodingTimeLimitInMinutes, ics.CreatedBy, ics.CreatedOn, ics.OpenedOn, ics.SubmittedOn,
+           -- The question as it reads now, so a report's "Questions Discussed" entry still finds its code after the
+           -- question was edited.
+           CAST(tsc.Comment AS NVARCHAR(MAX)) AS CurrentQuestionText
     FROM dbo.InterviewCodeSessions ics
+    LEFT JOIN dbo.TechSkillComments tsc ON tsc.id = ics.QuestionId
     WHERE ics.InterviewId = @InterviewId
     ORDER BY ics.CreatedOn ASC, ics.Id ASC;
 END

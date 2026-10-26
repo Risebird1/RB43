@@ -277,9 +277,11 @@ namespace Risebird.Repository
                 parameters.Add("@LanguageId", languageId);
                 parameters.Add("@Source", source, DbType.String);
                 parameters.Add("@CurrentDate", now);
-                var submittedOn = await con.QueryFirstOrDefaultAsync<DateTime?>(
+                var row = await con.QueryFirstOrDefaultAsync<SubmitRow>(
                     "usp_SubmitInterviewCodeSession", parameters, commandType: CommandType.StoredProcedure);
-                return submittedOn.HasValue;
+                // Accepted is false when the session had already been submitted (the stored code is final). A database
+                // still on the older procedure returns no Accepted column; then a SubmittedOn means it was saved.
+                return row != null && (row.Accepted ?? row.SubmittedOn.HasValue);
             }
             catch (SqlException ex)
             {
@@ -294,6 +296,12 @@ namespace Risebird.Repository
         private sealed class CreateSessionRow : InterviewCodeSession
         {
             public string Status { get; set; }
+        }
+
+        private sealed class SubmitRow
+        {
+            public DateTime? SubmittedOn { get; set; }
+            public bool? Accepted { get; set; }
         }
     }
 }

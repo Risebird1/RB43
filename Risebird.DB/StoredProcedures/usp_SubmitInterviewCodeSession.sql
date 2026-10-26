@@ -20,13 +20,19 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- A submission is final: once SubmittedOn is set the candidate's code can no longer be replaced - not by the
+    -- candidate, and not by anyone else who opens the same link (an interviewer included). Only the first submit saves.
     UPDATE dbo.InterviewCodeSessions
        SET LanguageId = @LanguageId,
            SubmittedSource = @Source,
            SubmittedOn = @CurrentDate,
            OpenedOn = ISNULL(OpenedOn, @CurrentDate)
-     WHERE Token = @Token;
+     WHERE Token = @Token
+       AND SubmittedOn IS NULL;
 
-    SELECT SubmittedOn FROM dbo.InterviewCodeSessions WHERE Token = @Token;
+    DECLARE @Accepted BIT = CASE WHEN @@ROWCOUNT = 1 THEN 1 ELSE 0 END;
+
+    -- Accepted = 0 with a SubmittedOn means it had already been submitted; the stored code was left as it was.
+    SELECT SubmittedOn, @Accepted AS Accepted FROM dbo.InterviewCodeSessions WHERE Token = @Token;
 END
 GO
