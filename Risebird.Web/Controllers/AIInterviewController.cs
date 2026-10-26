@@ -2933,12 +2933,16 @@ namespace Risebird.Web.Controllers
                         audioMimeType = "audio/webm";
                     }
 
+                    // Safari records audio as MP4, which is sniffed as video/mp4 (same container).
+                    if (audioMimeType == "video/mp4") audioMimeType = "audio/mp4";
+
                     if (audioMimeType == "audio/mpeg" || audioMimeType == "audio/wav" || audioMimeType == "audio/ogg"
                         || audioMimeType == "audio/webm" || audioMimeType == "video/webm" || audioMimeType == "audio/mp4"
                         || audioMimeType == "audio/x-m4a" || audioMimeType == "application/octet-stream")
                     {
                         var uploadContentType = audioMimeType == "application/octet-stream" ? "audio/webm" : audioMimeType;
                         var audioExtension = uploadContentType.Contains("webm", StringComparison.OrdinalIgnoreCase) ? "webm"
+                            : uploadContentType.Contains("mp4", StringComparison.OrdinalIgnoreCase) || uploadContentType.Contains("m4a", StringComparison.OrdinalIgnoreCase) ? "m4a"
                             : uploadContentType.Contains("ogg", StringComparison.OrdinalIgnoreCase) ? "ogg"
                             : uploadContentType.Contains("wav", StringComparison.OrdinalIgnoreCase) ? "wav"
                             : uploadContentType.Contains("mpeg", StringComparison.OrdinalIgnoreCase) || uploadContentType.Contains("mp3", StringComparison.OrdinalIgnoreCase) ? "mp3"
