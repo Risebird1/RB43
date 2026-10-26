@@ -423,9 +423,10 @@ namespace Risebird.Web.Controllers
                 Campaign           = campaign,
                 Agent              = await _campaignRepository.GetAgentAsync(campaign.AgentId),
                 Candidates         = await _campaignRepository.GetCampaignCandidatesAsync(id),
-                CallStats          = await _campaignRepository.GetCampaignCallStatsAsync(id),
+                CallStats          = await _campaignRepository.GetCampaignCallStatsAsync(id, _campaignService.InFlightTimeoutMinutes),
                 WhatsAppConfigured = !string.IsNullOrWhiteSpace(_configuration["PlivoCX:WhatsAppAgentId"]),
-                TimeZone           = PlivoCXCampaignRules.ResolveTimeZone(campaign.TimeZone)
+                TimeZone           = PlivoCXCampaignRules.ResolveTimeZone(campaign.TimeZone),
+                ConcurrencyBudget  = _campaignService.ConcurrencyBudget
             };
             return View(vm);
         }
@@ -436,7 +437,7 @@ namespace Risebird.Web.Controllers
         {
             if (CurrentUser() == null) return Denied(json: true);
             var list = await _campaignRepository.GetCampaignCandidatesAsync(id);
-            var stats = await _campaignRepository.GetCampaignCallStatsAsync(id);
+            var stats = await _campaignRepository.GetCampaignCallStatsAsync(id, _campaignService.InFlightTimeoutMinutes);
             return Json(new
             {
                 ok = true,
@@ -565,7 +566,7 @@ namespace Risebird.Web.Controllers
             {
                 var last = await _callRepository.GetCallLogByIdAsync(cc.LastCallLogId.Value);
                 if (last != null && (last.CallStatus == "initiated" || last.CallStatus == "triggered")
-                    && last.CreatedAt >= DateTime.UtcNow.AddMinutes(-30))
+                    && last.CreatedAt >= DateTime.UtcNow.AddMinutes(-_campaignService.InFlightTimeoutMinutes))
                     return Json(new { ok = false, message = "A call to this candidate is still connecting." });
             }
             if (cc.State != PlivoCXCampaignCandidateState.Pending)

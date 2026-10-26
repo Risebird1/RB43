@@ -1,5 +1,6 @@
 @model Risebird.Entities.Data.PlivoCXModels.PlivoCXCampaignDetailVM
 @using Risebird.Entities.Data.PlivoCXModels
+@using Risebird.Business.PlivoCX
 @using Risebird.Web.Controllers
 @{
     var c = Model.Campaign;
@@ -54,14 +55,15 @@
             <p class="pcx-sub">@policyLine</p>
 
             <div class="pcx-actions" style="margin-top:12px;">
-                <button type="button" class="pcx-btn primary" id="pcxCallNow" @(isPaused || !voiceConfigured ? "disabled" : "") title="Dial the due pending candidates now, up to @c.ConcurrentCalls at once — ignores the calling window, keeps the attempt limits">&#9679; Call now</button>
-                <button type="button" class="pcx-btn violet js-status" data-action="StartAutomatic" @(isRunning || !voiceConfigured ? "disabled" : "") title="Hand the campaign to the scheduler: it dials inside the calling window every 2 minutes">Start automatic</button>
+                <button type="button" class="pcx-btn primary" id="pcxCallNow" @(isPaused || !voiceConfigured ? "disabled" : "") title="Dial the due pending candidates once, up to @c.ConcurrentCalls at once — ignores the calling window, keeps the attempt limits">&#9679; Call now</button>
+                <button type="button" class="pcx-btn violet js-status" data-action="StartAutomatic" @(isRunning || !voiceConfigured ? "disabled" : "") title="Keep every line busy: inside the calling window the scheduler refills free lines every 15 seconds until nobody is pending">Start automatic</button>
                 <button type="button" class="pcx-btn js-status" data-action="Pause" @(isRunning ? "" : "disabled") title="Stop new dials; calls already connecting finish">Pause</button>
                 @if (Model.CallStats.InFlightCalls > 0)
                 {
                     <span class="pcx-muted">@Model.CallStats.InFlightCalls call(s) connecting…</span>
                 }
             </div>
+            <p class="pcx-muted pcx-small" style="margin:6px 0 0;">Call now dials one round. For a large list use <b>Start automatic</b> — it keeps all @c.ConcurrentCalls lines busy, refilling every 15 seconds.</p>
             <div id="pcxMsg" class="pcx-alert" style="display:none;margin-top:12px;"></div>
 
             <div class="pcx-tiles">
@@ -99,7 +101,11 @@
                         <div><label class="pcx-label" for="pAttemptsPerDay">Attempts / day</label><input class="pcx-input" type="number" min="1" max="20" id="pAttemptsPerDay" name="attemptsPerDay" value="@c.AttemptsPerDay" /></div>
                         <div><label class="pcx-label" for="pTotalAttempts">Total attempts</label><input class="pcx-input" type="number" min="1" max="50" id="pTotalAttempts" name="totalAttempts" value="@c.TotalAttempts" /></div>
                         <div><label class="pcx-label" for="pMinGap">Minimum gap (min)</label><input class="pcx-input" type="number" min="0" max="10080" id="pMinGap" name="minGapMinutes" value="@c.MinGapMinutes" /></div>
-                        <div><label class="pcx-label" for="pConcurrent">Concurrent calls</label><input class="pcx-input" type="number" min="1" max="50" id="pConcurrent" name="concurrentCalls" value="@c.ConcurrentCalls" /></div>
+                        <div>
+                            <label class="pcx-label" for="pConcurrent">Concurrent calls</label>
+                            <input class="pcx-input" type="number" min="1" max="50" id="pConcurrent" name="concurrentCalls" value="@c.ConcurrentCalls" aria-describedby="pcxRate" />
+                            <div class="pcx-muted pcx-small" id="pcxRate" style="margin-top:4px;"></div>
+                        </div>
                         <div>
                             <span class="pcx-label">Starts / ends on</span>
                             <div style="display:flex;gap:6px;">
@@ -225,6 +231,20 @@
         if (!phone) { say('Enter a phone number for the test call.', 'err'); return; }
         post(base + '/' + id + '/TestCall', { phone: phone, name: $('#pcxTestName').val(), email: $('#pcxTestEmail').val() }, $(this), false);
     });
+    // Same formula as PlivoCXCampaignRules.EstimateCallsPer30Minutes: each line places a call every
+    // (average call + half the 15-second refill interval).
+    var perLineMinutes = @PlivoCXCampaignRules.AverageCallMinutes.ToString(System.Globalization.CultureInfo.InvariantCulture) + 7.5 / 60, budget = @Model.ConcurrencyBudget;
+    function showRate() {
+        var n = parseInt($('#pConcurrent').val(), 10) || 0;
+        var lines = Math.min(n, budget);
+        var text = n > 0 ? '≈ ' + Math.floor(lines * 30 / perLineMinutes) + ' calls per 30 min' : '';
+        if (n > budget) text += ' — only ' + budget + ' lines are available to all campaigns together';
+        else if (n > 0) text += ' · ' + budget + ' lines shared by all campaigns';
+        $('#pcxRate').text(text);
+    }
+    $('#pConcurrent').on('input', showRate);
+    showRate();
+
     $('#pcxPolicy').on('submit', function (e) {
         e.preventDefault();
         var data = {};

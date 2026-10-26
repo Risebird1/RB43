@@ -39,6 +39,19 @@ namespace Risebird.Business.PlivoCX
             return "cant_say";
         }
 
+        /// <summary>
+        /// Plivo rejected the call for account capacity rather than the candidate not answering:
+        /// concurrency limit (hangup cause 5030 / SIP trunk 5190, "Concurrency Limit Breached") or
+        /// CPS (5180, cps_limit_reached). Such a call must not use up one of the candidate's attempts.
+        /// </summary>
+        public static bool IsCapacityRejection(string hangupCause)
+        {
+            if (string.IsNullOrWhiteSpace(hangupCause)) return false;
+            var v = hangupCause.ToLowerInvariant();
+            return v.Contains("5030") || v.Contains("5190") || v.Contains("5180")
+                || v.Contains("concurrency limit") || v.Contains("cps_limit") || v.Contains("cps limit");
+        }
+
         /// <summary>Lower-cases and strips whitespace, quotes and trailing punctuation.</summary>
         private static string Clean(string raw)
         {

@@ -12,8 +12,8 @@
 --   AND Attempts < TotalAttempts
 --   AND calls to the candidate from this campaign since @DayStartUtc < AttemptsPerDay
 --   AND no other dial holds the candidate (DialLockUntil unset or expired)
---   AND no call to the candidate is still connecting (initiated / triggered in the last 30
---       minutes - older ones never got a webhook and no longer block).
+--   AND no call to the candidate is still connecting (initiated / triggered within the last
+--       @InFlightMinutes - older ones never got a webhook and no longer block).
 -- The calling window is checked by the scheduler, not here: Call now ignores it.
 -- Fewest attempts first, so fresh candidates go before retries.
 -- =============================================
@@ -32,12 +32,15 @@ CREATE PROCEDURE [dbo].[usp_GetDuePlivoCXCampaignCandidates]
     @CampaignId  INT,
     @Take        INT,
     @NowUtc      DATETIME,
-    @DayStartUtc DATETIME
+    @DayStartUtc DATETIME,
+    -- A call still initiated / triggered after this many minutes never got its hangup webhook
+    -- and no longer blocks the candidate. The app passes PlivoCX:InFlightTimeoutMinutes.
+    @InFlightMinutes INT = 30
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    DECLARE @InFlightFrom DATETIME = DATEADD(MINUTE, -30, @NowUtc);
+    DECLARE @InFlightFrom DATETIME = DATEADD(MINUTE, -@InFlightMinutes, @NowUtc);
 
     SELECT TOP (@Take)
         cc.Id,
