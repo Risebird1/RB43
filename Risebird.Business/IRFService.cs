@@ -926,6 +926,11 @@ namespace Risebird.Business
 
             catch (Exception e)
             {
+                // Lets Edit IRF say why the save failed (see IRFVm.SaveFailureReason).
+                if (model != null)
+                {
+                    model.SaveFailureReason ??= e.Message;
+                }
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }

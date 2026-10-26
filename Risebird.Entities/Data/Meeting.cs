@@ -134,6 +134,8 @@ namespace Risebird.Entities.Data
         public bool IsCandidateVerification { get; set; }
         public bool CandidateIdverification { get; set; }
         public bool CodeSnippetRequired { get; set; }
+        /// <summary>IRF.IsInterviewerAlignmentRequired, from usp_FetchAudioComment. NULL or false: today's Interview Details.</summary>
+        public bool? IsInterviewerAlignmentRequired { get; set; }
         public string CandidateVideo { get; set; }
         public string AudioTranscriptFileLink { get; set; }
         public string AITranscriptVerdict { get; set; }

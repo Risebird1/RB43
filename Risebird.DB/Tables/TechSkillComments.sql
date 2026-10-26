@@ -62,3 +62,27 @@ GO
 
 
  
+-- Code sessions: lets an interviewer mark one of their own questions as needing code. Same column
+-- names SkillChannelSampleQuestions already uses, so the concept reads identically in both. There is
+-- deliberately no question-gist requirement here - that exists only because the AI avatar narrates.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'IsCodingQuestion'
+      AND Object_ID = Object_ID(N'TechSkillComments'))
+BEGIN
+    ALTER TABLE TechSkillComments
+    ADD IsCodingQuestion bit NULL
+END
+GO
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'CodingTimeLimitInMinutes'
+      AND Object_ID = Object_ID(N'TechSkillComments'))
+BEGIN
+    ALTER TABLE TechSkillComments
+    ADD CodingTimeLimitInMinutes int NULL
+END
+GO

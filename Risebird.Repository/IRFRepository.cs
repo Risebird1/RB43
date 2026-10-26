@@ -951,6 +951,14 @@ WHERE si.SuspiciousStatus = 1",
                             _resultVM.showChatBox = !string.IsNullOrEmpty(dt.Rows[0]["showChatBox"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["showChatBox"]) : false;
                             _resultVM.generateTranscriptSummary = !string.IsNullOrEmpty(dt.Rows[0]["generateTranscriptSummary"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["generateTranscriptSummary"]) : false;
                             _resultVM.IsProctoring = !dt.Columns.Contains("IsProctoring") || string.IsNullOrEmpty(dt.Rows[0]["IsProctoring"].ToString()) || Convert.ToBoolean(dt.Rows[0]["IsProctoring"]);
+                            // Interview alignment rollout switch, read so Edit IRF can show it. NULL on every channel
+                            // until someone ticks it; guarded so Edit IRF still loads where Tables\IRF.sql has not
+                            // been applied yet. It is written only by IRFController.UpdateInterviewerAlignmentRequired,
+                            // never by the Edit IRF save (UpdateIRFDetails), so toggling it cannot touch interviewers.
+                            _resultVM.IsInterviewerAlignmentRequired = dt.Columns.Contains("IsInterviewerAlignmentRequired")
+                                && !string.IsNullOrEmpty(dt.Rows[0]["IsInterviewerAlignmentRequired"].ToString())
+                                ? Convert.ToBoolean(dt.Rows[0]["IsInterviewerAlignmentRequired"])
+                                : (bool?)null;
                             // MCQ assessment section. Columns.Contains-guarded so the edit screen
                             // still loads if this build reaches an environment where Tables\IRF.sql
                             // has not been applied yet.
@@ -3246,12 +3254,14 @@ WHERE si.SuspiciousStatus = 1",
 
             catch (SqlException e)
             {
+                irfDetails.SaveFailureReason = e.Message;
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return new Tuple<bool, bool>(false, false);
             }
 
             catch (Exception e)
             {
+                irfDetails.SaveFailureReason = e.Message;
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return new Tuple<bool, bool>(false, false);
             }

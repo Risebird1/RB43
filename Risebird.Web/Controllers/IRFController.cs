@@ -53,8 +53,9 @@ namespace Risebird.Web.Controllers
 
     public class IRFController : Controller
     {
-        private const int MaxSampleQuestionLength = 5000;
-        private const int DefaultCodingTimeLimitInMinutes = 15;
+        // internal so the interview alignment code sessions (InterviewAlignmentController) apply the same limits.
+        internal const int MaxSampleQuestionLength = 5000;
+        internal const int DefaultCodingTimeLimitInMinutes = 15;
 
         private readonly IIRFRepository _irfRepository;
         private readonly IUserService _userService;
@@ -2390,6 +2391,27 @@ namespace Risebird.Web.Controllers
             return rubricSkills.Count > 0 ? string.Join(", ", rubricSkills) : model.JDTiltle;
         }
 
+        /// <summary>
+        /// " Reason: ..." for the "edits were not saved" message, from the error the save logged. The IRF list shows this
+        /// message inside a single-quoted JavaScript string, so it is kept to one line, without quote characters or
+        /// backslashes, and short enough to read.
+        /// </summary>
+        private static string SaveFailureSuffix(string reason)
+        {
+            if (string.IsNullOrWhiteSpace(reason))
+            {
+                return string.Empty;
+            }
+
+            var cleaned = System.Text.RegularExpressions.Regex.Replace(reason, @"\s+", " ")
+                .Replace("'", "").Replace("\"", "").Replace("\\", "/").Replace("<", "").Replace(">", "").Trim();
+            if (cleaned.Length > 300)
+            {
+                cleaned = cleaned.Substring(0, 300).TrimEnd() + "...";
+            }
+            return " Reason: " + cleaned;
+        }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> EditIRF(IRFVm model)
@@ -2585,6 +2607,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
+                            model.SaveFailureReason = null;
                             if (await _irfService.UpdateIRF(model, emailId))
                             {
                                 await _phoneScreenRepository.SetIRFPlivoAssistantUrlAsync(model.id, model.IRFId, model.PlivoAssistantUrl);
@@ -2596,12 +2619,12 @@ namespace Risebird.Web.Controllers
                             }
                             else if (model.IRFId != null)
                             {
-                                TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " edits were not saved.";
+                                TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " edits were not saved." + SaveFailureSuffix(model.SaveFailureReason);
                                 return RedirectToAction("Index");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessage"] = "Skills Channel edits were not saved.";
+                                TempData["SuccessErrorMessage"] = "Skills Channel edits were not saved." + SaveFailureSuffix(model.SaveFailureReason);
                                 return RedirectToAction("Index");
                             }
                         }
@@ -14101,6 +14124,46 @@ namespace Risebird.Web.Controllers
             var result = await _irfService.UpdateCandidateChecks(irfid, CandidateCheckvalue, CandidateCheckName);
             return Json("Successfully");
         }
+        /// <summary>
+        /// The "Interviewer alignment required" checkbox on Edit IRF, saved the moment it is toggled. It is not part
+        /// of the Edit IRF form save on purpose: that save (usp_UpdateIRFDetails) re-applies the channel's whole
+        /// interviewer panel, deactivating interviewers outside the MAG and unassigning their future interviews, and
+        /// switching the alignment page on or off must never change who is active or which interviews are assigned.
+        /// This writes IRF.IsInterviewerAlignmentRequired and nothing else. Same roles that see the checkbox.
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> UpdateInterviewerAlignmentRequired(int irfId, bool isRequired,
+            [FromServices] IInterviewAlignmentService alignmentService)
+        {
+            try
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                var allowed = profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement";
+                if (!allowed || irfId <= 0)
+                {
+                    return Json(new { success = false, message = "You are not allowed to change this setting." });
+                }
+
+                var saved = await alignmentService.SetAlignmentRequiredAsync(irfId, isRequired);
+                return Json(new
+                {
+                    success = saved == true,
+                    isRequired,
+                    message = saved == true ? null
+                        : saved == false ? "This skill channel was not found, so the setting was not saved."
+                        // The write failed in the database - in practice usp_SetInterviewerAlignmentRequired (or the
+                        // IRF.IsInterviewerAlignmentRequired column) has not been deployed to this environment yet.
+                        : "The setting could not be saved: the database is not ready for it yet (run the interview alignment database script)."
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "The setting could not be saved. Please try again." });
+            }
+        }
+
         [HttpPost]
         public async Task<JsonResult> SaveNewPriority(int irfid, int PriorityLevel)
         {

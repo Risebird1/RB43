@@ -279,6 +279,22 @@ namespace Risebird.Entities.ViewModel
         public bool showChatBox { get; set; }
         [Display(Name = "Proctoring Required")]
         public bool IsProctoring { get; set; } = true;
+
+        /// <summary>
+        /// Interview alignment rollout switch (IRF.IsInterviewerAlignmentRequired). On: interviewers on this
+        /// channel get the alignment page and the gated Zoom link. Read-only on this model: Edit IRF displays it, but
+        /// it is saved on its own by IRF/UpdateInterviewerAlignmentRequired, never by the Edit IRF save, because that
+        /// save re-applies the interviewer panel and toggling this switch must not change interviewers or assignments.
+        /// </summary>
+        [Display(Name = "Interviewer alignment required")]
+        public bool? IsInterviewerAlignmentRequired { get; set; }
+
+        /// <summary>
+        /// Set by IRFRepository.UpdateIRFDetails when the save throws: the underlying error (usually the SQL error that
+        /// usp_UpdateIRFDetails re-raises), so Edit IRF can say why "edits were not saved" instead of only that they
+        /// were not. Not a form field: IRFController.EditIRF clears it before saving.
+        /// </summary>
+        public string SaveFailureReason { get; set; }
         public bool generateTranscriptSummary { get; set; }
         public int AIInterviewType { get; set; }
         public IList<SkillComment> DeliveryHeadSampleQuestions { get; set; }
