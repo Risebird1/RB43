@@ -6,6 +6,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Risebird.Entities.ViewModel;
 
 namespace Risebird.Business
 {
@@ -402,6 +403,41 @@ Grant-Users 'C:\nuget'
 """
             }
         };
+
+        /// <summary>
+        /// The exact npm versions pre-loaded on the stack's machines and runner image (from its seed
+        /// package.json). Empty for stacks without one.
+        /// </summary>
+        public static IReadOnlyDictionary<string, string> PinnedPackageVersions(CodeProjectStack stack)
+        {
+            var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var seed in stack?.SeedFiles ?? new Dictionary<string, string>())
+            {
+                if (seed.Key.EndsWith("package.json", StringComparison.OrdinalIgnoreCase))
+                {
+                    using var doc = System.Text.Json.JsonDocument.Parse(seed.Value);
+                    foreach (var section in new[] { "dependencies", "devDependencies" })
+                        if (doc.RootElement.TryGetProperty(section, out var deps))
+                            foreach (var p in deps.EnumerateObject()) result[p.Name] = p.Value.GetString();
+                }
+                else if (seed.Key.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase))
+                {
+                    foreach (var r in System.Xml.Linq.XDocument.Parse(seed.Value).Descendants("PackageReference"))
+                        if ((string)r.Attribute("Include") is string id && (string)r.Attribute("Version") is string v) result[id] = v;
+                }
+            }
+            return result;
+        }
+
+        /// <summary>Stack-specific corrections applied to every generated or repaired project: exact npm and NuGet versions.</summary>
+        public static void ApplyStackFixups(CodeProjectGeneration g)
+        {
+            var stack = Find(g?.StackImageCode);
+            if (stack == null) return;
+            var pinned = PinnedPackageVersions(stack);
+            CodeProjectQuestionHelper.PinNodeDependencies(g, pinned);
+            CodeProjectQuestionHelper.PinNuGetPackages(g, pinned);
+        }
 
         public static CodeProjectStack Find(string code) =>
             All.FirstOrDefault(s => string.Equals(s.Code, code, StringComparison.OrdinalIgnoreCase));
