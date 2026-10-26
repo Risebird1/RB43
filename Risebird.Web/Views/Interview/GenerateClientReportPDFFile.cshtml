@@ -3,6 +3,12 @@
 @using Risebird.CommonHelper;
 @using Risebird.Entities.Enum
 @using Microsoft.Extensions.Configuration;
+@* Candidate code from per-question code sessions, shown under each question in "Questions Discussed". Disabled (the
+   report renders as before) when the interview has no code sessions. *@
+@{
+    var codeMatcher = await Risebird.Web.Helpers.CodeSessionReportHelper.GetMatcherAsync(Context, (Model == null ? 0 : Model.InterviewId),
+        Model?.QuestionsCollection, Model?.QuestionsTwoCollection);
+}
 
 @inject IConfiguration configuration
 
@@ -819,6 +825,11 @@
                                                                                      <ul style="padding:0px;margin:0px;">
                                                             @for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
                                                             {
+                                                                @* With code sessions, each question and its candidate code are one card. *@
+                                                                if (codeMatcher.Enabled)
+                                                                {
+                                                                    @:<li class="rb-qunit"><span class="rb-qunit-num">Question @(i + 1)</span><ul class="rb-qunit-q">
+                                                                }
                                                                 var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
                                                                 @if (Model.QuestionsCollection[i].Timing != null && Model.QuestionsCollection[i].Timing > 0)
                                                                 {
@@ -829,6 +840,12 @@
                                                                                                                                         <li style="padding-left:10px;margin-left:0px;" >@Model.QuestionsCollection[i].Comment [@Model.QuestionsCollection[i].SkillName]</li>
                                                                 }
                                                                                                                  <label style="padding-left:10px;margin-left:0px;">Rating : @valueslist</label>
+                                                                if (codeMatcher.Enabled)
+                                                                {
+                                                                    @:</ul>
+                                                                    @await Html.PartialAsync("~/Views/Shared/_QuestionCandidateCode.cshtml", new Risebird.Entities.ViewModel.QuestionCandidateCodeVM { Session = codeMatcher.Find(Model.QuestionsCollection[i].Comment), Wrapper = "div" })
+                                                                    @:</li>
+                                                                }
                                                             }
                                                                                      </ul>
                                                     }
@@ -839,6 +856,9 @@
                                                  </div>
                                              </div>
                                          </div>
+                                        @* Code sessions no discussed question matched, each with its question. *@
+                                        @await Html.PartialAsync("~/Views/Shared/_UnmatchedCandidateCode.cshtml", codeMatcher)
+
                                         @if (Model.SkillSetsevaluate > 1)
                                         {
                                                                     <!--Start: secondary skill-->
@@ -891,6 +911,11 @@
                                 <ul style="padding:0px;margin:0px;">
                                                                 @for (int i = 0; i < Model.QuestionsTwoCollection.Count(); i++)
                                                                 {
+                                                                    @* With code sessions, each question and its candidate code are one card. *@
+                                                                    if (codeMatcher.Enabled)
+                                                                    {
+                                                                        @:<li class="rb-qunit"><span class="rb-qunit-num">Question @(i + 1)</span><ul class="rb-qunit-q">
+                                                                    }
                                                                     var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsTwoCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
                                                                     @if (Model.QuestionsTwoCollection[i].Timing != null && Model.QuestionsTwoCollection[i].Timing > 0)
                                                                     {
@@ -901,6 +926,12 @@
                                             <li style="padding-left:10px;margin-left:0px;">@Model.QuestionsTwoCollection[i].Comment [@Model.QuestionsTwoCollection[i].SkillName]</li>
                                                                     }
                                         <label style="padding-left:10px;margin-left:0px;">Rating : @valueslist</label>
+                                                                    if (codeMatcher.Enabled)
+                                                                    {
+                                                                        @:</ul>
+                                                                        @await Html.PartialAsync("~/Views/Shared/_QuestionCandidateCode.cshtml", new Risebird.Entities.ViewModel.QuestionCandidateCodeVM { Session = codeMatcher.Find(Model.QuestionsTwoCollection[i].Comment), Wrapper = "div" })
+                                                                        @:</li>
+                                                                    }
                                                                 }
                                 </ul>
                                                         }

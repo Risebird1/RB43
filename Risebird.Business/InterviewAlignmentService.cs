@@ -321,6 +321,12 @@ namespace Risebird.Business
                 return (false, "This code session has ended or the link is not valid.", null);
             }
 
+            // A submitted answer is final; nothing more runs against it.
+            if (session.SubmittedOn.HasValue)
+            {
+                return (false, SubmittedLockedMessage(session.SubmittedOn.Value), null);
+            }
+
             var result = await _codeExecutionService.ExecuteAsync(new CodeExecutionRequest
             {
                 LanguageId = language.Id,
@@ -354,11 +360,18 @@ namespace Risebird.Business
                 return (false, "This code session has ended or the link is not valid.", null);
             }
 
+            // The candidate's code is final once submitted: it cannot be replaced, by the candidate or by anyone else who
+            // opens the same link. usp_SubmitInterviewCodeSession enforces this too.
+            if (session.SubmittedOn.HasValue)
+            {
+                return (false, SubmittedLockedMessage(session.SubmittedOn.Value), session.SubmittedOn);
+            }
+
             var now = DateTime.Now;
             var saved = await _repository.SubmitCodeSessionAsync(request.Token, language?.Id ?? session.LanguageId, request.Code, now);
             return saved
                 ? (true, null, now)
-                : (false, "Your answer could not be saved. Please try again.", null);
+                : (false, "Your answer could not be saved, or it had already been submitted. Reload the page to see it.", null);
         }
 
         public async Task<IList<InterviewCodeSession>> GetSessionsForReportAsync(int interviewId)
@@ -370,6 +383,9 @@ namespace Risebird.Business
 
             return await _repository.GetCodeSessionsAsync(interviewId) ?? new List<InterviewCodeSession>();
         }
+
+        private static string SubmittedLockedMessage(DateTime submittedOn) =>
+            $"This answer was submitted on {submittedOn:dd MMM yyyy, HH:mm} and can no longer be changed.";
 
         /// <summary>
         /// A token answers only while its interview is live and its channel still has the alignment switch on:

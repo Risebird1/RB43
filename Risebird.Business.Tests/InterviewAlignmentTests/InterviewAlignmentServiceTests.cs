@@ -180,6 +180,46 @@ namespace Risebird.Business.Tests.InterviewAlignmentTests
         }
 
         [Fact]
+        public async Task SubmitAsync_AfterSubmission_IsRefusedAndTheSubmittedCodeIsNotReplaced()
+        {
+            var fixture = new InterviewAlignmentFixture();
+            var token = Guid.NewGuid();
+            var session = InterviewAlignmentFixture.LiveSession(token);
+            session.SubmittedOn = new DateTime(2026, 10, 23, 14, 38, 0);
+            session.SubmittedSource = "print('candidate')";
+            fixture.Repository.Setup(x => x.GetCodeSessionByTokenAsync(token)).ReturnsAsync(session);
+            var sut = fixture.CreateSut();
+
+            // e.g. an interviewer who opened the candidate's link and edited the code
+            var (accepted, message, submittedOn) = await sut.SubmitAsync(new CodeSessionSubmitRequestVM { Token = token, Language = "python", Code = "print('edited')" });
+
+            Assert.False(accepted);
+            Assert.Contains("can no longer be changed", message);
+            Assert.Equal(session.SubmittedOn, submittedOn);
+            fixture.Repository.Verify(x => x.SubmitCodeSessionAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task RunAsync_AfterSubmission_IsRefusedAndNothingIsSaved()
+        {
+            var fixture = new InterviewAlignmentFixture();
+            var token = Guid.NewGuid();
+            var session = InterviewAlignmentFixture.LiveSession(token);
+            session.SubmittedOn = DateTime.Now.AddMinutes(-5);
+            fixture.CodeExecution.SetupGet(x => x.IsEnabled).Returns(true);
+            fixture.Repository.Setup(x => x.GetCodeSessionByTokenAsync(token)).ReturnsAsync(session);
+            var sut = fixture.CreateSut();
+
+            var (accepted, message, _) = await sut.RunAsync(new CodeSessionRunRequestVM { Token = token, Language = "python", Code = "print(1)" });
+
+            Assert.False(accepted);
+            Assert.Contains("can no longer be changed", message);
+            fixture.CodeExecution.Verify(x => x.ExecuteAsync(It.IsAny<CodeExecutionRequest>()), Times.Never);
+            fixture.Repository.Verify(x => x.SaveCodeSessionRunAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(),
+                It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+        }
+
+        [Fact]
         public async Task SubmitAsync_DoesNotNeedTheRunner()
         {
             var fixture = new InterviewAlignmentFixture();

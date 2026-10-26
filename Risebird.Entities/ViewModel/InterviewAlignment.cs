@@ -100,6 +100,13 @@ namespace Risebird.Entities.ViewModel
         public int InterviewId { get; set; }
         public int QuestionId { get; set; }
         public string QuestionText { get; set; }
+
+        /// <summary>
+        /// The question's text as it is now in TechSkillComments (usp_GetInterviewCodeSessions). QuestionText is the snapshot
+        /// taken when the session was created; the report's "Questions Discussed" holds whichever text the interviewer picked
+        /// when filling the report, so both are used to match a discussed question to its code.
+        /// </summary>
+        public string CurrentQuestionText { get; set; }
         public Guid Token { get; set; }
         public string LanguageId { get; set; }
         public string SubmittedSource { get; set; }
