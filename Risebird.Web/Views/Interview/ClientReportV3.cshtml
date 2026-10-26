@@ -5,6 +5,12 @@
 @using Microsoft.Extensions.Configuration;
 @using Risebird.Entities.Data
 @inject IConfiguration configuration
+@* Candidate code from per-question code sessions, shown under each question in "Questions Discussed". Disabled (the
+   report renders as before) when the interview has no code sessions. *@
+@{
+    var codeMatcher = await Risebird.Web.Helpers.CodeSessionReportHelper.GetMatcherAsync(Context, (Model == null ? 0 : Model.InterviewId),
+        Model?.QuestionsCollection, Model?.QuestionsTwoCollection);
+}
 @{
     ViewData["Title"] = "Interview Report";
     ViewBag.PageHeader = "Interview Report";
@@ -863,6 +869,11 @@
                                                             <ul>
                                                                 @for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
                                                                 {
+                                                                    @* With code sessions, each question and its candidate code are one card. *@
+                                                                    if (codeMatcher.Enabled)
+                                                                    {
+                                                                        @:<li class="rb-qunit"><span class="rb-qunit-num">Question @(i + 1)</span><ul class="rb-qunit-q">
+                                                                    }
                                                                     var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
                                                                     @if (Model.QuestionsCollection[i].Timing != null && Model.QuestionsCollection[i].Timing > 0)
                                                                     {
@@ -876,6 +887,12 @@
                                                                     {
                                                                         <label>Rating : @valueslist</label>
                                                                     }
+                                                                    if (codeMatcher.Enabled)
+                                                                    {
+                                                                        @:</ul>
+                                                                        @await Html.PartialAsync("~/Views/Shared/_QuestionCandidateCode.cshtml", new Risebird.Entities.ViewModel.QuestionCandidateCodeVM { Session = codeMatcher.Find(Model.QuestionsCollection[i].Comment), Wrapper = "div" })
+                                                                        @:</li>
+                                                                    }
                                                                 }
                                                             </ul>
                                                         }
@@ -885,6 +902,9 @@
 
                                                         }
                                                     </div>
+                                                @* Code sessions no discussed question matched, each with its question. *@
+                                                @await Html.PartialAsync("~/Views/Shared/_UnmatchedCandidateCode.cshtml", codeMatcher)
+
                                                 </div>
                                                 @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                                 {
@@ -1191,6 +1211,11 @@
                                                                     <ul>
                                                                         @for (int i = 0; i < Model.QuestionsTwoCollection.Count(); i++)
                                                                         {
+                                                                            @* With code sessions, each question and its candidate code are one card. *@
+                                                                            if (codeMatcher.Enabled)
+                                                                            {
+                                                                                @:<li class="rb-qunit"><span class="rb-qunit-num">Question @(i + 1)</span><ul class="rb-qunit-q">
+                                                                            }
                                                                             var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsTwoCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
                                                                             @if (Model.QuestionsTwoCollection[i].Timing != null && Model.QuestionsTwoCollection[i].Timing > 0)
                                                                             {
@@ -1203,6 +1228,12 @@
                                                                             @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                                                             {
                                                                                 <label>Rating : @valueslist</label>
+                                                                            }
+                                                                            if (codeMatcher.Enabled)
+                                                                            {
+                                                                                @:</ul>
+                                                                                @await Html.PartialAsync("~/Views/Shared/_QuestionCandidateCode.cshtml", new Risebird.Entities.ViewModel.QuestionCandidateCodeVM { Session = codeMatcher.Find(Model.QuestionsTwoCollection[i].Comment), Wrapper = "div" })
+                                                                                @:</li>
                                                                             }
                                                                         }
                                                                     </ul>
