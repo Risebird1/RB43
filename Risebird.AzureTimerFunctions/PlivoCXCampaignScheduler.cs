@@ -10,9 +10,12 @@ namespace Risebird.AzureTimerFunctions
 {
     /// <summary>
     /// Azure Timer Function — dials PlivoCX campaigns that are Running ("Start automatic").
-    /// Every 2 minutes, per campaign: inside its calling window and time zone, up to its
-    /// Concurrent limit, candidates whose Min gap has passed and who are under Attempts/day and
-    /// Total attempts. Campaigns past EndsOn, or with nobody left Pending, become Completed.
+    /// Every 15 seconds it refills free lines: the account's campaign line budget
+    /// (PlivoCX:CampaignConcurrencyBudget) is shared between the Running campaigns inside their
+    /// calling window, each up to its own Concurrent limit, and dialled with candidates whose Min
+    /// gap has passed and who are under Attempts/day and Total attempts. Campaigns past EndsOn, or
+    /// with nobody left Pending, become Completed. A pass with no Running campaign is one query.
+    /// Timer runs never overlap (the Functions host holds a singleton lock per timer).
     ///
     /// The limits that PlivoCXInterviewSchedulingJob / PlivoCXRescheduleJob hard-code (9-22h,
     /// 4/day, 2h cooldown) come from each campaign's calling policy here. Those two jobs skip
@@ -35,7 +38,7 @@ namespace Risebird.AzureTimerFunctions
         }
 
         [Function("PlivoCXCampaignScheduler")]
-        public async Task Run([TimerTrigger("0 */2 * * * *")] TimerInfo myTimer)
+        public async Task Run([TimerTrigger("*/15 * * * * *")] TimerInfo myTimer)
         {
             _log.LogInformation($"[PlivoCX-Campaign] Scheduler tick at {DateTime.UtcNow:u}");
             try

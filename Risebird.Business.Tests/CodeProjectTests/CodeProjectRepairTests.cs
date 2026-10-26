@@ -99,15 +99,19 @@ namespace Risebird.Business.Tests.CodeProjectTests
                     new Mock<ICodeProjectEnvironmentProvisioner>().Object, new Mock<IApplicationErrorLogger>().Object, OpenAI.Object);
             }
 
-            public void RepairReturns(string starterCalc) =>
-                OpenAI.Setup(x => x.CreateJsonWithInstructionsAsync(It.IsAny<string>(), It.IsAny<string>(), "RepairCodeProjectQuestion", It.IsAny<int?>()))
-                    .ReturnsAsync(JsonSerializer.Serialize(new
-                    {
-                        project_files = Starter(starterCalc).Select(f => new { path = f.Path, content = f.Content }),
-                        hidden_tests = new[] { new { path = "Tests/Hidden/CalcTests.cs", content = "tests" } },
-                        reference_solution = new[] { new { path = "App/Calc.cs", content = "SOLVED" } },
-                        notes = "Added the missing semicolon."
-                    }));
+            public void RepairReturns(params string[] starterCalcs)
+            {
+                var seq = OpenAI.SetupSequence(x => x.CreateJsonWithInstructionsAsync(It.IsAny<string>(), It.IsAny<string>(), "RepairCodeProjectQuestion", It.IsAny<int?>()));
+                foreach (var calc in starterCalcs) seq = seq.ReturnsAsync(Answer(calc));
+            }
+
+            private static string Answer(string starterCalc) => JsonSerializer.Serialize(new
+            {
+                project_files = Starter(starterCalc).Select(f => new { path = f.Path, content = f.Content }),
+                hidden_tests = new[] { new { path = "Tests/Hidden/CalcTests.cs", content = "tests" } },
+                reference_solution = new[] { new { path = "App/Calc.cs", content = "SOLVED" } },
+                notes = "Added the missing semicolon."
+            });
         }
 
         [Fact]
@@ -135,7 +139,7 @@ namespace Risebird.Business.Tests.CodeProjectTests
         public async Task Gives_up_after_the_maximum_number_of_repairs()
         {
             var h = new Harness("BROKEN");
-            h.RepairReturns("BROKEN again");
+            h.RepairReturns("BROKEN again", "BROKEN once more");
 
             await h.Service.ValidateAsync(QuestionId);
 
@@ -144,6 +148,20 @@ namespace Risebird.Business.Tests.CodeProjectTests
             Assert.Contains($"after {CodeProjectQuestionHelper.MaxRepairRounds} automatic repairs", last.Report.FailureReason);
             h.OpenAI.Verify(x => x.CreateJsonWithInstructionsAsync(It.IsAny<string>(), It.IsAny<string>(), "RepairCodeProjectQuestion", It.IsAny<int?>()),
                 Times.Exactly(CodeProjectQuestionHelper.MaxRepairRounds));
+        }
+
+        [Fact]
+        public async Task A_repair_that_changes_nothing_stops_without_another_build()
+        {
+            var h = new Harness("BROKEN");
+            h.RepairReturns("BROKEN");   // the same files it was given
+
+            await h.Service.ValidateAsync(QuestionId);
+
+            var last = h.Updates.Last();
+            Assert.Equal(CodeProjectValidationStatus.Failed, last.Status);
+            Assert.Contains("returned the files unchanged", last.Report.FailureReason);
+            h.OpenAI.Verify(x => x.CreateJsonWithInstructionsAsync(It.IsAny<string>(), It.IsAny<string>(), "RepairCodeProjectQuestion", It.IsAny<int?>()), Times.Once);
         }
 
         [Fact]

@@ -110,6 +110,11 @@ namespace Risebird.Business
                 g.EditableFiles = EditableFilesFromPayload(details.GeneratedPayload);
                 var timeLimit = details.CodingTimeLimitInMinutes ?? CodeProjectQuestionHelper.DefaultTimeLimitMinutes;
 
+                // Questions generated before a fix existed (or re-validated later) get it too; saved when anything changed.
+                var before = Fingerprint(g);
+                CodeProjectQuestionHelper.ApplyAutomaticFixes(g, CodeProjectStackCatalog.ApplyStackFixups);
+                if (Fingerprint(g) != before) await StoreProjectAsync(questionId, g, ct);
+
                 // Build and test; when the project itself is at fault (compile errors, unsolvable or
                 // mismatched tests, a pre-solved starter), the AI gets the real output and repairs the
                 // files, up to MaxRepairRounds times, before the question is reported as failed.
@@ -152,7 +157,13 @@ namespace Risebird.Business
                     var raw = await _openAI.CreateJsonWithInstructionsAsync(CodeProjectQuestionHelper.RepairInstructions,
                         CodeProjectQuestionHelper.BuildRepairInput(g, CodeProjectQuestionHelper.ResolveEditableFiles(g), report, starterRun, referenceRun),
                         "RepairCodeProjectQuestion");
-                    var repaired = CodeProjectQuestionHelper.ApplyRepair(g, raw, timeLimit, out var repairError, out var notes);
+                    var repaired = CodeProjectQuestionHelper.ApplyRepair(g, raw, timeLimit, out var repairError, out var notes, CodeProjectStackCatalog.ApplyStackFixups);
+                    // A "repair" that returns the same files would only fail the same way again.
+                    if (repaired != null && Fingerprint(repaired) == Fingerprint(g))
+                    {
+                        repaired = null;
+                        repairError = "it returned the files unchanged.";
+                    }
                     if (repaired == null)
                     {
                         report.FailureReason += $" Automatic repair {round + 1} did not help: {repairError}";
@@ -463,6 +474,16 @@ namespace Risebird.Business
             step.State = state;
             step.Detail = detail;
             step.Seconds = seconds;
+        }
+
+        /// <summary>Order-independent identity of a project's three file tiers.</summary>
+        private static string Fingerprint(CodeProjectGeneration g)
+        {
+            string Tier(IEnumerable<CodeProjectFile> files) => string.Join("\u0001", (files ?? Enumerable.Empty<CodeProjectFile>())
+                .Where(f => f?.Path != null)
+                .OrderBy(f => CodeProjectQuestionHelper.NormalizePath(f.Path), StringComparer.OrdinalIgnoreCase)
+                .Select(f => CodeProjectQuestionHelper.NormalizePath(f.Path) + "\u0002" + (f.Content ?? "").Replace("\r\n", "\n").Trim()));
+            return Tier(g.ProjectFiles) + "\u0003" + Tier(g.HiddenTests) + "\u0003" + Tier(g.ReferenceSolution);
         }
 
         /// <summary>Overwrites the stored candidate zip and the server-only secrets with the given project.</summary>

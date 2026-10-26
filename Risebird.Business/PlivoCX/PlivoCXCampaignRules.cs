@@ -1,6 +1,8 @@
 using Risebird.Entities.Data.PlivoCXModels;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 namespace Risebird.Business.PlivoCX
 {
@@ -159,6 +161,58 @@ namespace Risebird.Business.PlivoCX
             if (!IsKnownTimeZone(c.TimeZone)) return "Unknown time zone '" + c.TimeZone + "'. Use an id such as Asia/Kolkata.";
             if (c.StartsOn.HasValue && c.EndsOn.HasValue && c.EndsOn.Value.Date < c.StartsOn.Value.Date) return "Ends on cannot be before Starts on.";
             return null;
+        }
+
+        // ── Throughput ───────────────────────────────────────────────────────────
+
+        /// <summary>
+        /// Splits the free lines of the shared campaign budget across campaigns, one line at a time
+        /// in turn, so no campaign starves the others and none exceeds its own Concurrent limit.
+        /// Returns campaign id -> lines to dial now (campaigns with none are left out).
+        /// </summary>
+        public static Dictionary<int, int> PlanSlots(IReadOnlyList<(int CampaignId, int ConcurrentCalls, int InFlight)> campaigns, int globalFree)
+        {
+            var plan = new Dictionary<int, int>();
+            var room = campaigns.ToDictionary(c => c.CampaignId, c => Math.Max(0, c.ConcurrentCalls - c.InFlight));
+            int left = Math.Max(0, globalFree);
+            bool gave = true;
+            while (left > 0 && gave)
+            {
+                gave = false;
+                foreach (var c in campaigns)
+                {
+                    if (left == 0) break;
+                    if (room[c.CampaignId] == 0) continue;
+                    room[c.CampaignId]--;
+                    plan[c.CampaignId] = plan.TryGetValue(c.CampaignId, out var n) ? n + 1 : 1;
+                    left--;
+                    gave = true;
+                }
+            }
+            return plan;
+        }
+
+        /// <summary>Typical line occupancy per call: ringing, a 1-2 minute conversation, the hangup webhook.</summary>
+        public const double AverageCallMinutes = 1.5;
+
+        /// <summary>
+        /// Rough calls per 30 minutes at <paramref name="concurrentCalls"/> lines, with lines refilled
+        /// every <paramref name="refillSeconds"/>: each line places one call per (average call + half
+        /// a refill interval).
+        /// </summary>
+        public static int EstimateCallsPer30Minutes(int concurrentCalls, int refillSeconds = 15)
+        {
+            if (concurrentCalls <= 0) return 0;
+            double perLineMinutes = AverageCallMinutes + refillSeconds / 2.0 / 60.0;
+            return (int)Math.Floor(concurrentCalls * 30 / perLineMinutes);
+        }
+
+        /// <summary>Lines needed to place <paramref name="calls"/> calls within <paramref name="minutes"/>.</summary>
+        public static int ConcurrentCallsFor(int calls, int minutes, int refillSeconds = 15)
+        {
+            if (calls <= 0 || minutes <= 0) return 1;
+            double perLineMinutes = AverageCallMinutes + refillSeconds / 2.0 / 60.0;
+            return (int)Math.Ceiling(calls * perLineMinutes / minutes);
         }
     }
 }

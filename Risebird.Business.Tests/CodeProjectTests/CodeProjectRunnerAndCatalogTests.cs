@@ -205,6 +205,160 @@ Expected: 400</Message></ErrorInfo></Output>
         }
 
         [Fact]
+        public void Node_projects_get_the_exact_pre_loaded_versions()
+        {
+            // "^5.4.10" made npm pick 5.4.21 offline, which is not on the machine (ENOTCACHED).
+            const string generated = "{ \"name\": \"todo\", \"dependencies\": { \"express\": \"^4.21.1\" }, " +
+                                     "\"devDependencies\": { \"vite\": \"^5.4.10\", \"vitest\": \"~2.1.4\", \"left-pad\": \"^1.3.0\" } }";
+            var g = new Risebird.Entities.ViewModel.CodeProjectGeneration
+            {
+                StackImageCode = "rb-node-win",
+                ProjectFiles = { new() { Path = "package.json", Content = generated } },
+                ReferenceSolution = { new() { Path = "package.json", Content = generated } }
+            };
+
+            CodeProjectStackCatalog.ApplyStackFixups(g);
+
+            foreach (var file in g.ProjectFiles.Concat(g.ReferenceSolution))
+            {
+                var json = System.Text.Json.JsonDocument.Parse(file.Content).RootElement;
+                Assert.Equal("4.21.1", json.GetProperty("dependencies").GetProperty("express").GetString());
+                Assert.Equal("5.4.10", json.GetProperty("devDependencies").GetProperty("vite").GetString());
+                Assert.Equal("2.1.4", json.GetProperty("devDependencies").GetProperty("vitest").GetString());
+                // Not on the machine: left for validation (and repair) to deal with.
+                Assert.Equal("^1.3.0", json.GetProperty("devDependencies").GetProperty("left-pad").GetString());
+            }
+        }
+
+        [Fact]
+        public void Dotnet_test_projects_get_the_test_sdk_and_exact_versions()
+        {
+            // As generated: no Microsoft.NET.Test.Sdk (dotnet test would find no tests) and a floating xunit version.
+            const string tests = "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net8.0</TargetFramework></PropertyGroup>" +
+                                 "<ItemGroup><PackageReference Include=\"xunit\" Version=\"2.*\" /><PackageReference Include=\"Microsoft.AspNetCore.Mvc.Testing\"><Version>8.0.*</Version></PackageReference></ItemGroup></Project>";
+            var g = new Risebird.Entities.ViewModel.CodeProjectGeneration
+            {
+                StackImageCode = "rb-dotnet-win",
+                BuildCommand = "dotnet build -nologo",
+                ProjectFiles = { new() { Path = "Api.Tests/Api.Tests.csproj", Content = tests } }
+            };
+
+            CodeProjectStackCatalog.ApplyStackFixups(g);
+
+            var refs = System.Xml.Linq.XDocument.Parse(g.ProjectFiles[0].Content).Descendants("PackageReference")
+                .ToDictionary(r => (string)r.Attribute("Include"), r => (string)r.Attribute("Version"));
+            Assert.Equal("2.9.2", refs["xunit"]);
+            Assert.Equal("8.0.10", refs["Microsoft.AspNetCore.Mvc.Testing"]);
+            Assert.Equal("17.11.1", refs["Microsoft.NET.Test.Sdk"]);
+            Assert.Equal("2.8.2", refs["xunit.runner.visualstudio"]);
+        }
+
+        [Fact]
+        public void Dotnet_workspaces_always_get_implicit_usings_and_no_audit()
+        {
+            var g = new Risebird.Entities.ViewModel.CodeProjectGeneration
+            {
+                BuildCommand = "dotnet build -nologo",
+                // The project brought its own Directory.Build.props without either property.
+                ProjectFiles = { new() { Path = "Directory.Build.props", Content = "<Project><PropertyGroup><LangVersion>latest</LangVersion></PropertyGroup></Project>" } }
+            };
+
+            Risebird.Entities.ViewModel.CodeProjectQuestionHelper.EnsureDotnetOffline(g);
+
+            var props = System.Xml.Linq.XDocument.Parse(g.ProjectFiles.Single(f => f.Path == "Directory.Build.props").Content);
+            Assert.Equal("enable", (string)props.Descendants("ImplicitUsings").Single());
+            Assert.Equal("false", (string)props.Descendants("NuGetAudit").Single());
+            Assert.Equal("latest", (string)props.Descendants("LangVersion").Single());
+        }
+
+        [Fact]
+        public void Django_projects_tested_with_pytest_get_their_settings_module()
+        {
+            var g = new Risebird.Entities.ViewModel.CodeProjectGeneration
+            {
+                TestCommand = "python -m pytest --junitxml=test-results/junit.xml",
+                ProjectFiles =
+                {
+                    // manage.py names the settings too, but pytest never runs it.
+                    new() { Path = "manage.py", Content = "import os\nos.environ.setdefault('DJANGO_SETTINGS_MODULE', 'proj.settings')" },
+                    new() { Path = "proj/settings.py", Content = "INSTALLED_APPS = []" },
+                    new() { Path = "books/views.py", Content = "from rest_framework.decorators import api_view" }
+                }
+            };
+
+            Assert.Equal("pytest.ini", Risebird.Entities.ViewModel.CodeProjectQuestionHelper.EnsureDjangoSettingsForPytest(g));
+            Assert.Contains("DJANGO_SETTINGS_MODULE = proj.settings", g.ProjectFiles.Single(f => f.Path == "pytest.ini").Content);
+            Assert.Contains("pytest.ini", g.ReadOnlyPaths);
+            // Now configured: running it again changes nothing.
+            Assert.Null(Risebird.Entities.ViewModel.CodeProjectQuestionHelper.EnsureDjangoSettingsForPytest(g));
+        }
+
+        [Fact]
+        public void Non_django_python_projects_are_left_alone()
+        {
+            var g = new Risebird.Entities.ViewModel.CodeProjectGeneration
+            {
+                TestCommand = "python -m pytest",
+                ProjectFiles = { new() { Path = "app/main.py", Content = "import sqlite3" } }
+            };
+            Assert.Null(Risebird.Entities.ViewModel.CodeProjectQuestionHelper.EnsureDjangoSettingsForPytest(g));
+            Assert.Empty(g.ProjectFiles.Where(f => f.Path == "pytest.ini"));
+        }
+
+        [Fact]
+        public void A_root_dotnet_project_beside_a_test_project_moves_into_its_own_folder()
+        {
+            var g = new Risebird.Entities.ViewModel.CodeProjectGeneration
+            {
+                BuildCommand = "dotnet build -nologo",
+                EntryPointFile = "Program.cs",
+                EditableFiles = { "Program.cs" },
+                ProjectFiles =
+                {
+                    new() { Path = "Api.csproj", Content = "<Project Sdk=\"Microsoft.NET.Sdk.Web\" />" },
+                    new() { Path = "Program.cs", Content = "" },
+                    new() { Path = "Controllers/GreetController.cs", Content = "" },
+                    new() { Path = "NuGet.Config", Content = "<configuration />" },
+                    new() { Path = "Api.Tests/Api.Tests.csproj", Content = "<Project><ItemGroup><ProjectReference Include=\"..\\Api.csproj\" /></ItemGroup></Project>" }
+                },
+                ReferenceSolution = { new() { Path = "Program.cs", Content = "solved" } }
+            };
+
+            Assert.Equal("Api", Risebird.Entities.ViewModel.CodeProjectQuestionHelper.MoveRootDotnetProjectIntoFolder(g));
+
+            var paths = g.ProjectFiles.Select(f => f.Path).ToList();
+            Assert.Contains("Api/Api.csproj", paths);
+            Assert.Contains("Api/Controllers/GreetController.cs", paths);
+            Assert.Contains("NuGet.Config", paths);                  // shared root files stay
+            Assert.Contains("Api.Tests/Api.Tests.csproj", paths);    // other projects stay
+            Assert.Equal("Api/Program.cs", g.EntryPointFile);
+            Assert.Equal(new[] { "Api/Program.cs" }, g.EditableFiles);
+            Assert.Equal("Api/Program.cs", g.ReferenceSolution.Single().Path);
+            Assert.Contains("Include=\"..\\Api\\Api.csproj\"", g.ProjectFiles.Single(f => f.Path == "Api.Tests/Api.Tests.csproj").Content);
+        }
+
+        [Fact]
+        public void A_single_root_dotnet_project_is_left_where_it_is()
+        {
+            var g = new Risebird.Entities.ViewModel.CodeProjectGeneration
+            {
+                BuildCommand = "dotnet build -nologo",
+                ProjectFiles = { new() { Path = "App.csproj", Content = "<Project />" }, new() { Path = "Program.cs", Content = "" } }
+            };
+            Assert.Null(Risebird.Entities.ViewModel.CodeProjectQuestionHelper.MoveRootDotnetProjectIntoFolder(g));
+            Assert.Contains(g.ProjectFiles, f => f.Path == "App.csproj");
+        }
+
+        [Fact]
+        public void Pinned_versions_come_from_the_seed_and_other_stacks_have_none()
+        {
+            var node = CodeProjectStackCatalog.PinnedPackageVersions(CodeProjectStackCatalog.Find("rb-node-win"));
+            Assert.Equal("5.4.10", node["vite"]);
+            Assert.Equal("4.21.1", node["express"]);
+            Assert.Empty(CodeProjectStackCatalog.PinnedPackageVersions(CodeProjectStackCatalog.Find("rb-java-win")));
+        }
+
+        [Fact]
         public void Image_tags_and_template_names_are_stable_and_distinct()
         {
             foreach (var s in CodeProjectStackCatalog.All)
