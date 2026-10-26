@@ -10429,11 +10429,11 @@ namespace Risebird.Web.Controllers
                 if (errors.Count > 0)
                     return Json(new { success = false, message = "The generated project did not meet the rules.", errors });
 
-                // dotnet build/test in the workspace root need a solution there; add one when the projects sit in sub-folders.
-                CodeProjectQuestionHelper.EnsureDotnetSolution(generation);
-                // No internet in the runner or on the candidate's machine: restore must use only pre-loaded packages.
-                CodeProjectQuestionHelper.EnsureDotnetOffline(generation);
-                CodeProjectQuestionHelper.EnsureProgramVisibleToTests(generation);
+                // Deterministic corrections for offline builds: root .sln, offline NuGet with implicit usings,
+                // a visible Program for WebApplicationFactory, exact pre-loaded package versions.
+                // Paths are stored with the question, so a root .csproj beside other projects is moved into its own folder now.
+                CodeProjectQuestionHelper.MoveRootDotnetProjectIntoFolder(generation);
+                CodeProjectQuestionHelper.ApplyAutomaticFixes(generation, CodeProjectStackCatalog.ApplyStackFixups);
                 generation.TimeLimitMinutes = timeLimitMinutes;
                 generation.Language = string.IsNullOrWhiteSpace(generation.Language) ? (language ?? requestedStack) : generation.Language;
                 generation.QuestionGist = DmIvQuestionRubricHelper.BuildSpokenQuestionGist(generation.QuestionText, generation.QuestionGist);

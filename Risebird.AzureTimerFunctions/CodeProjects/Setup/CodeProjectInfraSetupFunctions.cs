@@ -101,14 +101,24 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
         public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "codeprojects/run")] HttpRequestData req, CancellationToken ct)
         {
-            var body = await new StreamReader(req.Body).ReadToEndAsync();
-            CodeProjectRunRequest request;
-            try { request = JsonConvert.DeserializeObject<CodeProjectRunRequest>(body); }
-            catch (JsonException) { request = null; }
-            if (request == null || string.IsNullOrWhiteSpace(request.StackImageCode))
-                return await JsonAsync(req, new CodeProjectRunResult { Completed = false, Error = "stackImageCode and files are required." }, HttpStatusCode.BadRequest);
+            try
+            {
+                var body = await new StreamReader(req.Body).ReadToEndAsync();
+                CodeProjectRunRequest request;
+                try { request = JsonConvert.DeserializeObject<CodeProjectRunRequest>(body); }
+                catch (JsonException) { request = null; }
+                if (request == null || string.IsNullOrWhiteSpace(request.StackImageCode))
+                    return await JsonAsync(req, new CodeProjectRunResult { Completed = false, Error = "stackImageCode and files are required." }, HttpStatusCode.BadRequest);
 
-            return await JsonAsync(req, await _runner.RunAsync(request, ct));
+                return await JsonAsync(req, await _runner.RunAsync(request, ct));
+            }
+            catch (Exception ex) when (!(ex is OperationCanceledException && ct.IsCancellationRequested))
+            {
+                // A readable error instead of a bare 500, so the author's panel says what went wrong.
+                _log.LogError(ex, "Code project run failed");
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return await JsonAsync(req, new CodeProjectRunResult { Completed = false, Error = "Runner failure: " + ex.Message });
+            }
         }
 
         private static async Task<HttpResponseData> JsonAsync(HttpRequestData req, object value, HttpStatusCode status = HttpStatusCode.OK)

@@ -37,7 +37,8 @@ namespace Risebird.Entities.ViewModel
             "- The starter project must build, and the hidden tests must mostly FAIL against it. The reference solution must make every hidden test pass.",
             "- hidden_tests, reference_solution and seeded_defects are server-side only. Do not copy their content into project_files.",
             "- Every hidden test file has its own path that does NOT appear in project_files (for example under tests/hidden/). Visible tests, if any, use different file names.",
-            "- build_command and test_command run in the workspace root. For .NET put a .sln at the root listing every .csproj (or a single .csproj at the root).",
+            "- build_command and test_command run in the workspace root. For .NET put each project in its own folder (App/App.csproj, App.Tests/App.Tests.csproj) and a .sln at the root listing them; never a .csproj at the root next to other projects.",
+            "- Node: in package.json use the EXACT versions listed for the stack (\"5.4.10\", never \"^5.4.10\" or \"~5.4.10\"); ranges resolve to versions that are not on the machine.",
             "- .NET minimal APIs tested with WebApplicationFactory<Program>: end Program.cs with `public partial class Program { }` (otherwise Program is internal and the tests do not compile).",
             "- project_files is a complete project that builds on its own with build_command: for .NET include every .csproj (and a test project referencing the code under test), " +
                 "for Java the pom.xml, for Node the package.json, for Python any package __init__.py files.",
@@ -92,6 +93,136 @@ namespace Risebird.Entities.ViewModel
             "with full file contents. The reference_solution lists only the files that differ from the starter (normally the editable files)."
         });
 
+        /// <summary>
+        /// The deterministic corrections every generated or repaired project gets (all idempotent): hidden
+        /// tests out of the candidate's files, a root .sln, offline NuGet with implicit usings, a visible
+        /// Program for WebApplicationFactory, and the stack's exact package versions.
+        /// </summary>
+        public static void ApplyAutomaticFixes(CodeProjectGeneration g, Action<CodeProjectGeneration> stackFixups = null)
+        {
+            StripHiddenTestsFromProject(g);
+            EnsureDotnetSolution(g);
+            EnsureDotnetOffline(g);
+            EnsureProgramVisibleToTests(g);
+            EnsureDjangoSettingsForPytest(g);
+            stackFixups?.Invoke(g);
+        }
+
+        /// <summary>
+        /// A .csproj at the workspace root compiles every .cs file beneath it, including the test
+        /// project's, so the app fails with "Xunit could not be found"; and a root .sln next to it makes
+        /// `dotnet build` ambiguous. When a root project sits beside projects in sub-folders, its files move
+        /// into a folder of its own (MinimalApiDemo.csproj → MinimalApiDemo/MinimalApiDemo.csproj), and
+        /// every reference to them (editable and read-only lists, entry point, reference solution,
+        /// ProjectReference paths) follows. Run before the question is saved, since paths are stored.
+        /// Returns the folder created, or null.
+        /// </summary>
+        public static string MoveRootDotnetProjectIntoFolder(CodeProjectGeneration g)
+        {
+            if (g == null || !(g.BuildCommand ?? "").TrimStart().StartsWith("dotnet", StringComparison.OrdinalIgnoreCase)) return null;
+            var paths = g.ProjectFiles.Where(f => f?.Path != null).Select(f => NormalizePath(f.Path)).ToList();
+            var roots = paths.Where(p => !p.Contains('/') && p.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase)).ToList();
+            var others = paths.Where(p => p.Contains('/') && p.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase)).ToList();
+            if (roots.Count != 1 || others.Count == 0) return null;
+
+            var rootProject = roots[0];
+            var name = Path.GetFileNameWithoutExtension(rootProject);
+            var folder = paths.Any(p => p.StartsWith(name + "/", StringComparison.OrdinalIgnoreCase)) ? name + ".App" : name;
+            var otherDirs = others.Select(p => p.Substring(0, p.LastIndexOf('/') + 1)).ToList();
+            var shared = new[] { ".sln", ".slnx" };
+            var sharedNames = new[] { "NuGet.Config", "Directory.Build.props", "Directory.Build.targets", "global.json", ".gitignore", ".editorconfig", "README.md" };
+            bool Moves(string p) =>
+                !otherDirs.Any(d => p.StartsWith(d, StringComparison.OrdinalIgnoreCase))
+                && !(!p.Contains('/') && (shared.Any(s => p.EndsWith(s, StringComparison.OrdinalIgnoreCase)) || sharedNames.Contains(p, StringComparer.OrdinalIgnoreCase)));
+            string Map(string p)
+            {
+                if (string.IsNullOrWhiteSpace(p)) return p;
+                var n = NormalizePath(p);
+                return Moves(n) ? folder + "/" + n : n;
+            }
+
+            // ProjectReference paths that pointed at the root project now point into its folder.
+            static string Resolve(string fromDir, string include)
+            {
+                var parts = (fromDir + include.Replace('\\', '/')).Split('/').ToList();
+                var stack = new List<string>();
+                foreach (var part in parts)
+                {
+                    if (part == "..") { if (stack.Count > 0) stack.RemoveAt(stack.Count - 1); }
+                    else if (part.Length > 0 && part != ".") stack.Add(part);
+                }
+                return string.Join("/", stack);
+            }
+            static string Relative(string fromDir, string to)
+            {
+                var up = fromDir.Count(c => c == '/');
+                return string.Concat(Enumerable.Repeat("..\\", up)) + to.Replace('/', '\\');
+            }
+
+            foreach (var f in g.ProjectFiles.Concat(g.ReferenceSolution).Concat(g.HiddenTests))
+            {
+                if (f?.Path == null) continue;
+                var oldPath = NormalizePath(f.Path);
+                var newPath = Map(oldPath);
+                if (oldPath.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase) && f.Content != null)
+                {
+                    var oldDir = oldPath.Contains('/') ? oldPath.Substring(0, oldPath.LastIndexOf('/') + 1) : "";
+                    var newDir = newPath.Contains('/') ? newPath.Substring(0, newPath.LastIndexOf('/') + 1) : "";
+                    f.Content = Regex.Replace(f.Content, @"(<ProjectReference\s+Include="")([^""]+)("")", m =>
+                    {
+                        var target = Map(Resolve(oldDir, m.Groups[2].Value));
+                        return m.Groups[1].Value + Relative(newDir, target) + m.Groups[3].Value;
+                    });
+                }
+                f.Path = newPath;
+            }
+            g.EditableFiles = (g.EditableFiles ?? new List<string>()).Select(Map).ToList();
+            g.ReadOnlyPaths = (g.ReadOnlyPaths ?? new List<string>()).Select(Map).ToList();
+            g.EntryPointFile = Map(g.EntryPointFile);
+            return folder;
+        }
+
+        /// <summary>
+        /// Django (and DRF) tests run under pytest-django need DJANGO_SETTINGS_MODULE; without it every
+        /// test module fails at collection with ImproperlyConfigured. When a Django project with a
+        /// settings.py has no such setting, a root pytest.ini naming it is added (or the line is added to
+        /// an existing pytest.ini). Returns the path changed, or null.
+        /// </summary>
+        public static string EnsureDjangoSettingsForPytest(CodeProjectGeneration g)
+        {
+            if (g == null || (g.TestCommand ?? "").IndexOf("pytest", StringComparison.OrdinalIgnoreCase) < 0) return null;
+            var files = g.ProjectFiles.Where(f => f?.Path != null).ToList();
+            var all = files.Concat(g.HiddenTests).Concat(g.ReferenceSolution).Where(f => f?.Content != null).ToList();
+            if (!all.Any(f => Regex.IsMatch(f.Content, @"^\s*(from|import)\s+(django|rest_framework)\b", RegexOptions.Multiline))) return null;
+            // Only where pytest itself picks the setting up counts: manage.py sets it too, but pytest never runs manage.py.
+            var pytestConfig = new[] { "pytest.ini", "pyproject.toml", "setup.cfg", "tox.ini", "conftest.py" };
+            if (all.Any(f => f.Path != null && pytestConfig.Contains(Path.GetFileName(NormalizePath(f.Path)), StringComparer.OrdinalIgnoreCase)
+                    && (f.Content.Contains("DJANGO_SETTINGS_MODULE") || f.Content.Contains("settings.configure("))))
+                return null;
+
+            var settings = files.Select(f => NormalizePath(f.Path)).Where(p => p.EndsWith("settings.py", StringComparison.OrdinalIgnoreCase))
+                .OrderBy(p => p.Count(c => c == '/')).ThenBy(p => p, StringComparer.Ordinal).FirstOrDefault();
+            if (settings == null) return null;
+            var module = settings.Substring(0, settings.Length - 3).Replace('/', '.');
+            var line = $"DJANGO_SETTINGS_MODULE = {module}";
+
+            var ini = files.FirstOrDefault(f => string.Equals(NormalizePath(f.Path), "pytest.ini", StringComparison.OrdinalIgnoreCase));
+            if (ini != null)
+            {
+                var content = ini.Content ?? "";
+                ini.Content = content.Contains("[pytest]")
+                    ? Regex.Replace(content, @"\[pytest\][^\n]*\n?", m => m.Value.TrimEnd('\r', '\n') + "\n" + line + "\n", RegexOptions.None, TimeSpan.FromSeconds(1))
+                    : "[pytest]\n" + line + "\n\n" + content;
+            }
+            else
+            {
+                g.ProjectFiles.Add(new CodeProjectFile { Path = "pytest.ini", Content = "[pytest]\n" + line + "\npython_files = test_*.py *_test.py tests.py\n" });
+                g.ReadOnlyPaths ??= new List<string>();
+                if (!g.ReadOnlyPaths.Contains("pytest.ini", StringComparer.OrdinalIgnoreCase)) g.ReadOnlyPaths.Add("pytest.ini");
+            }
+            return "pytest.ini";
+        }
+
         /// <summary>Failures the project itself can be repaired from: compile errors, unsolvable or mismatched tests, a pre-solved starter.</summary>
         public static bool IsRepairable(CodeProjectValidationReport report, CodeProjectRunResult starterRun, CodeProjectRunResult referenceRun)
         {
@@ -144,7 +275,8 @@ namespace Risebird.Entities.ViewModel
         /// Applies the AI's corrected files to a copy of the project, re-applies the automatic fixes and
         /// re-checks the static rules. Null with an error when the answer is unusable.
         /// </summary>
-        public static CodeProjectGeneration ApplyRepair(CodeProjectGeneration original, string raw, int timeLimitMinutes, out string error, out string notes)
+        public static CodeProjectGeneration ApplyRepair(CodeProjectGeneration original, string raw, int timeLimitMinutes, out string error, out string notes,
+            Action<CodeProjectGeneration> stackFixups = null)
         {
             error = null; notes = null;
             if (string.IsNullOrWhiteSpace(raw)) { error = "The AI returned no repair."; return null; }
@@ -206,10 +338,7 @@ namespace Risebird.Entities.ViewModel
                 HiddenTests = hidden,
                 ReferenceSolution = reference
             };
-            StripHiddenTestsFromProject(g);
-            EnsureDotnetSolution(g);
-            EnsureDotnetOffline(g);
-            EnsureProgramVisibleToTests(g);
+            ApplyAutomaticFixes(g, stackFixups);
 
             var problems = ValidateScope(g, timeLimitMinutes)
                 // The automatic .NET files may push the count past the limit; they are not the AI's files.
@@ -494,12 +623,12 @@ namespace Risebird.Entities.ViewModel
             var refPassed = g.Requirements.Count(r => FindTest(referenceRun.Tests, r.TestName)?.Passed == true);
             if (missing.Count > 0)
             {
-                Fail("reference", "Reference solution", $"No hidden test found for: {string.Join(", ", missing)}.", referenceRun.WallSeconds);
+                Fail("reference", "Reference solution", $"No hidden test found for: {string.Join(", ", missing)}. Tests reported: {(referenceRun.Tests.Count == 0 ? "none" : string.Join(", ", referenceRun.Tests.Take(8).Select(t => t.Name)))}.{BuildErrorExcerpt(referenceRun.TestOutput)}", referenceRun.WallSeconds);
                 return Finish(report);
             }
             if (refPassed < total)
             {
-                Fail("reference", "Reference solution", $"{refPassed} / {total} hidden tests passed — the question is not solvable as written.", referenceRun.WallSeconds);
+                Fail("reference", "Reference solution", $"{refPassed} / {total} hidden tests passed — the question is not solvable as written.{BuildErrorExcerpt(referenceRun.TestOutput)}", referenceRun.WallSeconds);
                 return Finish(report);
             }
             report.Steps.Add(Step("reference", "Reference solution", "ok", $"{refPassed} / {total} hidden tests passed — question is solvable", referenceRun.WallSeconds));
@@ -658,7 +787,12 @@ namespace Risebird.Entities.ViewModel
 
         public const string DotnetOfflineBuildProps =
             "<Project>\r\n  <PropertyGroup>\r\n    <!-- The vulnerability audit downloads data from nuget.org; there is no internet here. -->\r\n" +
-            "    <NuGetAudit>false</NuGetAudit>\r\n  </PropertyGroup>\r\n</Project>\r\n";
+            "    <NuGetAudit>false</NuGetAudit>\r\n" +
+            "    <!-- System.Linq, System.Net.Http, System.Threading.Tasks... in every project, as in the .NET templates. -->\r\n" +
+            "    <ImplicitUsings>enable</ImplicitUsings>\r\n  </PropertyGroup>\r\n</Project>\r\n";
+
+        /// <summary>Properties every .NET workspace needs here, enforced even when the project brings its own Directory.Build.props.</summary>
+        private static readonly (string Name, string Value)[] RequiredBuildProperties = { ("NuGetAudit", "false"), ("ImplicitUsings", "enable") };
 
         /// <summary>
         /// The runner and the candidate's machine have no internet. Since .NET 8, every restore of a
@@ -680,7 +814,71 @@ namespace Risebird.Entities.ViewModel
                 if (!g.ReadOnlyPaths.Contains(path, StringComparer.OrdinalIgnoreCase)) g.ReadOnlyPaths.Add(path);
                 added.Add(path);
             }
+
+            // A Directory.Build.props the project brought (or an older one of ours) still gets the required properties.
+            var props = g.ProjectFiles.First(f => string.Equals(NormalizePath(f.Path), "Directory.Build.props", StringComparison.OrdinalIgnoreCase));
+            try
+            {
+                var doc = System.Xml.Linq.XDocument.Parse(props.Content ?? "<Project />");
+                var root = doc.Root;
+                var missing = RequiredBuildProperties.Where(p => !root.Descendants(p.Name).Any()).ToList();
+                if (missing.Count > 0)
+                {
+                    root.Add(new System.Xml.Linq.XElement("PropertyGroup", missing.Select(p => new System.Xml.Linq.XElement(p.Name, p.Value))));
+                    props.Content = doc.ToString() + "\r\n";
+                    if (!added.Contains("Directory.Build.props")) added.Add("Directory.Build.props");
+                }
+            }
+            catch (System.Xml.XmlException)
+            {
+                props.Content = DotnetOfflineBuildProps;   // unreadable: replace with ours
+            }
             return added;
+        }
+
+        /// <summary>
+        /// .NET counterpart of <see cref="PinNodeDependencies"/>: every PackageReference the image pre-loads
+        /// gets its exact version, and an xUnit test project missing the test SDK or runner (without them
+        /// `dotnet test` finds no tests) gets them. Starter and reference .csproj files. Returns the changes.
+        /// </summary>
+        public static List<string> PinNuGetPackages(CodeProjectGeneration g, IReadOnlyDictionary<string, string> pinned)
+        {
+            var changed = new List<string>();
+            if (g == null || pinned == null || pinned.Count == 0) return changed;
+            foreach (var f in g.ProjectFiles.Concat(g.ReferenceSolution))
+            {
+                if (f?.Path == null || f.Content == null || !f.Path.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase)) continue;
+                System.Xml.Linq.XDocument doc;
+                try { doc = System.Xml.Linq.XDocument.Parse(f.Content); }
+                catch (System.Xml.XmlException) { continue; }   // validation reports it
+                var refs = doc.Root.Descendants().Where(e => e.Name.LocalName == "PackageReference").ToList();
+                var touched = false;
+                foreach (var r in refs)
+                {
+                    var id = (string)r.Attribute("Include");
+                    if (id == null || !pinned.TryGetValue(id, out var exact)) continue;
+                    var child = r.Elements().FirstOrDefault(e => e.Name.LocalName == "Version");
+                    if ((string)r.Attribute("Version") == exact && child == null) continue;
+                    child?.Remove();
+                    r.SetAttributeValue("Version", exact);
+                    touched = true;
+                    changed.Add($"{NormalizePath(f.Path)}: {id} {exact}");
+                }
+                var ids = new HashSet<string>(refs.Select(r => (string)r.Attribute("Include")).Where(i => i != null), StringComparer.OrdinalIgnoreCase);
+                if (ids.Contains("xunit"))
+                {
+                    var add = new[] { "Microsoft.NET.Test.Sdk", "xunit.runner.visualstudio" }.Where(p => !ids.Contains(p) && pinned.ContainsKey(p)).ToList();
+                    if (add.Count > 0)
+                    {
+                        doc.Root.Add(new System.Xml.Linq.XElement("ItemGroup", add.Select(p =>
+                            new System.Xml.Linq.XElement("PackageReference", new System.Xml.Linq.XAttribute("Include", p), new System.Xml.Linq.XAttribute("Version", pinned[p])))));
+                        touched = true;
+                        changed.AddRange(add.Select(p => $"{NormalizePath(f.Path)}: added {p}"));
+                    }
+                }
+                if (touched) f.Content = doc.ToString() + "\r\n";
+            }
+            return changed;
         }
 
         /// <summary>
@@ -703,6 +901,43 @@ namespace Risebird.Entities.ViewModel
                 if (Regex.IsMatch(f.Content, @"\bclass\s+Program\b")) continue;   // declares the class itself
                 f.Content = f.Content.TrimEnd() + "\n\n// Lets the integration tests' WebApplicationFactory<Program> see the app.\npublic partial class Program { }\n";
                 changed.Add(NormalizePath(f.Path));
+            }
+            return changed;
+        }
+
+        /// <summary>
+        /// Builds are offline. With a range such as "^5.4.10", npm picks the newest version it has metadata
+        /// for (e.g. 5.4.21), which was never downloaded, and fails with ENOTCACHED. Every dependency the
+        /// image pre-loads is rewritten to its exact pre-loaded version, in the starter and the reference
+        /// solution. Packages the image does not have are left for validation to report. Returns the
+        /// "file: package" entries changed.
+        /// </summary>
+        public static List<string> PinNodeDependencies(CodeProjectGeneration g, IReadOnlyDictionary<string, string> pinned)
+        {
+            var changed = new List<string>();
+            if (g == null || pinned == null || pinned.Count == 0) return changed;
+            foreach (var f in g.ProjectFiles.Concat(g.ReferenceSolution))
+            {
+                if (f?.Path == null || f.Content == null) continue;
+                if (!string.Equals(Path.GetFileName(NormalizePath(f.Path)), "package.json", StringComparison.OrdinalIgnoreCase)) continue;
+                System.Text.Json.Nodes.JsonObject root;
+                try { root = System.Text.Json.Nodes.JsonNode.Parse(f.Content) as System.Text.Json.Nodes.JsonObject; }
+                catch (JsonException) { continue; }   // validation will report the broken file
+                if (root == null) continue;
+                var touched = false;
+                foreach (var section in new[] { "dependencies", "devDependencies" })
+                {
+                    if (root[section] is not System.Text.Json.Nodes.JsonObject deps) continue;
+                    foreach (var name in deps.Select(p => p.Key).ToList())
+                    {
+                        if (!pinned.TryGetValue(name, out var exact)) continue;
+                        if (deps[name]?.GetValueKind() == JsonValueKind.String && deps[name].GetValue<string>() == exact) continue;
+                        deps[name] = exact;
+                        touched = true;
+                        changed.Add($"{NormalizePath(f.Path)}: {name}@{exact}");
+                    }
+                }
+                if (touched) f.Content = root.ToJsonString(new JsonSerializerOptions { WriteIndented = true }) + "\n";
             }
             return changed;
         }
