@@ -156,8 +156,12 @@
                     select.appendChild(option);
                 }
 
-                // A local draft wins over the server copy only when it is newer work than the last run/submit.
-                var draft = readDraft();
+                // A local draft wins over the server copy only when it is newer work than the last run - never once the
+                // answer is submitted: a submitted answer is final and always shows exactly what was submitted.
+                var draft = state.submittedOn ? null : readDraft();
+                if (state.submittedOn) {
+                    try { window.localStorage.removeItem(draftKey); } catch (e) { }
+                }
                 var startLanguage = (draft && findLanguage(draft.languageId)) || findLanguage(state.languageId) || languages[0];
                 var startCode = (draft && typeof draft.code === 'string' && draft.code.length > 0) ? draft.code
                     : (state.source || (startLanguage ? startLanguage.template : ''));
@@ -192,13 +196,27 @@
                 if (state.lastRunOutput) {
                     output.textContent = state.lastRunOutput;
                 }
-                if (state.submittedOn) {
-                    setStatus('Submitted ' + state.submittedOn + '. You can submit again to replace it.', 'is-ok');
-                }
 
                 function setStatus(text, cls) {
                     status.textContent = text || '';
                     status.className = 'cs-status' + (cls ? ' ' + cls : '');
+                }
+
+                // Once submitted, the answer is locked for everyone who opens this link (the candidate, or an interviewer):
+                // the code is read-only and nothing can be run or submitted again. The server refuses both as well.
+                var locked = false;
+                var stopTimer = null;
+                function lockSubmitted(submittedOn) {
+                    locked = true;
+                    editor.setOption('readOnly', true);
+                    select.disabled = true;
+                    stdin.disabled = true;
+                    if (runButton) { runButton.disabled = true; runButton.style.display = 'none'; }
+                    submitButton.disabled = true;
+                    submitButton.style.display = 'none';
+                    if (stopTimer) { stopTimer(); }
+                    try { window.localStorage.removeItem(draftKey); } catch (e) { }
+                    setStatus('Submitted ' + (submittedOn || '') + '. This answer is locked and can no longer be changed.', 'is-ok');
                 }
 
                 function post(url, body) {
@@ -217,6 +235,7 @@
 
                 if (runButton) {
                     runButton.addEventListener('click', function () {
+                        if (locked) { return; }
                         runButton.disabled = true;
                         setStatus('Running…');
                         output.textContent = 'Running…';
@@ -239,8 +258,12 @@
                 }
 
                 submitButton.addEventListener('click', function () {
+                    if (locked) { return; }
                     if (!editor.getValue().trim()) {
                         setStatus('Write some code before submitting it.', 'is-bad');
+                        return;
+                    }
+                    if (!window.confirm('Submit your answer? Once submitted, your code is final and cannot be changed.')) {
                         return;
                     }
                     submitButton.disabled = true;
@@ -250,13 +273,17 @@
                             if (result.rateLimited) {
                                 setStatus('Too many requests. Wait a moment and submit again.', 'is-bad');
                             } else if (result.success) {
-                                setStatus('Submitted ' + (result.submittedOn || '') + '. You can submit again to replace it.', 'is-ok');
+                                lockSubmitted(result.submittedOn);
+                            } else if (result.submittedOn) {
+                                // It had already been submitted (for example from another tab): the stored answer stands.
+                                lockSubmitted(result.submittedOn);
+                                setStatus(result.message || 'This answer was already submitted and can no longer be changed.', 'is-ok');
                             } else {
                                 setStatus(result.message || 'Your answer could not be saved. Please try again.', 'is-bad');
                             }
                         })
                         .catch(function () { setStatus('Your answer could not be saved. Please try again.', 'is-bad'); })
-                        .then(function () { submitButton.disabled = false; });
+                        .then(function () { if (!locked) { submitButton.disabled = false; } });
                 });
 
                 // Soft countdown from when the link was first opened. Time running out never blocks submitting;
@@ -277,7 +304,12 @@
                         timer.className = 'cs-timer' + (left <= 120 ? ' is-low' : '');
                     };
                     tick();
-                    setInterval(tick, 1000);
+                    var timerHandle = setInterval(tick, 1000);
+                    stopTimer = function () { clearInterval(timerHandle); timer.textContent = 'Submitted'; timer.className = 'cs-timer'; };
+                }
+
+                if (state.submittedOn) {
+                    lockSubmitted(state.submittedOn);
                 }
             })();
         </script>

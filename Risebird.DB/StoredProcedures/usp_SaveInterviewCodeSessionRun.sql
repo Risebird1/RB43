@@ -30,7 +30,9 @@ BEGIN
            LastRunStatus = @Status,
            RunCount = RunCount + 1,
            OpenedOn = ISNULL(OpenedOn, @CurrentDate)
-     WHERE Token = @Token;
+     WHERE Token = @Token
+       -- After submission the session is locked: a later run must not replace the evidence shown in the report.
+       AND SubmittedOn IS NULL;
 
     SELECT RunCount FROM dbo.InterviewCodeSessions WHERE Token = @Token;
 END
