@@ -19,11 +19,19 @@ namespace Risebird.Business.PlivoCX
     /// </summary>
     public class PlivoCXCampaignService : IPlivoCXCampaignService
     {
-        // The stagger between dials the legacy timer jobs use.
-        private const int DialStaggerMs = 2000;
-
         // How long a dial may hold a candidate before its lock expires (covers a crash mid-dial).
         private const int DialLockSeconds = 120;
+
+        // How soon a candidate is retried after Plivo rejected the call for account capacity.
+        private const int CapacityRetryMinutes = 1;
+
+        // Throughput settings (PlivoCX config section). Plivo India Professional allows 50
+        // concurrent calls account-wide (calls above it fail instantly with hangup cause 5030) and
+        // 2 calls per second (excess queued). The campaign budget leaves room for the legacy timer
+        // jobs, the phone screener and the interviewer agents on the same account.
+        private readonly int _concurrencyBudget;   // PlivoCX:CampaignConcurrencyBudget   (default 40)
+        private readonly int _dialIntervalMs;      // PlivoCX:CampaignDialIntervalMs      (default 600, about 1.6 calls/s)
+        private readonly int _inFlightMinutes;     // PlivoCX:InFlightTimeoutMinutes      (default 8)
 
         private readonly IConfiguration             _configuration;
         private readonly IPlivoCXService            _plivoCX;
@@ -46,7 +54,19 @@ namespace Risebird.Business.PlivoCX
             _campaignRepository = campaignRepository;
             _phoneNumberHelper  = phoneNumberHelper;
             _logger             = logger;
+
+            _concurrencyBudget  = Setting("PlivoCX:CampaignConcurrencyBudget", 40, 1, 500);
+            _dialIntervalMs     = Setting("PlivoCX:CampaignDialIntervalMs", 600, 0, 10000);
+            // A call holds a line for its ring + conversation (the flows cap it at 5 minutes) plus the
+            // hangup webhook; a call still "triggered" after this never got its webhook.
+            _inFlightMinutes    = Setting("PlivoCX:InFlightTimeoutMinutes", 8, 2, 60);
         }
+
+        public int ConcurrencyBudget      => _concurrencyBudget;
+        public int InFlightTimeoutMinutes => _inFlightMinutes;
+
+        private int Setting(string key, int fallback, int min, int max) =>
+            int.TryParse(_configuration[key], out var v) ? Math.Clamp(v, min, max) : fallback;
 
         // ── Agents ────────────────────────────────────────────────────────────────
 
@@ -173,13 +193,13 @@ namespace Risebird.Business.PlivoCX
             return new PlivoCXDialResult { Success = string.IsNullOrEmpty(response?.Error), CallLogId = logId, Error = response?.Error };
         }
 
-        public async Task<PlivoCXCampaignBatchResult> DialDueCandidatesAsync(PlivoCXCampaign campaign, string actor, bool respectWindow)
+        public async Task<PlivoCXCampaignBatchResult> DialDueCandidatesAsync(PlivoCXCampaign campaign, string actor, bool respectWindow, int? maxNewCalls = null)
         {
             var result = new PlivoCXCampaignBatchResult();
             var nowUtc = DateTime.UtcNow;
             var tz = PlivoCXCampaignRules.ResolveTimeZone(campaign.TimeZone);
 
-            await _campaignRepository.RetireExhaustedCandidatesAsync(campaign.Id);
+            await _campaignRepository.RetireExhaustedCandidatesAsync(campaign.Id, _inFlightMinutes);
 
             if (respectWindow)
             {
@@ -192,11 +212,18 @@ namespace Risebird.Business.PlivoCX
                 }
             }
 
-            result.InFlight = await _campaignRepository.CountInFlightAsync(campaign.Id);
+            result.InFlight = await _campaignRepository.CountInFlightAsync(campaign.Id, _inFlightMinutes);
             int slots = Math.Max(0, campaign.ConcurrentCalls - result.InFlight);
+
+            // Never exceed the account's lines: the scheduler passes this campaign's share of the
+            // shared budget; Call now / a direct call works it out here.
+            int accountFree = maxNewCalls ?? Math.Max(0, _concurrencyBudget - await _campaignRepository.CountAllInFlightAsync(_inFlightMinutes));
+            bool accountLimited = accountFree < slots;
+            slots = Math.Min(slots, accountFree);
+
             var due = slots == 0
                 ? new List<PlivoCXCampaignCandidate>()
-                : await _campaignRepository.GetDueCandidatesAsync(campaign.Id, slots, nowUtc, PlivoCXCampaignRules.LocalDayStartUtc(nowUtc, tz));
+                : await _campaignRepository.GetDueCandidatesAsync(campaign.Id, slots, nowUtc, PlivoCXCampaignRules.LocalDayStartUtc(nowUtc, tz), _inFlightMinutes);
 
             for (int i = 0; i < due.Count; i++)
             {
@@ -211,14 +238,17 @@ namespace Risebird.Business.PlivoCX
                     await _logger.LogMessage(LogLevelInfo.Exception,
                         new Exception($"PlivoCX campaign {campaign.Id}: dialling candidate {due[i].CandidateId} failed", ex));
                 }
-                if (i < due.Count - 1) await Task.Delay(DialStaggerMs);
+                // Paced under Plivo's 2 calls/second, which the other agents on the account share.
+                if (i < due.Count - 1 && _dialIntervalMs > 0) await Task.Delay(_dialIntervalMs);
             }
 
             result.Remaining = await _campaignRepository.CountPendingAsync(campaign.Id);
             result.Message = due.Count > 0
                 ? $"Dialled {result.Dialled}" + (result.Failed > 0 ? $", {result.Failed} failed" : "") + $". {result.Remaining} still pending."
                 : slots == 0
-                    ? $"{result.InFlight} call(s) still connecting - the Concurrent limit ({campaign.ConcurrentCalls}) is reached."
+                    ? accountLimited
+                        ? $"All {_concurrencyBudget} campaign lines on the Plivo account are busy - calls resume as lines free up."
+                        : $"{result.InFlight} call(s) still connecting - the Concurrent limit ({campaign.ConcurrentCalls}) is reached."
                     : result.Remaining == 0
                         ? "Nobody is left pending."
                         : $"No pending candidate is due yet ({result.Remaining} pending - waiting out the minimum gap or today's attempt limit).";
@@ -338,9 +368,18 @@ namespace Risebird.Business.PlivoCX
 
         // ── Scheduler ─────────────────────────────────────────────────────────────
 
+        /// <summary>
+        /// One dispatcher pass (the timer runs it every 15 seconds): housekeeping for every Running
+        /// campaign, then the account's free campaign lines are shared out between the campaigns
+        /// that may dial now - in turn, each up to its own Concurrent limit - and dialled.
+        /// </summary>
         public async Task RunSchedulerTickAsync()
         {
-            foreach (var campaign in await _campaignRepository.GetRunningCampaignsAsync())
+            var running = await _campaignRepository.GetRunningCampaignsAsync();
+            if (running.Count == 0) return;
+
+            var ready = new List<(PlivoCXCampaign Campaign, int InFlight)>();
+            foreach (var campaign in running)
             {
                 try
                 {
@@ -353,16 +392,37 @@ namespace Risebird.Business.PlivoCX
                         continue;
                     }
 
-                    await _campaignRepository.RetireExhaustedCandidatesAsync(campaign.Id);
+                    await _campaignRepository.RetireExhaustedCandidatesAsync(campaign.Id, _inFlightMinutes);
+                    int inFlight = await _campaignRepository.CountInFlightAsync(campaign.Id, _inFlightMinutes);
                     if (await _campaignRepository.CountPendingAsync(campaign.Id) == 0)
                     {
                         // Everyone is resolved; wait for calls still connecting so their outcome lands first.
-                        if (await _campaignRepository.CountInFlightAsync(campaign.Id) == 0)
+                        if (inFlight == 0)
                             await _campaignRepository.SetCampaignStatusAsync(campaign.Id, PlivoCXCampaignStatus.Completed);
                         continue;
                     }
 
-                    await DialDueCandidatesAsync(campaign, "PlivoCXCampaignScheduler", respectWindow: true);
+                    if (PlivoCXCampaignRules.WhyNotDialling(campaign, nowUtc, tz) == null)
+                        ready.Add((campaign, inFlight));
+                }
+                catch (Exception ex)
+                {
+                    await _logger.LogMessage(LogLevelInfo.Exception,
+                        new Exception($"PlivoCX campaign scheduler failed for campaign {campaign.Id}", ex));
+                }
+            }
+            if (ready.Count == 0) return;
+
+            int accountFree = Math.Max(0, _concurrencyBudget - await _campaignRepository.CountAllInFlightAsync(_inFlightMinutes));
+            var plan = PlivoCXCampaignRules.PlanSlots(
+                ready.Select(r => (r.Campaign.Id, r.Campaign.ConcurrentCalls, r.InFlight)).ToList(), accountFree);
+
+            foreach (var (campaign, _) in ready)
+            {
+                if (!plan.TryGetValue(campaign.Id, out var lines) || lines <= 0) continue;
+                try
+                {
+                    await DialDueCandidatesAsync(campaign, "PlivoCXCampaignScheduler", respectWindow: true, maxNewCalls: lines);
                 }
                 catch (Exception ex)
                 {
@@ -396,6 +456,14 @@ namespace Risebird.Business.PlivoCX
             if (cc.LastCallLogId.HasValue && cc.LastCallLogId.Value != callLog.Id) return;
             // A hand-marked or already-resolved candidate keeps its state.
             if (cc.State != PlivoCXCampaignCandidateState.Pending) return;
+
+            // Plivo turned the call away for account capacity (concurrency 5030 / CPS 5180): the
+            // candidate was never rung, so the attempt is given back and they are retried shortly.
+            if (PlivoCXOutcomeParser.IsCapacityRejection(callLog.HangupCause))
+            {
+                await _campaignRepository.RefundAttemptAsync(cc.Id, DateTime.UtcNow.AddMinutes(CapacityRetryMinutes));
+                return;
+            }
 
             var agent = await _campaignRepository.GetAgentAsync(campaign.AgentId);
             var t = PlivoCXCampaignRules.NextState(

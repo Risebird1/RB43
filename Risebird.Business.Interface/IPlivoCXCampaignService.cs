@@ -42,7 +42,18 @@ namespace Risebird.Business.Interface
         /// <paramref name="respectWindow"/> = false is Call now (dials outside the window and
         /// before StartsOn); attempt caps and Min gap always apply.
         /// </summary>
-        Task<PlivoCXCampaignBatchResult> DialDueCandidatesAsync(PlivoCXCampaign campaign, string actor, bool respectWindow);
+        /// <remarks>
+        /// Also capped by the account-wide campaign line budget (PlivoCX:CampaignConcurrencyBudget):
+        /// <paramref name="maxNewCalls"/> is this campaign's share when the scheduler has already
+        /// split the free lines; when null the free lines are counted here.
+        /// </remarks>
+        Task<PlivoCXCampaignBatchResult> DialDueCandidatesAsync(PlivoCXCampaign campaign, string actor, bool respectWindow, int? maxNewCalls = null);
+
+        /// <summary>Lines on the Plivo account that all campaigns together may use (PlivoCX:CampaignConcurrencyBudget).</summary>
+        int ConcurrencyBudget { get; }
+
+        /// <summary>Minutes after which a call still initiated / triggered no longer holds a line (PlivoCX:InFlightTimeoutMinutes).</summary>
+        int InFlightTimeoutMinutes { get; }
 
         /// <summary>Dials a typed number through the campaign's agent without touching any candidate row.</summary>
         Task<PlivoCXDialResult> TestCallAsync(PlivoCXCampaign campaign, string phone, string name, string email, string actor);

@@ -576,6 +576,14 @@ namespace Risebird.Web.Controllers
                 // ── Step 6: Apply call outcome fields ────────────────────────────────
                 callLog.PlivoCXConversationId = payload.ConversationId  ?? callLog.PlivoCXConversationId;
                 callLog.CallStatus            = payload.CallStatus      ?? callLog.CallStatus;
+                // A hangup means the call is over. Without a call_status in the event the row stayed
+                // "triggered" and kept holding a campaign line until the in-flight timeout.
+                if (callLog.CallStatus == "initiated" || callLog.CallStatus == "triggered")
+                    callLog.CallStatus = !string.IsNullOrWhiteSpace(payload.CandidateDisposition)
+                                      || !string.IsNullOrWhiteSpace(payload.Transcript)
+                                      || (int.TryParse(payload.Duration, out var heardSeconds) && heardSeconds > 0)
+                        ? "completed"
+                        : "no-answer";
                 callLog.HangupCause           = payload.HangupCause;
                 // Don't wipe a transcript we already have: Plivo CX often delivers the
                 // hangup webhook before the transcript is ready, so payload.Transcript is null.

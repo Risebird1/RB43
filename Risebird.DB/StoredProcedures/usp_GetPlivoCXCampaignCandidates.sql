@@ -18,7 +18,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE [dbo].[usp_GetPlivoCXCampaignCandidates]
-    @CampaignId INT
+    @CampaignId INT,
+    -- Calls initiated / triggered within this many minutes count as in flight (PlivoCX:InFlightTimeoutMinutes).
+    @InFlightMinutes INT = 30
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -59,7 +61,7 @@ BEGIN
         SUM(CASE WHEN l.CallStatus NOT IN ('initiated', 'triggered') THEN 1 ELSE 0 END) AS FinishedCalls,
         SUM(CASE WHEN l.CallStatus = 'completed' THEN 1 ELSE 0 END)                      AS AnsweredCalls,
         SUM(CASE WHEN l.CallStatus IN ('initiated', 'triggered')
-                  AND l.CreatedAt >= DATEADD(MINUTE, -30, GETUTCDATE()) THEN 1 ELSE 0 END) AS InFlightCalls
+                  AND l.CreatedAt >= DATEADD(MINUTE, -@InFlightMinutes, GETUTCDATE()) THEN 1 ELSE 0 END) AS InFlightCalls
     FROM dbo.PlivoCXCallLogs l
     WHERE l.CampaignId = @CampaignId;
 END
