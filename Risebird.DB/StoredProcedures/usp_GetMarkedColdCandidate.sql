@@ -10,7 +10,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE [dbo].[usp_GetMarkedColdCandidate]   
-@Emailid varchar(200)
+@Emailid varchar(200),
+@startDate datetime = NULL,
+@endDate datetime = NULL
 AS
 Begin
 Declare @Role varchar(150)              
@@ -32,7 +34,9 @@ join UserList ul on cm.UserId=ul.id
 join IRF on c.IRFId=IRF.id 
 left join Userlist ulir on ulir.id=irf.RisebirdHr
 join Client cl on cl.id=IRF.ClientId
-where cci.IsColdCandidate=1 and ulir.EmailId=@Emailid)
+where cci.IsColdCandidate=1 and ulir.EmailId=@Emailid
+and (@startDate is null or cci.ColdMarkedDate >= CAST(@startDate as date))
+and (@endDate is null or cci.ColdMarkedDate < DATEADD(day,1,CAST(@endDate as date))))
 Select CTE.*
 ,(select max(InterviewDate) from InterviewMeetings where candidateEmail=CTE.candidateEmail and  IRFId=CTE.IRFId) as interviewDate
 ,(SELECT top 1 ic.MeetingStatus
@@ -66,7 +70,9 @@ join UserList ul on cm.UserId=ul.id
 join IRF on c.IRFId=IRF.id 
 left join Userlist ulir on ulir.id=irf.RisebirdHr
 join Client cl on cl.id=IRF.ClientId
-where cci.IsColdCandidate=1)
+where cci.IsColdCandidate=1
+and (@startDate is null or cci.ColdMarkedDate >= CAST(@startDate as date))
+and (@endDate is null or cci.ColdMarkedDate < DATEADD(day,1,CAST(@endDate as date))))
 Select CTE.*
 ,(select max(InterviewDate) from InterviewMeetings where candidateEmail=CTE.candidateEmail and  IRFId=CTE.IRFId) as interviewDate
 ,(SELECT top 1 ic.MeetingStatus
