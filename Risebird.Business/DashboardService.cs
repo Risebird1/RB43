@@ -1214,11 +1214,11 @@ namespace Risebird.Business
             return null;
         }
 
-        public async Task<List<MeetingVM>> GetColdCandidatesList(int ColdCandidateValue, string EmailId)
+        public async Task<List<MeetingVM>> GetColdCandidatesList(int ColdCandidateValue, string EmailId, DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
-                return (await _dashboardRespository.GetColdCandidatesRepository(ColdCandidateValue, EmailId)).ToList();
+                return (await _dashboardRespository.GetColdCandidatesRepository(ColdCandidateValue, EmailId, startDate, endDate)).ToList();
             }
             catch (Exception ex)
             {

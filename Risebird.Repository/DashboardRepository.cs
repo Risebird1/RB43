@@ -2429,7 +2429,7 @@ Values
             }
         }
 
-        public async Task<List<MeetingVM>> GetColdCandidatesRepository(int ColdCandidateValue, string EmailId)
+        public async Task<List<MeetingVM>> GetColdCandidatesRepository(int ColdCandidateValue, string EmailId, DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
@@ -2450,6 +2450,8 @@ Values
                     {
                         var parameters = new DynamicParameters();
                         parameters.Add("@Emailid", EmailId);
+                        parameters.Add("@startDate", startDate);
+                        parameters.Add("@endDate", endDate);
                         var result = await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetMarkedColdCandidate", parameters, commandTimeout: 600,
                                                     commandType: CommandType.StoredProcedure);
                         return result.ToList();
