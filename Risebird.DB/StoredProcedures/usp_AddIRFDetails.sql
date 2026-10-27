@@ -79,6 +79,11 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 -- Advanced Resume Screening opt-in, and the ideal candidate profile it reads (Add had no profile).
 @IsAdvancedResumeScreening bit = null,
 @IdealCandidateProfile varchar(max) = null,
+-- Report level display and candidate reschedule limits. Edit IRF in clone mode saves through this
+-- proc, so without these a cloned channel would silently lose what the form showed. NULL = today.
+@LevelDisplayMode int = null,
+@MaxCandidateReschedules int = null,
+@InterviewCompleteByDays int = null,
 @idIrf int output
               
 AS              
@@ -138,7 +143,12 @@ Begin
 	   ,[McqAssessmentSections]
 	   ,[McqAssessmentMinutes]
 	   ,[IsAdvancedResumeScreening]
-	   ,[IdealCandidateProfile])
+	   ,[IdealCandidateProfile]
+	   -- @generateTranscriptSummary was accepted but never stored, so a clone lost the Q&A log flag.
+	   ,[generateTranscriptSummary]
+	   ,[LevelDisplayMode]
+	   ,[MaxCandidateReschedules]
+	   ,[InterviewCompleteByDays])
        --,[InterviewDuration]  
        --,[IsFixedInterviewduration]  
        --,[FixedAmount])              
@@ -192,7 +202,11 @@ Begin
 	   NULLIF(LTRIM(RTRIM(@McqAssessmentSections)), ''),
 	   NULLIF(@McqAssessmentMinutes, 0),
 	   ISNULL(@IsAdvancedResumeScreening, 0),
-	   NULLIF(LTRIM(RTRIM(@IdealCandidateProfile)), ''))
+	   NULLIF(LTRIM(RTRIM(@IdealCandidateProfile)), ''),
+	   NULLIF(@generateTranscriptSummary, 0),
+	   NULLIF(@LevelDisplayMode, 0),
+	   @MaxCandidateReschedules,
+	   NULLIF(@InterviewCompleteByDays, 0))
        --@InterviewDuration,  
        --@IsFixedInterviewduration,  
        --@FixedAmount)        

@@ -977,3 +977,45 @@ BEGIN
     Add AITrialEnabled bit NULL
 END
 GO
+
+-- Skill-rubric display on the client report. NULL or 0 (every existing row) renders exactly today's
+-- single "Evaluated at <required level>" line. 1 = required and actual level as text, plus the
+-- competency scale section. 2 = as 1, plus the five-star attainment row.
+-- One column with three modes rather than two booleans, so "stars on, required level off" cannot be
+-- represented.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'LevelDisplayMode'
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add LevelDisplayMode int NULL
+END
+GO
+
+-- How many times the candidate (no signed-in session) may reschedule an interview on this channel.
+-- NULL = unlimited, which is today's behaviour. Risebird internal and client users are never capped.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'MaxCandidateReschedules'
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add MaxCandidateReschedules int NULL
+END
+GO
+
+-- A candidate may not pick a slot more than this many days after the interview's first scheduled
+-- date. NULL = no deadline, which is today's behaviour. Applies to the candidate only.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'InterviewCompleteByDays'
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add InterviewCompleteByDays int NULL
+END
+GO

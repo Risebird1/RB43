@@ -85,7 +85,15 @@ Create PROCEDURE [dbo].[usp_UpdateIRFDetails]
  @McqAssessmentSections varchar(500) = null,
  @McqAssessmentMinutes int = null,
  -- Advanced Resume Screening opt-in. NULL leaves the stored flag unchanged.
- @IsAdvancedResumeScreening bit = null
+ @IsAdvancedResumeScreening bit = null,
+ -- Skill-level display mode and the candidate reschedule cap / deadline. NULL in any of the three is
+ -- meaningful (today's behaviour), so @ReportSchedulingLimitsSupplied says whether the caller sent them
+ -- at all. When it is NULL the stored values are left alone, so a build deployed before the updated
+ -- repository cannot silently clear a channel's configuration.
+ @ReportSchedulingLimitsSupplied bit = null,
+ @LevelDisplayMode int = null,
+ @MaxCandidateReschedules int = null,
+ @InterviewCompleteByDays int = null
  --@FixedAmount int = null  
  --@idRecommendation int,  
  --@RecommendationStatus bit,  
@@ -169,6 +177,12 @@ BEGIN
  ,[McqAssessmentMinutes]=CASE WHEN @HasMcqAssessmentSection IS NULL THEN [McqAssessmentMinutes]
                               ELSE NULLIF(@McqAssessmentMinutes,0) END
  ,[IsAdvancedResumeScreening]=ISNULL(@IsAdvancedResumeScreening,[IsAdvancedResumeScreening])
+ ,[LevelDisplayMode]=CASE WHEN @ReportSchedulingLimitsSupplied IS NULL THEN [LevelDisplayMode]
+                          ELSE NULLIF(@LevelDisplayMode,0) END
+ ,[MaxCandidateReschedules]=CASE WHEN @ReportSchedulingLimitsSupplied IS NULL THEN [MaxCandidateReschedules]
+                                 ELSE @MaxCandidateReschedules END
+ ,[InterviewCompleteByDays]=CASE WHEN @ReportSchedulingLimitsSupplied IS NULL THEN [InterviewCompleteByDays]
+                                 ELSE NULLIF(@InterviewCompleteByDays,0) END
  --,[InterviewDuration]=@InterviewDuration  
  --,[IsFixedInterviewduration]=@IsFixedInterviewduration  
  --,[FixedAmount] = @FixedAmount  

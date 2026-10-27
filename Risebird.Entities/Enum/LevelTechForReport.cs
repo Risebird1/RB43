@@ -18,8 +18,8 @@ namespace Risebird.Entities.Enum
         [Description("Novice")]
         Novice = 2,
 
-        [Display(Name = "Advanced")]//Advanced Beginner
-        [Description("Advanced")]//Advanced Beginner
+        [Display(Name = "Advanced Beginner")]
+        [Description("Advanced Beginner")]
         Advanced = 3,
 
         [Display(Name = "Competent")]
