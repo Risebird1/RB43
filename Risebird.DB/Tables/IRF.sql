@@ -1019,3 +1019,18 @@ BEGIN
     Add InterviewCompleteByDays int NULL
 END
 GO
+
+-- LevelTech id 3 is Dreyfus "Advanced Beginner" - the second-lowest rung - but was stored as "Advanced",
+-- which reads as better than Competent. Renamed here, in the script this release already runs, so it lands
+-- together with the LevelTechEnum / LevelTechForReport Display(Name) and Description change: the reports
+-- read LevelTech.Name, the dropdowns read the enum, and the two must agree.
+-- There is no LevelTech table script in this repo, so the fix lives with the release's other schema work.
+-- Display-name only (id untouched). Idempotent: renames the row only while it still holds the old name.
+IF OBJECT_ID(N'dbo.LevelTech') IS NOT NULL
+BEGIN
+    UPDATE dbo.LevelTech
+    SET [Name] = 'Advanced Beginner'
+    WHERE id = 3
+      AND LTRIM(RTRIM([Name])) = 'Advanced'
+END
+GO

@@ -63,8 +63,8 @@ namespace Risebird.Entities.ViewModel
 
         /// <summary>
         /// Client-facing level name, by id, so the report is right whatever LevelTech.Name holds in a given
-        /// environment. Id 3 is Dreyfus "Advanced Beginner" (Migrations\Fix_LevelTech_AdvancedBeginner.sql
-        /// renames the stored row to match); id 1 ("Clueless") is shown to clients as "Not demonstrated".
+        /// environment. Id 3 is Dreyfus "Advanced Beginner" (Tables\IRF.sql renames the stored row to match);
+        /// id 1 ("Clueless") is shown to clients as "Not demonstrated".
         /// </summary>
         public static string ClientLevelName(int levelId, string storedName)
         {
