@@ -511,6 +511,28 @@ BEGIN
     ADD CandidateRescheduleCount INT NULL
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsWaitingFinalAlertSent')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    -- Second (5-minute) WhatsApp waiting alert sent, C4 / I4. Set by usp_FetchParticipantZoomMeetingWaiting.
+    ALTER TABLE InterviewMeetings
+    ADD IsWaitingFinalAlertSent BIT NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsReportReminderSent')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    -- WhatsApp report-not-completed reminder sent, I6. One per interview.
+    ALTER TABLE InterviewMeetings
+    ADD IsReportReminderSent BIT NULL
+END
+
 END
 GO
 

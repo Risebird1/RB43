@@ -5204,6 +5204,26 @@ namespace Risebird.Web.Controllers
             return (string.IsNullOrWhiteSpace(email) ? null : email, profile);
         }
 
+        // WhatsApp unsubscribe button on interviewer templates (I2–I8). Keyed by uniqueid, never the raw email,
+        // so nobody can unsubscribe someone else. Stops all interviewer WhatsApp messages; emails are not affected.
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> Unsubscribe(string id, [FromServices] IWhatsappRepository whatsappRepository)
+        {
+            ViewBag.Title = "WhatsApp unsubscribe";
+            var email = string.IsNullOrWhiteSpace(id) ? null : await whatsappRepository.FetchEmailByUniqueIdAsync(id);
+            if (string.IsNullOrEmpty(email))
+            {
+                ViewBag.Message = "This unsubscribe link is not valid. Please write to support@risebird.io.";
+                return View("~/Views/Shared/WhatsAppUnsubscribed.cshtml");
+            }
+            var saved = await whatsappRepository.SaveOptOutAsync(WhatsAppHelper.AudienceInterviewer, email, null, null, "UnsubscribeButton");
+            ViewBag.Message = saved
+                ? "You won't receive WhatsApp messages from Risebird. Emails are not affected."
+                : "We could not record your request. Please try again or write to support@risebird.io.";
+            return View("~/Views/Shared/WhatsAppUnsubscribed.cshtml");
+        }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> MyQuality([FromServices] IInterviewerMyQualityService myQualityService)

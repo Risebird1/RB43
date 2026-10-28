@@ -73,6 +73,7 @@ namespace Risebird.Web.Controllers
         private readonly IAdvancedScreeningService _advancedScreeningService;
 
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IWhatsappRepository _whatsappRepository;
 
         public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService,
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
@@ -82,9 +83,10 @@ namespace Risebird.Web.Controllers
             IAffIndaResumeParserHelper affIndaResumeParserHelper,
             IInterviewSchedulerService interviewSchedulerservice, IWebHostEnvironment env,
             IEncryptionHelper encryptionHelper, IZohoMeetingHelper zoho, IAIInterviewerService aiInterviewerService,
-            IAdvancedScreeningService advancedScreeningService, IHttpClientFactory httpClientFactory)
+            IAdvancedScreeningService advancedScreeningService, IHttpClientFactory httpClientFactory, IWhatsappRepository whatsappRepository)
         {
             _httpClientFactory = httpClientFactory;
+            _whatsappRepository = whatsappRepository;
             _advancedScreeningService = advancedScreeningService;
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -7606,13 +7608,21 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> SendWhatsAppInvite(List<CandidateDetailsForWhatsApp> CandidateList)
         {
+            var results = new List<string>();
             foreach (var item in CandidateList)
             {
-                WhatsAppSend(item.IRFId, item.candidateEmail);
+                results.Add(await WhatsAppSend(item.IRFId, item.candidateEmail));
             }
-            return Json("Send Successfully.");
+            var sent = results.Count(x => x == "Message sent successfully.");
+            var optedOut = results.Count(x => x == WhatsAppHelper.SkippedOptedOut);
+            var atLimit = results.Count(x => x == WhatsAppHelper.SkippedLimitReached);
+            if (CandidateList.Count == 1)
+            {
+                return Json(sent == 1 ? "Send Successfully." : results.FirstOrDefault() ?? "Sorry! Could not send invite!");
+            }
+            return Json($"Sent {sent} · skipped {optedOut} opted out · {atLimit} at limit");
         }
-        public async Task WhatsAppSend(int irfId, string email)
+        private async Task<string> WhatsAppSend(int irfId, string email)
         {
             try
             {
@@ -7647,24 +7657,27 @@ namespace Risebird.Web.Controllers
                         {
                             oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, email);
                         }
-                        oneTimeSchedulingLink = linkurl + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + email;
-                        var UnsubscribeLink = linkurl + "/Candidate/Unsubscribe?emailid=" + email + "&irfid=" + irfId;
                         WhatsAppVM _whatsapp = new WhatsAppVM();
                         _whatsapp.Emailid = email;
                         _whatsapp.PrimarySkill = primarySkill;
                         _whatsapp.ClientName = client.Name;
                         _whatsapp.Event = "Schedule Interview";
-                        _whatsapp.buttonlink = oneTimeSchedulingLink;
-                        _whatsapp.UnsubscribeLink = UnsubscribeLink;
+                        // Button URL is https://portal.risebird.io/{{1}}: the path only.
+                        _whatsapp.buttonlink = "InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + Uri.EscapeDataString(email);
                         _whatsapp.irfId = irfId;
-                        _ = await _whatsAppHelper.WhatsAppSendScheduling(_whatsapp);
-                        if (candidate.TotalInvites == 0)
+                        _whatsapp.SentBy = HttpContext.Session.GetString("email")?.Trim('"');
+                        var result = await _whatsAppHelper.WhatsAppSendScheduling(_whatsapp);
+                        if (result == "Message sent successfully.")
                         {
-                            _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
+                            if (candidate.TotalInvites == 0)
+                            {
+                                _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
+                            }
+                            _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
                         }
-                        _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
                         //add candidate status
                         //await AddCandidateStatus(loggedUserEmailId, candidate.CandidateMasterId, irfId, "Invitation sent", (int)CandidateStatusOptions.InvitationSent);
+                        return result;
                     }
                 }
             }
@@ -7672,10 +7685,25 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
+            return "Sorry! Could not send invite!";
         }
-        public async Task<JsonResult> Unsubscribe(string emailid, int irfid)
+        // WhatsApp unsubscribe button on candidate templates (C1, C2, C4, C5, C6). Opts the candidate out of
+        // WhatsApp for this IRF only; emails and other roles are not affected.
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> Unsubscribe(string emailid, int irfid)
         {
-            return Json("Unsubscribed Successfully.");
+            ViewBag.Title = "WhatsApp unsubscribe";
+            if (string.IsNullOrWhiteSpace(emailid) || irfid <= 0)
+            {
+                ViewBag.Message = "This unsubscribe link is incomplete. Please write to candidatesupport@risebird.io.";
+                return View("~/Views/Shared/WhatsAppUnsubscribed.cshtml");
+            }
+            var saved = await _whatsappRepository.SaveOptOutAsync(WhatsAppHelper.AudienceCandidate, emailid, irfid, null, "UnsubscribeButton");
+            ViewBag.Message = saved
+                ? "You won't receive WhatsApp messages about this role. Emails are not affected."
+                : "We could not record your request. Please try again or write to candidatesupport@risebird.io.";
+            return View("~/Views/Shared/WhatsAppUnsubscribed.cshtml");
         }
 
         public async Task<IActionResult> GetCandidateResumeSummary(int candidateId)

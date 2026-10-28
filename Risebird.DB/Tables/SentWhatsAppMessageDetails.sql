@@ -27,3 +27,23 @@ End
 
 GO
 
+-- One row per send attempt: 'Sent' | 'Failed' | 'Skipped'. Only 'Sent' counts toward the 3-per-IRF WhatsApp limit.
+-- Rows written before this column existed stay NULL and are counted as sent (no backfill: the table is large).
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Status')
+      AND Object_ID = Object_ID(N'SentWhatsAppMessageDetails'))
+BEGIN
+    ALTER TABLE SentWhatsAppMessageDetails
+    ADD [Status] [varchar](10) NULL
+END
+
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_SentWhatsAppMessageDetails_Recipient_IRFId_Event' AND object_id = OBJECT_ID(N'SentWhatsAppMessageDetails'))
+    CREATE INDEX IX_SentWhatsAppMessageDetails_Recipient_IRFId_Event
+        ON SentWhatsAppMessageDetails (Recipient, IRFId, [Event]) INCLUDE ([Status]);
+
+GO
+
