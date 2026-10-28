@@ -1,4 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Configuration;
 using Risebird.Repository.Interface;
 using System;
 using System.Linq;
@@ -6,13 +10,46 @@ using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
+    /// <summary>
+    /// OpenAI call logs. Request/response payloads hold resumes, transcripts and candidate details,
+    /// so every action is limited to OpenAILogs:AllowedProfiles (Admin by default).
+    /// </summary>
+    [Authorize]
     public class OpenAILogsController : Controller
     {
-        private readonly IOpenAIApiLogRepository _openAIApiLogRepository;
+        private const string DefaultAllowedProfiles = "Admin";
 
-        public OpenAILogsController(IOpenAIApiLogRepository openAIApiLogRepository)
+        private readonly IOpenAIApiLogRepository _openAIApiLogRepository;
+        private readonly IConfiguration _configuration;
+
+        public OpenAILogsController(IOpenAIApiLogRepository openAIApiLogRepository, IConfiguration configuration)
         {
             _openAIApiLogRepository = openAIApiLogRepository;
+            _configuration = configuration;
+        }
+
+        public static bool IsAllowed(string profileName, IConfiguration configuration)
+        {
+            if (string.IsNullOrWhiteSpace(profileName))
+                return false;
+
+            var allowed = (configuration["OpenAILogs:AllowedProfiles"] ?? DefaultAllowedProfiles)
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            return allowed.Contains(profileName.Replace("\"", "").Trim(), StringComparer.OrdinalIgnoreCase);
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            var email = HttpContext.Session.GetString("email");
+            var profileName = HttpContext.Session.GetString("profileName");
+            if (email == null || !IsAllowed(profileName, _configuration))
+            {
+                context.Result = RedirectToAction("SignOut", "Session");
+                return;
+            }
+
+            ViewBag.profile = profileName.Replace("\"", "").Trim();
+            base.OnActionExecuting(context);
         }
 
         public async Task<IActionResult> Index(DateTime? startDate = null, DateTime? endDate = null, int pageNumber = 1, int pageSize = 50, string sortBy = "LogDate", string sortOrder = "desc")
@@ -195,6 +232,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RefreshAssistantSummary()
         {
             try
@@ -202,9 +240,9 @@ namespace Risebird.Web.Controllers
                 await _openAIApiLogRepository.RefreshAssistantCostSummaryAsync();
                 TempData["SuccessMessage"] = "Assistant cost summary refreshed successfully.";
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                TempData["ErrorMessage"] = $"Error refreshing summary: {ex.Message}";
+                TempData["ErrorMessage"] = "Error refreshing summary. Please try again or check the application logs.";
             }
 
             return RedirectToAction(nameof(AssistantRanking));

@@ -101,6 +101,7 @@ namespace Risebird.AzureTimerFunctions
                                 continue;
                             }
 
+                            using var aiCostScope = OpenAIApiLogScope.Begin(meetingId: item.id);
                             var aiAnalysis = await _assistantServiceHelper.GenerateTranscriptAnalysis(transcriptText);
                             if (aiAnalysis != null)
                             {

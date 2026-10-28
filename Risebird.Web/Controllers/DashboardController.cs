@@ -10203,6 +10203,7 @@ NEVER:
 
         public async Task<IActionResult> GenerateTranscriptAiEvaluation(int interviewid)
         {
+            using var aiCostScope = OpenAIApiLogScope.Begin(meetingId: interviewid);
             try
             {
                 var item = await _meetingService.GetPendingQcInterviewAIMergeById(interviewid);

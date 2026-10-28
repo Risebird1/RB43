@@ -1,4 +1,5 @@
 using Risebird.Entities.Data;
+using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -28,5 +29,8 @@ namespace Risebird.Repository.Interface
         Task RefreshAssistantCostSummaryAsync();
         Task<List<OpenAIAssistantCostSummary>> GetAssistantCostRankingAsync(int? topN = null, decimal? minCost = null, DateTime? startDate = null, DateTime? endDate = null);
         Task<AssistantCostDetails> GetAssistantCostDetailsAsync(string assistantId, DateTime? startDate = null, DateTime? endDate = null);
+
+        /// <summary>Cost, duplicate requests and cache savings per operation and model (usp_GetOpenAICostOptimizationReport).</summary>
+        Task<List<OpenAICostOptimizationRow>> GetCostOptimizationReportAsync(DateTime startDate, DateTime endDate);
     }
 }
