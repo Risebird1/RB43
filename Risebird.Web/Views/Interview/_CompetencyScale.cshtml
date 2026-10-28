@@ -1,0 +1,34 @@
+@*
+    "How to read these levels" - rendered once per report, after the technical skill rubric, only
+    when IRF.LevelDisplayMode is 1 or 2. Static and always expanded: it must print in the PDF.
+    Novice to Expert are the five Dreyfus stages. "Not demonstrated" (LevelTech Clueless) and
+    "Not tested" are Risebird's own outcomes, not Dreyfus stages, so they sit below a rule.
+    Plain blocks, not a <table>: the report stylesheets force `table { white-space: nowrap !important }`,
+    which stops the descriptions wrapping and spills them over the next column.
+*@
+@{
+    var stages = new[]
+    {
+        new { No = "1", Name = "Novice", Text = "Works to rules and instructions. Little situational judgement; needs close supervision." },
+        new { No = "2", Name = "Advanced Beginner", Text = "Handles routine tasks unaided and recognises recurring patterns. Needs guidance when something is unusual." },
+        new { No = "3", Name = "Competent", Text = "Plans and troubleshoots independently across the normal range of problems in the role." },
+        new { No = "4", Name = "Proficient", Text = "Reads a situation as a whole, prioritises what matters, anticipates problems rather than reacting." },
+        new { No = "5", Name = "Expert", Text = "Works largely from pattern recognition and deep experience; sets the approach others follow." }
+    };
+}
+<div class="competency-scale" style="clear:both;float:none;width:100%;box-sizing:border-box;margin:16px 0 20px 0;padding:12px 14px;border:1px solid #d1d5db;border-radius:6px;background:#fff;font-size:12px;line-height:1.45;white-space:normal;word-wrap:break-word;overflow-wrap:break-word;page-break-inside:avoid;">
+    <div style="font-weight:700;font-size:13px;margin-bottom:4px;color:#111827;">How to read these levels</div>
+    <div style="color:#4b5563;margin-bottom:8px;">Skills are evaluated on the Dreyfus model of skill acquisition, from least to most capable.</div>
+    @foreach (var stage in stages)
+    {
+        <div style="position:relative;padding:0 0 6px 20px;white-space:normal;">
+            <span style="position:absolute;left:0;top:0;color:#6b7280;font-weight:700;">@stage.No</span>
+            <b style="color:#111827;">@stage.Name</b> &mdash; @stage.Text
+        </div>
+    }
+    <div style="border-top:1px solid #e5e7eb;margin-top:4px;padding-top:6px;white-space:normal;">
+        <div style="padding-bottom:4px;"><b style="color:#111827;">Not demonstrated</b> &mdash; Evaluated, but the skill could not be shown at any level above.</div>
+        <div><b style="color:#111827;">Not tested</b> &mdash; The skill was not covered in this interview. No conclusion either way.</div>
+    </div>
+    <div style="color:#6b7280;margin-top:8px;white-space:normal;">A required level is always one of the five stages above. A skill meets the requirement when the actual level reaches it.</div>
+</div>

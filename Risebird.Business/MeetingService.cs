@@ -1328,6 +1328,7 @@ namespace Risebird.Business
                 reportModel.CodeSnippet = interviewDetails.CodeSnippet;
                 reportModel.CodeSnippetTwo = interviewDetails.CodeSnippetTwo;
                 reportModel.SkillSetsevaluate = irfDetails.SkillSetsevaluate;
+                reportModel.LevelDisplayMode = irfDetails.LevelDisplayMode;
                 reportModel.JDTitleTwo = interviewDetails.JDTitleTwo;
                 reportModel.Heuristicsscore = irfDetails.Heuristicsscore;
                 reportModel.TechRubricType = irfDetails.TechRubricType;

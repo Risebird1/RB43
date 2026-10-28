@@ -436,6 +436,7 @@ namespace Risebird.Web.Controllers
             {
                 model.interviewid = interviewid;
                 model.returnvaluetype = returnvaluetype;
+                await ApplyCandidateRescheduleLimits(model);
                 return View("ReScheduleEvent", model);
             }
             if (type == "314999")
@@ -1411,6 +1412,28 @@ namespace Risebird.Web.Controllers
 
                 TimeZoneInfo INDIAN_ZONE = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                 DateTime indianTime = TimeZoneInfo.ConvertTimeFromUtc(model.scheduleDate, INDIAN_ZONE);
+
+                // Candidate reschedule cap and deadline. Re-checked here because the e-mailed link is
+                // reusable: the GET state is only a hint. Applies to the candidate only - a Risebird or
+                // client user rescheduling the same interview is never capped and never counted.
+                var rescheduleLimits = model.interviewid > 0 ? await _interviewSchedulerservice.GetCandidateRescheduleLimits(model.interviewid) : null;
+                bool isCandidateInitiated = rescheduleLimits != null
+                    ? rescheduleLimits.IsCandidateActor(loginEmailid)
+                    : string.IsNullOrWhiteSpace(loginEmailid);
+                if (isCandidateInitiated && rescheduleLimits != null && rescheduleLimits.HasLimits)
+                {
+                    if (rescheduleLimits.IsQuotaSpent)
+                    {
+                        ModelState.AddModelError(string.Empty, "You have used all " + rescheduleLimits.MaxCandidateReschedules + " reschedules for this interview, so it stays at its confirmed time. If you genuinely cannot attend, reply to your interview e-mail and the recruiter can move it for you.");
+                        return View(model);
+                    }
+                    if (rescheduleLimits.IsBeyondDeadline(indianTime))
+                    {
+                        ModelState.AddModelError(string.Empty, "This interview must be completed by " + rescheduleLimits.CompleteByDate.Value.ToString("dd MMM yyyy") + ". Please choose a slot on or before that date.");
+                        return View(model);
+                    }
+                }
+
                 var _checkdetails = await _interviewSchedulerservice.CheckInterviewConcurrency(indianTime, model.InterviewChannelId, model.Uniqueid);
                 if (_checkdetails)
                 {
@@ -1462,7 +1485,7 @@ namespace Risebird.Web.Controllers
                         await TryAssignAIQuestionSetAsync(interviewId);
 
                         //Start: Cancel the previous meetings
-                        var candidateuniqueid = await _interviewSchedulerservice.UpdateReSchedulingInterview(model.interviewid, indianTime, loginEmailid);
+                        var candidateuniqueid = await _interviewSchedulerservice.UpdateReSchedulingInterview(model.interviewid, indianTime, loginEmailid, isCandidateInitiated);
                         if (string.IsNullOrWhiteSpace(candidateuniqueid.Message))
                         {
                             //cancel interview meeting over portal
@@ -1570,6 +1593,35 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("CandidateScheduleEvent", new { id = id, CandidateEmail = CandidateEmail });
             }
         }
+        /// <summary>
+        /// Attaches the channel's candidate reschedule cap and deadline to the reschedule screen, and
+        /// stops the slot picker at the deadline. Only when the person opening the screen is the
+        /// candidate and the channel has a limit; for a signed-in Risebird or client user, or a channel
+        /// without limits, the model is left untouched and the page renders exactly as before.
+        /// </summary>
+        private async Task ApplyCandidateRescheduleLimits(ScheculeInterview model)
+        {
+            if (model.interviewid <= 0)
+            {
+                return;
+            }
+            var limits = await _interviewSchedulerservice.GetCandidateRescheduleLimits(model.interviewid);
+            if (limits == null || !limits.HasLimits || !limits.IsCandidateActor(GetSessionEmail()))
+            {
+                return;
+            }
+            model.CandidateRescheduleLimits = limits;
+            var todayIst = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+            model.TimeSlotDays = limits.EffectiveSlotDays(model.TimeSlotDays, todayIst);
+        }
+
+        /// <summary>Signed-in user's e-mail, read the same way ReScheduleEvent reads it. Empty when there is no session.</summary>
+        private string GetSessionEmail()
+        {
+            var email = HttpContext.Session.GetString("email");
+            return string.IsNullOrEmpty(email) ? string.Empty : email.Trim().Replace("\"", "");
+        }
+
         #region Candidate Schedule Event With Pre filled details
         public async Task<IActionResult> CandidateScheduleEvent(string id, string CandidateEmail, int returnvaluetype, string type, int interviewid)
         {
@@ -1683,6 +1735,7 @@ namespace Risebird.Web.Controllers
                 model.interviewid = interviewid;
                 model.returnvaluetype = returnvaluetype;
                 model.reschedulerequest = true;
+                await ApplyCandidateRescheduleLimits(model);
                 return View("ReScheduleEvent", model);
             }
             return View(model);

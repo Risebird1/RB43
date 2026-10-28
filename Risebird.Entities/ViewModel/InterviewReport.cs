@@ -376,6 +376,12 @@ namespace Risebird.Entities.ViewModel
         public int SkillSetsevaluate { get; set; }
 
         /// <summary>
+        /// IRF.LevelDisplayMode for this report's channel. Null or 0 renders the skill rubric exactly as
+        /// before; see <see cref="LevelDisplayModes"/>.
+        /// </summary>
+        public int? LevelDisplayMode { get; set; }
+
+        /// <summary>
         /// True when this channel came from the AI screening intake. Gates the screening-only parts
         /// of the report — the joint overall verdict and the two-section score breakdown — so
         /// expert channels keep the headline they have today.
@@ -419,6 +425,14 @@ namespace Risebird.Entities.ViewModel
         public string SessionId { get; set; } //applicable only if the interview is conducted by AI interviewer, i.e.: IsAIInterview is true
         public float TotalTechScore { get; set; }
         public TranscriptSummaryVM TranscriptSummaryObject { get; set; }
+
+        /// <summary>
+        /// True when the AI question &amp; answer log has at least one pair to show. The report renders the
+        /// log's header only then, so an interview with no transcript (or an empty one) gets no empty
+        /// header. TranscriptSummaryObject is only set when the channel has IRF.generateTranscriptSummary on.
+        /// </summary>
+        public bool HasTranscriptQaPairs => TranscriptSummaryObject?.IntervieweeAnalysis?.QaPairs != null
+            && TranscriptSummaryObject.IntervieweeAnalysis.QaPairs.Count > 0;
         public int AIVideoCount { get; set; }
         public string TranscriptSummary { get; set; }
 

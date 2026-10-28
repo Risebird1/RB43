@@ -1,0 +1,50 @@
+@model Risebird.Entities.ViewModel.TechSkillLevelDisplay
+@*
+    Skill-level line for one technical skill when IRF.LevelDisplayMode is 1 or 2. Replaces the
+    "Evaluated at" line only; mode 0 / NULL never reaches this partial.
+    Static markup, inline styles and text glyphs only: the PDF goes through wkhtmltopdf with no
+    script window, so nothing here may depend on JavaScript or an icon font.
+    The required level is always shown, at least as prominently as the stars - stars are attainment
+    against the required level, and mean nothing without it.
+*@
+<div class="rqlevel-display" style="margin:2px 0 4px 0;font-size:13px;line-height:1.6;clear:both;">
+    <div>
+        <span style="color:#6b7280;">Required level</span>
+        <b style="color:#111827;">@Model.RequiredLevelName</b>
+        @if (Model.ScoreVisible)
+        {
+            <span style="display:table;margin:2px 0 0 0;padding:0 7px 0 0;border-radius:9px;font-size:10px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:@Model.VerdictColor;background:@Model.VerdictBackground;">@Model.Verdict</span>
+        }
+    </div>
+    @if (!Model.ScoreVisible)
+    {
+        <div style="color:#6b7280;">Rating available once the report is accepted</div>
+    }
+    else if (Model.IsNotTested)
+    {
+        <div style="color:#6b7280;">Not covered in this interview</div>
+    }
+    else
+    {
+        if (Model.ShowStars)
+        {
+            <div aria-label="@Model.Stars of 5" style="font-size:13px;line-height:1.3;color:#f59e0b;">
+                @for (int s = 1; s <= 5; s++)
+                {
+                    if (s <= Model.Stars)
+                    {
+                        <span>&#9733;</span>
+                    }
+                    else
+                    {
+                        <span style="color:#d1d5db;">&#9734;</span>
+                    }
+                }
+            </div>
+        }
+        <div>
+            <span style="color:#6b7280;">Actual level</span>
+            <b style="color:#111827;">@Model.ActualLevelName</b>
+        </div>
+    }
+</div>

@@ -716,7 +716,7 @@ OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;";
             }
             return null;
         }
-        public async Task<RescheduleInterviewDetails> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate, string loginemail)
+        public async Task<RescheduleInterviewDetails> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate, string loginemail, bool isCandidateInitiated = false)
         {
             try
             {
@@ -724,9 +724,30 @@ OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;";
                 dp.Add("@interviewid", interviewid);
                 dp.Add("@reason", "Reschedule on " + newinterviewdate.ToString());
                 dp.Add("@source", loginemail);
+                // Only a candidate-initiated reschedule counts against the channel's candidate cap.
+                dp.Add("@isCandidateInitiated", isCandidateInitiated);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = await SqlMapper.QueryAsync<RescheduleInterviewDetails>(con, "usp_UpdateReSchedulingInterview", dp,
+                            commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<CandidateRescheduleLimits> GetCandidateRescheduleLimits(int interviewid)
+        {
+            try
+            {
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@interviewid", interviewid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<CandidateRescheduleLimits>(con, "usp_GetCandidateRescheduleLimits", dp,
                             commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }

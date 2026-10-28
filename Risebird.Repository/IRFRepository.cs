@@ -837,6 +837,48 @@ WHERE si.SuspiciousStatus = 1",
         }
 
         /// <summary>
+        /// Report level display mode and candidate reschedule limits, for the Edit IRF save.
+        /// @ReportSchedulingLimitsSupplied is always sent, so the proc takes the three values verbatim -
+        /// including null, which is how a recruiter clears a limit back to "unlimited".
+        /// </summary>
+        private static void AddReportSchedulingLimitParameters(SqlCommand command, IRFVm irfDetails)
+        {
+            command.Parameters.Add(new SqlParameter("@ReportSchedulingLimitsSupplied", SqlDbType.Bit));
+            command.Parameters["@ReportSchedulingLimitsSupplied"].Value = true;
+
+            AddReportSchedulingLimitValues(command, irfDetails);
+        }
+
+        /// <summary>
+        /// The three values on their own, shared by the update path and the create path (usp_AddIRFDetails,
+        /// which Edit IRF uses in clone mode). Blank or out-of-range values go as NULL, today's behaviour.
+        /// </summary>
+        private static void AddReportSchedulingLimitValues(SqlCommand command, IRFVm irfDetails)
+        {
+            command.Parameters.Add(new SqlParameter("@LevelDisplayMode", SqlDbType.Int));
+            command.Parameters["@LevelDisplayMode"].Value = LevelDisplayModes.IsEnhanced(irfDetails.LevelDisplayMode)
+                ? irfDetails.LevelDisplayMode.Value
+                : (object)DBNull.Value;
+
+            command.Parameters.Add(new SqlParameter("@MaxCandidateReschedules", SqlDbType.Int));
+            command.Parameters["@MaxCandidateReschedules"].Value = irfDetails.MaxCandidateReschedules.HasValue && irfDetails.MaxCandidateReschedules.Value >= 0
+                ? irfDetails.MaxCandidateReschedules.Value
+                : (object)DBNull.Value;
+
+            command.Parameters.Add(new SqlParameter("@InterviewCompleteByDays", SqlDbType.Int));
+            command.Parameters["@InterviewCompleteByDays"].Value = irfDetails.InterviewCompleteByDays.HasValue && irfDetails.InterviewCompleteByDays.Value > 0
+                ? irfDetails.InterviewCompleteByDays.Value
+                : (object)DBNull.Value;
+        }
+
+        private static int? ReadNullableInt(DataTable dt, string column)
+        {
+            return dt.Columns.Contains(column) && !string.IsNullOrEmpty(dt.Rows[0][column].ToString())
+                ? Convert.ToInt32(dt.Rows[0][column])
+                : (int?)null;
+        }
+
+        /// <summary>
         /// Tidies the comma-separated section keys typed into the skill-channel form: trims each
         /// key, drops blanks and duplicates, and returns null for "nothing chosen" so the MCQ side
         /// falls back to its own default set. Keys are not validated against the MCQ catalogue
@@ -978,6 +1020,11 @@ WHERE si.SuspiciousStatus = 1",
                                 && !string.IsNullOrEmpty(dt.Rows[0]["McqAssessmentMinutes"].ToString())
                                 ? Convert.ToInt32(dt.Rows[0]["McqAssessmentMinutes"])
                                 : (int?)null;
+                            // Report level display and candidate reschedule limits. NULL is meaningful in all
+                            // three (today's behaviour), so it is carried through as null rather than 0.
+                            _resultVM.LevelDisplayMode = ReadNullableInt(dt, "LevelDisplayMode");
+                            _resultVM.MaxCandidateReschedules = ReadNullableInt(dt, "MaxCandidateReschedules");
+                            _resultVM.InterviewCompleteByDays = ReadNullableInt(dt, "InterviewCompleteByDays");
                             _resultVM.DmIvLockNew = dt.Columns.Contains("DmIvLockNew") && !string.IsNullOrEmpty(dt.Rows[0]["DmIvLockNew"].ToString()) && Convert.ToBoolean(dt.Rows[0]["DmIvLockNew"]);
                             _resultVM.DmAssignmentPolicy = dt.Columns.Contains("DmAssignmentPolicy") && !string.IsNullOrEmpty(dt.Rows[0]["DmAssignmentPolicy"].ToString()) ? dt.Rows[0]["DmAssignmentPolicy"].ToString() : "free";
                             _resultVM.DmDefaultInterviewCap = dt.Columns.Contains("DmDefaultInterviewCap") && !string.IsNullOrEmpty(dt.Rows[0]["DmDefaultInterviewCap"].ToString()) ? Convert.ToInt32(dt.Rows[0]["DmDefaultInterviewCap"]) : 20;
@@ -1949,6 +1996,8 @@ WHERE si.SuspiciousStatus = 1",
                     cmdCreateIRF.Parameters["@IsProctoring"].Value = DBNull.Value;
 
                     AddMcqAssessmentSectionParameters(cmdCreateIRF, irfDetails);
+
+                    AddReportSchedulingLimitValues(cmdCreateIRF, irfDetails);
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@IsAdvancedResumeScreening", SqlDbType.Bit));
                     cmdCreateIRF.Parameters["@IsAdvancedResumeScreening"].Value = irfDetails.IsAdvancedResumeScreening;
@@ -3008,6 +3057,8 @@ WHERE si.SuspiciousStatus = 1",
                     // checkbox is not shown), so a save never turns the feature off by omission.
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAdvancedResumeScreening", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsAdvancedResumeScreening"].Value = irfDetails.IsAdvancedResumeScreening;
+
+                    AddReportSchedulingLimitParameters(cmdUpdateIRF, irfDetails);
 
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
@@ -7713,6 +7764,20 @@ WHERE irf.IsDeleted = 0
 
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@AIInterviewType", SqlDbType.Int));
                     cmdUpdateIRF.Parameters["@AIInterviewType"].Value = irfDetails.AIInterviewType;
+
+                    // Carry these onto the clone. Unset values go as NULL - exactly what a cloned channel
+                    // got before - so a clone only differs when the source actually set them.
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@generateTranscriptSummary", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@generateTranscriptSummary"].Value = irfDetails.generateTranscriptSummary ? true : (object)DBNull.Value;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@LevelDisplayMode", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@LevelDisplayMode"].Value = LevelDisplayModes.IsEnhanced(irfDetails.LevelDisplayMode) ? irfDetails.LevelDisplayMode.Value : (object)DBNull.Value;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@MaxCandidateReschedules", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@MaxCandidateReschedules"].Value = irfDetails.MaxCandidateReschedules.HasValue && irfDetails.MaxCandidateReschedules.Value >= 0 ? irfDetails.MaxCandidateReschedules.Value : (object)DBNull.Value;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewCompleteByDays", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@InterviewCompleteByDays"].Value = irfDetails.InterviewCompleteByDays.HasValue && irfDetails.InterviewCompleteByDays.Value > 0 ? irfDetails.InterviewCompleteByDays.Value : (object)DBNull.Value;
 
                     SqlParameter flatRateParam = new SqlParameter();
                     flatRateParam.ParameterName = "@flatRate";
