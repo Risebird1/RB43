@@ -63,6 +63,7 @@ CREATE TABLE [dbo].[InterviewMeetings](
     [MeetingPlatForm][varchar](25),
     [RequestType][varchar](30) NULL,
     [BillingOwner][int] NULL,
+    [CandidateRescheduleCount][int] NULL,
  CONSTRAINT [PK_InterviewMeetings] PRIMARY KEY CLUSTERED 		
 (		
 	[id] ASC	
@@ -496,6 +497,18 @@ BEGIN
     -- Snapshot of IRF.BillingOwner (UserList.id) at interview create time
     ALTER TABLE InterviewMeetings
     ADD BillingOwner INT NULL
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CandidateRescheduleCount')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    -- Reschedules made by the candidate themself (no signed-in session). Incremented only by
+    -- usp_UpdateReSchedulingInterview when @isCandidateInitiated = 1. NULL is treated as 0.
+    ALTER TABLE InterviewMeetings
+    ADD CandidateRescheduleCount INT NULL
 END
 
 END

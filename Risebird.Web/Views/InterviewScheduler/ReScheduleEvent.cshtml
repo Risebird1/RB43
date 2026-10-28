@@ -116,8 +116,43 @@
             <h3>Your Interview is scheduled successfully for @ViewBag.interviewDate</h3>
         </div>
 
+        @{
+            // Set only for the candidate themself on a channel with a reschedule cap or deadline; null for
+            // every signed-in Risebird or client user, who see this page exactly as before.
+            var rescheduleLimits = Model.CandidateRescheduleLimits;
+            var rescheduleQuotaSpent = rescheduleLimits != null && rescheduleLimits.IsQuotaSpent;
+        }
         <div id="divcalenderdetails">
-            <div class="calendar-con clearfix">
+            @if (rescheduleLimits != null)
+            {
+                <div class="clearfix" style="margin:16px 3vw 0 3vw;padding:12px 16px;border-radius:6px;border:1px solid @(rescheduleQuotaSpent ? "#fca5a5" : "#bfdbfe");background:@(rescheduleQuotaSpent ? "#fef2f2" : "#eff6ff");font-size:15px;line-height:1.5;">
+                    @if (rescheduleQuotaSpent)
+                    {
+                        <div style="font-weight:600;">You have used all @rescheduleLimits.MaxCandidateReschedules reschedules for this interview.</div>
+                        @if (rescheduleLimits.CurrentInterviewDate.HasValue)
+                        {
+                            <div>Your interview stays confirmed for @rescheduleLimits.CurrentInterviewDate.Value.ToString("ddd dd MMM yyyy, HH:mm") IST.</div>
+                        }
+                        <div>If you genuinely cannot attend, reply to your interview e-mail and the recruiter can move it for you.</div>
+                    }
+                    else
+                    {
+                        @if (rescheduleLimits.IsLastReschedule)
+                        {
+                            <div style="font-weight:600;">This is your last reschedule. The slot you pick now is final.</div>
+                        }
+                        else if (rescheduleLimits.HasRescheduleCap)
+                        {
+                            <div>You can reschedule @rescheduleLimits.RemainingReschedules more time@(rescheduleLimits.RemainingReschedules == 1 ? "" : "s").</div>
+                        }
+                        @if (rescheduleLimits.HasDeadline)
+                        {
+                            <div>Interview must be completed by @rescheduleLimits.CompleteByDate.Value.ToString("dd MMM yyyy"). Slots after that date are unavailable.</div>
+                        }
+                    }
+                </div>
+            }
+            <div class="calendar-con clearfix" style="@(rescheduleQuotaSpent ? "display:none" : null)">
                 <div class="col-md-12">
                     <div class="col-md-4 company-info pull-left" style="padding-left:3vw">
                         @if (!string.IsNullOrEmpty(Model._IRFDetails.LogoLink))
@@ -380,6 +415,10 @@
                                 <div class="clearfix"></div>
 
                                 @Html.HiddenFor(m => m.MeetingPlatform)
+                                @if (Model.CandidateRescheduleLimits != null && Model.CandidateRescheduleLimits.IsLastReschedule)
+                                {
+                                    <div class="form-group" style="font-weight:600;color:#b45309;">This is your last reschedule &mdash; the slot you confirm will be final.</div>
+                                }
                                 <div class="form-group">
                                     <input type="submit" id="btnsubmit" value="Schedule Interview" onclick="return checkvalidation();" class="mdc-button mdc-button--raised" />
                                 </div>

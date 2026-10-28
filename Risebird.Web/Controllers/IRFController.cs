@@ -53,8 +53,9 @@ namespace Risebird.Web.Controllers
 
     public class IRFController : Controller
     {
-        private const int MaxSampleQuestionLength = 5000;
-        private const int DefaultCodingTimeLimitInMinutes = 15;
+        // internal so the interview alignment code sessions (InterviewAlignmentController) apply the same limits.
+        internal const int MaxSampleQuestionLength = 5000;
+        internal const int DefaultCodingTimeLimitInMinutes = 15;
 
         private readonly IIRFRepository _irfRepository;
         private readonly IUserService _userService;
@@ -2390,6 +2391,27 @@ namespace Risebird.Web.Controllers
             return rubricSkills.Count > 0 ? string.Join(", ", rubricSkills) : model.JDTiltle;
         }
 
+        /// <summary>
+        /// " Reason: ..." for the "edits were not saved" message, from the error the save logged. The IRF list shows this
+        /// message inside a single-quoted JavaScript string, so it is kept to one line, without quote characters or
+        /// backslashes, and short enough to read.
+        /// </summary>
+        private static string SaveFailureSuffix(string reason)
+        {
+            if (string.IsNullOrWhiteSpace(reason))
+            {
+                return string.Empty;
+            }
+
+            var cleaned = System.Text.RegularExpressions.Regex.Replace(reason, @"\s+", " ")
+                .Replace("'", "").Replace("\"", "").Replace("\\", "/").Replace("<", "").Replace(">", "").Trim();
+            if (cleaned.Length > 300)
+            {
+                cleaned = cleaned.Substring(0, 300).TrimEnd() + "...";
+            }
+            return " Reason: " + cleaned;
+        }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> EditIRF(IRFVm model)
@@ -2585,6 +2607,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
+                            model.SaveFailureReason = null;
                             if (await _irfService.UpdateIRF(model, emailId))
                             {
                                 await _phoneScreenRepository.SetIRFPlivoAssistantUrlAsync(model.id, model.IRFId, model.PlivoAssistantUrl);
@@ -2596,12 +2619,12 @@ namespace Risebird.Web.Controllers
                             }
                             else if (model.IRFId != null)
                             {
-                                TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " edits were not saved.";
+                                TempData["SuccessErrorMessage"] = "Skills Channel " + model.IRFId + " edits were not saved." + SaveFailureSuffix(model.SaveFailureReason);
                                 return RedirectToAction("Index");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessage"] = "Skills Channel edits were not saved.";
+                                TempData["SuccessErrorMessage"] = "Skills Channel edits were not saved." + SaveFailureSuffix(model.SaveFailureReason);
                                 return RedirectToAction("Index");
                             }
                         }
@@ -10282,6 +10305,81 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>
+        /// Suggests the author brief from the chosen stack, rubric skill and difficulty, so the author can
+        /// start from a feasible idea instead of a blank box. Inline instructions on the Responses API
+        /// (CodeProjectQuestionHelper.BriefSuggestionInstructions): no stored OpenAI prompt is needed.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> SuggestCodeProjectBrief(int irfId, string stackImageCode, string skillName = null,
+            string difficulty = null, string previousBrief = null, string Type = null)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+                if (!await AuthorizeDhiMutatingAccessAsync(irfId, Type))
+                    return Json(new { success = false, message = "Forbidden" });
+                if (string.IsNullOrEmpty(_configuration["OpenAI:ApiKey"]) || string.IsNullOrEmpty(_configuration["OpenAI:ResponsesModel"]))
+                    return Json(new { success = false, message = "OpenAI:ApiKey and OpenAI:ResponsesModel must be configured." });
+
+                var irfVm = await _irfService.GetEditIRF(irfId, 0, false);
+                if (irfVm == null || irfVm.SkillCollection == null || !irfVm.SkillCollection.Any())
+                    return Json(new { success = false, message = "No rubric skills found for this channel." });
+
+                var images = await _codeProjectQuestionService.GetActiveStackImages();
+                var validStackCodes = DmIvQuestionRubricHelper.BuildValidStackImageSet(images);
+                if (!DmIvQuestionRubricHelper.TryMatchStackImage(stackImageCode, validStackCodes, out var stack))
+                    return Json(new { success = false, message = "Choose one of the listed stack images." });
+                var image = images.First(i => string.Equals(i.Code, stack, StringComparison.OrdinalIgnoreCase));
+
+                var validSkillNames = DmIvQuestionRubricHelper.BuildValidSkillNameSet(irfVm.SkillCollection);
+                string preferredSkill = null;
+                if (!string.IsNullOrWhiteSpace(skillName) && !DmIvQuestionRubricHelper.TryMatchSkill(skillName, validSkillNames, out preferredSkill))
+                    return Json(new { success = false, message = "The skill must be one of this channel's rubric skills." });
+
+                var input = new StringBuilder();
+                input.AppendLine("Interview: technical, code project question (the candidate works on a real machine with an IDE).");
+                input.AppendLine($"Chosen stack: {image.Code} ({image.DisplayName}). Toolchain and the ONLY available dependencies: {image.Toolchain}");
+                input.AppendLine($"Difficulty: {(string.IsNullOrWhiteSpace(difficulty) ? "Medium" : difficulty.Trim())}");
+                input.AppendLine(preferredSkill != null ? $"Rubric skill to exercise: {preferredSkill}" : "Rubric skill: choose the one that best fits the chosen stack.");
+                if (!string.IsNullOrWhiteSpace(previousBrief))
+                    input.AppendLine("Previous brief (suggest something different): " + (previousBrief.Length > 1000 ? previousBrief.Substring(0, 1000) : previousBrief.Trim()));
+                input.AppendLine();
+                input.AppendLine(DmIvQuestionRubricHelper.BuildRubricPromptSection(irfVm.SkillCollection));
+                input.AppendLine("Answer in JSON.");
+
+                var raw = await _openAIResponsesHelper.CreateJsonWithInstructionsAsync(
+                    CodeProjectQuestionHelper.BriefSuggestionInstructions, input.ToString(), "SuggestCodeProjectBrief", maxOutputTokens: 600);
+                if (string.IsNullOrWhiteSpace(raw))
+                    return Json(new { success = false, message = "Could not suggest a brief right now. Write one, or try again." });
+
+                string brief = null, suggestedSkill = null;
+                try
+                {
+                    var json = Newtonsoft.Json.Linq.JObject.Parse(raw.Substring(Math.Max(0, raw.IndexOf('{'))));
+                    brief = json["brief"]?.ToString()?.Trim();
+                    suggestedSkill = json["skill"]?.ToString();
+                }
+                catch (Newtonsoft.Json.JsonException) { }
+                if (string.IsNullOrWhiteSpace(brief))
+                    return Json(new { success = false, message = "Could not suggest a brief right now. Write one, or try again." });
+                if (brief.Length > CodeProjectQuestionHelper.MaxSuggestedBriefLength)
+                    brief = brief.Substring(0, CodeProjectQuestionHelper.MaxSuggestedBriefLength).TrimEnd() + "…";
+
+                // The skill is shown to the author and sent back with Generate, so only an exact rubric skill is returned.
+                var skill = preferredSkill;
+                if (skill == null && DmIvQuestionRubricHelper.TryMatchSkill(suggestedSkill, validSkillNames, out var matched)) skill = matched;
+
+                return Json(new { success = true, brief, skill, stack = image.Code });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not suggest a brief right now. Write one, or try again." });
+            }
+        }
+
+        /// <summary>
         /// Generates a code project question from the rubric. Mirrors GenerateQuestionsFromRubric with
         /// one structural difference: building and test-running the project takes minutes, so this
         /// persists the question as 'validating', enqueues the validation job and returns at once.
@@ -10335,11 +10433,13 @@ namespace Risebird.Web.Controllers
                 CodeProjectGeneration generation = null;
                 string matchedSkill = null;
                 List<string> errors = null;
-                for (var attempt = 0; attempt < 2; attempt++)
+                for (var attempt = 0; attempt < 3; attempt++)
                 {
                     var raw = await _openAIResponsesHelper.CreateJsonWithInstructionsAsync(
                         CodeProjectQuestionHelper.GeneratorInstructions, input, "GenerateCodeProjectQuestion");
                     generation = CodeProjectQuestionHelper.Parse(raw, out var parseError);
+                    // A hidden test also listed as a project file would leak the answer key; drop the visible copy.
+                    CodeProjectQuestionHelper.StripHiddenTestsFromProject(generation);
                     errors = generation == null
                         ? new List<string> { parseError }
                         : CheckCodeProjectGeneration(generation, validSkillNames, validStackCodes, requestedStack, preferredSkill, timeLimitMinutes, out matchedSkill);
@@ -10352,6 +10452,11 @@ namespace Risebird.Web.Controllers
                 if (errors.Count > 0)
                     return Json(new { success = false, message = "The generated project did not meet the rules.", errors });
 
+                // Deterministic corrections for offline builds: root .sln, offline NuGet with implicit usings,
+                // a visible Program for WebApplicationFactory, exact pre-loaded package versions.
+                // Paths are stored with the question, so a root .csproj beside other projects is moved into its own folder now.
+                CodeProjectQuestionHelper.MoveRootDotnetProjectIntoFolder(generation);
+                CodeProjectQuestionHelper.ApplyAutomaticFixes(generation, CodeProjectStackCatalog.ApplyStackFixups);
                 generation.TimeLimitMinutes = timeLimitMinutes;
                 generation.Language = string.IsNullOrWhiteSpace(generation.Language) ? (language ?? requestedStack) : generation.Language;
                 generation.QuestionGist = DmIvQuestionRubricHelper.BuildSpokenQuestionGist(generation.QuestionText, generation.QuestionGist);
@@ -14019,6 +14124,46 @@ namespace Risebird.Web.Controllers
             var result = await _irfService.UpdateCandidateChecks(irfid, CandidateCheckvalue, CandidateCheckName);
             return Json("Successfully");
         }
+        /// <summary>
+        /// The "Interviewer alignment required" checkbox on Edit IRF, saved the moment it is toggled. It is not part
+        /// of the Edit IRF form save on purpose: that save (usp_UpdateIRFDetails) re-applies the channel's whole
+        /// interviewer panel, deactivating interviewers outside the MAG and unassigning their future interviews, and
+        /// switching the alignment page on or off must never change who is active or which interviews are assigned.
+        /// This writes IRF.IsInterviewerAlignmentRequired and nothing else. Same roles that see the checkbox.
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> UpdateInterviewerAlignmentRequired(int irfId, bool isRequired,
+            [FromServices] IInterviewAlignmentService alignmentService)
+        {
+            try
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                var allowed = profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement";
+                if (!allowed || irfId <= 0)
+                {
+                    return Json(new { success = false, message = "You are not allowed to change this setting." });
+                }
+
+                var saved = await alignmentService.SetAlignmentRequiredAsync(irfId, isRequired);
+                return Json(new
+                {
+                    success = saved == true,
+                    isRequired,
+                    message = saved == true ? null
+                        : saved == false ? "This skill channel was not found, so the setting was not saved."
+                        // The write failed in the database - in practice usp_SetInterviewerAlignmentRequired (or the
+                        // IRF.IsInterviewerAlignmentRequired column) has not been deployed to this environment yet.
+                        : "The setting could not be saved: the database is not ready for it yet (run the interview alignment database script)."
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "The setting could not be saved. Please try again." });
+            }
+        }
+
         [HttpPost]
         public async Task<JsonResult> SaveNewPriority(int irfid, int PriorityLevel)
         {
@@ -14464,6 +14609,35 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false, message = "The question sets could not be created. Please try again." });
+            }
+        }
+
+        /// <summary>
+        /// Adds sets from the questions no existing set holds, leaving existing sets (and the interviews
+        /// bound to them) untouched. This is how questions written after the sets were first created,
+        /// such as code project questions, reach candidates on a channel whose sets are already in use.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> AddAIQuestionSets(int irfid)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+                if (!await AuthorizeAIQuestionSetAccessAsync(irfid))
+                    return Json(new { success = false, message = "Forbidden" });
+
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var result = await _irfService.AddAIQuestionSets(irfid, emailid);
+                if (result == null)
+                    return Json(new { success = false, message = "The question sets could not be added. Please try again." });
+
+                return Json(new { success = result.Success, message = result.Message, setCount = result.SetCount });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "The question sets could not be added. Please try again." });
             }
         }
 

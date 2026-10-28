@@ -2674,7 +2674,34 @@
         audioElement.src = audioUrl;
         audioElement.hidden = false;
         // Don't highlight here: waves and aiAvatarCircle.speaking are added only on the audio 'play' event, so they stay in sync with actual playback (like video autoplay)
-        audioElement.play();
+        const attempt = audioElement.play();
+        if (attempt && typeof attempt.catch === 'function') {
+            // Mobile Chrome (Android) blocks unmuted autoplay after each answer's page reload, so the
+            // question was silently never played. Fall back to playing it on the candidate's first tap.
+            attempt.catch(function () { offerTapToPlayAssistantAudio(audioElement); });
+        }
+    }
+
+    function offerTapToPlayAssistantAudio(audioElement) {
+        if (document.getElementById('rbTapToHear')) return;
+
+        const btn = document.createElement('button');
+        btn.id = 'rbTapToHear';
+        btn.type = 'button';
+        btn.innerHTML = '<i class="fa fa-volume-up"></i> Tap to hear the question';
+        // Top of the screen: at the bottom it sat over the record button on phones.
+        btn.style.cssText = 'position:fixed;left:50%;top:calc(env(safe-area-inset-top, 0px) + 12px);transform:translateX(-50%);z-index:10000;white-space:nowrap;' +
+            'padding:12px 20px;border:0;border-radius:24px;background:#28a745;color:#fff;font-size:16px;' +
+            'box-shadow:0 4px 12px rgba(0,0,0,.3);';
+        document.body.appendChild(btn);
+
+        function playOnGesture() {
+            document.removeEventListener('pointerdown', playOnGesture, true);
+            btn.remove();
+            audioElement.play().catch(function () { });
+        }
+        // Any tap counts as the gesture, not only the button.
+        document.addEventListener('pointerdown', playOnGesture, true);
     }
 
     // Chat Log Scrolling Functionality
@@ -2827,7 +2854,7 @@
             const base64 = @Html.Raw(Json.Serialize(ViewData["AssistantAudioBase64"]));
             const audioBlob = new Blob([
                 Uint8Array.from(atob(base64), c => c.charCodeAt(0))
-            ], { type: 'audio/mp3' });
+            ], { type: 'audio/mpeg' });
             // Queue for autoplay when DOM is ready (inside DOMContentLoaded, after 'play' listener is attached so highlight and audio start together)
             window._initialAssistantAudioBlob = audioBlob;
         })();
@@ -4418,6 +4445,15 @@
 
     // Function to load ExitModalPartial dynamically
     function loadExitModal() {
+        // Exiting completes the interview and generates its report, which takes several seconds;
+        // show the wait overlay so the candidate doesn't think the page has hung.
+        const waitOverlay = document.getElementById('waitOverlay');
+        if (waitOverlay) {
+            document.body.appendChild(waitOverlay); // the interview container it lives in is hidden on exit
+            const msg = waitOverlay.querySelector('div');
+            if (msg) msg.textContent = 'Submitting your interview. Please wait...';
+            waitOverlay.style.display = 'flex';
+        }
         $.ajax({
             url: '@Url.Action("ExitModalPartial", "AIInterview", new { seId = Model.SessionId })',
             type: 'GET',

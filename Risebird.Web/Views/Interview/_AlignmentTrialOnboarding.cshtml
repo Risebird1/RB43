@@ -1,0 +1,61 @@
+@model Risebird.Entities.ViewModel.InterviewAlignmentViewModel
+@*
+    One-time trial onboarding. Rendered for every trial interview so the banner's "Read the trial policy"
+    link can reopen it, but it only opens by itself while the interviewer has not acknowledged it
+    (InterviewerProfile.TrialOnboardingAcknowledged NULL or 0). Acknowledging is recorded once; the first
+    timestamp is never overwritten. Built like the page's "Mandatory Interview Instructions" modal.
+*@
+<style>
+    #iaTrialOnboardingModal .ia-policy { margin: 0; padding: 0 10px 0 20px; }
+    #iaTrialOnboardingModal .ia-policy li { list-style: square; line-height: 22px; margin-bottom: 6px; font-size: 14.8px; color: #979494; font-weight: 400; }
+    #iaTrialOnboardingModal .ia-ack { float: left; width: 100%; padding: 10px 0; margin: 6px 0 0 0; border-top: 1px #dcd2d252 solid; cursor: pointer; }
+    #iaTrialOnboardingModal .ia-ack .round { float: left; left: 0; right: auto; }
+    #iaTrialOnboardingModal .ia-ack h2 { margin: 0 0 0 40px; font-size: 14.8px; line-height: 25px; color: #979494; font-weight: 400; }
+    #iaTrialOnboardingModal .ia-continue { position: relative; left: 5px; border-radius: 20px; padding: 10px 20px; font-size: 14px; background: #d43434; color: #fff; }
+    #iaTrialOnboardingModal .ia-continue:disabled { background: #d5cfcf; color: #fff; }
+</style>
+<div id="iaTrialOnboardingModal" class="modal modal-bg" style="z-index:10;display:none;" data-auto-open="@(Model.ShowTrialOnboarding ? "1" : "0")" role="dialog" aria-modal="true" aria-labelledby="iaTrialOnboardingTitle">
+    <div class="modal-dialog modal-lg" role="document" style="max-width:825px !important;top:10px;">
+        <div class="modal-content">
+            <div class="filheader" style="padding-bottom:0px;">
+                <div class="filavatar" style="background:#f0a020!important;width:37px;height:37px;">
+                    <span class="mdc-fab__icon material-icons">
+                        <i class="fa fa-flag" style="color:white;font-size:17px;padding:10px 0 0 11px;" aria-hidden="true"></i>
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left" id="iaTrialOnboardingTitle" style="padding-top:0px;">Trial Interview &mdash; Before You Join</h5>
+            </div>
+
+            <span class="mandate-inst">Your first interview on each channel is a trial. It is reviewed end to end &mdash; transcript, report, decision, timing &mdash; before you are assigned more work on this channel.</span>
+            <div class="modal-body mi-check" style="padding:10px 15px 0px 15px;">
+                <div style="overflow-y:auto;max-height:470px;">
+                    <h1 style="font-size:16px;line-height: 24px;color:#858080;padding:0px 0px;">What the review looks at:</h1>
+                    <ul class="ia-policy">
+                        <li>Cover every elimination skill on the rubric and record why you scored it.</li>
+                        <li>Join on time. Join latency is measured.</li>
+                        <li>Use the full duration the channel specifies.</li>
+                        <li>The candidate is shown to you by coded identity only.</li>
+                        <li>A review outcome can hold payment on this interview.</li>
+                    </ul>
+
+                    <label class="question ia-ack" for="iaTrialPolicyRead">
+                        <span class="round">
+                            <input type="checkbox" id="iaTrialPolicyRead" onchange="document.getElementById('iaTrialContinue').disabled = !this.checked;" />
+                            <label for="iaTrialPolicyRead" style="border-radius: 4px;width: 19px;height:19px;top: 5px;"></label>
+                        </span>
+                        <h2><b style="color:green;padding-right: 7px;">Trial policy :</b>I have read the trial policy.
+                            @if (!string.IsNullOrWhiteSpace(Model.TrialPolicyUrl))
+                            {
+                                <a target="_blank" rel="noopener" href="@Model.TrialPolicyUrl"><span style="color: #4c87b6;font-weight:bold;text-decoration:underline;">Click here to read the policy</span></a>
+                            }
+                        </h2>
+                    </label>
+
+                    <div class="col-md-4 accept-btn" style="margin:0px 0px 10px 0px;clear:both;">
+                        <button type="button" id="iaTrialContinue" class="mdc-button ia-continue" disabled onclick="iaAcknowledgeTrialOnboarding()">Accept &amp; Continue</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

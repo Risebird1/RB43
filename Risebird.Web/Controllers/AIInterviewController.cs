@@ -75,6 +75,7 @@ namespace Risebird.Web.Controllers
         private readonly IMcqAssessmentService _mcqAssessmentService;
         private readonly ICodeProjectQuestionService _codeProjectQuestionService;
         private readonly Risebird.Web.Services.CodeProjectBackgroundQueue _codeProjectQueue;
+        private readonly Risebird.Web.Services.AIInterviewReportQueue _reportQueue;
 
         private readonly IHttpClientFactory _httpClientFactory;
 
@@ -93,9 +94,11 @@ namespace Risebird.Web.Controllers
             ICodeExecutionService codeExecutionService,
             IMcqAssessmentService mcqAssessmentService,
             ICodeProjectQuestionService codeProjectQuestionService,
-            Risebird.Web.Services.CodeProjectBackgroundQueue codeProjectQueue, IHttpClientFactory httpClientFactory)
+            Risebird.Web.Services.CodeProjectBackgroundQueue codeProjectQueue, IHttpClientFactory httpClientFactory,
+            Risebird.Web.Services.AIInterviewReportQueue reportQueue)
         {
             _httpClientFactory = httpClientFactory;
+            _reportQueue = reportQueue;
             _codeProjectQuestionService = codeProjectQuestionService;
             _codeProjectQueue = codeProjectQueue;
             _configuration = configuration;
@@ -624,7 +627,8 @@ namespace Risebird.Web.Controllers
                                     //if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 3)
                                     {
                                         // Reload after the interviewer already concluded: finish instead of re-showing the closing message.
-                                        if (MessageSignalsInterviewCompletion(latestEntry.Message))
+                                        if (MessageSignalsInterviewCompletion(latestEntry.Message)
+                                            || AIInterviewCompletionDetector.IsClosingStatement(CleanMessage(latestEntry.Message)))
                                         {
                                             model.candidateName = meetingDetails.candidateName;
                                             return await CompleteAdaptiveInterviewAsync(model);
@@ -1868,6 +1872,19 @@ namespace Risebird.Web.Controllers
                             return await CompleteAdaptiveInterviewAsync(model);
                         }
 
+                        // Some prompts leave the marker out and just say goodbye again each time the
+                        // candidate replies; a repeated closing statement means the interview is over.
+                        var previousAssistantTurn = transcript
+                            .FirstOrDefault(x => string.Equals(x.Role, "assistant", StringComparison.OrdinalIgnoreCase))?.Message;
+                        var newestReply = CleanMessage(replies?.FirstOrDefault());
+                        if (AIInterviewCompletionDetector.RepeatsClosingTurn(newestReply, CleanMessage(previousAssistantTurn))
+                            || AIInterviewCompletionDetector.IsClosingStatement(newestReply))
+                        {
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                                $"AI interview session {model.SessionId}: the assistant signed off without the completion marker; completing the interview.");
+                            return await CompleteAdaptiveInterviewAsync(model);
+                        }
+
                         model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
 
                         if (replies != null)
@@ -1993,7 +2010,7 @@ namespace Risebird.Web.Controllers
         /// Internal token the adaptive assistant appends when it ends the interview.
         /// Stripped in CleanMessage so it is never shown/spoken to the candidate.
         /// </summary>
-        private const string AdaptiveInterviewCompletionMarker = "[[ADAPTIVE_INTERVIEW_COMPLETE]]";
+        private const string AdaptiveInterviewCompletionMarker = AIInterviewCompletionDetector.Marker;
 
         /// <summary>
         /// Appended to the start-of-interview prompt so the assistant flags completion for auto-exit.
@@ -2036,8 +2053,7 @@ namespace Risebird.Web.Controllers
 
         private static bool MessageSignalsInterviewCompletion(string message)
         {
-            return !string.IsNullOrWhiteSpace(message)
-                && message.IndexOf(AdaptiveInterviewCompletionMarker, StringComparison.OrdinalIgnoreCase) >= 0;
+            return AIInterviewCompletionDetector.SignalsCompletion(message);
         }
 
         private static bool RepliesSignalInterviewCompletion(IEnumerable<string> replies)
@@ -2925,12 +2941,16 @@ namespace Risebird.Web.Controllers
                         audioMimeType = "audio/webm";
                     }
 
+                    // Safari records audio as MP4, which is sniffed as video/mp4 (same container).
+                    if (audioMimeType == "video/mp4") audioMimeType = "audio/mp4";
+
                     if (audioMimeType == "audio/mpeg" || audioMimeType == "audio/wav" || audioMimeType == "audio/ogg"
                         || audioMimeType == "audio/webm" || audioMimeType == "video/webm" || audioMimeType == "audio/mp4"
                         || audioMimeType == "audio/x-m4a" || audioMimeType == "application/octet-stream")
                     {
                         var uploadContentType = audioMimeType == "application/octet-stream" ? "audio/webm" : audioMimeType;
                         var audioExtension = uploadContentType.Contains("webm", StringComparison.OrdinalIgnoreCase) ? "webm"
+                            : uploadContentType.Contains("mp4", StringComparison.OrdinalIgnoreCase) || uploadContentType.Contains("m4a", StringComparison.OrdinalIgnoreCase) ? "m4a"
                             : uploadContentType.Contains("ogg", StringComparison.OrdinalIgnoreCase) ? "ogg"
                             : uploadContentType.Contains("wav", StringComparison.OrdinalIgnoreCase) ? "wav"
                             : uploadContentType.Contains("mpeg", StringComparison.OrdinalIgnoreCase) || uploadContentType.Contains("mp3", StringComparison.OrdinalIgnoreCase) ? "mp3"
@@ -3025,6 +3045,27 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> ExitModalPartial(Guid seId)
         {
             var meetingDetails = await _aiinterviewerService.GetAIInterviewDetailsBySessionId(seId);
+
+            // Exit Interview on an adaptive interview ends it: without this the page said "closed" while
+            // the meeting stayed Pending and no report was generated. Guarded on status so a second
+            // load of this modal does not regenerate the report. The report is queued, not awaited:
+            // generating it held the candidate on a frozen page for 20-30 seconds.
+            if (meetingDetails != null
+                && meetingDetails.AIInterviewType == (int)AIInterviewTypeEnum.Adaptive
+                && meetingDetails.MeetingStatus != (int)MeetingStatus.Completed)
+            {
+                try
+                {
+                    await _aiinterviewerService.UpdateMeetingCompletedStatusForAIInterview(seId.ToString());
+                    _reportQueue.Enqueue(new Risebird.Web.Services.AIInterviewReportQueue.Job(
+                        seId, AdaptiveReportGenerationPrompt, (int)AIInterviewTypeEnum.Adaptive));
+                }
+                catch (Exception ex)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                    await _aiinterviewerService.LogAIInterviewException(seId.ToString(), "GET Exit", ex);
+                }
+            }
 
             var exitModel = new AIInterviewExitModalViewModel
             {
@@ -4499,7 +4540,8 @@ namespace Risebird.Web.Controllers
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
                 var email = HttpContext.Session.GetString("email")?.Trim();
-                email = profileName.Replace("\"", "");
+                // Attribute the edit to the person, not the role (this used to overwrite email with profileName).
+                email = email?.Replace("\"", "");
                 if (profileName == "Admin" || profileName == ProfileNames.QualityController)
                 {
                     var model = await _aiinterviewerService.UpdateCandidateAnswerById(questionId, candidateAnswer, email);

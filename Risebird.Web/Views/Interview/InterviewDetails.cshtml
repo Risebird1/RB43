@@ -90,6 +90,17 @@
 
             <span style="font-weight:normal; color: #8b8bcd;font-size: 18px; line-height: 36px;">Always Use Virtual Background while keeping your Video On</span>
         </div>
+        @* Only for channels with "Interviewer alignment required" on (set by InterviewController.InterviewDetails);
+           nothing renders for any other channel. *@
+        @if (!string.IsNullOrEmpty(ViewBag.AlignmentBriefingUrl as string))
+        {
+            <div style="margin: 0px auto 16px auto; text-align: center;">
+                <a id="openAlignmentBriefing" href="@ViewBag.AlignmentBriefingUrl" style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 18px; border-radius: 20px; background: #fff6e5; border: 1px solid #f0a020; color: #a35f00; font-size: 14px; font-weight: 600; text-decoration: none;">
+                    <i class="fa fa-check-square-o" aria-hidden="true"></i> Open interview alignment briefing
+                </a>
+                <div style="font-size: 12.2px; color: #929c9c; margin-top: 4px;">Rubric, questions, your record on this channel and code sessions for this interview</div>
+            </div>
+        }
 
 
         @if (Model.zoomLink != null && Model.zoomLink != "")
@@ -356,22 +367,22 @@
 
     <div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
         <div class="card" style="margin-bottom:10px;">
-            <label class="question" for="checkbox_nine" style="padding:5px;">
-                <label for="checkbox_nine" class="consent-label">
+            <label class="question" for="checkbox_candidatechecks" style="padding:5px;">
+                <label for="checkbox_candidatechecks" class="consent-label">
                     <i class="fa fa-question-circle-o" aria-hidden="true" style="font-size:24px;position:relative;top:1px;"></i>
                     Candidate checks:
                 </label>
                 <span class="round">
-                    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_nine" name="question1" data-trigger="hidden_fields_nine" />
-                    <label style="visibility:hidden" for="checkbox_nine"></label>
-                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_nine_1" name="Checkshow" checked />
-                    <label for="hidden_fields_nine_1"></label>
-                    <span id="hidden_fields_nine_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
-                    <span id="hidden_fields_nine_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
+                    <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_candidatechecks" name="question1" data-trigger="hidden_fields_candidatechecks" />
+                    <label style="visibility:hidden" for="checkbox_candidatechecks"></label>
+                    <input type="checkbox" class="coupon_question" disabled id="hidden_fields_candidatechecks_1" name="Checkshow" checked />
+                    <label for="hidden_fields_candidatechecks_1"></label>
+                    <span id="hidden_fields_candidatechecks_1" class="expand-panel"><i class='fas fa-chevron-up'></i> </span>
+                    <span id="hidden_fields_candidatechecks_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span>
                 </span>
             </label>
 
-            <fieldset class="answer hidden show-default" id="hidden_fields_nine">
+            <fieldset class="answer hidden show-default" id="hidden_fields_candidatechecks">
                 @{
                     int candidatecheckcount = 0;
                 }
@@ -592,27 +603,27 @@
                 }
                 <div class="col-md-6 pull-left pad10" style="padding:10px 5px 0px 0px">
                     <div class="card" style="margin-bottom:10px;">
-                        <label class="question default-open" for="checkbox_eight" style="padding: 5px;">
-                            <label class="consent-label" for="checkbox_eight" style="padding: 0px 5px;margin:0px;">
+                        <label class="question default-open" for="checkbox_consentack" style="padding: 5px;">
+                            <label class="consent-label" for="checkbox_consentack" style="padding: 0px 5px;margin:0px;">
                                 <div class="subheading-txt" style="border:0px;margin:0px;">
                                     <span class="num" style="margin-bottom:0px;">@candidatecheckcount</span>
                                     <h2 style="padding-bottom:0px;"> Candidate consent acknowledgement </h2>
                                 </div>
                             </label>
                             <span class="round">
-                                <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_eight" name="question1" data-trigger="hidden_fields_eight" />
-                                <label style="visibility:hidden" for="checkbox_eight"></label>
+                                <input style="visibility:hidden" type="checkbox" class="coupon_question trigger" id="checkbox_consentack" name="question1" data-trigger="hidden_fields_consentack" />
+                                <label style="visibility:hidden" for="checkbox_consentack"></label>
 
                                 @*
-                                <input type="checkbox" class="coupon_question" disabled id="hidden_fields_eight_1" name="Checkshow" />
+                                <input type="checkbox" class="coupon_question" disabled id="hidden_fields_consentack_1" name="Checkshow" />
                                 <label for="hidden_fields_four_1"></label>
 
-                                <span id="hidden_fields_eight_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
-                                <span id="hidden_fields_eight_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span> *@
+                                <span id="hidden_fields_consentack_1" class="expand-panel"><i class='fas fa-chevron-down'></i> </span>
+                                <span id="hidden_fields_consentack_1" class="collapsible-panel"><i class='fas fa-chevron-up'></i></span> *@
                             </span>
                         </label>
 
-                        <fieldset class="answer" id="hidden_fields_eight">
+                        <fieldset class="answer" id="hidden_fields_consentack">
                             @if (!string.IsNullOrWhiteSpace(Model.ConsentFormUrl))
                             {
                                 <div id="CandidateDetails"><a target="_blank" href="@Model.ConsentFormUrl"><span style="background: #42a5f5;color: #fff;padding: 3px 10px;border-radius:3px;text-decoration:none;margin:15px;"> Consent Form Link</span></a></div>
@@ -1226,35 +1237,27 @@
         // Setup an event listener for each trigger checkbox that
         // fires when the state of the checkbox changes.
         $('.trigger').change(function () {
-            // Get the ID of the hidden area from the data-trigger
-            // attribute.
+            // Get the ID of the section from the data-trigger attribute, then toggle it on what is actually on
+            // screen rather than on the checkbox: sections marked show-default start open through a
+            // "display: block !important" rule (dashboard-new.css), which an inline hide() can never beat, so the
+            // old checked/unchecked logic could not close them. Closing one therefore drops that class.
             var hiddenId = $(this).attr("data-trigger");
-
-            // Check to see if the checkbox is checked.
-            // If it is, show the fields and populate the input.
-            // If not, hide the fields.
-            if ($(this).is(':checked')) {
-                // Show the hidden fields.
-                $("#" + hiddenId).show();
+            var $panel = $("#" + hiddenId);
+            if (!$panel.is(':visible')) {
+                // Show the section.
+                $panel.show();
                 $("#" + hiddenId + "_1").prop('checked', true);
                 $("#" + hiddenId + "_1" + ".collapsible-panel").show();
                 $("#" + hiddenId + "_1" + ".expand-panel").hide();
                 CountCheckBox();
             } else {
-                // Make sure that the hidden fields are indeed
-                // hidden.
-                $("#" + hiddenId).hide();
+                // Collapse the section.
+                $panel.removeClass('show-default').hide();
                 $("#" + hiddenId + "_1" + ".collapsible-panel").hide();
                 $("#" + hiddenId + "_1" + ".expand-panel").show();
-                // You may also want to clear the value of the
-                // hidden fields here. Just in case somebody
-                // shows the fields, enters data to them and then
-                // unticks the checkbox.
-                //
-                // This would do the job:
-                //
-                // $("#hidden_field").val("");
             }
+            // Keep the hidden trigger checkbox in step with what is on screen.
+            $(this).prop('checked', $panel.is(':visible'));
         });
     });
 </script>

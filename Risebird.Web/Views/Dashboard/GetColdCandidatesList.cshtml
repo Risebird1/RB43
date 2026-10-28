@@ -11,6 +11,28 @@
     .swal2-popup #swal2-content {
         font-size: 18px;
     }
+
+    .date-filter-bar {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+    }
+
+        .date-filter-bar .control-label {
+            margin: 0;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .date-filter-bar input[type="date"] {
+            width: 140px;
+            padding: 4px 8px;
+            font-size: 13px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            height: 28px;
+        }
 </style>
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 
@@ -49,6 +71,19 @@
 
 
                     </div>
+
+                    @if (ViewBag.ColdCandidateValue == 1)
+                    {
+                        <div class="pull-right">
+                            <div class="form-inline date-filter-bar">
+                                <label class="control-label" for="coldStartDate">From</label>
+                                <input type="date" id="coldStartDate" class="form-control" value="@ViewBag.StartDate" />
+                                <label class="control-label" for="coldEndDate">To</label>
+                                <input type="date" id="coldEndDate" class="form-control" value="@ViewBag.EndDate" />
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" onclick="ApplyColdDateFilter('@ViewBag.ReturnBack')">Apply</button>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
             <div class="row bl-bg">
@@ -382,6 +417,21 @@
 
     function Changeurldetails(type, returnBack) {
         window.location.href = "/Dashboard/GetColdCandidatesList?ColdCandidateValue=" + type + "&returnBack=" + returnBack;
+    }
+
+    function ApplyColdDateFilter(returnBack) {
+        var startDate = $('#coldStartDate').val();
+        var endDate = $('#coldEndDate').val();
+        if (!startDate || !endDate) {
+            Swal.fire('', 'Please select both From and To dates.', 'warning');
+            return;
+        }
+        if (startDate > endDate) {
+            Swal.fire('', 'From date cannot be greater than To date.', 'warning');
+            return;
+        }
+        window.location.href = "/Dashboard/GetColdCandidatesList?ColdCandidateValue=1&returnBack=" + returnBack
+            + "&startDate=" + startDate + "&endDate=" + endDate;
     }
 
     function moreless(id) {

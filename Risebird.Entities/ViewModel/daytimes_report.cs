@@ -126,6 +126,13 @@ namespace Risebird.Entities.ViewModel
         public string urlid { get; set; }
         public int SkillSetsevaluate { get; set; }
         public int Interviewduration { get; set; }
+        /// <summary>
+        /// Set only when the candidate themself opens the reschedule screen on a channel with a
+        /// reschedule cap or deadline. Null for every signed-in Risebird or client user and for
+        /// channels without limits, and the page then renders exactly as before. Not posted back:
+        /// ReScheduleEvent re-reads the limits server-side.
+        /// </summary>
+        public CandidateRescheduleLimits CandidateRescheduleLimits { get; set; }
         [Display(Name = "Guest Email Id")]
         public string Guests { get; set; }
     }

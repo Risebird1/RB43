@@ -837,6 +837,48 @@ WHERE si.SuspiciousStatus = 1",
         }
 
         /// <summary>
+        /// Report level display mode and candidate reschedule limits, for the Edit IRF save.
+        /// @ReportSchedulingLimitsSupplied is always sent, so the proc takes the three values verbatim -
+        /// including null, which is how a recruiter clears a limit back to "unlimited".
+        /// </summary>
+        private static void AddReportSchedulingLimitParameters(SqlCommand command, IRFVm irfDetails)
+        {
+            command.Parameters.Add(new SqlParameter("@ReportSchedulingLimitsSupplied", SqlDbType.Bit));
+            command.Parameters["@ReportSchedulingLimitsSupplied"].Value = true;
+
+            AddReportSchedulingLimitValues(command, irfDetails);
+        }
+
+        /// <summary>
+        /// The three values on their own, shared by the update path and the create path (usp_AddIRFDetails,
+        /// which Edit IRF uses in clone mode). Blank or out-of-range values go as NULL, today's behaviour.
+        /// </summary>
+        private static void AddReportSchedulingLimitValues(SqlCommand command, IRFVm irfDetails)
+        {
+            command.Parameters.Add(new SqlParameter("@LevelDisplayMode", SqlDbType.Int));
+            command.Parameters["@LevelDisplayMode"].Value = LevelDisplayModes.IsEnhanced(irfDetails.LevelDisplayMode)
+                ? irfDetails.LevelDisplayMode.Value
+                : (object)DBNull.Value;
+
+            command.Parameters.Add(new SqlParameter("@MaxCandidateReschedules", SqlDbType.Int));
+            command.Parameters["@MaxCandidateReschedules"].Value = irfDetails.MaxCandidateReschedules.HasValue && irfDetails.MaxCandidateReschedules.Value >= 0
+                ? irfDetails.MaxCandidateReschedules.Value
+                : (object)DBNull.Value;
+
+            command.Parameters.Add(new SqlParameter("@InterviewCompleteByDays", SqlDbType.Int));
+            command.Parameters["@InterviewCompleteByDays"].Value = irfDetails.InterviewCompleteByDays.HasValue && irfDetails.InterviewCompleteByDays.Value > 0
+                ? irfDetails.InterviewCompleteByDays.Value
+                : (object)DBNull.Value;
+        }
+
+        private static int? ReadNullableInt(DataTable dt, string column)
+        {
+            return dt.Columns.Contains(column) && !string.IsNullOrEmpty(dt.Rows[0][column].ToString())
+                ? Convert.ToInt32(dt.Rows[0][column])
+                : (int?)null;
+        }
+
+        /// <summary>
         /// Tidies the comma-separated section keys typed into the skill-channel form: trims each
         /// key, drops blanks and duplicates, and returns null for "nothing chosen" so the MCQ side
         /// falls back to its own default set. Keys are not validated against the MCQ catalogue
@@ -951,6 +993,14 @@ WHERE si.SuspiciousStatus = 1",
                             _resultVM.showChatBox = !string.IsNullOrEmpty(dt.Rows[0]["showChatBox"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["showChatBox"]) : false;
                             _resultVM.generateTranscriptSummary = !string.IsNullOrEmpty(dt.Rows[0]["generateTranscriptSummary"].ToString()) ? Convert.ToBoolean(dt.Rows[0]["generateTranscriptSummary"]) : false;
                             _resultVM.IsProctoring = !dt.Columns.Contains("IsProctoring") || string.IsNullOrEmpty(dt.Rows[0]["IsProctoring"].ToString()) || Convert.ToBoolean(dt.Rows[0]["IsProctoring"]);
+                            // Interview alignment rollout switch, read so Edit IRF can show it. NULL on every channel
+                            // until someone ticks it; guarded so Edit IRF still loads where Tables\IRF.sql has not
+                            // been applied yet. It is written only by IRFController.UpdateInterviewerAlignmentRequired,
+                            // never by the Edit IRF save (UpdateIRFDetails), so toggling it cannot touch interviewers.
+                            _resultVM.IsInterviewerAlignmentRequired = dt.Columns.Contains("IsInterviewerAlignmentRequired")
+                                && !string.IsNullOrEmpty(dt.Rows[0]["IsInterviewerAlignmentRequired"].ToString())
+                                ? Convert.ToBoolean(dt.Rows[0]["IsInterviewerAlignmentRequired"])
+                                : (bool?)null;
                             // MCQ assessment section. Columns.Contains-guarded so the edit screen
                             // still loads if this build reaches an environment where Tables\IRF.sql
                             // has not been applied yet.
@@ -970,6 +1020,11 @@ WHERE si.SuspiciousStatus = 1",
                                 && !string.IsNullOrEmpty(dt.Rows[0]["McqAssessmentMinutes"].ToString())
                                 ? Convert.ToInt32(dt.Rows[0]["McqAssessmentMinutes"])
                                 : (int?)null;
+                            // Report level display and candidate reschedule limits. NULL is meaningful in all
+                            // three (today's behaviour), so it is carried through as null rather than 0.
+                            _resultVM.LevelDisplayMode = ReadNullableInt(dt, "LevelDisplayMode");
+                            _resultVM.MaxCandidateReschedules = ReadNullableInt(dt, "MaxCandidateReschedules");
+                            _resultVM.InterviewCompleteByDays = ReadNullableInt(dt, "InterviewCompleteByDays");
                             _resultVM.DmIvLockNew = dt.Columns.Contains("DmIvLockNew") && !string.IsNullOrEmpty(dt.Rows[0]["DmIvLockNew"].ToString()) && Convert.ToBoolean(dt.Rows[0]["DmIvLockNew"]);
                             _resultVM.DmAssignmentPolicy = dt.Columns.Contains("DmAssignmentPolicy") && !string.IsNullOrEmpty(dt.Rows[0]["DmAssignmentPolicy"].ToString()) ? dt.Rows[0]["DmAssignmentPolicy"].ToString() : "free";
                             _resultVM.DmDefaultInterviewCap = dt.Columns.Contains("DmDefaultInterviewCap") && !string.IsNullOrEmpty(dt.Rows[0]["DmDefaultInterviewCap"].ToString()) ? Convert.ToInt32(dt.Rows[0]["DmDefaultInterviewCap"]) : 20;
@@ -1941,6 +1996,8 @@ WHERE si.SuspiciousStatus = 1",
                     cmdCreateIRF.Parameters["@IsProctoring"].Value = DBNull.Value;
 
                     AddMcqAssessmentSectionParameters(cmdCreateIRF, irfDetails);
+
+                    AddReportSchedulingLimitValues(cmdCreateIRF, irfDetails);
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@IsAdvancedResumeScreening", SqlDbType.Bit));
                     cmdCreateIRF.Parameters["@IsAdvancedResumeScreening"].Value = irfDetails.IsAdvancedResumeScreening;
@@ -3001,6 +3058,8 @@ WHERE si.SuspiciousStatus = 1",
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@IsAdvancedResumeScreening", SqlDbType.Bit));
                     cmdUpdateIRF.Parameters["@IsAdvancedResumeScreening"].Value = irfDetails.IsAdvancedResumeScreening;
 
+                    AddReportSchedulingLimitParameters(cmdUpdateIRF, irfDetails);
+
                     //cmdUpdateIRF.Parameters.Add(new SqlParameter("@Surcharge", SqlDbType.Int));
                     //cmdUpdateIRF.Parameters["@Surcharge"].Value = irfDetails.Surcharge;
 
@@ -3246,12 +3305,14 @@ WHERE si.SuspiciousStatus = 1",
 
             catch (SqlException e)
             {
+                irfDetails.SaveFailureReason = e.Message;
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return new Tuple<bool, bool>(false, false);
             }
 
             catch (Exception e)
             {
+                irfDetails.SaveFailureReason = e.Message;
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return new Tuple<bool, bool>(false, false);
             }
@@ -7704,6 +7765,20 @@ WHERE irf.IsDeleted = 0
                     cmdUpdateIRF.Parameters.Add(new SqlParameter("@AIInterviewType", SqlDbType.Int));
                     cmdUpdateIRF.Parameters["@AIInterviewType"].Value = irfDetails.AIInterviewType;
 
+                    // Carry these onto the clone. Unset values go as NULL - exactly what a cloned channel
+                    // got before - so a clone only differs when the source actually set them.
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@generateTranscriptSummary", SqlDbType.Bit));
+                    cmdUpdateIRF.Parameters["@generateTranscriptSummary"].Value = irfDetails.generateTranscriptSummary ? true : (object)DBNull.Value;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@LevelDisplayMode", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@LevelDisplayMode"].Value = LevelDisplayModes.IsEnhanced(irfDetails.LevelDisplayMode) ? irfDetails.LevelDisplayMode.Value : (object)DBNull.Value;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@MaxCandidateReschedules", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@MaxCandidateReschedules"].Value = irfDetails.MaxCandidateReschedules.HasValue && irfDetails.MaxCandidateReschedules.Value >= 0 ? irfDetails.MaxCandidateReschedules.Value : (object)DBNull.Value;
+
+                    cmdUpdateIRF.Parameters.Add(new SqlParameter("@InterviewCompleteByDays", SqlDbType.Int));
+                    cmdUpdateIRF.Parameters["@InterviewCompleteByDays"].Value = irfDetails.InterviewCompleteByDays.HasValue && irfDetails.InterviewCompleteByDays.Value > 0 ? irfDetails.InterviewCompleteByDays.Value : (object)DBNull.Value;
+
                     SqlParameter flatRateParam = new SqlParameter();
                     flatRateParam.ParameterName = "@flatRate";
                     flatRateParam.DbType = DbType.Int16;
@@ -11447,6 +11522,62 @@ WHERE id = @irfId";
 
                     con.Open();
                     await cmdSaveSets.ExecuteNonQueryAsync();
+
+                    return new AIQuestionSetSaveResultVM
+                    {
+                        Success = successParam.Value != DBNull.Value && Convert.ToBoolean(successParam.Value),
+                        Message = messageParam.Value == DBNull.Value ? null : Convert.ToString(messageParam.Value)
+                    };
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
+
+        public async Task<AIQuestionSetSaveResultVM> AddAIQuestionSets(int irfId, IList<AIQuestionSetItemTvpRow> items, string createdBy)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable itemsDt = new DataTable();
+                    itemsDt.Columns.Add("SetName", typeof(string));
+                    itemsDt.Columns.Add("QuestionId", typeof(int));
+                    itemsDt.Columns.Add("SkillName", typeof(string));
+                    itemsDt.Columns.Add("TotalMinutes", typeof(int));
+                    itemsDt.Columns.Add("TotalPoints", typeof(int));
+                    itemsDt.Columns.Add("SortOrder", typeof(int));
+                    foreach (var item in items ?? new List<AIQuestionSetItemTvpRow>())
+                    {
+                        itemsDt.Rows.Add(item.SetName, item.QuestionId, item.SkillName,
+                            item.TotalMinutes.HasValue ? (object)item.TotalMinutes.Value : DBNull.Value,
+                            item.TotalPoints.HasValue ? (object)item.TotalPoints.Value : DBNull.Value,
+                            item.SortOrder);
+                    }
+
+                    SqlCommand cmdAddSets = new SqlCommand("usp_AddAIQuestionSets", con);
+                    cmdAddSets.CommandType = CommandType.StoredProcedure;
+                    cmdAddSets.Parameters.Add(new SqlParameter("@IRFId", SqlDbType.Int));
+                    cmdAddSets.Parameters["@IRFId"].Value = irfId;
+                    cmdAddSets.Parameters.Add(new SqlParameter("@Items", SqlDbType.Structured));
+                    cmdAddSets.Parameters["@Items"].Value = itemsDt;
+                    cmdAddSets.Parameters.Add(new SqlParameter("@CreatedBy", SqlDbType.VarChar, 150));
+                    cmdAddSets.Parameters["@CreatedBy"].Value = (object)createdBy ?? DBNull.Value;
+
+                    var successParam = new SqlParameter("@Success", SqlDbType.Bit) { Direction = ParameterDirection.Output };
+                    cmdAddSets.Parameters.Add(successParam);
+                    var messageParam = new SqlParameter("@Message", SqlDbType.NVarChar, 1000) { Direction = ParameterDirection.Output };
+                    cmdAddSets.Parameters.Add(messageParam);
+
+                    con.Open();
+                    await cmdAddSets.ExecuteNonQueryAsync();
 
                     return new AIQuestionSetSaveResultVM
                     {

@@ -1,0 +1,128 @@
+@model Risebird.Entities.ViewModel.InterviewAlignmentViewModel
+@*
+    "Your questions": the interviewer's own questions for this channel (TechSkillComments - the same list
+    IRF/SampleQuestions edits), each of which can be given a code session for the candidate, plus an empty
+    field to type a coding question before or during the call. The client's sample questions above stay
+    read-only; nothing is minted from them. The existing code snippet link and .txt upload are untouched.
+    Laid out like the Sample Questions card directly above it (header, numbered sub-sections, bordered table).
+*@
+@{
+    var initialQuestions = (Model.Questions ?? new List<Risebird.Entities.ViewModel.InterviewerCodeQuestion>()).Select(q => new
+    {
+        questionId = q.QuestionId,
+        comment = q.Comment,
+        skillName = q.SkillName,
+        isCodingQuestion = q.IsCodingQuestion,
+        codingTimeLimitInMinutes = q.CodingTimeLimitInMinutes,
+        hasSession = q.Token.HasValue,
+        link = q.Token.HasValue ? Url.Action("Index", "CodeSession", new { token = q.Token.Value }, Context.Request.Scheme) : null,
+        runCount = q.RunCount ?? 0,
+        opened = q.OpenedOn.HasValue,
+        submitted = q.SubmittedOn.HasValue
+    });
+    var initialSessions = (Model.Sessions ?? new List<Risebird.Entities.ViewModel.InterviewCodeSession>()).Select(s => new
+    {
+        questionId = s.QuestionId,
+        questionText = s.QuestionText,
+        codingTimeLimitInMinutes = s.CodingTimeLimitInMinutes,
+        link = Url.Action("Index", "CodeSession", new { token = s.Token }, Context.Request.Scheme),
+        runCount = s.RunCount,
+        lastRunStatus = s.LastRunStatus,
+        opened = s.OpenedOn.HasValue,
+        submitted = s.SubmittedOn.HasValue
+    });
+}
+<style>
+    #iaCodeSessions .ia-head { padding: 5px !important; cursor: default !important; overflow: hidden; }
+    #iaCodeSessions .ia-head .consent-label { cursor: default !important; }
+    #iaCodeSessions .ia-sub-note { font-size: 12.2px; color: #929c9c; text-transform: none; font-weight: 400; padding: 0 5px; }
+    #iaCodeSessions .ia-section { clear: both; padding: 0 10px 10px 10px; margin-bottom: 10px; }
+    #iaCodeSessions .ia-section .subheading-txt { border: 0; margin: 0; }
+    #iaCodeSessions table { margin-top: 4px; background: #fff; }
+    #iaCodeSessions td { vertical-align: middle; font-size: 14px; color: #5f5757; }
+    #iaCodeSessions .ia-q-text { white-space: pre-wrap; word-break: break-word; }
+    #iaCodeSessions .ia-badge { display: inline-block; margin: 3px 0 0 6px; padding: 0 6px; font-size: 10.5px; font-weight: 700; letter-spacing: .05em; color: #2e7d32; background: #e8f5e9; border: 1px solid #66bb6a; border-radius: 3px; white-space: nowrap; }
+    #iaCodeSessions .ia-session { display: flex; align-items: center; gap: 8px; }
+    #iaCodeSessions .ia-link { flex: 1 1 auto; min-width: 0; height: 30px; font-size: 12px; padding: 3px 7px; }
+    #iaCodeSessions .ia-pill { flex: 0 0 auto; display: inline-flex; align-items: center; height: 24px; padding: 0 11px;
+        background: #eaf4fe; color: #1f7fd0 !important; border: 1px solid #cfe4f8; border-radius: 12px;
+        font-size: 12px; font-weight: 600; line-height: 1; cursor: pointer; white-space: nowrap;
+        transition: background-color .15s ease, color .15s ease, border-color .15s ease; }
+    #iaCodeSessions .ia-pill:hover, #iaCodeSessions .ia-pill:focus-visible { background: #42a5f5; border-color: #42a5f5; color: #fff !important; outline: none; }
+    #iaCodeSessions .ia-state { flex: 0 0 auto; font-size: 12px; color: #979494; white-space: nowrap; }
+    #iaCodeSessions .ia-empty { font-size: 14px; color: #979494; padding: 6px 2px; }
+    #iaCodeSessions textarea.form-control { min-height: 80px; font-size: 14px; }
+    /* The theme's .form-control text is a placeholder-light grey; values here must read as values. */
+    #iaCodeSessions .form-control, #iaCodeSessions .ia-link { color: #5f5757 !important; }
+    #iaCodeSessions .ia-link { background: #f7f7f7; }
+    #iaCodeSessions .ia-add-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 10px; }
+    #iaCodeSessions .ia-add-row .heading { color: #949191; font-weight: 600; font-size: 14px; }
+    #iaCodeSessions .ia-add-row input[type=number] { width: 80px; height: 32px; }
+    #iaCodeSessions .ia-add-row select { width: 200px; height: 32px; padding: 2px 6px; }
+    #iaCodeSessions .ia-add-note { flex: 1 1 220px; font-size: 12.2px; color: #929c9c; }
+    #iaCodeSessions .ia-msg { font-size: 13px; margin-top: 8px; }
+    #iaCodeSessions .ia-msg.is-error { color: #e12f2f; }
+    #iaCodeSessions .ia-msg.is-ok { color: #2e7d32; }
+</style>
+
+<div class="col-md-12 pull-left pad10" style="padding-bottom:0px;padding-top:0px;">
+    <div class="card" id="iaCodeSessions" style="margin-bottom:10px;">
+        <div class="question ia-head">
+            <label class="consent-label">
+                <i class="fa fa-code" aria-hidden="true"></i>
+                Your questions &amp; code sessions
+            </label>
+        </div>
+        <fieldset class="answer">
+            <div class="card ia-section" style="padding-top:0;">
+                <div class="subheading-txt">
+                    <span class="num">1</span>
+                    <h2>
+                        Your questions
+                        <label class="ia-sub-note">
+                            Your own questions for this channel &mdash; the same list as
+                            <a href="@Url.Action("SampleQuestions", "IRF", new { id = Model.IRFIntId })" target="_blank" style="color:#4c87b6;text-decoration:underline;">your sample questions</a>.
+                            Create a code session and paste the link into the Zoom chat.
+                        </label>
+                    </h2>
+                </div>
+                <div id="iaQuestionList" style="clear:both;"></div>
+                <div id="iaOtherSessions"></div>
+                @if (!Model.CodeRunnerEnabled)
+                {
+                    <div class="ia-sub-note" style="padding:6px 2px 0 2px;">Running code is not configured in this environment &mdash; the candidate can still write and submit code.</div>
+                }
+            </div>
+
+            <div class="card ia-section" id="iaAddQuestion" style="padding-top:0;margin-bottom:0;">
+                <div class="subheading-txt">
+                    <span class="num">2</span>
+                    <h2>Add a question now <label class="ia-sub-note">before or during the call</label></h2>
+                </div>
+                <div style="clear:both;">
+                    <textarea id="iaNewQuestion" class="form-control" maxlength="@Model.MaxQuestionLength" placeholder="Type the coding question you want to give the candidate..."></textarea>
+                    <div class="ia-add-row">
+                        <label for="iaNewTimeLimit" class="heading">Time limit</label>
+                        <input type="number" id="iaNewTimeLimit" class="form-control" min="1" max="180" value="@Model.DefaultCodingTimeLimitInMinutes" />
+                        <span class="heading" style="font-weight:400;">min</span>
+                        @if (Model.Skills != null && Model.Skills.Count > 0)
+                        {
+                            <label for="iaNewSkill" class="heading">Skill</label>
+                            <select id="iaNewSkill" class="form-control">
+                                <option value="">(optional)</option>
+                                @foreach (var skill in Model.Skills)
+                                {
+                                    <option value="@skill">@skill</option>
+                                }
+                            </select>
+                        }
+                        <span class="ia-add-note">Saved to your questions for this channel, then a code session is created and the link is ready to paste.</span>
+                        <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="iaAddAndCreate" onclick="iaCreateCodeSession(0)" value="Add &amp; create code session" />
+                    </div>
+                    <div class="ia-msg" id="iaCodeMsg" role="status"></div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>
+<script type="application/json" id="iaCodeState">@Html.Raw(System.Text.Json.JsonSerializer.Serialize(new { questions = initialQuestions, sessions = initialSessions }))</script>

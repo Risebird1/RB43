@@ -1,0 +1,46 @@
+@model Risebird.Entities.ViewModel.InterviewReport
+@*
+    AI question & answer log for the server-side PDF (GenerateClientReportPDFFile, rendered by
+    wkhtmltopdf). Same content as the ClientReportV3/V4 card - timestamp, question, answer and the
+    per-question rating - but static: answers are printed in full because there is no script to drive
+    "Read more", and the layout avoids flexbox, which wkhtmltopdf's WebKit handles poorly.
+    Only rendered when the channel shows the log (IRF.generateTranscriptSummary) and it has pairs.
+*@
+<div class="html2pdf__page-break"></div>
+<div class="col-md-12">
+    <div class="cr-report-section" style="margin-top:10px;">
+        <div class="cr-section-head" style="margin-top:0"><span class="cr-section-head__label">AI Interview Questions &amp; Answers</span></div>
+        <hr style="margin-bottom:8px;" />
+        @{ int qIndex = 0; }
+        @foreach (var qaPair in Model.TranscriptSummaryObject.IntervieweeAnalysis.QaPairs)
+        {
+            qIndex++;
+            <div style="margin-bottom:12px;page-break-inside:avoid;">
+                <div style="margin-bottom:4px;">
+                    <span style="font-size:13px;font-weight:700;color:#5B9BD5;">Q@(qIndex):</span>
+                    @if (!string.IsNullOrEmpty(qaPair.Timestamp))
+                    {
+                        <span style="color:#95a5a6;font-size:10px;margin-left:6px;">@qaPair.Timestamp</span>
+                    }
+                </div>
+                <div style="background:#f0f7fc;border-left:3px solid #5B9BD5;padding:6px 10px;margin-bottom:6px;">
+                    <div style="font-size:11px;font-weight:700;color:#3d7bb8;">Question</div>
+                    <div style="color:#2c3e50;font-size:12px;line-height:1.4;">@qaPair.Question</div>
+                </div>
+                <div style="background:#fafbfc;border:1px solid #eee;padding:6px 10px;">
+                    <div style="font-size:11px;font-weight:700;color:#64798a;">
+                        Answer
+                        @if (qaPair.AnswerRating > 0)
+                        {
+                            <span style="float:right;background:#e6f4f2;color:#249c90;padding:0 6px;font-size:10px;font-weight:600;">Rating @qaPair.AnswerRating/5</span>
+                        }
+                    </div>
+                    <div style="color:#4a5568;font-size:11px;line-height:1.45;">@qaPair.Answer</div>
+                </div>
+            </div>
+        }
+        <div style="background:#eef0f3;border-left:4px solid #6c757d;padding:8px 12px;margin-top:8px;color:#6c757d;font-size:11px;">
+            <strong>Note:</strong> This section is generated using AI. AI outputs may contain errors, and human discretion is advised before final review.
+        </div>
+    </div>
+</div>

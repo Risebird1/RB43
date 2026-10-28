@@ -92,7 +92,7 @@ namespace Risebird.Business.Interface
         Task<List<MeetingVM>> GetDMApproveDetails(string EmailId);
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetOpenClickCampaignMailDetails(int campaignId);
         Task<List<PQIDetails>> GetInterviewerIRFDetails(string type, string uniqueid = null, string Email = null);
-        Task<List<MeetingVM>> GetColdCandidatesList(int ColdCandidateValue, string EmailId);
+        Task<List<MeetingVM>> GetColdCandidatesList(int ColdCandidateValue, string EmailId, DateTime? startDate = null, DateTime? endDate = null);
         Task<List<InterviewUsersDetails>> MarkedColdCandidate(int CandidateId, string Email, int InterviewId, int type);
         Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type, string EmailId);
         /// <summary>Latest QC decision per interviewer (and channel) on a QC page: PLI | PotentialRisk | HighRisk.</summary>

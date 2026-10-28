@@ -1,0 +1,26 @@
+@model Risebird.Entities.ViewModel.CodeSessionQuestionMatcher
+@*
+    Code sessions on this interview that no "Questions Discussed" entry matched (for example, the interviewer did not add
+    the coding question to the report). Each is shown with its own question, in the same block as the discussed questions,
+    so no candidate code is hidden from the client. Renders nothing when every session was matched, or when the interview
+    has no code sessions.
+*@
+@if (Model != null && Model.Enabled)
+{
+    var unmatched = Model.Unmatched;
+    if (unmatched.Count > 0)
+    {
+        <div style="clear:both;margin-top:8px;">
+            @foreach (var session in unmatched)
+            {
+                @* The same card as a discussed question: label, the question, then its code. *@
+                <div class="rb-qunit">
+                    <span class="rb-qunit-num">Coding question</span>
+                    <div class="rb-qunit-qtext">@session.QuestionText</div>
+                    @await Html.PartialAsync("~/Views/Shared/_QuestionCandidateCode.cshtml",
+                        new Risebird.Entities.ViewModel.QuestionCandidateCodeVM { Session = session, Wrapper = "div" })
+                </div>
+            }
+        </div>
+    }
+}

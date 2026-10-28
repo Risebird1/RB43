@@ -28,14 +28,19 @@ namespace Risebird.Business
         private readonly IApplicationErrorLogger _applicationErrorLogger;
 
         public CodeProjectQuestionService(ICodeProjectQuestionRepository repository, ICodeProjectBlobStore blobStore,
-            ICodeProjectRunner runner, ICodeProjectEnvironmentProvisioner provisioner, IApplicationErrorLogger applicationErrorLogger)
+            ICodeProjectRunner runner, ICodeProjectEnvironmentProvisioner provisioner, IApplicationErrorLogger applicationErrorLogger,
+            IOpenAIResponsesHelper openAI = null)
         {
             _repository = repository;
             _blobStore = blobStore;
             _runner = runner;
             _provisioner = provisioner;
             _applicationErrorLogger = applicationErrorLogger;
+            _openAI = openAI;
         }
+
+        /// <summary>Repairs projects that fail validation; without it a failed validation is final.</summary>
+        private readonly IOpenAIResponsesHelper _openAI;
 
         private static string ProjectBlobName(int questionId) => $"q{questionId}/project.zip";
         private static string SecretsBlobName(int questionId) => $"q{questionId}/secrets.json";
@@ -102,30 +107,82 @@ namespace Risebird.Business
 
                 var (starter, secrets) = await LoadProjectAsync(questionId, ct);
                 var g = ToGeneration(details, starter, secrets);
+                g.EditableFiles = EditableFilesFromPayload(details.GeneratedPayload);
                 var timeLimit = details.CodingTimeLimitInMinutes ?? CodeProjectQuestionHelper.DefaultTimeLimitMinutes;
 
-                var starterRun = await _runner.RunAsync(RunRequest(details, CodeProjectQuestionHelper.BuildReferenceWorkspace(starter, null, secrets.HiddenTests)), ct);
-                if (starterRun.Completed && starterRun.BuildExitCode == 0)
+                // Questions generated before a fix existed (or re-validated later) get it too; saved when anything changed.
+                var before = Fingerprint(g);
+                CodeProjectQuestionHelper.ApplyAutomaticFixes(g, CodeProjectStackCatalog.ApplyStackFixups);
+                if (Fingerprint(g) != before) await StoreProjectAsync(questionId, g, ct);
+
+                // Build and test; when the project itself is at fault (compile errors, unsolvable or
+                // mismatched tests, a pre-solved starter), the AI gets the real output and repairs the
+                // files, up to MaxRepairRounds times, before the question is reported as failed.
+                CodeProjectValidationReport report;
+                var repairs = new List<string>();
+                for (var round = 0; ; round++)
                 {
-                    // Surface progress while the second run is under way.
-                    SetStep(progress, "build", "ok", $"{details.BuildCommand} → exit 0", starterRun.WallSeconds);
-                    SetStep(progress, "reference", "run", null);
+                    var starterRun = await _runner.RunAsync(RunRequest(details, CodeProjectQuestionHelper.BuildReferenceWorkspace(g.ProjectFiles, null, g.HiddenTests)), ct);
+                    if (starterRun.Completed && starterRun.BuildExitCode == 0)
+                    {
+                        // Surface progress while the second run is under way.
+                        SetStep(progress, "build", "ok", $"{details.BuildCommand} → exit 0", starterRun.WallSeconds);
+                        SetStep(progress, "reference", "run", null);
+                        await _repository.UpdateValidation(questionId, CodeProjectValidationStatus.Validating, JsonSerializer.Serialize(progress, Json));
+                    }
+
+                    CodeProjectRunResult referenceRun = null;
+                    if (starterRun.Completed && starterRun.BuildExitCode == 0)
+                        referenceRun = await _runner.RunAsync(RunRequest(details,
+                            CodeProjectQuestionHelper.BuildReferenceWorkspace(g.ProjectFiles, g.ReferenceSolution, g.HiddenTests)), ct);
+
+                    report = CodeProjectQuestionHelper.EvaluateValidation(g, timeLimit, starterRun, referenceRun);
+                    if (report.FailureReason == null) break;
+
+                    if (round >= CodeProjectQuestionHelper.MaxRepairRounds || _openAI == null
+                        || !CodeProjectQuestionHelper.IsRepairable(report, starterRun, referenceRun))
+                    {
+                        if (repairs.Count > 0) report.FailureReason += $" (after {repairs.Count} automatic repair{(repairs.Count == 1 ? "" : "s")})";
+                        await _repository.UpdateValidation(questionId, CodeProjectValidationStatus.Failed, JsonSerializer.Serialize(report, Json));
+                        return;
+                    }
+
+                    // Show the repair on the failing step while the AI works on it.
+                    var failedKey = report.Steps.First(s => s.State == "failed").Key;
+                    var shown = CodeProjectQuestionHelper.InitialReport(runningKey: null);
+                    foreach (var s in report.Steps.TakeWhile(s => s.State == "ok")) SetStep(shown, s.Key, s.State, s.Detail, s.Seconds);
+                    SetStep(shown, failedKey, "run", $"Automatic repair {round + 1} of {CodeProjectQuestionHelper.MaxRepairRounds}: {report.FailureReason}");
+                    await _repository.UpdateValidation(questionId, CodeProjectValidationStatus.Validating, JsonSerializer.Serialize(shown, Json));
+
+                    var raw = await _openAI.CreateJsonWithInstructionsAsync(CodeProjectQuestionHelper.RepairInstructions,
+                        CodeProjectQuestionHelper.BuildRepairInput(g, CodeProjectQuestionHelper.ResolveEditableFiles(g), report, starterRun, referenceRun),
+                        "RepairCodeProjectQuestion");
+                    var repaired = CodeProjectQuestionHelper.ApplyRepair(g, raw, timeLimit, out var repairError, out var notes, CodeProjectStackCatalog.ApplyStackFixups);
+                    // A "repair" that returns the same files would only fail the same way again.
+                    if (repaired != null && Fingerprint(repaired) == Fingerprint(g))
+                    {
+                        repaired = null;
+                        repairError = "it returned the files unchanged.";
+                    }
+                    if (repaired == null)
+                    {
+                        report.FailureReason += $" Automatic repair {round + 1} did not help: {repairError}";
+                        await _repository.UpdateValidation(questionId, CodeProjectValidationStatus.Failed, JsonSerializer.Serialize(report, Json));
+                        return;
+                    }
+
+                    // The repaired files replace the stored ones; question, requirements and commands are unchanged.
+                    g = repaired;
+                    await StoreProjectAsync(questionId, g, ct);
+                    repairs.Add(string.IsNullOrWhiteSpace(notes) ? report.FailureReason : notes.Trim());
+                    progress = CodeProjectQuestionHelper.InitialReport();
+                    SetStep(progress, "build", "run", $"Re-validating after automatic repair {round + 1}…");
                     await _repository.UpdateValidation(questionId, CodeProjectValidationStatus.Validating, JsonSerializer.Serialize(progress, Json));
                 }
 
-                CodeProjectRunResult referenceRun = null;
-                if (starterRun.Completed && starterRun.BuildExitCode == 0)
-                    referenceRun = await _runner.RunAsync(RunRequest(details,
-                        CodeProjectQuestionHelper.BuildReferenceWorkspace(starter, secrets.ReferenceSolution, secrets.HiddenTests)), ct);
-
-                var report = CodeProjectQuestionHelper.EvaluateValidation(g, timeLimit, starterRun, referenceRun);
-                if (report.FailureReason != null)
-                {
-                    await _repository.UpdateValidation(questionId, CodeProjectValidationStatus.Failed, JsonSerializer.Serialize(report, Json));
-                    return;
-                }
-
-                report.Steps.Add(CodeProjectQuestionHelper.Step("publish", "Publish", "ok", $"project.zip → blob · question {questionId}"));
+                report.Steps.Add(CodeProjectQuestionHelper.Step("publish", "Publish",
+                    "ok", $"project.zip → blob · question {questionId}" +
+                    (repairs.Count > 0 ? $" · passed after {repairs.Count} automatic repair{(repairs.Count == 1 ? "" : "s")}: {string.Join(" / ", repairs)}" : "")));
                 // The CHECK constraint refuses 'passed' without a ProjectBlobUri, so a question that
                 // lost its zip cannot be published by accident.
                 var published = await _repository.UpdateValidation(questionId, CodeProjectValidationStatus.Passed, JsonSerializer.Serialize(report, Json));
@@ -417,6 +474,39 @@ namespace Risebird.Business
             step.State = state;
             step.Detail = detail;
             step.Seconds = seconds;
+        }
+
+        /// <summary>Order-independent identity of a project's three file tiers.</summary>
+        private static string Fingerprint(CodeProjectGeneration g)
+        {
+            string Tier(IEnumerable<CodeProjectFile> files) => string.Join("\u0001", (files ?? Enumerable.Empty<CodeProjectFile>())
+                .Where(f => f?.Path != null)
+                .OrderBy(f => CodeProjectQuestionHelper.NormalizePath(f.Path), StringComparer.OrdinalIgnoreCase)
+                .Select(f => CodeProjectQuestionHelper.NormalizePath(f.Path) + "\u0002" + (f.Content ?? "").Replace("\r\n", "\n").Trim()));
+            return Tier(g.ProjectFiles) + "\u0003" + Tier(g.HiddenTests) + "\u0003" + Tier(g.ReferenceSolution);
+        }
+
+        /// <summary>Overwrites the stored candidate zip and the server-only secrets with the given project.</summary>
+        private async Task StoreProjectAsync(int questionId, CodeProjectGeneration g, CancellationToken ct)
+        {
+            await _blobStore.UploadAsync(_blobStore.ProjectContainer, ProjectBlobName(questionId), Zip(g.ProjectFiles), "application/zip", ct);
+            var secrets = new ProjectSecrets { HiddenTests = g.HiddenTests, ReferenceSolution = g.ReferenceSolution, SeededDefects = g.SeededDefects };
+            await _blobStore.UploadAsync(_blobStore.SecretsContainer, SecretsBlobName(questionId),
+                JsonSerializer.SerializeToUtf8Bytes(secrets, Json), "application/json", ct);
+        }
+
+        /// <summary>editable_files from the sanitized payload (the details row does not store them separately).</summary>
+        private static List<string> EditableFilesFromPayload(string payload)
+        {
+            if (string.IsNullOrWhiteSpace(payload)) return new List<string>();
+            try
+            {
+                using var doc = JsonDocument.Parse(payload);
+                return doc.RootElement.TryGetProperty("editable_files", out var e) && e.ValueKind == JsonValueKind.Array
+                    ? e.EnumerateArray().Where(x => x.ValueKind == JsonValueKind.String).Select(x => x.GetString()).ToList()
+                    : new List<string>();
+            }
+            catch (JsonException) { return new List<string>(); }
         }
 
         private async Task<(List<CodeProjectFile> Starter, ProjectSecrets Secrets)> LoadProjectAsync(int questionId, CancellationToken ct)

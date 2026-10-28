@@ -7326,6 +7326,9 @@ namespace Risebird.Web.Controllers
                     ViewBag.Message = TempData["SuccessErrorMessageQCForm"].ToString();
                     TempData.Remove("SuccessErrorMessageQCForm");
                 }
+                // Code sessions render only on this path, after the share check above has passed;
+                // AddSecureReport renders the same view for the sign-in step without it.
+                ViewBag.CodeSessionInterviewId = interviewId;
                 if (model.IsProctor)
                 {
                     return PartialView("SecureProctorReport", model);
@@ -8882,7 +8885,85 @@ namespace Risebird.Web.Controllers
             if (result == null)
                 result = new Risebird.Entities.Data.Meeting();
             result.AudioComment = _irfService.FetchIRFAudioLink(id);
+
+            // Interview alignment rollout: the one decision point. The switch is IRF.IsInterviewerAlignmentRequired
+            // on the interview's own channel, read by usp_FetchAudioComment in the same round trip as the rest of
+            // this page - never from the query string. On: this page shows an "Open interview alignment briefing"
+            // link to the alignment page (Interview/Alignment), which re-checks everything itself. Off or NULL
+            // (every channel on day one): no link, no new query, and this page renders exactly as it always has.
+            if (result.IsInterviewerAlignmentRequired == true)
+            {
+                ViewBag.AlignmentBriefingUrl = Url.Action(nameof(Alignment), new { interviewId, id });
+            }
             return View(result);
+        }
+
+        /// <summary>
+        /// The interview alignment page, opened from the "Open interview alignment briefing" link on Interview Details.
+        /// It does not trust how it was reached: it re-checks the
+        /// session interviewer, IsInterviewerForInterview and the channel's rollout switch itself. Whenever any of
+        /// that fails - including the switch being turned off mid-flight - it redirects to Interview Details
+        /// rather than refusing, because the interviewer still has a call to join.
+        /// </summary>
+        public async Task<IActionResult> Alignment(int interviewId, int id, [FromServices] IInterviewAlignmentService alignmentService)
+        {
+            IActionResult fallback = RedirectToAction(nameof(InterviewDetails), new { id, interviewId });
+            var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            if (string.IsNullOrEmpty(emailid) || interviewId <= 0
+                || !await _meetingService.IsInterviewerForInterview(emailid, interviewId)
+                || !await alignmentService.IsAlignmentRequiredAsync(interviewId))
+            {
+                return fallback;
+            }
+
+            var jobLevelsList = JobLevelHelper.SelectListOptions().Select(x => new { x.ID, x.Name });
+            ViewBag.JobLevelList = new SelectList(jobLevelsList, "ID", "Name");
+            var result = await _meetingService.GetAudioCommentDetailsService(interviewId) ?? new Risebird.Entities.Data.Meeting();
+            result.interviewer = emailid;
+            result.AudioComment = _irfService.FetchIRFAudioLink(id);
+
+            return await AlignmentViewAsync(id, interviewId, emailid, result, alignmentService) ?? fallback;
+        }
+
+        /// <summary>
+        /// Renders the alignment page, or returns null - and Alignment redirects to Interview Details - when it cannot
+        /// be built (switch off, database objects not deployed, any failure).
+        /// </summary>
+        private async Task<IActionResult> AlignmentViewAsync(int id, int interviewId, string emailid, Risebird.Entities.Data.Meeting meeting,
+            IInterviewAlignmentService alignmentService)
+        {
+            Risebird.Entities.ViewModel.InterviewAlignmentViewModel alignment;
+            try
+            {
+                alignment = await alignmentService.BuildAlignmentAsync(interviewId, emailid, meeting,
+                    IRFController.DefaultCodingTimeLimitInMinutes, IRFController.MaxSampleQuestionLength);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                alignment = null;
+            }
+            if (alignment == null)
+            {
+                return null;
+            }
+
+            // The rubric, questions and instructions on this page come from the interview's own channel.
+            if (alignment.IRFIntId > 0 && alignment.IRFIntId != id)
+            {
+                id = alignment.IRFIntId;
+                meeting.AudioComment = _irfService.FetchIRFAudioLink(id);
+            }
+            ViewBag.id = id;
+            ViewBag.InterviewId = interviewId;
+            ViewBag.Alignment = alignment;
+
+            // The interviewer sees the candidate by coded identity only (alignment.CandidateCodedName, built from
+            // these before they are cleared). Clearing them guarantees nothing on the page can render them.
+            meeting.candidateName = null;
+            meeting.candidateEmail = null;
+            meeting.MobileNumber = null;
+            return View("InterviewAlignment", meeting);
         }
         [HttpPost]
         public async Task<JsonResult> VerifyInterviewerForInterviewDetails(int id, int interviewId, string Emailid)

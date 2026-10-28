@@ -39,6 +39,8 @@ namespace Risebird.Business
         private readonly IUserRepository _userRepository;
         private readonly ITemplateListingSearchRepository _templateListingSearchRepository;
         private readonly IOpenAIResponsesHelper _openAIResponsesHelper;
+        /// <summary>Optional: tells "Add more sets" which questions are published code projects, so they are dealt first.</summary>
+        private readonly ICodeProjectQuestionRepository _codeProjectRepository;
 
 
         public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger,
@@ -49,9 +51,11 @@ namespace Risebird.Business
             IClonableSkillChannelTemplateRepository clonableSkillChannelTemplateRepository, IUserRepository userRepository,
             IIrfListingSearchRepository irfListingSearchRepository,
             ITemplateListingSearchRepository templateListingSearchRepository,
-            IOpenAIResponsesHelper openAIResponsesHelper)
+            IOpenAIResponsesHelper openAIResponsesHelper,
+            ICodeProjectQuestionRepository codeProjectRepository = null)
         {
             _openAIResponsesHelper = openAIResponsesHelper;
+            _codeProjectRepository = codeProjectRepository;
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
@@ -926,6 +930,11 @@ namespace Risebird.Business
 
             catch (Exception e)
             {
+                // Lets Edit IRF say why the save failed (see IRFVm.SaveFailureReason).
+                if (model != null)
+                {
+                    model.SaveFailureReason ??= e.Message;
+                }
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
@@ -5362,6 +5371,119 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return new AIQuestionSetSaveResultVM { Success = false, Message = "Something went wrong while creating the question sets. Please try again." };
+            }
+        }
+
+        /// <summary>
+        /// Adds question sets to a channel without touching the ones it already has. Once an interview
+        /// is bound to a set the channel's sets can never be re-created (a candidate's paper must not
+        /// change), so questions written afterwards -- code project questions in particular -- would
+        /// otherwise never be asked. New sets are dealt deterministically from questions no set holds
+        /// yet (see AIQuestionSetDealer), named after the existing ones (D, E, ...), and pass the same
+        /// two balance gates as CreateAIQuestionSets: ValidateAIQuestionSets here and the checks inside
+        /// usp_AddAIQuestionSets. New sets have no interviews yet, so the least-used rotation deals
+        /// them to the next candidates first.
+        /// </summary>
+        public async Task<AIQuestionSetSaveResultVM> AddAIQuestionSets(int irfId, string createdBy)
+        {
+            try
+            {
+                var pool = await _irfRepository.GetAIQuestionPoolForSets(irfId);
+                if (pool == null)
+                    return new AIQuestionSetSaveResultVM { Success = false, Message = "Could not read this channel's questions. Please try again." };
+                if (!pool.IsPreset)
+                    return new AIQuestionSetSaveResultVM { Success = false, Message = "This skill channel is not a preset AI interview channel, so question sets do not apply to it." };
+
+                var parameters = pool.RubricParameters.Where(x => !string.IsNullOrWhiteSpace(x.SkillName)).OrderBy(x => x.ParameterOrder).ToList();
+                if (parameters.Count == 0)
+                    return new AIQuestionSetSaveResultVM { Success = false, Message = "This skill channel has no rubric parameters, so question sets cannot be created. Add skills to the rubric first." };
+
+                var existing = await _irfRepository.GetAIQuestionSetsByIRF(irfId);
+                if (existing == null)
+                    return new AIQuestionSetSaveResultVM { Success = false, Message = "Could not read this channel's existing sets. Please try again." };
+                if (existing.Count == 0)
+                    return new AIQuestionSetSaveResultVM { Success = false, Message = "This channel has no sets yet. Use Create sets first." };
+
+                var used = new HashSet<int>(existing.SelectMany(s => s.Items ?? new List<AIQuestionSetItemVM>()).Select(i => i.QuestionId));
+                var codeProjects = new HashSet<int>();
+                if (_codeProjectRepository != null)
+                    foreach (var row in await _codeProjectRepository.GetStatusesByIRF(irfId) ?? new List<CodeProjectStatusRow>())
+                        if (row.ValidationStatus == CodeProjectValidationStatus.Passed) codeProjects.Add(row.QuestionId);
+
+                var deal = AIQuestionSetDealer.DealNewSets(parameters, pool.Questions, used, codeProjects);
+                if (deal.Sets.Count == 0)
+                {
+                    return new AIQuestionSetSaveResultVM
+                    {
+                        Success = false,
+                        Message = deal.EmptyParameter == null
+                            ? "No new set can be made from this channel's questions."
+                            : $"Rubric parameter \"{deal.EmptyParameter}\" has no question that is not already in a set. Add a question for it, then try again."
+                    };
+                }
+
+                // Names continue after the existing ones.
+                var nextIndex = existing.Select(s => AIQuestionSetDealer.SetNameIndex(s.SetName)).DefaultIfEmpty(-1).Max() + 1;
+                var parameterOrder = parameters.ToDictionary(x => x.SkillName.Trim(), x => x.ParameterOrder, StringComparer.OrdinalIgnoreCase);
+                var rows = new List<AIQuestionSetItemTvpRow>();
+                for (var i = 0; i < deal.Sets.Count; i++)
+                {
+                    var setName = BuildSetName(nextIndex + i);
+                    if (setName == null)
+                        return new AIQuestionSetSaveResultVM { Success = false, Message = "This channel has more question sets than can be named. Nothing was saved." };
+                    var ordered = deal.Sets[i]
+                        .OrderBy(q => parameterOrder.TryGetValue((q.SkillName ?? "").Trim(), out var order) ? order : int.MaxValue)
+                        .ThenBy(q => q.id)
+                        .ToList();
+                    for (var k = 0; k < ordered.Count; k++)
+                    {
+                        rows.Add(new AIQuestionSetItemTvpRow
+                        {
+                            SetName = setName,
+                            QuestionId = ordered[k].id,
+                            SkillName = (ordered[k].SkillName ?? string.Empty).Trim(),
+                            TotalMinutes = ordered[k].MaxTimeMinutes,
+                            TotalPoints = ordered[k].MaxScore,
+                            SortOrder = k + 1
+                        });
+                    }
+                }
+
+                // Gate one of two (the other is inside usp_AddAIQuestionSets): the same balance rules as
+                // Create, counted over the questions no existing set holds, and nothing already in a set.
+                var unusedPool = new AIQuestionSetPoolVM
+                {
+                    IsPreset = pool.IsPreset,
+                    RubricParameters = pool.RubricParameters,
+                    Questions = pool.Questions.Where(q => !used.Contains(q.id)).ToList()
+                };
+                var validationMessage = rows.Any(r => used.Contains(r.QuestionId))
+                    ? "A question that is already in a set was proposed again. Nothing was saved."
+                    : ValidateAIQuestionSets(rows, unusedPool, parameters, deal.Sets.Count);
+                if (validationMessage != null)
+                    return new AIQuestionSetSaveResultVM { Success = false, Message = validationMessage };
+
+                var saveResult = await _irfRepository.AddAIQuestionSets(irfId, rows, createdBy);
+                if (saveResult == null)
+                    return new AIQuestionSetSaveResultVM { Success = false, Message = "The question sets could not be saved. Please try again." };
+
+                if (saveResult.Success)
+                {
+                    saveResult.SetCount = deal.Sets.Count;
+                    var projectCount = rows.Count(r => codeProjects.Contains(r.QuestionId));
+                    var names = rows.Select(r => r.SetName).Distinct().ToList();
+                    saveResult.Message = $"Added {names.Count} set(s) ({string.Join(", ", names)}) from questions not used in any set"
+                        + (projectCount > 0 ? $", including {projectCount} code project question(s)." : ".")
+                        + " New sets are dealt to the next interviews first.";
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Info,
+                        $"AI question sets {string.Join(", ", names)} added to IRFId={irfId} by {createdBy} ({projectCount} code project question(s)).");
+                }
+                return saveResult;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new AIQuestionSetSaveResultVM { Success = false, Message = "Something went wrong while adding question sets. Please try again." };
             }
         }
 

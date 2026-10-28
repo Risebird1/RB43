@@ -524,6 +524,9 @@ namespace Risebird.CommonHelper
                     throw new InvalidOperationException("OpenAI:ResponsesModel is not configured.");
                 if (string.IsNullOrWhiteSpace(input))
                     throw new InvalidOperationException($"OpenAI Responses input is required for operation {operationType}.");
+                // json_object output is refused (400) unless the *input* mentions JSON; the instructions do not count.
+                if (input.IndexOf("json", StringComparison.OrdinalIgnoreCase) < 0)
+                    input += "\n\nRespond with a single JSON object.";
 
                 var plan = PlanFor(operationType, null, useStoredPromptModel: false);
                 var cacheTtl = _costOptimization.CacheTtlMinutesFor(operationType);
