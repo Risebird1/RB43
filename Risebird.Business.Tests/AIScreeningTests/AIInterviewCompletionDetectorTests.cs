@@ -59,6 +59,26 @@ namespace Risebird.Business.Tests.AIScreeningTests
                 "Great."));
         }
 
+        [Theory]
+        [InlineData("Thank you, goodbye, take care.")]
+        [InlineData("Thanks for your time. We will get back to you.")]
+        [InlineData("That concludes the interview. Have a great day!")]
+        public void A_sign_off_is_a_closing_statement(string reply)
+        {
+            Assert.True(AIInterviewCompletionDetector.IsClosingStatement(reply));
+        }
+
+        [Theory]
+        [InlineData("Understood. Which CRM have you used, and how did you use it to track your team's leads?")]
+        [InlineData("Thank you. Now tell me about a time you had to say goodbye to a difficult client.")]
+        [InlineData("Take care to describe the process step by step.")]
+        [InlineData("Great answer. Let's move on.")]
+        [InlineData("")]
+        public void A_question_or_prompt_is_not_a_closing_statement(string reply)
+        {
+            Assert.False(AIInterviewCompletionDetector.IsClosingStatement(reply));
+        }
+
         [Fact]
         public void An_unwrapped_turn_keeps_its_completion_flag_as_the_marker()
         {

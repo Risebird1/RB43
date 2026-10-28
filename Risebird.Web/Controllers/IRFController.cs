@@ -14613,6 +14613,35 @@ namespace Risebird.Web.Controllers
         }
 
         /// <summary>
+        /// Adds sets from the questions no existing set holds, leaving existing sets (and the interviews
+        /// bound to them) untouched. This is how questions written after the sets were first created,
+        /// such as code project questions, reach candidates on a channel whose sets are already in use.
+        /// </summary>
+        [HttpPost]
+        public async Task<JsonResult> AddAIQuestionSets(int irfid)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+                if (!await AuthorizeAIQuestionSetAccessAsync(irfid))
+                    return Json(new { success = false, message = "Forbidden" });
+
+                var emailid = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var result = await _irfService.AddAIQuestionSets(irfid, emailid);
+                if (result == null)
+                    return Json(new { success = false, message = "The question sets could not be added. Please try again." });
+
+                return Json(new { success = result.Success, message = result.Message, setCount = result.SetCount });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "The question sets could not be added. Please try again." });
+            }
+        }
+
+        /// <summary>
         /// Switches this channel's question sets on or off. Same authorization as the rest of the
         /// section: a client or a candidate must never learn whether a channel deals papers, let alone
         /// change it.

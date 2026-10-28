@@ -2689,7 +2689,8 @@
         btn.id = 'rbTapToHear';
         btn.type = 'button';
         btn.innerHTML = '<i class="fa fa-volume-up"></i> Tap to hear the question';
-        btn.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:10000;' +
+        // Top of the screen: at the bottom it sat over the record button on phones.
+        btn.style.cssText = 'position:fixed;left:50%;top:calc(env(safe-area-inset-top, 0px) + 12px);transform:translateX(-50%);z-index:10000;white-space:nowrap;' +
             'padding:12px 20px;border:0;border-radius:24px;background:#28a745;color:#fff;font-size:16px;' +
             'box-shadow:0 4px 12px rgba(0,0,0,.3);';
         document.body.appendChild(btn);

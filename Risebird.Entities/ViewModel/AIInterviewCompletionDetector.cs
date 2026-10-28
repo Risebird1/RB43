@@ -86,6 +86,37 @@ namespace Risebird.Entities.ViewModel
             return all > 0 && shared >= 0.8 * all;
         }
 
+        private static readonly string[] FarewellPhrases =
+        {
+            "goodbye", "good bye", "bye for now", "take care", "we will get back to you", "we'll get back to you",
+            "will be in touch", "have a great day", "have a good day", "have a nice day", "all the best",
+            "this concludes the interview", "that concludes the interview", "that concludes our interview",
+            "this concludes our interview", "end of the interview", "end of our interview"
+        };
+
+        private static readonly string[] PromptingPhrases =
+        {
+            "tell me", "describe", "explain", "walk me", "share", "can you", "could you", "would you",
+            "what ", "how ", "why ", "please answer", "next question"
+        };
+
+        /// <summary>
+        /// True when the turn is a sign-off ("Thank you, goodbye, take care.") rather than a question.
+        /// The assistant does not always append the marker to its goodbye, and without this the
+        /// candidate is left on the goodbye with nothing to answer. A turn that still asks or prompts
+        /// for something is never a sign-off.
+        /// </summary>
+        public static bool IsClosingStatement(string reply)
+        {
+            var text = Normalize(reply);
+            if (text.Length == 0 || reply.Contains("?")) return false;
+
+            var padded = " " + text + " ";
+            if (PromptingPhrases.Any(p => padded.Contains(" " + p))) return false;
+
+            return FarewellPhrases.Any(p => padded.Contains(" " + p + " "));
+        }
+
         private static bool IsTrue(JToken value) =>
             value.Type == JTokenType.Boolean ? (bool)value
             : value.Type == JTokenType.String && string.Equals(((string)value).Trim(), "true", StringComparison.OrdinalIgnoreCase);
