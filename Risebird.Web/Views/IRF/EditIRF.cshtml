@@ -471,9 +471,49 @@
                                                  <div class="col-md-4 col-sm-4 pull-left">
                                                     <div class="mb-0">
                                                         @Html.CheckBoxFor(model => model.generateTranscriptSummary, new { @id = "generateTranscriptSummary" })
-                                                        <label for="generateTranscriptSummary" class="form-label">Generate TranscriptSummary</label>
+                                                        @* The summary is generated for every meeting regardless; this flag only controls
+                                                           whether the client report shows it. Column name unchanged. *@
+                                                        <label for="generateTranscriptSummary" class="form-label">Show AI question &amp; answer log in client report</label>
                                                     </div>
 
+                                                </div>
+
+                                                @* Report level display and candidate reschedule limits. Blank in any of the three
+                                                   keeps the channel exactly as it behaves today. *@
+                                                <div class="col-md-4 col-sm-4 pull-left">
+                                                    <div class="form-group">
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.LevelDisplayMode, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        </div>
+                                                        @Html.DropDownListFor(model => model.LevelDisplayMode, new List<SelectListItem>
+                                                        {
+                                                            new SelectListItem { Text = "Required & actual, as text", Value = "1" },
+                                                            new SelectListItem { Text = "Required & actual, with stars", Value = "2" }
+                                                        }, "Current (\"Evaluated at\" only)", new { @class = "form-control", @id = "LevelDisplayMode" })
+                                                        <small class="text-muted">Blank keeps the current single "Evaluated at" line.</small>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 col-sm-4 pull-left">
+                                                    <div class="form-group">
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.MaxCandidateReschedules, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        </div>
+                                                        @Html.EditorFor(model => model.MaxCandidateReschedules, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "0", @id = "MaxCandidateReschedules" } })
+                                                        @Html.ValidationMessageFor(model => model.MaxCandidateReschedules, "", new { @class = "text-danger" })
+                                                        <small class="text-muted">Blank = unlimited. Applies to the candidate only &mdash; internal and client users are never capped.</small>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 col-sm-4 pull-left">
+                                                    <div class="form-group">
+                                                        <div class="mandate">
+                                                            @Html.LabelFor(model => model.InterviewCompleteByDays, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        </div>
+                                                        @Html.EditorFor(model => model.InterviewCompleteByDays, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @id = "InterviewCompleteByDays" } })
+                                                        @Html.ValidationMessageFor(model => model.InterviewCompleteByDays, "", new { @class = "text-danger" })
+                                                        <small class="text-muted">Blank = no deadline. Counted from the first scheduled date.</small>
+                                                    </div>
                                                 </div>
 
                                                 @* MCQ assessment section. The test itself runs on screen.risebird.io and is

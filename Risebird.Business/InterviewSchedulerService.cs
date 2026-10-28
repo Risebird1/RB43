@@ -386,11 +386,11 @@ namespace Risebird.Business
         /// <param name="interviewid"></param>
         /// <param name="newinterviewdate"></param>
         /// <returns></returns>
-        public async Task<RescheduleInterviewDetails> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate, string loginemail)
+        public async Task<RescheduleInterviewDetails> UpdateReSchedulingInterview(int interviewid, DateTime newinterviewdate, string loginemail, bool isCandidateInitiated = false)
         {
             try
             {
-                var result = await _interviewSchedulerRepository.UpdateReSchedulingInterview(interviewid, newinterviewdate, loginemail);
+                var result = await _interviewSchedulerRepository.UpdateReSchedulingInterview(interviewid, newinterviewdate, loginemail, isCandidateInitiated);
                 if (result != null)
                 {
                     //return message if not cancelled and message is null in case of cancel interview
@@ -406,6 +406,22 @@ namespace Risebird.Business
                     }
                 }
                 return result;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        /// <summary>
+        /// The candidate reschedule cap and completion deadline for an interview. Null when the
+        /// interview is not found or the lookup fails; callers then behave exactly as before.
+        /// </summary>
+        public async Task<CandidateRescheduleLimits> GetCandidateRescheduleLimits(int interviewid)
+        {
+            try
+            {
+                return await _interviewSchedulerRepository.GetCandidateRescheduleLimits(interviewid);
             }
             catch (Exception ex)
             {
