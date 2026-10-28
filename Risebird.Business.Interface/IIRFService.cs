@@ -248,6 +248,7 @@ namespace Risebird.Business.Interface
 
         // AI interview question sets (preset channels only).
         Task<AIQuestionSetSaveResultVM> CreateAIQuestionSets(int irfId, string createdBy);
+        Task<AIQuestionSetSaveResultVM> AddAIQuestionSets(int irfId, string createdBy);
         Task<IList<AIQuestionSetVM>> GetAIQuestionSetsByIRF(int irfId);
         Task<AIQuestionSetAssignmentVM> AssignAIQuestionSetToInterview(int interviewId);
         Task<AIQuestionSetToggleResultVM> SetAIQuestionSetsEnabled(int irfId, bool enabled, string updatedBy);

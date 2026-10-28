@@ -75,6 +75,7 @@ namespace Risebird.Web.Controllers
         private readonly IMcqAssessmentService _mcqAssessmentService;
         private readonly ICodeProjectQuestionService _codeProjectQuestionService;
         private readonly Risebird.Web.Services.CodeProjectBackgroundQueue _codeProjectQueue;
+        private readonly Risebird.Web.Services.AIInterviewReportQueue _reportQueue;
 
         private readonly IHttpClientFactory _httpClientFactory;
 
@@ -93,9 +94,11 @@ namespace Risebird.Web.Controllers
             ICodeExecutionService codeExecutionService,
             IMcqAssessmentService mcqAssessmentService,
             ICodeProjectQuestionService codeProjectQuestionService,
-            Risebird.Web.Services.CodeProjectBackgroundQueue codeProjectQueue, IHttpClientFactory httpClientFactory)
+            Risebird.Web.Services.CodeProjectBackgroundQueue codeProjectQueue, IHttpClientFactory httpClientFactory,
+            Risebird.Web.Services.AIInterviewReportQueue reportQueue)
         {
             _httpClientFactory = httpClientFactory;
+            _reportQueue = reportQueue;
             _codeProjectQuestionService = codeProjectQuestionService;
             _codeProjectQueue = codeProjectQueue;
             _configuration = configuration;
@@ -623,7 +626,8 @@ namespace Risebird.Web.Controllers
                                     //if (latestEntry.Role.ToLower() == "assistant" && allQuestions.Count() <= 3)
                                     {
                                         // Reload after the interviewer already concluded: finish instead of re-showing the closing message.
-                                        if (MessageSignalsInterviewCompletion(latestEntry.Message))
+                                        if (MessageSignalsInterviewCompletion(latestEntry.Message)
+                                            || AIInterviewCompletionDetector.IsClosingStatement(CleanMessage(latestEntry.Message)))
                                         {
                                             model.candidateName = meetingDetails.candidateName;
                                             return await CompleteAdaptiveInterviewAsync(model);
@@ -1870,10 +1874,12 @@ namespace Risebird.Web.Controllers
                         // candidate replies; a repeated closing statement means the interview is over.
                         var previousAssistantTurn = transcript
                             .FirstOrDefault(x => string.Equals(x.Role, "assistant", StringComparison.OrdinalIgnoreCase))?.Message;
-                        if (AIInterviewCompletionDetector.RepeatsClosingTurn(CleanMessage(replies?.FirstOrDefault()), CleanMessage(previousAssistantTurn)))
+                        var newestReply = CleanMessage(replies?.FirstOrDefault());
+                        if (AIInterviewCompletionDetector.RepeatsClosingTurn(newestReply, CleanMessage(previousAssistantTurn))
+                            || AIInterviewCompletionDetector.IsClosingStatement(newestReply))
                         {
                             await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
-                                $"AI interview session {model.SessionId}: the assistant repeated its closing message without the completion marker; completing the interview.");
+                                $"AI interview session {model.SessionId}: the assistant signed off without the completion marker; completing the interview.");
                             return await CompleteAdaptiveInterviewAsync(model);
                         }
 
@@ -3040,7 +3046,8 @@ namespace Risebird.Web.Controllers
 
             // Exit Interview on an adaptive interview ends it: without this the page said "closed" while
             // the meeting stayed Pending and no report was generated. Guarded on status so a second
-            // load of this modal does not regenerate the report.
+            // load of this modal does not regenerate the report. The report is queued, not awaited:
+            // generating it held the candidate on a frozen page for 20-30 seconds.
             if (meetingDetails != null
                 && meetingDetails.AIInterviewType == (int)AIInterviewTypeEnum.Adaptive
                 && meetingDetails.MeetingStatus != (int)MeetingStatus.Completed)
@@ -3048,7 +3055,8 @@ namespace Risebird.Web.Controllers
                 try
                 {
                     await _aiinterviewerService.UpdateMeetingCompletedStatusForAIInterview(seId.ToString());
-                    await _api.GenerateReport(seId, AdaptiveReportGenerationPrompt, (int)AIInterviewTypeEnum.Adaptive, isExit: true);
+                    _reportQueue.Enqueue(new Risebird.Web.Services.AIInterviewReportQueue.Job(
+                        seId, AdaptiveReportGenerationPrompt, (int)AIInterviewTypeEnum.Adaptive));
                 }
                 catch (Exception ex)
                 {
