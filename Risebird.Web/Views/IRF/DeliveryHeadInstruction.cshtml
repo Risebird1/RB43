@@ -1164,7 +1164,12 @@
                                                                 <div class="dm-v4-questions-ai-sub">The number of sets is capped by the rubric parameter with the fewest questions, because every set must cover every parameter without reusing a question.</div>
                                                             </div>
                                                         </div>
-                                                        <button type="button" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" id="dmV4CreateQuestionSetsBtn" title="Create balanced question sets for this channel"><i class="fa fa-clone"></i> Create sets</button>
+                                                        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                                                            <button type="button" class="dm-v4-btn dm-v4-btn--primary dm-v4-btn--sm" id="dmV4CreateQuestionSetsBtn" title="Create balanced question sets for this channel"><i class="fa fa-clone"></i> Create sets</button>
+                                                            @* Sets in use by an interview can never be re-created, so questions added later
+                                                               (code project questions in particular) reach candidates through new sets. *@
+                                                            <button type="button" class="dm-v4-btn dm-v4-btn--ghost dm-v4-btn--sm" id="dmV4AddQuestionSetsBtn" title="Add sets made only of questions that are not in any set yet; existing sets are not changed"><i class="fa fa-plus"></i> Add more sets</button>
+                                                        </div>
                                                     </div>
 
                                                     @* The channel's explicit opt-in. Creating sets does not put them into use on its
@@ -3409,6 +3414,10 @@
                 CreateAIQuestionSets();
             });
 
+            $("#dmV4AddQuestionSetsBtn").on("click", function () {
+                AddAIQuestionSets();
+            });
+
             $("#dmV4UseQuestionSetsToggle").on("change", function () {
                 SetAIQuestionSetsEnabled($(this).is(":checked"));
             });
@@ -3535,6 +3544,46 @@
                     $btn.prop("disabled", false);
                     swal.fire({ text: "The question sets could not be created." });
                 }
+            });
+        }
+
+        // Appends sets built only from questions that no set holds yet. Existing sets and the
+        // interviews locked to them are left exactly as they are.
+        function AddAIQuestionSets() {
+            if (!aiQuestionSetsEnabled) return;
+            var irfid = $("#dmV4QuestionSetsPanel").data("irf-id");
+            swal.fire({
+                title: "Add more question sets?",
+                text: "New sets are made only from questions that are not in any set yet, with published code project questions placed first. Existing sets and the interviews using them are not changed. New sets are given to the next interviews first.",
+                showCancelButton: true,
+                confirmButtonText: "Add sets"
+            }).then(function (choice) {
+                if (!choice || !choice.value) return;
+                var $btn = $("#dmV4AddQuestionSetsBtn");
+                $btn.prop("disabled", true);
+                $("#dmV4QuestionSetsMessage").text("Adding sets...");
+                $.ajax({
+                    type: "POST",
+                    url: "/IRF/AddAIQuestionSets",
+                    data: { 'irfid': irfid },
+                    success: function (data) {
+                        $btn.prop("disabled", false);
+                        var message = (data && data.message) ? data.message : "The question sets could not be added.";
+                        $("#dmV4QuestionSetsMessage").text(message);
+                        if (!data || !data.success) {
+                            swal.fire({ text: message });
+                            return;
+                        }
+                        LoadAIQuestionSets();
+                        if (!$("#dmV4UseQuestionSetsToggle").is(":checked")) {
+                            $("#dmV4UseQuestionSetsMessage").text("These sets are not in use yet. Switch this channel on to start dealing them.");
+                        }
+                    },
+                    error: function () {
+                        $btn.prop("disabled", false);
+                        swal.fire({ text: "The question sets could not be added." });
+                    }
+                });
             });
         }
 

@@ -330,6 +330,8 @@ namespace Risebird.Repository.Interface
         // AI interview question sets (preset channels only).
         Task<AIQuestionSetPoolVM> GetAIQuestionPoolForSets(int irfId);
         Task<AIQuestionSetSaveResultVM> SaveAIQuestionSets(int irfId, IList<AIQuestionSetItemTvpRow> items, string promptId, string promptVersion, string createdBy);
+        /// <summary>Appends sets (usp_AddAIQuestionSets); existing sets and their interviews are untouched.</summary>
+        Task<AIQuestionSetSaveResultVM> AddAIQuestionSets(int irfId, IList<AIQuestionSetItemTvpRow> items, string createdBy);
         Task<IList<AIQuestionSetVM>> GetAIQuestionSetsByIRF(int irfId);
         Task<AIQuestionSetAssignmentVM> AssignAIQuestionSetToInterview(int interviewId);
         Task<AIQuestionSetToggleResultVM> SetAIQuestionSetsEnabled(int irfId, bool enabled);

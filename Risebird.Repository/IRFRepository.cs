@@ -11476,6 +11476,62 @@ WHERE id = @irfId";
             return null;
         }
 
+        public async Task<AIQuestionSetSaveResultVM> AddAIQuestionSets(int irfId, IList<AIQuestionSetItemTvpRow> items, string createdBy)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataTable itemsDt = new DataTable();
+                    itemsDt.Columns.Add("SetName", typeof(string));
+                    itemsDt.Columns.Add("QuestionId", typeof(int));
+                    itemsDt.Columns.Add("SkillName", typeof(string));
+                    itemsDt.Columns.Add("TotalMinutes", typeof(int));
+                    itemsDt.Columns.Add("TotalPoints", typeof(int));
+                    itemsDt.Columns.Add("SortOrder", typeof(int));
+                    foreach (var item in items ?? new List<AIQuestionSetItemTvpRow>())
+                    {
+                        itemsDt.Rows.Add(item.SetName, item.QuestionId, item.SkillName,
+                            item.TotalMinutes.HasValue ? (object)item.TotalMinutes.Value : DBNull.Value,
+                            item.TotalPoints.HasValue ? (object)item.TotalPoints.Value : DBNull.Value,
+                            item.SortOrder);
+                    }
+
+                    SqlCommand cmdAddSets = new SqlCommand("usp_AddAIQuestionSets", con);
+                    cmdAddSets.CommandType = CommandType.StoredProcedure;
+                    cmdAddSets.Parameters.Add(new SqlParameter("@IRFId", SqlDbType.Int));
+                    cmdAddSets.Parameters["@IRFId"].Value = irfId;
+                    cmdAddSets.Parameters.Add(new SqlParameter("@Items", SqlDbType.Structured));
+                    cmdAddSets.Parameters["@Items"].Value = itemsDt;
+                    cmdAddSets.Parameters.Add(new SqlParameter("@CreatedBy", SqlDbType.VarChar, 150));
+                    cmdAddSets.Parameters["@CreatedBy"].Value = (object)createdBy ?? DBNull.Value;
+
+                    var successParam = new SqlParameter("@Success", SqlDbType.Bit) { Direction = ParameterDirection.Output };
+                    cmdAddSets.Parameters.Add(successParam);
+                    var messageParam = new SqlParameter("@Message", SqlDbType.NVarChar, 1000) { Direction = ParameterDirection.Output };
+                    cmdAddSets.Parameters.Add(messageParam);
+
+                    con.Open();
+                    await cmdAddSets.ExecuteNonQueryAsync();
+
+                    return new AIQuestionSetSaveResultVM
+                    {
+                        Success = successParam.Value != DBNull.Value && Convert.ToBoolean(successParam.Value),
+                        Message = messageParam.Value == DBNull.Value ? null : Convert.ToString(messageParam.Value)
+                    };
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+            }
+            return null;
+        }
+
         public async Task<IList<AIQuestionSetVM>> GetAIQuestionSetsByIRF(int irfId)
         {
             try
